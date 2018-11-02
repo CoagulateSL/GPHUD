@@ -580,7 +580,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 "    // this is really the only tricky part, you need to specify the background color of the container element...\n" +
 "    color: #818078;\n" +
 "    background-color: #fcfcfa;\n" +
-"  }" +
+"  }"
+                + "}" +
 "</style>";
     }
     
