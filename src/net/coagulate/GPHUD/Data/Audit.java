@@ -163,6 +163,7 @@ public abstract class Audit {
             
             if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
                 Table internal = new Table();
+                internal.nowrap();
                 internal.add(new Cell("Source name:").th()).add(sourcename).closeRow();
                 internal.add(new Cell("Source owner:").th()).add(sourceowner).closeRow();
                 internal.add(new Cell("Source developer:").th()).add(sourcedev).closeRow();

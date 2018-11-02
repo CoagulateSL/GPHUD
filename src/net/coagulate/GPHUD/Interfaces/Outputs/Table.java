@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.State;
 public class Table implements Renderable {
     List<Row> table=new ArrayList<>();
     boolean border=false;
+    private boolean nowrap=false;
     public void border(boolean border) { this.border=border; }
     
     Row openrow=null;
@@ -49,6 +50,7 @@ public class Table implements Renderable {
         String s="";
         s+="<table";
         if (border) { s+=" border=1"; }
+        if (nowrap) { s+=" style=\"white-space: nowrap;\""; }
         s+=">";
         for (Row r:table) { s+=r.asHtml(st,rich); }
         s+="</table>";
@@ -72,4 +74,6 @@ public class Table implements Renderable {
     public int rowCount() {
         return table.size();
     }
+
+    public void nowrap() { nowrap=true; }
 }
