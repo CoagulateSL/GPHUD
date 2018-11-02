@@ -133,14 +133,15 @@ public abstract class Audit {
         table.border(false);
         NameCache cache=new NameCache();
         net.coagulate.GPHUD.Interfaces.Outputs.Row headers=new HeaderRow();
-        headers.add("T("+timezone+")").add("Source").add("Target").add("Change").add("Obj").add("ObjAvi").add("ObjDev").add("Region").add("Location");
+        headers.add(timezone).add("Source").add("Target").add("Change");
         table.add(headers);
+        /*
         HeaderRow h2=new HeaderRow();
         h2.add(new Cell("Old Value",3));
         h2.add(new Cell("New Value",2));
         h2.add(new Cell("Notes",7));
         table.add(h2);
-
+        */
         String olddate="";
         for (ResultsRow r:rows) {
             String datetime[]=fromUnixTime(r.getString("timedate"),timezone).split(" ");
@@ -163,17 +164,25 @@ public abstract class Audit {
             if ((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty())) {
                 t.add("");
             } else { 
-                t.add("->");
+                t.add("&rarr;");
             }
             t.add(dstav+(dstav.isEmpty() || dstch.isEmpty()?"":"/")+dstch);
             String changetype=cleanse(r.getString("changetype"));
             String changeitem=cleanse(r.getString("changeditem"));
             t.add(changetype+(changetype.isEmpty()||changeitem.isEmpty()?"":" - ")+changeitem);
-            t.add(cleanse(r.getString("sourcename")));
-            t.add(formatavatar(cache,r.getInt("sourceowner")));
-            t.add(formatuser(cache,r.getInt("sourcedeveloper")));
-            t.add(formatregion(cache,r.getInt("sourceregion")));
-            t.add(trimlocation(cleanse(r.getString("sourcelocation"))));
+            
+            
+            String sourcename=cleanse(r.getString("sourcename"));
+            String sourceowner=formatavatar(cache,r.getInt("sourceowner"));
+            String sourcedev=formatuser(cache,r.getInt("sourcedeveloper"));
+            String sourceregion=formatregion(cache,r.getInt("sourceregion"));
+            String sourceloc=trimlocation(cleanse(r.getString("sourcelocation")));
+            
+            if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
+                String content="[ Source ]";
+                t.add(content);
+            }
+            
             /*
             net.coagulate.GPHUD.Interfaces.Outputs.Row t2=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             t2.setbgcolor("#f0f0f0");
