@@ -139,7 +139,7 @@ public abstract class Audit {
         String tzheader=timezone;
         String[] tzparts=tzheader.split("/");
         if (tzparts.length==2) { tzheader=tzparts[1]; }
-        headers.add(tzheader).add("").add("Source").add("Target").add("Change").add("Old Value").add("New Value").add("");
+        headers.add(tzheader).add("").add("Source").add("").add("Target").add("Change").add("Old Value").add("New Value").add("");
         table.add(headers);
         String olddate="";
         for (ResultsRow r:rows) {
