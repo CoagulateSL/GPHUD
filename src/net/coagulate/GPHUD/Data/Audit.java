@@ -130,7 +130,7 @@ public abstract class Audit {
   public static Table formatAudit(Results rows,String timezone)
     {
         Table table=new Table();
-        table.border(true);
+        table.border(false);
         NameCache cache=new NameCache();
         net.coagulate.GPHUD.Interfaces.Outputs.Row headers=new HeaderRow();
         headers.add("T("+timezone+")").add("Source").add("Target").add("Change").add("Obj").add("ObjAvi").add("ObjDev").add("Region").add("Location");
@@ -158,6 +158,12 @@ public abstract class Audit {
             String dstav=formatavatar(cache,r.getInt("destavatarid"));
             String dstch=formatchar(cache,r.getInt("destcharacterid"));
             t.add(srcav+(srcav.isEmpty() || srcch.isEmpty()?"":"/")+srcch);
+            // if we have nothing on one side
+            if ((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty())) {
+                t.add("");
+            } else { 
+                t.add("->");
+            }
             t.add(dstav+(dstav.isEmpty() || dstch.isEmpty()?"":"/")+dstch);
             String changetype=cleanse(r.getString("changetype"));
             String changeitem=cleanse(r.getString("changeditem"));
