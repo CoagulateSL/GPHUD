@@ -534,7 +534,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 "    visibility: hidden;\n" +
 //"    width: 120px;\n" +
 "    background-color: #e0e0e0;\n" +
-"    color: #ffffff;\n" +
+"    color: black;\n" +
 "    text-align: center;\n" +
 "    padding: 5px 0;\n" +
 "    border-radius: 6px;\n" +
