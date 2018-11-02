@@ -1,0 +1,117 @@
+package net.coagulate.GPHUD.Modules.Configuration;
+
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Interfaces.Inputs.Button;
+import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
+import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
+import net.coagulate.GPHUD.Interfaces.Outputs.Link;
+import net.coagulate.GPHUD.Interfaces.Outputs.Paragraph;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
+import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
+import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
+import net.coagulate.GPHUD.Interfaces.User.Form;
+import net.coagulate.GPHUD.Modules.KV;
+import net.coagulate.GPHUD.Modules.Module;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.URL.URLs;
+import net.coagulate.GPHUD.SafeMap;
+import net.coagulate.GPHUD.State;
+
+/** Front page and default config page.
+ * 
+ * Front page lists modules and enable/disable options, and links to config pages, which are mostly made of "GenericConfiguration" pages
+ *
+ * @author Iain Price <gphud@predestined.net>
+ */
+public abstract class Index {
+
+    @URLs(url = "/configuration/")
+    public static void createForm(State st,SafeMap values) throws UserException, SystemException {
+        Form f=st.form;
+        f.noForm();
+        f.add(new TextHeader("GPHUD Module Configuration"));
+        f.add(new Paragraph("Here, the <b>INSTANCE OWNER</b> may enable and disable certain (non-core) modules to enable or disable functionality."));
+        f.add(new TextSubHeader("Core Modules"));
+        f.add(new Paragraph("These may not be disabled as they provide core functionality needed for the system to operate"));
+        Table core=new Table(); f.add(core);
+        core.add(new HeaderRow().add("Name").add("Description"));
+        f.add(new TextSubHeader("Optional Modules"));
+        f.add(new Paragraph("These modules can be disabled as they are optional, though you may consider some of them, such as the 'roller', to be 'core', it can be disabled, but probably makes no sense to do so.  Be aware certain modules may depend on other modules and may refuse to enable themselves."));
+        Table configurable=new Table(); f.add(configurable);
+        configurable.add(new HeaderRow().add("Name").add("Description").add("Status"));
+        for (Module m:Modules.getModules()) {
+            boolean hasconfig=!(m.getKVDefinitions(st).isEmpty());
+            if (m.hasConfig(st)) { hasconfig=true; }
+            if (m.canDisable()==true) {
+                configurable.openRow();
+                if (hasconfig && m.isEnabled(st)) {
+                    configurable.add(new Link(m.getName(),"/GPHUD/configuration/"+m.getName()));
+                } else {
+                    configurable.add(m.getName());
+                }
+                configurable.add(m.description());
+                if (m.isEnabled(st)) { //IF DISABLED etc etc check new Boolean(st.getInstanceKV("modules."+m.getName()))) {
+                    configurable.add(new Colour("green","ENABLED"));
+                    if (st.isInstanceOwner()) {
+                        Form disable=new Form();
+                        disable.setAction("./disablemodule");
+                        disable.add(new Hidden("module",m.getName()));
+                        disable.add(new Hidden("okreturnurl",st.getFullURL()));
+                        disable.add(new Button("Disable "+m.getName(),true));
+                        configurable.add(disable);
+                    }
+                } else {
+                    configurable.add(new Colour("red","Disabled"));
+                    if (st.isInstanceOwner()) {
+                        // only enableable if all the dependancies are enabled.  Note we dont check this on disables because reverse deps are annoying, and deps just disable themselves :P
+                        Form enable=new Form();
+                        enable.setAction("./enablemodule");
+                        enable.add(new Hidden("module",m.getName()));
+                        enable.add(new Hidden("okreturnurl",st.getFullURL()));
+                        enable.add(new Button("Enable "+m.getName(),true));
+                        configurable.add(enable);
+                    }
+                }
+            } else {  // note how this renders in one loop but produces two tables.  it feels a bit odd.
+                core.openRow();
+                if (hasconfig) {
+                    core.add(new Link(m.getName(),"/configuration/"+m.getName()));
+                } else {
+                    core.add(m.getName());
+                }
+                core.add(m.description());
+            }
+        }       
+        
+    }
+    
+    @URLs(url="/configuration/view/*")
+    public static void kvDetailPage(State st,SafeMap values) {
+        String kvname=st.getDebasedURL().replaceFirst("/configuration/view/","").replaceFirst("/",".");
+        KV kv = st.getKVDefinition(kvname);
+        st.form.noForm();
+        st.form.add(new ConfigurationHierarchy(st, kv, st));
+    }
+    @URLs(url = "/configuration/*")
+    public static void genericConfigurationPage(State st,SafeMap values) throws UserException, SystemException {
+        String module=st.getDebasedURL().replaceFirst("/configuration/", "");
+        String key=null;
+        if (module.contains("/")) {
+            String split[]=module.split("/");
+            if (split.length==2) { module=split[0]; key=split[1]; }
+        }
+        Module m=Modules.get(st,module);
+        if (key==null)
+        { 
+            m.kvConfigPage(st);
+        }
+        else
+        {
+            KV kv = st.getKVDefinition(module+"."+key);
+
+            st.form.add(new ConfigurationHierarchy(st, kv, st.simulate(st.getCharacter())));
+        }
+    }
+}

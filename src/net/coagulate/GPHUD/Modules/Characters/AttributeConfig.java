@@ -1,0 +1,227 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.coagulate.GPHUD.Modules.Characters;
+
+import java.util.ArrayList;
+import java.util.List;
+import net.coagulate.GPHUD.Data.Attribute;
+import net.coagulate.GPHUD.Data.Audit;
+import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
+import net.coagulate.GPHUD.Interfaces.Outputs.Row;
+import net.coagulate.GPHUD.Interfaces.Outputs.Separator;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
+import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Interfaces.User.Form;
+import net.coagulate.GPHUD.Modules.Argument;
+import net.coagulate.GPHUD.Modules.Argument.Arguments;
+import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Command.Commands;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.URL.URLs;
+import net.coagulate.GPHUD.SafeMap;
+import net.coagulate.GPHUD.State;
+
+
+/** Configure attributes.
+ *
+ * @author Iain Price <gphud@predestined.net>
+ */
+public class AttributeConfig {
+    
+    public static final String blankNulls(final String s) { if (s==null) { return ""; } return s; }
+    
+    @URLs(url = "/configuration/characters")
+    public static void configPage(State st,SafeMap values) { configPage(st,values,st.simulate(st.getCharacterNullable())); }
+    public static void configPage(State st,SafeMap values,State simulated) {
+        Form f=st.form;
+        f.add(new TextHeader("Defined Attributes"));
+        f.noForm();
+        Table at=new Table(); f.add(at);
+        at.add(new HeaderRow().add("Name").add("Attribute Type").add("SubType").add("Consumes Ability Points").add("Allow Self Modify").add("Required").add("Default"));
+        for (Attribute a:st.getAttributes()) {
+            Row r=new Row();
+            if (a.readOnly()) { r.setbgcolor("#e0e0e0"); }
+            at.add(r);
+            at.add(a.getName());
+            at.add(a.getType().toString());
+            at.add(blankNulls(a.getSubType()));
+
+            if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
+                at.add(new Form(st,true,"./characters/toggleap",a.usesAbilityPoints()+"","attribute",a.getName(),a.usesAbilityPoints()?"usesabilitypoints":"noop","set"));
+            } else { at.add(a.usesAbilityPoints()); }
+
+            if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
+                at.add(new Form(st,true,"./characters/toggleselfmodify",a.getSelfModify()+"","attribute",a.getName(),a.getSelfModify()?"selfmodify":"noop","set"));
+            } else { at.add(a.getSelfModify()); }
+
+            if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
+                at.add(new Form(st,true,"./characters/togglerequired",a.getRequired()+"","attribute",a.getName(),a.getRequired()?"required":"noop","set"));
+            } else { at.add(a.getRequired()); }
+
+            if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
+                at.add(new Form(st,true,"./characters/setdefaultvalue",a.getDefaultValue(),"attribute",a.getName(),"defaultvalue",a.getDefaultValue()));
+            } else {  at.add(blankNulls(a.getDefaultValue())); }
+            
+            if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
+                at.add(new Form(st,true,"./characters/deleteattribute","Delete Attribute","attribute",a.getName()));
+            }            
+        }
+        
+        if (st.hasPermission("Characters.CreateAttribute")) { f.add(new Form(st, true, "./characters/addattribute", "Create New Attribute")); }
+        f.add(new Separator());
+        Modules.get(st,"Characters").kvConfigPage(st);
+        //GenericConfiguration.page(st, values, st.getInstance(),simulated);
+    }
+    
+    
+    @URLs(url="/configuration/characters/addattribute",requiresPermission = "Characters.CreateAttribute")
+    public static void addAttribute(State st,SafeMap values) {
+        Modules.simpleHtml(st, "Characters.CreateAttribute", values);
+    }
+    
+    public static List<String> getAttributeTypes(State st) {
+        List<String> choices=new ArrayList<String>();
+        choices.add("INTEGER");
+        choices.add("FLOAT");
+        choices.add("GROUP");
+        choices.add("TEXT");
+        return choices;
+    }
+        
+    @Commands(description = "Create a new attribute",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
+    public static Response createAttribute(State st,
+        @Arguments(description = "Name of new attribute",type = Argument.ArgumentType.TEXT_ONELINE)
+            String name,
+        @Arguments(description="Allow users to edit their own value without needing permissions",type = Argument.ArgumentType.BOOLEAN)
+            Boolean selfmodify,
+        @Arguments(description = "Type of this attribute",type = Argument.ArgumentType.CHOICE,choiceMethod = "getAttributeTypes")
+            String attributetype,
+        @Arguments (description="Type of group if attribute is of type GROUP",mandatory = false,type = Argument.ArgumentType.TEXT_ONELINE)
+            String grouptype,
+        @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
+            Boolean usesabilitypoints,
+        @Arguments(description = "Attribute must be completed",mandatory=true,type = Argument.ArgumentType.BOOLEAN)
+            Boolean required,
+        @Arguments(description = "Default value (can be blank)",mandatory=true,type=Argument.ArgumentType.TEXT_ONELINE)
+            String defaultvalue
+    ){
+        for (Attribute a:st.getAttributes()) {
+            if (a.getName().equalsIgnoreCase(name)) { return new ErrorResponse("This name is already claimed"); }
+        }
+        if (name.length()<2) { return new ErrorResponse("Please enter a longer name"); }
+        String cleansed=name.replaceAll("[^A-Za-z]","");
+        if (!cleansed.equals(name)) { return new ErrorResponse("Please only use A-Z in the attribute name, no spaces either"); }
+        // attribute type will be validated by the DB ENUM, expect low level errors if you fake this :P
+        if (cleansed.equalsIgnoreCase("Faction")) { return new ErrorResponse("You must use the factions module for faction management"); }
+        if (attributetype.equals("GROUP")) {
+            if (grouptype==null) { return new ErrorResponse("Group data type must have a group type attached"); }
+            if (grouptype.equalsIgnoreCase("Faction")) { return new ErrorResponse("You should not be creating a faction attribute ; use the factions module"); }
+        }
+
+        st.getInstance().createAttribute(name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "CreateAttribute", name, null, null, "Avatar created new attribute "+name+" selfmod:"+selfmodify+" type:"+attributetype+" group:"+grouptype+" AP:"+usesabilitypoints+" REQ:"+required+" Default:"+defaultvalue);
+        return new OKResponse("Okay, attribute created");
+    }
+
+    @URLs(url="/configuration/characters/toggleap",requiresPermission = "Characters.CreateAttribute")
+    public static void toggleAP(State st,SafeMap values) {
+        Modules.simpleHtml(st, "Characters.SetAP", values);
+    }
+
+    @Commands(description = "Set wether an existing attribute uses Ability Points",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
+    public static Response setAP(State st,
+        @Arguments(description = "Attribute",type = Argument.ArgumentType.ATTRIBUTE)
+            Attribute attribute,
+        @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
+            Boolean usesabilitypoints
+    ){
+        attribute.validate(st);
+        boolean oldvalue=attribute.usesAbilityPoints();
+        attribute.setUsesAbilityPoints(usesabilitypoints);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetAP", attribute.getName(), oldvalue+"", usesabilitypoints+"", "Avatar set use of ability points");
+        return new OKResponse("Attribute ability points flag updated");
+    }
+    
+    
+    @URLs(url="/configuration/characters/toggleselfmodify",requiresPermission = "Characters.CreateAttribute")
+    public static void toggleSelfModify(State st,SafeMap values) {
+        Modules.simpleHtml(st, "Characters.SetSelfModify", values);
+    }
+
+    @Commands(description = "Set wether an existing attribute can be directly updated by the character",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
+    public static Response setSelfModify(State st,
+        @Arguments(description = "Attribute",type = Argument.ArgumentType.ATTRIBUTE)
+            Attribute attribute,
+        @Arguments(description="Free self modification allowed?",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
+            Boolean selfmodify
+    ){
+        attribute.validate(st);
+        boolean oldvalue=attribute.getSelfModify();
+        attribute.setSelfModify(selfmodify);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetSelfModify", attribute.getName(), oldvalue+"", selfmodify+"", "Avatar set self modify");
+        return new OKResponse("Attribute self modification flag updated");
+    }
+ 
+    @URLs(url="/configuration/characters/togglerequired",requiresPermission = "Characters.CreateAttribute")
+    public static void toggleRequired(State st,SafeMap values) {
+        Modules.simpleHtml(st, "Characters.SetRequired", values);
+    }
+
+    @Commands(description = "Set wether an existing attribute must have a value",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
+    public static Response setRequired(State st,
+        @Arguments(description = "Attribute",type = Argument.ArgumentType.ATTRIBUTE)
+            Attribute attribute,
+        @Arguments(description="Value required?",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
+            Boolean required
+    ){
+        attribute.validate(st);
+        boolean oldvalue=attribute.getRequired();
+        attribute.setRequired(required);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetRequired", attribute.getName(), oldvalue+"", required+"", "Avatar set required");
+        return new OKResponse("Attribute requried flag updated");
+    }
+    @URLs(url="/configuration/characters/setdefaultvalue",requiresPermission = "Characters.CreateAttribute")
+    public static void setDefaultValue(State st,SafeMap values) {
+        Modules.simpleHtml(st, "Characters.SetDefault", values);
+    }
+
+    @Commands(description = "Set the default value for an attribute",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
+    public static Response setDefault(State st,
+        @Arguments(description = "Attribute",type = Argument.ArgumentType.ATTRIBUTE)
+            Attribute attribute,
+        @Arguments(description="Default value",mandatory = false,type = Argument.ArgumentType.TEXT_ONELINE)
+            String defaultvalue
+    ){
+        attribute.validate(st);
+        String oldvalue=attribute.getDefaultValue(); if (oldvalue==null) { oldvalue="null"; }
+        attribute.setDefaultValue(defaultvalue);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetSelfModify", attribute.getName(), oldvalue, defaultvalue, "Avatar set default");
+        return new OKResponse("Attribute self modification flag  updated");
+    }
+
+    @URLs(url="/configuration/characters/deleteattribute",requiresPermission = "Characters.CreateAttribute")
+    public static void deleteAttributeForm(State st,SafeMap values) {
+        Modules.simpleHtml(st, "Characters.deleteAttribute", values);
+    }
+
+    @Commands(description = "Delete an attribute",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
+    public static Response deleteAttribute(State st,
+        @Arguments(description = "Attribute **AND ALL ITS DATA** to delete",type = Argument.ArgumentType.ATTRIBUTE)
+            Attribute attribute,
+        @Arguments(description="CONFIRM AS THIS WILL IRREVERSIBLY DELETE DATA ATTACHED TO THIS ATTRIBUTE",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
+            Boolean confirm
+    ){
+        attribute.validate(st);
+        if (confirm==false) { return new ErrorResponse("You did not confirm the operation"); }
+        attribute.delete();
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/DELETE", attribute.getName(), null,null, "Avatar DELETED ATTRIBUTE ENTIRELY");
+        return new OKResponse("Attribute and attached data has been DELETED");
+    }
+    
+}
