@@ -186,6 +186,13 @@ public abstract class Audit {
             t.add(changetype+(changetype.isEmpty()||changeitem.isEmpty()?"":" - ")+changeitem);
             
             
+            String oldvalue=notate(cleanse(r.getString("oldvalue")));
+            String newvalue=notate(cleanse(r.getString("oldvalue")));
+            String notes=notate(cleanse(r.getString("oldvalue")));
+            t.add(oldvalue);
+            if (oldvalue.isEmpty() && newvalue.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
+            t.add(newvalue);
+            t.add(notes);
             /*
             net.coagulate.GPHUD.Interfaces.Outputs.Row t2=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             t2.setbgcolor("#f0f0f0");
@@ -197,6 +204,10 @@ public abstract class Audit {
         }
         if (table.rowCount()==1) { table=new Table(); table.add("No audit events"); }
         return table;
+    }
+    private static String notate(String s) {
+        if (s.length()>30) { return s.substring(0,30)+"..."; }
+        return s;
     }
     private static String cleanse(String s) { if (s==null) { return ""; } return s; }
     private static String formatuser(NameCache cache,Integer userid) {
