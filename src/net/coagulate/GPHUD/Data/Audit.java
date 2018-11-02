@@ -12,7 +12,9 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
+import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
+import net.coagulate.GPHUD.Interfaces.Outputs.Text;
 import net.coagulate.GPHUD.Interfaces.Outputs.ToolTip;
 import net.coagulate.GPHUD.State;
 
@@ -185,12 +187,13 @@ public abstract class Audit {
             String changeitem=cleanse(r.getString("changeditem"));
             t.add(changetype+(changetype.isEmpty()||changeitem.isEmpty()?"":" - ")+changeitem);
             
-            
-            String oldvalue=notate(cleanse(r.getString("oldvalue")));
-            String newvalue=notate(cleanse(r.getString("oldvalue")));
-            String notes=notate(cleanse(r.getString("oldvalue")));
+            String oldvaluestr=cleanse(r.getString("oldvalue"));
+            String newvaluestr=cleanse(r.getString("newvalue"));
+            Renderable oldvalue=notate(oldvaluestr);
+            Renderable newvalue=notate(newvaluestr);
+            Renderable notes=notate(cleanse(r.getString("notes")));
             t.add(oldvalue);
-            if (oldvalue.isEmpty() && newvalue.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
+            if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
             t.add(newvalue);
             t.add(notes);
             /*
@@ -205,9 +208,11 @@ public abstract class Audit {
         if (table.rowCount()==1) { table=new Table(); table.add("No audit events"); }
         return table;
     }
-    private static String notate(String s) {
-        if (s.length()>30) { return s.substring(0,30)+"..."; }
-        return s;
+    private static Renderable notate(String s) {
+        if (s.length()>30) {
+            return new ToolTip(s.substring(0,30),s);
+        }
+        return new Text(s);
     }
     private static String cleanse(String s) { if (s==null) { return ""; } return s; }
     private static String formatuser(NameCache cache,Integer userid) {
