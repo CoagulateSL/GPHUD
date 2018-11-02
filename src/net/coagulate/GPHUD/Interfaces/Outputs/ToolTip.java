@@ -10,9 +10,12 @@ import net.coagulate.GPHUD.State;
 public class ToolTip implements Renderable {
 
     private final String element;
-    private final String tooltip;
+    private final Renderable tooltip;
 
-    public ToolTip(String element,String tooltip) { this.element=element; this.tooltip=tooltip; }
+    public ToolTip(String element,String tooltip) { this.element=element; this.tooltip=new Text(tooltip); }
+
+    public ToolTip(String element, Renderable tooltip) { this.element=element; this.tooltip=tooltip; }
+    
     @Override
     public String asText(State st) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

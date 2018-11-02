@@ -156,6 +156,23 @@ public abstract class Audit {
             net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             table.add(t);
             t.add(datetime[1]);
+            
+            String sourcename=cleanse(r.getString("sourcename"));
+            String sourceowner=formatavatar(cache,r.getInt("sourceowner"));
+            String sourcedev=formatuser(cache,r.getInt("sourcedeveloper"));
+            String sourceregion=formatregion(cache,r.getInt("sourceregion"));
+            String sourceloc=trimlocation(cleanse(r.getString("sourcelocation")));
+            
+            if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
+                Table internal = new Table();
+                internal.add(new Cell("Source name:").th()).add(sourcename).closeRow();
+                internal.add(new Cell("Source owner:").th()).add(sourceowner).closeRow();
+                internal.add(new Cell("Source developer:").th()).add(sourcedev).closeRow();
+                internal.add(new Cell("Source region:").th()).add(sourceregion).closeRow();
+                internal.add(new Cell("Source location:").th()).add(sourceloc).closeRow();
+                t.add(new ToolTip("[Via]",internal));
+            } else { t.add(""); }
+
             String srcav=formatavatar(cache,r.getInt("sourceavatarid"));
             String srcch=formatchar(cache,r.getInt("sourcecharacterid"));
             String dstav=formatavatar(cache,r.getInt("destavatarid"));
@@ -172,16 +189,6 @@ public abstract class Audit {
             String changeitem=cleanse(r.getString("changeditem"));
             t.add(changetype+(changetype.isEmpty()||changeitem.isEmpty()?"":" - ")+changeitem);
             
-            
-            String sourcename=cleanse(r.getString("sourcename"));
-            String sourceowner=formatavatar(cache,r.getInt("sourceowner"));
-            String sourcedev=formatuser(cache,r.getInt("sourcedeveloper"));
-            String sourceregion=formatregion(cache,r.getInt("sourceregion"));
-            String sourceloc=trimlocation(cleanse(r.getString("sourcelocation")));
-            
-            if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
-                t.add(new ToolTip("[Source]","Tooltip text"));
-            }
             
             /*
             net.coagulate.GPHUD.Interfaces.Outputs.Row t2=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
