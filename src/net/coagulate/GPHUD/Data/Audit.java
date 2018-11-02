@@ -189,13 +189,13 @@ public abstract class Audit {
             
             String oldvaluestr=cleanse(r.getString("oldvalue"));
             String newvaluestr=cleanse(r.getString("newvalue"));
-            Renderable oldvalue=notate(oldvaluestr);
-            Renderable newvalue=notate(newvaluestr);
-            Renderable notes=notate(cleanse(r.getString("notes")));
+            Renderable oldvalue=notate(oldvaluestr,10);
+            Renderable newvalue=notate(newvaluestr,10);
+            Renderable notes=notate(cleanse(r.getString("notes")),40);
+            t.add(notes);
             t.add(oldvalue);
             if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
             t.add(newvalue);
-            t.add(notes);
             /*
             net.coagulate.GPHUD.Interfaces.Outputs.Row t2=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             t2.setbgcolor("#f0f0f0");
@@ -208,9 +208,9 @@ public abstract class Audit {
         if (table.rowCount()==1) { table=new Table(); table.add("No audit events"); }
         return table;
     }
-    private static Renderable notate(String s) {
-        if (s.length()>30) {
-            return new ToolTip(s.substring(0,30),s);
+    private static Renderable notate(String s,int size) {
+        if (s.length()>size) {
+            return new ToolTip(s.substring(0,size),s);
         }
         return new Text(s);
     }
