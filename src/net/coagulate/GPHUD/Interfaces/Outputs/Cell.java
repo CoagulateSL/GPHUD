@@ -52,7 +52,7 @@ public class Cell implements Renderable {
         return this;
     }
 
-    public Cell align(String right) {
+    public Cell align(String align) {
         this.align=align;
         return this;
     }
