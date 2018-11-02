@@ -133,6 +133,7 @@ public abstract class Audit {
   public static Table formatAudit(Results rows,String timezone)
     {
         Table table=new Table();
+        table.nowrap();
         table.border(false);
         NameCache cache=new NameCache();
         net.coagulate.GPHUD.Interfaces.Outputs.Row headers=new HeaderRow();
