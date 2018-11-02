@@ -133,7 +133,7 @@ public abstract class Audit {
         table.border(true);
         NameCache cache=new NameCache();
         net.coagulate.GPHUD.Interfaces.Outputs.Row headers=new HeaderRow();
-        headers.add("T("+timezone+")").add("Source").add("Target").add("Type").add("Item").add("Obj").add("ObjAvi").add("ObjDev").add("Region").add("Location");
+        headers.add("T("+timezone+")").add("Source").add("Target").add("Change").add("Obj").add("ObjAvi").add("ObjDev").add("Region").add("Location");
         table.add(headers);
         HeaderRow h2=new HeaderRow();
         h2.add(new Cell("Old Value",3));
@@ -148,6 +148,7 @@ public abstract class Audit {
                 net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
                 table.add(t);
                 t.add(new Cell(datetime[0], 99999));
+                olddate=datetime[0];
             }
             net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             table.add(t);
@@ -156,10 +157,11 @@ public abstract class Audit {
             String srcch=formatchar(cache,r.getInt("sourcecharacterid"));
             String dstav=formatavatar(cache,r.getInt("destavatarid"));
             String dstch=formatchar(cache,r.getInt("destcharacterid"));
-            t.add(srcav+(srcch.isEmpty()?"":"/")+srcch);
-            t.add(dstav+(dstch.isEmpty()?"":"/")+dstch);
-            t.add(cleanse(r.getString("changetype")));
-            t.add(cleanse(r.getString("changeditem")));
+            t.add(srcav+(srcav.isEmpty() || srcch.isEmpty()?"":"/")+srcch);
+            t.add(dstav+(dstav.isEmpty() || dstch.isEmpty()?"":"/")+dstch);
+            String changetype=cleanse(r.getString("changetype"));
+            String changeitem=cleanse(r.getString("changeditem"));
+            t.add(changetype+(changetype.isEmpty()||changeitem.isEmpty()?"":" - ")+changeitem);
             t.add(cleanse(r.getString("sourcename")));
             t.add(formatavatar(cache,r.getInt("sourceowner")));
             t.add(formatuser(cache,r.getInt("sourcedeveloper")));
