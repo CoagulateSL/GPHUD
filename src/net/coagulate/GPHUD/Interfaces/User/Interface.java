@@ -548,40 +548,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 "/* Show the tooltip text when you mouse over the tooltip container */\n" +
 ".tooltip:hover .tooltiptext {\n" +
 "    visibility: visible;\n" +
-"}\n"
-                + ".hr-text {\n" +
-"  line-height: 1em;\n" +
-"  position: relative;\n" +
-"  outline: 0;\n" +
-"  border: 0;\n" +
-"  color: black;\n" +
-"  text-align: center;\n" +
-"  height: 1.5em;\n" +
-"  opacity: .5;\n" +
-"  .hr-text:before {\n" +
-"    content: '';\n" +
-"    // use the linear-gradient for the fading effect\n" +
-"    // use a solid background color for a solid bar\n" +
-"    background: linear-gradient(to right, transparent, #818078, transparent);\n" +
-"    position: absolute;\n" +
-"    left: 0;\n" +
-"    top: 50%;\n" +
-"    width: 100%;\n" +
-"    height: 1px;\n" +
-"  }\n" +
-"  .hr-text:after {\n" +
-"    content: attr(data-content);\n" +
-"    position: relative;\n" +
-"    display: inline-block;\n" +
-"    color: black;\n" +
-"\n" +
-"    padding: 0 .5em;\n" +
-"    line-height: 1.5em;\n" +
-"    // this is really the only tricky part, you need to specify the background color of the container element...\n" +
-"    color: #818078;\n" +
-"    background-color: #fcfcfa;\n" +
-"  }"
-                + "}" +
+"}\n"+
 "</style>";
     }
     

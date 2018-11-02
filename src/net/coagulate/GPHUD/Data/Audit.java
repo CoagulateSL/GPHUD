@@ -146,7 +146,7 @@ public abstract class Audit {
                 net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
                 t.align("center");
                 table.add(t);
-                t.add(new Cell("<hr class=\"hr-text\" data-content=\""+datetime[0]+"\">", 99999));
+                t.add(new Cell("<table width=100%><tr width=100%><td width=50%><hr></td><td>"+datetime[0]+"</td><td width=50%><hr></td></tr></table>", 99999));
                 olddate=datetime[0];
             }
             net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
