@@ -134,7 +134,10 @@ public abstract class Audit {
         table.border(false);
         NameCache cache=new NameCache();
         net.coagulate.GPHUD.Interfaces.Outputs.Row headers=new HeaderRow();
-        headers.add(timezone).add("").add("Source").add("Target").add("Change");
+        String tzheader=timezone;
+        String[] tzparts=tzheader.split("/");
+        if (tzparts.length==2) { tzheader=tzparts[1]; }
+        headers.add(tzheader).add("").add("Source").add("Target").add("Change");
         table.add(headers);
         /*
         HeaderRow h2=new HeaderRow();
