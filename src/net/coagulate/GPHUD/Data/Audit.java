@@ -139,7 +139,7 @@ public abstract class Audit {
         String tzheader=timezone;
         String[] tzparts=tzheader.split("/");
         if (tzparts.length==2) { tzheader=tzparts[1]; }
-        headers.add(tzheader).add("").add("Source").add("").add("Target").add("Change").add("Notes").add("Old Value").add("").add("New Value");
+        headers.add(tzheader).add("").add("Source").add("").add("Target").add("Change").add("Old Value").add("").add("New Value").add("Notes");
         table.add(headers);
         String olddate="";
         for (ResultsRow r:rows) {
@@ -191,11 +191,11 @@ public abstract class Audit {
             String newvaluestr=cleanse(r.getString("newvalue"));
             Renderable oldvalue=notate(oldvaluestr,10);
             Renderable newvalue=notate(newvaluestr,10);
-            Renderable notes=notate(cleanse(r.getString("notes")),40);
-            t.add(notes);
+            Renderable notes=new Text(cleanse(r.getString("notes")));
             t.add(new Cell(oldvalue).align("right"));
             if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
             t.add(newvalue);
+            t.add(notes);
             /*
             net.coagulate.GPHUD.Interfaces.Outputs.Row t2=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             t2.setbgcolor("#f0f0f0");
