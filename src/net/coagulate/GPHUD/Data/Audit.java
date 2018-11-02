@@ -141,14 +141,20 @@ public abstract class Audit {
         h2.add(new Cell("Notes",7));
         table.add(h2);
 
+        String olddate="";
         for (ResultsRow r:rows) {
+            String datetime[]=fromUnixTime(r.getString("timedate"),timezone).split(" ");
+            if (!olddate.equals(datetime[0])) {
+                net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
+                table.add(t);
+                t.add(new Cell(datetime[0], 99999));
+            }
             net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             table.add(t);
-            t.add(fromUnixTime(r.getString("timedate"),timezone));
-            t.add(formatavatar(cache,r.getInt("sourceavatarid")));
-            t.add(formatchar(cache,r.getInt("sourcecharacterid")));
-            t.add(formatavatar(cache,r.getInt("destavatarid")));
-            t.add(formatchar(cache,r.getInt("destcharacterid")));
+            t.add(datetime[1]);
+            t.add(formatavatar(cache,r.getInt("sourceavatarid"))+"/"+formatchar(cache,r.getInt("sourcecharacterid")));
+            t.add(formatavatar(cache,r.getInt("destavatarid"))+"/"+formatchar(cache,r.getInt("destcharacterid")));
+            /*
             t.add(cleanse(r.getString("changetype")));
             t.add(cleanse(r.getString("changeditem")));
             t.add(cleanse(r.getString("sourcename")));
@@ -162,6 +168,7 @@ public abstract class Audit {
             t2.add(new Cell(cleanse(r.getString("newvalue")),2));
             t2.add(new Cell(cleanse(r.getString("notes")),7));
             table.add(t2);
+            */
         }
         if (table.rowCount()==1) { table=new Table(); table.add("No audit events"); }
         return table;
