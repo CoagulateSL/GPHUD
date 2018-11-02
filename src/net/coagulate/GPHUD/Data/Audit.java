@@ -138,6 +138,7 @@ public abstract class Audit {
         String[] tzparts=tzheader.split("/");
         if (tzparts.length==2) { tzheader=tzparts[1]; }
         headers.add(tzheader).add("").add("Source").add("Target").add("Change").add("Old Value").add("New Value").add("");
+        table.add(headers);
         String olddate="";
         for (ResultsRow r:rows) {
             String datetime[]=fromUnixTime(r.getString("timedate"),timezone).split(" ");
@@ -145,7 +146,7 @@ public abstract class Audit {
                 net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
                 t.align("center");
                 table.add(t);
-                t.add(new Cell(datetime[0], 99999));
+                t.add(new Cell("<hr>"+datetime[0]+"</hr>", 99999));
                 olddate=datetime[0];
             }
             net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
