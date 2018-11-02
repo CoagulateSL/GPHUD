@@ -101,7 +101,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         String p="";
         p+="<html><head><title>";
         p+="GPHUD";
-        p+="</title></head><body>";
+        p+="</title>";
+        p+=styleSheet();
+        p+="</head><body>";
         p+="<table><tr><td colspan=3 align=center width=100%>";
         p+="<h1>GPHUD</h1>";
         p+="<i>"+GPHUD.environment()+"</i><hr>";
@@ -516,4 +518,37 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         return selectavatars;
     }    
+    
+    
+    // leave this here for now
+    public static String styleSheet() {
+        return "" +
+"<style>\n" +
+".tooltip {\n" +
+"    position: relative;\n" +
+"    display: inline-block;\n" +
+"    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */\n" +
+"}\n" +
+"\n" +
+".tooltip .tooltiptext {\n" +
+"    visibility: hidden;\n" +
+"    width: 120px;\n" +
+"    background-color: black;\n" +
+"    color: #fff;\n" +
+"    text-align: center;\n" +
+"    padding: 5px 0;\n" +
+"    border-radius: 6px;\n" +
+" \n" +
+"    /* Position the tooltip text - see examples below! */\n" +
+"    position: absolute;\n" +
+"    z-index: 1;\n" +
+"}\n" +
+"\n" +
+"/* Show the tooltip text when you mouse over the tooltip container */\n" +
+".tooltip:hover .tooltiptext {\n" +
+"    visibility: visible;\n" +
+"}\n" +
+"</style>";
+    }
+    
 }

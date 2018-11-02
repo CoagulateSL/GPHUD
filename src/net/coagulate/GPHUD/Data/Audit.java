@@ -179,7 +179,9 @@ public abstract class Audit {
             String sourceloc=trimlocation(cleanse(r.getString("sourcelocation")));
             
             if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
-                String content="[ Source ]";
+                String content="<div class=\"tooltip\">Hover over me\n" +
+                    "  <span class=\"tooltiptext\">Tooltip text</span>\n" +
+                    "</div>";
                 t.add(content);
             }
             
