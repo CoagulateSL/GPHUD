@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
+import net.coagulate.GPHUD.Interfaces.Outputs.ToolTip;
 import net.coagulate.GPHUD.State;
 
 /** Non instantiable class with static methods for auditing things.
@@ -179,10 +180,7 @@ public abstract class Audit {
             String sourceloc=trimlocation(cleanse(r.getString("sourcelocation")));
             
             if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
-                String content="<div class=\"tooltip\">Hover over me\n" +
-                    "  <span class=\"tooltiptext\">Tooltip text</span>\n" +
-                    "</div>";
-                t.add(content);
+                t.add(new ToolTip("[Source]","Tooltip text"));
             }
             
             /*
