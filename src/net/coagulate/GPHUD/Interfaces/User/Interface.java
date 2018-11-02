@@ -558,7 +558,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 "  text-align: center;\n" +
 "  height: 1.5em;\n" +
 "  opacity: .5;\n" +
-"  &:before {\n" +
+"  .hr-text:before {\n" +
 "    content: '';\n" +
 "    // use the linear-gradient for the fading effect\n" +
 "    // use a solid background color for a solid bar\n" +
@@ -569,7 +569,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 "    width: 100%;\n" +
 "    height: 1px;\n" +
 "  }\n" +
-"  &:after {\n" +
+"  .hr-text:after {\n" +
 "    content: attr(data-content);\n" +
 "    position: relative;\n" +
 "    display: inline-block;\n" +
