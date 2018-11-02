@@ -2,8 +2,8 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import java.util.HashSet;
 import java.util.Set;
-import net.coagulate.GPHUD.State;
 import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.GPHUD.State;
 
 /** A cell in a table.
  * Basically an encapsulated Element, that is an element its self.
@@ -14,6 +14,7 @@ public class Cell implements Renderable {
     Renderable e;
     boolean header=false;
     int colspan=1;
+    String align="";
     public Cell() {}
     public Cell(String s) { e=new Text(s); }
     public Cell(Renderable e) { if (e==null) { throw new SystemException("Abstract Cell is not renderable."); } this.e=e; }
@@ -31,6 +32,7 @@ public class Cell implements Renderable {
         String s="";
         if (header) { s+="<th"; } else { s+="<td"; }
         if (colspan>1) { s+=" colspan="+colspan; }
+        if (!align.isEmpty()) { s+=" align="+align; }
         s+=">";
         s+=e.asHtml(st,rich);
         s+="</";
@@ -47,6 +49,11 @@ public class Cell implements Renderable {
 
     public Cell th() {
         header=true;
+        return this;
+    }
+
+    public Cell align(String right) {
+        this.align=align;
         return this;
     }
     

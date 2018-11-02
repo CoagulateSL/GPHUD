@@ -139,7 +139,7 @@ public abstract class Audit {
         String tzheader=timezone;
         String[] tzparts=tzheader.split("/");
         if (tzparts.length==2) { tzheader=tzparts[1]; }
-        headers.add(tzheader).add("").add("Source").add("").add("Target").add("Change").add("Old Value").add("New Value").add("");
+        headers.add(tzheader).add("").add("Source").add("").add("Target").add("Change").add("Notes").add("Old Value").add("New Value");
         table.add(headers);
         String olddate="";
         for (ResultsRow r:rows) {
@@ -175,7 +175,7 @@ public abstract class Audit {
             String srcch=formatchar(cache,r.getInt("sourcecharacterid"));
             String dstav=formatavatar(cache,r.getInt("destavatarid"));
             String dstch=formatchar(cache,r.getInt("destcharacterid"));
-            t.add(srcav+(srcav.isEmpty() || srcch.isEmpty()?"":"/")+srcch);
+            t.add(new Cell(srcav+(srcav.isEmpty() || srcch.isEmpty()?"":"/")+srcch).align("right"));
             // if we have nothing on one side
             if ((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty())) {
                 t.add("");
@@ -193,7 +193,7 @@ public abstract class Audit {
             Renderable newvalue=notate(newvaluestr,10);
             Renderable notes=notate(cleanse(r.getString("notes")),40);
             t.add(notes);
-            t.add(oldvalue);
+            t.add(new Cell(oldvalue).align("right"));
             if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
             t.add(newvalue);
             /*
