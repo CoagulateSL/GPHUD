@@ -137,15 +137,7 @@ public abstract class Audit {
         String tzheader=timezone;
         String[] tzparts=tzheader.split("/");
         if (tzparts.length==2) { tzheader=tzparts[1]; }
-        headers.add(tzheader).add("").add("Source").add("Target").add("Change");
-        table.add(headers);
-        /*
-        HeaderRow h2=new HeaderRow();
-        h2.add(new Cell("Old Value",3));
-        h2.add(new Cell("New Value",2));
-        h2.add(new Cell("Notes",7));
-        table.add(h2);
-        */
+        headers.add(tzheader).add("").add("Source").add("Target").add("Change").add("Old Value").add("New Value").add("");
         String olddate="";
         for (ResultsRow r:rows) {
             String datetime[]=fromUnixTime(r.getString("timedate"),timezone).split(" ");
