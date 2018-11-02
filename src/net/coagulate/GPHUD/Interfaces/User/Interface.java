@@ -543,6 +543,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 "    left: 105%; "+
 "    position: absolute;\n" +
 "    z-index: 1;\n" +
+"white-space: nowrap;\n" +
 "}\n" +
 "\n" +
 "/* Show the tooltip text when you mouse over the tooltip container */\n" +

@@ -163,11 +163,11 @@ public abstract class Audit {
             
             if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
                 Table internal = new Table();
-                internal.add(new Cell("Source&nbsp;name:").th()).add(sourcename).closeRow();
-                internal.add(new Cell("Source&nbsp;owner:").th()).add(sourceowner).closeRow();
-                internal.add(new Cell("Source&nbsp;developer:").th()).add(sourcedev).closeRow();
-                internal.add(new Cell("Source&nbsp;region:").th()).add(sourceregion).closeRow();
-                internal.add(new Cell("Source&nbsp;location:").th()).add(sourceloc).closeRow();
+                internal.add(new Cell("Source name:").th()).add(sourcename).closeRow();
+                internal.add(new Cell("Source owner:").th()).add(sourceowner).closeRow();
+                internal.add(new Cell("Source developer:").th()).add(sourcedev).closeRow();
+                internal.add(new Cell("Source region:").th()).add(sourceregion).closeRow();
+                internal.add(new Cell("Source location:").th()).add(sourceloc).closeRow();
                 t.add(new ToolTip("[Via]",internal));
             } else { t.add(""); }
 
