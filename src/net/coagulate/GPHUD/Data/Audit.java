@@ -133,7 +133,7 @@ public abstract class Audit {
         table.border(true);
         NameCache cache=new NameCache();
         net.coagulate.GPHUD.Interfaces.Outputs.Row headers=new HeaderRow();
-        headers.add("T("+timezone+")").add("SrcAvi").add("SrcChar").add("DstAvi").add("DstChar").add("Type").add("Item").add("Obj").add("ObjAvi").add("ObjDev").add("Region").add("Location");
+        headers.add("T("+timezone+")").add("Source").add("Target").add("Type").add("Item").add("Obj").add("ObjAvi").add("ObjDev").add("Region").add("Location");
         table.add(headers);
         HeaderRow h2=new HeaderRow();
         h2.add(new Cell("Old Value",3));
@@ -152,9 +152,12 @@ public abstract class Audit {
             net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             table.add(t);
             t.add(datetime[1]);
-            t.add(formatavatar(cache,r.getInt("sourceavatarid"))+"/"+formatchar(cache,r.getInt("sourcecharacterid")));
-            t.add(formatavatar(cache,r.getInt("destavatarid"))+"/"+formatchar(cache,r.getInt("destcharacterid")));
-            /*
+            String srcav=formatavatar(cache,r.getInt("sourceavatarid"));
+            String srcch=formatchar(cache,r.getInt("sourcecharacterid"));
+            String dstav=formatavatar(cache,r.getInt("destavatarid"));
+            String dstch=formatchar(cache,r.getInt("destcharacterid"));
+            t.add(srcav+(srcch.isEmpty()?"":"/")+srcch);
+            t.add(dstav+(dstch.isEmpty()?"":"/")+dstch);
             t.add(cleanse(r.getString("changetype")));
             t.add(cleanse(r.getString("changeditem")));
             t.add(cleanse(r.getString("sourcename")));
@@ -162,6 +165,7 @@ public abstract class Audit {
             t.add(formatuser(cache,r.getInt("sourcedeveloper")));
             t.add(formatregion(cache,r.getInt("sourceregion")));
             t.add(trimlocation(cleanse(r.getString("sourcelocation"))));
+            /*
             net.coagulate.GPHUD.Interfaces.Outputs.Row t2=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
             t2.setbgcolor("#f0f0f0");
             t2.add(new Cell(cleanse(r.getString("oldvalue")),3));
