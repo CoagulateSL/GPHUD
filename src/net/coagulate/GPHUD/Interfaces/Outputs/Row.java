@@ -34,6 +34,7 @@ public class Row implements Renderable {
     public String asHtml(State st,boolean rich) {
         String s="<tr";
         if (!bgcolor.isEmpty()) { s+=" bgcolor="+bgcolor; }
+        if (!alignment.isEmpty()) { s+=" align="+alignment; }
         s+=">";
         for (Cell c:row) {
             c.header=isHeader();
@@ -59,6 +60,10 @@ public class Row implements Renderable {
     String bgcolor="";
     public void setbgcolor(String setbgcolor) {
         bgcolor=setbgcolor;
+    }
+    String alignment="";
+    public void align(String alignment) {
+        this.alignment=alignment;
     }
     
 }

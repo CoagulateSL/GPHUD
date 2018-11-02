@@ -146,6 +146,7 @@ public abstract class Audit {
             String datetime[]=fromUnixTime(r.getString("timedate"),timezone).split(" ");
             if (!olddate.equals(datetime[0])) {
                 net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
+                t.align("center");
                 table.add(t);
                 t.add(new Cell(datetime[0], 99999));
                 olddate=datetime[0];
