@@ -136,4 +136,7 @@ public class User extends TableRow {
         validate();
     }
     protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
+    
+    @Override
+    public String getName() { return wrapped.getUsername(); }
 }
