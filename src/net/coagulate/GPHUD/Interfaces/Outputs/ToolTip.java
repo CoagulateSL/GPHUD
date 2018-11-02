@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.Outputs;
 
+import java.util.HashSet;
 import java.util.Set;
 import net.coagulate.GPHUD.State;
 
@@ -28,7 +29,7 @@ public class ToolTip implements Renderable {
 
     @Override
     public Set<Renderable> getSubRenderables() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new HashSet<>();
     }
     
 }
