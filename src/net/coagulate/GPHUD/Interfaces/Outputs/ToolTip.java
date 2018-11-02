@@ -23,7 +23,7 @@ public class ToolTip implements Renderable {
 
     @Override
     public String asHtml(State st, boolean rich) {
-        return "<div class=\"tooltip\">"+element+"<span class=\"tooltiptext\">"+tooltip+"</span></div>";
+        return "<div class=\"tooltip\">"+element+"<span class=\"tooltiptext\">"+tooltip.asHtml(st, rich)+"</span></div>";
     }
 
     @Override

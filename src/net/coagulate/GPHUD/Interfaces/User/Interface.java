@@ -532,14 +532,15 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 "\n" +
 ".tooltip .tooltiptext {\n" +
 "    visibility: hidden;\n" +
-"    width: 120px;\n" +
+//"    width: 120px;\n" +
 "    background-color: black;\n" +
 "    color: #fff;\n" +
 "    text-align: center;\n" +
 "    padding: 5px 0;\n" +
 "    border-radius: 6px;\n" +
 " \n" +
-"    /* Position the tooltip text - see examples below! */\n" +
+"     top: -5px;\n" +
+"    left: 105%; "+
 "    position: absolute;\n" +
 "    z-index: 1;\n" +
 "}\n" +
