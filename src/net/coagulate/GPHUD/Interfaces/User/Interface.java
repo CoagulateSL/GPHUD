@@ -261,7 +261,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         s+="<hr width=150px>";
         s+="<a href=\"/GPHUD/\">Index</a><br><br>";
-        s+=dynamicSideMenus(st);
+        if (loggedin) { s+=dynamicSideMenus(st); s+="<br>"; }
+        s+="<a href=\"/Docs/GPHUD/index.php/Main_Page.html\">Documentation</a><br>";
         s+="<hr width=150px>";
         String sectionhead="<b>PERMISSIONS:</b><br>";
         if (st.isSuperUser()) { s+=sectionhead+"<b style=\"color: blue;\">SUPER-ADMIN</b><br>"; sectionhead=""; }
