@@ -249,8 +249,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             } else { s+="<i>none</i><br>"; }
         }
         else {
-            s+="<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br><hr width=150px>";
+            s+="<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>";
             s+="<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\" target=\"_blank\">Documentation</a><br>";
+            s+="<hr width=150px>";
             return s;
         }
         if (loggedin) {
