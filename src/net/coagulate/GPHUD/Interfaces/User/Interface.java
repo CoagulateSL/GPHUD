@@ -229,17 +229,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
     String renderSideMenu(State st) throws UserException, SystemException { 
         String s="";
         boolean loggedin=true;
-        if (st.getCharacterNullable()!=null || st.user!=null) {
-            s+="<b>Username:</b><br>";
-            if (st.user!=null) { 
-                s+=st.user.asHtml(st, true)+"<br>";
-            } else {
-                s+="<i><a href=\"\">Register</a></i><br>";
-            }
-            
-            
+        if (st.getCharacterNullable()!=null || st.user!=null || st.getAvatar()!=null) {
             s+="<b>Avatar:</b> ";
-            if (st.user!=null) s+="[<a href=\"/GPHUD/switch/avatar\">Switch</a>]"; // you can only switch avis if you're a logged in user, as thats what binds avis
+            //if (st.user!=null) s+="[<a href=\"/GPHUD/switch/avatar\">Switch</a>]"; // you can only switch avis if you're a logged in user, as thats what binds avis
             s+="<br>";
             if (st.avatar()!=null) {
                 s+=st.avatar().asHtml(st, true)+"<br>"; 
@@ -255,13 +247,18 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             if (st.getCharacterNullable()!=null) {
                 s+=st.getCharacter().asHtml(st, true)+"<br>";
             } else { s+="<i>none</i><br>"; }
-        } else { s+="<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br><hr width=150px>"; return s; }
+        }
+        else {
+            s+="<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br><hr width=150px>";
+            s+="<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\" target=\"_blank\">Documentation</a><br>";
+            return s;
+        }
         if (loggedin) {
             s+="<br><a href=\"/GPHUD/logout\">Logout</a><br>";
         }
         s+="<hr width=150px>";
         s+="<a href=\"/GPHUD/\">Index</a><br><br>";
-        if (loggedin) { s+=dynamicSideMenus(st); s+="<br>"; }
+        s+=dynamicSideMenus(st); s+="<br>";
         s+="<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\" target=\"_blank\">Documentation</a><br>";
         s+="<hr width=150px>";
         String sectionhead="<b>PERMISSIONS:</b><br>";
