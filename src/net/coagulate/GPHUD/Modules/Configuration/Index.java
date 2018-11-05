@@ -77,7 +77,7 @@ public abstract class Index {
             } else {  // note how this renders in one loop but produces two tables.  it feels a bit odd.
                 core.openRow();
                 if (hasconfig) {
-                    core.add(new Link(m.getName(),"/configuration/"+m.getName()));
+                    core.add(new Link(m.getName(),"/GPHUD/configuration/"+m.getName()));
                 } else {
                     core.add(m.getName());
                 }

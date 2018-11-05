@@ -4,7 +4,6 @@ import java.util.Map;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.TableRow;
-import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -49,7 +48,7 @@ public class GenericConfiguration {
                             kvtable.add(new Link(module.getName()+"."+kv.name(), st.getFullURL()+"/"+kv.fullname().replace('.', '/')));
                         }
                         else {
-                            kvtable.add(new Link(module.getName()+"."+kv.name(), Interface.generateURL(st,"configuration/view/"+kv.fullname().replace('.', '/'))));
+                            kvtable.add(new Link(module.getName()+"."+kv.name(), "/GPHUD/configuration/view/"+kv.fullname().replace('.', '/')));
                         }
                         kvtable.add(kv.description());
                         String raw=simulated.getRawKV(dbo,kv.fullname());
