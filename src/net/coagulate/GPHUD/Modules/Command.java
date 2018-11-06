@@ -174,7 +174,6 @@ public abstract class Command {
                         break;
                     case CHARACTER_NEAR:
                         Char targchar=null;
-                        System.out.println("HERE with v'"+v+"'");
                         if (v.startsWith(">")) {
                             v=v.substring(1);
                             try {
