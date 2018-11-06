@@ -4,10 +4,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.State;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 /** Reference to a character group.
@@ -34,7 +34,7 @@ public class CharacterGroup extends TableRow {
         json.put(prefix+"name","value");
         int count=0;
         for (CharacterGroup cg:st.getInstance().getGroupsForKeyword(a.getSubType())) {
-            System.out.println("Scanning CG "+cg.getNameSafe());
+            //System.out.println("Scanning CG "+cg.getNameSafe());
             if (cg.isOpen()) {
                 json.put(prefix+"button"+count, cg.getName());
                 count++;
