@@ -63,7 +63,7 @@ public class Maintenance extends Thread {
             GPHUD.getDB().d("delete from cookies where expires<?", now);
             int after=GPHUD.getDB().dqi(true,"select count(*) from cookies");
             if (before!=after) {
-                GPHUD.getLogger().log(FINE,"Cookies","Cookies cleaned from "+before+" to "+after+" ("+(after-before)+")");
+                GPHUD.getLogger().log(FINE,"Cookies cleaned from "+before+" to "+after+" ("+(after-before)+")");
             }
         } catch (Exception e) {
             GPHUD.getLogger().log(SEVERE,"Cookie expiration task exceptioned!",e);
