@@ -313,7 +313,7 @@ public abstract class Command {
             return new ErrorResponse("Illegal argument in " + getName());
         } catch (InvocationTargetException ex) {
             if (ex.getCause() != null && ex.getCause() instanceof UserException) {
-                return new ErrorResponse(getName() + " errored: \n\n--- " + ex.getCause().getLocalizedMessage());
+                return new ErrorResponse(getName() + " errored: \n--- " + ex.getCause().getLocalizedMessage());
             }
             if (ex.getCause()!=null && ex.getCause() instanceof SystemException) {
                 throw ((SystemException)ex.getCause());
