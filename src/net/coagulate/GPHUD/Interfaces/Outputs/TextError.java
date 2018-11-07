@@ -13,12 +13,12 @@ public class TextError implements Renderable {
 
     @Override
     public String asText(State st) {
-        return "*** ERROR : "+s+" ***";
+        return "*** ERROR : "+s;
     }
 
     @Override
     public String asHtml(State st,boolean rich) {
-        return "<font color=red><b> *** ERROR : "+s+" *** </b></font>";
+        return "<font color=red><b> *** ERROR : "+s+" ***</b></font>";
     }
 
     @Override
