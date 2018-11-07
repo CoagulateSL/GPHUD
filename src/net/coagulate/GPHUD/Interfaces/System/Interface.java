@@ -64,7 +64,13 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 // DEBUGGING ONLY log entire JSON input
                 if (debug) { GPHUD.getLogger().finer("JSON in : "+message); }
                 // JSONify it
-                JSONObject obj = new JSONObject(message);
+                JSONObject obj;
+                try { obj = new JSONObject(message); }
+                catch (JSONException e) { 
+                    SystemException se = new SystemException("Parse error in '"+message+"'");
+                    se.initCause(e);
+                    throw se;
+                }
                 // stash it in the state
                 st.json=obj;
                 // refresh tokens if necessary
