@@ -8,14 +8,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import static java.util.logging.Level.SEVERE;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /**  Static superclass that handles all the modules and delegating things around, accumulating info, etc.
@@ -176,7 +176,8 @@ public abstract class Modules {
         int i=0;
         String command=words[0].toLowerCase();
         if (command.startsWith("*")) { command=command.substring(1); }
-        Command c=getCommand(st,command);
+        Command c=null;
+        try { c=getCommand(st,command); } catch (UserException e) { return new ErrorResponse("Unable to find command '"+command+"' - "+e.getLocalizedMessage()); }
         if (c==null) { return new ErrorResponse("Failed to find command "+command); }
         if (c.permitConsole()==false) { return new ErrorResponse("Command '"+command+"' can not be called from the console"); }
         SafeMap parameters=new SafeMap();
