@@ -44,7 +44,7 @@ default {
 	
 	changed(integer change)
     {
-        if (change & (CHANGED_INVENTORY|CHANGED_REGION | CHANGED_REGION_START | CHANGED_TELEPORT))
+        if (change & (CHANGED_INVENTORY|CHANGED_REGION | CHANGED_REGION_START))
         {
             llResetScript();
         }
