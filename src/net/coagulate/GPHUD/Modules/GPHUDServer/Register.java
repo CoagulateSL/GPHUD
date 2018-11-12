@@ -58,6 +58,7 @@ public abstract class Register {
         j.put("instancename",instance.getName());
         j.put("autoattach", st.getKV("GPHUDServer.AutoAttach"));
         j.put("parcelonly", st.getKV("GPHUDServer.ParcelONLY"));
+        j.put("setlogo",st.getKV("GPHUDClient.logo"));
         instance.updateStatus();
         return new JSONResponse(j);
     }
