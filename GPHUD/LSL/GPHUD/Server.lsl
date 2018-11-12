@@ -4,9 +4,15 @@ integer parcelonly=TRUE;
 integer countdown=60;
 setlamps() {
 //	llOwnerSay("RX:"+(string)LAMP_RX+" TX:"+(string)LAMP_TX);
-	llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_COLOR,4,LAMP_RX_COL,1,PRIM_COLOR,2,LAMP_TX_COL,1,PRIM_COLOR,3,LAMP_RX_COL,1,PRIM_COLOR,1,LAMP_TX_COL,1]);
+	llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_COLOR,5,LAMP_RX_COL,1,PRIM_COLOR,2,LAMP_TX_COL,1]);
 }
-
+mark(integer n) {
+	key texture="24eb95bf-0d9c-da12-ffa7-11b0b697b4f5";
+	if (n==0) { texture="c498041c-1885-37d0-03d5-296ccb96b422"; }
+	if (n==1) { texture="de2e74d4-9ccd-6d83-ea03-1c95c2ef57ca"; }
+	llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,4,texture,<1,1,1>,<0,0,0>,PI_BY_TWO]);
+}
+setlogo(key k) { llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,1,k,<1,1,1>,<0,0,0>,0]); }
 #include "CommsHeader.lsl"
 subprocess(string command,key id) {
 	if (command=="broadcast") { llRegionSay(broadcastchannel,json); }
@@ -19,12 +25,16 @@ subprocess(string command,key id) {
 			if (readkey!="incommand" && readvalue!="") {
 				//llOwnerSay(readkey+" - "+readvalue);
 				llRegionSayTo(readkey,broadcastchannel,readvalue);
+				string logo=llJsonGetValue(readvalue,["setlogo"]);
+				if (logo=="" || logo==JSON_INVALID || logo==JSON_NULL || logo==NULL_KEY) { logo=""; }
+				if (logo!="") { setlogo((key)logo); }
 			}
 		}
 	}
 	if (command=="servergive") { llGiveInventory((key)(jsonget("giveto")),jsonget("itemname")); }
 	if (jsonget("instancestatus")!="") { llSetText(jsonget("instancestatus")+" "+(string)llGetFreeMemory()+"#"+((string)(llGetListLength(txid)))+"\n \n \n \n \n",(vector)jsonget("statuscolor"),1); }
 	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Server"); }
+	if (jsonget("setlogo")!="") { setlogo((key)jsonget("setlogo")); }
 	integer resetdispenser=FALSE;
 	if (jsonget("autoattach")!="")
 	{
@@ -55,7 +65,7 @@ subprocess(string command,key id) {
 integer alive=FALSE;
 subregistered() {
 	llOwnerSay("=== Server startup complete");
-	alive=TRUE;
+	alive=TRUE; mark(1);
 	llMessageLinked(LINK_THIS,LINK_GO,"","");
 }
 
@@ -64,6 +74,8 @@ string appendoutbound(string message) {return message;}
 default {
 	on_rez(integer n) { llResetScript(); }
 	state_entry() {
+		mark(-1);
+		setlogo("934916ae-eb57-14a3-c36c-7e5a933a8177");
 		llResetOtherScript("Dispenser");
 		llResetOtherScript("Visitors");
 		llSetText("INITIALISING\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<1.00,1.0,0.5>,1.0);	
@@ -140,7 +152,7 @@ default {
 
 state stop {
 	state_entry() {
-		LAMP_TX=-1; LAMP_RX=-1; updatelamps();
+		LAMP_TX=-1; LAMP_RX=-1; updatelamps(); mark(0);
 		llMessageLinked(LINK_THIS,LINK_LEGACY_PACKAGE,"","");
 		llSetText("SHUTDOWN:"+comms_reason+"\n \n \n \n",<1,.5,.5>,1);
 	}
@@ -148,13 +160,13 @@ state stop {
 }
 
 state distribution {
-	state_entry() { llSetObjectName("GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME); LAMP_TX=-1; LAMP_RX=-1; updatelamps(); llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); llResetOtherScript("Visitors"); llResetOtherScript("Dispenser"); }
+	state_entry() { llSetObjectName("GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME); LAMP_TX=-1; LAMP_RX=-1; updatelamps(); llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); llResetOtherScript("Visitors"); llResetOtherScript("Dispenser"); mark(-1); setlogo("934916ae-eb57-14a3-c36c-7e5a933a8177"); }
 	on_rez(integer n) { llResetScript(); }
 }
 state rebootscript {
 	state_entry() {
-		LAMP_RX=-1; LAMP_TX=-1; updatelamps();
-		alive=FALSE;
+		LAMP_RX=-1; LAMP_TX=-1; updatelamps(); mark(0);
+		alive=FALSE; 
 		countdown=60;
 		llSay(0,"Connection to server lost, restarting...");
 		llSetTimerEvent(1.0);
