@@ -75,7 +75,7 @@ default {
 	on_rez(integer n) { llResetScript(); }
 	state_entry() {
 		mark(-1);
-		setlogo("934916ae-eb57-14a3-c36c-7e5a933a8177");
+		setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c");
 		llResetOtherScript("Dispenser");
 		llResetOtherScript("Visitors");
 		llSetText("INITIALISING\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<1.00,1.0,0.5>,1.0);	
@@ -160,7 +160,7 @@ state stop {
 }
 
 state distribution {
-	state_entry() { llSetObjectName("GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME); LAMP_TX=-1; LAMP_RX=-1; updatelamps(); llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); llResetOtherScript("Visitors"); llResetOtherScript("Dispenser"); mark(-1); setlogo("934916ae-eb57-14a3-c36c-7e5a933a8177"); }
+	state_entry() { llSetObjectName("GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME); LAMP_TX=-1; LAMP_RX=-1; updatelamps(); llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); llResetOtherScript("Visitors"); llResetOtherScript("Dispenser"); mark(-1); setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c"); }
 	on_rez(integer n) { llResetScript(); }
 }
 state rebootscript {
