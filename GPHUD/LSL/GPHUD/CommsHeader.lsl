@@ -18,7 +18,7 @@ integer comms_callbackalive=FALSE;
 integer SHUTDOWN=FALSE;
 integer RESET=FALSE;
 string prefix="";
-integer serveractive;
+integer serveractive=-1;
 integer LAMP_RX=-1;
 integer LAMP_TX=-1;
 vector LAMP_RX_COL=<0,0,0>;
@@ -72,10 +72,10 @@ initComms(integer withcallback) {
 		DEV=1;
 		inject="dev";
 	}
-	prefix="https://sl"+inject+".coagulate.net/GPHUD/hud/";
-	servers=["https://sl1"+inject+".coagulate.net/GPHUD/system"];
-	servers+=["https://sl2"+inject+".coagulate.net/GPHUD/system"];
-	servers+=["https://sl3"+inject+".coagulate.net/GPHUD/system"];
+	//prefix="http://sl"+inject+".coagulate.net/GPHUD/hud/";
+	servers=["http://sl1"+inject+".coagulate.net/GPHUD/system"];
+	servers+=["http://sl2"+inject+".coagulate.net/GPHUD/system"];
+	servers+=["http://sl3"+inject+".coagulate.net/GPHUD/system"];
 	while (llGetListLength(servers)>llGetListLength(servertimeout)) { servertimeout+=[0]; }
 	serveractive=(integer)llFrand(llGetListLength(servers));
 	llListen(broadcastchannel,"",NULL_KEY,"");
@@ -96,7 +96,7 @@ resetcomms() {
 	SHUTDOWN=FALSE;
 	prefix="";
 	servertimeout=[];
-	serveractive=0;
+	serveractive=-1;
 	LAMP_RX_COL=<0,0,0>;
 	LAMP_TX_COL=<0,0,0>;
 	retjson="";

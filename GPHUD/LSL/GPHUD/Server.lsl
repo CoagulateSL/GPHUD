@@ -69,20 +69,55 @@ subregistered() {
 	llMessageLinked(LINK_THIS,LINK_GO,"","");
 }
 
+list ok=[];
 
 string appendoutbound(string message) {return message;}
 default {
-	on_rez(integer n) { llResetScript(); }
 	state_entry() {
 		mark(-1);
 		setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c");
+		llSetObjectName(name);
+		message_is_say=TRUE;
+		initComms(TRUE);
+		serveractive=-1;
+		integer i=0;
+		LAMP_TX=1;
+		updatelamps();
+		string inject=""; if (DEV) { inject="dev"; }
+		llSetText("GPHUD Server Startup ... pinging all servers ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",<0.75,0.75,1.0>,1);
+		for (i=0;i<llGetListLength(servers);i++) {
+			llHTTPRequest(
+				"http://sl"+((string)(i+1))+inject+".coagulate.net/SecondLifeAPI/Ping",
+				[HTTP_METHOD,"POST"],
+				"{}"
+			);
+		}
+		llSetTimerEvent(30.0);
+	}
+	http_response(key id,integer status,list data,string body) {
+		json=body;
+		serveractive=((integer)(jsonget("node")));
+		llSetText("GPHUD Server Startup ... response from "+jsonget("hostname")+"#"+((string)serveractive)+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",<0.75,1.0,0.75>,1);
+		ok=ok+[serveractive];
+		LAMP_TX=0; updatelamps();
+		if (llGetListLength(ok)==1) { llSetTimerEvent(1.0); }
+	}
+	timer() {
+		integer up=llGetListLength(ok);
+		integer i=0;
+		if (up==0) { mark(0); llSetText("GPHUD Server Startup ... NO SERVERS FOUND ... will reboot\n \n \n \n \n",<1.0,0.75,0.75>,1); llSleep(15.0); llResetScript(); }
+		serveractive=llList2Integer(ok,((integer)(llFrand(up))));
+		llSetText("GPHUD Server Startup ... booting from cluster node #"+((string)(serveractive+1))+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",<0.75,1.0,0.75>,1);
+		state txok;
+	}
+}
+state txok {
+	on_rez(integer n) { llResetScript(); }
+	state_entry() {
+		llRequestURL();
 		llResetOtherScript("Dispenser");
 		llResetOtherScript("Visitors");
-		llSetText("INITIALISING\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<1.00,1.0,0.5>,1.0);	
-		llSetObjectName(name);
 		banner();
-		initComms(TRUE);
-		message_is_say=TRUE;
 		llListen(0,"",NULL_KEY,"");
 	}
 	timer () {

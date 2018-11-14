@@ -20,6 +20,7 @@ integer detach=FALSE;
 string hudtext="Loading...";
 vector hudcolor=<1,1,1>;
 string titlertext="Loading...";
+list ok=[];
 vector titlercolor=<1,1,1>;
 integer firstshown=FALSE;
 string charname="";
@@ -164,22 +165,57 @@ default {
 			llResetOtherScript("Attacher");
 			llSetText("GPHUD Startup ... waiting for GO event ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,0.75,1.0>,1);
 			llSetObjectName("GPHUD");
-		} else { state active; }
+		} else { state preactive; }
 	}
 	on_rez(integer n) { if (n==0) { detach=FALSE; } else { detach=TRUE; } }
     link_message(integer from,integer num,string message,key id) {
         if (num==LINK_GO) {
-            state active;
+            state preactive;
         }
 	}
 	
 }
-
+state preactive {
+	state_entry() {
+		initComms(TRUE);
+		serveractive=-1;
+		integer i=0;
+		LAMP_TX=1;
+		updatelamps();
+		string inject=""; if (DEV) { inject="dev"; }
+		llSetText("GPHUD Startup ... pinging all servers ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,0.75,1.0>,1);
+		for (i=0;i<llGetListLength(servers);i++) {
+			llHTTPRequest(
+				"http://sl"+((string)(i+1))+inject+".coagulate.net/SecondLifeAPI/Ping",
+				[HTTP_METHOD,"POST"],
+				"{}"
+			);
+		}
+		llSetTimerEvent(30.0);
+	}
+	http_response(key id,integer status,list data,string body) {
+		json=body;
+		serveractive=((integer)(jsonget("node")));
+		llSetText("GPHUD Startup ... response from "+jsonget("hostname")+"#"+((string)serveractive)+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,1.0,0.75>,1);
+		ok=ok+[serveractive];
+		LAMP_TX=0; updatelamps();
+		if (llGetListLength(ok)==1) { llSetTimerEvent(1.0); }
+	}
+	timer() {
+		integer up=llGetListLength(ok);
+		integer i=0;
+		if (up==0) { llSetText("GPHUD Startup ... NO SERVERS FOUND ... will reboot",<1.0,0.75,0.75>,1); llSleep(15.0); llResetScript(); }
+		serveractive=llList2Integer(ok,((integer)(llFrand(up))));
+		llSetText("GPHUD Startup ... booting from cluster node #"+((string)(serveractive+1))+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,1.0,0.75>,1);
+		state active;
+	}
+}
 state active {
 	on_rez(integer n) { llResetScript(); }
 	state_entry() {
-	llResetOtherScript("Legacy");
-		initComms(TRUE);
+		llListen(broadcastchannel,"",NULL_KEY,"");		
+		llRequestURL();
+		llResetOtherScript("Legacy");
 		llListen(1,"",llGetOwner(),"");
 		llRegionSayTo(llGetOwner(),broadcastchannel,"{\"hudreplace\":\"hudreplace\"}");
 		llRequestExperiencePermissions(llGetOwner(),"");

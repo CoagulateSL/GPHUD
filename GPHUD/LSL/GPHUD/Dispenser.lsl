@@ -54,7 +54,7 @@ string experienceError() {
 }
 adduser(key check,integer when)
 {
-	if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)); }
+	if (debug) { llOwnerSay("Dispenser:New userNew user "+llKey2Name(check)); }
 	keys+=[check];
 	stage+=[0];
 	time+=[when];
