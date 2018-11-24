@@ -26,12 +26,10 @@ import net.coagulate.Core.Tools.UserException;
  */
 public class GPHUD {
     public static String hostname="UNSET";
-    private static Logger log=null;
     public static Integer nodeid=null;
+    private static Logger log=null;
     public static Logger getLogger(String subspace) { return Logger.getLogger(log.getName()+"."+subspace); }
-    public static Logger getLogger() {
-        return log;
-    }
+    public static Logger getLogger() { return log; }
     private static DBConnection db=null;
     public static DBConnection getDB() { return db; }
 
