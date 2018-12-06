@@ -104,12 +104,12 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         p+="</title>";
         p+=styleSheet();
         p+="</head><body>";
-        p+="<table><tr><td colspan=3 align=center width=100%>";
+        p+="<table height=100% valign=top><tr height=100% valign=top><td colspan=3 align=center width=100% height=100% valign=top>";
         p+="<h1>GPHUD</h1>";
         p+="<i>"+GPHUD.environment()+"</i><hr>";
         p+="</td></tr>";
         p+="<tr>";
-        p+="<td width=150px valign=top>";
+        p+="<td width=150px height=100% valign=top>";
         // calculate body first, since this sets up auth etc which the side menu will want to use to figure things out.
         String body=renderBodyProtected(st);
 
@@ -120,7 +120,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             p+="<b><i>Crashed</i></b>";
             st.logger().log(WARNING,"Side menu implementation crashed",e);
         }
-        p+="</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td width=100% valign=top>";
+        p+="</td><td height=100% valign=top>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td width=100% height=100% valign=top>";
         p+=messages(st);
         p+=body;
         p+="</td>";
