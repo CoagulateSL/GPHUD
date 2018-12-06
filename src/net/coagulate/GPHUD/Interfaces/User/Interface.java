@@ -104,7 +104,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         p+="</title>";
         p+=styleSheet();
         p+="</head><body>";
-        p+="<table><tr><td colspan=3 align=center width=100%>";
+        p+="<table height=100% valign=top><tr><td colspan=3 align=center width=100%>";
         p+="<h1>GPHUD</h1>";
         p+="<i>"+GPHUD.environment()+"</i><hr>";
         p+="</td></tr>";
