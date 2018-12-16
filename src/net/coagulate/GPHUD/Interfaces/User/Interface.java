@@ -259,7 +259,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         s+="<hr width=150px>";
         s+="<a href=\"/GPHUD/\">Index</a><br><br>";
-        s+=dynamicSideMenus(st); s+="<br>";
+        boolean dynamics=true;
+        if (st.avatar()==null) { s+="<i>Select an avatar</i><br>"; dynamics=false; }
+        if (st.getInstanceNullable()==null) { s+="<i>Select an instance</i><br>"; dynamics=false; }
+        if (dynamics) { s+=dynamicSideMenus(st); s+="<br>"; }
         s+="<a href=\"https://sl.coagulate.net/GPHUD/Help\">Documentation</a><br>";
         s+="<hr width=150px>";
         String sectionhead="<b>PERMISSIONS:</b><br>";
