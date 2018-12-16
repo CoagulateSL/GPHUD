@@ -250,7 +250,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         else {
             s+="<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>";
-            s+="<a href=\"https://sldev.coagulate.net/GPHUD/Help\">Documentation</a><br>";
+            s+="<a href=\"https://sl.coagulate.net/GPHUD/Help\">Documentation</a><br>";
             s+="<hr width=150px>";
             return s;
         }
@@ -260,7 +260,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         s+="<hr width=150px>";
         s+="<a href=\"/GPHUD/\">Index</a><br><br>";
         s+=dynamicSideMenus(st); s+="<br>";
-        s+="<a href=\"https://sldev.coagulate.net/GPHUD/Help\">Documentation</a><br>";
+        s+="<a href=\"https://sl.coagulate.net/GPHUD/Help\">Documentation</a><br>";
         s+="<hr width=150px>";
         String sectionhead="<b>PERMISSIONS:</b><br>";
         if (st.isSuperUser()) { s+=sectionhead+"<b style=\"color: blue;\">SUPER-ADMIN</b><br>"; sectionhead=""; }
