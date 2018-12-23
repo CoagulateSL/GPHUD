@@ -158,7 +158,7 @@ public class Cookies {
         String id="";
         if (avatar!=null) { id+=" Avatar:"+avatar.toString(); }
         if (character!=null) { id+=" Character:"+character.toString(); }
-        GPHUD.getDB().d("insert into cookies(cookie,expires,renewable,userid,avatarid,characterid,instanceid) values(?,?,?,?,?,?)",cookie,
+        GPHUD.getDB().d("insert into cookies(cookie,expires,renewable,avatarid,characterid,instanceid) values(?,?,?,?,?,?)",cookie,
                 expire,
                 renewableint,
                 getId(avatar),
