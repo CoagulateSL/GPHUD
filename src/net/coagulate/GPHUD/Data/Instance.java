@@ -21,6 +21,7 @@ import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
+import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
 /** Reference to an instance
@@ -364,7 +365,7 @@ public class Instance extends TableRow {
             if (idmap.containsKey(id)) { idmap.get(id).totalxp=r.getInt("total"); }
         }        
         Map<Integer,String> avatarnames=new TreeMap<>();
-        for (ResultsRow r:dq("select avatarid,avatarname from avatars")) { avatarnames.put(r.getInt("avatarid"),r.getString("avatarname")); }
+        for (ResultsRow r:SL.getDB().dq("select id,username from users")) { avatarnames.put(r.getInt("id"),r.getString("username")); }
         for (CharacterSummary cs:idmap.values()) {
             cs.ownername=avatarnames.get(cs.ownerid);
         }
