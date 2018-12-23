@@ -16,7 +16,6 @@ public class Logout {
         if (st.cookiestring!=null) { Cookies.delete(st.cookiestring); }
         st.cookie=null;
         st.cookiestring=null;
-        st.user=null;
         st.setAvatar(null);
         st.setCharacter(null);
         st.setInstance(null);

@@ -23,6 +23,7 @@ import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
 /** Reference to a character within an instance
@@ -59,7 +60,7 @@ public class Char extends TableRow {
      * @param avatar Avatar to look up the logged-in character for
      * @return Char they are using
      */
-    public static Char getActive(Avatar avatar) {
+    public static Char getActive(User avatar) {
         Integer i=GPHUD.getDB().dqi(false,"select characterid from characters where playedby=?",avatar.getId());
         if (i==null) { throw new UserException("Avatar "+avatar.getName()+" is not wearing the HUD or is not logged in as a character presently."); }
         return get(i);
@@ -151,8 +152,8 @@ public class Char extends TableRow {
      * 
      * @return Avatar owner of this character
      */
-    public Avatar getOwner() {
-        return Avatar.get(getInt("owner"));
+    public User getOwner() {
+        return User.get(getInt("owner"));
     }
 
     @Override
@@ -174,7 +175,7 @@ public class Char extends TableRow {
      * 
      * @param avatar Avatar who is playing this character.
      */
-    public void setPlayedBy(Avatar avatar) {
+    public void setPlayedBy(User avatar) {
         set("playedby",avatar.getId());
     }
     @Override
@@ -218,7 +219,7 @@ public class Char extends TableRow {
      * @param description Logged reason for the change
      */
     public void addPoolSystem(State st,Pool p,int adjustment,String description) {
-        d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)",getId(),p.fullName(),adjustment,null,Avatar.getSystem(st).getId(),description,getUnixTime());
+        d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)",getId(),p.fullName(),adjustment,null,User.getSystem().getId(),description,getUnixTime());
     }
 
     /** Sum visit time on sim.
@@ -281,11 +282,11 @@ public class Char extends TableRow {
         if (avatars==null || avatars.isEmpty()) { throw new UserException("Sorry, you are not near any other avatars"); }
         for (String key:avatars.split(",")) {
             if (debug) { System.out.println("KEY:"+key); } 
-            Avatar a=Avatar.find(key);
+            User a=User.find(key);
             if (debug) { System.out.println(a); }
             if (a!=null) {
                 Char c=null;
-                try { c=a.getActiveCharacter(); } catch (UserException e) { if (debug) { System.out.println(e.toString()); } }
+                try { c=Char.getActive(a); } catch (UserException e) { if (debug) { System.out.println(e.toString()); } }
                 if (debug) { System.out.println(c); }
                 if (c!=null) { chars.add(c); }
             }
@@ -589,10 +590,10 @@ public class Char extends TableRow {
      * 
      * @return Avatar
      */
-    public Avatar getPlayedBy() {
+    public User getPlayedBy() {
         Integer avatarid=dqi(true,"select playedby from characters where characterid=?",getId());
         if (avatarid==null) { return null; }
-        return Avatar.get(avatarid);
+        return User.get(avatarid);
     }
 
     public void validate(State st) throws SystemException {
@@ -619,4 +620,34 @@ public class Char extends TableRow {
         if (count!=0) { throw new UserException("Unable to rename character '"+getName()+"' to '"+newname+"', that name is already taken."); }
         set("name",newname);
     }
+    /** Get list of users characters at a given instance.
+     * 
+     * @param instance The instance
+     * @return List of Char (characters)
+     */
+    public static Set<Char> getCharacters(Instance instance,User avatar) {
+        Results rows=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=?",avatar.getId(),instance.getId());
+        Set<Char> results=new TreeSet<>();
+        for (ResultsRow r:rows) {
+            results.add(Char.get(r.getInt()));
+        }
+        return results;
+    }  
+    public static void create(State st,String name) {
+        GPHUD.getDB().d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)",name,st.getInstance().getId(),st.getAvatar().getId(),getUnixTime(),0);
+    }
+    /** Get all characters for the avatar, at any instance.
+     * 
+     * @return  Set of Char that are owned by this avatar and not retired
+     */
+    public static Set<Char> getCharacters(User a) {
+        Results rows=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0",a.getId());
+        Set<Char> results=new TreeSet<>();
+        for (ResultsRow r:rows) {
+            results.add(Char.get(r.getInt()));
+        }
+        return results;
+    }
+
+        
 }

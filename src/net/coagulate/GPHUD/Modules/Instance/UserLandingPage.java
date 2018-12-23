@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
 import java.util.Set;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.User.Form;
@@ -8,8 +10,6 @@ import net.coagulate.GPHUD.Modules.Characters.View;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 
 /**  Because we need an index for the User Interface.
@@ -26,7 +26,7 @@ public abstract class UserLandingPage {
             return;
         }
         if (st.getCharacterNullable()==null) { 
-            Set<Char> chars = st.avatar().getCharacters(st.getInstance());
+            Set<Char> chars = Char.getCharacters(st.getInstance(),st.avatar());
             if (chars.size()==1) { st.setCharacter(chars.iterator().next()); st.cookie.setCharacter(st.getCharacter()); }
             else {
                 SessionSwitch.switchCharacter(st, values);

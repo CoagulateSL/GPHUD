@@ -22,7 +22,7 @@ public class EventsCommands {
             @Arguments(description = "Name for the event",type = ArgumentType.TEXT_ONELINE)
             String eventName) {
         Event.create(st.getInstance(),eventName);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Create", "Event", null, eventName, "Event created");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Event", null, eventName, "Event created");
         return new OKResponse("Created event "+eventName);
     }
     
@@ -35,7 +35,7 @@ public class EventsCommands {
         zone.validate(st);
         event.validate(st);
         event.addZone(zone);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "AddLocation", "Event/"+event.getName(), null, zone.getName(),"Added zone to event");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "AddLocation", "Event/"+event.getName(), null, zone.getName(),"Added zone to event");
         return new OKResponse("Added zone "+zone.getName()+" to event "+event.getName());
     }
     
@@ -48,7 +48,7 @@ public class EventsCommands {
         zone.validate(st);
         event.validate(st);
         event.deleteZone(zone);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "DeleteLocation", "Event/"+event.getName(), zone.getName(),null,"Removed zone from event");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "DeleteLocation", "Event/"+event.getName(), zone.getName(),null,"Removed zone from event");
         return new OKResponse("Removed zone "+zone.getName()+" from event "+event.getName());
     }
 

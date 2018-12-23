@@ -14,15 +14,14 @@ import java.util.logging.Logger;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Event;
 import net.coagulate.GPHUD.Data.Instance;
+import net.coagulate.GPHUD.Data.Permissions;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.TableRow;
-import net.coagulate.GPHUD.Data.User;
 import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.Interfaces.User.Form;
@@ -35,6 +34,7 @@ import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Templater;
+import net.coagulate.SL.Data.User;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -90,7 +90,7 @@ public class State {
 
     public Logger logger() {
         String subspace=getInstanceString();
-        if (avatar!=null) { subspace+="."+avatar.getNameSafe(); }
+        if (avatar!=null) { subspace+="."+avatar.getName(); }
         if (character!=null) { subspace+="."+character.getNameSafe(); }
         return GPHUD.getLogger(subspace);
     }
@@ -177,12 +177,11 @@ public class State {
         this.character = character;
         if (this.avatar==null) { avatar=character.getPlayedBy(); }
     }
-    public void setAvatar(Avatar avatar) {
+    public void setAvatar(User avatar) {
         this.avatar=avatar;
-        if (avatar!=null) { this.user=avatar.getOwner(); } else { this.user=null; }
     }
-    public Avatar getAvatar() { return avatar; }
-    public Avatar avatar() { return avatar; }
+    public User getAvatar() { return avatar; }
+    public User avatar() { return avatar; }
     
     
     private Instance instance=null;
@@ -216,9 +215,8 @@ public class State {
     // system interface sets this if we're "runas" someone other than the owner
     public boolean issuid=false;
     // web interface logged in user ID, may be null if they cookie in as an avatar :)
-    public User user=null;
     // avatar, from web interface, or second life
-    private Avatar avatar=null;
+    public User avatar=null;
     // character
     private Char character=null;
     // web interface cookie, used to logout things
@@ -226,7 +224,7 @@ public class State {
     public String cookiestring=null;
     public Form form=null;
     // system interface puts the object originating the request here
-    public Avatar sourceowner=null;
+    public User sourceowner=null;
     public String sourcename=null;
     public User sourcedeveloper=null;
     public Region sourceregion=null;
@@ -282,7 +280,6 @@ public class State {
             return response;
         }
         if (avatar!=null) { return avatar.toString(); }
-        if (user!=null) { return user.toString(); }
         return "NOID#?";
     }
 
@@ -291,14 +288,14 @@ public class State {
     private Boolean superuser=null;
     
     public void flushSuperUser() { superuser=null; }
-    private void populateSuperUser() { if (superuser==null && user!=null) { superuser=user.isSuperAdmin(); } }
+    private void populateSuperUser() { if (superuser==null && avatar!=null) { superuser=avatar.isSuperAdmin(); } }
     public boolean isSuperUser() { populateSuperUser(); if (superuser==null) { return false; } return superuser; }
     
     Set<String> permissionscache=null;
     
     public void flushPermissionsCache() { permissionscache=null; }
     private void preparePermissionsCache() {
-        if (permissionscache==null && avatar!=null && instance!=null) { permissionscache=new HashSet<>(); permissionscache.addAll(avatar.getPermissions(instance)); }
+        if (permissionscache==null && avatar!=null && instance!=null) { permissionscache=new HashSet<>(); permissionscache.addAll(Permissions.getPermissions(instance,avatar)); }
     }
 
     /** Checks, and caches, if a user has a permission.

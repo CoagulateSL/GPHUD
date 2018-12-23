@@ -10,6 +10,7 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.EventXP;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 
 /** A schedule (start time, stop time, repeat interval) for an event
  *
@@ -183,10 +184,10 @@ public class EventSchedule extends TableRow {
             if (wanttoaward>0) {
                 //TO DO AWARD EVENT XP HERE.
                 // TODO notify the end users, in batch using the disseminate feature :P
-                State fake=new State(); fake.setInstance(getEvent().getInstance()); fake.setCharacter(Char.get(charid)); fake.setAvatar(Avatar.getSystem(fake));
+                State fake=new State(); fake.setInstance(getEvent().getInstance()); fake.setCharacter(Char.get(charid)); fake.setAvatar(User.getSystem());
                 String description="Awarded for "+duration(timespent)+" spent at event "+getEvent().getName();
                 int finallyawarded=new EventXP(-1).cappedSystemAward(fake, wanttoaward, description);
-                if (finallyawarded>0) { Audit.audit(fake, Audit.OPERATOR.AVATAR, null, null, fake.getCharacter(), "Add", "EventXP", null, finallyawarded+"", description+" ("+finallyawarded+" of up to "+wanttoaward+")"); }
+                if (finallyawarded>0) { Audit.audit(fake, Audit.OPERATOR.AVATAR, null, fake.getCharacter(), "Add", "EventXP", null, finallyawarded+"", description+" ("+finallyawarded+" of up to "+wanttoaward+")"); }
             }
         }
     }

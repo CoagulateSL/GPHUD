@@ -77,7 +77,7 @@ public abstract class Groups {
         boolean caneject=pg.canEject(st);
         for (PermissionsGroupMembership member:members) {
             membertable.openRow();
-            membertable.add(member.avatar);
+            membertable.add(member.avatar.getGPHUDLink());
             if (member.caninvite) { membertable.add(new Colour("green","Yes")); } else { membertable.add(new Colour("red","No")); }
             if (member.cankick) { membertable.add(new Colour("green","Yes")); } else { membertable.add(new Colour("red","No")); }
             if (st.isInstanceOwner()) {
@@ -138,7 +138,7 @@ public abstract class Groups {
         catch (UserException e) {
             return new ErrorResponse("Failed to create permissions group - "+e.getLocalizedMessage());
         }
-        Audit.audit(st, Audit.OPERATOR.AVATAR,null, null, null, "Create", "PermissionsGroup", null, name, "Avatar created new permissions group");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "PermissionsGroup", null, name, "Avatar created new permissions group");
         return new OKResponse("Permissions Group created successfully!");
     }
     
@@ -175,7 +175,7 @@ public abstract class Groups {
         permissionsgroup.validate(st);
         String name=permissionsgroup.getNameSafe();
         permissionsgroup.delete();
-        Audit.audit(st, Audit.OPERATOR.AVATAR,null, null, null, "DELETE", "AvatarGroup", name, null, "Avatar deleted permissions group");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "DELETE", "AvatarGroup", name, null, "Avatar deleted permissions group");
         return new OKResponse("Deleted permissions group "+name);
     }
 }

@@ -28,7 +28,7 @@ public abstract class ZoneCommands {
                 String name)
     {
         Zone.create(st.getInstance(),name);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Create", "Zone", "", name, "New zone created");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Zone", "", name, "New zone created");
         return new OKResponse("Zone '"+name+"' created.");
         
     }
@@ -45,7 +45,7 @@ public abstract class ZoneCommands {
             String cornerTwo) {
         zone.addArea(region,cornerOne,cornerTwo);
         region.pushZoning();
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Add Volume", zone.getName(), null, cornerOne+" - "+cornerTwo,"Added new volume to zone");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Add Volume", zone.getName(), null, cornerOne+" - "+cornerTwo,"Added new volume to zone");
         return new OKResponse("Added new volume to zone "+zone.getName());
         
     }
@@ -81,7 +81,7 @@ public abstract class ZoneCommands {
         String[] vectors = za.getVectors();
         Region region=za.getRegion();
         za.delete();
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Delete Area", zone.getName(), vectors[0]+" - "+vectors[1], null, "Area removed from zone");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Delete Area", zone.getName(), vectors[0]+" - "+vectors[1], null, "Area removed from zone");
         region.pushZoning();
         return new OKResponse("Zone area removed from zone "+zone.getName());
     }

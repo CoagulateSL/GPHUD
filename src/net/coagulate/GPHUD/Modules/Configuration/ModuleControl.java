@@ -31,7 +31,7 @@ public abstract class ModuleControl {
         if (!module.canDisable()) { return new ErrorResponse("The module "+module.getName()+" does not allow its self to be disabled, it is probably critical to system functionality"); }
         String k=module.getName()+".Enabled";
         st.setKV(st.getInstance(),module.getName()+".Enabled", "false");
-        Audit.audit(st, Audit.OPERATOR.AVATAR,null, null, null, "Disable Module", module.getName(), "", "", "Module disabled");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Disable Module", module.getName(), "", "", "Module disabled");
         return new OKResponse("Module "+module.getName()+" has been disabled");
     }
     
@@ -47,7 +47,7 @@ public abstract class ModuleControl {
         if (!(st.isInstanceOwner())) { return new ErrorResponse("Only the instance owner may enable a module"); }
 
         st.setKV(st.getInstance(),module.getName()+".Enabled", "true");
-        Audit.audit(st, Audit.OPERATOR.AVATAR,null, null, null, "Enable Module", module.getName(), "", "", "Module enabled");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Enable Module", module.getName(), "", "", "Module enabled");
         return new OKResponse("Module "+module.getName()+" has been enabled");
     }
     

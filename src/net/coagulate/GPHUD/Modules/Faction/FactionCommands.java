@@ -53,7 +53,7 @@ public class FactionCommands {
             return new ErrorResponse("This character has already reached their Faction XP Limit.  They will next be eligable for a point in "+target.poolNextFree(factionxp,maxxp,period));
         }
         // else award xp :P
-        Audit.audit(st, Audit.OPERATOR.CHARACTER,null, null, target, "Pool Add", "FactionXP", null, "1", reason);
+        Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Pool Add", "FactionXP", null, "1", reason);
         target.addPool(st, factionxp, 1, reason);
         if (target!=st.getCharacter()) { target.hudMessage("You were granted 1 point of Faction XP by "+st.getCharacter().getName()+" for "+reason); }
         return new OKResponse("Granted a point of Faction XP to "+target.getName());
@@ -72,7 +72,7 @@ public class FactionCommands {
         invite.put("from",target.getId());
         invite.put("to",ourfaction.getId());
         target.queueMessage(invite,60*60*48);
-        Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, target, "Faction Invite", ourfaction.getName(), null, null,"Faction invite sent");
+        Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Faction Invite", ourfaction.getName(), null, null,"Faction invite sent");
         return new OKResponse("Invite message sent to "+target.getName()+" for faction "+ourfaction.getName()+", they have 48 hours to accept.");
     }
             

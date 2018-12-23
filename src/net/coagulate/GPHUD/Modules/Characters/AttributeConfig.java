@@ -125,7 +125,7 @@ public class AttributeConfig {
         }
 
         st.getInstance().createAttribute(name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "CreateAttribute", name, null, null, "Avatar created new attribute "+name+" selfmod:"+selfmodify+" type:"+attributetype+" group:"+grouptype+" AP:"+usesabilitypoints+" REQ:"+required+" Default:"+defaultvalue);
+        Audit.audit(st, Audit.OPERATOR.AVATAR,null,null, "CreateAttribute", name, null, null, "Avatar created new attribute "+name+" selfmod:"+selfmodify+" type:"+attributetype+" group:"+grouptype+" AP:"+usesabilitypoints+" REQ:"+required+" Default:"+defaultvalue);
         return new OKResponse("Okay, attribute created");
     }
 
@@ -144,7 +144,7 @@ public class AttributeConfig {
         attribute.validate(st);
         boolean oldvalue=attribute.usesAbilityPoints();
         attribute.setUsesAbilityPoints(usesabilitypoints);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetAP", attribute.getName(), oldvalue+"", usesabilitypoints+"", "Avatar set use of ability points");
+        Audit.audit(st, Audit.OPERATOR.AVATAR,null,null, "Attribute/SetAP", attribute.getName(), oldvalue+"", usesabilitypoints+"", "Avatar set use of ability points");
         return new OKResponse("Attribute ability points flag updated");
     }
     
@@ -164,7 +164,7 @@ public class AttributeConfig {
         attribute.validate(st);
         boolean oldvalue=attribute.getSelfModify();
         attribute.setSelfModify(selfmodify);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetSelfModify", attribute.getName(), oldvalue+"", selfmodify+"", "Avatar set self modify");
+        Audit.audit(st, Audit.OPERATOR.AVATAR,null,null, "Attribute/SetSelfModify", attribute.getName(), oldvalue+"", selfmodify+"", "Avatar set self modify");
         return new OKResponse("Attribute self modification flag updated");
     }
  
@@ -183,7 +183,7 @@ public class AttributeConfig {
         attribute.validate(st);
         boolean oldvalue=attribute.getRequired();
         attribute.setRequired(required);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetRequired", attribute.getName(), oldvalue+"", required+"", "Avatar set required");
+        Audit.audit(st, Audit.OPERATOR.AVATAR,null,null, "Attribute/SetRequired", attribute.getName(), oldvalue+"", required+"", "Avatar set required");
         return new OKResponse("Attribute requried flag updated");
     }
     @URLs(url="/configuration/characters/setdefaultvalue",requiresPermission = "Characters.CreateAttribute")
@@ -201,7 +201,7 @@ public class AttributeConfig {
         attribute.validate(st);
         String oldvalue=attribute.getDefaultValue(); if (oldvalue==null) { oldvalue="null"; }
         attribute.setDefaultValue(defaultvalue);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/SetSelfModify", attribute.getName(), oldvalue, defaultvalue, "Avatar set default");
+        Audit.audit(st, Audit.OPERATOR.AVATAR,null,null, "Attribute/SetSelfModify", attribute.getName(), oldvalue, defaultvalue, "Avatar set default");
         return new OKResponse("Attribute self modification flag  updated");
     }
 
@@ -220,7 +220,7 @@ public class AttributeConfig {
         attribute.validate(st);
         if (confirm==false) { return new ErrorResponse("You did not confirm the operation"); }
         attribute.delete();
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null,null,null, "Attribute/DELETE", attribute.getName(), null,null, "Avatar DELETED ATTRIBUTE ENTIRELY");
+        Audit.audit(st, Audit.OPERATOR.AVATAR,null,null, "Attribute/DELETE", attribute.getName(), null,null, "Avatar DELETED ATTRIBUTE ENTIRELY");
         return new OKResponse("Attribute and attached data has been DELETED");
     }
     

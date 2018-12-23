@@ -14,11 +14,9 @@ import static java.util.logging.Level.WARNING;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.User;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.PasswordInput;
@@ -35,6 +33,7 @@ import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -229,12 +228,12 @@ public class Interface extends net.coagulate.GPHUD.Interface {
     String renderSideMenu(State st) throws UserException, SystemException { 
         String s="";
         boolean loggedin=true;
-        if (st.getCharacterNullable()!=null || st.user!=null || st.getAvatar()!=null) {
+        if (st.getCharacterNullable()!=null || st.getAvatar()!=null) {
             s+="<b>Avatar:</b> ";
             //if (st.user!=null) s+="[<a href=\"/GPHUD/switch/avatar\">Switch</a>]"; // you can only switch avis if you're a logged in user, as thats what binds avis
             s+="<br>";
             if (st.avatar()!=null) {
-                s+=st.avatar().asHtml(st, true)+"<br>"; 
+                s+=st.avatar().getGPHUDLink()+"<br>"; 
             } else { s+="<i>none</i><br>"; }
             
             
@@ -389,13 +388,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         if (cookies!=null) {
             Instance instance=cookies.getInstance();
             if (instance!=null ) { st.setInstance(instance); }
-            User u=cookies.getUser();
-            Avatar av=cookies.getAvatar();
+            User av=cookies.getAvatar();
             Char ch=cookies.getCharacter();
-            if (u!=null) {
-                st.user=u;
-                st.username=u.getName();
-            }
             if (av!=null) {
                 st.setAvatar(av);
             }
@@ -403,7 +397,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 st.setCharacter(ch);
             }
             if (av==null && ch!=null) { st.setAvatar(ch.getOwner()); }
-            if (u!=null || av!=null) { st.cookiestring=cookie; st.cookie=cookies; return avatarSelectionHook(st,values); } // logged in, one way or the other, note we might not have an entity, and we want one
+            if (av!=null) { st.cookiestring=cookie; st.cookie=cookies; return characterSelectionHook(st,values); } // logged in, one way or the other, note we might not have an entity, and we want one
         }
         if (cookieAuthenticationOnly()) {
             Form failed=new Form();
@@ -435,10 +429,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 failed="Incorrect credentials.";
                 st.logger().log(WARNING,"Attempt to login as '"+username+"' failed, no such user.");
             } else {
-                if (target.verifyPassword(password)) {
-                    cookie=Cookies.generate(target,null,null,null,true);
+                if (target.checkPassword(password)) {
+                    cookie=Cookies.generate(target,null,null,true);
                     st.username=username;
-                    st.user=target;
+                    st.avatar=target;
                     st.cookiestring=cookie;
                     try {
                         st.cookie=new Cookies(cookie);
@@ -447,7 +441,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                     }
                     st.resp.addHeader("Set-Cookie","gphud="+cookie+"; Path=/");
                     st.logger().log(INFO,"Logged in from "+st.address.getHostAddress());
-                    return avatarSelectionHook(st,values);
+                    return characterSelectionHook(st,values);
                 } else {
                     st.logger().log(WARNING,"Attempt to login as '"+username+"' failed, wrong password.");
                     failed="Incorrect credentials.";
@@ -458,45 +452,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         return login;
     }
     // A login must select an avatar from its list of avatars, if it has more than one...
-    private Form avatarSelectionHook(State st,Map<String,String> values) {
-        if (cookieAuthenticationOnly()) { return null; }
-        if (st.avatar()!=null) { return characterSelectionHook(st,values); } // already have one from cookie etc
-        Set<Avatar> avatars=st.user.getAvatars();
-        if (avatars.isEmpty()) { Form f=new Form(); f.add("You have no Second Life AVATARs?"); return f; }
-        if (avatars.size()==1)
-        {
-            st.setAvatar(avatars.iterator().next());
-            st.cookie.setAvatar(st.avatar());
-            st.setInstance(st.avatar().getLastInstance());
-            if (st.getInstanceNullable()!=null) { st.cookie.setInstance(st.getInstance()); }
-            return characterSelectionHook(st,values);
-        }
-        Form selectavatars=new Form();
-        selectavatars.add(new TextHeader("Select an SL avatar"));
-        Map<Button,Avatar> buttons=new TreeMap<>();
-        for (Avatar e:avatars) {
-            Button b=new Button(e.getName());
-            buttons.put(b,e);
-            selectavatars.add(b);
-            selectavatars.add("<br>");
-        }
-        st.form=selectavatars;
-        for (Avatar e:avatars) {
-            if (values.get(e.getName())!=null && !values.get(e.getName()).isEmpty()) {
-                st.setAvatar(e);
-                st.cookie.setAvatar(st.avatar());
-                st.setInstance(st.avatar().getLastInstance());
-                if (st.getInstance()!=null) { st.cookie.setInstance(st.getInstance()); }
-                return characterSelectionHook(st,values);
-            }
-        }
-        return selectavatars;
-    }
-    // A login must select an avatar from its list of avatars, if it has more than one...
     private Form characterSelectionHook(State st,Map<String,String> values) {
         if (1==1) { return null; }
         if (st.getCharacter()!=null) { return null; } // already have one from cookie etc
-        Set<Char> characters=st.avatar().getCharacters();
+        Set<Char> characters=Char.getCharacters(st.getInstance(),st.getAvatar());
         //if (characters.isEmpty()) { Form f=new Form(); f.add("You have no active characters at any instances, please visit an instance to commence."); return f; }
         // technically you should be able to do stuff as an avatar alone, but... 
         if (characters.isEmpty()) { return null; }

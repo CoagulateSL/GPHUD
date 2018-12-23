@@ -6,7 +6,6 @@ import java.util.List;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
@@ -16,6 +15,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Templater;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
 /** Templated command implementation, aka an alias command.
@@ -103,8 +103,8 @@ public class AliasCommand extends Command {
             if (v.startsWith(">")) {
                 v=v.substring(1);
                 try {
-                    Avatar a=Avatar.find(v); 
-                    targchar=a.getActiveCharacter();
+                    User a=User.find(v); 
+                    targchar=Char.getActive(a);
                 } catch (NoDataException e) { throw new UserException("Unable to find character or avatar named '"+v+"'"); }
             } else {
                 targchar=Char.resolve(st, v);

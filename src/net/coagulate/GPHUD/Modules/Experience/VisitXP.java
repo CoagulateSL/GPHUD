@@ -6,7 +6,6 @@ import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
@@ -15,6 +14,7 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 
 /** Implements Visit XP awards.
  *
@@ -46,9 +46,9 @@ public  class VisitXP extends QuotaedXP {
                 ch.addPool(st, visitxp, wanttogive, "Awarded XP for time on sim");
                 State fakestate=new State();
                 fakestate.setInstance(st.getInstance());
-                fakestate.setAvatar(Avatar.getSystem(fakestate));
+                fakestate.setAvatar(User.getSystem());
                 ch.hudMessage("You were awared 1 point of Vist XP, you will be eligable for your next point in "+nextFree(st));
-                Audit.audit(fakestate, Audit.OPERATOR.AVATAR,null, null, ch, "Pool Add", "VisitXP", null, ""+wanttogive, "Awarded XP for time on sim");
+                Audit.audit(fakestate, Audit.OPERATOR.AVATAR, null, ch, "Pool Add", "VisitXP", null, ""+wanttogive, "Awarded XP for time on sim");
             }
         } catch (Exception e) {
             GPHUD.getLogger().log(SEVERE,"Exception running awards for character "+ch.getNameSafe()+" #"+ch.getId(),e);
@@ -57,7 +57,7 @@ public  class VisitXP extends QuotaedXP {
  
     public  void runAwards(Instance i) {
         try {
-            State st=new State(); st.setInstance(i); st.setAvatar(Avatar.getSystem(st));
+            State st=new State(); st.setInstance(i); st.setAvatar(User.getSystem());
             for (Region r:i.getRegions()) {
                 Set<Char> visitors = r.getOpenVisits();
                 for (Char visitor:visitors) {

@@ -39,7 +39,7 @@ public class EditValues {
         if (!kv.appliesTo(st.getInstance())) { return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to instances"); }
         String oldvalue=st.getRawKV(st.getInstance(),key);
         st.setKV(st.getInstance(),key,value);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "SetInstanceKV", key, oldvalue, value, "Changed instance level configuration");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetInstanceKV", key, oldvalue, value, "Changed instance level configuration");
         // bit cludgy but...        
         if (key.equalsIgnoreCase("GPHUDServer.AutoAttach") || key.equalsIgnoreCase("GPHUDServer.ParcelONLY")) {
             net.coagulate.GPHUD.Modules.GPHUDServer.Register.sendAttachConfig(st);
@@ -68,7 +68,7 @@ public class EditValues {
         if (!kv.appliesTo(region)) { return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to regions"); }
         String oldvalue=st.getRawKV(region,key);
         st.setKV(region,key,value);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "SetRegionKV", region.getName()+"/"+key, oldvalue, value, "Changed region level configuration");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetRegionKV", region.getName()+"/"+key, oldvalue, value, "Changed region level configuration");
         // bit cludgy but...        
         if (key.equalsIgnoreCase("GPHUDServer.AutoAttach") || key.equalsIgnoreCase("GPHUDServer.ParcelONLY")) {
             net.coagulate.GPHUD.Modules.GPHUDServer.Register.sendAttachConfig(st);
@@ -97,7 +97,7 @@ public class EditValues {
         if (!kv.appliesTo(zone)) { return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to zones"); }
         String oldvalue=st.getRawKV(zone,key);
         st.setKV(zone,key,value);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "SetZoneKV", zone.getName()+"/"+key, oldvalue, value, "Updated zone KV entry");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetZoneKV", zone.getName()+"/"+key, oldvalue, value, "Updated zone KV entry");
         return new OKResponse("KV Store updated for zone '"+zone.getName()+"'");
     }
     
@@ -122,7 +122,7 @@ public class EditValues {
         if (!kv.appliesTo(event)) { return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to events"); }
         String oldvalue=st.getRawKV(event,key);
         st.setKV(event,key,value);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "SetEventKV", event.getName()+"/"+key, oldvalue, value, "Changed event level configuration");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetEventKV", event.getName()+"/"+key, oldvalue, value, "Changed event level configuration");
         return new OKResponse("Event KV store has been updated for event "+event.getName());
     }
         
@@ -149,7 +149,7 @@ public class EditValues {
         if (!kv.appliesTo(group)) { return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to character groups"); }
         String oldvalue=st.getRawKV(group,key);
         st.setKV(group,key,value);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "SetGroupKV", group.getName()+"/"+key, oldvalue, value, "Changed group level configuration");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetGroupKV", group.getName()+"/"+key, oldvalue, value, "Changed group level configuration");
         // bit cludgy but...        
         // to be done TODO
         if (key.equalsIgnoreCase("GPHUDServer.AutoAttach") || key.equalsIgnoreCase("GPHUDServer.ParcelONLY")) {
@@ -180,7 +180,7 @@ public class EditValues {
         if (!kv.appliesTo(character)) { return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to characters"); }
         String oldvalue=st.getRawKV(character,key);
         st.setKV(character,key,value);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "SetCharKV", character.getName()+"/"+key, oldvalue, value, "Changed character level configuration");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetCharKV", character.getName()+"/"+key, oldvalue, value, "Changed character level configuration");
 
         return new OKResponse("Character KV store has been updated for "+character.getName());
     }

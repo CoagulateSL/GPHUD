@@ -19,7 +19,7 @@ public class Damage {
             if (newvalue<0) { newvalue=0; }
         }
         st.setKV(targetchar, "health.health", newvalue+"");
-        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, null, targetchar, "SUBTRACT", "Health.Health", oldhealth+"", newvalue+"", "Damaged by "+damage+" for "+reason);
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, targetchar, "SUBTRACT", "Health.Health", oldhealth+"", newvalue+"", "Damaged by "+damage+" for "+reason);
     }
     public static void heal(State st,Char targetchar,int healing,String reason) {
         st.setTarget(targetchar);
@@ -28,6 +28,6 @@ public class Damage {
         int maxhealth=st.getKV("health.initialhealth").intValue();
         if (newvalue>maxhealth) { newvalue=maxhealth; }
         st.setKV(targetchar, "health.health", newvalue+"");
-        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, null, targetchar, "ADD", "Health.Health", oldhealth+"", newvalue+"", "Healed by "+healing+" for "+reason);
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, targetchar, "ADD", "Health.Health", oldhealth+"", newvalue+"", "Healed by "+healing+" for "+reason);
     }
 }

@@ -52,7 +52,7 @@ public abstract class Configuration {
             template.put("invoke",values.get("command"));
             try {
                 Alias newalias=Alias.create(st, values.get("name"), template);
-                Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Create", "Alias",null, values.get("command"),"Avatar created new alias");
+                Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Alias",null, values.get("command"),"Avatar created new alias");
                 throw new RedirectionException("./view/"+newalias.getId());
             }
             catch (UserException e) { st.form.add(new Paragraph(new TextError("Creation failed : "+e.getMessage()))); }
@@ -83,7 +83,7 @@ public abstract class Configuration {
                 }
                 template.put("invoke",old.get("invoke"));
                 a.setTemplate(template);
-                Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Updated", a.getName(), old.toString(), template.toString(), "Avatar updated command alias");
+                Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Updated", a.getName(), old.toString(), template.toString(), "Avatar updated command alias");
                 f.add(new TextOK("Template Updated"));
             }
         }

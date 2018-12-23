@@ -7,12 +7,11 @@ import static java.util.logging.Level.WARNING;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Instance;
+import net.coagulate.GPHUD.Data.PrimaryCharacters;
 import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.GPHUD.Data.User;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -22,6 +21,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
@@ -174,13 +174,13 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         st.sourcename=objectname;
         st.sourceregion=Region.find(regionname);
         st.sourcelocation=position;
-        Avatar owner=Avatar.findOrCreateAvatar(st,ownername,ownerkey);
+        User owner=User.findOrCreateAvatar(ownername,ownerkey);
         st.sourceowner=owner;
         st.setAvatar(owner);
         // hooks to allow things to run as "not the objects owner" (the default)
         String runasavatar=null;
         try { runasavatar=obj.getString("runasavatar"); } catch (JSONException e) {}
-        if (runasavatar!=null && (!(runasavatar.equals("")))) { st.setAvatar(Avatar.find(runasavatar)); st.issuid=true; }
+        if (runasavatar!=null && (!(runasavatar.equals("")))) { st.setAvatar(User.find(runasavatar)); st.issuid=true; }
         String runascharacter=null;
         try { runascharacter=obj.getString("runascharacter"); } catch (JSONException e) {}
         if (runascharacter!=null && (!(runascharacter.equals("")))) { st.setCharacter(Char.get(Integer.parseInt(runascharacter))); st.issuid=true; }
@@ -205,19 +205,13 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 Instance instance=region.getInstance();
                 st.setInstance(instance);
                 st.setRegion(region);
-                if (st.getCharacterNullable()==null) { st.setCharacter(owner.getPrimaryCharacter(st,st.getKV("Instance.AutoNameCharacter").boolValue())); }
+                if (st.getCharacterNullable()==null) { st.setCharacter(PrimaryCharacters.getPrimaryCharacter(st,st.getKV("Instance.AutoNameCharacter").boolValue())); }
                 try { obj.getString("runasnocharacter"); st.setCharacter(null); } catch (JSONException e) {}
                 if (st.getCharacterNullable()!=null) { st.zone=st.getCharacter().getZone(); }
                 SafeMap parametermap=new SafeMap();
                 for (String key:st.json.keySet()) {
                     String value=st.json.get(key).toString();
                     parametermap.put(key,value);
-                }
-                // can we derive a user from the avatar?
-                if (st.avatar()!=null) {
-                    if (st.avatar().getOwner()!=null) {
-                        st.user=st.avatar().getOwner();
-                    }
                 }
                 String command=obj.getString("command");
                 return Modules.run(st, obj.getString("command"), parametermap);
@@ -250,11 +244,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         if (console.startsWith("createinstance "))
         {
-            Avatar ava=st.avatar();
+            User ava=st.avatar();
             if (ava==null) { return new ErrorResponse("Null avatar associated with request??"); }
             boolean ok=false;
-            if (ava.getOwner()!=null && ava.getOwner().isSuperAdmin()) { ok=true; }
-            if (ava.canCreate()) { ok=true; }
+            if (ava.isSuperAdmin()) { ok=true; }
+            //if (ava.canCreate()) { ok=true; }
             if (!ok) { return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz"); }
             console=console.replaceFirst("createinstance ","");
             try { Instance.create(console,st.avatar()); }
@@ -262,8 +256,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             Instance instance=Instance.find(console);
             if (instance==null) { return new ErrorResponse("Failed to find instance after registering it :("); }
             st.setInstance(instance);
-            ava.canCreate(false);
-            Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,null,"Create","Instance","",console,"");
+            //ava.canCreate(false);
+            Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,"Create","Instance","",console,"");
             String success=Region.joinInstance(regionname, instance);
             if (!success.equals("")) {
                 return new ErrorResponse("Region registration failed after instance creation: "+success);
@@ -271,7 +265,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             Region region=Region.find(regionname);
             st.setRegion(region);
             st.sourceregion=region;
-            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,null,"Join", "Instance","",regionname,"Joined instance "+console);
+            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Join", "Instance","",regionname,"Joined instance "+console);
             Modules.initialiseInstance(st);
             JSONObject response=new JSONObject();
             response.put("rebootserver","rebootserver");
@@ -290,7 +284,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             st.setRegion(region);
             st.sourceregion=region;
             st.setInstance(instance);
-            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,null,"Join", "Instance","",regionname,"Joined instance "+console);
+            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Join", "Instance","",regionname,"Joined instance "+console);
             JSONObject response=new JSONObject();
             response.put("rebootserver","rebootserver");
             return new JSONResponse(response);

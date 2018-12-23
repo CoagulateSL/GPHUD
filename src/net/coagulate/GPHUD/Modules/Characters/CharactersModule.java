@@ -190,7 +190,7 @@ public class CharactersModule extends ModuleAnnotation {
         int local=0;
         if (localstr!=null && !localstr.isEmpty()) { local=Integer.parseInt(localstr); }
         st.setKV(st.getCharacter(),"characters."+attribute, (local+1)+"");
-        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, null, st.getCharacter(), "AbilityIncrease", attribute, local+"", (local+1)+"", "Character spent ability point to increase "+attribute+" from (total) "+existing+" to "+(existing+1));
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, st.getCharacter(), "AbilityIncrease", attribute, local+"", (local+1)+"", "Character spent ability point to increase "+attribute+" from (total) "+existing+" to "+(existing+1));
         String remaining="";
         remain--;
         if (remain>0) {
@@ -226,7 +226,7 @@ public class CharactersModule extends ModuleAnnotation {
         KV kv=st.getKVDefinition("Characters."+attribute.getName());
         String oldvalue=st.getRawKV(st.getCharacter(), kv.fullname());
         st.setKV(st.getCharacter(), kv.fullname(), value);
-        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, null, null, "AttributeSet", attribute.getNameSafe(), oldvalue, value,"Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullname());
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, null, "AttributeSet", attribute.getNameSafe(), oldvalue, value,"Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullname());
         return new OKResponse("Your character updated for Attribute "+attribute.getName());
     }
 }

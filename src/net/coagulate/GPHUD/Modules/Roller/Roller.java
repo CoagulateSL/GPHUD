@@ -75,7 +75,7 @@ public class Roller {
         if (bias!=0) { allrolls=allrolls+"+"+bias; total+=bias; }
         event+=total+" ("+allrolls+")";
         st.roll=total;
-        Audit.audit(st,Audit.OPERATOR.CHARACTER,null,null,null,"Roll",null,null,""+total,event);
+        Audit.audit(st,Audit.OPERATOR.CHARACTER,null,null,"Roll",null,null,""+total,event);
         SayResponse say=new SayResponse(event,st.getCharacter().getName());
         return say;
     }
@@ -173,7 +173,7 @@ public class Roller {
         event+="("+total+"v"+targettotal+")";
         st.roll=total;
         st.getTarget().roll=targettotal;
-        Audit.audit(st,Audit.OPERATOR.CHARACTER,null,st.getTarget().avatar(),st.getTarget().getCharacter(),"Roll",null,null,""+total,event);
+        Audit.audit(st,Audit.OPERATOR.CHARACTER,st.getTarget().avatar(),st.getTarget().getCharacter(),"Roll",null,null,""+total,event);
         SayResponse say=new SayResponse(event,st.getCharacter().getName());
         return say;
     }

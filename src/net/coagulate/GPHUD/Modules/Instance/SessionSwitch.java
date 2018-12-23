@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
 import java.util.Set;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
@@ -12,8 +14,6 @@ import net.coagulate.GPHUD.Modules.Characters.View;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Lets a user/avatar switch instance/character
  *
@@ -55,7 +55,7 @@ public class SessionSwitch {
         } 
         f.noForm();
         f.add(new TextHeader("Select Character"));
-        Set<Char> chars = st.avatar().getCharacters(st.getInstance());
+        Set<Char> chars = Char.getCharacters(st.getInstance(),st.avatar());
         if (chars.isEmpty()) { f.add("You have no characters at this instance, please select a new instance or navigate via the left side menu."); return; }
         f.add(new Separator());
         for (Char c:chars) {

@@ -25,7 +25,7 @@ public class ResetHealth {
         int oldhealth=st.getKV("health.health").intValue();
         int newvalue=st.getKV("health.initialhealth").intValue();
         st.setKV(st.getCharacter(), "health.health", newvalue+"");
-        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, null, st.getCharacter(), "SET", "Health.Health", oldhealth+"", newvalue+"", "Character reset their health");
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, st.getCharacter(), "SET", "Health.Health", oldhealth+"", newvalue+"", "Character reset their health");
         return new SayResponse("reset health from "+oldhealth+" to "+newvalue,st.getCharacter().getName());
     }
     

@@ -118,7 +118,7 @@ public class EventsPages {
         if (id==null) { st.form.add(new TextError("Null id to remove?")); }
         EventSchedule es=EventSchedule.get(Integer.parseInt(id));
         es.validate(st);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "DeleteSchedule", es.getEvent().getName(), es.describe("America/Los_Angeles")+" SLT", null,"Avatar deleted event schedule");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "DeleteSchedule", es.getEvent().getName(), es.describe("America/Los_Angeles")+" SLT", null,"Avatar deleted event schedule");
         es.delete();
         throw new RedirectionException(values);
     }
@@ -134,7 +134,7 @@ public class EventsPages {
                 int enddate=DateTime.outputDateTime("End", values,defaulttz);
                 int repeat=DateTime.outputInterval("Repeat",values);
                 event.addSchedule(startdate,enddate,repeat);
-                Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,null,"AddSchedule",event.getName(),null,DateTime.fromUnixTime(startdate,"America/Los_Angeles")+" SLT repeat "+UnixTime.duration(repeat),"Schedule added to event"); 
+                Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"AddSchedule",event.getName(),null,DateTime.fromUnixTime(startdate,"America/Los_Angeles")+" SLT repeat "+UnixTime.duration(repeat),"Schedule added to event"); 
                 throw new RedirectionException(values);
             } catch (UserException e) {
                 st.form.add(new TextError(e.getMessage()));

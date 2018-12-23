@@ -42,9 +42,7 @@ public abstract class View {
         t.openRow();
         t.add("Node").addNoNull((GPHUD.DEV?"DEVELOPMENT // ":"Production // ")+Interface.getNode());
         t.openRow();
-        t.add("User").addNoNull(st.user);
-        t.openRow();
-        t.add("Avatar").addNoNull(st.avatar());
+        t.add("Avatar").addNoNull(st.avatar().getGPHUDLink());
         t.openRow();
         t.add("Character").addNoNull(st.getCharacter());
         t.openRow();
@@ -56,9 +54,9 @@ public abstract class View {
         t.openRow();
         t.add("Source").addNoNull(st.sourcename);
         t.openRow();
-        t.add("SourceOwner").addNoNull(st.sourceowner);
+        t.add("SourceOwner").addNoNull(st.sourceowner.getGPHUDLink());
         t.openRow();
-        t.add("SourceDev").addNoNull(st.sourcedeveloper);
+        t.add("SourceDev").addNoNull(st.sourcedeveloper.getGPHUDLink());
         return t;
     }
 
@@ -92,7 +90,7 @@ public abstract class View {
         Form f=st.form;
         f.add(new TextSubHeader(c.getName()));
         Table kvtable=new Table(); f.add(kvtable);
-        kvtable.openRow().add("Owning Avatar").add(c.getOwner());
+        kvtable.openRow().add("Owning Avatar").add(c.getOwner().getGPHUDLink());
         String lastplayed=fromUnixTime(c.getLastPlayed(),tz);
         kvtable.openRow().add("Last Played").add(lastplayed).add(tz);
         kvtable.openRow().add("Connected");
@@ -110,7 +108,7 @@ public abstract class View {
         f.add(new TextSubHeader("KV Configuration"));
         GenericConfiguration.page(st, values, c,simulated);
         f.add(new TextSubHeader("Audit Trail"));
-        f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(),null,null,c),st.avatar().getTimeZone()));
+        f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(),null,c),st.avatar().getTimeZone()));
     }
     
     @Commands(context = Context.CHARACTER,description = "Show yourself privately your own character sheet")

@@ -76,22 +76,22 @@ public abstract class GetMessages {
         m.delete();
         st.getCharacter().pushMessageCount();
         if (!accepted) {
-            Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, Char.get(j.getInt("from")), "Invite Declined", targetfaction.getName(), null, null, "Declined invite to faction");
+            Audit.audit(st, Audit.OPERATOR.CHARACTER, null, Char.get(j.getInt("from")), "Invite Declined", targetfaction.getName(), null, null, "Declined invite to faction");
             return new OKResponse("Invitation rejected");
         }
         CharacterGroup currentfaction=st.getCharacter().getGroup("Faction");
         if (currentfaction==targetfaction) { 
-            Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, Char.get(j.getInt("from")), "Invite Invalid", targetfaction.getName(), null, null, "Invite to faction character is already in");
+            Audit.audit(st, Audit.OPERATOR.CHARACTER, null, Char.get(j.getInt("from")), "Invite Invalid", targetfaction.getName(), null, null, "Invite to faction character is already in");
             return new OKResponse("Invitation invalid, you are already in this faction");
         }
         if (currentfaction!=null && currentfaction.getOwner()==st.getCharacter()) {
-            Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, Char.get(j.getInt("from")), "Invite Invalid", targetfaction.getName(), null, null, "Invite to faction but leader of current faction");
+            Audit.audit(st, Audit.OPERATOR.CHARACTER, null, Char.get(j.getInt("from")), "Invite Invalid", targetfaction.getName(), null, null, "Invite to faction but leader of current faction");
             return new OKResponse("Invitation invalid, you are leader of "+currentfaction.getName());
         }
         if (currentfaction!=null) { 
             try { currentfaction.removeMember(st.getCharacter()); }
             catch (UserException e) {
-                Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, Char.get(j.getInt("from")), "Invite Invalid", targetfaction.getName(), null, null, "Invite to faction failed, leaving old faction errored - "+e.getMessage());
+                Audit.audit(st, Audit.OPERATOR.CHARACTER, null, Char.get(j.getInt("from")), "Invite Invalid", targetfaction.getName(), null, null, "Invite to faction failed, leaving old faction errored - "+e.getMessage());
                 return new ErrorResponse("Unable to leave existing faction - "+e.getMessage());
             }
         }
@@ -99,7 +99,7 @@ public abstract class GetMessages {
         catch (UserException e) {
             return new ErrorResponse("Unable to join new faction - "+e.getMessage());
         }
-        Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, Char.get(j.getInt("from")), "Invite Accepted", targetfaction.getName(), null, null, "Accepted faction invite");
+        Audit.audit(st, Audit.OPERATOR.CHARACTER, null, Char.get(j.getInt("from")), "Invite Accepted", targetfaction.getName(), null, null, "Accepted faction invite");
         return new OKResponse("Faction invite accepted");
     }
 

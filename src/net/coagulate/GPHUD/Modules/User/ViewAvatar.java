@@ -1,11 +1,11 @@
 package net.coagulate.GPHUD.Modules.User;
 
 import java.util.List;
+import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Tools.SystemException;
 import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.DateTime;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -21,6 +21,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 
 /** Views an Avatar object.
  *
@@ -32,36 +33,50 @@ public abstract class ViewAvatar {
     public static void viewAvatar(State st,SafeMap values) throws UserException, SystemException {
         String split[]=st.getDebasedURL().split("/");
         String id=split[split.length-1];
-        Avatar a=Avatar.get(Integer.parseInt(id));
+        User a=User.get(Integer.parseInt(id));
         viewAvatar(st,values,a);
     }
 
     
-    public static void viewAvatar(State st,SafeMap values,Avatar a) throws UserException, SystemException {
+    public static void viewAvatar(State st,SafeMap values,User a) throws UserException, SystemException {
+        boolean fullinstance=false;
         boolean full=false;
         String tz=st.avatar().getTimeZone();
-        if (st.avatar()==a) { full=true; }
-        if (st.hasPermission("Characters.ViewAll")) { full=true; }
+        if (st.avatar()==a) { fullinstance=true; full=true; }
+        if (st.hasPermission("Characters.ViewAll")) { fullinstance=true; }
+        if (st.isSuperUser()) { fullinstance=true; full=true; }
         Form f=st.form;
         f.noForm();
         f.add(new TextSubHeader(a.getName()));
         Table kvtable=new Table(); f.add(kvtable);
-        for (Char c:a.getCharacters(st.getInstance())) {
+        for (Char c:Char.getCharacters(st.getInstance(),a)) {
             kvtable.openRow().add("Owned Character").add(c);
         }
         String lastactive=fromUnixTime(a.getLastActive(),tz)+" "+tz;
         kvtable.openRow().add("Last Active").add(lastactive);
         kvtable.openRow().add("Selected Time Zone").add(tz);
-        if (st.avatar()!=null && st.avatar()==a) {
-            kvtable.add(new Form(st, true, "../settimezone", "Set TimeZone", "timezone",tz));
+
+        kvtable.openRow().add("SuperUser").add(""+a.isSuperAdmin());
+        kvtable.openRow().add("DeveloperKey").add(""+a.hasDeveloperKey());
+        if (!(full || fullinstance)) {
+            kvtable.openRow().add("<b>Avatar</b>").add("<b>Character</b>").add("<b>Instance</b>");
+            for (Char c:Char.getCharacters(a)) { kvtable.openRow().add("").add(c).add(c.getInstance()); }
+            Results rows=net.coagulate.GPHUD.Data.Audit.getAudit(st.getInstance(),a,null);
+            Table table = net.coagulate.GPHUD.Data.Audit.formatAudit(rows,a.getTimeZone());
+            st.form.add(table);        
+
+        
+            if (st.avatar()!=null && st.avatar()==a) {
+                kvtable.add(new Form(st, true, "../settimezone", "Set TimeZone", "timezone",tz));
+            }
+            //for (String key:kv.keySet()) {
+            //    String value=kv.get(key);
+            //    kvtable.openRow().add(key).add(value);
+            //}
+            if (a.getName().equals("SYSTEM")) { f.add("<p><i>SYSTEM is a fake avatar used internally as an 'Invoking Avatar' for commands that usually require an active Avatar/Character, but there is no appropriate caller, e.g. Visitation XP is awarded by the SYSTEM avatar to prevent confusion and clutter in some other character/avatar's audit log</i></p>"); }
+            f.add(new TextSubHeader("Audit Trail"));
+            f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(),a,null),st.avatar().getTimeZone()));
         }
-        //for (String key:kv.keySet()) {
-        //    String value=kv.get(key);
-        //    kvtable.openRow().add(key).add(value);
-        //}
-        if (a.getName().equals("SYSTEM")) { f.add("<p><i>SYSTEM is a fake avatar used internally as an 'Invoking Avatar' for commands that usually require an active Avatar/Character, but there is no appropriate caller, e.g. Visitation XP is awarded by the SYSTEM avatar to prevent confusion and clutter in some other character/avatar's audit log</i></p>"); }
-        f.add(new TextSubHeader("Audit Trail"));
-        f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(),null,a,null),st.avatar().getTimeZone()));
     }
 
     @URLs(url="/avatars/settimezone")

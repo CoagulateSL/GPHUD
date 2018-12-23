@@ -107,7 +107,7 @@ public abstract class Management {
     {
         try { st.getInstance().createCharacterGroup(name,false,type); }
         catch (UserException e) { return new ErrorResponse("Failed to create group: "+e.getMessage()); }
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Create Group", type, null, name, "Created new group "+name+" of type "+type);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create Group", type, null, name, "Created new group "+name+" of type "+type);
         return new OKResponse("Successfully created group");
     }
     
@@ -190,7 +190,7 @@ public abstract class Management {
         if (newowner==oldowner) { return new OKResponse("That character ("+newowner.getName()+") is already the group leader"); }
         if (newowner==null) {
             group.setOwner(null);
-            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,null,"SetOwner",group.getName(),oldownername,null,"Group leader removed");
+            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOwner",group.getName(),oldownername,null,"Group leader removed");
             if (oldowner!=null) { oldowner.hudMessage(("You are no longer the group leader for "+group.getName())); }
             return new OKResponse("Group leader removed.");
         }
@@ -201,7 +201,7 @@ public abstract class Management {
         if (oldowner!=null) { oldowner.hudMessage(("You are no longer the group leader for "+group.getName())); }
         newowner.hudMessage("You are now the group leader for "+group.getName());
         group.setOwner(newowner);
-        Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,newowner,"SetOwner",group.getName(),oldownername, newowner.getName(), "Group leader changed");
+        Audit.audit(st,Audit.OPERATOR.AVATAR,null,newowner,"SetOwner",group.getName(),oldownername, newowner.getName(), "Group leader changed");
         return new OKResponse("Group leader updated");
     }
     
@@ -237,7 +237,7 @@ public abstract class Management {
             result=newmember.getName()+" was moved into group "+group.getName()+" (was formerly in "+existinggroup.getName()+")";
         }
         newmember.hudMessage("You have been added to the group "+group.getName());
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, newmember, "AddMember", group.getName(), oldgroupname, group.getName(), result);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, newmember, "AddMember", group.getName(), oldgroupname, group.getName(), result);
         return new OKResponse(result);
     }
     
@@ -256,7 +256,7 @@ public abstract class Management {
         try { group.removeMember(member); }
         catch (UserException e) { return new ErrorResponse("Failed to remove member - "+e.getMessage()); }
         member.hudMessage("You have been removed from group "+group.getName());
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, member, "RemoveMember", group.getName(), group.getName(), null, "Removed member from group");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, member, "RemoveMember", group.getName(), group.getName(), null, "Removed member from group");
         return new OKResponse(member.getName()+" was removed from group "+group.getName());
     }
     
@@ -271,7 +271,7 @@ public abstract class Management {
                 CharacterGroup group) {
         String groupname=group.getName();
         group.delete();
-        Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,null,"DeleteGroup",groupname,groupname,null,"Group was deleted");
+        Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"DeleteGroup",groupname,groupname,null,"Group was deleted");
         return new OKResponse(groupname+" was deleted");
     }
     
@@ -303,7 +303,7 @@ public abstract class Management {
         } else {
             character.hudMessage("You are no longer a group administrator for "+group.getName());
         }
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, character, "SetAdmin", group.getName(), oldflag+"", admin+"", "Set admin flag");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetAdmin", group.getName(), oldflag+"", admin+"", "Set admin flag");
         return new OKResponse("Successfully altered admin flag on "+character+" in "+group);
     }
    @URLs(url="/groups/setopen")
@@ -322,7 +322,7 @@ public abstract class Management {
         // must be instance admin or group owner
         boolean oldflag=group.isOpen();
         group.setOpen(open);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "SetOpen", group.getName(), oldflag+"", open+"", "Set open flag");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetOpen", group.getName(), oldflag+"", open+"", "Set open flag");
         return new OKResponse("Successfully set open flag to "+open+" on group "+group.getName());
     }
     

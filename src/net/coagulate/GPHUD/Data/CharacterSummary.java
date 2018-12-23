@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 
 /** Just used to store data about characters for the "view all" page, because interrogating everything one cell at a time would be painful.
  * See Instance.getCharacterSummary()
@@ -63,7 +64,7 @@ public class CharacterSummary {
         Row r=new Row();
         if (retired) { r.setbgcolor("#ffe0e0"); }
         r.add(Char.getLink(name, "characters", id));
-        r.add(Avatar.getLink(ownername,"avatars", ownerid));
+        r.add(User.getGPHUDLink(ownername,ownerid));
         String tz=st.avatar().getTimeZone();
         r.add(fromUnixTime(lastactive,tz)+" "+tz);
         r.add(online);

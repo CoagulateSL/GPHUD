@@ -69,7 +69,7 @@ public abstract class Management {
     {
         try { st.getInstance().createCharacterGroup(name,false,"Faction"); }
         catch (UserException e) { return new ErrorResponse("Failed to create faction: "+e.getMessage()); }
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, null, "Create Faction", name, null, name, "Created new faction "+name);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create Faction", name, null, name, "Created new faction "+name);
         return new OKResponse("Successfully created faction group");
     }
     
@@ -152,7 +152,7 @@ public abstract class Management {
         if (newowner==oldowner) { return new OKResponse("That character ("+newowner.getName()+") is already the faction leader"); }
         if (newowner==null) {
             faction.setOwner(null);
-            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,null,"SetOwner",faction.getName(),oldownername,null,"Faction leader removed");
+            Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOwner",faction.getName(),oldownername,null,"Faction leader removed");
             if (oldowner!=null) { oldowner.hudMessage(("You are no longer the faction leader for "+faction.getName())); }
             return new OKResponse("Faction leader removed.");
         }
@@ -163,7 +163,7 @@ public abstract class Management {
         if (oldowner!=null) { oldowner.hudMessage(("You are no longer the faction leader for "+faction.getName())); }
         newowner.hudMessage("You are now the faction leader for "+faction.getName());
         faction.setOwner(newowner);
-        Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,newowner,"SetOwner",faction.getName(),oldownername, newowner.getName(), "Faction leader changed");
+        Audit.audit(st,Audit.OPERATOR.AVATAR,null,newowner,"SetOwner",faction.getName(),oldownername, newowner.getName(), "Faction leader changed");
         return new OKResponse("Faction leader updated");
     }
     
@@ -193,7 +193,7 @@ public abstract class Management {
             result=newmember.getName()+" was moved into faction "+faction.getName()+" (was formerly in "+existingfaction.getName()+")";
         }
         newmember.hudMessage("You have been added to the faction "+faction.getName());
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, newmember, "AddMember", faction.getName(), oldfactionname, faction.getName(), result);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, newmember, "AddMember", faction.getName(), oldfactionname, faction.getName(), result);
         return new OKResponse(result);
     }
     
@@ -217,7 +217,7 @@ public abstract class Management {
         try { existingfaction.removeMember(member); }
         catch (UserException e) { return new ErrorResponse("Failed to remove member - "+e.getMessage()); }
         member.hudMessage("You have been removed from faction "+faction.getName());
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, member, "RemoveMember", faction.getName(), faction.getName(), null, "Removed member from faction group");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, member, "RemoveMember", faction.getName(), faction.getName(), null, "Removed member from faction group");
         return new OKResponse(member.getName()+" was removed from their faction "+faction.getName());
     }
     
@@ -233,7 +233,7 @@ public abstract class Management {
         if (!faction.getType().equals("Faction")) { return new ErrorResponse(faction.getName()+" is not a faction."); }
         String factionname=faction.getName();
         faction.delete();
-        Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,null,"DeleteFaction",factionname,factionname,null,"Faction was deleted");
+        Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"DeleteFaction",factionname,factionname,null,"Faction was deleted");
         return new OKResponse(factionname+" was deleted");
     }
     
@@ -266,7 +266,7 @@ public abstract class Management {
         } else {
             character.hudMessage("You are no longer a faction administrator for "+faction.getName());
         }
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, character, "SetAdmin", faction.getName(), oldflag+"", admin+"", "Set admin flag");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetAdmin", faction.getName(), oldflag+"", admin+"", "Set admin flag");
         return new OKResponse("Successfully altered admin flag on "+character+" in "+faction);
     }
 }

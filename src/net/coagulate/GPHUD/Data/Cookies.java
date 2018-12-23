@@ -8,6 +8,7 @@ import net.coagulate.Core.Tools.Tokens;
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.SL.Data.User;
 
 /** Handles session cookies.
  * Session cookies are used in numerous places throughout HTTP interactions.
@@ -76,29 +77,21 @@ public class Cookies {
     private void load() {
         r=GPHUD.getDB().dqone(true,"select * from cookies where cookie=?",cookie);
     }
-    /** Get the user for this cookie
-     * 
-     * @return The user, or null
-     */
-    public User getUser() {
-        Integer userid=r.getInt("userid");
-        if (userid==null) { return null; }
-        return User.get(userid);
-    }
+
     /** Return the avatar associated with this cookie
      * 
      * @return The avatar, or null.
      */
-    public Avatar getAvatar() {
+    public User getAvatar() {
         Integer avatarid=r.getInt("avatarid");
         if (avatarid==null) { return null; }
-        return Avatar.get(avatarid);
+        return User.get(avatarid);
     }    
     /** Set the avatar for this cookie
      * 
      * @param avatar Avatar to set to
      */
-    public void setAvatar(Avatar avatar) {
+    public void setAvatar(User avatar) {
         /*if (avatar==null) { 
             GPHUD.getDB().d("update cookies set avatarid=null where cookie=?",cookie); load(); return;
         }*/
@@ -155,7 +148,7 @@ public class Cookies {
      * @param renewable Cookie can be refreshed
      * @return 
      */
-    public static String generate(User user, Avatar avatar, Char character, Instance instance,boolean renewable) {
+    public static String generate(User avatar, Char character, Instance instance,boolean renewable) {
         String cookie=Tokens.generateToken();
         int expiresafter=COOKIE_LIFESPAN;
         int expire=getUnixTime();
@@ -163,13 +156,11 @@ public class Cookies {
         Integer renewableint=0;
         if (renewable) { renewableint=1; }
         String id="";
-        if (user!=null) { id+=" User:"+user.toString(); }
         if (avatar!=null) { id+=" Avatar:"+avatar.toString(); }
         if (character!=null) { id+=" Character:"+character.toString(); }
-        GPHUD.getDB().d("insert into cookies(cookie,expires,renewable,userid,avatarid,characterid,instanceid) values(?,?,?,?,?,?,?)",cookie,
+        GPHUD.getDB().d("insert into cookies(cookie,expires,renewable,userid,avatarid,characterid,instanceid) values(?,?,?,?,?,?)",cookie,
                 expire,
                 renewableint,
-                getId(user),
                 getId(avatar),
                 getId(character),
                 getId(instance));
@@ -179,6 +170,10 @@ public class Cookies {
         if (r==null) { return new NullInteger(); }
         return r.getId();
     }
+    private static Object getId(User r) {
+        if (r==null) { return new NullInteger(); }
+        return r.getId();
+    }
     
-    public String toString() { return "User:"+getUser()+", Avatar:"+getAvatar()+", Instance: "+getInstance()+", Character:"+getCharacter(); }
+    public String toString() { return "Avatar:"+getAvatar()+", Instance: "+getInstance()+", Character:"+getCharacter(); }
 }

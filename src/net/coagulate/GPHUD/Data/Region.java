@@ -23,6 +23,7 @@ import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
 /** Reference to a region, which is connected to an instance.
@@ -177,7 +178,7 @@ public class Region extends TableRow {
         // iterate over the current visits
         for (ResultsRow row:db) { 
             int avatarid=row.getInt("avatarid");
-            String name=Avatar.get(avatarid).getName();
+            String name=User.get(avatarid).getName();
             // make sure those visits are in the list of avatars
             if (avatars.contains(name)) {
                 avatars.remove(name); // matches an avatar on the sim.
@@ -198,9 +199,9 @@ public class Region extends TableRow {
      * @param st State
      * @param avatars List of Avatar UUIDs or Names that have left the sim.
      */
-    public void departingAvatars(State st,Set<Avatar> avatars) {
+    public void departingAvatars(State st,Set<User> avatars) {
         boolean debug=false;
-        for (Avatar avatar:avatars) {
+        for (User avatar:avatars) {
             // for all the departing avatars
             if (debug) { System.out.println("Departing "+avatar); }
             try {
@@ -209,7 +210,7 @@ public class Region extends TableRow {
                 Results rows=dq("select characterid from visits where avatarid=? and regionid=? and endtime is null",avatarid,getId());
                 int count=rows.size();
                 if (count>0) {
-                    st.logger().info("Disconnected avatar "+avatar.getNameSafe());
+                    st.logger().info("Disconnected avatar "+avatar.getName());
                     d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",UnixTime.getUnixTime(),getId(),avatarid);
                 }
                 // computer visit XP ((TODO REFACTOR ME?))
@@ -266,8 +267,8 @@ public class Region extends TableRow {
             String olddesc=formatVersion(oldversion,olddatetime,false);
             String newdesc=formatVersion(newversion,newdatetime,false);
             st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc);
-            State fake=new State(); fake.setInstance(st.getInstance()); fake.setAvatar(Avatar.getSystem(st));
-            Audit.audit(fake, Audit.OPERATOR.AVATAR,null, null, null, "Upgrade", type, olddesc, newdesc, "Product version upgraded");
+            State fake=new State(); fake.setInstance(st.getInstance()); fake.setAvatar(User.getSystem());
+            Audit.audit(fake, Audit.OPERATOR.AVATAR, null, null, "Upgrade", type, olddesc, newdesc, "Product version upgraded");
         }
     }
 

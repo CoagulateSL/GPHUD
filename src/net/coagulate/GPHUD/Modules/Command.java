@@ -16,7 +16,6 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.Event;
@@ -56,6 +55,7 @@ import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.TEXT_ONELINE;
 import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.ZONE;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
 /** A command, probably derived from Annotations.
@@ -80,7 +80,7 @@ public abstract class Command {
         boolean permitUserWeb() default true;
     }
 
-    public static enum Context { ANY, CHARACTER, AVATAR, USER };
+    public static enum Context { ANY, CHARACTER, AVATAR};
     
     public abstract Method getMethod();
     public abstract boolean isGenerated(); 
@@ -177,8 +177,8 @@ public abstract class Command {
                         if (v.startsWith(">")) {
                             v=v.substring(1);
                             try {
-                                Avatar a=Avatar.find(v); 
-                                targchar=a.getActiveCharacter();
+                                User a=User.find(v); 
+                                targchar=Char.getActive(a);
                             } catch (NoDataException e) { throw new UserException("Unable to find character or avatar named '"+v+"'"); }
                         } else {
                             targchar=Char.resolve(st, v);
@@ -196,7 +196,7 @@ public abstract class Command {
                         break;
                     case AVATAR:
                     case AVATAR_NEAR:
-                        typedargs.add(assertNotNull(Avatar.find(v), v, "avatar"));
+                        typedargs.add(assertNotNull(User.find(v), v, "avatar"));
                         break;
                     default:
                         throw new SystemException("Unhandled ENUM TYPE in executor:" + type);
@@ -289,11 +289,6 @@ public abstract class Command {
                     }
                     if (st.avatar() == null) {
                         return new ErrorResponse("Avatar context required, your request is lacking an avatar registration");
-                    }
-                    break;
-                case USER:
-                    if (st.user == null) {
-                        return new ErrorResponse("User context required, your request is lacking a user login");
                     }
                     break;
                 default:
@@ -416,7 +411,7 @@ public abstract class Command {
                     json.put("arg" + arg + "type", "TEXTBOX");
                     break;
                 case CHARACTER_PLAYABLE:
-                    Set<Char> options = st.avatar().getPlayableCharacters(st.getInstance());
+                    Set<Char> options = Char.getCharacters(st.getInstance(),st.getAvatar());
                     if (options.size()>12) {
                         json.put("arg"+arg+"type","TEXTBOX");
                     } else {

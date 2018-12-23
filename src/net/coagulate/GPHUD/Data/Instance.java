@@ -20,6 +20,7 @@ import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
 /** Reference to an instance
@@ -64,7 +65,7 @@ public class Instance extends TableRow {
      * @return Blank string on success, otherwise error hudMessage
      * @throws UserException If the instance already exists (by name)
      */
-    public static void create(String name, Avatar caller) throws UserException {
+    public static void create(String name, User caller) throws UserException {
         if (name==null || name.equals("")) { throw new SystemException("Can't create null or empty instance"); }
         if (caller==null) { throw new SystemException("Owner can't be null"); }
         Integer exists=GPHUD.getDB().dqi(false,"select count(*) from instances where name like ?",name);
@@ -97,7 +98,7 @@ public class Instance extends TableRow {
      * @param owner Avatar to find instances for
      * @return Set of Instance objects, which may be empty
      */
-    public static Set<Instance> getInstances(Avatar owner) {
+    public static Set<Instance> getInstances(User owner) {
         Set<Instance> instances=new TreeSet<>();
         Results results=GPHUD.getDB().dq("select instanceid from instances where owner=?",owner.getId());
         for (ResultsRow r:results) {
@@ -109,9 +110,9 @@ public class Instance extends TableRow {
      * 
      * @return Avatar that owns the instance
      */
-    public Avatar getOwner() {
+    public User getOwner() {
         Integer id=getInt("owner");
-        return Avatar.get(id);
+        return User.get(id);
     }
 
     @Override
@@ -273,14 +274,14 @@ public class Instance extends TableRow {
     public int broadcastAdmins(State st,String message) {
         JSONObject j=new JSONObject();
         j.put("message","ADMIN : "+message);
-        Set<Avatar> targets=new TreeSet<>();
+        Set<User> targets=new TreeSet<>();
         targets.add(this.getOwner());
         //System.out.println("Pre broadcast!");
         Results results=dq("select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like 'instance.receiveadminmessages'",getId());
-        for (ResultsRow r:results) { targets.add(Avatar.get(r.getInt())); }
+        for (ResultsRow r:results) { targets.add(User.get(r.getInt())); }
         //System.out.println("Avatars:"+targets.size());
         Set<Char> chars=new TreeSet<>();
-        for (Avatar a:targets) {
+        for (User a:targets) {
             Results charlist=dq("select characterid from characters where instanceid=? and playedby=? and url is not null",getId(),a.getId());
             for (ResultsRow rr:charlist) { chars.add(Char.get(rr.getInt())); }
         }
@@ -471,7 +472,7 @@ public class Instance extends TableRow {
      * 
      * @param id New owner
      */
-    public void setOwner(Avatar id) {
+    public void setOwner(User id) {
         d("update instances set owner=? where instanceid=?",id.getId(),getId());
     }
     

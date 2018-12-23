@@ -24,7 +24,7 @@ public abstract class Retirement {
         if (!st.getKV("Instance.AllowSelfRetire").boolValue()) { return new ErrorResponse("Retirement is not presently permitted"); }
         if (!st.getCharacter().retired()) {
             st.getCharacter().retire();
-            Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, st.avatar(), st.getCharacter(), "SET", "RETIRED", Boolean.toString(st.getCharacter().retired()), "true", "Character self retired");
+            Audit.audit(true, st, Audit.OPERATOR.CHARACTER, st.avatar(), st.getCharacter(), "SET", "RETIRED", Boolean.toString(st.getCharacter().retired()), "true", "Character self retired");
         }
         JSONObject json=new JSONObject();
         json.put("reboot","Character has retired");
@@ -39,7 +39,7 @@ public abstract class Retirement {
         target.validate(st);
         if (target.retired()) { return new OKResponse("Target character is already retired"); }
         target.retire();
-        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, target, "SET", "RETIRED", Boolean.toString(target.retired()), "true", "Character retired by administrator");
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, target, "SET", "RETIRED", Boolean.toString(target.retired()), "true", "Character retired by administrator");
         target.hudMessage("This character has been retired by Administrator '"+st.avatar().getName()+"'");
         target.push("reboot", "Restarting due to character being retired.");
         return new OKResponse("Target character is retired");

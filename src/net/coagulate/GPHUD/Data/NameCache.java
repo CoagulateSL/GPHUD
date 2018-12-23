@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.SL.Data.User;
 
 /** Implements a naming cache, please read the warnings.
  * Warning:  GPHUD is not intended to use caching - the database can be updated by external systems (e.g. the other node).
@@ -16,7 +17,6 @@ import net.coagulate.GPHUD.GPHUD;
  */
 public class NameCache {
 
-    Map<Integer,String> usernames=null;
     Map<Integer,String> avatarnames=null;
     Map<Integer,String> characternames=null;
     Map<Integer,String> instancenames=null;
@@ -24,11 +24,7 @@ public class NameCache {
     
 
     public String lookup(User u) {
-        if (usernames==null) { usernames=loadMap("users","userid","username"); }
-        return usernames.get(u.getId());
-    }
-    public String lookup(Avatar u) {
-        if (avatarnames==null) { avatarnames=loadMap("avatars","avatarid","avatarname"); }
+        if (avatarnames==null) { avatarnames=User.loadMap(); }
         return avatarnames.get(u.getId());
     }
     public String lookup(Char u) {

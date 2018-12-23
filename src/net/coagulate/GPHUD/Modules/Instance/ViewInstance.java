@@ -32,7 +32,7 @@ public abstract class ViewInstance {
         if (st.isSuperUser()) { full=true; }
         Table map=new Table(); st.form.add(map);
         map.openRow().add("Name").add(i.getName());
-        map.openRow().add("Owner").add(i.getOwner());
+        map.openRow().add("Owner").add(i.getOwner().getGPHUDLink());
         for (Region r:i.getRegions()) {
             map.openRow().add("Region").add(r).add(r.getOnlineStatus(tz));
             map.openRow().add("").add("").add("Server "+r.getServerVersion(true));

@@ -11,6 +11,7 @@ import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 
 /** Reference to a permissions group.
  * A group of avatars with permissions bound to an instance.
@@ -99,7 +100,7 @@ public class PermissionsGroup extends TableRow {
         Results results=dq("select avatarid,caninvite,cankick from permissionsgroupmembers where permissionsgroupid=?",getId());
         for (ResultsRow r:results) {
             PermissionsGroupMembership record=new PermissionsGroupMembership();
-            record.avatar=Avatar.get(r.getInt("avatarid"));
+            record.avatar=User.get(r.getInt("avatarid"));
             record.caninvite=false; if (r.getInt("caninvite")==1) { record.caninvite=true; }
             record.cankick=false; if (r.getInt("cankick")==1) { record.cankick=true; }
             members.add(record);
@@ -148,7 +149,7 @@ public class PermissionsGroup extends TableRow {
      * @param avatar Avatar to add to the group
      * @throws UserException Avatar can not be added, e.g. is already in group
      */
-    public void addMember(Avatar avatar) throws UserException {
+    public void addMember(User avatar) throws UserException {
         int exists=dqi(true,"select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),avatar.getId());
         if (exists>0) { throw new UserException("Avatar is already a member of group?"); }
         d("insert into permissionsgroupmembers(permissionsgroupid,avatarid) values(?,?)",getId(),avatar.getId());
@@ -159,7 +160,7 @@ public class PermissionsGroup extends TableRow {
      * @param avatar Avatar to remove from the group
      * @throws UserException If the user can not be removed, such as not being in the group
      */
-    public void removeMember(Avatar avatar) throws UserException {
+    public void removeMember(User avatar) throws UserException {
         int exists=dqi(true,"select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),avatar.getId());
         d("delete from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),avatar.getId());
         if (exists==0) { throw new UserException("Avatar not in group."); }
@@ -172,7 +173,7 @@ public class PermissionsGroup extends TableRow {
      * @param cankick Set the avatar's ability to remove other avatars from this group
      * @throws UserException If the user's permissions can not be updated, i.e. not in the group
      */
-    public void setUserPermissions(Avatar a, Boolean caninvite, Boolean cankick) throws UserException {
+    public void setUserPermissions(User a, Boolean caninvite, Boolean cankick) throws UserException {
         int exists=dqi(true,"select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),a.getId());
         if (exists==0) { throw new UserException("Avatar not in group."); }
         int inviteval=0; if (caninvite) { inviteval=1; }

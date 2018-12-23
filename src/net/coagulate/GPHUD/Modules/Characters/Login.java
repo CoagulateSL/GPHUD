@@ -7,12 +7,13 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Avatar;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Instance;
+import net.coagulate.GPHUD.Data.PrimaryCharacters;
 import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Data.Visits;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -26,6 +27,7 @@ import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,7 +62,7 @@ public abstract class Login {
             return new ErrorResponse("You are not set up with a callback URL");
         }       
         boolean autocreate=st.getKV("Instance.AutoNameCharacter").boolValue();
-        Char character=st.avatar().getPrimaryCharacter(st,autocreate);
+        Char character=PrimaryCharacters.getPrimaryCharacter(st,autocreate);
         if (character==null) {
             if (autocreate) { throw new UserException("Failed to get/create a character for user "+st.avatar()); } // autocreate or die :P
             // if not auto create, offer "characters.create" i guess
@@ -133,13 +135,13 @@ public abstract class Login {
         st.getCharacter().setRegion(region);
         JSONObject registeringjson=new JSONObject().put("incommand","registering");
         Transmission registering=new Transmission((Char)null,registeringjson,url); registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
-        st.avatar().initVisit(st, st.getCharacter(),region);
+        Visits.initVisit(st, st.getCharacter(),region);
         if (version!=null && versiondate!=null && versiontime!=null) { 
             region.recordHUDVersion(st,version,versiondate,versiontime);
         }
         character.setPlayedBy(st.avatar());
         Instance instance=st.getInstance();
-        String cookie=Cookies.generate(null, st.avatar(), st.getCharacter(),instance, true);
+        String cookie=Cookies.generate(st.avatar(), st.getCharacter(),instance, true);
         JSONObject legacymenu=Modules.getJSONTemplate(st,"menus.main");
         JSONObject rawresponse=new JSONObject();
         int apremain=abilityPointsRemaining(st);
@@ -170,19 +172,19 @@ public abstract class Login {
             return new JSONResponse(json);
         }
         try {
-            if (Avatar.resolve(charactername)!=null) {
-                if (Avatar.resolve(charactername)!=st.avatar()) { return new ErrorResponse("You may not name a character after an avatar, other than yourself"); }
+            if (User.find(charactername)!=null) {
+                if (User.find(charactername)!=st.avatar()) { return new ErrorResponse("You may not name a character after an avatar, other than yourself"); }
             }
         } catch (NoDataException e) {}
         boolean autoname = st.getKV("Instance.AutoNameCharacter").boolValue();
         if (autoname && !st.avatar().getName().equalsIgnoreCase(charactername)) { return new ErrorResponse("You must name your one and only character after your avatar"); }
         int maxchars=st.getKV("Instance.MaxCharacters").intValue();
-        if (maxchars<=st.avatar().getCharacters().size() && !st.hasPermission("Characters.ExceedCharLimits")) { return new ErrorResponse("You are not allowed more than "+maxchars+" active characters"); }
+        if (maxchars<=Char.getCharacters(st.getInstance(), st.avatar()).size() && !st.hasPermission("Characters.ExceedCharLimits")) { return new ErrorResponse("You are not allowed more than "+maxchars+" active characters"); }
         boolean charswitchallowed=st.getKV("Instance.CharacterSwitchEnabled").boolValue();
         if (!charswitchallowed) { return new ErrorResponse("You are not allowed to create or switch characters in this location"); }
-        st.avatar().create(st,charactername);
+        Char.create(st,charactername);
         Char c=Char.resolve(st, charactername);
-        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, c, "Create", "Character", "", charactername, "Avatar attempted to create character, result: "+c);
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, c, "Create", "Character", "", charactername, "Avatar attempted to create character, result: "+c);
         return login(st,null,null,null);
     }
     
@@ -198,7 +200,7 @@ public abstract class Login {
         if (character.retired()) { return new ErrorResponse("Character '"+character+"' has been retired and can not be selected"); }
         GPHUD.purgeURL(st.callbackurl);
         if (st.getCharacterNullable()!=null) { st.purgeCache(st.getCharacter()); }
-        st.avatar().setPrimaryCharacter(st, character);
+        PrimaryCharacters.setPrimaryCharacter(st, character);
         return login(st,null,null,null);
     }
     
@@ -232,7 +234,7 @@ public abstract class Login {
             case POOL:
                 throw new UserException("Attempt to initialise pool attribute is invalid.");
         }
-        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, st.getCharacter(), "Initialise", attribute.getName(), null, value, "Character creation initialised attribute");
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, st.getCharacter(), "Initialise", attribute.getName(), null, value, "Character creation initialised attribute");
         return login(st,null,null,null);
     }
 }

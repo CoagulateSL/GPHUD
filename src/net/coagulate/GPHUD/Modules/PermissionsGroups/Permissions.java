@@ -38,7 +38,7 @@ public abstract class Permissions {
         if (!Modules.getPermission(st,permission).grantable()) { return new ErrorResponse("The permission '"+permission+"' is not grantable through user action."); }
         try { permissionsgroup.addPermission(st,permission); }
         catch (UserException e) { return new ErrorResponse("Failed to add permission to permissions group - "+e.getMessage()); }
-        Audit.audit(st, Audit.OPERATOR.AVATAR,null, null, null, "Add Permission", permissionsgroup.getNameSafe(), null, permission, "Permission added to permissions group");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Add Permission", permissionsgroup.getNameSafe(), null, permission, "Permission added to permissions group");
         return new OKResponse("Added "+permission+" to permissions group "+permissionsgroup.getNameSafe());
     }
 
@@ -57,7 +57,7 @@ public abstract class Permissions {
         if (!st.isInstanceOwner()) { return new ErrorResponse("No permission to modify the permissions on this group."); }
         try { permissionsgroup.removePermission(permission); }
         catch (UserException e) { return new ErrorResponse("Failed to remove permission from permissions group - "+e.getMessage()); }
-        Audit.audit(st, Audit.OPERATOR.AVATAR,null, null, null, "Del Permission", permissionsgroup.getNameSafe(), permission, null, "Permission removed from permissions group");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Del Permission", permissionsgroup.getNameSafe(), permission, null, "Permission removed from permissions group");
         return new OKResponse("Removed "+permission+" from permissions group "+permissionsgroup.getNameSafe());
     }
 }
