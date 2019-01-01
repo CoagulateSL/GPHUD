@@ -177,7 +177,7 @@ public abstract class Command {
                         if (v.startsWith(">")) {
                             v=v.substring(1);
                             try {
-                                User a=User.find(v); 
+                                User a=User.findMandatory(v); 
                                 targchar=Char.getActive(a);
                             } catch (NoDataException e) { throw new UserException("Unable to find character or avatar named '"+v+"'"); }
                         } else {
@@ -196,7 +196,7 @@ public abstract class Command {
                         break;
                     case AVATAR:
                     case AVATAR_NEAR:
-                        typedargs.add(assertNotNull(User.find(v), v, "avatar"));
+                        typedargs.add(assertNotNull(User.findMandatory(v), v, "avatar"));
                         break;
                     default:
                         throw new SystemException("Unhandled ENUM TYPE in executor:" + type);

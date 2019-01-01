@@ -173,8 +173,9 @@ public abstract class Login {
             return new JSONResponse(json);
         }
         try {
-            if (User.find(charactername)!=null) {
-                if (User.find(charactername)!=st.avatar()) { return new ErrorResponse("You may not name a character after an avatar, other than yourself"); }
+            User user=User.findOptional(charactername);
+            if (user!=null) {
+                if (user!=st.avatar()) { return new ErrorResponse("You may not name a character after an avatar, other than yourself"); }
             }
         } catch (NoDataException e) {}
         boolean autoname = st.getKV("Instance.AutoNameCharacter").boolValue();

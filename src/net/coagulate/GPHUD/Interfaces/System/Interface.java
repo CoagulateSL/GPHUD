@@ -180,7 +180,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         // hooks to allow things to run as "not the objects owner" (the default)
         String runasavatar=null;
         try { runasavatar=obj.getString("runasavatar"); } catch (JSONException e) {}
-        if (runasavatar!=null && (!(runasavatar.equals("")))) { st.setAvatar(User.find(runasavatar)); st.issuid=true; }
+        if (runasavatar!=null && (!(runasavatar.equals("")))) { st.setAvatar(User.findMandatory(runasavatar)); st.issuid=true; }
         String runascharacter=null;
         try { runascharacter=obj.getString("runascharacter"); } catch (JSONException e) {}
         if (runascharacter!=null && (!(runascharacter.equals("")))) { st.setCharacter(Char.get(Integer.parseInt(runascharacter))); st.issuid=true; }

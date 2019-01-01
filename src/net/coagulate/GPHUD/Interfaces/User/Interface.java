@@ -424,7 +424,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         String password=values.get("password");
         String failed="";
         if (values.get("Submit").equals("Submit") && !(username.isEmpty()) && !(password.isEmpty())) {
-            User target=User.find(username);
+            User target=User.findOptional(username);
             if (target==null) {
                 failed="Incorrect credentials.";
                 st.logger().log(WARNING,"Attempt to login as '"+username+"' failed, no such user.");

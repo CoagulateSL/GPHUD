@@ -282,7 +282,7 @@ public class Char extends TableRow {
         if (avatars==null || avatars.isEmpty()) { throw new UserException("Sorry, you are not near any other avatars"); }
         for (String key:avatars.split(",")) {
             if (debug) { System.out.println("KEY:"+key); } 
-            User a=User.find(key);
+            User a=User.findOptional(key);
             if (debug) { System.out.println(a); }
             if (a!=null) {
                 Char c=null;

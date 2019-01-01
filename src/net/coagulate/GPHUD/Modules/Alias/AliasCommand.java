@@ -103,7 +103,7 @@ public class AliasCommand extends Command {
             if (v.startsWith(">")) {
                 v=v.substring(1);
                 try {
-                    User a=User.find(v); 
+                    User a=User.findMandatory(v); 
                     targchar=Char.getActive(a);
                 } catch (NoDataException e) { throw new UserException("Unable to find character or avatar named '"+v+"'"); }
             } else {
