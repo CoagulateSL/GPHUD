@@ -91,7 +91,7 @@ public abstract class Audit {
                 "sourceowner," +
                 "sourcedeveloper," +
                 "sourceregion," +
-                "sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     getUnixTime(),
                     getId(stinstance),
                     getId(avatar),
