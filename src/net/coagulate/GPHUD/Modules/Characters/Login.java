@@ -166,6 +166,7 @@ public abstract class Login {
             @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the new character")
                 String charactername)
     {
+        try {
         if (Char.resolve(st, charactername)!=null) {
             JSONObject json = Modules.getJSONTemplate(st, "characters.create");
             json.put("message", "Character name already taken - please retry");
@@ -186,6 +187,8 @@ public abstract class Login {
         Char c=Char.resolve(st, charactername);
         Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, c, "Create", "Character", "", charactername, "Avatar attempted to create character, result: "+c);
         return login(st,null,null,null);
+        }
+        catch (Exception e) { e.printStackTrace(); throw e; }
     }
     
     @Commands(context=Context.AVATAR,description="Switch to a character")
