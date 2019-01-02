@@ -412,7 +412,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 User av=slsession.user();
                 if (av!=null) {
                     st.setAvatar(av);
-                    Char defaultchar=Char.get(av.getLastActive());
+                    Char defaultchar=null;
+                    Integer charid=av.getLastActive();
+                    if (charid!=null && charid>0) {
+                        defaultchar=Char.get(charid);
+                    }
                     if (defaultchar!=null) {
                         st.setInstance(defaultchar.getInstance());
                         st.setCharacter(defaultchar);
