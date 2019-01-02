@@ -417,11 +417,22 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                     if (charid!=null && charid>0) {
                         defaultchar=Char.get(charid);
                     }
+                    Instance instance=null;
                     if (defaultchar!=null) {
-                        st.setInstance(defaultchar.getInstance());
+                        instance=defaultchar.getInstance();
+                        st.setInstance(instance);
                         st.setCharacter(defaultchar);
                     }
-                    return characterSelectionHook(st,values);
+                    cookie=Cookies.generate(av,defaultchar,instance,true);
+                    st.cookiestring=cookie;
+                    try {
+                        st.cookie=new Cookies(cookie);
+                    } catch (SystemException ex) {
+                        st.logger().log(SEVERE,"Cookie load gave exception, right after it was generated?",ex);
+                    }
+                    st.resp.addHeader("Set-Cookie","gphud="+cookie+"; Path=/");
+                    st.logger().log(INFO,"SL Cluster Services SSO as "+av);
+                    return characterSelectionHook(st,values);                    
                 }
             }
         }
