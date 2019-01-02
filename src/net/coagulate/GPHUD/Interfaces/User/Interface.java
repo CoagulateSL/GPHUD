@@ -33,6 +33,7 @@ import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.Session;
 import net.coagulate.SL.Data.User;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -355,10 +356,15 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         boolean debug=false;
         if (debug) { System.out.println("Calling authentication hook, URI is "+st.getDebasedURL()); }
         String cookie=null;
+        String coagulateslcookie=null;
         for (Header h:st.req.getHeaders("Cookie")) {
             for (String piece:h.getValue().split(";")) {
                 if (debug) { System.out.println("Have a cookie: "+piece); }
                 piece=piece.trim();
+                if (piece.startsWith("coagulateslsessionid=")) {
+                    coagulateslcookie=piece.substring("coagulateslsessionid=".length());
+                    if (debug) { System.out.println("Extracted coagulate SL cookie from header "+coagulateslcookie); }
+                }
                 if (piece.startsWith("gphud=")) {
                     cookie=piece.substring(6);
                     if (debug) { System.out.println("Extracted cookie from header "+cookie); }
@@ -398,6 +404,22 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             }
             if (av==null && ch!=null) { st.setAvatar(ch.getOwner()); }
             if (av!=null) { st.cookiestring=cookie; st.cookie=cookies; return characterSelectionHook(st,values); } // logged in, one way or the other, note we might not have an entity, and we want one
+        }
+        if (cookies==null && coagulateslcookie!=null && !coagulateslcookie.isEmpty()) {
+            Session slsession=Session.get(coagulateslcookie);
+            if (slsession!=null) {
+                if (debug) { System.out.println("Adopting Coagulate SL Session (?)"); }
+                User av=slsession.user();
+                if (av!=null) {
+                    st.setAvatar(av);
+                    Char defaultchar=Char.get(av.getLastActive());
+                    if (defaultchar!=null) {
+                        st.setInstance(defaultchar.getInstance());
+                        st.setCharacter(defaultchar);
+                    }
+                    return characterSelectionHook(st,values);
+                }
+            }
         }
         if (cookieAuthenticationOnly()) {
             Form failed=new Form();
