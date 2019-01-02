@@ -44,6 +44,7 @@ public class SessionSwitch {
     
     @URLs(url="/switch/character")
     public static void switchCharacter(State st,SafeMap values) throws UserException, SystemException {
+        if (st.getInstanceNullable()==null) { throw new RedirectionException("/switch/instance"); }
         Form f=st.form;
         if (!values.get("charid").isEmpty()) {
             Char c=Char.get(Integer.parseInt(values.get("charid")));
