@@ -175,7 +175,7 @@ public class State {
     public void setCharacter(Char character) {
         if (character!=null) { character.validate(this); }
         this.character = character;
-        if (this.avatar==null) { avatar=character.getPlayedBy(); }
+        if (this.character!=null && this.avatar==null) { avatar=character.getPlayedBy(); }
     }
     public void setAvatar(User avatar) {
         this.avatar=avatar;
