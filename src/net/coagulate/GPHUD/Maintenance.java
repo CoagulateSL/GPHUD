@@ -30,9 +30,6 @@ public class Maintenance extends Thread {
     public static final int UPDATEINTERVAL=5;
     public static int cycle=0;
 
-    public static void maintenance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     public void runAlways() {
         try { refreshCharacterURLs(); }
         catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e); }
