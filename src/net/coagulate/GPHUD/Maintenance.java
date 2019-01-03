@@ -4,6 +4,7 @@ import java.util.Calendar;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import net.coagulate.Core.Database.LockException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.UnixTime;
@@ -13,6 +14,8 @@ import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Events.EventsMaintenance;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
+import static net.coagulate.SL.Config.LOCK_NUMBER_GPHUD_MAINTENANCE;
+import net.coagulate.SL.Data.LockTest;
 import org.json.JSONObject;
 
 /**  Maintenance tasks, runs every 60 seconds.
@@ -26,6 +29,10 @@ public class Maintenance extends Thread {
     public static final int PINGSERVERINTERVAL=10;
     public static final int UPDATEINTERVAL=5;
     public static int cycle=0;
+
+    public static void maintenance() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     public void runAlways() {
         try { refreshCharacterURLs(); }
         catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e); }
@@ -115,5 +122,38 @@ public class Maintenance extends Thread {
     public static void startEvents() {
         EventsMaintenance.maintenance();
     }
+    
+    
+    // for calling from OTHER MAINTENANCE CODE (GPHUD from SL)
+    public static void gphudMaintenance() {
+        try { Maintenance.refreshCharacterURLs(); }
+        catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e); }
+        try { Maintenance.refreshRegionURLs(); }
+        catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance refresh region URLs caught an exception",e); }
+
+        // this stuff all must run 'exclusively' across the cluster...
+        LockTest lock=new LockTest(LOCK_NUMBER_GPHUD_MAINTENANCE);
+        int lockserial;
+        try { lockserial=lock.lock(60); }
+        catch (LockException e) { GPHUD.getLogger().finer("Maintenance didn't aquire lock: "+e.getLocalizedMessage()); return; } // maintenance session already locked            
+            
+        try { Maintenance.startEvents(); }
+        catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance start events caught an exception",e); }            
+        
+        lock.extendLock(lockserial, 60);
+        try { Maintenance.purgeOldCookies(); }
+        catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance run purge cookies caught an exception",e); }
+        
+        lock.extendLock(lockserial, 60);
+        try { new VisitXP(-1).runAwards(); }
+        catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance run awards run caught an exception",e); }
+        
+        lock.extendLock(lockserial, 60);
+        try { if ((cycle % UPDATEINTERVAL)==0) { Maintenance.updateInstances(); } }
+        catch (Exception e) { GPHUD.getLogger().log(SEVERE,"Maintenance update Instances caught an exception",e); }
+        
+        lock.unlock(lockserial);
+    }
+        
     
 }
