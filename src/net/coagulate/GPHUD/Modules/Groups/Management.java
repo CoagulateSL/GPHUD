@@ -59,7 +59,7 @@ public abstract class Management {
         for (CharacterGroup g:groups) {
             String keyword=g.getType(); if (keyword==null) { keyword=""; }
             if (typefilter==null || typefilter.equalsIgnoreCase(keyword)) { 
-                t.openRow().add(new Link(g.getName(),"/groups/view/"+g.getId()));
+                t.openRow().add(new Link(g.getName(),"/GPHUD/groups/view/"+g.getId()));
                 String owner="";
                 if (g.getOwner()!=null) { owner=g.getOwner().asHtml(st, true); }
                 if (typefilter==null) { t.add(keyword); }
