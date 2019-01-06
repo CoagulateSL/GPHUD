@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.User;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -9,8 +11,6 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Set/change a users passwords.
  *
@@ -31,14 +31,4 @@ public abstract class Operations {
         
     }
 
-
-    @Commands(context = Context.AVATAR,description = "Create a new USER account for this avatar (via authorised SL login ONLY)",permitUserWeb = false)
-    public static Response register(State st,
-            @Arguments(description = "User name to register",type = ArgumentType.TEXT_ONELINE)
-                String username,
-            @Arguments(description = "Password for new user",type=ArgumentType.PASSWORD)
-                String password) throws SystemException, UserException
-    {
-        return new ErrorResponse("Registration is currently disabled");
-    }
 }
