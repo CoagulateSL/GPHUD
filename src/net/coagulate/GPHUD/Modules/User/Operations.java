@@ -24,7 +24,7 @@ public abstract class Operations {
                 String password) throws SystemException, UserException {
         if (st.sourcedeveloper!=null && st.sourcedeveloper.getId()!=1) { throw new SystemException("RESTRICTED COMMAND"); }
         if (st.avatar()==null) { return new ErrorResponse("Not connected to any user account?  Perhaps you need to register (via User.Register).  Session did not derive a USER context."); }
-        try { st.avatar().setPassword(password); }
+        try { st.avatar().setPassword(password,"Via GPHUD"); }
         catch (UserException e) { return new ErrorResponse(e.getMessage()); }
         Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Replace", "Password", "[CENSORED]", "[CENSORED]", "User set password.");
         return new OKResponse("Password set successfully.");
