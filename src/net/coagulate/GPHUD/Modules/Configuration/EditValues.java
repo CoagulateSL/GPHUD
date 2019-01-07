@@ -180,7 +180,7 @@ public class EditValues {
         if (!kv.appliesTo(character)) { return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to characters"); }
         String oldvalue=st.getRawKV(character,key);
         st.setKV(character,key,value);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetCharKV", character.getName()+"/"+key, oldvalue, value, "Changed character level configuration");
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetCharKV", character.getName()+"/"+key, oldvalue, value, "Changed character scope KV configuration");
 
         return new OKResponse("Character KV store has been updated for "+character.getName());
     }
