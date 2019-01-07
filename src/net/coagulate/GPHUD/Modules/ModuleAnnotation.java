@@ -6,11 +6,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Pool.Pools;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Represents a module.
  *

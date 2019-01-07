@@ -8,6 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Set;
 import static java.util.logging.Level.FINE;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.Event;
@@ -17,8 +19,6 @@ import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /** Wraps a KV (Key Value) element.

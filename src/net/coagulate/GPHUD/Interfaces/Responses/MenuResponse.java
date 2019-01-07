@@ -3,10 +3,10 @@ package net.coagulate.GPHUD.Interfaces.Responses;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
 import org.json.JSONObject;
 
 /** Provide a series of elements in a Menu like layout...

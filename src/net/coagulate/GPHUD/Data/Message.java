@@ -1,9 +1,9 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
 import org.json.JSONObject;
 
 /** Represents a queued message.

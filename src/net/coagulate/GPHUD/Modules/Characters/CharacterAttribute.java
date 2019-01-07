@@ -1,11 +1,11 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Contains the data related to an attribute defined for an instance.
  *

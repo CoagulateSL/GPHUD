@@ -1,8 +1,8 @@
 package net.coagulate.GPHUD.Modules;
 
-import net.coagulate.GPHUD.State;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.State;
 
 /** Wraps a KV (Key Value) element.
  *

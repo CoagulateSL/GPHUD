@@ -3,11 +3,11 @@ package net.coagulate.GPHUD.Data;
 import java.util.Set;
 import java.util.TreeSet;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Tools.SystemException;
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** An event - a timed occurance in a Zone
  *

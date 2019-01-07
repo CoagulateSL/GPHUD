@@ -5,11 +5,11 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** A command, probably derived from Annotations.
  *

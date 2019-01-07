@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Command.Commands;
@@ -8,8 +10,6 @@ import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /**  Demonstration for HUD "quick buttons"

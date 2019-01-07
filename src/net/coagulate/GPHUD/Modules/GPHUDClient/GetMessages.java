@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -16,8 +18,6 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /** Read your messages.

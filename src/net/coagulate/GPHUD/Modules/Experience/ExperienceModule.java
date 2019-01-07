@@ -2,11 +2,11 @@ package net.coagulate.GPHUD.Modules.Experience;
 
 import java.util.HashSet;
 import java.util.Set;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Dynamic events menu
  *

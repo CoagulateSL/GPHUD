@@ -3,14 +3,14 @@ package net.coagulate.GPHUD.Modules.Menus;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /** Templated command implementation, aka a menu command.

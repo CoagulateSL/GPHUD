@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -19,8 +21,6 @@ import net.coagulate.GPHUD.Modules.Configuration.GenericConfiguration;
 import net.coagulate.GPHUD.Modules.Pool.Pools;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Represents a module.
  *

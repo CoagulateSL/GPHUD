@@ -1,9 +1,9 @@
 package net.coagulate.GPHUD.Modules;
 
 import java.lang.reflect.Method;
-import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Modules.URL.URLs;
 
 /** Wraps a side sub menu.
  *

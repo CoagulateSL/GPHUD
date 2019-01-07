@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
@@ -7,8 +9,6 @@ import net.coagulate.GPHUD.Modules.SideSubMenu.SideSubMenus;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** API Introspection.
  *

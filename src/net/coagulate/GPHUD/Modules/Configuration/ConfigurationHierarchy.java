@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -15,8 +17,6 @@ import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Renders the entirety of a hierarchical KV for editing.
  *

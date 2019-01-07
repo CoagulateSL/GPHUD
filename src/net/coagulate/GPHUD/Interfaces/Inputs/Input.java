@@ -1,8 +1,8 @@
 package net.coagulate.GPHUD.Interfaces.Inputs;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
 
 /** For elements that read input (in HTML).
  *

@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.Message;
@@ -11,8 +13,6 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /** Deal with messages via a web interface.

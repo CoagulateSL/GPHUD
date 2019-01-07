@@ -2,12 +2,12 @@ package net.coagulate.GPHUD.Modules.Menus;
 
 import java.util.Map;
 import java.util.TreeMap;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Menus;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /**  Custom module for aliases, has dynamically generated commands.

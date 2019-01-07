@@ -5,10 +5,10 @@
  */
 package net.coagulate.GPHUD.Modules.Faction;
 
+import net.coagulate.Core.Tools.SystemException;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.KV;
-import net.coagulate.Core.Tools.SystemException;
 
 /** The 'faction' group attribute.
  *

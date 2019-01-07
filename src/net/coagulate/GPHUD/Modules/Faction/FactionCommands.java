@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Faction;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -14,8 +16,6 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import org.json.JSONObject;
 
 /**  Faction controls for the FactionCommands.

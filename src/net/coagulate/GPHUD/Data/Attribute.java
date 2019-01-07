@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Data;
 import java.util.Set;
 import java.util.TreeSet;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.FLOAT;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.INTEGER;
@@ -12,8 +14,6 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 
 /** Contains the data related to an attribute defined for an instance.
  *

@@ -1,9 +1,9 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
 
 /**  fake url for side sub menus (ugly).
  *

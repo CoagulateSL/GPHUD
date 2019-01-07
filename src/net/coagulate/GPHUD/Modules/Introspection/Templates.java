@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Introspection;
 import java.lang.reflect.Method;
 import java.util.Map;
 import static java.util.logging.Level.FINE;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
@@ -12,7 +13,6 @@ import net.coagulate.GPHUD.Modules.Templater;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.UserException;
 
 /** Introspection of the template annotations.
  *

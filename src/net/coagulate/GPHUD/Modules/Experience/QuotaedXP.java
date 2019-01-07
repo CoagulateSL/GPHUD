@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
+import net.coagulate.Core.Tools.SystemException;
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.POOL;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
@@ -8,7 +9,6 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
-import net.coagulate.Core.Tools.SystemException;
 
 /** Toolkit for Quotaed XP
  *
