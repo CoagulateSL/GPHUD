@@ -17,6 +17,7 @@ import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Instance;
+import net.coagulate.GPHUD.Data.PrimaryCharacters;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.PasswordInput;
@@ -414,10 +415,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 if (av!=null) {
                     st.setAvatar(av);
                     Char defaultchar=null;
-                    Integer charid=av.getLastActive();
-                    if (charid!=null && charid>0) {
-                        defaultchar=Char.get(charid);
-                    }
+                    try { defaultchar=PrimaryCharacters.getPrimaryCharacter(st,false); }
+                    catch (UserException e) {} // may have no characters etc
                     Instance instance=null;
                     if (defaultchar!=null) {
                         instance=defaultchar.getInstance();
