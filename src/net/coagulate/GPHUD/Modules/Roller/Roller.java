@@ -37,6 +37,40 @@ public class Roller {
         return rolls;
     }
     
+    /** Perform a dice roll only, without bias or summation.
+     * 
+     * @param st Session State
+     * @param dice Number of dice to roll - defaults to 1
+     * @param sides Sides on dice to roll - defaults to 100
+     * @param reason Reason to log against the roll - defaults to "No Reason"
+     * @return A response hudMessage containing the roll's outcome.
+     */
+    @Commands(context = Context.CHARACTER,description = "Roll a given number of stated sided dice with a bias and reason",permitUserWeb = false)
+    public static Response rollOnly(State st,
+            @Arguments(description = "Number of dice to roll",type = ArgumentType.INTEGER,mandatory = false)
+                    Integer dice,
+            @Arguments(description = "Number of sides on dice",type = ArgumentType.INTEGER,mandatory = false)
+                    Integer sides,
+            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE)
+                    String reason) throws UserException, SystemException {
+        if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
+        if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
+        if (reason==null) { reason="No Reason"; }
+        String event="rolled "+dice+"d"+sides+" ";
+        event+="for "+reason+", and rolled ";
+        String allrolls="";
+        List<Integer> rolls=roll(st,dice,sides);
+        for (int num:rolls) {
+            if (!allrolls.equals("")) { allrolls+=", "; }
+            allrolls=allrolls+num;
+        }
+        
+        event+=allrolls;
+        Audit.audit(st,Audit.OPERATOR.CHARACTER,null,null,"RollOnly",null,null,"",event);
+        SayResponse say=new SayResponse(event,st.getCharacter().getName());
+        return say;
+    }
+    
     /** Perform a dice roll.
      * 
      * @param st Session State
