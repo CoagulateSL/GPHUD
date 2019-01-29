@@ -213,7 +213,10 @@ state active {
     }	
     http_response(key id,integer status,list data,string body)
     {
-		if (firstrx) { report("CONNECTED",<0.5,1,0.5>); } 
+		if (firstrx) {
+			if (status!=200) { reboot_reason="Login failed - #"+(string)status; state reboot; }
+			report("CONNECTED",<0.5,1,0.5>);
+		} 
 		//llOwnerSay("[resp] "+body);
 		json=body;
 		comms_http_response(id,status);
@@ -279,7 +282,7 @@ state reboot {
 		llSetTimerEvent(1.0);
 	}
 	timer() {
-		llSetText(reboot_reason+", will reboot in "+(string)countdown+" seconds, please stand by... \n \n \n \n",<1,.5,.5>,1);
+		report(reboot_reason+", will reboot in "+(string)countdown+" seconds, please stand by...",<1,.5,.5>);
 		countdown--;
 		if (countdown<=0) { llResetScript(); }
 	}
