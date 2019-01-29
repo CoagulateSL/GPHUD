@@ -2,7 +2,7 @@
 setlamps() {}
 default {
 	state_entry () {
-		initComms(FALSE);
+		initComms(FALSE); // for broadcast channel
 		llRequestExperiencePermissions(llGetOwner(),"");
 		string desc=llGetObjectDesc();
 		if (desc=="DEV" || desc=="DEV-iain") {
@@ -30,6 +30,7 @@ default {
 				return;
 			}
 			if (jsonget("titlerreplace")!="") { llOwnerSay("Duplicate TITLER attached, detaching one"); llDetachFromAvatar(); }
+			if (jsonget("titlerremove")!="") { llDetachFromAvatar(); }
 		}
 	}
 	
@@ -49,4 +50,5 @@ default {
             llResetScript();
         }
     }
+	experience_permissions(key id) {}
 }

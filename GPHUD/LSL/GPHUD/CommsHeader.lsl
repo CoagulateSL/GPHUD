@@ -162,7 +162,7 @@ process(string method,key id) {
 	}
 	if (jsonget("terminate")!="") {
 		comms_reason=jsonget("terminate");
-		typedSay("---\nTERMINATE:"+comms_reason+"\n---");
+		typedSay("===TERMINATED===    "+comms_reason);
 		SHUTDOWN=TRUE; process=0;
 	}			
 	if (incommand=="shutdown" || jsonget("shutdown")!="") {

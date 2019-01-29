@@ -75,6 +75,7 @@ string reboot_reason="";
 default {
 	state_entry() {
 		mark(-1);
+		SHUTDOWN=FALSE;
 		setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c");
 		llSetObjectName(name);
 		message_is_say=TRUE;
@@ -118,6 +119,8 @@ default {
 		if (LAMP_TX==0 && LAMP_RX==0) { report("Startup complete",<0.75,1.0,0.75>); state txok; }
 	}
 	timer() {
+		if (SHUTDOWN) { state stop; }
+		if (RESET) { state reboot; }	
 		if (stage==0) { reboot_reason="URL Request Timeout"; state reboot; }
 		if (stage==1) { reboot_reason="Server registration timeout"; state reboot; }
 	}
@@ -130,6 +133,7 @@ state txok {
 		banner();
 		mark(1);
 		llMessageLinked(LINK_THIS,LINK_GO,"","");
+		llListen(broadcastchannel,"",NULL_KEY,"");
 		llListen(0,"",NULL_KEY,"");
 	}
 	timer () {
@@ -140,7 +144,7 @@ state txok {
 	}
     changed(integer change)
     {
-        if (change & (CHANGED_OWNER | CHANGED_REGION | CHANGED_REGION_START | CHANGED_TELEPORT))
+        if (change & (CHANGED_OWNER | CHANGED_REGION | CHANGED_REGION_START))
         {
             llResetScript();
         }
@@ -202,7 +206,7 @@ state stop {
 		llMessageLinked(LINK_THIS,LINK_LEGACY_PACKAGE,"","");
 		llSetText("SHUTDOWN:"+comms_reason+"\n \n \n \n",<1,.5,.5>,1);
 	}
-	touch_start(integer n) { if (llDetectedKey(0)==llGetOwner()) { llSetText("REBOOT",<1,.5,.5>,1); llSleep(1.0); llSetText("",<0,0,0>,0); llResetScript(); } }
+	touch_start(integer n) { if (llDetectedKey(0)==llGetOwner()) { llSetText("REBOOT in 30 sec",<1,.5,.5>,1); llSleep(30.0); llSetText("",<0,0,0>,0); llResetScript(); } }
 }
 
 state distribution {

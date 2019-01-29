@@ -82,18 +82,21 @@ subprocess(string incommand,key id) {
 }
 halt() {
 	LAMP_RX=-1; LAMP_TX=-1; updatelamps();
-	if (detach) { llDetachFromAvatar(); }
+	if (detach) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); llDetachFromAvatar(); }
+	report("Has shutdown",<1,1,.5>);
 }
 report(string msg,vector col) {
 	string inject=""; if (DEV) { inject="DEV "; }
-	llSetText("GPHUD "+inject+"Startup ... "+msg+" [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",col,1);
+	llSetText(msg+"\n \n[GPHUD "+inject+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",col,1);
 }
 integer stage=0;
 string reboot_reason="Unknown";
 integer countdown=0;
+integer firstrx=TRUE;
 default {
 	state_entry() {
 		llSetObjectName("GPHUD");
+		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,"e99682b7-d008-f0e0-9f08-e0a07d74232c",<1,1,1>,<0,0,0>,0]);
 		setupRpChannel();
 		llResetOtherScript("Legacy");
 		integer p=llGetNumberOfPrims();
@@ -116,7 +119,7 @@ default {
 		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) {
 			llResetOtherScript("Attacher");
 			report("Waiting for GO",<0.75,0.75,1.0>);
-		} else { state preactive; }
+		} else { detach=TRUE; state preactive; }
 	}
 	on_rez(integer n) { if (n==0) { detach=FALSE; } else { detach=TRUE; } }
     link_message(integer from,integer num,string message,key id) {
@@ -129,7 +132,7 @@ default {
 state preactive {
 	state_entry() {
 		initComms(TRUE);
-		report("Claiming URL",<0.75,1.0,0.75>);
+		report("Creating inbound channel",<0.5,0.75,0.5>);
 		LAMP_RX=1;
 		updatelamps();
 		stage=0;
@@ -143,10 +146,13 @@ state preactive {
 			LAMP_RX=1;
 			comms_url=body;
 			updatelamps();
+			report("Logging in to server",<0.5,0.87,0.5>);
 			state active;
 		}		
 		json=body;
 		llHTTPResponse(id,200,"{}");
+		if (SHUTDOWN) { halt(); }
+		if (RESET) { state reboot; }			
 	}
 	http_response(key id,integer status,list data,string body) {
 		//llOwnerSay("Response:"+body);
@@ -160,8 +166,12 @@ state preactive {
 			comms_http_response(id,status);
 			state active;
 		}
+		if (SHUTDOWN) { halt(); }
+		if (RESET) { state reboot; }			
 	}
 	timer() {
+		if (SHUTDOWN) { halt(); }
+		if (RESET) { state reboot; }	
 		if (stage==0) { reboot_reason="URL Request Timeout"; state reboot; }
 		if (stage==1) { reboot_reason="Server registration timeout"; state reboot; }
 	}
@@ -169,11 +179,11 @@ state preactive {
 state active {
 	on_rez(integer n) { llResetScript(); }
 	state_entry() {
+		firstrx=TRUE;
 		string status=llJsonSetValue("",["version"],VERSION);
 		status=llJsonSetValue(status,["versiondate"],COMPILEDATE);
 		status=llJsonSetValue(status,["versiontime"],COMPILETIME);	
 		httpcommand("characters.login",status);
-		banner();
 		llListen(broadcastchannel,"",NULL_KEY,"");		
 		llResetOtherScript("Legacy");
 		llListen(1,"",llGetOwner(),"");
@@ -203,11 +213,13 @@ state active {
     }	
     http_response(key id,integer status,list data,string body)
     {
+		if (firstrx) { report("CONNECTED",<0.5,1,0.5>); } 
 		//llOwnerSay("[resp] "+body);
 		json=body;
 		comms_http_response(id,status);
 		if (SHUTDOWN) { halt(); }
 		if (RESET) { state reboot; }
+		if (firstrx) { firstrx=FALSE; if (!SHUTDOWN) { banner(); } }
 	}
     http_request(key id, string method, string body)
     {
@@ -257,6 +269,7 @@ state active {
 		}
 		if (radarto!=NULL_KEY) { llHTTPResponse(radarto,200,"{\"avatars\":\""+keys+"\"}"); radarto=NULL_KEY; }
 	}
+	experience_permissions(key id) {}
 }
 
 state reboot {
