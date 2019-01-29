@@ -3,21 +3,17 @@
 // shared secret
 string DEVELOPER_KEY="***REMOVED***";
 
-// list of servers urls
-list servers=[];
-list servertimeout;
-
 // developer mode
 integer DEV=0;
 
 // reason for shutdown
+key httpkey=NULL_KEY;
 string comms_reason="";
 string comms_url="";
 integer comms_callback=FALSE;
-integer comms_callbackalive=FALSE;
 integer SHUTDOWN=FALSE;
 integer RESET=FALSE;
-string prefix="";
+string SERVER_URL="";
 integer serveractive=-1;
 integer LAMP_RX=-1;
 integer LAMP_TX=-1;
@@ -39,13 +35,6 @@ updatelamps() {
 	setlamps();
 }
 
-selectServer() {
-    serveractive=-1;
-    integer n=0;
-    for (n=0;n<llGetListLength(servers);n++) {
-        if (llList2Integer(servertimeout,n)<llGetUnixTime()) { serveractive=n; return; }
-    }
-}
 calculatebroadcastchannel() {
 	vector loc=llGetRegionCorner();
 	integer x=(integer)loc.x;
@@ -63,115 +52,57 @@ calculatebroadcastchannel() {
 initComms(integer withcallback) {
 	resetcomms();
 	calculatebroadcastchannel();
-	servers=[];
 	DEV=0;
 	string inject="";
 	if (llGetObjectDesc()=="DEV")
 	{ 
-		llOwnerSay("Booting in DEV mode"); 
 		DEV=1;
 		inject="dev";
 	}
-	//prefix="http://sl"+inject+".coagulate.net/GPHUD/hud/";
-	servers=["http://sl1"+inject+".coagulate.net/GPHUD/system"];
-	servers+=["http://sl2"+inject+".coagulate.net/GPHUD/system"];
-	servers+=["http://sl3"+inject+".coagulate.net/GPHUD/system"];
-	while (llGetListLength(servers)>llGetListLength(servertimeout)) { servertimeout+=[0]; }
-	serveractive=(integer)llFrand(llGetListLength(servers));
+	SERVER_URL="http://sl"+inject+".coagulate.net/GPHUD/system";
 	llListen(broadcastchannel,"",NULL_KEY,"");
 	if (withcallback) { llRequestURL(); }
 }
 
-list txid;
-list txmessage;
-list txserver;
 resetcomms() {
 	LAMP_TX=-1; LAMP_RX=-1; updatelamps();
 	if (comms_url!="") { llReleaseURL(comms_url); comms_url=""; }
-	servers=[];
 	DEV=0;
 	comms_reason="";
 	comms_callback=FALSE;
-	comms_callbackalive=FALSE;
 	SHUTDOWN=FALSE;
-	prefix="";
-	servertimeout=[];
-	serveractive=-1;
 	LAMP_RX_COL=<0,0,0>;
 	LAMP_TX_COL=<0,0,0>;
 	retjson="";
 	broadcastchannel=0;
 	RESET=FALSE;
-	txid=[];
-	txmessage=[];
-	txserver=[];
-}
-trigger() {
-
-	if (serveractive<0) { selectServer(); }
-    if (serveractive<0) {
-		LAMP_TX=-1;
-		LAMP_RX=-1;
-		if (comms_url!="") { llReleaseURL(comms_url); comms_url=""; }
-		updatelamps();
-		integer seconds=60;
-		RESET=TRUE; return;
-	}
-    integer i=0;
-    for (i=0;i<llGetListLength(txid);i++) {
-        if (llList2Key(txid,i)==NULL_KEY) {
-			LAMP_TX=1; updatelamps();
-			//llOwnerSay("Post to "+llList2String(servers,serveractive)+" - "+llList2String(txmessage,i));
-            key httpkey=llHTTPRequest(
-                        llList2String(servers,serveractive),
-                        [HTTP_METHOD,"POST"],
-                        llList2String(txmessage,i)
-                    );
-            txid=llListReplaceList(
-                txid,
-                [httpkey]
-                ,i,i
-            );
-            txserver=llListReplaceList(txserver,[serveractive],i,i);
-            if (httpkey==NULL_KEY) { llSetTimerEvent(15.0); return; }
-        }
-    }
 }
 
 httpsend(string message) {
 	//llOwnerSay("Send message:"+message);
 	LAMP_TX=1; updatelamps();
-    txid+=[NULL_KEY];
 	message=appendoutbound(message);
 	if (comms_url!="") { message=llJsonSetValue(message,["callback"],comms_url); }
-    txmessage+=[llJsonSetValue(message,["developerkey"],DEVELOPER_KEY)];
-    txserver+=[serveractive];
-    trigger();
+    message=llJsonSetValue(message,["developerkey"],DEVELOPER_KEY);
+	httpkey=llHTTPRequest(
+                        SERVER_URL,
+                        [HTTP_METHOD,"POST"],
+                        message
+                    );
 }
 httpcommand(string command,string json) {
     httpsend(llJsonSetValue(json,["command"],command));
 }
 
 comms_http_response(key id,integer status) {
-	integer n=llListFindList(txid,[id]);
-	if (n==-1) {
-		return;
-	}
+	if (id!=httpkey) { return; }
 	LAMP_TX=0; updatelamps();
 	if (status!=200) {
-		//llSay(0,"Server gave error "+(string)status+", activating failover");
-		integer serverid=llList2Integer(txserver,n);
-		servertimeout=llListReplaceList(servertimeout,[llGetUnixTime()+60],serverid,serverid);
-		selectServer();
-		txid=llListReplaceList(txid,[NULL_KEY],n,n);
-		trigger();
+		llSay(0,"Server gave error "+(string)status);
 	}
 	else
 	{
 		process("RETURN",NULL_KEY);
-		txid=llDeleteSubList(txid,n,n);
-		txmessage=llDeleteSubList(txmessage,n,n);
-		txserver=llDeleteSubList(txserver,n,n);            
 	}
 }
 integer DONOTRESPOND=FALSE;
@@ -205,9 +136,7 @@ process(string method,key id) {
 		// allow reregistration!
 		//if (comms_callbackalive==FALSE) {
 			//if (DEV) { llOwnerSay("Inbound registration complete."); }
-			subregistered();// duplicate functionality?
 			subprocess("registered",id);  // duplicate functionality?
-			comms_callbackalive=TRUE;
 		//}
 		//else
 		//{

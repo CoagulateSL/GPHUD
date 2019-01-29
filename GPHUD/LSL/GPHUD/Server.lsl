@@ -32,7 +32,7 @@ subprocess(string command,key id) {
 		}
 	}
 	if (command=="servergive") { llGiveInventory((key)(jsonget("giveto")),jsonget("itemname")); }
-	if (jsonget("instancestatus")!="") { llSetText(jsonget("instancestatus")+" "+(string)llGetFreeMemory()+"#"+((string)(llGetListLength(txid)))+"\n \n \n \n \n",(vector)jsonget("statuscolor"),1); }
+	if (jsonget("instancestatus")!="") { llSetText(jsonget("instancestatus")+" "+(string)llGetFreeMemory()+"b\n \n \n \n \n",(vector)jsonget("statuscolor"),1); }
 	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Server"); }
 	if (jsonget("setlogo")!="") { setlogo((key)jsonget("setlogo")); }
 	integer resetdispenser=FALSE;
@@ -62,69 +62,81 @@ subprocess(string command,key id) {
 	if (resetdispenser==TRUE) { llResetOtherScript("Dispenser"); } 
 	if (jsonget("rebootserver")!="") { llResetScript(); }
 }
-integer alive=FALSE;
-subregistered() {
-	llOwnerSay("=== Server startup complete");
-	alive=TRUE; mark(1);
-	llMessageLinked(LINK_THIS,LINK_GO,"","");
-}
 
 list ok=[];
 
 string appendoutbound(string message) {return message;}
+integer stage=0;
+report(string msg,vector col) {
+	string inject=""; if (DEV) { inject="DEV "; }
+	llSetText("GPHUD "+inject+"Server Startup ... "+msg+" [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",col,1);
+}
+string reboot_reason="";
 default {
 	state_entry() {
 		mark(-1);
 		setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c");
 		llSetObjectName(name);
 		message_is_say=TRUE;
+		report("Claiming URL",<0.75,1.0,0.75>);
 		initComms(TRUE);
 		serveractive=-1;
 		integer i=0;
 		LAMP_TX=1;
 		updatelamps();
 		string inject=""; if (DEV) { inject="dev"; }
-		llSetText("GPHUD Server Startup ... pinging all servers ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",<0.75,0.75,1.0>,1);
-		for (i=0;i<llGetListLength(servers);i++) {
-			llHTTPRequest(
-				"http://sl"+((string)(i+1))+inject+".coagulate.net/SecondLifeAPI/Ping",
-				[HTTP_METHOD,"POST"],
-				"{}"
-			);
-		}
+		stage=0;
 		llSetTimerEvent(30.0);
 	}
-	http_response(key id,integer status,list data,string body) {
+	http_request(key id, string method, string body) {
+		if (method == URL_REQUEST_DENIED)
+		{ reboot_reason="Error getting callback URL:" + body; state reboot; }
+		if (method == URL_REQUEST_GRANTED)
+		{
+			LAMP_RX=1;
+			updatelamps();
+			comms_url=body;
+			string status=llJsonSetValue("",["version"],VERSION);
+			status=llJsonSetValue(status,["versiondate"],COMPILEDATE);
+			status=llJsonSetValue(status,["versiontime"],COMPILETIME);
+			report("Registering with server",<0.75,1.0,0.75>);
+			httpcommand("gphudserver.register",status);
+			stage=1;
+			return;
+		}		
 		json=body;
-		serveractive=((integer)(jsonget("node")));
-		llSetText("GPHUD Server Startup ... response from "+jsonget("hostname")+"#"+((string)serveractive)+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",<0.75,1.0,0.75>,1);
-		ok=ok+[serveractive];
-		LAMP_TX=0; updatelamps();
-		if (llGetListLength(ok)==1) { llSetTimerEvent(1.0); }
+		if (jsonget("incommand")=="registered") { LAMP_RX=0; report("Incoming OK!",<0.75,1.0,0.75>); updatelamps(); }
+		if (LAMP_TX==0 && LAMP_RX==0) { report("Startup complete",<0.75,1.0,0.75>); state txok; }
+	}
+	http_response(key id,integer status,list data,string body) {
+		if (httpkey!=id) { return; }
+		if (status!=200) { LAMP_RX=-1; LAMP_TX=-1; updatelamps(); report("HTTP error "+(string)status,<1,.75,.75>); reboot_reason="Registration failed HTTP#"+(string)status; llSleep(3); state reboot; }
+		json=body;
+		process("",NULL_KEY);
+		//llOwnerSay("Response:"+body);
+		if (jsonget("incommand")=="registering") { LAMP_TX=0; updatelamps(); report("Registration OK!",<0.75,1.0,0.75>); }
+		if (LAMP_TX==0 && LAMP_RX==0) { report("Startup complete",<0.75,1.0,0.75>); state txok; }
 	}
 	timer() {
-		integer up=llGetListLength(ok);
-		integer i=0;
-		if (up==0) { mark(0); llSetText("GPHUD Server Startup ... NO SERVERS FOUND ... will reboot\n \n \n \n \n",<1.0,0.75,0.75>,1); llSleep(15.0); llResetScript(); }
-		serveractive=llList2Integer(ok,((integer)(llFrand(up))));
-		llSetText("GPHUD Server Startup ... booting from cluster node #"+((string)(serveractive+1))+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",<0.75,1.0,0.75>,1);
-		state txok;
+		if (stage==0) { reboot_reason="URL Request Timeout"; state reboot; }
+		if (stage==1) { reboot_reason="Server registration timeout"; state reboot; }
 	}
 }
 state txok {
 	on_rez(integer n) { llResetScript(); }
 	state_entry() {
-		llRequestURL();
 		llResetOtherScript("Dispenser");
 		llResetOtherScript("Visitors");
 		banner();
+		mark(1);
+		llMessageLinked(LINK_THIS,LINK_GO,"","");
 		llListen(0,"",NULL_KEY,"");
 	}
 	timer () {
 		llSetTimerEvent(5.0);
 		//LAMP_TX=0;
-		if (comms_callbackalive) { LAMP_RX=0; } else { LAMP_RX=-1; }
-		updatelamps(); trigger(); if (RESET) { state rebootscript; }
+		LAMP_RX=0;
+		updatelamps(); if (RESET) { state reboot; }
 	}
     changed(integer change)
     {
@@ -140,7 +152,7 @@ state txok {
 		json=body;
 		comms_http_response(id,status);
 		if (SHUTDOWN) { state stop; }
-		if (RESET) { state rebootscript; }
+		if (RESET) { state reboot; }
 	}
     http_request(key id, string method, string body)
     {
@@ -153,7 +165,7 @@ state txok {
 			httpcommand("gphudserver.register",status);
 		}		
 		if (SHUTDOWN) { state stop; }
-		if (RESET) { state rebootscript; }
+		if (RESET) { state reboot; }
     }	
 	listen(integer channel,string name,key id,string text) {
 		if (channel==broadcastchannel) {}
@@ -173,7 +185,6 @@ state txok {
 		}
 	}
     link_message(integer from,integer num,string message,key id) {
-		if (!alive) { return ; }
 		if (num==LINK_SET_USER_LIST) { httpcommand("gphudserver.setregionavatars",message); }
 		if (num==LINK_GET_DISPENSER_CONFIG) { llMessageLinked(LINK_THIS,LINK_DISPENSER_CONFIG,(string)autoattach,(string)parcelonly); }
 		if (num==LINK_CAN_GO) { llMessageLinked(LINK_THIS,LINK_GO,"",""); }
@@ -198,16 +209,14 @@ state distribution {
 	state_entry() { llSetObjectName("GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME); LAMP_TX=-1; LAMP_RX=-1; updatelamps(); llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); llResetOtherScript("Visitors"); llResetOtherScript("Dispenser"); mark(-1); setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c"); }
 	on_rez(integer n) { llResetScript(); }
 }
-state rebootscript {
+state reboot {
 	state_entry() {
 		LAMP_RX=-1; LAMP_TX=-1; updatelamps(); mark(0);
-		alive=FALSE; 
 		countdown=60;
-		llSay(0,"Connection to server lost, restarting...");
 		llSetTimerEvent(1.0);
 	}
 	timer() {
-		llSetText("No servers available, will reboot in "+(string)countdown+" seconds, please stand by... \n \n \n \n",<1,.5,.5>,1);
+		llSetText(reboot_reason+", will reboot in "+(string)countdown+" seconds, please stand by... \n \n \n \n",<1,.5,.5>,1);
 		countdown--;
 		if (countdown<=0) { llResetScript(); }
 	}

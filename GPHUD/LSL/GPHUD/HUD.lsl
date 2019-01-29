@@ -10,12 +10,9 @@ integer LINK_QB4=-1;
 integer LINK_QB5=-1;
 integer LINK_QB6=-1;
 integer LINK_MESSAGES=-1;
-string cookie="";
 key radarto=NULL_KEY;
 integer donotopenbefore=0;
 integer disallowclose=TRUE;
-integer alive=0;
-integer resetin=-1;
 integer detach=FALSE;
 string hudtext="Loading...";
 vector hudcolor=<1,1,1>;
@@ -26,6 +23,7 @@ integer firstshown=FALSE;
 string charname="";
 integer rpchannel=0;
 integer rpchannelhandle=0;
+string cookie="";
 setupRpChannel() {
 	if (rpchannelhandle!=0){llListenRemove(rpchannelhandle);}
 	if (rpchannel!=0) { rpchannelhandle=llListen(rpchannel,"",llGetOwner(),""); }
@@ -35,49 +33,12 @@ setlamps() {
 		llSetLinkPrimitiveParamsFast(LINK_RX,[PRIM_COLOR,ALL_SIDES,LAMP_RX_COL,1,PRIM_LINK_TARGET,LINK_TX,PRIM_COLOR,ALL_SIDES,LAMP_TX_COL,1]);
 	}
 }
-/*media(string urlsuffix) {
-		if (prefix=="") { llOwnerSay("PANIC, NO PREFIX SET FOR SERVICES!"); return; }
-		string newurl=prefix;
-		if (shown==FALSE) { newurl+="show/"; } 
-		newurl+=urlsuffix;
-		preshowhud();	
-		llSetLinkMedia(LINK_WEBPANEL,4,[PRIM_MEDIA_AUTO_PLAY,TRUE,PRIM_MEDIA_FIRST_CLICK_INTERACT,TRUE,PRIM_MEDIA_PERMS_INTERACT,PRIM_MEDIA_PERM_OWNER,PRIM_MEDIA_PERMS_CONTROL,PRIM_MEDIA_PERM_NONE,PRIM_MEDIA_CURRENT_URL,newurl,PRIM_MEDIA_HOME_URL,newurl]);
-
-}*/
-/*integer shown=FALSE;
-firstshow() {
-	if (donotopenbefore>llGetUnixTime()) { return; }
-	showhud();
-	shown=TRUE;
-	firstshown=TRUE;
-	disallowclose=TRUE;
-	llSetLinkPrimitiveParamsFast(LINK_WEBINTRO,[PRIM_POSITION,<0.00, 0.00, 0.20>,PRIM_LINK_TARGET,LINK_WEBPANEL,PRIM_POSITION,<0,0,0.11>,PRIM_SIZE,<0.01,0.2,0.1>]);
-}
-preshowhud() {
-	if (firstshown==FALSE) { firstshow(); return; }
-	if (donotopenbefore>llGetUnixTime()) { return; }
-	llSetLinkPrimitiveParamsFast(LINK_WEBPANEL,[PRIM_POSITION,<0.00, 0.00, 0.19>,PRIM_SIZE,<0.01, 0.51, 0.26>,PRIM_ROTATION,llEuler2Rot(<0,0,180>*DEG_TO_RAD)]);
-	shown=FALSE;
-}
-showhud() {
-	if (donotopenbefore>llGetUnixTime()) { return; }
-	llSetLinkPrimitiveParamsFast(LINK_WEBPANEL,[PRIM_POSITION,<0.00, 0.00, 0.19>,PRIM_SIZE,<0.01, 0.51, 0.26>,PRIM_ROTATION,ZERO_ROTATION,PRIM_LINK_TARGET,LINK_WEBINTRO,PRIM_POSITION,<0.00, 0.00,-0.46>]);
-	shown=TRUE;
-}
-hidehud() {
-	donotopenbefore=llGetUnixTime()+3;
-	string closedurl="data:text/plain,closed - "+((string)llFrand(999999999));
-	llSetLinkPrimitiveParamsFast(LINK_WEBPANEL,[PRIM_POSITION,<0,0,-2>,PRIM_ROTATION,ZERO_ROTATION,PRIM_LINK_TARGET,LINK_WEBINTRO,PRIM_POSITION,<0.00, 0.00,-0.46>]);
-	llSetLinkMedia(LINK_WEBPANEL,4,[PRIM_MEDIA_AUTO_PLAY,TRUE,PRIM_MEDIA_FIRST_CLICK_INTERACT,TRUE,PRIM_MEDIA_PERMS_INTERACT,PRIM_MEDIA_PERM_OWNER,PRIM_MEDIA_PERMS_CONTROL,PRIM_MEDIA_PERM_NONE,PRIM_MEDIA_CURRENT_URL,closedurl,PRIM_MEDIA_HOME_URL,closedurl]);
-	shown=FALSE;
-}
-hidepreshow() { llSetLinkPrimitiveParamsFast(LINK_WEBINTRO,[PRIM_POSITION,<0.00, 0.00,-0.46>]); }
-*/
 string appendoutbound(string j){
 	return llJsonSetValue(j,["cookie"],cookie); 
 }
 subprocess(string incommand,key id) {
 	if (incommand=="radar") { DONOTRESPOND=TRUE; llSensor("",NULL_KEY,AGENT,20,PI); radarto=id; }
+	if (incommand=="registered") { cookie=jsonget("cookie"); }
 	if (incommand=="ping") { retjson=llJsonSetValue(retjson,["cookie"],cookie); }
 	//if (incommand=="close" && !disallowclose) { hidehud(); }
 	//if (incommand=="open") { showhud(); disallowclose=FALSE;}
@@ -119,27 +80,20 @@ subprocess(string incommand,key id) {
 	if (jsonget("rpchannel")!="") { rpchannel=(integer)jsonget("rpchannel"); setupRpChannel();}
 	if (jsonget("name")!="") { charname=jsonget("name"); }
 }
-subregistered() {
-	cookie=jsonget("cookie");
-	//media("gphudclient.close?gphud="+cookie);
-	//firstshow();
-	string name=llGetObjectName();
-	banner();
-	llSetObjectName(name);
-	alive=1;
-}
-reboot() {
-	LAMP_RX=-1; LAMP_TX=-1; updatelamps();
-	alive=0;
-	resetin=60/5;
-}
 halt() {
 	LAMP_RX=-1; LAMP_TX=-1; updatelamps();
-	alive=-1;
 	if (detach) { llDetachFromAvatar(); }
 }
+report(string msg,vector col) {
+	string inject=""; if (DEV) { inject="DEV "; }
+	llSetText("GPHUD "+inject+"Startup ... "+msg+" [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",col,1);
+}
+integer stage=0;
+string reboot_reason="Unknown";
+integer countdown=0;
 default {
 	state_entry() {
+		llSetObjectName("GPHUD");
 		setupRpChannel();
 		llResetOtherScript("Legacy");
 		integer p=llGetNumberOfPrims();
@@ -159,12 +113,9 @@ default {
 			
 		}
 		if (LINK_MESSAGES==-1 || LINK_WEBINTRO==-1 || LINK_WEBPANEL==-1 || LINK_RX==-1 || LINK_TX==-1) { llOwnerSay("PANIC! LINK NOT SET)");  while (1==1) { llSleep(100.0); } }
-		//hidehud();
-		//hidepreshow();		
 		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) {
 			llResetOtherScript("Attacher");
-			llSetText("GPHUD Startup ... waiting for GO event ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,0.75,1.0>,1);
-			llSetObjectName("GPHUD");
+			report("Waiting for GO",<0.75,0.75,1.0>);
 		} else { state preactive; }
 	}
 	on_rez(integer n) { if (n==0) { detach=FALSE; } else { detach=TRUE; } }
@@ -178,43 +129,52 @@ default {
 state preactive {
 	state_entry() {
 		initComms(TRUE);
-		serveractive=-1;
-		integer i=0;
-		LAMP_TX=1;
+		report("Claiming URL",<0.75,1.0,0.75>);
+		LAMP_RX=1;
 		updatelamps();
-		string inject=""; if (DEV) { inject="dev"; }
-		llSetText("GPHUD Startup ... pinging all servers ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,0.75,1.0>,1);
-		for (i=0;i<llGetListLength(servers);i++) {
-			llHTTPRequest(
-				"http://sl"+((string)(i+1))+inject+".coagulate.net/SecondLifeAPI/Ping",
-				[HTTP_METHOD,"POST"],
-				"{}"
-			);
-		}
+		stage=0;
 		llSetTimerEvent(30.0);
 	}
-	http_response(key id,integer status,list data,string body) {
+	http_request(key id, string method, string body) {
+		//llOwnerSay("Request:"+body);
+		if (method == URL_REQUEST_DENIED)
+		{ reboot_reason="Error getting callback URL:" + body; state reboot; }
+		if (method==URL_REQUEST_GRANTED) {
+			LAMP_RX=1;
+			comms_url=body;
+			updatelamps();
+			state active;
+		}		
 		json=body;
-		serveractive=((integer)(jsonget("node")));
-		llSetText("GPHUD Startup ... response from "+jsonget("hostname")+"#"+((string)serveractive)+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,1.0,0.75>,1);
-		ok=ok+[serveractive];
-		LAMP_TX=0; updatelamps();
-		if (llGetListLength(ok)==1) { llSetTimerEvent(1.0); }
+		llHTTPResponse(id,200,"{}");
+	}
+	http_response(key id,integer status,list data,string body) {
+		//llOwnerSay("Response:"+body);
+		if (httpkey!=id) { return; }
+		if (status!=200) { LAMP_RX=-1; LAMP_TX=-1; updatelamps(); report("HTTP error "+(string)status,<1,.75,.75>); reboot_reason="Registration failed HTTP#"+(string)status; llSleep(3); state reboot; }
+		json=body;
+		if(jsonget("incommand")=="registered") {
+			LAMP_TX=0;
+			updatelamps();
+			report("Login OK!",<0.75,1,0.75>);
+			comms_http_response(id,status);
+			state active;
+		}
 	}
 	timer() {
-		integer up=llGetListLength(ok);
-		integer i=0;
-		if (up==0) { llSetText("GPHUD Startup ... NO SERVERS FOUND ... will reboot",<1.0,0.75,0.75>,1); llSleep(15.0); llResetScript(); }
-		serveractive=llList2Integer(ok,((integer)(llFrand(up))));
-		llSetText("GPHUD Startup ... booting from cluster node #"+((string)(serveractive+1))+" ... [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]",<0.75,1.0,0.75>,1);
-		state active;
+		if (stage==0) { reboot_reason="URL Request Timeout"; state reboot; }
+		if (stage==1) { reboot_reason="Server registration timeout"; state reboot; }
 	}
 }
 state active {
 	on_rez(integer n) { llResetScript(); }
 	state_entry() {
+		string status=llJsonSetValue("",["version"],VERSION);
+		status=llJsonSetValue(status,["versiondate"],COMPILEDATE);
+		status=llJsonSetValue(status,["versiontime"],COMPILETIME);	
+		httpcommand("characters.login",status);
+		banner();
 		llListen(broadcastchannel,"",NULL_KEY,"");		
-		llRequestURL();
 		llResetOtherScript("Legacy");
 		llListen(1,"",llGetOwner(),"");
 		llRegionSayTo(llGetOwner(),broadcastchannel,"{\"hudreplace\":\"hudreplace\"}");
@@ -223,25 +183,14 @@ state active {
 	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
 	touch_start(integer n)
 	{
-		if (alive==0) { return; }
-		if (alive==-1) { llResetScript(); }
-		if (comms_callbackalive) { 
-			if (llDetectedLinkNumber(0)==1) {
+		if (llDetectedLinkNumber(0)==1) {
+			llMessageLinked(LINK_THIS,LINK_LEGACY_FIRE,"","");
+		} else {
+			string name=llGetLinkName(llDetectedLinkNumber(0));
+			if (name=="legacymenu") {
 				llMessageLinked(LINK_THIS,LINK_LEGACY_FIRE,"","");
 			} else {
-				string name=llGetLinkName(llDetectedLinkNumber(0));
-				/*
-				if (name=="webmenu") { 
-					shown=FALSE;
-					media("gphudclient/menu?gphud="+cookie+"?seed="+((string)llFrand(999999999))); // yeah the double ? is kinda invalid or weird :P
-					return;
-				}
-				*/
-				if (name=="legacymenu") {
-					llMessageLinked(LINK_THIS,LINK_LEGACY_FIRE,"","");
-				} else {
-					httpcommand("gphudclient."+name,"");
-				}
+				httpcommand("gphudclient."+name,"");
 			}
 		}
 	}
@@ -258,21 +207,15 @@ state active {
 		json=body;
 		comms_http_response(id,status);
 		if (SHUTDOWN) { halt(); }
-		if (RESET) { reboot(); }
+		if (RESET) { state reboot; }
 	}
     http_request(key id, string method, string body)
     {
 		//llOwnerSay("[in] "+body);
 		json=body;
 		comms_http_request(id,method);
-		if (method==URL_REQUEST_GRANTED) {
-			string status=llJsonSetValue("",["version"],VERSION);
-			status=llJsonSetValue(status,["versiondate"],COMPILEDATE);
-			status=llJsonSetValue(status,["versiontime"],COMPILETIME);
-			httpcommand("characters.login",status);
-		}
 		if (SHUTDOWN) { halt(); }
-		if (RESET) { reboot(); }		
+		if (RESET) { state reboot; }		
     }
 	
 	listen(integer channel,string name,key id,string text) {
@@ -287,7 +230,6 @@ state active {
 		if (channel==1 && id==llGetOwner()) {
 			if (text=="status" && id==IAIN_MALTZ) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
 			if (text=="reboot") { llResetScript(); }
-			if (alive!=1) { return; }
 			httpcommand("console",llJsonSetValue("",["console"],text));
 		}
 		if (channel==rpchannel) {
@@ -298,14 +240,12 @@ state active {
         if (num==LINK_SEND) {
             httpcommand((string)id,message); 
         }
-		if (alive!=1) { return; }
 	}
 	timer () {
-		if (resetin>0) { resetin--; if (resetin==0) { llResetScript(); } llSetText(comms_reason+" : Reset in "+((string)(resetin*5)),<1,.5,.5>,1); }
 		llSetTimerEvent(5.0);
 		//LAMP_TX=0;
-		if (comms_callbackalive) { LAMP_RX=0; } else { LAMP_RX=-1; }
-		updatelamps(); trigger(); if (RESET) { reboot(); } if (SHUTDOWN) { halt(); }
+		LAMP_RX=0;
+		updatelamps(); if (RESET) { state reboot; } if (SHUTDOWN) { halt(); }
 	}
 	no_sensor() { if (radarto!=NULL_KEY) { llHTTPResponse(radarto,200,"{\"avatars\":\"\"}"); radarto=NULL_KEY; } }
 	sensor(integer n) {
@@ -318,3 +258,17 @@ state active {
 		if (radarto!=NULL_KEY) { llHTTPResponse(radarto,200,"{\"avatars\":\""+keys+"\"}"); radarto=NULL_KEY; }
 	}
 }
+
+state reboot {
+	state_entry() {
+		LAMP_RX=-1; LAMP_TX=-1; updatelamps();
+		countdown=60;
+		llSetTimerEvent(1.0);
+	}
+	timer() {
+		llSetText(reboot_reason+", will reboot in "+(string)countdown+" seconds, please stand by... \n \n \n \n",<1,.5,.5>,1);
+		countdown--;
+		if (countdown<=0) { llResetScript(); }
+	}
+}
+
