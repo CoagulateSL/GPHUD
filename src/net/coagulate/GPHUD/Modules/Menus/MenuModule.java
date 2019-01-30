@@ -50,10 +50,6 @@ public class MenuModule extends ModuleAnnotation {
         j.put("command5","Alias.Damage");
         j.put("button6","Faction");
         j.put("command6","Menus.Faction");
-        j.put("button7","Titler Color");
-        j.put("command7","GPHUDClient.setTitlerColor");
-        j.put("button8","Titler Text");
-        j.put("command8","GPHUDClient.setTitler");
         Menus.create(st, "Main", "Main Menu", j);
         j=new JSONObject();
         j.put("button1","AwardXP");

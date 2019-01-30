@@ -64,7 +64,7 @@ public abstract class Index {
                     }
                 } else {
                     configurable.add(new Colour("red","Disabled"));
-                    if (st.isInstanceOwner()) {
+                    if (st.isInstanceOwner() || st.isSuperUser()) {
                         // only enableable if all the dependancies are enabled.  Note we dont check this on disables because reverse deps are annoying, and deps just disable themselves :P
                         Form enable=new Form();
                         enable.setAction("./enablemodule");
@@ -83,8 +83,14 @@ public abstract class Index {
                 }
                 core.add(m.description());
             }
-        }       
-        
+        }
+        f.add(new TextSubHeader("Cookbooks"));
+        f.add(new Paragraph("Cookbooks provide a set of sequenced operations that modify your configuration and add features.  Everything these do can be done by hand and they merely provide a convenience measure."));        
+        f.add(new Paragraph("Clicking a cookbook will show you the steps that would be enacted.  Anyone may view a cookbook, but only the Instance.Owner may enact the cookbook due to the scale of changes"));
+        Table books=new Table(); f.add(books);
+        books.add(new HeaderRow().add("Name").add("Description"));
+        books.openRow().add(new Link("User Changable Titler","/GPHUD/configuration/cookbooks/user-titler")).add("Allows the character to modify a text string that is appended to their titler");
+        books.openRow().add(new Link("User Changable Titler Color","/GPHUD/configuration/cookbooks/user-titler-color")).add("Allows the character to modify a text string that changes their titler color (should be an LSL color, e.g. <0,1,0> for green");
     }
     
     @URLs(url="/configuration/view/*")
