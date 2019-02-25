@@ -1,4 +1,5 @@
-#include "CommsHeader.lsl"
+#include "GPHUDHeader.lsl"
+#include "../Library/JsonTools.lsl"
 init() {
 	llSetObjectName("GPHUD Item Giver");
 	llSetText("GPHUD Item Giver\n \n \n \n \n",<.75,.75,.75>,1);
@@ -21,3 +22,4 @@ default {
 		}
 	}
 }
+

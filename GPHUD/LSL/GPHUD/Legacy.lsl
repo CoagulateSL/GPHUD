@@ -1,3 +1,4 @@
+#include "SL/LSL/Library/JsonTools.lsl"
 #include "Constants.lsl"
 string mainmenu="";
 integer channel=0;
@@ -194,7 +195,7 @@ default {
 		if (sensormanual==1) { dialog+=["ManualEntry"]; truncated+=["ManualEntry"]; }
 		if (qty>(llGetListLength(stride)/2)) { qty=(llGetListLength(stride)/2); }
 		for (i=0;i<(qty*2); i+=2) {
-			llOwnerSay("Adding "+llList2String(stride,i+1));
+			//llOwnerSay("Adding "+llList2String(stride,i+1));
 			dialog+=llList2String(stride,i+1);
 			truncated+=llGetSubString(llList2String(stride,i+1),0,23);
 		}

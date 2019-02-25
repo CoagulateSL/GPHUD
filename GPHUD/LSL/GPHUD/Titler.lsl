@@ -1,8 +1,10 @@
-#include "CommsHeader.lsl"
+#include "GPHUDHeader.lsl"
+#include "../Library/JsonTools.lsl"
 setlamps() {}
 default {
 	state_entry () {
-		initComms(FALSE); // for broadcast channel
+		calculatebroadcastchannel();
+		llListen(broadcastchannel,"",NULL_KEY,"");
 		llRequestExperiencePermissions(llGetOwner(),"");
 		string desc=llGetObjectDesc();
 		if (desc=="DEV" || desc=="DEV-iain") {

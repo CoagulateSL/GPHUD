@@ -1,4 +1,4 @@
-#include "CommsHeader.lsl"
+#include "GPHUDHeader.lsl"
 
 integer channel=0;
 integer listener=0;
@@ -20,3 +20,5 @@ default {
 		}
 	}	
 }
+
+

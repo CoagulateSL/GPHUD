@@ -1,4 +1,4 @@
-#include "CommsHeader.lsl"
+#include "GPHUDHeader.lsl"
 
 integer ATTACH_LOCATION=ATTACH_HUD_BOTTOM;
 integer IN_EXPERIENCE=FALSE;

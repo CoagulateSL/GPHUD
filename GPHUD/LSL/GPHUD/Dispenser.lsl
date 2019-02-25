@@ -1,4 +1,4 @@
-#include "CommsHeader.lsl"
+#include "GPHUDHeader.lsl"
 list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :P)
 // stages are
 // 0 - querying them for an existing HUD
