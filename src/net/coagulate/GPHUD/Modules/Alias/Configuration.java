@@ -93,20 +93,22 @@ public abstract class Configuration {
         f.add(new Paragraph("Invokes command "+template.getString("invoke")));
         f.add(new Paragraph(new TextSubHeader("Template")));
         f.add(t);
-        t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description"));
+        t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description").add("Replaced Description"));
         Command c=Modules.getCommand(st,template.getString("invoke"));
         for (Argument arg:c.getArguments()) {
             if (!template.has(arg.getName())) { template.put(arg.getName(),""); }
         }
         
         for (String name:template.keySet()) {
-            if (!name.equals("invoke")) {
+            if (!name.equals("invoke") && !name.endsWith("-desc")) {
                 t.openRow().add(name).add(new TextInput(name,template.getString(name)));
                 Argument arg=null;
                 for (Argument anarg:c.getArguments()) { if (anarg.getName().equals(name)) { arg=anarg; }}
                 if (arg!=null) {
                     t.add(arg.type().toString());
                     t.add(arg.description());
+                    String desc=template.optString(name+"-desc","");
+                    t.add(new TextInput(name+"-desc",desc));
                     if (arg.delayTemplating()) { t.add("  <i> ( This parameter uses delayed templating ) </i>"); }
                 }
             }

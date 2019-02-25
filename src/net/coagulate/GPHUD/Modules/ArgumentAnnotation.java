@@ -15,6 +15,7 @@ public class ArgumentAnnotation extends Argument {
     Arguments meta;
     Parameter parameter;
     Command command;
+    String overridedescription=null;
     private boolean generated=true;
     public boolean isGenerated() { return generated; } 
     protected ArgumentAnnotation(){}
@@ -25,7 +26,8 @@ public class ArgumentAnnotation extends Argument {
         generated=false;
     }
     public ArgumentType type() { return meta.type(); }
-    public String description() { return meta.description(); }
+    public void overrideDescription(String n) { overridedescription=n; }
+    public String description() { if (overridedescription!=null) { return overridedescription; } return meta.description(); }
     public boolean mandatory() { return meta.mandatory(); }
     public String choiceMethod() { return meta.choiceMethod(); }
     public Class objectType() { return parameter.getType(); }

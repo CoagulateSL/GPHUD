@@ -44,8 +44,12 @@ public class AliasCommand extends Command {
     public Context context() { if (targetcommand==null) { return Context.ANY; } return targetcommand.context(); }
 
     @Override
-    public String description() { if (targetcommand==null) { return "The target command is not reachable, "+fail; } return targetcommand.description(); }
+    public String description() { 
+        if (targetcommand==null) { return "The target command is not reachable, "+fail; }
+        return targetcommand.description();
+    }
 
+    
     @Override
     public List<String> getArgumentNames(State st) throws UserException {
         if (targetcommand==null) { return new ArrayList<>(); }
@@ -66,6 +70,7 @@ public class AliasCommand extends Command {
         List<Argument> remainingargs=new ArrayList<>();
         for (Argument a:args) {
             if (!definition.has(a.getName())) { remainingargs.add(a); }
+            if (definition.has(a.getName()+"-desc") && !definition.optString(a.getName()+"-desc","").isEmpty()) { a.overrideDescription(definition.getString(a.getName()+"-desc")); }
         }
         return remainingargs;
     }

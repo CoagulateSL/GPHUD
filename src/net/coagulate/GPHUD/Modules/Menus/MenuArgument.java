@@ -34,6 +34,7 @@ public class MenuArgument extends Argument {
 
     @Override
     public String description() {
+        if (override!=null) { return override; }
         return "Choice of menu item";
     }
 
@@ -65,6 +66,12 @@ public class MenuArgument extends Argument {
     @Override
     public boolean delayTemplating() {
         return false;
+    }
+
+    String override=null;
+    @Override
+    public void overrideDescription(String n) {
+        override=n;
     }
     
     

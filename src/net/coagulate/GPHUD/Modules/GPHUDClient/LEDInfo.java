@@ -18,6 +18,6 @@ public class LEDInfo {
     }
     @Commands(context = Command.Context.ANY,description = "Gives information about the GREEN / RECEIVE light")
     public static Response rx(State st) {
-        return new OKResponse("The green light is the TRANSMIT light.\nDARK GREEN - Receiver has been set up and registered, and is idle.\nBRIGHT GREEN - A message is being received\nBLACK - No receiving circuit has been created, or it failed.");
+        return new OKResponse("The green light is the RECEIVE light.\nDARK GREEN - Receiver has been set up and registered, and is idle.\nBRIGHT GREEN - A message is being received\nBLACK - No receiving circuit has been created, or it failed.");
     }
 }

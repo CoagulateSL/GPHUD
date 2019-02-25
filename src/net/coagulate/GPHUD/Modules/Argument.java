@@ -51,6 +51,7 @@ public abstract class Argument {
     public abstract Class objectType();
     public abstract String getName();
     public abstract boolean delayTemplating();
+    public abstract void overrideDescription(String n);
 
     
     public abstract List<String> getChoices(State st);

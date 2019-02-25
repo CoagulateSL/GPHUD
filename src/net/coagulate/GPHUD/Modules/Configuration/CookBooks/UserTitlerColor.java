@@ -41,6 +41,7 @@ public class UserTitlerColor extends CookBook {
         setKV(st,act,t,st.getInstance(),"GPHUDClient.TitlerColor","--TITLERCOLOR--");
         JSONObject mappings=new JSONObject();
         mappings.put("attribute","TitlerColor");
+        mappings.put("value-desc", "Please enter titler color in SL format i.e. <R,G,B> with values between 0.0 and 1.0");
         createAlias(st,act,t,"SetTitlerColor","characters.set",mappings);
         menu(st,act,t,"Titler Color","Alias.SetTitlerColor");
     }

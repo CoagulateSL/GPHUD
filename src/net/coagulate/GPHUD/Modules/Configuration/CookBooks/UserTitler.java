@@ -43,6 +43,7 @@ public class UserTitler extends CookBook {
         setKV(st,act,t,st.getInstance(),"GPHUDClient.TitlerText",newvalue);
         JSONObject mappings=new JSONObject();
         mappings.put("attribute","TitlerText");
+        mappings.put("value-desc","Enter new titler text");
         createAlias(st,act,t,"SetTitlerText","characters.set",mappings);
         menu(st,act,t,"Titler Text","Alias.SetTitlerText");
     }
