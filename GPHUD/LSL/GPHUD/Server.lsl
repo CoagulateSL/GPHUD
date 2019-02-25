@@ -162,12 +162,13 @@ state distribution {
 	state_entry() { 
 		llMessageLinked(LINK_THIS,COMMS_SHUTDOWN,"","");
 		llSetObjectName("GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME);
-		llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0);
+		llSetTimerEvent(2.0);
 		llResetOtherScript("Visitors");
 		llResetOtherScript("Dispenser");
 		setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c");
 	}
 	on_rez(integer n) { llResetScript(); }
+	timer() { llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); }
 }
 
 
