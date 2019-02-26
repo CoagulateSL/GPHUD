@@ -39,7 +39,8 @@ public class UserTitler extends CookBook {
         t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
         charAttribute(st,act,t,"TitlerText","true","TEXT","","FALSE","FALSE","");
         String newvalue=st.getRawKV(st.getInstance(), "GPHUDClient.TitlerText");
-        newvalue+="--NEWLINE----TITLERTEXT--";
+        if (newvalue==null) { newvalue=""; } else { newvalue+="--NEWLINE--"; }
+        newvalue+="--TITLERTEXT--";
         setKV(st,act,t,st.getInstance(),"GPHUDClient.TitlerText",newvalue);
         JSONObject mappings=new JSONObject();
         mappings.put("attribute","TitlerText");
