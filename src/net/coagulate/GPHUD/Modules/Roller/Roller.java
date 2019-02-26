@@ -30,6 +30,7 @@ public class Roller {
         List<Integer> rolls=new ArrayList<>();
         if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
         if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
+        if (dice>100) { throw new UserException("Too many dice."); }
         for (int i=0;i<dice;i++) {
             int num = ThreadLocalRandom.current().nextInt(1, sides + 1);
             rolls.add(num);
@@ -56,6 +57,7 @@ public class Roller {
         if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
         if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
         if (reason==null) { reason="No Reason"; }
+        if (dice>100) { throw new UserException("Too many dice."); }
         String event="rolled "+dice+"d"+sides+" ";
         event+="for "+reason+", and rolled ";
         String allrolls="";
@@ -94,6 +96,7 @@ public class Roller {
         if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
         if (bias==null) { bias=0; }
         if (reason==null) { reason="No Reason"; }
+        if (dice>100) { throw new UserException("Too many dice."); }
         String event="rolled "+dice+"d"+sides+" ";
         if (bias!=0) { event+="(with bias "+bias+") "; }
         event+="for "+reason+", and rolled ";
@@ -162,6 +165,8 @@ public class Roller {
         if (targetdice==null) { targetdice=dice; }
         if (targetsides==null) { targetsides=sides; }
         if (targetbias==null) { targetbias=bias; }
+        if (dice>100) { throw new UserException("Too many dice."); }
+        if (targetdice>100) { throw new UserException("Too many dice for target."); }
         st.setTarget(target);
         
         int total=0;
