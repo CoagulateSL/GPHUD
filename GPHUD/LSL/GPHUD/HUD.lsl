@@ -1,4 +1,5 @@
 //#define DEBUG
+#include "SL/LSL/Constants.lsl"
 #include "SL/LSL/Library/SetDev.lsl"
 #include "SL/LSL/Comms/Header.lsl"
 #include "SL/LSL/GPHUD/GPHUDHeader.lsl"
@@ -131,7 +132,11 @@ integer firstrx=TRUE;
 default {
 	state_entry() {
 		llSetObjectName("GPHUD");
-		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,"e99682b7-d008-f0e0-9f08-e0a07d74232c",<1,1,1>,<0,0,0>,0]);
+		key k=LOGO_COAGULATE;
+		if (llGetObjectDesc()=="DEV") { 
+			k=LOGO_COAGULATE_DEV;
+		}
+		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,k,<1,1,1>,<0,0,0>,0]);
 		setupRpChannel();
 		llResetOtherScript("Legacy");
 		llResetOtherScript("Comms");

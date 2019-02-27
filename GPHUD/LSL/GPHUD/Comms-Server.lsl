@@ -8,6 +8,8 @@
 #define COMMS_LED_RX_FACE 5
 #define COMMS_LED_STATUS_LINK 0
 #define COMMS_LED_STATUS_FACE 4
+#define COMMS_LED_SHARD_LINK 0
+#define COMMS_LED_SHARD_FACE 0
 
 //---------- or can find them by dynamically searching prim names
 //#define COMMS_LED_TX_PRIMNAME

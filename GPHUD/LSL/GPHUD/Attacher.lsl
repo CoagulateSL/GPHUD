@@ -1,4 +1,5 @@
 #include "GPHUDHeader.lsl"
+#include "SL/LSL/Constants.lsl"
 
 integer ATTACH_LOCATION=ATTACH_HUD_BOTTOM;
 integer IN_EXPERIENCE=FALSE;
@@ -71,9 +72,14 @@ state standby {
 		}
 		dodie=TRUE;
 		integer sysnum=n%3;
+		key k=LOGO_COAGULATE;
 		if (sysnum==0) { llSetObjectDesc("GPHUD Version "+VERSION+" - "+COMPILEDATE+" "+COMPILETIME); system="Production"; }
 		if (sysnum==1) { llSetObjectDesc("DEV"); system="Testing";}
 		if (sysnum==2) { llSetObjectDesc("DEV-iain"); system="Iain-Dev"; }
+		if (sysnum!=0) { 
+			k=LOGO_COAGULATE_DEV;
+		}
+		if (llGetObjectName()=="GPHUD") { llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,k,<1,1,1>,<0,0,0>,0]); }
 		llSetTimerEvent(20.0);
 		calculatebroadcastchannel();
 		llListen(broadcastchannel+2,"",NULL_KEY,"");
