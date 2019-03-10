@@ -125,6 +125,7 @@ public abstract class Command {
                     case CHOICE:
                     case KVLIST:
                     case COORDINATES:
+                        //System.out.println("Adding arg "+v);
                         typedargs.add(new String(v));
                         break;
                     case BOOLEAN:

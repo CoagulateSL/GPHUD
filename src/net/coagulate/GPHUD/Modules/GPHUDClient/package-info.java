@@ -3,8 +3,8 @@
 @Permissions(name = "config",description = "Ability to configure the GPHUD interface")
 @Permissions(name="EditHUDText",description = "Ability to configure the HUD floating text")
 
-@KVS(name = "widthmultiplier",description = "Width of HUD versus its height (e.g. 2x, 1x, etc)",defaultvalue = "2",editpermission = "gphudclient.config",scope = KVSCOPE.COMPLETE,type = KVTYPE.FLOAT,hierarchy = KVHIERARCHY.DELEGATING,template=false)
-@KVS(name="logo",description = "Texture UUID for the HUD (right click, copy asset UUID)",editpermission = "gphudclient.config",scope = KVSCOPE.COMPLETE,type = KVTYPE.TEXTURE,defaultvalue = "e99682b7-d008-f0e0-9f08-e0a07d74232c",conveyas = "setlogo",hierarchy = KVHIERARCHY.DELEGATING,template=false)
+@KVS(name = "widthmultiplier",description = "Width of HUD versus its height (e.g. 2x, 1x, etc)",defaultvalue = "2",editpermission = "gphudclient.config",scope = KVSCOPE.COMPLETE,type = KVTYPE.FLOAT,hierarchy = KVHIERARCHY.DELEGATING,template=false,conveyas="sizeratio")
+@KVS(name="logo",description = "Texture UUID for the HUD (right click, copy asset UUID)",editpermission = "gphudclient.config",scope = KVSCOPE.COMPLETE,type = KVTYPE.TEXTURE,defaultvalue = "c792716b-13a3-06c9-6e7c-33c4e9d5a48f",conveyas = "setlogo",hierarchy = KVHIERARCHY.DELEGATING,template=false)
 @KVS(name="quickbutton1",description = "Command for Quick Button 1 (Top Left)",defaultvalue = "alias.roll",editpermission = "gphudclient.config",scope = KVSCOPE.COMPLETE,type = KVTYPE.TEXT,hierarchy = KVHIERARCHY.DELEGATING,template=false)
 @KVS(name="quickbutton2",description = "Command for Quick Button 2 (Top Right)",defaultvalue = "roller.rollagainst",editpermission = "gphudclient.config",scope = KVSCOPE.COMPLETE,type = KVTYPE.TEXT,hierarchy = KVHIERARCHY.DELEGATING,template=false)
 @KVS(name="quickbutton3",description = "Command for Quick Button 3 (Middle Left)",defaultvalue = "alias.damage",editpermission = "gphudclient.config",scope = KVSCOPE.COMPLETE,type = KVTYPE.TEXT,hierarchy = KVHIERARCHY.DELEGATING,template=false)

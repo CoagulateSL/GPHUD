@@ -211,6 +211,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 SafeMap parametermap=new SafeMap();
                 for (String key:st.json.keySet()) {
                     String value=st.json.get(key).toString();
+                    //System.out.println(key+"="+(value==null?"NULL":value));
                     parametermap.put(key,value);
                 }
                 String command=obj.getString("command");
