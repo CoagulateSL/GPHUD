@@ -39,6 +39,7 @@ public class UserTitlerColor extends CookBook {
         t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
         charAttribute(st,act,t,"TitlerColor","true","TEXT","","FALSE","FALSE","");
         setKV(st,act,t,st.getInstance(),"GPHUDClient.TitlerColor","--TITLERCOLOR--");
+        setKV(st,act,t,st.getInstance(),"Characters.TitlerColor","<1,1,1>");
         JSONObject mappings=new JSONObject();
         mappings.put("attribute","TitlerColor");
         mappings.put("value-desc", "Please enter titler color in SL format i.e. <R,G,B> with values between 0.0 and 1.0");
