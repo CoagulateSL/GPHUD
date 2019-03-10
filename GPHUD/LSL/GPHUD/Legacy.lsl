@@ -52,8 +52,21 @@ trigger() {
 	for (i=0;i<args;i++) {
 		if (iscomplete) {
 			string name=jsonget("arg"+(string)i+"name");
-			//llOwnerSay(name);
-			if (jsonget(name)=="") { 
+			string type=llJsonValueType(json,[name]);
+			/*
+			string valuetype="UNKNOWN";
+			if (type==JSON_INVALID) { valuetype="INVALID"; }
+			if (type==JSON_OBJECT) { valuetype="OBJECT"; }
+			if (type==JSON_ARRAY) { valuetype="ARRAY"; }
+			if (type==JSON_NUMBER) { valuetype="NUMBER"; }
+			if (type==JSON_STRING) { valuetype="STRING"; }
+			if (type==JSON_NULL) { valuetype="NULL"; }
+			if (type==JSON_TRUE) { valuetype="TRUE"; }
+			if (type==JSON_FALSE) { valuetype="FALSE"; }
+			if (type==JSON_DELETE) { valuetype="DELETE"; }
+			llOwnerSay(name+" "+valuetype);
+			*/
+			if (type==JSON_INVALID) {//if (jsonget(name)=="") { 
 				iscomplete=FALSE;
 				setname=name;
 				string val="arg"+(string)i+"type";

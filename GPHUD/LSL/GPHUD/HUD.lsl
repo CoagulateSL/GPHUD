@@ -14,6 +14,9 @@ integer LINK_QB4=-1;
 integer LINK_QB5=-1;
 integer LINK_QB6=-1;
 integer LINK_MESSAGES=-1;
+integer LINK_RX=-1;
+integer LINK_TX=-1;
+integer sizeratio=2;
 key radarto=NULL_KEY;
 integer detach=FALSE;
 string hudtext="Loading...";
@@ -26,6 +29,20 @@ integer rpchannel=0;
 integer rpchannelhandle=0;
 integer ready=FALSE;
 string cookie="";
+reflowHUD() {
+	float sr=((float)sizeratio);
+	llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<0.01,0.12*sr,0.12>,
+		PRIM_LINK_TARGET,LINK_RX,PRIM_SIZE,<0.02,0.06*sr,0.02>,PRIM_POSITION,<0.01,0.06*sr/2.0,-0.06>,
+		PRIM_LINK_TARGET,LINK_TX,PRIM_SIZE,<0.02,0.06*sr,0.02>,PRIM_POSITION,<0.01,-0.06*sr/2.0,-0.06>,
+		PRIM_LINK_TARGET,LINK_QB2,PRIM_POSITION,<0.01,0.12*sr/2.0+0.02,0.04>,
+		PRIM_LINK_TARGET,LINK_QB1,PRIM_POSITION,<0.01,0.12*sr/2.0+0.02+0.04,0.04>,
+		PRIM_LINK_TARGET,LINK_QB4,PRIM_POSITION,<0.01,0.12*sr/2.0+0.02,0.0>,
+		PRIM_LINK_TARGET,LINK_QB3,PRIM_POSITION,<0.01,0.12*sr/2.0+0.02+0.04,0.0>,
+		PRIM_LINK_TARGET,LINK_QB6,PRIM_POSITION,<0.01,0.12*sr/2.0+0.02,-0.04>,
+		PRIM_LINK_TARGET,LINK_QB5,PRIM_POSITION,<0.01,0.12*sr/2.0+0.02+0.04,-0.04>,
+		PRIM_LINK_TARGET,LINK_MESSAGES,PRIM_POSITION,<0.01,-0.12*sr/2.0-0.02,0.04>
+		]);
+}
 setupRpChannel() {
 	if (rpchannelhandle!=0){llListenRemove(rpchannelhandle);}
 	if (rpchannel!=0) { rpchannelhandle=llListen(rpchannel,"",llGetOwner(),""); }
@@ -74,6 +91,7 @@ integer process(key id) {
 	//if (incommand=="close" && !disallowclose) { hidehud(); }
 	//if (incommand=="open") { showhud(); disallowclose=FALSE;}
 	if (incommand=="runtemplate") { llMessageLinked(LINK_THIS,LINK_LEGACY_RUN,json,""); }
+	if (jsonget("sizeratio")!="") { sizeratio=(integer)jsonget("sizeratio"); reflowHUD(); }
 	if (incommand=="openurl") { llLoadURL(llGetOwner(),jsonget("description"),jsonget("url")); }
 	if (jsonget("setlogo")!="") { llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,jsonget("setlogo"),<1,1,1>,<0,0,0>,0]); }
 	if (jsonget("qb1texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB1,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb1texture"),<1,1,1>,<0,0,0>,0]); }
@@ -93,7 +111,9 @@ integer process(key id) {
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
 	if (jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
-		llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titler\":\""+(string)titlercolor+"|"+titlertext+"\"}");
+		string totitler=llJsonSetValue("",["titler"],(string)titlercolor+"|"+titlertext);
+		llRegionSayTo(llGetOwner(),broadcastchannel,totitler);
+		//llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titler\":\""+(string)titlercolor+"|"+titlertext+"\"}");
 	}
 	if (jsonget("messagecount")!="") {
 		integer messages=(integer)jsonget("messagecount");
@@ -149,6 +169,8 @@ default {
 			if (primname=="quickbutton4") { LINK_QB4=p; }
 			if (primname=="quickbutton5") { LINK_QB5=p; }
 			if (primname=="quickbutton6") { LINK_QB6=p; }
+			if (primname=="rx") { LINK_RX=p; }
+			if (primname=="tx") { LINK_TX=p; }
 			if (primname=="getmessage") { LINK_MESSAGES=p; }
 			
 		}
@@ -158,7 +180,9 @@ default {
 			LINK_QB3==-1 ||
 			LINK_QB4==-1 ||
 			LINK_QB5==-1 ||
-			LINK_QB6==-1) { llOwnerSay("PANIC! LINK NOT SET)");  while (1==1) { llSleep(100.0); } }
+			LINK_QB6==-1 ||
+			LINK_TX==-1 ||
+			LINK_RX==-1) { llOwnerSay("PANIC! LINK NOT SET)");  while (1==1) { llSleep(100.0); } }
 		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) {
 			llResetOtherScript("Attacher");
 			report("Waiting for GO",<0.75,0.75,1.0>);
