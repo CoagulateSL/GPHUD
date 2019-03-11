@@ -48,6 +48,9 @@ public abstract class ViewAvatar {
         Form f=st.form;
         f.noForm();
         f.add(new TextSubHeader(a.getName()));
+        if (a.getId()==User.getSystem().getId()) {
+            f.p("<b>SYSTEM is a virtual avatar used as an actor for automatic events that are run by GPHUD itself, e.g. character creation, visit xp, and more</b>");
+        }
         Table kvtable=new Table(); f.add(kvtable);
         for (Char c:Char.getCharacters(st.getInstance(),a)) {
             kvtable.openRow().add("Owned Character").add(c);
