@@ -66,6 +66,14 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         
         try {
             st.resp.setStatusCode(HttpStatus.SC_OK);
+            if (st.getInstanceNullable()==null) {
+                //hmm
+                Char c = PrimaryCharacters.getPrimaryCharacter(st, false);
+                if (c!=null) {
+                    st.setInstance(c.getInstance());
+                    st.setCharacter(c);
+                }
+            }
             st.resp.setEntity(new StringEntity(renderHTML(st),ContentType.TEXT_HTML));
         }
         catch (RedirectionException redir) {
