@@ -144,8 +144,10 @@ public abstract class Login {
         String cookie=Cookies.generate(st.avatar(), st.getCharacter(),instance, true);
         JSONObject legacymenu=Modules.getJSONTemplate(st,"menus.main");
         JSONObject rawresponse=new JSONObject();
-        int apremain=abilityPointsRemaining(st);
-        if (apremain>0) { new Transmission(st.getCharacter(),Modules.getJSONTemplate(st, "characters.spendabilitypoint"),1).start(); }
+        if (st.hasModule("Experience")) {
+            int apremain=abilityPointsRemaining(st);
+            if (apremain>0) { new Transmission(st.getCharacter(),Modules.getJSONTemplate(st, "characters.spendabilitypoint"),1).start(); }
+        }
         rawresponse.put("message",loginmessage);
         rawresponse.put("incommand","registered");
         rawresponse.put("cookie",cookie);
