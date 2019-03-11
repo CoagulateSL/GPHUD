@@ -53,7 +53,13 @@ import org.apache.http.entity.StringEntity;
  */
 public class Interface extends net.coagulate.GPHUD.Interface {
 
-    
+    /** URLs we do not redirect to instance/char selection.  Like logout. */
+    private boolean interceptable(String url) {
+        //System.out.println(url);
+        if (url.equalsIgnoreCase("/logout")) { return false; }
+        if (url.equalsIgnoreCase("/Help")) { return false; }
+        return true;
+    }
     /** this is where the request comes in after generic processing.
      * We basically just encapsulate all requests in an Exception handler that will spew errors as HTML errors (rather than JSON errors).
      * These are rather useless in production, but in DEV we dump the stack traces too.
@@ -66,14 +72,6 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         
         try {
             st.resp.setStatusCode(HttpStatus.SC_OK);
-            if (st.getInstanceNullable()==null) {
-                //hmm
-                Char c = PrimaryCharacters.getPrimaryCharacter(st, false);
-                if (c!=null) {
-                    st.setInstance(c.getInstance());
-                    st.setCharacter(c);
-                }
-            }
             st.resp.setEntity(new StringEntity(renderHTML(st),ContentType.TEXT_HTML));
         }
         catch (RedirectionException redir) {
@@ -293,6 +291,13 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         SafeMap values=getPostValues(st);
         f=authenticationHook(st,values);
         if (st.getInstanceNullable()==null && st.getCharacterNullable()!=null) { st.setInstance(st.getCharacter().getInstance()); }
+        // redirect the request if still no data
+        if (st.getInstanceNullable()==null) {
+            //hmm.  PrimaryChar doesn't work because thats instance dependant.
+            // just remap the URL.  and for that matter we need an exclusion list
+            if (interceptable(st.getDebasedURL())) { st.setURL("/switch/instance"); }
+        }
+        
         if (f==null) {
             f=new Form();
             st.form=f;
