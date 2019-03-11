@@ -82,4 +82,9 @@ public class URLAnnotation extends URL {
     public String getMethodName() {
         return method.getDeclaringClass().getName()+"."+method.getName()+"()";
     }
+
+    @Override
+    public boolean requiresAuthentication() {
+        return meta.requiresAuthentication();
+    }
 }

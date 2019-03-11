@@ -24,6 +24,7 @@ public abstract class URL {
     public @interface URLs {
         String url();
         String requiresPermission() default "";
+        boolean requiresAuthentication() default true;
     }
     
     
@@ -31,6 +32,7 @@ public abstract class URL {
     
     public abstract String url();
     public abstract String requiresPermission();
+    public abstract boolean requiresAuthentication();
     public abstract String getFullName();
     public abstract String getName();
     

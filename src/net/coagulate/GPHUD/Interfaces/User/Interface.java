@@ -258,7 +258,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         else {
             s+="<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>";
-            s+="<a href=\"https://sl.coagulate.net/GPHUD/Help\">Documentation</a><br>";
+            s+="<a href=\"/GPHUD/Help\">Documentation</a><br>";
             s+="<hr width=150px>";
             return s;
         }
@@ -271,7 +271,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         if (st.avatar()==null) { s+="<i>Select an avatar</i><br>"; dynamics=false; }
         if (st.getInstanceNullable()==null) { s+="<i>Select an instance</i><br>"; dynamics=false; }
         if (dynamics) { s+=dynamicSideMenus(st); s+="<br>"; }
-        s+="<a href=\"https://sl.coagulate.net/GPHUD/Help\">Documentation</a><br>";
+        s+="<a href=\"/GPHUD/Help\">Documentation</a><br>";
         s+="<hr width=150px>";
         String sectionhead="<b>PERMISSIONS:</b><br>";
         if (st.isSuperUser()) { s+=sectionhead+"<b style=\"color: blue;\">SUPER-ADMIN</b><br>"; sectionhead=""; }
@@ -287,21 +287,22 @@ public class Interface extends net.coagulate.GPHUD.Interface {
     public boolean isRich() { return true; }            
     
     public String renderBody(State st) throws SystemException,UserException, InvocationTargetException {
-        Form f;
+        Form f=null;
         SafeMap values=getPostValues(st);
-        f=authenticationHook(st,values);
-        if (st.getInstanceNullable()==null && st.getCharacterNullable()!=null) { st.setInstance(st.getCharacter().getInstance()); }
-        // redirect the request if still no data
-        if (st.getInstanceNullable()==null) {
-            //hmm.  PrimaryChar doesn't work because thats instance dependant.
-            // just remap the URL.  and for that matter we need an exclusion list
-            if (interceptable(st.getDebasedURL())) { st.setURL("/switch/instance"); }
+        URL content = Modules.getURL(st,st.getDebasedURL());
+        if (content.requiresAuthentication()) {
+            f=authenticationHook(st,values);
+            if (st.getInstanceNullable()==null && st.getCharacterNullable()!=null) { st.setInstance(st.getCharacter().getInstance()); }
+            // redirect the request if still no data
+            if (st.getInstanceNullable()==null) {
+                //hmm.  PrimaryChar doesn't work because thats instance dependant.
+                // just remap the URL.  and for that matter we need an exclusion list
+                if (interceptable(st.getDebasedURL())) { st.setURL("/switch/instance"); }
+            }
         }
-        
         if (f==null) {
             f=new Form();
             st.form=f;
-            URL content = Modules.getURL(st,st.getDebasedURL());                
             if (!content.requiresPermission().isEmpty()) {
                 if (!st.hasPermission(content.requiresPermission())) {
                     st.logger().log(WARNING,"Attempted access to "+st.getDebasedURL()+" which requires missing permission "+content.requiresPermission());

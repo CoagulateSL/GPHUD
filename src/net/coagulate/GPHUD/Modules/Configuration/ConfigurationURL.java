@@ -49,5 +49,10 @@ public class ConfigurationURL extends URL {
     public void run(State st, SafeMap values) {
         throw new SystemException("Stub url can not be run");
     }
+
+    @Override
+    public boolean requiresAuthentication() {
+        return true;
+    }
     
 }
