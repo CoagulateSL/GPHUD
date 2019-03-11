@@ -47,7 +47,7 @@ public  class VisitXP extends QuotaedXP {
                 State fakestate=new State();
                 fakestate.setInstance(st.getInstance());
                 fakestate.setAvatar(User.getSystem());
-                ch.hudMessage("You were awared 1 point of Vist XP, you will be eligable for your next point in "+nextFree(st));
+                ch.hudMessage("You were awared 1 point of Visit XP, you will be eligable for your next point "+nextFree(st));
                 Audit.audit(fakestate, Audit.OPERATOR.AVATAR, null, ch, "Pool Add", "VisitXP", null, ""+wanttogive, "Awarded XP for time on sim");
             }
         } catch (Exception e) {
