@@ -113,6 +113,13 @@ public class State {
         if (uri.startsWith("/GPHUD/")) { return uri.substring(6); }
         return uri;
     } 
+    public String getDebasedNoQueryURL() {
+        String ret=getDebasedURL();
+        System.out.println("Pre parsing:"+ret);
+        if (ret.indexOf("?")!=-1) { ret=ret.substring(0,ret.indexOf("?")); }
+        System.out.println("Post parsing:"+ret);
+        return ret;
+    }
     public void setURL(String url) { uri=url; }
     public Header[] headers=null;
     //requested host

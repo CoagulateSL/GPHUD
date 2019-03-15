@@ -289,7 +289,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
     public String renderBody(State st) throws SystemException,UserException, InvocationTargetException {
         Form f=null;
         SafeMap values=getPostValues(st);
-        URL content = Modules.getURL(st,st.getDebasedURL());
+        URL content = Modules.getURL(st,st.getDebasedNoQueryURL());
         if (content.requiresAuthentication()) {
             f=authenticationHook(st,values);
             if (st.getInstanceNullable()==null && st.getCharacterNullable()!=null) { st.setInstance(st.getCharacter().getInstance()); }
@@ -297,7 +297,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             if (st.getInstanceNullable()==null) {
                 //hmm.  PrimaryChar doesn't work because thats instance dependant.
                 // just remap the URL.  and for that matter we need an exclusion list
-                if (interceptable(st.getDebasedURL())) { st.setURL("/switch/instance"); }
+                if (interceptable(st.getDebasedNoQueryURL())) { st.setURL("/switch/instance"); }
             }
         }
         if (f==null) {
