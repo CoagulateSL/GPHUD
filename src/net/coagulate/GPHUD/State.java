@@ -115,9 +115,9 @@ public class State {
     } 
     public String getDebasedNoQueryURL() {
         String ret=getDebasedURL();
-        System.out.println("Pre parsing:"+ret);
+        //System.out.println("Pre parsing:"+ret);
         if (ret.indexOf("?")!=-1) { ret=ret.substring(0,ret.indexOf("?")); }
-        System.out.println("Post parsing:"+ret);
+        //System.out.println("Post parsing:"+ret);
         return ret;
     }
     public void setURL(String url) { uri=url; }
