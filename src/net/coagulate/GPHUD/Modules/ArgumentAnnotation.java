@@ -33,6 +33,7 @@ public class ArgumentAnnotation extends Argument {
     public Class objectType() { return parameter.getType(); }
     public String getName() { return parameter.getName(); }
     public boolean delayTemplating() { return meta.delayTemplating(); }
+    public int max() { return meta.max(); }
 
     @SuppressWarnings("unchecked")
     public List<String> getChoices(State st) throws SystemException {

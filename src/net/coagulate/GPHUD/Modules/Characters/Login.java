@@ -42,11 +42,11 @@ import org.json.JSONObject;
 public abstract class Login {
     @Commands(context = Context.AVATAR,permitConsole = false,permitUserWeb = false,permitHUDWeb = false,description = "Register this session as a character connection")
     public static Response login(State st,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version number of the HUD that is connecting")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version number of the HUD that is connecting",max=128)
                 String version,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version date of the HUD that is connecting")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version date of the HUD that is connecting",max=128)
                 String versiondate,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version time of the HUD that is connecting")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version time of the HUD that is connecting",max=128)
                 String versiontime
     ) throws UserException, SystemException
     {
@@ -165,7 +165,7 @@ public abstract class Login {
     
     @Commands(context = Context.AVATAR,description = "Create a new character")
     public static Response create(State st,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the new character")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the new character",max=64)
                 String charactername)
     {
         if (Char.resolve(st, charactername)!=null) {
@@ -211,7 +211,7 @@ public abstract class Login {
     public static Response initialise(State st,
             @Arguments(type = ArgumentType.ATTRIBUTE,description = "Attribute to initialise")
             Attribute attribute,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Value to initialise to")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Value to initialise to",max=4096)
             String value)
     {
         //System.out.println("Initialise "+attribute+" to "+value);

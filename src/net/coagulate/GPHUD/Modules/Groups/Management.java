@@ -100,7 +100,7 @@ public abstract class Management {
     
     @Commands(context = Context.AVATAR,description = "Create a group",requiresPermission = "Groups.Create")
     public static Response create(State st,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the group")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the group",max=128)
                 String name,
             @Arguments(type = ArgumentType.CHOICE,description="Type of the group",mandatory = false,choiceMethod = "groupTypes")
                 String type)

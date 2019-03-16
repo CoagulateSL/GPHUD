@@ -16,7 +16,7 @@ public class Broadcast {
     
     @Commands(context = Context.ANY,description = "Send admin message",requiresPermission = "instance.SendAdminMessages")
     public static Response admin(State st,
-            @Arguments(description = "Message to broadcast",type = ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Message to broadcast",type = ArgumentType.TEXT_ONELINE,max=200)
                 String sendmessage)
     {
         String message="(From ";

@@ -217,7 +217,7 @@ public class CharactersModule extends ModuleAnnotation {
     public static Response set(State st,
             @Arguments(type = Argument.ArgumentType.ATTRIBUTE_WRITABLE,description = "Attribute to set",mandatory = true)
                 Attribute attribute,
-            @Arguments(type=Argument.ArgumentType.TEXT_ONELINE,description="Value to use",mandatory=false)
+            @Arguments(type=Argument.ArgumentType.TEXT_ONELINE,description="Value to use",mandatory=false,max=4096)
                 String value)
     {
         if (attribute==null) { return new ErrorResponse("You must supply an attribute to set"); }

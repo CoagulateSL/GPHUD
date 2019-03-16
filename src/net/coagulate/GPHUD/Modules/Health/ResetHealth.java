@@ -39,7 +39,7 @@ public class ResetHealth {
             Integer sides,
             @Argument.Arguments(description="Bias to roll",mandatory = false,type = Argument.ArgumentType.INTEGER)
             Integer bias,
-            @Argument.Arguments(description = "Reason for heal",type = Argument.ArgumentType.TEXT_ONELINE,mandatory = false)
+            @Argument.Arguments(description = "Reason for heal",type = Argument.ArgumentType.TEXT_ONELINE,mandatory = false,max=512)
             String reason
             )
     {

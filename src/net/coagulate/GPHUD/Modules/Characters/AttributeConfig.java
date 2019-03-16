@@ -96,19 +96,19 @@ public class AttributeConfig {
         
     @Commands(description = "Create a new attribute",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
     public static Response createAttribute(State st,
-        @Arguments(description = "Name of new attribute",type = Argument.ArgumentType.TEXT_ONELINE)
+        @Arguments(description = "Name of new attribute",type = Argument.ArgumentType.TEXT_ONELINE,max=64)
             String name,
         @Arguments(description="Allow users to edit their own value without needing permissions",type = Argument.ArgumentType.BOOLEAN)
             Boolean selfmodify,
         @Arguments(description = "Type of this attribute",type = Argument.ArgumentType.CHOICE,choiceMethod = "getAttributeTypes")
             String attributetype,
-        @Arguments (description="Type of group if attribute is of type GROUP",mandatory = false,type = Argument.ArgumentType.TEXT_ONELINE)
+        @Arguments (description="Type of group if attribute is of type GROUP",mandatory = false,type = Argument.ArgumentType.TEXT_ONELINE,max=128)
             String grouptype,
         @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
             Boolean usesabilitypoints,
         @Arguments(description = "Attribute must be completed",mandatory=true,type = Argument.ArgumentType.BOOLEAN)
             Boolean required,
-        @Arguments(description = "Default value (can be blank)",mandatory=true,type=Argument.ArgumentType.TEXT_ONELINE)
+        @Arguments(description = "Default value (can be blank)",mandatory=true,type=Argument.ArgumentType.TEXT_ONELINE,max=4096)
             String defaultvalue
     ){
         for (Attribute a:st.getAttributes()) {
@@ -195,7 +195,7 @@ public class AttributeConfig {
     public static Response setDefault(State st,
         @Arguments(description = "Attribute",type = Argument.ArgumentType.ATTRIBUTE)
             Attribute attribute,
-        @Arguments(description="Default value",mandatory = false,type = Argument.ArgumentType.TEXT_ONELINE)
+        @Arguments(description="Default value",mandatory = false,type = Argument.ArgumentType.TEXT_ONELINE,max=4096)
             String defaultvalue
     ){
         attribute.validate(st);

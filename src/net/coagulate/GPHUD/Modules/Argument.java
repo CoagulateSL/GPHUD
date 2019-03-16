@@ -26,6 +26,7 @@ public abstract class Argument {
         boolean mandatory() default true;
         String choiceMethod() default "";
         boolean delayTemplating() default false;
+        int max() default -1;
     }
    
     public static enum ArgumentType { TEXT_ONELINE, TEXT_MULTILINE, PASSWORD,
@@ -51,6 +52,7 @@ public abstract class Argument {
     public abstract Class objectType();
     public abstract String getName();
     public abstract boolean delayTemplating();
+    public abstract int max();
     public abstract void overrideDescription(String n);
 
     

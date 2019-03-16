@@ -80,7 +80,7 @@ public class GPHUD {
         
         // Annotation parser
         Classes.initialise();
-        
+
         // finally open the listener
         HTTPListener.initialise(Integer.parseInt(get("PORT")));
         //
@@ -248,6 +248,7 @@ public class GPHUD {
         // Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
         log.config("GPHUD as module starting up... "+VERSION);
         log.config("Server operating on node "+hostname);
+        //Classes.initialise(); if (1==1) { System.exit(0); }        
 
         if (isdev) { DEV=isdev; log.config("Configuration declares us as a DEVELOPMENT NODE"); }
         // Initialise the Database layer

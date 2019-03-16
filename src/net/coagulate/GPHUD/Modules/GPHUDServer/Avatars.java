@@ -24,7 +24,7 @@ import net.coagulate.SL.Data.User;
 public abstract class Avatars {
     @Commands(context = Context.AVATAR,description = "Synchronise the avatars status with the regions contents, server use only.",permitConsole = false,permitHUDWeb = false,permitUserWeb = false)
     public static Response setRegionAvatars(State st,
-            @Arguments(description = "Comma separated list of avatar key=names on the sim",mandatory = true,type = ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Comma separated list of avatar key=names on the sim",mandatory = true,type = ArgumentType.TEXT_ONELINE,max=65536)
                     String userlist) throws UserException { 
         // check authorisation, servers can only be deployed by the instance owner...
         if (st.sourcedeveloper.getId()!=1) { return new ErrorResponse("Invalid developer source for priviledged call."); }

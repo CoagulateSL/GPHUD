@@ -73,6 +73,11 @@ public class MenuArgument extends Argument {
     public void overrideDescription(String n) {
         override=n;
     }
+
+    @Override
+    public int max() {
+        return 24; // i think
+    }
     
     
     

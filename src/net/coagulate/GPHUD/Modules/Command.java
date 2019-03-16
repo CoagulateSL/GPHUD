@@ -117,6 +117,40 @@ public abstract class Command {
             if ((v == null || v.equals("")) && type != ArgumentType.BOOLEAN) {
                 typedargs.add(null);
             } else {
+                int maxlen=-1;
+                switch (type) {
+                    case TEXT_ONELINE: maxlen=argument.max(); break;
+                    case TEXT_MULTILINE: maxlen=argument.max(); break;
+                    case PASSWORD: maxlen=1024; break;
+                    case BOOLEAN: maxlen=8; break;
+                    case INTEGER: maxlen=32; break;
+                    case FLOAT: maxlen=32; break; 
+                    case CHOICE: maxlen=1024; break;
+                    case CHARACTER: maxlen=64; break;
+                    case CHARACTER_PLAYABLE: maxlen=64; break;
+                    case CHARACTER_NEAR: maxlen=64; break;
+                    case CHARACTER_FACTION: maxlen=64; break;
+                    case AVATAR: maxlen=64; break;
+                    case AVATAR_NEAR: maxlen=64; break;
+                    case PERMISSIONSGROUP:  maxlen=64; break;
+                    case PERMISSION:  maxlen=64; break;
+                    case CHARACTERGROUP:  maxlen=128; break;
+                    case KVLIST: maxlen=128; break;
+                    case MODULE: maxlen=64; break;
+                    case REGION: maxlen=64; break;
+                    case ZONE: maxlen=64; break;
+                    case COORDINATES: maxlen=64; break;
+                    case EVENT: maxlen=128; break;
+                    case ATTRIBUTE: maxlen=64; break;
+                    case ATTRIBUTE_WRITABLE: maxlen=64; break;
+                    default:
+                        throw new AssertionError(type.name());
+                    
+                }
+                if (maxlen<1) { st.logger().warning("Command "+this.getClass().getSimpleName()+" argument "+argument.getName()+" does not specify a max, assuming 65k..."); }
+                else {
+                    if (v.length()>maxlen) { throw new UserException(argument.getName()+" is "+v.length()+" characters long and must be no more than "+maxlen+".  Input has not been processed, please try again"); }
+                }
                 switch (type) {
                     case TEXT_ONELINE:
                     case TEXT_MULTILINE:

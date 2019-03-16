@@ -37,7 +37,7 @@ public class FactionCommands {
     public static Response awardXP(State st,
             @Arguments(description = "Character to award a point of XP to",type = ArgumentType.CHARACTER_FACTION)
                 Char target,
-            @Arguments(description = "Reason for the award",type = ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Reason for the award",type = ArgumentType.TEXT_ONELINE,max=512)
                 String reason) throws UserException, SystemException {
         // things to check...
         // players are in the same faction

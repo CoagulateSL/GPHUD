@@ -32,9 +32,9 @@ public class OpenWebsite  {
     
     @Commands(context = Context.ANY,description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description",permitUserWeb = false,permitHUDWeb = false,permitConsole = true)
     public static Response offerWebsite(State st,
-            @Argument.Arguments(description = "URL to offer to user",type = Argument.ArgumentType.TEXT_ONELINE)
+            @Argument.Arguments(description = "URL to offer to user",type = Argument.ArgumentType.TEXT_ONELINE,max=255)
             String url,
-            @Argument.Arguments(description="Description to offer with the URL",type=Argument.ArgumentType.TEXT_MULTILINE)
+            @Argument.Arguments(description="Description to offer with the URL",type=Argument.ArgumentType.TEXT_MULTILINE,max=254)
             String description) {
         JSONObject json=new JSONObject();
         json.put("incommand","openurl");

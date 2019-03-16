@@ -52,7 +52,7 @@ public class Roller {
                     Integer dice,
             @Arguments(description = "Number of sides on dice",type = ArgumentType.INTEGER,mandatory = false)
                     Integer sides,
-            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE,max=512)
                     String reason) throws UserException, SystemException {
         if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
         if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
@@ -90,7 +90,7 @@ public class Roller {
                     Integer sides,
             @Arguments(description = "Optional bias to add to result",mandatory = false,type = ArgumentType.INTEGER)
                     Integer bias,
-            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE,max=512)
                     String reason) throws UserException, SystemException {
         if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
         if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
@@ -119,7 +119,7 @@ public class Roller {
     
     @Commands(context = Context.CHARACTER,description = "Default roll, only requests a reason",permitUserWeb = false)
     public static Response rollDefault(State st,
-            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE,max=512)
                     String reason) throws UserException, SystemException {
         return roll(st,null,null,0,reason);
     }
@@ -154,7 +154,7 @@ public class Roller {
                     Integer targetsides,
             @Arguments(description = "Optional bias to add to result",mandatory = false,type = ArgumentType.INTEGER)
                     Integer targetbias,
-            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE,max=512)
                 String reason) throws UserException, SystemException 
     {
         if (target==null) { throw new UserException("No target selected"); }
@@ -234,9 +234,9 @@ public class Roller {
                     Integer targetsides,
             @Arguments(description = "Optional bias to add to result",mandatory = false,type = ArgumentType.INTEGER)
                     Integer targetbias,
-            @Arguments(description = "Damage to apply to target if they lose",mandatory=false,type=ArgumentType.TEXT_ONELINE,delayTemplating = true)
+            @Arguments(description = "Damage to apply to target if they lose",mandatory=false,type=ArgumentType.TEXT_ONELINE,delayTemplating = true,max=1024)
                     String damage,
-            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Logged reason for the roll",type=ArgumentType.TEXT_ONELINE,max=512)
                 String reason) throws UserException, SystemException 
     {
         //System.out.println("DAMAGE RECEIVED AS "+damage);

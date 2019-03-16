@@ -30,7 +30,7 @@ public class EditValues {
     public static Response setInstance(State st,
             @Arguments(type = ArgumentType.KVLIST,description = "Key to set the value of")
                 String key,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key",max=4096)
                 String value) throws UserException, SystemException 
     {
         Modules.validateKV(st,key);
@@ -58,7 +58,7 @@ public class EditValues {
                 Region region,
             @Arguments(type = ArgumentType.KVLIST,description = "Key to set the value of")
                 String key,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key",max=4096)
                 String value) throws UserException, SystemException 
     {
         region.validate(st);
@@ -88,7 +88,7 @@ public class EditValues {
             Zone zone,
             @Arguments(type = ArgumentType.KVLIST,description="Key to set")
             String key,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description="Value to set to")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description="Value to set to",max=4096)
             String value) {
         zone.validate(st);
         Modules.validateKV(st,key);
@@ -112,7 +112,7 @@ public class EditValues {
                 Event event,
             @Arguments(type = ArgumentType.KVLIST,description = "Key to set the value of")
                 String key,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key",max=4096)
                 String value) throws UserException, SystemException 
     {
         event.validate(st);
@@ -139,7 +139,7 @@ public class EditValues {
                 CharacterGroup group,
             @Arguments(type = ArgumentType.KVLIST,description = "Key to set the value of")
                 String key,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key",max=4096)
                 String value) throws UserException, SystemException 
     {
         group.validate(st);
@@ -170,7 +170,7 @@ public class EditValues {
                 Char character,
             @Arguments(type = ArgumentType.KVLIST,description = "Key to set the value of")
                 String key,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "New value for the key",max=4096)
                 String value) throws UserException, SystemException 
     {
         character.validate(st);

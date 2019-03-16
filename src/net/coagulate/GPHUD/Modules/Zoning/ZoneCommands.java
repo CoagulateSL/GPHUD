@@ -24,7 +24,7 @@ public abstract class ZoneCommands {
     
     @Commands(context=Context.AVATAR,description="Create a new zone",requiresPermission = "Zoning.Config")
     public static Response create(State st,
-            @Arguments(description = "Name of the zone",type = ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Name of the zone",type = ArgumentType.TEXT_ONELINE,max=64)
                 String name)
     {
         Zone.create(st.getInstance(),name);

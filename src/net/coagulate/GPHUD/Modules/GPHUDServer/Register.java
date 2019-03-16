@@ -27,11 +27,11 @@ public abstract class Register {
 
     @Commands(context = Context.AVATAR,permitConsole = false,permitHUDWeb = false,permitUserWeb = false,description = "Registers this connection as the region server connection")
     public static Response register(State st,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version number of the Server that is connecting")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version number of the Server that is connecting",max=64)
                 String version,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version date of the Server that is connecting")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version date of the Server that is connecting",max=64)
                 String versiondate,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version time of the Server that is connecting")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Version time of the Server that is connecting",max=64)
                 String versiontime) throws UserException, SystemException {           
         // check authorisation, servers can only be deployed by the instance owner...
         String regionname=st.getRegionName();

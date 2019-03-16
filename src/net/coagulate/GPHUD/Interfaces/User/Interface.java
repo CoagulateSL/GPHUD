@@ -78,7 +78,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             st.resp.setStatusCode(303);
             String targeturl=redir.getURL();
             //System.out.println("PRE:"+targeturl);
-            if (targeturl.startsWith("/")) { targeturl="/GPHUD"+targeturl; }
+            if (targeturl.startsWith("/") && !targeturl.startsWith("/GPHUD")) { targeturl="/GPHUD"+targeturl; }
             //System.out.println("POST:"+targeturl);
             st.resp.addHeader("Location", targeturl);
         }

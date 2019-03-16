@@ -4,10 +4,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.logging.Logger;
 import net.coagulate.Core.Tools.ClassTools;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.CommandAnnotation;
 import net.coagulate.GPHUD.Modules.KV.KVS;
@@ -144,6 +146,54 @@ public abstract class Classes {
             Annotation a=m.getAnnotation(Commands.class);
             if (LOGREGISTERS) log.config("Registering command "+modulename+"/"+m.getName());
             ((ModuleAnnotation)Modules.get(null,modulename)).registerCommand(new CommandAnnotation(Modules.get(null,modulename),m));
+            // validate command argument annotations
+            boolean firstparam=true;
+            for (Parameter p:m.getParameters()) {
+                if (firstparam) { firstparam=false; } else {
+                    Argument.Arguments[] annotations = p.getAnnotationsByType(Argument.Arguments.class);
+                    if (annotations.length!=1) {
+                        throw new SystemException("Command "+modulename+"/"+m.getName()+" parameter "+p.getName()+" has no Arguments annotation");
+                    }
+                    Argument.Arguments annotation = annotations[0];
+                    boolean requiresmax=false;
+                    switch (annotation.type()) {
+                        case TEXT_ONELINE:
+                        case TEXT_MULTILINE:
+                            requiresmax=true;
+                            break;
+                        case PASSWORD:
+                        case INTEGER:
+                        case FLOAT:
+                        case BOOLEAN:
+                        case CHOICE:
+                        case CHARACTER:
+                        case CHARACTER_PLAYABLE:
+                        case CHARACTER_NEAR:
+                        case CHARACTER_FACTION:
+                        case AVATAR:
+                        case AVATAR_NEAR:
+                        case PERMISSIONSGROUP:
+                        case PERMISSION:
+                        case CHARACTERGROUP:
+                        case KVLIST:
+                        case MODULE:
+                        case REGION:
+                        case ZONE:
+                        case COORDINATES:
+                        case EVENT:
+                        case ATTRIBUTE:
+                        case ATTRIBUTE_WRITABLE:
+                            requiresmax=false;
+                            break;
+                        default:
+                            throw new SystemException("Unchecked argument type "+annotation.type().name());
+                        
+                    }
+                    if (requiresmax && annotation.max()<0) {
+                        throw new SystemException("Missing MAX parameter on argument annotation in ["+modulename+"]"+m.getClass().getSimpleName()+"/"+m.getName()+"/"+p.getName());
+                    }
+                }
+            }
         }
     }    
     @SuppressWarnings("unchecked")

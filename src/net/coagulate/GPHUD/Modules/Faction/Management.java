@@ -64,7 +64,7 @@ public abstract class Management {
     
     @Commands(context = Context.AVATAR,description = "Create a faction group",requiresPermission = "Faction.Create")
     public static Response create(State st,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the faction")
+            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the faction",max=128)
                 String name)
     {
         try { st.getInstance().createCharacterGroup(name,false,"Faction"); }

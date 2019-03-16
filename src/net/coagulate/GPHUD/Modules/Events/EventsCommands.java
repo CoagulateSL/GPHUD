@@ -19,7 +19,7 @@ public class EventsCommands {
     
     @Commands(context = Context.AVATAR,description = "Creates a new event with an empty configuration",requiresPermission = "Events.Create")
     public static Response create(State st,
-            @Arguments(description = "Name for the event",type = ArgumentType.TEXT_ONELINE)
+            @Arguments(description = "Name for the event",type = ArgumentType.TEXT_ONELINE,max=128)
             String eventName) {
         Event.create(st.getInstance(),eventName);
         Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Event", null, eventName, "Event created");
