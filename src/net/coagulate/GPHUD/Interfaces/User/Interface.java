@@ -110,7 +110,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         p+="GPHUD";
         p+="</title>";
         p+=styleSheet();
-        p+="<link rel=\"shortcut icon\" href=\"/resources/icon-dice.png\">";
+        p+="<link rel=\"shortcut icon\" href=\"/resources/icon-gphud.png\">";
         p+="</head><body>";
         p+="<table height=100% valign=top><tr><td colspan=3 align=center width=100%>";
         p+="<h1>GPHUD</h1>";
