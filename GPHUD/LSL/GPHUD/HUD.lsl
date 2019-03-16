@@ -43,6 +43,7 @@ reflowHUD() {
 		PRIM_LINK_TARGET,LINK_MESSAGES,PRIM_POSITION,<0.01,-0.12*sr/2.0-0.02,0.04>
 		]);
 }
+brand() {llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,"36c48d34-3d84-7b9a-9979-cda80cf1d96f",<1,1,1>,<0,0,0>,0]);}
 setupRpChannel() {
 	if (rpchannelhandle!=0){llListenRemove(rpchannelhandle);}
 	if (rpchannel!=0) { rpchannelhandle=llListen(rpchannel,"",llGetOwner(),""); }
@@ -202,6 +203,7 @@ default {
 			llOwnerSay("COMMS GO");
 			#endif			
 			ready=TRUE;
+			brand();
 			comms_ready();
 		}
 		if (num==COMMS_STOP) { ready=FALSE;
