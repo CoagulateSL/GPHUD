@@ -28,6 +28,7 @@ public class SessionSwitch {
         f.add(new Separator());
         for (Instance i:Instance.getInstances()) {
             String id=i.getId()+"";
+            f.add("<table><tr><td width=200px><img src=\""+i.getLogoURL(st)+"\" height=135px></td><td>");
             f.add(new Button("Select Instance - "+id,"Select Instance - "+i.getName()));
             if (!values.get("Select Instance - "+id).isEmpty()) {
                 st.setInstance(i);
@@ -38,6 +39,7 @@ public class SessionSwitch {
                 throw new RedirectionException("/switch/character");
             }
             ViewInstance.viewInstance(st, values, i);
+            f.add("</tr></table>");
             f.add(new Separator());
         }
     }

@@ -584,4 +584,13 @@ public class Instance extends TableRow {
         Region.wipeKV(this,key);
         d("delete from instancekvstore where instanceid=? and k like ?",getId(),key);
     }
+
+    public String getLogoURL(State st) {
+            String logouuid=st.getKV(this,"GPHUDClient.logo");
+            if (logouuid==null || logouuid.isEmpty()) { logouuid="8c5aba3e-1b3f-cdd7-c290-a6fae7363362"; }
+            return "http://secondlife.com/app/image/"+logouuid+"/0";
+    }
+    public String getLogoHREF(State st) {
+        return "<a href=\""+getLogoURL(st)+"\">";
+    }
 }

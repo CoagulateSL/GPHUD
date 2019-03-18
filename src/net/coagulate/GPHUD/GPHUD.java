@@ -216,7 +216,9 @@ public class GPHUD {
         if (DEV) { return "[==DEVELOPMENT // "+node+"==]\n \n"; }
         return "[Production // "+node+"]\n \n";
     }
-
+    public static String menuPanelEnvironment() {
+        return "&gt; "+(DEV?"DEVELOPMENT":"Production")+"<br>&gt; "+hostname;
+    }
     private static void syncToMinute() {
         int seconds=Calendar.getInstance().get(Calendar.SECOND);
         seconds=60-seconds;

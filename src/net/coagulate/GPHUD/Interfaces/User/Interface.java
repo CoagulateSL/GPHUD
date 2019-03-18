@@ -113,8 +113,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         p+="<link rel=\"shortcut icon\" href=\"/resources/icon-gphud.png\">";
         p+="</head><body>";
         p+="<table height=100% valign=top><tr><td colspan=3 align=center width=100%>";
-        p+="<h1>GPHUD</h1>";
-        p+="<i>"+GPHUD.environment()+"</i><hr>";
+        p+="<h1 style=\"margin: 0px;\"><img src=\"/resources/banner-gphud.png\"></h1>";
+        //p+="<i>"+GPHUD.environment()+"</i>";
+        p+="<hr>";
         p+="</td></tr>";
         p+="<tr height=100% valign=top>";
         p+="<td width=150px valign=top height=100%>";
@@ -236,6 +237,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
     
     String renderSideMenu(State st) throws UserException, SystemException { 
         String s="";
+        s+=GPHUD.menuPanelEnvironment()+"<hr width=150px>";
         boolean loggedin=true;
         if (st.getCharacterNullable()!=null || st.getAvatar()!=null) {
             s+="<b>Avatar:</b> ";
