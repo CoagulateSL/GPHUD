@@ -28,7 +28,7 @@ public class SessionSwitch {
         f.add(new Separator());
         for (Instance i:Instance.getInstances()) {
             String id=i.getId()+"";
-            f.add("<table><tr><td width=200px><img src=\""+i.getLogoURL(st)+"\" height=135px></td><td>");
+            f.add("<table><tr><td align=right width=250px><img src=\""+i.getLogoURL(st)+"\" height=150px></td><td>");
             f.add(new Button("Select Instance - "+id,"Select Instance - "+i.getName()));
             if (!values.get("Select Instance - "+id).isEmpty()) {
                 st.setInstance(i);
