@@ -587,7 +587,7 @@ public class Instance extends TableRow {
 
     public String getLogoURL(State st) {
             String logouuid=st.getKV(this,"GPHUDClient.logo");
-            if (logouuid==null || logouuid.isEmpty()) { logouuid="8c5aba3e-1b3f-cdd7-c290-a6fae7363362"; }
+            if (logouuid==null || logouuid.isEmpty()) { logouuid="36c48d34-3d84-7b9a-9979-cda80cf1d96f"; }
             return "http://secondlife.com/app/image/"+logouuid+"/0";
     }
     public String getLogoHREF(State st) {
