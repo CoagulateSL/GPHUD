@@ -28,6 +28,7 @@ string charname="";
 integer rpchannel=0;
 integer rpchannelhandle=0;
 integer ready=FALSE;
+integer loggedin=FALSE;
 string cookie="";
 reflowHUD() {
 	float sr=((float)sizeratio);
@@ -68,16 +69,22 @@ comms_ready() {
 	FIRSTREADY=FALSE;
 	banner();
 	calculatebroadcastchannel();
-	json=llJsonSetValue("",["version"],VERSION);
-	json=llJsonSetValue(json,["versiondate"],COMPILEDATE);
-	json=llJsonSetValue(json,["versiontime"],COMPILETIME);	
-	httpcommand("characters.login");
+	startLogin();
 	llListen(broadcastchannel,"",NULL_KEY,"");		
 	llResetOtherScript("Legacy");
 	llListen(1,"",llGetOwner(),"");
 	llRegionSayTo(llGetOwner(),broadcastchannel,"{\"hudreplace\":\"hudreplace\"}");
 	llRequestExperiencePermissions(llGetOwner(),"");
 }
+startLogin() {
+	LOGIN_ATTEMPTS--;
+	if (LOGIN_ATTEMPTS<=0) { llOwnerSay("FAILED REGISTRATION 10 TIMES.  Shutting down in case we are stuck in a loop!  Please contact support."); gphud_hang(); }
+	json=llJsonSetValue("",["version"],VERSION);
+	json=llJsonSetValue(json,["versiondate"],COMPILEDATE);
+	json=llJsonSetValue(json,["versiontime"],COMPILETIME);	
+	httpcommand("characters.login");
+}
+integer LOGIN_ATTEMPTS=10;
 integer started=FALSE;
 
 integer process(key id) {
@@ -86,8 +93,14 @@ integer process(key id) {
 	integer DONOTRESPOND=FALSE;
 	string retjson="";
 	//llOwnerSay("WE ARE HERE WITH "+json);
+	if (jsonget("error")!="" && loggedin==FALSE) { // failed to login / create character?  so blind retry? :P
+		llOwnerSay("Error during login/registration, retrying...");
+		llSetText("Retry character registration...",<1,.5,.5>,1);
+		startLogin();
+		return TRUE;	
+	}
 	if (incommand=="radar") { DONOTRESPOND=TRUE; llSensor("",NULL_KEY,AGENT,20,PI); radarto=id; }
-	if (incommand=="registered") { cookie=jsonget("cookie"); }
+	if (incommand=="registered") { cookie=jsonget("cookie"); loggedin=TRUE; }
 	if (incommand=="ping") { retjson=llJsonSetValue(retjson,["cookie"],cookie); }
 	//if (incommand=="close" && !disallowclose) { hidehud(); }
 	//if (incommand=="open") { showhud(); disallowclose=FALSE;}
@@ -131,7 +144,6 @@ integer process(key id) {
 	if (jsonget("leveltext")!="") { llOwnerSay(jsonget("leveltext")); }
 	if (jsonget("rpchannel")!="") { rpchannel=(integer)jsonget("rpchannel"); setupRpChannel();}
 	if (jsonget("name")!="") { charname=jsonget("name"); }
-	
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;
@@ -249,6 +261,7 @@ default {
 	touch_start(integer n)
 	{
 		if (!ready) { return; }
+		if (!loggedin) { return; }
 		if (llDetectedLinkNumber(0)==1) {
 			llMessageLinked(LINK_THIS,LINK_LEGACY_FIRE,"","");
 		} else {

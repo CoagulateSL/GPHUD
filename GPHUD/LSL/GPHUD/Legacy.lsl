@@ -185,7 +185,16 @@ default {
 				//llOwnerSay("IN:"+text+":OUT:"+text);
 				if (type=="SENSORCHAR") { text=">"+text; }
 			}
-			json=llJsonSetValue(json,[setname],text); curpage=0;
+			// SL bug
+			if (
+				llGetSubString(llStringTrim(text,STRING_TRIM),0,0)=="{" &&
+				llGetSubString(llStringTrim(text,STRING_TRIM),-1,-1)=="}"
+			) {
+				// llJsonSetValue does not properly encode strings wrapped in { } characters.  see SEC-6308.  until resolved, we block such inputs here
+				llOwnerSay("Illegal input ; due to a bug in Second Life you can not surround a string with { and } characters.  Please alter your input and try again.");
+			} else { 
+				json=llJsonSetValue(json,[setname],text); curpage=0;
+			}
 			trigger();
 		}
 	}
