@@ -102,7 +102,7 @@ report(string msg,vector col) {
 
 default {
 	state_entry() {
-		setlogo("e99682b7-d008-f0e0-9f08-e0a07d74232c");
+		setlogo("c792716b-13a3-06c9-6e7c-33c4e9d5a48f");
 		calculatebroadcastchannel();
 		llSetObjectName(name);
 		llResetOtherScript("Comms");
