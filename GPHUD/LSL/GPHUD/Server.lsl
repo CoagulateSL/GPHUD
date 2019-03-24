@@ -165,7 +165,7 @@ state distribution {
 		llSetTimerEvent(2.0);
 		llResetOtherScript("Visitors");
 		llResetOtherScript("Dispenser");
-		setlogo("36c48d34-3d84-7b9a-9979-cda80cf1d96f");
+		setlogo("c792716b-13a3-06c9-6e7c-33c4e9d5a48f");
 	}
 	on_rez(integer n) { llResetScript(); }
 	timer() { llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); }
