@@ -36,6 +36,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.Session;
 import net.coagulate.SL.Data.User;
+import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -105,6 +106,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
     }
     public String renderHTML(State st) {
         // This is basically the page template, the supporting structure that surrounds a title/menu/body
+        String body=renderBodyProtected(st);        
         String p="";
         p+="<html><head><title>";
         p+="GPHUD";
@@ -113,14 +115,23 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         p+="<link rel=\"shortcut icon\" href=\"/resources/icon-gphud.png\">";
         p+="</head><body>";
         p+="<table height=100% valign=top><tr><td colspan=3 align=center width=100%>";
+        p+="<table style=\"margin: 0px; border:0px;\" width=100%><tr><td width=33% align=left>";
+        p+="<h1 style=\"margin: 0px;\">"+SL.getBannerHREF()+"</h1>";
+        p+="</td><td width=34% align=center>";
+        String middletarget="/resources/banner-gphud.png";
+        if (st.getInstanceNullable()!=null) { 
+            middletarget=st.getInstance().getLogoURL(st);
+        }
+        p+="<h1 style=\"margin: 0px;\"><img src=\""+middletarget+"\" height=100px></h1>";
+        p+="</td><td width=33% align=right>";
         p+="<h1 style=\"margin: 0px;\"><img src=\"/resources/banner-gphud.png\"></h1>";
+        p+="</td></tr></table>";
         //p+="<i>"+GPHUD.environment()+"</i>";
         p+="<hr>";
         p+="</td></tr>";
         p+="<tr height=100% valign=top>";
         p+="<td width=150px valign=top height=100%>";
         // calculate body first, since this sets up auth etc which the side menu will want to use to figure things out.
-        String body=renderBodyProtected(st);
 
         try {
             p+=renderSideMenu(st);
