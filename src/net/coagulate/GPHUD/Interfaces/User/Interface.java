@@ -116,7 +116,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         p+="</head><body>";
         p+="<table height=100% valign=top><tr><td colspan=3 align=center width=100%>";
         p+="<table style=\"margin: 0px; border:0px;\" width=100%><tr><td width=33% align=left>";
-        p+="<h1 style=\"margin: 0px;\">"+SL.getBannerHREF()+"</h1>";
+        p+="<h1 style=\"margin: 0px;\"><img src=\"/resources/banner-gphud.png\"></h1>";
         p+="</td><td width=34% align=center>";
         String middletarget="/resources/banner-gphud.png";
         if (st.getInstanceNullable()!=null) { 
@@ -124,7 +124,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         p+="<h1 style=\"margin: 0px;\"><img src=\""+middletarget+"\" height=100px></h1>";
         p+="</td><td width=33% align=right>";
-        p+="<h1 style=\"margin: 0px;\"><img src=\"/resources/banner-gphud.png\"></h1>";
+        p+="<h1 style=\"margin: 0px;\">"+SL.getBannerHREF()+"</h1>";
         p+="</td></tr></table>";
         //p+="<i>"+GPHUD.environment()+"</i>";
         p+="<hr>";
