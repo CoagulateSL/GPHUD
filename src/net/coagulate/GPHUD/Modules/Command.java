@@ -149,7 +149,7 @@ public abstract class Command {
                 }
                 if (maxlen<1) { st.logger().warning("Command "+this.getClass().getSimpleName()+" argument "+argument.getName()+" does not specify a max, assuming 65k..."); }
                 else {
-                    if (v.length()>maxlen) { throw new UserException(argument.getName()+" is "+v.length()+" characters long and must be no more than "+maxlen+".  Input has not been processed, please try again"); }
+                    if (v!=null && v.length()>maxlen) { throw new UserException(argument.getName()+" is "+v.length()+" characters long and must be no more than "+maxlen+".  Input has not been processed, please try again"); }
                 }
                 switch (type) {
                     case TEXT_ONELINE:
