@@ -43,7 +43,7 @@ public abstract class Management {
         f.add(t);
         t.add(new HeaderRow().add("Name").add("Leader").add("Members"));
         for (CharacterGroup g:factions) {
-            t.openRow().add(new Link(g.getName(),"/factions/view/"+g.getId()));
+            t.openRow().add(new Link(g.getName(),"/GPHUD/factions/view/"+g.getId()));
             String owner="None";
             if (g.getOwner()!=null) { owner=g.getOwner().asHtml(st, true); }
             t.add(owner);
@@ -64,7 +64,7 @@ public abstract class Management {
     
     @Commands(context = Context.AVATAR,description = "Create a faction group",requiresPermission = "Faction.Create")
     public static Response create(State st,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the faction",max=128)
+            @Arguments(type = ArgumentType.TEXT_CLEAN,description = "Name of the faction",max=128)
                 String name)
     {
         try { st.getInstance().createCharacterGroup(name,false,"Faction"); }
