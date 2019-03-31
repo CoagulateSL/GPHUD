@@ -165,7 +165,7 @@ public abstract class Login {
     
     @Commands(context = Context.AVATAR,description = "Create a new character")
     public static Response create(State st,
-            @Arguments(type = ArgumentType.TEXT_ONELINE,description = "Name of the new character",max=40)
+            @Arguments(type = ArgumentType.TEXT_CLEAN,description = "Name of the new character",max=40)
                 String charactername)
     {
         if (Char.resolve(st, charactername)!=null) {

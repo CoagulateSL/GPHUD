@@ -157,7 +157,9 @@ public abstract class Classes {
                     Argument.Arguments annotation = annotations[0];
                     boolean requiresmax=false;
                     switch (annotation.type()) {
+                        case TEXT_CLEAN:
                         case TEXT_ONELINE:
+                        case TEXT_INTERNAL_NAME:
                         case TEXT_MULTILINE:
                             requiresmax=true;
                             break;

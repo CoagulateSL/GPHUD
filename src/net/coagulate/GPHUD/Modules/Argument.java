@@ -29,7 +29,7 @@ public abstract class Argument {
         int max() default -1;
     }
    
-    public static enum ArgumentType { TEXT_ONELINE, TEXT_MULTILINE, PASSWORD,
+    public static enum ArgumentType { TEXT_ONELINE, TEXT_MULTILINE, PASSWORD, TEXT_CLEAN, TEXT_INTERNAL_NAME,
                                         BOOLEAN, INTEGER, FLOAT,
                                         CHOICE,
                                         CHARACTER,CHARACTER_PLAYABLE,CHARACTER_NEAR,CHARACTER_FACTION,

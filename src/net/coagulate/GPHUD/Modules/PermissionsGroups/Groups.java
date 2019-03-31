@@ -131,7 +131,7 @@ public abstract class Groups {
 
     @Commands(context = Context.AVATAR,description = "Creates a new permissions group",requiresPermission = "instance.owner")
     public static Response create(State st,
-            @Arguments(description = "Name of group to create",type = ArgumentType.TEXT_ONELINE,max=64)
+            @Arguments(description = "Name of group to create",type = ArgumentType.TEXT_CLEAN,max=64)
                     String name) throws UserException,SystemException {
         if (!st.isInstanceOwner()) { return new ErrorResponse("Insufficient permission to create a permissions group"); }
         try { st.getInstance().createPermissionsGroup(name); }

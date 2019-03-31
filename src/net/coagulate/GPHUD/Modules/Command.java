@@ -50,6 +50,7 @@ import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.PASSWORD;
 import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.PERMISSION;
 import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.PERMISSIONSGROUP;
 import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.REGION;
+import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.TEXT_CLEAN;
 import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.TEXT_MULTILINE;
 import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.TEXT_ONELINE;
 import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.ZONE;
@@ -119,7 +120,9 @@ public abstract class Command {
             } else {
                 int maxlen=-1;
                 switch (type) {
+                    case TEXT_CLEAN: maxlen=argument.max(); break;
                     case TEXT_ONELINE: maxlen=argument.max(); break;
+                    case TEXT_INTERNAL_NAME: maxlen=argument.max(); break;
                     case TEXT_MULTILINE: maxlen=argument.max(); break;
                     case PASSWORD: maxlen=1024; break;
                     case BOOLEAN: maxlen=8; break;
@@ -152,6 +155,16 @@ public abstract class Command {
                     if (v!=null && v.length()>maxlen) { throw new UserException(argument.getName()+" is "+v.length()+" characters long and must be no more than "+maxlen+".  Input has not been processed, please try again"); }
                 }
                 switch (type) {
+                    case TEXT_INTERNAL_NAME: 
+                        if (v.matches(".*[^a-zA-Z0-9].*")) {
+                            return new ErrorResponse(argument.getName()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
+                        }
+                        // dont put anything here, follow up into the next thing
+                    case TEXT_CLEAN: 
+                        if (v.matches(".*[^a-zA-Z0-9\\.'\\-, ].*")) {
+                            return new ErrorResponse(argument.getName()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
+                        }
+                        // dont put anything here, follow up into the next thing
                     case TEXT_ONELINE:
                     case TEXT_MULTILINE:
                     case PASSWORD:
@@ -434,6 +447,8 @@ public abstract class Command {
                 case EVENT:
                 case MODULE:
                 case KVLIST:
+                case TEXT_INTERNAL_NAME:
+                case TEXT_CLEAN:
                 case TEXT_ONELINE:
                 case TEXT_MULTILINE:
                 case PASSWORD:
@@ -489,6 +504,8 @@ public abstract class Command {
             t.add(arg.description());
             switch (arg.type()) {
                 case AVATAR:
+                case TEXT_CLEAN:
+                case TEXT_INTERNAL_NAME:
                 case TEXT_ONELINE:
                 case TEXT_MULTILINE:
                 case COORDINATES:

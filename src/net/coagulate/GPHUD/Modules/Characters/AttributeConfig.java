@@ -97,13 +97,13 @@ public class AttributeConfig {
         
     @Commands(description = "Create a new attribute",context = Command.Context.AVATAR,requiresPermission = "Characters.CreateAttribute")
     public static Response createAttribute(State st,
-        @Arguments(description = "Name of new attribute",type = Argument.ArgumentType.TEXT_ONELINE,max=64)
+        @Arguments(description = "Name of new attribute",type = Argument.ArgumentType.TEXT_INTERNAL_NAME,max=64)
             String name,
         @Arguments(description="Allow users to edit their own value without needing permissions",type = Argument.ArgumentType.BOOLEAN)
             Boolean selfmodify,
         @Arguments(description = "Type of this attribute",type = Argument.ArgumentType.CHOICE,choiceMethod = "getAttributeTypes")
             String attributetype,
-        @Arguments (description="Type of group if attribute is of type GROUP",mandatory = false,type = Argument.ArgumentType.TEXT_ONELINE,max=128)
+        @Arguments (description="Type of group if attribute is of type GROUP",mandatory = false,type = Argument.ArgumentType.TEXT_INTERNAL_NAME,max=128)
             String grouptype,
         @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
             Boolean usesabilitypoints,
