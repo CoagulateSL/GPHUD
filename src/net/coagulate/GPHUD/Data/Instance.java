@@ -275,7 +275,7 @@ public class Instance extends TableRow {
     public int broadcastAdmins(State st,String message) {
         JSONObject j=new JSONObject();
         j.put("message","ADMIN : "+message);
-        Set<User> targets=new TreeSet<>();
+        Set<User> targets=new HashSet<>();
         targets.add(this.getOwner());
         //System.out.println("Pre broadcast!");
         Results results=dq("select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like 'instance.receiveadminmessages'",getId());
