@@ -30,10 +30,12 @@ import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.AUTHORITATIVE;
 import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.CUMULATIVE;
 import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.DELEGATING;
 import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.NONE;
+import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
 import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Templater;
+import net.coagulate.GPHUD.Modules.Validators;
 import net.coagulate.SL.Data.User;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
@@ -532,7 +534,13 @@ public class State {
         if (kv.type()==KV.KVTYPE.FLOAT) { evaluate=true; }
         if (kv.type()==KV.KVTYPE.INTEGER) { evaluate=true;isint=true; }
         if (debug) { System.out.println("PRE TEMPLATER : "+kvname+" = "+s+" with evaluate "+evaluate+" and isint "+isint); }
-        String out=Templater.template(this, s, evaluate,isint);
+        String out;
+        try { out=Templater.template(this, s, evaluate,isint); }
+        catch (Exception e) {
+            UserException ue=new UserException("Failed loading KV "+kvname+" for "+target.getTableName()+" "+target.getNameSafe()+" : "+e.getLocalizedMessage());
+            ue.initCause(e);
+            throw ue;
+        }
         if (debug) { System.out.println("POST TEMPLATER : "+kvname+" = "+out); } 
         return out;
     }
@@ -542,6 +550,43 @@ public class State {
     public void purgeCache(TableRow dbo) { kvmaps.remove(dbo); }
     
     public void setKV(TableRow dbo, String key, String value) {
+        if (value!=null && !value.isEmpty()) {
+            KV definition = this.getKVDefinition(key);
+            if (!definition.template()) { // these are hard to verify :P
+                switch(definition.type()) {
+                    case TEXT: // no checking here :P
+                        break;
+                    case INTEGER: // check it parses into an int
+                        try { Integer.parseInt(value); }
+                        catch (NumberFormatException e) { throw new UserException(key+" must be a whole number, you entered '"+value+"' ("+e.getLocalizedMessage()+")"); }
+                        break;
+                    case FLOAT:
+                        try { Float.parseFloat(value); }
+                        catch (NumberFormatException e) { throw new UserException(key+" must be a number, you entered '"+value+"' ("+e.getLocalizedMessage()+")"); }
+                        break;
+                    case TEXTURE:
+                        if (!Validators.uuid(value)) { throw new UserException(key+" must be a UUID , you entered '"+value+"'"); }
+                        break;
+                    case BOOLEAN:
+                        value=value.toLowerCase();
+                        if (!(value.equals("true") || value.equals("false"))) { throw new UserException(key+" must be true/false"); }
+                        break;
+                    case COMMAND:
+                        try { Modules.getCommand(this,value); }
+                        catch (SystemException e) { throw new UserException(key+" must be an internal command, you entered '"+value+"' and it gave a weird error"); }
+                        catch (UserException f) { throw new UserException(key+" must be an internal command, you entered '"+value+"' ("+f.getLocalizedMessage()+")"); }
+                    case COLOR:
+                        if (!Validators.color(value)) { throw new UserException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', you entered '"+value+"')"); }
+                        // does it have lsl surrounds?
+                        break;
+                    default:
+                        throw new SystemException("No validator defined for KV type "+definition.type()+" in "+key);
+                }
+            }
+            if (definition.type()==COLOR) {
+                if (!value.contains("<") || !value.contains(">")) { value="<"+value+">"; }
+            }
+        }
         purgeCache(dbo);
         dbo.setKV(this, key, value);
         // push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
@@ -612,6 +657,7 @@ public class State {
     }
 
     Set<Attribute> attributes=null;
+    public void purgeAttributeCache() { attributes=null; }
     /** Get attributes for an instance.
      * 
      * @param st Derives instance
