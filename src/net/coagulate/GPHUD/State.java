@@ -576,7 +576,7 @@ public class State {
                         catch (SystemException e) { throw new UserException(key+" must be an internal command, you entered '"+value+"' and it gave a weird error"); }
                         catch (UserException f) { throw new UserException(key+" must be an internal command, you entered '"+value+"' ("+f.getLocalizedMessage()+")"); }
                     case COLOR:
-                        if (!Validators.color(value)) { throw new UserException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', you entered '"+value+"')"); }
+                        if (!Validators.color(value)) { throw new UserException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you entered '"+value+"')"); }
                         // does it have lsl surrounds?
                         break;
                     default:

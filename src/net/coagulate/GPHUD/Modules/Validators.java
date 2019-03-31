@@ -29,7 +29,13 @@ public class Validators {
         for (int i=0;i<3;i++) { parts[i]=parts[i].trim(); }
         // each part should parse to a float :P
         for (int i=0;i<3;i++) { 
-            try { Float.parseFloat(parts[i]); }
+            try { 
+                Float f=Float.parseFloat(parts[i]);
+                if (f<0 || f>1) { 
+                    GPHUD.getLogger("Validation").fine(value+" failed float range 0<=x<=1 for "+parts[i]);
+                    return false;
+                }
+            }
             catch (NumberFormatException e) {  GPHUD.getLogger("Validation").fine(value+" failed float parse for "+parts[i]); return false; }
         }
         return true;
