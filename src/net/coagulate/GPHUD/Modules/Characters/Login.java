@@ -118,10 +118,12 @@ public abstract class Login {
         // AND LOGIN
         st.setCharacter(character);
         st.logger().log(INFO,"Logging in as "+character);
+        /*
         String loginmessage="Welcome back, "+character.getName();
         if (!character.getName().equals(st.avatar().getName())) { loginmessage+=" ["+st.avatar().getName()+"]"; }
         loginmessage+="\n\n";
         loginmessage+="Instance MOTD goes here";
+        */
         String oldavatarurl=st.getCharacter().getURL();
         if (oldavatarurl!=null && !oldavatarurl.equals(url))
         {
@@ -148,7 +150,7 @@ public abstract class Login {
             int apremain=abilityPointsRemaining(st);
             if (apremain>0) { new Transmission(st.getCharacter(),Modules.getJSONTemplate(st, "characters.spendabilitypoint"),1).start(); }
         }
-        rawresponse.put("message",loginmessage);
+        //rawresponse.put("message",loginmessage);
         rawresponse.put("incommand","registered");
         rawresponse.put("cookie",cookie);
         rawresponse.put("legacymenu",legacymenu.toString());
