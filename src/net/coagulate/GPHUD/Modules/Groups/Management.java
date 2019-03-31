@@ -71,7 +71,7 @@ public abstract class Management {
         if (st.hasPermission("Groups.Create")) {
             Form create=new Form();
             f.add(create);
-            create.setAction("./groups/create");
+            create.setAction("/GPHUD/groups/create");
             create.add(new Hidden("okreturnurl",st.getFullURL()));
             create.add(new Button("Create Group"));
         }
