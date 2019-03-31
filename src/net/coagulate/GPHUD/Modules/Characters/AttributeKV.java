@@ -66,7 +66,7 @@ public class AttributeKV extends KV {
 
     @Override
     public boolean template() {
-        return true;
+        return false; // it's usually not the character KV that is templated, but that it its self templates into other templated KVs ...
     }
     
 }
