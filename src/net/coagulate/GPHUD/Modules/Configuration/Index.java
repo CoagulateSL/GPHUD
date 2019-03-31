@@ -4,7 +4,7 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Paragraph;
@@ -53,7 +53,7 @@ public abstract class Index {
                 }
                 configurable.add(m.description());
                 if (m.isEnabled(st)) { //IF DISABLED etc etc check new Boolean(st.getInstanceKV("modules."+m.getName()))) {
-                    configurable.add(new Colour("green","ENABLED"));
+                    configurable.add(new Color("green","ENABLED"));
                     if (st.isInstanceOwner()) {
                         Form disable=new Form();
                         disable.setAction("./disablemodule");
@@ -63,7 +63,7 @@ public abstract class Index {
                         configurable.add(disable);
                     }
                 } else {
-                    configurable.add(new Colour("red","Disabled"));
+                    configurable.add(new Color("red","Disabled"));
                     if (st.isInstanceOwner() || st.isSuperUser()) {
                         // only enableable if all the dependancies are enabled.  Note we dont check this on disables because reverse deps are annoying, and deps just disable themselves :P
                         Form enable=new Form();
@@ -91,6 +91,8 @@ public abstract class Index {
         books.add(new HeaderRow().add("Name").add("Description"));
         books.openRow().add(new Link("User Changable Titler","/GPHUD/configuration/cookbooks/user-titler")).add("Allows the character to modify a text string that is appended to their titler");
         books.openRow().add(new Link("User Changable Titler Color","/GPHUD/configuration/cookbooks/user-titler-color")).add("Allows the character to modify a text string that changes their titler color (should be an LSL color, e.g. <0,1,0> for green");
+        books.openRow().add(new Link("Allow Multiple Characters","/GPHUD/configuration/cookbooks/multi-char")).add("Allows the user to create and name multiple characters");
+        books.openRow().add(new Link("Allow Self Retirement","/GPHUD/configuration/cookbooks/self-retire")).add("Allows a character to elect to 'retire' themselves");
     }
     
     @URLs(url="/configuration/view/*")
