@@ -69,10 +69,11 @@ public abstract class Templater {
         }
         catch (Exception e) {
             st.logger().log(WARNING,"Failed to complete expression evaluation for '"+string+"' - we got error "+e.getMessage(),e);
+            throw e;
         }
         return string;
     }
-    private static String template(State st,String string) {
+    private static String template(State st,String string) throws UserException{
         if (string==null) { return string; }
         if (st==null) { throw new SystemException("Null session state is not permitted"); }
         boolean debug=false;
@@ -132,7 +133,7 @@ public abstract class Templater {
     
     //https://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form
     // boann@stackoverflow.com
-    public static double eval(final String str) {
+    public static double eval(final String str) throws UserException {
         return new Object() {
             int pos = -1, ch;
 
