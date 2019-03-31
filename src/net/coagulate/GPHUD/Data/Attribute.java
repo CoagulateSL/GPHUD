@@ -5,6 +5,7 @@ import java.util.TreeSet;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.COLOR;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.FLOAT;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.INTEGER;
@@ -101,7 +102,7 @@ public class Attribute extends TableRow {
         }
         return set;
     }
-    public static enum ATTRIBUTETYPE { TEXT,FLOAT,INTEGER,GROUP,POOL };
+    public static enum ATTRIBUTETYPE { TEXT,FLOAT,INTEGER,GROUP,POOL,COLOR };
     
     public ATTRIBUTETYPE getType() {
         String type=null;
@@ -115,6 +116,7 @@ public class Attribute extends TableRow {
         if (type.equalsIgnoreCase("group")) { return GROUP; }
         if (type.equalsIgnoreCase("pool")) { return POOL; }
         if (type.equalsIgnoreCase("float")) { return FLOAT; }        
+        if (type.equalsIgnoreCase("color")) { return COLOR; }  
         throw new SystemException("Unhandled type "+type+" for attribute "+getId()+" "+getNameSafe());
     }
     
@@ -174,7 +176,7 @@ public class Attribute extends TableRow {
      */
     public boolean isKV() {
         ATTRIBUTETYPE def = getType();
-        if (def==INTEGER || def==FLOAT || def==TEXT) { return true; }
+        if (def==INTEGER || def==FLOAT || def==TEXT || def==COLOR) { return true; }
         if (def==POOL || def==GROUP) { return false; }
         throw new SystemException("Unknown attribute type "+def+" in attribute "+this);
     }
@@ -189,6 +191,7 @@ public class Attribute extends TableRow {
         if (def==INTEGER) { return KV.KVTYPE.INTEGER; }
         if (def==FLOAT) { return KV.KVTYPE.FLOAT; }
         if (def==TEXT) { return KV.KVTYPE.TEXT; }
+        if (def==COLOR) { return KV.KVTYPE.COLOR; }
         throw new SystemException("Non KV attribute type "+def+" in attribute "+this);
     }
 
@@ -202,6 +205,7 @@ public class Attribute extends TableRow {
         if (def==INTEGER) { return "0"; }
         if (def==FLOAT) { return "0"; }
         if (def==TEXT) { return ""; }
+        if (def==COLOR) { return "<1,1,1>"; }
         throw new SystemException("Unhandled KV attribute type "+def+" in attribute "+this);
     }
 
@@ -215,6 +219,7 @@ public class Attribute extends TableRow {
         if (def==INTEGER) { return KV.KVHIERARCHY.CUMULATIVE; }
         if (def==FLOAT) { return KV.KVHIERARCHY.CUMULATIVE; }
         if (def==TEXT) { return KV.KVHIERARCHY.DELEGATING; }
+        if (def==COLOR) { return KV.KVHIERARCHY.DELEGATING; }
         throw new SystemException("Unhandled attribute type "+def+" in attribute "+this);    }
    
     static void create(Instance instance, String name, Boolean selfmodify, String attributetype, String grouptype, Boolean usesabilitypoints,Boolean required,String defaultvalue) {

@@ -4,7 +4,7 @@ import java.util.Map;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Separator;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -73,10 +73,10 @@ public abstract class API {
         f.add(new TextSubHeader("Operational Context"));
         f.add(c.context().toString());
         f.add(new TextSubHeader("Interface Access"));
-        if (!c.permitConsole()) { f.add(new Colour("red","Console access denied")); } else { f.add(new Colour("green","Accessible via console")); } f.add("<br>");
-        if (!c.permitJSON()) { f.add(new Colour("red","LSL script access denied")); } else { f.add(new Colour("green","Accessible via LSL/JSON")); } f.add("<br>");
-        if (!c.permitUserWeb()) { f.add(new Colour("red","Browser Web UI access denied")); } else { f.add(new Colour("green","Accessible via Browser Web UI")); } f.add("<br>");
-        if (!c.permitHUDWeb()) { f.add(new Colour("red","HUD Web UI access denied")); } else { f.add(new Colour("green","Accessible via HUD Web UI")); } f.add("<br>");
+        if (!c.permitConsole()) { f.add(new Color("red","Console access denied")); } else { f.add(new Color("green","Accessible via console")); } f.add("<br>");
+        if (!c.permitJSON()) { f.add(new Color("red","LSL script access denied")); } else { f.add(new Color("green","Accessible via LSL/JSON")); } f.add("<br>");
+        if (!c.permitUserWeb()) { f.add(new Color("red","Browser Web UI access denied")); } else { f.add(new Color("green","Accessible via Browser Web UI")); } f.add("<br>");
+        if (!c.permitHUDWeb()) { f.add(new Color("red","HUD Web UI access denied")); } else { f.add(new Color("green","Accessible via HUD Web UI")); } f.add("<br>");
         f.add(new TextSubHeader("Target Method"));
         f.add(c.getFullMethodName());
     }
@@ -100,11 +100,11 @@ public abstract class API {
                     t.add("<a href=\"/GPHUD/introspection/api/"+m.getName()+"/"+command+"\">"+c.getName()+"</a>");
                     t.add(c.description());
                     if (c.requiresPermission().isEmpty()) { t.add(""); } else { t.add(" [ "+c.requiresPermission()+" ] "); }
-                    if (c.permitConsole()) { t.add(new Colour("green","Console")); } else { t.add(new Colour("red","Console")); }
-                    if (c.permitJSON()) { t.add(new Colour("green","JSON")); } else { t.add(new Colour("red","JSON")); }
-                    if (c.permitUserWeb()) { t.add(new Colour("green","UserWeb")); } else { t.add(new Colour("red","UserWeb")); }
-                    if (c.permitHUDWeb()) { t.add(new Colour("green","HUDWeb")); } else { t.add(new Colour("red","HUDWeb")); }
-                    if (c.isGenerated()) { t.add(new Colour("blue","Instance Specific")); } else { t.add(""); }
+                    if (c.permitConsole()) { t.add(new Color("green","Console")); } else { t.add(new Color("red","Console")); }
+                    if (c.permitJSON()) { t.add(new Color("green","JSON")); } else { t.add(new Color("red","JSON")); }
+                    if (c.permitUserWeb()) { t.add(new Color("green","UserWeb")); } else { t.add(new Color("red","UserWeb")); }
+                    if (c.permitHUDWeb()) { t.add(new Color("green","HUDWeb")); } else { t.add(new Color("red","HUDWeb")); }
+                    if (c.isGenerated()) { t.add(new Color("blue","Instance Specific")); } else { t.add(""); }
                 } catch (Exception e) { t.add("ERR:"+e.toString()); }
             }
             t.openRow();

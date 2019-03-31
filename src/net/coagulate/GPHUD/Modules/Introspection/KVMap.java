@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
 import java.util.Map;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -47,7 +47,7 @@ public abstract class KVMap {
                     r.add(kv.description());
                     r.add(kv.conveyas());
                     r.add(kv.template()+"");
-                    if (kv.isGenerated()) { r.add(new Colour("blue","Generated")); } else { r.add(""); }
+                    if (kv.isGenerated()) { r.add(new Color("blue","Generated")); } else { r.add(""); }
                 }
             }
         }

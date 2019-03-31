@@ -4,7 +4,7 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
@@ -37,7 +37,7 @@ public abstract class ViewInstance {
             map.openRow().add("Region").add(r).add(r.getOnlineStatus(tz));
             map.openRow().add("").add("").add("Server "+r.getServerVersion(true));
             map.openRow().add("").add("").add("HUD "+r.getHUDVersion(true));
-            if (r.needsUpdate()) { map.openRow().add("").add("").add(new Colour("orange","Update Required")); }
+            if (r.needsUpdate()) { map.openRow().add("").add("").add(new Color("orange","Update Required")); }
         }
     }
 

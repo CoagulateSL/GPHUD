@@ -2,7 +2,7 @@ package net.coagulate.GPHUD.Modules.Introspection;
 
 import java.util.Map;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.Interfaces.Outputs.Separator;
@@ -40,7 +40,7 @@ public abstract class ManagePermissions
                     t.add(permission);
                     t.add(permissions.get(permission).description());
                     if (permissions.get(permission).grantable()==false) {
-                        t.add(new Colour("red","Ungrantable"));
+                        t.add(new Color("red","Ungrantable"));
                     }
                 }
                 t.add(new Row(new Cell(new Separator(),999)));

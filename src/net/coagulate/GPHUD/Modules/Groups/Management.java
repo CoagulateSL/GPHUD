@@ -12,7 +12,7 @@ import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -159,8 +159,8 @@ public abstract class Management {
                 removeform.add(new Button("Kick Member",true));
                 t.add(new Cell(removeform));
             }
-            if (group.isAdmin(c)) { t.add(new Cell(new Colour("Red","Admin"))); } else { t.add(""); }
-            if (c==groupowner) { t.add(new Cell(new Colour("Red","Leader"))); } else { t.add(""); }
+            if (group.isAdmin(c)) { t.add(new Cell(new Color("Red","Admin"))); } else { t.add(""); }
+            if (c==groupowner) { t.add(new Cell(new Color("Red","Leader"))); } else { t.add(""); }
             if (c==groupowner || st.hasPermission("Groups.Create")) {
                 t.add(new Form(st,true,"../setadmin","Toggle Admin","group",group.getName(),"character",c.getName(),"Admin",group.isAdmin(c)?"":"true"));
             }

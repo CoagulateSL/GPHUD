@@ -91,6 +91,7 @@ public class AttributeConfig {
         choices.add("FLOAT");
         choices.add("GROUP");
         choices.add("TEXT");
+        choices.add("COLOR");
         return choices;
     }
         

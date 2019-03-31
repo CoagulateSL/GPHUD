@@ -8,11 +8,11 @@ import net.coagulate.GPHUD.State;
  *
  * @author iain
  */
-public class Colour implements Renderable {
+public class Color implements Renderable {
     Renderable content;
-    String colour;
-    public Colour(String colour,Renderable content) { this.content=content; this.colour=colour; }
-    public Colour(String colour,String content) { this.content=new Text(content); this.colour=colour; }
+    String color;
+    public Color(String color,Renderable content) { this.content=content; this.color=color; }
+    public Color(String color,String content) { this.content=new Text(content); this.color=color; }
 
     @Override
     public String asText(State st) {
@@ -21,7 +21,7 @@ public class Colour implements Renderable {
 
     @Override
     public String asHtml(State st, boolean rich) {
-        return "<font color=\""+colour+"\">"+content.asHtml(st, rich)+"</font>";
+        return "<font color=\""+color+"\">"+content.asHtml(st, rich)+"</font>";
     }
 
     @Override

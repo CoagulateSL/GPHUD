@@ -8,7 +8,7 @@ import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Data.PermissionsGroupMembership;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Separator;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -78,8 +78,8 @@ public abstract class Groups {
         for (PermissionsGroupMembership member:members) {
             membertable.openRow();
             membertable.add(member.avatar.getGPHUDLink());
-            if (member.caninvite) { membertable.add(new Colour("green","Yes")); } else { membertable.add(new Colour("red","No")); }
-            if (member.cankick) { membertable.add(new Colour("green","Yes")); } else { membertable.add(new Colour("red","No")); }
+            if (member.caninvite) { membertable.add(new Color("green","Yes")); } else { membertable.add(new Color("red","No")); }
+            if (member.cankick) { membertable.add(new Color("green","Yes")); } else { membertable.add(new Color("red","No")); }
             if (st.isInstanceOwner()) {
                 Form spf=new Form();
                 spf.add(new Hidden("okreturnurl",st.getFullURL()));

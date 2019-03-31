@@ -3,7 +3,7 @@ package net.coagulate.GPHUD.Modules.Instance;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.GPHUD.Interfaces.Outputs.Colour;
+import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
@@ -33,6 +33,6 @@ public abstract class ViewRegion {
         map.openRow().add("Communications").add(r.getOnlineStatus(st.avatar().getTimeZone()));
         map.openRow().add("Server Version").add(r.getServerVersion(true));
         map.openRow().add("HUD Version").add(r.getHUDVersion(true));
-         if (r.needsUpdate()) { map.openRow().add("").add(new Colour("orange","Update Required")); }
+         if (r.needsUpdate()) { map.openRow().add("").add(new Color("orange","Update Required")); }
     }  
 }
