@@ -21,7 +21,7 @@ public class UserTitlerColor extends CookBook {
     @URL.URLs(url = "/configuration/cookbooks/user-titler-color")
     public static void createForm(State st,SafeMap values) throws UserException, SystemException {
         Form f=st.form;
-        f.add(new TextHeader("User Configurable Titler Cookbook"));
+        f.add(new TextHeader("User Configurable Titler Color Cookbook"));
         boolean act=false;
         f.add(new Paragraph("This cookbook will enable the user to set their own titler color, it will perform the following steps:"));
         Table t=new Table(); f.add(t);
@@ -37,7 +37,7 @@ public class UserTitlerColor extends CookBook {
 
     private static void run(State st,Table t,boolean act) {
         t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
-        charAttribute(st,act,t,"TitlerColor","true","TEXT","","FALSE","FALSE","");
+        charAttribute(st,act,t,"TitlerColor","true","COLOR","","FALSE","FALSE","");
         setKV(st,act,t,st.getInstance(),"GPHUDClient.TitlerColor","--TITLERCOLOR--");
         setKV(st,act,t,st.getInstance(),"Characters.TitlerColor","<1,1,1>");
         JSONObject mappings=new JSONObject();
