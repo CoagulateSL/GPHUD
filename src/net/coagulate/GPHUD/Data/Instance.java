@@ -189,10 +189,12 @@ public class Instance extends TableRow {
      */
     public void updateStatus() {
         String statuscolor="<0.5,1,0.5>"; int level=0;
-        String newstatus=GPHUD.environment();
+        String newstatus="";
+        if (GPHUD.DEV) { newstatus+="===DEVELOPMENT===\n \n"; }
+        newstatus+="Server: "+GPHUD.hostname+" - "+GPHUD.VERSION+"\n \n";
         newstatus+=new Date().toString()+" ";
         for (Region r:getOurRegions()) {
-            newstatus+=" - ["+r.getName()+"#";
+            newstatus+="["+r.getName()+"#";
             Integer visitors=dqi(true,"select count(*) from visits where endtime is null and regionid=?",r.getId());
             String url=dqs(true,"select url from regions where regionid=?",r.getId());
             Integer urllast=dqi(true,"select urllast from regions where regionid=?",r.getId());
@@ -214,7 +216,7 @@ public class Instance extends TableRow {
                     newstatus+="*UPDATE*";
                     if (level<1) { statuscolor="<1.0,1.0,0.5>"; level=1; }
                 }
-                newstatus+="]";
+                newstatus+="]\n";
 
             }
         }
