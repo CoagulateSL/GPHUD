@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Data;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -192,8 +191,8 @@ public class Instance extends TableRow {
         String newstatus="";
         if (GPHUD.DEV) { newstatus+="===DEVELOPMENT===\n \n"; }
         newstatus+="Server: "+GPHUD.hostname+" - "+GPHUD.VERSION+"\n \n";
-        newstatus+=new Date().toString()+" ";
-        for (Region r:getOurRegions()) {
+        //newstatus+=new Date().toString()+" ";
+        for (Region r:getRegions()) {
             newstatus+="["+r.getName()+"#";
             Integer visitors=dqi(true,"select count(*) from visits where endtime is null and regionid=?",r.getId());
             String url=dqs(true,"select url from regions where regionid=?",r.getId());
@@ -220,6 +219,7 @@ public class Instance extends TableRow {
 
             }
         }
+        newstatus+=" \n";
 
         JSONObject statusupdate=new JSONObject();
         statusupdate.put("instancestatus",newstatus);
