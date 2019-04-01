@@ -100,7 +100,7 @@ public abstract class Index {
         String kvname=st.getDebasedURL().replaceFirst("/configuration/view/","").replaceFirst("/",".");
         KV kv = st.getKVDefinition(kvname);
         st.form.noForm();
-        st.form.add(new ConfigurationHierarchy(st, kv, st));
+        st.form.add(new ConfigurationHierarchy(st, kv, st,values));
     }
     @URLs(url = "/configuration/*")
     public static void genericConfigurationPage(State st,SafeMap values) throws UserException, SystemException {
@@ -119,7 +119,7 @@ public abstract class Index {
         {
             KV kv = st.getKVDefinition(module+"."+key);
 
-            st.form.add(new ConfigurationHierarchy(st, kv, st.simulate(st.getCharacter())));
+            st.form.add(new ConfigurationHierarchy(st, kv, st.simulate(st.getCharacter()),values));
         }
     }
 }
