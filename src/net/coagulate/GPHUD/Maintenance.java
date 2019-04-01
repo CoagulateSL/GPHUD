@@ -106,7 +106,7 @@ public class Maintenance extends Thread {
     }
     
     public static void updateInstances() {
-        for (Instance i:Instance.getOurInstances()) {
+        for (Instance i:Instance.getInstances()) {
             try {
                 //GPHUD.getLogger().log(FINER,"Pushing status update for instance "+i.getName());
                 i.updateStatus();
