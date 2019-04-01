@@ -88,7 +88,9 @@ public class ModuleAnnotation extends Module {
     }
 
     public Command getCommand(State st,String commandname) {
-        return commands.get(commandname.toLowerCase());
+        Command c=commands.get(commandname.toLowerCase());
+        if (c==null) { throw new UserException("No such command "+commandname+" in module "+this.name); }
+        return c;
     }
 
     protected static void checkPublicStatic(Method m) throws SystemException {
