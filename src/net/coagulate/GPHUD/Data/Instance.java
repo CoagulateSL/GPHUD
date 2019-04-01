@@ -224,7 +224,7 @@ public class Instance extends TableRow {
         JSONObject statusupdate=new JSONObject();
         statusupdate.put("instancestatus",newstatus);
         statusupdate.put("statuscolor",statuscolor);
-        for (Region r:getRegions()) {
+        for (Region r:getOurRegions()) {
             String url=r.getURL(true);
             if (url!=null) { 
                 if (canStatus(url)) {
