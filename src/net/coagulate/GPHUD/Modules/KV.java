@@ -55,7 +55,7 @@ public abstract class KV extends NameComparable {
     }    
 
     public static enum KVSCOPE {INSTANCE,SERVER,SPATIAL,CHARACTER,ZONE, EVENT,COMPLETE};
-    public static enum KVTYPE { TEXT,INTEGER,FLOAT,TEXTURE,BOOLEAN,COMMAND,COLOR};
+    public static enum KVTYPE { TEXT,INTEGER,FLOAT,UUID,BOOLEAN,COMMAND,COLOR};
     
     // Configurable THINGS
     // Characters, Events, Zones, Regions, Instances, Avatars (To be removed?), CharacterGroups (to be added)

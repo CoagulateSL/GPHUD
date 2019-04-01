@@ -22,7 +22,7 @@ public class ConfigurationRow extends Row {
         add(kv.name());
         add(kv.description());
         add(kv.editpermission());
-        if (kv.type()==KVTYPE.TEXTURE) {
+        if (kv.type()==KVTYPE.UUID) {
             add(kv.defaultvalue()+"<br><img height=48 width=48 src=\"http://texture-service.agni.lindenlab.com/"+kv.defaultvalue()+"/256x192.jpg/\">");
             add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\"http://texture-service.agni.lindenlab.com/"+simulated.getRawKV(dbo,kvname)+"/256x192.jpg/\">");
         }

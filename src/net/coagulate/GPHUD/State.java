@@ -564,7 +564,7 @@ public class State {
                         try { Float.parseFloat(value); }
                         catch (NumberFormatException e) { throw new UserException(key+" must be a number, you entered '"+value+"' ("+e.getLocalizedMessage()+")"); }
                         break;
-                    case TEXTURE:
+                    case UUID:
                         if (!Validators.uuid(value)) { throw new UserException(key+" must be a UUID , you entered '"+value+"'"); }
                         break;
                     case BOOLEAN:
