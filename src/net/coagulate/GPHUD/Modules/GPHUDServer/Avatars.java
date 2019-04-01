@@ -52,7 +52,7 @@ public abstract class Avatars {
         }
         region.departingAvatars(st, openvisits);
         Instance instance=st.getInstance();
-        instance.updateStatus();
+        //instance.updateStatus();
         return new NoResponse();
     }
  
