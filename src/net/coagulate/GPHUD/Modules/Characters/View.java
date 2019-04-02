@@ -62,6 +62,7 @@ public abstract class View {
 
     @URLs(url = "/characters/view/*")
     public static void viewCharacter(State st,SafeMap values) throws UserException, SystemException {
+        st.form.noForm();
         //System.out.println(st.uri);
         String split[]=st.getDebasedURL().split("/");
         //System.out.println(split.length);

@@ -106,6 +106,7 @@ public abstract class Index {
     public static void genericConfigurationPage(State st,SafeMap values) throws UserException, SystemException {
         String module=st.getDebasedURL().replaceFirst("/configuration/", "");
         String key=null;
+        st.form.noForm();
         if (module.contains("/")) {
             String split[]=module.split("/");
             if (split.length==2) { module=split[0]; key=split[1]; }
