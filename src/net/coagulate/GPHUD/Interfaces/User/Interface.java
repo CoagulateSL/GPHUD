@@ -100,7 +100,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         if (st.getCharacterNullable()==null) { return ""; }
         int messages=st.getCharacter().messages();
         if (messages>0) {
-            return "<p>"+new Link("<b>You have "+messages+" unread message"+(messages>1?"s":"")+", click here to read</b>","/messages/list").asHtml(st, true)+"</p>";
+            return "<p>"+new Link("<b>You have "+messages+" unread message"+(messages>1?"s":"")+", click here to read</b>","/GPHUD/messages/list").asHtml(st, true)+"</p>";
         }
         return "";
     }
