@@ -68,6 +68,7 @@ public class ConfigurationHierarchy extends Form {
                     st.setKV(dbo, kv.fullname(), value);
                     Audit.audit(true, st, Audit.OPERATOR.AVATAR, null,null,"Set"+type+"KV", kv.fullname(), oldvalue,value,"Changed "+type+"/"+dbo.getNameSafe()+" configuration");
                     add("<font color=green>OK: Value updated</font>");
+                    st.purgeCache(dbo);
                 } catch (UserException e) {
                     add("<font color=red>ERROR: "+e.getLocalizedMessage()+"</font>");
                 }
