@@ -138,9 +138,9 @@ public abstract class View {
                     GenericXPPool gen=(GenericXPPool)p;
                     try {
                         gen.awardXP(st, c, reason,ammount);
-                        content="<font color=green><b>OK: </b>Awarded "+ammount+" "+a.getName()+" to "+c.getName()+"</font>";
+                        content="<font color=green><b>&nbsp;&nbsp;&nbsp;OK: </b>Awarded "+ammount+" "+a.getName()+" to "+c.getName()+"</font>";
                     } catch (UserException e) {
-                        content="<font color=red><b>Error: </b>"+e.getLocalizedMessage()+"</font>";
+                        content="<font color=red><b>&nbsp;&nbsp;&nbsp;Error: </b>"+e.getLocalizedMessage()+"</font>";
                     }
                 }
                 
