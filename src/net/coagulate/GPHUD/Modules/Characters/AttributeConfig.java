@@ -92,6 +92,7 @@ public class AttributeConfig {
         choices.add("GROUP");
         choices.add("TEXT");
         choices.add("COLOR");
+        choices.add("EXPERIENCE");
         return choices;
     }
         

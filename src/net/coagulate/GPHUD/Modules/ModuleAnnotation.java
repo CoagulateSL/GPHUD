@@ -36,11 +36,11 @@ public class ModuleAnnotation extends Module {
         return o;
     }
     SideMenu sidemenu = null;
-    Map<String, Pool> poolmap = new TreeMap<>();
+    protected Map<String, Pool> poolmap = new TreeMap<>();
     Map<String, Permission> permissions = new TreeMap<>();
     Set<SideSubMenu> sidemenus = new HashSet<>();
     Map<String, Command> commands = new TreeMap<>();
-    Map<String, KV> kvmap = new TreeMap<>();
+    protected Map<String, KV> kvmap = new TreeMap<>();
     Set<URL> contents = new HashSet<>();
 
     Response run(State st, String commandname, String[] args) throws UserException, SystemException {
@@ -190,10 +190,6 @@ public class ModuleAnnotation extends Module {
 
     public void validateKV(State st, String key) throws SystemException {
         if (Modules.getKVDefinition(st,key)==null) { throw new SystemException("KV key "+key+" in module "+getName()+" does not exist"); }
-    }
-
-    public void validatePermission(String permission) throws SystemException {
-        if (!permissions.containsKey(permission.toLowerCase())) { throw new SystemException("Permission "+permission+" does not exist in module "+getName()); }
     }
 
     public void validateCommand(State st, String command) throws SystemException {

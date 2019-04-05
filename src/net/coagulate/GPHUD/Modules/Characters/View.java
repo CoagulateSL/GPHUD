@@ -1,9 +1,12 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.coagulate.Core.Tools.SystemException;
 import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.GPHUD;
@@ -22,6 +25,10 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.Configuration.ConfigurationHierarchy;
 import net.coagulate.GPHUD.Modules.Configuration.GenericConfiguration;
+import net.coagulate.GPHUD.Modules.Experience.Experience;
+import net.coagulate.GPHUD.Modules.Experience.GenericXPPool;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
@@ -96,14 +103,55 @@ public abstract class View {
         kvtable.openRow().add("Last Played").add(lastplayed).add(tz);
         kvtable.openRow().add("Connected");
         if (c.getURL()==null || c.getURL().isEmpty()) { kvtable.add("No"); } else { kvtable.add("Yes"); }
+        if (st.hasModule("Experience")) {
+            kvtable.openRow().add("Experience");
+            int xp=Experience.getExperience(st, c);
+            kvtable.add(xp+" XP").add("Level "+Experience.toLevel(st, xp));
+        }
         kvtable.openRow().add(new Cell("<i>Assuming "+simulated.toString()+"</i>",5));
         kvtable.openRow().add(new Cell(new TextSubHeader("Attributes"),5));
+        Set<String> experiences=new HashSet<>();
+        for (Attribute a:st.getAttributes()) { if (a.getType()==EXPERIENCE) { experiences.add(a.getName()+"XP"); } }
         for (Attribute a:st.getAttributes()) {
+            String content="";
+            boolean isxp=false;
+            for (String s:experiences) { if (s.equalsIgnoreCase(a.getName())) { isxp=true; }}
+            if (isxp && st.hasPermission("experience.award"+a.getName())) {
+                content="<button id=\"award-"+a.getName()+"\" "
+                        + "style=\"margin: 0\" "
+                        + "type=submit onClick=\""
+                            + "document.getElementById('award-"+a.getName()+"').style.display='none';"
+                            + "document.getElementById('editor-award-"+a.getName()+"').style.display='block';"
+                        + "\">Award</button>";
+                String target=values.get("target");
+                String ammountstring=values.get("xp-ammount");
+                String reason=values.getOrDefault("xp-reason","");
+                int ammount=1; if (ammountstring!=null && !ammountstring.isEmpty()) { try { ammount=Integer.parseInt(ammountstring); } catch (NumberFormatException e) {}}
+                content+="<div id=\"editor-award-"+a.getName()+"\" style=\"display: none;\">"
+                        + "<form method=post>"
+                        + "<input type=hidden name=target value="+a.getName()+">"
+                        + "Award <input type=text name=xp-ammount size=4 value="+ammount+"> XP for <input type=text name=xp-reason size=60 value=\""+reason+"\"> <button type=submit name=Award value=Award>Award</button>"
+                        + "</form>"
+                        + "</div>";
+                if (values.containsKey("Award") && values.getOrDefault("target","").equalsIgnoreCase(a.getName()) && !reason.isEmpty()) {
+                    Pool p=Modules.getPool(st,"Experience."+a.getName());
+                    GenericXPPool gen=(GenericXPPool)p;
+                    try {
+                        gen.awardXP(st, c, reason,ammount);
+                        content="<font color=green><b>OK: </b>Awarded "+ammount+" "+p.name()+" to "+c.getName()+"</font>";
+                    } catch (UserException e) {
+                        content="<font color=red><b>Error: </b>"+e.getLocalizedMessage()+"</font>";
+                    }
+                }
+                
+                f.noForm();
+            }
             kvtable.openRow();
             kvtable.add(a.getName());
             //System.out.println("About to print attribute "+a.getName());
             kvtable.add(a.getCharacterValue(simulated));
             kvtable.add(a.getCharacterValueDescription(simulated));
+            kvtable.add(content);        
         }
         if (brief) { return; }
         f.add(new TextSubHeader("KV Configuration"));

@@ -73,6 +73,19 @@ public class State {
         return types;
     }
 
+    public Attribute getAttributeOrException(String name) {
+        Attribute a=getAttribute(name);
+        if (a==null) { throw new UserException("No such character attribute '"+name+"'"); }
+        return a;
+    }
+    public Attribute getAttribute(String name) {
+        Set<Attribute> map = getAttributes();
+        for (Attribute a:map) {
+            if (name.equalsIgnoreCase(a.getName())) { return a; }
+        }
+        return null;
+    }
+    
     public Attribute getAttribute(CharacterGroup group) {
         boolean debug=false;
         String keyword=group.getType();

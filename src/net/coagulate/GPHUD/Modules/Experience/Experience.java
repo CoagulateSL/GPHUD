@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Modules.Experience;
 
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Data.Attribute;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Templater.Template;
@@ -41,6 +43,9 @@ public abstract class Experience {
         if (Modules.get(null,"experience").isEnabled(st)) { sum+=character.sumPool(Modules.getPool(st,"Experience.VisitXP")); }
         if (Modules.get(null,"faction").isEnabled(st)) { sum+=character.sumPool(Modules.getPool(st,"Faction.FactionXP")); }
         if (Modules.get(null,"Events").isEnabled(st)) { sum+=character.sumPool(Modules.getPool(st,"Events.EventXP")); }
+        for (Attribute a:st.getAttributes()) {
+            if (a.getType()==EXPERIENCE) { sum+=character.sumPool(Modules.getPool(st,"Experience."+a.getName()+"XP")); }
+        }
         return sum;
     }
 

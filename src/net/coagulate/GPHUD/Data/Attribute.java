@@ -6,6 +6,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.COLOR;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.FLOAT;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.INTEGER;
@@ -102,7 +103,7 @@ public class Attribute extends TableRow {
         }
         return set;
     }
-    public static enum ATTRIBUTETYPE { TEXT,FLOAT,INTEGER,GROUP,POOL,COLOR };
+    public static enum ATTRIBUTETYPE { TEXT,FLOAT,INTEGER,GROUP,POOL,COLOR,EXPERIENCE };
     
     public ATTRIBUTETYPE getType() {
         String type=null;
@@ -117,6 +118,7 @@ public class Attribute extends TableRow {
         if (type.equalsIgnoreCase("pool")) { return POOL; }
         if (type.equalsIgnoreCase("float")) { return FLOAT; }        
         if (type.equalsIgnoreCase("color")) { return COLOR; }  
+        if (type.equalsIgnoreCase("experience")) { return EXPERIENCE; }  
         throw new SystemException("Unhandled type "+type+" for attribute "+getId()+" "+getNameSafe());
     }
     
@@ -141,7 +143,7 @@ public class Attribute extends TableRow {
             if (cg==null) { return null; }
             return cg.getName();
         }
-        if (getType()==POOL) {
+        if (getType()==POOL || getType()==EXPERIENCE) {
             if (this instanceof QuotaedXP)
             {
                 QuotaedXP xp=(QuotaedXP)this;
@@ -154,7 +156,7 @@ public class Attribute extends TableRow {
     
     public String getCharacterValueDescription(State st) {
         if (isKV()) { return st.getKV("Characters."+getName()).path(); }
-        if (getType()==POOL) {
+        if (getType()==POOL || getType()==EXPERIENCE) {
             if (this instanceof QuotaedXP)
             {
                 QuotaedXP xp=(QuotaedXP)this;
@@ -177,7 +179,7 @@ public class Attribute extends TableRow {
     public boolean isKV() {
         ATTRIBUTETYPE def = getType();
         if (def==INTEGER || def==FLOAT || def==TEXT || def==COLOR) { return true; }
-        if (def==POOL || def==GROUP) { return false; }
+        if (def==POOL || def==GROUP || def==EXPERIENCE) { return false; }
         throw new SystemException("Unknown attribute type "+def+" in attribute "+this);
     }
 

@@ -14,6 +14,7 @@ import static java.util.logging.Level.SEVERE;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.POOL;
 import net.coagulate.GPHUD.Data.Audit;
@@ -118,7 +119,7 @@ public class CharactersModule extends ModuleAnnotation {
             if (group==null) { return ""; }
             return group.getName();
         }
-        if (attr.getType()==POOL) {
+        if (attr.getType()==POOL || attr.getType()==EXPERIENCE) {
             if (attr instanceof QuotaedXP)
             {
                 QuotaedXP xp=(QuotaedXP)attr;
