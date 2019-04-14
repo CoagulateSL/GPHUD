@@ -25,7 +25,8 @@ public class Damage {
         st.setTarget(targetchar);
         int oldhealth=st.getTarget().getKV("Health.Health").intValue();
         int newvalue=oldhealth+healing;
-        int maxhealth=st.getKV("health.initialhealth").intValue();
+        State targetstate=st.simulate(targetchar);
+        int maxhealth=targetstate.getKV("health.initialhealth").intValue();
         if (newvalue>maxhealth) { newvalue=maxhealth; }
         st.setKV(targetchar, "health.health", newvalue+"");
         Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, targetchar, "ADD", "Health.Health", oldhealth+"", newvalue+"", "Healed by "+healing+" for "+reason);
