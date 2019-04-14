@@ -473,6 +473,19 @@ public abstract class Command {
                         }
                     }
                     break;
+                case CHARACTERGROUP:
+                    Set<CharacterGroup> groups = st.getInstance().getCharacterGroups();
+                    if (groups.size()>12) {
+                        json.put("arg"+arg+"type","TEXTBOX");
+                    } else {
+                        json.put("arg"+arg+"type","SELECT");
+                        button=0;
+                        for (CharacterGroup g:groups) {
+                            json.put("arg"+arg+"button"+button,g.getName());
+                            button++;
+                        }
+                    }
+                    break;
                 case CHARACTER_FACTION:
                     json.put("arg" + arg + "type", "SENSOR");
                     json.put("arg" + arg + "manual", "true");
