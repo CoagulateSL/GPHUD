@@ -60,8 +60,8 @@ public class Char extends TableRow {
      * @param avatar Avatar to look up the logged-in character for
      * @return Char they are using
      */
-    public static Char getActive(User avatar) {
-        Integer i=GPHUD.getDB().dqi(false,"select characterid from characters where playedby=?",avatar.getId());
+    public static Char getActive(User avatar,Instance instance) {
+        Integer i=GPHUD.getDB().dqi(false,"select characterid from characters where playedby=? and instanceid=?",avatar.getId(),instance.getId());
         if (i==null) { throw new UserException("Avatar "+avatar.getName()+" is not wearing the HUD or is not logged in as a character presently."); }
         return get(i);
     }
@@ -286,7 +286,7 @@ public class Char extends TableRow {
             if (debug) { System.out.println(a); }
             if (a!=null) {
                 Char c=null;
-                try { c=Char.getActive(a); } catch (UserException e) { if (debug) { System.out.println(e.toString()); } }
+                try { c=Char.getActive(a,st.getInstance()); } catch (UserException e) { if (debug) { System.out.println(e.toString()); } }
                 if (debug) { System.out.println(c); }
                 if (c!=null) { chars.add(c); }
             }
