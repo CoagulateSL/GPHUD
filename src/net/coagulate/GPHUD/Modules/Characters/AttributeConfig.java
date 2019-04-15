@@ -104,7 +104,7 @@ public class AttributeConfig {
             Boolean selfmodify,
         @Arguments(description = "Type of this attribute",type = Argument.ArgumentType.CHOICE,choiceMethod = "getAttributeTypes")
             String attributetype,
-        @Arguments (description="Type of group if attribute is of type GROUP",mandatory = false,type = Argument.ArgumentType.TEXT_INTERNAL_NAME,max=128)
+        @Arguments (description="Type of group, if GROUP, or awarding group TYPE if EXPERIENCE",mandatory = false,type = Argument.ArgumentType.TEXT_INTERNAL_NAME,max=128)
             String grouptype,
         @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",mandatory = false,type = Argument.ArgumentType.BOOLEAN)
             Boolean usesabilitypoints,

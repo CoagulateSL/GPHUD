@@ -10,6 +10,7 @@ import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -140,13 +141,32 @@ public class ExperienceModule extends ModuleAnnotation {
             String reason
             
         ){
+        boolean permitted=false;
         if (ammount==null) { ammount=1; }
         Attribute attr=st.getAttribute(type);
-        if (!st.hasPermission("Experience.award"+attr.getName()+"XP")) {
-            return new ErrorResponse("You require permission Experience.award"+attr.getName()+"XP to execute this command");
-        }
         if (attr.getType()!=EXPERIENCE) {
             return new ErrorResponse("This attributes is not of type EXPERIENCE, (try omitting XP off the end, if you have this)");
+        }
+        if (st.hasPermission("Experience.award"+attr.getName()+"XP")) { permitted=true; }
+        if (!permitted) {
+            String subtype=attr.getSubType(); if (subtype==null) { subtype=""; }
+            if (!subtype.isEmpty()) {
+                // what is our group of this type then?
+                CharacterGroup group = st.getCharacter().getGroup(subtype);
+                // what is their blah
+                CharacterGroup theirgroup=target.getGroup(subtype);
+                if (group==null || theirgroup==null) {
+                    return new ErrorResponse("You lack admin permissions, and you/they are not in a group of type "+subtype);
+                }
+                if (group.getId()!=theirgroup.getId()) {
+                    return new ErrorResponse("You lack admin permissions, or you are in a different group of type "+subtype);
+                }
+                if (group.isAdmin(st.getCharacter())) { permitted=true; }
+                else { return new ErrorResponse("You lack admin permissions, and are not a group admin/owner for "+group.getName()); }
+            }
+        }
+        if (!permitted) {
+            return new ErrorResponse("You require permission Experience.award"+attr.getName()+"XP to execute this command");
         }
         Pool p=Modules.getPool(st,"Experience."+type+"XP");
         GenericXPPool gen=(GenericXPPool)p;
