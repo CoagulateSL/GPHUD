@@ -19,7 +19,7 @@ public class GenericXPPool extends Pool {
     @Override public String fullName() { return "Experience."+myname; }
     @Override public String name() { return myname; }
     
-    public void awardXP(State st,Char target,String reason,int ammount) {
+    public void awardXP(State st,Char target,String reason,int ammount,boolean incontext) {
         float period=st.getKV(fullName()+"XPPeriod").floatValue();
         int maxxp=st.getKV(fullName()+"XPLimit").intValue();
         Pool pool=Modules.getPool(st,"Experience."+myname+"XP");
@@ -33,7 +33,13 @@ public class GenericXPPool extends Pool {
         // else award xp :P
         Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Pool Add", pool.name()+"XP", null, ammount+"", reason);
         target.addPool(st, pool, ammount, reason);
-        if (target!=st.getCharacter()) { target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by (("+st.getAvatar().getName()+")) for "+reason); }
+        if (target!=st.getCharacter()) {
+            if (incontext) {
+                target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by "+st.getCharacter().getName()+" for "+reason);
+            } else {
+                target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by (("+st.getAvatar().getName()+")) for "+reason);
+            }
+        }
     }    
     
 }

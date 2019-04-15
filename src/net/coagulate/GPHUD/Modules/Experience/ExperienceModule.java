@@ -141,6 +141,7 @@ public class ExperienceModule extends ModuleAnnotation {
             String reason
             
         ){
+        boolean incontext=false;
         boolean permitted=false;
         if (ammount==null) { ammount=1; }
         Attribute attr=st.getAttribute(type);
@@ -163,6 +164,7 @@ public class ExperienceModule extends ModuleAnnotation {
                 }
                 if (group.isAdmin(st.getCharacter())) { permitted=true; }
                 else { return new ErrorResponse("You lack admin permissions, and are not a group admin/owner for "+group.getName()); }
+                incontext=true;
             }
         }
         if (!permitted) {
@@ -170,7 +172,7 @@ public class ExperienceModule extends ModuleAnnotation {
         }
         Pool p=Modules.getPool(st,"Experience."+type+"XP");
         GenericXPPool gen=(GenericXPPool)p;
-        gen.awardXP(st, target, reason,ammount);
+        gen.awardXP(st, target, reason,ammount,incontext);
         return new OKResponse("Awarded "+ammount+" "+p.name()+" to "+target.getName());
     }
 

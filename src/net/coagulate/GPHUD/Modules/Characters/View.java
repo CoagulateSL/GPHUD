@@ -137,7 +137,7 @@ public abstract class View {
                     Pool p=Modules.getPool(st,"Experience."+a.getName());
                     GenericXPPool gen=(GenericXPPool)p;
                     try {
-                        gen.awardXP(st, c, reason,ammount);
+                        gen.awardXP(st, c, reason,ammount,false);
                         content="<font color=green><b>&nbsp;&nbsp;&nbsp;OK: </b>Awarded "+ammount+" "+a.getName()+" to "+c.getName()+"</font>";
                     } catch (UserException e) {
                         content="<font color=red><b>&nbsp;&nbsp;&nbsp;Error: </b>"+e.getLocalizedMessage()+"</font>";
