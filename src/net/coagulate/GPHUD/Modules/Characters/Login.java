@@ -167,8 +167,7 @@ public abstract class Login {
     
     @Commands(context = Context.AVATAR,description = "Create a new character")
     public static Response create(State st,
-            @Arguments(type = ArgumentType.TEXT_CLEAN,description = "Name of the new character",max=24) // capped at 24
-                    // do not uncap without fixing the HUD interface, the dialog box breaks with name>24 chars as a button.
+            @Arguments(type = ArgumentType.TEXT_CLEAN,description = "Name of the new character",max=40)
                 String charactername)
     {
         if (Char.resolve(st, charactername)!=null) {
