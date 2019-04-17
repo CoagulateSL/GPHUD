@@ -1,5 +1,6 @@
 #include "SL/LSL/Library/JsonTools.lsl"
 #include "Constants.lsl"
+string dialogprefix="";
 string mainmenu="";
 integer channel=0;
 string setname="";
@@ -15,17 +16,17 @@ rollchannel() {
 	handle=llListen(channel,"",llGetOwner(),"");
 }
 
-page(integer p,string prefix) {
+page(integer p) {
 	if (p<0) { p=0; }
 	curpage=p;
 	integer j=0;
 	integer paged=0;
-	if (p>0 || jsonget(prefix+"12")!="") { paged=1; }
+	if (p>0 || jsonget(dialogprefix+"12")!="") { paged=1; }
 	//llOwnerSay("Paged is "+(string)paged);
-	//llOwnerSay("Element12:"+jsonget(prefix+"12"));
+	//llOwnerSay("Element12:"+jsonget(dialogprefix+"12"));
 	if (paged==0) { 
 		for (j=0;j<12;j++) {
-			if (jsonget(prefix+(string)j)!="") { dialog+=[jsonget(prefix+(string)j)]; }
+			if (jsonget(dialogprefix+(string)j)!="") { dialog+=[llGetSubString(jsonget(dialogprefix+(string)j),0,23)]; }
 		}
 		return;
 	}
@@ -33,15 +34,16 @@ page(integer p,string prefix) {
 	//llOwnerSay("Page "+(string)p+" element "+(string)s);
 	if (p>0){dialog+=["<<<"];}else{dialog+=[" "];}
 	dialog+=[" "];
-	if (jsonget(prefix+(string)(s+9))!="") { dialog+=[">>>"]; } else { dialog+=[" "]; }
+	if (jsonget(dialogprefix+(string)(s+9))!="") { dialog+=[">>>"]; } else { dialog+=[" "]; }
 	for (j=s;j<s+9;j++) {
-		if (jsonget(prefix+(string)j)!="") {
-			dialog+=[jsonget(prefix+(string)j)];
+		if (jsonget(dialogprefix+(string)j)!="") {
+			dialog+=[llGetSubString(jsonget(dialogprefix+(string)j),0,23)];
 		}
 	}
 }
 
 trigger() {
+	dialogprefix="";
 	dialog=[];
 	rollchannel();
 	integer args=(integer) jsonget("args");
@@ -76,8 +78,8 @@ trigger() {
 				if (type=="") { llOwnerSay("INVOKE TARGET "+jsonget("invoke")+" arg "+(string)i+" name "+name+" has no type"); }
 				string description=jsonget("arg"+(string)i+"description");
 				if (type=="SELECT") { parsed=TRUE; 
-					page(curpage,"arg"+(string)i+"button");
-						
+					dialogprefix="arg"+(string)i+"button";
+					page(curpage);
 					llDialog(llGetOwner(),description,dialog,channel);
 				}
 				if (type=="TEXTBOX" || sensormanual==99) { parsed=TRUE;
@@ -161,6 +163,14 @@ default {
 				if (text==" ") { trigger(); return; }
 				if (text==">>>") { curpage++; trigger(); return; }
 				if (text=="<<<") { curpage--; trigger(); return; } 
+				// if you make the first 24 chars ambiguous, expect dumb behaviour
+				if (llStringLength(text)>=23) {
+					i=0;
+					while (jsonget(dialogprefix+(string)i)!="") {
+						if (llSubStringIndex(jsonget(dialogprefix+(string)i),text)==0) { text=jsonget(dialogprefix+(string)i); }
+						i++;
+					}
+				}
 			}
 			if (type=="SENSOR" || type=="SENSORCHAR" || type=="SELECT") {
 				if (sensormanual==1 && text=="ManualEntry") { sensormanual=99; trigger(); return; }
