@@ -31,6 +31,7 @@ default {
 				llSetText(message,(vector)color,1);
 				return;
 			}
+			if (jsonget("titlerz")!="") { llSetPos(<0,0,(float)(jsonget("titlerz"))>); }
 			if (jsonget("titlerreplace")!="") { llOwnerSay("Duplicate TITLER attached, detaching one"); llDetachFromAvatar(); }
 			if (jsonget("titlerremove")!="") { llDetachFromAvatar(); }
 		}

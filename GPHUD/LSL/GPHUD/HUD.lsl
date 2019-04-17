@@ -122,6 +122,7 @@ integer process(key id) {
 	}
 	if (jsonget("zoning")!="") { llMessageLinked(LINK_THIS,LINK_SET_ZONING,jsonget("zoning"),""); }
 	if (jsonget("legacymenu")!="") { llMessageLinked(LINK_THIS,LINK_LEGACY_SET,jsonget("legacymenu"),""); }
+	if (jsonget("titlerz")!="") { llRegionSayTo(llGetOwner(),broadcastchannel,llJsonSetValue("",["titlerz"],jsonget("titlerz"))); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
 	if (jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
