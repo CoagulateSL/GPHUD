@@ -189,6 +189,13 @@ public abstract class Command {
                             return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
                         }
                         break;
+                    case FLOAT:
+                        try {
+                            typedargs.add(new Float(v));
+                        } catch (NumberFormatException e) {
+                            return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
+                        }
+                        break;                        
                     case MODULE:
                         Module m=Modules.get(null, v);
                         if (m==null) { return new ErrorResponse("Unable to resolve module "+m); }

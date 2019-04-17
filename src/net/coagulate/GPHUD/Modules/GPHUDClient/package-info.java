@@ -23,6 +23,7 @@
 @KVS(name="TitlerColor",defaultvalue="<1.0,1.0,1.0>",description = "Color for the titler text",editpermission = "GPHUDClient.Config",scope = KVSCOPE.COMPLETE,type = KVTYPE.COLOR,hierarchy = KVHIERARCHY.DELEGATING,template=true,conveyas = "titlercolor")
 @KVS(name="RpChannel",defaultvalue="2",conveyas = "rpchannel",description = "RP Channel for proxying chat as character",hierarchy = KVHIERARCHY.DELEGATING,scope = KVSCOPE.COMPLETE,template = true,type = KVTYPE.INTEGER,editpermission = "GPHUDClient.Config")
 @KVS(name="Name",defaultvalue = "--NAME--",description = "Conveys the character name to the HUD for the RP Channel's use",conveyas = "name",editpermission = "instance.owner",hidden = true,hierarchy = KVHIERARCHY.NONE,scope = KVSCOPE.CHARACTER,template = true,type = KVTYPE.TEXT)
+@KVS(name="TitlerAltitude",defaultvalue="0.19",conveyas = "titlerz",description = "Titler Altitude (height above character",editpermission = "gphudclient.config",hidden = false,hierarchy = KVHIERARCHY.DELEGATING,scope = KVSCOPE.COMPLETE,template = false,type = KVTYPE.FLOAT)        
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;

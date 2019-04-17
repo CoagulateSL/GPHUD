@@ -4,6 +4,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Modules.Argument;
+import net.coagulate.GPHUD.Modules.Argument.Arguments;
+import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
@@ -61,6 +67,14 @@ public class GPHUDClientModule extends ModuleAnnotation {
                 filterinto.put(newname,new ConveyanceKV(newname));
             }
         }
+    }
+    
+    @Commands(context =Command.Context.CHARACTER,description = "Set your Titler's Altitude (height above avatar)")
+    public static Response setAltitude(State st,
+            @Arguments(description = "Offset, in meters", mandatory = true,max = 3,type = Argument.ArgumentType.FLOAT)
+            Float offset) {
+        st.setKV(st.getCharacter(), "GPHUDClient.TitlerAltitude", offset+"");
+        return new OKResponse("Updated your Titler altitude to "+offset);
     }
     
 }
