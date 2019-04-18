@@ -12,7 +12,7 @@ comms_ready() {
 	llResetOtherScript("Visitors");
 	if (FIRSTREADY) { return; }
 	FIRSTREADY=TRUE;
-	banner();
+	banner_server();
 	llListen(broadcastchannel,"",NULL_KEY,"");
 	llListen(0,"",NULL_KEY,"");
 	json=llJsonSetValue("",["version"],VERSION);
@@ -25,7 +25,7 @@ gphud_hang() {
 	llMessageLinked(LINK_THIS,COMMS_SHUTDOWN,"","");
 	while(TRUE) { llSleep(9000+1); }
 }
-string name="GPHUD Server";
+string name="GPHUD Region Server";
 integer autoattach=FALSE;
 integer parcelonly=TRUE;
 integer countdown=60;
@@ -58,7 +58,7 @@ process() {
 	}
 	if (command=="servergive") { llGiveInventory((key)(jsonget("giveto")),jsonget("itemname")); }
 	if (jsonget("instancestatus")!="") { llSetText(jsonget("instancestatus")+" "+(string)llGetFreeMemory()+"b\n \n \n \n \n",(vector)jsonget("statuscolor"),1); }
-	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Server"); }
+	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Region Server"); }
 	if (jsonget("setlogo")!="") { setlogo((key)jsonget("setlogo")); }
 	integer resetdispenser=FALSE;
 	if (jsonget("autoattach")!="")
@@ -161,14 +161,14 @@ default {
 state distribution {
 	state_entry() { 
 		llMessageLinked(LINK_THIS,COMMS_SHUTDOWN,"","");
-		llSetObjectName("GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME);
+		llSetObjectName("GPHUD Region Server "+VERSION+" "+COMPILEDATE);
 		llSetTimerEvent(2.0);
 		llResetOtherScript("Visitors");
 		llResetOtherScript("Dispenser");
 		setlogo("c792716b-13a3-06c9-6e7c-33c4e9d5a48f");
 	}
 	on_rez(integer n) { llResetScript(); }
-	timer() { llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Server "+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"\n \n \n \n",<0.5,0.5,1.0>,1.0); }
+	timer() { llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Region Server "+VERSION+" "+COMPILEDATE+"\n \n \n \n",<0.5,0.5,1.0>,1.0); }
 }
 
 

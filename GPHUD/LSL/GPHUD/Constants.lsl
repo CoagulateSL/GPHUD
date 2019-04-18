@@ -25,7 +25,10 @@ string COMPILEDATE=__DATE__;
 string COMPILETIME=__TIME__;
 string IAIN_MALTZ="8dc52677-bea8-4fc3-b69b-21c5e2224306";
 
-banner() {
-	llOwnerSay(COMPILEDATE+" "+COMPILETIME+"\n \nGPHUD Version: "+VERSION+"\n(C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate\n");
+banner_hud() {
+	llOwnerSay("GPHUD HUD "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");
+}
+banner_server() {
+	llOwnerSay("GPHUD Region Server "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");
 }
 #endif

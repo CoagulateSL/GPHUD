@@ -67,7 +67,7 @@ comms_ready() {
 	llOwnerSay("Comms_Ready FIRST TIME");
 	#endif
 	FIRSTREADY=FALSE;
-	banner();
+	banner_hud();
 	calculatebroadcastchannel();
 	startLogin();
 	llListen(broadcastchannel,"",NULL_KEY,"");		
