@@ -136,6 +136,18 @@ public abstract class Login {
         Region region=st.getRegion();
         st.getCharacter().setRegion(region);
         JSONObject registeringjson=new JSONObject().put("incommand","registering");
+        String regmessage="";
+        if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
+            // is instance owner
+            regmessage=GPHUD.serverVersion()+" https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head";
+            if (st.getRegion().needsUpdate()) {
+                regmessage+="\n=====\nUpdate required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old one will then disable its self and can be deleted.\n=====";
+            }
+        } else {
+            //regmessage="O:"+st.getInstance().getOwner().getId()+" U:"+st.getCharacter().getId()+" "+GPHUD.serverVersion();
+            regmessage=GPHUD.serverVersion();
+        }
+        registeringjson.put("message",regmessage);
         Transmission registering=new Transmission((Char)null,registeringjson,url); registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
         Visits.initVisit(st, st.getCharacter(),region);
         if (version!=null && versiondate!=null && versiontime!=null) { 

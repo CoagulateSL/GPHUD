@@ -36,6 +36,7 @@ public class GPHUD {
     // config KV store
     private static final Map<String,String> CONFIG=new TreeMap<>();
     public static final String VERSION="v3.6.2";
+    public static final String VERSION_DATE="Apr 18 2019";
     
     public static boolean DEV=false; // make this auto detect some day... or in the ini file :P
     
@@ -258,6 +259,10 @@ public class GPHUD {
         
         // Annotation parser
         Classes.initialise();
+    }
+
+    public static String serverVersion() {
+        return "GPHUD Cluster "+VERSION+" "+VERSION_DATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
     }
     
 }

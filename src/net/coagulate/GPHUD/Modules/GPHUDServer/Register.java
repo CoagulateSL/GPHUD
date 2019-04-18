@@ -6,6 +6,7 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -50,6 +51,12 @@ public abstract class Register {
         region.setURL(url);
         st.logger().log(INFO,"Sending post registration message to "+regionname);
         JSONObject registered=new JSONObject().put("incommand","registered");
+        String regmessage="";
+        regmessage=GPHUD.serverVersion()+" https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head";
+        if (st.getRegion().needsUpdate()) {
+            regmessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version.\n=====";
+        }
+        registered.put("message",regmessage);        
         Transmission t=new Transmission(region,registered);
         t.start();
         JSONObject j=new JSONObject();
