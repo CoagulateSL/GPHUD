@@ -33,6 +33,7 @@ public class Giver {
         json.put("subcommand","giveitem");
         json.put("itemtogive",item);
         json.put("giveto",st.getAvatar().getUUID());
+        json.put("givetoname",st.getAvatar().getName());
         st.getRegion().sendServer(json);
         return new OKResponse("OK - Request for item has been sent");    }
 }
