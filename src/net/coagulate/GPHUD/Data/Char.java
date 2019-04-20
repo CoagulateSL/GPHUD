@@ -602,7 +602,7 @@ public class Char extends TableRow {
         if (st.getInstance()!=getInstance()) { throw new SystemException("Char / State Instance mismatch"); }
     }
     
-    protected int getNameCacheTime() { return 60; } // characters /may/ be renamable, just not really sure at this point
+    protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
     public void retire() {
         if (retired()) { return; }
