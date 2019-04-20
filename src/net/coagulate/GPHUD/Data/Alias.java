@@ -112,4 +112,8 @@ public class Alias extends TableRow {
     protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
     // for integrity reasons, renames should be doen through recreates (sadface)
 
+    public void delete() {
+        d("delete from aliases where aliasid=?",getId());
+    }
+
 }

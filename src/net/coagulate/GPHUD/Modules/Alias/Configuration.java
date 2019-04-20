@@ -36,10 +36,37 @@ public abstract class Configuration {
         Form f=st.form;
         f.noForm();
         f.add(new TextSubHeader("Alias Configuration"));
+
+        if (values.containsKey("deletealias") && st.isInstanceOwner()) {
+            Alias alias=Alias.getAlias(st,values.get("deletealias"));
+            if (alias==null) { f.add("<p color=red>Alias '"+values.get("deletealias")+"' was not fount</p>"); }
+            else {
+                alias.delete();
+                f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been deleted</p>");
+            }
+        }
+
         Map<String,Alias> aliases=Alias.getAliasMap(st);
+        int counter=0;
         for (String name:aliases.keySet())
         {
-            f.add("<a href=\"./alias/view/"+aliases.get(name).getId()+"\">"+name+"</a><br>"); // bleugh
+            String innercontent="";
+            if (st.isInstanceOwner()) {
+                innercontent += "<button style=\"border: 0;\" onclick=\"document.getElementById('delete-" + counter + "').style.display='inline';\">Delete</button>";
+                innercontent += "<div id=\"delete-" + counter + "\" style=\"display: none;\">";
+                innercontent += "&nbsp;&nbsp;&nbsp;";
+                innercontent += "CONFIRM DELETE? ";
+                innercontent += "<form style=\"display: inline;\" method=post>";
+                innercontent += "<input type=hidden name=deletealias value=\""+name+"\">";
+                innercontent += "<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>";
+                innercontent += "</form>";
+                innercontent += "</div>";
+                innercontent += "&nbsp;&nbsp;&nbsp;";
+            }
+            innercontent+="<a href=\"./alias/view/"+aliases.get(name).getId()+"\">"+name+"</a>";
+            innercontent+="<br>";
+            f.add(innercontent); // bleugh
+            counter++;
         }
         f.add("<br>");
         f.add(new Form(st, false, "./alias/create", "Create"));
