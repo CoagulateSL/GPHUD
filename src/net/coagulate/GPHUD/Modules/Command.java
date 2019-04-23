@@ -1,32 +1,10 @@
 package net.coagulate.GPHUD.Modules;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import static java.util.logging.Level.WARNING;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.CharacterGroup;
-import net.coagulate.GPHUD.Data.Event;
-import net.coagulate.GPHUD.Data.PermissionsGroup;
-import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.GPHUD.Data.Zone;
-import net.coagulate.GPHUD.Interfaces.Inputs.Button;
-import net.coagulate.GPHUD.Interfaces.Inputs.CheckBox;
-import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
-import net.coagulate.GPHUD.Interfaces.Inputs.PasswordInput;
-import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
+import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.Interfaces.Inputs.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -34,30 +12,20 @@ import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.AVATAR_NEAR;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.BOOLEAN;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.CHARACTERGROUP;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.CHARACTER_FACTION;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.CHARACTER_NEAR;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.CHARACTER_PLAYABLE;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.CHOICE;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.COORDINATES;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.EVENT;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.INTEGER;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.KVLIST;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.MODULE;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.PASSWORD;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.PERMISSION;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.PERMISSIONSGROUP;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.REGION;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.TEXT_CLEAN;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.TEXT_MULTILINE;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.TEXT_ONELINE;
-import static net.coagulate.GPHUD.Modules.Argument.ArgumentType.ZONE;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
+
+import java.lang.annotation.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.logging.Level.WARNING;
 
 /** A command, probably derived from Annotations.
  *
@@ -214,19 +182,19 @@ public abstract class Command {
                         if (attr==null) { throw new UserException("Unable to resolve '"+v+"' to an attribute"); }
                         typedargs.add(attr);
                         break;
-                    case CHARACTER_FACTION:
-                    case CHARACTER:
-                    case CHARACTER_PLAYABLE:
-                        Char targetchar=Char.resolve(st, v);
+                        /*Char targetchar=Char.resolve(st, v);
                         typedargs.add(assertNotNull(targetchar, v, "character"));
                         if (argument.getName().equalsIgnoreCase("target")) { st.setTarget(targetchar); }
-                        break;
+                        break;*/
                     case PERMISSIONSGROUP:
                         typedargs.add(assertNotNull(PermissionsGroup.resolve(st, v), v, "permissions group"));
                         break;
                     case CHARACTERGROUP:
                         typedargs.add(assertNotNull(CharacterGroup.resolve(st, v), v, "character group"));
                         break;
+                    case CHARACTER_FACTION:
+                    case CHARACTER:
+                    case CHARACTER_PLAYABLE:
                     case CHARACTER_NEAR:
                         Char targchar=null;
                         if (v.startsWith(">")) {
@@ -494,7 +462,7 @@ public abstract class Command {
                     }
                     break;
                 case CHARACTER_FACTION:
-                    json.put("arg" + arg + "type", "SENSOR");
+                    json.put("arg" + arg + "type", "SENSORCHAR");
                     json.put("arg" + arg + "manual", "true");
                     break;
                 case CHARACTER_NEAR:
