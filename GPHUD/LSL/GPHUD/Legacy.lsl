@@ -6,7 +6,8 @@ integer channel=0;
 string setname="";
 list dialog=[];
 integer handle=0;
-integer sensormanual=FALSE;
+integer MANUAL_NONE=0; integer MANUAL_AVAILABLE=1; integer MANUAL_SELECTED=2; 
+integer sensormanual=MANUAL_NONE;
 list zoning=[];
 string ourzone="";
 integer curpage=0;
@@ -82,20 +83,23 @@ trigger() {
 					page(curpage);
 					llDialog(llGetOwner(),description,dialog,channel);
 				}
-				if (type=="TEXTBOX" || sensormanual==99) { parsed=TRUE;
+				if (type=="TEXTBOX" || sensormanual==MANUAL_SELECTED) { parsed=TRUE;
 					llTextBox(llGetOwner(),description,channel);
 				}
-				if ((type=="SENSORCHAR" || type=="SENSOR") && sensormanual!=99) { parsed=TRUE; 
+				if ((type=="SENSORCHAR" || type=="SENSOR") && sensormanual!=MANUAL_SELECTED) { parsed=TRUE; 
 					llSensor("",NULL_KEY,AGENT,20,PI);
-					if (jsonget("arg"+(string)i+"manual")!="") { sensormanual=1; } else { sensormanual=0; }
+					if (jsonget("arg"+(string)i+"manual")!="") { sensormanual=MANUAL_AVAILABLE; } else { sensormanual=MANUAL_NONE; }
 					//llOwnerSay((string)sensormanual);
 				}
 				if (!parsed) { llOwnerSay("Legacy interface failure, unknown type "+type); }
 			}
 		}
 	}
-	if (sensormanual==99) { sensormanual=0; }
-	if (iscomplete) { llMessageLinked(LINK_THIS,LINK_SEND,json,jsonget("invoke")); } 
+	
+	if (iscomplete) {
+		llMessageLinked(LINK_THIS,LINK_SEND,json,jsonget("invoke"));
+		sensormanual=MANUAL_NONE;
+	} 
 }
 
 calculateZone() {
@@ -129,11 +133,11 @@ default {
     link_message(integer from,integer num,string message,key id) {
 		if (num==LINK_LEGACY_SET) { mainmenu=message; }
 		if (num==LINK_LEGACY_FIRE && mainmenu!="" ) { 
-			json=mainmenu;
+			json=mainmenu; sensormanual=MANUAL_NONE;
 			trigger();
 		}
 		if (num==LINK_LEGACY_RUN && message !="") { 
-			json=message;
+			json=message; sensormanual=MANUAL_NONE;
 			trigger();
 		}
 		if (num==LINK_DIAGNOSTICS) { llOwnerSay("Legacy: "+(string)llGetFreeMemory()); }
@@ -173,7 +177,7 @@ default {
 				}
 			}
 			if (type=="SENSOR" || type=="SENSORCHAR" || type=="SELECT") {
-				if (sensormanual==1 && text=="ManualEntry") { sensormanual=99; trigger(); return; }
+				if (sensormanual==MANUAL_AVAILABLE && text=="ManualEntry") { sensormanual=MANUAL_SELECTED; trigger(); return; }
 				//llOwnerSay("Qualify "+text);
 				integer i=0;
 				integer perfect=-1;
@@ -193,7 +197,7 @@ default {
 				if (prefix>=0) { text=llList2String(dialog,prefix); }
 				if (perfect>=0) { text=llList2String(dialog,perfect); }
 				//llOwnerSay("IN:"+text+":OUT:"+text);
-				if (type=="SENSORCHAR") { text=">"+text; }
+				if (type=="SENSORCHAR" && sensormanual!=MANUAL_SELECTED) { text=">"+text; }
 			}
 			// SL bug
 			if (
@@ -208,7 +212,10 @@ default {
 			trigger();
 		}
 	}
-	no_sensor() { llOwnerSay("Unable to detect any nearby players!"); }
+	no_sensor() {
+		if (sensormanual==MANUAL_AVAILABLE) { sensormanual=MANUAL_SELECTED; trigger(); return; }
+		llOwnerSay("Unable to detect any nearby players!");
+	}
 	sensor(integer n) {
 		list stride=[];
 		integer i=0;
@@ -223,8 +230,8 @@ default {
 		integer qty=12;
 		//llOwnerSay((string)sensormanual);
 		list truncated=[];
-		if (sensormanual==1) { qty=11; }
-		if (sensormanual==1) { dialog+=["ManualEntry"]; truncated+=["ManualEntry"]; }
+		if (sensormanual==MANUAL_AVAILABLE) { qty=11; }
+		if (sensormanual==MANUAL_AVAILABLE) { dialog+=["ManualEntry"]; truncated+=["ManualEntry"]; }
 		if (qty>(llGetListLength(stride)/2)) { qty=(llGetListLength(stride)/2); }
 		for (i=0;i<(qty*2); i+=2) {
 			//llOwnerSay("Adding "+llList2String(stride,i+1));
