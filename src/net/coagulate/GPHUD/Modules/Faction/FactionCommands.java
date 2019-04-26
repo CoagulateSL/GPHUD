@@ -69,7 +69,7 @@ public class FactionCommands {
         if (!ourfaction.isAdmin(st.getCharacter())) { return new ErrorResponse("You are not a faction admin"); }
         JSONObject invite=new JSONObject();
         invite.put("message", "factioninvite");
-        invite.put("from",target.getId());
+        invite.put("from",st.getCharacter().getId());
         invite.put("to",ourfaction.getId());
         target.queueMessage(invite,60*60*48);
         Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Faction Invite", ourfaction.getName(), null, null,"Faction invite sent");
