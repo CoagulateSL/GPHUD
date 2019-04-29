@@ -1,12 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.coagulate.Core.Tools.SystemException;
-import static net.coagulate.Core.Tools.UnixTime.duration;
-import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
@@ -14,13 +8,22 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static net.coagulate.Core.Tools.UnixTime.duration;
+import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 
 /** Just used to store data about characters for the "view all" page, because interrogating everything one cell at a time would be painful.
  * See Instance.getCharacterSummary()
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class CharacterSummary {
+public class CharacterSummary implements Comparable{
     int id=0;
     String name="";
     Integer ownerid=0;
@@ -57,7 +60,7 @@ public class CharacterSummary {
     }
     static String sortLink(String current,String link) {
         if (link.equals(current)) { return "<a href=\"?sort=-"+link+"\">"+link+"</a> &darr;"; }
-        if (("-"+link).equals(current)) { return "<a href=\"?sort=-"+link+"\">"+link+"</a> &uarr;"; }
+        if (("-"+link).equals(current)) { return "<a href=\"?sort="+link+"\">"+link+"</a> &uarr;"; }
         return "<a href=\"?sort="+link+"\">"+link+"</a>";
     }
     public Row asRow(State st) throws UserException, SystemException {
@@ -84,5 +87,13 @@ public class CharacterSummary {
 
     void setGroup(String grouptype, String groupname) {
         groups.put(grouptype,groupname);
+    }
+
+    @Override
+    public int compareTo(@NotNull Object o) {
+        if (o==null) { throw new NullPointerException("Comparing character summary to a null object"); }
+        if (!(o instanceof CharacterSummary)) { throw new ClassCastException("Can not compare a CharacterSummary to a "+o.getClass().getCanonicalName()); }
+        CharacterSummary compareto = (CharacterSummary) o;
+        return Integer.valueOf(id).compareTo(Integer.valueOf(compareto.id));
     }
 }
