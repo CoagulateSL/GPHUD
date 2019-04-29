@@ -20,7 +20,6 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -266,26 +265,5 @@ public abstract class Management {
         return new OKResponse("Successfully altered admin flag on "+character+" in "+faction);
     }
 
-    @Commands(context = Context.CHARACTER,description = "Eject a member from your faction")
-    public static Response eject(@NotNull State st,
-                                  @NotNull @Arguments(description = "Character to remove from the faction",type = ArgumentType.CHARACTER_FACTION)
-                                          Char member) {
-        CharacterGroup faction = st.getCharacter().getGroup("Faction");
-        if (faction==null) { return new ErrorResponse("You are not in a faction!"); }
-        if (!faction.isAdmin(st.getCharacter())) {return new ErrorResponse("You are not a lead/admin for faction "+faction.getName()); }
-        // refuse if they're not in this group (!)
-        CharacterGroup existingfaction=member.getGroup("Faction");
-        if (existingfaction==null) { return new ErrorResponse(member.getName()+" is not in a faction"); }
-        if (faction!=existingfaction) { return new ErrorResponse("Can not remove "+member.getName()+" from "+faction.getName()+" because they are instead in "+existingfaction.getName()); }
-        // refuse if they're the faction leader
-        if (faction.getOwner()==member) { return new ErrorResponse("Will not remove "+member.getName()+" from "+faction.getName()+", they are the faction leader, you must demote them by replacing them or leaving the faction leaderless."); }
-        // refuse if they're an admin.  leader can demote them I hope
-        if (faction.isAdmin(member)) { return new ErrorResponse("Will not remove "+member.getName()+" from "+faction.getName()+", they are a faction administrator and must be demoted first."); }
-        try { existingfaction.removeMember(member); }
-        catch (UserException e) { return new ErrorResponse("Failed to remove member - "+e.getMessage()); }
-        member.hudMessage("You have been removed from faction "+faction.getName()+" by "+st.getCharacter().getName());
-        Audit.audit(st, Audit.OPERATOR.CHARACTER, null, member, "RemoveMember", faction.getName(), faction.getName(), null, "Removed member from faction group");
-        return new OKResponse(member.getName()+" was removed from faction "+faction.getName());
-    }
 
 }

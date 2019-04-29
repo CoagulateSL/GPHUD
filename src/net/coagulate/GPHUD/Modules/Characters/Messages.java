@@ -37,12 +37,12 @@ public abstract class Messages {
         
     }
 
-    private static void displayFactionInvite(State st, SafeMap values, JSONObject j) throws UserException, SystemException {
+    public static void displayFactionInvite(State st, SafeMap values, JSONObject j) throws UserException, SystemException {
         Form f=st.form;
         Char from=Char.get(j.getInt("from"));
         CharacterGroup to=CharacterGroup.get(j.getInt("to"));
-        f.add(new TextSubHeader("Faction Invite"));
-        f.add("You have been invited to join the faction "+to.getName()+" by "+from.getName());
+        f.add(new TextSubHeader("Invite"));
+        f.add("You have been invited to join the "+to.getName()+" by "+from.getName());
         f.add(new Paragraph());
         Modules.simpleHtml(st, "gphudclient.acceptrejectmessage", values);
         

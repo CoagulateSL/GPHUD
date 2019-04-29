@@ -12,11 +12,12 @@ import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
+import net.coagulate.GPHUD.Modules.Groups.GroupCommands;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
-import org.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 
 /**  Faction controls for the FactionCommands.
  *
@@ -66,14 +67,15 @@ public class FactionCommands {
     {
         CharacterGroup ourfaction=st.getCharacter().getGroup("Faction");
         if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
-        if (!ourfaction.isAdmin(st.getCharacter())) { return new ErrorResponse("You are not a faction admin"); }
-        JSONObject invite=new JSONObject();
-        invite.put("message", "factioninvite");
-        invite.put("from",st.getCharacter().getId());
-        invite.put("to",ourfaction.getId());
-        target.queueMessage(invite,60*60*48);
-        Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Faction Invite", ourfaction.getName(), null, null,"Faction invite sent");
-        return new OKResponse("Invite message sent to "+target.getName()+" for faction "+ourfaction.getName()+", they have 48 hours to accept.");
+        return GroupCommands.invite(st, ourfaction, target);
     }
-            
+    @Commands(context = Context.CHARACTER,description = "Eject a member from your faction")
+    public static Response eject(@NotNull State st,
+                                 @NotNull @Arguments(description = "Character to remove from the faction",type = ArgumentType.CHARACTER_FACTION)
+                                         Char member) {
+        CharacterGroup faction = st.getCharacter().getGroup("Faction");
+        if (faction==null) { return new ErrorResponse("You are not in a faction!"); }
+        return GroupCommands.eject(st,faction,member);
+    }
+
 }
