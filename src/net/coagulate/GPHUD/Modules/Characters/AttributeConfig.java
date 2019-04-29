@@ -5,15 +5,9 @@
  */
 package net.coagulate.GPHUD.Modules.Characters;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
-import net.coagulate.GPHUD.Interfaces.Outputs.Row;
-import net.coagulate.GPHUD.Interfaces.Outputs.Separator;
-import net.coagulate.GPHUD.Interfaces.Outputs.Table;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
+import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -26,6 +20,9 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** Configure attributes.

@@ -51,7 +51,7 @@ public abstract class Permissions {
     public static Response delPermission(State st,
             @Arguments(description = "Permissions group to remove permission from",type = ArgumentType.PERMISSIONSGROUP) 
                     PermissionsGroup permissionsgroup,
-            @Arguments(description = "Permission to remove from group",type = ArgumentType.PERMISSION)
+            @Arguments(description = "Permission to remove from group",type = ArgumentType.TEXT_CLEAN,max=256)
                     String permission
     ) throws UserException,SystemException {
         if (!st.isInstanceOwner()) { return new ErrorResponse("No permission to modify the permissions on this group."); }

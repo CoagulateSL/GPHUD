@@ -1,8 +1,5 @@
 package net.coagulate.GPHUD.Data;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
@@ -12,6 +9,10 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 /** Reference to a permissions group.
  * A group of avatars with permissions bound to an instance.
@@ -83,7 +84,7 @@ public class PermissionsGroup extends TableRow {
         Results results=dq("select permission from permissions where permissionsgroupid=?",getId());
         for (ResultsRow r:results) {
             try {
-                Modules.validatePermission(st,r.getString());
+                //Modules.validatePermission(st,r.getString()); - don't validate, some left over perms might be in the DB
                 permissions.add(r.getString());
             }
             catch (IllegalArgumentException e) { st.logger().warning("Permission exists in database but not in schema - ["+r.getString()+"]"); }

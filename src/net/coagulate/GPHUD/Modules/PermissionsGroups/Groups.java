@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.PermissionsGroups;
 
-import java.util.Set;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Audit;
@@ -8,12 +7,7 @@ import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Data.PermissionsGroupMembership;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
-import net.coagulate.GPHUD.Interfaces.Outputs.Color;
-import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
-import net.coagulate.GPHUD.Interfaces.Outputs.Separator;
-import net.coagulate.GPHUD.Interfaces.Outputs.Table;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
+import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -24,10 +18,13 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.SideSubMenu.SideSubMenus;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+
+import java.util.Set;
 
 /**
  *
@@ -51,7 +48,9 @@ public abstract class Groups {
         for (String permission:permissions) {
             permtable.openRow();
             permtable.add(permission);
-            permtable.add(Modules.getPermission(st,permission).description());
+            Permission rawpermission = Modules.getPermission(st, permission);
+            if (rawpermission!=null) { permtable.add(rawpermission.description()); }
+            else { permtable.add("<font color=red><i>Permission no longer exists</i></font>"); }
             if (st.isInstanceOwner() || st.isSuperUser()) {
                 Form dp=new Form();
                 dp.setAction("../delpermission");
