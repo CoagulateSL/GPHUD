@@ -1,5 +1,12 @@
 package net.coagulate.GPHUD;
 
+import net.coagulate.Core.Database.DBConnection;
+import net.coagulate.Core.Database.DBException;
+import net.coagulate.Core.Database.MariaDBConnection;
+import net.coagulate.Core.Tools.LogHandler;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,14 +15,9 @@ import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TreeMap;
-import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import net.coagulate.Core.Database.DBConnection;
-import net.coagulate.Core.Database.DBException;
-import net.coagulate.Core.Database.MariaDBConnection;
-import net.coagulate.Core.Tools.LogHandler;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
+
+import static java.util.logging.Level.SEVERE;
 
 /** Bootstrap class for GPHUD.  Run me.
  Initialise config file
@@ -35,8 +37,8 @@ public class GPHUD {
 
     // config KV store
     private static final Map<String,String> CONFIG=new TreeMap<>();
-    public static final String VERSION="v3.6.2";
-    public static final String VERSION_DATE="Apr 18 2019";
+    public static final String VERSION="v3.6.3";
+    public static final String VERSION_DATE="Apr 29 2019";
     
     public static boolean DEV=false; // make this auto detect some day... or in the ini file :P
     
