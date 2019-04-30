@@ -37,8 +37,8 @@ public class GPHUD {
 
     // config KV store
     private static final Map<String,String> CONFIG=new TreeMap<>();
-    public static final String VERSION="v3.6.3";
-    public static final String VERSION_DATE="Apr 29 2019";
+    public static final String VERSION="v3.6.4";
+    public static final String VERSION_DATE="Apr 30 2019";
     
     public static boolean DEV=false; // make this auto detect some day... or in the ini file :P
     
