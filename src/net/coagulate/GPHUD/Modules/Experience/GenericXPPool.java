@@ -20,9 +20,10 @@ public class GenericXPPool extends Pool {
     @Override public String name() { return myname; }
     
     public void awardXP(State st,Char target,String reason,int ammount,boolean incontext) {
-        float period=st.getKV(fullName()+"XPPeriod").floatValue();
-        int maxxp=st.getKV(fullName()+"XPLimit").intValue();
-        Pool pool=Modules.getPool(st,"Experience."+myname+"XP");
+        State targetstate=State.getNonSpatial(target);
+        float period=targetstate.getKV(fullName()+"XPPeriod").floatValue();
+        int maxxp=targetstate.getKV(fullName()+"XPLimit").intValue();
+        Pool pool=Modules.getPool(targetstate,"Experience."+myname+"XP");
         int awarded=target.sumPoolDays(pool, period);
         if (awarded>=maxxp) {
             throw new UserException("This character has already reached their "+pool.name()+" XP limit.  They will next be eligable for a point in "+target.poolNextFree(pool,maxxp,period));
