@@ -254,6 +254,13 @@ public class State {
         this.character=c;
         this.avatar=c.getPlayedBy();
     }
+    public static State getNonSpatial(Char c) {
+        State ret=new State();
+        ret.setInstance(c.getInstance());
+        ret.setAvatar(c.getOwner());
+        ret.setCharacter(c);
+        return ret;
+    }
     public String getInstanceString() {
         if (instance==null) { return "<null>"; }
         return instance.toString();
@@ -301,7 +308,6 @@ public class State {
     /** Checks, and caches, if a user has a permission.
      * Note this assumes superuser is always allowed, as is instance owner.
      * DO NOT USE THIS TO PROTECT SUPERUSER ONLY OPERATIONS IN ANY WAY, INSTANCE OWNERS CAN ALWAYS DO EVERYTHING THE PERMISSION SYSTEM ALLOWS.
-     * @see isSuperUser()
      * @param permission Permission string to check
      * @return true/false
      */
@@ -409,7 +415,7 @@ public class State {
             }
         }
         //character
-        if (scope==KV.KVSCOPE.CHARACTER || scope==KV.KVSCOPE.COMPLETE || scope=KV.KVSCOPE.NONSPATIAL) { if (character!=null) { check.add(character); } }
+        if (scope==KV.KVSCOPE.CHARACTER || scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) { if (character!=null) { check.add(character); } }
         if (debug) { System.out.println(kv.fullname()+" with scope "+kv.scope()+" returned "+check.size()); }
         return check;
     }        
@@ -652,7 +658,6 @@ public class State {
     public void purgeAttributeCache() { attributes=null; }
     /** Get attributes for an instance.
      * 
-     * @param st Derives instance
      * @return Set of ALL character attributes, not just writable ones in the DB...
      */
     public Set<Attribute> getAttributes() {
