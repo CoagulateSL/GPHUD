@@ -1,35 +1,25 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
-import java.io.InputStream;
-import java.util.Set;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Cookies;
-import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.PrimaryCharacters;
-import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.Response;
-import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.*;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
-import org.apache.http.Header;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.json.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.util.Set;
+
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 
 /** Implements the System interface (from SL)
  * 
@@ -229,7 +219,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         String regionname=st.getRegionName();
         if (st.sourcedeveloper.getId()!=1 || !st.sourcename.startsWith("GPHUD Server")) {
             GPHUD.getLogger().log(WARNING,"Region '"+regionname+"' not registered but connecting with "+st.sourcename+" from developer "+st.sourcedeveloper+" owner by "+st.sourceowner);
-            return new TerminateResponse("Region not registered.");
+            //return new TerminateResponse("Region not registered.");
         }
         GPHUD.getLogger().log(WARNING,"Region '"+regionname+"' not registered but connecting, recognised as GPHUD server owned by "+st.sourceowner);
         if (!st.json.getString("command").equals("console")) {
