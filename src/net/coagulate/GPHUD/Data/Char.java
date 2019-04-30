@@ -1,19 +1,8 @@
 package net.coagulate.GPHUD.Data;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import static java.util.logging.Level.SEVERE;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
-import static net.coagulate.Core.Tools.UnixTime.duration;
-import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
@@ -25,6 +14,13 @@ import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static java.util.logging.Level.SEVERE;
+import static net.coagulate.Core.Tools.UnixTime.duration;
+import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 
 /** Reference to a character within an instance
  *
@@ -347,6 +343,7 @@ public class Char extends TableRow {
      * @return Explanation of when the next point is available.
      */
     public String poolNextFree(Pool pool, int maxxp, float days) {
+        if (maxxp==0) { return "NEVER"; }
         int now=getUnixTime();
         int nextfree=poolNextFreeAt(pool,maxxp,days);
         if (now>=nextfree) { return "NOW"; }
