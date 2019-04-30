@@ -12,7 +12,7 @@ public class GenericXPPeriodKV extends KV {
 
     public boolean isGenerated() { return true; }
     public String fullname() { return "Experience."+myname; }
-    public KVSCOPE scope() { return KVSCOPE.COMPLETE; }
+    public KVSCOPE scope() { return KVSCOPE.NONSPATIAL; }
     public KVTYPE type() { return KVTYPE.FLOAT; }
     public String description() { return "Cycle length, in days, for "+myname+" limit"; }
     public String editpermission() { return "Instance.Owner"; }

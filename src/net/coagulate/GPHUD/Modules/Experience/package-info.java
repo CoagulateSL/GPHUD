@@ -10,7 +10,7 @@
 @KVS(defaultvalue="You have --TOTALXP-- XP making you level --LEVEL--.  You have --ABILITYPOINTS-- ability points available to spend.",conveyas = "leveltext",description = "HUD message for leveling up",editpermission = "Experience.ConfigureLevels",hidden = false,hierarchy = KV.KVHIERARCHY.DELEGATING,name = "LevelText",scope = KVSCOPE.COMPLETE,template = true,type = KVTYPE.TEXT)
 @Permissions(name="ConfigureXP",description = "Configure generic aspects of the XP system")        
 @Permissions(name = "SetAbilityPoints",description = "Ability to manage other players ability point count")
-@KVS(defaultvalue = "0",description = "Ability points available to character",editpermission = "Experience.SetAbilityPoints",hierarchy = KV.KVHIERARCHY.CUMULATIVE,template = true,type = KVTYPE.INTEGER,scope = KVSCOPE.COMPLETE,name = "AbilityPoints")
+@KVS(defaultvalue = "0",description = "Ability points available to character",editpermission = "Experience.SetAbilityPoints",hierarchy = KV.KVHIERARCHY.CUMULATIVE,template = true,type = KVTYPE.INTEGER,scope = KVSCOPE.NONSPATIAL,name = "AbilityPoints")
         
 package net.coagulate.GPHUD.Modules.Experience;
 

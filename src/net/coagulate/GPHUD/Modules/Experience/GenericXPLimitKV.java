@@ -12,7 +12,7 @@ public class GenericXPLimitKV extends KV {
 
     public boolean isGenerated() { return true; }
     public String fullname() { return "Experience."+myname; }
-    public KVSCOPE scope() { return KVSCOPE.COMPLETE; }
+    public KVSCOPE scope() { return KVSCOPE.NONSPATIAL; }
     public KVTYPE type() { return KVTYPE.INTEGER; }
     public String description() { return "Maximum "+myname+" per cycle"; }
     public String editpermission() { return "Instance.Owner"; }
