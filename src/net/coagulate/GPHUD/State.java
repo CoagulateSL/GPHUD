@@ -1,47 +1,25 @@
 package net.coagulate.GPHUD;
 
-import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.logging.Logger;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.CharacterGroup;
-import net.coagulate.GPHUD.Data.Cookies;
-import net.coagulate.GPHUD.Data.Event;
-import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.Permissions;
-import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.GPHUD.Data.TableRow;
-import net.coagulate.GPHUD.Data.Zone;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.Interfaces.User.Form;
-import net.coagulate.GPHUD.Modules.KV;
-import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.AUTHORITATIVE;
-import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.CUMULATIVE;
-import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.DELEGATING;
-import static net.coagulate.GPHUD.Modules.KV.KVHIERARCHY.NONE;
-import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
-import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Module;
-import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.Modules.Templater;
-import net.coagulate.GPHUD.Modules.Validators;
+import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.SL.Data.User;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONObject;
+
+import java.lang.reflect.Field;
+import java.net.InetAddress;
+import java.util.*;
+import java.util.logging.Logger;
+
+import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
 
 /**  Used as an alternative to HTTPContext to pass around the state of the request.
  * Note some caches are used here, which can be flushed if necessary.
@@ -405,7 +383,7 @@ public class State {
         // create a ordered list of all the relevant objects, wether valued or not
         List<TableRow> check=new ArrayList<>();
         // in DELEGATING order
-        if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SERVER || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.INSTANCE) { if (instance!=null) { check.add(instance); } }
+        if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SERVER || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.INSTANCE || scope==KV.KVSCOPE.NONSPATIAL) { if (instance!=null) { check.add(instance); } }
         if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SERVER ||  scope==KV.KVSCOPE.SPATIAL) { if (region!=null) { check.add(region); } }
         if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.ZONE) { if (zone!=null) { check.add(zone); } }
         // events in ID order
@@ -419,7 +397,7 @@ public class State {
             }
         }
         // charactergroups in ID order
-        if (scope==KV.KVSCOPE.COMPLETE) {
+        if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
             if (character!=null) {
                 Map<Integer,CharacterGroup> map=new TreeMap<>();
                 for (CharacterGroup c:character.getGroups()) {
@@ -431,7 +409,7 @@ public class State {
             }
         }
         //character
-        if (scope==KV.KVSCOPE.CHARACTER || scope==KV.KVSCOPE.COMPLETE) { if (character!=null) { check.add(character); } }
+        if (scope==KV.KVSCOPE.CHARACTER || scope==KV.KVSCOPE.COMPLETE || scope=KV.KVSCOPE.NONSPATIAL) { if (character!=null) { check.add(character); } }
         if (debug) { System.out.println(kv.fullname()+" with scope "+kv.scope()+" returned "+check.size()); }
         return check;
     }        

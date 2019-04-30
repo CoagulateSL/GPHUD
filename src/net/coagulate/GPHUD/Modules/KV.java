@@ -1,25 +1,16 @@
 package net.coagulate.GPHUD.Modules;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.Set;
-import static java.util.logging.Level.FINE;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.CharacterGroup;
-import net.coagulate.GPHUD.Data.Event;
-import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.GPHUD.Data.TableRow;
-import net.coagulate.GPHUD.Data.Zone;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
+
+import java.lang.annotation.*;
+import java.util.Set;
+
+import static java.util.logging.Level.FINE;
 
 /** Wraps a KV (Key Value) element.
  *
@@ -54,7 +45,7 @@ public abstract class KV extends NameComparable {
         KVS[] value();
     }    
 
-    public static enum KVSCOPE {INSTANCE,SERVER,SPATIAL,CHARACTER,ZONE, EVENT,COMPLETE};
+    public static enum KVSCOPE {INSTANCE,SERVER,SPATIAL,NONSPATIAL,CHARACTER,ZONE, EVENT,COMPLETE};
     public static enum KVTYPE { TEXT,INTEGER,FLOAT,UUID,BOOLEAN,COMMAND,COLOR};
     
     // Configurable THINGS
@@ -87,6 +78,11 @@ public abstract class KV extends NameComparable {
             case SERVER:
                 if (o instanceof Instance ||
                         o instanceof Region) { return true; }
+                return false;
+            case NONSPATIAL:
+                if (    o instanceof Instance ||
+                        o instanceof CharacterGroup ||
+                        o instanceof Char) { return true; }
                 return false;
             case SPATIAL:
                 if (o instanceof Instance ||
