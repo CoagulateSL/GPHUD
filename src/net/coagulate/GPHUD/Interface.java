@@ -1,13 +1,16 @@
 package net.coagulate.GPHUD;
 
-import java.net.InetAddress;
-import static java.util.logging.Level.SEVERE;
+import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpInetConnection;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
+
+import java.net.InetAddress;
+
+import static java.util.logging.Level.SEVERE;
 
 /**  Superclass of both interfaces.  Defines how we pass things down.
  * 
@@ -55,6 +58,7 @@ public abstract class Interface implements HttpRequestHandler {
         }
         catch (Exception e) {
             // there is no INTENDED use case for this catch, each interface should have its own 'catchall' somewhere, but just in case
+            SL.report("Generic Interface caught exception",e,st);
             GPHUD.getLogger().log(SEVERE,"Exception propagated to generic interface handler!",e);
         }
     }

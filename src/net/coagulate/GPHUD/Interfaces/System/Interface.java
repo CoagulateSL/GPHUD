@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
+import net.coagulate.SL.SL;
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -101,6 +102,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
             resp.setEntity(new StringEntity("<html><body><pre>Hello there :) What are you doing here?</pre></body></html>",ContentType.TEXT_HTML));
         }
         catch (UserException e) {
+                SL.report("GPHUD system interface user error",e,st);
                 GPHUD.getLogger().log(WARNING,"User generated error : "+e.getLocalizedMessage(),e);
                 HttpResponse resp=st.resp;
                 resp.setStatusCode(HttpStatus.SC_OK);
@@ -109,12 +111,14 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         catch (Exception e) {
             try {
+                SL.report("GPHUD system interface error",e,st);
                 GPHUD.getLogger().log(SEVERE,"System Interface caught unhandled Exception : "+e.getLocalizedMessage(),e);
                 HttpResponse resp=st.resp;
                 resp.setStatusCode(HttpStatus.SC_OK);
                 resp.setEntity(new StringEntity("{\"error\":\"Internal error occured, sorry.\"}",ContentType.TEXT_PLAIN)); 
                 resp.setStatusCode(HttpStatus.SC_OK);            
             } catch (Exception ex) {
+                SL.report("Error in system interface error handler",ex,st);
                 GPHUD.getLogger().log(SEVERE,"Exception in exception handler - "+ex.getLocalizedMessage(),ex);
             }
         }

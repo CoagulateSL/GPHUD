@@ -15,6 +15,7 @@ import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
+import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
 import java.lang.annotation.*;
@@ -327,6 +328,7 @@ public abstract class Command {
         } catch (IllegalAccessException ex) {
             throw new SystemException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
         } catch (IllegalArgumentException ex) {
+            SL.report("Command "+this.getName()+" failed",ex,st);
             st.logger().log(WARNING,"Execute command " + this.getName() + " failed", ex);
             return new ErrorResponse("Illegal argument in " + getName());
         } catch (InvocationTargetException ex) {

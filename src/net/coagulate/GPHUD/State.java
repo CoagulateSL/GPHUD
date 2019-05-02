@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD;
 
+import net.coagulate.Core.Tools.DumpableState;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.*;
@@ -14,7 +15,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.logging.Logger;
@@ -27,7 +27,7 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  * Caching for any duration is prohibited by the MYSQL ASYNC replication backend GPHUD.getDB().
  * @author Iain Price <gphud@predestined.net>
  */
-public class State {
+public class State extends DumpableState {
 
     public String callbackurl=null;
 
@@ -592,52 +592,6 @@ public class State {
     }
 
     
-    
-    
-    
-    
-    public String toHTML() {
-        String ret="<table>";
-        for (Field f:this.getClass().getDeclaredFields()) {
-            ret+="<tr><th valign=top>"+f.getName()+"</th><td valign=top>";
-            try {
-                Object content=f.get(this);
-                ret+=toHTML(content);
-            } catch (IllegalArgumentException ex) {
-                ret+="IllegalArgument";
-            } catch (IllegalAccessException ex) {
-                ret+="IllegalAccess";
-            }
-            ret+="</td></tr>";
-        }
-        ret+="</table>";
-        return ret;
-    }
-    
-    private String toHTML(Object o) {
-        if (o==null) { return "</td><td valign=top><i>NULL</i>"; }
-        String ret=o.getClass().getSimpleName()+"</td><td valign=top>";
-        boolean handled=false;
-        if (o instanceof Header[]) {
-            ret+="<table>"; handled=true;
-            for (Header h:((Header[])o)) {
-                ret+="<tr><td valign=top>"+h.getName()+"</td><td valign=top>"+h.getValue()+"</td></tr>";
-            }
-            ret+="</table>";
-        }
-        if (o instanceof TreeMap) {
-            handled=true;
-            ret+="<table border=1>";
-            TreeMap map=(TreeMap)o;
-            for (Object oo:map.keySet()) {
-                ret+="<tr><td valign=top>"+toHTML(oo)+"</td>";
-                ret+="<td valign=top>"+toHTML(map.get(oo))+"</td></tr>";
-            }
-            ret+="</table>";
-        }
-        if (!handled) { ret+=o.toString(); }
-        return ret;
-    }
 
     public State simulate(Char c) {
         State simulated=new State();

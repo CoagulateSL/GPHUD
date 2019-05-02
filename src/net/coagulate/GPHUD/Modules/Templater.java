@@ -1,19 +1,18 @@
 package net.coagulate.GPHUD.Modules;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.State;
+import net.coagulate.SL.SL;
+
+import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
+
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.State;
 
 /**  Does the templating and mathematical operations on templated values.
  *
@@ -68,6 +67,7 @@ public abstract class Templater {
             if (evaluate && integer) { return ""+((int)(eval(string))); }
         }
         catch (Exception e) {
+            SL.report("Expression failed for "+string,e,st);
             st.logger().log(WARNING,"Failed to complete expression evaluation for '"+string+"' - we got error "+e.getMessage(),e);
             throw e;
         }
@@ -104,6 +104,7 @@ public abstract class Templater {
             try {
                 return (String) m.invoke(null, st,keyword);
             } catch (IllegalAccessException|IllegalArgumentException ex) {
+                SL.report("Templating exception",ex,st);
                 st.logger().log(SEVERE,"Exception running templater method",ex);
                 throw new SystemException("Templater exceptioned",ex);
             }

@@ -5,36 +5,32 @@
  */
 package net.coagulate.GPHUD.Modules.Characters;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import static java.util.logging.Level.SEVERE;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
-import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
-import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
-import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.POOL;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
-import net.coagulate.GPHUD.Modules.Argument;
+import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
-import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
-import net.coagulate.GPHUD.Modules.KV;
-import net.coagulate.GPHUD.Modules.ModuleAnnotation;
-import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.SL;
 import org.json.JSONObject;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static java.util.logging.Level.SEVERE;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.*;
 
 /** Module for characters and their dynamic definitions
  *
@@ -89,6 +85,7 @@ public class CharactersModule extends ModuleAnnotation {
                 addto.put("--"+attr.getName().toUpperCase()+"--",this.getClass().getMethod("templateAttribute",new Class[]{State.class,String.class}));
                 addto.put("--TARGET:"+attr.getName().toUpperCase()+"--",this.getClass().getMethod("templateAttribute",new Class[]{State.class,String.class}));
             } catch (NoSuchMethodException|SecurityException ex) {
+                SL.report("Templating referencing exception??",ex,st);
                 st.logger().log(SEVERE,"Exception referencing own templating method??",ex);
             }
         }        

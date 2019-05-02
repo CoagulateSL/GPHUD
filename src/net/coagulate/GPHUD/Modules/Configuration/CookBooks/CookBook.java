@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration.CookBooks;
 
-import java.util.logging.Level;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Alias;
@@ -13,7 +12,10 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.SL;
 import org.json.JSONObject;
+
+import java.util.logging.Level;
 
 /**
  *
@@ -40,8 +42,14 @@ public abstract class CookBook {
         t.add("Set KV "+attribute);
         t.add("OK");
         if (!act) { t.add("Set KV on "+object.asText(st)+" to '"+newvalue+"'"); return; }
-        try { st.setKV(object, attribute, newvalue); t.add("OK"); }
-        catch (Exception e) { GPHUD.getLogger("CookBook").log(Level.INFO,"Exception in setKV "+object+"/"+attribute+"="+newvalue,e); t.add("Error: "+e.getLocalizedMessage()); }        
+        try {
+            st.setKV(object, attribute, newvalue);
+            t.add("OK");
+        } catch (Exception e) {
+            SL.report("Cookbook setKV "+ object + "/" + attribute + "=" + newvalue, e,st);
+            GPHUD.getLogger("CookBook").log(Level.INFO, "Exception in setKV " + object + "/" + attribute + "=" + newvalue, e);
+            t.add("Error: " + e.getLocalizedMessage());
+        }
     }
     protected static void createAlias(State st, boolean act, Table t, String aliasname, String target, JSONObject template) {
         t.openRow();
@@ -50,11 +58,14 @@ public abstract class CookBook {
         catch (UserException e) { t.add("OK"); }
         if (!act) { t.add("Create Alias "+aliasname+" around command "+target); return; }
         try {
-            template.put("invoke",target);
+            template.put("invoke", target);
             Alias.create(st, aliasname, template);
             t.add("Created alias");
+        } catch (Exception e) {
+            SL.report("Cookbook createAlias " + aliasname + "->" + target + "=" + template, e,st);
+            GPHUD.getLogger("CookBook").log(Level.INFO, "Exception in alias " + aliasname + "->" + target + "=" + template, e);
+            t.add("Error: " + e.getLocalizedMessage());
         }
-        catch (Exception e) { GPHUD.getLogger("CookBook").log(Level.INFO,"Exception in alias "+aliasname+"->"+target+"="+template,e); t.add("Error: "+e.getLocalizedMessage()); }
     }
 
     protected static void createMenu(State st,boolean act,Table t,String name,String description) {

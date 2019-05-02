@@ -1,16 +1,5 @@
 package net.coagulate.GPHUD.Interfaces.User;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URLDecoder;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -28,22 +17,26 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Text;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
 import net.coagulate.GPHUD.Modules.Module;
-import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.Modules.SideMenu;
-import net.coagulate.GPHUD.Modules.SideSubMenu;
-import net.coagulate.GPHUD.Modules.URL;
+import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.Session;
 import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpStatus;
+import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static java.util.logging.Level.*;
 
 
 /** Handles User HTML connections.
@@ -85,6 +78,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         }
         catch (Exception e) {
             try {
+                SL.report("GPHUD UserInterface exception",e,st);
                 GPHUD.getLogger().log(SEVERE,"UserInterface exception : "+e.getLocalizedMessage(),e);
                 // stash the exception for the ErrorPage
                 st.exception=e;
@@ -92,6 +86,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 // an unmapped page, "ErrorPage"
                 st.resp.setEntity(new StringEntity("Error.",ContentType.TEXT_HTML));
             } catch (Exception ex) {
+                SL.report("GPHUD UserInterface exception in exception handler",ex,st);
                 GPHUD.getLogger().log(SEVERE,"Exception in exception handler - "+ex.getLocalizedMessage(),ex);
             }
         }
@@ -138,6 +133,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
         } catch (Exception e) {
             // Exception in side menu code
             p+="<b><i>Crashed</i></b>";
+            SL.report("GPHUD Side Menu crashed",e,st);
             st.logger().log(WARNING,"Side menu implementation crashed",e);
         }
         p+="</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td width=100% valign=top height=100%>";
@@ -164,10 +160,12 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                     GPHUD.getLogger().log(INFO,"Page threw user mode exception "+t.toString());
                     if (GPHUD.DEV) {
                         r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>User Mode Exception</h1>"+ExceptionTools.dumpException(t)+"<Br><br>"+st.toHTML();
+                        SL.report("GPHUD Web User Exception",t,st);
                         GPHUD.getLogger().log(WARNING,"Page threw user mode exception",t);
                     }                
                     return r;
                 }
+                SL.report("GPHUD Web Other Exception",t,st);
                 GPHUD.getLogger().log(WARNING,"Page threw non user exception",t);
                 String r="<h1>INTERNAL ERROR</h1><p>Sorry, your request could not be completed due to an internal error.</p>";
                 if (GPHUD.DEV) {

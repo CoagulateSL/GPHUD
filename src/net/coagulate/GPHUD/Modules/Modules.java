@@ -1,13 +1,5 @@
 package net.coagulate.GPHUD.Modules;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import static java.util.logging.Level.SEVERE;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
@@ -16,7 +8,12 @@ import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.SL;
 import org.json.JSONObject;
+
+import java.util.*;
+
+import static java.util.logging.Level.SEVERE;
 
 /**  Static superclass that handles all the modules and delegating things around, accumulating info, etc.
  * Groups functionality into presented configuration pages.
@@ -299,6 +296,7 @@ public abstract class Modules {
                 }
             }
             catch (Exception e) {
+                SL.report("Conveyance error",e,st);
                 st.logger().log(SEVERE,"Exception compiling conveyance",e);
             }
                        
