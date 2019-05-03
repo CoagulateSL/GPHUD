@@ -422,7 +422,6 @@ public abstract class Command {
 	 * Get the name of the arguments.
 	 *
 	 * @param st
-	 * @param commandname
 	 * @return
 	 * @throws UserException
 	 */

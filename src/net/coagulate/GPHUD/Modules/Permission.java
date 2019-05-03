@@ -21,8 +21,6 @@ public abstract class Permission {
 	/**
 	 * Defines a module permission, declare these (repeatedly) on your module's constructor.
 	 *
-	 * @param name        Name of the permission within your modules namespace (abc becomes module.abc)
-	 * @param description Description of the permission
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented

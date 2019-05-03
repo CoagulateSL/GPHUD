@@ -31,7 +31,6 @@ public class GenericConfiguration {
 	 *
 	 * @param st     State - infers instance etc
 	 * @param values Web form inputs
-	 * @param module Single module view if not null
 	 * @param dbo    Context we are looking at (shows stuff specific to this object)
 	 */
 	public static void page(State st, SafeMap values, TableRow dbo, State simulated, Module m) {

@@ -65,7 +65,6 @@ public class Cookies {
 	/**
 	 * Create a new cookie session
 	 *
-	 * @param user      User object to bind to, may be null
 	 * @param avatar    Avatar object to bind to, may be null
 	 * @param character Character object to bind to, may be null
 	 * @param instance  Instance object to bind to, may be null

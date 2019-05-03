@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.Outputs;
 
 /**
- * A row in a table that is of header type e.g. <th>.
+ * A row in a table that is of header type e.g. 'th'.
  *
  * @author Iain Price <gphud@predestined.net>
  */

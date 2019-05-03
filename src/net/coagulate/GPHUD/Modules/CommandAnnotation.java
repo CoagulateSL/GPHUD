@@ -114,7 +114,6 @@ public class CommandAnnotation extends Command {
 	 * Get the name of the arguments.
 	 *
 	 * @param st
-	 * @param commandname
 	 * @return
 	 * @throws UserException
 	 */

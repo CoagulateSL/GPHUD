@@ -219,7 +219,6 @@ public class CharacterGroup extends TableRow {
 	/**
 	 * Determine if this states character is an admin of the group
 	 *
-	 * @param state State
 	 * @return true if admin, else false
 	 */
 	public boolean isAdmin(State st) { return isAdmin(st.getCharacter()); }
