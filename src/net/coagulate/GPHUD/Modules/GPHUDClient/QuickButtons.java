@@ -26,7 +26,7 @@ public class QuickButtons {
 	}
 
 	@Commands(description = "Triggered when quick button 2 is pressed", permitConsole = false, permitHUDWeb = false, permitUserWeb = false, context = Context.CHARACTER)
-	public static Response quickButton2(State st) throws UserException, SystemException, SystemException {
+	public static Response quickButton2(State st) throws UserException, SystemException {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton2").value());
 	}
 
