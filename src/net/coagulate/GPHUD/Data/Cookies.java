@@ -30,7 +30,7 @@ public class Cookies {
 	 * Load existing cookie store.
 	 *
 	 * @param cookie Cookie to load
-	 * @throws net.coagulate.GPHUD.SystemException if the cookie does not exist or has expired.
+	 * @throws SystemException if the cookie does not exist or has expired.
 	 */
 	public Cookies(String cookie) {
 		this.cookie = cookie;

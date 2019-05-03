@@ -53,7 +53,7 @@ public class GPHUD {
 
 	/**
 	 * @param args the command line arguments
-	 * @throws net.coagulate.GPHUD.SystemException
+	 * @throws SystemException
 	 */
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws SystemException, UserException {
