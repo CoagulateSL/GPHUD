@@ -5,54 +5,58 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
-/**  fake url for side sub menus (ugly).
+/**
+ * fake url for side sub menus (ugly).
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConfigurationURL extends URL {
 
-    public ConfigurationURL(String name,String url) { this.name=name; this.url=url; }
-    String name;
-    String url;
-    
-    @Override
-    public boolean isGenerated() {
-        return true;
-    }
+	String name;
+	String url;
+	public ConfigurationURL(String name, String url) {
+		this.name = name;
+		this.url = url;
+	}
 
-    @Override
-    public String url() {
-        return url;
-    }
+	@Override
+	public boolean isGenerated() {
+		return true;
+	}
 
-    @Override
-    public String requiresPermission() {
-        return "";
-    }
+	@Override
+	public String url() {
+		return url;
+	}
 
-    @Override
-    public String getFullName() {
-        return name;
-    }
+	@Override
+	public String requiresPermission() {
+		return "";
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getFullName() {
+		return name;
+	}
 
-    @Override
-    public String getMethodName() {
-        throw new SystemException("Stub url has no backing method");
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public void run(State st, SafeMap values) {
-        throw new SystemException("Stub url can not be run");
-    }
+	@Override
+	public String getMethodName() {
+		throw new SystemException("Stub url has no backing method");
+	}
 
-    @Override
-    public boolean requiresAuthentication() {
-        return true;
-    }
-    
+	@Override
+	public void run(State st, SafeMap values) {
+		throw new SystemException("Stub url can not be run");
+	}
+
+	@Override
+	public boolean requiresAuthentication() {
+		return true;
+	}
+
 }

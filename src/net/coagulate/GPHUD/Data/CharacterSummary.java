@@ -18,82 +18,87 @@ import java.util.Map;
 import static net.coagulate.Core.Tools.UnixTime.duration;
 import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 
-/** Just used to store data about characters for the "view all" page, because interrogating everything one cell at a time would be painful.
+/**
+ * Just used to store data about characters for the "view all" page, because interrogating everything one cell at a time would be painful.
  * See Instance.getCharacterSummary()
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class CharacterSummary implements Comparable{
-    int id=0;
-    String name="";
-    Integer ownerid=0;
-    String ownername="";
-    Integer lastactive=0;
-    boolean online=false;
-    Integer totalvisits=0;
-    Integer recentvisits=0;
-    Integer totalxp=0;
-    List<String> groupheaders=new ArrayList<>();
-    Map<String,String> groups=new HashMap<>();
-    public boolean retired=false;
+public class CharacterSummary implements Comparable {
+	public boolean retired = false;
+	int id = 0;
+	String name = "";
+	Integer ownerid = 0;
+	String ownername = "";
+	Integer lastactive = 0;
+	boolean online = false;
+	Integer totalvisits = 0;
+	Integer recentvisits = 0;
+	Integer totalxp = 0;
+	List<String> groupheaders = new ArrayList<>();
+	Map<String, String> groups = new HashMap<>();
 
-    public Row headers(State st) throws UserException, SystemException {
-        String uri=st.getDebasedURL().replaceAll("%20"," ");
-        if (uri==null) { uri=""; }
-        uri=uri.replaceFirst(".*?sort=", "");
-        if (uri==null) { uri=""; }
-        Row r=new HeaderRow();
-        r.add(new Cell(sortLink(uri,"Name")).th());
-        r.add(new Cell(sortLink(uri,"Owner")).th());
-        r.add(new Cell(sortLink(uri,"Last Active")).th());
-        r.add(new Cell(sortLink(uri,"Online")).th());
-        r.add(new Cell(sortLink(uri,"Total Visit Time")).th());
-        r.add(new Cell(sortLink(uri,"Visit Time (Last "+Experience.getCycleLabel(st)+")")).th());
-        for (String header:groupheaders) {
-            r.add(new Cell(sortLink(uri,header)).th());
-        }
-        if (st.hasModule("Experience")) {
-            r.add(new Cell(sortLink(uri,"Total XP")).th());
-            r.add(new Cell(sortLink(uri,"Level")).th());
-        }
-        return r;
-    }
-    static String sortLink(String current,String link) {
-        if (link.equals(current)) { return "<a href=\"?sort=-"+link+"\">"+link+"</a> &darr;"; }
-        if (("-"+link).equals(current)) { return "<a href=\"?sort="+link+"\">"+link+"</a> &uarr;"; }
-        return "<a href=\"?sort="+link+"\">"+link+"</a>";
-    }
-    public Row asRow(State st) throws UserException, SystemException {
-        Row r=new Row();
-        if (retired) { r.setbgcolor("#ffe0e0"); }
-        r.add(Char.getLink(name, "characters", id));
-        r.add(User.getGPHUDLink(ownername,ownerid));
-        String tz=st.avatar().getTimeZone();
-        r.add(fromUnixTime(lastactive,tz)+" "+tz);
-        r.add(online);
-        r.add(duration(totalvisits));
-        r.add(duration(recentvisits));
-        for (String group:groupheaders) {
-            String add=groups.get(group);
-            if (add==null) { add=""; }
-            r.add(add);
-        }
-        if (st.hasModule("Experience")) {
-            r.add(totalxp);
-            r.add(Experience.toLevel(st, totalxp));
-        }
-        return r;
-    }
+	static String sortLink(String current, String link) {
+		if (link.equals(current)) { return "<a href=\"?sort=-" + link + "\">" + link + "</a> &darr;"; }
+		if (("-" + link).equals(current)) { return "<a href=\"?sort=" + link + "\">" + link + "</a> &uarr;"; }
+		return "<a href=\"?sort=" + link + "\">" + link + "</a>";
+	}
 
-    void setGroup(String grouptype, String groupname) {
-        groups.put(grouptype,groupname);
-    }
+	public Row headers(State st) throws UserException, SystemException {
+		String uri = st.getDebasedURL().replaceAll("%20", " ");
+		if (uri == null) { uri = ""; }
+		uri = uri.replaceFirst(".*?sort=", "");
+		if (uri == null) { uri = ""; }
+		Row r = new HeaderRow();
+		r.add(new Cell(sortLink(uri, "Name")).th());
+		r.add(new Cell(sortLink(uri, "Owner")).th());
+		r.add(new Cell(sortLink(uri, "Last Active")).th());
+		r.add(new Cell(sortLink(uri, "Online")).th());
+		r.add(new Cell(sortLink(uri, "Total Visit Time")).th());
+		r.add(new Cell(sortLink(uri, "Visit Time (Last " + Experience.getCycleLabel(st) + ")")).th());
+		for (String header : groupheaders) {
+			r.add(new Cell(sortLink(uri, header)).th());
+		}
+		if (st.hasModule("Experience")) {
+			r.add(new Cell(sortLink(uri, "Total XP")).th());
+			r.add(new Cell(sortLink(uri, "Level")).th());
+		}
+		return r;
+	}
 
-    @Override
-    public int compareTo(@NotNull Object o) {
-        if (o==null) { throw new NullPointerException("Comparing character summary to a null object"); }
-        if (!(o instanceof CharacterSummary)) { throw new ClassCastException("Can not compare a CharacterSummary to a "+o.getClass().getCanonicalName()); }
-        CharacterSummary compareto = (CharacterSummary) o;
-        return Integer.valueOf(id).compareTo(Integer.valueOf(compareto.id));
-    }
+	public Row asRow(State st) throws UserException, SystemException {
+		Row r = new Row();
+		if (retired) { r.setbgcolor("#ffe0e0"); }
+		r.add(Char.getLink(name, "characters", id));
+		r.add(User.getGPHUDLink(ownername, ownerid));
+		String tz = st.avatar().getTimeZone();
+		r.add(fromUnixTime(lastactive, tz) + " " + tz);
+		r.add(online);
+		r.add(duration(totalvisits));
+		r.add(duration(recentvisits));
+		for (String group : groupheaders) {
+			String add = groups.get(group);
+			if (add == null) { add = ""; }
+			r.add(add);
+		}
+		if (st.hasModule("Experience")) {
+			r.add(totalxp);
+			r.add(Experience.toLevel(st, totalxp));
+		}
+		return r;
+	}
+
+	void setGroup(String grouptype, String groupname) {
+		groups.put(grouptype, groupname);
+	}
+
+	@Override
+	public int compareTo(@NotNull Object o) {
+		if (o == null) { throw new NullPointerException("Comparing character summary to a null object"); }
+		if (!(o instanceof CharacterSummary)) {
+			throw new ClassCastException("Can not compare a CharacterSummary to a " + o.getClass().getCanonicalName());
+		}
+		CharacterSummary compareto = (CharacterSummary) o;
+		return Integer.valueOf(id).compareTo(Integer.valueOf(compareto.id));
+	}
 }

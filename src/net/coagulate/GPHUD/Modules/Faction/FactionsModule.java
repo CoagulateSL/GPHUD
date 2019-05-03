@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Faction;
 
-import java.util.HashSet;
-import java.util.Set;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -11,32 +9,36 @@ import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.StaticSideSubMenu;
 import net.coagulate.GPHUD.State;
 
-/** Dynamic faction menu
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Dynamic faction menu
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class FactionsModule extends ModuleAnnotation {
-    
-    public FactionsModule(String name, ModuleDefinition def) throws SystemException, UserException {
-        super(name, def);
-    }
 
-    @Override
-    public Set<SideSubMenu> getSideSubMenus(State st) {
-        Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
-        Set<SideSubMenu> ret=new HashSet<>();
-        for (CharacterGroup faction:factions) {
-            ret.add(new StaticSideSubMenu(faction.getName(), faction.getId(), "/factions/view/"+faction.getId(), ""));
-        }
-        return ret;
-    }
+	public FactionsModule(String name, ModuleDefinition def) throws SystemException, UserException {
+		super(name, def);
+	}
 
-    @Override
-    public Set<CharacterAttribute> getAttributes(State st) {
-        Set<CharacterAttribute> ret=new HashSet<>();
-        ret.add(new FactionAttribute(-1));
-        return ret;
-    }
+	@Override
+	public Set<SideSubMenu> getSideSubMenus(State st) {
+		Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
+		Set<SideSubMenu> ret = new HashSet<>();
+		for (CharacterGroup faction : factions) {
+			ret.add(new StaticSideSubMenu(faction.getName(), faction.getId(), "/factions/view/" + faction.getId(), ""));
+		}
+		return ret;
+	}
 
-    
+	@Override
+	public Set<CharacterAttribute> getAttributes(State st) {
+		Set<CharacterAttribute> ret = new HashSet<>();
+		ret.add(new FactionAttribute(-1));
+		return ret;
+	}
+
+
 }

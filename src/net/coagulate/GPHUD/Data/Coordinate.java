@@ -5,18 +5,19 @@
  */
 package net.coagulate.GPHUD.Data;
 
-/**  A co-ordinate, tridimensional.
- * 
+/**
+ * A co-ordinate, tridimensional.
+ * <p>
  * Sigh.
- * 
- * Guess I bodged this.  This class will either be deleted or the existing code retrofitted to use this. 
- * 
+ * <p>
+ * Guess I bodged this.  This class will either be deleted or the existing code retrofitted to use this.
+ * <p>
  * Probably the latter
  *
  * @author Iain Price <gphud@predestined.net>;
  */
 @Deprecated // for now
 public class Coordinate {
-    
-    
+
+
 }

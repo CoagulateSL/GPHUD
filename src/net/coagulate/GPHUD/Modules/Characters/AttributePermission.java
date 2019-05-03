@@ -9,34 +9,34 @@ import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Modules.Permission;
 
 /**
- *
  * @author iain
  */
 public class AttributePermission extends Permission {
 
-    Attribute a;
-    public AttributePermission(Attribute a) {
-        this.a=a;
-    }
+	Attribute a;
 
-    @Override
-    public boolean isGenerated() {
-        return true;
-    }
+	public AttributePermission(Attribute a) {
+		this.a = a;
+	}
 
-    @Override
-    public String name() {
-        return a.getName();
-    }
+	@Override
+	public boolean isGenerated() {
+		return true;
+	}
 
-    @Override
-    public String description() {
-        return "Permission to admin set attribute "+a.getName();
-    }
+	@Override
+	public String name() {
+		return a.getName();
+	}
 
-    @Override
-    public boolean grantable() {
-        return true;
-    }
-    
+	@Override
+	public String description() {
+		return "Permission to admin set attribute " + a.getName();
+	}
+
+	@Override
+	public boolean grantable() {
+		return true;
+	}
+
 }

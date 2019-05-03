@@ -15,36 +15,44 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
-/** Deal with messages via a web interface.
+/**
+ * Deal with messages via a web interface.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Messages {
-    @URLs(url="/hud/listmessages")
-    public static void messagesListHUD(State st,SafeMap values) throws SystemException, UserException {
-        messagesList(st,values);
-    }
-    @URLs(url = "/messages/list")
-    public static void messagesList(State st,SafeMap values) throws SystemException, UserException {
-        Message m=st.getCharacter().getMessage();
-        Form f=st.form;
-        if (m==null) { f.add(new TextError("You have no messages.")); return; }
-        m.setActive();
-        JSONObject j=new JSONObject(m.getJSON());
-        String message=j.optString("message","");
-        if (message.equalsIgnoreCase("factioninvite")) { displayFactionInvite(st,values,j); return; }
-        throw new SystemException("Malformed message "+m.getId()+", contains no message");
-        
-    }
+	@URLs(url = "/hud/listmessages")
+	public static void messagesListHUD(State st, SafeMap values) throws SystemException, UserException {
+		messagesList(st, values);
+	}
 
-    public static void displayFactionInvite(State st, SafeMap values, JSONObject j) throws UserException, SystemException {
-        Form f=st.form;
-        Char from=Char.get(j.getInt("from"));
-        CharacterGroup to=CharacterGroup.get(j.getInt("to"));
-        f.add(new TextSubHeader("Invite"));
-        f.add("You have been invited to join the "+to.getName()+" by "+from.getName());
-        f.add(new Paragraph());
-        Modules.simpleHtml(st, "gphudclient.acceptrejectmessage", values);
-        
-    }
+	@URLs(url = "/messages/list")
+	public static void messagesList(State st, SafeMap values) throws SystemException, UserException {
+		Message m = st.getCharacter().getMessage();
+		Form f = st.form;
+		if (m == null) {
+			f.add(new TextError("You have no messages."));
+			return;
+		}
+		m.setActive();
+		JSONObject j = new JSONObject(m.getJSON());
+		String message = j.optString("message", "");
+		if (message.equalsIgnoreCase("factioninvite")) {
+			displayFactionInvite(st, values, j);
+			return;
+		}
+		throw new SystemException("Malformed message " + m.getId() + ", contains no message");
+
+	}
+
+	public static void displayFactionInvite(State st, SafeMap values, JSONObject j) throws UserException, SystemException {
+		Form f = st.form;
+		Char from = Char.get(j.getInt("from"));
+		CharacterGroup to = CharacterGroup.get(j.getInt("to"));
+		f.add(new TextSubHeader("Invite"));
+		f.add("You have been invited to join the " + to.getName() + " by " + from.getName());
+		f.add(new Paragraph());
+		Modules.simpleHtml(st, "gphudclient.acceptrejectmessage", values);
+
+	}
 }

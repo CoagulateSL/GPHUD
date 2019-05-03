@@ -2,75 +2,77 @@ package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.GPHUD.Modules.KV;
 
-/** Wraps a dynamic attribute KV for characters.
+/**
+ * Wraps a dynamic attribute KV for characters.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConveyanceKV extends KV {
 
-    String name;
-    public ConveyanceKV(String attribute) {
-        this.name=attribute;
-    }
+	String name;
 
-    @Override
-    public boolean isGenerated() {
-        return true;
-    }
+	public ConveyanceKV(String attribute) {
+		this.name = attribute;
+	}
 
-    @Override
-    public String name() {
-        return name;
-    }
+	@Override
+	public boolean isGenerated() {
+		return true;
+	}
 
-    @Override
-    public KVSCOPE scope() {
-        return KVSCOPE.CHARACTER;
-    }
+	@Override
+	public String name() {
+		return name;
+	}
 
-    @Override
-    public KVTYPE type() {
-        return KVTYPE.TEXT;
-    }
+	@Override
+	public KVSCOPE scope() {
+		return KVSCOPE.CHARACTER;
+	}
 
-    @Override
-    public String description() {
-        return "Conveyance memory, internal use only";
-    }
+	@Override
+	public KVTYPE type() {
+		return KVTYPE.TEXT;
+	}
 
-    @Override
-    public String editpermission() {
-        return "instance.owner";
-    }
+	@Override
+	public String description() {
+		return "Conveyance memory, internal use only";
+	}
 
-    @Override
-    public String defaultvalue() {
-        return "";
-    }
+	@Override
+	public String editpermission() {
+		return "instance.owner";
+	}
 
-    @Override
-    public String conveyas() {
-        return ""; // NEVER.  NO.  DONT.  :P
-    }
+	@Override
+	public String defaultvalue() {
+		return "";
+	}
 
-    @Override
-    public KVHIERARCHY hierarchy() {
-        return KVHIERARCHY.NONE;
-    }
+	@Override
+	public String conveyas() {
+		return ""; // NEVER.  NO.  DONT.  :P
+	}
 
-    @Override
-    public String fullname() {
-        return "GPHUDClient."+name();
-    }
+	@Override
+	public KVHIERARCHY hierarchy() {
+		return KVHIERARCHY.NONE;
+	}
 
-    @Override
-    public boolean template() {
-        return false;
-    }
+	@Override
+	public String fullname() {
+		return "GPHUDClient." + name();
+	}
 
-    @Override
-    public boolean hidden() {
-        return true;
-    }
-    
+	@Override
+	public boolean template() {
+		return false;
+	}
+
+	@Override
+	public boolean hidden() {
+		return true;
+	}
+
 }

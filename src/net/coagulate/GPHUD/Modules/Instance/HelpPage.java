@@ -8,17 +8,19 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
 
-/**  Because we need an index for the User Interface.
+/**
+ * Because we need an index for the User Interface.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class HelpPage {
-    @URLs(url = "/help",requiresAuthentication = false)
-    public static void index(State st,SafeMap values) throws UserException, SystemException {
-        Form f=st.form;
-        f.noForm();
-        f.add("<table width=100% height=100%><tr width=100% height=100%><td width=100% height=100% valign=top><iframe width=100% height=100% frameborder=0 src=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\"></iframe></td></tr></table>");
-    }
-    public Form authenticationHook(State st,SafeMap values) throws SystemException { return null; }
-    
+	@URLs(url = "/help", requiresAuthentication = false)
+	public static void index(State st, SafeMap values) throws UserException, SystemException {
+		Form f = st.form;
+		f.noForm();
+		f.add("<table width=100% height=100%><tr width=100% height=100%><td width=100% height=100% valign=top><iframe width=100% height=100% frameborder=0 src=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\"></iframe></td></tr></table>");
+	}
+
+	public Form authenticationHook(State st, SafeMap values) throws SystemException { return null; }
+
 }

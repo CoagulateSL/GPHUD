@@ -1,5 +1,5 @@
-@ModuleDefinition(canDisable = false,description = "Controls HUD menus",forceConfig=true,implementation = "net.coagulate.GPHUD.Modules.Menus.MenuModule")
-@Permissions(description = "Permission to reconfigure the menus",name = "Config")
+@ModuleDefinition(canDisable = false, description = "Controls HUD menus", forceConfig = true, implementation = "net.coagulate.GPHUD.Modules.Menus.MenuModule")
+@Permissions(description = "Permission to reconfigure the menus", name = "Config")
 
 package net.coagulate.GPHUD.Modules.Menus;
 

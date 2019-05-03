@@ -3,70 +3,72 @@ package net.coagulate.GPHUD.Modules.Characters;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Modules.KV;
 
-/** Wraps a dynamic attribute KV for characters.
+/**
+ * Wraps a dynamic attribute KV for characters.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class AttributeMaxKV extends KV {
 
-    Attribute attribute;
-    public AttributeMaxKV(Attribute attribute) {
-        this.attribute=attribute;
-    }
+	Attribute attribute;
 
-    @Override
-    public boolean isGenerated() {
-        return true;
-    }
+	public AttributeMaxKV(Attribute attribute) {
+		this.attribute = attribute;
+	}
 
-    @Override
-    public String name() {
-        return attribute.getName()+"MAX";
-    }
+	@Override
+	public boolean isGenerated() {
+		return true;
+	}
 
-    @Override
-    public KVSCOPE scope() {
-        return KVSCOPE.COMPLETE;
-    }
+	@Override
+	public String name() {
+		return attribute.getName() + "MAX";
+	}
 
-    @Override
-    public KVTYPE type() {
-        return attribute.getKVType();
-    }
+	@Override
+	public KVSCOPE scope() {
+		return KVSCOPE.COMPLETE;
+	}
 
-    @Override
-    public String description() {
-        return "Character attribute "+attribute.getName()+" maximum allowed value";
-    }
+	@Override
+	public KVTYPE type() {
+		return attribute.getKVType();
+	}
 
-    @Override
-    public String editpermission() {
-        return "Characters.CreateAttribute";
-    }
+	@Override
+	public String description() {
+		return "Character attribute " + attribute.getName() + " maximum allowed value";
+	}
 
-    @Override
-    public String defaultvalue() {
-        return attribute.getKVDefaultValue();
-    }
+	@Override
+	public String editpermission() {
+		return "Characters.CreateAttribute";
+	}
 
-    @Override
-    public String conveyas() {
-        return "";
-    }
+	@Override
+	public String defaultvalue() {
+		return attribute.getKVDefaultValue();
+	}
 
-    @Override
-    public KVHIERARCHY hierarchy() {
-        return attribute.getKVHierarchy();
-    }
+	@Override
+	public String conveyas() {
+		return "";
+	}
 
-    @Override
-    public String fullname() {
-        return "Characters."+name();
-    }
+	@Override
+	public KVHIERARCHY hierarchy() {
+		return attribute.getKVHierarchy();
+	}
 
-    @Override
-    public boolean template() {
-        return true;
-    }
-    
+	@Override
+	public String fullname() {
+		return "Characters." + name();
+	}
+
+	@Override
+	public boolean template() {
+		return true;
+	}
+
 }
