@@ -45,7 +45,7 @@ public abstract class ModuleControl {
 	@Commands(context = Context.AVATAR, description = "Enabled the specified module", requiresPermission = "instance.owner")
 	public static Response enableModule(State st,
 	                                    @Arguments(type = ArgumentType.MODULE, description = "Module to enable")
-			                                    Module module) throws Exception {
+			                                    Module module) {
 		if (!(st.isInstanceOwner())) { return new ErrorResponse("Only the instance owner may enable a module"); }
 
 		st.setKV(st.getInstance(), module.getName() + ".Enabled", "true");

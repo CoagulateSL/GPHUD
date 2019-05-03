@@ -353,7 +353,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 	public boolean isRich() { return true; }
 
-	public String renderBody(State st) throws SystemException, UserException, InvocationTargetException {
+	public String renderBody(State st) throws SystemException, UserException {
 		Form f = null;
 		SafeMap values = getPostValues(st);
 		URL content = Modules.getURL(st, st.getDebasedNoQueryURL());
