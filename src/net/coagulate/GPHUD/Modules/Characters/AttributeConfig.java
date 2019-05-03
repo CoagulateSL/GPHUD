@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class AttributeConfig {
 
-	public static final String blankNulls(final String s) {
+	public static String blankNulls(final String s) {
 		if (s == null) { return ""; }
 		return s;
 	}
