@@ -52,7 +52,7 @@ public class ResetHealth {
 		String allrolls = "";
 		List<Integer> rolls = Roller.roll(st, dice, sides);
 		for (int num : rolls) {
-			if (!allrolls.equals("")) { allrolls += ", "; }
+			if (!"".equals(allrolls)) { allrolls += ", "; }
 			total = total + num;
 			allrolls = allrolls + num;
 		}

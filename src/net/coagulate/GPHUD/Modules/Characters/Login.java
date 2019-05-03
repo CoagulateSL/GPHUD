@@ -50,7 +50,7 @@ public abstract class Login {
 
 		String url = null;
 		if (st.json != null) { try { url = st.json.getString("callback"); } catch (JSONException e) {} }
-		if (url == null || url.equals("")) {
+		if (url == null || "".equals(url)) {
 			st.logger().log(WARNING, "No callback URL sent with character registration");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}

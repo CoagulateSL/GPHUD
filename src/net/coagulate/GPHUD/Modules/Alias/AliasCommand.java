@@ -155,7 +155,7 @@ public class AliasCommand extends Command {
 			AliasCommand ac = (AliasCommand) consider;
 			//System.out.println("Processing "+ac.getFullName());
 			for (String key : ac.getDefinition().keySet()) {
-				if (!key.equalsIgnoreCase("invoke")) {
+				if (!"invoke".equalsIgnoreCase(key)) {
 					boolean numeric = false;
 					boolean integer = false;
 					boolean delaytemplating = false;

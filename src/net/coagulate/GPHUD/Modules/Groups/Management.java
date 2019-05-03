@@ -79,7 +79,7 @@ public abstract class Management {
 	public static void manageType(State st, SafeMap values) {
 		String[] comps = st.getDebasedURL().split("/");
 		String type = comps[comps.length - 1];
-		if (type.equals("BLANK")) { type = ""; }
+		if ("BLANK".equals(type)) { type = ""; }
 		manage(st, values, type);
 	}
 

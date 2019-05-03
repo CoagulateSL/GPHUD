@@ -21,7 +21,7 @@ public class JSONPushResponse implements Response {
 	Response nonjson;
 
 	public JSONPushResponse(JSONObject j, String url, Response nonjson) {
-		if (url == null || url.isEmpty() || url.equals("?")) { throw new SystemException("Can not use the null URL"); }
+		if (url == null || url.isEmpty() || "?".equals(url)) { throw new SystemException("Can not use the null URL"); }
 		json = j;
 		this.url = url;
 		this.nonjson = nonjson;

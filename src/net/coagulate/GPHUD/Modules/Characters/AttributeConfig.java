@@ -127,12 +127,12 @@ public class AttributeConfig {
 			return new ErrorResponse("Please only use A-Z in the attribute name, no spaces either");
 		}
 		// attribute type will be validated by the DB ENUM, expect low level errors if you fake this :P
-		if (cleansed.equalsIgnoreCase("Faction")) {
+		if ("Faction".equalsIgnoreCase(cleansed)) {
 			return new ErrorResponse("You must use the factions module for faction management");
 		}
-		if (attributetype.equals("GROUP")) {
+		if ("GROUP".equals(attributetype)) {
 			if (grouptype == null) { return new ErrorResponse("Group data type must have a group type attached"); }
-			if (grouptype.equalsIgnoreCase("Faction")) {
+			if ("Faction".equalsIgnoreCase(grouptype)) {
 				return new ErrorResponse("You should not be creating a faction attribute ; use the factions module");
 			}
 		}

@@ -49,7 +49,7 @@ public abstract class MenuConfig {
 		if (m.getInstance() != st.getInstance()) {
 			throw new UserException("That menu belongs to a different instance");
 		}
-		if (st.hasPermission("Menus.Config") && values.get("Submit").equals("Submit")) {
+		if (st.hasPermission("Menus.Config") && "Submit".equals(values.get("Submit"))) {
 			JSONObject json = new JSONObject();
 			for (int i = 1; i <= 12; i++) {
 				String button = values.get("button" + i);
@@ -60,7 +60,7 @@ public abstract class MenuConfig {
 				}
 			}
 			m.setJSON(json);
-			if (m.getName().equalsIgnoreCase("Main")) {
+			if ("Main".equalsIgnoreCase(m.getName())) {
 				JSONObject broadcastupdate = new JSONObject();
 				broadcastupdate.put("incommand", "broadcast");
 				JSONObject legacymenu = Modules.getJSONTemplate(st, "menus.main");
@@ -97,7 +97,7 @@ public abstract class MenuConfig {
 
 	@URLs(url = "/configuration/menus/create", requiresPermission = "Menus.Config")
 	public static void createMenu(State st, SafeMap values) {
-		if (values.get("Submit").equals("Submit") && !values.get("name").isEmpty()) {
+		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty()) {
 			Menus menu = Menus.create(st, values.get("name"), values.get("description"), new JSONObject());
 			throw new RedirectionException("./view/" + menu.getId());
 		}

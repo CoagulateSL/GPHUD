@@ -193,7 +193,7 @@ public abstract class Modules {
 	public static Response getJSONTemplateResponse(State st, String command) throws UserException, SystemException { return new JSONResponse(getJSONTemplate(st, command)); }
 
 	public static Response run(State st, String console) throws UserException, SystemException {
-		if (console == null || console.equals("")) { return new ErrorResponse("No console string supplied"); }
+		if (console == null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
 		String words[] = console.split(" ");
 		int i = 0;
 		String command = words[0].toLowerCase();
@@ -211,7 +211,7 @@ public abstract class Modules {
 			i++;
 			if (i >= words.length) { return new ErrorResponse("Not enough parameters supplied"); }
 			String argname = arg.getName();
-			if (words[i] == null || words[i].isEmpty() || words[i].equals("-")) {
+			if (words[i] == null || words[i].isEmpty() || "-".equals(words[i])) {
 				parameters.put(argname, null);
 			} else {
 				boolean respectnewlines = false;
@@ -256,7 +256,7 @@ public abstract class Modules {
 	public static Response run(State st, String qualifiedcommandname, SafeMap parametermap) throws UserException, SystemException {
 		if (st == null) { throw new SystemException("Null state"); }
 		if (qualifiedcommandname == null) { throw new SystemException("Null command"); }
-		if (qualifiedcommandname.equalsIgnoreCase("console")) { return run(st, parametermap.get("console")); }
+		if ("console".equalsIgnoreCase(qualifiedcommandname)) { return run(st, parametermap.get("console")); }
 		Module module = get(st, qualifiedcommandname);
 		if (module == null) { throw new UserException("Unknown module in " + qualifiedcommandname); }
 		Command command = module.getCommand(st, extractReference(qualifiedcommandname));

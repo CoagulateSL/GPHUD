@@ -80,7 +80,7 @@ public class GPHUD {
 		log.config("Loaded " + CONFIG.size() + " configuration elements from the file");
 		validateConfig();
 
-		if (get("DEV").equals("1")) {
+		if ("1".equals(get("DEV"))) {
 			DEV = true;
 			log.config("Configuration declares us as a DEVELOPMENT NODE");
 		}
@@ -204,12 +204,12 @@ public class GPHUD {
 	public static String get(String keyword) { return CONFIG.get(keyword.toUpperCase()); }
 
 	private static void validateNode(String node) throws SystemException {
-		if (node.equalsIgnoreCase("luna") ||
-				node.equalsIgnoreCase("sol") ||
-				node.equalsIgnoreCase("saturn") ||
-				node.equalsIgnoreCase("mars") ||
-				node.equalsIgnoreCase("neptune") ||
-				node.equalsIgnoreCase("pluto")
+		if ("luna".equalsIgnoreCase(node) ||
+				"sol".equalsIgnoreCase(node) ||
+				"saturn".equalsIgnoreCase(node) ||
+				"mars".equalsIgnoreCase(node) ||
+				"neptune".equalsIgnoreCase(node) ||
+				"pluto".equalsIgnoreCase(node)
 		) { return; }
 		throw new SystemException("Unrecognised node name, this would break the scheduler");
 	}
@@ -221,8 +221,8 @@ public class GPHUD {
 		cyclenumber = cyclenumber % 2;
 		String node = hostname;
 		if (DEV) { return true; }
-		if (node.equalsIgnoreCase("sol") && cyclenumber == 0) { return true; }     // sol, runs slot 0 on production
-		if (node.equalsIgnoreCase("pluto") && cyclenumber == 1) {
+		if ("sol".equalsIgnoreCase(node) && cyclenumber == 0) { return true; }     // sol, runs slot 0 on production
+		if ("pluto".equalsIgnoreCase(node) && cyclenumber == 1) {
 			return true;
 		}  // pluto only runs prod, and runs in slot 1
 		return false;

@@ -40,7 +40,7 @@ public class EditValues {
 		st.setKV(st.getInstance(), key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetInstanceKV", key, oldvalue, value, "Changed instance level configuration");
 		// bit cludgy but...
-		if (key.equalsIgnoreCase("GPHUDServer.AutoAttach") || key.equalsIgnoreCase("GPHUDServer.ParcelONLY")) {
+		if ("GPHUDServer.AutoAttach".equalsIgnoreCase(key) || "GPHUDServer.ParcelONLY".equalsIgnoreCase(key)) {
 			net.coagulate.GPHUD.Modules.GPHUDServer.Register.sendAttachConfig(st);
 		}
 		return new OKResponse("Instance KV store has been updated");
@@ -72,7 +72,7 @@ public class EditValues {
 		st.setKV(region, key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetRegionKV", region.getName() + "/" + key, oldvalue, value, "Changed region level configuration");
 		// bit cludgy but...
-		if (key.equalsIgnoreCase("GPHUDServer.AutoAttach") || key.equalsIgnoreCase("GPHUDServer.ParcelONLY")) {
+		if ("GPHUDServer.AutoAttach".equalsIgnoreCase(key) || "GPHUDServer.ParcelONLY".equalsIgnoreCase(key)) {
 			net.coagulate.GPHUD.Modules.GPHUDServer.Register.sendAttachConfig(st);
 		}
 
@@ -163,7 +163,7 @@ public class EditValues {
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetGroupKV", group.getName() + "/" + key, oldvalue, value, "Changed group level configuration");
 		// bit cludgy but...
 		// to be done TODO
-		if (key.equalsIgnoreCase("GPHUDServer.AutoAttach") || key.equalsIgnoreCase("GPHUDServer.ParcelONLY")) {
+		if ("GPHUDServer.AutoAttach".equalsIgnoreCase(key) || "GPHUDServer.ParcelONLY".equalsIgnoreCase(key)) {
 			net.coagulate.GPHUD.Modules.GPHUDServer.Register.sendAttachConfig(st);
 		}
 

@@ -644,7 +644,7 @@ public class State extends DumpableState {
 						break;
 					case BOOLEAN:
 						value = value.toLowerCase();
-						if (!(value.equals("true") || value.equals("false"))) {
+						if (!("true".equals(value) || "false".equals(value))) {
 							throw new UserException(key + " must be true/false");
 						}
 						break;

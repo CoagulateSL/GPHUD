@@ -163,7 +163,7 @@ public class Region extends TableRow {
 			return;
 		}
 
-		if (oldurl != null && !(oldurl.equals(""))) {
+		if (oldurl != null && !("".equals(oldurl))) {
 			GPHUD.getLogger().info("Sending shutdown to old URL : " + oldurl);
 			JSONObject tx = new JSONObject().put("incommand", "shutdown").put("shutdown", "Connection replaced by new region server");
 			Transmission t = new Transmission(this, tx, oldurl);

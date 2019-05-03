@@ -28,7 +28,7 @@ public abstract class Interface implements HttpRequestHandler {
 
 	public static String base() {
 		if (base == null) {
-			if (Interface.getNode().equalsIgnoreCase("luna")) { base = "app-iain"; } else { base = "app"; }
+			if ("luna".equalsIgnoreCase(Interface.getNode())) { base = "app-iain"; } else { base = "app"; }
 		}
 		return base;
 	}
@@ -57,11 +57,11 @@ public abstract class Interface implements HttpRequestHandler {
 			Header headers[] = req.getAllHeaders();
 			String host = "";
 			for (Header h : headers) {
-				if (h.getName().equals("Host")) {host = h.getValue(); }
+				if ("Host".equals(h.getName())) {host = h.getValue(); }
 			}
 
 			// we use the HOST to construct absolute URLs so it's somewhat important :P
-			if (host.equals("")) { GPHUD.getLogger().warning("Host accessed is not known :("); }
+			if ("".equals(host)) { GPHUD.getLogger().warning("Host accessed is not known :("); }
 
 			// stash the remote address, uri, the headers array, request and response in the context
 			//System.out.println(req.getRequestLine().toString());

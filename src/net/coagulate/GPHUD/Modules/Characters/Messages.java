@@ -37,7 +37,7 @@ public abstract class Messages {
 		m.setActive();
 		JSONObject j = new JSONObject(m.getJSON());
 		String message = j.optString("message", "");
-		if (message.equalsIgnoreCase("factioninvite")) {
+		if ("factioninvite".equalsIgnoreCase(message)) {
 			displayFactionInvite(st, values, j);
 			return;
 		}

@@ -128,7 +128,7 @@ public abstract class Groups {
 	@URLs(url = "/permissionsgroups/create", requiresPermission = "instance.owner")
 	@SideSubMenus(name = "Create", priority = 10)
 	public static void createGroupPage(State st, SafeMap values) throws UserException, SystemException {
-		if (values.get("Submit").equals("Submit")) { st.form.add(Modules.run(st, "permissionsgroups.create", values)); }
+		if ("Submit".equals(values.get("Submit"))) { st.form.add(Modules.run(st, "permissionsgroups.create", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.create");
 	}
 
@@ -165,7 +165,7 @@ public abstract class Groups {
 	@URLs(url = "/permissionsgroups/delete", requiresPermission = "instance.owner")
 	@SideSubMenus(name = "Delete", priority = 11, requiresPermission = "instance.owner")
 	public static void deleteForm(State st, SafeMap values) throws UserException, SystemException {
-		if (values.get("Submit").equals("Submit")) { st.form.add(Modules.run(st, "permissionsgroups.delete", values)); }
+		if ("Submit".equals(values.get("Submit"))) { st.form.add(Modules.run(st, "permissionsgroups.delete", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.delete");
 	}
 

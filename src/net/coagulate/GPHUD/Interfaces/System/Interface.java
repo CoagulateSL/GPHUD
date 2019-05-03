@@ -148,14 +148,14 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			//Log.log(Log.INFO,"SYSTEM","SystemInterface",h.getName()+"="+h.getValue());
 			String name = h.getName();
 			String value = h.getValue();
-			if (name.equals("X-SecondLife-Owner-Name")) { ownername = value; }
-			if (name.equals("X-SecondLife-Owner-Key")) { ownerkey = value; }
-			if (name.equals("X-SecondLife-Region")) { regionname = value; }
-			if (name.equals("X-SecondLife-Object-Name")) { objectname = value; }
-			if (name.equals("X-SecondLife-Shard")) { shard = value; }
-			if (name.equals("X-SecondLife-Local-Position")) { position = value; }
+			if ("X-SecondLife-Owner-Name".equals(name)) { ownername = value; }
+			if ("X-SecondLife-Owner-Key".equals(name)) { ownerkey = value; }
+			if ("X-SecondLife-Region".equals(name)) { regionname = value; }
+			if ("X-SecondLife-Object-Name".equals(name)) { objectname = value; }
+			if ("X-SecondLife-Shard".equals(name)) { shard = value; }
+			if ("X-SecondLife-Local-Position".equals(name)) { position = value; }
 		}
-		if (shard == null || (!(shard.equals("Production")))) {
+		if (shard == null || (!("Production".equals(shard)))) {
 			if (shard == null) { shard = "<null>"; }
 			GPHUD.getLogger().severe("Unknown shard [" + shard + "]");
 			return new TerminateResponse("Only accessible from Second Life Production systems.");
@@ -177,13 +177,13 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// hooks to allow things to run as "not the objects owner" (the default)
 		String runasavatar = null;
 		try { runasavatar = obj.getString("runasavatar"); } catch (JSONException e) {}
-		if (runasavatar != null && (!(runasavatar.equals("")))) {
+		if (runasavatar != null && (!("".equals(runasavatar)))) {
 			st.setAvatar(User.findMandatory(runasavatar));
 			st.issuid = true;
 		}
 		String runascharacter = null;
 		try { runascharacter = obj.getString("runascharacter"); } catch (JSONException e) {}
-		if (runascharacter != null && (!(runascharacter.equals("")))) {
+		if (runascharacter != null && (!("".equals(runascharacter)))) {
 			st.setCharacter(Char.get(Integer.parseInt(runascharacter)));
 			st.issuid = true;
 		}
@@ -239,7 +239,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			return new TerminateResponse("Region not registered.");
 		}
 		GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting, recognised as GPHUD server owned by " + st.sourceowner);
-		if (!st.json.getString("command").equals("console")) {
+		if (!"console".equals(st.json.getString("command"))) {
 			return new ErrorResponse("Region not registered, only pre-registration commands may be run");
 		}
 		// only the server's owner can run these commands, call them the pre-reg commands
@@ -271,7 +271,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			//ava.canCreate(false);
 			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Instance", "", console, "");
 			String success = Region.joinInstance(regionname, instance);
-			if (!success.equals("")) {
+			if (!"".equals(success)) {
 				return new ErrorResponse("Region registration failed after instance creation: " + success);
 			}
 			Region region = Region.find(regionname);

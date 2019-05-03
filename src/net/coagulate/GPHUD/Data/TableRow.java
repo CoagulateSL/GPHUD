@@ -71,7 +71,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		try { return (String) cacheGet("name"); } catch (CacheMiss ex) {}
 		String name = getString(getNameField());
 		if (name == null) { return "<null>"; }
-		if (name.equals("")) { return "<blank>"; }
+		if ("".equals(name)) { return "<blank>"; }
 		int cachetime = getNameCacheTime();
 		if (cachetime == 0) { return name; } // dont cache some things
 		return (String) cachePut("name", name, getNameCacheTime());

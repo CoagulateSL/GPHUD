@@ -86,8 +86,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	 */
 	private boolean interceptable(String url) {
 		//System.out.println(url);
-		if (url.equalsIgnoreCase("/logout")) { return false; }
-		if (url.equalsIgnoreCase("/Help")) { return false; }
+		if ("/logout".equalsIgnoreCase(url)) { return false; }
+		if ("/Help".equalsIgnoreCase(url)) { return false; }
 		return true;
 	}
 
@@ -530,7 +530,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		if (cookieAuthenticationOnly()) {
 			Form failed = new Form();
-			if (cookie != null && !cookie.equals("")) {
+			if (cookie != null && !"".equals(cookie)) {
 				failed.add("Sorry, your session has expired, please start a new session somehow");
 			} else {
 				failed.add("Sorry, login failed, cookie not received at this time.");
@@ -552,7 +552,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		String username = values.get("username");
 		String password = values.get("password");
 		String failed = "";
-		if (values.get("Submit").equals("Submit") && !(username.isEmpty()) && !(password.isEmpty())) {
+		if ("Submit".equals(values.get("Submit")) && !(username.isEmpty()) && !(password.isEmpty())) {
 			User target = User.findOptional(username);
 			if (target == null) {
 				failed = "Incorrect credentials.";

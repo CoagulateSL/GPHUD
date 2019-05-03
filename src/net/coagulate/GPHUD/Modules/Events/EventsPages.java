@@ -130,7 +130,7 @@ public class EventsPages {
 		String defaulttz = st.avatar().getTimeZone();
 		Event event = Event.find(st.getInstance(), eventname);
 		event.validate(st);
-		if (values.get("Add").equals("Add")) {
+		if ("Add".equals(values.get("Add"))) {
 			try {
 				int startdate = DateTime.outputDateTime("Start", values, defaulttz);
 				int enddate = DateTime.outputDateTime("End", values, defaulttz);

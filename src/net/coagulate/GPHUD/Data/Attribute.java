@@ -71,7 +71,7 @@ public class Attribute extends TableRow {
 
 	static void create(Instance instance, String name, Boolean selfmodify, String attributetype, String grouptype, Boolean usesabilitypoints, Boolean required, String defaultvalue) {
 		// =)
-		if (defaultvalue != null && defaultvalue.equals("")) { defaultvalue = null; }
+		if (defaultvalue != null && "".equals(defaultvalue)) { defaultvalue = null; }
 		GPHUD.getDB().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
 				instance.getId(), name, selfmodify, attributetype, grouptype, usesabilitypoints, required, defaultvalue);
 	}
@@ -138,13 +138,13 @@ public class Attribute extends TableRow {
 			cachePut("type", type, getNameCacheTime());
 		}
 		if (type == null) { throw new SystemException("Null type for attribute " + getId() + " " + getNameSafe()); }
-		if (type.equalsIgnoreCase("text")) { return TEXT; }
-		if (type.equalsIgnoreCase("integer")) { return INTEGER; }
-		if (type.equalsIgnoreCase("group")) { return GROUP; }
-		if (type.equalsIgnoreCase("pool")) { return POOL; }
-		if (type.equalsIgnoreCase("float")) { return FLOAT; }
-		if (type.equalsIgnoreCase("color")) { return COLOR; }
-		if (type.equalsIgnoreCase("experience")) { return EXPERIENCE; }
+		if ("text".equalsIgnoreCase(type)) { return TEXT; }
+		if ("integer".equalsIgnoreCase(type)) { return INTEGER; }
+		if ("group".equalsIgnoreCase(type)) { return GROUP; }
+		if ("pool".equalsIgnoreCase(type)) { return POOL; }
+		if ("float".equalsIgnoreCase(type)) { return FLOAT; }
+		if ("color".equalsIgnoreCase(type)) { return COLOR; }
+		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
 		throw new SystemException("Unhandled type " + type + " for attribute " + getId() + " " + getNameSafe());
 	}
 

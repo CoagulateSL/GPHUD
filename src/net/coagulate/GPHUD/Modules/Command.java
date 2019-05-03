@@ -88,7 +88,7 @@ public abstract class Command {
 			ArgumentType type = argument.type();
 			String v = args[arg];
 			arg++;
-			if ((v == null || v.equals("")) && type != ArgumentType.BOOLEAN) {
+			if ((v == null || "".equals(v)) && type != ArgumentType.BOOLEAN) {
 				typedargs.add(null);
 			} else {
 				int maxlen = -1;
@@ -204,7 +204,7 @@ public abstract class Command {
 						typedargs.add(new String(v));
 						break;
 					case BOOLEAN:
-						if (v != null && (v.equals("1") || v.equalsIgnoreCase("on") || v.equalsIgnoreCase("true") || v.equalsIgnoreCase("t"))) {
+						if (v != null && ("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
 							typedargs.add(Boolean.TRUE);
 						} else {
 							typedargs.add(Boolean.FALSE);
@@ -361,7 +361,7 @@ public abstract class Command {
 							if (s.isEmpty()) {
 								return new ErrorResponse("Argument " + a.getName() + " is mandatory and a blank string was passed" + suspiciousname);
 							}
-							if (s.equals("-")) {
+							if ("-".equals(s)) {
 								return new ErrorResponse("Argument " + a.getName() + " is mandatory and a dash '-' was passed" + suspiciousname);
 							}
 						}

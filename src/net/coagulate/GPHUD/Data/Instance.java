@@ -76,7 +76,7 @@ public class Instance extends TableRow {
 	 * @throws UserException If the instance already exists (by name)
 	 */
 	public static void create(String name, User caller) throws UserException {
-		if (name == null || name.equals("")) { throw new SystemException("Can't create null or empty instance"); }
+		if (name == null || "".equals(name)) { throw new SystemException("Can't create null or empty instance"); }
 		if (caller == null) { throw new SystemException("Owner can't be null"); }
 		Integer exists = GPHUD.getDB().dqi(false, "select count(*) from instances where name like ?", name);
 		if (exists != 0) {
@@ -286,7 +286,7 @@ public class Instance extends TableRow {
 		int now = UnixTime.getUnixTime();
 		if (laststatused.containsKey(url)) {
 			int last = laststatused.get(url);
-			if (url.equals("admins")) {  // bodge, admins get 5 minute pesterings :P
+			if ("admins".equals(url)) {  // bodge, admins get 5 minute pesterings :P
 				if ((now - last) > 300) {
 					laststatused.put(url, now);
 					return true;
@@ -436,11 +436,11 @@ public class Instance extends TableRow {
 		List<CharacterSummary> sortedlist = new ArrayList<>();
 		if (sortby == null || sortby.isEmpty()) { sortby = "name"; }
 		sortby = sortby.toLowerCase();
-		if (sortby.equals("name") || sortby.equals("owner")) {
+		if ("name".equals(sortby) || "owner".equals(sortby)) {
 			Map<String, Set<CharacterSummary>> sorted = new TreeMap<>();
 			for (CharacterSummary cs : idmap.values()) {
 				String value = cs.name;
-				if (sortby.equals("owner")) { value = cs.ownername; }
+				if ("owner".equals(sortby)) { value = cs.ownername; }
 				Set<CharacterSummary> records = new HashSet<>();
 				if (sorted.containsKey(value)) { records = sorted.get(value); }
 				records.add(cs);
@@ -459,12 +459,12 @@ public class Instance extends TableRow {
 			Map<Integer, Set<CharacterSummary>> sorted = new TreeMap<>();
 			for (CharacterSummary cs : idmap.values()) {
 				Integer value = cs.lastactive;
-				if (sortby.equals("total visit time")) { value = cs.totalvisits; }
+				if ("total visit time".equals(sortby)) { value = cs.totalvisits; }
 				if (sortby.equals("visit time (last " + Experience.getCycleLabel(st).toLowerCase() + ")")) {
 					value = cs.recentvisits;
 				}
-				if (sortby.equals("total xp")) { value = cs.totalxp; }
-				if (sortby.equals("level")) { value = cs.totalxp; }
+				if ("total xp".equals(sortby)) { value = cs.totalxp; }
+				if ("level".equals(sortby)) { value = cs.totalxp; }
 
 				Set<CharacterSummary> records = new TreeSet<>();
 				if (sorted.containsKey(value)) { records = sorted.get(value); }

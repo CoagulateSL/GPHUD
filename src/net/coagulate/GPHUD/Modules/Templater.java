@@ -56,7 +56,7 @@ public abstract class Templater {
 	public static String template(State st, String string, boolean evaluate, boolean integer) {
 		string = template(st, string);
 		if (string == null) { return string; }
-		if (string.equals("")) { return ""; }
+		if ("".equals(string)) { return ""; }
 		try {
 			if (evaluate && !integer) { return eval(string) + ""; }
 			if (evaluate && integer) { return "" + ((int) (eval(string))); }
@@ -194,10 +194,10 @@ public abstract class Templater {
 					while (ch >= 'a' && ch <= 'z') nextChar();
 					String func = str.substring(startPos, this.pos);
 					x = parseFactor();
-					if (func.equals("sqrt")) x = Math.sqrt(x);
-					else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
-					else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
-					else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
+					if ("sqrt".equals(func)) x = Math.sqrt(x);
+					else if ("sin".equals(func)) x = Math.sin(Math.toRadians(x));
+					else if ("cos".equals(func)) x = Math.cos(Math.toRadians(x));
+					else if ("tan".equals(func)) x = Math.tan(Math.toRadians(x));
 					else throw new UserException("Unknown function: " + func);
 				} else {
 					throw new UserException("Unexpected: " + (char) ch + " at " + pos + " in '" + str + "'");

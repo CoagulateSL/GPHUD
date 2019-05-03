@@ -32,7 +32,7 @@ public class KVValue {
 	}
 
 	public boolean boolValue() {
-		if (value.equals("1") || value.equalsIgnoreCase("true") || value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("y") || value.equalsIgnoreCase("on")) {
+		if ("1".equals(value) || "true".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value) || "t".equalsIgnoreCase(value) || "y".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value)) {
 			return true;
 		}
 		return false;

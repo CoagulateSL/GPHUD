@@ -78,7 +78,7 @@ public abstract class Management {
 		//System.out.println(split.length);
 		String id = split[split.length - 1];
 		CharacterGroup faction = CharacterGroup.get(Integer.parseInt(id));
-		if (faction.getType().equals("Faction")) {
+		if ("Faction".equals(faction.getType())) {
 			viewFaction(st, values, faction);
 		} else {
 			st.form.add(new TextError("This is not a faction group"));
@@ -144,7 +144,7 @@ public abstract class Management {
 	                                @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false)
 			                                Char newowner) {
 		// group must be a faction group
-		if (!faction.getType().equals("Faction")) {
+		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
 		Char oldowner = faction.getOwner();
@@ -187,7 +187,7 @@ public abstract class Management {
 			                           CharacterGroup faction,
 	                           @Arguments(description = "Character to add to the faction", type = ArgumentType.CHARACTER)
 			                           Char newmember) throws UserException {
-		if (!faction.getType().equals("Faction")) {
+		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
 		CharacterGroup existingfaction = newmember.getGroup("Faction");
@@ -226,7 +226,7 @@ public abstract class Management {
 			                              CharacterGroup faction,
 	                              @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER)
 			                              Char member) {
-		if (!faction.getType().equals("Faction")) {
+		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
 		CharacterGroup existingfaction = member.getGroup("Faction");
@@ -255,7 +255,7 @@ public abstract class Management {
 	public static Response delete(State st,
 	                              @Arguments(description = "Faction to delete", type = ArgumentType.CHARACTERGROUP)
 			                              CharacterGroup faction) {
-		if (!faction.getType().equals("Faction")) {
+		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
 		String factionname = faction.getName();
@@ -277,7 +277,7 @@ public abstract class Management {
 			                                Char character,
 	                                @Arguments(description = "Admin flag to set on the character in this faction", type = ArgumentType.BOOLEAN)
 			                                boolean admin) throws SystemException {
-		if (!faction.getType().equals("Faction")) {
+		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
 		if (!faction.hasMember(character)) {

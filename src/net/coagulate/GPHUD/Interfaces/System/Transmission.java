@@ -137,7 +137,7 @@ public class Transmission extends Thread {
 				JSONObject j = new JSONObject(response);
 				jsonresponse = j;
 				String incommand = j.optString("incommand", "");
-				if (incommand.equals("pong")) {
+				if ("pong".equals(incommand)) {
 					if (j.has("callback")) { Char.refreshURL(j.getString("callback")); }
 					if (j.has("callback")) { Region.refreshURL(j.getString("callback")); }
 					if (j.has("cookie")) { Cookies.refreshCookie(j.getString("cookie")); }

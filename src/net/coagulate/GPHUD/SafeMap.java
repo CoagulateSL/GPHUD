@@ -14,7 +14,7 @@ public class SafeMap extends TreeMap<String, String> {
 		return s;
 	}
 
-	public boolean submit() { return (get("Submit").equals("Submit")); }
+	public boolean submit() { return ("Submit".equals(get("Submit"))); }
 
 	public String get(String key) { return nonull(super.get(key)); }
 

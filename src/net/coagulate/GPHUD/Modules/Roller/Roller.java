@@ -67,7 +67,7 @@ public class Roller {
 		String allrolls = "";
 		List<Integer> rolls = roll(st, dice, sides);
 		for (int num : rolls) {
-			if (!allrolls.equals("")) { allrolls += ", "; }
+			if (!"".equals(allrolls)) { allrolls += ", "; }
 			allrolls = allrolls + num;
 		}
 
@@ -109,7 +109,7 @@ public class Roller {
 		String allrolls = "";
 		List<Integer> rolls = roll(st, dice, sides);
 		for (int num : rolls) {
-			if (!allrolls.equals("")) { allrolls += ", "; }
+			if (!"".equals(allrolls)) { allrolls += ", "; }
 			total = total + num;
 			allrolls = allrolls + num;
 		}
@@ -189,14 +189,14 @@ public class Roller {
 			targetallrolls = "";
 			List<Integer> rolls = roll(st, dice, sides);
 			for (int num : rolls) {
-				if (!allrolls.equals("")) { allrolls += ", "; }
+				if (!"".equals(allrolls)) { allrolls += ", "; }
 				total = total + num;
 				allrolls = allrolls + num;
 			}
 			total = total + bias;
 			List<Integer> targetrolls = roll(st.getTarget(), targetdice, targetsides);
 			for (int num : targetrolls) {
-				if (!targetallrolls.equals("")) { targetallrolls += ", "; }
+				if (!"".equals(targetallrolls)) { targetallrolls += ", "; }
 				targettotal = targettotal + num;
 				targetallrolls = targetallrolls + num;
 			}

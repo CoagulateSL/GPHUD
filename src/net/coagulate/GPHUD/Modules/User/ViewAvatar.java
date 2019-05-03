@@ -86,7 +86,7 @@ public abstract class ViewAvatar {
 			//    String value=kv.get(key);
 			//    kvtable.openRow().add(key).add(value);
 			//}
-			if (a.getName().equals("SYSTEM")) {
+			if ("SYSTEM".equals(a.getName())) {
 				f.add("<p><i>SYSTEM is a fake avatar used internally as an 'Invoking Avatar' for commands that usually require an active Avatar/Character, but there is no appropriate caller, e.g. Visitation XP is awarded by the SYSTEM avatar to prevent confusion and clutter in some other character/avatar's audit log</i></p>");
 			}
 			f.add(new TextSubHeader("Audit Trail"));

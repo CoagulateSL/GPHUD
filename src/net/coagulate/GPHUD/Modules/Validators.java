@@ -12,19 +12,19 @@ public class Validators {
 			GPHUD.getLogger("Validation").fine(value + " failed length check as UUID");
 			return false;
 		}
-		if (!value.substring(8, 9).equals("-")) {
+		if (!"-".equals(value.substring(8, 9))) {
 			GPHUD.getLogger("Validation").fine(value + " no dash at pos 8");
 			return false;
 		}
-		if (!value.substring(13, 14).equals("-")) {
+		if (!"-".equals(value.substring(13, 14))) {
 			GPHUD.getLogger("Validation").fine(value + " no dash at pos 13");
 			return false;
 		}
-		if (!value.substring(18, 19).equals("-")) {
+		if (!"-".equals(value.substring(18, 19))) {
 			GPHUD.getLogger("Validation").fine(value + " no dash at pos 18");
 			return false;
 		}
-		if (!value.substring(23, 24).equals("-")) {
+		if (!"-".equals(value.substring(23, 24))) {
 			GPHUD.getLogger("Validation").fine(value + " no dash at pos 23");
 			return false;
 		}

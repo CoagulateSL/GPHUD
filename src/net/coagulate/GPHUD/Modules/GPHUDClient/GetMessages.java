@@ -36,7 +36,7 @@ public abstract class GetMessages {
 
 		JSONObject j = new JSONObject(m.getJSON());
 		String message = j.optString("message", "");
-		if (message.equalsIgnoreCase("factioninvite")) { return processFactionInvite(st, j); }
+		if ("factioninvite".equalsIgnoreCase(message)) { return processFactionInvite(st, j); }
 		throw new SystemException("Unable to find a message parser in GPHUDClient for message type '" + message + "'");
 	}
 
@@ -64,14 +64,14 @@ public abstract class GetMessages {
 
 		JSONObject j = new JSONObject(m.getJSON());
 		String message = j.optString("message", "");
-		if (message.equalsIgnoreCase("factioninvite")) { return processFactionInviteResponse(st, m, j, response); }
+		if ("factioninvite".equalsIgnoreCase(message)) { return processFactionInviteResponse(st, m, j, response); }
 		throw new SystemException("Unable to find a message RESPONSE parser in GPHUDClient for message type '" + message + "'");
 	}
 
 	private static Response processFactionInviteResponse(State st, Message m, JSONObject j, String response) throws UserException {
 		boolean accepted;
-		if (response.equalsIgnoreCase("Accept")) { accepted = true; } else {
-			if (response.equalsIgnoreCase("Reject")) { accepted = false; } else {
+		if ("Accept".equalsIgnoreCase(response)) { accepted = true; } else {
+			if ("Reject".equalsIgnoreCase(response)) { accepted = false; } else {
 				throw new UserException("Expected Accept or Reject response");
 			}
 		}

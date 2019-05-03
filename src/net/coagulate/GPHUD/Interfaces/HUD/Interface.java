@@ -34,7 +34,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.User.Interface {
 		uri = uri.substring("/hud/".length());
 		String command = "";
 		for (String piece : uri.split("/")) {
-			if (!command.equals("")) {
+			if (!"".equals(command)) {
 				command = command + ".";
 			}
 			command += piece;

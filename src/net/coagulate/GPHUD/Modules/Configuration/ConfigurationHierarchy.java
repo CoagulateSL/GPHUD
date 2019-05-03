@@ -50,27 +50,27 @@ public class ConfigurationHierarchy extends Form {
 			if (parameters.containsKey(magickey)) { value = parameters.get(magickey); }
 			TableRow dbo = null;
 			String type = "unknown";
-			if (dboname.equals("instancekvstore")) {
+			if ("instancekvstore".equals(dboname)) {
 				dbo = Instance.get(id);
 				type = "Instance";
 			}
-			if (dboname.equals("regionkvstore")) {
+			if ("regionkvstore".equals(dboname)) {
 				dbo = Region.get(id);
 				type = "Region";
 			}
-			if (dboname.equals("charactergroupkvstore")) {
+			if ("charactergroupkvstore".equals(dboname)) {
 				dbo = CharacterGroup.get(id);
 				type = "CharacterGroup";
 			}
-			if (dboname.equals("characterkvstore")) {
+			if ("characterkvstore".equals(dboname)) {
 				dbo = Char.get(id);
 				type = "Character";
 			}
-			if (dboname.equals("eventskvstore")) {
+			if ("eventskvstore".equals(dboname)) {
 				dbo = Event.get(id);
 				type = "Event";
 			}
-			if (dboname.equals("zonekvstore")) {
+			if ("zonekvstore".equals(dboname)) {
 				dbo = Zone.get(id);
 				type = "Zone";
 			}
@@ -176,8 +176,8 @@ public class ConfigurationHierarchy extends Form {
 			switch (kv.type()) {
 				case BOOLEAN:
 					Boolean selected = null;
-					if (value.equalsIgnoreCase("true")) { selected = true; }
-					if (value.equalsIgnoreCase("false")) { selected = false; }
+					if ("true".equalsIgnoreCase(value)) { selected = true; }
+					if ("false".equalsIgnoreCase(value)) { selected = false; }
 					editor = "<input type=\"radio\" name=\"value-" + codename + "\" value=\"true\" " + ((selected != null && selected == true) ? "checked=checked" : "") + ">True";
 					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"false\" " + ((selected != null && selected == false) ? "checked=checked" : "") + ">False";
 					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"\" " + ((selected == null) ? "checked=checked" : "") + ">Unset";

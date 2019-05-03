@@ -69,7 +69,7 @@ public abstract class Configuration {
 
 	@URLs(url = "/configuration/alias/create", requiresPermission = "Alias.Config")
 	public static void createAlias(State st, SafeMap values) throws SystemException, UserException {
-		if (values.get("Submit").equals("Submit") && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {
+		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {
 			JSONObject template = new JSONObject();
 			template.put("invoke", values.get("command"));
 			try {
@@ -99,12 +99,12 @@ public abstract class Configuration {
 	public static void viewAlias(State st, SafeMap values, Alias a) throws SystemException, UserException {
 		a.validate(st);
 		Form f = st.form;
-		if (values.get("Update").equals("Update")) {
+		if ("Update".equals(values.get("Update"))) {
 			if (st.hasPermissionOrAnnotateForm("Alias.Config")) {
 				JSONObject old = a.getTemplate();
 				JSONObject template = new JSONObject();
 				for (String k : values.keySet()) {
-					if (!k.equals("Update")) { template.put(k, values.get(k)); }
+					if (!"Update".equals(k)) { template.put(k, values.get(k)); }
 				}
 				template.put("invoke", old.get("invoke"));
 				a.setTemplate(template);
@@ -125,7 +125,7 @@ public abstract class Configuration {
 		}
 
 		for (String name : template.keySet()) {
-			if (!name.equals("invoke") && !name.endsWith("-desc")) {
+			if (!"invoke".equals(name) && !name.endsWith("-desc")) {
 				t.openRow().add(name).add(new TextInput(name, template.getString(name)));
 				Argument arg = null;
 				for (Argument anarg : c.getArguments()) { if (anarg.getName().equals(name)) { arg = anarg; }}
