@@ -76,7 +76,7 @@ public class Cookies {
 		int expiresafter = COOKIE_LIFESPAN;
 		int expire = getUnixTime();
 		expire = expire + expiresafter;
-		Integer renewableint = 0;
+		int renewableint = 0;
 		if (renewable) { renewableint = 1; }
 		String id = "";
 		if (avatar != null) { id += " Avatar:" + avatar.toString(); }

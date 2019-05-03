@@ -50,7 +50,7 @@ public class Validators {
 		// each part should parse to a float :P
 		for (int i = 0; i < 3; i++) {
 			try {
-				Float f = Float.parseFloat(parts[i]);
+				float f = Float.parseFloat(parts[i]);
 				if (f < 0 || f > 1) {
 					GPHUD.getLogger("Validation").fine(value + " failed float range 0<=x<=1 for " + parts[i]);
 					return false;
