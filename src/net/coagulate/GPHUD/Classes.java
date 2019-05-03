@@ -57,7 +57,6 @@ public abstract class Classes {
 		return split[0];
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadModules() {
 		for (Class c : ClassTools.getAnnotatedClasses(ModuleDefinition.class)) {
 			try {
@@ -77,7 +76,6 @@ public abstract class Classes {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadPermissions() {
 		for (Class c : ClassTools.getAnnotatedClasses(Permissions.class)) {
 			String modulename = getModuleName(c);
@@ -98,7 +96,6 @@ public abstract class Classes {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadKVMaps() {
 		for (Class c : ClassTools.getAnnotatedClasses(KVS.class)) {
 			String modulename = getModuleName(c);
@@ -116,7 +113,6 @@ public abstract class Classes {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadPools() {
 		for (Class c : ClassTools.getAnnotatedClasses(Pools.class)) {
 			String modulename = getModuleName(c);
@@ -134,7 +130,6 @@ public abstract class Classes {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadCommands() {
 		for (Method m : ClassTools.getAnnotatedMethods(Commands.class)) {
 			String modulename = getModuleName(m.getDeclaringClass());
@@ -194,7 +189,6 @@ public abstract class Classes {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadURLs() {
 		for (Method m : ClassTools.getAnnotatedMethods(URLs.class)) {
 			if (m.getDeclaringClass().getName().startsWith("net.coagulate.GPHUD.Modules")) {
@@ -206,7 +200,6 @@ public abstract class Classes {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadSideMenus() {
 		for (Class c : ClassTools.getAnnotatedClasses(SideMenus.class)) {
 			String modulename = getModuleName(c);
@@ -225,7 +218,6 @@ public abstract class Classes {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadTemplates() {
 		for (Method m : ClassTools.getAnnotatedMethods(Template.class)) {
 			if (m.getDeclaringClass().getName().startsWith("net.coagulate.GPHUD.Modules")) {
