@@ -42,7 +42,6 @@ public class State extends DumpableState {
 	public String jsoncommand = null;
 	public InetAddress address = null;
 
-	;
 	public Header[] headers = null;
 	//requested host
 	public String host = null;

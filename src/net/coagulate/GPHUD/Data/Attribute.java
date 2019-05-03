@@ -128,8 +128,6 @@ public class Attribute extends TableRow {
 		if (st.getInstance() != getInstance()) { throw new SystemException("Attribute / State Instance mismatch"); }
 	}
 
-	;
-
 	@Override
 	protected int getNameCacheTime() { return 60 * 60; } // 1 hour, attributes can NOT be renamed because they create a KV based on the name :P
 

@@ -50,8 +50,6 @@ public abstract class Audit {
 		audit(true, st, op, targetavatar, targetcharacter, changetype, changeditem, oldvalue, newvalue, note);
 	}
 
-	;
-
 	public static void audit(boolean log, State st, OPERATOR op, User targetavatar, Char targetcharacter, String changetype, String changeditem, String oldvalue, String newvalue, String note) {
 		User avatar = st.avatar();
 		Char character = st.getCharacterNullable();

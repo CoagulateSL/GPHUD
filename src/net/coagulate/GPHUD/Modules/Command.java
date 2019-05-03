@@ -51,8 +51,6 @@ public abstract class Command {
 		}
 	}
 
-	;
-
 	public abstract Method getMethod();
 
 	public abstract boolean isGenerated();

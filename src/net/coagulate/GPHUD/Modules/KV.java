@@ -25,15 +25,9 @@ public abstract class KV extends NameComparable {
 
 	public abstract KVSCOPE scope();
 
-	;
-
 	public abstract KVTYPE type();
 
-	;
-
 	public abstract String description();
-
-	;
 
 	public abstract String editpermission();
 

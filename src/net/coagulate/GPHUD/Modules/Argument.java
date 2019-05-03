@@ -16,8 +16,6 @@ public abstract class Argument {
 
 	public abstract ArgumentType type();
 
-	;
-
 	public abstract String description();
 
 	public abstract boolean mandatory();
