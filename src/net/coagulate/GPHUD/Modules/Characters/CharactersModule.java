@@ -123,7 +123,7 @@ public class CharactersModule extends ModuleAnnotation {
 
 	@Commands(context = Command.Context.CHARACTER, description = "Spend an ability point to raise an attribute", permitUserWeb = false)
 	public static Response spendAbilityPoint(State st,
-	                                         @Arguments(choiceMethod = "getRaisableAttributesList", description = "Attribute to spend an ability point on", mandatory = true, type = Argument.ArgumentType.CHOICE)
+	                                         @Arguments(choiceMethod = "getRaisableAttributesList", description = "Attribute to spend an ability point on", type = Argument.ArgumentType.CHOICE)
 			                                         String attribute) {
 		int remain = abilityPointsRemaining(st);
 		if (remain <= 0) { return new ErrorResponse("You have no remaining ability points to spend."); }
@@ -159,7 +159,7 @@ public class CharactersModule extends ModuleAnnotation {
 
 	@Commands(context = Command.Context.CHARACTER, description = "Change a value about your own character")
 	public static Response set(State st,
-	                           @Arguments(type = Argument.ArgumentType.ATTRIBUTE_WRITABLE, description = "Attribute to set", mandatory = true)
+	                           @Arguments(type = Argument.ArgumentType.ATTRIBUTE_WRITABLE, description = "Attribute to set")
 			                           Attribute attribute,
 	                           @Arguments(type = Argument.ArgumentType.TEXT_ONELINE, description = "Value to use", mandatory = false, max = 4096)
 			                           String value) {

@@ -28,7 +28,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 
 	@Commands(context = Command.Context.CHARACTER, description = "Set your Titler's Altitude (height above avatar)")
 	public static Response setAltitude(State st,
-	                                   @Arguments(description = "Offset, in meters", mandatory = true, max = 3, type = Argument.ArgumentType.FLOAT)
+	                                   @Arguments(description = "Offset, in meters", max = 3, type = Argument.ArgumentType.FLOAT)
 			                                   Float offset) {
 		st.setKV(st.getCharacter(), "GPHUDClient.TitlerAltitude", offset + "");
 		return new OKResponse("Updated your Titler altitude to " + offset);

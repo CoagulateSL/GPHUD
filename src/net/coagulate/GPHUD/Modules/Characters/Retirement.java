@@ -36,7 +36,7 @@ public abstract class Retirement {
 
 	@Commands(context = Command.Context.AVATAR, description = "Force retire a character", requiresPermission = "Characters.Retire")
 	public static Response retireTarget(State st,
-	                                    @Arguments(description = "Character to retire", mandatory = true, type = ArgumentType.CHARACTER)
+	                                    @Arguments(description = "Character to retire", type = ArgumentType.CHARACTER)
 			                                    Char target) {
 		if (target == null) { return new ErrorResponse("Target character was null"); }
 		target.validate(st);

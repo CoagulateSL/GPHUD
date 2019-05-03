@@ -10,7 +10,7 @@ import net.coagulate.GPHUD.State;
 public class Rename {
 	@Command.Commands(context = Command.Context.AVATAR, description = "Rename a character", requiresPermission = "Characters.ForceRename")
 	public static Response rename(State st,
-	                              @Argument.Arguments(description = "Character to rename", type = Argument.ArgumentType.CHARACTER, mandatory = true, max = 64)
+	                              @Argument.Arguments(description = "Character to rename", type = Argument.ArgumentType.CHARACTER, max = 64)
 			                              Char oldname,
 	                              @Argument.Arguments(description = "New name for character", max = 40, type = Argument.ArgumentType.TEXT_ONELINE)
 			                              String newname) {

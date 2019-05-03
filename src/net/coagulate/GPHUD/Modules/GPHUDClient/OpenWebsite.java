@@ -31,7 +31,7 @@ public class OpenWebsite {
 		return new JSONPushResponse(json, st.getCharacter().getURL(), new OKResponse("Request sent"));
 	}
 
-	@Commands(context = Context.ANY, description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb = false, permitHUDWeb = false, permitConsole = true)
+	@Commands(context = Context.ANY, description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb = false, permitHUDWeb = false)
 	public static Response offerWebsite(State st,
 	                                    @Argument.Arguments(description = "URL to offer to user", type = Argument.ArgumentType.TEXT_ONELINE, max = 255)
 			                                    String url,

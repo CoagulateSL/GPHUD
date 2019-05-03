@@ -31,11 +31,11 @@ public class ExperienceModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
-	@Commands(context = AVATAR, requiresPermission = "", description = "Award XP")
+	@Commands(context = AVATAR, description = "Award XP")
 	public static Response award(State st,
-	                             @Arguments(description = "Character to award to", mandatory = true, type = CHARACTER)
+	                             @Arguments(description = "Character to award to", type = CHARACTER)
 			                             Char target,
-	                             @Arguments(description = "XP type to award", mandatory = true, type = TEXT_INTERNAL_NAME, max = 32)
+	                             @Arguments(description = "XP type to award", type = TEXT_INTERNAL_NAME, max = 32)
 			                             String type,
 	                             @Arguments(description = "Ammount to award", mandatory = false, type = INTEGER, max = 999999)
 			                             Integer ammount,

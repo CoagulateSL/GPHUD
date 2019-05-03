@@ -101,7 +101,7 @@ public abstract class ViewAvatar {
 
 	@Commands(context = Command.Context.AVATAR, description = "Set displayed timezone for date/time events")
 	public static Response setTZ(State st,
-	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", mandatory = true, choiceMethod = "getTimeZones")
+	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", choiceMethod = "getTimeZones")
 			                             String timezone) {
 		st.avatar().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");

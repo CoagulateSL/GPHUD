@@ -25,7 +25,7 @@ public class Giver {
 
 	@Commands(context = Command.Context.AVATAR, description = "Get an Item from a giver", permitUserWeb = false)
 	public static Response get(State st,
-	                           @Argument.Arguments(description = "Name of object to give to avatar", mandatory = true, type = Argument.ArgumentType.TEXT_ONELINE, max = 63)
+	                           @Argument.Arguments(description = "Name of object to give to avatar", type = Argument.ArgumentType.TEXT_ONELINE, max = 63)
 			                           String item) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "broadcast");

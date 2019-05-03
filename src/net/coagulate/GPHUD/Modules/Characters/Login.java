@@ -229,7 +229,7 @@ public abstract class Login {
 
 	@Commands(context = Context.AVATAR, description = "Switch to a character")
 	public static Response select(State st,
-	                              @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load", mandatory = true)
+	                              @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load")
 			                              Char character) {
 		if (character == null) { return new ErrorResponse("No such character"); }
 		if (character.getOwner() != st.avatar()) { return new ErrorResponse("That character does not belong to you"); }

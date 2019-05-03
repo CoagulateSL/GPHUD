@@ -113,9 +113,9 @@ public class AttributeConfig {
 			                                       String grouptype,
 	                                       @Arguments(description = "Increases based off allocation of ability points? (only for INTEGER/FLOAT types)", mandatory = false, type = Argument.ArgumentType.BOOLEAN)
 			                                       Boolean usesabilitypoints,
-	                                       @Arguments(description = "Attribute must be completed", mandatory = true, type = Argument.ArgumentType.BOOLEAN)
+	                                       @Arguments(description = "Attribute must be completed", type = Argument.ArgumentType.BOOLEAN)
 			                                       Boolean required,
-	                                       @Arguments(description = "Default value (can be blank)", mandatory = true, type = Argument.ArgumentType.TEXT_ONELINE, max = 4096)
+	                                       @Arguments(description = "Default value (can be blank)", type = Argument.ArgumentType.TEXT_ONELINE, max = 4096)
 			                                       String defaultvalue
 	) {
 		for (Attribute a : st.getAttributes()) {
