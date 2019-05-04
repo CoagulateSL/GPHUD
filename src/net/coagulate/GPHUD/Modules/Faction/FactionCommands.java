@@ -45,6 +45,8 @@ public class FactionCommands {
 		// players are in the same faction
 		CharacterGroup ourfaction = st.getCharacter().getGroup("Faction");
 		CharacterGroup theirfaction = target.getGroup("Faction");
+		if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
+		if (theirfaction==null) { return new ErrorResponse(target.getName()+" is not in a faction"); }
 		if (ourfaction != theirfaction) {
 			return new ErrorResponse("You must be in the same faction as the person you want to award XP to");
 		}
