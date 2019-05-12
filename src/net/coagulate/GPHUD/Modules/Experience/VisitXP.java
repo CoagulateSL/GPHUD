@@ -41,6 +41,7 @@ public class VisitXP extends QuotaedXP {
 				//System.out.println("Sum total visit time for "+ch+" is "+timethisweek);
 				//System.out.println("Sum visit xp in that time period is "+xpthisweek);
 				//System.out.println("Config is "+points+" per "+duration+" total "+perweek);
+				if (duration==0) { return; }
 				int wanttogive = (timethisweek / duration) * points - xpthisweek;
 				//System.out.println("Uncapped wanttogive "+wanttogive);
 				if ((xpthisweek + wanttogive) > perweek) { wanttogive = perweek - xpthisweek; }
