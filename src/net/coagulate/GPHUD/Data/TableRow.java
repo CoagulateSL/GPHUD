@@ -181,6 +181,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	Object cacheGet(String key) throws CacheMiss {
 		if (!cache.containsKey(key)) { throw new CacheMiss(); }
 		CacheElement ele = cache.get(key);
+		if (ele==null) { throw new CacheMiss(); }
 		if (ele.expires < getUnixTime()) {
 			cache.remove(key);
 			throw new CacheMiss();
