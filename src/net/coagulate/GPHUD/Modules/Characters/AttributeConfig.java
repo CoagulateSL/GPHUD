@@ -126,6 +126,7 @@ public class AttributeConfig {
 		if (!cleansed.equals(name)) {
 			return new ErrorResponse("Please only use A-Z in the attribute name, no spaces either");
 		}
+		if (attributetype==null || attributetype.isBlank()) { return new ErrorResponse("Attribute type can not be null/empty"); }
 		// attribute type will be validated by the DB ENUM, expect low level errors if you fake this :P
 		if ("Faction".equalsIgnoreCase(cleansed)) {
 			return new ErrorResponse("You must use the factions module for faction management");
