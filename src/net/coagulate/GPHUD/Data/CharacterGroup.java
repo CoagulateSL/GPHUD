@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
@@ -210,10 +211,12 @@ public class CharacterGroup extends TableRow {
 			throw new SystemException("Character (group) / Instance mismatch");
 		}
 		if (this.getOwner() == character) { return true; }
-		Integer adminflag = dqi(true, "select isadmin from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		if (adminflag == null) { return false; }
-		if (adminflag == 1) { return true; }
-		return false;
+		try {
+			Integer adminflag = dqi(true, "select isadmin from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
+			if (adminflag == null) { return false; }
+			if (adminflag == 1) { return true; }
+			return false;
+		} catch (NoDataException e) { return false; }
 	}
 
 	/**
