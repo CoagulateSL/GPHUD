@@ -28,6 +28,51 @@ public class ResetHealth {
 		Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, st.getCharacter(), "SET", "Health.Health", oldhealth + "", newvalue + "", "Character reset their health");
 		return new SayResponse("reset health from " + oldhealth + " to " + newvalue, st.getCharacter().getName());
 	}
+	@Command.Commands(context = Command.Context.CHARACTER, description = "Have a chance to heal a target player")
+	public static Response healRollChance(State st,
+	                                      @Argument.Arguments(description = "Target to heal", type = Argument.ArgumentType.CHARACTER_NEAR)
+			                                      Char target,
+	                                      @Argument.Arguments(description = "Number of dice to roll for chance to heal", mandatory = true, type = Argument.ArgumentType.INTEGER)
+			                                      Integer chancedice,
+	                                      @Argument.Arguments(description = "Sides on dice to roll for change to heal", mandatory = true, type = Argument.ArgumentType.INTEGER)
+			                                      Integer chancesides,
+	                                      @Argument.Arguments(description = "Bias to add to ammount to chance to heal", mandatory = true, type = Argument.ArgumentType.INTEGER)
+			                                      Integer chancebias,
+	                                      @Argument.Arguments(description="Score to beat to succeed at healing",mandatory=true,type= Argument.ArgumentType.INTEGER)
+	                                              Integer chancethreshold,
+	                                      @Argument.Arguments(description = "Number of dice to roll for ammount healed", mandatory = false, type = Argument.ArgumentType.INTEGER)
+			                                      Integer healdice,
+	                                      @Argument.Arguments(description = "Sides on dice to roll for ammount healed", mandatory = false, type = Argument.ArgumentType.INTEGER)
+			                                      Integer healsides,
+	                                      @Argument.Arguments(description = "Bias to add to ammount to heal roll", mandatory = false, type = Argument.ArgumentType.INTEGER)
+			                                      Integer healbias,
+	                                      @Argument.Arguments(description = "Reason for heal", type = Argument.ArgumentType.TEXT_ONELINE, mandatory = false, max = 512)
+			                                      String reason
+	) {
+		List<Integer> chancerolls = Roller.roll(st, st.getCharacter(), chancedice, chancesides);
+		int rollssum=chancebias; for (int roll:chancerolls) { rollssum+=roll; }
+		String chancerollsreport="";
+		boolean first=true;
+		for (int roll:chancerolls) {
+			if (!first) { chancerollsreport += "+"; }
+			chancerollsreport += roll;
+			first = false;
+		}
+		if (chancebias>0) {
+			chancerollsreport += " + " + chancebias;
+		}
+		chancerollsreport+="="+rollssum;
+		// threshold met?
+		if (rollssum<chancethreshold) {
+			String failmsg="Attempted to heal "+target.getName()+" but failed! (";
+			failmsg+=chancerollsreport+"<"+chancethreshold+")";
+			Audit.audit(false, st, Audit.OPERATOR.CHARACTER, null, target, "HealChance", "Result", "", "FAIL", chancerollsreport);
+			return new SayResponse(failmsg,st.getCharacter().getName());
+		}
+		chancerollsreport+=">"+chancethreshold;
+		Audit.audit(false, st, Audit.OPERATOR.CHARACTER, null, target, "HealChance", "Result", "", "PASS", chancerollsreport);
+		return healRoll(st,target,healdice,healsides,healbias,reason);
+	}
 
 	@Command.Commands(context = Command.Context.CHARACTER, description = "Heal a target player")
 	public static Response healRoll(State st,
