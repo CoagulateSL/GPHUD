@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
@@ -38,7 +39,9 @@ public abstract class Permissions {
 			return new ErrorResponse("No permission to modify the permissions on this group.");
 		}
 		Modules.validatePermission(st, permission);
-		if (!Modules.getPermission(st, permission).grantable()) {
+		Permission permissionref = Modules.getPermission(st, permission);
+		if (permissionref==null) { return new ErrorResponse("The permission '"+permission+"' did not resolve properly (does not exist?)"); }
+		if (!permissionref.grantable()) {
 			return new ErrorResponse("The permission '" + permission + "' is not grantable through user action.");
 		}
 		try { permissionsgroup.addPermission(st, permission); } catch (UserException e) {
