@@ -19,7 +19,7 @@ import org.json.JSONObject;
  */
 public class OpenWebsite {
 
-	@Commands(context = Context.CHARACTER, description = "Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website", permitUserWeb = false, permitHUDWeb = false, permitConsole = false)
+	@Commands(context = Context.CHARACTER, description = "Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website", permitUserWeb = false, permitHUDWeb = false, permitConsole = true)
 	public static Response openWebsite(State st) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "openurl");
