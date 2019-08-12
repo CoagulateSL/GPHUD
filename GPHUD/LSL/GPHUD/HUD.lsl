@@ -232,9 +232,9 @@ default {
 
 	changed(integer change)
 	{
-		if ((change & (CHANGED_REGION | CHANGED_REGION_START )) && ready)
+		if ((change & (CHANGED_REGION)) && ready)
 		{
-			llResetScript();
+			llDetachFromAvatar();
 		}
 	}	
 	listen(integer channel,string name,key id,string text) {

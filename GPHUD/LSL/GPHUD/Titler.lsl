@@ -48,10 +48,14 @@ default {
 	
 	changed(integer change)
     {
-        if (change & (CHANGED_INVENTORY|CHANGED_REGION | CHANGED_REGION_START))
+        if (change & (CHANGED_INVENTORY))
         {
             llResetScript();
         }
+		if (change & (CHANGED_REGION))
+		{
+			llDetachFromAvatar();
+		}
     }
 	experience_permissions(key id) {}
 }
