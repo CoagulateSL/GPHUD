@@ -76,6 +76,9 @@ public abstract class Login {
 					case FLOAT:
 					case INTEGER:
 					case TEXT:
+						if (a.getKVIdField()==null) {
+							st.logger().log(WARNING,"Null KV K for attribute "+a.getName()+" in instance "+st.getInstanceAndRegionString());
+						}
 						if (simulate.getKV(a.getKVIdField()) == null) {
 							if (debug) {
 								System.out.println("Character " + character + " fails validation check for input " + a);
