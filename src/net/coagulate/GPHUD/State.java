@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.net.InetAddress;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
@@ -523,7 +524,11 @@ public class State extends DumpableState {
 		try {
 			String path = "";
 			final boolean debug = false;
-			if (kvname == null) { throw new SystemException("Get KV on null K"); }
+			if (kvname == null) {
+				SystemException ex=new SystemException("Get KV on null K");
+				logger().log(Level.WARNING,"Get KV on null K",ex);
+				throw ex;
+			}
 			if (debug) { System.out.println("Calling get on " + kvname); }
 			KV kv = getKVDefinition(kvname);
 			if (kv.hierarchy() == KV.KVHIERARCHY.CUMULATIVE) {
