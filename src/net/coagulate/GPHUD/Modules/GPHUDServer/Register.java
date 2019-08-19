@@ -39,7 +39,7 @@ public abstract class Register {
 		// check authorisation, servers can only be deployed by the instance owner...
 		String regionname = st.getRegionName();
 		Instance instance = st.getInstance();
-		if (st.avatar() != instance.getOwner()) {
+		if (st.avatar() != instance.getOwner() && st.avatar().isSuperAdmin()==false) {
 			st.logger().log(WARNING, "Not the instance owner (who is " + instance.getOwner() + ")");
 			return new TerminateResponse("You are not the instance owner, you can not deploy server nodes");
 		}
