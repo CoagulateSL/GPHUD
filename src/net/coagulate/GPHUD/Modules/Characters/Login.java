@@ -70,12 +70,12 @@ public abstract class Login {
 		State simulate = st.simulate(character);
 		for (Attribute a : st.getAttributes()) {
 			if (a.getRequired()) {
-				boolean handled = false;
 				Attribute.ATTRIBUTETYPE type = a.getType();
 				switch (type) {
+					case TEXT: // mandatory text doesn't work at this time
+						break;
 					case FLOAT:
 					case INTEGER:
-					case TEXT:
 						if (a.getKVIdField()==null) {
 							st.logger().log(WARNING,"Null KV K for attribute "+a.getName()+" in instance "+st.getInstanceAndRegionString());
 						}
