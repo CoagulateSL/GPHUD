@@ -197,7 +197,7 @@ public abstract class Login {
 
 	@Commands(context = Context.AVATAR, description = "Create a new character")
 	public static Response create(State st,
-	                              @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the new character", max = 40)
+	                              @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max = 40)
 			                              String charactername) {
 		if (Char.resolve(st, charactername) != null) {
 			JSONObject json = Modules.getJSONTemplate(st, "characters.create");
