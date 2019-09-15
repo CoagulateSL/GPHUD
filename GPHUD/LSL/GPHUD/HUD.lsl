@@ -30,6 +30,7 @@ integer rpchannelhandle=0;
 integer ready=FALSE;
 integer loggedin=FALSE;
 string cookie="";
+integer retrylogin=FALSE;
 reflowHUD() {
 	float sr=((float)sizeratio);
 	llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<0.01,0.12*sr,0.12>,
@@ -94,9 +95,9 @@ integer process(key id) {
 	string retjson="";
 	//llOwnerSay("WE ARE HERE WITH "+json);
 	if (jsonget("error")!="" && loggedin==FALSE) { // failed to login / create character?  so blind retry? :P
-		llOwnerSay("Error during login/registration, retrying...");
-		llSetText("Retry character registration...",<1,.5,.5>,1);
-		startLogin();
+		llOwnerSay("Error during login/registration, please click the HUD to retry...");
+		llSetText("Registration failed - click HUD to retry registration...",<1,.5,.5>,1);
+		retrylogin=TRUE;
 		return TRUE;	
 	}
 	if (incommand=="radar") { DONOTRESPOND=TRUE; llSensor("",NULL_KEY,AGENT,20,PI); radarto=id; }
@@ -153,6 +154,7 @@ gphud_hang() {
 	//llMessageLinked(LINK_THIS,COMMS_SHUTDOWN,"",""); // not much point, just makes it spam a thing
 	if (detach) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); llDetachFromAvatar(); }
 	report("Has shutdown",<1,1,.5>);
+	while (TRUE) { llSleep(60.0); }
 }
 report(string msg,vector col) {
 	string inject=""; if (DEV) { inject="DEV "; }
@@ -261,6 +263,11 @@ default {
 	on_rez(integer parameter) { if (ready) { llResetScript(); } }
 	touch_start(integer n)
 	{
+		if (retrylogin) {
+			retrylogin=FALSE;
+			llSetText("Retry character registration...",<1,.5,.5>,1);
+			startLogin();
+		}
 		if (!ready) { return; }
 		if (!loggedin) { return; }
 		if (llDetectedLinkNumber(0)==1) {
