@@ -37,9 +37,9 @@ public class ExperienceModule extends ModuleAnnotation {
 			                             Char target,
 	                             @Arguments(description = "XP type to award", type = TEXT_INTERNAL_NAME, max = 32)
 			                             String type,
-	                             @Arguments(description = "Ammount to award", mandatory = false, type = INTEGER, max = 999999)
+	                             @Arguments(description = "Ammount to award", type = INTEGER, max = 999999)
 			                             Integer ammount,
-	                             @Arguments(description = "Reason for award", mandatory = false, type = TEXT_ONELINE, max = 128)
+	                             @Arguments(description = "Reason for award", type = TEXT_ONELINE, max = 128)
 			                             String reason
 
 	) {
@@ -47,8 +47,9 @@ public class ExperienceModule extends ModuleAnnotation {
 		boolean permitted = false;
 		if (ammount == null) { ammount = 1; }
 		Attribute attr = st.getAttribute(type);
+		if (attr==null) { return new ErrorResponse("Unable to find experience type "+type); }
 		if (attr.getType() != EXPERIENCE) {
-			return new ErrorResponse("This attributes is not of type EXPERIENCE, (try omitting XP off the end, if you have this)");
+			return new ErrorResponse("This attributes is not of type EXPERIENCE, (try omitting XP off the end, if present)");
 		}
 		if (st.hasPermission("Experience.award" + attr.getName() + "XP")) { permitted = true; }
 		if (!permitted) {

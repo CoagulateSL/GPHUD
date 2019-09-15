@@ -42,6 +42,7 @@ public class GenericXPPool extends Pool {
 		if ((awarded + ammount) > maxxp) {
 			throw new UserException("This will push the character beyond their " + pool.name() + " XP limit, they can be awarded " + (maxxp - awarded) + " XP right now");
 		}
+		if (reason==null) { throw new UserException("You must supply a reason"); }
 		// else award xp :P
 		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Pool Add", pool.name() + "XP", null, ammount + "", reason);
 		target.addPool(st, pool, ammount, reason);

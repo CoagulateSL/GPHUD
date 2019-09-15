@@ -31,7 +31,7 @@ public class AttributePermission extends Permission {
 
 	@Override
 	public String description() {
-		return "Permission to admin set attribute " + a.getName();
+		return "Permission to admin set attribute " + a.getNameSafe();
 	}
 
 	@Override

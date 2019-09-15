@@ -626,10 +626,12 @@ public class Instance extends TableRow {
 						if (debug) { System.out.println("created buffer"); }
 						buffer.put(reg, new JSONObject().put("incommand", "disseminate"));
 					}
-					buffer.get(reg).put(c.getPlayedBy().getUUID(), payload.toString());
+					String playedby = c.getPlayedBy().getUUID();
+					String payloadstring = payload.toString();
+					buffer.get(reg).put(playedby, payloadstring);
 					if (buffer.get(reg).toString().length() > (3 * 1024)) {
 						if (debug) {
-							System.out.println("Size cautionary push: " + reg + " : " + buffer.get(reg).toString());
+							GPHUD.getLogger("Instance "+getNameSafe()).severe("Size cautionary push: " + reg + " : " + buffer.get(reg).toString());
 						}
 						reg.sendServer(buffer.get(reg));
 						buffer.put(reg, new JSONObject().put("incommand", "disseminate"));
