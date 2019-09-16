@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
+import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
@@ -43,7 +44,7 @@ public abstract class Login {
 	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128)
 			                             String versiontime
 	) throws UserException, SystemException {
-		final boolean debug = false;
+		final boolean debug = true;
 		////// CHANGE ALL THIS, HAVE A
 		////// "USINGCHARACTER" COLUMN FOR <AVATAR> TYPES
 		////// THIS IS IMPORTANT TO RESOLVE A TARGET FROM AN AVATAR LATER WHEN TARGETTING FOR EXAMPLE
@@ -73,16 +74,31 @@ public abstract class Login {
 				Attribute.ATTRIBUTETYPE type = a.getType();
 				switch (type) {
 					case TEXT: // mandatory text doesn't work at this time
-						break;
 					case FLOAT:
 					case INTEGER:
-						if (a.getKVIdField()==null) {
-							st.logger().log(WARNING,"Null KV K for attribute "+a.getName()+" in instance "+st.getInstanceAndRegionString());
-						}
-						if (simulate.getKV(a.getKVIdField()) == null) {
+						String value = simulate.getRawKV(character,"characters." + a.getName());
+						if (value == null || value.isEmpty()) {
 							if (debug) {
 								System.out.println("Character " + character + " fails validation check for input " + a);
 							}
+							KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
+							Float max=null;
+							if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
+							String maxstring="";
+							if (max!=null && max>0) { maxstring=", which must be no greater than "+max; }
+							JSONObject json = new JSONObject();
+							json.put("hudtext", "Initialising character...").put("hudcolor", "<1.0,0.75,0.75>")
+									.put("titlertext", "Initialising character...").put("titlercolor", "<1.0,0.75,0.75>")
+									.put("message", "Character creation requires you to input attribute " + a.getName()+maxstring);
+							json.put("incommand", "runtemplate");
+							json.put("invoke", "characters.initialise");
+							json.put("args", "1");
+							json.put("attribute", a.getName());
+							json.put("arg0name","value");
+							json.put("arg0description", "You must select a " + a.getName() + " for your Character before you can use it"+maxstring);
+							json.put("arg0type","TEXTBOX");
+							if (debug) { System.out.println("Choice JSON : " + json.toString()); }
+							return new JSONResponse(json);
 						} else {
 							if (debug) {
 								System.out.println("Character " + character + " passes validation check for input " + a);
@@ -256,16 +272,42 @@ public abstract class Login {
 	                                  @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to initialise to", max = 4096)
 			                                  String value) {
 		//System.out.println("Initialise "+attribute+" to "+value);
+		final boolean debug=true;
 		switch (attribute.getType()) {
 			case FLOAT:
 			case INTEGER:
 			case TEXT:
 				// its a KV.  check it has no KV already.
-				String existingvalue = st.getRawKV(st.getCharacter(), attribute.getKVIdField());
+				String existingvalue = st.getRawKV(st.getCharacter(),"characters."+attribute.getName());
 				if (existingvalue != null) {
 					return new ErrorResponse("Can not initialise a non null value (currently:" + existingvalue + ")");
 				}
-				st.setKV(st.getCharacter(), attribute.getKVIdField(), value);
+				// does it exceed the max, if a max is configured, or anything
+				if (attribute.getType()== Attribute.ATTRIBUTETYPE.FLOAT || attribute.getType()== Attribute.ATTRIBUTETYPE.INTEGER) {
+					KVValue maxkv=st.getKV("characters."+attribute.getName()+"MAX");
+					Float max=null;
+					if (debug) { System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv); }
+					if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
+					if (debug) { System.out.println("Max is "+max); }
+					if (max!=null && max>0) {
+						if (debug) { System.out.println("About to check "+max+" > "+Float.parseFloat(value)); }
+						if (Float.parseFloat(value)>max) {
+							JSONObject json = new JSONObject();
+							json.put("hudtext", "Initialising character...").put("hudcolor", "<1.0,0.75,0.75>")
+									.put("titlertext", "Initialising character...").put("titlercolor", "<1.0,0.75,0.75>")
+									.put("message", "Character creation requires you to input attribute " + attribute.getName()+" WHICH MUST BE NO MORE THAN "+max);
+							json.put("incommand", "runtemplate");
+							json.put("invoke", "characters.initialise");
+							json.put("args", "1");
+							json.put("attribute", attribute.getName());
+							json.put("arg0name","value");
+							json.put("arg0description", "You must select a " + attribute.getName() + " for your Character before you can use it (no greater than "+max+")");
+							json.put("arg0type","TEXTBOX");
+							return new JSONResponse(json);
+						}
+					}
+				}
+				st.setKV(st.getCharacter(), "characters."+attribute.getName(), value);
 				break;
 			case GROUP:
 				// its a group... check user has no group already
