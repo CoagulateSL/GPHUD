@@ -2,8 +2,7 @@ package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Interface;
-import net.coagulate.GPHUD.Interfaces.Responses.JSONPushResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command.Commands;
@@ -28,10 +27,10 @@ public class OpenWebsite {
 		json.put("url", Interface.generateURL(st, "?gphud=" + cookie));
 		json.put("description", "Open GPHUD Administrative Application");
 		//System.out.println("OPENURL:"+json.toString());
-		return new JSONPushResponse(json, st.getCharacter().getURL(), new OKResponse("Request sent"));
+		return new JSONResponse(json);
 	}
 
-	@Commands(context = Context.ANY, description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb = false, permitHUDWeb = false)
+	@Commands(context = Context.ANY, description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb = false, permitHUDWeb = false, permitConsole=true)
 	public static Response offerWebsite(State st,
 	                                    @Argument.Arguments(description = "URL to offer to user", type = Argument.ArgumentType.TEXT_ONELINE, max = 255)
 			                                    String url,
@@ -44,6 +43,6 @@ public class OpenWebsite {
 		json.put("url", url);
 		json.put("description", description);
 		//System.out.println("OPENURL:"+json.toString());
-		return new JSONPushResponse(json, st.getCharacter().getURL(), new OKResponse("Request sent"));
+		return new JSONResponse(json);
 	}
 }
