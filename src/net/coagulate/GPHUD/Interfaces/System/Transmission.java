@@ -143,7 +143,7 @@ public class Transmission extends Thread {
 					if (j.has("cookie")) { Cookies.refreshCookie(j.getString("cookie")); }
 				}
 			} catch (Exception e) {
-				GPHUD.getLogger().log(WARNING, "Exception in response parser", e);
+				GPHUD.getLogger().log(WARNING, "Exception in response parser - "+response, e);
 			}
 		}
 	}
