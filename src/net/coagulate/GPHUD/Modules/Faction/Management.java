@@ -151,6 +151,7 @@ public abstract class Management {
 		String oldownername = null;
 		if (oldowner != null) { oldownername = oldowner.getName(); }
 		if (newowner == oldowner) {
+			if (newowner==null) { return new OKResponse("There is already no faction leader for this faction"); }
 			return new OKResponse("That character (" + newowner.getName() + ") is already the faction leader");
 		}
 		if (newowner == null) {
