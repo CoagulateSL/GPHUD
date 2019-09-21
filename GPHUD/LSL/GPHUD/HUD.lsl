@@ -31,6 +31,10 @@ integer ready=FALSE;
 integer loggedin=FALSE;
 string cookie="";
 integer retrylogin=FALSE;
+dodetach() {
+	llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0,PRIM_POS_LOCAL,<-10,-10,-10>]);
+	llDetachFromAvatar();
+}
 reflowHUD() {
 	float sr=((float)sizeratio);
 	llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<0.01,0.12*sr,0.12>,
@@ -139,7 +143,7 @@ integer process(key id) {
 			llOwnerSay("You have "+(string)messages+" new message"+s+".  Click the envelope to read.");
 		} 
 	}
-	if (jsonget("hudreplace")!="") { llOwnerSay("Duplicate GPHUD attached, detaching one"); llDetachFromAvatar(); }
+	if (jsonget("hudreplace")!="") { llOwnerSay("Duplicate GPHUD attached, detaching one"); dodetach(); }
 	if (jsonget("zone")!="") { llMessageLinked(LINK_THIS,LINK_RECEIVE,json,""); }
 	if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
 	if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
@@ -152,7 +156,7 @@ integer process(key id) {
 }
 gphud_hang() {
 	//llMessageLinked(LINK_THIS,COMMS_SHUTDOWN,"",""); // not much point, just makes it spam a thing
-	if (detach) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); llDetachFromAvatar(); }
+	if (detach) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); dodetach(); }
 	report("Has shutdown",<1,1,.5>);
 	while (TRUE) { llSleep(60.0); }
 }
@@ -202,7 +206,7 @@ default {
 		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) {
 			llResetOtherScript("Attacher");
 			report("Waiting for GO",<0.75,0.75,1.0>);
-		} else { detach=TRUE; comms_start(); started=TRUE; }
+		} else { comms_start(); started=TRUE; }
 	}
 	link_message(integer from,integer num,string message,key id) {
         if (num==LINK_SEND) { json=message; message=""; httpcommand((string)id); }	
@@ -234,13 +238,12 @@ default {
 
 	changed(integer change)
 	{
-		if ((change & (CHANGED_REGION)) && ready)
+		if (change & (CHANGED_REGION))
 		{
-			llDetachFromAvatar();
+			dodetach();
 		}
 	}	
 	listen(integer channel,string name,key id,string text) {
-		if (!ready) { return; }
 		if (channel==broadcastchannel) {
 			if (text=="GOTHUD") {
 				llRegionSayTo(id,broadcastchannel,"GOTHUD");
@@ -252,10 +255,13 @@ default {
 		}
 		if (channel==1 && id==llGetOwner()) {
 			if (text=="status" && id==IAIN_MALTZ) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
+			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); dodetach(); }
 			if (text=="reboot") { llResetScript(); }
+			if (!ready) { return; }
 			json=llJsonSetValue("",["console"],text);
 			httpcommand("console");
 		}
+		if (!ready) { return; }
 		if (channel==rpchannel) {
 			string name=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(name);
 		}
@@ -282,8 +288,21 @@ default {
 			}
 		}
 	}
-	experience_permissions(key id) {}
+	experience_permissions(key id) {
+		detach=TRUE;
+		#ifdef DEBUG
+		llOwnerSay("Detach set experience");
+		#endif
+	}
 	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
+	run_time_permissions(integer perms) {
+		if(perms & PERMISSION_ATTACH) { 
+			detach=TRUE;
+			#ifdef DEBUG
+			llOwnerSay("Detach set manual");
+			#endif
+		} else { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
+	}
 	no_sensor() {
 		if (radarto!=NULL_KEY) {
 			llMessageLinked(LINK_THIS,COMMS_REQUEST_RESPONSE,"{\"avatars\":\"\"}",radarto);

@@ -1,6 +1,10 @@
 #include "GPHUDHeader.lsl"
 #include "../Library/JsonTools.lsl"
 setlamps() {}
+detach() {
+	llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0]);
+	llDetachFromAvatar();
+}
 default {
 	state_entry () {
 		calculatebroadcastchannel();
@@ -32,14 +36,14 @@ default {
 				return;
 			}
 			if (jsonget("titlerz")!="") { llSetPos(<0,0,(float)(jsonget("titlerz"))>); }
-			if (jsonget("titlerreplace")!="") { llOwnerSay("Duplicate TITLER attached, detaching one"); llDetachFromAvatar(); }
-			if (jsonget("titlerremove")!="") { llDetachFromAvatar(); }
+			if (jsonget("titlerreplace")!="") { llOwnerSay("Duplicate TITLER attached, detaching one"); detach(); }
+			if (jsonget("titlerremove")!="") { detach(); }
 		}
 	}
 	
     link_message(integer from,integer num,string message,key id) {
         if (num==LINK_GO) {
-			llSetText("Active",<1,1,1>,1);
+			llSetText("Starting Up...",<1,1,1>,1);
 			if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
         }
 	}
@@ -54,7 +58,7 @@ default {
         }
 		if (change & (CHANGED_REGION))
 		{
-			llDetachFromAvatar();
+			detach();
 		}
     }
 	experience_permissions(key id) {}
