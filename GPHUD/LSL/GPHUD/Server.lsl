@@ -114,7 +114,12 @@ default {
 		}
 	}
 	listen(integer channel,string name,key id,string text) {
-		if (channel==broadcastchannel) {}
+		if (channel==broadcastchannel) {
+			json=text;
+			if (jsonget("dispense")!="") {
+				llMessageLinked(LINK_THIS,LINK_DISPENSE,"",(key)jsonget("dispense"));
+			}
+		}
 		if (channel==0) {
 			if (llSubStringIndex(text,"*")==0) {
 				if ((id==IAIN_MALTZ || id==llGetOwner()) && text=="*reboot") { llResetScript(); }
