@@ -26,7 +26,8 @@ public class Transmission extends Thread {
 	int delay = 0;
 	Char character = null;
 	Region region = null;
-
+	boolean succeeded=false;
+	public boolean failed() { return !succeeded; }
 	public Transmission(Char character, JSONObject json, String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to character " + character + " on url " + oldurl + " with json " + json.toString());
@@ -146,6 +147,7 @@ public class Transmission extends Thread {
 				GPHUD.getLogger().log(WARNING, "Exception in response parser - "+response, e);
 			}
 		}
+		succeeded=true;
 	}
 
 	private String sendAttempt() throws IOException {

@@ -6,6 +6,9 @@ import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Tools.LogHandler;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.SL.Data.User;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -285,5 +288,36 @@ public class GPHUD {
 	public static String serverVersion() {
 		return "GPHUD Cluster " + VERSION + " " + VERSION_DATE + " (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
 	}
+
+
+	public static void sendNewServer(User avatar) {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("incommand", "broadcast");
+			json.put("subcommand", "giveitemprefix");
+			json.put("itemtogive", "GPHUD Region Server");
+			json.put("givetoname", avatar.getName());
+			json.put("giveto", avatar.getUUID());
+			Region.find("Cerasi").sendServerSync(json);
+		}
+		catch (UserException e) {
+			throw new UserException("Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+e.getLocalizedMessage()+"]");
+		}
+	}
+	public static void sendDispenser(User avatar) {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("incommand", "broadcast");
+			json.put("subcommand", "giveitemprefix");
+			json.put("itemtogive", "GPHUD Remote Dispenser");
+			json.put("givetoname", avatar.getName());
+			json.put("giveto", avatar.getUUID());
+			Region.find("Cerasi").sendServerSync(json);
+		}
+		catch (UserException e) {
+			throw new UserException("Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+e.getLocalizedMessage()+"]");
+		}
+	}
+
 
 }

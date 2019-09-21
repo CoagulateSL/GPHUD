@@ -432,6 +432,11 @@ public class Region extends TableRow {
 	public void sendServer(JSONObject json) {
 		new Transmission(this, json).start();
 	}
+	public void sendServerSync(JSONObject json) {
+		Transmission t=new Transmission(this, json);
+		t.run();
+		if (t.failed()) { throw new UserException("Connection to server failed"); }
+	}
 
 	/**
 	 * Get all zones that are present in this region.

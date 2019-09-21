@@ -44,7 +44,7 @@ public abstract class Login {
 	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128)
 			                             String versiontime
 	) throws UserException, SystemException {
-		final boolean debug = true;
+		final boolean debug = false;
 		////// CHANGE ALL THIS, HAVE A
 		////// "USINGCHARACTER" COLUMN FOR <AVATAR> TYPES
 		////// THIS IS IMPORTANT TO RESOLVE A TARGET FROM AN AVATAR LATER WHEN TARGETTING FOR EXAMPLE
@@ -162,7 +162,7 @@ public abstract class Login {
 			regmessage = GPHUD.serverVersion() + " https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head";
 			if (st.getRegion().needsUpdate()) {
 				regmessage += "\n=====\nUpdate required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old one will then disable its self and can be deleted.\n=====";
-				sendNewServer(st.getAvatar());
+				GPHUD.sendNewServer(st.getAvatar());
 			}
 		} else {
 			//regmessage="O:"+st.getInstance().getOwner().getId()+" U:"+st.getCharacter().getId()+" "+GPHUD.serverVersion();
@@ -199,16 +199,6 @@ public abstract class Login {
 		//    rawresponse.put(key,convey.get(key));
 		//}
 		return new JSONResponse(rawresponse);
-	}
-
-	private static void sendNewServer(User avatar) {
-		JSONObject json = new JSONObject();
-		json.put("incommand", "broadcast");
-		json.put("subcommand", "giveitemprefix");
-		json.put("itemtogive", "GPHUD Region Server");
-		json.put("givetoname", avatar.getName());
-		json.put("giveto", avatar.getUUID());
-		Region.find("Cerasi").sendServer(json);
 	}
 
 	@Commands(context = Context.AVATAR, description = "Create a new character")
