@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
@@ -79,7 +80,7 @@ public abstract class Templater {
 				String value = "ERROR";
 				try { value = getValue(st, subst); } catch (UserException e) { value = "Error: " + e.getMessage(); }
 				if (debug) { System.out.println("REPLACE: " + subst + " with " + value); }
-				string = string.replaceAll(subst, value);
+				string = string.replaceAll(subst, Matcher.quoteReplacement(value));
 				if (debug) { System.out.println("Post: " + string); }
 			}
 		}
