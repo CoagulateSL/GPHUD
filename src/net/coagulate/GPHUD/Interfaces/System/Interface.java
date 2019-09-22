@@ -93,7 +93,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 System.out.println(out);*/
 				if (debug) { GPHUD.getLogger().finer("JSON out : " + out); }
 				if (out.length() >= 2048) { GPHUD.getLogger().severe("Output exceeds limit of 2048 characters"); }
-				resp.setEntity(new StringEntity(out, ContentType.TEXT_PLAIN));
+				resp.setEntity(new StringEntity(out, ContentType.APPLICATION_JSON));
 				return;
 			}
 			GPHUD.getLogger().warning("Processing command of request class " + req.getClass().getName() + " which is odd?");
@@ -106,7 +106,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			GPHUD.getLogger().log(WARNING, "User generated error : " + e.getLocalizedMessage(), e);
 			HttpResponse resp = st.resp;
 			resp.setStatusCode(HttpStatus.SC_OK);
-			resp.setEntity(new StringEntity("{\"error\":\"" + e.getLocalizedMessage() + "\"}", ContentType.TEXT_PLAIN));
+			resp.setEntity(new StringEntity("{\"error\":\"" + e.getLocalizedMessage() + "\"}", ContentType.APPLICATION_JSON));
 			resp.setStatusCode(HttpStatus.SC_OK);
 		} catch (Exception e) {
 			try {
@@ -114,7 +114,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				GPHUD.getLogger().log(SEVERE, "System Interface caught unhandled Exception : " + e.getLocalizedMessage(), e);
 				HttpResponse resp = st.resp;
 				resp.setStatusCode(HttpStatus.SC_OK);
-				resp.setEntity(new StringEntity("{\"error\":\"Internal error occured, sorry.\"}", ContentType.TEXT_PLAIN));
+				resp.setEntity(new StringEntity("{\"error\":\"Internal error occured, sorry.\"}", ContentType.APPLICATION_JSON));
 				resp.setStatusCode(HttpStatus.SC_OK);
 			} catch (Exception ex) {
 				SL.report("Error in system interface error handler", ex, st);
