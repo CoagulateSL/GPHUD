@@ -210,6 +210,9 @@ public abstract class Login {
 			json.put("message", "Character name already taken - please retry");
 			return new JSONResponse(json);
 		}
+		if (charactername.startsWith(">")) {
+			return new ErrorResponse("You are not allowed to start a character name with the character >");
+		}
 		try {
 			User user = User.findOptional(charactername);
 			if (user != null) {
