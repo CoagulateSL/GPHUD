@@ -14,6 +14,7 @@ public class TextError implements Renderable {
 
 	public TextError(String s) { this.s = s; }
 
+	public String getMessage(State st) { return s; }
 
 	@Override
 	public String asText(State st) {
