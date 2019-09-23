@@ -9,6 +9,7 @@ integer cycle=0;
 list stage=[];
 list time=[];
 list secret=[];
+integer listens=4;
 
 integer autoattach=FALSE;
 integer parcelonly=TRUE;
@@ -54,9 +55,10 @@ string experienceError() {
 }
 adduser(key check,integer when)
 {
-	if (debug) { llOwnerSay("Dispenser:New userNew user "+llKey2Name(check)); }
+	if (llListFindList(keys,[check])!=-1) { return; }
+	if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
 	keys+=[check];
-	stage+=[0];
+	if (when==-1) { stage+=[-1]; } else { stage+=[0]; }
 	time+=[when];
 	integer asecret=1000+((integer)llFrand(999999999));
 	asecret=asecret/3;
@@ -98,14 +100,14 @@ execute() {
 		}
 	}
 	// every cycle, progress a number of these "things"
-	integer actions=3;
+	integer actions=1;
 	integer i=0;
 	for (i=0;i<llGetListLength(keys);i++) {
 		key ik=llList2Key(keys,i);
 		integer istage=llList2Integer(stage,i);
 		integer itime=llList2Integer(time,i);
 		integer isecret=llList2Integer(secret,i);
-		if (istage>=0 && itime<=now) {
+		if (istage>=0 && itime<=now && actions>0) {
 			actions--;
 			if (debug) { llOwnerSay("Dispenser:Acting on "+llKey2Name(ik)+" in stage "+(string)istage+", "+(string)actions+" actions remain"); }
 			
@@ -138,6 +140,9 @@ default {
 		llMessageLinked(LINK_THIS,LINK_GET_DISPENSER_CONFIG,"","");
 		llSetTimerEvent(60.0);
 	}
+	on_rez(integer n) {
+		llResetScript();
+	}
 	timer() {
 		llMessageLinked(LINK_THIS,LINK_GET_DISPENSER_CONFIG,"","");
 	}	
@@ -145,13 +150,40 @@ default {
 		if (num==LINK_DISPENSER_CONFIG) {
 			autoattach=(integer)message;
 			parcelonly=(integer)((string)id);
-			state go;
+			state prepopulate;
 		}
 		if (num==LINK_LEGACY_PACKAGE) { llOwnerSay("Dispenser resetting into standby"); llResetScript(); }
 		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser (STANDBY) free memory: "+(string)llGetFreeMemory()); }
 
 		if (num==LINK_GO) { llMessageLinked(LINK_THIS,LINK_GET_DISPENSER_CONFIG,"",""); }
 	}	
+}
+state prepopulate{
+	state_entry() {
+		llOwnerSay("GPHUD Dispenser module initialising, collecting existing data...");
+		calculatebroadcastchannel();
+		llListen(broadcastchannel,"",NULL_KEY,"");
+		llListen(broadcastchannel+1,"",NULL_KEY,"");
+		llSetTimerEvent(30.0);
+		llRegionSay(broadcastchannel,"GOTHUD");
+	}
+	timer() {
+	llOwnerSay("Dispenser pre-population complete, found "+(string)llGetListLength(stage)+" existing");
+		state go;
+	}
+	on_rez(integer n) {
+		llResetScript();
+	}	
+	listen(integer channel,string name,key id,string message) {
+		if (channel==broadcastchannel) {
+			if (message=="GOTHUD") {
+				adduser(llGetOwnerKey(id),-1);
+			}
+		}
+	}
+
+
+
 }
 state go{
 	state_entry() {
@@ -165,8 +197,11 @@ state go{
 		llListen(broadcastchannel,"",NULL_KEY,"");
 		llListen(broadcastchannel+1,"",NULL_KEY,"");
 		execute();
-		llSetTimerEvent(1.0);
+		llSetTimerEvent(2.0);
 	}
+	on_rez(integer n) {
+		llResetScript();
+	}	
 	listen(integer channel,string name,key id,string message) {
 		if (channel==broadcastchannel+1) {
 			integer sec=(integer)message;

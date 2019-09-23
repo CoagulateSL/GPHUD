@@ -5,11 +5,11 @@ detach() {
 	llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0]);
 	llDetachFromAvatar();
 }
+integer permitted=FALSE;
 default {
 	state_entry () {
 		calculatebroadcastchannel();
 		llListen(broadcastchannel,"",NULL_KEY,"");
-		llRequestExperiencePermissions(llGetOwner(),"");
 		string desc=llGetObjectDesc();
 		if (desc=="DEV" || desc=="DEV-iain") {
 			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.25,.25,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,1]);
@@ -45,6 +45,7 @@ default {
         if (num==LINK_GO) {
 			llSetText("Starting Up...",<1,1,1>,1);
 			if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
+			if (!permitted) { llRequestExperiencePermissions(llGetOwner(),""); }
         }
 	}
 	
@@ -52,7 +53,7 @@ default {
 	
 	changed(integer change)
     {
-        if (change & (CHANGED_INVENTORY))
+        if (change & (CHANGED_OWNER))
         {
             llResetScript();
         }
@@ -61,5 +62,6 @@ default {
 			detach();
 		}
     }
-	experience_permissions(key id) {}
+	experience_permissions(key id) { permitted=TRUE; }
+	run_time_permissions(integer perm) { if (perm & PERMISSION_ATTACH) { permitted=TRUE; }}
 }
