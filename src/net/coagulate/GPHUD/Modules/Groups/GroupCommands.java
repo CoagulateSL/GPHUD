@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Groups;
 
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -16,6 +17,40 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class GroupCommands {
+
+	@Commands(context = Context.CHARACTER,description = "Join an open group")
+	public static Response join(@NotNull State st,
+	                            @Arguments(description = "Name of group to join",type = ArgumentType.CHARACTERGROUP)
+	                            @NotNull CharacterGroup group) {
+
+		// is group open?
+		if (!group.isOpen()) { return new ErrorResponse("Can not join group "+group.getNameSafe()+", it is not open, you will need to be invited instead."); }
+		// does the group have a type
+		if (group.getType()!=null && !group.getType().isEmpty()) {
+			// it's a typed group, find the attribute it maps to
+			Attribute attribute = Attribute.findGroup(st.getInstance(), group.getType());
+			if (!attribute.getSelfModify()) {
+				return new ErrorResponse("You can not change your " + attribute.getNameSafe() + " after character creation.");
+			}
+			// since its a typed group they /can/ self modify, we need to remove them from the old group first
+			CharacterGroup existinggroup = st.getCharacter().getGroup(group.getType());
+			if (existinggroup != null) {
+				// try remove, in a weird way, note we bypass the permissions check on the target call here
+				Response remove = Management.remove(st, existinggroup, st.getCharacter());
+				if (remove instanceof ErrorResponse) {
+					return new ErrorResponse("Can't switch group - would require you to leave " + existinggroup.getNameSafe() + " but this failed: " + ((ErrorResponse) remove).getMessage(st));
+				}
+				// ok, we removed them from the old group
+			}
+		}
+		// well then, add tim
+		Response add=Management.add(st,group,st.getCharacter());
+		if (add instanceof ErrorResponse) {
+			return new ErrorResponse("Failed to add to new group: "+((ErrorResponse) add).getMessage(st));
+		}
+		return new OKResponse("You are now a member of "+group.getNameSafe());
+	}
+
 	@Commands(description = "Invite a character to a group", context = Context.CHARACTER)
 	public static Response invite(State st,
 	                              @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to invite to")
