@@ -6,17 +6,26 @@ detach() {
 	llDetachFromAvatar();
 }
 integer permitted=FALSE;
+go() {
+	llSetText("Starting Up...",<1,1,1>,1);
+	if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
+	if (!permitted) { llRequestExperiencePermissions(llGetOwner(),""); }
+	string desc=llGetObjectDesc();
+	if (desc=="DEV" || desc=="DEV-iain") {
+		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.25,.25,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,1]);
+	} else {
+		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.001,.001,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,0]);
+	}	
+}
 default {
 	state_entry () {
 		calculatebroadcastchannel();
 		llListen(broadcastchannel,"",NULL_KEY,"");
 		string desc=llGetObjectDesc();
-		if (desc=="DEV" || desc=="DEV-iain") {
-			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.25,.25,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,1]);
-		} else {
-			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.001,.001,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,0]);
-		}		
+		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.001,.001,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,0]);
 		if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
+		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) { llSetText("Waiting GO...",<1,1,1>,1); }
+		else { go(); }
 	}
 	
 	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
@@ -43,9 +52,7 @@ default {
 	
     link_message(integer from,integer num,string message,key id) {
         if (num==LINK_GO) {
-			llSetText("Starting Up...",<1,1,1>,1);
-			if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
-			if (!permitted) { llRequestExperiencePermissions(llGetOwner(),""); }
+			go();
         }
 	}
 	
