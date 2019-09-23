@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -43,6 +44,17 @@ public class Attribute extends TableRow {
 		Integer id = GPHUD.getDB().dqi(false, "select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
 		if (id == null) {
 			throw new UserException("Unable to find attribute '" + name + "' in instance '" + instance + "'");
+		}
+		return get(id);
+	}
+
+	/** Find an attribute that is a group by 'type'.
+	 *
+	 */
+	public static Attribute findGroup(@NotNull Instance instance,String grouptype) {
+		Integer id=GPHUD.getDB().dqi(false,"select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
+		if (id==null) {
+			throw new UserException("Unable to find an attribute representing a group of type "+grouptype);
 		}
 		return get(id);
 	}
