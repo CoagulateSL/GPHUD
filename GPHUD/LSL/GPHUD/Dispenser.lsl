@@ -1,4 +1,5 @@
 #include "GPHUDHeader.lsl"
+#include "../Library/JsonTools.lsl"
 list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :P)
 // stages are
 // 0 - querying them for an existing HUD
@@ -52,6 +53,13 @@ string experienceError() {
 	string experiencename=llList2String(experience,0);
 	string statemessage=llList2String(experience,4);
 	return "Experience error : "+experiencename+" - "+statemessage;
+}
+forcedispense(key who) {
+	adduser(who,llGetUnixTime()+10);
+	integer i=llListFindList(keys,[who]);
+	if (i==-1) { return; }
+	stage=llListReplaceList(stage,[0],i,i);
+	time=llListReplaceList(time,[0],i,i);
 }
 adduser(key check,integer when)
 {
@@ -222,6 +230,10 @@ state go{
 					stage=llListReplaceList(stage,[-1],n,n);
 				}
 			}
+			json=message;
+			if (jsonget("forcedispense")!="") {
+				forcedispense((key)jsonget("forcedispense"));
+			}
 		}
 	}
 	timer() {
@@ -230,6 +242,6 @@ state go{
     link_message(integer from,integer num,string message,key id) {
 		if (num==LINK_LEGACY_PACKAGE) { llOwnerSay("Dispenser resetting into standby"); llResetScript(); }
 		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser free memory: "+(string)llGetFreeMemory()+" tracked elements "+(string)llGetListLength(keys)); }
-		if (num==LINK_DISPENSE) { adduser(id,0); }
+		if (num==LINK_DISPENSE) { forcedispense(id); }
 	}	
 }
