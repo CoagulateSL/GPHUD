@@ -12,4 +12,5 @@ default {
 			llRegionSayTo(llDetectedKey(touchers),0,"Request for HUD sent!");
 		}
 	}
+	on_rez(integer n) { llResetScript(); }
 }
