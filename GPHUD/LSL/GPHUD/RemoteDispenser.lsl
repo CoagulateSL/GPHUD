@@ -7,7 +7,7 @@ default {
 	}
 	touch_start(integer touchers) {
 		for (touchers--;touchers>=0;touchers--) {
-			json=llJsonSetValue("",["dispense"],(string)llDetectedKey(touchers));
+			json=llJsonSetValue("",["forcedispense"],(string)llDetectedKey(touchers));
 			llRegionSay(broadcastchannel,json);
 			llRegionSayTo(llDetectedKey(touchers),0,"Request for HUD sent!");
 		}
