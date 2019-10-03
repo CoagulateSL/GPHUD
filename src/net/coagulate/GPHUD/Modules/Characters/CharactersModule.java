@@ -5,6 +5,7 @@
  */
 package net.coagulate.GPHUD.Modules.Characters;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
@@ -84,10 +85,12 @@ public class CharactersModule extends ModuleAnnotation {
 		int total = 0;
 		for (Attribute attribute : st.getAttributes()) {
 			//System.out.println("ATTRIBUTE IS "+attribute);
-			if (attribute.usesAbilityPoints()) {
-				String spent = st.getKV(st.getCharacter(), "Characters." + attribute.getName());
-				if (spent != null && !spent.isEmpty()) { total = total + Integer.parseInt(spent); }
-			}
+			try {
+				if (attribute.usesAbilityPoints()) {
+					String spent = st.getKV(st.getCharacter(), "Characters." + attribute.getName());
+					if (spent != null && !spent.isEmpty()) { total = total + Integer.parseInt(spent); }
+				}
+			} catch (NoDataException e) {} // attribute deleted race condition
 		}
 		return total;
 	}
