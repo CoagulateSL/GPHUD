@@ -182,7 +182,7 @@ default {
 		}
 		else
 		{
-			json=body;
+			json=body; body="";
 			
 			if (comms_http_response(request_id,status)) { return; }
 			
