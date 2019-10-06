@@ -4,7 +4,7 @@
 #include "SL/LSL/Library/JsonTools.lsl"
 #include "SL/LSL/Library/SetDev.lsl"
 #include "SL/LSL/GPHUD/GPHUDHeader.lsl"
-
+#include "SL/LSL/Library/ServerMesh.lsl"
 #define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
 #define COMMS_INCLUDEDIGEST
@@ -22,7 +22,7 @@ integer autoattach=FALSE;
 integer parcelonly=TRUE;
 integer countdown=60;
 output(string s) { llOwnerSay(s); }
-setlogo(key k) { llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,1,k,<1,1,1>,<0,0,0>,0]); }
+
 integer process(key id) {
 
 	string command=jsonget("incommand");
@@ -76,8 +76,8 @@ setup() {
 	if (BOOTSTAGE==BOOT_COMMS) { 
 		key k=LOGO_COAGULATE;
 		setDev(TRUE);
-		if (DEV) { k=LOGO_COAGULATE_DEV; DEV=TRUE; }
-		setlogo(k);
+		if (DEV) { k=LOGO_COAGULATE_DEV; }
+		setlogo(k); setshard(k);
 		calculatebroadcastchannel();
 		llSetObjectName(name);
 		llResetOtherScript("Dispenser");
