@@ -2,7 +2,9 @@
 #include "../Library/JsonTools.lsl"
 setlamps() {}
 detach() {
-	llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0]);
+	if (llGetInventoryType("Attacher")!=INVENTORY_SCRIPT) {
+		llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0]);
+	}
 	llDetachFromAvatar();
 }
 integer permitted=FALSE;
@@ -22,7 +24,11 @@ default {
 		calculatebroadcastchannel();
 		llListen(broadcastchannel,"",NULL_KEY,"");
 		string desc=llGetObjectDesc();
-		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.001,.001,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,0]);
+		if (desc=="DEV" || desc=="DEV-iain") {
+			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.25,.25,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,1]);
+		} else {
+			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.001,.001,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,0]);
+		}
 		if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
 		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) { llSetText("Waiting GO...",<1,1,1>,1); }
 		else { go(); }

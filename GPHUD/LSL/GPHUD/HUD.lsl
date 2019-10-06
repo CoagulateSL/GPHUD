@@ -29,9 +29,12 @@ string charname="";
 integer rpchannel=0;
 integer rpchannelhandle=0;
 integer retrylogin=FALSE;
-
+integer SHUTDOWN=FALSE;
 dodetach() {
-	//llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0,PRIM_POS_LOCAL,<-10,-10,-10>]);
+	if (llGetInventoryType("Attacher")!=INVENTORY_SCRIPT) {
+		llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0,PRIM_POS_LOCAL,<-10,-10,-10>]);
+	}
+	if (!SHUTDOWN) { SHUTDOWN=TRUE; httpcommand("characters.logout","GPHUD/system"); }
 	llDetachFromAvatar();
 }
 reflowHUD() {
@@ -102,7 +105,7 @@ integer process(key id) {
 			llOwnerSay("You have "+(string)messages+" new message"+s+".  Click the envelope to read.");
 		} 
 	}
-	if (jsonget("hudreplace")!="") { llOwnerSay("Duplicate GPHUD attached, detaching one"); dodetach(); }
+	if (jsonget("hudreplace")!="") { llOwnerSay("Duplicate GPHUD attached, detaching one"); SHUTDOWN=TRUE; dodetach(); }
 	if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
 	if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
 	if (jsonget("leveltext")!="") { llOwnerSay(jsonget("leveltext")); }
@@ -230,9 +233,10 @@ default {
 
 	changed(integer change)
 	{
+		if (change & CHANGED_OWNER) { llResetScript(); }
 		if (change & (CHANGED_REGION))
 		{
-			dodetach();
+			SHUTDOWN=TRUE; dodetach();
 		}
 	}	
 	listen(integer channel,string name,key id,string text) {
