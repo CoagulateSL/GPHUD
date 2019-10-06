@@ -2,11 +2,11 @@ package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
-import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.SecondLifeAPI.ShutdownResponse;
 
 /**
  * Page that destroys the session.
@@ -32,6 +32,6 @@ public class Logout {
 			st.getCharacter().closeURL(st);
 			st.logger().info("Logout from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName());
 		}
-		return new TerminateResponse("Logout complete");
+		return new ShutdownResponse("Logout complete");
 	}
 }
