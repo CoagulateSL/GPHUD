@@ -1,11 +1,10 @@
 package net.coagulate.GPHUD.Modules.GPHUDServer;
 
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.NoResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
@@ -13,8 +12,8 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
+import org.json.JSONObject;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.logging.Level.WARNING;
@@ -29,6 +28,7 @@ public abstract class Avatars {
 	public static Response setRegionAvatars(State st,
 	                                        @Arguments(description = "Comma separated list of avatar key=names on the sim", type = ArgumentType.TEXT_ONELINE, max = 65536)
 			                                        String userlist) throws UserException {
+
 		// check authorisation, servers can only be deployed by the instance owner...
 		if (st.sourcedeveloper.getId() != 1) {
 			return new ErrorResponse("Invalid developer source for priviledged call.");
@@ -38,11 +38,7 @@ public abstract class Avatars {
 			return new ErrorResponse("Invalid callback URL, you do not match the registered region server");
 		}
 		if (userlist == null) { userlist = ""; }
-		Set<User> openvisits = new HashSet<>();
-		for (Char c : region.getOpenVisits()) {
-			User avi = c.getPlayedBy();
-			if (avi != null) { openvisits.add(avi); }
-		}
+		Set<User> openvisits = region.getAvatarOpenVisits();
 
 		for (String element : userlist.split(",")) {
 			//System.out.println(element);
@@ -60,7 +56,10 @@ public abstract class Avatars {
 		region.departingAvatars(st, openvisits);
 		Instance instance = st.getInstance();
 		//instance.updateStatus();
-		return new NoResponse();
+		JSONObject json=new JSONObject();
+		json.put("autoattach",st.getKV("gphudserver.autoattach"));
+		json.put("parcelonly",st.getKV("gphudserver.parcelonly"));
+		return new JSONResponse(json);
 	}
 
 }

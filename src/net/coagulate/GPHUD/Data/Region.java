@@ -355,6 +355,15 @@ public class Region extends TableRow {
 		}
 		return characters;
 	}
+	public Set<User> getAvatarOpenVisits() {
+		Set<User> users = new HashSet<>();
+		Results results = dq("select avatarid from visits where regionid=? and endtime is null", getId());
+		for (ResultsRow r : results) {
+			try { users.add(User.get(r.getInt("avatarid"))); }
+			catch (Exception e) {}
+		}
+		return users;
+	}
 
 	/**
 	 * Return the online/offline status of this region as a string
