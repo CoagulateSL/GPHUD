@@ -3,9 +3,11 @@ package net.coagulate.GPHUD;
 import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.DBException;
 import net.coagulate.Core.Database.MariaDBConnection;
+import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.LogHandler;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Data.Char;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -251,7 +253,20 @@ public class GPHUD {
 	public static void purgeURL(String url) {
 		//System.out.println("Purge URL "+url);
 		try {
-			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null where url=?", url);
+			for (ResultsRow row:getDB().dq("select characterid,regionid from characters where url=?",url)) {
+				try {
+					Integer charid=row.getInt("characterid");
+					Integer regionid=row.getInt("regionid");
+					Char ch=Char.get(charid);
+					State st=State.getNonSpatial(ch);
+					Integer howmany=getDB().dqi(true,"select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
+					if (howmany>0) {
+						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName()+", not reported as region leaver.");
+					}
+					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
+				} catch (Exception e) {}
+			}
+			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?", url);
 		} catch (DBException ex) {
 			GPHUD.getLogger().log(SEVERE, "Failed to purge URL from characters", ex);
 		}
