@@ -735,5 +735,12 @@ public class Char extends TableRow {
 		set("name", newname);
 	}
 
-
+	public void closeVisits(State st) {
+		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
+		d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",st.getCharacter().getId(),st.getRegion().getId());
+	}
+	public void closeURL(State st) {
+		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
+		d("update characters set url=null,urlfirst=null,urllast=null,authnode=null,zoneid=null,regionid=null,lastactive=UNIX_TIMESTAMP(),playedby=null where characterid=?",st.getCharacter().getId());
+	}
 }
