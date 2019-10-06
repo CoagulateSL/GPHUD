@@ -1,5 +1,13 @@
-#include "SL/LSL/Library/JsonTools.lsl"
 #include "Constants.lsl"
+#include "SL/LSL/Library/SetDev.lsl"
+#include "SL/LSL/Library/JsonTools.lsl"
+
+#define COMMS_INCLUDECOOKIE
+#define COMMS_INCLUDECALLBACK
+#define COMMS_INCLUDEDIGEST
+#define COMMS_DEVKEY "***REMOVED***"
+#include "SL/LSL/Library/CommsV3.lsl"
+
 string dialogprefix="";
 string mainmenu="";
 integer channel=0;
@@ -91,13 +99,13 @@ trigger() {
 					if (jsonget("arg"+(string)i+"manual")!="") { sensormanual=MANUAL_AVAILABLE; } else { sensormanual=MANUAL_NONE; }
 					//llOwnerSay((string)sensormanual);
 				}
-				if (!parsed) { llOwnerSay("Legacy interface failure, unknown type "+type); }
+				if (!parsed) { llOwnerSay("User interface failure, unknown type "+type); }
 			}
 		}
 	}
 	
 	if (iscomplete) {
-		llMessageLinked(LINK_THIS,LINK_SEND,json,jsonget("invoke"));
+		httpcommand(jsonget("invoke"),"GPHUD/system");
 		sensormanual=MANUAL_NONE;
 	} 
 }
@@ -122,33 +130,56 @@ calculateZone() {
 	}
 	//llOwnerSay("Location:"+favloc);
 	//llOwnerSay("ourzone:"+ourzone+" newloc:"+favloc);
-	if (favloc!=ourzone) { llMessageLinked(LINK_THIS,LINK_SEND,"{\"zone\":\""+favloc+"\"}","zoning.zonetransition"); ourzone=favloc; }
+	if (favloc!=ourzone) {
+		string temp=json;
+		json="{\"zone\":\""+favloc+"\"}";
+		httpcommand("zoning.zonetransition","GPHUD/system");
+		ourzone=favloc;
+		json=temp;
+	}
 }
-
+process() {
+	//llOwnerSay("Json2:"+jsontwo);
+	string incommand=jsontwoget("incommand");	
+	if (incommand=="registered") { cookie=jsontwoget("cookie"); }
+	if (jsontwoget("zoning")!="") { zoning=llParseStringKeepNulls(jsontwoget("zoning"),["|"],[]); calculateZone();}
+	if (jsontwoget("legacymenu")!="") { mainmenu=jsontwoget("legacymenu"); }
+	if (jsontwoget("url")!="") { comms_url=jsontwoget("url"); }
+	if (jsontwoget("virtual-node")!="") { comms_node=((integer)jsontwoget("virtual-node")); }
+	if (jsontwoget("zone")!="" && jsontwoget("zonemessage")!="") {
+		if (jsontwoget("zone")==ourzone) { llOwnerSay(jsontwoget("zonemessage")); }
+	}
+	if (incommand=="runtemplate") { json=jsontwo; sensormanual=MANUAL_NONE; trigger(); }
+}
+mainMenu() {
+	json=mainmenu;
+	sensormanual=MANUAL_NONE;
+	trigger();
+}
 default {
-	state_entry() {llSetTimerEvent(2);}
+	state_entry() {
+		llSetTimerEvent(2);
+		setDev(FALSE);
+	}
 	timer() {
 		if (llGetListLength(zoning)>0) { calculateZone(); }
 	}
     link_message(integer from,integer num,string message,key id) {
-		if (num==LINK_LEGACY_SET) { mainmenu=message; }
-		if (num==LINK_LEGACY_FIRE && mainmenu!="" ) { 
-			json=mainmenu; sensormanual=MANUAL_NONE;
-			trigger();
-		}
-		if (num==LINK_LEGACY_RUN && message !="") { 
-			json=message; sensormanual=MANUAL_NONE;
-			trigger();
-		}
-		if (num==LINK_DIAGNOSTICS) { llOwnerSay("Legacy: "+(string)llGetFreeMemory()); }
-		if (num==LINK_SET_ZONING) { zoning=llParseStringKeepNulls(message,["|"],[]); calculateZone();}
+		if (num==LINK_SET_STAGE) { BOOTSTAGE=((integer)message); }
 		if (num==LINK_RECEIVE) {
-			string zone=llJsonGetValue(message,["zone"]);
-			string message=llJsonGetValue(message,["zonemessage"]);
-			if (zone==ourzone) { llOwnerSay(message); }
+			//llOwnerSay("Json2:"+message);
+			//llOwnerSay("False:"+((string)id));
+			jsontwo=message; message=""; process(); jsontwo="";
 		}
-		
+		if (num==LINK_DIAGNOSTICS) { llOwnerSay("UI: "+(string)llGetFreeMemory()); }
 	}
+	http_response( key request_id, integer status, list metadata, string body ) {
+		if (status==200) {
+			jsontwo=body; body="";
+			process();
+			jsontwo="";
+		}
+	}	
 	listen(integer rxchannel,string name,key id,string text) {
 		if (id==llGetOwner() && channel==rxchannel) {
 			string type="";
@@ -244,4 +275,17 @@ default {
 		}
 		llDialog(llGetOwner(),"Pick a character's avatar",truncated,channel);
 	}
+	touch_start(integer n)
+	{
+		if (BOOTSTAGE<BOOT_COMPLETE) { return; }
+		if (llDetectedLinkNumber(0)==1) {
+			mainMenu();
+		} else {
+			string name=llGetLinkName(llDetectedLinkNumber(0));
+			if (name=="legacymenu") {
+				mainMenu();
+			}
+		}
+	}
+	
 }

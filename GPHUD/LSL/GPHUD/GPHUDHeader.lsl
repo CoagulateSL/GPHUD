@@ -2,10 +2,6 @@
 #define _INCLUDE_GPHUD_HEADER
 #include "SL/LSL/GPHUD/Constants.lsl"
 
-// shared secret
-#define GPHUD_DEVELOPER_KEY "***REMOVED***"
-
-
 // reason for shutdown
 integer broadcastchannel=0;
 integer message_is_say=FALSE;
@@ -28,17 +24,6 @@ calculatebroadcastchannel() {
 	broadcastchannel=output;
 }
 
-
-httpsend() {
-	//llOwnerSay("Send message:"+message);
-	appendoutbound();
-    json=llJsonSetValue(json,["developerkey"],GPHUD_DEVELOPER_KEY);
-	send("GPHUD/system");
-}
-httpcommand(string command) {
-	json=llJsonSetValue(json,["command"],command);
-    httpsend();
-}
 
 integer gphud_process() {
 	string incommand=jsonget("incommand");

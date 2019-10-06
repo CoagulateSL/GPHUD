@@ -1,5 +1,13 @@
 #include "GPHUDHeader.lsl"
 #include "../Library/JsonTools.lsl"
+
+#define COMMS_INCLUDECOOKIE
+#define COMMS_INCLUDECALLBACK
+#define COMMS_INCLUDEDIGEST
+#define COMMS_DEVKEY "***REMOVED***"
+#include "SL/LSL/Library/CommsV3.lsl"
+#include "SL/LSL/Library/SetDev.lsl"
+
 list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :P)
 // stages are
 // 0 - querying them for an existing HUD
@@ -17,6 +25,9 @@ integer parcelonly=TRUE;
 integer debug=FALSE;
 integer slave=0;
 integer IN_EXPERIENCE=TRUE;
+integer IS_ACTIVE=FALSE;
+
+
 string getSlaveScript() {
     string name="Dispenser Slave";
     if (slave>0) { name+=" "+(string)slave; }
@@ -24,9 +35,8 @@ string getSlaveScript() {
     if (llGetInventoryType("Dispenser Slave "+(string)slave)!=INVENTORY_SCRIPT) { slave=0; }
     return name;
 }
-
-listdel(integer i)
-{
+gphud_hang() { llResetScript(); }
+listdel(integer i) {
 	keys=llDeleteSubList(keys,i,i);
 	stage=llDeleteSubList(stage,i,i);
 	time=llDeleteSubList(time,i,i);
@@ -61,8 +71,7 @@ forcedispense(key who) {
 	stage=llListReplaceList(stage,[0],i,i);
 	time=llListReplaceList(time,[0],i,i);
 }
-adduser(key check,integer when)
-{
+adduser(key check,integer when) {
 	if (llListFindList(keys,[check])!=-1) { return; }
 	if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
 	keys+=[check];
@@ -85,10 +94,20 @@ execute() {
 		if (experiencestatus!="") { llOwnerSay(experiencestatus); }
 	}
 	if ((cycle % 2) == 1) {
+		integer scope=AGENT_LIST_REGION;
+		if (parcelonly) { scope=AGENT_LIST_PARCEL; }
+		list newkeys=llGetAgentList(scope,[]);
+		if ((cycle % 30) == 1) {
+			json="";
+			json+="{\"userlist\":\"";
+			integer i=0;
+			for (i=0;i<llGetListLength(newkeys);i++) {
+				json=json+(string)llList2Key(newkeys,i)+"="+llKey2Name(llList2String(newkeys,i))+",";
+			}	
+			json+="\"}";
+			httpcommand("gphudserver.setregionavatars","GPHUD/system");
+		}
 		if (autoattach) {
-			integer scope=AGENT_LIST_REGION;
-			if (parcelonly) { scope=AGENT_LIST_PARCEL; }
-			list newkeys=llGetAgentList(scope,[]);
 			// purge leavers
 			integer i=0;
 			for (i=llGetListLength(keys)-1;i>=0;i--) {
@@ -143,105 +162,115 @@ execute() {
 	}
 }
 
+process(key id) {
+	if (gphud_process()) { return; }
+	string command=jsonget("incommand");
+	string othercommand=jsonget("command");
+	if (jsonget("url")!="") { comms_url=jsonget("url"); } // llOwnerSay("Dispenser: Inherited URL"); }
+	if (jsonget("virtual-node")!="") { comms_node=((integer)jsonget("virtual-node")); } // llOwnerSay("Dispenser: Inherited Comms Node"); }	
+	if (jsonget("autoattach")!="")
+	{
+		if (jsonget("autoattach")=="true") {
+			if (autoattach==FALSE) { llOwnerSay("Dispenser: Enabling auto attach"); }
+			autoattach=TRUE;
+		} else {
+			if (autoattach==TRUE) { llOwnerSay("Dispenser: Disabling auto attach"); }
+			autoattach=FALSE;
+		}
+	}
+	
+	if (jsonget("parcelonly")!="")
+	{
+		if (jsonget("parcelonly")=="true") {
+			if (parcelonly==FALSE) { llOwnerSay("Dispenser: Enabling parcel only"); }
+			parcelonly=TRUE;
+		} else {
+			if (parcelonly==TRUE) { llOwnerSay("Dispenser: Disabling parcel only"); }
+			parcelonly=FALSE;
+		}
+	}
+}
+
+
+integer processafter=-1;
 default {
 	state_entry() {
-		llMessageLinked(LINK_THIS,LINK_GET_DISPENSER_CONFIG,"","");
-		llSetTimerEvent(60.0);
-	}
-	on_rez(integer n) {
-		llResetScript();
-	}
-	timer() {
-		llMessageLinked(LINK_THIS,LINK_GET_DISPENSER_CONFIG,"","");
-	}	
-	link_message(integer from,integer num,string message,key id) {
-		if (num==LINK_DISPENSER_CONFIG) {
-			autoattach=(integer)message;
-			parcelonly=(integer)((string)id);
-			state prepopulate;
-		}
-		if (num==LINK_LEGACY_PACKAGE) { llOwnerSay("Dispenser resetting into standby"); llResetScript(); }
-		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser (STANDBY) free memory: "+(string)llGetFreeMemory()); }
-
-		if (num==LINK_GO) { llMessageLinked(LINK_THIS,LINK_GET_DISPENSER_CONFIG,"",""); }
-	}	
-}
-state prepopulate{
-	state_entry() {
-		llOwnerSay("GPHUD Dispenser module initialising, collecting existing data...");
-		calculatebroadcastchannel();
-		llListen(broadcastchannel,"",NULL_KEY,"");
-		llListen(broadcastchannel+1,"",NULL_KEY,"");
-		llSetTimerEvent(30.0);
-		llRegionSay(broadcastchannel,"GOTHUD");
-	}
-	timer() {
-	llOwnerSay("Dispenser pre-population complete, found "+(string)llGetListLength(stage)+" existing");
-		state go;
-	}
-	on_rez(integer n) {
-		llResetScript();
-	}	
-	listen(integer channel,string name,key id,string message) {
-		if (channel==broadcastchannel) {
-			if (message=="GOTHUD") {
-				adduser(llGetOwnerKey(id),-1);
-			}
-		}
-	}
-
-
-
-}
-state go{
-	state_entry() {
-		string auto="DISABLED";
-		string parcel="off";
-		if (autoattach) { auto="on"; }
-		if (parcelonly) { parcel="ENABLED"; }
-		llOwnerSay("GPHUD Dispenser module initialising, autoattach is "+auto+" and parcelonly is "+parcel);
 		llOwnerSay(validateExperience());
-		calculatebroadcastchannel();
-		llListen(broadcastchannel,"",NULL_KEY,"");
-		llListen(broadcastchannel+1,"",NULL_KEY,"");
-		execute();
-		llSetTimerEvent(2.0);
+		llOwnerSay("Dispenser: Awaiting Server Boot Complete");
 	}
-	on_rez(integer n) {
-		llResetScript();
-	}	
-	listen(integer channel,string name,key id,string message) {
-		if (channel==broadcastchannel+1) {
-			integer sec=(integer)message;
-			integer i=llListFindList(secret,[sec]);
-			if (i!=-1) {
-				if (debug) { llOwnerSay("Responded to attachment query for "+llKey2Name(llList2Key(keys,i))); }
-				llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i));
-				stage=llListReplaceList(stage,[2],i,i);
-				time=llListReplaceList(time,[llGetUnixTime()+180],i,i);
-			}
-		}
-		if (channel==broadcastchannel) {
-			if (message=="GOTHUD") {
-				key k=llGetOwnerKey(id);
-				if (debug) { llOwnerSay("Dispenser:Has Hud "+llKey2Name(k)); }
-				integer n=llListFindList(keys,[k]);
-				if (n!=-1) {
-					stage=llListReplaceList(stage,[-1],n,n);
+	link_message(integer from,integer num,string message,key id) {
+		if (num==LINK_SET_STAGE) {
+			integer NEWBOOTSTAGE=((integer)message);
+			if (NEWBOOTSTAGE!=BOOTSTAGE) {
+				BOOTSTAGE=NEWBOOTSTAGE;
+				if (BOOTSTAGE==BOOT_COMPLETE) {
+					setDev(FALSE);
+					// our startup!
+					llOwnerSay("Dispenser: Server Booted ; searching existing HUDs");
+					llSetTimerEvent(2.0);
+					processafter=llGetUnixTime()+30;
+					calculatebroadcastchannel();
+					llListen(broadcastchannel,"",NULL_KEY,"");
+					llListen(broadcastchannel+1,"",NULL_KEY,"");
+					llRegionSay(broadcastchannel,"GOTHUD");
 				}
 			}
-			json=message;
-			if (jsonget("forcedispense")!="") {
-				forcedispense((key)jsonget("forcedispense"));
-			}
 		}
-	}
-	timer() {
-		execute();
-	}
-    link_message(integer from,integer num,string message,key id) {
-		if (num==LINK_LEGACY_PACKAGE) { llOwnerSay("Dispenser resetting into standby"); llResetScript(); }
 		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser free memory: "+(string)llGetFreeMemory()+" tracked elements "+(string)llGetListLength(keys)); }
 		if (num==LINK_DISPENSE) { forcedispense(id); }
 	}	
+		
+	timer() {
+		if (!IS_ACTIVE && llGetUnixTime()>processafter) { llOwnerSay("Dispenser: Startup complete"); IS_ACTIVE=TRUE; }
+		if (IS_ACTIVE) {execute(); }
+	}
+	on_rez(integer n) { llResetScript(); }
+	listen(integer channel,string name,key id,string message) {
+		if (!IS_ACTIVE) {
+			if (channel==broadcastchannel) {
+				if (message=="GOTHUD") {
+					adduser(llGetOwnerKey(id),-1);
+				}
+			}
+		}
+		else  // else ACTIVE is TRUE
+		{
+			if (channel==broadcastchannel+1) {
+				integer sec=(integer)message;
+				integer i=llListFindList(secret,[sec]);
+				if (i!=-1) {
+					if (debug) { llOwnerSay("Responded to attachment query for "+llKey2Name(llList2Key(keys,i))); }
+					llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i));
+					stage=llListReplaceList(stage,[2],i,i);
+					time=llListReplaceList(time,[llGetUnixTime()+180],i,i);
+				}
+			}
+			if (channel==broadcastchannel) {
+				if (message=="GOTHUD") {
+					key k=llGetOwnerKey(id);
+					if (debug) { llOwnerSay("Dispenser:Has Hud "+llKey2Name(k)); }
+					integer n=llListFindList(keys,[k]);
+					if (n!=-1) {
+						stage=llListReplaceList(stage,[-1],n,n);
+					}
+				}
+				json=message;
+				if (jsonget("forcedispense")!="") {
+					forcedispense((key)jsonget("forcedispense"));
+				}
+			}
+		}
+
+	}
+	http_response( key request_id, integer status, list metadata, string body ) {
+		#ifdef DEBUG
+		llOwnerSay("REPLY:"+body);
+		#endif
+		if (status==200) {
+			json=body;
+			process(NULL_KEY);
+		}
+	}	
 }
+
+

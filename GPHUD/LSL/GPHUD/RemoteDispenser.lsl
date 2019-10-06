@@ -1,5 +1,4 @@
 #include "SL/LSL/GPHUD/GPHUDHeader.lsl"
-#include "SL/LSL/Comms/API.lsl"
 #include "SL/LSL/Library/JsonTools.lsl"
 default {
 	state_entry() {
