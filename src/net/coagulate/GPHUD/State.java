@@ -619,6 +619,10 @@ public class State extends DumpableState {
 			ue.initCause(e);
 			throw ue;
 		}
+		if (kv.type()== COLOR) {
+			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }
+			while (out.endsWith(">>")) { out=out.replaceFirst(">>",">"); }
+		}
 		if (debug) { System.out.println("POST TEMPLATER : " + kvname + " = " + out); }
 		return out;
 	}
