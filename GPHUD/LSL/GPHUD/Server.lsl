@@ -53,7 +53,7 @@ integer process(key id) {
 		}
 	}
 	if (command=="servergive") { llGiveInventory((key)(jsonget("giveto")),jsonget("itemname")); }
-	if (jsonget("instancestatus")!="") { llSetText(jsonget("instancestatus")+" "+(string)llGetFreeMemory()+"b\n \n \n \n \n",(vector)jsonget("statuscolor"),1); }
+	if (jsonget("instancestatus")!="") { llSetText(jsonget("instancestatus")+" V"+VERSION+"\n \n \n \n \n",(vector)jsonget("statuscolor"),1); }
 	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Region Server"); }
 	if (jsonget("setlogo")!="") { setlogo((key)jsonget("setlogo")); }
 	if (jsonget("rebootserver")!="") { llResetScript(); }
