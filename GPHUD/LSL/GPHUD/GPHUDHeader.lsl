@@ -37,7 +37,7 @@ integer gphud_process() {
 		return TRUE;
 	}
 	if (jsonget("error")!="") {
-		typedSay("Server reported error with request:\n"+jsonget("error"));
+		typedSay(jsonget("error"));
 		return TRUE;
 	}
 	if (jsonget("terminate")!="") {
