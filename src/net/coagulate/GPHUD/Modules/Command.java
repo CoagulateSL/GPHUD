@@ -78,6 +78,7 @@ public abstract class Command {
 	public abstract String getName();
 
 	public Response run(State st, String[] args) throws SystemException, UserException {
+		final boolean debug=false;
 		List<Object> typedargs = new ArrayList<>();
 		int arg = 0;
 		typedargs.add(st);
@@ -88,6 +89,7 @@ public abstract class Command {
 			ArgumentType type = argument.type();
 			String v = args[arg];
 			arg++;
+			if (debug) { System.out.println("Command "+getFullName()+" Arg "+arg+" has v "+v+" for argument name "+argument.getName()+" and type "+type); }
 			if ((v == null || "".equals(v)) && type != ArgumentType.BOOLEAN) {
 				typedargs.add(null);
 			} else {
@@ -265,12 +267,13 @@ public abstract class Command {
 								User a = User.findMandatory(v);
 								targchar = Char.getActive(a, st.getInstance());
 							} catch (NoDataException e) {
-								throw new UserException("Unable to find character or avatar named '" + v + "'");
+								return new ErrorResponse("Unable to find character of avatar named '" + v + "'");
 							}
 						} else {
 							targchar = Char.resolve(st, v);
 						}
 						if (targchar != null) { typedargs.add(targchar); }
+						else {return new ErrorResponse("Unable to find character named '" + v + "'");}
 						break;
 					case REGION:
 						typedargs.add(assertNotNull(Region.find(v), v, "region name"));
@@ -283,7 +286,9 @@ public abstract class Command {
 						break;
 					case AVATAR:
 					case AVATAR_NEAR:
-						typedargs.add(assertNotNull(User.findMandatory(v), v, "avatar"));
+						User user = User.findOptional(v);
+						if (user==null) { return new ErrorResponse("Unable to find a known avatar named '"+v+"'"); }
+						typedargs.add(assertNotNull(user, v, "avatar"));
 						break;
 					default:
 						throw new SystemException("Unhandled ENUM TYPE in executor:" + type);
@@ -302,7 +307,7 @@ public abstract class Command {
 	 * @throws SystemException
 	 */
 	Response run(State st, Object[] args) throws SystemException {
-		boolean debug = false;
+		final boolean debug = false;
 		try {
 			// check permission
 			if (!requiresPermission().isEmpty() && !st.hasPermission(requiresPermission())) {
@@ -338,6 +343,13 @@ public abstract class Command {
 			//check arguments
 			int i = 0;
 			if (args.length != getInvokingArgumentCount() + 1) {
+				if (debug) {
+					System.out.println("Args.length is " + args.length);
+					System.out.println("gIAC() is " + getInvokingArgumentCount());
+					for (int ii = 0; ii < args.length; ii++) {
+						System.out.println("Arg " + ii + " is " + args[ii]);
+					}
+				}
 				return new ErrorResponse("Incorrect number of arguments, " + getFullName() + " aka " + getMethod().getName() + " requires " + (getInvokingArgumentCount() + 1) + " and we got " + args.length);
 			}
 			String suspiciousname = "";
@@ -510,6 +522,7 @@ public abstract class Command {
 				case ATTRIBUTE:
 				case ATTRIBUTE_WRITABLE:
 				case CHARACTER:
+				case AVATAR:
 				case ZONE:
 					json.put("arg" + arg + "type", "TEXTBOX");
 					break;
