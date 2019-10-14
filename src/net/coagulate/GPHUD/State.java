@@ -736,11 +736,11 @@ public class State extends DumpableState {
 			if (!ret.isEmpty()) { ret += ", "; }
 			ret += "Zone:" + zone.getName();
 		}
-		for (CharacterGroup c : character.getGroups()) {
-			if (!ret.isEmpty()) { ret += ", "; }
-			ret += "Group:" + c.getName();
-		}
 		if (character != null) {
+			for (CharacterGroup c : character.getGroups()) {
+				if (!ret.isEmpty()) { ret += ", "; }
+				ret += "Group:" + c.getName();
+			}
 			if (!ret.isEmpty()) { ret += ", "; }
 			ret += "Char:" + character.getName();
 		}
