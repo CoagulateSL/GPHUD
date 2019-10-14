@@ -163,7 +163,6 @@ execute() {
 }
 
 process(key id) {
-	if (gphud_process()) { return; }
 	string command=jsonget("incommand");
 	string othercommand=jsonget("command");
 	if (jsonget("url")!="") { comms_url=jsonget("url"); } // llOwnerSay("Dispenser: Inherited URL"); }
