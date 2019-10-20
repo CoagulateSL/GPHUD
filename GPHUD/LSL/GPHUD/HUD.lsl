@@ -233,6 +233,7 @@ default {
 
 	changed(integer change)
 	{
+		if (change & CHANGED_OWNER) { llResetScript(); }
 		if (change & (CHANGED_REGION))
 		{
 			SHUTDOWN=TRUE; dodetach();
