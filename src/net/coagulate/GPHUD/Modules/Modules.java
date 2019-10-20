@@ -142,6 +142,7 @@ public abstract class Modules {
 		URL relaxed = null;
 		for (Module mod : modules.values()) {
 			URL proposed = mod.getURL(st, url);
+			if (debug) { System.out.println("Module "+mod.getName()+" proposed "+(proposed==null?"null":proposed.getFullName())); }
 			if (proposed != null) {
 				if (proposed.url().endsWith("*")) {
 					if (relaxed != null) {

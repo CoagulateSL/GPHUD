@@ -65,7 +65,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public URL getURL(State st, String url) throws UserException, SystemException {
-		final boolean debug=true;
+		final boolean debug=false;
 		URL liberalmatch = null;
 		for (URL m : contents) {
 			if (debug) { System.out.println("Comparing "+m.url().toLowerCase()+" to "+url.toLowerCase()); }
@@ -75,7 +75,7 @@ public class ModuleAnnotation extends Module {
 			if (m.url().endsWith("*")) {
 				String compareto = m.url().toLowerCase();
 				compareto = compareto.substring(0, compareto.length() - 1);
-				if (url.startsWith(compareto.toLowerCase())) {
+				if (url.toLowerCase().startsWith(compareto)) {
 					if (liberalmatch != null) {
 						if (liberalmatch.url().length() == m.url().length()) {
 							throw new SystemException("Multiple liberal matches for " + url + " - " + m.getFullName() + " conflicts with " + liberalmatch.getFullName());
