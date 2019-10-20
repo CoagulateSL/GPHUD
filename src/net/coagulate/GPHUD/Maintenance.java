@@ -55,11 +55,21 @@ public class Maintenance extends Thread {
 			for (ResultsRow r : results) {
 				//System.out.println("About to background for a callback to character:"+r.getString("name"));
 				JSONObject ping = new JSONObject().put("incommand", "ping");
-				Transmission t = new Transmission((Char) null, ping, r.getString("url"));
+				Transmission t = new PingTransmission(Char.get(r.getInt("characterid")), ping, r.getString("url"));
 				t.start();
 				try { Thread.sleep(1000); } catch (InterruptedException e) {}
 			}
 		} //else { GPHUD.getLogger().log(FINE,"Pinging out to no character URLs"); }
+	}
+
+	public static class PingTransmission extends Transmission {
+		public PingTransmission(Char c,JSONObject json,String url) {
+			super(c,json,url);
+		}
+		public void run() {
+			super.run();
+			if (!failed()) { character.pinged(); }
+		}
 	}
 
 	public static void refreshRegionURLs() {
