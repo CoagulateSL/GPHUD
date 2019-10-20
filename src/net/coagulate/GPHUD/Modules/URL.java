@@ -29,6 +29,8 @@ public abstract class URL {
 
 	public abstract void run(State st, SafeMap values);
 
+	public abstract Module getModule();
+
 	/**
 	 * Defines an exposed command.
 	 * That is, something the user can call through web, SL or other user interfaces.

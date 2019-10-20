@@ -90,6 +90,11 @@ public class URLAnnotation extends URL {
 		}
 	}
 
+	@Override
+	public Module getModule() {
+		return module;
+	}
+
 	public String getMethodName() {
 		return method.getDeclaringClass().getName() + "." + method.getName() + "()";
 	}

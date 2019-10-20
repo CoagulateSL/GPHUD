@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
 import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.GPHUD.Modules.Module;
+import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
@@ -52,6 +54,11 @@ public class ConfigurationURL extends URL {
 	@Override
 	public void run(State st, SafeMap values) {
 		throw new SystemException("Stub url can not be run");
+	}
+
+	@Override
+	public Module getModule() {
+		return Modules.get(null,"Configuration");
 	}
 
 	@Override

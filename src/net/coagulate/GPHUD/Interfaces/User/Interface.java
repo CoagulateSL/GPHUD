@@ -368,6 +368,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				if (interceptable(st.getDebasedNoQueryURL())) { st.setURL("/switch/instance"); }
 			}
 		}
+		if (!content.getModule().isEnabled(st)) { f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString())); }
 		if (f == null) {
 			f = new Form();
 			st.form = f;
