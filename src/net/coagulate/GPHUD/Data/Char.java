@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
@@ -742,5 +743,10 @@ public class Char extends TableRow {
 	public void closeURL(State st) {
 		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
 		d("update characters set url=null,urlfirst=null,urllast=null,authnode=null,zoneid=null,regionid=null,lastactive=UNIX_TIMESTAMP(),playedby=null where characterid=?",st.getCharacter().getId());
+	}
+
+	/** Called when a ping to the URL completes, update the timer */
+	public void pinged() {
+		d("update characters set urllast=? where characterid=?", UnixTime.getUnixTime(),getId());
 	}
 }
