@@ -65,13 +65,15 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public URL getURL(State st, String url) throws UserException, SystemException {
+		final boolean debug=true;
 		URL liberalmatch = null;
 		for (URL m : contents) {
-			if (m.url().equals(url.toLowerCase())) {
+			if (debug) { System.out.println("Comparing "+m.url().toLowerCase()+" to "+url.toLowerCase()); }
+			if (m.url().toLowerCase().equals(url.toLowerCase())) {
 				return m;
 			}
 			if (m.url().endsWith("*")) {
-				String compareto = m.url();
+				String compareto = m.url().toLowerCase();
 				compareto = compareto.substring(0, compareto.length() - 1);
 				if (url.startsWith(compareto.toLowerCase())) {
 					if (liberalmatch != null) {
@@ -178,6 +180,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public void registerContent(URL m) throws UserException, SystemException {
+		//System.out.println("Module "+name+" gets URL "+m.url()+" mapping to "+m.getMethodName());
 		contents.add(m);
 	}
 
