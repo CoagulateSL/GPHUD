@@ -135,29 +135,29 @@ public abstract class Modules {
 	 * @throws SystemException if multiple URLs match (internal error)
 	 */
 	public static URL getURL(State st, String url, boolean exception) throws UserException, SystemException {
-		if (url.startsWith("/GPHUD/")) { url = url.substring(6); }
+		final boolean debug=false;
+		if (debug) { System.out.println("getURL in state "+st); }
+		if (url.toLowerCase().startsWith("/gphud/")) { url = url.substring(6); }
 		URL literal = null;
 		URL relaxed = null;
 		for (Module mod : modules.values()) {
-			if (mod.isEnabled(st)) {
-				URL proposed = mod.getURL(st, url);
-				if (proposed != null) {
-					if (proposed.url().endsWith("*")) {
-						if (relaxed != null) {
-							// break if matching prefix length, otherwise...
-							if (relaxed.url().length() == proposed.url().length()) {
-								throw new SystemException("Multiple relaxed matches between " + proposed.url() + " and " + relaxed.url());
-							}
-							if (relaxed.url().length() < proposed.url().length()) {
-								relaxed = proposed;
-							}  // pick longer prefix
-						} else { relaxed = proposed; }
-					} else {
-						if (literal != null) {
-							throw new SystemException("Multiple literal matches between " + proposed.url() + " and " + literal.url());
+			URL proposed = mod.getURL(st, url);
+			if (proposed != null) {
+				if (proposed.url().endsWith("*")) {
+					if (relaxed != null) {
+						// break if matching prefix length, otherwise...
+						if (relaxed.url().length() == proposed.url().length()) {
+							throw new SystemException("Multiple relaxed matches between " + proposed.url() + " and " + relaxed.url());
 						}
-						literal = proposed;
+						if (relaxed.url().length() < proposed.url().length()) {
+							relaxed = proposed;
+						}  // pick longer prefix
+					} else { relaxed = proposed; }
+				} else {
+					if (literal != null) {
+						throw new SystemException("Multiple literal matches between " + proposed.url() + " and " + literal.url());
 					}
+					literal = proposed;
 				}
 			}
 		}
