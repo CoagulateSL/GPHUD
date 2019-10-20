@@ -24,7 +24,7 @@ public class Transmission extends Thread {
 	JSONObject json = null;
 	JSONObject jsonresponse = null;
 	int delay = 0;
-	Char character = null;
+	protected Char character = null;
 	Region region = null;
 	boolean succeeded=false;
 	public boolean failed() { return !succeeded; }
@@ -33,6 +33,7 @@ public class Transmission extends Thread {
 			System.out.println("Transmission to character " + character + " on url " + oldurl + " with json " + json.toString());
 			Thread.dumpStack();
 		}
+		this.character=character;
 		this.url = oldurl;
 		this.json = json;
 	}
