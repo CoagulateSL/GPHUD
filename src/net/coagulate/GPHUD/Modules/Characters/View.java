@@ -24,6 +24,7 @@ import net.coagulate.GPHUD.Modules.Configuration.GenericConfiguration;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.Experience.GenericXPPool;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Notes.ViewNotes;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
@@ -161,6 +162,9 @@ public abstract class View {
 			kvtable.add(a.getCharacterValue(simulated));
 			kvtable.add(a.getCharacterValueDescription(simulated));
 			kvtable.add(content);
+		}
+		if (st.hasModule("notes")) {
+			ViewNotes.viewNotes(st,c.getOwner(), c,true );
 		}
 		if (brief) { return; }
 		f.add(new TextSubHeader("KV Configuration"));
