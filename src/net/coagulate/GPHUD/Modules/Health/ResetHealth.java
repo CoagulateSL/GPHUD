@@ -32,13 +32,13 @@ public class ResetHealth {
 	public static Response healRollChance(State st,
 	                                      @Argument.Arguments(description = "Target to heal", type = Argument.ArgumentType.CHARACTER_NEAR)
 			                                      Char target,
-	                                      @Argument.Arguments(description = "Number of dice to roll for chance to heal", mandatory = true, type = Argument.ArgumentType.INTEGER)
+	                                      @Argument.Arguments(description = "Number of dice to roll for chance to heal", type = Argument.ArgumentType.INTEGER)
 			                                      Integer chancedice,
-	                                      @Argument.Arguments(description = "Sides on dice to roll for change to heal", mandatory = true, type = Argument.ArgumentType.INTEGER)
+	                                      @Argument.Arguments(description = "Sides on dice to roll for change to heal", type = Argument.ArgumentType.INTEGER)
 			                                      Integer chancesides,
-	                                      @Argument.Arguments(description = "Bias to add to ammount to chance to heal", mandatory = true, type = Argument.ArgumentType.INTEGER)
+	                                      @Argument.Arguments(description = "Bias to add to ammount to chance to heal", type = Argument.ArgumentType.INTEGER)
 			                                      Integer chancebias,
-	                                      @Argument.Arguments(description="Score to beat to succeed at healing",mandatory=true,type= Argument.ArgumentType.INTEGER)
+	                                      @Argument.Arguments(description="Score to beat to succeed at healing", type= Argument.ArgumentType.INTEGER)
 	                                              Integer chancethreshold,
 	                                      @Argument.Arguments(description = "Number of dice to roll for ammount healed", mandatory = false, type = Argument.ArgumentType.INTEGER)
 			                                      Integer healdice,

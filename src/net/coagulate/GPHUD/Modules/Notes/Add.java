@@ -13,11 +13,11 @@ public class Add {
 
 	@Command.Commands(description = "Adds a note to a character",context = Command.Context.AVATAR,requiresPermission = "Notes.Add")
 	public static Response character(State st,
-	                                 @Argument.Arguments(description="Character to log note against",type = Argument.ArgumentType.CHARACTER,mandatory=true)
+	                                 @Argument.Arguments(description="Character to log note against",type = Argument.ArgumentType.CHARACTER)
 		                                    Char character,
-	                                 @Argument.Arguments(description = "Share note with the user",type = Argument.ArgumentType.BOOLEAN,mandatory = true)
+	                                 @Argument.Arguments(description = "Share note with the user",type = Argument.ArgumentType.BOOLEAN)
 	                                        Boolean shared,
-	                                 @Argument.Arguments(description="Note to record",type=Argument.ArgumentType.TEXT_ONELINE,max=4096,mandatory=true)
+	                                 @Argument.Arguments(description="Note to record",type=Argument.ArgumentType.TEXT_ONELINE,max=4096)
 	                                        String note)
 	{
 		AdminNotes.add(st.getInstance(),st.getAvatar(),character.getOwner(),character,note,!shared);
@@ -26,11 +26,11 @@ public class Add {
 
 	@Command.Commands(description = "Adds a note to an avatar",context = Command.Context.AVATAR,requiresPermission = "Notes.Add")
 	public static Response avatar(State st,
-	                                 @Argument.Arguments(description="Avatar to log note against",type = Argument.ArgumentType.AVATAR,mandatory=true)
+	                                 @Argument.Arguments(description="Avatar to log note against",type = Argument.ArgumentType.AVATAR)
 			                                 User target,
-	                                 @Argument.Arguments(description = "Share note with the user",type = Argument.ArgumentType.BOOLEAN,mandatory = true)
+	                                 @Argument.Arguments(description = "Share note with the user",type = Argument.ArgumentType.BOOLEAN)
 			                                 Boolean shared,
-	                                 @Argument.Arguments(description="Note to record",type=Argument.ArgumentType.TEXT_ONELINE,max=4096,mandatory=true)
+	                                 @Argument.Arguments(description="Note to record",type=Argument.ArgumentType.TEXT_ONELINE,max=4096)
 			                                 String note)
 	{
 		AdminNotes.add(st.getInstance(),st.getAvatar(),target,null,note,!shared);
