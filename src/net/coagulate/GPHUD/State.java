@@ -163,7 +163,7 @@ public class State extends DumpableState {
 		if (debug) { System.out.println("getAttribute keyword is " + keyword); }
 		for (Attribute attr : getAttributes()) {
 			if (debug) { System.out.println("getAttribute checking attr " + attr + " of type " + attr.getType()); }
-			if (attr.getType().equals("GROUP")) {
+			if (attr.getType()== Attribute.ATTRIBUTETYPE.GROUP) {
 				String type = attr.getSubType();
 				if (debug) { System.out.println("getAttribute compare to " + type); }
 				if (type.equals(keyword)) {
