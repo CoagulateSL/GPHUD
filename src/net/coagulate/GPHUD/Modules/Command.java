@@ -315,25 +315,25 @@ public abstract class Command {
 			}
 			// check required interface
 			boolean ok = false;
-			if (st.handler.equals(net.coagulate.GPHUD.Interfaces.HUD.Interface.class)) {
+			if (st.handler instanceof net.coagulate.GPHUD.Interfaces.HUD.Interface) {
 				if (!this.permitHUDWeb()) {
 					return new ErrorResponse("This command can not be accessed via the HUD Web interface");
 				}
 				ok = true;
 			}
-			if (st.handler.equals(net.coagulate.GPHUD.Interfaces.User.Interface.class)) {
+			if (st.handler instanceof net.coagulate.GPHUD.Interfaces.User.Interface) {
 				if (!this.permitUserWeb()) {
 					return new ErrorResponse("This command can not be accessed via the Web interface");
 				}
 				ok = true;
 			}
-			if (st.handler.equals(net.coagulate.GPHUD.Interfaces.System.Interface.class)) {
+			if (st.handler instanceof net.coagulate.GPHUD.Interfaces.System.Interface) {
 				if (!this.permitJSON()) {
 					return new ErrorResponse("This command can not be accessed via the LSL System interface");
 				}
 				ok = true;
 			}
-			if (st.handler.equals(net.coagulate.GPHUD.Interfaces.HUD.Interface.class)) {
+			if (st.handler instanceof net.coagulate.GPHUD.Interfaces.HUD.Interface) {
 				if (!this.permitHUDWeb()) {
 					return new ErrorResponse("This command can not be accessed via the HUD Web interface");
 				}
