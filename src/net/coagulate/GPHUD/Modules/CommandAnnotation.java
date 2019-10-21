@@ -58,7 +58,7 @@ public class CommandAnnotation extends Command {
 		if (method.getParameterCount() == 0) {
 			throw new SystemException("Method " + getFullName() + "() takes zero arguments but must take 'State' as its first argument");
 		}
-		if (method.getParameters()[0].getClass().equals(State.class)) {
+		if ((method.getParameters()[0]).getClass().getCanonicalName().equalsIgnoreCase(State.class.getCanonicalName())) {
 			throw new SystemException("Method " + getFullName() + " must take State as its first argument");
 		}
 		for (int i = 1; i < method.getParameters().length; i++) {
