@@ -488,6 +488,10 @@ public class Region extends TableRow {
 	}
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
+
+	public Integer getOpenVisitCount() {
+		return dqi(true, "select count(*) from visits where endtime is null and regionid=?", getId());
+	}
     
     /*protected void delete() {
         d("delete from regions where regionid=?",getId());

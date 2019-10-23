@@ -221,7 +221,7 @@ public class Instance extends TableRow {
 		//newstatus+=new Date().toString()+" ";
 		for (Region r : getRegions()) {
 			newstatus += "[" + r.getName() + "#";
-			Integer visitors = dqi(true, "select count(*) from visits where endtime is null and regionid=?", r.getId());
+			Integer visitors = r.getOpenVisitCount();
 			String url = dqs(true, "select url from regions where regionid=?", r.getId());
 			Integer urllast = dqi(true, "select urllast from regions where regionid=?", r.getId());
 			if (urllast == null) { urllast = getUnixTime(); }
