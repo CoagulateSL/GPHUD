@@ -84,9 +84,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	 * URLs we do not redirect to instance/char selection.  Like logout.
 	 */
 	private boolean interceptable(String url) {
-		//System.out.println(url);
 		if ("/logout".equalsIgnoreCase(url)) { return false; }
 		if ("/Help".equalsIgnoreCase(url)) { return false; }
+		if (url!=null && url.toLowerCase().startsWith("/published/")) { return false; }
 		return true;
 	}
 
@@ -141,45 +141,53 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// This is basically the page template, the supporting structure that surrounds a title/menu/body
 		String body = renderBodyProtected(st);
 		String p = "";
+		final boolean external=st.getDebasedNoQueryURL().toLowerCase().startsWith("/published/");
 		p += "<html><head><title>";
 		p += "GPHUD";
 		p += "</title>";
-		p += styleSheet();
-		p += "<link rel=\"shortcut icon\" href=\"/resources/icon-gphud.png\">";
+		if (!external) {
+			p += styleSheet();
+			p += "<link rel=\"shortcut icon\" href=\"/resources/icon-gphud.png\">";
+		}
 		p += "</head><body>";
-		p += "<table height=100% valign=top><tr><td colspan=3 align=center width=100%>";
-		p += "<table style=\"margin: 0px; border:0px;\" width=100%><tr><td width=33% align=left>";
-		p += "<h1 style=\"margin: 0px;\"><img src=\"/resources/banner-gphud.png\"></h1>";
-		p += "</td><td width=34% align=center>";
-		String middletarget = "/resources/banner-gphud.png";
-		if (st.getInstanceNullable() != null) {
-			middletarget = st.getInstance().getLogoURL(st);
-		}
-		p += "<h1 style=\"margin: 0px;\"><img src=\"" + middletarget + "\" height=100px></h1>";
-		p += "</td><td width=33% align=right>";
-		p += "<h1 style=\"margin: 0px;\"><a href=\"/\">" + SL.getBannerHREF() + "</a></h1>";
-		p += "</td></tr></table>";
-		//p+="<i>"+GPHUD.environment()+"</i>";
-		p += "<hr>";
-		p += "</td></tr>";
-		p += "<tr height=100% valign=top>";
-		p += "<td width=150px valign=top height=100%>";
-		// calculate body first, since this sets up auth etc which the side menu will want to use to figure things out.
+		if (!external) {
+			p += "<table height=100% valign=top><tr><td colspan=3 align=center width=100%>";
+			p += "<table style=\"margin: 0px; border:0px;\" width=100%><tr><td width=33% align=left>";
+			p += "<h1 style=\"margin: 0px;\"><img src=\"/resources/banner-gphud.png\"></h1>";
+			p += "</td><td width=34% align=center>";
+			String middletarget = "/resources/banner-gphud.png";
+			if (st.getInstanceNullable() != null) {
+				middletarget = st.getInstance().getLogoURL(st);
+			}
+			p += "<h1 style=\"margin: 0px;\"><img src=\"" + middletarget + "\" height=100px></h1>";
+			p += "</td><td width=33% align=right>";
+			p += "<h1 style=\"margin: 0px;\"><a href=\"/\">" + SL.getBannerHREF() + "</a></h1>";
+			p += "</td></tr></table>";
+			//p+="<i>"+GPHUD.environment()+"</i>";
+			p += "<hr>";
+			p += "</td></tr>";
+			p += "<tr height=100% valign=top>";
+			p += "<td width=150px valign=top height=100%>";
+			// calculate body first, since this sets up auth etc which the side menu will want to use to figure things out.
 
-		try {
-			p += renderSideMenu(st);
-		} catch (Exception e) {
-			// Exception in side menu code
-			p += "<b><i>Crashed</i></b>";
-			SL.report("GPHUD Side Menu crashed", e, st);
-			st.logger().log(WARNING, "Side menu implementation crashed", e);
+			try {
+				p += renderSideMenu(st);
+			} catch (Exception e) {
+				// Exception in side menu code
+				p += "<b><i>Crashed</i></b>";
+				SL.report("GPHUD Side Menu crashed", e, st);
+				st.logger().log(WARNING, "Side menu implementation crashed", e);
+			}
+			p += "</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td width=100% valign=top height=100%>";
+			p += messages(st);
 		}
-		p += "</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td width=100% valign=top height=100%>";
-		p += messages(st);
 		p += body;
-		p += "</td>";
-		p += "</tr>";
-		p += "</table></body></html>";
+		if (!external) {
+			p += "</td>";
+			p += "</tr>";
+			p += "</table>";
+		}
+		p += "</body></html>";
 		return p;
 	}
 
@@ -368,8 +376,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				if (interceptable(st.getDebasedNoQueryURL())) { st.setURL("/switch/instance"); }
 			}
 		}
-		if (f==null && st.getInstanceNullable()==null) { content=Modules.getURL(st,"/GPHUD/switch/instance"); } //f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is inaccessible as no instance is currently selected")); }
-		if (f==null && !content.getModule().isEnabled(st)) { f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString())); }
+		content = Modules.getURL(st, st.getDebasedNoQueryURL());
+		System.out.println("Post auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
+		if (f==null && st.getInstanceNullable()==null && interceptable(st.getDebasedNoQueryURL())) { content=Modules.getURL(st,"/GPHUD/switch/instance"); } //f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is inaccessible as no instance is currently selected")); }
+		if (f==null && st.getInstanceNullable()!=null && !content.getModule().isEnabled(st)) { f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString())); }
+		System.out.println("Post post-auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
 		if (f == null) {
 			f = new Form();
 			st.form = f;
