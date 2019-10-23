@@ -1,4 +1,4 @@
-@ModuleDefinition(defaultDisable = true, description = "Events manager created timed/locationed events, optionally awarding events xp", forceConfig = true, requires = "Zoning", implementation = "net.coagulate.GPHUD.Modules.Events.EventsModule")
+@ModuleDefinition(defaultDisable = true, description = "Events manager creates timed/locationed events, optionally awarding events xp", forceConfig = true, requires = "Zoning", implementation = "net.coagulate.GPHUD.Modules.Events.EventsModule")
 @Permissions(name = "Create", description = "Permission to create a brand new event")
 @Permissions(name = "Locations", description = "Ability to add or remove locations from an event")
 @Permissions(name = "Schedule", description = "Ability to update the schedule for an event")
