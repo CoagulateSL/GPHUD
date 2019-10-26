@@ -377,10 +377,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			}
 		}
 		content = Modules.getURL(st, st.getDebasedNoQueryURL());
-		System.out.println("Post auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
+		//System.out.println("Post auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
 		if (f==null && st.getInstanceNullable()==null && interceptable(st.getDebasedNoQueryURL())) { content=Modules.getURL(st,"/GPHUD/switch/instance"); } //f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is inaccessible as no instance is currently selected")); }
 		if (f==null && st.getInstanceNullable()!=null && !content.getModule().isEnabled(st)) { f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString())); }
-		System.out.println("Post post-auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
+		//System.out.println("Post post-auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
 		if (f == null) {
 			f = new Form();
 			st.form = f;
