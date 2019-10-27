@@ -163,9 +163,9 @@ default {
 	http_request(key id,string method,string body) {
 		json=body; body="";
 		#ifdef DEBUG
-		llOwnerSay("IN:"+body);
+		llOwnerSay("IN:"+json);
 		#endif
-		
+		llMessageLinked(LINK_THIS,LINK_RECEIVE,json,"");
 		if (comms_http_request(id,method)) { llHTTPResponse(id,200,json); return; }
 		
 		//llOwnerSay("HTTPIN:"+json);
