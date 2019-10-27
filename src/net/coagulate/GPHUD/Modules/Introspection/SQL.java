@@ -2,10 +2,7 @@ package net.coagulate.GPHUD.Modules.Introspection;
 
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interfaces.Outputs.Row;
-import net.coagulate.GPHUD.Interfaces.Outputs.Table;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
+import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.URL.URLs;
@@ -51,6 +48,7 @@ public class SQL {
 			newrow.add(c);
 			newrow.add(sql);
 			newrow.add(Long.toString(t) + "ms");
+			if (c>0) { newrow.add(Long.toString(t/c) + "ms"); }
 			Set<Row> rowset = new HashSet<>();
 			if (bycount.containsKey(c)) { rowset = bycount.get(c); }
 			rowset.add(newrow);
@@ -71,6 +69,7 @@ public class SQL {
 		f.add(new TextSubHeader("By per call execution time"));
 		Table t = new Table();
 		f.add(t);
+		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
 		for (Double l : byper.keySet()) {
 			Set<Row> set = byper.get(l);
 			for (Row r : set) { t.add(r); }
@@ -78,6 +77,7 @@ public class SQL {
 		f.add(new TextSubHeader("By total execution time"));
 		t = new Table();
 		f.add(t);
+		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
 		for (Long l : bytime.keySet()) {
 			Set<Row> set = bytime.get(l);
 			for (Row r : set) { t.add(r); }
@@ -85,6 +85,7 @@ public class SQL {
 		f.add(new TextSubHeader("By execution count"));
 		t = new Table();
 		f.add(t);
+		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
 		for (Integer l : bycount.keySet()) {
 			Set<Row> set = bycount.get(l);
 			for (Row r : set) { t.add(r); }
