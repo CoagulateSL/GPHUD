@@ -1,11 +1,13 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
+import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.GPHUD;
 import org.json.JSONObject;
 
+import javax.mail.MessagingException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -145,7 +147,13 @@ public class Transmission extends Thread {
 					if (j.has("cookie")) { Cookies.refreshCookie(j.getString("cookie")); }
 				}
 			} catch (Exception e) {
-				GPHUD.getLogger().log(WARNING, "Exception in response parser - "+response, e);
+				GPHUD.getLogger().log(WARNING, "Exception in response parser",e);
+				String body=url+"\n<br>\n";
+				body+="Character:"+(character==null?"null":character.getNameSafe())+"\n<br>\n";
+				body+=response;
+				try { MailTools.mail("Failed response", body); } catch (MessagingException ee){
+					GPHUD.getLogger().log(SEVERE,"Mail exception in response parser exception handler",ee);
+				}
 			}
 		}
 		succeeded=true;
