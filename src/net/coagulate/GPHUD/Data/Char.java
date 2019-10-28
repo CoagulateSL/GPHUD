@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.Core.Tools.UserException;
@@ -57,6 +58,7 @@ public class Char extends TableRow {
 			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on " + t + " url " + url);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Character","Refreshing CHARACTER url "+url);
+		if (url.startsWith("https")) { MailTools.logTrace("HTTPS URL violation",url); }
 		GPHUD.getDB().d("update " + t + " set lastactive=?,urllast=?,authnode=? where url=?", getUnixTime(), getUnixTime(), Interface.getNode(), url);
 	}
 
@@ -190,6 +192,7 @@ public class Char extends TableRow {
 			t.start();
 		}
 		// set the URL
+		if (url.startsWith("https")) { MailTools.logTrace("HTTPS URL violation",url); }
 		d("update characters set url=?, lastactive=?, urllast=?, urlfirst=?, authnode=? where characterid=?", url, now, now, now, Interface.getNode(), getId());
 
 	}
