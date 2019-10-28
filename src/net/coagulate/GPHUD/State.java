@@ -65,8 +65,7 @@ public class State extends DumpableState {
 	public User sourcedeveloper = null;
 	public Region sourceregion = null;
 	public String sourcelocation = null;
-	// how this command was received.
-	public Interface handler;
+
 	// used by the HUD interface to stash things briefly
 	public String command;
 	public Zone zone = null;
@@ -748,5 +747,5 @@ public class State extends DumpableState {
 	}
 
 
-	public enum Sources {NONE, HUD, SYSTEM, USER}
+	public enum Sources {NONE, HUD, SYSTEM, USER,CONSOLE}
 }

@@ -257,7 +257,7 @@ public abstract class Modules {
 	public static Response run(State st, String qualifiedcommandname, SafeMap parametermap) throws UserException, SystemException {
 		if (st == null) { throw new SystemException("Null state"); }
 		if (qualifiedcommandname == null) { throw new SystemException("Null command"); }
-		if ("console".equalsIgnoreCase(qualifiedcommandname)) { return run(st, parametermap.get("console")); }
+		if ("console".equalsIgnoreCase(qualifiedcommandname)) { st.source= State.Sources.CONSOLE; return run(st, parametermap.get("console")); }
 		Module module = get(st, qualifiedcommandname);
 		if (module == null) { throw new UserException("Unknown module in " + qualifiedcommandname); }
 		Command command = module.getCommand(st, extractReference(qualifiedcommandname));
