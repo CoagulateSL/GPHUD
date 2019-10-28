@@ -1,0 +1,174 @@
+options {
+    STATIC=false;
+    OUTPUT_DIRECTORY="Generated";
+    MULTI=true;
+    NODE_DEFAULT_VOID=true;
+    NODE_PREFIX="GS";
+    NODE_CLASS="net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode";
+    DEBUG_PARSER=true;
+    DEBUG_LOOKAHEAD=true;
+    TRACK_TOKENS=true;
+    //DEBUG_TOKEN_MANAGER=true;
+}
+PARSER_BEGIN(GSParser)
+package net.coagulate.GPHUD.Modules.Scripting.Language.Generated;
+
+import java.util.*;
+
+  public class GSParser{
+  }
+
+PARSER_END(GSParser)
+
+SKIP : {
+ " "
+|  "\t"
+|  "\n"
+|  "\r"
+|  <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
+|  <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
+}
+
+<PREPROCESSOR_OUTPUT> SKIP:
+{
+     "\n" : DEFAULT
+}
+
+<PREPROCESSOR_OUTPUT> MORE:
+{
+ "\\\n"
+ |
+ "\\\r\n"
+ |
+ < ~[] >
+}
+
+
+TOKEN : {
+ <INTEGER_LITERAL: <DECIMAL_LITERAL> (["l","L"])? | <HEX_LITERAL> (["l","L"])? | <OCTAL_LITERAL> (["l","L"])?>
+|  <#DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])*>
+|  <#HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+>
+|  <#OCTAL_LITERAL: "0" (["0"-"7"])*>
+|  <FLOATING_POINT_LITERAL: (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])? | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])? | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])? | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]>
+|  <#EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+>
+|  <STRING_LITERAL: "\"" ( ~["\"","\\","\n","\r"] | "\\" ( ["n","t","b","r","f","\\","\'","\""] | ["0"-"7"] (["0"-"7"])?  | ["0"-"3"] ["0"-"7"] ["0"-"7"] | ( ["\n","\r"] | "\r\n")))* "\"">
+}
+
+TOKEN : {
+	<RETURN: "return"> |
+	<WHILE: "while"> |
+	<FLOAT: "float"> |
+	<ELSE: "else"> |
+	<FOR: "for"> |
+	<INT: "Int"> |
+	<CHARACTER: "Character"> |
+	<AVATAR: "Avatar"> |
+	<GROUP: "Group"> |
+	<RESPONSE: "Response"> |
+	<STRING: "String"> |
+	<IF: "if"> |
+	<DO: "do">
+}
+
+TOKEN : {
+ <IDENTIFIER: <LETTER> (<LETTER> | <DIGIT>)*>
+|  <#LETTER: ["$","A"-"Z","_","a"-"z"]>
+|  <#DIGIT: ["0"-"9"]>
+}
+
+/** Main production. */
+GSStart Start() #Start : {}
+{
+  Statements() <EOF>
+  { return jjtThis; }
+}
+
+void Statements() : {}
+{
+    ( Statement() )*
+}
+
+void Statement() #Statement : {}
+{
+    "{" Statements() "}" |
+    Conditional() |
+    Initialiser() ";" |
+    LOOKAHEAD(2) Assignment() ";" |
+    Expression() ";"
+}
+
+void Initialiser() #Initialiser : {}
+{
+    TypeSpecifier() Identifier() "=" Expression()
+}
+
+void Assignment() #Assignment : {}
+{
+    Identifier() "=" Expression()
+}
+
+void TypeSpecifier() #TypeSpecifier : {}
+{
+    <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP>
+}
+
+void Identifier() #Identifier : {}
+{
+    <IDENTIFIER>
+}
+
+void Expression() #Expression : {}
+{
+    LOOKAHEAD(3) FunctionCall() |
+    LOOKAHEAD(3) Term() BinaryOperator() Expression() |
+    LOOKAHEAD(3) Term()
+    //UnaryOperator() Term()
+}
+
+void BinaryOperator() #BinaryOperator : {}
+{
+   "+" | "-" | "*" | "/" | "==" | "!="
+}
+
+void Term() #Term : {}
+{
+    StringConstant() |
+    IntegerConstant() |
+    FloatConstant() |
+    Identifier() |
+    "(" Expression() ")"
+}
+
+void StringConstant() #StringConstant : {}
+{
+    <STRING_LITERAL>
+}
+
+void IntegerConstant() #IntegerConstant : {}
+{
+    <INTEGER_LITERAL>
+}
+
+void FloatConstant() #FLoatConstant : {}
+{
+    <FLOATING_POINT_LITERAL>
+}
+
+void FunctionCall() #FunctionCall : {} {
+    <IDENTIFIER> "(" Parameters() ")"
+}
+
+void Parameters() #Parameters : {}
+{
+    Parameter() ( "," Parameter() )*
+}
+
+void Parameter() #Parameter : {}
+{
+    Expression()
+}
+
+void Conditional() #Conditional : {}
+{
+    <IF> "(" Expression() ")" Statement()
+}
