@@ -30,11 +30,13 @@ public class Transmission extends Thread {
 	Region region = null;
 	boolean succeeded=false;
 	public boolean failed() { return !succeeded; }
+	StackTraceElement[] caller=null;
 	public Transmission(Char character, JSONObject json, String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to character " + character + " on url " + oldurl + " with json " + json.toString());
 			Thread.dumpStack();
 		}
+		caller=Thread.currentThread().getStackTrace();
 		this.character=character;
 		this.url = oldurl;
 		this.json = json;
@@ -45,6 +47,7 @@ public class Transmission extends Thread {
 			System.out.println("Transmission to character " + character + " with json " + json.toString());
 			Thread.dumpStack();
 		}
+		caller=Thread.currentThread().getStackTrace();
 		this.character = character;
 		this.url = character.getURL();
 		this.json = json;
@@ -55,6 +58,7 @@ public class Transmission extends Thread {
 			System.out.println("Transmission to character " + character + " with json " + json.toString());
 			Thread.dumpStack();
 		}
+		caller=Thread.currentThread().getStackTrace();
 		this.character = character;
 		this.url = character.getURL();
 		this.delay = i;
@@ -66,6 +70,7 @@ public class Transmission extends Thread {
 			System.out.println("Transmission to region " + region + " with json " + json.toString());
 			Thread.dumpStack();
 		}
+		caller=Thread.currentThread().getStackTrace();
 		this.region = region;
 		this.url = region.getURL();
 		json = message;
@@ -76,6 +81,7 @@ public class Transmission extends Thread {
 			System.out.println("Transmission to region " + region + " with json " + json.toString());
 			Thread.dumpStack();
 		}
+		caller=Thread.currentThread().getStackTrace();
 		this.region = region;
 		this.url = region.getURL();
 		this.delay = i;
@@ -87,6 +93,7 @@ public class Transmission extends Thread {
 			System.out.println("Transmission to region " + region + " on url " + oldurl + " with json " + json.toString());
 			Thread.dumpStack();
 		}
+		caller=Thread.currentThread().getStackTrace();
 		this.url = oldurl;
 		json = message;
 	}
@@ -96,6 +103,7 @@ public class Transmission extends Thread {
 			System.out.println("DELAYED Transmission to character " + aChar + " on url " + url + " with delay " + i + " and json " + json.toString());
 			Thread.dumpStack();
 		}
+		caller=Thread.currentThread().getStackTrace();
 		this.json = ping;
 		this.url = url;
 		this.delay = i;
@@ -150,6 +158,9 @@ public class Transmission extends Thread {
 				GPHUD.getLogger().log(WARNING, "Exception in response parser",e);
 				String body=url+"\n<br>\n";
 				body+="Character:"+(character==null?"null":character.getNameSafe())+"\n<br>\n";
+				for (StackTraceElement ele:caller) {
+					body+="Caller: "+ele.getClassName()+"/"+ele.getMethodName()+":"+ele.getLineNumber()+"\n<br>\n";
+				}
 				body+=response;
 				try { MailTools.mail("Failed response", body); } catch (MessagingException ee){
 					GPHUD.getLogger().log(SEVERE,"Mail exception in response parser exception handler",ee);
