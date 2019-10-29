@@ -24,7 +24,7 @@ public class OpenWebsite {
 		json.put("incommand", "openurl");
 		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel
 		String cookie = Cookies.generate(st.avatar(), st.getCharacter(), st.getInstance(), true);
-		json.put("url", Interface.generateURL(st, "?gphud=" + cookie));
+		json.put("openurl", Interface.generateURL(st, "?gphud=" + cookie));
 		json.put("description", "Open GPHUD Administrative Application");
 		//System.out.println("OPENURL:"+json.toString());
 		return new JSONResponse(json);
@@ -40,7 +40,7 @@ public class OpenWebsite {
 		json.put("incommand", "openurl");
 		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel
 		String cookie = Cookies.generate(st.avatar(), st.getCharacter(), st.getInstance(), true);
-		json.put("url", url);
+		json.put("openurl", url);
 		json.put("description", description);
 		//System.out.println("OPENURL:"+json.toString());
 		return new JSONResponse(json);
