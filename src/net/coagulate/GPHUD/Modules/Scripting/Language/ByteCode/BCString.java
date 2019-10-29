@@ -6,9 +6,9 @@ public class BCString extends ByteCode {
 	private String content="";
 	public BCString() {};
 	public BCString(String content) { this.content=content; }
-	public String explain() { return "BCString("+content+") (push)"; }
+	public String explain() { return "String("+content+") (push)"; }
 	public void toByteCode(List<Byte> bytes) {
-		bytes.add(InstructionSet.BCString.get());
+		bytes.add(InstructionSet.String.get());
 		addInt(bytes,content.length());
 		for (char c:content.toCharArray()) {
 			bytes.add((byte)c);

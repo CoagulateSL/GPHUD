@@ -46,11 +46,24 @@ public class GSCompiler {
 	}
 	// The compiler has a stack (Last In First Out) which it uses to store 'things'
 	// we also have a 'script' which is just a list of things, this time including instructions
-	public List<ByteCode> compile() { return compile(startnode); }
+	public List<ByteCode> compile() { lastdebuglineno=-1; lastdebugcolno=-1; return compile(startnode); }
 
+	private int lastdebuglineno=-1;
+	private int lastdebugcolno=-1;
+	private void addDebug(List<ByteCode> compiled,ParseNode node) {
+		Token firsttoken=node.jjtGetFirstToken();
+		if (firsttoken!=null) {
+			int lineno = firsttoken.beginLine;
+			int colno = firsttoken.beginColumn;
+			if (lineno != lastdebuglineno || colno != lastdebugcolno) {
+				compiled.add(new BCDebug(lineno, colno));
+				lastdebuglineno = lineno;
+				lastdebugcolno = colno;
+			}
+		}
+	}
 	private List<ByteCode> compile(ParseNode node) {
 		List<ByteCode> compiled=new ArrayList<>();
-
 		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) { throw new SystemException("GSInitialiser had "+node.jjtGetNumChildren()+" children"); }
 
 
@@ -79,10 +92,12 @@ public class GSCompiler {
 			if (!typed) { throw new SystemException("Unable to initialise variable of type "+type+" (not implemented)"); }
 			BCString identifier=new BCString(node.child(1).tokens());
 			compiled.add(identifier);
+			addDebug(compiled,node);
 			compiled.add(new BCInitialise());
 			// variable initialised.  Assign variable wants to pop the name then content, so content first
 			compiled.addAll(compile(node.child(2)));
 			compiled.add(identifier);
+			addDebug(compiled,node);
 			compiled.add(new BCAssign());
 			return compiled;
 		}
@@ -91,6 +106,7 @@ public class GSCompiler {
 			checkType(node,1,GSExpression.class);
 			compiled.addAll(compile(node.child(1)));
 			compiled.add(new BCString(node.child(0).tokens()));
+			addDebug(compiled,node);
 			compiled.add(new BCAssign());
 			return compiled;
 		}
@@ -115,6 +131,7 @@ public class GSCompiler {
 			// evaluate the condition, branch if zero, otherwise run the statement
 			compiled.addAll(compile(node.child(0)));
 			BCLabel label=new BCLabel(jumpnumber++);
+			addDebug(compiled,node);
 			compiled.add(new BCBranchIfZero(label));
 			compiled.addAll(compile(node.child(1)));
 			compiled.add(label);
@@ -133,6 +150,7 @@ public class GSCompiler {
 			// dump the paramters, in reverse order, (which starts with the paramter count), and finally the name and the invoking bytecode
 			compiled.addAll(compile(node.child(1)));
 			compiled.add(new BCString((node.child(0).tokens())));
+			addDebug(compiled,node);
 			compiled.add(new BCInvoke());
 			return compiled;
 		}
@@ -156,6 +174,7 @@ public class GSCompiler {
 			boolean handledop=false;
 			String op=node.child(1).tokens();
 			//"+" | "-" | "*" | "/" | "==" | "!="
+			addDebug(compiled,node);
 			if (op.equals("+")) { handledop=true; compiled.add(new BCAdd()); }
 			if (op.equals("-")) { handledop=true; compiled.add(new BCSubtract()); }
 			if (op.equals("*")) { handledop=true; compiled.add(new BCMultiply()); }
@@ -168,6 +187,7 @@ public class GSCompiler {
 		if (node instanceof GSIdentifier) {
 			// pull the variable onto the stack.  Kinda
 			compiled.add(new BCString(node.tokens()));
+			addDebug(compiled,node);
 			compiled.add(new BCLoadVariable());
 			return compiled;
 		}

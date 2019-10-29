@@ -4,8 +4,8 @@ import java.util.List;
 
 public class BCInequality extends ByteCode {
 	// Pop two, op, push result
-	public String explain() { return "BCInequality (Pop two, push 1 if unequal, 0 if equal)"; }
+	public String explain() { return "Inequality (Pop two, push 1 if unequal, 0 if equal)"; }
 	public void toByteCode(List<Byte> bytes) {
-		bytes.add(InstructionSet.BCInequality.get());
+		bytes.add(InstructionSet.Inequality.get());
 	}
 }

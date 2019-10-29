@@ -9,9 +9,9 @@ public class BCInteger extends ByteCode {
 
 	public BCInteger(String tokens) { this.content=Integer.parseInt(tokens); }
 
-	public String explain() { return "BCInteger("+content+") (push)"; }
+	public String explain() { return "Integer("+content+") (push)"; }
 	public void toByteCode(List<Byte> bytes) {
-		bytes.add(InstructionSet.BCInteger.get());
+		bytes.add(InstructionSet.Integer.get());
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content);
 	}

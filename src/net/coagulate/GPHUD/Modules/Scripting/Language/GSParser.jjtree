@@ -5,9 +5,9 @@ options {
     NODE_DEFAULT_VOID=true;
     NODE_PREFIX="GS";
     NODE_CLASS="net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode";
-    DEBUG_PARSER=true;
-    DEBUG_LOOKAHEAD=true;
     TRACK_TOKENS=true;
+    //DEBUG_PARSER=true;
+    //DEBUG_LOOKAHEAD=true;
     //DEBUG_TOKEN_MANAGER=true;
 }
 PARSER_BEGIN(GSParser)

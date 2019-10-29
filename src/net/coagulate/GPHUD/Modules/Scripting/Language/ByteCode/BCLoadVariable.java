@@ -4,8 +4,8 @@ import java.util.List;
 
 public class BCLoadVariable extends ByteCode {
 
-	public String explain() { return "BCLoadVariable (Pop name, push variable value)"; }
+	public String explain() { return "LoadVariable (Pop name, push variable value)"; }
 	public void toByteCode(List<Byte> bytes) {
-		bytes.add(InstructionSet.BCLoadVariable.get());
+		bytes.add(InstructionSet.LoadVariable.get());
 	}
 }

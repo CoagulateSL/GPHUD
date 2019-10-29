@@ -8,9 +8,9 @@ public class BCCharacter extends ByteCode {
 	private Char content=null;
 	public BCCharacter() {}
 	public BCCharacter(Char content) { this.content=content; }
-	public String explain() { return "BCCharacter("+content+") (push)"; }
+	public String explain() { return "Character("+content+") (push)"; }
 	public void toByteCode(List<Byte> bytes) {
-		bytes.add(InstructionSet.BCCharacter.get());
+		bytes.add(InstructionSet.Character.get());
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content.getId());
 	}
