@@ -69,8 +69,6 @@ public abstract class Interface implements HttpRequestHandler {
 			st.setURL(uri);
 			st.headers = headers;
 			st.host = host;
-			st.handler = this;
-
 			// process the page request
 			process(st);
 		} catch (Exception e) {
