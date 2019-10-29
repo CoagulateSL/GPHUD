@@ -60,7 +60,7 @@ TOKEN : {
 	<FLOAT: "float"> |
 	<ELSE: "else"> |
 	<FOR: "for"> |
-	<INT: "Int"> |
+	<INT: "Integer"> |
 	<CHARACTER: "Character"> |
 	<AVATAR: "Avatar"> |
 	<GROUP: "Group"> |
@@ -120,9 +120,13 @@ void Identifier() #Identifier : {}
 void Expression() #Expression : {}
 {
     LOOKAHEAD(3) FunctionCall() |
-    LOOKAHEAD(3) Term() BinaryOperator() Expression() |
+    LOOKAHEAD(3) BinaryOperation() |
     LOOKAHEAD(3) Term()
     //UnaryOperator() Term()
+}
+
+void BinaryOperation() #BinaryOperation : {} {
+    Term() BinaryOperator() Expression()
 }
 
 void BinaryOperator() #BinaryOperator : {}
@@ -155,7 +159,11 @@ void FloatConstant() #FLoatConstant : {}
 }
 
 void FunctionCall() #FunctionCall : {} {
-    <IDENTIFIER> "(" Parameters() ")"
+    FunctionName() "(" Parameters() ")"
+}
+
+void FunctionName() #FunctionName : {} {
+    <IDENTIFIER>
 }
 
 void Parameters() #Parameters : {}

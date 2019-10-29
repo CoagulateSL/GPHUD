@@ -14,6 +14,23 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 		super(p, i);
 	}
 
+	public int children() { return jjtGetNumChildren(); }
+	public ParseNode child(int i) { return ((ParseNode)jjtGetChild(i)); }
+
+	public String tokens() {
+		String s="";
+		Token t=jjtGetFirstToken();
+		if (t!=null) {
+			boolean last=false;
+			while (!last) {
+				if (!s.isEmpty()) { s+=" "; }
+				s+=t.image;
+				if (t==jjtGetLastToken()) { last=true; } else { t=t.next; }
+			}
+		}
+		return s;
+	}
+
 	public String toHtml() {
 		String s="";
 		if (children!=null) {
