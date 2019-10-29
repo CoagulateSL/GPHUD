@@ -150,7 +150,7 @@ public class Event extends TableRow {
 
 	@Override
 	public String getLinkTarget() {
-		return "/event/" + getId();
+		return "/GPHUD/event/" + getId();
 	}
 
 	public Instance getInstance() {
