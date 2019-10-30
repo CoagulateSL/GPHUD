@@ -12,4 +12,5 @@ public class BCAdd extends ByteCode {
 	public void toByteCode(List<Byte> bytes) {
 		bytes.add(InstructionSet.Add.get());
 	}
+
 }

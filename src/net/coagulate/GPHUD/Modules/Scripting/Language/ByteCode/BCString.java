@@ -9,9 +9,10 @@ public class BCString extends ByteCode {
 	public String explain() { return "String("+content+") (push)"; }
 	public void toByteCode(List<Byte> bytes) {
 		bytes.add(InstructionSet.String.get());
-		addInt(bytes,content.length());
+		addShort(bytes,content.length());
 		for (char c:content.toCharArray()) {
 			bytes.add((byte)c);
 		}
 	}
+	@Override public String htmlDecode() { return "String</td><td>"+content; }
 }

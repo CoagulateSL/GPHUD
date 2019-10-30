@@ -15,4 +15,5 @@ public class BCInteger extends ByteCode {
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content);
 	}
+	@Override public String htmlDecode() { return "Integer</td><td>"+content; }
 }

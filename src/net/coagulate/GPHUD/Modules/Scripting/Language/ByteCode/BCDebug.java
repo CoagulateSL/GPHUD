@@ -18,4 +18,5 @@ public class BCDebug extends ByteCode {
 		addShort(bytes,line);
 		addShort(bytes,column);
 	}
+	@Override public String htmlDecode() { return "Debug</td><td>"+line+":"+column; }
 }

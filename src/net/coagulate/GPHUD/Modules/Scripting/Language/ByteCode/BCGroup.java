@@ -14,4 +14,5 @@ public class BCGroup extends ByteCode {
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content.getId());
 	}
+	@Override public String htmlDecode() { return "Avatar</td><td>"+content.getId(); }
 }

@@ -1,10 +1,55 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.SL.Data.User;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class ByteCode {
+
+	public static ByteCode load(GSVM vm) {
+		byte instruction = vm.bytecode[vm.PC];
+		vm.PC++;
+		InstructionSet decode = ByteCode.get(instruction);
+		if (decode == null) {
+			throw new SystemException("Unable to decode instruction " + instruction + " at index " + vm.PC);
+		}
+		switch (decode) {
+			case Add: return new BCAdd();
+			case Assign: return new BCAssign();
+			case Character: return new BCCharacter(Char.get(vm.getInt()));
+			case Group: return new BCGroup(CharacterGroup.get(vm.getInt()));
+			case Integer: return new BCInteger(vm.getInt());
+			case BranchIfZero: return new BCBranchIfZero(vm.getInt());
+			case Avatar: return new BCAvatar(User.get(vm.getInt()));
+			case String:
+				int length = vm.getShort();
+				byte[] string = new byte[length];
+				try { System.arraycopy(vm.bytecode, vm.PC, string, 0, length); } catch (RuntimeException e)
+				{
+					throw new SystemException("Failed to arraycopy " + length + " from pos " + vm.PC, e);
+				}
+				vm.PC += length;
+				String str = new String(string);
+				return new BCString(str);
+			case Debug: return new BCDebug(vm.getShort(),vm.getShort());
+			case Divide: return new BCDivide();
+			case Equality: return new BCEquality();
+			case Inequality: return new BCInequality();
+			case Initialise: return new BCInitialise();
+			case Invoke: return new BCInvoke();
+			case LoadVariable: return new BCLoadVariable();
+			case Multiply: return new BCMultiply();
+			case Response: return new BCResponse();
+			case Subtract: return new BCSubtract();
+		}
+		throw new SystemException("Failed to materialise instruction "+decode);
+	}
 
 	public abstract String explain();
 	public abstract void toByteCode(List<Byte> bytes);
@@ -38,6 +83,9 @@ public abstract class ByteCode {
 		public byte get() { return value; }
 	}
 	public static InstructionSet get(byte b) { return map.get(b); }
+	public String htmlDecode() {
+		return this.getClass().getSimpleName().replaceFirst("BC","");
+	}
 
 	void addInt(List<Byte> bytes,int a) {
 		bytes.add((byte)(a>>24));
