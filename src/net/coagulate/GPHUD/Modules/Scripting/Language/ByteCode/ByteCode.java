@@ -4,6 +4,7 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.SL.Data.User;
 
 import java.util.HashMap;
@@ -11,6 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ByteCode {
+
+	private ParseNode sourcenode=null;
+	public ByteCode(ParseNode n) { sourcenode=n; }
+	public ByteCode node(ParseNode n)
+	{ sourcenode=n; return this; }
+	public ParseNode node() { return sourcenode; }
+
 
 	public static ByteCode load(GSVM vm) {
 		byte instruction = vm.bytecode[vm.PC];
@@ -20,13 +28,13 @@ public abstract class ByteCode {
 			throw new SystemException("Unable to decode instruction " + instruction + " at index " + vm.PC);
 		}
 		switch (decode) {
-			case Add: return new BCAdd();
-			case Assign: return new BCAssign();
-			case Character: return new BCCharacter(Char.get(vm.getInt()));
-			case Group: return new BCGroup(CharacterGroup.get(vm.getInt()));
-			case Integer: return new BCInteger(vm.getInt());
-			case BranchIfZero: return new BCBranchIfZero(vm.getInt());
-			case Avatar: return new BCAvatar(User.get(vm.getInt()));
+			case Add: return new BCAdd(null);
+			case Store: return new BCStore(null);
+			case Character: return new BCCharacter(null,Char.get(vm.getInt()));
+			case Group: return new BCGroup(null,CharacterGroup.get(vm.getInt()));
+			case Integer: return new BCInteger(null,vm.getInt());
+			case BranchIfZero: return new BCBranchIfZero(null,vm.getInt());
+			case Avatar: return new BCAvatar(null,User.get(vm.getInt()));
 			case String:
 				int length = vm.getShort();
 				byte[] string = new byte[length];
@@ -36,20 +44,20 @@ public abstract class ByteCode {
 				}
 				vm.PC += length;
 				String str = new String(string);
-				return new BCString(str);
-			case Debug: return new BCDebug(vm.getShort(),vm.getShort());
-			case Divide: return new BCDivide();
-			case Equality: return new BCEquality();
-			case Inequality: return new BCInequality();
-			case Initialise: return new BCInitialise();
-			case Invoke: return new BCInvoke();
-			case LoadVariable: return new BCLoadVariable();
-			case Multiply: return new BCMultiply();
-			case Response: return new BCResponse();
-			case Subtract: return new BCSubtract();
-			case List: return new BCList(vm.getShort());
-			case LoadElement: return new BCLoadElement();
-			case AssignElement: return new BCAssignElement();
+				return new BCString(null,str);
+			case Debug: return new BCDebug(null,vm.getShort(),vm.getShort());
+			case Divide: return new BCDivide(null);
+			case Equality: return new BCEquality(null);
+			case Inequality: return new BCInequality(null);
+			case Initialise: return new BCInitialise(null);
+			case Invoke: return new BCInvoke(null);
+			case Load: return new BCLoad(null);
+			case Multiply: return new BCMultiply(null);
+			case Response: return new BCResponse(null);
+			case Subtract: return new BCSubtract(null);
+			case List: return new BCList(null,vm.getShort());
+			case LoadIndexed: return new BCLoadIndexed(null);
+			case StoreIndexed: return new BCStoreIndexed(null);
 		}
 		throw new SystemException("Failed to materialise instruction "+decode);
 	}
@@ -61,7 +69,7 @@ public abstract class ByteCode {
 	public enum InstructionSet { // max 255 instructions (haha)
 		Debug((byte)0),
 		Add((byte)1),
-		Assign((byte)2),
+		Store((byte)2),
 		Avatar((byte)3),
 		BranchIfZero((byte)4),
 		Character((byte)5),
@@ -72,14 +80,14 @@ public abstract class ByteCode {
 		Initialise((byte)10),
 		Integer((byte)11),
 		Invoke((byte)12),
-		LoadVariable((byte)13),
+		Load((byte)13),
 		Multiply((byte)14),
 		Response((byte)15),
 		String((byte)16),
 		Subtract((byte)17),
 		List((byte)18),
-		LoadElement((byte)19),
-		AssignElement((byte)20);
+		LoadIndexed((byte)19),
+		StoreIndexed((byte)20);
 		private byte value;
 
 

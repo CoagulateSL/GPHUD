@@ -1,10 +1,15 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
 public class BCAdd extends ByteCode {
+	public BCAdd(ParseNode n) {
+		super(n);
+	}
+
 	@Override
 	public String explain() {
 		return "Add (Pop two from stack, add, push result)";

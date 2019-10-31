@@ -1,13 +1,14 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
 public class BCDebug extends ByteCode {
 	private int line=0;
 	private int column=0;
-	public BCDebug(int line,int column) { this.line=line; this.column=column; }
+	public BCDebug(ParseNode n, int line, int column) { super(n); this.line=line; this.column=column; }
 
 	@Override
 	public String explain() {

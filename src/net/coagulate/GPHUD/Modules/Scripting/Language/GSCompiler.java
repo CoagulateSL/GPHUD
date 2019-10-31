@@ -58,7 +58,7 @@ public class GSCompiler {
 			int lineno = firsttoken.beginLine;
 			int colno = firsttoken.beginColumn;
 			if (lineno != lastdebuglineno || colno != lastdebugcolno) {
-				compiled.add(new BCDebug(lineno, colno));
+				compiled.add(new BCDebug(node,lineno, colno));
 				lastdebuglineno = lineno;
 				lastdebugcolno = colno;
 			}
@@ -85,23 +85,23 @@ public class GSCompiler {
 			boolean typed=false;
 			String type=node.child(0).tokens();
 			// INITIALISE the variable - reverse place name and null content.  Then we just implement "set variable".
-			if (type.equals("String")) { compiled.add(new BCString()); typed=true; }
-			if (type.equals("Response")) { compiled.add(new BCResponse()); typed=true; }
-			if (type.equals("Integer")) { compiled.add(new BCInteger()); typed=true; }
-			if (type.equals("Avatar")) { compiled.add(new BCAvatar()); typed=true; }
-			if (type.equals("Group")) { compiled.add(new BCGroup()); typed=true; }
-			if (type.equals("Character")) { compiled.add(new BCCharacter()); typed=true; }
-			if (type.equals("List")) { compiled.add(new BCList()); typed=true; }
+			if (type.equals("String")) { compiled.add(new BCString(node)); typed=true; }
+			if (type.equals("Response")) { compiled.add(new BCResponse(node)); typed=true; }
+			if (type.equals("Integer")) { compiled.add(new BCInteger(node)); typed=true; }
+			if (type.equals("Avatar")) { compiled.add(new BCAvatar(node)); typed=true; }
+			if (type.equals("Group")) { compiled.add(new BCGroup(node)); typed=true; }
+			if (type.equals("Character")) { compiled.add(new BCCharacter(node)); typed=true; }
+			if (type.equals("List")) { compiled.add(new BCList(node)); typed=true; }
 			if (!typed) { throw new SystemException("Unable to initialise variable of type "+type+" (not implemented)"); }
-			BCString identifier=new BCString(node.child(1).tokens());
+			BCString identifier=new BCString(node.child(1),node.child(1).tokens());
 			compiled.add(identifier);
 			addDebug(compiled,node);
-			compiled.add(new BCInitialise());
+			compiled.add(new BCInitialise(node));
 			// variable initialised.  Assign variable wants to pop the name then content, so content first
 			compiled.addAll(compile(node.child(2)));
 			compiled.add(identifier);
 			addDebug(compiled,node);
-			compiled.add(new BCAssign());
+			compiled.add(new BCStore(node));
 			return compiled;
 		}
 		if (node instanceof GSAssignment) { // similar to end of GSInitialiser code
@@ -112,18 +112,18 @@ public class GSCompiler {
 			if (target.getClass().equals(GSIdentifier.class)) {
 				// assign/varname/value
 				compiled.addAll(compile(node.child(1)));
-				compiled.add(new BCString(node.child(0).tokens()));
+				compiled.add(new BCString(node.child(0),node.child(0).tokens()));
 				addDebug(compiled, node);
-				compiled.add(new BCAssign());
+				compiled.add(new BCStore(node));
 				return compiled;
 			}
 			if (target.getClass().equals(GSIdentifierWithIndex.class)) {
 				//assignelement/varname/elementno/value
 				compiled.addAll(compile(node.child(1))); // the value
 				compiled.addAll(compile(target.child(1))); // evaluate index onto stack
-				compiled.add(new BCString(target.child(0).tokens())); // push name
+				compiled.add(new BCString(target.child(0),target.child(0).tokens())); // push name
 				addDebug(compiled, node);
-				compiled.add(new BCAssignElement());
+				compiled.add(new BCStoreIndexed(node));
 				return compiled;
 			}
 			throw new SystemException("Compiler error: Unknown type of Assignment: "+target.getClass().getName());
@@ -132,12 +132,12 @@ public class GSCompiler {
 		if (node instanceof GSStringConstant) {
 			String string=node.tokens();
 			string=string.substring(1,string.length()-1);
-			compiled.add(new BCString(string));
+			compiled.add(new BCString(node,string));
 			return compiled;
 		}
 
 		if (node instanceof GSIntegerConstant) {
-			compiled.add(new BCInteger(node.tokens()));
+			compiled.add(new BCInteger(node,node.tokens()));
 			return compiled;
 		}
 
@@ -148,9 +148,9 @@ public class GSCompiler {
 			checkType(node,1,GSStatement.class);
 			// evaluate the condition, branch if zero, otherwise run the statement
 			compiled.addAll(compile(node.child(0)));
-			BCLabel label=new BCLabel(jumpnumber++);
+			BCLabel label=new BCLabel(node,jumpnumber++);
 			addDebug(compiled,node);
-			compiled.add(new BCBranchIfZero(label));
+			compiled.add(new BCBranchIfZero(node,label));
 			compiled.addAll(compile(node.child(1)));
 			compiled.add(label);
 			return compiled;
@@ -167,9 +167,9 @@ public class GSCompiler {
 			}
 			// dump the paramters, in reverse order, (which starts with the paramter count), and finally the name and the invoking bytecode
 			compiled.addAll(compile(node.child(1)));
-			compiled.add(new BCString((node.child(0).tokens())));
+			compiled.add(new BCString(node,(node.child(0).tokens())));
 			addDebug(compiled,node);
-			compiled.add(new BCInvoke());
+			compiled.add(new BCInvoke(node));
 			return compiled;
 		}
 
@@ -177,7 +177,7 @@ public class GSCompiler {
 			for (int i=node.jjtGetNumChildren()-1;i>=0;i--) {
 				compiled.addAll(compile(node.child(i)));
 			}
-			compiled.add(new BCInteger(node.children()));
+			compiled.add(new BCInteger(node,node.children()));
 			return compiled;
 		}
 
@@ -193,20 +193,20 @@ public class GSCompiler {
 			String op=node.child(1).tokens();
 			//"+" | "-" | "*" | "/" | "==" | "!="
 			addDebug(compiled,node);
-			if (op.equals("+")) { handledop=true; compiled.add(new BCAdd()); }
-			if (op.equals("-")) { handledop=true; compiled.add(new BCSubtract()); }
-			if (op.equals("*")) { handledop=true; compiled.add(new BCMultiply()); }
-			if (op.equals("/")) { handledop=true; compiled.add(new BCDivide()); }
-			if (op.equals("==")) { handledop=true; compiled.add(new BCEquality()); }
-			if (op.equals("!=")) { handledop=true; compiled.add(new BCInequality()); }
+			if (op.equals("+")) { handledop=true; compiled.add(new BCAdd(node.child(1))); }
+			if (op.equals("-")) { handledop=true; compiled.add(new BCSubtract(node.child(1))); }
+			if (op.equals("*")) { handledop=true; compiled.add(new BCMultiply(node.child(1))); }
+			if (op.equals("/")) { handledop=true; compiled.add(new BCDivide(node.child(1))); }
+			if (op.equals("==")) { handledop=true; compiled.add(new BCEquality(node.child(1))); }
+			if (op.equals("!=")) { handledop=true; compiled.add(new BCInequality(node.child(1))); }
 			return compiled;
 		}
 
 		if (node instanceof GSIdentifier) {
 			// pull the variable onto the stack.  Kinda
-			compiled.add(new BCString(node.tokens()));
+			compiled.add(new BCString(node,node.tokens()));
 			addDebug(compiled,node);
-			compiled.add(new BCLoadVariable());
+			compiled.add(new BCLoad(node));
 			return compiled;
 		}
 
@@ -215,7 +215,7 @@ public class GSCompiler {
 			for (int i=node.children()-1;i>=0;i--) {
 				compiled.addAll(compile(node.child(i)));
 			}
-			compiled.add(new BCList(node.children()));
+			compiled.add(new BCList(node,node.children()));
 			return compiled;
 		}
 
@@ -224,9 +224,9 @@ public class GSCompiler {
 			checkType(node,1,GSExpression.class);
 			// pop name, pop index
 			compiled.addAll(compile(node.child(1)));
-			compiled.add(new BCString(node.child(0).tokens()));
+			compiled.add(new BCString(node.child(0),node.child(0).tokens()));
 			addDebug(compiled,node);
-			compiled.add(new BCLoadElement());
+			compiled.add(new BCLoadIndexed(node));
 			return compiled;
 		}
 

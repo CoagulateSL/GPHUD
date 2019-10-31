@@ -1,10 +1,15 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
 public class BCSubtract extends ByteCode {
+	public BCSubtract(ParseNode n) {
+		super(n);
+	}
+
 	// Pop two, op, push result
 	public String explain() { return "Subtract (Pop two, push one-two)"; }
 	public void toByteCode(List<Byte> bytes) {

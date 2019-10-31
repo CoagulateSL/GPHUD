@@ -1,15 +1,20 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
-public class BCAssign extends ByteCode {
+public class BCStore extends ByteCode {
+	public BCStore(ParseNode n) {
+		super(n);
+	}
+
 	// Assign a value to a variable
 	// POP the NAME.  POP the content.
 	public String explain() { return "Assign (Pop variable name, pop content, assign)"; }
 	public void toByteCode(List<Byte> bytes) {
-		bytes.add(InstructionSet.Assign.get());
+		bytes.add(InstructionSet.Store.get());
 	}
 
 	@Override

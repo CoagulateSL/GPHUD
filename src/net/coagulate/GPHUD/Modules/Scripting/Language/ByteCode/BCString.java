@@ -2,14 +2,15 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
 public class BCString extends ByteCodeDataType {
 	private String content=""; public String getContent() { return content; }
-	public BCString() {};
-	public BCString(String content) { this.content=content; }
-	public String explain() { return "String("+content+") (push)"; }
+	public BCString(ParseNode n) {super(n);};
+	public BCString(ParseNode n,String content) {super(n);this.content=content; }
+	public String explain() { return "String ("+content+")"; }
 	public void toByteCode(List<Byte> bytes) {
 		bytes.add(InstructionSet.String.get());
 		addShort(bytes,content.length());
@@ -29,10 +30,10 @@ public class BCString extends ByteCodeDataType {
 		Class type=var.getClass();
 		// <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 		if (type.equals(BCList.class)) { // special case, return a list
-			return new BCList(this).add(var);
+			return new BCList(node(),this).add(var);
 		}
 		// for everything else
-		return new BCString(this.content+(var.toBCString()));
+		return new BCString(node(),this.content+(var.toBCString()));
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class BCString extends ByteCodeDataType {
 
 	@Override
 	public ByteCodeDataType clone() {
-		return new BCString(content);
+		return new BCString(node(),content);
 	}
 
 }

@@ -2,14 +2,19 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSArrayIndexOutOfBoundsException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
-public class BCLoadElement extends ByteCode {
+public class BCLoadIndexed extends ByteCode {
+
+	public BCLoadIndexed(ParseNode n) {
+		super(n);
+	}
 
 	public String explain() { return "LoadElement (Pop name, pop index, push variable value)"; }
 	public void toByteCode(List<Byte> bytes) {
-		bytes.add(InstructionSet.LoadElement.get());
+		bytes.add(InstructionSet.LoadIndexed.get());
 	}
 
 	@Override

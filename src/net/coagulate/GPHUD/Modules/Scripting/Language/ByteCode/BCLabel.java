@@ -2,14 +2,15 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
 public class BCLabel extends ByteCode {
 	final int id;
-	public BCLabel(int id) {this.id=id;}
-	public BCLabel(int id,int address) {this.id=id; this.address=address; }
-	public String explain() { return "Label:"+id; }
+	public BCLabel(ParseNode n,int id) {super(n);this.id=id;}
+	public BCLabel(ParseNode n,int id,int address) {super(n);this.id=id; this.address=address; }
+	public String explain() { return "Label (:"+id+")"; }
 	Integer address=null;
 	public void toByteCode(List<Byte> bytes) {
 		address=bytes.size();

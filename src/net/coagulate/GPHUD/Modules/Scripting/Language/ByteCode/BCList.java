@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +11,13 @@ public class BCList extends ByteCodeDataType {
 	int elements=0; // used by the compiler
 
 	List<ByteCodeDataType> content=new ArrayList<>(); // used by the VM
-	public BCList() {}
-	public BCList(int elements) { this.elements=elements; }
-	public BCList(ByteCodeDataType e) { content.add(e); elements++; }
+	public BCList(ParseNode n) {super(n);}
+	public BCList(ParseNode n,int elements) { super(n); this.elements=elements; }
+	public BCList(ParseNode n,ByteCodeDataType e) { super(n); content.add(e); elements++; }
 
 	@Override
 	public String explain() {
-		String r="List ("+elements+")";
+		String r="List (#"+elements+")";
 		return r;
 	}
 
@@ -43,7 +44,7 @@ public class BCList extends ByteCodeDataType {
 
 	@Override
 	public ByteCodeDataType clone() {
-		BCList clone=new BCList();
+		BCList clone=new BCList(node());
 		clone.elements=elements;
 		for(ByteCodeDataType element:content) {
 			clone.content.add(element.clone());

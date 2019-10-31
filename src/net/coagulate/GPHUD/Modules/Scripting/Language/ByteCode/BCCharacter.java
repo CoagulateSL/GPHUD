@@ -3,14 +3,15 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import java.util.List;
 
 public class BCCharacter extends ByteCodeDataType {
+	public BCCharacter(ParseNode n) { super(n); }
 	private Char content=null; public Char getContent() { return content; }
-	public BCCharacter() {}
-	public BCCharacter(Char content) { this.content=content; }
-	public String explain() { return "Character("+content+") (push)"; }
+	public BCCharacter(ParseNode n, Char content) { super(n); this.content=content; }
+	public String explain() { return "Character ("+content+")"; }
 	public void toByteCode(List<Byte> bytes) {
 		bytes.add(InstructionSet.Character.get());
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
@@ -25,7 +26,7 @@ public class BCCharacter extends ByteCodeDataType {
 
 	@Override
 	public ByteCodeDataType add(ByteCodeDataType var) {
-		if (var.getClass().equals(BCString.class)) { return new BCString(
+		if (var.getClass().equals(BCString.class)) { return new BCString(node(),
 				toString() + var.toString()) ; }
 		throw new GSInvalidExpressionException("Can't add BCCharacter + "+var.getClass().getSimpleName());
 	}
@@ -47,11 +48,11 @@ public class BCCharacter extends ByteCodeDataType {
 
 	@Override
 	public BCString toBCString() {
-		return new BCString(content.getName());
+		return new BCString(node(),content.getName());
 	}
 
 	@Override
 	public ByteCodeDataType clone() {
-		return new BCCharacter(content);
+		return new BCCharacter(node(),content);
 	}
 }

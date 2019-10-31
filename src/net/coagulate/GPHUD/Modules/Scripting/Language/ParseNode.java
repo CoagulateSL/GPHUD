@@ -34,23 +34,25 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 	public String toHtml() {
 		String s="";
 		if (children!=null) {
-			s="<table border=1>";
+			s="<ul>";
 			for (Node nnode : children) {
 				SimpleNode node=(SimpleNode)nnode;
-				s += "<tr><td><b>";
+				s += "<li><b>";
 				s+= node.getClass().getName().replaceFirst("net.coagulate.GPHUD.Modules.Scripting.Language.Generated.","");
-				s+="</b>";
+				s+=" : </b><i>";
 				Token t=node.jjtGetFirstToken();
 				if (t!=null) {
 					boolean last=false;
 					while (!last) {
-						s+="<br>"+t.image;
+						s+=" "+t.image;
 						if (t==node.jjtGetLastToken()) { last=true; } else { t=t.next; }
 					}
 				}
-				s+="</td><td>" + ((ParseNode) node).toHtml() + "</td></tr>";
+				s+="</i>";
+				s+=((ParseNode) node).toHtml();
+				s+="</li>";
 			}
-			s+="</table>";
+			s+="</ul>";
 		}
 		return s;
 	}
