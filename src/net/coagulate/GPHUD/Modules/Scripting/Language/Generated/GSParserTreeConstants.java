@@ -9,19 +9,23 @@ public interface GSParserTreeConstants
   public int JJTINITIALISER = 3;
   public int JJTASSIGNMENT = 4;
   public int JJTTYPESPECIFIER = 5;
-  public int JJTIDENTIFIER = 6;
-  public int JJTEXPRESSION = 7;
-  public int JJTBINARYOPERATION = 8;
-  public int JJTBINARYOPERATOR = 9;
-  public int JJTTERM = 10;
-  public int JJTSTRINGCONSTANT = 11;
-  public int JJTINTEGERCONSTANT = 12;
-  public int JJTFLOATCONSTANT = 13;
-  public int JJTFUNCTIONCALL = 14;
-  public int JJTFUNCTIONNAME = 15;
-  public int JJTPARAMETERS = 16;
-  public int JJTPARAMETER = 17;
-  public int JJTCONDITIONAL = 18;
+  public int JJTIDENTIFIERORLIST = 6;
+  public int JJTIDENTIFIERWITHINDEX = 7;
+  public int JJTIDENTIFIER = 8;
+  public int JJTEXPRESSION = 9;
+  public int JJTBINARYOPERATION = 10;
+  public int JJTBINARYOPERATOR = 11;
+  public int JJTTERM = 12;
+  public int JJTLISTINDEX = 13;
+  public int JJTSTRINGCONSTANT = 14;
+  public int JJTINTEGERCONSTANT = 15;
+  public int JJTFLOATCONSTANT = 16;
+  public int JJTFUNCTIONCALL = 17;
+  public int JJTFUNCTIONNAME = 18;
+  public int JJTPARAMETERS = 19;
+  public int JJTPARAMETER = 20;
+  public int JJTCONDITIONAL = 21;
+  public int JJTLIST = 22;
 
 
   public String[] jjtNodeName = {
@@ -31,11 +35,14 @@ public interface GSParserTreeConstants
     "Initialiser",
     "Assignment",
     "TypeSpecifier",
+    "IdentifierOrList",
+    "IdentifierWithIndex",
     "Identifier",
     "Expression",
     "BinaryOperation",
     "BinaryOperator",
     "Term",
+    "ListIndex",
     "StringConstant",
     "IntegerConstant",
     "FLoatConstant",
@@ -44,6 +51,7 @@ public interface GSParserTreeConstants
     "Parameters",
     "Parameter",
     "Conditional",
+    "List",
   };
 }
-/* JavaCC - OriginalChecksum=bb22bf7850cabd47ebdee2f41bc5b470 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f37edd8ed0c55d89bae29b536d738743 (do not edit this line) */

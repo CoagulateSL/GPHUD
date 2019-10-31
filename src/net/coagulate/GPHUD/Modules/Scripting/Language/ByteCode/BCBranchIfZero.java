@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+
 import java.util.List;
 
 public class BCBranchIfZero extends ByteCode {
@@ -14,4 +16,12 @@ public class BCBranchIfZero extends ByteCode {
 		else { addInt(bytes,target.address); }
 	}
 	@Override public String htmlDecode() { return "BranchIfZero</td><td>"+target.address; }
+
+	@Override
+	public void execute(GSVM vm) {
+		// pop an int
+		BCInteger conditional=vm.popInteger();
+		// set PC if zero
+		if (conditional.getContent()==0) { vm.PC=target.address; }
+	}
 }

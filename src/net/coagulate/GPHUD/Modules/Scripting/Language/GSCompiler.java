@@ -26,6 +26,8 @@ public class GSCompiler {
 		if (node instanceof GSAssignment) { return 2; }
 		if (node instanceof GSStatement) { return 1; }
 		if (node instanceof GSBinaryOperation) { return 3; }
+		if (node instanceof GSList) { return -1; }
+		if (node instanceof GSListIndex) { return 2; }
 		throw new SystemException("Expected Children not defined for node "+node.getClass().getName());
 	}
 	private final ParseNode startnode;
@@ -89,6 +91,7 @@ public class GSCompiler {
 			if (type.equals("Avatar")) { compiled.add(new BCAvatar()); typed=true; }
 			if (type.equals("Group")) { compiled.add(new BCGroup()); typed=true; }
 			if (type.equals("Character")) { compiled.add(new BCCharacter()); typed=true; }
+			if (type.equals("List")) { compiled.add(new BCList()); typed=true; }
 			if (!typed) { throw new SystemException("Unable to initialise variable of type "+type+" (not implemented)"); }
 			BCString identifier=new BCString(node.child(1).tokens());
 			compiled.add(identifier);
@@ -102,13 +105,28 @@ public class GSCompiler {
 			return compiled;
 		}
 		if (node instanceof GSAssignment) { // similar to end of GSInitialiser code
-			checkType(node,0,GSIdentifier.class);
+			checkType(node,0,GSIdentifierOrList.class);
 			checkType(node,1,GSExpression.class);
-			compiled.addAll(compile(node.child(1)));
-			compiled.add(new BCString(node.child(0).tokens()));
-			addDebug(compiled,node);
-			compiled.add(new BCAssign());
-			return compiled;
+			ParseNode target = node.child(0).child(0);
+			// this may be a NORMAL VARIABLE (GSIdentifier) or a SPECIFIC LIST ELEMENT (GSIdentifierWithIndex)
+			if (target.getClass().equals(GSIdentifier.class)) {
+				// assign/varname/value
+				compiled.addAll(compile(node.child(1)));
+				compiled.add(new BCString(node.child(0).tokens()));
+				addDebug(compiled, node);
+				compiled.add(new BCAssign());
+				return compiled;
+			}
+			if (target.getClass().equals(GSIdentifierWithIndex.class)) {
+				//assignelement/varname/elementno/value
+				compiled.addAll(compile(node.child(1))); // the value
+				compiled.addAll(compile(target.child(1))); // evaluate index onto stack
+				compiled.add(new BCString(target.child(0).tokens())); // push name
+				addDebug(compiled, node);
+				compiled.add(new BCAssignElement());
+				return compiled;
+			}
+			throw new SystemException("Compiler error: Unknown type of Assignment: "+target.getClass().getName());
 		}
 
 		if (node instanceof GSStringConstant) {
@@ -189,6 +207,26 @@ public class GSCompiler {
 			compiled.add(new BCString(node.tokens()));
 			addDebug(compiled,node);
 			compiled.add(new BCLoadVariable());
+			return compiled;
+		}
+
+		if (node instanceof GSList) {
+			// pop the list, in reverse order, then short the size, and then the command.
+			for (int i=node.children()-1;i>=0;i--) {
+				compiled.addAll(compile(node.child(i)));
+			}
+			compiled.add(new BCList(node.children()));
+			return compiled;
+		}
+
+		if (node instanceof GSListIndex) { // a list index in an evaluatable position
+			checkType(node,0,GSIdentifier.class);
+			checkType(node,1,GSExpression.class);
+			// pop name, pop index
+			compiled.addAll(compile(node.child(1)));
+			compiled.add(new BCString(node.child(0).tokens()));
+			addDebug(compiled,node);
+			compiled.add(new BCLoadElement());
 			return compiled;
 		}
 

@@ -47,6 +47,9 @@ public abstract class ByteCode {
 			case Multiply: return new BCMultiply();
 			case Response: return new BCResponse();
 			case Subtract: return new BCSubtract();
+			case List: return new BCList(vm.getShort());
+			case LoadElement: return new BCLoadElement();
+			case AssignElement: return new BCAssignElement();
 		}
 		throw new SystemException("Failed to materialise instruction "+decode);
 	}
@@ -55,7 +58,7 @@ public abstract class ByteCode {
 	public abstract void toByteCode(List<Byte> bytes);
 	public static Map<Byte,InstructionSet> map=new HashMap<>();
 
-	public enum InstructionSet {
+	public enum InstructionSet { // max 255 instructions (haha)
 		Debug((byte)0),
 		Add((byte)1),
 		Assign((byte)2),
@@ -73,7 +76,10 @@ public abstract class ByteCode {
 		Multiply((byte)14),
 		Response((byte)15),
 		String((byte)16),
-		Subtract((byte)17);
+		Subtract((byte)17),
+		List((byte)18),
+		LoadElement((byte)19),
+		AssignElement((byte)20);
 		private byte value;
 
 
@@ -84,7 +90,7 @@ public abstract class ByteCode {
 	}
 	public static InstructionSet get(byte b) { return map.get(b); }
 	public String htmlDecode() {
-		return this.getClass().getSimpleName().replaceFirst("BC","");
+		return this.getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
 	}
 
 	void addInt(List<Byte> bytes,int a) {
@@ -97,4 +103,6 @@ public abstract class ByteCode {
 		bytes.add((byte)((a>>8) & 0xff));
 		bytes.add((byte)(a&0xff));
 	}
+
+	public abstract void execute(GSVM vm);
 }

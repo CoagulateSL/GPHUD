@@ -7,7 +7,7 @@
                      
                                                                           
                       
-    //DEBUG_PARSER=true;
+    DEBUG_PARSER=true;
     //DEBUG_LOOKAHEAD=true;
     //DEBUG_TOKEN_MANAGER=true;
 }
@@ -70,6 +70,7 @@ TOKEN : {
 	<GROUP: "Group"> |
 	<RESPONSE: "Response"> |
 	<STRING: "String"> |
+	<LIST: "List"> |
 	<IF: "if"> |
 	<DO: "do">
 }
@@ -138,8 +139,7 @@ void Statement()            : {/*@bgen(jjtree) Statement */
     "{" Statements() "}" |
     Conditional() |
     Initialiser() ";" |
-    LOOKAHEAD(2) Assignment() ";" |
-    Expression() ";"/*@bgen(jjtree)*/
+    LOOKAHEAD(2) Assignment() ";"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -205,7 +205,7 @@ void Assignment()             : {/*@bgen(jjtree) Assignment */
 {/*@bgen(jjtree) Assignment */
     try {
 /*@egen*/
-    Identifier() "=" Expression()/*@bgen(jjtree)*/
+    IdentifierOrListElement() "=" Expression()/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -238,7 +238,74 @@ void TypeSpecifier()                : {/*@bgen(jjtree) TypeSpecifier */
 {/*@bgen(jjtree) TypeSpecifier */
     try {
 /*@egen*/
-    <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP>/*@bgen(jjtree)*/
+    <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+/*@egen*/
+}
+
+void IdentifierOrListElement()                   : {/*@bgen(jjtree) IdentifierOrList */
+  GSIdentifierOrList jjtn000 = new GSIdentifierOrList(JJTIDENTIFIERORLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtn000.jjtSetFirstToken(getToken(1));
+/*@egen*/}
+{/*@bgen(jjtree) IdentifierOrList */
+    try {
+/*@egen*/
+    LOOKAHEAD(2) IdentifierWithIndex() |
+    LOOKAHEAD(2) Identifier()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+/*@egen*/
+}
+
+void IdentifierWithIndex()                      : {/*@bgen(jjtree) IdentifierWithIndex */
+  GSIdentifierWithIndex jjtn000 = new GSIdentifierWithIndex(JJTIDENTIFIERWITHINDEX);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtn000.jjtSetFirstToken(getToken(1));
+/*@egen*/}
+{/*@bgen(jjtree) IdentifierWithIndex */
+    try {
+/*@egen*/
+    Identifier() "[" Expression() "]"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
@@ -276,9 +343,10 @@ void Expression()             : {/*@bgen(jjtree) Expression */
 {/*@bgen(jjtree) Expression */
     try {
 /*@egen*/
-    LOOKAHEAD(3) FunctionCall() |
-    LOOKAHEAD(3) BinaryOperation() |
-    LOOKAHEAD(3) Term()/*@bgen(jjtree)*/
+    LOOKAHEAD(5) FunctionCall() |
+    LOOKAHEAD(5) BinaryOperation() |
+    LOOKAHEAD(5) InlineList() |
+    LOOKAHEAD(5) Term()/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -366,8 +434,41 @@ void Term()       : {/*@bgen(jjtree) Term */
     StringConstant() |
     IntegerConstant() |
     FloatConstant() |
-    Identifier() |
+    LOOKAHEAD(2) ListIndex() |
+    LOOKAHEAD(2) Identifier() |
     "(" Expression() ")"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+/*@egen*/
+}
+
+void ListIndex()            : {/*@bgen(jjtree) ListIndex */
+  GSListIndex jjtn000 = new GSListIndex(JJTLISTINDEX);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtn000.jjtSetFirstToken(getToken(1));
+/*@egen*/} {/*@bgen(jjtree) ListIndex */
+    try {
+/*@egen*/
+    Identifier() "[" Expression() "]"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -574,6 +675,39 @@ void Conditional()              : {/*@bgen(jjtree) Conditional */
     try {
 /*@egen*/
     <IF> "(" Expression() ")" Statement()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+/*@egen*/
+}
+
+void InlineList()       : {/*@bgen(jjtree) List */
+  GSList jjtn000 = new GSList(JJTLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtn000.jjtSetFirstToken(getToken(1));
+/*@egen*/}
+{/*@bgen(jjtree) List */
+    try {
+/*@egen*/
+    "[" (Expression() (","Expression())*)? "]"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+
 import java.util.List;
 
 public class BCInitialise extends ByteCode {
@@ -9,4 +11,13 @@ public class BCInitialise extends ByteCode {
 	public void toByteCode(List<Byte> bytes) {
 		bytes.add(InstructionSet.Initialise.get());
 	}
+
+	@Override
+	public void execute(GSVM vm) {
+		String variablename=vm.popString().toString();
+		ByteCodeDataType value=vm.pop();
+		vm.set(variablename,value);
+	}
+
+
 }

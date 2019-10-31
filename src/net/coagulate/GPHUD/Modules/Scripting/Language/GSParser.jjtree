@@ -6,7 +6,7 @@ options {
     NODE_PREFIX="GS";
     NODE_CLASS="net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode";
     TRACK_TOKENS=true;
-    //DEBUG_PARSER=true;
+    DEBUG_PARSER=true;
     //DEBUG_LOOKAHEAD=true;
     //DEBUG_TOKEN_MANAGER=true;
 }
@@ -66,6 +66,7 @@ TOKEN : {
 	<GROUP: "Group"> |
 	<RESPONSE: "Response"> |
 	<STRING: "String"> |
+	<LIST: "List"> |
 	<IF: "if"> |
 	<DO: "do">
 }
@@ -93,8 +94,7 @@ void Statement() #Statement : {}
     "{" Statements() "}" |
     Conditional() |
     Initialiser() ";" |
-    LOOKAHEAD(2) Assignment() ";" |
-    Expression() ";"
+    LOOKAHEAD(2) Assignment() ";"
 }
 
 void Initialiser() #Initialiser : {}
@@ -104,12 +104,23 @@ void Initialiser() #Initialiser : {}
 
 void Assignment() #Assignment : {}
 {
-    Identifier() "=" Expression()
+    IdentifierOrListElement() "=" Expression()
 }
 
 void TypeSpecifier() #TypeSpecifier : {}
 {
-    <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP>
+    <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
+}
+
+void IdentifierOrListElement() #IdentifierOrList : {}
+{
+    LOOKAHEAD(2) IdentifierWithIndex() |
+    LOOKAHEAD(2) Identifier()
+}
+
+void IdentifierWithIndex() #IdentifierWithIndex : {}
+{
+    Identifier() "[" Expression() "]"
 }
 
 void Identifier() #Identifier : {}
@@ -119,9 +130,10 @@ void Identifier() #Identifier : {}
 
 void Expression() #Expression : {}
 {
-    LOOKAHEAD(3) FunctionCall() |
-    LOOKAHEAD(3) BinaryOperation() |
-    LOOKAHEAD(3) Term()
+    LOOKAHEAD(5) FunctionCall() |
+    LOOKAHEAD(5) BinaryOperation() |
+    LOOKAHEAD(5) InlineList() |
+    LOOKAHEAD(5) Term()
     //UnaryOperator() Term()
 }
 
@@ -139,8 +151,13 @@ void Term() #Term : {}
     StringConstant() |
     IntegerConstant() |
     FloatConstant() |
-    Identifier() |
+    LOOKAHEAD(2) ListIndex() |
+    LOOKAHEAD(2) Identifier() |
     "(" Expression() ")"
+}
+
+void ListIndex() #ListIndex : {} {
+    Identifier() "[" Expression() "]"
 }
 
 void StringConstant() #StringConstant : {}
@@ -179,4 +196,9 @@ void Parameter() #Parameter : {}
 void Conditional() #Conditional : {}
 {
     <IF> "(" Expression() ")" Statement()
+}
+
+void InlineList() #List : {}
+{
+    "[" (Expression() (","Expression())*)? "]"
 }
