@@ -677,4 +677,8 @@ public class Instance extends TableRow {
 	public String getLogoHREF(State st) {
 		return "<a href=\"" + getLogoURL(st) + "\">";
 	}
+
+	public Set<Scripts> getScripts() {
+		return Scripts.getScript(this);
+	}
 }

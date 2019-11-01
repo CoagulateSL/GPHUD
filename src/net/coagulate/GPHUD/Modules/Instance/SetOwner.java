@@ -19,7 +19,7 @@ import net.coagulate.SL.Data.User;
  */
 public abstract class SetOwner {
 
-	@Commands(context = Context.AVATAR, description = "Transfer ownership of the instance (SUPERADMIN ONLY)", requiresPermission = "instance.owner", permitHUDWeb = false, permitJSON = false, permitUserWeb = false)
+	@Commands(context = Context.AVATAR, permitScripting = false,description = "Transfer ownership of the instance (SUPERADMIN ONLY)", requiresPermission = "instance.owner", permitHUDWeb = false, permitJSON = false, permitUserWeb = false)
 	public static Response setOwner(State st,
 	                                @Arguments(description = "New owner for this instance", type = ArgumentType.AVATAR)
 			                                User avatar) {

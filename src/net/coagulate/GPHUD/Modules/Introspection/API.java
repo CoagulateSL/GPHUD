@@ -84,6 +84,11 @@ public abstract class API {
 			f.add(new Color("green", "Accessible via HUD Web UI"));
 		}
 		f.add("<br>");
+		if (!c.permitScripting()) { f.add(new Color("red", "Scripting access denied")); } else {
+			f.add(new Color("green", "Accessible via Scripting module"));
+		}
+		f.add("<br>");
+		f.add("<br>");
 		f.add(new TextSubHeader("Target Method"));
 		f.add(c.getFullMethodName());
 	}
@@ -118,6 +123,9 @@ public abstract class API {
 					}
 					if (c.permitHUDWeb()) { t.add(new Color("green", "HUDWeb")); } else {
 						t.add(new Color("red", "HUDWeb"));
+					}
+					if (c.permitScripting()) { t.add(new Color("green", "Scripting")); } else {
+						t.add(new Color("red", "Scripting"));
 					}
 					if (c.isGenerated()) { t.add(new Color("blue", "Instance Specific")); } else { t.add(""); }
 				} catch (Exception e) { t.add("ERR:" + e.toString()); }

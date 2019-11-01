@@ -94,6 +94,8 @@ public class CommandAnnotation extends Command {
 
 	public boolean permitUserWeb() { return meta.permitUserWeb(); }
 
+	public boolean permitScripting() { return meta.permitScripting(); }
+
 	public List<Argument> getArguments() { return arguments; }
 
 	public int getArgumentCount() { return getArguments().size(); }

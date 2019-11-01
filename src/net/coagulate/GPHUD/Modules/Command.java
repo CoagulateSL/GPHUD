@@ -69,6 +69,8 @@ public abstract class Command {
 
 	public abstract boolean permitUserWeb();
 
+	public abstract boolean permitScripting();
+
 	public abstract List<Argument> getArguments();
 
 	public abstract int getArgumentCount();
@@ -338,6 +340,11 @@ public abstract class Command {
 					return new ErrorResponse("This command can not be accessed via the console");
 				}
 				ok = true;
+			}
+			if (st.source== State.Sources.SCRIPTING) {
+				if (!this.permitScripting()) {
+					return new ErrorResponse("This command can not be access via the Scripting module");
+				}
 			}
 
 			//check arguments
@@ -737,6 +744,8 @@ public abstract class Command {
 		boolean permitHUDWeb() default true;
 
 		boolean permitUserWeb() default true;
+
+		boolean permitScripting() default true;
 	}
 
 }

@@ -9,6 +9,9 @@ import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Scripts extends TableRow {
 	public Scripts(int id) {
 		super(id);
@@ -42,6 +45,19 @@ public class Scripts extends TableRow {
 
 	public static Scripts get(int id) {
 		return (Scripts) factoryPut("Scripts", id, new Scripts(id));
+	}
+
+	public static Set<Scripts> getScript(Instance instance) {
+		Set<Scripts> scripts=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().dq("select id from scripts where instanceid=?",instance.getId())) {
+			scripts.add(new Scripts(row.getInt("id")));
+		}
+		return scripts;
+	}
+
+	public static Scripts find(State st, String commandname) {
+		Integer id=GPHUD.getDB().dqi(true,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
+		return new Scripts(id);
 	}
 
 	public String getSource() {

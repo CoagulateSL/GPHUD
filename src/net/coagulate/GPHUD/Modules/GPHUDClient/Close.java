@@ -16,7 +16,7 @@ import org.json.JSONObject;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Close {
-	@Commands(context = Context.CHARACTER, permitConsole = false, permitJSON = false, permitUserWeb = false, description = "Causes the HUD to close its web panel")
+	@Commands(context = Context.CHARACTER, permitScripting = false, permitConsole = false, permitJSON = false, permitUserWeb = false, description = "Causes the HUD to close its web panel")
 	public static Response close(State st) {
 		//System.out.println("Send close");
 		if (st.getCharacter().getURL() == null) {

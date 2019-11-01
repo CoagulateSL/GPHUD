@@ -13,7 +13,7 @@ import org.json.JSONObject;
  */
 public class Giver {
 
-	@Commands(context = Command.Context.AVATAR, description = "Get an Item Giver", requiresPermission = "instance.owner", permitUserWeb = false)
+	@Commands(context = Command.Context.AVATAR, description = "Get an Item Giver", permitScripting = false, requiresPermission = "instance.owner", permitUserWeb = false)
 	public static Response getGiver(State st) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");

@@ -50,7 +50,7 @@ public abstract class ZoneCommands {
 
 	}
 
-	@Commands(context = Context.CHARACTER, description = "Trigger a zone change event", permitConsole = false, permitHUDWeb = false, permitUserWeb = false)
+	@Commands(context = Context.CHARACTER, permitScripting = false,description = "Trigger a zone change event", permitConsole = false, permitHUDWeb = false, permitUserWeb = false)
 	public static Response zoneTransition(State st,
 	                                      @Arguments(description = "Name of zone we transitioned into", type = ArgumentType.ZONE)
 			                                      Zone zone) {
