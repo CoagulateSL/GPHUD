@@ -163,7 +163,7 @@ public class GSCompiler {
 			// validate the function name
 			String functionname = node.child(0).tokens();
 			if (!validFunction(functionname)) {
-				throw new UserException("Function " + functionname + " does not exist");
+				throw new GSUnknownIdentifier("Function " + functionname + " does not exist");
 			}
 			// dump the paramters, in reverse order, (which starts with the paramter count), and finally the name and the invoking bytecode
 			compiled.addAll(compile(node.child(1)));
@@ -187,8 +187,8 @@ public class GSCompiler {
 			checkType(node,1,GSBinaryOperator.class);
 			checkType(node,2,GSExpression.class);
 			// exection is just OP pops 2 and pushes result so....
-			compiled.addAll(compile(node.child(0)));
-			compiled.addAll(compile(node.child(2)));
+			compiled.addAll(compile(node.child(2)));  // reverse polish
+			compiled.addAll(compile(node.child(0)));  // so first term is pushed last!
 			boolean handledop=false;
 			String op=node.child(1).tokens();
 			//"+" | "-" | "*" | "/" | "==" | "!="
@@ -199,6 +199,8 @@ public class GSCompiler {
 			if (op.equals("/")) { handledop=true; compiled.add(new BCDivide(node.child(1))); }
 			if (op.equals("==")) { handledop=true; compiled.add(new BCEquality(node.child(1))); }
 			if (op.equals("!=")) { handledop=true; compiled.add(new BCInequality(node.child(1))); }
+			if (op.equals(">")) { handledop=true; compiled.add(new BCGreaterThan(node.child(1))); }
+			if (op.equals("<")) { handledop=true; compiled.add(new BCLessThan(node.child(1))); }
 			return compiled;
 		}
 

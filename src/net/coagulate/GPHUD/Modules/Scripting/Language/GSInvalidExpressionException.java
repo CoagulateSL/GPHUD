@@ -8,4 +8,6 @@ public class GSInvalidExpressionException extends GSException {
 	public GSInvalidExpressionException(String reason, Throwable cause) {
 		super(reason, cause);
 	}
+
+	public String toString() { return "{GS Invalid Expression Exception}: "+getLocalizedMessage(); }
 }

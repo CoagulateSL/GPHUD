@@ -32,10 +32,10 @@ public class ScriptingConfig {
 		f.add(new Paragraph("List of scripts"));
 		f.add(Scripts.getTable(st.getInstance()));
 		f.noForm();
-		f.add(new Form(st, true, "/GPHUD/scripting/create", "Create new script"));
+		f.add(new Form(st, true, "/GPHUD/configuration/scripting/create", "Create new script"));
 	}
 
-	@URL.URLs(url = "/scripting/create", requiresPermission = "Scripting.Create")
+	@URL.URLs(url = "/configuration/scripting/create", requiresPermission = "Scripting.Create")
 	public static void createScript(State st, SafeMap values) {
 		Form f = st.form;
 		if (!values.get("scriptname").isEmpty()) {
@@ -47,7 +47,7 @@ public class ScriptingConfig {
 		f.add(new Button("Create"));
 	}
 
-	@URL.URLs(url = "/scripting/edit/*", requiresPermission = "Scripting.Create")
+	@URL.URLs(url = "/configuration/scripting/edit/*", requiresPermission = "Scripting.Create")
 	public static void editScript(State st, SafeMap values) {
 		Form f = st.form;
 		String split[] = st.getDebasedURL().split("/");

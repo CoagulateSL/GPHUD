@@ -8,4 +8,6 @@ public class GSCastException extends GSInvalidExpressionException {
 	public GSCastException(String reason, Throwable cause) {
 		super(reason, cause);
 	}
+
+	public String toString() { return "{GS Cast Exception}: "+getLocalizedMessage(); }
 }

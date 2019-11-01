@@ -23,7 +23,7 @@ public class Scripts extends TableRow {
 		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
 		for (ResultsRow row:rows) {
 			o.openRow();
-			o.add("<a href=\"/GPHUD/scripting/edit/"+row.getInt("id")+"\">"+row.getString("name")+"</a>");
+			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getInt("id")+"\">"+row.getString("name")+"</a>");
 			Integer sourceversion=row.getInt("sourceversion");
 			Integer bytecodeversion=row.getInt("bytecodeversion");
 			if (sourceversion==bytecodeversion) {
@@ -94,7 +94,7 @@ public class Scripts extends TableRow {
 	public String getNameField() { return "name"; }
 
 	@Override
-	public String getLinkTarget() { return "/GPHUD/scripting/edit/"+getId(); }
+	public String getLinkTarget() { return "/GPHUD/configuration/scripting/edit/"+getId(); }
 
 	@Override
 	protected int getNameCacheTime() { return 600; }

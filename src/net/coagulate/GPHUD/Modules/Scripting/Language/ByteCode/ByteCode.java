@@ -58,6 +58,8 @@ public abstract class ByteCode {
 			case List: return new BCList(null,vm.getShort());
 			case LoadIndexed: return new BCLoadIndexed(null);
 			case StoreIndexed: return new BCStoreIndexed(null);
+			case LessThan: return new BCLessThan(null);
+			case GreaterThan: return new BCGreaterThan(null);
 		}
 		throw new SystemException("Failed to materialise instruction "+decode);
 	}
@@ -87,7 +89,9 @@ public abstract class ByteCode {
 		Subtract((byte)17),
 		List((byte)18),
 		LoadIndexed((byte)19),
-		StoreIndexed((byte)20);
+		StoreIndexed((byte)20),
+		GreaterThan((byte)21),
+		LessThan((byte)22);
 		private byte value;
 
 

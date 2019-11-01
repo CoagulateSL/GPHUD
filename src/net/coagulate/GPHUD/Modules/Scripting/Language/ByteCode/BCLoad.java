@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSUnknownIdentifier;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
@@ -21,7 +21,7 @@ public class BCLoad extends ByteCode {
 	public void execute(GSVM vm) {
 		String name=vm.popString().getContent();
 		ByteCodeDataType val=vm.get(name);
-		if (val==null) { throw new GSInvalidExpressionException("Variable "+name+" is not defined"); }
+		if (val==null) { throw new GSUnknownIdentifier("Variable "+name+" is not defined"); }
 		vm.push(val);
 	}
 }

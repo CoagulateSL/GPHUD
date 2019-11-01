@@ -10,4 +10,6 @@ public class GSException extends UserException {
 	public GSException(String reason, Throwable cause) {
 		super(reason, cause);
 	}
+
+	public String toString() { return "{GS Exception}: "+getLocalizedMessage(); }
 }
