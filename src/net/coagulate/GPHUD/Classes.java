@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Modules.Permission.Permissions;
 import net.coagulate.GPHUD.Modules.Permission.Permissionss;
 import net.coagulate.GPHUD.Modules.Pool.Pools;
 import net.coagulate.GPHUD.Modules.Pool.Poolss;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
 import net.coagulate.GPHUD.Modules.SideMenu.SideMenus;
 import net.coagulate.GPHUD.Modules.SideSubMenu.SideSubMenus;
 import net.coagulate.GPHUD.Modules.Templater.Template;
@@ -49,6 +50,7 @@ public abstract class Classes {
 		loadURLs();
 		loadSideMenus();
 		loadTemplates();
+		loadGSFunctions();
 	}
 
 	private static String getModuleName(Class c) {
@@ -229,5 +231,13 @@ public abstract class Classes {
 		}
 	}
 
-	private static enum BOOTPHASE {MODULES, PERMISSIONS, KVMAP, POOLS, COMMANDS, CONTENTS, SIDEMENUS, TEMPLATES}
+	private static void loadGSFunctions() {
+		for (Method m : ClassTools.getAnnotatedMethods(GSFunctions.GSFunction.class)) {
+			Annotation a = m.getAnnotation(GSFunctions.GSFunction.class);
+			if (LOGREGISTERS) log.config("Registering gsFunction " + m.getName());
+			GSFunctions.register(m.getName(),m);
+		}
+	}
+
+
 }

@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class BCGreaterThan extends ByteCode {
 	}
 
 	@Override
-	public void execute(GSVM vm) {
+	public void execute(State st, GSVM vm) {
 		ByteCodeDataType var1 = vm.pop();
 		ByteCodeDataType var2 = vm.pop();
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"

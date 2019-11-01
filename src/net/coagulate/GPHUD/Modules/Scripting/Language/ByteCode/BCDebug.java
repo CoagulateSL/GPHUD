@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class BCDebug extends ByteCode {
 	@Override public String htmlDecode() { return "Debug</td><td>"+line+":"+column; }
 
 	@Override
-	public void execute(GSVM vm) {
+	public void execute(State st, GSVM vm) {
 		vm.column=column; vm.row=line;
 	}
 }

@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
+import net.coagulate.GPHUD.State;
 
 import java.util.*;
 
@@ -101,7 +102,7 @@ public class GSVM {
 	}
 
 	public boolean simulation=false;
-	public List<ExecutionStep> simulate() {
+	public List<ExecutionStep> simulate(State st) {
 		List<ExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM();
 		simulation=true;
@@ -112,7 +113,7 @@ public class GSVM {
 				startPC = PC;
 				ByteCode instruction = ByteCode.load(this);
 				frame.decode = instruction.htmlDecode();
-				instruction.execute(this);
+				instruction.execute(st, this);
 				for (int i=0;i<stack.size();i++) { frame.resultingstack.push(stack.elementAt(i).clone()); }
 				for (String k:variables.keySet()) {
 					ByteCodeDataType clone = null;

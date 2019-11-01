@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 
 import java.util.List;
 
@@ -17,9 +18,9 @@ public class BCInequality extends ByteCode {
 	}
 
 	@Override
-	public void execute(GSVM vm) {
+	public void execute(State st, GSVM vm) {
 		// cheat
-		new BCEquality(node()).execute(vm);
+		new BCEquality(node()).execute(st, vm);
 		int result=vm.popInteger().toInteger();
 		if (result==0) { result=1; } else { result=0; }
 		vm.push(new BCInteger(node(),result));

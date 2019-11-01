@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class BCGroup extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "Avatar</td><td>"+content.getId(); }
 
 	@Override
-	public void execute(GSVM vm) {
+	public void execute(State st, GSVM vm) {
 		vm.push(this);
 	}
 

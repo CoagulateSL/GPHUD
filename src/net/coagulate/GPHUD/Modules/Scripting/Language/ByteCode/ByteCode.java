@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
 import java.util.HashMap;
@@ -116,5 +117,5 @@ public abstract class ByteCode {
 		bytes.add((byte)(a&0xff));
 	}
 
-	public abstract void execute(GSVM vm);
+	public abstract void execute(State st, GSVM vm);
 }

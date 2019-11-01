@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class BCStore extends ByteCode {
 	}
 
 	@Override
-	public void execute(GSVM vm) {
+	public void execute(State st, GSVM vm) {
 		String variablename = vm.popString().getContent();
 		ByteCodeDataType value = vm.pop();
 		vm.set(variablename,value);

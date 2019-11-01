@@ -113,27 +113,27 @@ public class ScriptingConfig {
 		f.br();
 		if (values.get("View Parse Tree").equals("View Parse Tree") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
-			f.add(debug(script.getSource(), STAGE.PARSER));
+			f.add(debug(st,script.getSource(), STAGE.PARSER));
 		}
 		if (values.get("View Compiler Output").equals("View Compiler Output") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Compiler Output"));
-			f.add(debug(script.getSource(), STAGE.COMPILER));
+			f.add(debug(st,script.getSource(), STAGE.COMPILER));
 		}
 		if (values.get("View Raw ByteCode").equals("View Raw ByteCode") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Raw ByteCode"));
-			f.add(debug(script.getSource(), STAGE.BYTECODE));
+			f.add(debug(st,script.getSource(), STAGE.BYTECODE));
 		}
 		if (values.get("View Disassembly").equals("View Disassembly") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Disassembly"));
-			f.add(debug(script.getSource(), STAGE.DISASSEMBLY));
+			f.add(debug(st,script.getSource(), STAGE.DISASSEMBLY));
 		}
 		if (values.get("View Simulation").equals("View Simulation") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(script.getSource(), STAGE.SIMULATION));
+			f.add(debug(st,script.getSource(), STAGE.SIMULATION));
 		}
 	}
 	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION};
-	private static String debug(String script, STAGE stage) {
+	private static String debug(State st,String script, STAGE stage) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(script.getBytes());
 		GSParser parser = new GSParser(bais);
 		parser.enable_tracing();
@@ -192,7 +192,7 @@ public class ScriptingConfig {
 
 			try {
 				if (stage==STAGE.SIMULATION) {
-					List<GSVM.ExecutionStep> steps = gsvm.simulate();
+					List<GSVM.ExecutionStep> steps = gsvm.simulate(st);
 					String output="<table border=1><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>";
 					for (GSVM.ExecutionStep step:steps) {
 						output+="<tr><th>"+step.programcounter+"</th><td>"+step.decode+"</td><td><table>";

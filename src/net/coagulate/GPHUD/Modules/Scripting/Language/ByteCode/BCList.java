@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class BCList extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "List</td><td>"+elements; }
 
 	@Override
-	public void execute(GSVM vm) {
+	public void execute(State st, GSVM vm) {
 		// pull the list from the stack!
 		for (int i=0;i<elements;i++) {
 			content.add(vm.pop());

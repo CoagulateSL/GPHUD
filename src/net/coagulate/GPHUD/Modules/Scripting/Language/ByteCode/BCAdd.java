@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.State;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class BCAdd extends ByteCode {
 	}
 
 	@Override
-	public void execute(GSVM vm) {
+	public void execute(State st, GSVM vm) {
 		// add the next two stack elements and push the result.
 		ByteCodeDataType var1=vm.pop();
 		ByteCodeDataType var2=vm.pop();

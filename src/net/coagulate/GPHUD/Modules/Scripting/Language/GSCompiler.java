@@ -1,8 +1,8 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.*;
 
 import java.util.ArrayList;
@@ -242,9 +242,9 @@ public class GSCompiler {
 	}
 
 	private boolean validFunction(String name) {
-		if (name.equals("gsQuery")) { return true; }
-		if (name.equals("gsAPI")) { return true; }
-		if (name.equals("gsGetKV")) { return true; }
+		for (String funname: GSFunctions.getAll().keySet()) {
+			if (funname.equals(name)) { return true; }
+		}
 		return false;
 	}
 
