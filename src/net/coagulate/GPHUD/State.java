@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.*;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.SL.Data.User;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
@@ -72,6 +73,7 @@ public class State extends DumpableState {
 	// used by the HUD interface to stash things briefly
 	public boolean sendshow;
 	public Integer roll = null;
+	public GSVM vm;
 	Set<String> permissionscache = null;
 	Set<Attribute> attributes = null;
 	private String uri = null;
@@ -744,6 +746,16 @@ public class State extends DumpableState {
 			ret += "Char:" + character.getName();
 		}
 		return ret;
+	}
+
+	@Override
+	protected String dumpAdditionalStateToHtml() {
+		if (vm!=null) {
+			try {
+				return vm.dumpStateToHtml();
+			} catch (Throwable e) { return "Exceptioned: " + e.toString(); }
+		}
+		return "";
 	}
 
 

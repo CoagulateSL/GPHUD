@@ -24,11 +24,11 @@ public class GSCompiler {
 		if (node instanceof GSParameters) { return -1; }
 		if (node instanceof GSConditional) { return 2; }
 		if (node instanceof GSAssignment) { return 2; }
-		if (node instanceof GSStatement) { return 1; }
+		if (node instanceof GSStatement) { return -1; }
 		if (node instanceof GSBinaryOperation) { return 3; }
 		if (node instanceof GSList) { return -1; }
 		if (node instanceof GSListIndex) { return 2; }
-		throw new SystemException("Expected Children not defined for node "+node.getClass().getName());
+		throw new SystemException("Expected Children not defined for node "+node.getClass().getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
 	private final ParseNode startnode;
 	public GSCompiler(Node passednode) {
@@ -66,7 +66,7 @@ public class GSCompiler {
 	}
 	private List<ByteCode> compile(ParseNode node) {
 		List<ByteCode> compiled=new ArrayList<>();
-		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) { throw new SystemException("GSInitialiser had "+node.jjtGetNumChildren()+" children"); }
+		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) { throw new SystemException(node.getClass().getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn); }
 
 
 		if (node instanceof GSStart || node instanceof GSExpression || node instanceof GSParameter || node instanceof GSTerm || node instanceof GSStatement) { // expression just breaks down into 1 of X executable subtypes

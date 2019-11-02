@@ -16,7 +16,7 @@ public class ScriptingModule extends ModuleAnnotation {
 
 	@Override
 	public Command getCommand(State st, String commandname) {
-		Scripts script=Scripts.find(st,commandname);
+		Scripts script=Scripts.findOrNull(st,commandname.replaceFirst("gs",""));
 		if (script==null) { throw new UserException("No script named "+commandname+" exists"); }
 		return new ScriptingCommand(script);
 	}

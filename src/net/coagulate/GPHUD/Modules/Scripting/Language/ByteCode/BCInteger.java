@@ -7,7 +7,7 @@ import net.coagulate.GPHUD.State;
 import java.util.List;
 
 public class BCInteger extends ByteCodeDataType {
-	private Integer content=0xffffffff;
+	private Integer content=0;
 	public BCInteger(ParseNode n) { super(n); }
 	public BCInteger(ParseNode n,Integer content) { super(n); this.content=content; }
 	public BCInteger(ParseNode n,String tokens) { super(n); this.content=Integer.parseInt(tokens); }
@@ -15,7 +15,7 @@ public class BCInteger extends ByteCodeDataType {
 	public String explain() { return "Integer ("+content+")"; }
 	public void toByteCode(List<Byte> bytes) {
 		bytes.add(InstructionSet.Integer.get());
-		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
+		if (content==null) { bytes.add((byte)0); bytes.add((byte)0); bytes.add((byte)0); bytes.add((byte)0);return; }
 		addInt(bytes,content);
 	}
 	@Override public String htmlDecode() { return "Integer</td><td>"+content; }

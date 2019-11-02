@@ -2,8 +2,12 @@ package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Data.Scripts;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.State;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,12 +18,14 @@ public class ScriptingCommand extends Command {
 	public ScriptingCommand(Scripts script) { this.script=script; }
 	@Override
 	public Method getMethod() {
-		try { return this.getClass().getMethod("execute",new Class[0]); }
+		try { return this.getClass().getMethod("execute",new Class[]{State.class}); }
 		catch (NoSuchMethodException e) { throw new SystemException("Reflection exception finding gsScriptCommand's execute() method",e); }
 	}
 
-	public void execute() {
-
+	public Response execute(State st) {
+		GSVM vm=new GSVM(script.getByteCode());
+		vm.execute(st);
+		return new OKResponse("Created VM!");
 	}
 
 	@Override

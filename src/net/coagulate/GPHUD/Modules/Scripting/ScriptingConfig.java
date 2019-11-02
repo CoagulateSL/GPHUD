@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Scripts;
+import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.Paragraph;
@@ -110,6 +111,7 @@ public class ScriptingConfig {
 		f.add(new Button("View Disassembly", "View Disassembly"));
 		f.add(new Button("View Simulation", "View Simulation"));
 		f.add(new Button("View ALL", "View ALL"));
+		if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
 		f.br();
 		if (values.get("View Parse Tree").equals("View Parse Tree") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
@@ -131,6 +133,7 @@ public class ScriptingConfig {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
 			f.add(debug(st,script.getSource(), STAGE.SIMULATION));
 		}
+		if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}
 	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION};
 	private static String debug(State st,String script, STAGE stage) {

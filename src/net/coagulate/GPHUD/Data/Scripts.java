@@ -59,6 +59,11 @@ public class Scripts extends TableRow {
 		Integer id=GPHUD.getDB().dqi(true,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
 		return new Scripts(id);
 	}
+	public static Scripts findOrNull(State st, String commandname) {
+		Integer id=GPHUD.getDB().dqi(false,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
+		if (id==null) { return null; }
+		return new Scripts(id);
+	}
 
 	public String getSource() {
 		String script=getString("source");
@@ -126,5 +131,34 @@ public class Scripts extends TableRow {
 	public void setBytecode(Byte[] toByteCode, int version) {
 		validate();
 		d("update scripts set bytecode=?, bytecodeversion=? where id=?",toByteCode,version,getId());
+		if (GPHUD.DEV) {
+			byte[] compareto = getByteCode();
+			if (compareto.length != toByteCode.length) {
+				throw new SystemException("Length mismatch, wrote " + toByteCode.length + " and read " + compareto.length);
+			}
+			for (int i = 0; i < compareto.length; i++) {
+				if (compareto[i] != toByteCode[i]) {
+					throw new SystemException("Difference at " + i + " - we wrote " + toByteCode[i] + " and read " + compareto[i]);
+				}
+			}
+		}
+	}
+
+	public byte[] getByteCode() {
+		validate();
+		return getBytes("bytecode");
+	}
+
+	public static void test() {
+		byte[] b=new byte[255];
+		for (int i=0;i<256;i++) { b[i]=((byte)(0xff & i)); }
+		GPHUD.getDB().d("insert into scripts(instanceid,name,bytecode) values(?,?,?)",-1," ENCODING TEST ",b);
+		byte[] out=GPHUD.getDB().dqbyte(true,"select bytecode from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
+		GPHUD.getDB().d("delete from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
+		for (int i=0;i<256;i++) {
+			if (b[i] != out[i]) {
+				throw new SystemException("Comparison error on " + i + " - " + b[i] + " gave " + out[i]);
+			}
+		}
 	}
 }

@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
+import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.State;
 
@@ -62,8 +64,11 @@ public class GSVM {
 		String line = "<table>";
 		while (PC < bytecode.length) {
 			line += "<tr><th>" + PC + "</th><td>";
-			ByteCode instruction=ByteCode.load(this);
-			line+=instruction.htmlDecode();
+			try {
+				ByteCode instruction = ByteCode.load(this);
+				line += instruction.htmlDecode();
+			}
+			catch (Exception e) { line+="</td></tr><tr><td colspan=5>"+e.toString()+"</tD></tr></table>"; return line; }
 			line += "</td></tr>";
 		}
 		return line + "</td></tr></table>";
@@ -95,6 +100,55 @@ public class GSVM {
 			throw new GSInvalidExpressionException("Variable "+name+" is not a List");
 		}
 		return (BCList)raw;
+	}
+
+	public void execute(State st) {
+		// like simulation but we dont keep the whole execution trace
+		st.vm=this;
+		initialiseVM(st);
+		ExecutionStep currentstep=new ExecutionStep();
+		try {
+			while (PC<bytecode.length) {
+				currentstep=new ExecutionStep();
+				startPC=PC;
+				ByteCode.load(this).execute(st,this,false);
+			}
+		} catch (Throwable t) {
+			if (t instanceof SystemException || t instanceof GSInternalError) {
+				throw new SystemException("VM exception: "+t.toString()+" "+at(),t);
+			}
+			if (t instanceof GSException || t instanceof UserException) { throw new UserException("Script error: "+t.toString()+" "+at(),t); }
+			if (t instanceof RuntimeException) { throw new SystemException("VM Runtime: "+t.toString()+" "+at(),t); }
+			throw new SystemException("VM Uncaught: "+t.toString()+" "+at(),t);
+		}
+		st.vm=null;
+	}
+
+	public String dumpStateToHtml() {
+		String ret="";
+		ret+="<h3>Stack</h3><br><table>";
+		for (int i=0;i<stack.size();i++) {
+			ret+="<tr><th>"+i+"</th><td>"+stack.get(i).getClass().getSimpleName()+"</td><td>"+stack.get(i).explain()+"</td></tr>";
+		}
+		ret+="</table>";
+		ret+="<h3>Variable store</h3><br><table>";
+		for (String k:variables.keySet()) {
+			ret+="<tr><th>"+k+"</th>";
+			ByteCodeDataType value = variables.get(k);
+			ret+="<td>"+value.getClass().getSimpleName()+"</td><td>"+value.explain()+"</td></tr>";
+		}
+		ret+="</table>";
+		ret+="<h3>Byte code</h3><br>";
+		ret += "<pre><table border=0><tr>";
+		for (int i = 0; i < bytecode.length; i++) {
+			if ((i % 25) == 0) { ret += "</tr><tr><th>" + i + "</th>"; }
+			ret += "<td>" + bytecode[i] + "</td>";
+		}
+		ret += "</tr></table></pre>";
+
+		ret+="<h3>Code store</h3><br>";
+		ret+=toHtml();
+		return ret;
 	}
 
 	public class ExecutionStep {
@@ -136,8 +190,13 @@ public class GSVM {
 	}
 
 	public int getInt() {
-		int ret=(((int) this.bytecode[this.PC] & 0xff) << 24) + (((int) this.bytecode[this.PC + 1] & 0xff) << 16) + (((int) this.bytecode[this.PC + 2] & 0xff) << 8) + (((int) this.bytecode[this.PC + 3] & 0xff));
-		this.PC+=4;
+		int a=bytecode[PC] & 0xff;
+		int b=bytecode[PC+1] & 0xff;
+		int c=bytecode[PC+2] & 0xff;
+		int d=bytecode[PC+3]&0xff & 0xff;
+		int ret=(a<<24)+(b<<16)+(c<<8)+d;
+		System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
+		PC+=4;
 		return ret;
 	}
 

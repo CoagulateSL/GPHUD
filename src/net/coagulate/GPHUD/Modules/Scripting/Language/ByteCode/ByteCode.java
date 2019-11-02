@@ -23,11 +23,11 @@ public abstract class ByteCode {
 
 	public static ByteCode load(GSVM vm) {
 		byte instruction = vm.bytecode[vm.PC];
-		vm.PC++;
 		InstructionSet decode = ByteCode.get(instruction);
 		if (decode == null) {
 			throw new SystemException("Unable to decode instruction " + instruction + " at index " + vm.PC);
 		}
+		vm.PC++;
 		switch (decode) {
 			case Add: return new BCAdd(null);
 			case Store: return new BCStore(null);
@@ -107,7 +107,12 @@ public abstract class ByteCode {
 	}
 
 	void addInt(List<Byte> bytes,int a) {
-		bytes.add((byte)(a>>24));
+		/*System.out.println("Writing "+
+				((byte)((a>>24) & 0xff))+" "+
+				((byte)((a>>16) & 0xff))+" "+
+				((byte)((a>>8) & 0xff))+" "+
+				((byte)(a&0xff)));*/
+		bytes.add((byte)((a>>24) & 0xff));
 		bytes.add((byte)((a>>16) & 0xff));
 		bytes.add((byte)((a>>8) & 0xff));
 		bytes.add((byte)(a&0xff));

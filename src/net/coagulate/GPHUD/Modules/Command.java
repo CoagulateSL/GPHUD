@@ -416,7 +416,7 @@ public abstract class Command {
 				System.out.println("Go for invoke on " + getMethod());
 				for (Object o : args) {System.out.println(o); }
 			}
-			Response response = (Response) (getMethod().invoke(null, args));
+			Response response = (Response) (getMethod().invoke(this, args));
 			return response;
 		} catch (IllegalAccessException ex) {
 			throw new SystemException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
