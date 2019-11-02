@@ -20,7 +20,7 @@ public class BCStoreIndexed extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		BCString variablename=vm.popString();
 		BCInteger index=vm.popInteger();
 		ByteCodeDataType newvalue = vm.pop();

@@ -19,7 +19,7 @@ public class BCLoad extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		String name=vm.popString().getContent();
 		ByteCodeDataType val=vm.get(name);
 		if (val==null) { throw new GSUnknownIdentifier("Variable "+name+" is not defined"); }

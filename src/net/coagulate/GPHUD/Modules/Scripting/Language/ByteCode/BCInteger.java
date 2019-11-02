@@ -21,7 +21,7 @@ public class BCInteger extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "Integer</td><td>"+content; }
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		vm.push(this);
 	}
 

@@ -18,7 +18,7 @@ public class BCDivide extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		ByteCodeDataType arg1 = vm.pop();
 		ByteCodeDataType arg2 = vm.pop();
 		vm.push(arg1.divide(arg2));

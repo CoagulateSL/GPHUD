@@ -18,7 +18,7 @@ public class BCLabel extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		throw new GSInternalError("Can not execute the LABEL instruction, it is a pseudocode marker for compilation only");
 	}
 }

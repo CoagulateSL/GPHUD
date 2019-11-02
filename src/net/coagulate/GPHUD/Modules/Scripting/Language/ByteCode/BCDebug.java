@@ -25,7 +25,7 @@ public class BCDebug extends ByteCode {
 	@Override public String htmlDecode() { return "Debug</td><td>"+line+":"+column; }
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		vm.column=column; vm.row=line;
 	}
 }

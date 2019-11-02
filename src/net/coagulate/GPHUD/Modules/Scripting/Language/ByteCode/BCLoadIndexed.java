@@ -19,7 +19,7 @@ public class BCLoadIndexed extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		String name=vm.popString().getContent();
 		int index=vm.popInteger().getContent();
 		BCList list=vm.getList(name);

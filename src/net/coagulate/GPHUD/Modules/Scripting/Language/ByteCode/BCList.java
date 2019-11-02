@@ -30,7 +30,7 @@ public class BCList extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "List</td><td>"+elements; }
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		// pull the list from the stack!
 		for (int i=0;i<elements;i++) {
 			content.add(vm.pop());

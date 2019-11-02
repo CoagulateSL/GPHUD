@@ -25,6 +25,8 @@ public class IntrospectionMenu {
 		f.p("The API documentation provides an overview of callable functions provided by GPHUD and further details about individual commands.");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/kvmap\">Keyvalue Mappings</a>"));
 		f.p("Keywords registered to the system (configuration names, attributes, etc).");
+		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/gsfunctions\">GSFunctions</a>"));
+		f.p("Functions available to the scripting language GPHUDScript.");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/permissions\">Permissions</a>"));
 		f.p("Permission tokens registered to the system.");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/templates\">Templates</a>"));

@@ -18,10 +18,10 @@ public class BCCharacter extends ByteCodeDataType {
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content.getId());
 	}
-	@Override public String htmlDecode() { return "Avatar</td><td>"+content.getId(); }
+	@Override public String htmlDecode() { return "Character</td><td>"+content.getId(); }
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		vm.push(this);
 	}
 

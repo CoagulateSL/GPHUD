@@ -23,7 +23,7 @@ public class BCAvatar extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "Avatar</td><td>"+content.getId(); }
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		// easy
 		vm.push(this);
 	}

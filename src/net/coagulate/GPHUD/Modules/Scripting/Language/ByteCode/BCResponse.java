@@ -18,7 +18,7 @@ public class BCResponse extends ByteCodeDataType {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		vm.push(this);
 	}
 

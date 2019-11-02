@@ -20,7 +20,7 @@ public class BCBranchIfZero extends ByteCode {
 	@Override public String htmlDecode() { return "BranchIfZero</td><td>"+target.address; }
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		// pop an int
 		BCInteger conditional=vm.popInteger();
 		// set PC if zero

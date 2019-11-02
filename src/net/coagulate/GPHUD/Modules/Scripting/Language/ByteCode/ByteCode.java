@@ -117,5 +117,5 @@ public abstract class ByteCode {
 		bytes.add((byte)(a&0xff));
 	}
 
-	public abstract void execute(State st, GSVM vm);
+	public abstract void execute(State st, GSVM vm, boolean simulation);
 }

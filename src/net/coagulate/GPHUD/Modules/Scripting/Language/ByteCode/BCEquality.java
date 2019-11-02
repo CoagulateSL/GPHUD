@@ -20,7 +20,7 @@ public class BCEquality extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		ByteCodeDataType var1 = vm.pop();
 		ByteCodeDataType var2 = vm.pop();
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"

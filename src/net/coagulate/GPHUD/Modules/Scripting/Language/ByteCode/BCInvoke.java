@@ -25,7 +25,7 @@ public class BCInvoke extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		String functionname=vm.popString().getContent();
 		Method function= GSFunctions.get(functionname);
 		int argcount=vm.popInteger().getContent();

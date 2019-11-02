@@ -8,6 +8,8 @@ import java.util.*;
 public class GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
 
+	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
+
 	public byte[] bytecode;
 	public int PC=0;
 	public int row=0;
@@ -16,7 +18,7 @@ public class GSVM {
 	public Stack<ByteCodeDataType> stack=new Stack<>();
 	Map<String,ByteCodeDataType> variables=new HashMap<>();
 
-	private void initialiseVM() {
+	private void initialiseVM(State st) {
 		stack.clear();
 		PC=0;
 		startPC=0;
@@ -24,6 +26,8 @@ public class GSVM {
 		column=0;
 		variables.clear();
 		simulation=false;
+		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
+		variables.put("AVATAR",new BCAvatar(null,st.getAvatar()));
 	}
 
 	public ByteCodeDataType get(String k) { return variables.get(k); }
@@ -104,7 +108,7 @@ public class GSVM {
 	public boolean simulation=false;
 	public List<ExecutionStep> simulate(State st) {
 		List<ExecutionStep> simulationsteps=new ArrayList<>();
-		initialiseVM();
+		initialiseVM(st);
 		simulation=true;
 		try {
 			while (PC < bytecode.length) {
@@ -113,7 +117,7 @@ public class GSVM {
 				startPC = PC;
 				ByteCode instruction = ByteCode.load(this);
 				frame.decode = instruction.htmlDecode();
-				instruction.execute(st, this);
+				instruction.execute(st, this,true);
 				for (int i=0;i<stack.size();i++) { frame.resultingstack.push(stack.elementAt(i).clone()); }
 				for (String k:variables.keySet()) {
 					ByteCodeDataType clone = null;

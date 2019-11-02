@@ -19,7 +19,7 @@ public class BCStore extends ByteCode {
 	}
 
 	@Override
-	public void execute(State st, GSVM vm) {
+	public void execute(State st, GSVM vm, boolean simulation) {
 		String variablename = vm.popString().getContent();
 		ByteCodeDataType value = vm.pop();
 		vm.set(variablename,value);
