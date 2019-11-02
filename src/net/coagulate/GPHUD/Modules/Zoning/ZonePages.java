@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Modules.Zoning;
 
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
-import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.Data.ZoneArea;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
@@ -29,11 +28,8 @@ public abstract class ZonePages {
 		Form f = st.form;
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
-		for (Region region : st.getInstance().getRegions()) {
-			f.p(new TextSubHeader(region.getName()));
-			for (Zone zone : region.getZones()) {
-				f.add(new Link(zone.getName(), "./zoning/view/" + zone.getId())).add("<br>");
-			}
+		for (Zone zone:st.getInstance().getZones()) {
+			f.add(new Link(zone.getName(), "./zoning/view/" + zone.getId())).add("<br>");
 		}
 		f.add("<br>");
 		if (st.hasPermission("Zoning.config")) {
