@@ -195,7 +195,7 @@ public class GSVM {
 		int c=bytecode[PC+2] & 0xff;
 		int d=bytecode[PC+3]&0xff & 0xff;
 		int ret=(a<<24)+(b<<16)+(c<<8)+d;
-		System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
+		//System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
 		PC+=4;
 		return ret;
 	}
