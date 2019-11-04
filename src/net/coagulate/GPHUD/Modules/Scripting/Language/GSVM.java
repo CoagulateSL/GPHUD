@@ -271,6 +271,7 @@ public class GSVM {
 		// stack and variables should be restored
 		bytecode=run.getByteCode();
 		PC=((BCInteger)(variables.get(" PC"))).getContent();
+		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
 	}
 	public Response resume(State st) { return executeloop(st); }
 
