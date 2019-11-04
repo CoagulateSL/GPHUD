@@ -27,18 +27,16 @@ calculatebroadcastchannel() {
 
 integer gphud_process() {
 	string incommand=jsonget("incommand");
-	if (jsonget("message")!="") { typedSay(jsonget("message")); return TRUE; }
+	if (jsonget("message")!="") { typedSay(jsonget("message")); }
 	if (jsonget("say")!="") {
 		string oldname=llGetObjectName();
 		string newname=jsonget("sayas");
 		if (newname!="") { llSetObjectName(newname); }
 		llSay(0,jsonget("say"));
 		if (newname!="") { llSetObjectName(oldname); }
-		return TRUE;
 	}
 	if (jsonget("error")!="") {
 		typedSay(jsonget("error"));
-		return TRUE;
 	}
 	if (jsonget("terminate")!="") {
 		typedSay("===TERMINATED===\n"+jsonget("terminate"));
@@ -54,7 +52,6 @@ integer gphud_process() {
 	}
 	if (incommand=="ping") {
 		//json=llJsonSetValue("",["incommand"],"pong");
-		return TRUE;
 	}
 	return FALSE;
 }
