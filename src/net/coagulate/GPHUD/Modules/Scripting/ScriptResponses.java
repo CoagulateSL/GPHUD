@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -26,6 +27,22 @@ public class ScriptResponses {
 		GSVM vm=new GSVM(run,st);
 		// inject response
 		vm.push(new BCCharacter(null,response));
+		return vm.resume(st);
+	}
+
+	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitHUDWeb = false,permitConsole = false,permitJSON = true)
+	public static Response stringResponse(State st,
+	                                         @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER,mandatory=true)
+			                                         Integer processid,
+	                                         @Argument.Arguments(description = "The string response",type = Argument.ArgumentType.TEXT_ONELINE,mandatory = true,max = 1024)
+			                                         String response) {
+		if (response==null) { throw new SystemException("Well, we got a null string for some reason"); }
+		if (processid==null) { throw new SystemException("No process id"); }
+		ScriptRuns run = ScriptRuns.get(processid);
+		if (run.getRespondant()!=st.getCharacter()) { return new ErrorResponse("Script was not expecting a response from you (?)"); }
+		GSVM vm=new GSVM(run,st);
+		// inject response
+		vm.push(new BCString(null,response));
 		return vm.resume(st);
 	}
 }

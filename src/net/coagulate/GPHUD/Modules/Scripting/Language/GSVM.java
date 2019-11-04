@@ -204,7 +204,27 @@ public class GSVM {
 		out.put("incommand","runtemplate");
 		out.put("invoke","Scripting.CharacterResponse");
 	}
-
+	public void queueGetText(Char ch,String description) {
+		JSONObject out=getQueue(ch);
+		out.put("args",1);
+		out.put("arg0name","response");
+		out.put("arg0type","TEXTBOX");
+		out.put("arg0description",description);
+		out.put("incommand","runtemplate");
+		out.put("invoke","Scripting.StringResponse");
+	}
+	public void queueGetChoice(Char ch,String description,List<String> options) {
+		JSONObject out=getQueue(ch);
+		out.put("args",1);
+		out.put("arg0name","response");
+		out.put("arg0type","SELECT");
+		out.put("arg0description",description);
+		for (int i=0;i<options.size();i++) {
+			out.put("arg"+0+"button"+i,options.get(i));
+		}
+		out.put("incommand","runtemplate");
+		out.put("invoke","Scripting.StringResponse");
+	}
 	boolean suspended=false;
 	public void suspend(State st,Char respondant) {
 		// simulations dont suspend
