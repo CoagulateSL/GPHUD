@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Data.Scripts;
-import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
@@ -24,8 +23,9 @@ public class ScriptingCommand extends Command {
 
 	public Response execute(State st) {
 		GSVM vm=new GSVM(script.getByteCode());
-		vm.execute(st);
-		return new OKResponse("Created VM!");
+		//System.out.println("Script about to execute "+script.getNameSafe());
+		Response r=vm.execute(st);
+		return r;
 	}
 
 	@Override
@@ -85,11 +85,11 @@ public class ScriptingCommand extends Command {
 
 	@Override
 	public String getFullName() {
-		return "Scripting.gs"+script.getName();
+		return "Scripting."+script.getName();
 	}
 
 	@Override
 	public String getName() {
-		return "gs"+script.getName();
+		return script.getName();
 	}
 }

@@ -57,4 +57,9 @@ public class BCInteger extends ByteCodeDataType {
 	public ByteCodeDataType clone() {
 		return new BCInteger(node(),content);
 	}
+
+	@Override
+	public BCString toBCString() {
+		return new BCString(node(),content.toString());
+	}
 }

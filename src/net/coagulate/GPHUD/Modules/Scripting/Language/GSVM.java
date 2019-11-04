@@ -2,8 +2,14 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.ScriptRuns;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -102,13 +108,16 @@ public class GSVM {
 		return (BCList)raw;
 	}
 
-	public void execute(State st) {
+	public Response execute(State st) {
 		// like simulation but we dont keep the whole execution trace
-		st.vm=this;
+		st.vm = this;
 		initialiseVM(st);
+		return executeloop(st);
+	}
+	private Response executeloop(State st) {
 		ExecutionStep currentstep=new ExecutionStep();
 		try {
-			while (PC<bytecode.length) {
+			while (PC<bytecode.length && !suspended) {
 				currentstep=new ExecutionStep();
 				startPC=PC;
 				ByteCode.load(this).execute(st,this,false);
@@ -122,6 +131,7 @@ public class GSVM {
 			throw new SystemException("VM Uncaught: "+t.toString()+" "+at(),t);
 		}
 		st.vm=null;
+		return dequeue(st,st.getCharacter());
 	}
 
 	public String dumpStateToHtml() {
@@ -150,6 +160,99 @@ public class GSVM {
 		ret+=toHtml();
 		return ret;
 	}
+
+	Map<Char,JSONObject> queue =new HashMap<>();
+	private JSONObject getQueue(Char c) {
+		if (!queue.containsKey(c)) { queue.put(c,new JSONObject()); }
+		return queue.get(c);
+	}
+	public Response dequeue(State st,Char target) {
+		JSONObject totarget=getQueue(target);
+		if (pid!=0) { totarget.put("processid",""+pid); }
+		if (queue.containsKey(target)) { queue.remove(target); }
+		for (Char k:queue.keySet()) {
+			JSONObject totransmit = queue.get(target);
+			if (pid!=0) { totransmit.put("processid",""+pid); }
+			new Transmission(k,totransmit).start();
+		}
+		return new JSONResponse(totarget);
+	}
+
+	public void queueSayAs(Char ch, String message) {
+		JSONObject out=getQueue(ch);
+		String m="";
+		if (out.has("say")) { m=out.getString("say")+"\n"; }
+		m=m+message;
+		out.put("say",m);
+		out.put("sayas",ch.getName());
+	}
+
+	public void queueOwnerSay(Char ch, String message) {
+		JSONObject out=getQueue(ch);
+		String m="";
+		if (out.has("message")) { m=out.getString("message")+"\n"; }
+		m=m+message;
+		out.put("message",m);
+	}
+	public void queueSelectCharacter(Char ch,String description) {
+		JSONObject out=getQueue(ch);
+		out.put("args",1);
+		out.put("arg0name","response");
+		out.put("arg0type","SENSORCHAR");
+		out.put("arg0manual","surewhynot");
+		out.put("arg0description",description);
+		out.put("incommand","runtemplate");
+		out.put("invoke","Scripting.CharacterResponse");
+	}
+
+	boolean suspended=false;
+	public void suspend(State st,Char respondant) {
+		// simulations dont suspend
+		if (simulation) { return; }
+		suspended=true;
+		variables.put(" PC",new BCInteger(null,PC));
+		List<ByteCode> initlist=new ArrayList<>();
+		for (int i=0;i<stack.size();i++) {
+			initlist.add(stack.get(i));
+		}
+		for (String k:variables.keySet()) {
+			ByteCodeDataType bcd=variables.get(k);
+			if (!bcd.getClass().equals(BCList.class)) {
+				initlist.add(bcd);
+			} else {
+				BCList list=(BCList)bcd;
+				for (ByteCodeDataType element:list.getContent()) {
+					initlist.add(element);
+				}
+				initlist.add(list);
+			}
+			initlist.add(new BCString(null,k));
+			initlist.add(new BCInitialise(null));
+		}
+
+		List<Byte> initbc=new ArrayList<>();
+		for (ByteCode bc:initlist) { bc.toByteCode(initbc); }
+		// redo. now that forward references are completed
+		initbc=new ArrayList<>();
+		for (ByteCode bc:initlist) { bc.toByteCode(initbc); }
+		Byte[] initialiser=initbc.toArray(new Byte[]{});
+
+		ScriptRuns run=ScriptRuns.create(bytecode,initialiser,respondant);
+		pid=run.getId();
+		//return dequeue(st,st.getCharacter(),run.getId());
+	}
+	private int pid=0;
+	public GSVM(ScriptRuns run,State st) {
+		st.vm=this;
+		// run the initialiser as prep
+		initialiseVM(st);
+		bytecode=run.getInitialiser();
+		executeloop(st);
+		// stack and variables should be restored
+		bytecode=run.getByteCode();
+		PC=((BCInteger)(variables.get(" PC"))).getContent();
+	}
+	public Response resume(State st) { return executeloop(st); }
 
 	public class ExecutionStep {
 		public int programcounter;
