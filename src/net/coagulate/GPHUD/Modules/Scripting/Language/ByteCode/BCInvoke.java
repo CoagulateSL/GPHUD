@@ -80,6 +80,6 @@ public class BCInvoke extends ByteCode {
 			throw new GSInternalError("No cause to invocation target exception from "+function.getDeclaringClass().getSimpleName()+"/"+function.getName(),e);
 		}
 		ByteCodeDataType ret=(ByteCodeDataType)rawret;
-		vm.push(ret);
+		ret.stack(vm);
 	}
 }

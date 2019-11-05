@@ -28,6 +28,11 @@ public class TerminateResponse implements Response {
 	}
 
 	@Override
+	public String scriptResponse() {
+		return "<The TERMINATE-NOW Response> (how did you get this!?";
+	}
+
+	@Override
 	public String asText(State st) {
 		throw new SystemException("This request is TERMINATED - " + reason);
 	}

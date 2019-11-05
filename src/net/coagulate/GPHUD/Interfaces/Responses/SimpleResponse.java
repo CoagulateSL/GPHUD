@@ -23,6 +23,11 @@ public class SimpleResponse implements Response {
 	}
 
 	@Override
+	public String scriptResponse() {
+		return message;
+	}
+
+	@Override
 	public String asText(State st) {
 		return message;
 	}

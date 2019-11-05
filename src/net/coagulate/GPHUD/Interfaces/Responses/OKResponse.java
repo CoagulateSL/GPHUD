@@ -19,4 +19,9 @@ public class OKResponse extends TextOK implements Response {
 		return j;
 	}
 
+	@Override
+	public String scriptResponse() {
+		return "OK: "+s;
+	}
+
 }

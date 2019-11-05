@@ -24,6 +24,11 @@ public class TabularResponse extends Table implements Response {
 		return j;
 	}
 
+	@Override
+	public String scriptResponse() {
+		return "<A tablulated response>";
+	}
+
 	public String asText(State st) {
 		String s = "";
 		if (title != null && !title.isEmpty()) { s += new TextHeader(title).asText(st); }

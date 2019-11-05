@@ -32,6 +32,11 @@ public class MenuResponse implements Response {
 	}
 
 	@Override
+	public String scriptResponse() {
+		return "<A menu response>";
+	}
+
+	@Override
 	public String asText(State st) {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

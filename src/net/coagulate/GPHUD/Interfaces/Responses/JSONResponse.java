@@ -25,6 +25,11 @@ public class JSONResponse implements Response {
 	}
 
 	@Override
+	public String scriptResponse() {
+		return "<A JSON Response>";
+	}
+
+	@Override
 	public String asText(State st) {
 		throw new SystemException("JSONResponse can not be converted to Text");
 	}

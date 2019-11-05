@@ -29,6 +29,11 @@ public class NullResponse implements Response {
 	}
 
 	@Override
+	public String scriptResponse() {
+		throw new SystemException("You can not interrogate the null response.");
+	}
+
+	@Override
 	public String asText(State st) {
 		throw new SystemException("You can not interrogate the null response.");
 	}

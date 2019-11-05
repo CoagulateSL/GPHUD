@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSCastException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 public abstract class ByteCodeDataType extends ByteCode {
@@ -30,4 +31,8 @@ public abstract class ByteCodeDataType extends ByteCode {
 	public int toInteger() { return toBCInteger().getContent(); }
 
 	public abstract ByteCodeDataType clone();
+
+	public void stack(GSVM vm) {
+		vm.push(this);
+	}
 }

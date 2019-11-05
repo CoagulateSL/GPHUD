@@ -18,4 +18,9 @@ public class NoResponse extends TextOK implements Response {
 		return j;
 	}
 
+	@Override
+	public String scriptResponse() {
+		return "<No Response>";
+	}
+
 }

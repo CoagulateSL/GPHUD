@@ -14,4 +14,6 @@ import org.json.JSONObject;
  */
 public interface Response extends Renderable {
 	public abstract JSONObject asJSON(State st);
+
+	public abstract String scriptResponse();
 }

@@ -33,6 +33,11 @@ public class JSONPushResponse implements Response {
 	}
 
 	@Override
+	public String scriptResponse() {
+		return"<A JSON Push Response>";
+	}
+
+	@Override
 	public String asText(State st) {
 		Transmission t = new Transmission((Char) null, json, url);
 		t.start();

@@ -10,6 +10,7 @@ import org.json.JSONObject;
  * @author Iain Price <gphud@predestined.net>
  */
 public class ErrorResponse extends TextError implements Response {
+
 	public ErrorResponse(String r) {
 		super(r);
 	}
@@ -19,6 +20,11 @@ public class ErrorResponse extends TextError implements Response {
 		JSONObject j = new JSONObject();
 		j.put("error", asText(st));
 		return j;
+	}
+
+	@Override
+	public String scriptResponse() {
+		return "Error: "+s;
 	}
 
 }

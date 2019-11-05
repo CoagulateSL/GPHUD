@@ -89,7 +89,8 @@ public abstract class Command {
 				throw new SystemException("Argument metadata null on " + getFullName() + "() arg#" + (arg + 1) + " " + argument.getName());
 			}
 			ArgumentType type = argument.type();
-			String v = args[arg];
+			String v = null;
+			if (args.length>arg) { v=args[arg]; } else { v=""; }
 			arg++;
 			if (debug) { System.out.println("Command "+getFullName()+" Arg "+arg+" has v "+v+" for argument name "+argument.getName()+" and type "+type); }
 			if ((v == null || "".equals(v)) && type != ArgumentType.BOOLEAN) {

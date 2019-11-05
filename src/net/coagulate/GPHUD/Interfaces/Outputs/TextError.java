@@ -10,7 +10,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TextError implements Renderable {
-	String s;
+	protected String s;
 
 	public TextError(String s) { this.s = s; }
 

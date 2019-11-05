@@ -40,6 +40,11 @@ public class SayResponse implements Response {
 	}
 
 	@Override
+	public String scriptResponse() {
+		return (sayas==null?"":sayas+": ")+reason;
+	}
+
+	@Override
 	public String asText(State st) {
 		if (st.getCharacter() != null) {
 			Transmission t = new Transmission(st.getCharacter(), this.asJSON(st));
