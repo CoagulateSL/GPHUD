@@ -14,6 +14,7 @@ public class Input {
 
 	@GSFunctions.GSFunction(description = "Triggers the character's HUD to select a nearby character",parameters = "String - message - Description for the dialog box",notes = "",returns = "Character - a character the user selected")
 	public static BCCharacter gsSelectCharacter(State st, GSVM vm, BCCharacter target, BCString message) {
+		if (vm.simulation) { return target; }
 		vm.queueSelectCharacter(target.getContent(),message.getContent());
 		vm.suspend(st,target.getContent());
 		return target;
@@ -21,6 +22,7 @@ public class Input {
 
 	@GSFunctions.GSFunction(description = "Triggers the character's HUD to enter a string",parameters = "String - message - Description for the dialog box",notes = "",returns = "String - Some user input text")
 	public static BCString gsGetText(State st, GSVM vm, BCCharacter target, BCString message) {
+		if (vm.simulation) { return new BCString(null,"Simulated user input"); }
 		vm.queueGetText(target.getContent(),message.getContent());
 		vm.suspend(st,target.getContent());
 		return new BCString(null,"");
@@ -28,6 +30,10 @@ public class Input {
 
 	@GSFunctions.GSFunction(description = "Triggers the character's HUD to offer a choice (menu box)",parameters = "String - message - Description for the dialog box",notes = "",returns = "String - The user's selection<br>List - A list of strings the user may choose from")
 	public static BCString gsGetChoice(State st, GSVM vm, BCCharacter target, BCString message, BCList choices) {
+		if (vm.simulation) {
+			if (choices.getContent().isEmpty()) { return new BCString(null,"Simulation with empty choice list"); }
+			else { return choices.getContent().get(0).toBCString(); }
+		}
 		List<String> strchoices=new ArrayList<>();
 		for (ByteCodeDataType s:choices.getContent()) { strchoices.add(s.toBCString().getContent()); }
 		vm.queueGetChoice(target.getContent(),message.getContent(),strchoices);

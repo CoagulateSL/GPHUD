@@ -51,13 +51,11 @@ public interface GSParserConstants {
   /** RegularExpression Id. */
   int IF = 30;
   /** RegularExpression Id. */
-  int DO = 31;
+  int IDENTIFIER = 31;
   /** RegularExpression Id. */
-  int IDENTIFIER = 32;
+  int LETTER = 32;
   /** RegularExpression Id. */
-  int LETTER = 33;
-  /** RegularExpression Id. */
-  int DIGIT = 34;
+  int DIGIT = 33;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -97,7 +95,6 @@ public interface GSParserConstants {
     "\"String\"",
     "\"List\"",
     "\"if\"",
-    "\"do\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",

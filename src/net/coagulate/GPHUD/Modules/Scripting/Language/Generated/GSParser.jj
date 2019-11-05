@@ -71,8 +71,7 @@ TOKEN : {
 	<RESPONSE: "Response"> |
 	<STRING: "String"> |
 	<LIST: "List"> |
-	<IF: "if"> |
-	<DO: "do">
+	<IF: "if">
 }
 
 TOKEN : {
@@ -138,6 +137,7 @@ void Statement()            : {/*@bgen(jjtree) Statement */
 /*@egen*/
     "{" Statements() "}" |
     Conditional() |
+    WhileLoop() |
     Initialiser() ";" |
     LOOKAHEAD(2) Assignment() ";"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
@@ -674,7 +674,16 @@ void Conditional()              : {/*@bgen(jjtree) Conditional */
 {/*@bgen(jjtree) Conditional */
     try {
 /*@egen*/
-    <IF> "(" Expression() ")" Statement()/*@bgen(jjtree)*/
+    <IF>
+    "("
+    Expression()
+    ")"
+    Statement()
+    (
+        LOOKAHEAD(2)
+        <ELSE>
+        Statement()
+    )?/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -708,6 +717,39 @@ void InlineList()       : {/*@bgen(jjtree) List */
     try {
 /*@egen*/
     "[" (Expression() (","Expression())*)? "]"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+/*@egen*/
+}
+
+void WhileLoop()            : {/*@bgen(jjtree) WhileLoop */
+  GSWhileLoop jjtn000 = new GSWhileLoop(JJTWHILELOOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtn000.jjtSetFirstToken(getToken(1));
+/*@egen*/}
+{/*@bgen(jjtree) WhileLoop */
+    try {
+/*@egen*/
+    <WHILE> "(" Expression() ")" Statement()/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

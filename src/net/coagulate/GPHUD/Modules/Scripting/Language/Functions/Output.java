@@ -13,6 +13,7 @@ public class Output {
 			returns = "Integer - The number 0",
 			notes = "Messages are stacked up, per user, until the script completes or is suspended")
 	public static BCInteger gsSayAsChar(State st, GSVM vm, BCCharacter target, BCString message) {
+		if (vm.simulation) { return new BCInteger(null,0); }
 		vm.queueSayAs(target.getContent(),message.getContent());
 		return new BCInteger(null,0);
 	}
@@ -21,6 +22,7 @@ public class Output {
 			returns = "Integer - The number 0",
 			notes = "Messages are stacked up, per user, until the script completes or is suspended")
 	public static BCInteger gsSayToChar(State st, GSVM vm, BCCharacter target, BCString message) {
+		if (vm.simulation) { return new BCInteger(null,0); }
 		vm.queueOwnerSay(target.getContent(),message.getContent());
 		return new BCInteger(null,0);
 	}

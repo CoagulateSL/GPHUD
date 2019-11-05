@@ -22,12 +22,13 @@ public class GSCompiler {
 		if (node instanceof GSIntegerConstant) { return 0; }
 		if (node instanceof GSIdentifier) { return 0; }
 		if (node instanceof GSParameters) { return -1; }
-		if (node instanceof GSConditional) { return 2; }
+		if (node instanceof GSConditional) { return -1; }
 		if (node instanceof GSAssignment) { return 2; }
 		if (node instanceof GSStatement) { return -1; }
 		if (node instanceof GSBinaryOperation) { return 3; }
 		if (node instanceof GSList) { return -1; }
 		if (node instanceof GSListIndex) { return 2; }
+		if (node instanceof GSWhileLoop) { return 2; }
 		throw new SystemException("Expected Children not defined for node "+node.getClass().getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
 	private final ParseNode startnode;
@@ -147,12 +148,34 @@ public class GSCompiler {
 			checkType(node,0,GSExpression.class);
 			checkType(node,1,GSStatement.class);
 			// evaluate the condition, branch if zero, otherwise run the statement
-			compiled.addAll(compile(node.child(0)));
-			BCLabel label=new BCLabel(node,jumpnumber++);
+			compiled.addAll(compile(node.child(0))); // compile condition
+			BCLabel posttruth=new BCLabel(node,jumpnumber++);
+			BCLabel postfalse=new BCLabel(node,jumpnumber++);
 			addDebug(compiled,node);
-			compiled.add(new BCBranchIfZero(node,label));
+			compiled.add(new BCBranchIfZero(node,posttruth)); // if false, branch to posttruth
+			compiled.addAll(compile(node.child(1))); // truth
+			compiled.add(new BCInteger(node,0)); // if we're still here (in truth)
+			compiled.add(new BCBranchIfZero(node,postfalse)); // branch to end of whole statement
+			compiled.add(posttruth); // where we go if false
+			if (node.children()==3) { compiled.addAll(compile(node.child(2))); }
+			compiled.add(postfalse); // end of the whole thing
+			return compiled;
+		}
+
+		if (node instanceof GSWhileLoop) {
+			checkType(node,0,GSExpression.class);
+			checkType(node,1,GSStatement.class);
+			BCLabel start=new BCLabel(node,jumpnumber++);
+			BCLabel end=new BCLabel(node,jumpnumber++);
+			// check condition, exit if false, code block, repeat
+			addDebug(compiled,node);
+			compiled.add(start);
+			compiled.addAll(compile(node.child(0)));
+			compiled.add(new BCBranchIfZero(node,end));
 			compiled.addAll(compile(node.child(1)));
-			compiled.add(label);
+			compiled.add(new BCInteger(node,0));
+			compiled.add(new BCBranchIfZero(node,start));
+			compiled.add(end);
 			return compiled;
 		}
 

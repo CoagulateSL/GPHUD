@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceLimitExceededException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -8,9 +9,21 @@ import net.coagulate.GPHUD.State;
 import java.util.List;
 
 public class BCString extends ByteCodeDataType {
-	private String content=""; public String getContent() { return content; }
-	public BCString(ParseNode n) {super(n);};
-	public BCString(ParseNode n,String content) {super(n);this.content=content; }
+	private String content = "";
+
+	public String getContent() { return content; }
+
+	public BCString(ParseNode n) {super(n);}
+
+	;
+
+	public BCString(ParseNode n, String content) {
+		super(n);
+		if (content.length() > 65535) {
+			throw new GSResourceLimitExceededException("Attempt to make string longer than 65535 characters");
+		}
+		this.content=content;
+}
 	public String explain() { return "String ("+content+")"; }
 	public void toByteCode(List<Byte> bytes) {
 		bytes.add(InstructionSet.String.get());

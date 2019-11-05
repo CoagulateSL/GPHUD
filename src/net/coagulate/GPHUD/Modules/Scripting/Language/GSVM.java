@@ -53,7 +53,8 @@ public class GSVM {
 		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+existing.getClass().getSimpleName());
 	}
 	public String at() {
-		return "at row "+row+", column "+column+", PC="+startPC+", OP="+bytecode[startPC]+" ("+ByteCode.get(bytecode[startPC])+")";
+		return "at row "+row+", column "+column+", PC="+startPC+
+				(startPC>=0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode.get(bytecode[startPC])+")":"");
 	}
 
 	public GSVM(Byte[] code) {

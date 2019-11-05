@@ -26,6 +26,7 @@ public interface GSParserTreeConstants
   public int JJTPARAMETER = 20;
   public int JJTCONDITIONAL = 21;
   public int JJTLIST = 22;
+  public int JJTWHILELOOP = 23;
 
 
   public String[] jjtNodeName = {
@@ -52,6 +53,7 @@ public interface GSParserTreeConstants
     "Parameter",
     "Conditional",
     "List",
+    "WhileLoop",
   };
 }
-/* JavaCC - OriginalChecksum=f37edd8ed0c55d89bae29b536d738743 (do not edit this line) */
+/* JavaCC - OriginalChecksum=93f983b4e030c601dd7ee389b447d85e (do not edit this line) */

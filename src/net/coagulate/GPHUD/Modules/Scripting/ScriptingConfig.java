@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.ExceptionTools;
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Data.Scripts;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
@@ -85,6 +86,8 @@ public class ScriptingConfig {
 					script.setBytecode(compiler.toByteCode(), version);
 					f.p("Script compiled and saved OK!");
 				}
+			} catch (NullPointerException ex) {
+				throw new SystemException("Null pointer exception in compiler",ex);
 			} catch (Throwable t) {
 				f.p("Compilation failed; "+t.toString());
 			}
@@ -173,6 +176,8 @@ public class ScriptingConfig {
 					code += "</table></pre>";
 					return code;
 				}
+			} catch (NullPointerException ex) {
+				throw new SystemException("Null pointer exception in compiler",ex);
 			} catch (Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 				return "<b>Compilation failed:</b> " + e.toString();
 			}
@@ -220,6 +225,8 @@ public class ScriptingConfig {
 					return output;
 				}
 
+			} catch (ArrayIndexOutOfBoundsException ex) {
+				throw new SystemException("Array index out of bounds in compiler/simulator",ex);
 			} catch (Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 				return "<b>Simulation failed:</b> " + e.toString();
 			}

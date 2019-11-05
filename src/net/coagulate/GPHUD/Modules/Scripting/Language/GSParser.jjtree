@@ -67,8 +67,7 @@ TOKEN : {
 	<RESPONSE: "Response"> |
 	<STRING: "String"> |
 	<LIST: "List"> |
-	<IF: "if"> |
-	<DO: "do">
+	<IF: "if">
 }
 
 TOKEN : {
@@ -93,6 +92,7 @@ void Statement() #Statement : {}
 {
     "{" Statements() "}" |
     Conditional() |
+    WhileLoop() |
     Initialiser() ";" |
     LOOKAHEAD(2) Assignment() ";"
 }
@@ -195,10 +195,25 @@ void Parameter() #Parameter : {}
 
 void Conditional() #Conditional : {}
 {
-    <IF> "(" Expression() ")" Statement()
+    <IF>
+    "("
+    Expression()
+    ")"
+    Statement()
+    (
+        LOOKAHEAD(2)
+        <ELSE>
+        Statement()
+    )?
 }
 
 void InlineList() #List : {}
 {
     "[" (Expression() (","Expression())*)? "]"
 }
+
+void WhileLoop() #WhileLoop : {}
+{
+    <WHILE> "(" Expression() ")" Statement()
+}
+
