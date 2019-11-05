@@ -26,6 +26,9 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.RESULTS;
+import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULATION;
+
 public class ScriptingConfig {
 	@URL.URLs(url = "/configuration/scripting")
 	public static void configPage(State st, SafeMap values) {
@@ -113,6 +116,7 @@ public class ScriptingConfig {
 		f.add(new Button("View Raw ByteCode", "View Raw ByteCode"));
 		f.add(new Button("View Disassembly", "View Disassembly"));
 		f.add(new Button("View Simulation", "View Simulation"));
+		f.add(new Button("View Results", "View Results"));
 		f.add(new Button("View ALL", "View ALL"));
 		if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
 		f.br();
@@ -134,11 +138,15 @@ public class ScriptingConfig {
 		}
 		if (values.get("View Simulation").equals("View Simulation") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st,script.getSource(), STAGE.SIMULATION));
+			f.add(debug(st,script.getSource(), SIMULATION));
+		}
+		if (values.get("View Results").equals("View Results") || values.get("View ALL").equals("View ALL")) {
+			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
+			f.add(debug(st,script.getSource(), STAGE.RESULTS));
 		}
 		if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}
-	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION};
+	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS};
 	private static String debug(State st,String script, STAGE stage) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(script.getBytes());
 		GSParser parser = new GSParser(bais);
@@ -199,27 +207,21 @@ public class ScriptingConfig {
 			}
 
 			try {
-				if (stage==STAGE.SIMULATION) {
+				if (stage== SIMULATION || stage==RESULTS) {
+					long start=System.currentTimeMillis();
 					List<GSVM.ExecutionStep> steps = gsvm.simulate(st);
-					String output="<table border=1><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>";
-					for (GSVM.ExecutionStep step:steps) {
-						output+="<tr><th>"+step.programcounter+"</th><td>"+step.decode+"</td><td><table>";
-						for (int i=0;i<step.resultingstack.size();i++) {
-							output+="<tr><th>"+i+"</th><td>"+
-									step.resultingstack.get(i).htmlDecode()+"</td></tr>";
+					long end=System.currentTimeMillis();
+					String output="<p><i>Run time: "+(end-start)+" ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>";
+					if (stage==SIMULATION) {
+							// no more than 100 steps now
+						int index=steps.size()-100;
+						if (index<0) { start=0; }
+						for (;index<steps.size();index++) {
+							output+=formatStep(steps.get(index));
 						}
-						output+="</table></td><td><table>";
-						for (String k:step.resultingvariables.keySet()) {
-							String decode="???";
-							if (step.resultingvariables.get(k)!=null) {
-								decode = step.resultingvariables.get(k).htmlDecode();
-							}
-							output+="<tr><th>"+k+"</th><td>"+
-									decode+"</td></tr>";
-						}
-						output+="</table></td></tr>";
-						if (step.t!=null) { output+="<tr><td colspan=100>"+
-								ExceptionTools.toHTML(step.t)+"</td></tr>"; }
+					} else {
+						if (steps.size()>1) { output+=formatStep(steps.get(steps.size()-2)); }
+						if (steps.size()>0) { output+=formatStep(steps.get(steps.size()-1)); }
 					}
 					output+="</table>";
 					return output;
@@ -232,5 +234,29 @@ public class ScriptingConfig {
 			}
 		}
 		return "Did nothing (?)";
+	}
+
+	private static String formatStep(GSVM.ExecutionStep step) {
+		String output = "";
+		output += "<tr><td>" + step.IC + "</td><th>" + step.programcounter + "</th><td>" + step.decode + "</td><td><table>";
+		for (int i = 0; i < step.resultingstack.size(); i++) {
+			output += "<tr><th>" + i + "</th><td>" +
+					step.resultingstack.get(i).htmlDecode() + "</td></tr>";
+		}
+		output += "</table></td><td><table>";
+		for (String k : step.resultingvariables.keySet()) {
+			String decode = "???";
+			if (step.resultingvariables.get(k) != null) {
+				decode = step.resultingvariables.get(k).htmlDecode();
+			}
+			output += "<tr><th>" + k + "</th><td>" +
+					decode + "</td></tr>";
+		}
+		output += "</table></td></tr>";
+		if (step.t != null) {
+			output += "<tr><td colspan=100>" +
+					ExceptionTools.toHTML(step.t) + "</td></tr>";
+		}
+		return output;
 	}
 }
