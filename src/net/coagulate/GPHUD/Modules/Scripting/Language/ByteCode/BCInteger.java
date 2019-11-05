@@ -44,13 +44,13 @@ public class BCInteger extends ByteCodeDataType {
 	@Override
 	public ByteCodeDataType multiply(ByteCodeDataType var) {
 		//check float, eventually
-		return new BCInteger(node(),toInteger()-var.toInteger());
+		return new BCInteger(node(),toInteger()*var.toInteger());
 	}
 
 	@Override
 	public ByteCodeDataType divide(ByteCodeDataType var) {
 		//check float, eventually
-		return new BCInteger(node(),toInteger()-var.toInteger());
+		return new BCInteger(node(),toInteger()/var.toInteger());
 	}
 
 	@Override
