@@ -224,6 +224,8 @@ public class GSCompiler {
 			if (op.equals("!=")) { handledop=true; compiled.add(new BCInequality(node.child(1))); }
 			if (op.equals(">")) { handledop=true; compiled.add(new BCGreaterThan(node.child(1))); }
 			if (op.equals("<")) { handledop=true; compiled.add(new BCLessThan(node.child(1))); }
+			if (op.equals(">=")) { handledop=true; compiled.add(new BCGreaterThanEqual(node.child(1))); }
+			if (op.equals("<=")) { handledop=true; compiled.add(new BCLessThanEqual(node.child(1))); }
 			return compiled;
 		}
 

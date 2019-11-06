@@ -56,4 +56,8 @@ public class BCCharacter extends ByteCodeDataType {
 	public ByteCodeDataType clone() {
 		return new BCCharacter(node(),content);
 	}
+
+	public boolean isOnline() {
+		return getContent().isOnline();
+	}
 }

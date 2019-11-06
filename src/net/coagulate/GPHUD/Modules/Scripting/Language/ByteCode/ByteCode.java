@@ -61,6 +61,8 @@ public abstract class ByteCode {
 			case StoreIndexed: return new BCStoreIndexed(null);
 			case LessThan: return new BCLessThan(null);
 			case GreaterThan: return new BCGreaterThan(null);
+			case LessThanEqual: return new BCLessThanEqual(null);
+			case GreaterThanEqual: return new BCGreaterThanEqual(null);
 		}
 		throw new SystemException("Failed to materialise instruction "+decode);
 	}
@@ -92,7 +94,9 @@ public abstract class ByteCode {
 		LoadIndexed((byte)19),
 		StoreIndexed((byte)20),
 		GreaterThan((byte)21),
-		LessThan((byte)22);
+		LessThan((byte)22),
+		GreaterThanEqual((byte)23),
+		LessThanEqual((byte)24);
 		private byte value;
 
 

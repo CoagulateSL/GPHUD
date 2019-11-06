@@ -175,7 +175,7 @@ public class GSVM {
 		if (pid!=0) { totarget.put("processid",""+pid); }
 		if (queue.containsKey(target)) { queue.remove(target); }
 		for (Char k:queue.keySet()) {
-			JSONObject totransmit = queue.get(target);
+			JSONObject totransmit = getQueue(target);
 			if (pid!=0) { totransmit.put("processid",""+pid); }
 			new Transmission(k,totransmit).start();
 		}

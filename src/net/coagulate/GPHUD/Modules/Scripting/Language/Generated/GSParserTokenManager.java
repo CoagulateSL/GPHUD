@@ -111,15 +111,15 @@ private int jjMoveStringLiteralDfa0_0(){
       case 33:
          return jjMoveStringLiteralDfa1_0(0x200000000000L);
       case 40:
-         return jjStopAtPos(0, 48);
+         return jjStopAtPos(0, 50);
       case 41:
-         return jjStopAtPos(0, 49);
+         return jjStopAtPos(0, 51);
       case 42:
          return jjStopAtPos(0, 42);
       case 43:
          return jjStopAtPos(0, 40);
       case 44:
-         return jjStopAtPos(0, 50);
+         return jjStopAtPos(0, 52);
       case 45:
          return jjStopAtPos(0, 41);
       case 47:
@@ -127,12 +127,14 @@ private int jjMoveStringLiteralDfa0_0(){
       case 59:
          return jjStopAtPos(0, 36);
       case 60:
-         return jjStopAtPos(0, 47);
+         jjmatchedKind = 47;
+         return jjMoveStringLiteralDfa1_0(0x1000000000000L);
       case 61:
          jjmatchedKind = 37;
          return jjMoveStringLiteralDfa1_0(0x100000000000L);
       case 62:
-         return jjStopAtPos(0, 46);
+         jjmatchedKind = 46;
+         return jjMoveStringLiteralDfa1_0(0x2000000000000L);
       case 65:
          return jjMoveStringLiteralDfa1_0(0x2000000L);
       case 67:
@@ -182,6 +184,10 @@ private int jjMoveStringLiteralDfa1_0(long active0){
             return jjStopAtPos(1, 44);
          else if ((active0 & 0x200000000000L) != 0L)
             return jjStopAtPos(1, 45);
+         else if ((active0 & 0x1000000000000L) != 0L)
+            return jjStopAtPos(1, 48);
+         else if ((active0 & 0x2000000000000L) != 0L)
+            return jjStopAtPos(1, 49);
          break;
       case 101:
          return jjMoveStringLiteralDfa2_0(active0, 0x8040000L);
@@ -857,7 +863,7 @@ null, null, null, null, null, "\162\145\164\165\162\156", "\167\150\151\154\145"
 "\103\150\141\162\141\143\164\145\162", "\101\166\141\164\141\162", "\107\162\157\165\160", 
 "\122\145\163\160\157\156\163\145", "\123\164\162\151\156\147", "\114\151\163\164", "\151\146", null, null, null, 
 "\173", "\175", "\73", "\75", "\133", "\135", "\53", "\55", "\52", "\57", "\75\75", 
-"\41\75", "\76", "\74", "\50", "\51", "\54", };
+"\41\75", "\76", "\74", "\74\75", "\76\75", "\50", "\51", "\54", };
 protected Token jjFillToken()
 {
    final Token t;
@@ -1070,10 +1076,10 @@ public static final String[] lexStateNames = {
 public static final int[] jjnewLexState = {
    -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-   -1, 
+   -1, -1, -1, 
 };
 static final long[] jjtoToken = {
-   0x7fffcfffe8801L, 
+   0x1ffffcfffe8801L, 
 };
 static final long[] jjtoSkip = {
    0xfeL, 

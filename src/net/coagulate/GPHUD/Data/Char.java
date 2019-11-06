@@ -752,4 +752,10 @@ public class Char extends TableRow {
 	public void pinged() {
 		d("update characters set urllast=? where characterid=?", UnixTime.getUnixTime(),getId());
 	}
+
+	public boolean isOnline() {
+		String s=getURL();
+		if (s==null || s.isEmpty()) { return false; }
+		return true;
+	}
 }

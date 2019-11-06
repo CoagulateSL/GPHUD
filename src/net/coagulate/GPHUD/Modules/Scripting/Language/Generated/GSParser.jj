@@ -412,7 +412,7 @@ void BinaryOperator()                 : {/*@bgen(jjtree) BinaryOperator */
 {/*@bgen(jjtree) BinaryOperator */
    try {
 /*@egen*/
-   "+" | "-" | "*" | "/" | "==" | "!=" | ">" | "<"/*@bgen(jjtree)*/
+   "+" | "-" | "*" | "/" | "==" | "!=" | ">" | "<" | "<=" | ">="/*@bgen(jjtree)*/
    } finally {
      if (jjtc000) {
        jjtree.closeNodeScope(jjtn000, true);
