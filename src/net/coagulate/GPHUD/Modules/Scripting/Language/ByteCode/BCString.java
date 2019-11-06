@@ -1,9 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceLimitExceededException;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
-import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.Modules.Scripting.Language.*;
 import net.coagulate.GPHUD.State;
 
 import java.util.List;
@@ -14,8 +11,6 @@ public class BCString extends ByteCodeDataType {
 	public String getContent() { return content; }
 
 	public BCString(ParseNode n) {super(n);}
-
-	;
 
 	public BCString(ParseNode n, String content) {
 		super(n);
@@ -82,4 +77,9 @@ public class BCString extends ByteCodeDataType {
 		return new BCString(node(),content);
 	}
 
+	@Override
+	public BCInteger toBCInteger() {
+		try { return new BCInteger(null,Integer.parseInt(getContent())); }
+		catch (NumberFormatException e) { throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer"); }
+	}
 }

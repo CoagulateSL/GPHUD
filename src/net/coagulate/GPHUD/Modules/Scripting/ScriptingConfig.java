@@ -215,7 +215,7 @@ public class ScriptingConfig {
 					if (stage==SIMULATION) {
 							// no more than 100 steps now
 						int index=steps.size()-100;
-						if (index<0) { start=0; }
+						if (index<0) { index=0; }
 						for (;index<steps.size();index++) {
 							output+=formatStep(steps.get(index));
 						}
