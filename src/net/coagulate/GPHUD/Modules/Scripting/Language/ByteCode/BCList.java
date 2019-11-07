@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -33,7 +34,9 @@ public class BCList extends ByteCodeDataType {
 	public void execute(State st, GSVM vm, boolean simulation) {
 		// pull the list from the stack!
 		for (int i=0;i<elements;i++) {
-			content.add(vm.pop());
+			ByteCodeDataType data = vm.pop();
+			if (data instanceof BCList) { throw new GSInvalidExpressionException("You can not nest a List inside a List"); }
+			content.add(data);
 		}
 		elements=content.size();
 		vm.push(this);
