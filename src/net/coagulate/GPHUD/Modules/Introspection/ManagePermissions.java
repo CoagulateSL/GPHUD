@@ -32,10 +32,13 @@ public abstract class ManagePermissions {
 				for (String permission : permissions.keySet()) {
 					Row r = new Row();
 					t.add(r);
-					if (permissions.get(permission).isGenerated()) { r.setbgcolor("#e0e0e0"); }
+					r.setbgcolor(permissions.get(permission).getColor());
 					t.add(permission);
 					t.add(permissions.get(permission).description());
+					boolean bump=true;
+					if (permissions.get(permission).isGenerated()) { t.add("<i>Generated</i>"); bump=false; }
 					if (permissions.get(permission).grantable() == false) {
+						if (bump) { t.add(""); }
 						t.add(new Color("red", "Ungrantable"));
 					}
 				}

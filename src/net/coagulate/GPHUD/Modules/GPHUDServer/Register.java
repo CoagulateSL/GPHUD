@@ -8,7 +8,6 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
-import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
@@ -28,7 +27,7 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Register {
 
-	@Commands(context = Context.AVATAR, permitScripting = false, permitConsole = false, permitHUDWeb = false, permitUserWeb = false, description = "Registers this connection as the region server connection")
+	@Commands(context = Context.AVATAR, permitScripting = false, permitConsole = false, permitHUDWeb = false, permitUserWeb = false, description = "Registers this connection as the region server connection",requiresPermission = "Instance.ServerOperator")
 	public static Response register(State st,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the Server that is connecting", max = 64)
 			                                String version,
@@ -39,10 +38,12 @@ public abstract class Register {
 		// check authorisation, servers can only be deployed by the instance owner...
 		String regionname = st.getRegionName();
 		Instance instance = st.getInstance();
+		/* -- NOW obsoleted and actually uses the permissions checking code (?)
 		if (st.avatar() != instance.getOwner() && st.avatar().isSuperAdmin()==false) {
 			st.logger().log(WARNING, "Not the instance owner (who is " + instance.getOwner() + ")");
 			return new TerminateResponse("You are not the instance owner, you can not deploy server nodes");
 		}
+		 */
 		String url = null;
 		try { url = st.json.getString("callback"); } catch (JSONException e) {}
 		if (url == null || "".equals(url)) {

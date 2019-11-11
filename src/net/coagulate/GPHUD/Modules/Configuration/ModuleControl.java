@@ -23,7 +23,7 @@ import net.coagulate.GPHUD.State;
  */
 public abstract class ModuleControl {
 
-	@Commands(context = Context.AVATAR, description = "Disable the specified module", requiresPermission = "instance.owner")
+	@Commands(context = Context.AVATAR, description = "Disable the specified module", requiresPermission = "instance.ModuleEnablement")
 	public static Response disableModule(State st,
 	                                     @Arguments(type = ArgumentType.MODULE, description = "Module to disable")
 			                                     Module module) throws UserException, SystemException {
@@ -37,12 +37,12 @@ public abstract class ModuleControl {
 		return new OKResponse("Module " + module.getName() + " has been disabled");
 	}
 
-	@URLs(url = "/configuration/disablemodule", requiresPermission = "instance.owner")
+	@URLs(url = "/configuration/disablemodule", requiresPermission = "instance.ModuleEnablement")
 	public static void disableModuleForm(State st, SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Configuration.DisableModule", values);
 	}
 
-	@Commands(context = Context.AVATAR, description = "Enabled the specified module", requiresPermission = "instance.owner")
+	@Commands(context = Context.AVATAR, description = "Enabled the specified module", requiresPermission = "instance.ModuleEnablement")
 	public static Response enableModule(State st,
 	                                    @Arguments(type = ArgumentType.MODULE, description = "Module to enable")
 			                                    Module module) {
@@ -53,7 +53,7 @@ public abstract class ModuleControl {
 		return new OKResponse("Module " + module.getName() + " has been enabled");
 	}
 
-	@URLs(url = "/configuration/enablemodule", requiresPermission = "instance.owner")
+	@URLs(url = "/configuration/enablemodule", requiresPermission = "instance.ModuleEnablement")
 	public static void enableModuleForm(State st, SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Configuration.EnableModule", values);
 	}

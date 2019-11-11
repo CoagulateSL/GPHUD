@@ -23,12 +23,12 @@ import net.coagulate.GPHUD.State;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Permissions {
-	@URLs(url = "/permissionsgroups/addpermission", requiresPermission = "instance.owner")
+	@URLs(url = "/permissionsgroups/addpermission", requiresPermission = "Instance.ManagePermissions")
 	public static void addPermissionForm(State st, SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.addpermission", values);
 	}
 
-	@Commands(context = Context.AVATAR, description = "Add a permission to a permission group", requiresPermission = "instance.owner")
+	@Commands(context = Context.AVATAR, description = "Add a permission to a permission group", requiresPermission = "Instance.ManagePermissions")
 	public static Response addPermission(State st,
 	                                     @Arguments(description = "Permissions group to add permission to", type = ArgumentType.PERMISSIONSGROUP)
 			                                     PermissionsGroup permissionsgroup,
@@ -51,12 +51,12 @@ public abstract class Permissions {
 		return new OKResponse("Added " + permission + " to permissions group " + permissionsgroup.getNameSafe());
 	}
 
-	@URLs(url = "/permissionsgroups/delpermission", requiresPermission = "instance.owner")
+	@URLs(url = "/permissionsgroups/delpermission", requiresPermission = "Instance.ManagePermissions")
 	public static void delPermissionForm(State st, SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.delpermission", values);
 	}
 
-	@Commands(context = Context.AVATAR, description = "Remove a permission from a permissions group", requiresPermission = "instance.owner")
+	@Commands(context = Context.AVATAR, description = "Remove a permission from a permissions group", requiresPermission = "Instance.ManagePermissions")
 	public static Response delPermission(State st,
 	                                     @Arguments(description = "Permissions group to remove permission from", type = ArgumentType.PERMISSIONSGROUP)
 			                                     PermissionsGroup permissionsgroup,

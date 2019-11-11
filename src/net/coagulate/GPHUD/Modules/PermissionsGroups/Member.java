@@ -24,12 +24,12 @@ import net.coagulate.SL.Data.User;
  */
 public abstract class Member {
 
-	@URLs(url = "/permissionsgroups/eject", requiresPermission = "instance.owner")
+	@URLs(url = "/permissionsgroups/eject", requiresPermission = "Instance.ManagePermissions")
 	public static void ejectForm(State st, SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.eject", values);
 	}
 
-	@Commands(context = Context.AVATAR, requiresPermission = "instance.owner", description = "Remove a member from a permissions group")
+	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Remove a member from a permissions group")
 	public static Response eject(State st,
 	                             @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to remove member from")
 			                             PermissionsGroup permissionsgroup,
@@ -44,12 +44,12 @@ public abstract class Member {
 		return new OKResponse("Removed " + avatar.getName() + " from permissions group " + permissionsgroup.getNameSafe());
 	}
 
-	@URLs(url = "/permissionsgroups/invite", requiresPermission = "instance.owner")
+	@URLs(url = "/permissionsgroups/invite", requiresPermission = "Instance.ManagePermissions")
 	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.invite", values);
 	}
 
-	@Commands(context = Context.AVATAR, requiresPermission = "instance.owner", description = "Adds a user to a permissions group")
+	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Adds a user to a permissions group")
 	public static Response invite(State st,
 	                              @Arguments(description = "Permissions group to join avatar to", type = ArgumentType.PERMISSIONSGROUP)
 			                              PermissionsGroup permissionsgroup,
@@ -64,12 +64,12 @@ public abstract class Member {
 		return new OKResponse("Added " + avatar.getName() + " to permissions group " + permissionsgroup.getNameSafe());
 	}
 
-	@URLs(url = "/permissionsgroups/setpermissions", requiresPermission = "instance.owner")
+	@URLs(url = "/permissionsgroups/setpermissions", requiresPermission = "Instance.ManagePermissions")
 	public static void setPermissionsForm(State st, SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.setpermissions", values);
 	}
 
-	@Commands(context = Context.AVATAR, requiresPermission = "instance.owner", description = "Set a users permissions over a permissions group")
+	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Set a users permissions over a permissions group")
 	public static Response setPermissions(State st,
 	                                      @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to set a users permissions in")
 			                                      PermissionsGroup permissionsgroup,

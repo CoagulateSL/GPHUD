@@ -83,7 +83,7 @@ public abstract class Index {
 		}
 		f.add(new TextSubHeader("Cookbooks"));
 		f.add(new Paragraph("Cookbooks provide a set of sequenced operations that modify your configuration and add features.  Everything these do can be done by hand and they merely provide a convenience measure."));
-		f.add(new Paragraph("Clicking a cookbook will show you the steps that would be enacted.  Anyone may view a cookbook, but only the Instance.Owner may enact the cookbook due to the scale of changes"));
+		f.add(new Paragraph("Clicking a cookbook will show you the steps that would be enacted.  Anyone may view a cookbook, but only the Instance.PlayCookBook may enact the cookbook due to the scale of changes"));
 		Table books = new Table();
 		f.add(books);
 		books.add(new HeaderRow().add("Name").add("Description"));

@@ -20,7 +20,7 @@ public class GenericXPPeriodKV extends KV {
 
 	public String description() { return "Cycle length, in days, for " + myname + " limit"; }
 
-	public String editpermission() { return "Instance.Owner"; }
+	public String editpermission() { return "Experience.ConfigureXP"; }
 
 	public String defaultvalue() { return "6.75"; }
 

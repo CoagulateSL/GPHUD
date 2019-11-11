@@ -1,7 +1,7 @@
 @ModuleDefinition(canDisable = false, description = "Provides server side support for the HUD and thin-client mode", implementation = "net.coagulate.GPHUD.Modules.GPHUDClient.GPHUDClientModule")
 
-@Permissions(name = "config", description = "Ability to configure the GPHUD interface")
-@Permissions(name = "EditHUDText", description = "Ability to configure the HUD floating text")
+@Permissions(name = "config", description = "Ability to configure the GPHUD interface",power = Permission.POWER.MEDIUM)
+@Permissions(name = "EditHUDText", description = "Ability to configure the HUD floating text",power = Permission.POWER.LOW)
 
 @KVS(name = "widthmultiplier", description = "Width of HUD versus its height (e.g. 2x, 1x, etc)", defaultvalue = "2", editpermission = "gphudclient.config", scope = KVSCOPE.COMPLETE, type = KVTYPE.FLOAT, hierarchy = KVHIERARCHY.DELEGATING, template = false, conveyas = "sizeratio")
 @KVS(name = "logo", description = "Texture UUID for the HUD (right click, copy asset UUID)", editpermission = "gphudclient.config", scope = KVSCOPE.COMPLETE, type = KVTYPE.UUID, defaultvalue = "36c48d34-3d84-7b9a-9979-cda80cf1d96f", conveyas = "setlogo", hierarchy = KVHIERARCHY.DELEGATING, template = false)
@@ -31,5 +31,6 @@ import net.coagulate.GPHUD.Modules.KV.KVS;
 import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
 import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
+import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
 
