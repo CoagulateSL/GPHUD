@@ -17,7 +17,7 @@ public class GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
 
 	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
-
+	public boolean suspended() { return suspended; }
 	public byte[] bytecode;
 	public int PC=0;
 	int IC=0;

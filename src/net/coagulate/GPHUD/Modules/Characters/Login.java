@@ -16,6 +16,7 @@ import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.Instance.Distribution;
 import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -69,7 +70,24 @@ public abstract class Login {
 		}
 		// we have a character at least
 		// before actually logging it in, we should check that it is 'complete'
+		st.getCharacter().setURL(url);
+		Region region = st.getRegion();
+		st.getCharacter().setRegion(region);
+		character.setPlayedBy(st.avatar());
 		State simulate = st.simulate(character);
+		String initscript=simulate.getKV("Instance.CharInitScript").toString();
+		String loginmessage="";
+		if (initscript!=null && (!initscript.isEmpty())) {
+			// let the init script have a "run"
+			Scripts init=Scripts.findOrNull(simulate, initscript);
+			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; } else {
+				GSVM initialisecharacter = new GSVM(init.getByteCode());
+				Response response = initialisecharacter.execute(simulate);
+				if (initialisecharacter.suspended()) { // bail here
+					return response;
+				} // else carry on and discard the response
+			}
+		}
 		for (Attribute a : st.getAttributes()) {
 			if (a.getRequired()) {
 				Attribute.ATTRIBUTETYPE type = a.getType();
@@ -152,10 +170,6 @@ public abstract class Login {
 			Transmission shutdown = new Transmission((Char) null, shutdownjson, oldavatarurl);
 			shutdown.start();
 		}
-		String oldurl = character.getURL();
-		st.getCharacter().setURL(url);
-		Region region = st.getRegion();
-		st.getCharacter().setRegion(region);
 		JSONObject registeringjson = new JSONObject().put("incommand", "registering");
 		String regmessage = "";
 		if (st.getInstance().getOwner().getId() == st.getAvatar().getId()) {
@@ -176,7 +190,6 @@ public abstract class Login {
 		if (version != null && versiondate != null && versiontime != null) {
 			region.recordHUDVersion(st, version, versiondate, versiontime);
 		}
-		character.setPlayedBy(st.avatar());
 		Instance instance = st.getInstance();
 		String cookie = Cookies.generate(st.avatar(), st.getCharacter(), instance, true);
 		JSONObject legacymenu = Modules.getJSONTemplate(st, "menus.main");
@@ -187,7 +200,7 @@ public abstract class Login {
 				new Transmission(st.getCharacter(), Modules.getJSONTemplate(st, "characters.spendabilitypoint"), 1).start();
 			}
 		}
-		//rawresponse.put("message",loginmessage);
+		if (loginmessage!=null && (!loginmessage.isEmpty())) { rawresponse.put("message",loginmessage); }
 		rawresponse.put("incommand", "registered");
 		rawresponse.put("cookie", cookie);
 		rawresponse.put("legacymenu", legacymenu.toString());

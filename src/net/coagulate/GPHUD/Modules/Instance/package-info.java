@@ -12,6 +12,7 @@
 @KVS(name = "ViewOtherTemplate", description = "The default template for the view-other character sheet command", editpermission = "Instance.EditCharacterSheets", hierarchy = KVHIERARCHY.DELEGATING, scope = KVSCOPE.COMPLETE, type = KVTYPE.TEXT, template = true, defaultvalue = "--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
 @KVS(name = "ShowSelfTemplate", description = "The default template for the public-show character sheet command", editpermission = "Instance.EditCharacterSheets", hierarchy = KVHIERARCHY.DELEGATING, scope = KVSCOPE.COMPLETE, type = KVTYPE.TEXT, template = true, defaultvalue = "--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
 @KVS(name = "AllowSelfRetire", description = "Allow the character to retire themselves", defaultvalue = "false", editpermission = "Instance.Owner", hierarchy = KVHIERARCHY.DELEGATING, scope = KVSCOPE.COMPLETE, template = false, type = KVTYPE.BOOLEAN)
+@KVS(name="CharInitScript",description="Script to use to initialise a character's information, leave blank to use default",defaultvalue="",editpermission = "Instance.Owner",type = KVTYPE.TEXT,template = false,scope = KVSCOPE.INSTANCE,hierarchy = KVHIERARCHY.NONE)
 @Permissions(name = "EditCharacterSheets", description = "Allows the editing of the character sheet display formats")
 package net.coagulate.GPHUD.Modules.Instance;
 
