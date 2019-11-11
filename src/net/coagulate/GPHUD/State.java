@@ -74,6 +74,7 @@ public class State extends DumpableState {
 	public boolean sendshow;
 	public Integer roll = null;
 	public GSVM vm;
+	public Map<Integer,Set<String>> permissionsGroupCache=new HashMap<>(); public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
 	Set<String> permissionscache = null;
 	Set<Attribute> attributes = null;
 	private String uri = null;

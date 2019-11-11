@@ -83,7 +83,7 @@ public abstract class Classes {
 			String modulename = getModuleName(c);
 			for (Annotation a : c.getAnnotationsByType(Permissions.class)) {
 				if (LOGREGISTERS) log.config("Registering permission " + modulename + "/" + ((Permissions) a).name());
-				((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation((Permissions) a));
+				((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation((Permissions) a,modulename));
 			}
 		}
 		for (Class c : ClassTools.getAnnotatedClasses(Permissionss.class)) {
@@ -92,7 +92,7 @@ public abstract class Classes {
 				for (Permissions a : ((Permissionss) as).value()) {
 					if (LOGREGISTERS)
 						log.config("Registering permissions " + modulename + "/" + ((Permissions) a).name());
-					((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation((Permissions) a));
+					((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation((Permissions) a,modulename));
 				}
 			}
 		}

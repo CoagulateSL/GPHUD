@@ -1,10 +1,10 @@
 @ModuleDefinition(defaultDisable = true, description = "Events manager creates timed/locationed events, optionally awarding events xp", forceConfig = true, requires = "Zoning", implementation = "net.coagulate.GPHUD.Modules.Events.EventsModule")
-@Permissions(name = "Create", description = "Permission to create a brand new event")
-@Permissions(name = "Locations", description = "Ability to add or remove locations from an event")
-@Permissions(name = "Schedule", description = "Ability to update the schedule for an event")
-@Permissions(name = "Messages", description = "Ability to configure messages sent out related to events")
-@Permissions(name = "PerEventEventXP", description = "Manage settings on events related to awarding event xp")
-@Permissions(name = "EventXP", description = "Configure global settings related to event xp")
+@Permissions(name = "Create", description = "Permission to create a brand new event",power = Permission.POWER.LOW)
+@Permissions(name = "Locations", description = "Ability to add or remove locations from an event",power = Permission.POWER.LOW)
+@Permissions(name = "Schedule", description = "Ability to update the schedule for an event",power = Permission.POWER.LOW)
+@Permissions(name = "Messages", description = "Ability to configure messages sent out related to events",power = Permission.POWER.LOW)
+@Permissions(name = "PerEventEventXP", description = "Manage settings on events related to awarding event xp",power = Permission.POWER.LOW)
+@Permissions(name = "EventXP", description = "Configure global settings related to event xp",power = Permission.POWER.MEDIUM)
 @KVS(name = "ZoneStartMessage", editpermission = "Events.Messages", description = "Message sent to the zones the event is in when it starts", scope = KVSCOPE.EVENT, type = KVTYPE.TEXT, defaultvalue = "", template = false)
 @KVS(name = "BroadcastStartMessage", editpermission = "Events.Messages", description = "Message sent to all characters when the event starts", scope = KVSCOPE.EVENT, type = KVTYPE.TEXT, defaultvalue = "", template = false)
 @KVS(name = "EventEntryMessage", editpermission = "Events.Messages", description = "Message sent to people entering the event AFTER it has started", scope = KVSCOPE.EVENT, type = KVTYPE.TEXT, defaultvalue = "", template = false)
@@ -23,6 +23,7 @@ import net.coagulate.GPHUD.Modules.KV.KVS;
 import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
 import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
+import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
 import net.coagulate.GPHUD.Modules.Pool.Pools;
 import net.coagulate.GPHUD.Modules.SideMenu;

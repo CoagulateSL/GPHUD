@@ -25,7 +25,7 @@ public class KVEnabled extends KV {
 
 	public String description() { return "Enabled flag for this module"; }
 
-	public String editpermission() { return "Instance.Owner"; }
+	public String editpermission() { return "Instance.ModuleEnablement"; }
 
 	public String defaultvalue() { return def; }
 

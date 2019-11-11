@@ -20,7 +20,7 @@ public class GenericXPLimitKV extends KV {
 
 	public String description() { return "Maximum " + myname + " per cycle"; }
 
-	public String editpermission() { return "Instance.Owner"; }
+	public String editpermission() { return "Experience.ConfigureXP"; }
 
 	public String defaultvalue() { return "1000"; }
 

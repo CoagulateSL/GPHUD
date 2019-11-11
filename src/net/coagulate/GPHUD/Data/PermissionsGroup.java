@@ -87,17 +87,21 @@ public class PermissionsGroup extends TableRow {
 	 * @return Set of String permissions
 	 */
 	public Set<String> getPermissions(State st) {
-		Set<String> permissions = new TreeSet<>();
-		Results results = dq("select permission from permissions where permissionsgroupid=?", getId());
-		for (ResultsRow r : results) {
-			try {
-				//Modules.validatePermission(st,r.getString()); - don't validate, some left over perms might be in the DB
-				permissions.add(r.getString());
-			} catch (IllegalArgumentException e) {
-				st.logger().warning("Permission exists in database but not in schema - [" + r.getString() + "]");
+		if (!st.permissionsGroupCache.containsKey(getId())) {
+
+			Set<String> permissions = new TreeSet<>();
+			Results results = dq("select permission from permissions where permissionsgroupid=?", getId());
+			for (ResultsRow r : results) {
+				try {
+					//Modules.validatePermission(st,r.getString()); - don't validate, some left over perms might be in the DB
+					permissions.add(r.getString());
+				} catch (IllegalArgumentException e) {
+					st.logger().warning("Permission exists in database but not in schema - [" + r.getString() + "]");
+				}
 			}
+			st.permissionsGroupCache.put(getId(), permissions);
 		}
-		return permissions;
+		return st.permissionsGroupCache.get(getId());
 	}
 
 	/**
@@ -241,4 +245,11 @@ public class PermissionsGroup extends TableRow {
 	}
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
+
+	public boolean hasPermission(State st,String fullname) {
+		for (String permission:getPermissions(st)) {
+			if (permission.equalsIgnoreCase(fullname)) { return true; }
+		}
+		return false;
+	}
 }

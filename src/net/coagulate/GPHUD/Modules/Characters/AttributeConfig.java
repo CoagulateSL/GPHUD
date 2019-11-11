@@ -221,12 +221,12 @@ public class AttributeConfig {
 		return new OKResponse("Attribute self modification flag  updated");
 	}
 
-	@URLs(url = "/configuration/characters/deleteattribute", requiresPermission = "Characters.CreateAttribute")
+	@URLs(url = "/configuration/characters/deleteattribute", requiresPermission = "Characters.DeleteAttribute")
 	public static void deleteAttributeForm(State st, SafeMap values) {
 		Modules.simpleHtml(st, "Characters.deleteAttribute", values);
 	}
 
-	@Commands(description = "Delete an attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute")
+	@Commands(description = "Delete an attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.DeleteAttribute")
 	public static Response deleteAttribute(State st,
 	                                       @Arguments(description = "Attribute **AND ALL ITS DATA** to delete", type = Argument.ArgumentType.ATTRIBUTE)
 			                                       Attribute attribute,

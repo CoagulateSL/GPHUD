@@ -98,4 +98,6 @@ public class Table implements Renderable {
 	}
 
 	public void nowrap() { nowrap = true; }
+
+	public void setBGColor(String bgcolor){ openrow.setbgcolor(bgcolor);}
 }
