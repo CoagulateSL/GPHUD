@@ -492,6 +492,10 @@ public class Region extends TableRow {
 	public Integer getOpenVisitCount() {
 		return dqi(true, "select count(*) from visits where endtime is null and regionid=?", getId());
 	}
+
+	public void setGlobalCoordinates(int x, int y) {
+		d("update regions set regionx=?,regiony=? where regionid=?",x,y,getId());
+	}
     
     /*protected void delete() {
         d("delete from regions where regionid=?",getId());

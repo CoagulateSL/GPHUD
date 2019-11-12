@@ -14,8 +14,12 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
+import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
@@ -44,13 +48,24 @@ public abstract class Register {
 			return new TerminateResponse("You are not the instance owner, you can not deploy server nodes");
 		}
 		 */
+		Region region = st.getRegion();
+		for (Header header:st.headers) {
+			if (header.getName().equalsIgnoreCase("X-SecondLife-Region")) {
+				System.out.println("Element: "+header.getValue());
+				Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
+				if (match.matches()) {
+					region.setGlobalCoordinates(Integer.parseInt(match.group(1)),Integer.parseInt(match.group(2)));
+				} else {
+					st.logger().log(WARNING,"Failed to parse region format: "+header.getValue());
+				}
+			}
+		}
 		String url = null;
 		try { url = st.json.getString("callback"); } catch (JSONException e) {}
 		if (url == null || "".equals(url)) {
 			st.logger().log(WARNING, "No callback URL sent with registration");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
-		Region region = st.getRegion();
 		region.setURL(url);
 		st.logger().log(INFO, "Sending post registration message to " + regionname);
 		JSONObject registered = new JSONObject().put("incommand", "registered");
