@@ -26,7 +26,7 @@ public class GSVM {
 	private int startPC=0;
 	public Stack<ByteCodeDataType> stack=new Stack<>();
 	Map<String,ByteCodeDataType> variables=new HashMap<>();
-
+	String invokeonexit=null; public void invokeOnExit(String commandname) {invokeonexit=commandname;}
 	private void initialiseVM(State st) {
 		stack.clear();
 		PC=0;
@@ -135,7 +135,13 @@ public class GSVM {
 			throw new SystemException("VM Uncaught: "+t.toString()+" "+at(),t);
 		}
 		st.vm=null;
-		return dequeue(st,st.getCharacter());
+		JSONObject json = dequeue(st, st.getCharacter()).asJSON(st);
+		if (invokeonexit!=null && suspended==false) {
+			json.put("incommand", "runtemplate");
+			json.put("args", "0");
+			json.put("invoke", invokeonexit);
+		}
+		return new JSONResponse(json);
 	}
 
 	public String dumpStateToHtml() {
@@ -234,6 +240,7 @@ public class GSVM {
 		variables.put(" PC",new BCInteger(null,PC));
 		variables.put(" IC",new BCInteger(null,IC));
 		variables.put(" SUSP",new BCInteger(null,suspensions));
+		if (invokeonexit!=null) { variables.put(" ONEXIT",new BCString(null,invokeonexit)); }
 		suspensions++;
 		if (suspensions>10) { throw new GSResourceLimitExceededException("Maximum number of VM suspensions reached - too many user input requests?"); }
 		// simulations dont suspend.  but do update the variables and fake a suspension count.  for completeness :P
@@ -282,6 +289,7 @@ public class GSVM {
 		PC=((BCInteger)(variables.get(" PC"))).getContent();
 		IC=((BCInteger)(variables.get(" IC"))).getContent();
 		suspensions=((BCInteger)(variables.get(" SUSP"))).getContent();
+		if (variables.containsKey((" ONEXIT"))) { invokeonexit=((BCString)variables.get(" ONEXIT")).getContent(); }
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
 	}
 	public Response resume(State st) { return executeloop(st); }

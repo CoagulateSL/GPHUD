@@ -39,11 +39,11 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
 public abstract class Login {
 	@Commands(context = Context.AVATAR, permitConsole = false, permitUserWeb = false, permitScripting =false,permitHUDWeb = false, description = "Register this session as a character connection")
 	public static Response login(State st,
-	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128)
+	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128,mandatory = false)
 			                             String version,
-	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the HUD that is connecting", max = 128)
+	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the HUD that is connecting", max = 128,mandatory = false)
 			                             String versiondate,
-	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128)
+	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128,mandatory = false)
 			                             String versiontime
 	) throws UserException, SystemException {
 		final boolean debug = false;
@@ -82,6 +82,7 @@ public abstract class Login {
 			Scripts init=Scripts.findOrNull(simulate, initscript);
 			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; } else {
 				GSVM initialisecharacter = new GSVM(init.getByteCode());
+				initialisecharacter.invokeOnExit("characters.login");
 				Response response = initialisecharacter.execute(simulate);
 				if (initialisecharacter.suspended()) { // bail here
 					return response;
@@ -187,7 +188,7 @@ public abstract class Login {
 		Transmission registering = new Transmission((Char) null, registeringjson, url);
 		registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
 		Visits.initVisit(st, st.getCharacter(), region);
-		if (version != null && versiondate != null && versiontime != null) {
+		if (version != null && versiondate != null && versiontime != null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
 			region.recordHUDVersion(st, version, versiondate, versiontime);
 		}
 		Instance instance = st.getInstance();
