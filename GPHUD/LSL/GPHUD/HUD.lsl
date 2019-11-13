@@ -111,6 +111,10 @@ integer process(key id) {
 	if (jsonget("leveltext")!="") { llOwnerSay(jsonget("leveltext")); }
 	if (jsonget("rpchannel")!="") { rpchannel=(integer)jsonget("rpchannel"); setupRpChannel();}
 	if (jsonget("name")!="") { charname=jsonget("name"); }
+	if (jsonget("teleport")!="") {
+		list pieces=llParseString2List(jsonget("teleport"),["|"],[]);
+		llTeleportAgentGlobalCoords(llGetOwner(),(vector)(llList2String(pieces,0)),(vector)(llList2String(pieces,1)),(vector)(llList2String(pieces,2)));
+	}
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;
