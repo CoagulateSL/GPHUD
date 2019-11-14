@@ -51,7 +51,7 @@ public abstract class Register {
 		Region region = st.getRegion();
 		for (Header header:st.headers) {
 			if (header.getName().equalsIgnoreCase("X-SecondLife-Region")) {
-				System.out.println("Element: "+header.getValue());
+				//System.out.println("Element: "+header.getValue());
 				Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
 				if (match.matches()) {
 					region.setGlobalCoordinates(Integer.parseInt(match.group(1)),Integer.parseInt(match.group(2)));

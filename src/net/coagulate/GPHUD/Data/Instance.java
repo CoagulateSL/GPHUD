@@ -34,7 +34,7 @@ public class Instance extends TableRow {
 	 */
 	public static Set<Instance> getOurInstances() {
 		Set<Instance> instances = new TreeSet<>();
-		Results instancerows = GPHUD.getDB().dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=?", Interface.getNode());
+		Results instancerows = GPHUD.getDB().dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and retired=0", Interface.getNode());
 		for (ResultsRow r : instancerows) { instances.add(Instance.get(r.getInt())); }
 		return instances;
 	}
@@ -187,7 +187,7 @@ public class Instance extends TableRow {
 	 * @return Set of Regions
 	 */
 	public Set<Region> getOurRegions(boolean allowretired) {
-		Results results = dq("select regionid from regions where instanceid=? and authnode=?", getId(), Interface.getNode());
+		Results results = dq("select regionid from regions where instanceid=? and authnode=? and retired<?", getId(), Interface.getNode(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
 		for (ResultsRow row : results) {
 			regions.add(Region.get(row.getInt("regionid"),allowretired));
@@ -201,7 +201,7 @@ public class Instance extends TableRow {
 	 * @return Set of Regions
 	 */
 	public Set<Region> getRegions(boolean allowretired) {
-		Results results = dq("select regionid from regions where instanceid=?", getId());
+		Results results = dq("select regionid from regions where instanceid=? and retired<?", getId(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
 		for (ResultsRow row : results) {
 			regions.add(Region.get(row.getInt("regionid"),allowretired));
