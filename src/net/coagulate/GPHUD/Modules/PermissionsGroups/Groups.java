@@ -52,12 +52,16 @@ public abstract class Groups {
 		for (String permission : permissions) {
 			permtable.openRow();
 			permtable.add(permission);
-			Permission rawpermission = Modules.getPermission(st, permission);
-			if (rawpermission != null) {
-				permtable.add(rawpermission.description());
-				permtable.setBGColor(rawpermission.getColor());
-			} else {
-				permtable.add("<font color=red><i>Permission no longer exists</i></font>");
+			try {
+				Permission rawpermission = Modules.getPermission(st, permission);
+				if (rawpermission != null) {
+					permtable.add(rawpermission.description());
+					permtable.setBGColor(rawpermission.getColor());
+				} else {
+					permtable.add("<font color=red><i>Permission no longer exists</i></font>");
+				}
+			} catch (UserException permissionerror) {
+				permtable.add("Error: "+permissionerror.getLocalizedMessage()); permtable.setBGColor("#e0e0e0");
 			}
 			if (st.isInstanceOwner() || st.isSuperUser()) {
 				Form dp = new Form();
