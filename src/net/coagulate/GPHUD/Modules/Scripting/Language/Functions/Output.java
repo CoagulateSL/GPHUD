@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
+import net.coagulate.GPHUD.Data.Landmarks;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
@@ -27,6 +28,16 @@ public class Output {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		vm.queueOwnerSay(target.getContent(),message.getContent());
+		return new BCInteger(null,0);
+	}
+
+	@GSFunctions.GSFunction(description = "Teleports the plater",parameters = "BCCharacter - who to teleport<br>BCString - Landmark name to teleport to",returns="Integer - 0",notes="")
+	public static BCInteger gsTeleport(State st,GSVM vm,BCCharacter target,BCString landmark) {
+		if (vm.simulation) { return new BCInteger(null,0); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		Landmarks t=st.getInstance().getLandmark(landmark.getContent());
+		if (t==null) { throw new GSResourceUnavailableException("Can not find landmark "+landmark.getContent()); }
+		vm.queueTeleport(target.getContent(),t.getHUDRepresentation());
 		return new BCInteger(null,0);
 	}
 }

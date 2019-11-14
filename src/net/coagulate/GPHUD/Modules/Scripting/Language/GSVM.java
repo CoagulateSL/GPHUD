@@ -197,6 +197,11 @@ public class GSVM {
 		out.put("sayas",ch.getName());
 	}
 
+	public void queueTeleport(Char content, String hudRepresentation) {
+		JSONObject queue=getQueue(content);
+		queue.put("teleport",hudRepresentation);
+	}
+
 	public void queueOwnerSay(Char ch, String message) {
 		JSONObject out=getQueue(ch);
 		String m="";

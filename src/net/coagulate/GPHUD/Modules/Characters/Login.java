@@ -208,11 +208,16 @@ public abstract class Login {
 		rawresponse.put("messagecount", st.getCharacter().messages());
 		st.getCharacter().initialConveyances(st, rawresponse);
 		rawresponse.put("zoning", ZoneTransport.createZoneTransport(region));
+		String logincommand=st.getKV("Instance.RunOnLogin").value();
+		if (logincommand!=null && (!logincommand.isEmpty())) {
+			rawresponse.put("logincommand",logincommand);
+		}
 		// pretty sure initial conveyances does this now.
 		//SafeMap convey=Modules.getConveyances(st);
 		//for (String key:convey.keySet()) {
 		//    rawresponse.put(key,convey.get(key));
 		//}
+
 		return new JSONResponse(rawresponse);
 	}
 

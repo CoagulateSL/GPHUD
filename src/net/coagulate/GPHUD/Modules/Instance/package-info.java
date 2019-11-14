@@ -14,6 +14,7 @@
 @KVS(name = "ShowSelfTemplate", description = "The default template for the public-show character sheet command", editpermission = "Instance.EditCharacterSheets", hierarchy = KVHIERARCHY.DELEGATING, scope = KVSCOPE.COMPLETE, type = KVTYPE.TEXT, template = true, defaultvalue = "--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
 @KVS(name="CharInitScript",description="Script to use to initialise a character's information, leave blank to use default",defaultvalue="",editpermission = "Instance.ConfigureCharacters",type = KVTYPE.TEXT,template = false,scope = KVSCOPE.INSTANCE,hierarchy = KVHIERARCHY.NONE)
 @KVS(name = "AllowSelfRetire", description = "Allow the character to retire themselves", defaultvalue = "false", editpermission = "Instance.ConfigureCharacters", hierarchy = KVHIERARCHY.DELEGATING, scope = KVSCOPE.COMPLETE, template = false, type = KVTYPE.BOOLEAN)
+@KVS(name = "RunOnLogin",description="Command user should automatically run on login",defaultvalue="",type = KVTYPE.COMMAND,hierarchy = KVHIERARCHY.DELEGATING,scope = KVSCOPE.COMPLETE,template = true,editpermission = "Instance.SetLoginScript")
 @Permissions(name = "EditCharacterSheets", description = "Allows the editing of the character sheet display formats",power = Permission.POWER.LOW)
 @Permissions(name = "ModuleEnablement",description = "Enable or disable modules at this instance",power = Permission.POWER.MEDIUM)
 @Permissions(name="ServerOperator",description="The ability to get+deploy GPHUD Region Servers",power = Permission.POWER.MEDIUM)
@@ -21,6 +22,8 @@
 @Permissions(name="ManagePermissions",description="Can create and alter permissions groups (including giving themselves permissions, essentially)",power = Permission.POWER.HIGH)
 @Permissions(name="PermissonsMembers",description="Can join or remove users from permissions groups",power= Permission.POWER.HIGH)
 @Permissions(name="CookBooks",description="Can run cookbooks",power= Permission.POWER.MEDIUM)
+@Permissions(name="SetLoginScript",description = "Can change the 'run at login' command",power = Permission.POWER.MEDIUM)
+
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
