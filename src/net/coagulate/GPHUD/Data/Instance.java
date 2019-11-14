@@ -681,4 +681,6 @@ public class Instance extends TableRow {
 	public Set<Scripts> getScripts() {
 		return Scripts.getScript(this);
 	}
+
+	public Landmarks getLandmark(String name) { return Landmarks.find(this,name); }
 }

@@ -496,6 +496,16 @@ public class Region extends TableRow {
 	public void setGlobalCoordinates(int x, int y) {
 		d("update regions set regionx=?,regiony=? where regionid=?",x,y,getId());
 	}
+
+
+
+	public String getGlobalCoordinates() {
+		ResultsRow r = dqone(true, "select regionx,regiony from regions where regionid=?", getId());
+		Integer x=r.getInt("regionx");
+		Integer y=r.getInt("regiony");
+		if (x==null || y==null) { throw new UserException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server"); }
+		return "<"+x+","+y+",0>";
+	}
     
     /*protected void delete() {
         d("delete from regions where regionid=?",getId());
