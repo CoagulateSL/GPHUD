@@ -378,6 +378,7 @@ public class Region extends TableRow {
 	 */
 	public String getOnlineStatus(String timezone) {
 		Integer urllast = getURLLast();
+		if (isRetired()) { return "Retired"; }
 		if (urllast == null) { return "OFFLINE forever?"; }
 		if (getURL(true) == null || getURL(true).isEmpty()) {
 			return "OFFLINE for " + duration(getUnixTime() - urllast);
