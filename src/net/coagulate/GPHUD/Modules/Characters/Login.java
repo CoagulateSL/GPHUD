@@ -276,6 +276,7 @@ public abstract class Login {
 		GPHUD.purgeURL(st.callbackurl);
 		if (st.getCharacterNullable() != null) { st.purgeCache(st.getCharacter()); }
 		PrimaryCharacters.setPrimaryCharacter(st, character);
+		character.setURL(st.callbackurl);
 		return login(st, null, null, null);
 	}
 
