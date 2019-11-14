@@ -69,7 +69,7 @@ public class TeleportCommands {
 		Landmarks lm=st.getInstance().getLandmark(landmark);
 		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
 		JSONObject tp=new JSONObject();
-		tp.put("teleport",lm.getHUDRepresentation());
+		tp.put("teleport",lm.getHUDRepresentation(false));
 		return new JSONResponse(tp);
 	}
 }

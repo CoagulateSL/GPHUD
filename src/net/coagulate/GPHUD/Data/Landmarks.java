@@ -37,9 +37,9 @@ public class Landmarks extends TableRow {
 		GPHUD.getDB().d("insert into landmarks(regionid,name,x,y,z,lookatx,lookaty,lookatz) values(?,?,?,?,?,?,?,?)",region.getId(),name,x,y,z,lax,lay,laz);
 	}
 
-	public String getHUDRepresentation() {
+	public String getHUDRepresentation(boolean allowretired) {
 		String tp="";
-		tp+=getRegion().getGlobalCoordinates();
+		tp+=getRegion(allowretired).getGlobalCoordinates();
 		tp+="|";
 		tp+=getCoordinates();
 		tp+="|";
@@ -54,8 +54,8 @@ public class Landmarks extends TableRow {
 		return "<"+getFloat("lookatx")+","+getFloat("lookaty")+","+getFloat("lookatz")+">";
 	}
 
-	public Region getRegion() {
-		return Region.get(getInt("regionid"));
+	public Region getRegion(boolean allowretired) {
+		return Region.get(getInt("regionid"),allowretired);
 	}
 
 	@Override

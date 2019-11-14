@@ -37,7 +37,7 @@ public class Output {
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		Landmarks t=st.getInstance().getLandmark(landmark.getContent());
 		if (t==null) { throw new GSResourceUnavailableException("Can not find landmark "+landmark.getContent()); }
-		vm.queueTeleport(target.getContent(),t.getHUDRepresentation());
+		vm.queueTeleport(target.getContent(),t.getHUDRepresentation(false));
 		return new BCInteger(null,0);
 	}
 }
