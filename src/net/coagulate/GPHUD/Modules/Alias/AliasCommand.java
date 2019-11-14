@@ -99,12 +99,6 @@ public class AliasCommand extends Command {
 	}
 
 	@Override
-	public boolean permitHUDWeb() {
-		if (targetcommand == null) { return false; }
-		return targetcommand.permitHUDWeb();
-	}
-
-	@Override
 	public boolean permitJSON() {
 		if (targetcommand == null) { return false; }
 		return targetcommand.permitJSON();

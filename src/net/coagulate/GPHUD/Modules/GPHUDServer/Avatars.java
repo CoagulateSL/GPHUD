@@ -24,7 +24,7 @@ import static java.util.logging.Level.WARNING;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Avatars {
-	@Commands(context = Context.AVATAR, permitScripting = false, description = "Synchronise the avatars status with the regions contents, server use only.", permitConsole = false, permitHUDWeb = false, permitUserWeb = false)
+	@Commands(context = Context.AVATAR, permitScripting = false, description = "Synchronise the avatars status with the regions contents, server use only.", permitConsole = false, permitUserWeb = false)
 	public static Response setRegionAvatars(State st,
 	                                        @Arguments(description = "Comma separated list of avatar key=names on the sim", type = ArgumentType.TEXT_ONELINE, max = 65536)
 			                                        String userlist) throws UserException {

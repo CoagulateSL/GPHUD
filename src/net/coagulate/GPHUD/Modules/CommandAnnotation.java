@@ -90,8 +90,6 @@ public class CommandAnnotation extends Command {
 
 	public boolean permitConsole() { return meta.permitConsole(); }
 
-	public boolean permitHUDWeb() { return meta.permitHUDWeb(); }
-
 	public boolean permitUserWeb() { return meta.permitUserWeb(); }
 
 	public boolean permitScripting() { return meta.permitScripting(); }

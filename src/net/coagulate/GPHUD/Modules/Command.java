@@ -65,8 +65,6 @@ public abstract class Command {
 
 	public abstract boolean permitConsole();
 
-	public abstract boolean permitHUDWeb();
-
 	public abstract boolean permitUserWeb();
 
 	public abstract boolean permitScripting();
@@ -318,12 +316,6 @@ public abstract class Command {
 			}
 			// check required interface
 			boolean ok = false;
-			if (st.source== State.Sources.HUD) {
-				if (!this.permitHUDWeb()) {
-					return new ErrorResponse("This command can not be accessed via the HUD Web interface");
-				}
-				ok = true;
-			}
 			if (st.source== State.Sources.USER) {
 				if (!this.permitUserWeb()) {
 					return new ErrorResponse("This command can not be accessed via the Web interface");
@@ -741,8 +733,6 @@ public abstract class Command {
 		boolean permitJSON() default true;
 
 		boolean permitConsole() default true;
-
-		boolean permitHUDWeb() default true;
 
 		boolean permitUserWeb() default true;
 

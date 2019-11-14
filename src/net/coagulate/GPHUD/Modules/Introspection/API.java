@@ -80,10 +80,6 @@ public abstract class API {
 			f.add(new Color("green", "Accessible via Browser Web UI"));
 		}
 		f.add("<br>");
-		if (!c.permitHUDWeb()) { f.add(new Color("red", "HUD Web UI access denied")); } else {
-			f.add(new Color("green", "Accessible via HUD Web UI"));
-		}
-		f.add("<br>");
 		if (!c.permitScripting()) { f.add(new Color("red", "Scripting access denied")); } else {
 			f.add(new Color("green", "Accessible via Scripting module"));
 		}
@@ -120,9 +116,6 @@ public abstract class API {
 					if (c.permitJSON()) { t.add(new Color("green", "JSON")); } else { t.add(new Color("red", "JSON")); }
 					if (c.permitUserWeb()) { t.add(new Color("green", "UserWeb")); } else {
 						t.add(new Color("red", "UserWeb"));
-					}
-					if (c.permitHUDWeb()) { t.add(new Color("green", "HUDWeb")); } else {
-						t.add(new Color("red", "HUDWeb"));
 					}
 					if (c.permitScripting()) { t.add(new Color("green", "Scripting")); } else {
 						t.add(new Color("red", "Scripting"));

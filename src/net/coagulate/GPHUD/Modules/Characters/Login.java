@@ -37,7 +37,7 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Login {
-	@Commands(context = Context.AVATAR, permitConsole = false, permitUserWeb = false, permitScripting =false,permitHUDWeb = false, description = "Register this session as a character connection")
+	@Commands(context = Context.AVATAR, permitConsole = false, permitUserWeb = false, permitScripting =false,description = "Register this session as a character connection")
 	public static Response login(State st,
 	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128,mandatory = false)
 			                             String version,

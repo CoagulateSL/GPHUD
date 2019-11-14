@@ -64,11 +64,6 @@ public class ScriptingCommand extends Command {
 	}
 
 	@Override
-	public boolean permitHUDWeb() {
-		return false;
-	}
-
-	@Override
 	public boolean permitUserWeb() {
 		return false;
 	}

@@ -65,9 +65,6 @@ public class MenuCommand extends Command {
 	public boolean permitConsole() { return false; }
 
 	@Override
-	public boolean permitHUDWeb() {return false; }
-
-	@Override
 	public boolean permitJSON() { return true; }
 
 	@Override

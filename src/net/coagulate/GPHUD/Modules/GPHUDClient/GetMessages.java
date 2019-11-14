@@ -28,7 +28,7 @@ import java.util.List;
  */
 public abstract class GetMessages {
 
-	@Commands(context = Context.CHARACTER, permitScripting = false, description = "Get a message", permitConsole = false, permitHUDWeb = false, permitUserWeb = false)
+	@Commands(context = Context.CHARACTER, permitScripting = false, description = "Get a message", permitConsole = false, permitUserWeb = false)
 	public static Response getMessage(State st) throws SystemException, UserException {
 		Message m = st.getCharacter().getMessage();
 		if (m == null) { return new ErrorResponse("You have no outstanding messages."); }
@@ -55,7 +55,7 @@ public abstract class GetMessages {
 		return options;
 	}
 
-	@Commands(context = Context.CHARACTER, description = "Accept/Reject a message", permitScripting = false, permitConsole = false, permitHUDWeb = false, permitUserWeb = false)
+	@Commands(context = Context.CHARACTER, description = "Accept/Reject a message", permitScripting = false, permitConsole = false, permitUserWeb = false)
 	public static Response acceptRejectMessage(State st,
 	                                           @Arguments(type = ArgumentType.CHOICE, description = "Accept or Reject the message", choiceMethod = "getAcceptReject")
 			                                           String response) throws SystemException, UserException {

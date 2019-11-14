@@ -14,7 +14,7 @@ import net.coagulate.GPHUD.State;
 
 public class ScriptResponses {
 
-	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitHUDWeb = false,permitConsole = false,permitJSON = true)
+	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false,permitJSON = true)
 	public static Response characterResponse(State st,
 	                                         @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER,mandatory=true)
 	                                         Integer processid,
@@ -30,7 +30,7 @@ public class ScriptResponses {
 		return vm.resume(st);
 	}
 
-	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitHUDWeb = false,permitConsole = false,permitJSON = true)
+	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false,permitJSON = true)
 	public static Response stringResponse(State st,
 	                                         @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER,mandatory=true)
 			                                         Integer processid,

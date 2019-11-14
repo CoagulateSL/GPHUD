@@ -760,5 +760,5 @@ public class State extends DumpableState {
 	}
 
 
-	public enum Sources {NONE, HUD, SYSTEM, USER, CONSOLE, SCRIPTING}
+	public enum Sources {NONE, SYSTEM, USER, CONSOLE, SCRIPTING}
 }

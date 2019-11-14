@@ -478,10 +478,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				if (debug) { System.out.println("Extracted cookie from URI " + cookie); }
 				st.resp.addHeader("Set-Cookie", "gphud=" + cookie + "; Path=/");
 				st.setURL(st.getFullURL().replaceAll("\\?gphud=.*", ""));
-				if (!(this instanceof net.coagulate.GPHUD.Interfaces.HUD.Interface)) {
-					if (debug) { System.out.println("Redirecting to " + st.getDebasedURL()); }
-					throw new RedirectionException(st.getDebasedURL());
-				}
+				if (debug) { System.out.println("Redirecting to " + st.getDebasedURL()); }
+				throw new RedirectionException(st.getDebasedURL());
 			}
 		}
 		Cookies cookies = null;
