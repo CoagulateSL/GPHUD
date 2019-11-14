@@ -140,10 +140,10 @@ public class ZoneArea extends TableRow {
 	 *
 	 * @return Region
 	 */
-	public Region getRegion() {
+	public Region getRegion(boolean allowretired) {
 		Integer id = getInt("regionid");
 		if (id == null) { throw new SystemException("Zone Area " + getId() + " has no associated region?"); }
-		return Region.get(id);
+		return Region.get(id,allowretired);
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class ZoneArea extends TableRow {
 	@Override
 	public String getName() {
 		String vectors[] = getVectors();
-		return getRegion().getName() + "@" + vectors[0] + "-" + vectors[1];
+		return getRegion(true).getName() + "@" + vectors[0] + "-" + vectors[1];
 	}
 
 	@Override

@@ -169,7 +169,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.setRegionName(regionname);
 		st.issuid = false;
 		st.sourcename = objectname;
-		st.sourceregion = Region.find(regionname);
+		st.sourceregion = Region.find(regionname,false);
 		st.sourcelocation = position;
 		User owner = User.findOrCreateAvatar(ownername, ownerkey);
 		st.sourceowner = owner;
@@ -188,7 +188,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.issuid = true;
 		}
 		// load region from database, if it exists
-		Region region = Region.find(regionname);
+		Region region = Region.find(regionname,false);
 		if (region == null) {
 			return processUnregistered(st);
 		} else {
@@ -274,7 +274,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (!"".equals(success)) {
 				return new ErrorResponse("Region registration failed after instance creation: " + success);
 			}
-			Region region = Region.find(regionname);
+			Region region = Region.find(regionname,false);
 			st.setRegion(region);
 			st.sourceregion = region;
 			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Join", "Instance", "", regionname, "Joined instance " + console);
@@ -291,7 +291,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			}
 			if (instance == null) { return new ErrorResponse("Failed to find named instance, see *listinstances"); }
 			String success = Region.joinInstance(regionname, instance);
-			Region region = Region.find(regionname);
+			Region region = Region.find(regionname,false);
 			st.setInstance(instance);
 			st.setRegion(region);
 			st.sourceregion = region;

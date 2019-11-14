@@ -61,20 +61,26 @@ public class Region extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A Region representation
 	 */
-	public static Region get(int id) {
-		return (Region) factoryPut("Region", id, new Region(id));
+	public static Region get(int id,boolean allowretired) {
+		Region r= (Region) factoryPut("Region", id, new Region(id));
+		if (r.isRetired() && (!allowretired)) { throw new SystemException("Attempt to access retired region"); }
+		return r;
 	}
 
+
+	public boolean isRetired() {
+		return getBool("retired");
+	}
 	/**
 	 * Find a region by name.
 	 *
 	 * @param name Name of region to locate
 	 * @return Region object for that region, or null if none is found.
 	 */
-	public static Region find(String name) {
+	public static Region find(String name,boolean allowretired) {
 		Integer regionid = GPHUD.getDB().dqi(false, "select regionid from regions where name=?", name);
 		if (regionid == null) { return null; }
-		return get(regionid);
+		return get(regionid,allowretired);
 	}
 
 	/**

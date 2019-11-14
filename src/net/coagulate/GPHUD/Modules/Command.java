@@ -279,7 +279,7 @@ public abstract class Command {
 						else {return new ErrorResponse("Unable to find character named '" + v + "'");}
 						break;
 					case REGION:
-						typedargs.add(assertNotNull(Region.find(v), v, "region name"));
+						typedargs.add(assertNotNull(Region.find(v,false), v, "region name"));
 						break;
 					case EVENT:
 						typedargs.add(assertNotNull(Event.find(st.getInstance(), v), v, "event name"));
@@ -508,7 +508,7 @@ public abstract class Command {
 				case REGION:
 					json.put("arg" + arg + "type", "SELECT");
 					button = 0;
-					for (Region reg : st.getInstance().getRegions()) {
+					for (Region reg : st.getInstance().getRegions(false)) {
 						String label = reg.getName();
 						json.put("arg" + arg + "button" + button, label);
 						button++;
@@ -654,7 +654,7 @@ public abstract class Command {
 					break;
 				case REGION:
 					DropDownList regionlist = new DropDownList(arg.getName());
-					for (Region aregion : st.getInstance().getRegions()) {
+					for (Region aregion : st.getInstance().getRegions(false)) {
 						regionlist.add(aregion.getName());
 					}
 					t.add(regionlist);

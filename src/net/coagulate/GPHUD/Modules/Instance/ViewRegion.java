@@ -21,7 +21,7 @@ public abstract class ViewRegion {
 		String split[] = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		String id = split[split.length - 1];
-		Region r = Region.get(Integer.parseInt(id));
+		Region r = Region.get(Integer.parseInt(id),true);
 		viewRegion(st, values, r);
 	}
 

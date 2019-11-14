@@ -62,7 +62,7 @@ public abstract class ZonePages {
 		f.add(t);
 		t.border(false);
 		for (ZoneArea a : z.getZoneAreas()) {
-			t.openRow().add("Location").add(a.getRegion().getName() + ", " + a.getVectors()[0] + " - " + a.getVectors()[1]);
+			t.openRow().add("Location").add(a.getRegion(true).getName() + ", " + a.getVectors()[0] + " - " + a.getVectors()[1]);
 			if (admin) { t.add(new Form(st, true, "../deletearea", "Delete Area", "zoneareaid", a.getId() + "")); }
 		}
 		if (admin) { t.openRow().add("").add(new Form(st, true, "../addarea", "Add Area", "zone", z.getName())); }

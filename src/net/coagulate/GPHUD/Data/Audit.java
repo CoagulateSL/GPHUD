@@ -240,7 +240,7 @@ public abstract class Audit {
 	}
 
 	private static String formatregion(NameCache cache, Integer charid) {
-		if (charid != null) { return cache.lookup(Region.get(charid)); }
+		if (charid != null) { return cache.lookup(Region.get(charid,true)); }
 		return "";
 	}
 

@@ -29,7 +29,7 @@ public class Visits {
 			GPHUD.getDB().d("update visits set endtime=? where avatarid=? and endtime is null", getUnixTime(), avatar.getId());
 			Set<User> avatarset = new HashSet<>();
 			avatarset.add(avatar);
-			for (Region reg : st.getInstance().getRegions()) { reg.departingAvatars(st, avatarset); }
+			for (Region reg : st.getInstance().getRegions(false)) { reg.departingAvatars(st, avatarset); }
 		}
 		st.logger().fine("Starting visit for " + character.getNameSafe() + " at " + region.getNameSafe() + " on avatar " + avatar.getName());
 		GPHUD.getDB().d("insert into visits(avatarid,characterid,regionid,starttime) values(?,?,?,?)", avatar.getId(), character.getId(), region.getId(), getUnixTime());
