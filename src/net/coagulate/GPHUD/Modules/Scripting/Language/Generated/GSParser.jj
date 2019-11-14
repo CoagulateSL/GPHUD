@@ -7,7 +7,7 @@
                      
                                                                           
                       
-    DEBUG_PARSER=true;
+    //DEBUG_PARSER=true;
     //DEBUG_LOOKAHEAD=true;
     //DEBUG_TOKEN_MANAGER=true;
 }
