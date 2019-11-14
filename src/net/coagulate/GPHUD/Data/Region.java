@@ -63,7 +63,7 @@ public class Region extends TableRow {
 	 */
 	public static Region get(int id,boolean allowretired) {
 		Region r= (Region) factoryPut("Region", id, new Region(id));
-		if (r.isRetired() && (!allowretired)) { throw new SystemException("Attempt to access retired region"); }
+		if (r.isRetired() && (!allowretired)) { throw new UserException("Attempt to access retired region"); }
 		return r;
 	}
 
