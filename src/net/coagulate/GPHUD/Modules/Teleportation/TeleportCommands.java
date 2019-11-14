@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 public class TeleportCommands {
 
-	@Command.Commands(description = "Teleport the player to a given X, Y and Z",permitHUDWeb = false,permitUserWeb = false,context = Command.Context.CHARACTER,permitConsole = false)
+	@Command.Commands(description = "Teleport the player to a given X, Y and Z",permitUserWeb = false,context = Command.Context.CHARACTER,permitConsole = false)
 	public static Response teleportTo(State st,
 	                           @Argument.Arguments(description = "Region to teleport to (must be part of the instance",type = Argument.ArgumentType.REGION)
 	                           Region region,
@@ -33,7 +33,7 @@ public class TeleportCommands {
 		return new JSONResponse(response);
 	}
 
-	@Command.Commands(description="Creates a landmark at the current location",context = Command.Context.CHARACTER,permitUserWeb = false,permitHUDWeb = false,permitScripting = false,requiresPermission = "Teleportation.CreateLandmark")
+	@Command.Commands(description="Creates a landmark at the current location",context = Command.Context.CHARACTER,permitUserWeb = false,permitScripting = false,requiresPermission = "Teleportation.CreateLandmark")
 	public static Response createLandmark(State st,
 	                                      @Argument.Arguments(description = "Name for the landmark, replaces it if it already exists",max = 64,type = Argument.ArgumentType.TEXT_ONELINE)
 	                                      String name) {
@@ -62,7 +62,7 @@ public class TeleportCommands {
 		return new OKResponse("Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
 	}
 
-	@Command.Commands(description = "Teleport to a landmark", context = Command.Context.CHARACTER,permitUserWeb = false,permitHUDWeb = false,permitConsole = false)
+	@Command.Commands(description = "Teleport to a landmark", context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
 	public static Response go(State st,
 								@Argument.Arguments(description = "Landmark name to teleport to",type = Argument.ArgumentType.TEXT_ONELINE,max = 64)
 								String landmark) {
