@@ -35,7 +35,7 @@ public abstract class ViewInstance {
 		st.form.add(map);
 		map.openRow().add("Name").add(i.getName());
 		map.openRow().add("Owner").add(i.getOwner().getGPHUDLink());
-		for (Region r : i.getRegions()) {
+		for (Region r : i.getRegions(false)) {
 			map.openRow().add("Region").add(r).add(r.getOnlineStatus(tz));
 			map.openRow().add("").add("").add("Server " + r.getServerVersion(true));
 			map.openRow().add("").add("").add("HUD " + r.getHUDVersion(true));

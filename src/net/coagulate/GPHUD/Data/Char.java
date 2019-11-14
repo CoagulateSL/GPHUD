@@ -680,7 +680,7 @@ public class Char extends TableRow {
 	public Region getRegion() {
 		Integer region = getInt("regionid");
 		if (region == null) { return null; }
-		return Region.get(region);
+		return Region.get(region,false);
 	}
 
 	/**

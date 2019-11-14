@@ -55,7 +55,7 @@ public class ConfigurationHierarchy extends Form {
 				type = "Instance";
 			}
 			if ("regionkvstore".equals(dboname)) {
-				dbo = Region.get(id);
+				dbo = Region.get(id,true);
 				type = "Region";
 			}
 			if ("charactergroupkvstore".equals(dboname)) {
@@ -101,7 +101,7 @@ public class ConfigurationHierarchy extends Form {
 		Instance instance = simulated.getInstance();
 		Set<String> alledits = new HashSet<>();
 		if (kv.appliesTo(instance)) { addKVRow(st, h, kv, instance, simulated, alledits); }
-		for (Region r : instance.getRegions()) { if (kv.appliesTo(r)) { addKVRow(st, h, kv, r, simulated, alledits); } }
+		for (Region r : instance.getRegions(false)) { if (kv.appliesTo(r)) { addKVRow(st, h, kv, r, simulated, alledits); } }
 		for (Zone z : instance.getZones()) { if (kv.appliesTo(z)) { addKVRow(st, h, kv, z, simulated, alledits); } }
 		for (Event e : instance.getEvents()) { if (kv.appliesTo(e)) { addKVRow(st, h, kv, e, simulated, alledits); } }
 		for (CharacterGroup cg : instance.getCharacterGroups()) {

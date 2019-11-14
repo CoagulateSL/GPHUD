@@ -34,7 +34,7 @@ public class Instance extends TableRow {
 	 */
 	public static Set<Instance> getOurInstances() {
 		Set<Instance> instances = new TreeSet<>();
-		Results instancerows = GPHUD.getDB().dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=?", Interface.getNode());
+		Results instancerows = GPHUD.getDB().dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and retired=0", Interface.getNode());
 		for (ResultsRow r : instancerows) { instances.add(Instance.get(r.getInt())); }
 		return instances;
 	}
@@ -186,11 +186,11 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of Regions
 	 */
-	public Set<Region> getOurRegions() {
-		Results results = dq("select regionid from regions where instanceid=? and authnode=?", getId(), Interface.getNode());
+	public Set<Region> getOurRegions(boolean allowretired) {
+		Results results = dq("select regionid from regions where instanceid=? and authnode=? and retired<?", getId(), Interface.getNode(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
 		for (ResultsRow row : results) {
-			regions.add(Region.get(row.getInt("regionid")));
+			regions.add(Region.get(row.getInt("regionid"),allowretired));
 		}
 		return regions;
 	}
@@ -200,11 +200,11 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of Regions
 	 */
-	public Set<Region> getRegions() {
-		Results results = dq("select regionid from regions where instanceid=?", getId());
+	public Set<Region> getRegions(boolean allowretired) {
+		Results results = dq("select regionid from regions where instanceid=? and retired<?", getId(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
 		for (ResultsRow row : results) {
-			regions.add(Region.get(row.getInt("regionid")));
+			regions.add(Region.get(row.getInt("regionid"),allowretired));
 		}
 		return regions;
 	}
@@ -219,7 +219,7 @@ public class Instance extends TableRow {
 		if (GPHUD.DEV) { newstatus += "===DEVELOPMENT===\n \n"; }
 		newstatus += "Server: " + GPHUD.hostname + " - " + GPHUD.VERSION + "\n \n";
 		//newstatus+=new Date().toString()+" ";
-		for (Region r : getRegions()) {
+		for (Region r : getRegions(false)) {
 			newstatus += "[" + r.getName() + "#";
 			Integer visitors = r.getOpenVisitCount();
 			String url = dqs(true, "select url from regions where regionid=?", r.getId());
@@ -263,7 +263,7 @@ public class Instance extends TableRow {
 		JSONObject statusupdate = new JSONObject();
 		statusupdate.put("instancestatus", newstatus);
 		statusupdate.put("statuscolor", statuscolor);
-		for (Region r : getOurRegions()) {
+		for (Region r : getOurRegions(false)) {
 			String url = r.getURL(true);
 			if (url != null) {
 				if (canStatus(url)) {
@@ -536,7 +536,7 @@ public class Instance extends TableRow {
 	 * @param j JSON message to transmit.
 	 */
 	public void sendServers(JSONObject j) {
-		for (Region r : getRegions()) {
+		for (Region r : getRegions(false)) {
 			r.sendServer(j);
 			//System.out.println("Send to "+r.getName()+" "+j.toString());
 		}

@@ -65,7 +65,7 @@ public class VisitXP extends QuotaedXP {
 			State st = new State();
 			st.setInstance(i);
 			st.setAvatar(User.getSystem());
-			for (Region r : i.getRegions()) {
+			for (Region r : i.getRegions(false)) {
 				Set<Char> visitors = r.getOpenVisits();
 				for (Char visitor : visitors) {
 					runAwards(st, visitor);

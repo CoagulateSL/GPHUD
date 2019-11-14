@@ -19,7 +19,7 @@ public class Distribution {
 			json.put("itemtogive", "GPHUD Region Server");
 			json.put("givetoname", st.getAvatar().getName());
 			json.put("giveto", st.getAvatar().getUUID());
-			Region.find("Cerasi").sendServerSync(json);
+			Region.find("Cerasi",false).sendServerSync(json);
 		}
 		catch (UserException e) {
 			throw new UserException("Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+e.getLocalizedMessage()+"]");

@@ -81,7 +81,7 @@ public abstract class ZoneCommands {
 		Zone zone = za.getZone();
 		zone.validate(st);
 		String[] vectors = za.getVectors();
-		Region region = za.getRegion();
+		Region region = za.getRegion(true);
 		za.delete();
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Delete Area", zone.getName(), vectors[0] + " - " + vectors[1], null, "Area removed from zone");
 		region.pushZoning();

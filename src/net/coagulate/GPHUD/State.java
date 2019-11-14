@@ -692,7 +692,7 @@ public class State extends DumpableState {
 		simulated.setInstance(getInstance());
 		if (c == null) { c = getCharacterNullable(); }
 		simulated.setCharacter(c);
-		Set<Region> possibleregions = instance.getRegions();
+		Set<Region> possibleregions = instance.getRegions(false);
 		Region simulatedregion = new ArrayList<Region>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
 		simulated.setRegion(simulatedregion);
 		Set<Zone> possiblezones = simulatedregion.getZones();
