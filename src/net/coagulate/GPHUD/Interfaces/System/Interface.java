@@ -292,9 +292,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (instance == null) { return new ErrorResponse("Failed to find named instance, see *listinstances"); }
 			String success = Region.joinInstance(regionname, instance);
 			Region region = Region.find(regionname);
+			st.setInstance(instance);
 			st.setRegion(region);
 			st.sourceregion = region;
-			st.setInstance(instance);
 			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Join", "Instance", "", regionname, "Joined instance " + console);
 			JSONObject response = new JSONObject();
 			response.put("rebootserver", "rebootserver");
