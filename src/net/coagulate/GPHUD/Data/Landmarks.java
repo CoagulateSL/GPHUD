@@ -1,8 +1,12 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Landmarks extends TableRow {
 	public Landmarks(int id) {
@@ -11,6 +15,14 @@ public class Landmarks extends TableRow {
 
 	public static Landmarks get(int id) {
 		return (Landmarks) factoryPut("Landmarks", id, new Landmarks(id));
+	}
+
+	public static Set<Landmarks> getAll(Instance instance) {
+		Set<Landmarks> results=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
+			results.add(get(row.getInt("id")));
+		}
+		return results;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Teleportation;
 
 import net.coagulate.Core.Tools.UserException;
+import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Landmarks;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -30,6 +31,7 @@ public class TeleportCommands {
 		teleportto+="<"+x+","+y+","+z+">|";
 		teleportto+="<128,256,0>";
 		response.put("teleport",teleportto);
+		Audit.audit(st, Audit.OPERATOR.CHARACTER,null,null,"Move","Avatar","",x+","+y+","+z,"Player teleported to "+x+","+y+","+z);
 		return new JSONResponse(response);
 	}
 
@@ -58,8 +60,21 @@ public class TeleportCommands {
 
 		if (position==null || rotation==null) { throw new UserException("Unable to calculate your location/rotation information"); }
 
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
+
 		Landmarks.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+((float)1));
 		return new OKResponse("Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
+	}
+
+	@Command.Commands(description="Remove a landmark by name",context = Command.Context.AVATAR,requiresPermission = "Teleportation.DeleteLandmark")
+	public static Response deleteLandmark(State st,
+	                                      @Argument.Arguments(description = "Landmark name to remove",type = Argument.ArgumentType.TEXT_ONELINE,max = 64)
+	                                      String name) {
+		Landmarks landmark=Landmarks.find(st.getInstance(),name);
+		if (landmark==null) { return new ErrorResponse("Can not delete landmark "+name+" - it does not exist"); }
+		Landmarks.obliterate(st.getInstance(),name);
+		Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,"Delete",name,"","","Deleted landmark "+name);
+		return new OKResponse("Deleted landmark "+name);
 	}
 
 	@Command.Commands(description = "Teleport to a landmark", context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
@@ -70,6 +85,7 @@ public class TeleportCommands {
 		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
 		JSONObject tp=new JSONObject();
 		tp.put("teleport",lm.getHUDRepresentation(false));
+		Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,null,"Move",st.getCharacter().getName(),"",landmark,"Player teleported to "+landmark+" at "+lm.getRegion(true).getName()+":"+lm.getCoordinates()+" lookat "+lm.getLookAt());
 		return new JSONResponse(tp);
 	}
 }
