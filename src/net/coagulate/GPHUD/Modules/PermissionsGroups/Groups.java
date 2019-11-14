@@ -59,7 +59,7 @@ public abstract class Groups {
 			} else {
 				permtable.add("<font color=red><i>Permission no longer exists</i></font>");
 			}
-			if (st.isInstanceOwner() || st.isSuperUser()) {
+			if (st.hasPermission("instance.managepermissions")) {
 				Form dp = new Form();
 				dp.setAction("../delpermission");
 				dp.add(new Hidden("permissionsgroup", "" + pg.getName()));
@@ -69,7 +69,7 @@ public abstract class Groups {
 				permtable.add(dp);
 			}
 		}
-		if (st.isInstanceOwner() || st.isSuperUser()) {
+		if (st.hasPermission("instance.managepermissions")) {
 			f.add("<a href=\"/GPHUD/permissionsgroups/edit/"+pg.getId()+"\">Edit Permissions</a>");
 		}
 		f.add(new TextSubHeader("Members"));
@@ -87,7 +87,7 @@ public abstract class Groups {
 			if (member.cankick) { membertable.add(new Color("green", "Yes")); } else {
 				membertable.add(new Color("red", "No"));
 			}
-			if (st.isInstanceOwner()) {
+			if (st.hasPermission("instance.managepermissions")) {
 				Form spf = new Form();
 				spf.add(new Hidden("okreturnurl", st.getFullURL()));
 				membertable.add(spf);
@@ -116,7 +116,7 @@ public abstract class Groups {
 			invite.add(new Button("Add Member"));
 			f.add(invite);
 		}
-		if (st.isInstanceOwner()) {
+		if (st.hasPermission("instance.managepermissions")) {
 			Form df = new Form();
 			df.setAction("../delete");
 			df.add(new Hidden("permissionsgroup", "" + pg.getName()));
@@ -138,9 +138,6 @@ public abstract class Groups {
 	public static Response create(State st,
 	                              @Arguments(description = "Name of group to create", type = ArgumentType.TEXT_CLEAN, max = 64)
 			                              String name) throws UserException, SystemException {
-		if (!st.isInstanceOwner()) {
-			return new ErrorResponse("Insufficient permission to create a permissions group");
-		}
 		try { st.getInstance().createPermissionsGroup(name); } catch (UserException e) {
 			return new ErrorResponse("Failed to create permissions group - " + e.getLocalizedMessage());
 		}
@@ -175,7 +172,6 @@ public abstract class Groups {
 	public static Response delete(State st,
 	                              @Arguments(description = "Permissions group to delete", type = ArgumentType.PERMISSIONSGROUP)
 			                              PermissionsGroup permissionsgroup) throws UserException {
-		if (!st.isInstanceOwner()) { throw new UserException("Insufficient permission to create a permissions group"); }
 		String success = "NOP";
 		permissionsgroup.validate(st);
 		String name = permissionsgroup.getNameSafe();

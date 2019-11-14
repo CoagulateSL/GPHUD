@@ -32,7 +32,7 @@ public abstract class Configuration {
 		f.noForm();
 		f.add(new TextSubHeader("Alias Configuration"));
 
-		if (values.containsKey("deletealias") && st.isInstanceOwner()) {
+		if (values.containsKey("deletealias") && st.hasPermission("alias.config")) {
 			Alias alias = Alias.getAlias(st, values.get("deletealias"));
 			if (alias == null) {
 				f.add("<p color=red>Alias '" + values.get("deletealias") + "' was not fount</p>");
@@ -46,7 +46,7 @@ public abstract class Configuration {
 		int counter = 0;
 		for (String name : aliases.keySet()) {
 			String innercontent = "";
-			if (st.isInstanceOwner()) {
+			if (st.hasPermission("alias.config")) {
 				innercontent += "<button style=\"border: 0;\" onclick=\"document.getElementById('delete-" + counter + "').style.display='inline';\">Delete</button>";
 				innercontent += "<div id=\"delete-" + counter + "\" style=\"display: none;\">";
 				innercontent += "&nbsp;&nbsp;&nbsp;";

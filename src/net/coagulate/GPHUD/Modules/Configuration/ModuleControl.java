@@ -27,7 +27,6 @@ public abstract class ModuleControl {
 	public static Response disableModule(State st,
 	                                     @Arguments(type = ArgumentType.MODULE, description = "Module to disable")
 			                                     Module module) throws UserException, SystemException {
-		if (!(st.isInstanceOwner())) { return new ErrorResponse("Only the instance owner may disable a module"); }
 		if (!module.canDisable()) {
 			return new ErrorResponse("The module " + module.getName() + " does not allow its self to be disabled, it is probably critical to system functionality");
 		}
@@ -46,8 +45,6 @@ public abstract class ModuleControl {
 	public static Response enableModule(State st,
 	                                    @Arguments(type = ArgumentType.MODULE, description = "Module to enable")
 			                                    Module module) {
-		if (!(st.isInstanceOwner())) { return new ErrorResponse("Only the instance owner may enable a module"); }
-
 		st.setKV(st.getInstance(), module.getName() + ".Enabled", "true");
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Enable Module", module.getName(), "", "", "Module enabled");
 		return new OKResponse("Module " + module.getName() + " has been enabled");

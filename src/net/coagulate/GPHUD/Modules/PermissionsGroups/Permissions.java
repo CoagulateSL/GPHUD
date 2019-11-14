@@ -35,9 +35,6 @@ public abstract class Permissions {
 	                                     @Arguments(description = "Permission to add to group", type = ArgumentType.PERMISSION)
 			                                     String permission
 	) throws UserException, SystemException {
-		if (!st.isInstanceOwner()) {
-			return new ErrorResponse("No permission to modify the permissions on this group.");
-		}
 		Modules.validatePermission(st, permission);
 		Permission permissionref = Modules.getPermission(st, permission);
 		if (permissionref==null) { return new ErrorResponse("The permission '"+permission+"' did not resolve properly (does not exist?)"); }
@@ -63,9 +60,6 @@ public abstract class Permissions {
 	                                     @Arguments(description = "Permission to remove from group", type = ArgumentType.TEXT_CLEAN, max = 256)
 			                                     String permission
 	) throws UserException, SystemException {
-		if (!st.isInstanceOwner()) {
-			return new ErrorResponse("No permission to modify the permissions on this group.");
-		}
 		try { permissionsgroup.removePermission(permission); } catch (UserException e) {
 			return new ErrorResponse("Failed to remove permission from permissions group - " + e.getMessage());
 		}

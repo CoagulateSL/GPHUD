@@ -138,7 +138,7 @@ public class PermissionsGroup extends TableRow {
 	 * @return true if the current avatar can invite to this group
 	 */
 	public boolean canInvite(State st) {
-		if (st.isInstanceOwner()) { return true; }
+		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
 			int inviteflag = dqi(true, "select caninvite from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.avatar().getId());
 			if (inviteflag == 1) { return true; }
@@ -153,7 +153,7 @@ public class PermissionsGroup extends TableRow {
 	 * @return true if the current avatar can eject from this group
 	 */
 	public boolean canEject(State st) {
-		if (st.isInstanceOwner()) { return true; }
+		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
 			int inviteflag = dqi(true, "select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.avatar().getId());
 			if (inviteflag == 1) { return true; }

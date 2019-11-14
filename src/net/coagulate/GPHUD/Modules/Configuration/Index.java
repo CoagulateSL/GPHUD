@@ -51,7 +51,7 @@ public abstract class Index {
 				configurable.add(m.description());
 				if (m.isEnabled(st)) { //IF DISABLED etc etc check new Boolean(st.getInstanceKV("modules."+m.getName()))) {
 					configurable.add(new Color("green", "ENABLED"));
-					if (st.isInstanceOwner()) {
+					if (st.hasPermission("instance.moduleenablement")) {
 						Form disable = new Form();
 						disable.setAction("./disablemodule");
 						disable.add(new Hidden("module", m.getName()));
@@ -61,7 +61,7 @@ public abstract class Index {
 					}
 				} else {
 					configurable.add(new Color("red", "Disabled"));
-					if (st.isInstanceOwner() || st.isSuperUser()) {
+					if (st.hasPermission("instance.moduleenablement")) {
 						// only enableable if all the dependancies are enabled.  Note we dont check this on disables because reverse deps are annoying, and deps just disable themselves :P
 						Form enable = new Form();
 						enable.setAction("./enablemodule");

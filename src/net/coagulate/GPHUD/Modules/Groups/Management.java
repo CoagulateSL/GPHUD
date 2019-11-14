@@ -307,7 +307,6 @@ public abstract class Management {
 		// must be instance admin or group owner
 		boolean ok = false;
 		if (group.getOwner() == st.getCharacter()) { ok = true; }
-		if (!ok && st.isInstanceOwner()) { ok = true; }
 		if (!ok && st.hasPermission("Groups.Create")) {ok = true; }
 		if (!ok) {
 			return new ErrorResponse("You must be group owner, or have Groups.Create permissions to set admin flags");

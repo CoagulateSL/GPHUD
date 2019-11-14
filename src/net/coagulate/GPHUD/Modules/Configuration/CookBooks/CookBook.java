@@ -144,7 +144,7 @@ public abstract class CookBook {
 
 	protected static void confirmButton(State st, Form f) {
 		f.add("");
-		if (st.isInstanceOwner() || st.isSuperUser()) {
+		if (st.hasPermission("Instance.CookBooks")) {
 			f.add(new TextSubHeader("You may click here to enact the cookbook"));
 			f.add(new Button("ACTIVATE COOKBOOK"));
 		} else { f.add("Only the instance owner may run cookbooks"); }

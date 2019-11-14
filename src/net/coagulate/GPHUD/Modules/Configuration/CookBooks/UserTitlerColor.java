@@ -22,7 +22,7 @@ public class UserTitlerColor extends CookBook {
 		Table t = new Table();
 		f.add(t);
 		run(st, t, false);
-		if (values.containsKey("ACTIVATE COOKBOOK") && (st.isInstanceOwner() || st.isSuperUser())) {
+		if (values.containsKey("ACTIVATE COOKBOOK") && (st.hasPermission("instance.cookbooks"))) {
 			f.add("");
 			f.add(new TextSubHeader("EXECUTING COOKBOOK"));
 			Table runt = new Table();

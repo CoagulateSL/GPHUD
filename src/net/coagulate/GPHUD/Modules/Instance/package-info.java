@@ -19,7 +19,8 @@
 @Permissions(name="ServerOperator",description="The ability to get+deploy GPHUD Region Servers",power = Permission.POWER.MEDIUM)
 @Permissions(name="ConfigureCharacters",description="Alter settings related to character limits (number of, etc)",power=Permission.POWER.LOW)
 @Permissions(name="ManagePermissions",description="Can create and alter permissions groups (including giving themselves permissions, essentially)",power = Permission.POWER.HIGH)
-
+@Permissions(name="PermissonsMembers",description="Can join or remove users from permissions groups",power= Permission.POWER.HIGH)
+@Permissions(name="CookBooks",description="Can run cookbooks",power= Permission.POWER.MEDIUM)
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
