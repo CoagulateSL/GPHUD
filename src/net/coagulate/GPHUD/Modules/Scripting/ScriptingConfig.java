@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Scripts;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
@@ -45,6 +46,7 @@ public class ScriptingConfig {
 		Form f = st.form;
 		if (!values.get("scriptname").isEmpty()) {
 			Scripts.create(st, values.get("scriptname"));
+			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Create",values.get("scriptname"),"","","Created script");
 			throw new RedirectionException("/GPHUD/configuration/scripting");
 		}
 		f.add(new TextHeader("Create new script"));
@@ -82,17 +84,20 @@ public class ScriptingConfig {
 					} else {
 						f.p("<b>Parse failed:</b> " + e.toString());
 					}
+					Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","ParseFail","Saved script, with parse failures");
 				}
 				if (gsscript!=null) {
 					GSCompiler compiler = new GSCompiler(gsscript);
 					compiler.compile();
 					script.setBytecode(compiler.toByteCode(), version);
 					f.p("Script compiled and saved OK!");
+					Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
 				}
 			} catch (NullPointerException ex) {
 				throw new SystemException("Null pointer exception in compiler",ex);
 			} catch (Throwable t) {
 				f.p("Compilation failed; "+t.toString());
+				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
 			}
 		}
 		f.add(new TextHeader("Edit script " + script.getName()));
