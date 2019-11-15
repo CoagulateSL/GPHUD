@@ -175,7 +175,7 @@ public abstract class Login {
 		String regmessage = "";
 		if (st.getInstance().getOwner().getId() == st.getAvatar().getId()) {
 			// is instance owner
-			regmessage = GPHUD.serverVersion() + " https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head";
+			regmessage = GPHUD.serverVersion() + " [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 			if (st.getRegion().needsUpdate()) {
 				regmessage += "\n=====\nUpdate required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old one will then disable its self and can be deleted.\n=====";
 				Distribution.getServer(st);
