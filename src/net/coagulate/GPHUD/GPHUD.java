@@ -32,7 +32,7 @@ import static java.util.logging.Level.SEVERE;
  */
 public class GPHUD {
 	public static final String VERSION = "v3.9.0";
-	public static final String VERSION_DATE = "Nov 11th 2019";
+	public static final String VERSION_DATE = "Nov 15th 2019";
 	// config KV store
 	private static final Map<String, String> CONFIG = new TreeMap<>();
 	public static String hostname = "UNSET";
