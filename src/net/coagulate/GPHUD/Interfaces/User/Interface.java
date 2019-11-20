@@ -369,7 +369,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			f = authenticationHook(st, values);
 			if (st.getCharacterNullable()==null && st.getAvatar()!=null) {
 				// pick up most recently played character
-				Char character=Char.getMostRecent(st.getAvatar());
+				Char character=Char.getMostRecent(st.getAvatar(),st.getInstanceNullable());
 				if (character!=null) {
 					st.setInstance(character.getInstance());
 					st.setCharacter(character);
