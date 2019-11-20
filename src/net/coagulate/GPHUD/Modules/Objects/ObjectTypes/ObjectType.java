@@ -30,6 +30,7 @@ public abstract class ObjectType {
 		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
 		if (behaviour.equals("PhantomTeleport")) { return new PhantomTeleporter(st,object); }
 		if (behaviour.equals("RunCommand")) { return new RunCommand(st,object); }
+		if (behaviour.equals("NPC")) { return new NPC(st,object); }
 		throw new SystemException("Behaviour "+behaviour+" is not known!");
 	}
 
@@ -38,6 +39,7 @@ public abstract class ObjectType {
 		options.put("ClickTeleport","Teleport user on click.");
 		options.put("PhantomTeleport","Teleport user on collision; becomes phantom.");
 		options.put("RunCommand","Causes the character to run a command when they click.");
+		options.put("NPC","Assigns a character to this object and allows it to participate in scripted events");
 		return options;
 	}
 
