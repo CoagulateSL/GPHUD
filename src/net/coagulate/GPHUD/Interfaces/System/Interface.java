@@ -187,6 +187,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.issuid = true;
 		}
 		st.object=Objects.findOrNull(st,objectkey);
+		if (st.object!=null) { st.object.updateRX(); }
 		String runascharacter = null;
 		try { runascharacter = obj.getString("runascharacter"); } catch (JSONException e) {}
 		if (runascharacter != null && (!("".equals(runascharacter)))) {

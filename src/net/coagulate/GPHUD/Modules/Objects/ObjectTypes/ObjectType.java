@@ -29,13 +29,15 @@ public abstract class ObjectType {
 		String behaviour=json.optString("behaviour", "");
 		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
 		if (behaviour.equals("PhantomTeleport")) { return new PhantomTeleporter(st,object); }
+		if (behaviour.equals("RunCommand")) { return new RunCommand(st,object); }
 		throw new SystemException("Behaviour "+behaviour+" is not known!");
 	}
 
 	public static Map<String,String> getObjectTypes(State st) {
 		Map<String,String> options=new TreeMap<>();
-		options.put("ClickTeleport","Teleport user on click");
+		options.put("ClickTeleport","Teleport user on click.");
 		options.put("PhantomTeleport","Teleport user on collision; becomes phantom.");
+		options.put("RunCommand","Causes the character to run a command when they click.");
 		return options;
 	}
 

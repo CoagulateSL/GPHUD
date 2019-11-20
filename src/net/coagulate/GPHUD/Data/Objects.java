@@ -145,4 +145,11 @@ public class Objects extends TableRow {
 	public String getURL() {
 		return getString("url");
 	}
+
+	public void updateRX() {
+		Integer lastrx=getInt("lastrx");
+		if (lastrx==null) { lastrx=0; }
+		int diff=UnixTime.getUnixTime()-lastrx;
+		if (diff>60) { set("lastrx",UnixTime.getUnixTime()); }
+	}
 }
