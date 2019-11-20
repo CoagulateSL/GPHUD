@@ -38,6 +38,7 @@ public class GSVM {
 		simulation=false;
 		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
 		variables.put("AVATAR",new BCAvatar(null,st.getAvatar()));
+		for (String k:introductions.keySet()) { variables.put(k,introductions.get(k)); }
 	}
 
 	public ByteCodeDataType get(String k) { return variables.get(k); }
@@ -177,13 +178,18 @@ public class GSVM {
 		return queue.get(c);
 	}
 	public Response dequeue(State st,Char target) {
+		final boolean debug=false;
+		if (debug) { System.out.println("IN DEQUEUE"); }
 		JSONObject totarget=getQueue(target);
 		if (pid!=0) { totarget.put("processid",""+pid); }
-		if (queue.containsKey(target)) { queue.remove(target); }
+		if (queue.containsKey(target)) { queue.remove(target);
+			if (debug) { System.out.println("PURGED TARGET IN DEQUEUE : "+target); }
+		}
 		for (Char k:queue.keySet()) {
-			JSONObject totransmit = getQueue(target);
+			JSONObject totransmit = getQueue(k);
 			if (pid!=0) { totransmit.put("processid",""+pid); }
 			new Transmission(k,totransmit).start();
+			if (debug) { System.out.println("Dequeued to target: "+k+" - "+totransmit.toString()); }
 		}
 		return new JSONResponse(totarget);
 	}
@@ -298,6 +304,11 @@ public class GSVM {
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
 	}
 	public Response resume(State st) { return executeloop(st); }
+
+	Map<String,ByteCodeDataType> introductions=new HashMap<>();
+	public void introduce(String target, ByteCodeDataType data) {
+		introductions.put(target,data);
+	}
 
 	public class ExecutionStep {
 		public int programcounter;
