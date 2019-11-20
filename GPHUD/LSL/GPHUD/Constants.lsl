@@ -23,4 +23,7 @@ banner_hud() {
 banner_server() {
 	llOwnerSay("GPHUD Region Server "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");
 }
+banner_object() {
+	llOwnerSay("GPHUD Object Driver "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");
+}
 #endif

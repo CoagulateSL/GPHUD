@@ -35,7 +35,7 @@ string getSlaveScript() {
     if (llGetInventoryType("Dispenser Slave "+(string)slave)!=INVENTORY_SCRIPT) { slave=0; }
     return name;
 }
-gphud_hang() { llResetScript(); }
+gphud_hang(string reason) { llResetScript(); }
 listdel(integer i) {
 	keys=llDeleteSubList(keys,i,i);
 	stage=llDeleteSubList(stage,i,i);

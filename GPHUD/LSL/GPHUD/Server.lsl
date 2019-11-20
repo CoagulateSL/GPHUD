@@ -14,9 +14,9 @@
 
 
 
-gphud_hang() {
+gphud_hang(string reason) {
 	llResetOtherScript("Dispenser");
-	llSetText("Service halted",<1,.5,.5>,1);
+	llSetText("Service halted\n"+reason,<1,.5,.5>,1);
 	while(TRUE) { llSleep(9000+1); }
 }
 string name="GPHUD Region Server";

@@ -4,9 +4,12 @@
 
 // reason for shutdown
 integer broadcastchannel=0;
-integer message_is_say=FALSE;
 typedSay(string s) {
-	if (message_is_say) { llSay(0,s); } else { llOwnerSay(s); }
+	#ifdef MESSAGE_IS_SAY
+	llSay(0,s);
+	#else
+	llOwnerSay(s);
+	#endif
 }
 
 calculatebroadcastchannel() {
@@ -40,14 +43,14 @@ integer gphud_process() {
 	}
 	if (jsonget("terminate")!="") {
 		typedSay("===TERMINATED===\n"+jsonget("terminate"));
-		gphud_hang();
+		gphud_hang(jsonget("terminate"));
 	}			
 	if (incommand=="shutdown" || jsonget("shutdown")!="") {
 		typedSay("---SHUTDOWN REQUESTED---\n"+jsonget("shutdown"));
-		gphud_hang();
+		gphud_hang(jsonget("shutdown"));
 	}	
 	if (incommand=="reboot" || jsonget("reboot")!="") {
-		llOwnerSay("Rebooting at request from server: "+jsonget("reboot"));
+		typedSay("Rebooting at request from server: "+jsonget("reboot"));
 		llResetScript();
 	}
 	if (incommand=="ping") {

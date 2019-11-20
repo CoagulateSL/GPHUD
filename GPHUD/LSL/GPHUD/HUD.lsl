@@ -51,7 +51,7 @@ reflowHUD() {
 }
 startLogin() {
 	LOGIN_ATTEMPTS--;
-	if (LOGIN_ATTEMPTS<=0) { llOwnerSay("FAILED REGISTRATION 10 TIMES.  Shutting down in case we are stuck in a loop!  Please contact support."); gphud_hang(); }
+	if (LOGIN_ATTEMPTS<=0) { llOwnerSay("FAILED REGISTRATION 10 TIMES.  Shutting down in case we are stuck in a loop!  Please contact support."); gphud_hang("Too many login failures"); }
 	json=llJsonSetValue("",["version"],VERSION);
 	json=llJsonSetValue(json,["versiondate"],COMPILEDATE);
 	json=llJsonSetValue(json,["versiontime"],COMPILETIME);	
@@ -119,9 +119,9 @@ integer process(key id) {
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;
 }
-gphud_hang() {
+gphud_hang(string reason) {
 	if (detach) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); dodetach(); }
-	report("Has shutdown",<1,1,.5>);
+	report("Has shutdown\n"+reason,<1,1,.5>);
 	while (TRUE) { llSleep(60.0); }
 }
 report(string msg,vector col) {
