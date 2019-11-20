@@ -5,6 +5,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
@@ -63,6 +64,14 @@ public class Scripts extends TableRow {
 		Integer id=GPHUD.getDB().dqi(false,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
 		if (id==null) { return null; }
 		return new Scripts(id);
+	}
+
+	public static DropDownList getList(State st, String listname) {
+		DropDownList list=new DropDownList(listname);
+		for (ResultsRow row:GPHUD.getDB().dq("select id,name from scripts where instanceid=?",st.getInstance().getId())) {
+			list.add(""+row.getInt("id"),row.getString("name"));
+		}
+		return list;
 	}
 
 	public String getSource() {
