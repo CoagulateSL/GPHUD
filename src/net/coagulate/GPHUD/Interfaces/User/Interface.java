@@ -367,6 +367,14 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		URL content = Modules.getURL(st, st.getDebasedNoQueryURL());
 		if (content.requiresAuthentication()) {
 			f = authenticationHook(st, values);
+			if (st.getCharacterNullable()==null && st.getAvatar()!=null) {
+				// pick up most recently played character
+				Char character=Char.getMostRecent(st.getAvatar());
+				if (character!=null) {
+					st.setInstance(character.getInstance());
+					st.setCharacter(character);
+				}
+			}
 			if (st.getInstanceNullable() == null && st.getCharacterNullable() != null) {
 				st.setInstance(st.getCharacter().getInstance());
 			}

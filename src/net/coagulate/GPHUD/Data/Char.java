@@ -158,6 +158,16 @@ public class Char extends TableRow {
 		return results;
 	}
 
+	public static Char getMostRecent(User avatar) {
+		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 order by playedby desc",avatar.getId());
+		if (results.empty()) { return null; }
+		try { return Char.get(results.iterator().next().getInt("characterid")); }
+		catch (Exception e) { // weird
+			GPHUD.getLogger().log(SEVERE,"Exception while instansiating most recently used character?",e);
+			return null;
+		}
+	}
+
 	/**
 	 * Gets the characters personal URL
 	 *
