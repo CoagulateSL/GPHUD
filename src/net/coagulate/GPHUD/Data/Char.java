@@ -8,6 +8,7 @@ import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.KV;
@@ -166,6 +167,24 @@ public class Char extends TableRow {
 			GPHUD.getLogger().log(SEVERE,"Exception while instansiating most recently used character?",e);
 			return null;
 		}
+	}
+	public static Char getMostRecent(User avatar,Instance optionalinstance) {
+		if (optionalinstance==null) { return getMostRecent(avatar); }
+		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by playedby desc",avatar.getId(),optionalinstance.getId());
+		if (results.empty()) { return null; }
+		try { return Char.get(results.iterator().next().getInt("characterid")); }
+		catch (Exception e) { // weird
+			GPHUD.getLogger().log(SEVERE,"Exception while instansiating most recently used character?",e);
+			return null;
+		}
+	}
+
+	public static DropDownList getNPCList(State st,String listname) {
+		DropDownList list=new DropDownList(listname);
+		for (ResultsRow row:GPHUD.getDB().dq("select characterid,name from characters where instanceid=? and owner=?",st.getInstance().getId(),User.getSystem().getId())) {
+			list.add(row.getInt("characterid")+"",row.getString("name"));
+		}
+		return list;
 	}
 
 	/**
@@ -767,5 +786,11 @@ public class Char extends TableRow {
 		String s=getURL();
 		if (s==null || s.isEmpty()) { return false; }
 		return true;
+	}
+
+	public void setOwner(User newowner) {
+		set("owner",newowner.getId());
+		// purge any primary characters referring to this
+		PrimaryCharacters.purge(this);
 	}
 }

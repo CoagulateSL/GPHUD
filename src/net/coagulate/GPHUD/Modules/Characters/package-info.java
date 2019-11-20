@@ -6,6 +6,7 @@
 @Permissions(name = "Retire", description = "Allowed to force-retire another's character",power = Permission.POWER.LOW)
 @Permissions(name = "ForceRename", description = "Allowed to force-rename another's character",power = Permission.POWER.LOW)
 @Permissions(name="DeleteAttribute",description="Remove an attribute from the system",power=Permission.POWER.HIGH)
+@Permissions(name="MakeNPC",description = "Allows a user to mark their character as an NPC for use by Objects",power = Permission.POWER.MEDIUM)
 @SideMenus(name = "View Characters", priority = 250, requiresPermission = "Characters.ViewAll", url = "/characters/list?sort=Name")
 package net.coagulate.GPHUD.Modules.Characters;
 

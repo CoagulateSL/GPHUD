@@ -59,4 +59,7 @@ public class PrimaryCharacters {
 		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.avatar().getId(), st.getInstance().getId(), c.getId());
 	}
 
+	public static void purge(Char ch) {
+		GPHUD.getDB().d("delete from primarycharacters where entityid=?",ch.getId());
+	}
 }
