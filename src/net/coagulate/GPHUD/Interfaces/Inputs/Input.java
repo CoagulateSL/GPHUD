@@ -16,7 +16,7 @@ public abstract class Input implements Renderable {
 
 	private String getValue() { return value; }
 
-	public void setValue(String value) { this.value = value; }
+	public Input setValue(String value) { this.value = value; return this; }
 
 	@Override
 	public String asText(State st) {

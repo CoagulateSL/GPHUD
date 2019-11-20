@@ -4,6 +4,7 @@ import net.coagulate.Core.Tools.DumpableState;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.Data.Objects;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Module;
@@ -33,6 +34,7 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  */
 public class State extends DumpableState {
 
+	public SafeMap postmap=null; // often unset at this point...
 	public String callbackurl = null;
 	public Sources source = Sources.NONE;
 	public HttpRequest req = null;
@@ -74,7 +76,11 @@ public class State extends DumpableState {
 	public boolean sendshow;
 	public Integer roll = null;
 	public GSVM vm;
-	public Map<Integer,Set<String>> permissionsGroupCache=new HashMap<>(); public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
+	public Map<Integer,Set<String>> permissionsGroupCache=new HashMap<>();
+	public String objectkey=null;
+	public Objects object=null;
+
+	public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
 	Set<String> permissionscache = null;
 	Set<Attribute> attributes = null;
 	private String uri = null;
@@ -760,5 +766,5 @@ public class State extends DumpableState {
 	}
 
 
-	public enum Sources {NONE, SYSTEM, USER, CONSOLE, SCRIPTING}
+	public enum Sources {NONE, SYSTEM, USER, CONSOLE, SCRIPTING, OBJECT}
 }

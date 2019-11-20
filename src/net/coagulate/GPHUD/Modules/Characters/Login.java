@@ -37,7 +37,7 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Login {
-	@Commands(context = Context.AVATAR, permitConsole = false, permitUserWeb = false, permitScripting =false,description = "Register this session as a character connection")
+	@Commands(context = Context.AVATAR, permitConsole = false, permitUserWeb = false, permitScripting =false,description = "Register this session as a character connection",permitObject = false)
 	public static Response login(State st,
 	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128,mandatory = false)
 			                             String version,
@@ -221,7 +221,7 @@ public abstract class Login {
 		return new JSONResponse(rawresponse);
 	}
 
-	@Commands(context = Context.AVATAR, description = "Create a new character")
+	@Commands(context = Context.AVATAR, description = "Create a new character",permitObject = false,permitScripting = false)
 	public static Response create(State st,
 	                              @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max = 40)
 			                              String charactername) {
@@ -260,7 +260,7 @@ public abstract class Login {
 		return login(st, null, null, null);
 	}
 
-	@Commands(context = Context.AVATAR, description = "Switch to a character")
+	@Commands(context = Context.AVATAR, description = "Switch to a character",permitObject = false,permitScripting = false)
 	public static Response select(State st,
 	                              @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load")
 			                              Char character) {
@@ -280,7 +280,7 @@ public abstract class Login {
 		return login(st, null, null, null);
 	}
 
-	@Commands(context = Context.AVATAR, description = "Initialise a character attribute")
+	@Commands(context = Context.AVATAR, description = "Initialise a character attribute",permitObject = false)
 	public static Response initialise(State st,
 	                                  @Arguments(type = ArgumentType.ATTRIBUTE, description = "Attribute to initialise")
 			                                  Attribute attribute,

@@ -687,4 +687,5 @@ public class Instance extends TableRow {
 	public Set<Landmarks> getLandmarks() {
 		return Landmarks.getAll(this);
 	}
+
 }

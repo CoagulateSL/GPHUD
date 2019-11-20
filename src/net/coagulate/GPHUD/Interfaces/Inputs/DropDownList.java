@@ -45,7 +45,9 @@ public class DropDownList extends Input {
 	@Override
 	public String asHtml(State st, boolean rich) {
 		String r = "";
-		r += "<select name=\"" + name + "\">";
+		r += "<select name=\"" + name + "\"";
+		if (submitonchange) { r+="onchange=\"this.form.submit()\""; }
+		r+=">";
 		for (String option : choices.keySet()) {
 			r += "<option value=\"" + option + "\"";
 			if (option.equalsIgnoreCase(value)) { r += " selected"; }
@@ -65,4 +67,6 @@ public class DropDownList extends Input {
 		return name;
 	}
 
+	boolean submitonchange=false;
+	public DropDownList submitOnChange() { submitonchange=true; return this;}
 }

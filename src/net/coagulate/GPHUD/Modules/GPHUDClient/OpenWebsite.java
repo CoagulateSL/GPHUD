@@ -18,7 +18,7 @@ import org.json.JSONObject;
  */
 public class OpenWebsite {
 
-	@Commands(context = Context.CHARACTER, description = "Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website", permitUserWeb = false)
+	@Commands(context = Context.CHARACTER, description = "Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website", permitUserWeb = false,permitObject = false)
 	public static Response openWebsite(State st) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "openurl");
@@ -30,7 +30,7 @@ public class OpenWebsite {
 		return new JSONResponse(json);
 	}
 
-	@Commands(context = Context.ANY, description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb = false)
+	@Commands(context = Context.ANY, description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb = false,permitObject = false)
 	public static Response offerWebsite(State st,
 	                                    @Argument.Arguments(description = "URL to offer to user", type = Argument.ArgumentType.TEXT_ONELINE, max = 255)
 			                                    String url,

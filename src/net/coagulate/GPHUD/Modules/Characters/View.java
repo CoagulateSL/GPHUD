@@ -173,7 +173,7 @@ public abstract class View {
 		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), null, c), st.avatar().getTimeZone()));
 	}
 
-	@Commands(context = Context.CHARACTER, description = "Show yourself privately your own character sheet")
+	@Commands(context = Context.CHARACTER, description = "Show yourself privately your own character sheet",permitObject = false)
 	public static Response view(State st) {
 		return new OKResponse(st.getKV("instance.ViewSelfTemplate").value());
 	}
@@ -183,7 +183,7 @@ public abstract class View {
 		return new SayResponse(st.getKV("instance.ShowSelfTemplate").value());
 	}
 
-	@Commands(context = Context.CHARACTER, description = "Look at another's character sheet")
+	@Commands(context = Context.CHARACTER, description = "Look at another's character sheet",permitObject = false)
 	public static Response look(State st,
 	                            @Arguments(type = Argument.ArgumentType.CHARACTER_NEAR, description = "Character to inspect")
 			                            Char character) {

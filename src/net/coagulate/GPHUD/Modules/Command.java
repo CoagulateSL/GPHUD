@@ -63,6 +63,8 @@ public abstract class Command {
 
 	public abstract boolean permitJSON();
 
+	public abstract boolean permitObject();
+
 	public abstract boolean permitConsole();
 
 	public abstract boolean permitUserWeb();
@@ -714,6 +716,7 @@ public abstract class Command {
 		return getArgumentCount();
 	}
 
+
 	public static enum Context {ANY, CHARACTER, AVATAR}
 
 	/**
@@ -737,6 +740,8 @@ public abstract class Command {
 		boolean permitUserWeb() default true;
 
 		boolean permitScripting() default true;
+
+		boolean permitObject() default true;
 	}
 
 }

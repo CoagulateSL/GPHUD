@@ -363,6 +363,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	public String renderBody(State st) throws SystemException, UserException {
 		Form f = null;
 		SafeMap values = getPostValues(st);
+		st.postmap=values;
 		URL content = Modules.getURL(st, st.getDebasedNoQueryURL());
 		if (content.requiresAuthentication()) {
 			f = authenticationHook(st, values);

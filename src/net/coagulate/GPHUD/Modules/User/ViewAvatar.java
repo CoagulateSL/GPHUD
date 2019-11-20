@@ -99,7 +99,7 @@ public abstract class ViewAvatar {
 		Modules.simpleHtml(st, "User.SetTZ", value);
 	}
 
-	@Commands(context = Command.Context.AVATAR,permitScripting = false,description = "Set displayed timezone for date/time events")
+	@Commands(context = Command.Context.AVATAR,permitScripting = false,description = "Set displayed timezone for date/time events",permitObject = false)
 	public static Response setTZ(State st,
 	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", choiceMethod = "getTimeZones")
 			                             String timezone) {

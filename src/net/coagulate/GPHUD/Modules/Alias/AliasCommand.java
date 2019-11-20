@@ -111,6 +111,12 @@ public class AliasCommand extends Command {
 	}
 
 	@Override
+	public boolean permitObject() {
+		if (targetcommand == null) { return false; }
+		return targetcommand.permitObject();
+	}
+
+	@Override
 	public boolean permitUserWeb() {
 		if (targetcommand == null) { return false; }
 		return targetcommand.permitUserWeb();

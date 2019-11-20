@@ -20,7 +20,7 @@ import org.json.JSONObject;
  */
 public abstract class Retirement {
 
-	@Commands(context = Command.Context.CHARACTER, description = "Retires the current character, if permitted.")
+	@Commands(context = Command.Context.CHARACTER, description = "Retires the current character, if permitted.",permitObject = false)
 	public static Response retireMe(State st) {
 		if (!st.getKV("Instance.AllowSelfRetire").boolValue()) {
 			return new ErrorResponse("Retirement is not presently permitted");

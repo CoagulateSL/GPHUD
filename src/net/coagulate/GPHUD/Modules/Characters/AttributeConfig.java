@@ -101,7 +101,7 @@ public class AttributeConfig {
 		return choices;
 	}
 
-	@Commands(description = "Create a new attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute")
+	@Commands(description = "Create a new attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute",permitObject = false)
 	public static Response createAttribute(State st,
 	                                       @Arguments(description = "Name of new attribute", type = Argument.ArgumentType.TEXT_INTERNAL_NAME, max = 64)
 			                                       String name,
@@ -226,7 +226,7 @@ public class AttributeConfig {
 		Modules.simpleHtml(st, "Characters.deleteAttribute", values);
 	}
 
-	@Commands(description = "Delete an attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.DeleteAttribute")
+	@Commands(description = "Delete an attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.DeleteAttribute",permitObject = false)
 	public static Response deleteAttribute(State st,
 	                                       @Arguments(description = "Attribute **AND ALL ITS DATA** to delete", type = Argument.ArgumentType.ATTRIBUTE)
 			                                       Attribute attribute,

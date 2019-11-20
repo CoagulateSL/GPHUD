@@ -64,6 +64,9 @@ public class ScriptingCommand extends Command {
 	}
 
 	@Override
+	public boolean permitObject() { return true; }
+
+	@Override
 	public boolean permitUserWeb() {
 		return false;
 	}

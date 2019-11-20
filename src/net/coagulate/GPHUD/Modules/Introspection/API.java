@@ -84,6 +84,10 @@ public abstract class API {
 			f.add(new Color("green", "Accessible via Scripting module"));
 		}
 		f.add("<br>");
+		if (!c.permitObject()) { f.add(new Color("red", "Object access denied")); } else {
+			f.add(new Color("green", "Accessible via Object API"));
+		}
+		f.add("<br>");
 		f.add("<br>");
 		f.add(new TextSubHeader("Target Method"));
 		f.add(c.getFullMethodName());
@@ -119,6 +123,9 @@ public abstract class API {
 					}
 					if (c.permitScripting()) { t.add(new Color("green", "Scripting")); } else {
 						t.add(new Color("red", "Scripting"));
+					}
+					if (c.permitObject()) { t.add(new Color("green", "Object")); } else {
+						t.add(new Color("red", "Object"));
 					}
 					if (c.isGenerated()) { t.add(new Color("blue", "Instance Specific")); } else { t.add(""); }
 				} catch (Exception e) { t.add("ERR:" + e.toString()); }

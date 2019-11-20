@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpInetConnection;
@@ -37,6 +38,18 @@ public abstract class Interface implements HttpRequestHandler {
 	// it doesn't any more :)
 	public static String generateURL(State st, String ending) {
 		return "https://sl" + (GPHUD.DEV ? "dev" : "") + ".coagulate.net/" + base() + "/" + ending;
+	}
+
+	public static int convertVersion(String version) {
+		String[] versionparts = version.split("\\.");
+		int major=Integer.parseInt(versionparts[0]);
+		int minor=Integer.parseInt(versionparts[1]);
+		int bugfix=Integer.parseInt(versionparts[2]);
+		if (major>99) { throw new SystemException("Major version number too high"); }
+		if (minor>99) { throw new SystemException("Minor version number too high"); }
+		if (bugfix>99) { throw new SystemException("Bugfix version number too high"); }
+		int output=10000 * major + 100 * minor + bugfix;
+		return output;
 	}
 
 	@Override

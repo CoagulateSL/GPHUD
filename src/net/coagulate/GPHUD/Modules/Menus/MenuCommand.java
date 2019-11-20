@@ -74,6 +74,9 @@ public class MenuCommand extends Command {
 	public boolean permitScripting() { return false; }
 
 	@Override
+	public boolean permitObject() { return true; }
+
+	@Override
 	public String getFullMethodName() { return this.getClass() + ".run()"; }
 
 	@Override

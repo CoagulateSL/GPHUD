@@ -31,7 +31,7 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Register {
 
-	@Commands(context = Context.AVATAR, permitScripting = false, permitConsole = false, permitUserWeb = false, description = "Registers this connection as the region server connection",requiresPermission = "Instance.ServerOperator")
+	@Commands(context = Context.AVATAR, permitScripting = false, permitConsole = false, permitUserWeb = false, description = "Registers this connection as the region server connection",requiresPermission = "Instance.ServerOperator",permitObject = false)
 	public static Response register(State st,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the Server that is connecting", max = 64)
 			                                String version,

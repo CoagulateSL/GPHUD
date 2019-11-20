@@ -21,7 +21,7 @@ import static net.coagulate.SL.Config.LOCK_NUMBER_GPHUD_MAINTENANCE;
 /**
  * Maintenance tasks, runs every 60 seconds.
  * No functional need for this as a class, just keep the code out of the MAIN program.
- * Note we're running in the programs main thread (though otherwise asleep) thread.  Don't crash it :P
+ * Note we're (sometimes) running in the programs main thread (though otherwise asleep) thread.  Don't crash it :P
  *
  * @author iain
  */
@@ -30,7 +30,20 @@ public class Maintenance extends Thread {
 	public static final int PINGHUDINTERVAL = 10;
 	public static final int PINGSERVERINTERVAL = 10;
 	public static final int UPDATEINTERVAL = 5;
+	public static final int PURGECONNECTIONS = 60;
 	public static int cycle = 0;
+
+	public static void purgeConnections() {
+		try {
+			Integer purgecount=GPHUD.getDB().dqi(true,"select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+			if (purgecount>0) {
+				GPHUD.getLogger().log(FINE,"Purging "+purgecount+" disconnected objects");
+				GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+			}
+		} catch (Exception e) {
+			GPHUD.getLogger().log(SEVERE,"purgeConnections Exceptioned!",e);
+		}
+	}
 
 	public static void purgeOldCookies() {
 		try {
@@ -129,6 +142,11 @@ public class Maintenance extends Thread {
 		lock.extendLock(lockserial, 60);
 		try { Maintenance.purgeOldCookies(); } catch (Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance run purge cookies caught an exception", e);
+		}
+
+		lock.extendLock(lockserial, 60);
+		try { Maintenance.purgeConnections(); } catch (Exception e) {
+			GPHUD.getLogger().log(SEVERE, "Maintenance run purge connections caught an exception", e);
 		}
 
 		lock.extendLock(lockserial, 60);

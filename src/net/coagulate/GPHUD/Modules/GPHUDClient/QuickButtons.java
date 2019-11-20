@@ -20,32 +20,32 @@ import org.json.JSONObject;
  */
 public class QuickButtons {
 
-	@Commands(description = "Triggered when quick button 1 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER)
+	@Commands(description = "Triggered when quick button 1 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER,permitObject = false,permitScripting = false)
 	public static Response quickButton1(State st) throws UserException, SystemException {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton1").value());
 	}
 
-	@Commands(description = "Triggered when quick button 2 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER)
+	@Commands(description = "Triggered when quick button 2 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER,permitObject = false,permitScripting = false)
 	public static Response quickButton2(State st) throws UserException, SystemException {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton2").value());
 	}
 
-	@Commands(description = "Triggered when quick button 3 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER)
+	@Commands(description = "Triggered when quick button 3 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER,permitObject = false,permitScripting = false)
 	public static Response quickButton3(State st) {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton3").value());
 	}
 
-	@Commands(description = "Triggered when quick button 4 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER)
+	@Commands(description = "Triggered when quick button 4 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER,permitObject = false,permitScripting = false)
 	public static Response quickButton4(State st) {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton4").value());
 	}
 
-	@Commands(description = "Triggered when quick button 5 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER)
+	@Commands(description = "Triggered when quick button 5 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER,permitObject = false,permitScripting = false)
 	public static Response quickButton5(State st) {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton5").value());
 	}
 
-	@Commands(description = "Triggered when quick button 6 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER)
+	@Commands(description = "Triggered when quick button 6 is pressed", permitConsole = false, permitUserWeb = false, context = Context.CHARACTER,permitObject = false,permitScripting = false)
 	public static Response quickButton6(State st) throws UserException, SystemException {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton6").value());
 	}

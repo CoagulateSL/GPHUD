@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.System;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
+import net.coagulate.GPHUD.Data.Objects;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.GPHUD;
 import org.json.JSONObject;
@@ -25,6 +26,7 @@ public class Transmission extends Thread {
 	String url;
 	JSONObject json = null;
 	JSONObject jsonresponse = null;
+	Objects object=null;
 	int delay = 0;
 	protected Char character = null;
 	Region region = null;
@@ -40,6 +42,17 @@ public class Transmission extends Thread {
 		this.character=character;
 		this.url = oldurl;
 		this.json = json;
+	}
+
+	public Transmission (Objects obj,JSONObject json) {
+		if (debugspawn) {
+			System.out.println("Transmission to object " + obj + " with json " + json.toString());
+			Thread.dumpStack();
+		}
+		caller=Thread.currentThread().getStackTrace();
+		this.object=obj;
+		this.url=object.getURL();
+		this.json=json;
 	}
 
 	public Transmission(Char character, JSONObject json) {

@@ -71,7 +71,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				if (obj.has("callback")) { Char.refreshURL(obj.getString("callback")); }
 				if (obj.has("callback")) { Region.refreshURL(obj.getString("callback")); }
 				if (obj.has("cookie")) { Cookies.refreshCookie(obj.getString("cookie")); }
-
+				if (obj.has("interface") && obj.get("interface").equals("object")) { st.source= State.Sources.OBJECT; }
 
 				// attempt to run the command
 				// load the original conveyances
@@ -85,6 +85,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				}
 				// respond to request
 				resp.setStatusCode(HttpStatus.SC_OK);
+				jsonresponse.remove("developerkey");
 				String out = jsonresponse.toString();
                 /*PrintWriter pw = new PrintWriter(System.out);
                 jsonresponse.write(pw,4,0);
@@ -134,6 +135,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.logger().warning("Unable to resolve developer for request " + st.jsoncommand);
 			return new TerminateResponse("Developer key is not known");
 		}
+		st.json.remove("developerkey");
 		st.sourcedeveloper = developer;
 
 
@@ -143,6 +145,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		String regionname = null;
 		String ownerkey = null;
 		String shard = null;
+		String objectkey=null;
 		String position = "???";
 		for (Header h : st.headers) {
 			//Log.log(Log.INFO,"SYSTEM","SystemInterface",h.getName()+"="+h.getValue());
@@ -150,6 +153,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			String value = h.getValue();
 			if ("X-SecondLife-Owner-Name".equals(name)) { ownername = value; }
 			if ("X-SecondLife-Owner-Key".equals(name)) { ownerkey = value; }
+			if ("X-SecondLife-Object-Key".equals(name)) { objectkey = value; }
 			if ("X-SecondLife-Region".equals(name)) { regionname = value; }
 			if ("X-SecondLife-Object-Name".equals(name)) { objectname = value; }
 			if ("X-SecondLife-Shard".equals(name)) { shard = value; }
@@ -173,6 +177,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.sourcelocation = position;
 		User owner = User.findOrCreateAvatar(ownername, ownerkey);
 		st.sourceowner = owner;
+		st.objectkey=objectkey;
 		st.setAvatar(owner);
 		// hooks to allow things to run as "not the objects owner" (the default)
 		String runasavatar = null;
@@ -181,6 +186,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.setAvatar(User.findMandatory(runasavatar));
 			st.issuid = true;
 		}
+		st.object=Objects.findOrNull(st,objectkey);
 		String runascharacter = null;
 		try { runascharacter = obj.getString("runascharacter"); } catch (JSONException e) {}
 		if (runascharacter != null && (!("".equals(runascharacter)))) {
@@ -222,6 +228,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					parametermap.put(key, value);
 				}
 				String command = obj.getString("command");
+				st.postmap=parametermap;
 				return Modules.run(st, obj.getString("command"), parametermap);
 			}
 		}

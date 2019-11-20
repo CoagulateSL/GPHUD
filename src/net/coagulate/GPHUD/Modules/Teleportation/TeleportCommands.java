@@ -4,6 +4,7 @@ import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Landmarks;
 import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -13,6 +14,8 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
 import org.apache.http.Header;
 import org.json.JSONObject;
+
+import java.util.Set;
 
 public class TeleportCommands {
 
@@ -87,5 +90,15 @@ public class TeleportCommands {
 		tp.put("teleport",lm.getHUDRepresentation(false));
 		Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,null,"Move",st.getCharacter().getName(),"",landmark,"Player teleported to "+landmark+" at "+lm.getRegion(true).getName()+":"+lm.getCoordinates()+" lookat "+lm.getLookAt());
 		return new JSONResponse(tp);
+	}
+
+	public static DropDownList getDropDownList(State st,String name,String selected) {
+		DropDownList list=new DropDownList(name);
+		Set<Landmarks> landmarks = Landmarks.getAll(st.getInstance());
+		for (Landmarks landmark:landmarks) {
+			list.add(landmark.getName());
+		}
+		list.setValue(selected);
+		return list;
 	}
 }

@@ -25,7 +25,7 @@ public class Logout {
 		st.setInstance(null);
 	}
 
-	@Command.Commands(description = "Log out or disconnect this character",context= Command.Context.CHARACTER,permitScripting = false,permitUserWeb = false,permitConsole = false)
+	@Command.Commands(description = "Log out or disconnect this character",context= Command.Context.CHARACTER,permitScripting = false,permitUserWeb = false,permitConsole = false,permitObject = false)
 	public static Response logout(State st) {
 		if (st.getCharacterNullable()!=null) {
 			st.getCharacter().closeVisits(st);

@@ -286,8 +286,7 @@ public class Region extends TableRow {
 		ResultsRow regiondata = dqone(true, "select region" + type + "version,region" + type + "datetime from regions where regionid=?", getId());
 		Integer oldversion = regiondata.getInt("region" + type + "version");
 		Integer olddatetime = regiondata.getInt("region" + type + "datetime");
-		String[] versionparts = version.split("\\.");
-		int newversion = 10000 * Integer.parseInt(versionparts[0]) + 100 * Integer.parseInt(versionparts[1]) + Integer.parseInt(versionparts[2]);
+		int newversion = Interface.convertVersion(version);
 		int newdatetime = (int) (d.getTime() / 1000.0);
 		if (oldversion == null || olddatetime == null || olddatetime < newdatetime || oldversion < newversion) {
 			d("update regions set region" + type + "version=?,region" + type + "datetime=? where regionid=?", newversion, newdatetime, getId());

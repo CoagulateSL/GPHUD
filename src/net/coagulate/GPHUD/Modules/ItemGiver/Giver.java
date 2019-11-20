@@ -13,7 +13,7 @@ import org.json.JSONObject;
  */
 public class Giver {
 
-	@Commands(context = Command.Context.AVATAR, description = "Get an Item Giver", permitScripting = false, requiresPermission = "Instance.ServerOperator", permitUserWeb = false)
+	@Commands(context = Command.Context.AVATAR, description = "Get an Item Giver", permitScripting = false, requiresPermission = "Instance.ServerOperator", permitUserWeb = false,permitObject = false)
 	public static Response getGiver(State st) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
@@ -23,7 +23,7 @@ public class Giver {
 		return new OKResponse("OK - Sent you an Item Giver");
 	}
 
-	@Commands(context = Command.Context.AVATAR, description = "Get an Item from a giver", permitUserWeb = false)
+	@Commands(context = Command.Context.AVATAR, description = "Get an Item from a giver", permitUserWeb = false,permitObject = false)
 	public static Response get(State st,
 	                           @Argument.Arguments(description = "Name of object to give to avatar", type = Argument.ArgumentType.TEXT_ONELINE, max = 63)
 			                           String item) {

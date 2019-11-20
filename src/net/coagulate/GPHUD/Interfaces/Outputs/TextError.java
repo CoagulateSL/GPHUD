@@ -18,7 +18,7 @@ public class TextError implements Renderable {
 
 	@Override
 	public String asText(State st) {
-		return "*** ERROR : " + s;
+		return ">>> ERROR : " + s;
 	}
 
 	@Override

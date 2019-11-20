@@ -19,7 +19,7 @@ import net.coagulate.GPHUD.State;
  */
 public abstract class Operations {
 
-	@Commands(context = Context.AVATAR, permitScripting = false, description = "Set your USER password (via authorised SL login ONLY)", permitUserWeb = false)
+	@Commands(context = Context.AVATAR, permitScripting = false, description = "Set your USER password (via authorised SL login ONLY)", permitUserWeb = false,permitObject = false)
 	public static Response setPassword(State st,
 	                                   @Arguments(description = "New password", type = ArgumentType.PASSWORD)
 			                                   String password) throws SystemException, UserException {
