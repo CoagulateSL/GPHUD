@@ -7,10 +7,12 @@ import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 public class NPC extends ObjectType {
 	protected NPC(State st, ObjectTypes object) {
@@ -31,9 +33,11 @@ public class NPC extends ObjectType {
 		script.validate(st);
 		GSVM vm=new GSVM(script.getByteCode());
 		vm.introduce("TARGET",new BCCharacter(null,clicker));
-		Response response = vm.execute(st);
-		System.out.println(response.asJSON(st));
-		return response;
+		JSONObject jsonresponse = vm.execute(st).asJSON(st);
+		//System.out.println(response.asJSON(st));
+		ch.appendConveyance(st,jsonresponse);
+		clicker.considerPushingConveyances();
+		return new JSONResponse(jsonresponse);
 	}
 
 	Char getChar() {
@@ -95,5 +99,21 @@ public class NPC extends ObjectType {
 	@Override
 	public MODE mode() {
 		return MODE.CLICKABLE;
+	}
+
+	@Override
+	public void payload(State st, JSONObject response) {
+		super.payload(st, response);
+		if (!json.has("character")) { return; }
+		Integer charid=json.getInt("character");
+		Char ch=Char.get(charid);
+		ch.validate(st);
+		ch.setRegion(st.getRegion());
+		st.setCharacter(ch);
+		if (st.callbackurl!=null) {
+			//System.out.println("SET OBJECT URL");
+			ch.setURL(st.callbackurl);
+		}
+		ch.initialConveyances(st,response);
 	}
 }

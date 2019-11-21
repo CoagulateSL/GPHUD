@@ -718,7 +718,10 @@ public class Char extends TableRow {
 	 * @param r Region
 	 */
 	public void setRegion(Region r) {
-		set("regionid", r.getId());
+		//System.out.println("Setting region to "+r+" for "+getName()+" where it is currently "+getRegion());
+		if (getRegion()!=r) {
+			set("regionid", r.getId());
+		}
 	}
 
 	/**
@@ -792,5 +795,14 @@ public class Char extends TableRow {
 		set("owner",newowner.getId());
 		// purge any primary characters referring to this
 		PrimaryCharacters.purge(this);
+	}
+
+	public void considerPushingConveyances() {
+		JSONObject json=new JSONObject();
+		appendConveyance(new State(this),json);
+		//System.out.println("Consider pushing: "+json.toString()+" = "+json.keySet().size());
+		if (json.keySet().size()>0) {
+			new Transmission(this,json).start();
+		}
 	}
 }

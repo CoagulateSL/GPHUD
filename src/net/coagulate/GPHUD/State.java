@@ -690,7 +690,7 @@ public class State extends DumpableState {
 		dbo.setKV(this, key, value);
 		purgeCache(dbo);
 		// push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
-		if (character != dbo) { instance.pushConveyances(); }
+		instance.pushConveyances();
 	}
 
 	public State simulate(Char c) {

@@ -620,6 +620,7 @@ public class Instance extends TableRow {
 			}
 			if (!payload.keySet().isEmpty()) {
 				Region reg = c.getRegion();
+				if (debug) { System.out.println("Target is in region "+reg); }
 				if (reg != null) {
 					if (debug) { System.out.println("Adding"); }
 					if (!buffer.containsKey(reg)) {
@@ -627,8 +628,12 @@ public class Instance extends TableRow {
 						buffer.put(reg, new JSONObject().put("incommand", "disseminate"));
 					}
 					User user = c.getPlayedBy();
-					if (user!=null) {
-						String playedby = user.getUUID();
+					String playedby = null;
+					if (user!=null) { playedby=user.getUUID(); }
+					if (playedby==null) { // maybe its an object
+						playedby=dqs(false,"select uuid from objects where url like ?",c.getURL());
+					}
+					if (playedby!=null) {
 						String payloadstring = payload.toString();
 						buffer.get(reg).put(playedby, payloadstring);
 						if (buffer.get(reg).toString().length() > (3 * 1024)) {

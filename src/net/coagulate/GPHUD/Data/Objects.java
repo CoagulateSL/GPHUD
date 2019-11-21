@@ -60,12 +60,15 @@ public class Objects extends TableRow {
 			if (st.hasPermission("Objects.MapObjects")) {
 				String objecttype = st.postmap.get(row.getString("uuid"));
 				if (!objecttype.isEmpty()) {
-					GPHUD.getDB().d("update objects set objecttype=? where id=?", objecttype, row.getInt("id"));
-					Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,"Set","ObjectType","",objecttype,"Set object type for "+row.getString("name")+" "+row.getString("uuid"));
-					ObjectType ot= ObjectType.materialise(st,ObjectTypes.get(Integer.parseInt(objecttype)));
-					JSONObject reconfigurepayload=new JSONObject();
-					ot.payload(st,reconfigurepayload);
-					new Transmission(Objects.get(row.getInt("id")),reconfigurepayload).start();
+					Integer oldobjecttype=row.getInt("objecttype");
+					if (oldobjecttype!=Integer.parseInt(objecttype)) {
+						GPHUD.getDB().d("update objects set objecttype=? where id=?", objecttype, row.getInt("id"));
+						Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Set", "ObjectType", "", objecttype, "Set object type for " + row.getString("name") + " " + row.getString("uuid"));
+						ObjectType ot = ObjectType.materialise(st, ObjectTypes.get(Integer.parseInt(objecttype)));
+						JSONObject reconfigurepayload = new JSONObject();
+						ot.payload(st, reconfigurepayload);
+						new Transmission(Objects.get(row.getInt("id")), reconfigurepayload).start();
+					}
 				} else { objecttype=row.getString("objecttype"); }
 				r += "<td>" + ObjectTypes.getDropDownList(st, row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st, true) + "</td>"; // editing too, have fun with that.
 			} else {

@@ -27,7 +27,7 @@ import static net.coagulate.SL.Config.LOCK_NUMBER_GPHUD_MAINTENANCE;
  */
 public class Maintenance extends Thread {
 
-	public static final int PINGHUDINTERVAL = 10;
+	public static final int PINGHUDINTERVAL = 15;
 	public static final int PINGSERVERINTERVAL = 10;
 	public static final int UPDATEINTERVAL = 5;
 	public static final int PURGECONNECTIONS = 60;
