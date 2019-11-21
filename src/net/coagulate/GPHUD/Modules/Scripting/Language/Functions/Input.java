@@ -1,9 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
-import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
-import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCList;
-import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
-import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCodeDataType;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSCastException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceUnavailableException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
@@ -47,5 +45,11 @@ public class Input {
 		return new BCString(null,"");
 	}
 
+	@GSFunctions.GSFunction(description = "Checks if a string can be converted into a number successfull",parameters = "String - string to test",notes = "",returns = "Integer - 1 if the string can convert to an integer, 0 if it fails to do so (and will crash your script if you try)")
+	public static BCInteger gsIsANumber(State st,GSVM vm,BCString teststring) {
+		try { teststring.toBCInteger(); }
+		catch (GSCastException e) { return new BCInteger(null,0); }
+		return new BCInteger(null,1);
+	}
 
 }
