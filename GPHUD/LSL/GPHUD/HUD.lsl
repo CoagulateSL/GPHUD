@@ -120,6 +120,7 @@ integer process(key id) {
 	return TRUE;
 }
 gphud_hang(string reason) {
+	if (comms_url!="") { llReleaseURL(comms_url); comms_url=""; }
 	if (detach) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); dodetach(); }
 	report("Has shutdown\n"+reason,<1,1,.5>);
 	while (TRUE) { llSleep(60.0); }

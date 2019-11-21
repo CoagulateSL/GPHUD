@@ -24,7 +24,8 @@ startLogin() {
 	if (BOOTSTAGE==BOOT_COMPLETE) { json=llJsonSetValue(json,["silent"],"silent"); }
 	httpcommand("objects.connect","GPHUD/system");
 }
-
+string titlertext="";
+vector titlercolor=<1,1,1>;
 integer process(key id) {
 	gphud_process();
 	string incommand=jsonget("incommand");
@@ -41,6 +42,12 @@ integer process(key id) {
 	if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
 	if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
 	if (jsonget("mode")!="") { MODE=jsonget("mode"); }
+	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
+	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
+	if (jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
+		string totitler=llJsonSetValue("",["titler"],(string)titlercolor+"|"+titlertext);
+		llSetText(titlertext,titlercolor,1);
+	}	
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;
@@ -48,6 +55,7 @@ integer process(key id) {
 
 gphud_hang(string reason) {
 	string finalreason="===SHUTDOWN===\n"+reason+"\n"+llGetTimestamp();
+	if (comms_url!="") { llReleaseURL(comms_url); comms_url=""; }
 	while (TRUE) {
 		llSetText(finalreason,<1,.75,.75>,1);
 		llSleep(300);
@@ -106,13 +114,23 @@ all_http_response( key request_id, integer status, list metadata, string body ) 
 }	
 	
 	//====================================
-
+dolisten() {
+		calculatebroadcastchannel();
+		llListen(broadcastchannel,"",NULL_KEY,"");		
+}
+all_listen(integer channel,string name,key id,string text) {
+	if (channel==broadcastchannel) {
+		json=text;
+		json=llJsonSetValue(json,["incommand"],"broadcast");
+		process(NULL_KEY);
+	}
+}
 default {
 	state_entry() {
 		if (llGetInventoryType("GPHUD Non Server Functionality Inihibitor")!=INVENTORY_NONE) { state wait; }
 		llSetText("",<0,0,0>,0);
 		setDev(FALSE);
-		setup();
+		setup(); dolisten();
 	}
 	http_request(key id,string method,string body) {
 		all_http_request(id,method,body);
@@ -126,6 +144,8 @@ default {
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="CLICKABLE") { state clickable; }
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="NONE") { state none; }
 	}
+	listen(integer channel,string name,key id,string text) { all_listen(channel,name,id,text); }
+	
 	timer() { startLogin(); }
 	changed(integer change) { if ((change & CHANGED_REGION) || (change & CHANGED_REGION_START) || (change & CHANGED_OWNER)) { llResetScript(); }}	
 	on_rez(integer parameter) { llResetScript(); }	
@@ -138,7 +158,7 @@ state wait {
 
 state none {
 	state_entry() { llSetTimerEvent(CHECKIN_MINUTES*60.0); 
-		llSetStatus(STATUS_PHANTOM,FALSE); llVolumeDetect(FALSE);
+		llSetStatus(STATUS_PHANTOM,FALSE); llVolumeDetect(FALSE); dolisten();
 		#ifdef DEBUG
 		llOwnerSay("Switched to NONE operational mode");
 		#endif
@@ -151,6 +171,7 @@ state none {
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="CLICKABLE") { state clickable; }
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="PHANTOM") { state phantom; }
 	}
+	listen(integer channel,string name,key id,string text) { all_listen(channel,name,id,text); }	
 	timer() { startLogin(); }
 	changed(integer change) { if ((change & CHANGED_REGION) || (change & CHANGED_REGION_START) || (change & CHANGED_OWNER)) { llResetScript(); }}	
 	on_rez(integer parameter) { llResetScript(); }
@@ -158,7 +179,7 @@ state none {
 
 state clickable {
 	state_entry() { llSetTimerEvent(CHECKIN_MINUTES*60.0);
-		llSetStatus(STATUS_PHANTOM,FALSE); llVolumeDetect(FALSE);
+		llSetStatus(STATUS_PHANTOM,FALSE); llVolumeDetect(FALSE); dolisten();
 		#ifdef DEBUG
 		llOwnerSay("Switched to CLICKABLE operational mode");
 		#endif
@@ -171,6 +192,7 @@ state clickable {
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="NONE") { state none; }
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="PHANTOM") { state phantom; }
 	}
+	listen(integer channel,string name,key id,string text) { all_listen(channel,name,id,text); }	
 	timer() { startLogin(); }
 	changed(integer change) { if ((change & CHANGED_REGION) || (change & CHANGED_REGION_START) || (change & CHANGED_OWNER)) { llResetScript(); }}
 	on_rez(integer parameter) { llResetScript(); }
@@ -183,7 +205,7 @@ state clickable {
 }
 state phantom {
 	state_entry() { llSetTimerEvent(CHECKIN_MINUTES*60.0);
-		llSetStatus(STATUS_PHANTOM,TRUE); llVolumeDetect(TRUE);
+		llSetStatus(STATUS_PHANTOM,TRUE); llVolumeDetect(TRUE); dolisten();
 		#ifdef DEBUG
 		llOwnerSay("Switched to PHANTOM VOLUME operational mode");
 		#endif
@@ -196,6 +218,7 @@ state phantom {
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="NONE") { state none; }
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="CLICKABLE") { state clickable; }
 	}
+	listen(integer channel,string name,key id,string text) { all_listen(channel,name,id,text); }	
 	timer() { startLogin(); }
 	changed(integer change) { if ((change & CHANGED_REGION) || (change & CHANGED_REGION_START) || (change & CHANGED_OWNER)) { llResetScript(); }}
 	on_rez(integer parameter) { llResetScript(); }

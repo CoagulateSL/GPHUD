@@ -15,6 +15,7 @@
 
 
 gphud_hang(string reason) {
+	if (comms_url!="") { llReleaseURL(comms_url); comms_url=""; }
 	llResetOtherScript("Dispenser");
 	llSetText("Service halted\n"+reason,<1,.5,.5>,1);
 	while(TRUE) { llSleep(9000+1); }
