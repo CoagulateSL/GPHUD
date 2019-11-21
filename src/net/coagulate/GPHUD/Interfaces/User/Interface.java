@@ -234,6 +234,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		Map<Integer, Set<SideSubMenu>> priorities = new TreeMap<>();
 		// collect sidemenus, by priority
 		for (SideSubMenu s : owner.getSideSubMenus(st)) {
+			//System.out.println("Testing "+s.name());
 			Integer priority = s.priority();
 			Set<SideSubMenu> set = new HashSet<>();
 			if (priorities.containsKey(priority)) { set = priorities.get(priority); }
