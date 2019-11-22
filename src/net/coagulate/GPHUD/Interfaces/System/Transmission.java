@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Tools.MailTools;
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Objects;
@@ -13,6 +14,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 
 import static java.util.logging.Level.*;
 
@@ -128,6 +130,25 @@ public class Transmission extends Thread {
 	// can call .start() to background run this, or .run() to async run inline/inthread
 	@Override
 	public void run() {
+		try { runUnwrapped(); }
+		catch (Exception e) {
+			Throwable step=e;
+			int sanity=100;
+			while (step.getCause()!=null && sanity>=0) {
+				step=step.getCause();
+				sanity--;
+				if (sanity==0) { GPHUD.getLogger("Transmission").log(SEVERE,"Excess exception stepping in Transmission exception reporter"); }
+			}
+			if (step.getCause()==null) {
+				SystemException se = new SystemException("Transmission caller stack trace");
+				se.setStackTrace(caller);
+				step.initCause(se);
+			}
+			GPHUD.getLogger("Transmission").log(Level.WARNING,"Transmission threw exception from inner wrapper",e);
+
+		}
+	}
+	public void runUnwrapped() {
 		boolean debug = false;
 		if (delay > 0) {
 			if (debug) { System.out.println("Delay " + delay); }
