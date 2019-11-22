@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 import static net.coagulate.Core.Tools.UnixTime.*;
 
 /**
@@ -63,7 +64,11 @@ public class Region extends TableRow {
 	 */
 	public static Region get(int id,boolean allowretired) {
 		Region r= (Region) factoryPut("Region", id, new Region(id));
-		if (r.isRetired() && (!allowretired)) { throw new UserException("Attempt to access retired region"); }
+		if (r.isRetired() && (!allowretired)) {
+			UserException exception=new UserException("Attempt to access retired region");
+			GPHUD.getLogger("Regions").log(WARNING,"Attempt to access retired region",exception);
+			throw exception;
+		}
 		return r;
 	}
 
