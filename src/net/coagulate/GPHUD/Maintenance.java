@@ -64,7 +64,7 @@ public class Maintenance extends Thread {
 
 		Results results = GPHUD.getDB().dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc limit 0,30", Interface.getNode(), UnixTime.getUnixTime() - (PINGHUDINTERVAL * 60));
 		if (results.notEmpty()) {
-			GPHUD.getLogger().log(FINE,"Pinging out to "+results.size()+" character URLs");
+			//GPHUD.getLogger().log(FINE,"Pinging out to "+results.size()+" character URLs");
 			for (ResultsRow r : results) {
 				//System.out.println("About to background for a callback to character:"+r.getString("name"));
 				JSONObject ping = new JSONObject().put("incommand", "ping");
