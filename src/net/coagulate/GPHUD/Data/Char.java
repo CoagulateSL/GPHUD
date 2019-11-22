@@ -704,12 +704,14 @@ public class Char extends TableRow {
 	/**
 	 * Get the current region for this character
 	 *
-	 * @return Region
+	 * @return Region - nulls the retired region
 	 */
 	public Region getRegion() {
 		Integer region = getInt("regionid");
 		if (region == null) { return null; }
-		return Region.get(region,false);
+		Region r=Region.get(region,true);
+		if (r.isRetired()) { return null; }
+		return r;
 	}
 
 	/**
