@@ -7,6 +7,7 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.Tokens;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
@@ -98,6 +99,15 @@ public class Cookies {
 	private static Object getId(User r) {
 		if (r == null) { return new NullInteger(); }
 		return r.getId();
+	}
+
+	public static Cookies loadOrNull(String cookie) {
+		if (cookie != null) {
+			try {
+				return new Cookies(cookie);
+			} catch (SystemException e) {} // logged out possibly, or expired and cleaned up
+		}
+		return null;
 	}
 
 	/**
@@ -208,4 +218,18 @@ public class Cookies {
 	}
 
 	public String toString() { return "Avatar:" + getAvatar() + ", Instance: " + getInstance() + ", Character:" + getCharacter(); }
+
+	public void setStateFromCookies(State st) {
+		Instance instance = getInstance();
+		if (instance != null) { st.setInstance(instance); }
+		User av = getAvatar();
+		Char ch = getCharacter();
+		if (av != null) { st.setAvatar(av); }
+		if (ch != null) { st.setCharacter(ch); }
+		if (av == null && ch != null) { st.setAvatar(ch.getOwner()); }
+		if (av != null) {
+			st.cookiestring = cookie;
+			st.cookie = this;
+		}
+	}
 }

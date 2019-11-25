@@ -160,7 +160,7 @@ public class Char extends TableRow {
 	}
 
 	public static Char getMostRecent(User avatar) {
-		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 order by playedby desc",avatar.getId());
+		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 order by lastactive desc limit 0,1",avatar.getId());
 		if (results.empty()) { return null; }
 		try { return Char.get(results.iterator().next().getInt("characterid")); }
 		catch (Exception e) { // weird
@@ -170,7 +170,7 @@ public class Char extends TableRow {
 	}
 	public static Char getMostRecent(User avatar,Instance optionalinstance) {
 		if (optionalinstance==null) { return getMostRecent(avatar); }
-		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by playedby desc",avatar.getId(),optionalinstance.getId());
+		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",avatar.getId(),optionalinstance.getId());
 		if (results.empty()) { return null; }
 		try { return Char.get(results.iterator().next().getInt("characterid")); }
 		catch (Exception e) { // weird

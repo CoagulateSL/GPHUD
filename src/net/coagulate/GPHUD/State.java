@@ -34,7 +34,8 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  */
 public class State extends DumpableState {
 
-	public SafeMap postmap=null; // often unset at this point...
+	// map of post values read in the user interface
+	public SafeMap postmap=null;
 	public String callbackurl = null;
 	public Sources source = Sources.NONE;
 	public HttpRequest req = null;
@@ -763,6 +764,60 @@ public class State extends DumpableState {
 			} catch (Throwable e) { return "Exceptioned: " + e.toString(); }
 		}
 		return "";
+	}
+
+	public void fleshOut() {
+		// attempt to figure out some kinda completion for avatar/instance/char
+		if (avatar==null && instance==null && character==null) { return; } //meh, nothing to work with
+		if (avatar!=null && instance!=null && character!=null) { return; } //heh, the opposite, nothing to do
+		// well not sure there's a general solution so
+		if (avatar==null) {
+			if (character==null) {
+				if (instance==null) {
+					// NO avatar, NO character, NO instance
+					return; // pointless
+				} else {
+					// NO avatar, NO character, YES instance
+					return; // unworkable combo
+				}
+			} else {
+				if (instance==null) {
+					// NO avatar, YES character, NO instance
+					instance=character.getInstance(); avatar=character.getOwner(); updateCookie(); return;
+				} else {
+					// NO avatar, YES character, YES instance
+					character.validate(this);
+					avatar=character.getOwner(); updateCookie(); return;
+				}
+			}
+		} else {
+			if (character==null) {
+				if (instance==null) {
+					// YES avatar, NO character, NO instance
+					character=Char.getMostRecent(avatar); instance=character.getInstance(); updateCookie(); return;
+				} else {
+					// YES avatar, NO character, YES instance
+					character=Char.getMostRecent(avatar, instance); updateCookie(); return;
+				}
+			} else {
+				if (instance==null) {
+					// YES avatar, YES character, NO instance
+					instance=character.getInstance(); updateCookie(); return;
+				} else {
+					// YES avatar, YES character, YES instance
+					return;
+				}
+			}
+		}
+
+	}
+
+	private void updateCookie() {
+		if (cookie!=null) {
+			if (cookie.getCharacter()!=character) { cookie.setCharacter(character); }
+			if (cookie.getAvatar()!=avatar) { cookie.setAvatar(avatar); }
+			if (cookie.getInstance()!=instance) { cookie.setInstance(instance); }
+		}
 	}
 
 
