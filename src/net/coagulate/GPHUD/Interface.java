@@ -37,7 +37,7 @@ public abstract class Interface implements HttpRequestHandler {
 	// we dont really know about "/app" but apache does, and then hides it from us, which is both nice, and arbitary, either way really.
 	// it doesn't any more :)
 	public static String generateURL(State st, String ending) {
-		return "https://sl" + (GPHUD.DEV ? "dev" : "") + ".coagulate.net/" + base() + "/" + ending;
+		return "https://" + (GPHUD.DEV ? "dev." : "") + "coagulate.sl/" + base() + "/" + ending;
 	}
 
 	public static int convertVersion(String version) {
