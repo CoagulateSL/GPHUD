@@ -95,7 +95,7 @@ public abstract class KV extends NameComparable {
 		if (!(TableRow.class.isAssignableFrom(o.getClass()))) {
 			throw new SystemException("Object " + o.getClass() + " does not extend DBOBject while setting KV " + name());
 		}
-		TableRow applyto = (TableRow) o;
+		TableRow applyto = o;
 		st.setKV(o, name(), value);
 		convey(st, value);
 	}

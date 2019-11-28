@@ -91,8 +91,8 @@ public abstract class Classes {
 			for (Annotation as : c.getAnnotationsByType(Permissionss.class)) {
 				for (Permissions a : ((Permissionss) as).value()) {
 					if (LOGREGISTERS)
-						log.config("Registering permissions " + modulename + "/" + ((Permissions) a).name());
-					((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation((Permissions) a,modulename));
+						log.config("Registering permissions " + modulename + "/" + a.name());
+					((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation(a,modulename));
 				}
 			}
 		}

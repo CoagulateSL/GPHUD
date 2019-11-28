@@ -26,7 +26,7 @@ public class BCGreaterThan extends ByteCode {
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 		if (!var1.getClass().equals(var2.getClass())) // no match then
 		{ vm.push(new BCInteger(null,0)); return; }
-		Class type=var1.getClass();
+		Class<? extends ByteCodeDataType> type=var1.getClass();
 		if (type.equals(BCString.class)) {
 			String s1 = var1.toString();
 			String s2 = var2.toString();

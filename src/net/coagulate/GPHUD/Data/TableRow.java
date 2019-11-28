@@ -19,7 +19,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 /**
  * @author Iain Price
  */
-public abstract class TableRow extends net.coagulate.Core.Database.TableRow implements Renderable, Comparable {
+public abstract class TableRow extends net.coagulate.Core.Database.TableRow implements Renderable, Comparable<TableRow> {
 	public static final int REFRESH_INTERVAL = 60;
 	boolean validated = false;
 	Map<String, CacheElement> cache = new HashMap<>();
@@ -168,7 +168,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * Implements the comparison operator for sorting (TreeSet etc)
 	 * We rely on the names as the sorting order, and pass the buck to String.compareTo()
 	 */
-	public int compareTo(Object t) {
+	public int compareTo(TableRow t) {
 		if (!TableRow.class.isAssignableFrom(t.getClass())) {
 			throw new SystemException(t.getClass().getName() + " is not assignable from DBObject");
 		}
@@ -206,5 +206,6 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 
 	protected static class CacheMiss extends Exception {
+		private static long serialVersionUID=1L;
 	}
 }

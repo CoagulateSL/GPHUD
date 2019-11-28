@@ -8,6 +8,7 @@ import java.util.TreeMap;
  * @author iain
  */
 public class SafeMap extends TreeMap<String, String> {
+	private static final long serialVersionUID=1L;
 
 	private static String nonull(String s) {
 		if (s == null) { return ""; }

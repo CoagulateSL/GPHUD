@@ -79,6 +79,7 @@ public abstract class Command {
 
 	public abstract String getName();
 
+	@SuppressWarnings("fallthrough")
 	public Response run(State st, String[] args) throws SystemException, UserException {
 		final boolean debug=false;
 		List<Object> typedargs = new ArrayList<>();

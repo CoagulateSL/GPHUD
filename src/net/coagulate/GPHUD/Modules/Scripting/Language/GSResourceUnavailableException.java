@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 public class GSResourceUnavailableException extends GSException {
+	private static final long serialVersionUID=1L;
 	public GSResourceUnavailableException(String reason) {
 		super(reason);
 	}

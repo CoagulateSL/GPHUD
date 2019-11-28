@@ -108,7 +108,7 @@ public class CommandAnnotation extends Command {
 		arguments = new ArrayList<>();
 		boolean skipfirst = true; // first should be STATE
 		for (Parameter p : method.getParameters()) {
-			if (skipfirst) { skipfirst = false; } else { arguments.add((Argument) new ArgumentAnnotation(this, p)); }
+			if (skipfirst) { skipfirst = false; } else { arguments.add(new ArgumentAnnotation(this, p)); }
 		}
 	}
 
