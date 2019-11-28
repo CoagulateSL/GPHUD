@@ -100,7 +100,7 @@ public abstract class ByteCode {
 		private byte value;
 
 
-		private InstructionSet(byte value) {
+		InstructionSet(byte value) {
 			this.value = value;map.put(value,this);
 		}
 		public byte get() { return value; }

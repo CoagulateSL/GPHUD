@@ -45,7 +45,7 @@ public abstract class ZonePages {
 
 	@URLs(url = "/configuration/zoning/view/*")
 	public static void viewZone(State st, SafeMap values) throws UserException, SystemException {
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		Zone z = Zone.get(Integer.parseInt(id));
 		viewZone(st, values, z, false);

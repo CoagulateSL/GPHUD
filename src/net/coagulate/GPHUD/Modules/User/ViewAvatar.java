@@ -34,7 +34,7 @@ public abstract class ViewAvatar {
 
 	@URLs(url = "/avatars/view/*")
 	public static void viewAvatar(State st, SafeMap values) throws UserException, SystemException {
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		User a = User.get(Integer.parseInt(id));
 		viewAvatar(st, values, a);

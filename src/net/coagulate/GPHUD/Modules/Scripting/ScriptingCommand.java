@@ -17,7 +17,7 @@ public class ScriptingCommand extends Command {
 	public ScriptingCommand(Scripts script) { this.script=script; }
 	@Override
 	public Method getMethod() {
-		try { return this.getClass().getMethod("execute",new Class[]{State.class}); }
+		try { return this.getClass().getMethod("execute",State.class); }
 		catch (NoSuchMethodException e) { throw new SystemException("Reflection exception finding gsScriptCommand's execute() method",e); }
 	}
 

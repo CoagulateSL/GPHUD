@@ -42,7 +42,7 @@ public class Connect {
 		}
 		if (!st.json.has("silent")) {
 			response.put("message","Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatar()+"\nCharacter: "+st.getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour);
-		};
+		}
 		return new JSONResponse(response);
 	}
 }

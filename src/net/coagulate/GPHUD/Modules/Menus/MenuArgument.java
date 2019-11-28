@@ -63,7 +63,7 @@ public class MenuArgument extends Argument {
 	}
 
 	@Override
-	public Class objectType() {
+	public Class<String> objectType() {
 		return String.class;
 	}
 

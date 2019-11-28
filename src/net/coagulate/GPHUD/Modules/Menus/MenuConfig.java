@@ -39,7 +39,7 @@ public abstract class MenuConfig {
 
 	@URLs(url = "/configuration/menus/view/*")
 	public static void viewMenus(State st, SafeMap values) throws SystemException, UserException {
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		Menus m = Menus.get(Integer.parseInt(id));
 		viewMenus(st, values, m);

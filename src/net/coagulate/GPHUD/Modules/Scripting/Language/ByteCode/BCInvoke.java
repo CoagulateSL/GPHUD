@@ -29,7 +29,7 @@ public class BCInvoke extends ByteCode {
 		String functionname=vm.popString().getContent();
 		Method function= GSFunctions.get(functionname);
 		int argcount=vm.popInteger().getContent();
-		ByteCodeDataType args[]=new ByteCodeDataType[argcount];
+		ByteCodeDataType[] args =new ByteCodeDataType[argcount];
 		for (int i=0;i<argcount;i++) { args[i]=vm.pop(); }
 		// MAGIC GOES HERE
 		// check the arguments, two forms are allowed, both have State and GSVM as the initial arguments

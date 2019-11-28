@@ -35,10 +35,10 @@ public abstract class URLHandlers {
 		for (Module module : Modules.getModules()) {
 			for (URL url : module.getAllContents(st)) {
 				Row writeup = new Row();
-				writeup.add(url.url().toString());
+				writeup.add(url.url());
 				writeup.add(url.getMethodName());
 				writeup.add(url.requiresPermission());
-				output.put(url.url().toString(), writeup);
+				output.put(url.url(), writeup);
 			}
 		}
 		for (String url : output.keySet()) {

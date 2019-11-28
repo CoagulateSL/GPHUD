@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
+import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
@@ -21,7 +22,7 @@ public class SQL {
 	@URLs(url = "/introspection/sql")
 	@SideSubMenu.SideSubMenus(name = "SQL", priority = 9999)
 	public static void sqlIndex(State st, SafeMap values) throws UserException {
-		if (!GPHUD.getDB().sqlLogging()) {
+		if (!DBConnection.sqlLogging()) {
 			st.form.add(new TextError("SQL auditing is disabled in this installation."));
 			return;
 		}
@@ -47,8 +48,8 @@ public class SQL {
 			Row newrow = new Row();
 			newrow.add(c);
 			newrow.add(sql);
-			newrow.add(Long.toString(t) + "ms");
-			if (c>0) { newrow.add(Long.toString(t/c) + "ms"); }
+			newrow.add(t + "ms");
+			if (c>0) { newrow.add(t / c + "ms"); }
 			Set<Row> rowset = new HashSet<>();
 			if (bycount.containsKey(c)) { rowset = bycount.get(c); }
 			rowset.add(newrow);

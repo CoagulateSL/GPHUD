@@ -424,7 +424,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// make a buffer, read, make a string, voila :P
 				int available = contentstream.available();
 				if (available == 0) { return values; } //not actually a post
-				byte array[] = new byte[available];
+				byte[] array = new byte[available];
 				contentstream.read(array);
 				String content = new String(array);
 				// parse the string into post variables
@@ -481,7 +481,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				}
 			}
 		}
-		String array[] = st.getDebasedURL().split("\\?"); // URLs passed always takes precedence
+		String[] array = st.getDebasedURL().split("\\?"); // URLs passed always takes precedence
 		for (String piece : array) {
 			if (piece.startsWith("gphud=")) {
 				cookie = piece.substring("gphud=".length());

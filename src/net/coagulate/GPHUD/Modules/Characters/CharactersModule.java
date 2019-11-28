@@ -218,8 +218,8 @@ public class CharactersModule extends ModuleAnnotation {
 		Map<String, KV> ourmap = getKVDefinitions(st);
 		for (Attribute attr : st.getAttributes()) {
 			try {
-				addto.put("--" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", new Class[]{State.class, String.class}));
-				addto.put("--TARGET:" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", new Class[]{State.class, String.class}));
+				addto.put("--" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", State.class, String.class));
+				addto.put("--TARGET:" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", State.class, String.class));
 			} catch (NoSuchMethodException | SecurityException ex) {
 				SL.report("Templating referencing exception??", ex, st);
 				st.logger().log(SEVERE, "Exception referencing own templating method??", ex);

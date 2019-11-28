@@ -52,7 +52,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// stream it into a buffer
 				HttpEntityEnclosingRequest r = (HttpEntityEnclosingRequest) req;
 				InputStream is = r.getEntity().getContent();
-				byte buffer[] = new byte[65 * 1024];
+				byte[] buffer = new byte[65 * 1024];
 				is.read(buffer);
 				String message = new String(buffer);
 				// DEBUGGING ONLY log entire JSON input
@@ -60,8 +60,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// JSONify it
 				JSONObject obj;
 				try { obj = new JSONObject(message); } catch (JSONException e) {
-					SystemException se = new SystemException("Parse error in '" + message + "'");
-					se.initCause(e);
+					SystemException se = new SystemException("Parse error in '" + message + "'", e);
 					throw se;
 				}
 				// stash it in the state

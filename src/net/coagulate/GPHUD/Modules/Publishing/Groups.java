@@ -67,7 +67,7 @@ public class Groups extends Publishing {
 	public static void allGroups(State st,SafeMap values) {
 		Instance instance=Instance.get(getPartInt(st,1));
 		st.setInstance(instance);
-		TreeMap<String,String> grouprows=new TreeMap();
+		TreeMap<String,String> grouprows=new TreeMap<>();
 		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
 		st.form.add("<table border=0>");
 		for (CharacterGroup group:instance.getCharacterGroups()) {
@@ -84,7 +84,7 @@ public class Groups extends Publishing {
 
 	private static String formatGroup(CharacterGroup group) {
 		String line="<tr><th colspan=2 align=left>"+group.getName()+(group.getType()!=null?" (<i>"+group.getType()+"</i>)":"")+"</th></tr>";
-		TreeMap<String,String> charrows=new TreeMap();
+		TreeMap<String,String> charrows=new TreeMap<>();
 		for (Char ch:group.getMembers()) {
 			String userline="<tr><td>"+ch.getName()+"</td><td><i>"+ch.getOwner().getName()+"</i></td>";
 			String sortby=ch.getName();

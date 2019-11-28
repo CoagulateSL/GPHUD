@@ -173,7 +173,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			throw new SystemException(t.getClass().getName() + " is not assignable from DBObject");
 		}
 		String ours = getNameSafe();
-		TableRow them = (TableRow) t;
+		TableRow them = t;
 		String theirs = them.getNameSafe();
 		return ours.compareTo(theirs);
 	}
@@ -206,6 +206,6 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 
 	protected static class CacheMiss extends Exception {
-		private static long serialVersionUID=1L;
+		private static final long serialVersionUID=1L;
 	}
 }

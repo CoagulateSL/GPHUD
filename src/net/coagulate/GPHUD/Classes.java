@@ -53,14 +53,14 @@ public abstract class Classes {
 		loadGSFunctions();
 	}
 
-	private static String getModuleName(Class c) {
+	private static String getModuleName(Class<? extends Object> c) {
 		String name = c.getName().substring("net.coagulate.GPHUD.Modules.".length());
 		String[] split = name.split("\\.");
 		return split[0];
 	}
 
 	private static void loadModules() {
-		for (Class c : ClassTools.getAnnotatedClasses(ModuleDefinition.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(ModuleDefinition.class)) {
 			try {
 				Annotation a = c.getAnnotation(ModuleDefinition.class);
 				String implementation = ((ModuleDefinition) a).implementation();
@@ -79,14 +79,14 @@ public abstract class Classes {
 	}
 
 	private static void loadPermissions() {
-		for (Class c : ClassTools.getAnnotatedClasses(Permissions.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(Permissions.class)) {
 			String modulename = getModuleName(c);
 			for (Annotation a : c.getAnnotationsByType(Permissions.class)) {
 				if (LOGREGISTERS) log.config("Registering permission " + modulename + "/" + ((Permissions) a).name());
 				((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation((Permissions) a,modulename));
 			}
 		}
-		for (Class c : ClassTools.getAnnotatedClasses(Permissionss.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(Permissionss.class)) {
 			String modulename = getModuleName(c);
 			for (Annotation as : c.getAnnotationsByType(Permissionss.class)) {
 				for (Permissions a : ((Permissionss) as).value()) {
@@ -99,13 +99,13 @@ public abstract class Classes {
 	}
 
 	private static void loadKVMaps() {
-		for (Class c : ClassTools.getAnnotatedClasses(KVS.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(KVS.class)) {
 			String modulename = getModuleName(c);
 			Annotation a = c.getAnnotation(KVS.class);
 			if (LOGREGISTERS) log.config("Registering KV " + modulename + "/" + ((KVS) a).name());
 			((ModuleAnnotation) Modules.get(null, modulename)).registerKV(new KVAnnotation(Modules.get(null, modulename), (KVS) a));
 		}
-		for (Class c : ClassTools.getAnnotatedClasses(KVSS.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(KVSS.class)) {
 			String modulename = getModuleName(c);
 			Annotation a = c.getAnnotation(KVSS.class);
 			for (KVS element : ((KVSS) a).value()) {
@@ -116,13 +116,13 @@ public abstract class Classes {
 	}
 
 	private static void loadPools() {
-		for (Class c : ClassTools.getAnnotatedClasses(Pools.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(Pools.class)) {
 			String modulename = getModuleName(c);
 			Annotation a = c.getAnnotation(Pools.class);
 			if (LOGREGISTERS) log.config("Registering pool " + modulename + "/" + ((Pools) a).name());
 			((ModuleAnnotation) Modules.get(null, modulename)).registerPool(new PoolAnnotation(Modules.get(null, modulename), (Pools) a));
 		}
-		for (Class c : ClassTools.getAnnotatedClasses(Poolss.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(Poolss.class)) {
 			String modulename = getModuleName(c);
 			Annotation a = c.getAnnotation(Poolss.class);
 			for (Pools element : ((Poolss) a).value()) {
@@ -203,7 +203,7 @@ public abstract class Classes {
 	}
 
 	private static void loadSideMenus() {
-		for (Class c : ClassTools.getAnnotatedClasses(SideMenus.class)) {
+		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(SideMenus.class)) {
 			String modulename = getModuleName(c);
 			Annotation a = c.getAnnotation(SideMenus.class);
 			if (LOGREGISTERS) log.config("Registering side menu " + modulename + "/" + ((SideMenus) a).name());

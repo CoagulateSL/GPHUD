@@ -71,7 +71,7 @@ public class CommandAnnotation extends Command {
 				// validate the choice method
 				String choicemethod = arg.choiceMethod();
 				try {
-					method.getDeclaringClass().getMethod(choicemethod, new Class[]{State.class});
+					method.getDeclaringClass().getMethod(choicemethod, State.class);
 				} catch (Exception e) {
 					throw new SystemException("Failed to instansiate choice method " + getFullName() + " / " + choicemethod);
 				}

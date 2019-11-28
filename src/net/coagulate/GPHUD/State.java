@@ -623,8 +623,7 @@ public class State extends DumpableState {
 		}
 		String out;
 		try { out = Templater.template(this, s, evaluate, isint); } catch (Exception e) {
-			UserException ue = new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage());
-			ue.initCause(e);
+			UserException ue = new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
 			throw ue;
 		}
 		if (kv.type()== COLOR) {
