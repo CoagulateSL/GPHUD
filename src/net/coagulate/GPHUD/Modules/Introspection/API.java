@@ -49,7 +49,7 @@ public abstract class API {
 			f.add("<b>" + p.getName() + "</b>");
 			f.add(" - Type: " + p.type());
 			if (p.type() == ArgumentType.CHOICE) {
-				String split[] = proposedcommand.split("\\.");
+				String[] split = proposedcommand.split("\\.");
 				String options = "";
 				for (String s : p.getChoices(st)) {
 					if (!options.isEmpty()) { options += ", "; }

@@ -113,7 +113,7 @@ public abstract class Management {
 	public static void viewGroup(State st, SafeMap values) throws SystemException {
 
 		//System.out.println(st.uri);
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		String id = split[split.length - 1];
 		CharacterGroup group = CharacterGroup.get(Integer.parseInt(id));

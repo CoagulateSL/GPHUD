@@ -58,8 +58,7 @@ if (jjtc000) {
       case IF:
       case IDENTIFIER:
       case 34:{
-        ;
-        break;
+	      break;
         }
       default:
         jj_la1[0] = jj_gen;
@@ -655,8 +654,7 @@ if (jjtc000) {
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case 52:{
-          ;
-          break;
+	        break;
           }
         default:
           jj_la1[6] = jj_gen;
@@ -731,7 +729,6 @@ if (jjtc000) {
         jj_consume_token(ELSE);
         Statement();
       } else {
-        ;
       }
     } catch (Throwable jjte000) {
 if (jjtc000) {
@@ -774,8 +771,7 @@ if (jjtc000) {
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
           case 52:{
-            ;
-            break;
+	          break;
             }
           default:
             jj_la1[7] = jj_gen;
@@ -788,7 +784,6 @@ if (jjtc000) {
         }
       default:
         jj_la1[8] = jj_gen;
-        ;
       }
       jj_consume_token(39);
     } catch (Throwable jjte000) {

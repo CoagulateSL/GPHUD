@@ -67,7 +67,7 @@ public abstract class Interface implements HttpRequestHandler {
 			String uri = req.getRequestLine().getUri();
 
 			// get requested Host: from the headers.
-			Header headers[] = req.getAllHeaders();
+			Header[] headers = req.getAllHeaders();
 			String host = "";
 			for (Header h : headers) {
 				if ("Host".equals(h.getName())) {host = h.getValue(); }

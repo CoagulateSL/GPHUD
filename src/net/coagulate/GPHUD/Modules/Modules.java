@@ -193,9 +193,10 @@ public abstract class Modules {
 
 	public static Response getJSONTemplateResponse(State st, String command) throws UserException, SystemException { return new JSONResponse(getJSONTemplate(st, command)); }
 
+	@SuppressWarnings("fallthrough")
 	public static Response run(State st, String console) throws UserException, SystemException {
 		if (console == null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
-		String words[] = console.split(" ");
+		String[] words = console.split(" ");
 		int i = 0;
 		String command = words[0].toLowerCase();
 		if (command.startsWith("*")) { command = command.substring(1); }

@@ -35,9 +35,9 @@ public class ZoneArea extends TableRow {
 		s = s.replaceAll(">", "");
 		s = s.replaceAll("\\(", "");
 		s = s.replaceAll("\\)", "");
-		String parts[] = s.split(",");
+		String[] parts = s.split(",");
 		if (parts.length != 3) { throw new UserException("Could not decompose co-ordinates properly"); }
-		int pos[] = new int[3];
+		int[] pos = new int[3];
 		try { pos[0] = (int) Float.parseFloat(parts[0]); } catch (NumberFormatException e) {
 			throw new UserException("Error processing X number " + parts[0] + " - " + e.getMessage());
 		}
@@ -129,7 +129,7 @@ public class ZoneArea extends TableRow {
 		}
 		vec1 += ">";
 		vec2 += ">";
-		String vectors[] = new String[2];
+		String[] vectors = new String[2];
 		vectors[0] = vec1;
 		vectors[1] = vec2;
 		return vectors;
@@ -179,7 +179,7 @@ public class ZoneArea extends TableRow {
 
 	@Override
 	public String getName() {
-		String vectors[] = getVectors();
+		String[] vectors = getVectors();
 		return getRegion(true).getName() + "@" + vectors[0] + "-" + vectors[1];
 	}
 

@@ -42,7 +42,7 @@ public abstract class Avatars {
 
 		for (String element : userlist.split(",")) {
 			//System.out.println(element);
-			String p[] = element.split("=");
+			String[] p = element.split("=");
 			if (p.length == 2) {
 				try {
 					User thisavi = User.findOrCreateAvatar(p[1], p[0]);

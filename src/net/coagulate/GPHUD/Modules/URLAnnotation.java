@@ -70,7 +70,7 @@ public class URLAnnotation extends URL {
 
 	public void run(State st, SafeMap values) throws SystemException, UserException {
 		try {
-			method.invoke(null, new Object[]{st, values});
+			method.invoke(null, st, values);
 		} catch (IllegalAccessException ex) {
 			throw new SystemException("Illegal method access to content at " + st.getDebasedURL(), ex);
 		} catch (IllegalArgumentException ex) {

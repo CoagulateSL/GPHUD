@@ -79,6 +79,7 @@ public abstract class Command {
 
 	public abstract String getName();
 
+	@SuppressWarnings("fallthrough")
 	public Response run(State st, String[] args) throws SystemException, UserException {
 		final boolean debug=false;
 		List<Object> typedargs = new ArrayList<>();
@@ -206,7 +207,7 @@ public abstract class Command {
 					case KVLIST:
 					case COORDINATES:
 						//System.out.println("Adding arg "+v);
-						typedargs.add(new String(v));
+						typedargs.add(v);
 						break;
 					case BOOLEAN:
 						if (v != null && ("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
@@ -717,7 +718,7 @@ public abstract class Command {
 	}
 
 
-	public static enum Context {ANY, CHARACTER, AVATAR}
+	public enum Context {ANY, CHARACTER, AVATAR}
 
 	/**
 	 * Defines an exposed command.

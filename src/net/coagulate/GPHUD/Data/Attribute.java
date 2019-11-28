@@ -311,7 +311,7 @@ public class Attribute extends TableRow {
 		return false;
 	}
 
-	public static enum ATTRIBUTETYPE {TEXT, FLOAT, INTEGER, GROUP, POOL, COLOR, EXPERIENCE}
+	public enum ATTRIBUTETYPE {TEXT, FLOAT, INTEGER, GROUP, POOL, COLOR, EXPERIENCE}
 
 
 }

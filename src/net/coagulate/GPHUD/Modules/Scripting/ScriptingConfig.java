@@ -57,7 +57,7 @@ public class ScriptingConfig {
 	@URL.URLs(url = "/configuration/scripting/edit/*", requiresPermission = "Scripting.Create")
 	public static void editScript(State st, SafeMap values) {
 		Form f = st.form;
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		String id = split[split.length - 1];
 		Scripts script = Scripts.get(Integer.parseInt(id));
@@ -151,7 +151,8 @@ public class ScriptingConfig {
 		}
 		if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}
-	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS};
+	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS}
+
 	private static String debug(State st,String script, STAGE stage) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(script.getBytes());
 		GSParser parser = new GSParser(bais);

@@ -74,7 +74,7 @@ public abstract class Management {
 	public static void viewFaction(State st, SafeMap values) throws SystemException {
 
 		//System.out.println(st.uri);
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		String id = split[split.length - 1];
 		CharacterGroup faction = CharacterGroup.get(Integer.parseInt(id));

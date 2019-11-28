@@ -37,7 +37,7 @@ public class Validators {
 
 	public static boolean color(String value) {
 		// e.g. <1,0.5,1>
-		String parts[] = value.split(",");
+		String[] parts = value.split(",");
 		if (parts.length != 3) {
 			GPHUD.getLogger("Validation").fine(value + " not 3 parts (commas)");
 			return false;

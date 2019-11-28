@@ -86,7 +86,7 @@ public abstract class Module {
 
 	public boolean dependanciesEnabled(State st) {
 		if (requires(st).isEmpty()) { return true; }
-		String deps[] = requires(st).split(",");
+		String[] deps = requires(st).split(",");
 		for (String dep : deps) {
 			if (Modules.get(null, dep).isEnabled(st) == false) { return false; }
 		}

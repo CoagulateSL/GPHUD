@@ -147,7 +147,7 @@ public abstract class Audit {
 		table.add(headers);
 		String olddate = "";
 		for (ResultsRow r : rows) {
-			String datetime[] = fromUnixTime(r.getString("timedate"), timezone).split(" ");
+			String[] datetime = fromUnixTime(r.getString("timedate"), timezone).split(" ");
 			if (!olddate.equals(datetime[0])) {
 				net.coagulate.GPHUD.Interfaces.Outputs.Row t = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 				t.align("center");
@@ -249,7 +249,7 @@ public abstract class Audit {
 		s = s.replaceAll("\\(", "");
 		s = s.replaceAll("\\)", "");
 		s = s.replaceAll(" ", "");
-		String xyz[] = s.split(",");
+		String[] xyz = s.split(",");
 		if (xyz.length != 3) { return olds; }
 		try {
 			float x = Float.parseFloat(xyz[0]);
@@ -259,5 +259,5 @@ public abstract class Audit {
 		} catch (NumberFormatException e) { return olds; }
 	}
 
-	public static enum OPERATOR {AVATAR, CHARACTER}
+	public enum OPERATOR {AVATAR, CHARACTER}
 }

@@ -27,7 +27,7 @@ public abstract class Permission {
 		MEDIUM - stuff that might break the instance, but can be repaired, or partially restored
 		HIGH - stuff that destroys things, likely to cause rollbacks if misused
 		 */
-	public static enum POWER {LOW,MEDIUM,HIGH,UNKNOWN};
+	public enum POWER {LOW,MEDIUM,HIGH,UNKNOWN}
 
 	public abstract boolean isGenerated();
 

@@ -36,7 +36,7 @@ public class BCString extends ByteCodeDataType {
 
 	@Override
 	public ByteCodeDataType add(ByteCodeDataType var) {
-		Class type=var.getClass();
+		Class<? extends ByteCodeDataType> type=var.getClass();
 		// <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 		if (type.equals(BCList.class)) { // special case, return a list
 			return new BCList(node(),this).add(var);

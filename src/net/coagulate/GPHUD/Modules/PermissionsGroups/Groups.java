@@ -186,7 +186,7 @@ public abstract class Groups {
 
 	@URLs(url="/permissionsgroups/edit/*",requiresPermission = "Instance.ManagePermissions")
 	public static void editPermissions(State st,SafeMap values) {
-		String split[]=st.getDebasedNoQueryURL().split("/");
+		String[] split =st.getDebasedNoQueryURL().split("/");
 		if (split.length!=4) { throw new UserException("Incorrect number of query parameters ("+split.length+")"); }
 		Integer groupid=Integer.parseInt(split[3]);
 		PermissionsGroup pg=PermissionsGroup.get(groupid);

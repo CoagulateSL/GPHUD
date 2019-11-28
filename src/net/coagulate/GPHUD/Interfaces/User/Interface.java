@@ -412,7 +412,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// make a buffer, read, make a string, voila :P
 				int available = contentstream.available();
 				if (available == 0) { return values; } //not actually a post
-				byte array[] = new byte[available];
+				byte[] array = new byte[available];
 				contentstream.read(array);
 				String content = new String(array);
 				// parse the string into post variables

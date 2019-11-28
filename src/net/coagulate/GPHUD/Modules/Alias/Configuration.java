@@ -90,7 +90,7 @@ public abstract class Configuration {
 
 	@URLs(url = "/configuration/alias/view/*")
 	public static void viewAlias(State st, SafeMap values) throws SystemException, UserException {
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		Alias a = Alias.get(Integer.parseInt(id));
 		viewAlias(st, values, a);

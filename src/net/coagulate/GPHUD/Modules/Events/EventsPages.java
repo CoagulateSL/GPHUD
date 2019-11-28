@@ -55,7 +55,7 @@ public class EventsPages {
 	@URLs(url = "/event/*")
 	public static void viewEvent(State st, SafeMap values) throws UserException, SystemException {
 		//System.out.println(st.uri);
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		String id = split[split.length - 1];
 		Event e = Event.get(Integer.parseInt(id));

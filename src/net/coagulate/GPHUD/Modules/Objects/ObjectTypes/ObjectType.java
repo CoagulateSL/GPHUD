@@ -69,5 +69,5 @@ public abstract class ObjectType {
 	public Response click(State st, Char clicker) { return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
 	public Response collide(State st, Char collider)  { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
-	enum MODE {NONE,CLICKABLE,PHANTOM};
+	enum MODE {NONE,CLICKABLE,PHANTOM}
 }

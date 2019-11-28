@@ -18,7 +18,7 @@ public interface Renderable {
 	 * @param st
 	 * @return
 	 */
-	public abstract String asText(State st);
+	String asText(State st);
 
 	/**
 	 * Render this element into simple HTML.
@@ -29,7 +29,7 @@ public interface Renderable {
 	 * @param rich Rich mode
 	 * @return
 	 */
-	public abstract String asHtml(State st, boolean rich);
+	String asHtml(State st, boolean rich);
 
-	public abstract Set<Renderable> getSubRenderables();
+	Set<Renderable> getSubRenderables();
 }

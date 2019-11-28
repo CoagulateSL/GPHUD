@@ -107,7 +107,7 @@ public abstract class Index {
 		String key = null;
 		st.form.noForm();
 		if (module.contains("/")) {
-			String split[] = module.split("/");
+			String[] split = module.split("/");
 			if (split.length == 2) {
 				module = split[0];
 				key = split[1];

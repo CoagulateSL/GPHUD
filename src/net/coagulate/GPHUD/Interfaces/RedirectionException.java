@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.SafeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class RedirectionException extends RuntimeException {
+	private static final long serialVersionUID=1L;
 	String url;
 
 	public RedirectionException(SafeMap values) {

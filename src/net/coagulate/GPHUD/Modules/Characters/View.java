@@ -75,7 +75,7 @@ public abstract class View {
 	public static void viewCharacter(State st, SafeMap values) throws UserException, SystemException {
 		st.form.noForm();
 		//System.out.println(st.uri);
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		if (split.length == 4) {
 			String id = split[split.length - 1];

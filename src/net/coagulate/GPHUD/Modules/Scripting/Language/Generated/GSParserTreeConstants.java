@@ -3,33 +3,33 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.Generated;
 
 public interface GSParserTreeConstants
 {
-  public int JJTSTART = 0;
-  public int JJTVOID = 1;
-  public int JJTSTATEMENT = 2;
-  public int JJTINITIALISER = 3;
-  public int JJTASSIGNMENT = 4;
-  public int JJTTYPESPECIFIER = 5;
-  public int JJTIDENTIFIERORLIST = 6;
-  public int JJTIDENTIFIERWITHINDEX = 7;
-  public int JJTIDENTIFIER = 8;
-  public int JJTEXPRESSION = 9;
-  public int JJTBINARYOPERATION = 10;
-  public int JJTBINARYOPERATOR = 11;
-  public int JJTTERM = 12;
-  public int JJTLISTINDEX = 13;
-  public int JJTSTRINGCONSTANT = 14;
-  public int JJTINTEGERCONSTANT = 15;
-  public int JJTFLOATCONSTANT = 16;
-  public int JJTFUNCTIONCALL = 17;
-  public int JJTFUNCTIONNAME = 18;
-  public int JJTPARAMETERS = 19;
-  public int JJTPARAMETER = 20;
-  public int JJTCONDITIONAL = 21;
-  public int JJTLIST = 22;
-  public int JJTWHILELOOP = 23;
+  int JJTSTART = 0;
+  int JJTVOID = 1;
+  int JJTSTATEMENT = 2;
+  int JJTINITIALISER = 3;
+  int JJTASSIGNMENT = 4;
+  int JJTTYPESPECIFIER = 5;
+  int JJTIDENTIFIERORLIST = 6;
+  int JJTIDENTIFIERWITHINDEX = 7;
+  int JJTIDENTIFIER = 8;
+  int JJTEXPRESSION = 9;
+  int JJTBINARYOPERATION = 10;
+  int JJTBINARYOPERATOR = 11;
+  int JJTTERM = 12;
+  int JJTLISTINDEX = 13;
+  int JJTSTRINGCONSTANT = 14;
+  int JJTINTEGERCONSTANT = 15;
+  int JJTFLOATCONSTANT = 16;
+  int JJTFUNCTIONCALL = 17;
+  int JJTFUNCTIONNAME = 18;
+  int JJTPARAMETERS = 19;
+  int JJTPARAMETER = 20;
+  int JJTCONDITIONAL = 21;
+  int JJTLIST = 22;
+  int JJTWHILELOOP = 23;
 
 
-  public String[] jjtNodeName = {
+  String[] jjtNodeName = {
     "Start",
     "void",
     "Statement",

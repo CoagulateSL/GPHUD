@@ -259,7 +259,7 @@ public class Region extends TableRow {
 				for (ResultsRow row : urls) {
 					String url = row.getString("url");
 					JSONObject ping = new JSONObject().put("incommand", "ping");
-					Transmission t = new Transmission((Char) null, ping, url, 5);
+					Transmission t = new Transmission(null, ping, url, 5);
 					t.start();
 				}
 			} catch (Exception e) {
