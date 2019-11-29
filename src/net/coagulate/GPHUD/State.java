@@ -697,11 +697,11 @@ public class State extends DumpableState {
 		if (c == null) { c = getCharacterNullable(); }
 		simulated.setCharacter(c);
 		Set<Region> possibleregions = instance.getRegions(false);
-		Region simulatedregion = new ArrayList<Region>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
+		Region simulatedregion = new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
 		simulated.setRegion(simulatedregion);
 		Set<Zone> possiblezones = simulatedregion.getZones();
 		if (!possiblezones.isEmpty()) {
-			simulated.zone = new ArrayList<Zone>(possiblezones).get((int) (Math.floor(Math.random() * possiblezones.size())));
+			simulated.zone = new ArrayList<>(possiblezones).get((int) (Math.floor(Math.random() * possiblezones.size())));
 		}
 		return simulated;
 	}
@@ -715,7 +715,7 @@ public class State extends DumpableState {
 	 */
 	public Set<Attribute> getAttributes() {
 		if (attributes != null) { return attributes; }
-		attributes = new TreeSet<Attribute>();
+		attributes = new TreeSet<>();
 		Set<Attribute> db = Attribute.getAttributes(this);
 		attributes.addAll(db);
 		for (Module module : Modules.getModules()) {

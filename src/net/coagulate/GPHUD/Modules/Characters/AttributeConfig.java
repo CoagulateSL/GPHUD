@@ -91,7 +91,7 @@ public class AttributeConfig {
 	}
 
 	public static List<String> getAttributeTypes(State st) {
-		List<String> choices = new ArrayList<String>();
+		List<String> choices = new ArrayList<>();
 		choices.add("INTEGER");
 		choices.add("FLOAT");
 		choices.add("GROUP");

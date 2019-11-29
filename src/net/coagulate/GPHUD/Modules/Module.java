@@ -188,7 +188,7 @@ dead code?
 	public void addTemplateMethods(State st, Map<String, Method> ret) { }
 
 	public Set<CharacterAttribute> getAttributes(State st) {
-		return new TreeSet<CharacterAttribute>();
+		return new TreeSet<>();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
