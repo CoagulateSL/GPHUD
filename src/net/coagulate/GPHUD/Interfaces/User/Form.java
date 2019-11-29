@@ -107,7 +107,7 @@ public class Form implements Renderable {
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();
-		for (Renderable rend : list) { r.add(rend); }
+		r.addAll(list);
 		return r;
 	}
 

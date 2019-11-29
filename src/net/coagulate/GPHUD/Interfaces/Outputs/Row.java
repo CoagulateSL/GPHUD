@@ -66,7 +66,7 @@ public class Row implements Renderable {
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();
-		for (Cell c : row) { r.add(c); }
+		r.addAll(row);
 		return r;
 	}
 

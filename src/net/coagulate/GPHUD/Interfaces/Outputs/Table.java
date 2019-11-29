@@ -81,7 +81,7 @@ public class Table implements Renderable {
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();
-		for (Row row : table) { r.add(row); }
+		r.addAll(table);
 		return r;
 	}
 
