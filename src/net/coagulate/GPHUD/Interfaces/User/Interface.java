@@ -585,7 +585,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		Form selectavatars = new Form();
 		selectavatars.add(new TextHeader("Select a character"));
-		Map<Button, Char> buttons = new TreeMap<>();
+		Map<Button, Char> buttons = new HashMap<>();
 		for (Char e : characters) {
 			Button b = new Button(e.getName());
 			buttons.put(b, e);

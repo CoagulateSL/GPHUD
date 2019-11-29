@@ -81,8 +81,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 		if ((awarded + award) < cap) { return award; } // still under the cap
 		int capped = cap - awarded;
 		if (capped <= 0) { return 0; } // hmm
-		if (capped < award) { return capped; }
-		return award;
+		return Math.min(capped, award);
 	}
 
 	public int cappedSystemAward(State st, int award, String description) {

@@ -768,37 +768,36 @@ public class State extends DumpableState {
 			if (character==null) {
 				if (instance==null) {
 					// NO avatar, NO character, NO instance
-					return; // pointless
+					// pointless
 				} else {
 					// NO avatar, NO character, YES instance
-					return; // unworkable combo
+					// unworkable combo
 				}
 			} else {
 				if (instance==null) {
 					// NO avatar, YES character, NO instance
-					instance=character.getInstance(); avatar=character.getOwner(); updateCookie(); return;
+					instance=character.getInstance(); avatar=character.getOwner(); updateCookie();
 				} else {
 					// NO avatar, YES character, YES instance
 					character.validate(this);
-					avatar=character.getOwner(); updateCookie(); return;
+					avatar=character.getOwner(); updateCookie();
 				}
 			}
 		} else {
 			if (character==null) {
 				if (instance==null) {
 					// YES avatar, NO character, NO instance
-					character=Char.getMostRecent(avatar); instance=character.getInstance(); updateCookie(); return;
+					character=Char.getMostRecent(avatar); instance=character.getInstance(); updateCookie();
 				} else {
 					// YES avatar, NO character, YES instance
-					character=Char.getMostRecent(avatar, instance); updateCookie(); return;
+					character=Char.getMostRecent(avatar, instance); updateCookie();
 				}
 			} else {
 				if (instance==null) {
 					// YES avatar, YES character, NO instance
-					instance=character.getInstance(); updateCookie(); return;
+					instance=character.getInstance(); updateCookie();
 				} else {
 					// YES avatar, YES character, YES instance
-					return;
 				}
 			}
 		}

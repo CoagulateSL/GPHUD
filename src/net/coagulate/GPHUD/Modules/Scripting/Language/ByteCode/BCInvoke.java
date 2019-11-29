@@ -60,7 +60,6 @@ public class BCInvoke extends ByteCode {
 		}
 		// no arguments
 		invoke(st,vm,function,new Object[0]);
-		return;
 	}
 
 	private void invoke(State st, GSVM vm, Method function, Object[] parameters) {

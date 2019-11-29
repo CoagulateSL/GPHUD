@@ -131,7 +131,7 @@ public class GSVM {
 			if (t instanceof SystemException || t instanceof GSInternalError) {
 				throw new SystemException("VM exception: "+t.toString()+" "+at(),t);
 			}
-			if (t instanceof GSException || t instanceof UserException) { throw new UserException("Script error: "+t.toString()+" "+at(),t); }
+			if (t instanceof UserException) { throw new UserException("Script error: "+t.toString()+" "+at(),t); }
 			if (t instanceof RuntimeException) { throw new SystemException("VM Runtime: "+t.toString()+" "+at(),t); }
 			throw new SystemException("VM Uncaught: "+t.toString()+" "+at(),t);
 		}

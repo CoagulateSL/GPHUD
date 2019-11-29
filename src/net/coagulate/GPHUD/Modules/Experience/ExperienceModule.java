@@ -83,7 +83,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public void validatePermission(State st, String permission) {
-		return; // really can't validate these as they can be dynamic
+		// really can't validate these as they can be dynamic
 	}
 
 	@Override

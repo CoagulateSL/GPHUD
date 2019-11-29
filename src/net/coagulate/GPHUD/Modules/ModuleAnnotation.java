@@ -133,10 +133,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public boolean hasPool(State st, Pools p) {
-		if (poolmap.containsValue(p)) {
-			return true;
-		}
-		return false;
+		return poolmap.containsValue(p);
 	}
 
 	public Map<String, Command> getCommands(State st) throws UserException, SystemException {

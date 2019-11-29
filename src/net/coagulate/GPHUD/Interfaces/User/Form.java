@@ -95,8 +95,9 @@ public class Form implements Renderable {
 			response += " style=\"border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n";
 		}
 		for (Renderable r : list) {
-			if (r instanceof NullResponse) {}//{ response+="{NULLRESPONSE}"; }
-			else { response += r.asHtml(st, rich) + "\n"; }
+			if (!(r instanceof NullResponse)) { response += r.asHtml(st, rich) + "\n"; }  // else { response+="{NULLRESPONSE}"; }
+
+
 		}
 		if (form) {
 			response += "</form>\n";

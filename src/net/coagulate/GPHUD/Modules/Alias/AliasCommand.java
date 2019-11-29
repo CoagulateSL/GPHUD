@@ -157,7 +157,7 @@ public class AliasCommand extends Command {
 
 
 		Command consider = this;
-		while (consider != null && consider instanceof AliasCommand) {
+		while (consider instanceof AliasCommand) {
 			AliasCommand ac = (AliasCommand) consider;
 			//System.out.println("Processing "+ac.getFullName());
 			for (String key : ac.getDefinition().keySet()) {

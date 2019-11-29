@@ -186,6 +186,7 @@ public abstract class Login {
 		}
 		registeringjson.put("message", regmessage);
 		Transmission registering = new Transmission((Char) null, registeringjson, url);
+		//noinspection CallToThreadRun
 		registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
 		Visits.initVisit(st, st.getCharacter(), region);
 		if (version != null && versiondate != null && versiontime != null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {

@@ -453,6 +453,7 @@ public class Region extends TableRow {
 	}
 	public void sendServerSync(JSONObject json) {
 		Transmission t=new Transmission(this, json);
+		//noinspection CallToThreadRun
 		t.run();
 		if (t.failed()) { throw new UserException("Connection to server failed"); }
 	}

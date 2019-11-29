@@ -380,6 +380,7 @@ public class Char extends TableRow {
 		}
 		JSONObject radarrequest = new JSONObject().put("incommand", "radar");
 		Transmission t = new Transmission(this, radarrequest);
+		//noinspection CallToThreadRun
 		t.run();
 		JSONObject j = t.getResponse();
 		if (j == null) { throw new SystemException("Failed to get a useful response from the remote HUD"); }
