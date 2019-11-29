@@ -100,82 +100,42 @@ public abstract class Command {
 				int maxlen = -1;
 				switch (type) {
 					case TEXT_CLEAN:
-						maxlen = argument.max();
-						break;
 					case TEXT_ONELINE:
-						maxlen = argument.max();
-						break;
 					case TEXT_INTERNAL_NAME:
-						maxlen = argument.max();
-						break;
 					case TEXT_MULTILINE:
 						maxlen = argument.max();
 						break;
 					case PASSWORD:
+					case CHOICE:
 						maxlen = 1024;
 						break;
 					case BOOLEAN:
 						maxlen = 8;
 						break;
 					case INTEGER:
-						maxlen = 32;
-						break;
 					case FLOAT:
 						maxlen = 32;
 						break;
-					case CHOICE:
-						maxlen = 1024;
-						break;
 					case CHARACTER:
-						maxlen = 64;
-						break;
+					case ATTRIBUTE_WRITABLE:
+					case ATTRIBUTE:
+					case COORDINATES:
+					case ZONE:
+					case REGION:
+					case MODULE:
+					case PERMISSION:
+					case PERMISSIONSGROUP:
+					case AVATAR_NEAR:
+					case AVATAR:
+					case CHARACTER_FACTION:
+					case CHARACTER_NEAR:
 					case CHARACTER_PLAYABLE:
 						maxlen = 64;
 						break;
-					case CHARACTER_NEAR:
-						maxlen = 64;
-						break;
-					case CHARACTER_FACTION:
-						maxlen = 64;
-						break;
-					case AVATAR:
-						maxlen = 64;
-						break;
-					case AVATAR_NEAR:
-						maxlen = 64;
-						break;
-					case PERMISSIONSGROUP:
-						maxlen = 64;
-						break;
-					case PERMISSION:
-						maxlen = 64;
-						break;
 					case CHARACTERGROUP:
-						maxlen = 128;
-						break;
+					case EVENT:
 					case KVLIST:
 						maxlen = 128;
-						break;
-					case MODULE:
-						maxlen = 64;
-						break;
-					case REGION:
-						maxlen = 64;
-						break;
-					case ZONE:
-						maxlen = 64;
-						break;
-					case COORDINATES:
-						maxlen = 64;
-						break;
-					case EVENT:
-						maxlen = 128;
-						break;
-					case ATTRIBUTE:
-						maxlen = 64;
-						break;
-					case ATTRIBUTE_WRITABLE:
-						maxlen = 64;
 						break;
 					default:
 						throw new AssertionError(type.name());
@@ -592,16 +552,12 @@ public abstract class Command {
 				case COORDINATES:
 				case CHARACTER:
 				case CHARACTER_PLAYABLE: // FIXME this can be done properly
+				case FLOAT:
+				case INTEGER:
 					t.add(new TextInput(arg.getName()));
 					break;
 				case PASSWORD:
 					t.add(new PasswordInput(arg.getName()));
-					break;
-				case INTEGER:
-					t.add(new TextInput(arg.getName()));
-					break;
-				case FLOAT:
-					t.add(new TextInput(arg.getName()));
 					break;
 				case BOOLEAN:
 					t.add(new CheckBox(arg.getName()));
