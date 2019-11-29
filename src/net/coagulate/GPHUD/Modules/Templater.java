@@ -74,7 +74,7 @@ public abstract class Templater {
 		if (st == null) { throw new SystemException("Null session state is not permitted"); }
 		boolean debug = false;
 		for (String subst : getTemplates(st).keySet()) {
-			if (string.indexOf(subst) != -1) {
+			if (string.contains(subst)) {
 				if (debug) { System.out.println("Check: " + subst); }
 				if (debug) { System.out.println("Pre: " + string); }
 				String value = "ERROR";

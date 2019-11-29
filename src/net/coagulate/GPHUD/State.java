@@ -202,7 +202,7 @@ public class State extends DumpableState {
 	public String getDebasedNoQueryURL() {
 		String ret = getDebasedURL();
 		//System.out.println("Pre parsing:"+ret);
-		if (ret.indexOf("?") != -1) { ret = ret.substring(0, ret.indexOf("?")); }
+		if (ret.contains("?")) { ret = ret.substring(0, ret.indexOf("?")); }
 		//System.out.println("Post parsing:"+ret);
 		return ret;
 	}
