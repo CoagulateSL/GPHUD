@@ -87,7 +87,7 @@ public abstract class Management {
 	public static List<String> groupTypes(State st) {
 		List<String> ret = new ArrayList<>();
 		ret.add("");
-		for (String gt : st.getCharacterGroupTypes()) { ret.add(gt); }
+		ret.addAll(st.getCharacterGroupTypes());
 		return ret;
 	}
 

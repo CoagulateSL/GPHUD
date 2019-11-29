@@ -452,7 +452,7 @@ public class Instance extends TableRow {
 			}
 			for (String key : sortedkeys) {
 				Set<CharacterSummary> set = sorted.get(key);
-				for (CharacterSummary c : set) { sortedlist.add(c); }
+				sortedlist.addAll(set);
 			}
 		} else {
 			Map<Integer, Set<CharacterSummary>> sorted = new TreeMap<>();
@@ -478,7 +478,7 @@ public class Instance extends TableRow {
 			// default is biggest at top, smallest at bottom, which is reverse order as the NORMAL order.   alphabetic is a-z so forward order for the NORMAL order....
 			for (Integer key : sortedkeys) {
 				Set<CharacterSummary> set = sorted.get(key);
-				for (CharacterSummary c : set) { sortedlist.add(c); }
+				sortedlist.addAll(set);
 			}
 
 		}
