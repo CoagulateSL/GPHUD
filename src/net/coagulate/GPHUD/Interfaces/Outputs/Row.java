@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Row implements Renderable {
-	List<Cell> row = new ArrayList<>();
+	final List<Cell> row = new ArrayList<>();
 	String bgcolor = "";
 	String alignment = "";
 

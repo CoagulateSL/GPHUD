@@ -17,10 +17,10 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class URLAnnotation extends URL {
-	private static Set<String> inuse = new HashSet<>(); // a legitimate static in a non static class oO
-	private URLs meta;
-	private Module module;
-	private Method method;
+	private static final Set<String> inuse = new HashSet<>(); // a legitimate static in a non static class oO
+	private final URLs meta;
+	private final Module module;
+	private final Method method;
 	private boolean generated = true;
 
 	public URLAnnotation(Module module, Method method) throws SystemException, UserException {

@@ -27,8 +27,7 @@ public abstract class NameComparable implements Comparable<NameComparable> {
 	@Override
 	public int compareTo(NameComparable t) {
 		String ours = name();
-		NameComparable them = t;
-		String theirs = them.name();
+		String theirs = t.name();
 		return ours.compareTo(theirs);
 	}
 }

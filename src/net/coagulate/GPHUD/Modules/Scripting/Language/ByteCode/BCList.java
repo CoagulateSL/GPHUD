@@ -12,15 +12,14 @@ public class BCList extends ByteCodeDataType {
 
 	int elements=0; // used by the compiler
 
-	List<ByteCodeDataType> content=new ArrayList<>(); // used by the VM
+	final List<ByteCodeDataType> content=new ArrayList<>(); // used by the VM
 	public BCList(ParseNode n) {super(n);}
 	public BCList(ParseNode n,int elements) { super(n); this.elements=elements; }
 	public BCList(ParseNode n,ByteCodeDataType e) { super(n); content.add(e); elements++; }
 
 	@Override
 	public String explain() {
-		String r="List (#"+elements+")";
-		return r;
+		return "List (#"+elements+")";
 	}
 
 	@Override

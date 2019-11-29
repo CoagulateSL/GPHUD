@@ -165,7 +165,7 @@ public class ParseException extends Exception {
               retval.append("\\\"");
               continue;
            case '\'':
-              retval.append("\\\'");
+              retval.append("\\'");
               continue;
            case '\\':
               retval.append("\\\\");

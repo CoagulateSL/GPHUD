@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class MenuCommand extends Command {
 
-	JSONObject definition;
-	Command targetcommand;
-	String description = "Pick a menu item item item. :P";
-	String name;
+	final JSONObject definition;
+	final Command targetcommand;
+	final String description = "Pick a menu item item item. :P";
+	final String name;
 
 	public MenuCommand(State st, String name, JSONObject newdef) throws UserException, SystemException {
 		super();
@@ -93,8 +93,7 @@ public class MenuCommand extends Command {
 	@Override
 	public Method getMethod() {
 		try {
-			Method m = this.getClass().getDeclaredMethod("run", State.class, SafeMap.class);
-			return m;
+			return this.getClass().getDeclaredMethod("run", State.class, SafeMap.class);
 		} catch (NoSuchMethodException | SecurityException ex) {
 			throw new SystemException("Issue locating RUN command for MenuCommand, this makes no sense :)");
 		}

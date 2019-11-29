@@ -18,7 +18,7 @@ import java.util.Set;
 public class MenuResponse implements Response {
 
 	private String header = null;
-	private List<Renderable> menu = new ArrayList<>();
+	private final List<Renderable> menu = new ArrayList<>();
 
 	public MenuResponse() {}
 

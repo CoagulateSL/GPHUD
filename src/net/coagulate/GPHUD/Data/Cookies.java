@@ -25,7 +25,7 @@ public class Cookies {
 	public static final int COOKIE_REFRESH = ((int) (2.0 / 3.0 * COOKIE_LIFESPAN)); // if cookie expires sooner than this many minutes from now
 	// i.e. 1/3rd of time gone (10 minutes), 20 minutes left, then refresh cookie.
 	private ResultsRow r;
-	private String cookie;
+	private final String cookie;
 
 	/**
 	 * Load existing cookie store.
@@ -74,9 +74,8 @@ public class Cookies {
 	 */
 	public static String generate(User avatar, Char character, Instance instance, boolean renewable) {
 		String cookie = Tokens.generateToken();
-		int expiresafter = COOKIE_LIFESPAN;
 		int expire = getUnixTime();
-		expire = expire + expiresafter;
+		expire = expire + COOKIE_LIFESPAN;
 		int renewableint = 0;
 		if (renewable) { renewableint = 1; }
 		String id = "";

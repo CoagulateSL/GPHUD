@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class Form implements Renderable {
 
-	List<Renderable> list = new ArrayList<>();
+	final List<Renderable> list = new ArrayList<>();
 	String action = null;
 	/*
 	public Map<String, String> getValueMap() {

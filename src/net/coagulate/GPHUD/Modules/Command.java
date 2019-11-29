@@ -210,7 +210,7 @@ public abstract class Command {
 						typedargs.add(v);
 						break;
 					case BOOLEAN:
-						if (v != null && ("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
+						if (("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
 							typedargs.add(Boolean.TRUE);
 						} else {
 							typedargs.add(Boolean.FALSE);
@@ -412,8 +412,7 @@ public abstract class Command {
 				System.out.println("Go for invoke on " + getMethod());
 				for (Object o : args) {System.out.println(o); }
 			}
-			Response response = (Response) (getMethod().invoke(this, args));
-			return response;
+			return (Response) (getMethod().invoke(this, args));
 		} catch (IllegalAccessException ex) {
 			throw new SystemException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
 		} catch (IllegalArgumentException ex) {

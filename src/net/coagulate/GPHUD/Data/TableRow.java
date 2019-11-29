@@ -22,7 +22,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 public abstract class TableRow extends net.coagulate.Core.Database.TableRow implements Renderable, Comparable<TableRow> {
 	public static final int REFRESH_INTERVAL = 60;
 	boolean validated = false;
-	Map<String, CacheElement> cache = new HashMap<>();
+	final Map<String, CacheElement> cache = new HashMap<>();
 
 	public TableRow(int id) { super(id); }
 
@@ -173,8 +173,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			throw new SystemException(t.getClass().getName() + " is not assignable from DBObject");
 		}
 		String ours = getNameSafe();
-		TableRow them = t;
-		String theirs = them.getNameSafe();
+		String theirs = t.getNameSafe();
 		return ours.compareTo(theirs);
 	}
 
@@ -196,8 +195,8 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 
 	private static class CacheElement {
-		public Object element;
-		public int expires;
+		public final Object element;
+		public final int expires;
 
 		public CacheElement(Object element, int expires) {
 			this.element = element;

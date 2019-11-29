@@ -26,8 +26,8 @@ import java.util.TreeSet;
  */
 public abstract class Module {
 
-	String name;
-	ModuleDefinition annotation;
+	final String name;
+	final ModuleDefinition annotation;
 
 
 	public Module(String name, ModuleDefinition annotation) {

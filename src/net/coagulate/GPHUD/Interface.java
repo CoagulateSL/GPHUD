@@ -48,8 +48,7 @@ public abstract class Interface implements HttpRequestHandler {
 		if (major>99) { throw new SystemException("Major version number too high"); }
 		if (minor>99) { throw new SystemException("Minor version number too high"); }
 		if (bugfix>99) { throw new SystemException("Bugfix version number too high"); }
-		int output=10000 * major + 100 * minor + bugfix;
-		return output;
+		return 10000 * major + 100 * minor + bugfix;
 	}
 
 	@Override

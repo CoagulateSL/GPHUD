@@ -9,8 +9,8 @@ package net.coagulate.GPHUD.Modules;
  * @author iain
  */
 public class KVValue {
-	private String value;
-	private String path;
+	private final String value;
+	private final String path;
 
 	public KVValue(String value, String path) {
 		this.value = value;

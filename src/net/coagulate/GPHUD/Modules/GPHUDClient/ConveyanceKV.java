@@ -9,7 +9,7 @@ import net.coagulate.GPHUD.Modules.KV;
  */
 public class ConveyanceKV extends KV {
 
-	String name;
+	final String name;
 
 	public ConveyanceKV(String attribute) {
 		this.name = attribute;

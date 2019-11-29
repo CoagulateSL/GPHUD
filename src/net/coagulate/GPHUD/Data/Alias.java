@@ -100,8 +100,7 @@ public class Alias extends TableRow {
 
 	public JSONObject getTemplate() throws SystemException {
 		String json = dqs(true, "select template from aliases where aliasid=?", getId());
-		JSONObject jsonobject = new JSONObject(json);
-		return jsonobject;
+		return new JSONObject(json);
 	}
 
 	public void setTemplate(JSONObject template) {

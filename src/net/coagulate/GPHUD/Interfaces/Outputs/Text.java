@@ -10,7 +10,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Text implements Renderable {
-	String content;
+	final String content;
 
 	public Text(String s) { content = s; }
 

@@ -36,7 +36,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	Integer recentvisits = 0;
 	Integer totalxp = 0;
 	List<String> groupheaders = new ArrayList<>();
-	Map<String, String> groups = new HashMap<>();
+	final Map<String, String> groups = new HashMap<>();
 
 	static String sortLink(String current, String link) {
 		if (link.equals(current)) { return "<a href=\"?sort=-" + link + "\">" + link + "</a> &darr;"; }
@@ -98,7 +98,6 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		if (!(o instanceof CharacterSummary)) {
 			throw new ClassCastException("Can not compare a CharacterSummary to a " + o.getClass().getCanonicalName());
 		}
-		CharacterSummary compareto = o;
-		return Integer.valueOf(id).compareTo(Integer.valueOf(compareto.id));
+		return Integer.valueOf(id).compareTo(Integer.valueOf(o.id));
 	}
 }

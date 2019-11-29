@@ -24,8 +24,8 @@ public class GSVM {
 	public int row=0;
 	public int column=0;
 	private int startPC=0;
-	public Stack<ByteCodeDataType> stack=new Stack<>();
-	Map<String,ByteCodeDataType> variables=new HashMap<>();
+	public final Stack<ByteCodeDataType> stack=new Stack<>();
+	final Map<String,ByteCodeDataType> variables=new HashMap<>();
 	String invokeonexit=null; public void invokeOnExit(String commandname) {invokeonexit=commandname;}
 	private void initialiseVM(State st) {
 		stack.clear();
@@ -172,7 +172,7 @@ public class GSVM {
 		return ret;
 	}
 
-	Map<Char,JSONObject> queue =new HashMap<>();
+	final Map<Char,JSONObject> queue =new HashMap<>();
 	private JSONObject getQueue(Char c) {
 		if (!queue.containsKey(c)) { queue.put(c,new JSONObject()); }
 		return queue.get(c);
@@ -305,7 +305,7 @@ public class GSVM {
 	}
 	public Response resume(State st) { return executeloop(st); }
 
-	Map<String,ByteCodeDataType> introductions=new HashMap<>();
+	final Map<String,ByteCodeDataType> introductions=new HashMap<>();
 	public void introduce(String target, ByteCodeDataType data) {
 		introductions.put(target,data);
 	}
@@ -313,8 +313,8 @@ public class GSVM {
 	public class ExecutionStep {
 		public int programcounter;
 		public String decode="";
-		public Stack<ByteCodeDataType> resultingstack=new Stack<>();
-		public Map<String,ByteCodeDataType> resultingvariables=new HashMap<>();
+		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
+		public final Map<String,ByteCodeDataType> resultingvariables=new HashMap<>();
 		public Throwable t=null;
 		public int IC=0;
 	}

@@ -74,7 +74,7 @@ public class TokenMgrError extends Error
           retval.append("\\\"");
           continue;
         case '\'':
-          retval.append("\\\'");
+          retval.append("\\'");
           continue;
         case '\\':
           retval.append("\\\\");

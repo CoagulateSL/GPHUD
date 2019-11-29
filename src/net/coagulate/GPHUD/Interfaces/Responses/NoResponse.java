@@ -14,8 +14,7 @@ public class NoResponse extends TextOK implements Response {
 
 	@Override
 	public JSONObject asJSON(State st) {
-		JSONObject j = new JSONObject();
-		return j;
+		return new JSONObject();
 	}
 
 	@Override

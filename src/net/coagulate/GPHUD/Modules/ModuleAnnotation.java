@@ -20,13 +20,13 @@ import java.util.TreeMap;
  */
 public class ModuleAnnotation extends Module {
 
-	protected Map<String, Pool> poolmap = new TreeMap<>();
-	protected Map<String, KV> kvmap = new TreeMap<>();
+	protected final Map<String, Pool> poolmap = new TreeMap<>();
+	protected final Map<String, KV> kvmap = new TreeMap<>();
 	SideMenu sidemenu = null;
-	Map<String, Permission> permissions = new TreeMap<>();
-	Set<SideSubMenu> sidemenus = new HashSet<>();
-	Map<String, Command> commands = new TreeMap<>();
-	Set<URL> contents = new HashSet<>();
+	final Map<String, Permission> permissions = new TreeMap<>();
+	final Set<SideSubMenu> sidemenus = new HashSet<>();
+	final Map<String, Command> commands = new TreeMap<>();
+	final Set<URL> contents = new HashSet<>();
 	private boolean generated = true;
 	public ModuleAnnotation(String name, ModuleDefinition def) throws SystemException, UserException {
 		super(name, def);

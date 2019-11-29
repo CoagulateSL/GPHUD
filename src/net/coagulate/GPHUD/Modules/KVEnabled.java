@@ -7,8 +7,8 @@ package net.coagulate.GPHUD.Modules;
  */
 public class KVEnabled extends KV {
 
-	Module module;
-	String def;
+	final Module module;
+	final String def;
 
 	public KVEnabled(Module m, String def) {
 		this.module = m;

@@ -12,8 +12,8 @@ import java.util.Set;
  */
 public class Button extends Input {
 
-	String name;
-	String value;
+	final String name;
+	final String value;
 	boolean borderless = false;
 
 	//public boolean pressed() { if (getValue()==null || getValue().isEmpty()) { return false; } return true; }

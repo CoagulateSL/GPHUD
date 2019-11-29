@@ -22,7 +22,7 @@ import static java.util.logging.Level.SEVERE;
  * @author iain
  */
 public abstract class Modules {
-	static Map<String, Module> modules = new TreeMap<>();
+	static final Map<String, Module> modules = new TreeMap<>();
 
 	static void register(Module mod) throws SystemException {
 		String name = mod.getName();
@@ -111,8 +111,7 @@ public abstract class Modules {
 			throw new UserException("Invalid format, must be module.reference but we received " + qualified);
 		}
 		extractModule(qualified); // validates the module
-		String reference = parts[1];
-		return reference;
+		return parts[1];
 	}
 
 	// validate a KV mapping exists
@@ -250,8 +249,7 @@ public abstract class Modules {
 				}
 			}
 		}
-		Response response = c.run(st, parameters);
-		return response;
+		return c.run(st, parameters);
 	}
 
 

@@ -62,7 +62,7 @@ public class ObjectManagement {
 	}
 
 	@URL.URLs(url="/configuration/objects/createtype",requiresPermission="Objects.ObjectTypes")
-	public static void createObjectType(State st,SafeMap map) throws RedirectException {
+	public static void createObjectType(State st,SafeMap map) {
 		if (map.get("Create").equalsIgnoreCase("Create")) {
 			JSONObject jsonbase=new JSONObject();
 			jsonbase.put("behaviour",map.get("behaviour"));

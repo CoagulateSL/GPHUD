@@ -25,7 +25,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Instance extends TableRow {
 
-	private static Map<String, Integer> laststatused = new TreeMap<>(); // naughty, static data, but thats okay really for this
+	private static final Map<String, Integer> laststatused = new TreeMap<>(); // naughty, static data, but thats okay really for this
 
 	protected Instance(int id) { super(id); }
 
@@ -360,7 +360,6 @@ public class Instance extends TableRow {
 	 *
 	 * @param st Session state, from which sorting will be read via the URI, and instance will be used.
 	 * @return A list of CharacterSummary objects
-	 * @see CharacterSummary
 	 */
 	public List<CharacterSummary> getCharacterSummary(State st) {
 		String sortby = st.getDebasedURL().replaceAll("%20", " ");

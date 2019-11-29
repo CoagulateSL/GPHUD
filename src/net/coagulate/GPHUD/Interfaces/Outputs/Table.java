@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Table implements Renderable {
-	List<Row> table = new ArrayList<>();
+	final List<Row> table = new ArrayList<>();
 	boolean border = false;
 	Row openrow = null;
 	private boolean nowrap = false;

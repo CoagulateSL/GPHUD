@@ -26,9 +26,9 @@ import java.util.List;
  */
 public class AliasCommand extends Command {
 
-	JSONObject definition;
-	Command targetcommand;
-	String name;
+	final JSONObject definition;
+	final Command targetcommand;
+	final String name;
 	String fail = "";
 
 	public AliasCommand(State st, String name, JSONObject newdef) throws UserException, SystemException {

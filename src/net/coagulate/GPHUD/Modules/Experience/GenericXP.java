@@ -10,7 +10,7 @@ import net.coagulate.GPHUD.State;
  * @author Iain Price <gphud@predestined.net>
  */
 public class GenericXP extends QuotaedXP {
-	private String myname;
+	private final String myname;
 
 	public GenericXP(String name) {
 		super(-1);

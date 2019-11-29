@@ -12,9 +12,9 @@ import java.lang.reflect.Method;
  * @author Iain Price <gphud@predestined.net>
  */
 public class SideSubMenuAnnotation extends SideSubMenu {
-	SideSubMenus meta;
-	Method method;
-	URL url;
+	final SideSubMenus meta;
+	final Method method;
+	final URL url;
 	private boolean generated = true;
 
 	public SideSubMenuAnnotation(Method m) throws UserException, SystemException {

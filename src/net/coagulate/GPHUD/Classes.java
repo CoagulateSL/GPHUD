@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public abstract class Classes {
 
-	private static boolean LOGREGISTERS = false;
+	private static final boolean LOGREGISTERS = false;
 	private static Logger log = null;
 
 	// Start recursing through the elements in the classpath.  So many exceptions returned!

@@ -83,7 +83,7 @@ public class Attribute extends TableRow {
 
 	static void create(Instance instance, String name, Boolean selfmodify, String attributetype, String grouptype, Boolean usesabilitypoints, Boolean required, String defaultvalue) {
 		// =)
-		if (defaultvalue != null && "".equals(defaultvalue)) { defaultvalue = null; }
+		if ("".equals(defaultvalue)) { defaultvalue = null; }
 		GPHUD.getDB().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
 				instance.getId(), name, selfmodify, attributetype, grouptype, usesabilitypoints, required, defaultvalue);
 	}

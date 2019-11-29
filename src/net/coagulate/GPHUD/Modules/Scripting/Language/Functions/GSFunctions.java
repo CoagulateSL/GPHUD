@@ -28,7 +28,7 @@ public class GSFunctions {
 		String notes();
 	}
 
-	private static Map<String, Method> gsfunctions=new HashMap<>();
+	private static final Map<String, Method> gsfunctions=new HashMap<>();
 	public static void register(String string,Method method) {
 		if (gsfunctions.containsKey(string)) { throw new SystemException("Duplicate definition for gsFunction "+string); }
 		gsfunctions.put(string,method);

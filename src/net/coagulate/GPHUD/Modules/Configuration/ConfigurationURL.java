@@ -14,8 +14,8 @@ import net.coagulate.GPHUD.State;
  */
 public class ConfigurationURL extends URL {
 
-	String name;
-	String url;
+	final String name;
+	final String url;
 	public ConfigurationURL(String name, String url) {
 		this.name = name;
 		this.url = url;

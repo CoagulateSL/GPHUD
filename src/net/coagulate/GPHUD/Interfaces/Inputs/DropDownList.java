@@ -16,8 +16,8 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class DropDownList extends Input {
-	String name;
-	Map<String, String> choices = new TreeMap<>();
+	final String name;
+	final Map<String, String> choices = new TreeMap<>();
 
 	public DropDownList(String name) {
 		this.name = name;

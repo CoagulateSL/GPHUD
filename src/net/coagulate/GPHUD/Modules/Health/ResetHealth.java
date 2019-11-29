@@ -110,8 +110,7 @@ public class ResetHealth {
 		event += "for " + reason;
 		Damage.heal(st, target, total, reason);
 		event += " - Health now " + st.getRawKV(target, "Health.Health");
-		SayResponse say = new SayResponse(event, st.getCharacter().getName());
-		return say;
+		return new SayResponse(event, st.getCharacter().getName());
 	}
 
 }

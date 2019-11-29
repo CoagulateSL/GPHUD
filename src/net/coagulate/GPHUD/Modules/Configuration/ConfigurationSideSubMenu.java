@@ -10,7 +10,7 @@ import net.coagulate.GPHUD.Modules.SideSubMenu;
  */
 public class ConfigurationSideSubMenu extends SideSubMenu {
 	int priority = 999;
-	Module m;
+	final Module m;
 
 	public ConfigurationSideSubMenu(Module m) {
 		this.m = m;

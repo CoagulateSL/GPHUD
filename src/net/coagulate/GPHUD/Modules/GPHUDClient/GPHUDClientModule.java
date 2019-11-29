@@ -20,7 +20,7 @@ import java.util.TreeMap;
  */
 public class GPHUDClientModule extends ModuleAnnotation {
 
-	Map<String, KV> base = new TreeMap<>();
+	final Map<String, KV> base = new TreeMap<>();
 
 	public GPHUDClientModule(String name, ModuleDefinition def) throws SystemException, UserException {
 		super(name, def);

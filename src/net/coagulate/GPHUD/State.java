@@ -44,7 +44,7 @@ public class State extends DumpableState {
 	// system interface puts input here
 	public JSONObject json = null;
 	// system interface sets to raw json string
-	public String jsoncommand = null;
+	public final String jsoncommand = null;
 	public InetAddress address = null;
 
 	public Header[] headers = null;
@@ -93,7 +93,7 @@ public class State extends DumpableState {
 	private Char character = null;
 	private Boolean superuser = null;
 	private Boolean instanceowner = null;
-	private Map<TableRow, Map<String, String>> kvmaps = new HashMap<>();
+	private final Map<TableRow, Map<String, String>> kvmaps = new HashMap<>();
 
 	public State() {}
 
@@ -603,8 +603,7 @@ public class State extends DumpableState {
 		if (target == null) { throw new SystemException("Can not get kv " + kvname + " for null target"); }
 		KV kv = getKVDefinition(kvname);
 		if (kv == null) { throw new UserException("Failed to resolve " + kvname + " to a valid KV entity"); }
-		String value = getKVMap(target).get(kvname.toLowerCase());
-		return value;
+		return getKVMap(target).get(kvname.toLowerCase());
 	}
 
 	public String getKV(TableRow target, String kvname) {
@@ -624,8 +623,7 @@ public class State extends DumpableState {
 		}
 		String out;
 		try { out = Templater.template(this, s, evaluate, isint); } catch (Exception e) {
-			UserException ue = new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
-			throw ue;
+			throw new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
 		}
 		if (kv.type()== COLOR) {
 			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }

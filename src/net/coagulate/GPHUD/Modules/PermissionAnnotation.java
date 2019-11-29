@@ -9,7 +9,7 @@ import net.coagulate.GPHUD.State;
  * @author Iain Price <gphud@predestined.net>
  */
 public class PermissionAnnotation extends Permission {
-	Permissions meta;
+	final Permissions meta;
 	private boolean generated = true;
 	private String modulename=null;
 
