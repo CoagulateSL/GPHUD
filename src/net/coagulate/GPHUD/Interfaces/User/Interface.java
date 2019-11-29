@@ -246,9 +246,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			priorities.put(s.priority(), set);
 		}
 		// enumerate the priorities
-		for (Integer pri : priorities.keySet()) {
+		for (Set<SideSubMenu> sideSubMenus : priorities.values()) {
 			// enumerate the SideMenus
-			for (SideSubMenu s : priorities.get(pri)) {
+			for (SideSubMenu s : sideSubMenus) {
 				String u = s.getURL();
 				ret += "&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;<a href=\"/GPHUD" + u + "\">" + s.name() + "</a><br>";
 			}
@@ -281,9 +281,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			}
 		}
 		// enumerate the priorities
-		for (Integer pri : priorities.keySet()) {
+		for (Set<SideMenu> sideMenus : priorities.values()) {
 			// enumerate the SideMenus
-			for (SideMenu menu : priorities.get(pri)) {
+			for (SideMenu menu : sideMenus) {
 				String url = menu.url();
 				String name = menu.name();
 				r += "<a href=\"/GPHUD" + url + "\">" + name + "</a><br>";

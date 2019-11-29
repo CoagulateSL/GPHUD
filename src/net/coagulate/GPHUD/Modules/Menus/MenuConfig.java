@@ -29,8 +29,8 @@ public abstract class MenuConfig {
 		Form f = st.form;
 		f.add(new TextSubHeader("Dialog menu configuration"));
 		Map<String, Integer> menus = Menus.getMenusMap(st);
-		for (String name : menus.keySet()) {
-			f.add("<a href=\"./menus/view/" + menus.get(name) + "\">" + name + "</a><br>");
+		for (Map.Entry<String, Integer> entry : menus.entrySet()) {
+			f.add("<a href=\"./menus/view/" + entry.getValue() + "\">" + entry.getKey() + "</a><br>");
 		}
 		if (st.hasPermission("Menus.Config")) {
 			f.add("<br><a href=\"./menus/create\">Create new menu</a><br>");

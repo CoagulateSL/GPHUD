@@ -77,7 +77,7 @@ public class Groups extends Publishing {
 			String sortby=type+group.getName();
 			grouprows.put(sortby,line);
 		}
-		for (String k:grouprows.keySet()) { st.form.add(grouprows.get(k)); }
+		for (String s : grouprows.values()) { st.form.add(s); }
 		st.form.add("</table>");
 		contentResizer(st);
 	}
@@ -95,7 +95,7 @@ public class Groups extends Publishing {
 			userline+="</tr>";
 			charrows.put(sortby,userline);
 		}
-		for (String k:charrows.keySet()) { line+=charrows.get(k); }
+		for (String s : charrows.values()) { line+= s; }
 		return line;
 	}
 

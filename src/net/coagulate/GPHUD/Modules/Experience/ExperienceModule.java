@@ -100,9 +100,9 @@ public class ExperienceModule extends ModuleAnnotation {
 	@Override
 	public Permission getPermission(State st, String itemname) {
 		Map<String, Permission> perms = getPermissions(st);
-		for (String s : perms.keySet()) {
-			if (s.equalsIgnoreCase(itemname)) {
-				return perms.get(s);
+		for (Map.Entry<String, Permission> entry : perms.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase(itemname)) {
+				return entry.getValue();
 			}
 		}
 		return super.getPermission(st, itemname);
@@ -125,8 +125,8 @@ public class ExperienceModule extends ModuleAnnotation {
 	@Override
 	public Pool getPool(State st, String itemname) {
 		Map<String, Pool> pmap = getPoolMap(st);
-		for (String name : pmap.keySet()) {
-			if (name.equalsIgnoreCase(itemname)) { return pmap.get(name); }
+		for (Map.Entry<String, Pool> entry : pmap.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
 		}
 		throw new SystemException("Unable to retrieve pool " + itemname);
 	}
@@ -137,7 +137,7 @@ public class ExperienceModule extends ModuleAnnotation {
 			return kvmap.get(qualifiedname.toLowerCase());
 		}
 		Map<String, KV> map = getKVDefinitions(st);
-		for (String s : map.keySet()) { if ((s).equalsIgnoreCase(qualifiedname)) { return map.get(s); } }
+		for (Map.Entry<String, KV> entry : map.entrySet()) { if (entry.getKey().equalsIgnoreCase(qualifiedname)) { return entry.getValue(); } }
 		throw new SystemException("Invalid KV " + qualifiedname + " in module " + getName());
 	}
 

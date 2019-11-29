@@ -41,8 +41,8 @@ public abstract class URLHandlers {
 				output.put(url.url(), writeup);
 			}
 		}
-		for (String url : output.keySet()) {
-			t.add(output.get(url));
+		for (Row row : output.values()) {
+			t.add(row);
 		}
 	}
 }

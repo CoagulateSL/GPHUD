@@ -26,8 +26,9 @@ public class MenuModule extends ModuleAnnotation {
 	public Map<String, Command> getCommands(State st) throws UserException, SystemException {
 		Map<String, Command> commands = new TreeMap<>();
 		Map<String, JSONObject> templates = Menus.getTemplates(st);
-		for (String name : templates.keySet()) {
-			commands.put(name, new MenuCommand(st, name, templates.get(name)));
+		for (Map.Entry<String, JSONObject> entry : templates.entrySet()) {
+			String name = entry.getKey();
+			commands.put(name, new MenuCommand(st, name, entry.getValue()));
 		}
 		return commands;
 	}

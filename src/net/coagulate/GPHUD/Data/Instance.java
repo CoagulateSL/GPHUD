@@ -644,9 +644,10 @@ public class Instance extends TableRow {
 				}
 			}
 		}
-		for (Region region : buffer.keySet()) {
-			if (debug) { System.out.println("PUSHREGION " + region + " : " + buffer.get(region)); }
-			region.sendServer(buffer.get(region));
+		for (Map.Entry<Region, JSONObject> entry : buffer.entrySet()) {
+			Region region = entry.getKey();
+			if (debug) { System.out.println("PUSHREGION " + region + " : " + entry.getValue()); }
+			region.sendServer(entry.getValue());
 		}
 	}
 

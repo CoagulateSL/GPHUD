@@ -134,10 +134,10 @@ public abstract class Module {
 	public Map<String, KV> getKVAppliesTo(State st, TableRow dbo) {
 		Map<String, KV> fullset = getKVDefinitions(st);
 		Map<String, KV> filtered = new TreeMap<>();
-		for (String k : fullset.keySet()) {
-			KV v = fullset.get(k);
+		for (Map.Entry<String, KV> entry : fullset.entrySet()) {
+			KV v = entry.getValue();
 			if (v.appliesTo(dbo)) {
-				filtered.put(k, v);
+				filtered.put(entry.getKey(), v);
 			}
 		}
 		return filtered;

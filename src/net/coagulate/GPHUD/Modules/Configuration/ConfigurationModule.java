@@ -41,8 +41,8 @@ public class ConfigurationModule extends ModuleAnnotation {
 				}
 			}
 			int priority = 1;
-			for (String name : map.keySet()) {
-				((ConfigurationSideSubMenu) map.get(name)).setPriority(priority);
+			for (SideSubMenu sideSubMenu : map.values()) {
+				((ConfigurationSideSubMenu) sideSubMenu).setPriority(priority);
 				priority++;
 			}
 		}

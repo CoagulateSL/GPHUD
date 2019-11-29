@@ -14,6 +14,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCode;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCodeDataType;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSCompiler;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.GSParser;
@@ -26,6 +27,7 @@ import net.coagulate.GPHUD.State;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.RESULTS;
 import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULATION;
@@ -250,12 +252,12 @@ public class ScriptingConfig {
 					step.resultingstack.get(i).htmlDecode() + "</td></tr>";
 		}
 		output += "</table></td><td><table>";
-		for (String k : step.resultingvariables.keySet()) {
+		for (Map.Entry<String, ByteCodeDataType> entry : step.resultingvariables.entrySet()) {
 			String decode = "???";
-			if (step.resultingvariables.get(k) != null) {
-				decode = step.resultingvariables.get(k).htmlDecode();
+			if (entry.getValue() != null) {
+				decode = entry.getValue().htmlDecode();
 			}
-			output += "<tr><th>" + k + "</th><td>" +
+			output += "<tr><th>" + entry.getKey() + "</th><td>" +
 					decode + "</td></tr>";
 		}
 		output += "</table></td></tr>";

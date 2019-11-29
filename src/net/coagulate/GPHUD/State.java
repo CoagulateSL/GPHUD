@@ -455,9 +455,7 @@ public class State extends DumpableState {
 			for (Event e : instance.getActiveEvents()) {
 				eventmap.put(e.getId(), e);
 			}
-			for (Integer id : eventmap.keySet()) {
-				check.add(eventmap.get(id));
-			}
+			check.addAll(eventmap.values());
 		}
 		// charactergroups in ID order
 		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.NONSPATIAL) {
@@ -466,9 +464,7 @@ public class State extends DumpableState {
 				for (CharacterGroup c : character.getGroups()) {
 					map.put(c.getId(), c);
 				}
-				for (Integer id : map.keySet()) {
-					check.add(map.get(id));
-				}
+				check.addAll(map.values());
 			}
 		}
 		//character

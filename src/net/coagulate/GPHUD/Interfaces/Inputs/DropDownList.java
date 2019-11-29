@@ -48,10 +48,11 @@ public class DropDownList extends Input {
 		r += "<select name=\"" + name + "\"";
 		if (submitonchange) { r+="onchange=\"this.form.submit()\""; }
 		r+=">";
-		for (String option : choices.keySet()) {
+		for (Map.Entry<String, String> entry : choices.entrySet()) {
+			String option = entry.getKey();
 			r += "<option value=\"" + option + "\"";
 			if (option.equalsIgnoreCase(value)) { r += " selected"; }
-			r += ">" + choices.get(option) + "</option>";
+			r += ">" + entry.getValue() + "</option>";
 		}
 		r += "</select>";
 		return r;

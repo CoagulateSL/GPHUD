@@ -38,7 +38,7 @@ public class GSVM {
 		simulation=false;
 		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
 		variables.put("AVATAR",new BCAvatar(null,st.getAvatar()));
-		for (String k:introductions.keySet()) { variables.put(k,introductions.get(k)); }
+		for (Map.Entry<String, ByteCodeDataType> entry : introductions.entrySet()) { variables.put(entry.getKey(), entry.getValue()); }
 	}
 
 	public ByteCodeDataType get(String k) { return variables.get(k); }
@@ -153,9 +153,9 @@ public class GSVM {
 		}
 		ret+="</table>";
 		ret+="<h3>Variable store</h3><br><table>";
-		for (String k:variables.keySet()) {
-			ret+="<tr><th>"+k+"</th>";
-			ByteCodeDataType value = variables.get(k);
+		for (Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
+			ret+="<tr><th>"+ entry.getKey() +"</th>";
+			ByteCodeDataType value = entry.getValue();
 			ret+="<td>"+value.getClass().getSimpleName()+"</td><td>"+value.explain()+"</td></tr>";
 		}
 		ret+="</table>";
@@ -258,8 +258,8 @@ public class GSVM {
 		if (simulation) { return; }
 		suspended=true;
 		List<ByteCode> initlist = new ArrayList<>(stack);
-		for (String k:variables.keySet()) {
-			ByteCodeDataType bcd=variables.get(k);
+		for (Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
+			ByteCodeDataType bcd= entry.getValue();
 			if (!bcd.getClass().equals(BCList.class)) {
 				initlist.add(bcd);
 			} else {
@@ -267,7 +267,7 @@ public class GSVM {
 				initlist.addAll(list.getContent());
 				initlist.add(list);
 			}
-			initlist.add(new BCString(null,k));
+			initlist.add(new BCString(null, entry.getKey()));
 			initlist.add(new BCInitialise(null));
 		}
 
@@ -329,10 +329,10 @@ public class GSVM {
 				frame.decode = instruction.htmlDecode();
 				instruction.execute(st, this,true);
 				for (int i=0;i<stack.size();i++) { frame.resultingstack.push(stack.elementAt(i).clone()); }
-				for (String k:variables.keySet()) {
+				for (Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
 					ByteCodeDataType clone = null;
-					if (variables.get(k)!=null) { clone=variables.get(k).clone(); }
-					frame.resultingvariables.put(k,clone);
+					if (entry.getValue() !=null) { clone= entry.getValue().clone(); }
+					frame.resultingvariables.put(entry.getKey(),clone);
 				}
 				frame.IC=IC;
 				simulationsteps.add(frame);

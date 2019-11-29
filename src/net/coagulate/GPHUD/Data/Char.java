@@ -498,11 +498,11 @@ public class Char extends TableRow {
 		int overshoot = awarded - maxxp;
 		if (overshoot < 0) { return now; }
 		int datefilled = 0;
-		for (int at : when.keySet()) {
-			int ammount = when.get(at);
+		for (Map.Entry<Integer, Integer> entry : when.entrySet()) {
+			int ammount = entry.getValue();
 			overshoot -= ammount;
 			if (overshoot < 0) {
-				return (int) (at + (days * 60 * 60 * 24));
+				return (int) (entry.getKey() + (days * 60 * 60 * 24));
 			}
 		}
 		return now;
@@ -668,8 +668,9 @@ public class Char extends TableRow {
 		boolean debug = false;
 		validate(st);
 		Map<KV, String> oldconveyances = loadConveyances(st);
-		for (KV kv : oldconveyances.keySet()) {
-			String oldvalue = oldconveyances.get(kv);
+		for (Map.Entry<KV, String> entry : oldconveyances.entrySet()) {
+			KV kv = entry.getKey();
+			String oldvalue = entry.getValue();
 			String newvalue = st.getKV(kv.fullname()).value();
 			payload.put(kv.conveyas(), newvalue); // always put in init
 			if (!oldvalue.equals(newvalue)) {
@@ -689,8 +690,9 @@ public class Char extends TableRow {
 		boolean debug = false;
 		validate(st);
 		Map<KV, String> oldconveyances = loadConveyances(st);
-		for (KV kv : oldconveyances.keySet()) {
-			String oldvalue = oldconveyances.get(kv);
+		for (Map.Entry<KV, String> entry : oldconveyances.entrySet()) {
+			KV kv = entry.getKey();
+			String oldvalue = entry.getValue();
 			if (debug) { System.out.println("Append conveyance " + kv.fullname()); }
 			String newvalue = st.getKV(kv.fullname()).value();
 			if (!oldvalue.equals(newvalue)) {

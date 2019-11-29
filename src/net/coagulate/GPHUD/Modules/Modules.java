@@ -38,9 +38,7 @@ public abstract class Modules {
 	 * @return
 	 */
 	public static List<Module> getModules() {
-		List<Module> set = new ArrayList<>();
-		for (String name : modules.keySet()) { set.add(modules.get(name)); }
-		return set;
+		return new ArrayList<>(modules.values());
 	}
 
 	/**
@@ -305,9 +303,7 @@ public abstract class Modules {
 		for (Module m : getModules()) {
 			if (m.isEnabled(st)) {
 				Map<String, KV> getkvs = m.getKVDefinitions(st);
-				for (String s : getkvs.keySet()) {
-					kvs.add(getkvs.get(s));
-				}
+				kvs.addAll(getkvs.values());
 			}
 		}
 		return kvs;
