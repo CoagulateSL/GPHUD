@@ -98,6 +98,6 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		if (!(o instanceof CharacterSummary)) {
 			throw new ClassCastException("Can not compare a CharacterSummary to a " + o.getClass().getCanonicalName());
 		}
-		return Integer.valueOf(id).compareTo(o.id);
+		return Integer.compare(id, o.id);
 	}
 }

@@ -119,11 +119,11 @@ public class GSVM {
 		return executeloop(st);
 	}
 	private Response executeloop(State st) {
-		ExecutionStep currentstep=new ExecutionStep();
+		ExecutionStep currentstep= new ExecutionStep();
 		try {
 			while (PC<bytecode.length && !suspended) {
 				increaseIC();
-				currentstep=new ExecutionStep();
+				currentstep= new ExecutionStep();
 				startPC=PC;
 				ByteCode.load(this).execute(st,this,false);
 			}
@@ -310,7 +310,7 @@ public class GSVM {
 		introductions.put(target,data);
 	}
 
-	public class ExecutionStep {
+	public static class ExecutionStep {
 		public int programcounter;
 		public String decode="";
 		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
@@ -343,7 +343,7 @@ public class GSVM {
 				simulationsteps.add(frame);
 			}
 		} catch (Throwable e) {
-			ExecutionStep step=new ExecutionStep();
+			ExecutionStep step= new ExecutionStep();
 			step.t=e;
 			step.decode=at();
 			simulationsteps.add(step);
