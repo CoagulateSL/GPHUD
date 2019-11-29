@@ -39,7 +39,7 @@ public class BCInvoke extends ByteCode {
 		if (!parameters[1].equals(GSVM.class)) { throw new GSInternalError("Second parameter to function "+functionname+" must be the GSVM"); }
 		// any arguments?
 		if (argcount!=0 || parameters.length!=2) {
-			if (parameters.length==3 && parameters[2].equals(new ByteCodeDataType[0].getClass())) {
+			if (parameters.length==3 && parameters[2].equals(ByteCodeDataType[].class)) {
 				// yes and the 3rd parameter catches them all (varargs style)
 				Object[] pass={st,vm,args};
 				invoke(st,vm,function,pass);

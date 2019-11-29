@@ -41,8 +41,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String, KV> getKVDefinitions(State st) {
-		Map<String, KV> kv = new TreeMap<>();
-		kv.putAll(base); // anotation defined KVs for us.
+		Map<String, KV> kv = new TreeMap<>(base); // anotation defined KVs for us.
 		// note we must NOT use modules.getallKVs() (ok thats not its name) because it will come back through here and thus infinite loop.
 		// instead we'll enumerate the modules other than ourselves, and then deal with ourselves.
 		for (Module m : Modules.getModules()) {

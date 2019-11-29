@@ -110,8 +110,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String, Pool> getPoolMap(State st) {
-		Map<String, Pool> pools = new HashMap<>();
-		pools.putAll(poolmap);
+		Map<String, Pool> pools = new HashMap<>(poolmap);
 		if (st != null) {
 			if (st.getInstanceNullable() == null) { return pools; }
 			for (Attribute attr : st.getAttributes()) {
@@ -144,8 +143,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String, KV> getKVDefinitions(State st) {
-		Map<String, KV> map = new TreeMap<>();
-		map.putAll(kvmap);
+		Map<String, KV> map = new TreeMap<>(kvmap);
 		if (st.getInstanceNullable() == null) { return map; }
 		for (Attribute attr : st.getAttributes()) {
 			if (attr.getType() == EXPERIENCE) {

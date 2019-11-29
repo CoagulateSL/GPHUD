@@ -31,8 +31,7 @@ public abstract class Templater {
 	}
 
 	public static Map<String, String> getTemplates(State st) {
-		Map<String, String> ret = new TreeMap<>();
-		ret.putAll(templates);
+		Map<String, String> ret = new TreeMap<>(templates);
 		for (Module m : Modules.getModules()) {
 			m.addTemplateDescriptions(st, ret);
 		}
@@ -40,8 +39,7 @@ public abstract class Templater {
 	}
 
 	public static Map<String, Method> getMethods(State st) {
-		Map<String, Method> ret = new TreeMap<>();
-		ret.putAll(methods);
+		Map<String, Method> ret = new TreeMap<>(methods);
 		for (Module m : Modules.getModules()) {
 			m.addTemplateMethods(st, ret);
 		}

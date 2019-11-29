@@ -445,8 +445,7 @@ public class Instance extends TableRow {
 				records.add(cs);
 				sorted.put(value, records);
 			}
-			List<String> sortedkeys = new ArrayList<>();
-			sortedkeys.addAll(sorted.keySet());
+			List<String> sortedkeys = new ArrayList<>(sorted.keySet());
 			if (reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
 				Collections.sort(sortedkeys);
 			}
@@ -470,8 +469,7 @@ public class Instance extends TableRow {
 				records.add(cs);
 				sorted.put(value, records);
 			}
-			List<Integer> sortedkeys = new ArrayList<>();
-			sortedkeys.addAll(sorted.keySet());
+			List<Integer> sortedkeys = new ArrayList<>(sorted.keySet());
 			if (!reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
 				Collections.sort(sortedkeys);
 			} // note reverse is reversed for numbers
