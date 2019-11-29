@@ -114,7 +114,7 @@ public abstract class Module {
 			return !defaultDisable();
 		}
 		if (debug) { System.out.println("Return value " + enabled); }
-		return Boolean.valueOf(enabled);
+		return Boolean.parseBoolean(enabled);
 	}
 
 	public abstract Map<String, Permission> getPermissions(State st);
