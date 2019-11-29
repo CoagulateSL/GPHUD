@@ -31,7 +31,7 @@ public abstract class URLHandlers {
 		Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("URL").add("Method"));
-		Map<String, Row> output = new TreeMap<>();
+		Map<String, Row> output = new TreeMap<String, Row>();
 		for (Module module : Modules.getModules()) {
 			for (URL url : module.getAllContents(st)) {
 				Row writeup = new Row();
