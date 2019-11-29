@@ -138,9 +138,7 @@ public class GPHUD {
 	}
 
 	public static void loadConfig(String filename) {
-		BufferedReader file = null;
-		try {
-			file = new BufferedReader(new FileReader(filename));
+		try (BufferedReader file = new BufferedReader(new FileReader(filename))) {
 			String line = file.readLine();
 			while (line != null) {
 				line = line.trim();
@@ -168,8 +166,6 @@ public class GPHUD {
 		} catch (IOException e) {
 			log.log(SEVERE, "IOException reading configuration file " + filename, e);
 			System.exit(1);
-		} finally {
-			try { if (file != null) { file.close(); } } catch (IOException e) {}
 		}
 	}
 

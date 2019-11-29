@@ -447,7 +447,7 @@ public class Instance extends TableRow {
 			}
 			List<String> sortedkeys = new ArrayList<>();
 			sortedkeys.addAll(sorted.keySet());
-			if (reverse) { Collections.sort(sortedkeys, Collections.reverseOrder()); } else {
+			if (reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
 				Collections.sort(sortedkeys);
 			}
 			for (String key : sortedkeys) {
@@ -472,7 +472,7 @@ public class Instance extends TableRow {
 			}
 			List<Integer> sortedkeys = new ArrayList<>();
 			sortedkeys.addAll(sorted.keySet());
-			if (!reverse) { Collections.sort(sortedkeys, Collections.reverseOrder()); } else {
+			if (!reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
 				Collections.sort(sortedkeys);
 			} // note reverse is reversed for numbers
 			// default is biggest at top, smallest at bottom, which is reverse order as the NORMAL order.   alphabetic is a-z so forward order for the NORMAL order....
