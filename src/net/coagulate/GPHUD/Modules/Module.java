@@ -88,7 +88,7 @@ public abstract class Module {
 		if (requires(st).isEmpty()) { return true; }
 		String[] deps = requires(st).split(",");
 		for (String dep : deps) {
-			if (Modules.get(null, dep).isEnabled(st) == false) { return false; }
+			if (!Modules.get(null, dep).isEnabled(st)) { return false; }
 		}
 		return true;
 	}
@@ -114,7 +114,7 @@ public abstract class Module {
 			return !defaultDisable();
 		}
 		if (debug) { System.out.println("Return value " + enabled); }
-		return new Boolean(enabled);
+		return Boolean.valueOf(enabled);
 	}
 
 	public abstract Map<String, Permission> getPermissions(State st);

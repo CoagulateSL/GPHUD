@@ -102,7 +102,7 @@ public class GPHUD {
 		syncToMinute();
 		log.info("Main thread entering maintenance loop.");
 
-		while (1 == 1) // until shutdown time, however we do that
+		while (true) // until shutdown time, however we do that
 		{
 			try {
 				Maintenance thread = new Maintenance();

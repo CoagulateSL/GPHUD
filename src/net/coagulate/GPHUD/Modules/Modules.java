@@ -205,7 +205,7 @@ public abstract class Modules {
 			return new ErrorResponse("Unable to find command '" + command + "' - " + e.getLocalizedMessage());
 		}
 		if (c == null) { return new ErrorResponse("Failed to find command " + command); }
-		if (c.permitConsole() == false) {
+		if (!c.permitConsole()) {
 			return new ErrorResponse("Command '" + command + "' can not be called from the console");
 		}
 		SafeMap parameters = new SafeMap();

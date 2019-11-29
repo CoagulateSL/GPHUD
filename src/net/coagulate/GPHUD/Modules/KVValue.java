@@ -24,11 +24,11 @@ public class KVValue {
 	public String toString() { return value(); }
 
 	public Integer intValue() {
-		return new Integer(value());
+		return Integer.valueOf(value());
 	}
 
 	public Float floatValue() {
-		return new Float(value());
+		return new Float.valueOf(value());
 	}
 
 	public boolean boolValue() {

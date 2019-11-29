@@ -137,7 +137,7 @@ public class GSVM {
 		}
 		st.vm=null;
 		JSONObject json = dequeue(st, st.getCharacter()).asJSON(st);
-		if (invokeonexit!=null && suspended==false) {
+		if (invokeonexit!=null && !suspended) {
 			json.put("incommand", "runtemplate");
 			json.put("args", "0");
 			json.put("invoke", invokeonexit);
@@ -355,7 +355,7 @@ public class GSVM {
 		int a=bytecode[PC] & 0xff;
 		int b=bytecode[PC+1] & 0xff;
 		int c=bytecode[PC+2] & 0xff;
-		int d=bytecode[PC+3]&0xff & 0xff;
+		int d= bytecode[PC + 3] & 0xff;
 		int ret=(a<<24)+(b<<16)+(c<<8)+d;
 		//System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
 		PC+=4;

@@ -234,7 +234,7 @@ public class AttributeConfig {
 			                                       Boolean confirm
 	) {
 		attribute.validate(st);
-		if (confirm == false) { return new ErrorResponse("You did not confirm the operation"); }
+		if (!confirm) { return new ErrorResponse("You did not confirm the operation"); }
 		attribute.delete();
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Attribute/DELETE", attribute.getName(), null, null, "Avatar DELETED ATTRIBUTE ENTIRELY");
 		return new OKResponse("Attribute and attached data has been DELETED");

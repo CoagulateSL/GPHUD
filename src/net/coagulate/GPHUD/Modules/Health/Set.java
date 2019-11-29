@@ -19,10 +19,10 @@ public class Set {
 	                           )
 	{
 		// is this command enabled?
-		if (st.getKV("Health.allowSelfSet").boolValue()==false) {
+		if (!st.getKV("Health.allowSelfSet").boolValue()) {
 			return new ErrorResponse("Administration has not enabled this command at this instance.");
 		}
-		if (st.getKV("Health.allowNegative").boolValue()==false && target<0) {
+		if (!st.getKV("Health.allowNegative").boolValue() && target<0) {
 			return new ErrorResponse("You can not set your health to a negative value");
 		}
 		if (target>st.getKV("Health.initialHealth").intValue()) {

@@ -218,14 +218,14 @@ public abstract class Command {
 						break;
 					case INTEGER:
 						try {
-							typedargs.add(new Integer(v));
+							typedargs.add(Integer.valueOf(v));
 						} catch (NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}
 						break;
 					case FLOAT:
 						try {
-							typedargs.add(new Float(v));
+							typedargs.add(Float.valueOf(v));
 						} catch (NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}

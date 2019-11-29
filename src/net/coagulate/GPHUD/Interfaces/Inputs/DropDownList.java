@@ -30,7 +30,7 @@ public class DropDownList extends Input {
 		DropDownList commands = new DropDownList(name);
 		for (Module mod : Modules.getModules()) {
 			for (Command c : mod.getCommands(st).values()) {
-				if (allowgenerated == true || !c.isGenerated()) {
+				if (allowgenerated || !c.isGenerated()) {
 					commands.add(c.getFullName(), c.getFullName() + " - " + c.description());
 				}
 			}

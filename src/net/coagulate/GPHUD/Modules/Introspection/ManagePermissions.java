@@ -37,7 +37,7 @@ public abstract class ManagePermissions {
 					t.add(permissions.get(permission).description());
 					boolean bump=true;
 					if (permissions.get(permission).isGenerated()) { t.add("<i>Generated</i>"); bump=false; }
-					if (permissions.get(permission).grantable() == false) {
+					if (!permissions.get(permission).grantable()) {
 						if (bump) { t.add(""); }
 						t.add(new Color("red", "Ungrantable"));
 					}
