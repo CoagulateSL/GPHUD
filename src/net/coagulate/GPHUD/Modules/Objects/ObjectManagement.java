@@ -21,7 +21,6 @@ import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import org.apache.http.client.RedirectException;
 import org.json.JSONObject;
 
 public class ObjectManagement {

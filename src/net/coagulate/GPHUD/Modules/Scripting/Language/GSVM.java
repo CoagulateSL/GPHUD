@@ -258,8 +258,8 @@ public class GSVM {
 		if (simulation) { return; }
 		suspended=true;
 		List<ByteCode> initlist=new ArrayList<>();
-		for (int i=0;i<stack.size();i++) {
-			initlist.add(stack.get(i));
+		for (ByteCodeDataType bcdt : stack) {
+			initlist.add(bcdt);
 		}
 		for (String k:variables.keySet()) {
 			ByteCodeDataType bcd=variables.get(k);
