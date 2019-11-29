@@ -257,8 +257,7 @@ public class GSVM {
 		// simulations dont suspend.  but do update the variables and fake a suspension count.  for completeness :P
 		if (simulation) { return; }
 		suspended=true;
-		List<ByteCode> initlist=new ArrayList<>();
-		initlist.addAll(stack);
+		List<ByteCode> initlist = new ArrayList<>(stack);
 		for (String k:variables.keySet()) {
 			ByteCodeDataType bcd=variables.get(k);
 			if (!bcd.getClass().equals(BCList.class)) {

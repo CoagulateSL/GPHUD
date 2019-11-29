@@ -106,9 +106,7 @@ public class Form implements Renderable {
 
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
-		r.addAll(list);
-		return r;
+		return new HashSet<>(list);
 	}
 
 	public void readValue(String key, String value) {

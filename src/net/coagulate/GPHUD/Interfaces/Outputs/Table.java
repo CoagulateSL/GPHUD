@@ -80,9 +80,7 @@ public class Table implements Renderable {
 
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
-		r.addAll(table);
-		return r;
+		return new HashSet<>(table);
 	}
 
 	public void addNoNull(Renderable addable) {

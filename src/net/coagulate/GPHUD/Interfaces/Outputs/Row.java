@@ -65,9 +65,7 @@ public class Row implements Renderable {
 
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
-		r.addAll(row);
-		return r;
+		return new HashSet<>(row);
 	}
 
 	public void add(Integer ownerid) {

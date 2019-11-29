@@ -203,8 +203,7 @@ public class Region extends TableRow {
 	 */
 	public void verifyAvatars(String[] avatarsarray) {
 		String report = "";
-		Set<String> avatars = new HashSet<>();
-		avatars.addAll(Arrays.asList(avatarsarray));
+		Set<String> avatars = new HashSet<>(Arrays.asList(avatarsarray));
 		Results db = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		// iterate over the current visits
 		for (ResultsRow row : db) {

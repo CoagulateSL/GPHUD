@@ -9,10 +9,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.SafeMap;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * DateTime utilities.
@@ -144,7 +141,7 @@ public abstract class DateTime {
 		String[] tzs = TimeZone.getAvailableIDs();
 		List<String> tzlist = new ArrayList<>();
 		tzlist.add("America/Los_Angeles");
-		for (String s : tzs) { tzlist.add(s); }
+		tzlist.addAll(Arrays.asList(tzs));
 		return tzlist;
 	}
 
