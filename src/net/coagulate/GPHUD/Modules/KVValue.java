@@ -28,7 +28,7 @@ public class KVValue {
 	}
 
 	public Float floatValue() {
-		return new Float.valueOf(value());
+		return Float.valueOf(value());
 	}
 
 	public boolean boolValue() {
