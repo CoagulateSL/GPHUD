@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Interfaces.Inputs;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -24,11 +26,13 @@ public class Hidden extends Input {
 		return name;
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		return "<input type=hidden name=\"" + getName() + "\" value=\"" + value + "\">";
 	}
 
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;

@@ -25,6 +25,8 @@ import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -43,6 +45,7 @@ import static java.util.logging.Level.*;
 public class Interface extends net.coagulate.GPHUD.Interface {
 
 	// leave this here for now
+	@Nonnull
 	public static String styleSheet() {
 		return "" +
 				"<style>\n" +
@@ -78,7 +81,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	/**
 	 * URLs we do not redirect to instance/char selection.  Like logout.
 	 */
-	private boolean interceptable(String url) {
+	private boolean interceptable(@Nullable String url) {
 		if ("/logout".equalsIgnoreCase(url)) { return false; }
 		if ("/Help".equalsIgnoreCase(url)) { return false; }
 		if (url!=null && url.toLowerCase().startsWith("/published/")) { return false; }
@@ -93,7 +96,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	 * @param st
 	 */
 	@Override
-	public void process(State st) {
+	public void process(@Nonnull State st) {
 		st.source = State.Sources.USER;
 		//for (Header h:headers) { System.out.println(h.getName()+"="+h.getValue()); }
 
@@ -124,7 +127,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 	}
 
-	public String messages(State st) {
+	@Nonnull
+	public String messages(@Nonnull State st) {
 		if (st.getCharacterNullable() == null) { return ""; }
 		int messages = st.getCharacter().messages();
 		if (messages > 0) {
@@ -134,7 +138,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 	// FIRST STEP of producing the page its self, this is all wrapped in a low level exception handler.
-	public String renderHTML(State st) {
+	@Nonnull
+	public String renderHTML(@Nonnull State st) {
 		// This is basically the page template, the supporting structure that surrounds a title/menu/body
 
 		// we compute the body first, so any changes it causes to the rest of the data (like logging out, menu changes etc) is reflected
@@ -191,7 +196,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 	// SECOND STAGE - called by the outline code, this is a wrapper around renderBody that "nicely" handles all deeper exceptions
-	protected String renderBodyProtected(State st) {
+	@Nonnull
+	protected String renderBodyProtected(@Nonnull State st) {
 		// with all exception protections, in a 'sensible' way.
 		try {
 			// literally, just a wrapper
@@ -225,6 +231,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 	}
 
+	@Nonnull
 	String dynamicSubMenus(State st, SideMenu menu) {
 		// dereference the menu into a module
 		Module owner = null;
@@ -253,7 +260,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return ret.toString();
 	}
 
-	String dynamicSideMenus(State st) throws UserException, SystemException {
+	@Nonnull
+	String dynamicSideMenus(@Nonnull State st) throws UserException, SystemException {
 		StringBuilder r = new StringBuilder();
 		Map<Integer, Set<SideMenu>> priorities = new TreeMap<>();
 		// collect sidemenus, by priority
@@ -294,7 +302,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return r.toString();
 	}
 
-	String renderSideMenu(State st) throws UserException, SystemException {
+	@Nonnull
+	String renderSideMenu(@Nonnull State st) throws UserException, SystemException {
 		StringBuilder s = new StringBuilder();
 		s.append(GPHUD.menuPanelEnvironment()).append("<hr width=150px>");
 		boolean loggedin = true;
@@ -363,7 +372,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	public boolean isRich() { return true; }
 
 	// THIRD stage (process -> renderHTML (page layout) -> renderBodyProtected -> renderBody)
-	public String renderBody(State st) throws SystemException, UserException {
+	@Nonnull
+	public String renderBody(@Nonnull State st) throws SystemException, UserException {
 		Form f = null;
 		SafeMap values = getPostValues(st);
 		st.postmap=values;
@@ -392,7 +402,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return f.asHtml(st, isRich());
 	}
 
-	public SafeMap getPostValues(State st) {
+	@Nonnull
+	public SafeMap getPostValues(@Nonnull State st) {
 		SafeMap values = new SafeMap();
 		Form f = st.form;
 		HttpRequest req = st.req;
@@ -446,7 +457,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 
 	// this should probably be done better, i dont think we have to "split" on ; as i think the API will decompose that for us if we ask nicely
-	public String extractGPHUDCookie(State st) {
+	@Nullable
+	public String extractGPHUDCookie(@Nonnull State st) {
 		for (Header h : st.req.getHeaders("Cookie")) {
 			for (String piece : h.getValue().split(";")) {
 				piece = piece.trim();
@@ -457,7 +469,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		return null;
 	}
-	public String extractClusterCookie(State st){
+	@Nullable
+	public String extractClusterCookie(@Nonnull State st){
 		for (Header h : st.req.getHeaders("Cookie")) {
 			for (String piece : h.getValue().split(";")) {
 				piece = piece.trim();
@@ -475,7 +488,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	// return a Form if you want to intercept the connection to authenticate it
 	//
 	// generally our job is to set up the avatar/instance/character stuff
-	public Form authenticationHook(State st, SafeMap values) throws SystemException {
+	@Nullable
+	public Form authenticationHook(@Nonnull State st, @Nonnull SafeMap values) throws SystemException {
 		boolean debug = false;
 		// FIRSTLY, pick up any existing session data
 		String cookie = extractGPHUDCookie(st);
@@ -538,7 +552,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return login;
 	}
 
-	private void setupStateFromCluster(State st, String coagulateslcookie) {
+	private void setupStateFromCluster(@Nonnull State st, String coagulateslcookie) {
 		Session slsession = Session.get(coagulateslcookie);
 		if (slsession != null) {
 			User av = slsession.user();
@@ -554,7 +568,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 	}
 
-	private void extractURLCookieAndRedirect(State st) {
+	private void extractURLCookieAndRedirect(@Nonnull State st) {
 		String array[] = st.getDebasedURL().split("\\?"); // URLs passed always takes precedence
 		for (String piece : array) {
 			if (piece.startsWith("gphud=")) {
@@ -567,7 +581,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 	// A login must select an avatar from its list of avatars, if it has more than one...
-	private Form characterSelectionHook(State st, Map<String, String> values) {
+	@Nullable
+	private Form characterSelectionHook(@Nonnull State st, @Nonnull Map<String, String> values) {
 		if (1 == 1) { return null; }
 		if (st.getCharacter() != null) { return null; } // already have one from cookie etc
 		Set<Char> characters = Char.getCharacters(st.getInstance(), st.getAvatar());

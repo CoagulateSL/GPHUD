@@ -8,13 +8,16 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
 public class Giver {
 
+	@Nonnull
 	@Commands(context = Command.Context.AVATAR, description = "Get an Item Giver", permitScripting = false, requiresPermission = "Instance.ServerOperator", permitUserWeb = false,permitObject = false)
-	public static Response getGiver(State st) {
+	public static Response getGiver(@Nonnull State st) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
 		json.put("itemname", "GPHUD Item Giver");
@@ -23,8 +26,9 @@ public class Giver {
 		return new OKResponse("OK - Sent you an Item Giver");
 	}
 
+	@Nonnull
 	@Commands(context = Command.Context.AVATAR, description = "Get an Item from a giver", permitUserWeb = false,permitObject = false)
-	public static Response get(State st,
+	public static Response get(@Nonnull State st,
 	                           @Argument.Arguments(description = "Name of object to give to avatar", type = Argument.ArgumentType.TEXT_ONELINE, max = 63)
 			                           String item) {
 		JSONObject json = new JSONObject();

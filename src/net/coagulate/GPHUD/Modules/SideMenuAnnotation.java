@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules;
 
 
+import javax.annotation.Nonnull;
+
 /**
  * Wraps a side menu.
  *
@@ -17,11 +19,14 @@ public class SideMenuAnnotation extends SideMenu {
 
 	public boolean isGenerated() { return generated; }
 
+	@Nonnull
 	public String name() { return meta.name(); }
 
 	public int priority() { return meta.priority(); }
 
+	@Nonnull
 	public String url() { return meta.url(); }
 
+	@Nonnull
 	public String requiresPermission() { return meta.requiresPermission(); }
 }

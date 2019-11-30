@@ -12,10 +12,13 @@ import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 public class Connect {
 
+	@Nonnull
 	@Command.Commands(description = "Connects to the system as an object",context = Command.Context.AVATAR,permitConsole = false,permitUserWeb = false,permitScripting = false,permitJSON = false)
-	public static Response connect(State st) {
+	public static Response connect(@Nonnull State st) {
 		if (!st.hasPermission("Objects.Connect")) {
 			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"REJECTED","Connection","","","Rejected GPHUD Object connection from "+st.sourcename+" at "+st.sourceregion+"/"+st.sourcelocation);
 			return new TerminateResponse("You do not have permissions to connect objects at this instance!");

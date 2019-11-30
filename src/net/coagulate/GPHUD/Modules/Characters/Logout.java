@@ -8,6 +8,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Page that destroys the session.
  *
@@ -15,7 +17,7 @@ import net.coagulate.GPHUD.State;
  */
 public class Logout {
 	@URLs(url = "/logout")
-	public static void logout(State st, SafeMap values) {
+	public static void logout(@Nonnull State st, SafeMap values) {
 		st.form.add("Good Bye!");
 		if (st.cookiestring != null) { Cookies.delete(st.cookiestring); }
 		st.cookie = null;
@@ -25,8 +27,9 @@ public class Logout {
 		st.setInstance(null);
 	}
 
+	@Nonnull
 	@Command.Commands(description = "Log out or disconnect this character",context= Command.Context.CHARACTER,permitScripting = false,permitUserWeb = false,permitConsole = false,permitObject = false)
-	public static Response logout(State st) {
+	public static Response logout(@Nonnull State st) {
 		if (st.getCharacterNullable()!=null) {
 			st.getCharacter().closeVisits(st);
 			st.getCharacter().closeURL(st);

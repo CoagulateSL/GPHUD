@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,8 +27,9 @@ public class GPHUDClientModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
+	@Nonnull
 	@Commands(context = Command.Context.CHARACTER, description = "Set your Titler's Altitude (height above avatar)")
-	public static Response setAltitude(State st,
+	public static Response setAltitude(@Nonnull State st,
 	                                   @Arguments(description = "Offset, in meters", max = 3, type = Argument.ArgumentType.FLOAT)
 			                                   Float offset) {
 		st.setKV(st.getCharacter(), "GPHUDClient.TitlerAltitude", offset + "");
@@ -35,10 +37,11 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public void registerKV(KV a) throws UserException {
+	public void registerKV(@Nonnull KV a) throws UserException {
 		base.put(a.name().toLowerCase(), a);
 	}
 
+	@Nonnull
 	@Override
 	public Map<String, KV> getKVDefinitions(State st) {
 		Map<String, KV> kv = new TreeMap<>(base); // anotation defined KVs for us.
@@ -56,13 +59,13 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public KV getKVDefinition(State st, String qualifiedname) throws SystemException {
+	public KV getKVDefinition(State st, @Nonnull String qualifiedname) throws SystemException {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
 		if (base.containsKey(qualifiedname.toLowerCase())) { return base.get(qualifiedname.toLowerCase()); }
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}
 
-	private void keyConveyances(Map<String, KV> filterinto, Map<String, KV> filterfrom) {
+	private void keyConveyances(@Nonnull Map<String, KV> filterinto, @Nonnull Map<String, KV> filterfrom) {
 		for (KV kv : filterfrom.values()) {
 			String conveyas = kv.conveyas();
 			if (conveyas != null && !conveyas.isEmpty()) {

@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCAdd extends ByteCode {
@@ -11,18 +12,19 @@ public class BCAdd extends ByteCode {
 		super(n);
 	}
 
+	@Nonnull
 	@Override
 	public String explain() {
 		return "Add (Pop two from stack, add, push result)";
 	}
 	// Pop two, op, push result
 
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.Add.get());
 	}
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		// add the next two stack elements and push the result.
 		ByteCodeDataType var1=vm.pop();
 		ByteCodeDataType var2=vm.pop();

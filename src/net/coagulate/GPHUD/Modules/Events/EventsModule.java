@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.StaticSideSubMenu;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,8 +23,9 @@ public class EventsModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
+	@Nonnull
 	@Override
-	public Set<SideSubMenu> getSideSubMenus(State st) {
+	public Set<SideSubMenu> getSideSubMenus(@Nonnull State st) {
 		Set<Event> events = st.getInstance().getEvents();
 		Set<SideSubMenu> ret = new HashSet<>();
 		for (Event event : events) {

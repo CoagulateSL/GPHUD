@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 
 /**
@@ -15,6 +16,7 @@ public abstract class Permission {
 	public static final String RED="#ffdfdf";
 	public static final String YELLOW="#ffffdf";
 	public static final String GREEN="#dfffdf";
+	@Nonnull
 	public String getColor() {
 		if (power()==POWER.HIGH) { return RED; }
 		if (power()==POWER.MEDIUM) { return YELLOW; }
@@ -48,11 +50,11 @@ public abstract class Permission {
 	@Target(ElementType.PACKAGE)
 	@Repeatable(Permissionss.class)
 	public @interface Permissions {
-		String name();
+		@Nonnull String name();
 
-		String description();
+		@Nonnull String description();
 
-		POWER power();
+		@Nonnull POWER power();
 
 		boolean grantable() default true;
 	}
@@ -61,6 +63,6 @@ public abstract class Permission {
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface Permissionss {
-		Permissions[] value();
+		@Nonnull Permissions[] value();
 	}
 }

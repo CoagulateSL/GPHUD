@@ -18,6 +18,8 @@ import net.coagulate.GPHUD.Modules.SideSubMenu.SideSubMenus;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -36,6 +38,7 @@ import java.util.logging.Logger;
 public abstract class Classes {
 
 	private static final boolean LOGREGISTERS = false;
+	@Nullable
 	private static Logger log = null;
 
 	// Start recursing through the elements in the classpath.  So many exceptions returned!
@@ -53,7 +56,7 @@ public abstract class Classes {
 		loadGSFunctions();
 	}
 
-	private static String getModuleName(Class<? extends Object> c) {
+	private static String getModuleName(@Nonnull Class<? extends Object> c) {
 		String name = c.getName().substring("net.coagulate.GPHUD.Modules.".length());
 		String[] split = name.split("\\.");
 		return split[0];
@@ -72,7 +75,7 @@ public abstract class Classes {
 				Class<?> target = Class.forName(creatingclass);
 				Constructor<?> cons = target.getConstructor(String.class, ModuleDefinition.class);
 				cons.newInstance(modulename, a);
-			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+			} catch (@Nonnull ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				throw new SystemException("Instansiating module failed: " + ex.toString(), ex);
 			}
 		}

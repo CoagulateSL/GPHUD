@@ -9,9 +9,11 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 public class Management {
 	@URL.URLs(url = "/configuration/Teleportation")
-	public static void configuration(State st, SafeMap map) {
+	public static void configuration(@Nonnull State st, SafeMap map) {
 		Form f=st.form;
 		f.add(new TextHeader("Teleportation Landmarks"));
 		Table t=new Table(); f.add(t);

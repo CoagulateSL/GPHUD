@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.Modules.Experience.VisitXP;
 import net.coagulate.SL.Data.LockTest;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Calendar;
 
 import static java.util.logging.Level.*;
@@ -76,7 +77,7 @@ public class Maintenance extends Thread {
 	}
 
 	public static class PingTransmission extends Transmission {
-		public PingTransmission(Char c,JSONObject json,String url) {
+		public PingTransmission(Char c, @Nonnull JSONObject json, String url) {
 			super(c,json,url);
 		}
 		public void run() {

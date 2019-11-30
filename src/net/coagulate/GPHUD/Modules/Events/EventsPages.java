@@ -17,6 +17,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -28,7 +29,7 @@ public class EventsPages {
 
 
 	@URLs(url = "/events")
-	public static void listEvents(State st, SafeMap values) {
+	public static void listEvents(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.noForm();
 		f.add(new TextHeader("Events Listing"));
@@ -45,7 +46,7 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/events/create", requiresPermission = "events.create")
-	public static void createEvent(State st, SafeMap values) {
+	public static void createEvent(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		Modules.simpleHtml(st, "events.create", values);
 		Command c = Modules.getCommand(st, "events.create");
@@ -53,7 +54,7 @@ public class EventsPages {
 
 
 	@URLs(url = "/event/*")
-	public static void viewEvent(State st, SafeMap values) throws UserException, SystemException {
+	public static void viewEvent(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		//System.out.println(st.uri);
 		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -62,7 +63,7 @@ public class EventsPages {
 		viewEvent(st, values, e, false);
 	}
 
-	public static void viewEvent(State st, SafeMap values, Event e, boolean brief) throws UserException, SystemException {
+	public static void viewEvent(@Nonnull State st, SafeMap values, @Nonnull Event e, boolean brief) throws UserException, SystemException {
 		e.validate(st);
 		Form f = st.form;
 		f.noForm();
@@ -114,7 +115,7 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/event/deleteschedule", requiresPermission = "events.schedule")
-	public static void deleteSchedule(State st, SafeMap values) {
+	public static void deleteSchedule(@Nonnull State st, @Nonnull SafeMap values) {
 		String id = values.get("eventscheduleid");
 		if (id == null) { st.form.add(new TextError("Null id to remove?")); }
 		EventSchedule es = EventSchedule.get(Integer.parseInt(id));
@@ -125,7 +126,7 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/event/addschedule", requiresPermission = "events.schedule")
-	public static void addSchedule(State st, SafeMap values) {
+	public static void addSchedule(@Nonnull State st, @Nonnull SafeMap values) {
 		String eventname = values.get("event");
 		String defaulttz = st.avatar().getTimeZone();
 		Event event = Event.find(st.getInstance(), eventname);

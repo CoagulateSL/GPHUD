@@ -5,6 +5,8 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
@@ -22,16 +24,19 @@ public class GenericXPAwardPermission extends Permission {
 	@Override
 	public boolean isGenerated() { return true; }
 
+	@Nonnull
 	@Override
 	public String name() {
 		return "award" + myname + "XP";
 	}
 
+	@Nonnull
 	@Override
 	public String description() {
 		return "Allow this user to award " + myname + " XP, up to the weekly limits";
 	}
 
+	@Nonnull
 	@Override
 	public POWER power() {
 		return POWER.LOW;

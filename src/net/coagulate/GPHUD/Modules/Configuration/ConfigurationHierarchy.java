@@ -13,6 +13,8 @@ import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +25,7 @@ import java.util.Set;
  */
 public class ConfigurationHierarchy extends Form {
 
-	public ConfigurationHierarchy(State st, KV kv, State simulated, SafeMap parameters) {
+	public ConfigurationHierarchy(@Nullable State st, @Nullable KV kv, @Nullable State simulated, @Nonnull SafeMap parameters) {
 		if (st == null) { throw new SystemException("Null state?"); }
 		if (simulated == null) { simulated = st; }
 		if (kv == null) { throw new SystemException("KV null?"); }
@@ -129,7 +131,7 @@ public class ConfigurationHierarchy extends Form {
 		add("</script>");
 	}
 
-	void addKVRow(State st, Table t, KV kv, TableRow dbo, State simulated, Set<String> alledits) {
+	void addKVRow(@Nonnull State st, @Nonnull Table t, @Nonnull KV kv, @Nullable TableRow dbo, @Nonnull State simulated, @Nonnull Set<String> alledits) {
 		if (dbo == null) { throw new SystemException("Add KV Row for Null DBO?"); }
 		t.openRow();
 		if (dbo instanceof CharacterGroup) {

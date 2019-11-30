@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,6 +27,7 @@ public class Menus extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return An Avatar representation
 	 */
+	@Nonnull
 	public static Menus get(int id) {
 		return (Menus) factoryPut("Menus", id, new Menus(id));
 	}
@@ -35,7 +38,8 @@ public class Menus extends TableRow {
 	 * @param st Infers instance
 	 * @return Map of String menu name to Integer menu ID for this instance.
 	 */
-	public static Map<String, Integer> getMenusMap(State st) {
+	@Nonnull
+	public static Map<String, Integer> getMenusMap(@Nonnull State st) {
 		Map<String, Integer> aliases = new TreeMap<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select name,menuid from menus where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getString("name"), r.getInt("menuid"));
@@ -50,7 +54,8 @@ public class Menus extends TableRow {
 	 * @param name Name of the menu to load
 	 * @return Menus object
 	 */
-	public static Menus getMenu(State st, String name) {
+	@Nullable
+	public static Menus getMenu(@Nonnull State st, String name) {
 		Integer id = GPHUD.getDB().dqi(false, "select menuid from menus where instanceid=? and name like ?", st.getInstance().getId(), name);
 		if (id == null) { return null; }
 		return get(id);
@@ -66,7 +71,8 @@ public class Menus extends TableRow {
 	 * @return the new Menus object
 	 * @throws UserException If the name is invalid or duplicated.
 	 */
-	public static Menus create(State st, String name, String description, JSONObject template) throws UserException {
+	@Nullable
+	public static Menus create(@Nonnull State st, @Nonnull String name, String description, @Nonnull JSONObject template) throws UserException {
 		if (getMenu(st, name) != null) { throw new UserException("Menu " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
 			throw new UserException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
@@ -85,7 +91,8 @@ public class Menus extends TableRow {
 	 * @param st State, infers instance
 	 * @return Map of Name to JSONPayloads for all menus in this instance.
 	 */
-	public static Map<String, JSONObject> getTemplates(State st) {
+	@Nonnull
+	public static Map<String, JSONObject> getTemplates(@Nonnull State st) {
 		Map<String, JSONObject> aliases = new TreeMap<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select name,description,json from menus where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getString("name"), new JSONObject(r.getString("json")));
@@ -93,21 +100,25 @@ public class Menus extends TableRow {
 		return aliases;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "menus";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "menuid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/configuration/menus/" + getId();
@@ -118,6 +129,7 @@ public class Menus extends TableRow {
 	 *
 	 * @return The JSON payload
 	 */
+	@Nonnull
 	public JSONObject getJSON() throws SystemException {
 		String json = dqs(true, "select json from menus where menuid=?", getId());
 		if (json == null) { throw new SystemException("No (null) template for menu id " + getId()); }
@@ -129,7 +141,7 @@ public class Menus extends TableRow {
 	 *
 	 * @param template JSON payload
 	 */
-	public void setJSON(JSONObject template) {
+	public void setJSON(@Nonnull JSONObject template) {
 		d("update menus set json=? where menuid=?", template.toString(), getId());
 	}
 
@@ -138,19 +150,22 @@ public class Menus extends TableRow {
 	 *
 	 * @return Instance for this menu
 	 */
+	@Nullable
 	public Instance getInstance() {
 		Integer id = dqi(false, "select instanceid from menus where menuid=?", getId());
 		if (id == null) { return null; }
 		return Instance.get(id);
 	}
 
+	@Nullable
 	public String getKVTable() { return null; }
 
+	@Nullable
 	public String getKVIdField() { return null; }
 
 	public void flushKVCache(State st) {}
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Menus / State Instance mismatch"); }

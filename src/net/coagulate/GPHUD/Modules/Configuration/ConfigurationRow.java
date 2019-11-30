@@ -11,13 +11,15 @@ import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * A row representing a configuration item.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConfigurationRow extends Row {
-	public ConfigurationRow(State st, TableRow dbo, KV kv, State simulated) throws UserException, SystemException {
+	public ConfigurationRow(@Nonnull State st, TableRow dbo, @Nonnull KV kv, @Nonnull State simulated) throws UserException, SystemException {
 		String kvname = kv.fullname();
 		//kv=st.getKVDefinition(kvname);
 		add(kv.name());

@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Interfaces.Inputs;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -12,6 +14,7 @@ import java.util.Set;
  */
 public class TextInput extends Input {
 	String name = "";
+	@Nullable
 	Integer width = null;
 
 	public TextInput(String name) {this.name = name;}
@@ -39,6 +42,7 @@ public class TextInput extends Input {
 		return name;
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		String s = "<input type=\"" + getType() + "\" name=\"" + name + "\" value=\"" + value + "\" ";
@@ -50,6 +54,7 @@ public class TextInput extends Input {
 		return s;
 	}
 
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;

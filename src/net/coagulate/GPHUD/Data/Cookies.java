@@ -10,6 +10,9 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 
 /**
@@ -72,7 +75,8 @@ public class Cookies {
 	 * @param renewable Cookie can be refreshed
 	 * @return
 	 */
-	public static String generate(User avatar, Char character, Instance instance, boolean renewable) {
+	@Nonnull
+	public static String generate(@Nullable User avatar, @Nullable Char character, Instance instance, boolean renewable) {
 		String cookie = Tokens.generateToken();
 		int expire = getUnixTime();
 		expire = expire + COOKIE_LIFESPAN;
@@ -90,17 +94,18 @@ public class Cookies {
 		return cookie;
 	}
 
-	private static Object getId(TableRow r) {
+	private static Object getId(@Nullable TableRow r) {
 		if (r == null) { return new NullInteger(); }
 		return r.getId();
 	}
 
-	private static Object getId(User r) {
+	private static Object getId(@Nullable User r) {
 		if (r == null) { return new NullInteger(); }
 		return r.getId();
 	}
 
-	public static Cookies loadOrNull(String cookie) {
+	@Nullable
+	public static Cookies loadOrNull(@Nullable String cookie) {
 		if (cookie != null) {
 			try {
 				return new Cookies(cookie);
@@ -140,6 +145,7 @@ public class Cookies {
 	 *
 	 * @return The avatar, or null.
 	 */
+	@Nullable
 	public User getAvatar() {
 		Integer avatarid = r.getInt("avatarid");
 		if (avatarid == null) { return null; }
@@ -151,7 +157,7 @@ public class Cookies {
 	 *
 	 * @param avatar Avatar to set to
 	 */
-	public void setAvatar(User avatar) {
+	public void setAvatar(@Nonnull User avatar) {
         /*if (avatar==null) {
             GPHUD.getDB().d("update cookies set avatarid=null where cookie=?",cookie); load(); return;
         }*/
@@ -164,6 +170,7 @@ public class Cookies {
 	 *
 	 * @return Character
 	 */
+	@Nullable
 	public Char getCharacter() {
 		Integer entityid = r.getInt("characterid");
 		if (entityid == null) { return null; }
@@ -175,7 +182,7 @@ public class Cookies {
 	 *
 	 * @param character Character to set to
 	 */
-	public void setCharacter(Char character) {
+	public void setCharacter(@Nullable Char character) {
 		Integer id = null;
 		if (character != null) {
 			id = character.getId();
@@ -198,6 +205,7 @@ public class Cookies {
 	 *
 	 * @return The instance
 	 */
+	@Nullable
 	public Instance getInstance() {
 		Integer instanceid = r.getInt("instanceid");
 		if (instanceid == null) { return null; }
@@ -209,16 +217,17 @@ public class Cookies {
 	 *
 	 * @param entity Instance
 	 */
-	public void setInstance(Instance entity) {
+	public void setInstance(@Nullable Instance entity) {
 		Integer id = null;
 		if (entity != null) { id = entity.getId(); }
 		GPHUD.getDB().d("update cookies set instanceid=? where cookie=?", id, cookie);
 		load();
 	}
 
+	@Nullable
 	public String toString() { return "Avatar:" + getAvatar() + ", Instance: " + getInstance() + ", Character:" + getCharacter(); }
 
-	public void setStateFromCookies(State st) {
+	public void setStateFromCookies(@Nonnull State st) {
 		Instance instance = getInstance();
 		if (instance != null) { st.setInstance(instance); }
 		User av = getAvatar();

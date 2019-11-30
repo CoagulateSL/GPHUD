@@ -18,6 +18,7 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,9 +32,10 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Register {
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, permitScripting = false, permitConsole = false, permitUserWeb = false, description = "Registers this connection as the region server connection",requiresPermission = "Instance.ServerOperator",permitObject = false)
-	public static Response register(State st,
-	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the Server that is connecting", max = 64)
+	public static Response register(@Nonnull State st,
+	                                @Nonnull @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the Server that is connecting", max = 64)
 			                                String version,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the Server that is connecting", max = 64)
 			                                String versiondate,
@@ -88,7 +90,7 @@ public abstract class Register {
 		return new JSONResponse(j);
 	}
 
-	public static void sendAttachConfig(State st) {
+	public static void sendAttachConfig(@Nonnull State st) {
 		JSONObject j = new JSONObject();
 		j.put("autoattach", st.getKV("GPHUDServer.AutoAttach"));
 		j.put("parcelonly", st.getKV("GPHUDServer.ParcelONLY"));

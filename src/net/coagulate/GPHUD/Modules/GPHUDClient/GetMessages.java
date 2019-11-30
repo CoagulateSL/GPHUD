@@ -18,6 +18,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,9 @@ import java.util.List;
  */
 public abstract class GetMessages {
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, permitScripting = false, description = "Get a message", permitConsole = false, permitUserWeb = false)
-	public static Response getMessage(State st) throws SystemException, UserException {
+	public static Response getMessage(@Nonnull State st) throws SystemException, UserException {
 		Message m = st.getCharacter().getMessage();
 		if (m == null) { return new ErrorResponse("You have no outstanding messages."); }
 		m.setActive();
@@ -40,7 +42,8 @@ public abstract class GetMessages {
 		throw new SystemException("Unable to find a message parser in GPHUDClient for message type '" + message + "'");
 	}
 
-	private static Response processFactionInvite(State st, JSONObject j) throws UserException, SystemException {
+	@Nonnull
+	private static Response processFactionInvite(State st, @Nonnull JSONObject j) throws UserException, SystemException {
 		Char from = Char.get(j.getInt("from"));
 		CharacterGroup faction = CharacterGroup.get(j.getInt("to"));
 		JSONObject template = Modules.getJSONTemplate(st, "gphudclient.acceptrejectmessage");
@@ -48,6 +51,7 @@ public abstract class GetMessages {
 		return new JSONResponse(template);
 	}
 
+	@Nonnull
 	public static List<String> getAcceptReject(State st) throws UserException {
 		List<String> options = new ArrayList<>();
 		options.add("Accept");
@@ -55,8 +59,9 @@ public abstract class GetMessages {
 		return options;
 	}
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Accept/Reject a message", permitScripting = false, permitConsole = false, permitUserWeb = false)
-	public static Response acceptRejectMessage(State st,
+	public static Response acceptRejectMessage(@Nonnull State st,
 	                                           @Arguments(type = ArgumentType.CHOICE, description = "Accept or Reject the message", choiceMethod = "getAcceptReject")
 			                                           String response) throws SystemException, UserException {
 		Message m = st.getCharacter().getActiveMessage();
@@ -68,7 +73,8 @@ public abstract class GetMessages {
 		throw new SystemException("Unable to find a message RESPONSE parser in GPHUDClient for message type '" + message + "'");
 	}
 
-	private static Response processFactionInviteResponse(State st, Message m, JSONObject j, String response) throws UserException {
+	@Nonnull
+	private static Response processFactionInviteResponse(@Nonnull State st, @Nonnull Message m, @Nonnull JSONObject j, String response) throws UserException {
 		boolean accepted;
 		if ("Accept".equalsIgnoreCase(response)) { accepted = true; } else {
 			if ("Reject".equalsIgnoreCase(response)) { accepted = false; } else {

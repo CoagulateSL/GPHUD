@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -16,16 +18,19 @@ public class TextError implements Renderable {
 
 	public String getMessage(State st) { return s; }
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return ">>> ERROR : " + s;
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		return "<font color=red><b> *** ERROR : " + s + " ***</b></font>";
 	}
 
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;

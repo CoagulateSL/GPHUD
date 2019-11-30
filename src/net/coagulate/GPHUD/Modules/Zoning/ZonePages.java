@@ -16,6 +16,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Zone management pages.
  *
@@ -24,7 +26,7 @@ import net.coagulate.GPHUD.State;
 public abstract class ZonePages {
 
 	@URLs(url = "/configuration/zoning")
-	public static void listZones(State st, SafeMap values) {
+	public static void listZones(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
@@ -44,14 +46,14 @@ public abstract class ZonePages {
 	}
 
 	@URLs(url = "/configuration/zoning/view/*")
-	public static void viewZone(State st, SafeMap values) throws UserException, SystemException {
+	public static void viewZone(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		Zone z = Zone.get(Integer.parseInt(id));
 		viewZone(st, values, z, false);
 	}
 
-	public static void viewZone(State st, SafeMap values, Zone z, boolean brief) throws UserException, SystemException {
+	public static void viewZone(@Nonnull State st, SafeMap values, @Nonnull Zone z, boolean brief) throws UserException, SystemException {
 		boolean full = false;
 		boolean admin = false;
 		if (st.hasPermission("zoning.config")) { admin = true; }
@@ -86,7 +88,7 @@ public abstract class ZonePages {
 	}
 
 	@URLs(url = "/configuration/zoning/deletearea", requiresPermission = "zoning.config")
-	public static void delVolume(State st, SafeMap values) {
+	public static void delVolume(State st, @Nonnull SafeMap values) {
 		Modules.run(st, "zoning.deletevolume", values);
 		throw new RedirectionException(values.get("okreturnurl"));
 	}

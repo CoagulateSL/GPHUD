@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 import java.util.Set;
 
@@ -90,7 +91,7 @@ public abstract class KV extends NameComparable {
 		}
 	}
 
-	public void setKV(State st, TableRow o, String value) throws UserException, SystemException {
+	public void setKV(@Nonnull State st, @Nonnull TableRow o, String value) throws UserException, SystemException {
 		assertAppliesTo(o);
 		if (!(TableRow.class.isAssignableFrom(o.getClass()))) {
 			throw new SystemException("Object " + o.getClass() + " does not extend DBOBject while setting KV " + name());
@@ -99,7 +100,7 @@ public abstract class KV extends NameComparable {
 		convey(st, value);
 	}
 
-	public void convey(State st, String value) throws UserException, SystemException {
+	public void convey(@Nonnull State st, String value) throws UserException, SystemException {
 		if (!conveyas().isEmpty()) {
 			Set<Region> regions = st.getInstance().getRegions(false);
 			JSONObject message = new JSONObject();
@@ -156,21 +157,21 @@ public abstract class KV extends NameComparable {
 	@Target(ElementType.PACKAGE)
 	@Repeatable(KVSS.class)
 	public @interface KVS {
-		String name();
+		@Nonnull String name();
 
-		KVSCOPE scope();
+		@Nonnull KVSCOPE scope();
 
-		KVTYPE type();
+		@Nonnull KVTYPE type();
 
-		String description();
+		@Nonnull String description();
 
-		String editpermission();
+		@Nonnull String editpermission();
 
-		String defaultvalue();
+		@Nonnull String defaultvalue();
 
-		String conveyas() default "";
+		@Nonnull String conveyas() default "";
 
-		KVHIERARCHY hierarchy() default KVHIERARCHY.NONE;
+		@Nonnull KVHIERARCHY hierarchy() default KVHIERARCHY.NONE;
 
 		boolean template();
 
@@ -181,6 +182,6 @@ public abstract class KV extends NameComparable {
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface KVSS {
-		KVS[] value();
+		@Nonnull KVS[] value();
 	}
 }

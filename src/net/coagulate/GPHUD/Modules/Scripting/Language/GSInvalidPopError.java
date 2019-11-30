@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
+import javax.annotation.Nonnull;
+
 public class GSInvalidPopError extends GSInternalError {
 	private static final long serialVersionUID=1L;
 	public GSInvalidPopError(String reason) {
@@ -10,5 +12,6 @@ public class GSInvalidPopError extends GSInternalError {
 		super(reason, cause);
 	}
 
+	@Nonnull
 	public String toString() { return "{GS Internal Error}: "+getLocalizedMessage(); }
 }

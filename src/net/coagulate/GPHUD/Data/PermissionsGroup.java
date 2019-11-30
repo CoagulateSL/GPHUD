@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -24,7 +26,8 @@ public class PermissionsGroup extends TableRow {
 
 	protected PermissionsGroup(int id) { super(id); }
 
-	public static PermissionsGroup resolve(State st, String v) {
+	@Nullable
+	public static PermissionsGroup resolve(@Nonnull State st, String v) {
 		int id = new PermissionsGroup(-1).resolveToID(st, v, true);
 		if (id == 0) { return null; }
 		return get(id);
@@ -36,6 +39,7 @@ public class PermissionsGroup extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A Region representation
 	 */
+	@Nonnull
 	public static PermissionsGroup get(int id) {
 		return (PermissionsGroup) factoryPut("PermissionsGroup", id, new PermissionsGroup(id));
 	}
@@ -46,12 +50,14 @@ public class PermissionsGroup extends TableRow {
 	 * @param name Name of region to locate
 	 * @return Region object for that region, or null if none is found.
 	 */
-	public static PermissionsGroup find(String name, Instance i) {
+	@Nullable
+	public static PermissionsGroup find(String name, @Nonnull Instance i) {
 		Integer id = GPHUD.getDB().dqi(false, "select permissionsgroupid from permissionsgroups where name like ? and instanceid=?", name, i.getId());
 		if (id == null) { return null; }
 		return get(id);
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "permissionsgroups"; }
 
@@ -60,20 +66,24 @@ public class PermissionsGroup extends TableRow {
 	 *
 	 * @return The Instance object
 	 */
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "permissionsgroups";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "permissionsgroupid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
@@ -86,7 +96,7 @@ public class PermissionsGroup extends TableRow {
 	 * @param st State
 	 * @return Set of String permissions
 	 */
-	public Set<String> getPermissions(State st) {
+	public Set<String> getPermissions(@Nonnull State st) {
 		if (!st.permissionsGroupCache.containsKey(getId())) {
 
 			Set<String> permissions = new TreeSet<>();
@@ -109,6 +119,7 @@ public class PermissionsGroup extends TableRow {
 	 *
 	 * @return A Set of PermissionsGroupMemberships
 	 */
+	@Nonnull
 	public Set<PermissionsGroupMembership> getMembers() {
 		Set<PermissionsGroupMembership> members = new HashSet<>();
 		Results results = dq("select avatarid,caninvite,cankick from permissionsgroupmembers where permissionsgroupid=?", getId());
@@ -137,13 +148,13 @@ public class PermissionsGroup extends TableRow {
 	 * @param st State
 	 * @return true if the current avatar can invite to this group
 	 */
-	public boolean canInvite(State st) {
+	public boolean canInvite(@Nonnull State st) {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
 			int inviteflag = dqi(true, "select caninvite from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.avatar().getId());
 			if (inviteflag == 1) { return true; }
 			return false;
-		} catch (NullPointerException | NoDataException e) { return false; }
+		} catch (@Nonnull NullPointerException | NoDataException e) { return false; }
 	}
 
 	/**
@@ -152,13 +163,13 @@ public class PermissionsGroup extends TableRow {
 	 * @param st State
 	 * @return true if the current avatar can eject from this group
 	 */
-	public boolean canEject(State st) {
+	public boolean canEject(@Nonnull State st) {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
 			int inviteflag = dqi(true, "select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.avatar().getId());
 			if (inviteflag == 1) { return true; }
 			return false;
-		} catch (NullPointerException | NoDataException e) { return false; }
+		} catch (@Nonnull NullPointerException | NoDataException e) { return false; }
 	}
 
 	/**
@@ -167,7 +178,7 @@ public class PermissionsGroup extends TableRow {
 	 * @param avatar Avatar to add to the group
 	 * @throws UserException Avatar can not be added, e.g. is already in group
 	 */
-	public void addMember(User avatar) throws UserException {
+	public void addMember(@Nonnull User avatar) throws UserException {
 		int exists = dqi(true, "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		if (exists > 0) { throw new UserException("Avatar is already a member of group?"); }
 		d("insert into permissionsgroupmembers(permissionsgroupid,avatarid) values(?,?)", getId(), avatar.getId());
@@ -179,7 +190,7 @@ public class PermissionsGroup extends TableRow {
 	 * @param avatar Avatar to remove from the group
 	 * @throws UserException If the user can not be removed, such as not being in the group
 	 */
-	public void removeMember(User avatar) throws UserException {
+	public void removeMember(@Nonnull User avatar) throws UserException {
 		int exists = dqi(true, "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		d("delete from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		if (exists == 0) { throw new UserException("Avatar not in group."); }
@@ -193,7 +204,7 @@ public class PermissionsGroup extends TableRow {
 	 * @param cankick   Set the avatar's ability to remove other avatars from this group
 	 * @throws UserException If the user's permissions can not be updated, i.e. not in the group
 	 */
-	public void setUserPermissions(User a, Boolean caninvite, Boolean cankick) throws UserException {
+	public void setUserPermissions(@Nonnull User a, Boolean caninvite, Boolean cankick) throws UserException {
 		int exists = dqi(true, "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), a.getId());
 		if (exists == 0) { throw new UserException("Avatar not in group."); }
 		int inviteval = 0;
@@ -229,14 +240,16 @@ public class PermissionsGroup extends TableRow {
 		d("delete from permissions where permissionsgroupid=? and permission=?", getId(), permission);
 	}
 
+	@Nullable
 	public String getKVTable() { return null; }
 
+	@Nullable
 	public String getKVIdField() { return null; }
 
 	public void flushKVCache(State st) {}
 
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) {
@@ -246,7 +259,7 @@ public class PermissionsGroup extends TableRow {
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
 
-	public boolean hasPermission(State st,String fullname) {
+	public boolean hasPermission(@Nonnull State st, String fullname) {
 		for (String permission:getPermissions(st)) {
 			if (permission.equalsIgnoreCase(fullname)) { return true; }
 		}

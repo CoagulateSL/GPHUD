@@ -5,6 +5,8 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,11 +22,16 @@ import java.util.TreeMap;
  */
 public class NameCache {
 
+	@Nullable
 	Map<Integer, String> avatarnames = null;
+	@Nullable
 	Map<Integer, String> characternames = null;
+	@Nullable
 	Map<Integer, String> instancenames = null;
+	@Nullable
 	Map<Integer, String> regionnames = null;
 
+	@Nonnull
 	private static Map<Integer, String> loadMap(String tablename, String idcolumn, String namecolumn) {
 		Map<Integer, String> results = new TreeMap<>();
 		Results rows = GPHUD.getDB().dq("select " + idcolumn + "," + namecolumn + " from " + tablename);
@@ -34,22 +41,22 @@ public class NameCache {
 		return results;
 	}
 
-	public String lookup(User u) {
+	public String lookup(@Nonnull User u) {
 		if (avatarnames == null) { avatarnames = User.loadMap(); }
 		return avatarnames.get(u.getId());
 	}
 
-	public String lookup(Char u) {
+	public String lookup(@Nonnull Char u) {
 		if (characternames == null) { characternames = loadMap("characters", "characterid", "name"); }
 		return characternames.get(u.getId());
 	}
 
-	public String lookup(Instance u) {
+	public String lookup(@Nonnull Instance u) {
 		if (instancenames == null) { instancenames = loadMap("instances", "instanceid", "name"); }
 		return instancenames.get(u.getId());
 	}
 
-	public String lookup(Region u) {
+	public String lookup(@Nonnull Region u) {
 		if (regionnames == null) { regionnames = loadMap("regions", "regionid", "name"); }
 		return regionnames.get(u.getId());
 	}

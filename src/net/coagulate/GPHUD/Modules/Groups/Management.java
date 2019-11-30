@@ -23,6 +23,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -34,11 +36,11 @@ import java.util.Set;
  */
 public abstract class Management {
 	@URLs(url = "/groups")
-	public static void manage(State st, SafeMap values) {
+	public static void manage(@Nonnull State st, SafeMap values) {
 		manage(st, values, null);
 	}
 
-	public static void manage(State st, SafeMap values, String typefilter) {
+	public static void manage(@Nonnull State st, SafeMap values, @Nullable String typefilter) {
 		Form f = st.form;
 		f.noForm();
 		Table t = new Table();
@@ -76,7 +78,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/type/*")
-	public static void manageType(State st, SafeMap values) {
+	public static void manageType(@Nonnull State st, SafeMap values) {
 		String[] comps = st.getDebasedURL().split("/");
 		String type = comps[comps.length - 1];
 		if ("BLANK".equals(type)) { type = ""; }
@@ -84,7 +86,8 @@ public abstract class Management {
 	}
 
 
-	public static List<String> groupTypes(State st) {
+	@Nonnull
+	public static List<String> groupTypes(@Nonnull State st) {
 		List<String> ret = new ArrayList<>();
 		ret.add("");
 		ret.addAll(st.getCharacterGroupTypes());
@@ -96,8 +99,9 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Groups.create", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Create a group", requiresPermission = "Groups.Create")
-	public static Response create(State st,
+	public static Response create(@Nonnull State st,
 	                              @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Name of the group", max = 128)
 			                              String name,
 	                              @Arguments(type = ArgumentType.CHOICE, description = "Type of the group", mandatory = false, choiceMethod = "groupTypes")
@@ -110,7 +114,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/view/*")
-	public static void viewGroup(State st, SafeMap values) throws SystemException {
+	public static void viewGroup(@Nonnull State st, SafeMap values) throws SystemException {
 
 		//System.out.println(st.uri);
 		String[] split = st.getDebasedURL().split("/");
@@ -120,7 +124,7 @@ public abstract class Management {
 		viewGroup(st, values, group);
 	}
 
-	public static void viewGroup(State st, SafeMap values, CharacterGroup group) throws SystemException {
+	public static void viewGroup(@Nonnull State st, SafeMap values, @Nonnull CharacterGroup group) throws SystemException {
 		Form f = st.form;
 		f.noForm();
 		f.add(new TextHeader(group.getName()));
@@ -178,11 +182,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Groups.SetOwner", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set the leader of a group", requiresPermission = "Groups.SetOwner")
-	public static Response setOwner(State st,
-	                                @Arguments(description = "Group to change the leader of", type = ArgumentType.CHARACTERGROUP)
+	public static Response setOwner(@Nonnull State st,
+	                                @Nonnull @Arguments(description = "Group to change the leader of", type = ArgumentType.CHARACTERGROUP)
 			                                CharacterGroup group,
-	                                @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false)
+	                                @Nonnull @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false)
 			                                Char newowner) {
 		Char oldowner = group.getOwner();
 		String oldownername = null;
@@ -216,11 +221,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Groups.Add", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Add a member to this group", requiresPermission = "Groups.SetGroup")
-	public static Response add(State st,
-	                           @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to add character to")
+	public static Response add(@Nonnull State st,
+	                           @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to add character to")
 			                           CharacterGroup group,
-	                           @Arguments(description = "Character to add to the group", type = ArgumentType.CHARACTER)
+	                           @Nonnull @Arguments(description = "Character to add to the group", type = ArgumentType.CHARACTER)
 			                           Char newmember) throws UserException {
 		boolean debug = false;
 		Attribute attr = st.getAttribute(group);
@@ -253,11 +259,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Groups.Remove", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Remove a member from this group", requiresPermission = "Groups.SetGroup")
-	public static Response remove(State st,
-	                              @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to remove character from")
+	public static Response remove(@Nonnull State st,
+	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to remove character from")
 			                              CharacterGroup group,
-	                              @Arguments(description = "Character to remove from the group", type = ArgumentType.CHARACTER)
+	                              @Nonnull @Arguments(description = "Character to remove from the group", type = ArgumentType.CHARACTER)
 			                              Char member) {
 		if (group.getOwner() == member) {
 			return new ErrorResponse("Will not remove " + member.getName() + " from " + group.getName() + ", they are the group leader, you must demote them by replacing them or leaving the group leaderless.");
@@ -275,9 +282,10 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Groups.Delete", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Delete a group", requiresPermission = "Groups.Delete")
-	public static Response delete(State st,
-	                              @Arguments(description = "Group to delete", type = ArgumentType.CHARACTERGROUP)
+	public static Response delete(@Nonnull State st,
+	                              @Nonnull @Arguments(description = "Group to delete", type = ArgumentType.CHARACTERGROUP)
 			                              CharacterGroup group) {
 		String groupname = group.getName();
 		group.delete();
@@ -290,11 +298,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Groups.SetAdmin", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.ANY, description = "Set the groups admin flag on a user")
-	public static Response setAdmin(State st,
-	                                @Arguments(description = "Group to set the character's admin flag on", type = ArgumentType.CHARACTERGROUP)
+	public static Response setAdmin(@Nonnull State st,
+	                                @Nonnull @Arguments(description = "Group to set the character's admin flag on", type = ArgumentType.CHARACTERGROUP)
 			                                CharacterGroup group,
-	                                @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER)
+	                                @Nonnull @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER)
 			                                Char character,
 	                                @Arguments(description = "Admin flag to set on the character in this group", type = ArgumentType.BOOLEAN)
 			                                boolean admin) throws SystemException {
@@ -324,9 +333,10 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Groups.SetOpen", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.ANY, description = "Set the groups open flag", requiresPermission = "Groups.SetOpen")
-	public static Response setOpen(State st,
-	                               @Arguments(description = "Group to modify", type = ArgumentType.CHARACTERGROUP)
+	public static Response setOpen(@Nonnull State st,
+	                               @Nonnull @Arguments(description = "Group to modify", type = ArgumentType.CHARACTERGROUP)
 			                               CharacterGroup group,
 	                               @Arguments(description = "Group open?", type = ArgumentType.BOOLEAN)
 			                               boolean open) throws SystemException {

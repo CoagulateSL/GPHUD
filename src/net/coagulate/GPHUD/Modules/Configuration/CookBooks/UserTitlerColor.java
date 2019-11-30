@@ -9,12 +9,14 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
 public class UserTitlerColor extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/user-titler-color")
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.add(new TextHeader("User Configurable Titler Color Cookbook"));
 		boolean act = false;
@@ -33,7 +35,7 @@ public class UserTitlerColor extends CookBook {
 		}
 	}
 
-	private static void run(State st, Table t, boolean act) {
+	private static void run(@Nonnull State st, @Nonnull Table t, boolean act) {
 		t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
 		charAttribute(st, act, t, "TitlerColor", "true", "COLOR", "", "FALSE", "FALSE", "");
 		setKV(st, act, t, st.getInstance(), "GPHUDClient.TitlerColor", "--TITLERCOLOR--");

@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -17,12 +19,13 @@ public class ArgumentAnnotation extends Argument {
 	Arguments meta;
 	Parameter parameter;
 	Command command;
+	@Nullable
 	String overridedescription = null;
 	private boolean generated = true;
 
 	protected ArgumentAnnotation() {}
 
-	public ArgumentAnnotation(Command c, Parameter p) {
+	public ArgumentAnnotation(Command c, @Nonnull Parameter p) {
 		this.parameter = p;
 		this.command = c;
 		meta = p.getAnnotation(Arguments.class);
@@ -31,10 +34,12 @@ public class ArgumentAnnotation extends Argument {
 
 	public boolean isGenerated() { return generated; }
 
+	@Nonnull
 	public ArgumentType type() { return meta.type(); }
 
 	public void overrideDescription(String n) { overridedescription = n; }
 
+	@Nullable
 	public String description() {
 		if (overridedescription != null) { return overridedescription; }
 		return meta.description();
@@ -42,6 +47,7 @@ public class ArgumentAnnotation extends Argument {
 
 	public boolean mandatory() { return meta.mandatory(); }
 
+	@Nonnull
 	public String choiceMethod() { return meta.choiceMethod(); }
 
 	public Class<? extends Object> objectType() { return parameter.getType(); }
@@ -52,6 +58,7 @@ public class ArgumentAnnotation extends Argument {
 
 	public int max() { return meta.max(); }
 
+	@Nonnull
 	@SuppressWarnings("unchecked")
 	public List<String> getChoices(State st) throws SystemException {
 		try {

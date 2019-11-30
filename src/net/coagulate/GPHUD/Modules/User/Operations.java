@@ -12,6 +12,8 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Set/change a users passwords.
  *
@@ -19,9 +21,10 @@ import net.coagulate.GPHUD.State;
  */
 public abstract class Operations {
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, permitScripting = false, description = "Set your USER password (via authorised SL login ONLY)", permitUserWeb = false,permitObject = false)
-	public static Response setPassword(State st,
-	                                   @Arguments(description = "New password", type = ArgumentType.PASSWORD)
+	public static Response setPassword(@Nonnull State st,
+	                                   @Nonnull @Arguments(description = "New password", type = ArgumentType.PASSWORD)
 			                                   String password) throws SystemException, UserException {
 		if (st.sourcedeveloper != null && st.sourcedeveloper.getId() != 1) {
 			throw new SystemException("RESTRICTED COMMAND");

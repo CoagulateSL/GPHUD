@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules;
 
 
+import javax.annotation.Nonnull;
+
 /**
  * Wraps a Pool.
  *
@@ -19,12 +21,16 @@ public class PoolAnnotation extends Pool {
 
 	public boolean isGenerated() { return generated; }
 
+	@Nonnull
 	public String name() { return meta.name(); }
 
+	@Nonnull
 	public String description() { return meta.description(); }
 
+	@Nonnull
 	public String getName() { return name(); }
 
+	@Nonnull
 	public String fullName() { return module.getName() + "." + getName(); }
 
 }

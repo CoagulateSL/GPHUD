@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Modules.Characters;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Modules.KV;
 
+import javax.annotation.Nonnull;
+
 /**
  * Wraps a dynamic attribute KV for characters.
  *
@@ -26,6 +28,7 @@ public class AttributeKV extends KV {
 		return attribute.getName();
 	}
 
+	@Nonnull
 	@Override
 	public KVSCOPE scope() {
 		return KVSCOPE.COMPLETE;
@@ -36,11 +39,13 @@ public class AttributeKV extends KV {
 		return attribute.getKVType();
 	}
 
+	@Nonnull
 	@Override
 	public String description() {
 		return "Character attribute " + attribute.getName();
 	}
 
+	@Nonnull
 	@Override
 	public String editpermission() {
 		return "Characters.Set" + name();
@@ -51,6 +56,7 @@ public class AttributeKV extends KV {
 		return attribute.getKVDefaultValue();
 	}
 
+	@Nonnull
 	@Override
 	public String conveyas() {
 		return "";
@@ -61,6 +67,7 @@ public class AttributeKV extends KV {
 		return attribute.getKVHierarchy();
 	}
 
+	@Nonnull
 	@Override
 	public String fullname() {
 		return "Characters." + name();

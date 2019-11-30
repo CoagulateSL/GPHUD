@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -24,21 +25,25 @@ public class JSONResponse implements Response {
 		return json;
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<A JSON Response>";
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		throw new SystemException("JSONResponse can not be converted to Text");
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		throw new SystemException("JSONResponse can not be converted to HTML");
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("JSONResponse can not be interrogated as a Form");

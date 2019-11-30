@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules;
 
+import javax.annotation.Nonnull;
+
 /**
  * Hard wired "enabled" flag for modules.
  *
@@ -15,20 +17,27 @@ public class KVEnabled extends KV {
 		this.def = def;
 	} // technically is generated, but generated really means "instance specific", and these KVs aren't, they're just a convenience for writing the static declaration.
 
+	@Nonnull
 	public String name() { return "Enabled"; }
 
+	@Nonnull
 	public KVSCOPE scope() { return KVSCOPE.INSTANCE; }
 
+	@Nonnull
 	public KVTYPE type() { return KVTYPE.BOOLEAN; }
 
+	@Nonnull
 	public KVHIERARCHY hierarchy() { return KVHIERARCHY.NONE; }
 
+	@Nonnull
 	public String description() { return "Enabled flag for this module"; }
 
+	@Nonnull
 	public String editpermission() { return "Instance.ModuleEnablement"; }
 
 	public String defaultvalue() { return def; }
 
+	@Nonnull
 	public String conveyas() { return ""; }
 
 	@Override
@@ -36,6 +45,7 @@ public class KVEnabled extends KV {
 		return false;
 	}
 
+	@Nonnull
 	@Override
 	public String fullname() {
 		return module.getName() + "." + name();

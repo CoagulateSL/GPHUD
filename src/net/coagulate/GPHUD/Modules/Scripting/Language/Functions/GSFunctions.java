@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSUnknownIdentifier;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -22,10 +23,10 @@ public class GSFunctions {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface GSFunction {
-		String description();
-		String parameters();
-		String returns();
-		String notes();
+		@Nonnull String description();
+		@Nonnull String parameters();
+		@Nonnull String returns();
+		@Nonnull String notes();
 	}
 
 	private static final Map<String, Method> gsfunctions=new HashMap<>();
@@ -33,5 +34,6 @@ public class GSFunctions {
 		if (gsfunctions.containsKey(string)) { throw new SystemException("Duplicate definition for gsFunction "+string); }
 		gsfunctions.put(string,method);
 	}
+	@Nonnull
 	public static Map<String, Method> getAll() { return gsfunctions; }
 }

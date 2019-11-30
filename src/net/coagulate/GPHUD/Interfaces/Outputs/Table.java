@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,11 +17,13 @@ import java.util.Set;
 public class Table implements Renderable {
 	final List<Row> table = new ArrayList<>();
 	boolean border = false;
+	@Nullable
 	Row openrow = null;
 	private boolean nowrap = false;
 
 	public void border(boolean border) { this.border = border; }
 
+	@Nonnull
 	public Table openRow() {
 		if (openrow != null) { closeRow(); }
 		openrow = new Row();
@@ -27,29 +31,35 @@ public class Table implements Renderable {
 		return this;
 	}
 
+	@Nonnull
 	public Table closeRow() {
 		openrow = null;
 		return this;
 	}
 
+	@Nonnull
 	public Table add(Row r) {
 		table.add(r);
 		openrow = r;
 		return this;
 	}
 
+	@Nonnull
 	public Table add(String s) {
 		add(new Text(s));
 		return this;
 	}
 
-	public Table add(Boolean b) { return add(b.toString()); }
+	@Nonnull
+	public Table add(@Nonnull Boolean b) { return add(b.toString()); }
 
+	@Nonnull
 	public Table add(Renderable e) {
 		add(new Cell(e));
 		return this;
 	}
 
+	@Nonnull
 	public Table add(Cell e) {
 		if (openrow == null) { openRow(); }
 		openrow.add(e);
@@ -78,16 +88,17 @@ public class Table implements Renderable {
 		return s.toString();
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(table);
 	}
 
-	public void addNoNull(Renderable addable) {
+	public void addNoNull(@Nullable Renderable addable) {
 		if (addable == null) { add(""); } else { add(addable); }
 	}
 
-	public void addNoNull(String addable) {
+	public void addNoNull(@Nullable String addable) {
 		if (addable == null) { add(""); } else { add(addable); }
 	}
 

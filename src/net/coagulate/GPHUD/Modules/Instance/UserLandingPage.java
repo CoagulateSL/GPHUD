@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 public abstract class UserLandingPage {
 	@URLs(url = "/")
-	public static void index(State st, SafeMap values) throws UserException, SystemException {
+	public static void index(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.add(new TextHeader("Welcome to GPHUD"));
 		if (st.getInstanceNullable() == null) {

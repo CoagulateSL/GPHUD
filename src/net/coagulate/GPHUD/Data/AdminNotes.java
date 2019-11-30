@@ -9,6 +9,7 @@ import net.coagulate.SL.Data.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class AdminNotes extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return An AdminNotes representation
 	 */
+	@Nonnull
 	public static AdminNotes get(int id) {
 		return (AdminNotes) factoryPut("AdminNotes", id, new AdminNotes(id));
 	}
@@ -71,7 +73,8 @@ public class AdminNotes extends TableRow {
 		}
 	}
 
-	public static List<AdminNote> get(Instance instance, User user, Char character, boolean showall, boolean toponly) {
+	@Nonnull
+	public static List<AdminNote> get(@Nonnull Instance instance, @Nonnull User user, @Nonnull Char character, boolean showall, boolean toponly) {
 		List<AdminNote> results=new ArrayList<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+
 						(showall?"":" and adminonly=0")+" order by tds desc"+
@@ -84,7 +87,8 @@ public class AdminNotes extends TableRow {
 		}
 		return results;
 	}
-	public static List<AdminNote> get(Instance instance, User user, boolean showall, boolean toponly) {
+	@Nonnull
+	public static List<AdminNote> get(@Nonnull Instance instance, @Nonnull User user, boolean showall, boolean toponly) {
 		List<AdminNote> results=new ArrayList<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? and targetuser=?"+
 						(showall?"":" and adminonly=0")+" order by tds desc"+
@@ -95,13 +99,15 @@ public class AdminNotes extends TableRow {
 		}
 		return results;
 	}
-	public static List<AdminNote> get(Instance instance) {
+	@Nonnull
+	public static List<AdminNote> get(@Nonnull Instance instance) {
 		List<AdminNote> results=new ArrayList<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? order by tds desc",
 				instance.getId())) results.add(resultify(row));
 		return results;
 	}
-	private static AdminNote resultify(ResultsRow row) {
+	@Nonnull
+	private static AdminNote resultify(@Nonnull ResultsRow row) {
 		return new AdminNote(
 				row.getInt("tds"),
 				Instance.get(row.getInt("instanceid")),
@@ -113,29 +119,35 @@ public class AdminNotes extends TableRow {
 		);
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "adminnotes";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "id";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		throw new SystemException("Admin Notes don't have names");
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/notes/view/" + getId();
 	}
 
 
+	@javax.annotation.Nullable
 	public String getKVTable() { return null; }
 
+	@javax.annotation.Nullable
 	public String getKVIdField() { return null; }
 
 	public void flushKVCache(State st) {}

@@ -5,6 +5,8 @@
  */
 package net.coagulate.GPHUD.Modules;
 
+import javax.annotation.Nonnull;
+
 /**
  * Wrapper for comparing objects by name in the modules workarea (DBObject handles database sorting).
  *
@@ -25,7 +27,7 @@ public abstract class NameComparable implements Comparable<NameComparable> {
 	 * We rely on the names as the sorting order, and pass the buck to String.compareTo()
 	 */
 	@Override
-	public int compareTo(NameComparable t) {
+	public int compareTo(@Nonnull NameComparable t) {
 		String ours = name();
 		String theirs = t.name();
 		return ours.compareTo(theirs);

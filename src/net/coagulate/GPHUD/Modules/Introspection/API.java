@@ -14,6 +14,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 public abstract class API {
 	@URLs(url = "/introspection/api/*")
-	public static void renderCommand(State st, SafeMap values) throws UserException, SystemException {
+	public static void renderCommand(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		String uri = st.getDebasedURL();
 		if (!uri.startsWith("/introspection/api/")) { throw new SystemException("URL Misconfiguratin?"); }
 		uri = uri.substring("/introspection/api/".length());
@@ -95,7 +96,7 @@ public abstract class API {
 
 	@URLs(url = "/introspection/api/")
 	@SideSubMenus(name = "API", priority = 1)
-	public static void APIIndex(State st, SafeMap values) {
+	public static void APIIndex(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		Table t = new Table();
 		//t.border(true);

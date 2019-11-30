@@ -18,6 +18,8 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -40,6 +42,7 @@ public class Char extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A Char representation
 	 */
+	@Nonnull
 	public static Char get(int id) {
 		return (Char) factoryPut("Character", id, new Char(id));
 	}
@@ -50,7 +53,7 @@ public class Char extends TableRow {
 	 *
 	 * @param url the URL to refresh the last used timer for.
 	 */
-	public static void refreshURL(String url) {
+	public static void refreshURL(@Nonnull String url) {
 		String t = "characters";
 		int refreshifolderthan = getUnixTime() - REFRESH_INTERVAL;
 		int toupdate = GPHUD.getDB().dqi(true, "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
@@ -69,7 +72,8 @@ public class Char extends TableRow {
 	 * @param avatar Avatar to look up the logged-in character for
 	 * @return Char they are using
 	 */
-	public static Char getActive(User avatar, Instance instance) {
+	@Nonnull
+	public static Char getActive(@Nonnull User avatar, @Nonnull Instance instance) {
 		Integer i = GPHUD.getDB().dqi(false, "select characterid from characters where playedby=? and instanceid=?", avatar.getId(), instance.getId());
 		if (i == null) {
 			throw new UserException("Avatar " + avatar.getName() + " is not wearing the HUD or is not logged in as a character presently.");
@@ -83,7 +87,8 @@ public class Char extends TableRow {
 	 * @param zone The zone to enumerate
 	 * @return A set of Char(acters) that are registered inside the zone.
 	 */
-	public static Set<Char> getInZone(Zone zone) {
+	@Nonnull
+	public static Set<Char> getInZone(@Nonnull Zone zone) {
 		Set<Char> chars = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select characterid from characters where zoneid=? and url is not null", zone.getId())) {
 			chars.add(Char.get(r.getInt()));
@@ -91,7 +96,7 @@ public class Char extends TableRow {
 		return chars;
 	}
 
-	static void wipeKV(Instance instance, String key) {
+	static void wipeKV(@Nonnull Instance instance, String key) {
 		String kvtable = "characterkvstore";
 		String maintable = "characters";
 		String idcolumn = "characterid";
@@ -105,6 +110,7 @@ public class Char extends TableRow {
 	 * @param name Character name
 	 * @return Character
 	 */
+	@Nullable
 	public static Char resolve(State st, String name) {
 		int id = new Char(-1).resolveToID(st, name, true);
 		if (id == 0) { return null; }
@@ -118,6 +124,7 @@ public class Char extends TableRow {
 	 * @param i Instance
 	 * @return Set of Characters that have inbound links
 	 */
+	@Nonnull
 	public static Set<Char> getActive(Instance i) {
 		Set<Char> chars = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select characterid from characters where url is not null")) {
@@ -132,7 +139,8 @@ public class Char extends TableRow {
 	 * @param instance The instance
 	 * @return List of Char (characters)
 	 */
-	public static Set<Char> getCharacters(Instance instance, User avatar) {
+	@Nonnull
+	public static Set<Char> getCharacters(@Nonnull Instance instance, @Nonnull User avatar) {
 		Results rows = GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=?", avatar.getId(), instance.getId());
 		Set<Char> results = new TreeSet<>();
 		for (ResultsRow r : rows) {
@@ -141,7 +149,7 @@ public class Char extends TableRow {
 		return results;
 	}
 
-	public static void create(State st, String name) {
+	public static void create(@Nonnull State st, String name) {
 		GPHUD.getDB().d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)", name, st.getInstance().getId(), st.getAvatar().getId(), getUnixTime(), 0);
 	}
 
@@ -150,7 +158,8 @@ public class Char extends TableRow {
 	 *
 	 * @return Set of Char that are owned by this avatar and not retired
 	 */
-	public static Set<Char> getCharacters(User a) {
+	@Nonnull
+	public static Set<Char> getCharacters(@Nonnull User a) {
 		Results rows = GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0", a.getId());
 		Set<Char> results = new TreeSet<>();
 		for (ResultsRow r : rows) {
@@ -159,7 +168,8 @@ public class Char extends TableRow {
 		return results;
 	}
 
-	public static Char getMostRecent(User avatar) {
+	@Nullable
+	public static Char getMostRecent(@Nonnull User avatar) {
 		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 order by lastactive desc limit 0,1",avatar.getId());
 		if (results.empty()) { return null; }
 		try { return Char.get(results.iterator().next().getInt("characterid")); }
@@ -168,7 +178,8 @@ public class Char extends TableRow {
 			return null;
 		}
 	}
-	public static Char getMostRecent(User avatar,Instance optionalinstance) {
+	@Nullable
+	public static Char getMostRecent(@Nonnull User avatar, @Nullable Instance optionalinstance) {
 		if (optionalinstance==null) { return getMostRecent(avatar); }
 		Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",avatar.getId(),optionalinstance.getId());
 		if (results.empty()) { return null; }
@@ -179,7 +190,8 @@ public class Char extends TableRow {
 		}
 	}
 
-	public static DropDownList getNPCList(State st,String listname) {
+	@Nonnull
+	public static DropDownList getNPCList(@Nonnull State st, String listname) {
 		DropDownList list=new DropDownList(listname);
 		for (ResultsRow row:GPHUD.getDB().dq("select characterid,name from characters where instanceid=? and owner=?",st.getInstance().getId(),User.getSystem().getId())) {
 			list.add(row.getInt("characterid")+"",row.getString("name"));
@@ -204,7 +216,7 @@ public class Char extends TableRow {
 	 *
 	 * @param url URL to set to
 	 */
-	public void setURL(String url) {
+	public void setURL(@Nonnull String url) {
 		String oldurl = getURL();
 		int now = getUnixTime();
 
@@ -253,21 +265,25 @@ public class Char extends TableRow {
 		return User.get(getInt("owner"));
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "characters";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "characterid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "characters"; }
 
@@ -277,7 +293,7 @@ public class Char extends TableRow {
 	 * @param p Pool
 	 * @return Sum of the entries
 	 */
-	public int sumPool(Pool p) {
+	public int sumPool(@Nonnull Pool p) {
 		Integer sum = dqi(true, "select sum(adjustment) from characterpools where characterid=? and poolname like ?", getId(), p.fullName());
 		if (sum == null) { return 0; }
 		return sum;
@@ -291,7 +307,7 @@ public class Char extends TableRow {
 	 * @param adjustment  Ammount to grant
 	 * @param description Audit logged description
 	 */
-	public void addPool(State st, Pool p, int adjustment, String description) {
+	public void addPool(@Nonnull State st, @Nonnull Pool p, int adjustment, String description) {
 		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)", getId(), p.fullName(), adjustment, st.getCharacter().getId(), st.avatar().getId(), description, getUnixTime());
 	}
 
@@ -303,7 +319,7 @@ public class Char extends TableRow {
 	 * @param adjustment  Ammount to grant
 	 * @param description Audit logged description
 	 */
-	public void addPoolAdmin(State st, Pool p, int adjustment, String description) {
+	public void addPoolAdmin(@Nonnull State st, @Nonnull Pool p, int adjustment, String description) {
 		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)", getId(), p.fullName(), adjustment, null, st.avatar().getId(), description, getUnixTime());
 	}
 
@@ -315,7 +331,7 @@ public class Char extends TableRow {
 	 * @param adjustment  Ammount to adjust
 	 * @param description Logged reason for the change
 	 */
-	public void addPoolSystem(State st, Pool p, int adjustment, String description) {
+	public void addPoolSystem(State st, @Nonnull Pool p, int adjustment, String description) {
 		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)", getId(), p.fullName(), adjustment, null, User.getSystem().getId(), description, getUnixTime());
 	}
 
@@ -345,7 +361,7 @@ public class Char extends TableRow {
 	 * @param since Unix Time to count points since
 	 * @return Number of points in the given period.
 	 */
-	public int sumPoolSince(Pool p, int since) {
+	public int sumPoolSince(@Nullable Pool p, int since) {
 		if (p == null) { throw new SystemException("Null pool not permitted"); }
 		Integer sum = dqi(true, "select sum(adjustment) from characterpools where characterid=? and poolname like ? and timedate>=?", getId(), p.fullName(), since);
 		if (sum == null) { return 0; }
@@ -370,7 +386,8 @@ public class Char extends TableRow {
 	 * @param st State
 	 * @return List of nearby Chars
 	 */
-	public List<Char> getNearbyCharacters(State st) {
+	@Nonnull
+	public List<Char> getNearbyCharacters(@Nonnull State st) {
 		Char character = st.getCharacter();
 		boolean debug = false;
 		List<Char> chars = new ArrayList<>();
@@ -406,7 +423,7 @@ public class Char extends TableRow {
 	 * @param st State
 	 * @return Level number
 	 */
-	public int getLevel(State st) {
+	public int getLevel(@Nonnull State st) {
 		if (st.hasModule("Experience")) { return Experience.toLevel(st, Experience.getExperience(st, this)); }
 		return 0;
 	}
@@ -426,7 +443,8 @@ public class Char extends TableRow {
 	 * @param st State
 	 * @return List of Pools
 	 */
-	public Set<Pool> getPools(State st) {
+	@Nonnull
+	public Set<Pool> getPools(@Nonnull State st) {
 		Set<Pool> pools = new TreeSet<>();
 		Results results = dq("select distinct poolname from characterpools where characterid=?", getId());
 		for (ResultsRow r : results) {
@@ -445,6 +463,7 @@ public class Char extends TableRow {
 	 * @param grouptype Group type string
 	 * @return The CharacterGroup or null
 	 */
+	@Nullable
 	public CharacterGroup getGroup(String grouptype) {
 		Integer group = dqi(false, "select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers.charactergroupid where characterid=? and charactergroups.type=?", getId(), grouptype);
 		if (group == null) { return null; }
@@ -459,7 +478,8 @@ public class Char extends TableRow {
 	 * @param days  Period (days)
 	 * @return Explanation of when the next point is available.
 	 */
-	public String poolNextFree(Pool pool, int maxxp, float days) {
+	@Nonnull
+	public String poolNextFree(@Nonnull Pool pool, int maxxp, float days) {
 		if (maxxp == 0) { return "NEVER"; }
 		int now = getUnixTime();
 		int nextfree = poolNextFreeAt(pool, maxxp, days);
@@ -477,7 +497,7 @@ public class Char extends TableRow {
 	 * @param days  Period in days
 	 * @return Date-time of the point of next free (may be in the past, in which case available NOW).
 	 */
-	public int poolNextFreeAt(Pool pool, int maxxp, float days) {
+	public int poolNextFreeAt(@Nonnull Pool pool, int maxxp, float days) {
 		boolean debug = false;
 		int now = getUnixTime();
 		int since = (int) (now - (days * 60 * 60 * 24));
@@ -510,7 +530,7 @@ public class Char extends TableRow {
 	 * @param key   Key
 	 * @param value Value
 	 */
-	public void push(String key, String value) {
+	public void push(@Nonnull String key, String value) {
 		String url = getURL();
 		if (url == null) { return; }
 		JSONObject j = new JSONObject();
@@ -546,7 +566,7 @@ public class Char extends TableRow {
 	 * @param message         Message to send (JSON format)
 	 * @param lifespanseconds life span of the queueMessage in seconds
 	 */
-	public void queueMessage(JSONObject message, int lifespanseconds) {
+	public void queueMessage(@Nonnull JSONObject message, int lifespanseconds) {
 		Message.add(this, getUnixTime() + lifespanseconds, message);
 		pushMessageCount();
 	}
@@ -556,6 +576,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Message object
 	 */
+	@Nullable
 	public Message getMessage() {
 		return Message.getNextMessage(this);
 	}
@@ -565,6 +586,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Message object
 	 */
+	@Nullable
 	public Message getActiveMessage() { return Message.getActiveMessage(this); }
 
 	/**
@@ -572,6 +594,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Zone
 	 */
+	@Nullable
 	public Zone getZone() {
 		Integer id = dqi(false, "select zoneid from characters where characterid=?", getId());
 		if (id == null) { return null; }
@@ -583,7 +606,7 @@ public class Char extends TableRow {
 	 *
 	 * @param zone Zone
 	 */
-	public void setZone(Zone zone) {
+	public void setZone(@Nullable Zone zone) {
 		Integer id = null;
 		if (zone != null) { id = zone.getId(); }
 		if (id == null) {
@@ -593,11 +616,13 @@ public class Char extends TableRow {
 		d("update characters set zoneid=? where characterid=?", id, getId());
 	}
 
+	@Nonnull
 	@Override
 	public String getKVTable() {
 		return "characterkvstore";
 	}
 
+	@Nonnull
 	@Override
 	public String getKVIdField() {
 		return "characterid";
@@ -608,6 +633,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Set of Character Groups
 	 */
+	@Nonnull
 	public Set<CharacterGroup> getGroups() {
 		Set<CharacterGroup> ret = new TreeSet<>();
 		for (ResultsRow r : dq("select charactergroupid from charactergroupmembers where characterid=?", getId())) {
@@ -622,7 +648,8 @@ public class Char extends TableRow {
 	 * @param st State
 	 * @return Set of conveyanced KVs
 	 */
-	private Set<KV> getConveyances(State st) {
+	@Nonnull
+	private Set<KV> getConveyances(@Nonnull State st) {
 		// load the previously sent conveyances from the DB.  Note that the 'state' caches these queries so its not quite as garbage as it sounds.
 		validate(st);
 		Set<KV> conveyances = new TreeSet<>();
@@ -640,7 +667,8 @@ public class Char extends TableRow {
 	 * @param st State
 	 * @return Map of KV=Values for all conveyanced data.
 	 */
-	private Map<KV, String> loadConveyances(State st) {
+	@Nonnull
+	private Map<KV, String> loadConveyances(@Nonnull State st) {
 		// load the previously sent conveyances from the DB.  Note that the 'state' caches these queries so its not quite as garbage as it sounds.
 		validate(st);
 		Map<KV, String> conveyances = new TreeMap<>();
@@ -660,7 +688,7 @@ public class Char extends TableRow {
 	 * @param st      State
 	 * @param payload Message to append the conveyances to
 	 */
-	public void initialConveyances(State st, JSONObject payload) {
+	public void initialConveyances(@Nonnull State st, @Nonnull JSONObject payload) {
 		boolean debug = false;
 		validate(st);
 		Map<KV, String> oldconveyances = loadConveyances(st);
@@ -681,7 +709,7 @@ public class Char extends TableRow {
 	 * @param st      State
 	 * @param payload Message to append changed conveyances to.
 	 */
-	public void appendConveyance(State st, JSONObject payload) {
+	public void appendConveyance(@Nonnull State st, @Nonnull JSONObject payload) {
 		boolean debug = false;
 		validate(st);
 		Map<KV, String> oldconveyances = loadConveyances(st);
@@ -701,6 +729,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Region - nulls the retired region
 	 */
+	@Nullable
 	public Region getRegion() {
 		Integer region = getInt("regionid");
 		if (region == null) { return null; }
@@ -714,7 +743,7 @@ public class Char extends TableRow {
 	 *
 	 * @param r Region
 	 */
-	public void setRegion(Region r) {
+	public void setRegion(@Nonnull Region r) {
 		//System.out.println("Setting region to "+r+" for "+getName()+" where it is currently "+getRegion());
 		if (getRegion()!=r) {
 			set("regionid", r.getId());
@@ -726,6 +755,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Avatar
 	 */
+	@Nullable
 	public User getPlayedBy() {
 		Integer avatarid = dqi(true, "select playedby from characters where characterid=?", getId());
 		if (avatarid == null) { return null; }
@@ -737,11 +767,11 @@ public class Char extends TableRow {
 	 *
 	 * @param avatar Avatar who is playing this character.
 	 */
-	public void setPlayedBy(User avatar) {
+	public void setPlayedBy(@Nonnull User avatar) {
 		set("playedby", avatar.getId());
 	}
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Char / State Instance mismatch"); }
@@ -768,11 +798,11 @@ public class Char extends TableRow {
 		set("name", newname);
 	}
 
-	public void closeVisits(State st) {
+	public void closeVisits(@Nonnull State st) {
 		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
 		d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",st.getCharacter().getId(),st.getRegion().getId());
 	}
-	public void closeURL(State st) {
+	public void closeURL(@Nonnull State st) {
 		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
 		d("update characters set url=null,urlfirst=null,urllast=null,authnode=null,zoneid=null,regionid=null,lastactive=UNIX_TIMESTAMP(),playedby=null where characterid=?",st.getCharacter().getId());
 	}
@@ -788,7 +818,7 @@ public class Char extends TableRow {
 		return true;
 	}
 
-	public void setOwner(User newowner) {
+	public void setOwner(@Nonnull User newowner) {
 		set("owner",newowner.getId());
 		// purge any primary characters referring to this
 		PrimaryCharacters.purge(this);

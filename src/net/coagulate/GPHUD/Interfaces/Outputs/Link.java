@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,16 +26,19 @@ public class Link implements Renderable {
 		this.target = target;
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return ">" + content.asText(st) + "<";
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		return "<a href=\"" + target + "\">" + content.asHtml(st, rich) + "</a>";
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();

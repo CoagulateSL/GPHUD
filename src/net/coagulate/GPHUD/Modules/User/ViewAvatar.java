@@ -21,6 +21,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
@@ -33,7 +34,7 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 public abstract class ViewAvatar {
 
 	@URLs(url = "/avatars/view/*")
-	public static void viewAvatar(State st, SafeMap values) throws UserException, SystemException {
+	public static void viewAvatar(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		User a = User.get(Integer.parseInt(id));
@@ -41,7 +42,7 @@ public abstract class ViewAvatar {
 	}
 
 
-	public static void viewAvatar(State st, SafeMap values, User a) throws UserException, SystemException {
+	public static void viewAvatar(@Nonnull State st, SafeMap values, @Nonnull User a) throws UserException, SystemException {
 		boolean fullinstance = false;
 		boolean full = false;
 		String tz = st.avatar().getTimeZone();
@@ -99,14 +100,16 @@ public abstract class ViewAvatar {
 		Modules.simpleHtml(st, "User.SetTZ", value);
 	}
 
+	@Nonnull
 	@Commands(context = Command.Context.AVATAR,permitScripting = false,description = "Set displayed timezone for date/time events",permitObject = false)
-	public static Response setTZ(State st,
+	public static Response setTZ(@Nonnull State st,
 	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", choiceMethod = "getTimeZones")
 			                             String timezone) {
 		st.avatar().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");
 	}
 
+	@Nonnull
 	public static List<String> getTimeZones(State st) {
 		return DateTime.getTimeZones();
 	}

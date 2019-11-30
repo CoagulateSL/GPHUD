@@ -23,6 +23,9 @@ import net.coagulate.SL.Data.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
 import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPointsRemaining;
@@ -37,13 +40,14 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Login {
+	@Nonnull
 	@Commands(context = Context.AVATAR, permitConsole = false, permitUserWeb = false, permitScripting =false,description = "Register this session as a character connection",permitObject = false)
-	public static Response login(State st,
-	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128,mandatory = false)
+	public static Response login(@Nonnull State st,
+	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128,mandatory = false)
 			                             String version,
-	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the HUD that is connecting", max = 128,mandatory = false)
+	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the HUD that is connecting", max = 128,mandatory = false)
 			                             String versiondate,
-	                             @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128,mandatory = false)
+	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128,mandatory = false)
 			                             String versiontime
 	) throws UserException, SystemException {
 		final boolean debug = false;
@@ -208,9 +212,10 @@ public abstract class Login {
 		return new JSONResponse(rawresponse);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Create a new character",permitObject = false,permitScripting = false)
-	public static Response create(State st,
-	                              @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max = 40)
+	public static Response create(@Nonnull State st,
+	                              @Nullable @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max = 40)
 			                              String charactername) {
 		if (Char.resolve(st, charactername) != null) {
 			JSONObject json = Modules.getJSONTemplate(st, "characters.create");
@@ -247,9 +252,10 @@ public abstract class Login {
 		return login(st, null, null, null);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Switch to a character",permitObject = false,permitScripting = false)
-	public static Response select(State st,
-	                              @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load")
+	public static Response select(@Nonnull State st,
+	                              @Nullable @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load")
 			                              Char character) {
 		if (character == null) { return new ErrorResponse("No such character"); }
 		if (character.getOwner() != st.avatar()) { return new ErrorResponse("That character does not belong to you"); }
@@ -267,11 +273,12 @@ public abstract class Login {
 		return login(st, null, null, null);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Initialise a character attribute",permitObject = false)
-	public static Response initialise(State st,
-	                                  @Arguments(type = ArgumentType.ATTRIBUTE, description = "Attribute to initialise")
+	public static Response initialise(@Nonnull State st,
+	                                  @Nonnull @Arguments(type = ArgumentType.ATTRIBUTE, description = "Attribute to initialise")
 			                                  Attribute attribute,
-	                                  @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to initialise to", max = 4096)
+	                                  @Nonnull @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to initialise to", max = 4096)
 			                                  String value) {
 		//System.out.println("Initialise "+attribute+" to "+value);
 		final boolean debug=true;

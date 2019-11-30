@@ -5,20 +5,22 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /** Some generally useful methods for publishing */
 public class Publishing {
-	static int getPartInt(State st,int part) {
+	static int getPartInt(@Nonnull State st, int part) {
 		return Integer.parseInt(getPart(st,part));
 	}
-	static String getPart(State st,int part) {
+	static String getPart(@Nonnull State st, int part) {
 		String[] split=st.getDebasedNoQueryURL().split("/");
 		if ((part+2)>=split.length) { throw new UserException("Missing identifier "+part); }
 		return split[part+2];
 	}
 
-	static void contentResizer(State st) {st.form.add("<script type=\"text/javascript\" src=\"https://coagulate.sl/resources/iframeResizer.contentWindow.min.js\"></script>");}
+	static void contentResizer(@Nonnull State st) {st.form.add("<script type=\"text/javascript\" src=\"https://coagulate.sl/resources/iframeResizer.contentWindow.min.js\"></script>");}
 
-	static void published(State st,String inline) {
+	static void published(@Nonnull State st, String inline) {
 		String id="GPHudFrame"+((int)((Math.random()*1000000.0)));
 		Form f=st.form;
 		example(f,"<style>\n" +
@@ -34,7 +36,7 @@ public class Publishing {
 				"  iFrameResize({ log: false }, '#"+id+"')\n" +
 				"</script>");
 	}
-	private static void example(Form f,String s) {
+	private static void example(@Nonnull Form f, String s) {
 		if (GPHUD.DEV) { s=s.replaceAll("sl\\.coagulate\\.net","sldev.coagulate.net"); }
 		if (GPHUD.DEV) { s=s.replaceAll("coagulate\\.sl","dev.coagulate.sl"); }
 		f.add("<p><b>Copy paste the following HTML into your page:</b><br><pre style=\"border: 1;\">"+s.replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\n","<br>")+"</pre></p>");

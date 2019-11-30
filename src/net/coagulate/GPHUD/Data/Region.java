@@ -14,6 +14,8 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,7 +51,7 @@ public class Region extends TableRow {
 		GPHUD.getDB().d("update " + t + " set urllast=?,authnode=? where url=?", UnixTime.getUnixTime(), Interface.getNode(), url);
 	}
 
-	static void wipeKV(Instance instance, String key) {
+	static void wipeKV(@Nonnull Instance instance, String key) {
 		String kvtable = "regionkvstore";
 		String maintable = "regions";
 		String idcolumn = "regionid";
@@ -62,7 +64,8 @@ public class Region extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A Region representation
 	 */
-	public static Region get(int id,boolean allowretired) {
+	@Nonnull
+	public static Region get(int id, boolean allowretired) {
 		Region r= (Region) factoryPut("Region", id, new Region(id));
 		if (r.isRetired() && (!allowretired)) {
 			UserException exception=new UserException("Attempt to access retired region");
@@ -82,7 +85,8 @@ public class Region extends TableRow {
 	 * @param name Name of region to locate
 	 * @return Region object for that region, or null if none is found.
 	 */
-	public static Region find(String name,boolean allowretired) {
+	@Nullable
+	public static Region find(String name, boolean allowretired) {
 		Integer regionid = GPHUD.getDB().dqi(false, "select regionid from regions where name=?", name);
 		if (regionid == null) { return null; }
 		return get(regionid,allowretired);
@@ -95,7 +99,8 @@ public class Region extends TableRow {
 	 * @param i      Instance object to register the region with
 	 * @return A blank string on success, or a text hudMessage explaining any problem.
 	 */
-	public static String joinInstance(String region, Instance i) {
+	@Nonnull
+	public static String joinInstance(String region, @Nonnull Instance i) {
 		// TO DO - lacks validation
 		Integer exists = GPHUD.getDB().dqi(true, "select count(*) from regions where name=?", region);
 		if (exists == 0) {
@@ -106,6 +111,7 @@ public class Region extends TableRow {
 		return "Region is already registered!";
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "regions"; }
 
@@ -118,16 +124,19 @@ public class Region extends TableRow {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "regions";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "regionid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
@@ -138,6 +147,7 @@ public class Region extends TableRow {
 	 *
 	 * @return URL
 	 */
+	@Nullable
 	public String getURL(boolean permitnull) throws UserException {
 		String url = getString("url");
 		if (url == null) {
@@ -151,6 +161,7 @@ public class Region extends TableRow {
 	 *
 	 * @return
 	 */
+	@Nullable
 	public String getURL() throws UserException {
 		return getURL(false);
 	}
@@ -230,7 +241,7 @@ public class Region extends TableRow {
 	 * @param st      State
 	 * @param avatars List of Avatar UUIDs or Names that have left the sim.
 	 */
-	public void departingAvatars(State st, Set<User> avatars) {
+	public void departingAvatars(@Nonnull State st, @Nonnull Set<User> avatars) {
 		boolean debug = false;
 		for (User avatar : avatars) {
 			// for all the departing avatars
@@ -274,7 +285,7 @@ public class Region extends TableRow {
 	 * @param versiondate Parsable date (see FireStorm preprocessor macro __DATE__)
 	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
 	 */
-	public void recordVersion(State st, String type, String version, String versiondate, String versiontime) {
+	public void recordVersion(@Nonnull State st, String type, @Nonnull String version, String versiondate, String versiontime) {
 		Date d = null;
 		try {
 			SimpleDateFormat df = new SimpleDateFormat("MMM d yyyy HH:mm:ss");
@@ -310,7 +321,8 @@ public class Region extends TableRow {
 	 * @param html     To HTML or not
 	 * @return String form of the version information passed
 	 */
-	private String formatVersion(Integer version, Integer datetime, boolean html) {
+	@Nonnull
+	private String formatVersion(@Nullable Integer version, @Nullable Integer datetime, boolean html) {
 		String v = "";
 		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 		df.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -333,7 +345,7 @@ public class Region extends TableRow {
 	 * @param versiondate Preprocessor macro _DATE_ in Firestorm
 	 * @param versiontime Preprocessor macro _TIME_ in Firestorm
 	 */
-	public void recordHUDVersion(State st, String version, String versiondate, String versiontime) {
+	public void recordHUDVersion(@Nonnull State st, @Nonnull String version, String versiondate, String versiontime) {
 		recordVersion(st, "hud", version, versiondate, versiontime);
 	}
 
@@ -345,7 +357,7 @@ public class Region extends TableRow {
 	 * @param versiondate Preprocessor macro _DATE_
 	 * @param versiontime Preprocessor macro _TIME_
 	 */
-	public void recordServerVersion(State st, String version, String versiondate, String versiontime) {
+	public void recordServerVersion(@Nonnull State st, @Nonnull String version, String versiondate, String versiontime) {
 		recordVersion(st, "server", version, versiondate, versiontime);
 	}
 
@@ -354,6 +366,7 @@ public class Region extends TableRow {
 	 *
 	 * @return Set of Characters currently visiting this region.
 	 */
+	@Nonnull
 	public Set<Char> getOpenVisits() {
 		Set<Char> characters = new TreeSet<>();
 		Results results = dq("select characterid from visits where regionid=? and endtime is null", getId());
@@ -362,6 +375,7 @@ public class Region extends TableRow {
 		}
 		return characters;
 	}
+	@Nonnull
 	public Set<User> getAvatarOpenVisits() {
 		Set<User> users = new HashSet<>();
 		Results results = dq("select avatarid from visits where regionid=? and endtime is null", getId());
@@ -377,6 +391,7 @@ public class Region extends TableRow {
 	 *
 	 * @return String, starts with OFFLINE or STALLED if problematic, otherwise "Online"
 	 */
+	@Nonnull
 	public String getOnlineStatus(String timezone) {
 		Integer urllast = getURLLast();
 		if (isRetired()) { return "Retired"; }
@@ -406,6 +421,7 @@ public class Region extends TableRow {
 	 * @param html As HTML?
 	 * @return Server version string
 	 */
+	@Nonnull
 	public String getServerVersion(boolean html) {
 		ResultsRow r = dqone(true, "select regionserverversion,regionserverdatetime from regions where regionid=?", getId());
 		return formatVersion(r.getInt("regionserverversion"), r.getInt("regionserverdatetime"), html);
@@ -417,6 +433,7 @@ public class Region extends TableRow {
 	 * @param html As HTML?
 	 * @return HUD version string
 	 */
+	@Nonnull
 	public String getHUDVersion(boolean html) {
 		ResultsRow r = dqone(true, "select regionhudversion,regionhuddatetime from regions where regionid=?", getId());
 		return formatVersion(r.getInt("regionhudversion"), r.getInt("regionhuddatetime"), html);
@@ -461,6 +478,7 @@ public class Region extends TableRow {
 	 *
 	 * @return Set of Zone objects for this region.
 	 */
+	@Nonnull
 	public Set<Zone> getZones() {
 		Set<Zone> zones = new TreeSet<>();
 		for (ResultsRow r : dq("select distinct zoneid from zoneareas where regionid=?", getId())) {
@@ -480,17 +498,19 @@ public class Region extends TableRow {
 		t.start();
 	}
 
+	@Nonnull
 	@Override
 	public String getKVTable() {
 		return "regionkvstore";
 	}
 
+	@Nonnull
 	@Override
 	public String getKVIdField() {
 		return "regionid";
 	}
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Region / State Instance mismatch"); }
@@ -508,6 +528,7 @@ public class Region extends TableRow {
 
 
 
+	@Nonnull
 	public String getGlobalCoordinates() {
 		ResultsRow r = dqone(true, "select regionx,regiony from regions where regionid=?", getId());
 		Integer x=r.getInt("regionx");

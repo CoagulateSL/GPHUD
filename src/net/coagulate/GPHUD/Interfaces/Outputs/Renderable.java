@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -31,5 +32,6 @@ public interface Renderable {
 	 */
 	String asHtml(State st, boolean rich);
 
+	@Nullable
 	Set<Renderable> getSubRenderables();
 }

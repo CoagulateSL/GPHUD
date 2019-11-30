@@ -9,6 +9,8 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.KV;
 
+import javax.annotation.Nonnull;
+
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
 
 /**
@@ -24,6 +26,7 @@ public class FactionAttribute extends CharacterAttribute {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public String getSubType() {
 		return "Faction";
@@ -39,6 +42,7 @@ public class FactionAttribute extends CharacterAttribute {
 		return false;
 	}
 
+	@Nonnull
 	@Override
 	public String getDefaultValue() {
 		return "";
@@ -54,26 +58,31 @@ public class FactionAttribute extends CharacterAttribute {
 		return false;
 	}
 
+	@Nonnull
 	@Override
 	public KV.KVTYPE getKVType() {
 		throw new SystemException("Invalid KV call to faction group attribute");
 	}
 
+	@Nonnull
 	@Override
 	public String getKVDefaultValue() {
 		throw new SystemException("Invalid KV call to faction group attribute");
 	}
 
+	@Nonnull
 	@Override
 	public KV.KVHIERARCHY getKVHierarchy() {
 		throw new SystemException("Invalid KV call to faction group attribute");
 	}
 
+	@Nonnull
 	@Override
 	public String getName() {
 		return "Faction";
 	}
 
+	@Nonnull
 	@Override
 	public ATTRIBUTETYPE getType() {
 		return GROUP;

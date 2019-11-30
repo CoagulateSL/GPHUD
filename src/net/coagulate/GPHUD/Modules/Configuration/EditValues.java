@@ -16,15 +16,18 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Allows get/set of configuration values.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class EditValues {
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set an instance level configuration value")
-	public static Response setInstance(State st,
-	                                   @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
+	public static Response setInstance(@Nonnull State st,
+	                                   @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
 			                                   String key,
 	                                   @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
 			                                   String value) throws UserException, SystemException {
@@ -51,11 +54,12 @@ public class EditValues {
 		Modules.simpleHtml(st, "configuration.setinstance", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a region level configuration value")
-	public static Response setRegion(State st,
-	                                 @Arguments(type = ArgumentType.REGION, description = "Region to edit the key for")
+	public static Response setRegion(@Nonnull State st,
+	                                 @Nonnull @Arguments(type = ArgumentType.REGION, description = "Region to edit the key for")
 			                                 Region region,
-	                                 @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
+	                                 @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
 			                                 String key,
 	                                 @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
 			                                 String value) throws UserException, SystemException {
@@ -84,11 +88,12 @@ public class EditValues {
 		Modules.simpleHtml(st, "configuration.setregion", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a key value for a zone")
-	public static Response setZone(State st,
-	                               @Arguments(type = ArgumentType.ZONE, description = "Name of the zone")
+	public static Response setZone(@Nonnull State st,
+	                               @Nonnull @Arguments(type = ArgumentType.ZONE, description = "Name of the zone")
 			                               Zone zone,
-	                               @Arguments(type = ArgumentType.KVLIST, description = "Key to set")
+	                               @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set")
 			                               String key,
 	                               @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to set to", max = 4096)
 			                               String value) {
@@ -112,11 +117,12 @@ public class EditValues {
 		Modules.simpleHtml(st, "configuration.setzone", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set an event level configuration value")
-	public static Response setEvent(State st,
-	                                @Arguments(type = ArgumentType.EVENT, description = "Character group to edit the key for")
+	public static Response setEvent(@Nonnull State st,
+	                                @Nonnull @Arguments(type = ArgumentType.EVENT, description = "Character group to edit the key for")
 			                                Event event,
-	                                @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
+	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
 			                                String key,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
 			                                String value) throws UserException, SystemException {
@@ -141,11 +147,12 @@ public class EditValues {
 		Modules.simpleHtml(st, "configuration.setevent", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a character group level configuration value")
-	public static Response setGroup(State st,
-	                                @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Character group to edit the key for")
+	public static Response setGroup(@Nonnull State st,
+	                                @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Character group to edit the key for")
 			                                CharacterGroup group,
-	                                @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
+	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
 			                                String key,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
 			                                String value) throws UserException, SystemException {
@@ -175,11 +182,12 @@ public class EditValues {
 		Modules.simpleHtml(st, "configuration.setgroup", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a character level configuration value")
-	public static Response setChar(State st,
-	                               @Arguments(type = ArgumentType.CHARACTER, description = "Character to edit the key for")
+	public static Response setChar(@Nonnull State st,
+	                               @Nonnull @Arguments(type = ArgumentType.CHARACTER, description = "Character to edit the key for")
 			                               Char character,
-	                               @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
+	                               @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
 			                               String key,
 	                               @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
 			                               String value) throws UserException, SystemException {

@@ -5,6 +5,8 @@ import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,6 +32,7 @@ public abstract class Templater {
 		methods.put("--" + key + "--", method);
 	}
 
+	@Nonnull
 	public static Map<String, String> getTemplates(State st) {
 		Map<String, String> ret = new TreeMap<>(templates);
 		for (Module m : Modules.getModules()) {
@@ -38,6 +41,7 @@ public abstract class Templater {
 		return ret;
 	}
 
+	@Nonnull
 	public static Map<String, Method> getMethods(State st) {
 		Map<String, Method> ret = new TreeMap<>(methods);
 		for (Module m : Modules.getModules()) {
@@ -46,13 +50,13 @@ public abstract class Templater {
 		return ret;
 	}
 
-	public static void register(Template template, Method m) {
+	public static void register(@Nonnull Template template, Method m) {
 		add(template.name(), template.description(), m);
 	}
 
 	public static Method getMethod(State st, String name) { return getMethods(st).get(name); }
 
-	public static String template(State st, String string, boolean evaluate, boolean integer) {
+	public static String template(@Nonnull State st, String string, boolean evaluate, boolean integer) {
 		string = template(st, string);
 		if (string == null) { return string; }
 		if ("".equals(string)) { return ""; }
@@ -67,7 +71,8 @@ public abstract class Templater {
 		return string;
 	}
 
-	private static String template(State st, String string) throws UserException {
+	@Nullable
+	private static String template(@Nullable State st, @Nullable String string) throws UserException {
 		if (string == null) { return string; }
 		if (st == null) { throw new SystemException("Null session state is not permitted"); }
 		boolean debug = false;
@@ -81,18 +86,20 @@ public abstract class Templater {
 		return string;
 	}
 
-	public static String getValue(State st, String keyword, boolean evaluate, boolean integer) {
+	@Nonnull
+	public static String getValue(@Nonnull State st, String keyword, boolean evaluate, boolean integer) {
 		if (evaluate && integer) { return ((int) eval(getValue(st, keyword))) + ""; }
 		if (evaluate) { return eval(getValue(st, keyword)) + ""; }
 		return getValue(st, keyword);
 	}
 
-	private static String getValue(State st, String keyword) {
+	@Nonnull
+	private static String getValue(@Nonnull State st, String keyword) {
 		Method m = getMethods(st).get(keyword);
 		if (m != null) {
 			try {
 				return (String) m.invoke(null, st, keyword);
-			} catch (IllegalAccessException | IllegalArgumentException ex) {
+			} catch (@Nonnull IllegalAccessException | IllegalArgumentException ex) {
 				SL.report("Templating exception", ex, st);
 				st.logger().log(SEVERE, "Exception running templater method", ex);
 				throw new SystemException("Templater exceptioned", ex);
@@ -106,7 +113,7 @@ public abstract class Templater {
 	}
 
 	@Template(name = "NAME", description = "Character Name")
-	public static String getCharacterName(State st, String key) {
+	public static String getCharacterName(@Nonnull State st, String key) {
 		if (st.getCharacterNullable() == null) { return ""; }
 		return st.getCharacter().getName();
 	}
@@ -114,17 +121,18 @@ public abstract class Templater {
 	// some standard templates
 
 	@Template(name = "AVATAR", description = "Avatar Name")
-	public static String getAvatarName(State st, String key) {
+	public static String getAvatarName(@Nonnull State st, String key) {
 		if (st.avatar() == null) { return ""; }
 		return st.avatar().getName();
 	}
 
+	@Nonnull
 	@Template(name = "NEWLINE", description = "Newline character")
 	public static String newline(State st, String key) { return "\n"; }
 
 	//https://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form
 	// boann@stackoverflow.com
-	public static double eval(final String str) throws UserException {
+	public static double eval(@Nonnull final String str) throws UserException {
 		return new Object() {
 			int pos = -1, ch;
 
@@ -225,9 +233,9 @@ public abstract class Templater {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface Template {
-		String name();
+		@Nonnull String name();
 
-		String description();
+		@Nonnull String description();
 	}
 
 }

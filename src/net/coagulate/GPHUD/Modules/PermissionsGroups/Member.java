@@ -17,6 +17,8 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+
 /**
  * Add/remove/edit users in a permissions group.
  *
@@ -29,11 +31,12 @@ public abstract class Member {
 		Modules.simpleHtml(st, "permissionsgroups.eject", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Remove a member from a permissions group")
-	public static Response eject(State st,
-	                             @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to remove member from")
+	public static Response eject(@Nonnull State st,
+	                             @Nonnull @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to remove member from")
 			                             PermissionsGroup permissionsgroup,
-	                             @Arguments(description = "Avatar to remove from the group", type = ArgumentType.AVATAR)
+	                             @Nonnull @Arguments(description = "Avatar to remove from the group", type = ArgumentType.AVATAR)
 			                             User avatar
 	) throws UserException, SystemException {
 		if (!permissionsgroup.canEject(st)) { return new ErrorResponse("No permission to eject from this group"); }
@@ -49,11 +52,12 @@ public abstract class Member {
 		Modules.simpleHtml(st, "permissionsgroups.invite", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Adds a user to a permissions group")
-	public static Response invite(State st,
-	                              @Arguments(description = "Permissions group to join avatar to", type = ArgumentType.PERMISSIONSGROUP)
+	public static Response invite(@Nonnull State st,
+	                              @Nonnull @Arguments(description = "Permissions group to join avatar to", type = ArgumentType.PERMISSIONSGROUP)
 			                              PermissionsGroup permissionsgroup,
-	                              @Arguments(description = "Avatar to join to group", type = ArgumentType.AVATAR)
+	                              @Nonnull @Arguments(description = "Avatar to join to group", type = ArgumentType.AVATAR)
 			                              User avatar
 	) throws UserException, SystemException {
 		if (!permissionsgroup.canInvite(st)) { return new ErrorResponse("No permission to invite to this group"); }
@@ -69,11 +73,12 @@ public abstract class Member {
 		Modules.simpleHtml(st, "permissionsgroups.setpermissions", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Set a users permissions over a permissions group")
-	public static Response setPermissions(State st,
-	                                      @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to set a users permissions in")
+	public static Response setPermissions(@Nonnull State st,
+	                                      @Nonnull @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to set a users permissions in")
 			                                      PermissionsGroup permissionsgroup,
-	                                      @Arguments(type = ArgumentType.AVATAR, description = "Avatar in the group to set permissions of")
+	                                      @Nonnull @Arguments(type = ArgumentType.AVATAR, description = "Avatar in the group to set permissions of")
 			                                      User avatar,
 	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user invite people to this group")
 			                                      Boolean caninvite,

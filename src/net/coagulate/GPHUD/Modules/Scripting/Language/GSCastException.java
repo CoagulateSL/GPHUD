@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
+import javax.annotation.Nonnull;
+
 public class GSCastException extends GSInvalidExpressionException {
 	private static final long serialVersionUID=1L;
 	public GSCastException(String reason) {
@@ -10,5 +12,6 @@ public class GSCastException extends GSInvalidExpressionException {
 		super(reason, cause);
 	}
 
+	@Nonnull
 	public String toString() { return "{GS Cast Exception}: "+getLocalizedMessage(); }
 }

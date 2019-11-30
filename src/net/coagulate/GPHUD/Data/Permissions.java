@@ -5,6 +5,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,7 +20,8 @@ public class Permissions {
 	 * @param u User(avatar)
 	 * @return Set of permissions.
 	 */
-	public static Set<String> getPermissions(Instance i, User u) {
+	@Nonnull
+	public static Set<String> getPermissions(@Nonnull Instance i, @Nonnull User u) {
 		Set<String> permissions = new TreeSet<>();
 		Results results = GPHUD.getDB().dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups.permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroupmembers.avatarid=?", i.getId(), u.getId());
 		for (ResultsRow r : results) {

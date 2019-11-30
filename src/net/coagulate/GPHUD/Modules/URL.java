@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 
 /**
@@ -39,9 +40,9 @@ public abstract class URL {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface URLs {
-		String url();
+		@Nonnull String url();
 
-		String requiresPermission() default "";
+		@Nonnull String requiresPermission() default "";
 
 		boolean requiresAuthentication() default true;
 	}

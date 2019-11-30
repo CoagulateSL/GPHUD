@@ -10,19 +10,25 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class Objects extends TableRow {
 	public Objects(int id) {
 		super(id);
 	}
 
+	@Nonnull
 	public static Objects get(int id) {
 		return (Objects) factoryPut("Objects", id, new Objects(id));
 	}
 
+	@Nonnull
 	public static Objects find(State st, String uuid) {
 		Integer id=GPHUD.getDB().dqi(true,"select id from objects where uuid=?",uuid);
 		return new Objects(id);
 	}
+	@Nullable
 	public static Objects findOrNull(State st, String uuid) {
 		Integer id=GPHUD.getDB().dqi(false,"select id from objects where uuid=?",uuid);
 		if (id==null) { return null; }
@@ -35,13 +41,15 @@ public class Objects extends TableRow {
 		return version;
 	}
 
+	@Nullable
 	public ObjectTypes getObjectType() {
 		Integer otid=getInt("objecttype");
 		if (otid==null) { return null; }
 		return ObjectTypes.get(otid);
 	}
 
-	public static String dumpObjects(State st) {
+	@Nonnull
+	public static String dumpObjects(@Nonnull State st) {
 		Instance instance=st.getInstance();
 		StringBuilder r= new StringBuilder("<table border=0><tr><th>UUID</th><th>name</th><th>Owner</th><th>Region</th><th>Location</th><th>Version</th><th>Last RX</th><Th>Object Type</th></tr>");
 		for (ResultsRow row:GPHUD.getDB().dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
@@ -90,16 +98,18 @@ public class Objects extends TableRow {
 		return r.toString();
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() { return "id"; }
 
 	@Override
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Object / State Instance mismatch"); }
 	}
 
+	@Nonnull
 	public Region getRegion() { return Region.get(getInt("regionid"),true); }
 
 	public String getLocation() { return getString("location"); }
@@ -107,31 +117,37 @@ public class Objects extends TableRow {
 		return getRegion().getInstance();
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() { return "name"; }
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "/GPHUD/configuration/objects/object/"+getId(); }
 
 	@Override
 	protected int getNameCacheTime() { return 600; }
 
+	@Nullable
 	@Override
 	public String getKVTable() {
 		return null;
 	}
 
+	@Nullable
 	@Override
 	public String getKVIdField() {
 		return null;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "objects";
 	}
 
-	public static Objects connect(State st, String uuid, String name, Region region, User owner, String location,String url,int version) {
+	@Nullable
+	public static Objects connect(State st, String uuid, String name, @Nonnull Region region, @Nonnull User owner, String location, String url, int version) {
 		Objects object=findOrNull(st,uuid);
 		if (object==null) {
 			GPHUD.getDB().d("insert into objects(uuid,name,regionid,owner,location,lastrx,url,version) values(?,?,?,?,?,?,?,?)",uuid,name,region.getId(),owner.getId(),location, UnixTime.getUnixTime(),url,version);
@@ -143,6 +159,7 @@ public class Objects extends TableRow {
 		return object;
 	}
 
+	@Nonnull
 	public String toString() { return "Object#"+getId()+"='"+getName()+"'@"+getRegion().toString()+"/"+getLocation();}
 
 	public String getURL() {

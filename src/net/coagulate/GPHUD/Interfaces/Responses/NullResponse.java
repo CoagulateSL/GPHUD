@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -23,26 +24,31 @@ public class NullResponse implements Response {
 
 	public NullResponse() {}
 
+	@Nonnull
 	@Override
 	public JSONObject asJSON(State st) {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("You can not interrogate the null response.");

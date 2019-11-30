@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class Visits {
 	 * @param character character that is visiting
 	 * @param region    region that is being visited
 	 */
-	public static void initVisit(State st, Char character, Region region) {
+	public static void initVisit(@Nonnull State st, @Nonnull Char character, @Nonnull Region region) {
 		User avatar = st.avatar();
 		int updates = GPHUD.getDB().dqi(true, "select count(*) from visits where avatarid=? and endtime is null", avatar.getId());
 		if (updates > 0) {

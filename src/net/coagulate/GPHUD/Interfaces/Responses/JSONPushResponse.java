@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -17,10 +19,11 @@ import java.util.Set;
  */
 public class JSONPushResponse implements Response {
 	JSONObject json;
+	@Nullable
 	String url;
 	Response nonjson;
 
-	public JSONPushResponse(JSONObject j, String url, Response nonjson) {
+	public JSONPushResponse(JSONObject j, @Nullable String url, Response nonjson) {
 		if (url == null || url.isEmpty() || "?".equals(url)) { throw new SystemException("Can not use the null URL"); }
 		json = j;
 		this.url = url;
@@ -32,6 +35,7 @@ public class JSONPushResponse implements Response {
 		return json;
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return"<A JSON Push Response>";
@@ -51,6 +55,7 @@ public class JSONPushResponse implements Response {
 		return nonjson.asHtml(st, rich);
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("JSONResponse can not be interrogated as a Form");

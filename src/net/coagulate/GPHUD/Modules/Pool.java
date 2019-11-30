@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 
 /**
@@ -24,16 +25,16 @@ public abstract class Pool extends NameComparable {
 	@Target(ElementType.PACKAGE)
 	@Repeatable(Poolss.class)
 	public @interface Pools {
-		String name();
+		@Nonnull String name();
 
-		String description();
+		@Nonnull String description();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface Poolss {
-		Pools[] value();
+		@Nonnull Pools[] value();
 	}
 
 }

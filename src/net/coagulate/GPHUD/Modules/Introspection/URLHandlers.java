@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,7 +22,7 @@ import java.util.TreeMap;
 public abstract class URLHandlers {
 	@URLs(url = "/introspection/urlhandlers")
 	@SideSubMenus(name = "URL Handlers", priority = 99)
-	public static void createForm(State st, SafeMap values) {
+	public static void createForm(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.add(new TextHeader("URL Handler registrations"));
 		if (!st.isSuperUser()) {

@@ -16,6 +16,7 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	 * @param st Session State
 	 */
 	@Override
-	public void process(State st) {
+	public void process(@Nonnull State st) {
 		boolean debug = false;
 		st.source = State.Sources.SYSTEM;
 		//for (Header h:headers) { System.out.println(h.getName()+"="+h.getValue()); }
@@ -121,7 +122,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 
-	protected Response execute(State st) throws SystemException, UserException {
+	protected Response execute(@Nonnull State st) throws SystemException, UserException {
 		JSONObject obj = st.json;
 		// get developer key
 		String developerkey = obj.getString("developerkey");
@@ -233,7 +234,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 
-	private Response processUnregistered(State st) {
+	@Nonnull
+	private Response processUnregistered(@Nonnull State st) {
 		// region is not registered, all we allow is registration
 		// note connections from non-registered regions are cause to SUSPEND operation, unless you're a GPHUD Server, cos they do 'registration'
 		// if we're a "GPHUD Server" of some kind from dev id 1 then... bob's ya uncle, dont suspend :P

@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,8 +27,9 @@ public class AliasModule extends ModuleAnnotation {
 	 * @param st State, derives instance
 	 * @return Map of String (command name) to command object
 	 */
+	@Nonnull
 	@Override
-	public Map<String, Command> getCommands(State st) {
+	public Map<String, Command> getCommands(@Nonnull State st) {
 		Map<String, Command> commands = new TreeMap<>();
 		Map<String, JSONObject> templates = Alias.getTemplates(st);
 		for (Map.Entry<String, JSONObject> entry : templates.entrySet()) {
@@ -37,8 +39,9 @@ public class AliasModule extends ModuleAnnotation {
 		return commands;
 	}
 
+	@Nonnull
 	@Override
-	public Command getCommand(State st, String commandname) {
+	public Command getCommand(@Nonnull State st, String commandname) {
 		Alias alias = Alias.getAlias(st, commandname);
 		if (alias == null) { throw new UserException("Unknown command alias." + commandname); }
 		JSONObject template = alias.getTemplate();
@@ -46,7 +49,7 @@ public class AliasModule extends ModuleAnnotation {
 	}
 
 	@Override
-	protected void initialiseInstance(State st) {
+	protected void initialiseInstance(@Nonnull State st) {
 		// some useful defaults
 		JSONObject j = new JSONObject();
 		j.put("invoke", "Roller.Roll");

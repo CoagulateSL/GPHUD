@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,16 +24,19 @@ public class ToolTip implements Renderable {
 		this.tooltip = tooltip;
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		return "<div class=\"tooltip\">" + element + "<span class=\"tooltiptext\">" + tooltip.asHtml(st, rich) + "</span></div>";
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>();

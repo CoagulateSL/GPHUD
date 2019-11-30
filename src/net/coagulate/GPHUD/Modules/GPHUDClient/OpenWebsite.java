@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * Hook that causes the HUD to close the web panel.
  * Usually called from the hud's web panel, so we have to call back to talk to the actual in world object.
@@ -18,8 +20,9 @@ import org.json.JSONObject;
  */
 public class OpenWebsite {
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website", permitUserWeb = false,permitObject = false)
-	public static Response openWebsite(State st) {
+	public static Response openWebsite(@Nonnull State st) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "openurl");
 		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel
@@ -30,8 +33,9 @@ public class OpenWebsite {
 		return new JSONResponse(json);
 	}
 
+	@Nonnull
 	@Commands(context = Context.ANY, description = "Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb = false,permitObject = false)
-	public static Response offerWebsite(State st,
+	public static Response offerWebsite(@Nonnull State st,
 	                                    @Argument.Arguments(description = "URL to offer to user", type = Argument.ArgumentType.TEXT_ONELINE, max = 255)
 			                                    String url,
 	                                    @Argument.Arguments(description = "Description to offer with the URL", type = Argument.ArgumentType.TEXT_MULTILINE, max = 254)

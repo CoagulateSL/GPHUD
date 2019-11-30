@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCStoreIndexed extends ByteCode {
@@ -14,13 +15,14 @@ public class BCStoreIndexed extends ByteCode {
 
 	// Assign a value to an array index
 	// POP the NAME.  POP the index.  POP the content.
+	@Nonnull
 	public String explain() { return "AssignElement (Pop variable name, pop index, pop content, assign)"; }
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.StoreIndexed.get());
 	}
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		BCString variablename=vm.popString();
 		BCInteger index=vm.popInteger();
 		ByteCodeDataType newvalue = vm.pop();

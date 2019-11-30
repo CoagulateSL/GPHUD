@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCDivide extends ByteCode {
@@ -12,13 +13,14 @@ public class BCDivide extends ByteCode {
 	}
 
 	// Pop two, op, push result
+	@Nonnull
 	public String explain() { return "Divide (Pop two, divide, push result)"; }
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.Divide.get());
 	}
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		ByteCodeDataType arg1 = vm.pop();
 		ByteCodeDataType arg2 = vm.pop();
 		vm.push(arg1.divide(arg2));

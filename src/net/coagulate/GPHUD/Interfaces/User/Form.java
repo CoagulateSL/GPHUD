@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Text;
 import net.coagulate.GPHUD.Interfaces.Responses.NullResponse;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Set;
 public class Form implements Renderable {
 
 	final List<Renderable> list = new ArrayList<>();
+	@Nullable
 	String action = null;
 	/*
 	public Map<String, String> getValueMap() {
@@ -50,7 +53,7 @@ public class Form implements Renderable {
 		add(new Hidden("okreturnurl", ""));
 	}
 
-	public Form(State st, boolean setreturnurl, String targeturl, String buttonname, String... inputs) throws SystemException {
+	public Form(@Nonnull State st, boolean setreturnurl, String targeturl, String buttonname, @Nonnull String... inputs) throws SystemException {
 		setAction(targeturl);
 		if (setreturnurl) { add(new Hidden("okreturnurl", st.getDebasedURL())); }
 		add(new Button(buttonname, true));
@@ -62,8 +65,10 @@ public class Form implements Renderable {
 		}
 	}
 
+	@Nonnull
 	public Form add(String s) { return add(new Text(s)); }
 
+	@Nonnull
 	public Form add(Renderable e) {
 		list.add(e);
 		return this;
@@ -75,6 +80,7 @@ public class Form implements Renderable {
 
 	public void p(String text) { add(new Paragraph(text)); }
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		StringBuilder response = new StringBuilder();
@@ -82,10 +88,12 @@ public class Form implements Renderable {
 		return response.toString();
 	}
 
+	@Nullable
 	public String getAction() { return action; }
 
 	public void setAction(String a) { action = a; }
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		StringBuilder response = new StringBuilder();
@@ -105,6 +113,7 @@ public class Form implements Renderable {
 		return response.toString();
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(list);
@@ -126,11 +135,13 @@ public class Form implements Renderable {
 		return value;
 	}
 	*/
+	@Nullable
 	public Input findInput(String name) {
 		return scourRenderables(getSubRenderables(), name);
 	}
 
-	private Input scourRenderables(Set<Renderable> subrenderables, String name) {
+	@Nullable
+	private Input scourRenderables(@Nonnull Set<Renderable> subrenderables, String name) {
 		for (Renderable r : subrenderables) {
 			if (r instanceof Input) {
 				Input i = (Input) r;
@@ -152,6 +163,7 @@ public class Form implements Renderable {
 		form = false;
 	}
 
+	@Nonnull
 	public Form br() {
 		return add("<br>");
 	}

@@ -12,6 +12,9 @@ import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Superadmin command for debugging and administration.
  *
@@ -19,9 +22,10 @@ import net.coagulate.SL.Data.User;
  */
 public abstract class SetOwner {
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, permitScripting = false,description = "Transfer ownership of the instance (SUPERADMIN ONLY)", requiresPermission = "instance.owner", permitJSON = false, permitUserWeb = false)
-	public static Response setOwner(State st,
-	                                @Arguments(description = "New owner for this instance", type = ArgumentType.AVATAR)
+	public static Response setOwner(@Nonnull State st,
+	                                @Nullable @Arguments(description = "New owner for this instance", type = ArgumentType.AVATAR)
 			                                User avatar) {
 		if (!st.isSuperUser()) { throw new UserException("Instance transfer may only be performed by a SUPERADMIN"); }
 		if (avatar == null) { return new ErrorResponse("Target avatar is null or not found"); }

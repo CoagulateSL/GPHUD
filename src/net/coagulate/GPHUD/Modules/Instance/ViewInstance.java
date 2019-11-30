@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Allows viewing of an Instance object.
  *
@@ -18,7 +20,7 @@ import net.coagulate.GPHUD.State;
 public abstract class ViewInstance {
 
 	@URLs(url = "/instances/view/*")
-	public static void viewInstance(State st, SafeMap values) throws UserException, SystemException {
+	public static void viewInstance(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		//System.out.println(st.uri);
 		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -27,7 +29,7 @@ public abstract class ViewInstance {
 		viewInstance(st, values, i);
 	}
 
-	public static void viewInstance(State st, SafeMap values, Instance i) throws UserException {
+	public static void viewInstance(@Nonnull State st, SafeMap values, @Nonnull Instance i) throws UserException {
 		String tz = st.avatar().getTimeZone();
 		boolean full = false;
 		if (st.isSuperUser()) { full = true; }

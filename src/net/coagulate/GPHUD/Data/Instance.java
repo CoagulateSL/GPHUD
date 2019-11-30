@@ -14,6 +14,8 @@ import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
@@ -32,6 +34,7 @@ public class Instance extends TableRow {
 	/**
 	 * Return instances connected to this node
 	 */
+	@Nonnull
 	public static Set<Instance> getOurInstances() {
 		Set<Instance> instances = new TreeSet<>();
 		Results instancerows = GPHUD.getDB().dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and retired=0", Interface.getNode());
@@ -44,6 +47,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of Instances
 	 */
+	@Nonnull
 	public static Set<Instance> getInstances() {
 		Set<Instance> instances = new TreeSet<>();
 		Results instancerows = GPHUD.getDB().dq("select instanceid from instances");
@@ -57,7 +61,8 @@ public class Instance extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return An Instance representation
 	 */
-	public static Instance get(Integer id) {
+	@Nullable
+	public static Instance get(@Nullable Integer id) {
 		if (id == null) { return null; }
 		return (Instance) factoryPut("Instance", id, new Instance(id));
 	}
@@ -75,7 +80,7 @@ public class Instance extends TableRow {
 	 * @return Blank string on success, otherwise error hudMessage
 	 * @throws UserException If the instance already exists (by name)
 	 */
-	public static void create(String name, User caller) throws UserException {
+	public static void create(@Nullable String name, @Nullable User caller) throws UserException {
 		if (name == null || "".equals(name)) { throw new SystemException("Can't create null or empty instance"); }
 		if (caller == null) { throw new SystemException("Owner can't be null"); }
 		Integer exists = GPHUD.getDB().dqi(false, "select count(*) from instances where name like ?", name);
@@ -92,6 +97,7 @@ public class Instance extends TableRow {
 	 * @param name Name of instance
 	 * @return Instance object
 	 */
+	@Nullable
 	public static Instance find(String name) {
 		Integer id = GPHUD.getDB().dqi(false, "select instanceid from instances where name=?", name);
 		if (id == null) { throw new UserException("Unable to find instance named '" + name + "'"); }
@@ -104,7 +110,8 @@ public class Instance extends TableRow {
 	 * @param owner Avatar to find instances for
 	 * @return Set of Instance objects, which may be empty
 	 */
-	public static Set<Instance> getInstances(User owner) {
+	@Nonnull
+	public static Set<Instance> getInstances(@Nonnull User owner) {
 		Set<Instance> instances = new TreeSet<>();
 		Results results = GPHUD.getDB().dq("select instanceid from instances where owner=?", owner.getId());
 		for (ResultsRow r : results) {
@@ -113,6 +120,7 @@ public class Instance extends TableRow {
 		return instances;
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "instances"; }
 
@@ -131,20 +139,23 @@ public class Instance extends TableRow {
 	 *
 	 * @param id New owner
 	 */
-	public void setOwner(User id) {
+	public void setOwner(@Nonnull User id) {
 		d("update instances set owner=? where instanceid=?", id.getId(), getId());
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "instances";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "instanceid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
@@ -156,7 +167,7 @@ public class Instance extends TableRow {
 	 * @param name Name of the permissions group
 	 * @throws UserException if the group has no name or already exists.
 	 */
-	public void createPermissionsGroup(String name) throws UserException {
+	public void createPermissionsGroup(@Nullable String name) throws UserException {
 		if (name == null) { throw new UserException("Can not create permissions group with null name"); }
 		name = name.trim();
 		if (name.isEmpty()) { throw new UserException("Can not create permissions group with blank name"); }
@@ -170,6 +181,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of PermissionsGroups
 	 */
+	@Nonnull
 	public Set<PermissionsGroup> getPermissionsGroups() {
 		Results results = dq("select permissionsgroupid from permissionsgroups where instanceid=?", getId());
 		Set<PermissionsGroup> set = new TreeSet<>();
@@ -186,6 +198,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of Regions
 	 */
+	@Nonnull
 	public Set<Region> getOurRegions(boolean allowretired) {
 		Results results = dq("select regionid from regions where instanceid=? and authnode=? and retired<?", getId(), Interface.getNode(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
@@ -200,6 +213,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of Regions
 	 */
+	@Nonnull
 	public Set<Region> getRegions(boolean allowretired) {
 		Results results = dq("select regionid from regions where instanceid=? and retired<?", getId(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
@@ -325,7 +339,7 @@ public class Instance extends TableRow {
 	 * @param message Message to send to admins
 	 * @return count of the number of users the message is sent to.
 	 */
-	public int broadcastAdmins(State st, String message) {
+	public int broadcastAdmins(@Nullable State st, String message) {
 		JSONObject j = new JSONObject();
 		j.put("message", "ADMIN : " + message);
 		Set<User> targets = new HashSet<>();
@@ -361,7 +375,8 @@ public class Instance extends TableRow {
 	 * @param st Session state, from which sorting will be read via the URI, and instance will be used.
 	 * @return A list of CharacterSummary objects
 	 */
-	public List<CharacterSummary> getCharacterSummary(State st) {
+	@Nonnull
+	public List<CharacterSummary> getCharacterSummary(@Nonnull State st) {
 		String sortby = st.getDebasedURL().replaceAll("%20", " ");
 		if (sortby == null) { sortby = ""; }
 		sortby = sortby.replaceFirst(".*?sort=", "");
@@ -491,6 +506,7 @@ public class Instance extends TableRow {
 	 * @param keyword Type of group to find
 	 * @return Set of character groups (potentially the empty set)
 	 */
+	@Nonnull
 	public Set<CharacterGroup> getGroupsForKeyword(String keyword) {
 		Set<CharacterGroup> groups = new TreeSet<>();
 		for (ResultsRow r : dq("select charactergroupid from charactergroups where instanceid=? and type=?", getId(), keyword)) {
@@ -519,6 +535,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of CharacterGroups
 	 */
+	@Nonnull
 	public Set<CharacterGroup> getCharacterGroups() {
 		Set<CharacterGroup> groups = new TreeSet<>();
 		for (ResultsRow r : dq("select charactergroupid from charactergroups where instanceid=?", getId())) {
@@ -545,6 +562,7 @@ public class Instance extends TableRow {
 	 * @param name Name of zone
 	 * @return Zone object, or null.
 	 */
+	@Nullable
 	public Zone getZone(String name) {
 		Integer id = dqi(false, "select zoneid from zones where instanceid=? and name like ?", getId(), name);
 		if (id == null) { return null; }
@@ -556,6 +574,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set (possibly empty) of Zones
 	 */
+	@Nonnull
 	public Set<Zone> getZones() {
 		Set<Zone> zones = new TreeSet<>();
 		for (ResultsRow r : dq("select zoneid from zones where instanceid=?", getId())) {
@@ -564,11 +583,13 @@ public class Instance extends TableRow {
 		return zones;
 	}
 
+	@Nonnull
 	@Override
 	public String getKVTable() {
 		return "instancekvstore";
 	}
 
+	@Nonnull
 	@Override
 	public String getKVIdField() {
 		return "instanceid";
@@ -579,6 +600,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of Events
 	 */
+	@Nonnull
 	public Set<Event> getEvents() {
 		return Event.getAll(this);
 	}
@@ -588,6 +610,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of events that are active and have been started for this instance
 	 */
+	@Nonnull
 	public Set<Event> getActiveEvents() {
 		return Event.getActive(this);
 	}
@@ -597,6 +620,7 @@ public class Instance extends TableRow {
 	 *
 	 * @return Set of EventSchedules that are currently active and have been started
 	 */
+	@Nonnull
 	public Set<EventSchedule> getActiveEventSchedules() {
 		return EventSchedule.getActive(this);
 	}
@@ -661,22 +685,27 @@ public class Instance extends TableRow {
 		d("delete from instancekvstore where instanceid=? and k like ?", getId(), key);
 	}
 
-	public String getLogoURL(State st) {
+	@Nonnull
+	public String getLogoURL(@Nonnull State st) {
 		String logouuid = st.getKV(this, "GPHUDClient.logo");
 		if (logouuid == null || logouuid.isEmpty()) { return "/resources/banner-gphud.png"; }
 		return "http://texture-service.agni.lindenlab.com/" + logouuid + "/320x240.jpg/";
 	}
 
-	public String getLogoHREF(State st) {
+	@Nonnull
+	public String getLogoHREF(@Nonnull State st) {
 		return "<a href=\"" + getLogoURL(st) + "\">";
 	}
 
+	@Nonnull
 	public Set<Scripts> getScripts() {
 		return Scripts.getScript(this);
 	}
 
+	@Nullable
 	public Landmarks getLandmark(String name) { return Landmarks.find(this,name); }
 
+	@Nonnull
 	public Set<Landmarks> getLandmarks() {
 		return Landmarks.getAll(this);
 	}

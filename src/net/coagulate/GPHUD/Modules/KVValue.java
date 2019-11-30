@@ -5,6 +5,8 @@
  */
 package net.coagulate.GPHUD.Modules;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author iain
  */
@@ -23,10 +25,12 @@ public class KVValue {
 
 	public String toString() { return value(); }
 
+	@Nonnull
 	public Integer intValue() {
 		return Integer.valueOf(value());
 	}
 
+	@Nonnull
 	public Float floatValue() {
 		return Float.valueOf(value());
 	}

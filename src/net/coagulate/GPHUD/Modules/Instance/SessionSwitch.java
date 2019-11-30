@@ -14,6 +14,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Set;
 public class SessionSwitch {
 
 	@URLs(url = "/switch/instance")
-	public static void switchInstance(State st, SafeMap values) throws UserException {
+	public static void switchInstance(@Nonnull State st, @Nonnull SafeMap values) throws UserException {
 		Form f = st.form;
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
@@ -47,7 +48,7 @@ public class SessionSwitch {
 	}
 
 	@URLs(url = "/switch/character")
-	public static void switchCharacter(State st, SafeMap values) throws UserException, SystemException {
+	public static void switchCharacter(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		if (st.getInstanceNullable() == null) { throw new RedirectionException("/switch/instance"); }
 		Form f = st.form;
 		if (!values.get("charid").isEmpty()) {

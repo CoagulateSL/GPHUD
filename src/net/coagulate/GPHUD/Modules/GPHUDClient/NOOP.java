@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * NO-OP.  Used by the HUD to "check in", payloads may be attached to the response (should be) which will make this make sense (see titler updates).
  *
@@ -14,6 +16,7 @@ import org.json.JSONObject;
  */
 public abstract class NOOP {
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "No-operation, used by HUD to poll server", permitConsole = false, permitUserWeb = false)
 	public static Response noop(State st) {
 		return new JSONResponse(new JSONObject());

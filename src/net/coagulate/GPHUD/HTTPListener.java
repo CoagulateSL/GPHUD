@@ -5,6 +5,7 @@ import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +19,7 @@ import static java.util.logging.Level.SEVERE;
  * @author Iain Price <gphud@predestined.net>
  */
 public class HTTPListener {
+	@Nullable
 	private static HttpServer server = null;
 	private static boolean hasshutdown = false;
 

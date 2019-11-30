@@ -9,6 +9,8 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -36,15 +38,20 @@ public class GPHUD {
 	// config KV store
 	private static final Map<String, String> CONFIG = new TreeMap<>();
 	public static String hostname = "UNSET";
+	@Nullable
 	public static Integer nodeid = null;
 	public static boolean DEV = false; // make this auto detect some day... or in the ini file :P
+	@Nullable
 	private static Logger log = null;
+	@Nullable
 	private static DBConnection db = null;
 
 	public static Logger getLogger(String subspace) { return Logger.getLogger(log.getName() + "." + subspace); }
 
+	@Nullable
 	public static Logger getLogger() { return log; }
 
+	@Nullable
 	public static DBConnection getDB() { return db; }
 
 	// return codes
@@ -58,7 +65,7 @@ public class GPHUD {
 	 * @throws SystemException
 	 */
 	@SuppressWarnings("deprecation")
-	public static void main(String[] args) throws SystemException, UserException {
+	public static void main(@Nonnull String[] args) throws SystemException, UserException {
 		LogHandler.initialise();
 		log = Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
@@ -137,7 +144,7 @@ public class GPHUD {
 		//System.exit(0);
 	}
 
-	public static void loadConfig(String filename) {
+	public static void loadConfig(@Nonnull String filename) {
 		try (BufferedReader file = new BufferedReader(new FileReader(filename))) {
 			String line = file.readLine();
 			while (line != null) {
@@ -199,7 +206,7 @@ public class GPHUD {
 		CONFIG.put(keyword, value);
 	}
 
-	public static String get(String keyword) { return CONFIG.get(keyword.toUpperCase()); }
+	public static String get(@Nonnull String keyword) { return CONFIG.get(keyword.toUpperCase()); }
 
 	private static void validateNode(String node) throws SystemException {
 		if ("luna".equalsIgnoreCase(node) ||
@@ -226,12 +233,14 @@ public class GPHUD {
 		return false;
 	}
 
+	@Nonnull
 	public static String environment() {
 		String node = hostname;
 		if (DEV) { return "[==DEVELOPMENT // " + node + "==]\n \n"; }
 		return "[Production // " + node + "]\n \n";
 	}
 
+	@Nonnull
 	public static String menuPanelEnvironment() {
 		return "&gt; " + (DEV ? "DEVELOPMENT" : "Production") + "<br>&gt; " + hostname + "<br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
 	}
@@ -294,6 +303,7 @@ public class GPHUD {
 		Classes.initialise();
 	}
 
+	@Nonnull
 	public static String serverVersion() {
 		return "GPHUD Cluster " + VERSION + " " + VERSION_DATE + " (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
 	}

@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.*;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +32,14 @@ public class GSCompiler {
 		if (node instanceof GSWhileLoop) { return 2; }
 		throw new SystemException("Expected Children not defined for node "+node.getClass().getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
+	@Nonnull
 	private final ParseNode startnode;
 	public GSCompiler(Node passednode) {
 		if (!(passednode instanceof ParseNode)) { throw new SystemException("Compiler error - passed node is of type "+passednode.getClass().getCanonicalName()+" which is not a ParseNode implementation"); }
 		startnode=(ParseNode) passednode;
 	}
 
+	@Nonnull
 	public Byte[] toByteCode() {
 		List<ByteCode> bytecodelist=compile();
 		// twopass
@@ -49,11 +52,12 @@ public class GSCompiler {
 	}
 	// The compiler has a stack (Last In First Out) which it uses to store 'things'
 	// we also have a 'script' which is just a list of things, this time including instructions
+	@Nonnull
 	public List<ByteCode> compile() { lastdebuglineno=-1; lastdebugcolno=-1; return compile(startnode); }
 
 	private int lastdebuglineno=-1;
 	private int lastdebugcolno=-1;
-	private void addDebug(List<ByteCode> compiled,ParseNode node) {
+	private void addDebug(@Nonnull List<ByteCode> compiled, @Nonnull ParseNode node) {
 		Token firsttoken=node.jjtGetFirstToken();
 		if (firsttoken!=null) {
 			int lineno = firsttoken.beginLine;
@@ -65,7 +69,8 @@ public class GSCompiler {
 			}
 		}
 	}
-	private List<ByteCode> compile(ParseNode node) {
+	@Nonnull
+	private List<ByteCode> compile(@Nonnull ParseNode node) {
 		List<ByteCode> compiled=new ArrayList<>();
 		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) { throw new SystemException(node.getClass().getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn); }
 
@@ -260,7 +265,7 @@ public class GSCompiler {
 		throw new SystemException("Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
 	}
 
-	private void checkType(ParseNode node,int pos,Class<? extends ParseNode> clazz) {
+	private void checkType(@Nonnull ParseNode node, int pos, @Nonnull Class<? extends ParseNode> clazz) {
 		if (node.jjtGetNumChildren()<pos) { throw new SystemException("Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+clazz.getName()); }
 		Node child=node.jjtGetChild(pos);
 		if (!child.getClass().equals(clazz)) { throw new SystemException("Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+" not the expected "+clazz.getName()); }

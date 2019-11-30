@@ -9,22 +9,26 @@ import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.TreeMap;
 
 public abstract class ObjectType {
 
 	final State state;
+	@Nonnull
 	final ObjectTypes object;
+	@Nonnull
 	final JSONObject json;
 
-	protected ObjectType(State st, ObjectTypes object) {
+	protected ObjectType(State st, @Nonnull ObjectTypes object) {
 		this.state=st;
 		this.object=object;
 		this.json=object.getBehaviour();
 	}
 
-	public static ObjectType materialise(State st, ObjectTypes object) {
+	@Nonnull
+	public static ObjectType materialise(State st, @Nonnull ObjectTypes object) {
 		JSONObject json=object.getBehaviour();
 		String behaviour=json.optString("behaviour", "");
 		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
@@ -34,6 +38,7 @@ public abstract class ObjectType {
 		throw new SystemException("Behaviour "+behaviour+" is not known!");
 	}
 
+	@Nonnull
 	public static Map<String,String> getObjectTypes(State st) {
 		Map<String,String> options=new TreeMap<>();
 		options.put("ClickTeleport","Teleport user on click.");
@@ -43,6 +48,7 @@ public abstract class ObjectType {
 		return options;
 	}
 
+	@Nonnull
 	public static DropDownList getDropDownList(State st) {
 		DropDownList behaviours = new DropDownList("behaviour");
 		Map<String, String> types = getObjectTypes(st);
@@ -60,7 +66,7 @@ public abstract class ObjectType {
 
 	public abstract String explainText();
 
-	public void payload(State st, JSONObject response) {
+	public void payload(State st, @Nonnull JSONObject response) {
 		response.put("mode",mode());
 	}
 

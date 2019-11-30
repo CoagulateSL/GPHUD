@@ -9,6 +9,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.InetAddress;
 
 import static java.util.logging.Level.SEVERE;
@@ -23,10 +25,12 @@ import static java.util.logging.Level.SEVERE;
  */
 public abstract class Interface implements HttpRequestHandler {
 
+	@Nullable
 	public static String base = null;
 
 	public static String getNode() { return GPHUD.hostname; }
 
+	@Nullable
 	public static String base() {
 		if (base == null) {
 			if ("luna".equalsIgnoreCase(Interface.getNode())) { base = "app-iain"; } else { base = "app"; }
@@ -36,11 +40,12 @@ public abstract class Interface implements HttpRequestHandler {
 
 	// we dont really know about "/app" but apache does, and then hides it from us, which is both nice, and arbitary, either way really.
 	// it doesn't any more :)
+	@Nonnull
 	public static String generateURL(State st, String ending) {
 		return "https://" + (GPHUD.DEV ? "dev." : "") + "coagulate.sl/" + base() + "/" + ending;
 	}
 
-	public static int convertVersion(String version) {
+	public static int convertVersion(@Nonnull String version) {
 		String[] versionparts = version.split("\\.");
 		int major=Integer.parseInt(versionparts[0]);
 		int minor=Integer.parseInt(versionparts[1]);
@@ -52,7 +57,7 @@ public abstract class Interface implements HttpRequestHandler {
 	}
 
 	@Override
-	public void handle(HttpRequest req, HttpResponse resp, HttpContext httpcontext) {
+	public void handle(@Nonnull HttpRequest req, HttpResponse resp, @Nonnull HttpContext httpcontext) {
 		State st = new State(req, resp, httpcontext);
 		try {
 			// create our state object

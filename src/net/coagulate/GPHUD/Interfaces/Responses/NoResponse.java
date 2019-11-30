@@ -4,6 +4,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextOK;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * Default implementation of a Response, the OK Response.
  *
@@ -12,11 +14,13 @@ import org.json.JSONObject;
 public class NoResponse extends TextOK implements Response {
 	public NoResponse() { super(""); }
 
+	@Nonnull
 	@Override
 	public JSONObject asJSON(State st) {
 		return new JSONObject();
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<No Response>";

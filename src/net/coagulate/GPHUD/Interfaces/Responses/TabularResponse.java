@@ -5,18 +5,23 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Default implementation of a Response, the OK Response.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class TabularResponse extends Table implements Response {
+	@Nullable
 	String title = null;
 
 	public TabularResponse() {}
 
 	public TabularResponse(String message) { title = message; }
 
+	@Nonnull
 	@Override
 	public JSONObject asJSON(State st) {
 		JSONObject j = new JSONObject();
@@ -24,6 +29,7 @@ public class TabularResponse extends Table implements Response {
 		return j;
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<A tablulated response>";

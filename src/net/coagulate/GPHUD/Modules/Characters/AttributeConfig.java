@@ -21,6 +21,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,15 +34,16 @@ import java.util.List;
  */
 public class AttributeConfig {
 
-	public static String blankNulls(final String s) {
+	@Nullable
+	public static String blankNulls(@Nullable final String s) {
 		if (s == null) { return ""; }
 		return s;
 	}
 
 	@URLs(url = "/configuration/characters")
-	public static void configPage(State st, SafeMap values) { configPage(st, values, st.simulate(st.getCharacterNullable())); }
+	public static void configPage(@Nonnull State st, SafeMap values) { configPage(st, values, st.simulate(st.getCharacterNullable())); }
 
-	public static void configPage(State st, SafeMap values, State simulated) {
+	public static void configPage(@Nonnull State st, SafeMap values, State simulated) {
 		Form f = st.form;
 		f.add(new TextHeader("Defined Attributes"));
 		f.noForm();
@@ -90,6 +93,7 @@ public class AttributeConfig {
 		Modules.simpleHtml(st, "Characters.CreateAttribute", values);
 	}
 
+	@Nonnull
 	public static List<String> getAttributeTypes(State st) {
 		List<String> choices = new ArrayList<>();
 		choices.add("INTEGER");
@@ -101,15 +105,16 @@ public class AttributeConfig {
 		return choices;
 	}
 
+	@Nonnull
 	@Commands(description = "Create a new attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute",permitObject = false)
-	public static Response createAttribute(State st,
-	                                       @Arguments(description = "Name of new attribute", type = Argument.ArgumentType.TEXT_INTERNAL_NAME, max = 64)
+	public static Response createAttribute(@Nonnull State st,
+	                                       @Nonnull @Arguments(description = "Name of new attribute", type = Argument.ArgumentType.TEXT_INTERNAL_NAME, max = 64)
 			                                       String name,
 	                                       @Arguments(description = "Allow users to edit their own value without needing permissions", type = Argument.ArgumentType.BOOLEAN)
 			                                       Boolean selfmodify,
-	                                       @Arguments(description = "Type of this attribute", type = Argument.ArgumentType.CHOICE, choiceMethod = "getAttributeTypes")
+	                                       @Nullable @Arguments(description = "Type of this attribute", type = Argument.ArgumentType.CHOICE, choiceMethod = "getAttributeTypes")
 			                                       String attributetype,
-	                                       @Arguments(description = "Type of group, if GROUP, or awarding group TYPE if EXPERIENCE", mandatory = false, type = Argument.ArgumentType.TEXT_INTERNAL_NAME, max = 128)
+	                                       @Nullable @Arguments(description = "Type of group, if GROUP, or awarding group TYPE if EXPERIENCE", mandatory = false, type = Argument.ArgumentType.TEXT_INTERNAL_NAME, max = 128)
 			                                       String grouptype,
 	                                       @Arguments(description = "Increases based off allocation of ability points? (only for INTEGER/FLOAT types)", mandatory = false, type = Argument.ArgumentType.BOOLEAN)
 			                                       Boolean usesabilitypoints,
@@ -148,9 +153,10 @@ public class AttributeConfig {
 		Modules.simpleHtml(st, "Characters.SetAP", values);
 	}
 
+	@Nonnull
 	@Commands(description = "Set wether an existing attribute uses Ability Points", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute")
-	public static Response setAP(State st,
-	                             @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
+	public static Response setAP(@Nonnull State st,
+	                             @Nonnull @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
 			                             Attribute attribute,
 	                             @Arguments(description = "Increases based off allocation of ability points? (only for INTEGER/FLOAT types)", mandatory = false, type = Argument.ArgumentType.BOOLEAN)
 			                             Boolean usesabilitypoints
@@ -168,9 +174,10 @@ public class AttributeConfig {
 		Modules.simpleHtml(st, "Characters.SetSelfModify", values);
 	}
 
+	@Nonnull
 	@Commands(description = "Set wether an existing attribute can be directly updated by the character", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute")
-	public static Response setSelfModify(State st,
-	                                     @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
+	public static Response setSelfModify(@Nonnull State st,
+	                                     @Nonnull @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
 			                                     Attribute attribute,
 	                                     @Arguments(description = "Free self modification allowed?", mandatory = false, type = Argument.ArgumentType.BOOLEAN)
 			                                     Boolean selfmodify
@@ -187,9 +194,10 @@ public class AttributeConfig {
 		Modules.simpleHtml(st, "Characters.SetRequired", values);
 	}
 
+	@Nonnull
 	@Commands(description = "Set wether an existing attribute must have a value", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute")
-	public static Response setRequired(State st,
-	                                   @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
+	public static Response setRequired(@Nonnull State st,
+	                                   @Nonnull @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
 			                                   Attribute attribute,
 	                                   @Arguments(description = "Value required?", mandatory = false, type = Argument.ArgumentType.BOOLEAN)
 			                                   Boolean required
@@ -206,9 +214,10 @@ public class AttributeConfig {
 		Modules.simpleHtml(st, "Characters.SetDefault", values);
 	}
 
+	@Nonnull
 	@Commands(description = "Set the default value for an attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.CreateAttribute")
-	public static Response setDefault(State st,
-	                                  @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
+	public static Response setDefault(@Nonnull State st,
+	                                  @Nonnull @Arguments(description = "Attribute", type = Argument.ArgumentType.ATTRIBUTE)
 			                                  Attribute attribute,
 	                                  @Arguments(description = "Default value", mandatory = false, type = Argument.ArgumentType.TEXT_ONELINE, max = 4096)
 			                                  String defaultvalue
@@ -226,9 +235,10 @@ public class AttributeConfig {
 		Modules.simpleHtml(st, "Characters.deleteAttribute", values);
 	}
 
+	@Nonnull
 	@Commands(description = "Delete an attribute", context = Command.Context.AVATAR, requiresPermission = "Characters.DeleteAttribute",permitObject = false)
-	public static Response deleteAttribute(State st,
-	                                       @Arguments(description = "Attribute **AND ALL ITS DATA** to delete", type = Argument.ArgumentType.ATTRIBUTE)
+	public static Response deleteAttribute(@Nonnull State st,
+	                                       @Nonnull @Arguments(description = "Attribute **AND ALL ITS DATA** to delete", type = Argument.ArgumentType.ATTRIBUTE)
 			                                       Attribute attribute,
 	                                       @Arguments(description = "CONFIRM AS THIS WILL IRREVERSIBLY DELETE DATA ATTACHED TO THIS ATTRIBUTE", mandatory = false, type = Argument.ArgumentType.BOOLEAN)
 			                                       Boolean confirm

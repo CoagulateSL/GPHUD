@@ -6,6 +6,8 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,8 +17,9 @@ public class ScriptingModule extends ModuleAnnotation {
 		super(name, annotation);
 	}
 
+	@Nullable
 	@Override
-	public Command getCommand(State st, String commandname) {
+	public Command getCommand(@Nonnull State st, @Nonnull String commandname) {
 		if (commandname.equalsIgnoreCase("characterresponse") ||
 			commandname.equalsIgnoreCase("stringresponse")) { return super.getCommand(st,commandname); }
 		Scripts script=Scripts.findOrNull(st,commandname.replaceFirst("gs",""));
@@ -25,8 +28,9 @@ public class ScriptingModule extends ModuleAnnotation {
 	}
 
 
+	@Nonnull
 	@Override
-	public Map<String, Command> getCommands(State st) {
+	public Map<String, Command> getCommands(@Nonnull State st) {
 		Map<String,Command> commands=new HashMap<>();
 		Set<Scripts> scripts=st.getInstance().getScripts();
 		for (Scripts script:scripts) {

@@ -21,6 +21,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -30,7 +32,7 @@ import java.util.Set;
  */
 public abstract class Management {
 	@URLs(url = "/factions")
-	public static void manage(State st, SafeMap values) {
+	public static void manage(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.noForm();
 		Table t = new Table();
@@ -59,8 +61,9 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Faction.create", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Create a faction group", requiresPermission = "Faction.Create")
-	public static Response create(State st,
+	public static Response create(@Nonnull State st,
 	                              @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the faction", max = 128)
 			                              String name) {
 		try { st.getInstance().createCharacterGroup(name, false, "Faction"); } catch (UserException e) {
@@ -71,7 +74,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/view/*")
-	public static void viewFaction(State st, SafeMap values) throws SystemException {
+	public static void viewFaction(@Nonnull State st, SafeMap values) throws SystemException {
 
 		//System.out.println(st.uri);
 		String[] split = st.getDebasedURL().split("/");
@@ -85,7 +88,7 @@ public abstract class Management {
 		}
 	}
 
-	public static void viewFaction(State st, SafeMap values, CharacterGroup faction) throws SystemException {
+	public static void viewFaction(@Nonnull State st, SafeMap values, @Nonnull CharacterGroup faction) throws SystemException {
 		Form f = st.form;
 		f.noForm();
 		f.add(new TextHeader(faction.getName()));
@@ -137,11 +140,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Faction.SetOwner", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set the leader of a faction", requiresPermission = "Faction.SetOwner")
-	public static Response setOwner(State st,
-	                                @Arguments(description = "Faction to change the leader of", type = ArgumentType.CHARACTERGROUP)
+	public static Response setOwner(@Nonnull State st,
+	                                @Nonnull @Arguments(description = "Faction to change the leader of", type = ArgumentType.CHARACTERGROUP)
 			                                CharacterGroup faction,
-	                                @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false)
+	                                @Nullable @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false)
 			                                Char newowner) {
 		// group must be a faction group
 		if (!"Faction".equals(faction.getType())) {
@@ -182,11 +186,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Faction.Add", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Add a member to this faction", requiresPermission = "Faction.SetOwner")
-	public static Response add(State st,
-	                           @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to add character to")
+	public static Response add(@Nonnull State st,
+	                           @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to add character to")
 			                           CharacterGroup faction,
-	                           @Arguments(description = "Character to add to the faction", type = ArgumentType.CHARACTER)
+	                           @Nonnull @Arguments(description = "Character to add to the faction", type = ArgumentType.CHARACTER)
 			                           Char newmember) throws UserException {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
@@ -221,11 +226,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Faction.Remove", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Remove a member from this faction", requiresPermission = "Faction.SetOwner")
-	public static Response remove(State st,
-	                              @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to remove character from")
+	public static Response remove(@Nonnull State st,
+	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to remove character from")
 			                              CharacterGroup faction,
-	                              @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER)
+	                              @Nonnull @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER)
 			                              Char member) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
@@ -252,9 +258,10 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Faction.Delete", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Delete a faction", requiresPermission = "Faction.Delete")
-	public static Response delete(State st,
-	                              @Arguments(description = "Faction to delete", type = ArgumentType.CHARACTERGROUP)
+	public static Response delete(@Nonnull State st,
+	                              @Nonnull @Arguments(description = "Faction to delete", type = ArgumentType.CHARACTERGROUP)
 			                              CharacterGroup faction) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
@@ -270,11 +277,12 @@ public abstract class Management {
 		Modules.simpleHtml(st, "Faction.SetAdmin", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.ANY, description = "Set the faction admin flag on a user")
-	public static Response setAdmin(State st,
-	                                @Arguments(description = "Faction to set the character's admin flag on", type = ArgumentType.CHARACTERGROUP)
+	public static Response setAdmin(@Nonnull State st,
+	                                @Nonnull @Arguments(description = "Faction to set the character's admin flag on", type = ArgumentType.CHARACTERGROUP)
 			                                CharacterGroup faction,
-	                                @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER)
+	                                @Nonnull @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER)
 			                                Char character,
 	                                @Arguments(description = "Admin flag to set on the character in this faction", type = ArgumentType.BOOLEAN)
 			                                boolean admin) throws SystemException {

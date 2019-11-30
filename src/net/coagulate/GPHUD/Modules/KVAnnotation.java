@@ -4,6 +4,8 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Wraps a KV (Key Value) element.
  *
@@ -25,22 +27,31 @@ public class KVAnnotation extends KV {
 
 	public boolean isGenerated() { return generated; }
 
+	@Nonnull
 	public String fullname() { return module.getName() + "." + meta.name(); }
 
+	@Nonnull
 	public String name() { return meta.name(); }
 
+	@Nonnull
 	public KVSCOPE scope() { return meta.scope(); }
 
+	@Nonnull
 	public KVTYPE type() { return meta.type(); }
 
+	@Nonnull
 	public String description() { return meta.description(); }
 
+	@Nonnull
 	public String editpermission() { return meta.editpermission(); }
 
+	@Nonnull
 	public String defaultvalue() { return meta.defaultvalue(); }
 
+	@Nonnull
 	public String conveyas() { return meta.conveyas(); }
 
+	@Nonnull
 	public KVHIERARCHY hierarchy() { return meta.hierarchy(); }
 
 	public boolean template() { return meta.template(); }

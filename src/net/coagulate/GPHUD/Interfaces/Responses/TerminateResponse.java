@@ -5,6 +5,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -20,6 +22,7 @@ public class TerminateResponse implements Response {
 		reason = r;
 	}
 
+	@Nonnull
 	@Override
 	public JSONObject asJSON(State st) {
 		JSONObject j = new JSONObject();
@@ -27,21 +30,25 @@ public class TerminateResponse implements Response {
 		return j;
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<The TERMINATE-NOW Response> (how did you get this!?";
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		throw new SystemException("This request is TERMINATED - " + reason);
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		throw new SystemException("This request is TERMINATED - " + reason);
 	}
 
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;

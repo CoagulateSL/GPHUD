@@ -8,12 +8,15 @@ import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 import static net.coagulate.GPHUD.Data.Audit.audit;
 
 public class Set {
 
+	@Nonnull
 	@Command.Commands(description = "Set own health",context = Command.Context.CHARACTER)
-	public static Response set(State st,
+	public static Response set(@Nonnull State st,
 	                           @Argument.Arguments(description = "Ammount of health to set to",type = Argument.ArgumentType.INTEGER)
                                Integer target
 	                           )

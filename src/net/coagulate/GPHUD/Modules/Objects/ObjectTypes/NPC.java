@@ -14,13 +14,17 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class NPC extends ObjectType {
-	protected NPC(State st, ObjectTypes object) {
+	protected NPC(State st, @Nonnull ObjectTypes object) {
 		super(st, object);
 	}
 
+	@Nonnull
 	@Override
-	public Response click(State st, Char clicker) {
+	public Response click(@Nonnull State st, @Nonnull Char clicker) {
 		// do we have a character set
 		if (!json.has("character")) { return new ErrorResponse("No character is associated with this NPC object"); }
 		Integer charid=json.getInt("character");
@@ -40,6 +44,7 @@ public class NPC extends ObjectType {
 		return new JSONResponse(jsonresponse);
 	}
 
+	@Nullable
 	Char getChar() {
 		String chid=json.optString("character","");
 		String chname="";
@@ -47,6 +52,7 @@ public class NPC extends ObjectType {
 		return Char.get(Integer.parseInt(chid));
 	}
 
+	@Nonnull
 	@Override
 	public String explainHtml() {
 		Char ch=getChar();
@@ -54,7 +60,7 @@ public class NPC extends ObjectType {
 	}
 
 	@Override
-	public void editForm(State st) {
+	public void editForm(@Nonnull State st) {
 		Table t=new Table();
 		t.add("Character").add(Char.getNPCList(st,"character").setValue(""+json.getInt("character")));
 		t.openRow();
@@ -69,7 +75,7 @@ public class NPC extends ObjectType {
 	}
 
 	@Override
-	public void update(State st) {
+	public void update(@Nonnull State st) {
 		boolean update=false;
 		if (st.postmap.containsKey("character")) {
 			int charid=Integer.parseInt(st.postmap.get("character"));
@@ -91,18 +97,20 @@ public class NPC extends ObjectType {
 		if (update) { object.setBehaviour(json); }
 	}
 
+	@Nonnull
 	@Override
 	public String explainText() {
 		return explainHtml();
 	}
 
+	@Nonnull
 	@Override
 	public MODE mode() {
 		return MODE.CLICKABLE;
 	}
 
 	@Override
-	public void payload(State st, JSONObject response) {
+	public void payload(@Nonnull State st, @Nonnull JSONObject response) {
 		super.payload(st, response);
 		if (!json.has("character")) { return; }
 		Integer charid=json.getInt("character");

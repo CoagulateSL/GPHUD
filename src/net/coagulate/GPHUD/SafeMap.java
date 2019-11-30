@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.TreeMap;
 
 /**
@@ -10,13 +12,15 @@ import java.util.TreeMap;
 public class SafeMap extends TreeMap<String, String> {
 	private static final long serialVersionUID=1L;
 
-	private static String nonull(String s) {
+	@Nullable
+	private static String nonull(@Nullable String s) {
 		if (s == null) { return ""; }
 		return s;
 	}
 
 	public boolean submit() { return ("Submit".equals(get("Submit"))); }
 
+	@Nonnull
 	public String get(String key) { return nonull(super.get(key)); }
 
 	public void debugDump() {

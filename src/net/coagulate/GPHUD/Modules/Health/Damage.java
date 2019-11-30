@@ -4,12 +4,14 @@ import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
 public class Damage {
 
-	public static void apply(State st, Char targetchar, int damage, String reason) {
+	public static void apply(@Nonnull State st, Char targetchar, int damage, String reason) {
 		st.setTarget(targetchar);
 		int oldhealth = st.getTarget().getKV("Health.Health").intValue();
 		boolean allownegative = st.getTarget().getKV("Health.allowNegative").boolValue();
@@ -21,7 +23,7 @@ public class Damage {
 		Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, targetchar, "SUBTRACT", "Health.Health", oldhealth + "", newvalue + "", "Damaged by " + damage + " for " + reason);
 	}
 
-	public static void heal(State st, Char targetchar, int healing, String reason) {
+	public static void heal(@Nonnull State st, Char targetchar, int healing, String reason) {
 		st.setTarget(targetchar);
 		int oldhealth = st.getTarget().getKV("Health.Health").intValue();
 		int newvalue = oldhealth + healing;

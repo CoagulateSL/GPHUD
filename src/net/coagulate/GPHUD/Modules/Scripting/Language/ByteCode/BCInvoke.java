@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,13 +20,14 @@ public class BCInvoke extends ByteCode {
 	}
 
 	// Invoke a function.  Pop name, arg count, N*arguments
+	@Nonnull
 	public String explain() { return "Invoke (pop function name, pop arg count, pop arguments, push result)"; }
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.Invoke.get());
 	}
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		String functionname=vm.popString().getContent();
 		Method function= GSFunctions.get(functionname);
 		int argcount=vm.popInteger().getContent();
@@ -62,7 +64,7 @@ public class BCInvoke extends ByteCode {
 		invoke(st,vm,function,new Object[0]);
 	}
 
-	private void invoke(State st, GSVM vm, Method function, Object[] parameters) {
+	private void invoke(State st, @Nonnull GSVM vm, @Nonnull Method function, Object[] parameters) {
 		Object rawret= null;
 		try {
 			rawret = function.invoke(null, parameters);
