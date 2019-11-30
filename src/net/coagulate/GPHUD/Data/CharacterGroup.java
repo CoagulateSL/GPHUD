@@ -149,6 +149,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @return Group type
 	 */
+	@Nullable
 	public String getType() { return dqs(true, "select type from charactergroups where charactergroupid=?", getId()); }
 
 
@@ -287,6 +288,7 @@ public class CharacterGroup extends TableRow {
 
 	public void setOpen(Boolean b) { set("open", b); }
 
+	@Nullable
 	public String getTypeNotNull() {
 		String ret = getType();
 		if (ret == null) { return ""; }

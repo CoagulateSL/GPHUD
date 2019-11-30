@@ -96,7 +96,7 @@ public abstract class Index {
 	}
 
 	@URLs(url = "/configuration/view/*")
-	public static void kvDetailPage(@Nonnull State st, SafeMap values) {
+	public static void kvDetailPage(@Nonnull State st, @Nonnull SafeMap values) {
 		String kvname = st.getDebasedURL().replaceFirst("/configuration/view/", "").replaceFirst("/", ".");
 		KV kv = st.getKVDefinition(kvname);
 		st.form.noForm();
@@ -104,7 +104,7 @@ public abstract class Index {
 	}
 
 	@URLs(url = "/configuration/*")
-	public static void genericConfigurationPage(@Nonnull State st, SafeMap values) throws UserException, SystemException {
+	public static void genericConfigurationPage(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		String module = st.getDebasedURL().replaceFirst("/configuration/", "");
 		String key = null;
 		st.form.noForm();

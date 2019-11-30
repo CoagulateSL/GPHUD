@@ -73,6 +73,7 @@ public abstract class ByteCode {
 		throw new SystemException("Failed to materialise instruction "+decode);
 	}
 
+	@Nonnull
 	public abstract String explain();
 	public abstract void toByteCode(List<Byte> bytes);
 	public static final Map<Byte,InstructionSet> map=new HashMap<>();
@@ -112,6 +113,7 @@ public abstract class ByteCode {
 		public byte get() { return value; }
 	}
 	public static InstructionSet get(byte b) { return map.get(b); }
+	@Nullable
 	public String htmlDecode() {
 		return this.getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
 	}

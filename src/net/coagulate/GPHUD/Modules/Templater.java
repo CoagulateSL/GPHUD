@@ -112,6 +112,7 @@ public abstract class Templater {
 		throw new SystemException("No template implementation for " + keyword);
 	}
 
+	@Nullable
 	@Template(name = "NAME", description = "Character Name")
 	public static String getCharacterName(@Nonnull State st, String key) {
 		if (st.getCharacterNullable() == null) { return ""; }

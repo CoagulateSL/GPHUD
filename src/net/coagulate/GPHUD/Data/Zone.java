@@ -128,6 +128,7 @@ public class Zone extends TableRow {
 	 *
 	 * @return Instance object
 	 */
+	@Nullable
 	public Instance getInstance() {
 		Integer id = getInt("instanceid");
 		if (id == null) {

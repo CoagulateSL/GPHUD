@@ -16,6 +16,7 @@ public abstract class Argument {
 
 	public abstract boolean isGenerated();
 
+	@Nonnull
 	public abstract ArgumentType type();
 
 	@Nullable
@@ -34,6 +35,7 @@ public abstract class Argument {
 
 	public abstract void overrideDescription(String n);
 
+	@Nonnull
 	public abstract List<String> getChoices(State st);
 
 	public enum ArgumentType {

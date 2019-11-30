@@ -23,7 +23,7 @@ public abstract class Teleporter extends ObjectType {
 	}
 
 	@Nonnull
-	Response execute(@Nonnull State st, Char clicker) {
+	Response execute(@Nonnull State st, @Nonnull Char clicker) {
 		if (!st.hasModule("Teleportation")) { throw new UserException("Teleporter can not function ; teleportation module is disabled at this instance."); }
 		JSONObject doteleport=new JSONObject();
 		doteleport.put("teleport",getTeleportTarget(st));

@@ -112,7 +112,9 @@ public class Objects extends TableRow {
 	@Nonnull
 	public Region getRegion() { return Region.get(getInt("regionid"),true); }
 
+	@Nullable
 	public String getLocation() { return getString("location"); }
+	@Nullable
 	public Instance getInstance() {
 		return getRegion().getInstance();
 	}
@@ -162,6 +164,7 @@ public class Objects extends TableRow {
 	@Nonnull
 	public String toString() { return "Object#"+getId()+"='"+getName()+"'@"+getRegion().toString()+"/"+getLocation();}
 
+	@Nullable
 	public String getURL() {
 		return getString("url");
 	}

@@ -99,6 +99,7 @@ public class Alias extends TableRow {
 		return "name";
 	}
 
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}

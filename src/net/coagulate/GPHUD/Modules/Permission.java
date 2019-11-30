@@ -33,10 +33,13 @@ public abstract class Permission {
 
 	public abstract boolean isGenerated();
 
+	@Nonnull
 	public abstract String name();
 
+	@Nonnull
 	public abstract String description();
 
+	@Nonnull
 	public abstract POWER power();
 
 	public abstract boolean grantable();

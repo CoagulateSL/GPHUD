@@ -26,6 +26,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public abstract class Audit {
 
+	@Nullable
 	public static Results getAudit(@Nullable Instance instance, @Nullable User avatar, @Nullable Char character) {
 		List<Object> parameters = new ArrayList<>();
 		String sql = "select * from audit where 1=1 ";

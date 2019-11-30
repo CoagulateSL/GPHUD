@@ -221,7 +221,7 @@ public class PermissionsGroup extends TableRow {
 	 * @param permission Name of permission to add.
 	 * @throws UserException If the permissions is invalid, already added, etc.
 	 */
-	public void addPermission(State st, String permission) throws UserException {
+	public void addPermission(State st, @Nonnull String permission) throws UserException {
 		Modules.validatePermission(st, permission);
 		int exists = dqi(true, "select count(*) from permissions where permissionsgroupid=? and permission like ?", getId(), permission);
 		if (exists != 0) { throw new UserException("Permission already exists on group."); }

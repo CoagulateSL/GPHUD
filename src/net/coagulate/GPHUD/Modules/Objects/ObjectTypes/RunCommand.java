@@ -59,7 +59,7 @@ public class RunCommand extends ObjectType {
 
 	@Nonnull
 	@Override
-	public Response click(State st, Char clicker) {
+	public Response click(@Nonnull State st, @Nonnull Char clicker) {
 		if (json.optString("command","").isEmpty()) { return new ErrorResponse("Command to invoke is not configured in this object type"); }
 		JSONObject resp = Modules.getJSONTemplate(st, json.getString("command"));
 		new Transmission(clicker,resp).start();

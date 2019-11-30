@@ -93,7 +93,7 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public Response run(State st, @Nonnull SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull State st, @Nonnull SafeMap parametermap) throws UserException, SystemException {
 		String selected = parametermap.get("choice");
 		int choice = 0;
 		for (int i = 1; i <= 12; i++) { if (definition.optString("button" + i, "").equals(selected)) { choice = i; } }

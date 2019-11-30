@@ -11,6 +11,7 @@ import net.coagulate.SL.Data.User;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,12 +30,17 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	public boolean retired = false;
 	int id = 0;
 	String name = "";
+	@Nullable
 	Integer ownerid = 0;
 	String ownername = "";
+	@Nullable
 	Integer lastactive = 0;
 	boolean online = false;
+	@Nullable
 	Integer totalvisits = 0;
+	@Nullable
 	Integer recentvisits = 0;
+	@Nullable
 	Integer totalxp = 0;
 	@Nonnull
 	List<String> groupheaders = new ArrayList<>();

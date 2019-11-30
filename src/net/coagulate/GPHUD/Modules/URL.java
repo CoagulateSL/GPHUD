@@ -18,6 +18,7 @@ public abstract class URL {
 
 	public abstract String url();
 
+	@Nonnull
 	public abstract String requiresPermission();
 
 	public abstract boolean requiresAuthentication();
@@ -26,6 +27,7 @@ public abstract class URL {
 
 	public abstract String getName();
 
+	@Nonnull
 	public abstract String getMethodName();
 
 	public abstract void run(State st, SafeMap values);

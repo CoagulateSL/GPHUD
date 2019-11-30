@@ -73,6 +73,7 @@ public abstract class ZoneCommands {
 		return new JSONResponse(response);
 	}
 
+	@Nullable
 	@Template(name = "ZONE", description = "Current zone")
 	public static String getZone(@Nonnull State st, String key) {
 		if (st.zone == null) { return ""; }

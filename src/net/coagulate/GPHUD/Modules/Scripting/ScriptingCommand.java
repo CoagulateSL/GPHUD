@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +93,7 @@ public class ScriptingCommand extends Command {
 		return "Scripting."+script.getName();
 	}
 
+	@Nullable
 	@Override
 	public String getName() {
 		return script.getName();

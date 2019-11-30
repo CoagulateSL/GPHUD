@@ -79,8 +79,10 @@ public abstract class Command {
 
 	public abstract int getArgumentCount();
 
+	@Nonnull
 	public abstract String getFullName();
 
+	@Nullable
 	public abstract String getName();
 
 	@Nonnull
@@ -658,6 +660,7 @@ public abstract class Command {
 		}
 	}
 
+	@Nonnull
 	public String getFullMethodName() {
 		return getMethod().getDeclaringClass().getName() + "." + getMethod().getName() + "()";
 	}

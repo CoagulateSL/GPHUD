@@ -43,7 +43,7 @@ public abstract class GetMessages {
 	}
 
 	@Nonnull
-	private static Response processFactionInvite(State st, @Nonnull JSONObject j) throws UserException, SystemException {
+	private static Response processFactionInvite(@Nonnull State st, @Nonnull JSONObject j) throws UserException, SystemException {
 		Char from = Char.get(j.getInt("from"));
 		CharacterGroup faction = CharacterGroup.get(j.getInt("to"));
 		JSONObject template = Modules.getJSONTemplate(st, "gphudclient.acceptrejectmessage");

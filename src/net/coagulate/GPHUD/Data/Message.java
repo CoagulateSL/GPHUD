@@ -134,6 +134,7 @@ public class Message extends TableRow {
 	 *
 	 * @return JSONObject payload
 	 */
+	@Nullable
 	public String getJSON() {
 		return dqs(true, "select json from messages where messageid=?", getId());
 	}

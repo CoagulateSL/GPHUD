@@ -58,21 +58,26 @@ public abstract class ObjectType {
 		return behaviours;
 	}
 
+	@Nonnull
 	public abstract String explainHtml();
 
 	public abstract void editForm(State st);
 
 	public abstract void update(State st);
 
+	@Nonnull
 	public abstract String explainText();
 
 	public void payload(State st, @Nonnull JSONObject response) {
 		response.put("mode",mode());
 	}
 
+	@Nonnull
 	public abstract MODE mode();
 
+	@Nonnull
 	public Response click(State st, Char clicker) { return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
+	@Nonnull
 	public Response collide(State st, Char collider)  { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
 	enum MODE {NONE,CLICKABLE,PHANTOM}

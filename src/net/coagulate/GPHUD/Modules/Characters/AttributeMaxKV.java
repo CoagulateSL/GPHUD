@@ -35,6 +35,7 @@ public class AttributeMaxKV extends KV {
 		return KVSCOPE.COMPLETE;
 	}
 
+	@Nonnull
 	@Override
 	public KVTYPE type() {
 		return attribute.getKVType();
@@ -52,6 +53,7 @@ public class AttributeMaxKV extends KV {
 		return "Characters.CreateAttribute";
 	}
 
+	@Nonnull
 	@Override
 	public String defaultvalue() {
 		return attribute.getKVDefaultValue();
@@ -63,6 +65,7 @@ public class AttributeMaxKV extends KV {
 		return "";
 	}
 
+	@Nonnull
 	@Override
 	public KVHIERARCHY hierarchy() {
 		return attribute.getKVHierarchy();

@@ -57,18 +57,22 @@ public abstract class Module {
 
 	public String getName() { return name; }
 
-	Response run(State st, String commandname, String[] args) throws UserException, SystemException {
+	@Nonnull
+	Response run(@Nonnull State st, String commandname, @Nonnull String[] args) throws UserException, SystemException {
 		Command command = getCommand(st, commandname);
 		return command.run(st, args);
 	}
 
+	@Nullable
 	public abstract Set<SideSubMenu> getSideSubMenus(State st);
 
 	@Nonnull
 	public String requires(State st) { return annotation.requires(); }
 
+	@Nullable
 	public abstract URL getURL(State st, String url);
 
+	@Nonnull
 	public abstract Map<String, KV> getKVDefinitions(State st);
 
 	public abstract KV getKVDefinition(State st, String qualifiedname);
@@ -80,10 +84,12 @@ public abstract class Module {
 
 	public abstract Permission getPermission(State st, String itemname);
 
+	@Nonnull
 	public abstract Map<String, Pool> getPoolMap(State st);
 
 	public abstract boolean hasPool(State st, Pools p);
 
+	@Nonnull
 	public abstract Map<String, Command> getCommands(State st);
 
 	public boolean hasConfig(State st) { return alwaysHasConfig(); }
@@ -117,8 +123,10 @@ public abstract class Module {
 
 	public abstract Map<String, Permission> getPermissions(State st);
 
+	@Nullable
 	public abstract SideMenu getSideMenu(State st);
 
+	@Nonnull
 	public abstract Set<URL> getAllContents(State st);
 
 	@Nonnull

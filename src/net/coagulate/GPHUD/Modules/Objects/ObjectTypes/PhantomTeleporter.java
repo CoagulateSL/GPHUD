@@ -26,7 +26,7 @@ public class PhantomTeleporter extends Teleporter {
 
 	@Nonnull
 	@Override
-	public Response collide(@Nonnull State st, Char clicker) {
+	public Response collide(@Nonnull State st, @Nonnull Char clicker) {
 		return execute(st,clicker);
 	}
 

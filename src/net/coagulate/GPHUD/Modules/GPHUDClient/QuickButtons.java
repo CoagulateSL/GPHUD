@@ -52,7 +52,7 @@ public class QuickButtons {
 		return templateOrRun(st, st.getKV("GPHUDClient.QuickButton6").value());
 	}
 
-	static Response templateOrRun(State st, String command) throws UserException, SystemException {
+	static Response templateOrRun(@Nonnull State st, @Nonnull String command) throws UserException, SystemException {
 		JSONObject template = Modules.getJSONTemplate(st, command);
 		if (template.getInt("args") == 0) { return Modules.run(st, command, new SafeMap()); }
 		return new JSONResponse(template);

@@ -12,12 +12,15 @@ public abstract class SideMenu {
 
 	public abstract boolean isGenerated();
 
+	@Nonnull
 	public abstract String name();
 
 	public abstract int priority();
 
+	@Nonnull
 	public abstract String url();
 
+	@Nonnull
 	public abstract String requiresPermission();
 
 	/**

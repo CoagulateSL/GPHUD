@@ -13,8 +13,10 @@ public abstract class Pool extends NameComparable {
 
 	public abstract boolean isGenerated();
 
+	@Nonnull
 	public abstract String description();
 
+	@Nonnull
 	public abstract String fullName();
 
 	/**

@@ -120,6 +120,7 @@ public class Region extends TableRow {
 	 *
 	 * @return The Instance object
 	 */
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
@@ -201,6 +202,7 @@ public class Region extends TableRow {
 	 *
 	 * @return UnixTime the last time this server's url was refreshed / used
 	 */
+	@Nullable
 	public Integer getURLLast() {
 		return getInt("urllast");
 	}
@@ -411,6 +413,7 @@ public class Region extends TableRow {
 	 *
 	 * @return Short name of the backend LSLR server node in use
 	 */
+	@Nullable
 	public String getAuthNode() {
 		return dqs(true, "select authnode from regions where regionid=?", getId());
 	}
@@ -518,6 +521,7 @@ public class Region extends TableRow {
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
 
+	@Nullable
 	public Integer getOpenVisitCount() {
 		return dqi(true, "select count(*) from visits where endtime is null and regionid=?", getId());
 	}

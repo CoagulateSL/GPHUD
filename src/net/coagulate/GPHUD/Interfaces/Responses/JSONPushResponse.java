@@ -41,6 +41,7 @@ public class JSONPushResponse implements Response {
 		return"<A JSON Push Response>";
 	}
 
+	@Nullable
 	@Override
 	public String asText(State st) {
 		Transmission t = new Transmission((Char) null, json, url);
@@ -48,6 +49,7 @@ public class JSONPushResponse implements Response {
 		return nonjson.asText(st);
 	}
 
+	@Nullable
 	@Override
 	public String asHtml(State st, boolean rich) {
 		Transmission t = new Transmission((Char) null, json, url);

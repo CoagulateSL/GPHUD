@@ -236,7 +236,7 @@ public class Roller {
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Roll against another player", permitUserWeb = false)
 	public static Response rollDamageAgainst(@Nonnull State st,
-	                                         @Arguments(description = "Character to roll against", type = ArgumentType.CHARACTER_NEAR)
+	                                         @Nonnull @Arguments(description = "Character to roll against", type = ArgumentType.CHARACTER_NEAR)
 			                                         Char target,
 	                                         @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false)
 			                                         Integer dice,

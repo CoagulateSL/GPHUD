@@ -19,10 +19,13 @@ public abstract class CharacterAttribute extends Attribute {
 
 	protected CharacterAttribute(int id) {super(id); } //throw new SystemException("Not valid on auto generated attribute");}
 
+	@Nullable
 	public abstract String getName();
 
+	@Nonnull
 	public abstract ATTRIBUTETYPE getType();
 
+	@Nonnull
 	public abstract String getSubType();
 
 	public abstract boolean usesAbilityPoints();
@@ -36,6 +39,7 @@ public abstract class CharacterAttribute extends Attribute {
 	 */
 	public void setRequired(Boolean required) {throw new UserException("Not valid on auto generated attribute");}
 
+	@Nonnull
 	public abstract String getDefaultValue();
 
 	/**
@@ -56,10 +60,13 @@ public abstract class CharacterAttribute extends Attribute {
 
 	public abstract boolean isKV();
 
+	@Nonnull
 	public abstract KV.KVTYPE getKVType();
 
+	@Nonnull
 	public abstract String getKVDefaultValue();
 
+	@Nonnull
 	public abstract KV.KVHIERARCHY getKVHierarchy();
 
 	@Nonnull

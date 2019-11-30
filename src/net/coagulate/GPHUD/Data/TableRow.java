@@ -28,14 +28,18 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	public TableRow(int id) { super(id); }
 
+	@Nonnull
 	public static String getLink(String name, String target, int id) {
 		return new Link(name, "/GPHUD/" + target + "/view/" + id).asHtml(null, true);
 	}
 
+	@Nonnull
 	public String getIdColumn() { return getIdField(); }
 
+	@Nonnull
 	public abstract String getIdField();
 
+	@Nullable
 	@Override
 	public final DBConnection getDatabase() { return GPHUD.getDB(); }
 
@@ -65,10 +69,13 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public abstract void validate(State st) throws SystemException;
 
+	@Nullable
 	public abstract String getNameField();
 
+	@Nullable
 	public abstract String getLinkTarget();
 
+	@Nullable
 	public String getName() {
 		try { return (String) cacheGet("name"); } catch (CacheMiss ex) {}
 		String name = getString(getNameField());
@@ -81,6 +88,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	protected abstract int getNameCacheTime();
 
+	@Nullable
 	public String getNameSafe() {
 		try {
 			return getName();
@@ -94,11 +102,13 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Override
 	public String toString() { return getNameSafe() + "[#" + getId() + "]"; }
 
+	@Nullable
 	@Override
 	public String asText(State st) {
 		return getNameSafe();
 	}
 
+	@Nullable
 	@Override
 	public String asHtml(State st, boolean rich) {
 		if (!rich) { return getNameSafe(); }
@@ -144,7 +154,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		}
 	}
 
-	public void setKV(State st, String key, @Nullable String value) {
+	public void setKV(State st, @Nonnull String key, @Nullable String value) {
 		kvcheck();
 		String oldvalue = dqs(false, "select v from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key);
 		if (value == null && oldvalue == null) { return; }

@@ -35,6 +35,7 @@ public class TextInput extends Input {
 		this.width = width;
 	}
 
+	@Nonnull
 	String getType() { return "text"; }
 
 	@Override

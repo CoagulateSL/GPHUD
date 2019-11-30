@@ -83,6 +83,7 @@ public class Scripts extends TableRow {
 		return list;
 	}
 
+	@Nullable
 	public String getSource() {
 		String script=getString("source");
 		if (script==null) { script=""; }
@@ -110,6 +111,7 @@ public class Scripts extends TableRow {
 		if (st.getInstance() != getInstance()) { throw new SystemException("Script / State Instance mismatch"); }
 	}
 
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
@@ -168,6 +170,7 @@ public class Scripts extends TableRow {
 		}
 	}
 
+	@Nullable
 	public byte[] getByteCode() {
 		validate();
 		return getBytes("bytecode");

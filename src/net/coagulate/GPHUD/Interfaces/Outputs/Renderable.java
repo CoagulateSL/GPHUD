@@ -19,6 +19,7 @@ public interface Renderable {
 	 * @param st
 	 * @return
 	 */
+	@Nullable
 	String asText(State st);
 
 	/**
@@ -30,6 +31,7 @@ public interface Renderable {
 	 * @param rich Rich mode
 	 * @return
 	 */
+	@Nullable
 	String asHtml(State st, boolean rich);
 
 	@Nullable

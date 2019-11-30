@@ -109,6 +109,7 @@ public class Attribute extends TableRow {
 		return get(id);
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "attributes"; }
 
@@ -122,16 +123,19 @@ public class Attribute extends TableRow {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "attributes";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "attributeid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
@@ -154,6 +158,7 @@ public class Attribute extends TableRow {
 	@Override
 	protected int getNameCacheTime() { return 60 * 60; } // 1 hour, attributes can NOT be renamed because they create a KV based on the name :P
 
+	@Nonnull
 	public ATTRIBUTETYPE getType() {
 		String type = null;
 		try { type = (String) cacheGet("type"); } catch (CacheMiss ex) {
@@ -171,6 +176,7 @@ public class Attribute extends TableRow {
 		throw new SystemException("Unhandled type " + type + " for attribute " + getId() + " " + getNameSafe());
 	}
 
+	@Nullable
 	public String getSubType() { return getString("grouptype"); }
 
 	public boolean usesAbilityPoints() { return getBool("usesabilitypoints"); }
@@ -186,6 +192,7 @@ public class Attribute extends TableRow {
 		set("required", required);
 	}
 
+	@Nullable
 	public String getDefaultValue() { return getString("defaultvalue"); }
 
 	/**
@@ -230,6 +237,7 @@ public class Attribute extends TableRow {
 		throw new SystemException("Unhandled non KV type " + getType());
 	}
 
+	@Nonnull
 	public String getCharacterValueDescription(@Nonnull State st) {
 		if (isKV()) { return st.getKV("Characters." + getName()).path(); }
 		if (getType() == POOL || getType() == EXPERIENCE) {
@@ -262,6 +270,7 @@ public class Attribute extends TableRow {
 	 * @return the KVTYPE
 	 * @throws SystemException If the attribute is not of a KV represented attribute.
 	 */
+	@Nonnull
 	public KV.KVTYPE getKVType() throws SystemException {
 		ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVTYPE.INTEGER; }
@@ -277,6 +286,7 @@ public class Attribute extends TableRow {
 	 * @return The default value
 	 * @throws SystemException if this attribute type is not KV backed
 	 */
+	@Nonnull
 	public String getKVDefaultValue() throws SystemException {
 		ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return "0"; }
@@ -292,6 +302,7 @@ public class Attribute extends TableRow {
 	 * @return the appropriate KVHIERARCHY
 	 * @throws SystemException If this attribute is not backed by a KV type.
 	 */
+	@Nonnull
 	public KV.KVHIERARCHY getKVHierarchy() throws SystemException {
 		ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVHIERARCHY.CUMULATIVE; }

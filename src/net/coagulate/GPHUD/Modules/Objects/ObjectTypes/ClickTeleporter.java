@@ -26,7 +26,7 @@ public class ClickTeleporter extends Teleporter {
 
 	@Nonnull
 	@Override
-	public Response click(@Nonnull State st, Char clicker) {
+	public Response click(@Nonnull State st, @Nonnull Char clicker) {
 		return execute(st,clicker);
 	}
 

@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
  */
 public class FactionCommands {
 
+	@Nullable
 	@Template(name = "FACTION", description = "Current faction name")
 	public static String getFactionName(@Nullable State st, String key) {
 		if (st == null) { throw new UserException("State is null"); }

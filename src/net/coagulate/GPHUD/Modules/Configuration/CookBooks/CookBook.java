@@ -38,7 +38,7 @@ public abstract class CookBook {
 		st.purgeAttributeCache();
 	}
 
-	protected static void setKV(@Nonnull State st, boolean act, @Nonnull Table t, @Nonnull TableRow object, String attribute, String newvalue) {
+	protected static void setKV(@Nonnull State st, boolean act, @Nonnull Table t, @Nonnull TableRow object, @Nonnull String attribute, String newvalue) {
 		t.openRow();
 		t.add("Set KV " + attribute);
 		t.add("OK");

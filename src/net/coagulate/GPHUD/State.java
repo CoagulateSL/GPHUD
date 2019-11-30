@@ -666,7 +666,7 @@ public class State extends DumpableState {
 
 	public void purgeCache(TableRow dbo) { kvmaps.remove(dbo); }
 
-	public void setKV(@Nonnull TableRow dbo, String key, @Nullable String value) {
+	public void setKV(@Nonnull TableRow dbo, @Nonnull String key, @Nullable String value) {
 		if (value != null && !value.isEmpty()) {
 			KV definition = this.getKVDefinition(key);
 			if (!definition.template()) { // these are hard to verify :P

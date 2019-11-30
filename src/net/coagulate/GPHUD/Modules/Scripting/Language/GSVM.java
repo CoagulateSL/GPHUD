@@ -20,6 +20,7 @@ public class GSVM {
 
 	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
 	public boolean suspended() { return suspended; }
+	@Nullable
 	public byte[] bytecode;
 	public int PC=0;
 	int IC=0;
@@ -317,6 +318,7 @@ public class GSVM {
 
 	public static class ExecutionStep {
 		public int programcounter;
+		@Nullable
 		public String decode="";
 		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
 		public final Map<String,ByteCodeDataType> resultingvariables=new HashMap<>();

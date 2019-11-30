@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.POOL;
@@ -29,6 +30,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	/**
 	 * Name of the quotaed pool
 	 */
+	@Nullable
 	public String poolName(State st) { return getName(); }
 
 	@Nonnull
@@ -40,6 +42,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	@Nonnull
 	public String quotaKV(State st) { throw new SystemException("Override this method!"); }
 
+	@Nonnull
 	public Integer quota(@Nonnull State st) { return st.getKV(quotaKV(st)).intValue(); }
 
 	/**
@@ -48,6 +51,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	@Nonnull
 	public String periodKV(State st) { throw new SystemException("Override this method!"); }
 
+	@Nonnull
 	public Float period(@Nonnull State st) { return st.getKV(periodKV(st)).floatValue(); }
 
 	/**
@@ -107,6 +111,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	}
 
 
+	@Nullable
 	@Override
 	public String getName() {
 		throw new SystemException("Override this method!");

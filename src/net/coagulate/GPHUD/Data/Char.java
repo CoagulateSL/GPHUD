@@ -111,7 +111,7 @@ public class Char extends TableRow {
 	 * @return Character
 	 */
 	@Nullable
-	public static Char resolve(State st, String name) {
+	public static Char resolve(@Nonnull State st, String name) {
 		int id = new Char(-1).resolveToID(st, name, true);
 		if (id == 0) { return null; }
 		return get(id);
@@ -204,6 +204,7 @@ public class Char extends TableRow {
 	 *
 	 * @return The URL, or null
 	 */
+	@Nullable
 	public String getURL() {
 		return getString("url");
 	}
@@ -243,6 +244,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Unix format timestamp for the last use of this URL - accurate to within REFRESH_INTERVAL
 	 */
+	@Nullable
 	public Integer getURLLast() {
 		return getInt("urllast");
 	}
@@ -252,6 +254,7 @@ public class Char extends TableRow {
 	 *
 	 * @return The Instance
 	 */
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
@@ -433,6 +436,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Unix time the character was last played.
 	 */
+	@Nullable
 	public Integer getLastPlayed() {
 		return dqi(true, "select lastactive from characters where characterid=?", getId());
 	}

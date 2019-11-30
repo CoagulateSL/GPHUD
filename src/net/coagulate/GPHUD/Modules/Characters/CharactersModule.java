@@ -47,6 +47,7 @@ public class CharactersModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
+	@Nullable
 	public static String templateAttribute(State st, @Nullable String template) {
 		if (template == null) { throw new SystemException("Null template?"); }
 		template = template.substring(2, template.length() - 2);

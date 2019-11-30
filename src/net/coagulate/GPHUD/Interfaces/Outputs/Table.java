@@ -66,6 +66,7 @@ public class Table implements Renderable {
 		return this;
 	}
 
+	@Nullable
 	@Override
 	public String asText(State st) {
 		StringBuilder res = new StringBuilder();
@@ -76,6 +77,7 @@ public class Table implements Renderable {
 		return res.toString();
 	}
 
+	@Nullable
 	@Override
 	public String asHtml(State st, boolean rich) {
 		StringBuilder s = new StringBuilder();

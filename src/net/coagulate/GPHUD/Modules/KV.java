@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.util.Set;
 
@@ -22,20 +23,27 @@ public abstract class KV extends NameComparable {
 
 	public abstract boolean isGenerated();
 
+	@Nonnull
 	public abstract String fullname();
 
+	@Nonnull
 	public abstract KVSCOPE scope();
 
+	@Nonnull
 	public abstract KVTYPE type();
 
+	@Nonnull
 	public abstract String description();
 
+	@Nonnull
 	public abstract String editpermission();
 
 	public abstract String defaultvalue();
 
+	@Nullable
 	public abstract String conveyas();
 
+	@Nonnull
 	public abstract KVHIERARCHY hierarchy();
 
 	public abstract boolean template();

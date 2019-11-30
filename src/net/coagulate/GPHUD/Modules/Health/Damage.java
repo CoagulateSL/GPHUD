@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  */
 public class Damage {
 
-	public static void apply(@Nonnull State st, Char targetchar, int damage, String reason) {
+	public static void apply(@Nonnull State st, @Nonnull Char targetchar, int damage, String reason) {
 		st.setTarget(targetchar);
 		int oldhealth = st.getTarget().getKV("Health.Health").intValue();
 		boolean allownegative = st.getTarget().getKV("Health.allowNegative").boolValue();
@@ -23,7 +23,7 @@ public class Damage {
 		Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, targetchar, "SUBTRACT", "Health.Health", oldhealth + "", newvalue + "", "Damaged by " + damage + " for " + reason);
 	}
 
-	public static void heal(@Nonnull State st, Char targetchar, int healing, String reason) {
+	public static void heal(@Nonnull State st, @Nonnull Char targetchar, int healing, String reason) {
 		st.setTarget(targetchar);
 		int oldhealth = st.getTarget().getKV("Health.Health").intValue();
 		int newvalue = oldhealth + healing;
