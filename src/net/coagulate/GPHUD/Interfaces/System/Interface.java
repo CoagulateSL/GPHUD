@@ -56,7 +56,6 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				is.read(buffer);
 				String message = new String(buffer);
 				// DEBUGGING ONLY log entire JSON input
-				if (debug) { GPHUD.getLogger().finer("JSON in : " + message); }
 				// JSONify it
 				JSONObject obj;
 				try { obj = new JSONObject(message); } catch (JSONException e) {
@@ -90,7 +89,6 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 pw.flush();
                 pw.close();
                 System.out.println(out);*/
-				if (debug) { GPHUD.getLogger().finer("JSON out : " + out); }
 				if (out.length() >= 2048) { GPHUD.getLogger().severe("Output exceeds limit of 2048 characters"); }
 				resp.setEntity(new StringEntity(out, ContentType.APPLICATION_JSON));
 				return;

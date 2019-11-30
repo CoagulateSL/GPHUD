@@ -224,15 +224,12 @@ public abstract class Management {
 			                           Char newmember) throws UserException {
 		boolean debug = false;
 		Attribute attr = st.getAttribute(group);
-		if (debug) { System.out.println("Attribute is " + attr); }
 		String grouptype = null;
 		if (attr != null) {
 			grouptype = attr.getSubType();
 		}
-		if (debug) { System.out.println("Group type is " + grouptype); }
 		CharacterGroup existinggroup = null;
 		if (grouptype != null) { existinggroup = newmember.getGroup(grouptype); }
-		if (debug) { System.out.println("Existing group is " + existinggroup); }
 		if (existinggroup != null && existinggroup.getOwner() == newmember) {
 			return new ErrorResponse("Refusing to move character " + newmember.getName() + ", they are currently group leader of " + existinggroup.getName() + ", you must manually eject them from that position");
 		}

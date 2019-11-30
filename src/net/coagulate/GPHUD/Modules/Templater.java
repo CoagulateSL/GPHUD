@@ -73,13 +73,9 @@ public abstract class Templater {
 		boolean debug = false;
 		for (String subst : getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
-				if (debug) { System.out.println("Check: " + subst); }
-				if (debug) { System.out.println("Pre: " + string); }
 				String value = "ERROR";
 				try { value = getValue(st, subst); } catch (UserException e) { value = "Error: " + e.getMessage(); }
-				if (debug) { System.out.println("REPLACE: " + subst + " with " + value); }
 				string = string.replaceAll(subst, Matcher.quoteReplacement(value));
-				if (debug) { System.out.println("Post: " + string); }
 			}
 		}
 		return string;

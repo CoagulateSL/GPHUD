@@ -612,16 +612,10 @@ public class Instance extends TableRow {
 			State simulated = new State(c);
 			JSONObject payload = new JSONObject();
 			simulated.getCharacter().appendConveyance(simulated, payload);
-			if (debug) {
-				System.out.println("PUSH CONSIDERATION : " + simulated.getCharacter() + " - " + payload.toString());
-			}
 			if (!payload.keySet().isEmpty()) {
 				Region reg = c.getRegion();
-				if (debug) { System.out.println("Target is in region "+reg); }
 				if (reg != null) {
-					if (debug) { System.out.println("Adding"); }
 					if (!buffer.containsKey(reg)) {
-						if (debug) { System.out.println("created buffer"); }
 						buffer.put(reg, new JSONObject().put("incommand", "disseminate"));
 					}
 					User user = c.getPlayedBy();
@@ -634,9 +628,6 @@ public class Instance extends TableRow {
 						String payloadstring = payload.toString();
 						buffer.get(reg).put(playedby, payloadstring);
 						if (buffer.get(reg).toString().length() > (3 * 1024)) {
-							if (debug) {
-								GPHUD.getLogger("Instance " + getNameSafe()).severe("Size cautionary push: " + reg + " : " + buffer.get(reg).toString());
-							}
 							reg.sendServer(buffer.get(reg));
 							buffer.put(reg, new JSONObject().put("incommand", "disseminate"));
 						}
@@ -646,7 +637,6 @@ public class Instance extends TableRow {
 		}
 		for (Map.Entry<Region, JSONObject> entry : buffer.entrySet()) {
 			Region region = entry.getKey();
-			if (debug) { System.out.println("PUSHREGION " + region + " : " + entry.getValue()); }
 			region.sendServer(entry.getValue());
 		}
 	}

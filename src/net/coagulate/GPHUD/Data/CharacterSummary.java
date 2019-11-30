@@ -46,9 +46,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 
 	public Row headers(State st) throws UserException, SystemException {
 		String uri = st.getDebasedURL().replaceAll("%20", " ");
-		if (uri == null) { uri = ""; }
 		uri = uri.replaceFirst(".*?sort=", "");
-		if (uri == null) { uri = ""; }
 		Row r = new HeaderRow();
 		r.add(new Cell(sortLink(uri, "Name")).th());
 		r.add(new Cell(sortLink(uri, "Owner")).th());
@@ -94,10 +92,6 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 
 	@Override
 	public int compareTo(@NotNull CharacterSummary o) {
-		if (o == null) { throw new NullPointerException("Comparing character summary to a null object"); }
-		if (!(o instanceof CharacterSummary)) {
-			throw new ClassCastException("Can not compare a CharacterSummary to a " + o.getClass().getCanonicalName());
-		}
 		return Integer.compare(id, o.id);
 	}
 }

@@ -142,10 +142,8 @@ public class State extends DumpableState {
 		Set<String> types = new TreeSet<>();
 		types.add("");
 		for (Attribute a : getAttributes()) {
-			if (debug) { System.out.println("Parsing attribute " + a.getNameSafe() + " of type " + a.getType()); }
 			if (a.getType() == Attribute.ATTRIBUTETYPE.GROUP) {
 				String grouptype = a.getSubType();
-				if (debug) { System.out.println("Has sub type " + grouptype); }
 				if (grouptype != null && !grouptype.isEmpty()) { types.add(grouptype); }
 			}
 		}
@@ -169,12 +167,9 @@ public class State extends DumpableState {
 	public Attribute getAttribute(CharacterGroup group) {
 		boolean debug = false;
 		String keyword = group.getType();
-		if (debug) { System.out.println("getAttribute keyword is " + keyword); }
 		for (Attribute attr : getAttributes()) {
-			if (debug) { System.out.println("getAttribute checking attr " + attr + " of type " + attr.getType()); }
 			if (attr.getType()== Attribute.ATTRIBUTETYPE.GROUP) {
 				String type = attr.getSubType();
-				if (debug) { System.out.println("getAttribute compare to " + type); }
 				if (type.equals(keyword)) {
 					return attr;
 				}
@@ -471,14 +466,12 @@ public class State extends DumpableState {
 		if (scope == KV.KVSCOPE.CHARACTER || scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.NONSPATIAL) {
 			if (character != null) { check.add(character); }
 		}
-		if (debug) { System.out.println(kv.fullname() + " with scope " + kv.scope() + " returned " + check.size()); }
 		return check;
 	}
 
 	// tells us which is the target from where we would derive a value.
 	public TableRow determineTarget(KV kv) {
 		boolean debug = false;
-		if (debug) { System.out.println("Finding target for " + kv.fullname()); }
 		List<TableRow> targets = getTargetList(kv);
 		TableRow ret = null;
 		switch (kv.hierarchy()) {
@@ -489,7 +482,6 @@ public class State extends DumpableState {
 				if (targets.size() == 1) {
 					ret = targets.get(0); // "the" element
 				}
-				if (debug) { System.out.println("Selected singular element as no hierarchy"); }
 				break;
 			case AUTHORITATIVE:
 				// from highest to lowest, first value we find takes precedence.
@@ -498,29 +490,17 @@ public class State extends DumpableState {
 						if (kvDefined(dbo, kv) && getKV(dbo, kv.fullname()) != null) { ret = dbo; }
 					}
 				}
-				if (debug) { System.out.println("Selected highest auth element"); }
 				break;
 			case DELEGATING:
 				// rather the inverse logic, just take the 'lowest' match
 				for (TableRow dbo : targets) {
-					if (debug) {
-						System.out.println("DELEGATING - CHECKING " + dbo.getClass().getSimpleName() + "/" + dbo.getName());
-						System.out.println("KVDEFINED: " + kvDefined(dbo, kv));
-						System.out.println("VALUE : " + getKV(dbo, kv.fullname()));
-					}
 					if (kvDefined(dbo, kv) && getKV(dbo, kv.fullname()) != null) { ret = dbo; }
 				}
-				if (debug) { System.out.println("Selected lowest 'delegating' element"); }
 				break;
 			case CUMULATIVE:
 				throw new SystemException("Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV()");
 			default:
 				throw new SystemException("Unknown hierarchy type " + kv.hierarchy());
-		}
-		if (debug) {
-			if (ret == null) { System.out.println("Selected null"); } else {
-				System.out.println("Selected " + ret.getClass().getSimpleName() + "/" + ret.getName());
-			}
 		}
 		return ret;
 	}
@@ -534,7 +514,6 @@ public class State extends DumpableState {
 				logger().log(Level.WARNING,"Get KV on null K",ex);
 				throw ex;
 			}
-			if (debug) { System.out.println("Calling get on " + kvname); }
 			KV kv = getKVDefinition(kvname);
 			if (kv.hierarchy() == KV.KVHIERARCHY.CUMULATIVE) {
 				float sum = 0;
@@ -552,28 +531,19 @@ public class State extends DumpableState {
 						}
 					}
 					if (triggered) {
-						if (debug) {System.out.println("Cumulative return of " + sum); }
 						if (kv.type() == KV.KVTYPE.INTEGER) { return new KVValue(((int) sum) + "", path.toString()); }
 						return new KVValue(sum + "", path.toString());
 					}
 				}
-				if (debug) { System.out.println("Cumulative returning defaultvalue of " + templateDefault(kv)); }
 				return new KVValue(templateDefault(kv), "Template Default");
 			} else {
 				TableRow target = determineTarget(kv);
 				if (target == null) {
-					if (debug) { System.out.println("Null target, returning default of " + templateDefault(kv)); }
 					return new KVValue(templateDefault(kv), "No Target Template Default");
 				}
 				String value = getKV(target, kvname);
 				if (value == null) {
-					if (debug) {
-						System.out.println("Null value from " + target.getClass().getSimpleName() + "/" + target.getName() + ", returning default of " + templateDefault(kv));
-					}
 					return new KVValue(templateDefault(kv), "Null Value Template Default");
-				}
-				if (debug) {
-					System.out.println("Selected value of " + value + " from " + target.getClass().getSimpleName() + "/" + target.getName());
 				}
 				return new KVValue(getKV(target, kvname), "Direct value from " + target.getClass().getSimpleName() + " " + target.getNameSafe());
 			}
@@ -614,9 +584,6 @@ public class State extends DumpableState {
 			evaluate = true;
 			isint = true;
 		}
-		if (debug) {
-			System.out.println("PRE TEMPLATER : " + kvname + " = " + s + " with evaluate " + evaluate + " and isint " + isint);
-		}
 		String out;
 		try { out = Templater.template(this, s, evaluate, isint); } catch (Exception e) {
 			throw new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
@@ -625,7 +592,6 @@ public class State extends DumpableState {
 			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }
 			while (out.endsWith(">>")) { out=out.replaceFirst(">>",">"); }
 		}
-		if (debug) { System.out.println("POST TEMPLATER : " + kvname + " = " + out); }
 		return out;
 	}
 

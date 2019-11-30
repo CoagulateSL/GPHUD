@@ -98,9 +98,6 @@ public abstract class Login {
 					case INTEGER:
 						String value = simulate.getRawKV(character,"characters." + a.getName());
 						if (value == null || value.isEmpty()) {
-							if (debug) {
-								System.out.println("Character " + character + " fails validation check for input " + a);
-							}
 							KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
 							Float max=null;
 							if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
@@ -117,19 +114,12 @@ public abstract class Login {
 							json.put("arg0name","value");
 							json.put("arg0description", "You must select a " + a.getName() + " for your Character before you can use it"+maxstring);
 							json.put("arg0type","TEXTBOX");
-							if (debug) { System.out.println("Choice JSON : " + json.toString()); }
 							return new JSONResponse(json);
 						} else {
-							if (debug) {
-								System.out.println("Character " + character + " passes validation check for input " + a);
-							}
 						}
 						break;
 					case GROUP:
 						if (character.getGroup(a.getSubType()) == null) {
-							if (debug) {
-								System.out.println("Character " + character + " fails validation check for group " + a);
-							}
 							JSONObject json = new JSONObject();
 							json.put("hudtext", "Initialising character...").put("hudcolor", "<1.0,0.75,0.75>")
 									.put("titlertext", "Initialising character...").put("titlercolor", "<1.0,0.75,0.75>")
@@ -140,12 +130,8 @@ public abstract class Login {
 							json.put("args", "1");
 							json.put("attribute", a.getName());
 							json.put("arg0description", "You must select a " + a.getName() + " for your Character before you can use it");
-							if (debug) { System.out.println("Choice JSON : " + json.toString()); }
 							return new JSONResponse(json);
 						} else {
-							if (debug) {
-								System.out.println("Character " + character + " passes validation check for group " + a);
-							}
 						}
 						break;
 					case POOL:
@@ -302,11 +288,11 @@ public abstract class Login {
 				if (attribute.getType()== Attribute.ATTRIBUTETYPE.FLOAT || attribute.getType()== Attribute.ATTRIBUTETYPE.INTEGER) {
 					KVValue maxkv=st.getKV("characters."+attribute.getName()+"MAX");
 					Float max=null;
-					if (debug) { System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv); }
+					System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv);
 					if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
-					if (debug) { System.out.println("Max is "+max); }
+					System.out.println("Max is "+max);
 					if (max!=null && max>0) {
-						if (debug) { System.out.println("About to check "+max+" > "+Float.parseFloat(value)); }
+						System.out.println("About to check "+max+" > "+Float.parseFloat(value));
 						if (Float.parseFloat(value)>max) {
 							JSONObject json = new JSONObject();
 							json.put("hudtext", "Initialising character...").put("hudcolor", "<1.0,0.75,0.75>")

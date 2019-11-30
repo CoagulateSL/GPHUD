@@ -133,13 +133,11 @@ public abstract class Modules {
 	 */
 	public static URL getURL(State st, String url, boolean exception) throws UserException, SystemException {
 		final boolean debug=false;
-		if (debug) { System.out.println("getURL in state "+st); }
 		if (url.toLowerCase().startsWith("/gphud/")) { url = url.substring(6); }
 		URL literal = null;
 		URL relaxed = null;
 		for (Module mod : modules.values()) {
 			URL proposed = mod.getURL(st, url);
-			if (debug) { System.out.println("Module "+mod.getName()+" proposed "+(proposed==null?"null":proposed.getFullName())); }
 			if (proposed != null) {
 				if (proposed.url().endsWith("*")) {
 					if (relaxed != null) {

@@ -95,25 +95,19 @@ public abstract class Module {
 
 	public boolean isEnabled(State st) throws UserException, SystemException {
 		boolean debug = false;
-		if (debug) { System.out.println("check module enable " + getName() + " in state " + st); }
 		if (!canDisable()) {
-			if (debug) { System.out.println("cant disable so true"); }
 			return true;
 		}
 		if (st == null) {
-			if (debug) { System.out.println("No state so true"); }
 			return true;
 		}
 		if (!dependanciesEnabled(st)) {
-			if (debug) { System.out.println("dep failure so false"); }
 			return false;
 		}
 		String enabled = st.getKV(getName() + ".enabled").value();
 		if (enabled == null || enabled.isEmpty()) {
-			if (debug) { System.out.println("not set so opposing defaultDisable - " + (!defaultDisable())); }
 			return !defaultDisable();
 		}
-		if (debug) { System.out.println("Return value " + enabled); }
 		return Boolean.parseBoolean(enabled);
 	}
 

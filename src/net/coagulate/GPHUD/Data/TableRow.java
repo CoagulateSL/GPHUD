@@ -109,23 +109,20 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		boolean debug = false;
 		if (s == null) { return 0; }
 		if (s.isEmpty()) { return 0; }
-		if (debug) { System.out.println("Resolve to id on " + s); }
 		try {
 			// is it an ID
 			int id = Integer.parseInt(s);
 			if (id > 0) { return id; }
 		} catch (NumberFormatException e) {} // not a number then :P
 		try {
-			if (debug) { System.out.println("Not an id input"); }
 			int id = 0;
 			if (instancelocal) {
 				id = dqi(true, "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ? and instanceid=?", s, st.getInstance().getId());
 			} else {
 				id = dqi(true, "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ?", s);
 			}
-			if (debug) { System.out.println("Not an id input, we resolved to " + id); }
 			if (id > 0) { return id; }
-		} catch (NoDataException e) {if (debug) { System.out.println("NO DATA");} } catch (TooMuchDataException e) {
+		} catch (NoDataException e) { } catch (TooMuchDataException e) {
 			GPHUD.getLogger().warning("Multiple matches searching for " + s + " in " + this.getClass().toString());
 		}
 		return 0;

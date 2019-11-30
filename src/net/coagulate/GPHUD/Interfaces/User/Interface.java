@@ -477,7 +477,6 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	// generally our job is to set up the avatar/instance/character stuff
 	public Form authenticationHook(State st, SafeMap values) throws SystemException {
 		boolean debug = false;
-		if (debug) { System.out.println("Calling authentication hook, URI is " + st.getDebasedURL()); }
 		// FIRSTLY, pick up any existing session data
 		String cookie = extractGPHUDCookie(st);
 		String coagulateslcookie = extractClusterCookie(st);

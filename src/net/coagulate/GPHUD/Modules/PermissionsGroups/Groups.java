@@ -249,10 +249,7 @@ public abstract class Groups {
 			boolean exists=false;
 			Permission a = Modules.get(st, Modules.extractModule(fullname)).getPermission(st, Modules.extractReference(fullname));
 			if (a!=null) { exists=true; }
-			r.append("<tr bgcolor="+col+"><td>"+fullname+"</td><td>"+p.description()+"</td><td>"+
-					"<input type=checkbox name=\""+fullname+"\" value=\""+fullname+"\" "+(pg.hasPermission(st,fullname)?"checked":"")+">"+
-					"</td><td>"+(exists?"":"Doesn't Exist")+
-					"</td></tr>");
+			r.append("<tr bgcolor=").append(col).append("><td>").append(fullname).append("</td><td>").append(p.description()).append("</td><td>").append("<input type=checkbox name=\"").append(fullname).append("\" value=\"").append(fullname).append("\" ").append(pg.hasPermission(st, fullname) ? "checked" : "").append(">").append("</td><td>").append(exists ? "" : "Doesn't Exist").append("</td></tr>");
 		}
 		return r.toString();
 	}

@@ -179,17 +179,14 @@ public class GSVM {
 	}
 	public Response dequeue(State st,Char target) {
 		final boolean debug=false;
-		if (debug) { System.out.println("IN DEQUEUE"); }
 		JSONObject totarget=getQueue(target);
 		if (pid!=0) { totarget.put("processid",""+pid); }
 		if (queue.containsKey(target)) { queue.remove(target);
-			if (debug) { System.out.println("PURGED TARGET IN DEQUEUE : "+target); }
 		}
 		for (Char k:queue.keySet()) {
 			JSONObject totransmit = getQueue(k);
 			if (pid!=0) { totransmit.put("processid",""+pid); }
 			new Transmission(k,totransmit).start();
-			if (debug) { System.out.println("Dequeued to target: "+k+" - "+totransmit.toString()); }
 		}
 		return new JSONResponse(totarget);
 	}

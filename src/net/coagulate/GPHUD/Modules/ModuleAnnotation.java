@@ -68,7 +68,6 @@ public class ModuleAnnotation extends Module {
 		final boolean debug=false;
 		URL liberalmatch = null;
 		for (URL m : contents) {
-			if (debug) { System.out.println("Comparing "+m.url().toLowerCase()+" to "+url.toLowerCase()); }
 			if (m.url().toLowerCase().equals(url.toLowerCase())) {
 				return m;
 			}

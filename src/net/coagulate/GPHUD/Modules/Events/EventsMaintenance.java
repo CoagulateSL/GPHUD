@@ -89,9 +89,6 @@ public abstract class EventsMaintenance {
 		Set<EventSchedule> events = st.getInstance().getActiveEventSchedules();
 		EventSchedule wasin = null;
 		EventSchedule nowin = null;
-		if (debug) {
-			System.out.println("From " + oldzone.getName() + " to " + zone.getName() + " checking " + events.size());
-		}
 		for (EventSchedule es : events) {
 			Event e = es.getEvent();
 			for (Zone loczone : e.getZones()) {

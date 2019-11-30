@@ -93,7 +93,6 @@ public abstract class Command {
 			String v = null;
 			if (args.length>arg) { v=args[arg]; } else { v=""; }
 			arg++;
-			if (debug) { System.out.println("Command "+getFullName()+" Arg "+arg+" has v "+v+" for argument name "+argument.getName()+" and type "+type); }
 			if ((v == null || "".equals(v)) && type != ArgumentType.BOOLEAN) {
 				typedargs.add(null);
 			} else {
@@ -306,13 +305,6 @@ public abstract class Command {
 			//check arguments
 			int i = 0;
 			if (args.length != getInvokingArgumentCount() + 1) {
-				if (debug) {
-					System.out.println("Args.length is " + args.length);
-					System.out.println("gIAC() is " + getInvokingArgumentCount());
-					for (int ii = 0; ii < args.length; ii++) {
-						System.out.println("Arg " + ii + " is " + args[ii]);
-					}
-				}
 				return new ErrorResponse("Incorrect number of arguments, " + getFullName() + " aka " + getMethod().getName() + " requires " + (getInvokingArgumentCount() + 1) + " and we got " + args.length);
 			}
 			String suspiciousname = "";
@@ -366,11 +358,6 @@ public abstract class Command {
 					break;
 				default:
 					throw new SystemException("Unhandled CONTEXT enum during pre-flight check in execute()");
-			}
-			if (debug) {
-				System.out.println("DEBUG");
-				System.out.println("Go for invoke on " + getMethod());
-				for (Object o : args) {System.out.println(o); }
 			}
 			return (Response) (getMethod().invoke(this, args));
 		} catch (IllegalAccessException ex) {

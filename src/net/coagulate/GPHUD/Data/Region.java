@@ -234,7 +234,6 @@ public class Region extends TableRow {
 		boolean debug = false;
 		for (User avatar : avatars) {
 			// for all the departing avatars
-			if (debug) { System.out.println("Departing " + avatar); }
 			try {
 				int avatarid = avatar.getId();
 				// if the avatar exists, see if there's a visit
@@ -253,7 +252,6 @@ public class Region extends TableRow {
 				}
 				int instanceid = this.getInstance().getId();
 				Results urls = dq("select url from characters where instanceid=? and playedby=? and url is not null", instanceid, avatarid);
-				if (debug) { System.out.println("URLs is " + urls.size()); }
 				// if the visitor (character) has URLs send them a ping, which will probably 404 and remove its self
 				for (ResultsRow row : urls) {
 					String url = row.getString("url");

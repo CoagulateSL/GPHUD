@@ -389,15 +389,11 @@ public class Char extends TableRow {
 			throw new UserException("Sorry, you are not near any other avatars");
 		}
 		for (String key : avatars.split(",")) {
-			if (debug) { System.out.println("KEY:" + key); }
 			User a = User.findOptional(key);
-			if (debug) { System.out.println(a); }
 			if (a != null) {
 				Char c = null;
 				try { c = Char.getActive(a, st.getInstance()); } catch (UserException e) {
-					if (debug) { System.out.println(e.toString()); }
 				}
-				if (debug) { System.out.println(c); }
 				if (c != null) { chars.add(c); }
 			}
 		}
@@ -495,7 +491,6 @@ public class Char extends TableRow {
 			while (when.containsKey(at)) { at++; }
 			when.put(at, ammount);
 		}
-		if (debug) { System.out.println("poolNextFree: Accumulated " + awarded + " of " + maxxp); }
 		int overshoot = awarded - maxxp;
 		if (overshoot < 0) { return now; }
 		int datefilled = 0;
@@ -677,7 +672,6 @@ public class Char extends TableRow {
 			if (!oldvalue.equals(newvalue)) {
 				this.setKV(st, "gphudclient.conveyance-" + kv.conveyas(), newvalue); // skip cache flush
 			}
-			if (debug) { System.out.println("init kv : " + kv.conveyas() + "=" + newvalue); }
 		}
 	}
 
@@ -694,12 +688,10 @@ public class Char extends TableRow {
 		for (Map.Entry<KV, String> entry : oldconveyances.entrySet()) {
 			KV kv = entry.getKey();
 			String oldvalue = entry.getValue();
-			if (debug) { System.out.println("Append conveyance " + kv.fullname()); }
 			String newvalue = st.getKV(kv.fullname()).value();
 			if (!oldvalue.equals(newvalue)) {
 				payload.put(kv.conveyas(), newvalue);
 				this.setKV(st, "gphudclient.conveyance-" + kv.conveyas(), newvalue); // skip cache update/flush
-				if (debug) { System.out.println("update kv : " + kv.conveyas() + "=" + newvalue); }
 			}
 		}
 	}
