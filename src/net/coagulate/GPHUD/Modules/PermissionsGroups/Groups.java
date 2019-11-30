@@ -241,7 +241,7 @@ public abstract class Groups {
 	}
 
 	private static String addPermissions(State st,Set<Permission> permissions, PermissionsGroup pg,String col) {
-		StringBuilder r="";
+		StringBuilder r=new StringBuilder("");
 		TreeMap<String,Permission> sorted=new TreeMap<>();
 		for (Permission p:permissions) { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }
 		for (Permission p : sorted.values()) {
