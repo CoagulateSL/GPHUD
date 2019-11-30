@@ -270,7 +270,7 @@ public class GPHUD {
 					Integer regionid=row.getInt("regionid");
 					Char ch=Char.get(charid);
 					State st=State.getNonSpatial(ch);
-					Integer howmany=getDB().dqi(true,"select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
+					Integer howmany=getDB().dqi("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
 					if (howmany>0) {
 						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatarNullable().getName()+" as character "+st.getCharacter().getName()+", not reported as region leaver.");
 					}

@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.MailTools;
@@ -56,7 +57,7 @@ public class Char extends TableRow {
 	public static void refreshURL(@Nonnull String url) {
 		String t = "characters";
 		int refreshifolderthan = getUnixTime() - REFRESH_INTERVAL;
-		int toupdate = GPHUD.getDB().dqi(true, "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
+		int toupdate = GPHUD.getDB().dqi( "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
 		if (toupdate == 0) { return; }
 		if (toupdate > 1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on " + t + " url " + url);
@@ -74,11 +75,12 @@ public class Char extends TableRow {
 	 */
 	@Nonnull
 	public static Char getActive(@Nonnull User avatar, @Nonnull Instance instance) {
-		Integer i = GPHUD.getDB().dqi(false, "select characterid from characters where playedby=? and instanceid=?", avatar.getId(), instance.getId());
-		if (i == null) {
-			throw new UserException("Avatar " + avatar.getName() + " is not wearing the HUD or is not logged in as a character presently.");
+		try {
+			Integer i = GPHUD.getDB().dqi("select characterid from characters where playedby=? and instanceid=?", avatar.getId(), instance.getId());
+			return get(i);
+		} catch (NoDataException e) {
+			throw new UserException("Avatar " + avatar.getName() + " is not wearing the HUD or is not logged in as a character presently.", e);
 		}
-		return get(i);
 	}
 
 	/**
@@ -297,7 +299,7 @@ public class Char extends TableRow {
 	 * @return Sum of the entries
 	 */
 	public int sumPool(@Nonnull Pool p) {
-		Integer sum = dqi(true, "select sum(adjustment) from characterpools where characterid=? and poolname like ?", getId(), p.fullName());
+		Integer sum = dqi( "select sum(adjustment) from characterpools where characterid=? and poolname like ?", getId(), p.fullName());
 		if (sum == null) { return 0; }
 		return sum;
 	}
@@ -366,7 +368,7 @@ public class Char extends TableRow {
 	 */
 	public int sumPoolSince(@Nullable Pool p, int since) {
 		if (p == null) { throw new SystemException("Null pool not permitted"); }
-		Integer sum = dqi(true, "select sum(adjustment) from characterpools where characterid=? and poolname like ? and timedate>=?", getId(), p.fullName(), since);
+		Integer sum = dqi( "select sum(adjustment) from characterpools where characterid=? and poolname like ? and timedate>=?", getId(), p.fullName(), since);
 		if (sum == null) { return 0; }
 		return sum;
 	}
@@ -438,7 +440,7 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public Integer getLastPlayed() {
-		return dqi(true, "select lastactive from characters where characterid=?", getId());
+		return dqi( "select lastactive from characters where characterid=?", getId());
 	}
 
 	/**
@@ -469,9 +471,10 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public CharacterGroup getGroup(String grouptype) {
-		Integer group = dqi(false, "select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers.charactergroupid where characterid=? and charactergroups.type=?", getId(), grouptype);
-		if (group == null) { return null; }
-		return CharacterGroup.get(group);
+		try {
+			Integer group = dqi("select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers.charactergroupid where characterid=? and charactergroups.type=?", getId(), grouptype);
+			return CharacterGroup.get(group);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -600,9 +603,10 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public Zone getZone() {
-		Integer id = dqi(false, "select zoneid from characters where characterid=?", getId());
-		if (id == null) { return null; }
-		return Zone.get(id);
+		try {
+			Integer id = dqi("select zoneid from characters where characterid=?", getId());
+			return Zone.get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -761,7 +765,7 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public User getPlayedBy() {
-		Integer avatarid = dqi(true, "select playedby from characters where characterid=?", getId());
+		Integer avatarid = dqi( "select playedby from characters where characterid=?", getId());
 		if (avatarid == null) { return null; }
 		return User.get(avatarid);
 	}
@@ -795,7 +799,7 @@ public class Char extends TableRow {
 	}
 
 	public void rename(String newname) {
-		Integer count = dqi(true, "select count(*) from characters where name like ? and instanceid=?", newname, getInstance().getId());
+		Integer count = dqi( "select count(*) from characters where name like ? and instanceid=?", newname, getInstance().getId());
 		if (count != 0) {
 			throw new UserException("Unable to rename character '" + getName() + "' to '" + newname + "', that name is already taken.");
 		}

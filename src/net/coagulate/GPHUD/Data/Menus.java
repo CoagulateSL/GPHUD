@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -56,9 +57,10 @@ public class Menus extends TableRow {
 	 */
 	@Nullable
 	public static Menus getMenu(@Nonnull State st, String name) {
-		Integer id = GPHUD.getDB().dqi(false, "select menuid from menus where instanceid=? and name like ?", st.getInstance().getId(), name);
-		if (id == null) { return null; }
-		return get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi("select menuid from menus where instanceid=? and name like ?", st.getInstance().getId(), name);
+			return get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -131,7 +133,7 @@ public class Menus extends TableRow {
 	 */
 	@Nonnull
 	public JSONObject getJSON() throws SystemException {
-		String json = dqs(true, "select json from menus where menuid=?", getId());
+		String json = dqs( "select json from menus where menuid=?", getId());
 		if (json == null) { throw new SystemException("No (null) template for menu id " + getId()); }
 		return new JSONObject(json);
 	}
@@ -150,10 +152,9 @@ public class Menus extends TableRow {
 	 *
 	 * @return Instance for this menu
 	 */
-	@Nullable
+	@Nonnull
 	public Instance getInstance() {
-		Integer id = dqi(false, "select instanceid from menus where menuid=?", getId());
-		if (id == null) { return null; }
+		Integer id = dqi("select instanceid from menus where menuid=?", getId());
 		return Instance.get(id);
 	}
 

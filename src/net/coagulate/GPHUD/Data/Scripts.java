@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
@@ -43,7 +44,7 @@ public class Scripts extends TableRow {
 	}
 
 	public static void create(@Nonnull State st, String scriptname) {
-		Integer existing=GPHUD.getDB().dqi(true,"select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
+		Integer existing=GPHUD.getDB().dqi("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
 		if (existing>0) { throw new UserException("script with that name already exists"); }
 		GPHUD.getDB().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
 	}
@@ -64,14 +65,13 @@ public class Scripts extends TableRow {
 
 	@Nonnull
 	public static Scripts find(@Nonnull State st, String commandname) {
-		Integer id=GPHUD.getDB().dqi(true,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
+		Integer id=GPHUD.getDB().dqi("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
 		return new Scripts(id);
 	}
 	@Nullable
 	public static Scripts findOrNull(@Nonnull State st, String commandname) {
-		Integer id=GPHUD.getDB().dqi(false,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
-		if (id==null) { return null; }
-		return new Scripts(id);
+		try { return find(st,commandname); }
+		catch (NoDataException e) {return null; }
 	}
 
 	@Nonnull
@@ -180,7 +180,7 @@ public class Scripts extends TableRow {
 		byte[] b=new byte[255];
 		for (int i=0;i<256;i++) { b[i]=((byte)(0xff & i)); }
 		GPHUD.getDB().d("insert into scripts(instanceid,name,bytecode) values(?,?,?)",-1," ENCODING TEST ",b);
-		byte[] out=GPHUD.getDB().dqbyte(true,"select bytecode from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
+		byte[] out=GPHUD.getDB().dqbyte("select bytecode from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
 		GPHUD.getDB().d("delete from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
 		for (int i=0;i<256;i++) {
 			if (b[i] != out[i]) {

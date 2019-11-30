@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
@@ -83,7 +84,7 @@ public class Instance extends TableRow {
 	public static void create(@Nullable String name, @Nullable User caller) throws UserException {
 		if (name == null || "".equals(name)) { throw new SystemException("Can't create null or empty instance"); }
 		if (caller == null) { throw new SystemException("Owner can't be null"); }
-		Integer exists = GPHUD.getDB().dqi(false, "select count(*) from instances where name like ?", name);
+		Integer exists = GPHUD.getDB().dqi( "select count(*) from instances where name like ?", name);
 		if (exists != 0) {
 			throw new UserException("Instance already exists!");
 		}
@@ -99,9 +100,10 @@ public class Instance extends TableRow {
 	 */
 	@Nullable
 	public static Instance find(String name) {
-		Integer id = GPHUD.getDB().dqi(false, "select instanceid from instances where name=?", name);
-		if (id == null) { throw new UserException("Unable to find instance named '" + name + "'"); }
-		return get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi("select instanceid from instances where name=?", name);
+			return get(id);
+		} catch (NoDataException e) { throw new UserException("Unable to find instance named '" + name + "'",e); }
 	}
 
 	/**
@@ -171,7 +173,7 @@ public class Instance extends TableRow {
 		if (name == null) { throw new UserException("Can not create permissions group with null name"); }
 		name = name.trim();
 		if (name.isEmpty()) { throw new UserException("Can not create permissions group with blank name"); }
-		int exists = dqi(true, "select count(*) from permissionsgroups where name like ? and instanceid=?", name, getId());
+		int exists = dqi( "select count(*) from permissionsgroups where name like ? and instanceid=?", name, getId());
 		if (exists != 0) { throw new UserException("Group already exists? (" + exists + " results)"); }
 		d("insert into permissionsgroups(name,instanceid) values(?,?)", name, getId());
 	}
@@ -236,8 +238,8 @@ public class Instance extends TableRow {
 		for (Region r : getRegions(false)) {
 			newstatus.append("[").append(r.getName()).append("#");
 			Integer visitors = r.getOpenVisitCount();
-			String url = dqs(true, "select url from regions where regionid=?", r.getId());
-			Integer urllast = dqi(true, "select urllast from regions where regionid=?", r.getId());
+			String url = dqs( "select url from regions where regionid=?", r.getId());
+			Integer urllast = dqi( "select urllast from regions where regionid=?", r.getId());
 			if (urllast == null) { urllast = getUnixTime(); }
 			if (url == null || url.isEmpty()) {
 				newstatus.append("ERROR:DISCONNECTED]");
@@ -524,7 +526,7 @@ public class Instance extends TableRow {
 	 * @throws UserException If the group can not be created, already exists, etc.
 	 */
 	public void createCharacterGroup(String name, boolean open, String keyword) {
-		int count = dqi(true, "select count(*) from charactergroups where instanceid=? and name like ?", getId(), name);
+		int count = dqi( "select count(*) from charactergroups where instanceid=? and name like ?", getId(), name);
 		if (count > 0) { throw new UserException("Failed to create group, already exists."); }
 		d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)", getId(), name, open, keyword);
 	}
@@ -564,9 +566,10 @@ public class Instance extends TableRow {
 	 */
 	@Nullable
 	public Zone getZone(String name) {
-		Integer id = dqi(false, "select zoneid from zones where instanceid=? and name like ?", getId(), name);
-		if (id == null) { return null; }
-		return Zone.get(id);
+		try {
+			Integer id = dqi("select zoneid from zones where instanceid=? and name like ?", getId(), name);
+			return Zone.get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -646,7 +649,7 @@ public class Instance extends TableRow {
 					String playedby = null;
 					if (user!=null) { playedby=user.getUUID(); }
 					if (playedby==null) { // maybe its an object
-						playedby=dqs(false,"select uuid from objects where url like ?",c.getURL());
+						try { playedby=dqs("select uuid from objects where url like ?",c.getURL()); } catch (NoDataException e) {}
 					}
 					if (playedby!=null) {
 						String payloadstring = payload.toString();

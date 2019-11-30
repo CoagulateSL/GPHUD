@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
@@ -25,20 +26,20 @@ public class Objects extends TableRow {
 
 	@Nonnull
 	public static Objects find(State st, String uuid) {
-		Integer id=GPHUD.getDB().dqi(true,"select id from objects where uuid=?",uuid);
+		Integer id=GPHUD.getDB().dqi("select id from objects where uuid=?",uuid);
 		return new Objects(id);
 	}
 	@Nullable
 	public static Objects findOrNull(State st, String uuid) {
-		Integer id=GPHUD.getDB().dqi(false,"select id from objects where uuid=?",uuid);
-		if (id==null) { return null; }
-		return new Objects(id);
+		try { return find(st,uuid); }
+		catch (NoDataException e) { return null; }
 	}
 
 	public static int getMaxVersion() {
-		Integer version= GPHUD.getDB().dqi(false, "select max(version) as maxver from objects");
-		if (version==null) { return 0; }
-		return version;
+		try {
+			Integer version = GPHUD.getDB().dqi("select max(version) as maxver from objects");
+			return version;
+		} catch (NoDataException e) { return 0; }
 	}
 
 	@Nullable

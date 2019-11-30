@@ -117,7 +117,7 @@ public class EventSchedule extends TableRow {
 	 */
 	@Nonnull
 	public net.coagulate.GPHUD.Interfaces.Outputs.Row asRow(String timezone) {
-		ResultsRow r = dqone(true, "select * from eventsschedule where eventsscheduleid=?", getId());
+		ResultsRow r = dqone( "select * from eventsschedule where eventsscheduleid=?", getId());
 		net.coagulate.GPHUD.Interfaces.Outputs.Row ret = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 		ret.add(fromUnixTime(r.getInt("starttime"), timezone));
 		ret.add(fromUnixTime(r.getInt("endtime"), timezone));
@@ -231,7 +231,7 @@ public class EventSchedule extends TableRow {
 
 	@Nonnull
 	public String describe(String timezone) {
-		ResultsRow r = dqone(true, "select * from eventsschedule where eventsscheduleid=?", getId());
+		ResultsRow r = dqone( "select * from eventsschedule where eventsscheduleid=?", getId());
 		String ret = fromUnixTime(r.getInt("starttime"), timezone);
 		ret += " - " + fromUnixTime(r.getInt("endtime"), timezone);
 		return ret;

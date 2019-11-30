@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -62,9 +63,10 @@ public class Alias extends TableRow {
 
 	@Nullable
 	public static Alias getAlias(@Nonnull State st, String name) {
-		Integer id = GPHUD.getDB().dqi(false, "select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
-		if (id == null) { return null; }
-		return get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi("select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
+			return get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	@Nullable
@@ -112,7 +114,7 @@ public class Alias extends TableRow {
 
 	@Nonnull
 	public JSONObject getTemplate() throws SystemException {
-		String json = dqs(true, "select template from aliases where aliasid=?", getId());
+		String json = dqs( "select template from aliases where aliasid=?", getId());
 		return new JSONObject(json);
 	}
 

@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -42,9 +43,10 @@ public class Event extends TableRow {
 	 */
 	@Nullable
 	public static Event find(@Nonnull Instance instance, String name) {
-		Integer eventid = GPHUD.getDB().dqi(false, "select eventid from events where name like ? and instanceid=?", name, instance.getId());
-		if (eventid == null) { return null; }
-		return get(eventid);
+		try {
+			Integer eventid = GPHUD.getDB().dqi("select eventid from events where name like ? and instanceid=?", name, instance.getId());
+			return get(eventid);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -206,7 +208,7 @@ public class Event extends TableRow {
 	 * @param zone Zone to add to the event
 	 */
 	public void addZone(@Nonnull Zone zone) {
-		Integer count = dqi(true, "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
+		Integer count = dqi( "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
 		if (count != 0) { return; }
 		d("insert into eventslocations(eventid,zoneid) values(?,?)", getId(), zone.getId());
 	}

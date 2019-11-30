@@ -36,7 +36,7 @@ public class Maintenance extends Thread {
 
 	public static void purgeConnections() {
 		try {
-			Integer purgecount=GPHUD.getDB().dqi(true,"select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+			Integer purgecount=GPHUD.getDB().dqi("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 			if (purgecount>0) {
 				GPHUD.getLogger().log(FINE,"Purging "+purgecount+" disconnected objects");
 				GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
@@ -49,9 +49,9 @@ public class Maintenance extends Thread {
 	public static void purgeOldCookies() {
 		try {
 			int now = UnixTime.getUnixTime();
-			int before = GPHUD.getDB().dqi(true, "select count(*) from cookies");
+			int before = GPHUD.getDB().dqi( "select count(*) from cookies");
 			GPHUD.getDB().d("delete from cookies where expires<?", now);
-			int after = GPHUD.getDB().dqi(true, "select count(*) from cookies");
+			int after = GPHUD.getDB().dqi( "select count(*) from cookies");
 			if (before != after) {
 				GPHUD.getLogger().log(FINE, "Cookies cleaned from " + before + " to " + after + " (" + (after - before) + ")");
 			}

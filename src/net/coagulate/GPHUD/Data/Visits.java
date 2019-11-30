@@ -24,7 +24,7 @@ public class Visits {
 	 */
 	public static void initVisit(@Nonnull State st, @Nonnull Char character, @Nonnull Region region) {
 		User avatar = st.getAvatarNullable();
-		int updates = GPHUD.getDB().dqi(true, "select count(*) from visits where avatarid=? and endtime is null", avatar.getId());
+		int updates = GPHUD.getDB().dqi( "select count(*) from visits where avatarid=? and endtime is null", avatar.getId());
 		if (updates > 0) {
 			st.logger().fine("Force terminating " + updates + " visits");
 			GPHUD.getDB().d("update visits set endtime=? where avatarid=? and endtime is null", getUnixTime(), avatar.getId());

@@ -100,7 +100,7 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nullable
 	public String[] getVectors() {
-		ResultsRow r = dqone(true, "select * from zoneareas where zoneareaid=?", getId());
+		ResultsRow r = dqone( "select * from zoneareas where zoneareaid=?", getId());
 		Integer x1 = r.getInt("x1");
 		Integer y1 = r.getInt("y1");
 		Integer z1 = r.getInt("z1");
@@ -164,7 +164,7 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nonnull
 	public Zone getZone() {
-		return Zone.get(dqi(true, "select zoneid from zoneareas where zoneareaid=?", getId()));
+		return Zone.get(dqi( "select zoneid from zoneareas where zoneareaid=?", getId()));
 	}
 
 	/**

@@ -26,10 +26,10 @@ public class ObjectTypes extends TableRow {
 
 	@Nonnull
 	public static ObjectTypes create(@Nonnull State st, String name, @Nonnull JSONObject behaviour) {
-		int existing= GPHUD.getDB().dqi(true,"select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		int existing= GPHUD.getDB().dqi("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) { throw new UserException("ObjectType "+name+" already exists in instance "+st.getInstance()); }
 		GPHUD.getDB().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
-		int newid=GPHUD.getDB().dqi(true,"select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		int newid=GPHUD.getDB().dqi("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		return get(newid);
 	}
 

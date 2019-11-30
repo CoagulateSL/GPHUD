@@ -58,7 +58,7 @@ public class Cookies {
 	 */
 	public static void refreshCookie(String cookie) {
 		int refreshifexpiresbefore = getUnixTime() + COOKIE_REFRESH;
-		int toupdate = GPHUD.getDB().dqi(true, "select count(*) from cookies where cookie=? and expires<? and renewable=1", cookie, refreshifexpiresbefore);
+		int toupdate = GPHUD.getDB().dqi( "select count(*) from cookies where cookie=? and expires<? and renewable=1", cookie, refreshifexpiresbefore);
 		if (toupdate == 0) { return; }
 		if (toupdate > 1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on cookie " + cookie);
@@ -138,7 +138,7 @@ public class Cookies {
 	}
 
 	private void load() {
-		r = GPHUD.getDB().dqone(true, "select * from cookies where cookie=?", cookie);
+		r = GPHUD.getDB().dqone( "select * from cookies where cookie=?", cookie);
 	}
 
 	/**

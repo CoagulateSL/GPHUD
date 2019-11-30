@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
@@ -42,7 +43,7 @@ public class Region extends TableRow {
 	public static void refreshURL(String url) {
 		String t = "regions";
 		int refreshifolderthan = UnixTime.getUnixTime() - TableRow.REFRESH_INTERVAL;
-		int toupdate = GPHUD.getDB().dqi(true, "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
+		int toupdate = GPHUD.getDB().dqi( "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
 		if (toupdate == 0) { return; }
 		if (toupdate > 1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on " + t + " url " + url);
@@ -87,9 +88,10 @@ public class Region extends TableRow {
 	 */
 	@Nullable
 	public static Region find(String name, boolean allowretired) {
-		Integer regionid = GPHUD.getDB().dqi(false, "select regionid from regions where name=?", name);
-		if (regionid == null) { return null; }
-		return get(regionid,allowretired);
+		try {
+			Integer regionid = GPHUD.getDB().dqi("select regionid from regions where name=?", name);
+			return get(regionid, allowretired);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -102,7 +104,7 @@ public class Region extends TableRow {
 	@Nonnull
 	public static String joinInstance(String region, @Nonnull Instance i) {
 		// TO DO - lacks validation
-		Integer exists = GPHUD.getDB().dqi(true, "select count(*) from regions where name=?", region);
+		Integer exists = GPHUD.getDB().dqi( "select count(*) from regions where name=?", region);
 		if (exists == 0) {
 			GPHUD.getLogger().info("Joined region '" + region + "' to instance " + i.toString());
 			GPHUD.getDB().d("insert into regions(name,instanceid) values(?,?)", region, i.getId());
@@ -298,7 +300,7 @@ public class Region extends TableRow {
 		} catch (ParseException ex) {
 			st.logger().log(SEVERE, "Failed to parse date time from " + versiondate + " " + versiontime, ex);
 		}
-		ResultsRow regiondata = dqone(true, "select region" + type + "version,region" + type + "datetime from regions where regionid=?", getId());
+		ResultsRow regiondata = dqone( "select region" + type + "version,region" + type + "datetime from regions where regionid=?", getId());
 		Integer oldversion = regiondata.getInt("region" + type + "version");
 		Integer olddatetime = regiondata.getInt("region" + type + "datetime");
 		int newversion = Interface.convertVersion(version);
@@ -415,7 +417,7 @@ public class Region extends TableRow {
 	 */
 	@Nullable
 	public String getAuthNode() {
-		return dqs(true, "select authnode from regions where regionid=?", getId());
+		return dqs( "select authnode from regions where regionid=?", getId());
 	}
 
 	/**
@@ -426,7 +428,7 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public String getServerVersion(boolean html) {
-		ResultsRow r = dqone(true, "select regionserverversion,regionserverdatetime from regions where regionid=?", getId());
+		ResultsRow r = dqone( "select regionserverversion,regionserverdatetime from regions where regionid=?", getId());
 		return formatVersion(r.getInt("regionserverversion"), r.getInt("regionserverdatetime"), html);
 	}
 
@@ -438,7 +440,7 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public String getHUDVersion(boolean html) {
-		ResultsRow r = dqone(true, "select regionhudversion,regionhuddatetime from regions where regionid=?", getId());
+		ResultsRow r = dqone( "select regionhudversion,regionhuddatetime from regions where regionid=?", getId());
 		return formatVersion(r.getInt("regionhudversion"), r.getInt("regionhuddatetime"), html);
 	}
 
@@ -448,13 +450,13 @@ public class Region extends TableRow {
 	 * @return True if the region requires an update, false otherwise
 	 */
 	public boolean needsUpdate() {
-		Integer ourserver = dqi(true, "select regionserverversion from regions where regionid=?", getId());
-		Integer maxserver = dqi(false, "select MAX(regionserverversion) from regions");
+		Integer ourserver = dqi( "select regionserverversion from regions where regionid=?", getId());
+		Integer maxserver = dqi( "select MAX(regionserverversion) from regions");
 		if (ourserver != null && maxserver != null) {
 			if (maxserver > ourserver) { return true; }
 		}
-		Integer ourhud = dqi(true, "select regionhudversion from regions where regionid=?", getId());
-		Integer maxhud = dqi(false, "select MAX(regionhudversion) from regions");
+		Integer ourhud = dqi( "select regionhudversion from regions where regionid=?", getId());
+		Integer maxhud = dqi( "select MAX(regionhudversion) from regions");
 		if (ourhud != null && maxhud != null) {
 			if (maxhud > ourhud) { return true; }
 		}
@@ -523,7 +525,7 @@ public class Region extends TableRow {
 
 	@Nullable
 	public Integer getOpenVisitCount() {
-		return dqi(true, "select count(*) from visits where endtime is null and regionid=?", getId());
+		return dqi( "select count(*) from visits where endtime is null and regionid=?", getId());
 	}
 
 	public void setGlobalCoordinates(int x, int y) {
@@ -534,7 +536,7 @@ public class Region extends TableRow {
 
 	@Nonnull
 	public String getGlobalCoordinates() {
-		ResultsRow r = dqone(true, "select regionx,regiony from regions where regionid=?", getId());
+		ResultsRow r = dqone( "select regionx,regiony from regions where regionid=?", getId());
 		Integer x=r.getInt("regionx");
 		Integer y=r.getInt("regiony");
 		if (x==null || y==null) { throw new UserException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server"); }

@@ -16,7 +16,7 @@ public class PrimaryCharacters {
 
 	@Nonnull
 	private static Char getPrimaryCharacter_internal(@Nonnull Instance instance, @Nonnull User avatar) {
-		Integer primary = GPHUD.getDB().dqi(true, "select entityid from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
+		Integer primary = GPHUD.getDB().dqi( "select entityid from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
 		Char c = Char.get(primary);
 		if (c.retired()) {
 			GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());

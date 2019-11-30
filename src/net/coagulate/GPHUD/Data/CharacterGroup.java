@@ -77,16 +77,17 @@ public class CharacterGroup extends TableRow {
 	}
 
 	/**
-	 * Find a region by name.
+	 * Find a character group by name.
 	 *
-	 * @param name Name of region to locate
-	 * @return Region object for that region, or null if none is found.
+	 * @param name Name of character group to locate
+	 * @return Character group, or null if not found
 	 */
 	@Nullable
 	public static CharacterGroup find(String name, @Nonnull Instance i) {
-		Integer id = GPHUD.getDB().dqi(false, "select charactergroupid from charactergroups where name like ? and instanceid=?", name, i.getId());
-		if (id == null) { return null; }
-		return get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi( "select charactergroupid from charactergroups where name like ? and instanceid=?", name, i.getId());
+			return get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -150,7 +151,7 @@ public class CharacterGroup extends TableRow {
 	 * @return Group type
 	 */
 	@Nullable
-	public String getType() { return dqs(true, "select type from charactergroups where charactergroupid=?", getId()); }
+	public String getType() { return dqs( "select type from charactergroups where charactergroupid=?", getId()); }
 
 
 	/**
@@ -164,7 +165,7 @@ public class CharacterGroup extends TableRow {
 		if (character.getInstance() != getInstance()) {
 			throw new SystemException("Character (group) / Instance mismatch");
 		}
-		int exists = dqi(true, "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
+		int exists = dqi( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		if (exists > 0) { throw new UserException("Character is already a member of group?"); }
 		// in competing group?
 		CharacterGroup competition = character.getGroup(this.getType());
@@ -183,7 +184,7 @@ public class CharacterGroup extends TableRow {
 		if (character.getInstance() != getInstance()) {
 			throw new SystemException("Character (group) / Instance mismatch");
 		}
-		int exists = dqi(true, "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
+		int exists = dqi( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		if (exists == 0) { throw new UserException("Character not in group."); }
 	}
@@ -195,7 +196,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public Char getOwner() {
-		Integer owner = dqi(true, "select owner from charactergroups where charactergroupid=?", getId());
+		Integer owner = dqi( "select owner from charactergroups where charactergroupid=?", getId());
 		if (owner == null) { return null; }
 		return Char.get(owner);
 	}
@@ -226,7 +227,7 @@ public class CharacterGroup extends TableRow {
 		}
 		if (this.getOwner() == character) { return true; }
 		try {
-			Integer adminflag = dqi(true, "select isadmin from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
+			Integer adminflag = dqi( "select isadmin from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 			if (adminflag == null) { return false; }
 			if (adminflag == 1) { return true; }
 			return false;
@@ -257,7 +258,7 @@ public class CharacterGroup extends TableRow {
 	 * @return true/false
 	 */
 	public boolean hasMember(@Nonnull Char character) {
-		Integer count = dqi(true, "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
+		Integer count = dqi( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		if (count == null) { throw new SystemException("Null response from count statement"); }
 		if (count > 1) {
 			throw new SystemException("Matched too many members (" + count + ") for " + character + " in CG " + getId() + " - " + getName());
