@@ -83,7 +83,7 @@ public class Groups extends Publishing {
 	}
 
 	private static String formatGroup(CharacterGroup group) {
-		String line="<tr><th colspan=2 align=left>"+group.getName()+(group.getType()!=null?" (<i>"+group.getType()+"</i>)":"")+"</th></tr>";
+		StringBuilder line= new StringBuilder("<tr><th colspan=2 align=left>" + group.getName() + (group.getType() != null ? " (<i>" + group.getType() + "</i>)" : "") + "</th></tr>");
 		TreeMap<String,String> charrows=new TreeMap<>();
 		for (Char ch:group.getMembers()) {
 			String userline="<tr><td>"+ch.getName()+"</td><td><i>"+ch.getOwner().getName()+"</i></td>";
@@ -95,8 +95,8 @@ public class Groups extends Publishing {
 			userline+="</tr>";
 			charrows.put(sortby,userline);
 		}
-		for (String s : charrows.values()) { line+= s; }
-		return line;
+		for (String s : charrows.values()) { line.append(s); }
+		return line.toString();
 	}
 
 }

@@ -43,20 +43,20 @@ public class Objects extends TableRow {
 
 	public static String dumpObjects(State st) {
 		Instance instance=st.getInstance();
-		String r="<table border=0><tr><th>UUID</th><th>name</th><th>Owner</th><th>Region</th><th>Location</th><th>Version</th><th>Last RX</th><Th>Object Type</th></tr>";
+		StringBuilder r= new StringBuilder("<table border=0><tr><th>UUID</th><th>name</th><th>Owner</th><th>Region</th><th>Location</th><th>Version</th><th>Last RX</th><Th>Object Type</th></tr>");
 		for (ResultsRow row:GPHUD.getDB().dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
 			int since=row.getInt("since");
 			String bgcol="#dfffdf";
 			if (since>16*60) { bgcol="#ffffdf"; }
 			if (since>60*60) { bgcol="#ffdfdf"; }
-			r+="<tr bgcolor="+bgcol+">";
-			r+="<td>"+row.getString("uuid")+"</td>";
-			r+="<td>"+row.getString("name")+"</td>";
-			r+="<td>"+User.get(row.getInt("owner")).getGPHUDLink()+"</td>";
-			r+="<td>"+Region.get(row.getInt("regionid"),true).asHtml(st,true)+"</td>";
-			r+="<td>"+row.getString("location")+"</td>";
-			r+="<td>"+row.getInt("version")+"</td>";
-			r+="<td>"+UnixTime.duration(since)+" ago</td>";
+			r.append("<tr bgcolor=").append(bgcol).append(">");
+			r.append("<td>").append(row.getString("uuid")).append("</td>");
+			r.append("<td>").append(row.getString("name")).append("</td>");
+			r.append("<td>").append(User.get(row.getInt("owner")).getGPHUDLink()).append("</td>");
+			r.append("<td>").append(Region.get(row.getInt("regionid"), true).asHtml(st, true)).append("</td>");
+			r.append("<td>").append(row.getString("location")).append("</td>");
+			r.append("<td>").append(row.getInt("version")).append("</td>");
+			r.append("<td>").append(UnixTime.duration(since)).append(" ago</td>");
 			if (st.hasPermission("Objects.MapObjects")) {
 				String objecttype = st.postmap.get(row.getString("uuid"));
 				if (!objecttype.isEmpty()) {
@@ -70,24 +70,24 @@ public class Objects extends TableRow {
 						new Transmission(Objects.get(row.getInt("id")), reconfigurepayload).start();
 					}
 				} else { objecttype=row.getString("objecttype"); }
-				r += "<td>" + ObjectTypes.getDropDownList(st, row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st, true) + "</td>"; // editing too, have fun with that.
+				r.append("<td>").append(ObjectTypes.getDropDownList(st, row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st, true)).append("</td>"); // editing too, have fun with that.
 			} else {
-				r+="<td>"+row.getString("objecttype")+"</td>";
+				r.append("<td>").append(row.getString("objecttype")).append("</td>");
 			}
 			if (st.hasPermission("Objects.RebootObjects")) {
-				r+="<td><button type=Submit name=reboot value=\""+row.getString("uuid")+"\">Reboot</button></td>";
+				r.append("<td><button type=Submit name=reboot value=\"").append(row.getString("uuid")).append("\">Reboot</button></td>");
 			}
 			if (st.hasPermission("Objects.ShutdownObjects")) {
 				if (row.getString("uuid").equals(st.postmap.get("shutdown"))) {
-					r += "<td><button type=Submit name=reallyshutdown value=\"" + row.getString("uuid") + "\">CONFIRM SHUTDOWN - THE OBJECT OWNER MUST REBOOT IT TO RESUME SERVICE</button></td>";
+					r.append("<td><button type=Submit name=reallyshutdown value=\"").append(row.getString("uuid")).append("\">CONFIRM SHUTDOWN - THE OBJECT OWNER MUST REBOOT IT TO RESUME SERVICE</button></td>");
 				} else {
-					r+="<td><button type=Submit name=shutdown value=\""+row.getString("uuid")+"\">Shutdown</button></td>";
+					r.append("<td><button type=Submit name=shutdown value=\"").append(row.getString("uuid")).append("\">Shutdown</button></td>");
 				}
 			}
-			r+="</tr>";
+			r.append("</tr>");
 		}
-		r+="</table><br><i>(Objects are expected to check in once every 15 minutes, though if a region is down this may not happen.  Connections are purged after 24 hours inactivity, the object type configuration is not, and can be relinked to a new connection.)</i>";
-		return r;
+		r.append("</table><br><i>(Objects are expected to check in once every 15 minutes, though if a region is down this may not happen.  Connections are purged after 24 hours inactivity, the object type configuration is not, and can be relinked to a new connection.)</i>");
+		return r.toString();
 	}
 
 	@Override

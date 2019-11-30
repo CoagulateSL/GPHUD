@@ -240,9 +240,9 @@ public class EventSchedule extends TableRow {
 	}
 
 	private String pad(Integer padmeint, int howmuch) {
-		String padme = padmeint + "";
-		while (padme.length() < howmuch) { padme += " "; }
-		return padme;
+		StringBuilder padme = new StringBuilder(padmeint + "");
+		while (padme.length() < howmuch) { padme.append(" "); }
+		return padme.toString();
 	}
 
 }

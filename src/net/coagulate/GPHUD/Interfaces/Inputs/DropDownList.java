@@ -44,18 +44,18 @@ public class DropDownList extends Input {
 
 	@Override
 	public String asHtml(State st, boolean rich) {
-		String r = "";
-		r += "<select name=\"" + name + "\"";
-		if (submitonchange) { r+="onchange=\"this.form.submit()\""; }
-		r+=">";
+		StringBuilder r = new StringBuilder();
+		r.append("<select name=\"").append(name).append("\"");
+		if (submitonchange) { r.append("onchange=\"this.form.submit()\""); }
+		r.append(">");
 		for (Map.Entry<String, String> entry : choices.entrySet()) {
 			String option = entry.getKey();
-			r += "<option value=\"" + option + "\"";
-			if (option.equalsIgnoreCase(value)) { r += " selected"; }
-			r += ">" + entry.getValue() + "</option>";
+			r.append("<option value=\"").append(option).append("\"");
+			if (option.equalsIgnoreCase(value)) { r.append(" selected"); }
+			r.append(">").append(entry.getValue()).append("</option>");
 		}
-		r += "</select>";
-		return r;
+		r.append("</select>");
+		return r.toString();
 	}
 
 	@Override

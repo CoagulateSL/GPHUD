@@ -241,7 +241,7 @@ public abstract class Groups {
 	}
 
 	private static String addPermissions(State st,Set<Permission> permissions, PermissionsGroup pg,String col) {
-		String r="";
+		StringBuilder r="";
 		TreeMap<String,Permission> sorted=new TreeMap<>();
 		for (Permission p:permissions) { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }
 		for (Permission p : sorted.values()) {
@@ -249,11 +249,11 @@ public abstract class Groups {
 			boolean exists=false;
 			Permission a = Modules.get(st, Modules.extractModule(fullname)).getPermission(st, Modules.extractReference(fullname));
 			if (a!=null) { exists=true; }
-			r+="<tr bgcolor="+col+"><td>"+fullname+"</td><td>"+p.description()+"</td><td>"+
+			r.append("<tr bgcolor="+col+"><td>"+fullname+"</td><td>"+p.description()+"</td><td>"+
 					"<input type=checkbox name=\""+fullname+"\" value=\""+fullname+"\" "+(pg.hasPermission(st,fullname)?"checked":"")+">"+
 					"</td><td>"+(exists?"":"Doesn't Exist")+
-					"</td></tr>";
+					"</td></tr>");
 		}
-		return r;
+		return r.toString();
 	}
 }

@@ -58,24 +58,24 @@ public class Table implements Renderable {
 
 	@Override
 	public String asText(State st) {
-		String res = "";
+		StringBuilder res = new StringBuilder();
 		for (Row r : table) {
-			if (!res.isEmpty()) { res += "\n"; }
-			res += r.asText(st);
+			if (res.length() > 0) { res.append("\n"); }
+			res.append(r.asText(st));
 		}
-		return res;
+		return res.toString();
 	}
 
 	@Override
 	public String asHtml(State st, boolean rich) {
-		String s = "";
-		s += "<table";
-		if (border) { s += " border=1"; }
-		if (nowrap) { s += " style=\"white-space: nowrap;\""; }
-		s += ">";
-		for (Row r : table) { s += r.asHtml(st, rich); }
-		s += "</table>";
-		return s;
+		StringBuilder s = new StringBuilder();
+		s.append("<table");
+		if (border) { s.append(" border=1"); }
+		if (nowrap) { s.append(" style=\"white-space: nowrap;\""); }
+		s.append(">");
+		for (Row r : table) { s.append(r.asHtml(st, rich)); }
+		s.append("</table>");
+		return s.toString();
 	}
 
 	@Override

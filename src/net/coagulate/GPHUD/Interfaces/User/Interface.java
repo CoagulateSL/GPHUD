@@ -231,7 +231,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		for (Module m : Modules.getModules()) { if (m.getSideMenu(st) == menu) { owner = m; } }
 		if (owner == null) { return ">> NULL?<br>"; }
 
-		String ret = "";
+		StringBuilder ret = new StringBuilder();
 		Map<Integer, Set<SideSubMenu>> priorities = new TreeMap<>();
 		// collect sidemenus, by priority
 		for (SideSubMenu s : owner.getSideSubMenus(st)) {
@@ -247,14 +247,14 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			// enumerate the SideMenus
 			for (SideSubMenu s : sideSubMenus) {
 				String u = s.getURL();
-				ret += "&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;<a href=\"/GPHUD" + u + "\">" + s.name() + "</a><br>";
+				ret.append("&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;<a href=\"/GPHUD").append(u).append("\">").append(s.name()).append("</a><br>");
 			}
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	String dynamicSideMenus(State st) throws UserException, SystemException {
-		String r = "";
+		StringBuilder r = new StringBuilder();
 		Map<Integer, Set<SideMenu>> priorities = new TreeMap<>();
 		// collect sidemenus, by priority
 		for (Module m : Modules.getModules()) {
@@ -283,81 +283,81 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			for (SideMenu menu : sideMenus) {
 				String url = menu.url();
 				String name = menu.name();
-				r += "<a href=\"/GPHUD" + url + "\">" + name + "</a><br>";
+				r.append("<a href=\"/GPHUD").append(url).append("\">").append(name).append("</a><br>");
 				if (st.getDebasedURL().startsWith(url)) {
-					r += dynamicSubMenus(st, menu);
+					r.append(dynamicSubMenus(st, menu));
 				}
 			}
 		}
 
 
-		return r;
+		return r.toString();
 	}
 
 	String renderSideMenu(State st) throws UserException, SystemException {
-		String s = "";
-		s += GPHUD.menuPanelEnvironment() + "<hr width=150px>";
+		StringBuilder s = new StringBuilder();
+		s.append(GPHUD.menuPanelEnvironment()).append("<hr width=150px>");
 		boolean loggedin = true;
 		if (st.getCharacterNullable() != null || st.getAvatar() != null) {
-			s += "<b>Avatar:</b> ";
+			s.append("<b>Avatar:</b> ");
 			//if (st.user!=null) s+="[<a href=\"/GPHUD/switch/avatar\">Switch</a>]"; // you can only switch avis if you're a logged in user, as thats what binds avis
-			s += "<br>";
+			s.append("<br>");
 			if (st.avatar() != null) {
-				s += st.avatar().getGPHUDLink() + "<br>";
-			} else { s += "<i>none</i><br>"; }
+				s.append(st.avatar().getGPHUDLink()).append("<br>");
+			} else { s.append("<i>none</i><br>"); }
 
 
-			s += "<b>Instance:</b> [<a href=\"/GPHUD/switch/instance\">Switch</a>]<br>";
+			s.append("<b>Instance:</b> [<a href=\"/GPHUD/switch/instance\">Switch</a>]<br>");
 			if (st.getInstanceNullable() != null) {
-				s += st.getInstance().asHtml(st, true) + "<br>";
-			} else { s += "<i>none</i><br>"; }
+				s.append(st.getInstance().asHtml(st, true)).append("<br>");
+			} else { s.append("<i>none</i><br>"); }
 
-			s += "<b>Character:</b> [<a href=\"/GPHUD/switch/character\">Switch</a>]<br>";
+			s.append("<b>Character:</b> [<a href=\"/GPHUD/switch/character\">Switch</a>]<br>");
 			if (st.getCharacterNullable() != null) {
-				s += st.getCharacter().asHtml(st, true) + "<br>";
-			} else { s += "<i>none</i><br>"; }
+				s.append(st.getCharacter().asHtml(st, true)).append("<br>");
+			} else { s.append("<i>none</i><br>"); }
 		} else {
-			s += "<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>";
-			s += "<a href=\"/GPHUD/Help\">Documentation</a><br>";
-			s += "<hr width=150px>";
-			return s;
+			s.append("<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>");
+			s.append("<a href=\"/GPHUD/Help\">Documentation</a><br>");
+			s.append("<hr width=150px>");
+			return s.toString();
 		}
 		if (loggedin) {
-			s += "<br><a href=\"/GPHUD/logout\">Logout</a><br>";
+			s.append("<br><a href=\"/GPHUD/logout\">Logout</a><br>");
 		}
-		s += "<hr width=150px>";
-		s += "<a href=\"/GPHUD/\">Index</a><br><br>";
+		s.append("<hr width=150px>");
+		s.append("<a href=\"/GPHUD/\">Index</a><br><br>");
 		boolean dynamics = true;
 		if (st.avatar() == null) {
-			s += "<i>Select an avatar</i><br>";
+			s.append("<i>Select an avatar</i><br>");
 			dynamics = false;
 		}
 		if (st.getInstanceNullable() == null) {
-			s += "<i>Select an instance</i><br>";
+			s.append("<i>Select an instance</i><br>");
 			dynamics = false;
 		}
 		if (dynamics) {
-			s += dynamicSideMenus(st);
-			s += "<br>";
+			s.append(dynamicSideMenus(st));
+			s.append("<br>");
 		}
-		s += "<a href=\"/GPHUD/Help\">Documentation</a><br>";
-		s += "<hr width=150px>";
+		s.append("<a href=\"/GPHUD/Help\">Documentation</a><br>");
+		s.append("<hr width=150px>");
 		String sectionhead = "<b>PERMISSIONS:</b><br>";
 		if (st.isSuperUser()) {
-			s += sectionhead + "<b style=\"color: blue;\">SUPER-ADMIN</b><br>";
+			s.append(sectionhead).append("<b style=\"color: blue;\">SUPER-ADMIN</b><br>");
 			sectionhead = "";
 		}
 		if (st.isInstanceOwner()) {
-			s += sectionhead + "<b style=\"color: blue;\">Instance Owner</b><br>";
+			s.append(sectionhead).append("<b style=\"color: blue;\">Instance Owner</b><br>");
 			sectionhead = "";
 		}
 		if (st.getPermissions() != null) {
 			for (String permission : st.getPermissions()) {
-				s += sectionhead + "<font style=\"color: green;\">" + permission + "</font><br>";
+				s.append(sectionhead).append("<font style=\"color: green;\">").append(permission).append("</font><br>");
 				sectionhead = "";
 			}
 		}
-		return s;
+		return s.toString();
 	}
 
 	public boolean isRich() { return true; }

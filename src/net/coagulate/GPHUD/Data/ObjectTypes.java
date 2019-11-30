@@ -30,17 +30,17 @@ public class ObjectTypes extends TableRow {
 	}
 
 	public static String dumpTypes(State st) {
-		String r="<table>";
-		r+="<tr><th>Name</th><th>Behaviour</th></tr>";
+		StringBuilder r= new StringBuilder("<table>");
+		r.append("<tr><th>Name</th><th>Behaviour</th></tr>");
 		for (ResultsRow row:GPHUD.getDB().dq("select * from objecttypes where instanceid=?",st.getInstance().getId())) {
-			r+="<tr>";
+			r.append("<tr>");
 			ObjectTypes ot=get(row.getInt("id"));
-			r+="<td><a href=\"/GPHUD/configuration/objects/objecttypes/"+row.getInt("id")+"\">"+row.getString("name")+"</a></td>";
-			r+="<td>"+ ObjectType.materialise(st,ot).explainHtml()+"</td>";
-			r+="</tr>";
+			r.append("<td><a href=\"/GPHUD/configuration/objects/objecttypes/").append(row.getInt("id")).append("\">").append(row.getString("name")).append("</a></td>");
+			r.append("<td>").append(ObjectType.materialise(st, ot).explainHtml()).append("</td>");
+			r.append("</tr>");
 		}
-		r+="</table>";
-		return r;
+		r.append("</table>");
+		return r.toString();
 	}
 
 	public static Set<String> getObjectTypes(State st) {

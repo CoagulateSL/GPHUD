@@ -42,23 +42,23 @@ public class Row implements Renderable {
 
 	@Override
 	public String asText(State st) {
-		String s = "";
+		StringBuilder s = new StringBuilder();
 		for (Cell c : row) {
-			if (!s.isEmpty()) { s += " : "; }
-			s = s + c.asText(st);
+			if (s.length() > 0) { s.append(" : "); }
+			s.append(c.asText(st));
 		}
-		return s;
+		return s.toString();
 	}
 
 	@Override
 	public String asHtml(State st, boolean rich) {
-		String s = "<tr";
-		if (!bgcolor.isEmpty()) { s += " bgcolor=" + bgcolor; }
-		if (!alignment.isEmpty()) { s += " align=" + alignment; }
-		s += ">";
+		StringBuilder s = new StringBuilder("<tr");
+		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
+		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }
+		s.append(">");
 		for (Cell c : row) {
 			c.header = isHeader();
-			s = s + c.asHtml(st, rich);
+			s.append(c.asHtml(st, rich));
 		}
 		return s + "</tr>";
 	}

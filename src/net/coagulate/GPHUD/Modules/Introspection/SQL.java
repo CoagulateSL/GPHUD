@@ -59,7 +59,7 @@ public class SQL {
 			if (bytime.containsKey(t)) { rowset = bytime.get(t); }
 			rowset.add(newrow);
 			bytime.put(t, rowset);
-			double avg = t / c;
+			double avg = ((double)t) / ((double)c);
 			rowset = new HashSet<>();
 			if (byper.containsKey(avg)) { rowset = byper.get(avg); }
 			rowset.add(newrow);

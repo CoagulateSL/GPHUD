@@ -60,7 +60,6 @@ public abstract class Audit {
 			if (stinstance != null) { instance = stinstance.getName(); }
 			String actor = "";
 			if (avatar != null) {
-				if (!actor.isEmpty()) { actor += " "; }
 				actor += "A:" + avatar.getName();
 			}
 			if (character != null) {
@@ -72,7 +71,6 @@ public abstract class Audit {
 			if (changeditem != null) { facility += "/" + changeditem; }
 			String target = "";
 			if (targetavatar != null) {
-				if (!target.isEmpty()) { target += " "; }
 				target += "A:" + targetavatar.getName();
 			}
 			if (targetcharacter != null) {

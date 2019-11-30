@@ -190,13 +190,13 @@ public class Transmission extends Thread {
 				}
 			} catch (Exception e) {
 				GPHUD.getLogger().log(WARNING, "Exception in response parser",e);
-				String body=url+"\n<br>\n";
-				body+="Character:"+(character==null?"null":character.getNameSafe())+"\n<br>\n";
+				StringBuilder body= new StringBuilder(url + "\n<br>\n");
+				body.append("Character:").append(character == null ? "null" : character.getNameSafe()).append("\n<br>\n");
 				for (StackTraceElement ele:caller) {
-					body+="Caller: "+ele.getClassName()+"/"+ele.getMethodName()+":"+ele.getLineNumber()+"\n<br>\n";
+					body.append("Caller: ").append(ele.getClassName()).append("/").append(ele.getMethodName()).append(":").append(ele.getLineNumber()).append("\n<br>\n");
 				}
-				body+=response;
-				try { MailTools.mail("Failed response", body); } catch (MessagingException ee){
+				body.append(response);
+				try { MailTools.mail("Failed response", body.toString()); } catch (MessagingException ee){
 					GPHUD.getLogger().log(SEVERE,"Mail exception in response parser exception handler",ee);
 				}
 			}
@@ -220,11 +220,11 @@ public class Transmission extends Thread {
 		out.close();
 		BufferedReader rd = new BufferedReader(new InputStreamReader(transmission.getInputStream()));
 		String line;
-		String response = "";
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
-			response += line + "\n";
+			response.append(line).append("\n");
 		}
 		if (debug) { GPHUD.getLogger().log(FINER, "Push: " + json.toString() + "\ngives " + response); }
-		return response;
+		return response.toString();
 	}
 }

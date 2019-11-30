@@ -527,7 +527,7 @@ public class State extends DumpableState {
 
 	public KVValue getKV(String kvname) {
 		try {
-			String path = "";
+			StringBuilder path = new StringBuilder();
 			final boolean debug = false;
 			if (kvname == null) {
 				SystemException ex=new SystemException("Get KV on null K");
@@ -547,14 +547,14 @@ public class State extends DumpableState {
 							sum = sum + Float.parseFloat(raw);
 							triggered = true;
 							if (kv.type() == KV.KVTYPE.INTEGER) {
-								path = path + " +" + Integer.parseInt(raw) + " (" + dbo.getNameSafe() + ")";
-							} else { path = path + " +" + Float.parseFloat(raw) + " (" + dbo.getNameSafe() + ")"; }
+								path.append(" +").append(Integer.parseInt(raw)).append(" (").append(dbo.getNameSafe()).append(")");
+							} else { path.append(" +").append(Float.parseFloat(raw)).append(" (").append(dbo.getNameSafe()).append(")"); }
 						}
 					}
 					if (triggered) {
 						if (debug) {System.out.println("Cumulative return of " + sum); }
-						if (kv.type() == KV.KVTYPE.INTEGER) { return new KVValue(((int) sum) + "", path); }
-						return new KVValue(sum + "", path);
+						if (kv.type() == KV.KVTYPE.INTEGER) { return new KVValue(((int) sum) + "", path.toString()); }
+						return new KVValue(sum + "", path.toString());
 					}
 				}
 				if (debug) { System.out.println("Cumulative returning defaultvalue of " + templateDefault(kv)); }
@@ -725,28 +725,28 @@ public class State extends DumpableState {
 	}
 
 	public String toString() {
-		String ret = "";
+		StringBuilder ret = new StringBuilder();
 		if (instance != null) {
-			if (!ret.isEmpty()) { ret += ", "; }
-			ret += "Instance:" + instance.getName();
+			if (ret.length() > 0) { ret.append(", "); }
+			ret.append("Instance:").append(instance.getName());
 		}
 		if (region != null) {
-			if (!ret.isEmpty()) { ret += ", "; }
-			ret += "Region:" + region.getName();
+			if (ret.length() > 0) { ret.append(", "); }
+			ret.append("Region:").append(region.getName());
 		}
 		if (zone != null) {
-			if (!ret.isEmpty()) { ret += ", "; }
-			ret += "Zone:" + zone.getName();
+			if (ret.length() > 0) { ret.append(", "); }
+			ret.append("Zone:").append(zone.getName());
 		}
 		if (character != null) {
 			for (CharacterGroup c : character.getGroups()) {
-				if (!ret.isEmpty()) { ret += ", "; }
-				ret += "Group:" + c.getName();
+				if (ret.length() > 0) { ret.append(", "); }
+				ret.append("Group:").append(c.getName());
 			}
-			if (!ret.isEmpty()) { ret += ", "; }
-			ret += "Char:" + character.getName();
+			if (ret.length() > 0) { ret.append(", "); }
+			ret.append("Char:").append(character.getName());
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	@Override

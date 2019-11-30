@@ -104,13 +104,13 @@ public class Zone extends TableRow {
 	 */
 	public String getTransportFormat() {
 		Set<ZoneArea> areas = getZoneAreas();
-		String s = "";
+		StringBuilder s = new StringBuilder();
 		for (ZoneArea a : areas) {
 			String[] vectors = a.getVectors();
-			if (!s.isEmpty()) { s += "|"; }
-			s = getName() + "|" + vectors[0] + "|" + vectors[1];
+			if (s.length() > 0) { s.append("|"); }
+			s = new StringBuilder(getName() + "|" + vectors[0] + "|" + vectors[1]);
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**

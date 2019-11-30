@@ -51,26 +51,26 @@ public class ResetHealth {
 	) {
 		List<Integer> chancerolls = Roller.roll(st, st.getCharacter(), chancedice, chancesides);
 		int rollssum=chancebias; for (int roll:chancerolls) { rollssum+=roll; }
-		String chancerollsreport="";
+		StringBuilder chancerollsreport= new StringBuilder();
 		boolean first=true;
 		for (int roll:chancerolls) {
-			if (!first) { chancerollsreport += "+"; }
-			chancerollsreport += roll;
+			if (!first) { chancerollsreport.append("+"); }
+			chancerollsreport.append(roll);
 			first = false;
 		}
 		if (chancebias>0) {
-			chancerollsreport += " + " + chancebias;
+			chancerollsreport.append(" + ").append(chancebias);
 		}
-		chancerollsreport+="="+rollssum;
+		chancerollsreport.append("=").append(rollssum);
 		// threshold met?
 		if (rollssum<chancethreshold) {
 			String failmsg="Attempted to heal "+target.getName()+" but failed! (";
 			failmsg+=chancerollsreport+"<"+chancethreshold+")";
-			Audit.audit(false, st, Audit.OPERATOR.CHARACTER, null, target, "HealChance", "Result", "", "FAIL", chancerollsreport);
+			Audit.audit(false, st, Audit.OPERATOR.CHARACTER, null, target, "HealChance", "Result", "", "FAIL", chancerollsreport.toString());
 			return new SayResponse(failmsg,st.getCharacter().getName());
 		}
-		chancerollsreport+=">"+chancethreshold;
-		Audit.audit(false, st, Audit.OPERATOR.CHARACTER, null, target, "HealChance", "Result", "", "PASS", chancerollsreport);
+		chancerollsreport.append(">").append(chancethreshold);
+		Audit.audit(false, st, Audit.OPERATOR.CHARACTER, null, target, "HealChance", "Result", "", "PASS", chancerollsreport.toString());
 		return healRoll(st,target,healdice,healsides,healbias,reason);
 	}
 

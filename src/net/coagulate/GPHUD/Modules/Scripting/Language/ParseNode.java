@@ -18,43 +18,43 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 	public ParseNode child(int i) { return ((ParseNode)jjtGetChild(i)); }
 
 	public String tokens() {
-		String s="";
+		StringBuilder s= new StringBuilder();
 		Token t=jjtGetFirstToken();
 		if (t!=null) {
 			boolean last=false;
 			while (!last) {
-				if (!s.isEmpty()) { s+=" "; }
-				s+=t.image;
+				if (s.length() > 0) { s.append(" "); }
+				s.append(t.image);
 				if (t==jjtGetLastToken()) { last=true; } else { t=t.next; }
 			}
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String toHtml() {
-		String s="";
+		StringBuilder s= new StringBuilder();
 		if (children!=null) {
-			s="<ul>";
+			s = new StringBuilder("<ul>");
 			for (Node nnode : children) {
 				SimpleNode node=(SimpleNode)nnode;
-				s += "<li><b>";
-				s+= node.getClass().getName().replaceFirst("net.coagulate.GPHUD.Modules.Scripting.Language.Generated.","");
-				s+=" : </b><i>";
+				s.append("<li><b>");
+				s.append(node.getClass().getName().replaceFirst("net.coagulate.GPHUD.Modules.Scripting.Language.Generated.", ""));
+				s.append(" : </b><i>");
 				Token t=node.jjtGetFirstToken();
 				if (t!=null) {
 					boolean last=false;
 					while (!last) {
-						s+=" "+t.image;
+						s.append(" ").append(t.image);
 						if (t==node.jjtGetLastToken()) { last=true; } else { t=t.next; }
 					}
 				}
-				s+="</i>";
-				s+=((ParseNode) node).toHtml();
-				s+="</li>";
+				s.append("</i>");
+				s.append(((ParseNode) node).toHtml());
+				s.append("</li>");
 			}
-			s+="</ul>";
+			s.append("</ul>");
 		}
-		return s;
+		return s.toString();
 	}
 
 }

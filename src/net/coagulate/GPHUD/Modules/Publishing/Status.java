@@ -37,15 +37,15 @@ public class Status extends Publishing {
 		Instance instance = Instance.get(getPartInt(st, 1));
 		st.setInstance(instance);
 		st.form.add("<b>"+instance.getName()+"</b> <i>GPHUD</i><br><br>");
-		String line="Regions: ";
+		StringBuilder line= new StringBuilder("Regions: ");
 		boolean first=true;
 		int players=0;
 		TreeMap<String,String> playerlist=new TreeMap<>();
 		for(Region r:instance.getRegions(false)) {
 			String statuscolor="#c00000";
 			if (r.getOnlineStatus("Europe/London").toLowerCase().startsWith("online")) { statuscolor="#00c000"; }
-			if (!first) { line+=", "; } else { first=false; }
-			line+="<font color=\""+statuscolor+"\">"+r.getName()+"</font>";
+			if (!first) { line.append(", "); } else { first=false; }
+			line.append("<font color=\"").append(statuscolor).append("\">").append(r.getName()).append("</font>");
 			players=r.getOpenVisitCount();
 			for (Char c:r.getOpenVisits()) {
 				playerlist.put(c.getOwner().getName(),c.getOwner().getName()+" <i>as</i> "+c.getName()+"<br>");

@@ -215,18 +215,18 @@ public class Instance extends TableRow {
 	public void updateStatus() {
 		String statuscolor = "<0.5,1,0.5>";
 		int level = 0;
-		String newstatus = "";
-		if (GPHUD.DEV) { newstatus += "===DEVELOPMENT===\n \n"; }
-		newstatus += "Server: " + GPHUD.hostname + " - " + GPHUD.VERSION + "\n \n";
+		StringBuilder newstatus = new StringBuilder();
+		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n \n"); }
+		newstatus.append("Server: ").append(GPHUD.hostname).append(" - ").append(GPHUD.VERSION).append("\n \n");
 		//newstatus+=new Date().toString()+" ";
 		for (Region r : getRegions(false)) {
-			newstatus += "[" + r.getName() + "#";
+			newstatus.append("[").append(r.getName()).append("#");
 			Integer visitors = r.getOpenVisitCount();
 			String url = dqs(true, "select url from regions where regionid=?", r.getId());
 			Integer urllast = dqi(true, "select urllast from regions where regionid=?", r.getId());
 			if (urllast == null) { urllast = getUnixTime(); }
 			if (url == null || url.isEmpty()) {
-				newstatus += "ERROR:DISCONNECTED]";
+				newstatus.append("ERROR:DISCONNECTED]");
 				if (canStatus("admins")) {
 					broadcastAdmins(null, "SYSTEM : Alert, region server for '" + r.getName() + "' is not connected to GPHUD Server.");
 				}
@@ -236,7 +236,7 @@ public class Instance extends TableRow {
 				}
 			} else {
 				if ((getUnixTime() - urllast) > (15 * 60)) {
-					newstatus += "*STALLED*";
+					newstatus.append("*STALLED*");
 					if (canStatus("admins")) {
 						broadcastAdmins(null, "SYSTEM : Alert, region server for '" + r.getName() + "' is not communicating (STALLED / CRASHED)??.");
 					}
@@ -245,23 +245,23 @@ public class Instance extends TableRow {
 						level = 2;
 					}
 				}
-				newstatus += visitors;
+				newstatus.append(visitors);
 				//System.out.println(r+" - "+r.needsUpdate());
 				if (r.needsUpdate()) {
-					newstatus += "*UPDATE*";
+					newstatus.append("*UPDATE*");
 					if (level < 1) {
 						statuscolor = "<1.0,1.0,0.5>";
 						level = 1;
 					}
 				}
-				newstatus += "]\n";
+				newstatus.append("]\n");
 
 			}
 		}
-		newstatus += " \n";
+		newstatus.append(" \n");
 
 		JSONObject statusupdate = new JSONObject();
-		statusupdate.put("instancestatus", newstatus);
+		statusupdate.put("instancestatus", newstatus.toString());
 		statusupdate.put("statuscolor", statuscolor);
 		for (Region r : getOurRegions(false)) {
 			String url = r.getURL(true);

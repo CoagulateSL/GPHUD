@@ -179,18 +179,18 @@ public class ScriptingConfig {
 				compiler = new GSCompiler(gsscript);
 				if (stage==STAGE.COMPILER) {
 					List<ByteCode> bytecode = compiler.compile();
-					String code = "<pre><table border=0>";
+					StringBuilder code = new StringBuilder("<pre><table border=0>");
 					for (ByteCode bc : bytecode) {
-						code += "<tr><td>"+(bc.node()!=null?bc.node().tokens():"")+"</td><td>" + bc.explain().replaceFirst(" \\(", "</td><td><i>(") + "</i></td><td>";
+						code.append("<tr><td>").append(bc.node() != null ? bc.node().tokens() : "").append("</td><td>").append(bc.explain().replaceFirst(" \\(", "</td><td><i>(")).append("</i></td><td>");
 						ArrayList<Byte> bcl = new ArrayList<>();
 						bc.toByteCode(bcl);
 						for (Byte b : bcl) {
-							code += b + " ";
+							code.append(b).append(" ");
 						}
-						code += "</td></tr>";
+						code.append("</td></tr>");
 					}
-					code += "</table></pre>";
-					return code;
+					code.append("</table></pre>");
+					return code.toString();
 				}
 			} catch (NullPointerException ex) {
 				throw new SystemException("Null pointer exception in compiler",ex);
@@ -200,13 +200,13 @@ public class ScriptingConfig {
 
 			Byte[] rawcode= compiler.toByteCode();
 			if (stage==STAGE.BYTECODE) {
-				String bcstring = "<pre><table border=0><tr>";
+				StringBuilder bcstring = new StringBuilder("<pre><table border=0><tr>");
 				for (int i = 0; i < rawcode.length; i++) {
-					if ((i % 25) == 0) { bcstring += "</tr><tr><th>" + i + "</th>"; }
-					bcstring += "<td>" + rawcode[i] + "</td>";
+					if ((i % 25) == 0) { bcstring.append("</tr><tr><th>").append(i).append("</th>"); }
+					bcstring.append("<td>").append(rawcode[i]).append("</td>");
 				}
-				bcstring += "</tr></table></pre>";
-				return bcstring;
+				bcstring.append("</tr></table></pre>");
+				return bcstring.toString();
 			}
 
 			GSVM gsvm=new GSVM(rawcode);
@@ -219,20 +219,20 @@ public class ScriptingConfig {
 					long start=System.currentTimeMillis();
 					List<GSVM.ExecutionStep> steps = gsvm.simulate(st);
 					long end=System.currentTimeMillis();
-					String output="<p><i>Run time: "+(end-start)+" ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>";
+					StringBuilder output= new StringBuilder("<p><i>Run time: " + (end - start) + " ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>");
 					if (stage==SIMULATION) {
 							// no more than 100 steps now
 						int index=steps.size()-100;
 						if (index<0) { index=0; }
 						for (;index<steps.size();index++) {
-							output+=formatStep(steps.get(index));
+							output.append(formatStep(steps.get(index)));
 						}
 					} else {
-						if (steps.size()>1) { output+=formatStep(steps.get(steps.size()-2)); }
-						if (steps.size()>0) { output+=formatStep(steps.get(steps.size()-1)); }
+						if (steps.size()>1) { output.append(formatStep(steps.get(steps.size() - 2))); }
+						if (steps.size()>0) { output.append(formatStep(steps.get(steps.size() - 1))); }
 					}
-					output+="</table>";
-					return output;
+					output.append("</table>");
+					return output.toString();
 				}
 
 			} catch (ArrayIndexOutOfBoundsException ex) {
@@ -245,26 +245,23 @@ public class ScriptingConfig {
 	}
 
 	private static String formatStep(GSVM.ExecutionStep step) {
-		String output = "";
-		output += "<tr><td>" + step.IC + "</td><th>" + step.programcounter + "</th><td>" + step.decode + "</td><td><table>";
+		StringBuilder output = new StringBuilder();
+		output.append("<tr><td>").append(step.IC).append("</td><th>").append(step.programcounter).append("</th><td>").append(step.decode).append("</td><td><table>");
 		for (int i = 0; i < step.resultingstack.size(); i++) {
-			output += "<tr><th>" + i + "</th><td>" +
-					step.resultingstack.get(i).htmlDecode() + "</td></tr>";
+			output.append("<tr><th>").append(i).append("</th><td>").append(step.resultingstack.get(i).htmlDecode()).append("</td></tr>");
 		}
-		output += "</table></td><td><table>";
+		output.append("</table></td><td><table>");
 		for (Map.Entry<String, ByteCodeDataType> entry : step.resultingvariables.entrySet()) {
 			String decode = "???";
 			if (entry.getValue() != null) {
 				decode = entry.getValue().htmlDecode();
 			}
-			output += "<tr><th>" + entry.getKey() + "</th><td>" +
-					decode + "</td></tr>";
+			output.append("<tr><th>").append(entry.getKey()).append("</th><td>").append(decode).append("</td></tr>");
 		}
-		output += "</table></td></tr>";
+		output.append("</table></td></tr>");
 		if (step.t != null) {
-			output += "<tr><td colspan=100>" +
-					ExceptionTools.toHTML(step.t) + "</td></tr>";
+			output.append("<tr><td colspan=100>").append(ExceptionTools.toHTML(step.t)).append("</td></tr>");
 		}
-		return output;
+		return output.toString();
 	}
 }

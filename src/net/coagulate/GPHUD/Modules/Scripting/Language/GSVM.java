@@ -71,15 +71,15 @@ public class GSVM {
 
 	public String toHtml() {
 		PC=0;
-		String line = "<table>";
+		StringBuilder line = new StringBuilder("<table>");
 		while (PC < bytecode.length) {
-			line += "<tr><th>" + PC + "</th><td>";
+			line.append("<tr><th>").append(PC).append("</th><td>");
 			try {
 				ByteCode instruction = ByteCode.load(this);
-				line += instruction.htmlDecode();
+				line.append(instruction.htmlDecode());
 			}
-			catch (Exception e) { line+="</td></tr><tr><td colspan=5>"+e.toString()+"</tD></tr></table>"; return line; }
-			line += "</td></tr>";
+			catch (Exception e) { line.append("</td></tr><tr><td colspan=5>").append(e.toString()).append("</tD></tr></table>"); return line.toString(); }
+			line.append("</td></tr>");
 		}
 		return line + "</td></tr></table>";
 	}
@@ -146,30 +146,30 @@ public class GSVM {
 	}
 
 	public String dumpStateToHtml() {
-		String ret="";
-		ret+="<h3>Stack</h3><br><table>";
+		StringBuilder ret= new StringBuilder();
+		ret.append("<h3>Stack</h3><br><table>");
 		for (int i=0;i<stack.size();i++) {
-			ret+="<tr><th>"+i+"</th><td>"+stack.get(i).getClass().getSimpleName()+"</td><td>"+stack.get(i).explain()+"</td></tr>";
+			ret.append("<tr><th>").append(i).append("</th><td>").append(stack.get(i).getClass().getSimpleName()).append("</td><td>").append(stack.get(i).explain()).append("</td></tr>");
 		}
-		ret+="</table>";
-		ret+="<h3>Variable store</h3><br><table>";
+		ret.append("</table>");
+		ret.append("<h3>Variable store</h3><br><table>");
 		for (Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
-			ret+="<tr><th>"+ entry.getKey() +"</th>";
+			ret.append("<tr><th>").append(entry.getKey()).append("</th>");
 			ByteCodeDataType value = entry.getValue();
-			ret+="<td>"+value.getClass().getSimpleName()+"</td><td>"+value.explain()+"</td></tr>";
+			ret.append("<td>").append(value.getClass().getSimpleName()).append("</td><td>").append(value.explain()).append("</td></tr>");
 		}
-		ret+="</table>";
-		ret+="<h3>Byte code</h3><br>";
-		ret += "<pre><table border=0><tr>";
+		ret.append("</table>");
+		ret.append("<h3>Byte code</h3><br>");
+		ret.append("<pre><table border=0><tr>");
 		for (int i = 0; i < bytecode.length; i++) {
-			if ((i % 25) == 0) { ret += "</tr><tr><th>" + i + "</th>"; }
-			ret += "<td>" + bytecode[i] + "</td>";
+			if ((i % 25) == 0) { ret.append("</tr><tr><th>").append(i).append("</th>"); }
+			ret.append("<td>").append(bytecode[i]).append("</td>");
 		}
-		ret += "</tr></table></pre>";
+		ret.append("</tr></table></pre>");
 
-		ret+="<h3>Code store</h3><br>";
-		ret+=toHtml();
-		return ret;
+		ret.append("<h3>Code store</h3><br>");
+		ret.append(toHtml());
+		return ret.toString();
 	}
 
 	final Map<Char,JSONObject> queue =new HashMap<>();

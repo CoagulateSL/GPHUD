@@ -77,9 +77,9 @@ public class Form implements Renderable {
 
 	@Override
 	public String asText(State st) {
-		String response = "";
-		for (Renderable r : list) { response += r.asText(st); }
-		return response;
+		StringBuilder response = new StringBuilder();
+		for (Renderable r : list) { response.append(r.asText(st)); }
+		return response.toString();
 	}
 
 	public String getAction() { return action; }
@@ -88,21 +88,21 @@ public class Form implements Renderable {
 
 	@Override
 	public String asHtml(State st, boolean rich) {
-		String response = "";
+		StringBuilder response = new StringBuilder();
 		if (form) {
-			response += "<form method=post";
-			if (action != null && !action.isEmpty()) { response += " action=\"" + action + "\""; }
-			response += " style=\"border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n";
+			response.append("<form method=post");
+			if (action != null && !action.isEmpty()) { response.append(" action=\"").append(action).append("\""); }
+			response.append(" style=\"border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n");
 		}
 		for (Renderable r : list) {
-			if (!(r instanceof NullResponse)) { response += r.asHtml(st, rich) + "\n"; }  // else { response+="{NULLRESPONSE}"; }
+			if (!(r instanceof NullResponse)) { response.append(r.asHtml(st, rich)).append("\n"); }  // else { response+="{NULLRESPONSE}"; }
 
 
 		}
 		if (form) {
-			response += "</form>\n";
+			response.append("</form>\n");
 		}
-		return response;
+		return response.toString();
 	}
 
 	@Override

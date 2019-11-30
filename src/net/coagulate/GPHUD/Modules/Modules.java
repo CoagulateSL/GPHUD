@@ -223,21 +223,21 @@ public abstract class Modules {
 								parameters.put(argname, words[i]);
 							} else {
 								// is a multi word thing
-								String string = "";
+								StringBuilder string = new StringBuilder();
 								while (!words[i].endsWith("\"")) {
-									if (!string.isEmpty()) { string = string + " "; }
-									string = string + words[i];
+									if (string.length() > 0) { string.append(" "); }
+									string.append(words[i]);
 									i++;
 								}
-								string += " " + words[i];
+								string.append(" ").append(words[i]);
 								if (!respectnewlines) {
-									string = string.replaceAll("\n", "");
-									string = string.replaceAll("\r", "");
+									string = new StringBuilder(string.toString().replaceAll("\n", ""));
+									string = new StringBuilder(string.toString().replaceAll("\r", ""));
 								}
-								string = string.replaceFirst("^\"", "");
-								string = string.replaceAll("\"$", "");
+								string = new StringBuilder(string.toString().replaceFirst("^\"", ""));
+								string = new StringBuilder(string.toString().replaceAll("\"$", ""));
 								//System.out.println(string);
-								parameters.put(argname, string);
+								parameters.put(argname, string.toString());
 							}
 						} else {
 							// is a single word thing

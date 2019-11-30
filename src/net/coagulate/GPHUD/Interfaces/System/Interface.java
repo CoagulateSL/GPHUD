@@ -307,10 +307,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			return new JSONResponse(response);
 		}
 		if (console.startsWith("listinstances")) {
-			String response = "Instances:\n";
+			StringBuilder response = new StringBuilder("Instances:\n");
 			Set<Instance> instances = Instance.getInstances(st.avatar());
-			for (Instance i : instances) { response += i.getName() + "\n"; }
-			return new OKResponse(response);
+			for (Instance i : instances) { response.append(i.getName()).append("\n"); }
+			return new OKResponse(response.toString());
 		}
 		return new ErrorResponse("Pre-Registration command not recognised.  Use *listinstances, *createinstance <name>, or *joininstance <name>");
 	}

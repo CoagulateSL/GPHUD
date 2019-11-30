@@ -43,15 +43,15 @@ public class MenuResponse implements Response {
 
 	@Override
 	public String asHtml(State st, boolean rich) {
-		String s = "";
-		if (header != null && !header.isEmpty()) { s += new TextHeader(header).asHtml(st, rich); }
+		StringBuilder s = new StringBuilder();
+		if (header != null && !header.isEmpty()) { s.append(new TextHeader(header).asHtml(st, rich)); }
 		for (Renderable r : menu) {
-			if (!s.isEmpty()) {
-				if (rich) { s += "<br>"; } else { s += " | "; }
+			if (s.length() > 0) {
+				if (rich) { s.append("<br>"); } else { s.append(" | "); }
 			}
-			s += r.asHtml(st, rich);
+			s.append(r.asHtml(st, rich));
 		}
-		return s;
+		return s.toString();
 	}
 
 	@Override

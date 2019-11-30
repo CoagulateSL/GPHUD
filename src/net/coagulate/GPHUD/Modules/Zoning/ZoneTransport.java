@@ -11,15 +11,15 @@ import net.coagulate.GPHUD.Data.Zone;
 public abstract class ZoneTransport {
 
 	public static String createZoneTransport(Region r) {
-		String response = "";
+		StringBuilder response = new StringBuilder();
 		for (Zone z : r.getZones()) {
 			String s = z.getTransportFormat();
 			if (s != null) {
-				if (!response.isEmpty()) { response += "|"; }
-				response += s;
+				if (response.length() > 0) { response.append("|"); }
+				response.append(s);
 			}
 		}
-		return response;
+		return response.toString();
 	}
 
 }

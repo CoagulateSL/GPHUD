@@ -50,10 +50,10 @@ public abstract class API {
 			f.add(" - Type: " + p.type());
 			if (p.type() == ArgumentType.CHOICE) {
 				String[] split = proposedcommand.split("\\.");
-				String options = "";
+				StringBuilder options = new StringBuilder();
 				for (String s : p.getChoices(st)) {
-					if (!options.isEmpty()) { options += ", "; }
-					options += s;
+					if (options.length() > 0) { options.append(", "); }
+					options.append(s);
 				}
 				f.add(" [" + options + "]");
 			}
