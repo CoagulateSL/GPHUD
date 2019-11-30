@@ -33,7 +33,7 @@ public class Logout {
 		if (st.getCharacterNullable()!=null) {
 			st.getCharacter().closeVisits(st);
 			st.getCharacter().closeURL(st);
-			st.logger().info("Logout from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName());
+			st.logger().info("Logout from avatar " + st.getAvatarNullable().getName()+" as character "+st.getCharacter().getName());
 		}
 		return new TerminateResponse("Logout complete");
 	}

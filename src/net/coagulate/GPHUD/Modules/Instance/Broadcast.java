@@ -24,8 +24,8 @@ public class Broadcast {
 			                             String sendmessage) {
 		String message = "(From ";
 		String avfrom = "";
-		if (st.avatar() != null) {
-			avfrom = st.avatar().getName();
+		if (st.getAvatarNullable() != null) {
+			avfrom = st.getAvatarNullable().getName();
 			message += avfrom;
 		}
 		if (st.getCharacter() != null) {

@@ -21,7 +21,7 @@ public class Giver {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
 		json.put("itemname", "GPHUD Item Giver");
-		json.put("giveto", st.getAvatar().getUUID());
+		json.put("giveto", st.getAvatarNullable().getUUID());
 		st.getRegion().sendServer(json);
 		return new OKResponse("OK - Sent you an Item Giver");
 	}
@@ -35,8 +35,8 @@ public class Giver {
 		json.put("incommand", "broadcast");
 		json.put("subcommand", "giveitem");
 		json.put("itemtogive", item);
-		json.put("giveto", st.getAvatar().getUUID());
-		json.put("givetoname", st.getAvatar().getName());
+		json.put("giveto", st.getAvatarNullable().getUUID());
+		json.put("givetoname", st.getAvatarNullable().getName());
 		st.getRegion().sendServer(json);
 		return new OKResponse("OK - Request for item has been sent");
 	}

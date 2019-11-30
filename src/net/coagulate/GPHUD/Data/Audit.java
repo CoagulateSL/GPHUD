@@ -54,7 +54,7 @@ public abstract class Audit {
 	}
 
 	public static void audit(boolean log, @Nonnull State st, OPERATOR op, @Nullable User targetavatar, @Nullable Char targetcharacter, @Nullable String changetype, @Nullable String changeditem, @Nullable String oldvalue, @Nullable String newvalue, String note) {
-		User avatar = st.avatar();
+		User avatar = st.getAvatarNullable();
 		Char character = st.getCharacterNullable();
 		if (op == OPERATOR.AVATAR) { character = null; }
 		Instance stinstance = st.getInstanceNullable();

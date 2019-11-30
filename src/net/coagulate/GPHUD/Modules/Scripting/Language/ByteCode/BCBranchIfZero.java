@@ -12,7 +12,7 @@ public class BCBranchIfZero extends ByteCode {
 
 	@Nullable
 	private final BCLabel target;
-	public BCBranchIfZero(ParseNode n, BCLabel target) { super(n); this.target=target; }
+	public BCBranchIfZero(ParseNode n, @Nullable BCLabel target) { super(n); this.target=target; }
 	public BCBranchIfZero(ParseNode n,int pc) { super(n); target=new BCLabel(node(),-1,pc); }
 	@Nonnull
 	public String explain() { return "BranchIfZero#"+target.id+" (Pop one, branch if zero)"; }

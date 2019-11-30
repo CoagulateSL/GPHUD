@@ -25,7 +25,7 @@ public class MenuResponse implements Response {
 
 	public MenuResponse() {}
 
-	public MenuResponse(String title) { header = title; }
+	public MenuResponse(@Nullable String title) { header = title; }
 
 	public void add(Renderable r) { menu.add(r); }
 

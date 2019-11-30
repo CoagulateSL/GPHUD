@@ -248,7 +248,7 @@ public abstract class Management {
 		try { existingfaction.removeMember(member); } catch (UserException e) {
 			return new ErrorResponse("Failed to remove member - " + e.getMessage());
 		}
-		member.hudMessage("You have been removed from faction " + faction.getName() + " by (( " + st.getAvatar().getName() + " ))");
+		member.hudMessage("You have been removed from faction " + faction.getName() + " by (( " + st.getAvatarNullable().getName() + " ))");
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, member, "RemoveMember", faction.getName(), faction.getName(), null, "Removed member from faction group");
 		return new OKResponse(member.getName() + " was removed from their faction " + faction.getName());
 	}

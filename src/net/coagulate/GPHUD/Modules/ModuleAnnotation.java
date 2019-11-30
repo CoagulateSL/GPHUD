@@ -204,7 +204,7 @@ public class ModuleAnnotation extends Module {
 		kvmap.put(a.name().toLowerCase(), a);
 	}
 
-	public void validateKV(State st, String key) throws SystemException {
+	public void validateKV(State st, @Nonnull String key) throws SystemException {
 		if (Modules.getKVDefinition(st, key) == null) {
 			throw new SystemException("KV key " + key + " in module " + getName() + " does not exist");
 		}

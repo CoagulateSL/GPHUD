@@ -138,7 +138,7 @@ public class State extends DumpableState {
 	public State() {}
 
 
-	public State(HttpRequest req, HttpResponse resp, HttpContext context) {
+	public State(@Nullable HttpRequest req, @Nullable HttpResponse resp, @Nullable HttpContext context) {
 		this.req = req;
 		this.resp = resp;
 		this.context = context;
@@ -152,7 +152,7 @@ public class State extends DumpableState {
 		this.zone = c.getZone();
 	}
 
-	public State(Instance i, Region r, Zone z, @Nonnull Char c) {
+	public State(@Nullable Instance i, @Nullable Region r, @Nullable Zone z, @Nonnull Char c) {
 		this.instance = i;
 		this.region = r;
 		this.zone = z;
@@ -323,21 +323,24 @@ public class State extends DumpableState {
 	}
 
 	@Nullable
-	public User getAvatar() { return avatar; }
+	public User getAvatarNullable() { return avatar; }
 
-	public void setAvatar(User avatar) {
-		this.avatar = avatar;
+	@Nonnull
+	public User getAvatar() {
+		if (avatar==null) { throw new UserException("There is no logged in avatar"); }
+		return avatar;
 	}
 
-	@Nullable
-	public User avatar() { return avatar; }
+	public void setAvatar(@Nullable User avatar) {
+		this.avatar = avatar;
+	}
 
 	/**
 	 * Return the Instance object associated with this connection.
 	 *
 	 * @return Instance object
 	 */
-	@Nullable
+	@Nonnull
 	public Instance getInstance() {
 		Instance i = getInstanceNullable();
 		if (i == null) { throw new UserException("No instance has been selected"); }

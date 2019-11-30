@@ -45,8 +45,8 @@ public abstract class ViewAvatar {
 	public static void viewAvatar(@Nonnull State st, SafeMap values, @Nonnull User a) throws UserException, SystemException {
 		boolean fullinstance = false;
 		boolean full = false;
-		String tz = st.avatar().getTimeZone();
-		if (st.avatar() == a) {
+		String tz = st.getAvatarNullable().getTimeZone();
+		if (st.getAvatarNullable() == a) {
 			fullinstance = true;
 			full = true;
 		}
@@ -80,7 +80,7 @@ public abstract class ViewAvatar {
 			st.form.add(table);
 
 
-			if (st.avatar() != null && st.avatar() == a) {
+			if (st.getAvatarNullable() != null && st.getAvatarNullable() == a) {
 				kvtable.add(new Form(st, true, "../settimezone", "Set TimeZone", "timezone", tz));
 			}
 			//for (String key:kv.keySet()) {
@@ -91,7 +91,7 @@ public abstract class ViewAvatar {
 				f.add("<p><i>SYSTEM is a fake avatar used internally as an 'Invoking Avatar' for commands that usually require an active Avatar/Character, but there is no appropriate caller, e.g. Visitation XP is awarded by the SYSTEM avatar to prevent confusion and clutter in some other character/avatar's audit log</i></p>");
 			}
 			f.add(new TextSubHeader("Audit Trail"));
-			f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), a, null), st.avatar().getTimeZone()));
+			f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), a, null), st.getAvatarNullable().getTimeZone()));
 		}
 	}
 
@@ -105,7 +105,7 @@ public abstract class ViewAvatar {
 	public static Response setTZ(@Nonnull State st,
 	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", choiceMethod = "getTimeZones")
 			                             String timezone) {
-		st.avatar().setTimeZone(timezone);
+		st.getAvatarNullable().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");
 	}
 

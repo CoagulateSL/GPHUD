@@ -15,7 +15,7 @@ public class BCAvatar extends ByteCodeDataType {
 	private User content=null; @Nullable
 	public User getContent() { return content; }
 	public BCAvatar(ParseNode n) { super(n); }
-	public BCAvatar(ParseNode node,User content) {
+	public BCAvatar(ParseNode node, @Nullable User content) {
 		super(node);
 		this.content=content; }
 	@Nonnull
@@ -44,20 +44,20 @@ public class BCAvatar extends ByteCodeDataType {
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType subtract(ByteCodeDataType var) {
+	public ByteCodeDataType subtract(@Nonnull ByteCodeDataType var) {
 		// never makes sense
 		throw new GSInvalidExpressionException("Can not perform subtraction on a BCAvatar");
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType multiply(ByteCodeDataType var) {
+	public ByteCodeDataType multiply(@Nonnull ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can not perform multiplication on a BCAvatar");
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType divide(ByteCodeDataType var) {
+	public ByteCodeDataType divide(@Nonnull ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can not perform division on a BCAvatar");
 	}
 

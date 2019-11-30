@@ -20,8 +20,8 @@ public class Distribution {
 			json.put("incommand", "broadcast");
 			json.put("subcommand", "giveitemprefix");
 			json.put("itemtogive", "GPHUD Region Server");
-			json.put("givetoname", st.getAvatar().getName());
-			json.put("giveto", st.getAvatar().getUUID());
+			json.put("givetoname", st.getAvatarNullable().getName());
+			json.put("giveto", st.getAvatarNullable().getUUID());
 			Region.find("Cerasi",false).sendServerSync(json);
 		}
 		catch (UserException e) {
@@ -35,7 +35,7 @@ public class Distribution {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
 		json.put("itemname", "GPHUD Remote Dispenser");
-		json.put("giveto", st.getAvatar().getUUID());
+		json.put("giveto", st.getAvatarNullable().getUUID());
 		st.getRegion().sendServer(json);
 		return new OKResponse("A remote dispenser is being set to you by your region server");
 	}

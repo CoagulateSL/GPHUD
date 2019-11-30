@@ -65,7 +65,7 @@ public abstract class Login {
 		Char character = PrimaryCharacters.getPrimaryCharacter(st, autocreate);
 		if (character == null) {
 			if (autocreate) {
-				throw new UserException("Failed to get/create a character for user " + st.avatar());
+				throw new UserException("Failed to get/create a character for user " + st.getAvatarNullable());
 			} // autocreate or die :P
 			// if not auto create, offer "characters.create" i guess
 			JSONResponse response = new JSONResponse(Modules.getJSONTemplate(st, "characters.create"));
@@ -77,7 +77,7 @@ public abstract class Login {
 		st.getCharacter().setURL(url);
 		Region region = st.getRegion();
 		st.getCharacter().setRegion(region);
-		character.setPlayedBy(st.avatar());
+		character.setPlayedBy(st.getAvatarNullable());
 		State simulate = st.simulate(character);
 		String initscript=simulate.getKV("Instance.CharInitScript").toString();
 		String loginmessage="";
@@ -163,7 +163,7 @@ public abstract class Login {
 		}
 		JSONObject registeringjson = new JSONObject().put("incommand", "registering");
 		String regmessage = "";
-		if (st.getInstance().getOwner().getId() == st.getAvatar().getId()) {
+		if (st.getInstance().getOwner().getId() == st.getAvatarNullable().getId()) {
 			// is instance owner
 			regmessage = GPHUD.serverVersion() + " [https://coagulate.sl/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 			if (st.getRegion().needsUpdate()) {
@@ -183,7 +183,7 @@ public abstract class Login {
 			region.recordHUDVersion(st, version, versiondate, versiontime);
 		}
 		Instance instance = st.getInstance();
-		String cookie = Cookies.generate(st.avatar(), st.getCharacter(), instance, true);
+		String cookie = Cookies.generate(st.getAvatarNullable(), st.getCharacter(), instance, true);
 		JSONObject legacymenu = Modules.getJSONTemplate(st, "menus.main");
 		JSONObject rawresponse = new JSONObject();
 		if (st.hasModule("Experience")) {
@@ -229,17 +229,17 @@ public abstract class Login {
 		try {
 			User user = User.findOptional(charactername);
 			if (user != null) {
-				if (user != st.avatar()) {
+				if (user != st.getAvatarNullable()) {
 					return new ErrorResponse("You may not name a character after an avatar, other than yourself");
 				}
 			}
 		} catch (NoDataException e) {}
 		boolean autoname = st.getKV("Instance.AutoNameCharacter").boolValue();
-		if (autoname && !st.avatar().getName().equalsIgnoreCase(charactername)) {
+		if (autoname && !st.getAvatarNullable().getName().equalsIgnoreCase(charactername)) {
 			return new ErrorResponse("You must name your one and only character after your avatar");
 		}
 		int maxchars = st.getKV("Instance.MaxCharacters").intValue();
-		if (maxchars <= Char.getCharacters(st.getInstance(), st.avatar()).size() && !st.hasPermission("Characters.ExceedCharLimits")) {
+		if (maxchars <= Char.getCharacters(st.getInstance(), st.getAvatarNullable()).size() && !st.hasPermission("Characters.ExceedCharLimits")) {
 			return new ErrorResponse("You are not allowed more than " + maxchars + " active characters");
 		}
 		boolean charswitchallowed = st.getKV("Instance.CharacterSwitchEnabled").boolValue();
@@ -258,7 +258,7 @@ public abstract class Login {
 	                              @Nullable @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load")
 			                              Char character) {
 		if (character == null) { return new ErrorResponse("No such character"); }
-		if (character.getOwner() != st.avatar()) { return new ErrorResponse("That character does not belong to you"); }
+		if (character.getOwner() != st.getAvatarNullable()) { return new ErrorResponse("That character does not belong to you"); }
 		boolean charswitchallowed = st.getKV("Instance.CharacterSwitchEnabled").boolValue();
 		if (!charswitchallowed) {
 			return new ErrorResponse("You are not allowed to create or switch characters in this location");

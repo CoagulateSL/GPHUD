@@ -123,8 +123,8 @@ public abstract class Templater {
 
 	@Template(name = "AVATAR", description = "Avatar Name")
 	public static String getAvatarName(@Nonnull State st, String key) {
-		if (st.avatar() == null) { return ""; }
-		return st.avatar().getName();
+		if (st.getAvatarNullable() == null) { return ""; }
+		return st.getAvatarNullable().getName();
 	}
 
 	@Nonnull

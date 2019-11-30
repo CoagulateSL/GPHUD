@@ -91,7 +91,7 @@ public class Form implements Renderable {
 	@Nullable
 	public String getAction() { return action; }
 
-	public void setAction(String a) { action = a; }
+	public void setAction(@Nullable String a) { action = a; }
 
 	@Nonnull
 	@Override

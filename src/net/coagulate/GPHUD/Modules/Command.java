@@ -360,7 +360,7 @@ public abstract class Command {
 					if (st.getInstance() == null) {
 						return new ErrorResponse("Avatar context required and you are not connected to an instance.");
 					}
-					if (st.avatar() == null) {
+					if (st.getAvatarNullable() == null) {
 						return new ErrorResponse("Avatar context required, your request is lacking an avatar registration");
 					}
 					break;
@@ -485,7 +485,7 @@ public abstract class Command {
 					json.put("arg" + arg + "type", "TEXTBOX");
 					break;
 				case CHARACTER_PLAYABLE:
-					Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatar());
+					Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
 					if (options.size() > 12) {
 						json.put("arg" + arg + "type", "TEXTBOX");
 					} else {

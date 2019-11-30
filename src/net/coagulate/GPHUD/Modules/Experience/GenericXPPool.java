@@ -55,7 +55,7 @@ public class GenericXPPool extends Pool {
 			if (incontext) {
 				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by " + st.getCharacter().getName() + " for " + reason);
 			} else {
-				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by ((" + st.getAvatar().getName() + ")) for " + reason);
+				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by ((" + st.getAvatarNullable().getName() + ")) for " + reason);
 			}
 		}
 	}

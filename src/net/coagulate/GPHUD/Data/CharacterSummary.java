@@ -80,7 +80,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		if (retired) { r.setbgcolor("#ffe0e0"); }
 		r.add(Char.getLink(name, "characters", id));
 		r.add(User.getGPHUDLink(ownername, ownerid));
-		String tz = st.avatar().getTimeZone();
+		String tz = st.getAvatarNullable().getTimeZone();
 		r.add(fromUnixTime(lastactive, tz) + " " + tz);
 		r.add(online);
 		r.add(duration(totalvisits));

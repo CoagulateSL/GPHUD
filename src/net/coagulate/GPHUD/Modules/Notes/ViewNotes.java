@@ -35,7 +35,7 @@ public class ViewNotes {
 		Form f=st.form;
 		f.add(new TextSubHeader("Administrator Notes (Last three only)"));
 		if (!notes.isEmpty()) {
-			f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
+			f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));
 			Table buttons=new Table();
 			if (st.hasPermission("Notes.Add")) {
 				f.noForm();
@@ -76,13 +76,13 @@ public class ViewNotes {
 		boolean admin=false;
 		if (st.hasPermission("Notes.View")) { admin=true; }
 		if (!admin) {
-			if (st.getAvatar()!=target.getOwner()) {
+			if (st.getAvatarNullable()!=target.getOwner()) {
 				throw new UserException("You can only view your own character");
 			}
 		}
 		Form f=st.form;
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatar().getTimeZone()));
+		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatarNullable().getTimeZone()));
 	}
 	@URLs(url="/Notes/ViewUser/*")
 	public static void viewUser(@Nonnull State st, SafeMap values) throws UserException,SystemException {
@@ -95,20 +95,20 @@ public class ViewNotes {
 		boolean admin=false;
 		if (st.hasPermission("Notes.View")) { admin=true; }
 		if (!admin) {
-			if (st.getAvatar()!=target) {
+			if (st.getAvatarNullable()!=target) {
 				throw new UserException("You can only view your own character");
 			}
 		}
 		Form f=st.form;
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
+		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatarNullable().getTimeZone()));
 	}
 	@URLs(url ="/Notes/ViewAll",requiresPermission = "Notes.View")
 	public static void viewAll(@Nonnull State st, SafeMap values)  throws UserException, SystemException {
 		Form f=st.form;
 		List<AdminNotes.AdminNote> notes = AdminNotes.get(st.getInstance());
 		f.add(new TextHeader("Admin Notes Log"));
-		f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
+		f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));
 	}
 
 	@Nonnull

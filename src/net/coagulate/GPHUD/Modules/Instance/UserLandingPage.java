@@ -29,7 +29,7 @@ public abstract class UserLandingPage {
 			return;
 		}
 		if (st.getCharacterNullable() == null) {
-			Set<Char> chars = Char.getCharacters(st.getInstance(), st.avatar());
+			Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
 			if (chars.size() == 1) {
 				st.setCharacter(chars.iterator().next());
 				st.cookie.setCharacter(st.getCharacter());

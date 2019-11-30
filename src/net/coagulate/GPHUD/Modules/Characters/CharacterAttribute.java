@@ -96,7 +96,7 @@ public abstract class CharacterAttribute extends Attribute {
 	@Override
 	public String getKVIdField() { return null; }
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		validate();
 	}
 

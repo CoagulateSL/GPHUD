@@ -48,11 +48,17 @@ public class GPHUD {
 
 	public static Logger getLogger(String subspace) { return Logger.getLogger(log.getName() + "." + subspace); }
 
-	@Nullable
-	public static Logger getLogger() { return log; }
+	@Nonnull
+	public static Logger getLogger() {
+		if (log==null) { throw new SystemException("Accessing logger before logger is initialised"); }
+		return log;
+	}
 
-	@Nullable
-	public static DBConnection getDB() { return db; }
+	@Nonnull
+	public static DBConnection getDB() {
+		if (db==null) { throw new SystemException("Calling DB before DB is initialised"); }
+		return db;
+	}
 
 	// return codes
 	// 1 - configurational problem during startup
@@ -266,7 +272,7 @@ public class GPHUD {
 					State st=State.getNonSpatial(ch);
 					Integer howmany=getDB().dqi(true,"select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
 					if (howmany>0) {
-						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName()+", not reported as region leaver.");
+						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatarNullable().getName()+" as character "+st.getCharacter().getName()+", not reported as region leaver.");
 					}
 					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
 					getDB().d("update objects set url=null where url=?",url);

@@ -44,7 +44,7 @@ public class Connect {
 			ot.payload(st,response);
 		}
 		if (!st.json.has("silent")) {
-			response.put("message","Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatar()+"\nCharacter: "+st.getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour);
+			response.put("message","Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatarNullable()+"\nCharacter: "+st.getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour);
 		}
 		return new JSONResponse(response);
 	}

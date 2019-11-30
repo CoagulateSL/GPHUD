@@ -37,7 +37,7 @@ public class MenuModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Command getCommand(@Nonnull State st, String commandname) {
+	public Command getCommand(@Nonnull State st, @Nonnull String commandname) {
 		return new MenuCommand(st, commandname, Menus.getMenu(st, commandname).getJSON());
 	}
 

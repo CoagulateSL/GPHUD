@@ -38,7 +38,7 @@ public class ObjectManagement {
 			if (obj!=null) {
 				obj.validate(st);
 				JSONObject reboot=new JSONObject();
-				reboot.put("reboot","Rebooted via web site by "+st.getAvatar());
+				reboot.put("reboot","Rebooted via web site by "+st.getAvatarNullable());
 				new Transmission(obj,reboot).start();
 				f.add("<p><i>Rebooted object "+obj.getName()+" "+uuid+"</i></p>");
 				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Reboot",obj.getName(),"","","Rebooted object "+uuid);
@@ -50,7 +50,7 @@ public class ObjectManagement {
 			if (obj!=null) {
 				obj.validate(st);
 				JSONObject shutdown=new JSONObject();
-				shutdown.put("shutdown","Shutdown via web site by "+st.getAvatar());
+				shutdown.put("shutdown","Shutdown via web site by "+st.getAvatarNullable());
 				new Transmission(obj,shutdown).start();
 				f.add("<p><i>Shutdown object "+obj.getName()+" "+uuid+"</i></p>");
 				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Shutdown",obj.getName(),"","","Shutdown object "+uuid);
@@ -100,7 +100,7 @@ public class ObjectManagement {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
 		json.put("itemname", "GPHUD Object Driver");
-		json.put("giveto", st.getAvatar().getUUID());
+		json.put("giveto", st.getAvatarNullable().getUUID());
 		st.getRegion().sendServer(json);
 		return new OKResponse("OK - Sent you an Object Driver script");
 	}

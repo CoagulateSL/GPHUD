@@ -15,7 +15,7 @@ public class BCCharacter extends ByteCodeDataType {
 	@Nullable
 	private Char content=null; @Nullable
 	public Char getContent() { return content; }
-	public BCCharacter(ParseNode n, Char content) { super(n); this.content=content; }
+	public BCCharacter(ParseNode n, @Nullable Char content) { super(n); this.content=content; }
 	@Nonnull
 	public String explain() { return "Character ("+content+")"; }
 	public void toByteCode(@Nonnull List<Byte> bytes) {
@@ -41,19 +41,19 @@ public class BCCharacter extends ByteCodeDataType {
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType subtract(ByteCodeDataType var) {
+	public ByteCodeDataType subtract(@Nonnull ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can't subtract with BCCharacter");
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType multiply(ByteCodeDataType var) {
+	public ByteCodeDataType multiply(@Nonnull ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can't multiply with BCCharacter");
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType divide(ByteCodeDataType var) {
+	public ByteCodeDataType divide(@Nonnull ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can't divide with BCCharacter");
 	}
 

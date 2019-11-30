@@ -83,7 +83,7 @@ public class EventsPages {
 			z.openRow().add(new Cell(new Form(st, true, "./addlocation", "Add Zone", "event", e.getName()), 2));
 		}
 
-		String tz = st.avatar().getTimeZone();
+		String tz = st.getAvatarNullable().getTimeZone();
 		//f.add(new TextSubHeader("Schedule"));
 		Set<EventSchedule> schedule = e.getSchedule();
 		Table sch = new Table();
@@ -128,7 +128,7 @@ public class EventsPages {
 	@URLs(url = "/event/addschedule", requiresPermission = "events.schedule")
 	public static void addSchedule(@Nonnull State st, @Nonnull SafeMap values) {
 		String eventname = values.get("event");
-		String defaulttz = st.avatar().getTimeZone();
+		String defaulttz = st.getAvatarNullable().getTimeZone();
 		Event event = Event.find(st.getInstance(), eventname);
 		event.validate(st);
 		if ("Add".equals(values.get("Add"))) {
@@ -146,7 +146,7 @@ public class EventsPages {
 		Form f = st.form;
 		f.add(new Hidden("event", eventname));
 		f.add(new TextSubHeader("Schedule event " + eventname));
-		String tz = st.avatar().getTimeZone();
+		String tz = st.getAvatarNullable().getTimeZone();
 		Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("").add("DD").add("MM").add("YYYY").add("HH").add("MM"));

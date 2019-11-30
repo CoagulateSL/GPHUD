@@ -249,7 +249,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			return new ErrorResponse("Region not registered, only pre-registration commands may be run");
 		}
 		// only the server's owner can run these commands, call them the pre-reg commands
-		if (st.avatar() != st.sourceowner) {
+		if (st.getAvatarNullable() != st.sourceowner) {
 			return new ErrorResponse("Command not authorised.  Must be Server's owner for pre-registration commands.");
 		}
 
@@ -259,7 +259,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			console = console.substring(1);
 		}
 		if (console.startsWith("createinstance ")) {
-			User ava = st.avatar();
+			User ava = st.getAvatarNullable();
 			if (ava == null) { return new ErrorResponse("Null avatar associated with request??"); }
 			boolean ok = false;
 			if (ava.isSuperAdmin()) { ok = true; }
@@ -268,7 +268,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");
 			}
 			console = console.replaceFirst("createinstance ", "");
-			try { Instance.create(console, st.avatar()); } catch (UserException e) {
+			try { Instance.create(console, st.getAvatarNullable()); } catch (UserException e) {
 				return new ErrorResponse("Instance registration failed: " + e.getMessage());
 			}
 			Instance instance = Instance.find(console);
@@ -292,7 +292,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (console.startsWith("joininstance ")) {
 			console = console.replaceFirst("joininstance ", "");
 			Instance instance = Instance.find(console);
-			if (instance != null && instance.getOwner() != st.avatar()) {
+			if (instance != null && instance.getOwner() != st.getAvatarNullable()) {
 				return new ErrorResponse("Instance exists and does not belong to you");
 			}
 			if (instance == null) { return new ErrorResponse("Failed to find named instance, see *listinstances"); }
@@ -308,7 +308,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		if (console.startsWith("listinstances")) {
 			StringBuilder response = new StringBuilder("Instances:\n");
-			Set<Instance> instances = Instance.getInstances(st.avatar());
+			Set<Instance> instances = Instance.getInstances(st.getAvatarNullable());
 			for (Instance i : instances) { response.append(i.getName()).append("\n"); }
 			return new OKResponse(response.toString());
 		}

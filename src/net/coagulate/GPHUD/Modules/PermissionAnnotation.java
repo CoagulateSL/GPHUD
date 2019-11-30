@@ -17,7 +17,7 @@ public class PermissionAnnotation extends Permission {
 	@Nullable
 	private String modulename=null;
 
-	public PermissionAnnotation(Permissions m,String modulename) {
+	public PermissionAnnotation(Permissions m, @Nullable String modulename) {
 		meta = m;
 		generated = false;
 		this.modulename=modulename;

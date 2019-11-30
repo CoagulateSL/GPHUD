@@ -44,7 +44,7 @@ public class Transmission extends Thread {
 	public boolean failed() { return !succeeded; }
 	@Nullable
 	StackTraceElement[] caller=null;
-	public Transmission(Char character, @Nonnull JSONObject json, String oldurl) {
+	public Transmission(@Nullable Char character, @Nonnull JSONObject json, @Nullable String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to character " + character + " on url " + oldurl + " with json " + json.toString());
 			Thread.dumpStack();
@@ -55,7 +55,7 @@ public class Transmission extends Thread {
 		this.json = json;
 	}
 
-	public Transmission (Objects obj, @Nonnull JSONObject json) {
+	public Transmission (@Nullable Objects obj, @Nonnull JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to object " + obj + " with json " + json.toString());
 			Thread.dumpStack();
@@ -89,7 +89,7 @@ public class Transmission extends Thread {
 		this.json = json;
 	}
 
-	public Transmission(@Nonnull Region region, JSONObject message) {
+	public Transmission(@Nonnull Region region, @Nullable JSONObject message) {
 		if (debugspawn) {
 			System.out.println("Transmission to region " + region + " with json " + json.toString());
 			Thread.dumpStack();
@@ -100,7 +100,7 @@ public class Transmission extends Thread {
 		json = message;
 	}
 
-	public Transmission(@Nonnull Region region, JSONObject message, int i) {
+	public Transmission(@Nonnull Region region, @Nullable JSONObject message, int i) {
 		if (debugspawn) {
 			System.out.println("Transmission to region " + region + " with json " + json.toString());
 			Thread.dumpStack();
@@ -112,7 +112,7 @@ public class Transmission extends Thread {
 		json = message;
 	}
 
-	public Transmission(Region r, JSONObject message, String oldurl) {
+	public Transmission(Region r, @Nullable JSONObject message, @Nullable String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to region " + region + " on url " + oldurl + " with json " + json.toString());
 			Thread.dumpStack();
@@ -122,7 +122,7 @@ public class Transmission extends Thread {
 		json = message;
 	}
 
-	public Transmission(Char aChar, JSONObject ping, String url, int i) {
+	public Transmission(Char aChar, @Nullable JSONObject ping, @Nullable String url, int i) {
 		if (debugspawn) {
 			System.out.println("DELAYED Transmission to character " + aChar + " on url " + url + " with delay " + i + " and json " + json.toString());
 			Thread.dumpStack();

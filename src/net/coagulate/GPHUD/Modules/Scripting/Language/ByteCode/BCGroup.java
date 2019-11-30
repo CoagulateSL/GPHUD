@@ -13,7 +13,7 @@ public class BCGroup extends ByteCodeDataType {
 	@Nullable
 	private CharacterGroup content=null;
 	public BCGroup(ParseNode node) { super(node); }
-	public BCGroup(ParseNode node,CharacterGroup content) { super(node); this.content=content; }
+	public BCGroup(ParseNode node, @Nullable CharacterGroup content) { super(node); this.content=content; }
 	@Nonnull
 	public String explain() { return "Group ("+content+")"; }
 	public void toByteCode(@Nonnull List<Byte> bytes) {

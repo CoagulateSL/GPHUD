@@ -85,7 +85,7 @@ public class ExperienceModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public void validatePermission(State st, String permission) {
+	public void validatePermission(State st, @Nonnull String permission) {
 		// really can't validate these as they can be dynamic
 	}
 
@@ -127,7 +127,7 @@ public class ExperienceModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public Pool getPool(State st, String itemname) {
+	public Pool getPool(State st, @Nonnull String itemname) {
 		Map<String, Pool> pmap = getPoolMap(st);
 		for (Map.Entry<String, Pool> entry : pmap.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }

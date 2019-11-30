@@ -18,7 +18,7 @@ public abstract class ByteCode {
 
 	@Nullable
 	private ParseNode sourcenode=null;
-	public ByteCode(ParseNode n) { sourcenode=n; }
+	public ByteCode(@Nullable ParseNode n) { sourcenode=n; }
 	@Nonnull
 	public ByteCode node(ParseNode n)
 	{ sourcenode=n; return this; }

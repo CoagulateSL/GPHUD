@@ -188,7 +188,7 @@ public class CharactersModule extends ModuleAnnotation {
 	//Map<String,KV> base=new TreeMap<>();
 	@Override
 	@Deprecated
-	public void registerKV(KV a) throws UserException {
+	public void registerKV(@Nonnull KV a) throws UserException {
 		throw new SystemException("It is no longer permitted to have manual registrations inside Characters module");
 	}
 

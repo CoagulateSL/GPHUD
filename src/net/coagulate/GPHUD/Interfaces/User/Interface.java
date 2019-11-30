@@ -307,12 +307,12 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		StringBuilder s = new StringBuilder();
 		s.append(GPHUD.menuPanelEnvironment()).append("<hr width=150px>");
 		boolean loggedin = true;
-		if (st.getCharacterNullable() != null || st.getAvatar() != null) {
+		if (st.getCharacterNullable() != null || st.getAvatarNullable() != null) {
 			s.append("<b>Avatar:</b> ");
 			//if (st.user!=null) s+="[<a href=\"/GPHUD/switch/avatar\">Switch</a>]"; // you can only switch avis if you're a logged in user, as thats what binds avis
 			s.append("<br>");
-			if (st.avatar() != null) {
-				s.append(st.avatar().getGPHUDLink()).append("<br>");
+			if (st.getAvatarNullable() != null) {
+				s.append(st.getAvatarNullable().getGPHUDLink()).append("<br>");
 			} else { s.append("<i>none</i><br>"); }
 
 
@@ -337,7 +337,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		s.append("<hr width=150px>");
 		s.append("<a href=\"/GPHUD/\">Index</a><br><br>");
 		boolean dynamics = true;
-		if (st.avatar() == null) {
+		if (st.getAvatarNullable() == null) {
 			s.append("<i>Select an avatar</i><br>");
 			dynamics = false;
 		}
@@ -585,7 +585,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	private Form characterSelectionHook(@Nonnull State st, @Nonnull Map<String, String> values) {
 		if (1 == 1) { return null; }
 		if (st.getCharacter() != null) { return null; } // already have one from cookie etc
-		Set<Char> characters = Char.getCharacters(st.getInstance(), st.getAvatar());
+		Set<Char> characters = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
 		//if (characters.isEmpty()) { Form f=new Form(); f.add("You have no active characters at any instances, please visit an instance to commence."); return f; }
 		// technically you should be able to do stuff as an avatar alone, but...
 		if (characters.isEmpty()) { return null; }

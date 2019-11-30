@@ -34,7 +34,7 @@ public abstract class ViewRegion {
 		st.form.add(map);
 		map.openRow().add("Name").add(r.getName());
 		map.openRow().add("Instance").add(r.getInstance());
-		map.openRow().add("Communications").add(r.getOnlineStatus(st.avatar().getTimeZone()));
+		map.openRow().add("Communications").add(r.getOnlineStatus(st.getAvatarNullable().getTimeZone()));
 		map.openRow().add("Server Version").add(r.getServerVersion(true));
 		map.openRow().add("HUD Version").add(r.getHUDVersion(true));
 		if (r.needsUpdate()) { map.openRow().add("").add(new Color("orange", "Update Required")); }

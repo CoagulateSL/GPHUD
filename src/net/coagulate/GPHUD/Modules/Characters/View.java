@@ -55,7 +55,7 @@ public abstract class View {
 		t.openRow();
 		t.add("Node").addNoNull((GPHUD.DEV ? "DEVELOPMENT // " : "Production // ") + Interface.getNode());
 		t.openRow();
-		t.add("Avatar").addNoNull(st.avatar().getGPHUDLink());
+		t.add("Avatar").addNoNull(st.getAvatarNullable().getGPHUDLink());
 		t.openRow();
 		t.add("Character").addNoNull(st.getCharacter());
 		t.openRow();
@@ -98,7 +98,7 @@ public abstract class View {
 	public static void viewCharacter(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Char c, boolean brief) throws UserException, SystemException {
 		boolean full = false;
 		State simulated = st.simulate(c);
-		String tz = st.avatar().getTimeZone();
+		String tz = st.getAvatarNullable().getTimeZone();
 		if (st.getCharacterNullable() == c) { full = true; }
 		if (st.hasPermission("Characters.ViewAll")) { full = true; }
 		Form f = st.form;
@@ -172,7 +172,7 @@ public abstract class View {
 		f.add(new TextSubHeader("KV Configuration"));
 		GenericConfiguration.page(st, values, c, simulated);
 		f.add(new TextSubHeader("Audit Trail"));
-		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), null, c), st.avatar().getTimeZone()));
+		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), null, c), st.getAvatarNullable().getTimeZone()));
 	}
 
 	@Nonnull

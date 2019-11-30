@@ -34,7 +34,7 @@ public class PrimaryCharacters {
 	@Nullable
 	public static Char getPrimaryCharacter(@Nonnull State st, boolean autocreate) {
 		Instance instance = st.getInstance();
-		User avatar = st.getAvatar();
+		User avatar = st.getAvatarNullable();
 		try {
 			return getPrimaryCharacter_internal(instance, avatar);
 		} catch (NoDataException e) {
@@ -59,8 +59,8 @@ public class PrimaryCharacters {
 
 	public static void setPrimaryCharacter(@Nonnull State st, @Nonnull Char c) {
 		c.validate(st);
-		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", st.avatar().getId(), st.getInstance().getId());
-		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.avatar().getId(), st.getInstance().getId(), c.getId());
+		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", st.getAvatarNullable().getId(), st.getInstance().getId());
+		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.getAvatarNullable().getId(), st.getInstance().getId(), c.getId());
 	}
 
 	public static void purge(@Nonnull Char ch) {

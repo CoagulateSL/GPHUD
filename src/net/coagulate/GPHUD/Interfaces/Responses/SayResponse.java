@@ -23,7 +23,7 @@ public class SayResponse implements Response {
 
 	public SayResponse(String r) { reason = r; }
 
-	public SayResponse(String r, String sayas) {
+	public SayResponse(String r, @Nullable String sayas) {
 		reason = r;
 		this.sayas = sayas;
 	}

@@ -19,7 +19,7 @@ public class TabularResponse extends Table implements Response {
 
 	public TabularResponse() {}
 
-	public TabularResponse(String message) { title = message; }
+	public TabularResponse(@Nullable String message) { title = message; }
 
 	@Nonnull
 	@Override

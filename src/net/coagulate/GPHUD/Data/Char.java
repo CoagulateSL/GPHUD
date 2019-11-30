@@ -150,7 +150,7 @@ public class Char extends TableRow {
 	}
 
 	public static void create(@Nonnull State st, String name) {
-		GPHUD.getDB().d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)", name, st.getInstance().getId(), st.getAvatar().getId(), getUnixTime(), 0);
+		GPHUD.getDB().d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)", name, st.getInstance().getId(), st.getAvatarNullable().getId(), getUnixTime(), 0);
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class Char extends TableRow {
 		int now = getUnixTime();
 
 		// update last used timer if we're the same URL and its more than 60 seconds since the last timer and we're done
-		if (oldurl != null && oldurl.equals(url)) {
+		if (url.equals(oldurl)) {
 			refreshURL(url);
 			return;
 		}
@@ -311,7 +311,7 @@ public class Char extends TableRow {
 	 * @param description Audit logged description
 	 */
 	public void addPool(@Nonnull State st, @Nonnull Pool p, int adjustment, String description) {
-		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)", getId(), p.fullName(), adjustment, st.getCharacter().getId(), st.avatar().getId(), description, getUnixTime());
+		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)", getId(), p.fullName(), adjustment, st.getCharacter().getId(), st.getAvatarNullable().getId(), description, getUnixTime());
 	}
 
 	/**
@@ -323,7 +323,7 @@ public class Char extends TableRow {
 	 * @param description Audit logged description
 	 */
 	public void addPoolAdmin(@Nonnull State st, @Nonnull Pool p, int adjustment, String description) {
-		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)", getId(), p.fullName(), adjustment, null, st.avatar().getId(), description, getUnixTime());
+		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)", getId(), p.fullName(), adjustment, null, st.getAvatarNullable().getId(), description, getUnixTime());
 	}
 
 	/**

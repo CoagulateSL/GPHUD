@@ -37,7 +37,7 @@ public class Set {
 		int setto=target;
 		st.setKV(st.getCharacter(),"health.health",setto+"");
 		st.purgeCache(st.getCharacter());
-		audit(st,Audit.OPERATOR.CHARACTER,st.getAvatar(),st.getCharacter(),"Set","Health",oldvalue,target+"","Set character their own health");
+		audit(st,Audit.OPERATOR.CHARACTER,st.getAvatarNullable(),st.getCharacter(),"Set","Health",oldvalue,target+"","Set character their own health");
 		return new SayResponse("set their health to "+target,st.getCharacter().getName());
 	}
 }

@@ -41,7 +41,7 @@ public class GSVM {
 		variables.clear();
 		simulation=false;
 		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
-		variables.put("AVATAR",new BCAvatar(null,st.getAvatar()));
+		variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
 		for (Map.Entry<String, ByteCodeDataType> entry : introductions.entrySet()) { variables.put(entry.getKey(), entry.getValue()); }
 	}
 
@@ -72,7 +72,7 @@ public class GSVM {
 		}
 	}
 
-	public GSVM(byte[] code) { bytecode = code; }
+	public GSVM(@Nullable byte[] code) { bytecode = code; }
 
 	@Nonnull
 	public String toHtml() {
