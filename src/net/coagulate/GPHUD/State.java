@@ -88,7 +88,7 @@ public class State extends DumpableState {
 	@Nullable
 	public String sourcename = null;
 	@Nullable
-	public User sourcedeveloper = null;
+	private User sourcedeveloper = null;
 	@Nullable
 	public Region sourceregion = null;
 	@Nullable
@@ -231,17 +231,20 @@ public class State extends DumpableState {
 	}
 
 	// requested uri
-	@Nullable
-	public String getFullURL() { return uri; }
+	@Nonnull
+	public String getFullURL() {
+		if (uri==null) { throw new SystemException("Attempted to get URI but it's null?"); }
+		return uri;
+	}
 
-	@Nullable
+	@Nonnull
 	public String getDebasedURL() {
-		if (uri == null) { return null; }
+		if (uri == null) { throw new SystemException("Attempted to get URI but it's null?"); }
 		if (uri.startsWith("/GPHUD/")) { return uri.substring(6); }
 		return uri;
 	}
 
-	@Nullable
+	@Nonnull
 	public String getDebasedNoQueryURL() {
 		String ret = getDebasedURL();
 		//System.out.println("Pre parsing:"+ret);
@@ -285,7 +288,7 @@ public class State extends DumpableState {
 	 *
 	 * @return Region object
 	 */
-	@Nullable
+	@Nonnull
 	public Region getRegion() {
 		Region r = getRegionNullable();
 		if (r == null) { throw new UserException("No region has been selected"); }
@@ -303,7 +306,7 @@ public class State extends DumpableState {
 		return region;
 	}
 
-	@Nullable
+	@Nonnull
 	public Char getCharacter() {
 		Char c = getCharacterNullable();
 		if (c == null) { throw new UserException("No character is selected"); }
@@ -493,7 +496,7 @@ public class State extends DumpableState {
 		return false;
 	}
 
-	@Nullable
+	@Nonnull
 	public KV getKVDefinition(String kvname) {
 		return Modules.getKVDefinition(this, kvname);
 	}
@@ -748,7 +751,7 @@ public class State extends DumpableState {
 	 *
 	 * @return Set of ALL character attributes, not just writable ones in the DB...
 	 */
-	@Nullable
+	@Nonnull
 	public Set<Attribute> getAttributes() {
 		if (attributes != null) { return attributes; }
 		attributes = new TreeSet<>();
@@ -854,6 +857,21 @@ public class State extends DumpableState {
 			if (cookie.getAvatar()!=avatar) { cookie.setAvatar(avatar); }
 			if (cookie.getInstance()!=instance) { cookie.setInstance(instance); }
 		}
+	}
+
+	public Form form() {
+		if (form==null) { throw new SystemException("Getting form but no form defined?"); }
+		return form;
+	}
+
+	@Nonnull
+	public User getSourcedeveloper() {
+		if (sourcedeveloper==null) { throw new SystemException("There is no source developer!"); }
+		return sourcedeveloper;
+	}
+
+	public void setSourcedeveloper(@Nullable User sourcedeveloper) {
+		this.sourcedeveloper = sourcedeveloper;
 	}
 
 

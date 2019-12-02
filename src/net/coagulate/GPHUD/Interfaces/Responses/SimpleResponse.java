@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
@@ -28,11 +29,13 @@ public class SimpleResponse implements Response {
 		return message;
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return message;
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		return message;

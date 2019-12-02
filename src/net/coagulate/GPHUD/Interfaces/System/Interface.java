@@ -133,7 +133,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			return new TerminateResponse("Developer key is not known");
 		}
 		st.json.remove("developerkey");
-		st.sourcedeveloper = developer;
+		st.setSourcedeveloper(developer);
 
 
 		// extract SL headers
@@ -240,8 +240,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// note connections from non-registered regions are cause to SUSPEND operation, unless you're a GPHUD Server, cos they do 'registration'
 		// if we're a "GPHUD Server" of some kind from dev id 1 then... bob's ya uncle, dont suspend :P
 		String regionname = st.getRegionName();
-		if (st.sourcedeveloper.getId() != 1 || !st.sourcename.startsWith("GPHUD Region Server")) {
-			GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting with " + st.sourcename + " from developer " + st.sourcedeveloper + " owner by " + st.sourceowner);
+		if (st.getSourcedeveloper().getId() != 1 || !st.sourcename.startsWith("GPHUD Region Server")) {
+			GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting with " + st.sourcename + " from developer " + st.getSourcedeveloper() + " owner by " + st.sourceowner);
 			return new TerminateResponse("Region not registered.");
 		}
 		GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting, recognised as GPHUD server owned by " + st.sourceowner);

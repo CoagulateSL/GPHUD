@@ -111,7 +111,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	}
 
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String getName() {
 		throw new SystemException("Override this method!");

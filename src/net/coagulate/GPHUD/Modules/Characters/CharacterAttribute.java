@@ -19,7 +19,7 @@ public abstract class CharacterAttribute extends Attribute {
 
 	protected CharacterAttribute(int id) {super(id); } //throw new SystemException("Not valid on auto generated attribute");}
 
-	@Nullable
+	@Nonnull
 	public abstract String getName();
 
 	@Nonnull

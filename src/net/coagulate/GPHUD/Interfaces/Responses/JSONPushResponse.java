@@ -41,7 +41,7 @@ public class JSONPushResponse implements Response {
 		return"<A JSON Push Response>";
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		Transmission t = new Transmission((Char) null, json, url);
@@ -49,7 +49,7 @@ public class JSONPushResponse implements Response {
 		return nonjson.asText(st);
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		Transmission t = new Transmission((Char) null, json, url);
@@ -57,7 +57,7 @@ public class JSONPushResponse implements Response {
 		return nonjson.asHtml(st, rich);
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("JSONResponse can not be interrogated as a Form");

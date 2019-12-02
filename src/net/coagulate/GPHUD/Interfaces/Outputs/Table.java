@@ -66,7 +66,7 @@ public class Table implements Renderable {
 		return this;
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		StringBuilder res = new StringBuilder();
@@ -77,7 +77,7 @@ public class Table implements Renderable {
 		return res.toString();
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		StringBuilder s = new StringBuilder();
@@ -90,7 +90,7 @@ public class Table implements Renderable {
 		return s.toString();
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(table);

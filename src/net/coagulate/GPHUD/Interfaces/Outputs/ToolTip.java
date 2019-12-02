@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class ToolTip implements Renderable {
 		return "<div class=\"tooltip\">" + element + "<span class=\"tooltiptext\">" + tooltip.asHtml(st, rich) + "</span></div>";
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>();

@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class AttributeConfig {
 
-	@Nullable
+	@Nonnull
 	public static String blankNulls(@Nullable final String s) {
 		if (s == null) { return ""; }
 		return s;
@@ -44,7 +44,7 @@ public class AttributeConfig {
 	public static void configPage(@Nonnull State st, SafeMap values) { configPage(st, values, st.simulate(st.getCharacterNullable())); }
 
 	public static void configPage(@Nonnull State st, SafeMap values, State simulated) {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Defined Attributes"));
 		f.noForm();
 		Table at = new Table();

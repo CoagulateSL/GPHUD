@@ -6,6 +6,7 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -43,7 +44,7 @@ public class JSONResponse implements Response {
 		throw new SystemException("JSONResponse can not be converted to HTML");
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("JSONResponse can not be interrogated as a Form");

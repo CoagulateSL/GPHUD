@@ -25,7 +25,7 @@ public class Permissions {
 		Set<String> permissions = new TreeSet<>();
 		Results results = GPHUD.getDB().dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups.permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroupmembers.avatarid=?", i.getId(), u.getId());
 		for (ResultsRow r : results) {
-			permissions.add(r.getString());
+			permissions.add(r.getStringNullable());
 		}
 		return permissions;
 	}

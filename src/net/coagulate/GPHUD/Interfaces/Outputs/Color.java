@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ public class Color implements Renderable {
 		this.color = color;
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return content.asText(st);
@@ -34,7 +36,7 @@ public class Color implements Renderable {
 		return "<font color=\"" + color + "\">" + content.asHtml(st, rich) + "</font>";
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();

@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
@@ -13,9 +14,13 @@ import java.util.List;
 public class BCCharacter extends ByteCodeDataType {
 	public BCCharacter(ParseNode n) { super(n); }
 	@Nullable
-	private Char content=null; @Nullable
-	public Char getContent() { return content; }
-	public BCCharacter(ParseNode n, @Nullable Char content) { super(n); this.content=content; }
+	private Char content=null;
+	@Nonnull
+	public Char getContent() {
+		if (content==null) { throw new SystemException("Getting an uninitialised BCCharacter's contents"); }
+		return content;
+	}
+	public BCCharacter(ParseNode n, @Nonnull Char content) { super(n); this.content=content; }
 	@Nonnull
 	public String explain() { return "Character ("+content+")"; }
 	public void toByteCode(@Nonnull List<Byte> bytes) {
@@ -24,7 +29,7 @@ public class BCCharacter extends ByteCodeDataType {
 		addInt(bytes,content.getId());
 	}
 	@Nonnull
-	@Override public String htmlDecode() { return "Character</td><td>"+content.getId(); }
+	@Override public String htmlDecode() { return "Character</td><td>"+getContent().getId(); }
 
 	@Override
 	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
@@ -60,13 +65,13 @@ public class BCCharacter extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public BCString toBCString() {
-		return new BCString(node(),content.getName());
+		return new BCString(node(),getContent().getName());
 	}
 
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {
-		return new BCCharacter(node(),content);
+		return new BCCharacter(node(),getContent());
 	}
 
 	public boolean isOnline() {

@@ -17,6 +17,7 @@ import java.util.List;
 public class ScriptingCommand extends Command {
 	final Scripts script;
 	public ScriptingCommand(Scripts script) { this.script=script; }
+	@Nonnull
 	@Override
 	public Method getMethod() {
 		try { return this.getClass().getMethod("execute",State.class); }

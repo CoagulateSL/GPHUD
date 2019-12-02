@@ -23,17 +23,17 @@ public abstract class ByteCodeDataType extends ByteCode {
 	@Nullable
 	public ByteCodeDataType divide(@Nonnull ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not divide using type "+var.getClass().getSimpleName()); }
 
-	@Nullable
+	@Nonnull
 	public BCString toBCString() {
 		if (this.getClass().equals(BCString.class)) { return (BCString)this; }
 		throw new GSCastException("Can not cast "+this.getClass().getSimpleName()+" to BCString");
 	}
-	@Nullable
+	@Nonnull
 	public BCInteger toBCInteger() {
 		if (this.getClass().equals(BCInteger.class)) { return (BCInteger)this; }
 		throw new GSCastException("Can not cast "+this.getClass().getSimpleName()+" to BCInteger");
 	}
-	@Nullable
+	@Nonnull
 	public BCList toBCList() {
 		if (this.getClass().equals(BCList.class)) { return (BCList)this; } return new BCList(node(),this); }
 

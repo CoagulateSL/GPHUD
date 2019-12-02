@@ -47,7 +47,7 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public static Attribute find(@Nonnull Instance instance, String name) {
 		try {
-			Integer id = GPHUD.getDB().dqi("select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
+			int id = GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
 			return get(id);
 		} catch (NoDataException e) {
 			throw new UserException("Unable to find attribute '" + name + "' in instance '" + instance + "'",e);
@@ -60,7 +60,7 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public static Attribute findGroup(@NotNull Instance instance, String grouptype) {
 		try {
-			Integer id = GPHUD.getDB().dqi("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?", instance.getId(), grouptype);
+			int id = GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?", instance.getId(), grouptype);
 			return get(id);
 		} catch (NoDataException e) {
 			throw new UserException("Unable to find an attribute representing a group of type " + grouptype, e);
@@ -121,7 +121,7 @@ public class Attribute extends TableRow {
 	 *
 	 * @return The Instance object
 	 */
-	@Nullable
+	@Nonnull
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}

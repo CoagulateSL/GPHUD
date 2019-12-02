@@ -19,6 +19,7 @@ public class GenericXP extends QuotaedXP {
 		myname = name;
 	}
 
+	@Nonnull
 	public String getName() { return myname; }
 
 	@Nonnull

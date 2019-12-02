@@ -49,8 +49,11 @@ public class AliasCommand extends Command {
 
 	public JSONObject getDefinition() { return definition; }
 
-	@Nullable
-	public Command getTargetCommand() { return targetcommand; }
+	@Nonnull
+	public Command getTargetCommand() {
+		if (targetcommand==null) { throw new SystemException("Attempt to access null target command in Alias Command "+getName()); }
+		return targetcommand;
+	}
 
 	@Override
 	public Context context() {
@@ -201,10 +204,10 @@ public class AliasCommand extends Command {
 		return super.run(st, parametermap);
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public Method getMethod() {
-		if (targetcommand == null) { return null; }
+		if (targetcommand == null) { throw new SystemException("Unable to getMethod on null targetcommand"); }
 		return targetcommand.getMethod();
 	}
 

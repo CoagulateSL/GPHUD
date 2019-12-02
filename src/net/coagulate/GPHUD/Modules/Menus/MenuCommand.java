@@ -100,6 +100,7 @@ public class MenuCommand extends Command {
 		return Modules.getJSONTemplateResponse(st, definition.getString("command" + choice));
 	}
 
+	@Nonnull
 	@Override
 	public Method getMethod() {
 		try {

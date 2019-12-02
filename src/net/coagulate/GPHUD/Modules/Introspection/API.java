@@ -30,7 +30,7 @@ public abstract class API {
 		uri = uri.substring("/introspection/api/".length());
 
 		// if we get here, we're investigating a specific command
-		Form f = st.form;
+		Form f = st.form();
 		String proposedcommand = uri;
 		proposedcommand = proposedcommand.replaceAll("/", ".");
 		proposedcommand = proposedcommand.replaceAll("[^A-Za-z0-9\\.]", "");  // limited character set.  XSS protect etc blah blah tainted user input blah
@@ -97,7 +97,7 @@ public abstract class API {
 	@URLs(url = "/introspection/api/")
 	@SideSubMenus(name = "API", priority = 1)
 	public static void APIIndex(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		Table t = new Table();
 		//t.border(true);
 		f.add(t);

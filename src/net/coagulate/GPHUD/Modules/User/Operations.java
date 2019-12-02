@@ -26,7 +26,7 @@ public abstract class Operations {
 	public static Response setPassword(@Nonnull State st,
 	                                   @Nonnull @Arguments(description = "New password", type = ArgumentType.PASSWORD)
 			                                   String password) throws SystemException, UserException {
-		if (st.sourcedeveloper != null && st.sourcedeveloper.getId() != 1) {
+		if (st.getSourcedeveloper() != null && st.getSourcedeveloper().getId() != 1) {
 			throw new SystemException("RESTRICTED COMMAND");
 		}
 		if (st.getAvatarNullable() == null) {

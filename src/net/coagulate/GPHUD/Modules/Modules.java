@@ -282,10 +282,10 @@ public abstract class Modules {
 		return get(st, qualifiedname).getPermission(st, extractReference(qualifiedname));
 	}
 
-	@Nullable
-	public static KV getKVDefinition(State st, @Nullable String qualifiedname) throws UserException, SystemException {
+	@Nonnull
+	public static KV getKVDefinition(@Nonnull State st, @Nonnull String qualifiedname) throws UserException, SystemException {
 		KV kv = null;
-		if (qualifiedname == null) { throw new SystemException("Null qualified name for KV definition?"); }
+		//if (qualifiedname == null) { throw new SystemException("Null qualified name for KV definition?"); }
 		if (qualifiedname.toLowerCase().endsWith(".enabled")) {
 			kv = get(null, qualifiedname).getKVDefinition(st, extractReference(qualifiedname));
 		} else {

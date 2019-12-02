@@ -75,7 +75,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getLinkTarget();
 
-	@Nullable
+	@Nonnull
 	public String getName() {
 		try { return (String) cacheGet("name"); } catch (CacheMiss ex) {}
 		String name = getString(getNameField());
@@ -102,13 +102,13 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Override
 	public String toString() { return getNameSafe() + "[#" + getId() + "]"; }
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return getNameSafe();
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		if (!rich) { return getNameSafe(); }
@@ -173,7 +173,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		kvcheck();
 		Map<String, String> result = new TreeMap<>();
 		for (ResultsRow row : dq("select k,v from " + getKVTable() + " where " + getKVIdField() + "=?", getId())) {
-			result.put(row.getString("k").toLowerCase(), row.getString("v"));
+			result.put(row.getStringNullable("k").toLowerCase(), row.getStringNullable("v"));
 		}
 		return result;
 	}

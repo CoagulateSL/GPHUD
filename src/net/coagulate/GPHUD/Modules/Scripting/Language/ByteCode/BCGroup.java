@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
@@ -22,7 +23,7 @@ public class BCGroup extends ByteCodeDataType {
 		addInt(bytes,content.getId());
 	}
 	@Nonnull
-	@Override public String htmlDecode() { return "Avatar</td><td>"+content.getId(); }
+	@Override public String htmlDecode() { return "Avatar</td><td>"+getContent().getId(); }
 
 	@Override
 	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
@@ -30,7 +31,13 @@ public class BCGroup extends ByteCodeDataType {
 	}
 
 	@Nullable
-	public CharacterGroup getContent() { return content; }
+	public CharacterGroup getContentNullable() { return content; }
+
+	@Nonnull
+	public CharacterGroup getContent() {
+		if (content==null) { throw new SystemException("Group has no content (group)"); }
+		return content;
+	}
 
 	@Nullable
 	@Override

@@ -124,7 +124,7 @@ public class Region extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return Instance.get(getIntNullable("instanceid"));
 	}
 
 	@Nonnull
@@ -151,12 +151,8 @@ public class Region extends TableRow {
 	 * @return URL
 	 */
 	@Nullable
-	public String getURL(boolean permitnull) throws UserException {
-		String url = getString("url");
-		if (url == null) {
-			if (permitnull) { return null; } else { throw new UserException("This region has no callback URL"); }
-		}
-		return url;
+	public String getURLNullable() {
+		return getString("url");
 	}
 
 	/**
@@ -164,9 +160,13 @@ public class Region extends TableRow {
 	 *
 	 * @return
 	 */
-	@Nullable
-	public String getURL() throws UserException {
-		return getURL(false);
+	@Nonnull
+	public String getURL() {
+		String url=getURLNullable();
+		if (url == null) {
+			throw new UserException("This region has no callback URL");
+		}
+		return url;
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class Region extends TableRow {
 	 */
 	@Nullable
 	public Integer getURLLast() {
-		return getInt("urllast");
+		return getIntNullable("urllast");
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class Region extends TableRow {
 		Results db = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		// iterate over the current visits
 		for (ResultsRow row : db) {
-			int avatarid = row.getInt("avatarid");
+			int avatarid = row.getIntNullable("avatarid");
 			String name = User.get(avatarid).getName();
 			// make sure those visits are in the list of avatars
 			if (avatars.contains(name)) {
@@ -262,14 +262,14 @@ public class Region extends TableRow {
 				for (ResultsRow r : rows) {
 					State temp = new State();
 					temp.setInstance(st.getInstance());
-					temp.setCharacter(Char.get(r.getInt("characterid")));
+					temp.setCharacter(Char.get(r.getIntNullable("characterid")));
 					new VisitXP(-1).runAwards(st, temp.getCharacter());
 				}
 				int instanceid = this.getInstance().getId();
 				Results urls = dq("select url from characters where instanceid=? and playedby=? and url is not null", instanceid, avatarid);
 				// if the visitor (character) has URLs send them a ping, which will probably 404 and remove its self
 				for (ResultsRow row : urls) {
-					String url = row.getString("url");
+					String url = row.getStringNullable("url");
 					JSONObject ping = new JSONObject().put("incommand", "ping");
 					Transmission t = new Transmission(null, ping, url, 5);
 					t.start();
@@ -301,8 +301,8 @@ public class Region extends TableRow {
 			st.logger().log(SEVERE, "Failed to parse date time from " + versiondate + " " + versiontime, ex);
 		}
 		ResultsRow regiondata = dqone( "select region" + type + "version,region" + type + "datetime from regions where regionid=?", getId());
-		Integer oldversion = regiondata.getInt("region" + type + "version");
-		Integer olddatetime = regiondata.getInt("region" + type + "datetime");
+		Integer oldversion = regiondata.getIntNullable("region" + type + "version");
+		Integer olddatetime = regiondata.getIntNullable("region" + type + "datetime");
 		int newversion = Interface.convertVersion(version);
 		int newdatetime = (int) (d.getTime() / 1000.0);
 		if (oldversion == null || olddatetime == null || olddatetime < newdatetime || oldversion < newversion) {
@@ -375,7 +375,7 @@ public class Region extends TableRow {
 		Set<Char> characters = new TreeSet<>();
 		Results results = dq("select characterid from visits where regionid=? and endtime is null", getId());
 		for (ResultsRow r : results) {
-			characters.add(Char.get(r.getInt("characterid")));
+			characters.add(Char.get(r.getIntNullable("characterid")));
 		}
 		return characters;
 	}
@@ -384,7 +384,7 @@ public class Region extends TableRow {
 		Set<User> users = new HashSet<>();
 		Results results = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		for (ResultsRow r : results) {
-			try { users.add(User.get(r.getInt("avatarid"))); }
+			try { users.add(User.get(r.getIntNullable("avatarid"))); }
 			catch (Exception e) {}
 		}
 		return users;
@@ -400,7 +400,7 @@ public class Region extends TableRow {
 		Integer urllast = getURLLast();
 		if (isRetired()) { return "Retired"; }
 		if (urllast == null) { return "OFFLINE forever?"; }
-		if (getURL(true) == null || getURL(true).isEmpty()) {
+		if (getURLNullable() == null || getURLNullable().isEmpty()) {
 			return "OFFLINE for " + duration(getUnixTime() - urllast);
 		}
 		String authnode = getAuthNode();
@@ -429,7 +429,7 @@ public class Region extends TableRow {
 	@Nonnull
 	public String getServerVersion(boolean html) {
 		ResultsRow r = dqone( "select regionserverversion,regionserverdatetime from regions where regionid=?", getId());
-		return formatVersion(r.getInt("regionserverversion"), r.getInt("regionserverdatetime"), html);
+		return formatVersion(r.getIntNullable("regionserverversion"), r.getIntNullable("regionserverdatetime"), html);
 	}
 
 	/**
@@ -441,7 +441,7 @@ public class Region extends TableRow {
 	@Nonnull
 	public String getHUDVersion(boolean html) {
 		ResultsRow r = dqone( "select regionhudversion,regionhuddatetime from regions where regionid=?", getId());
-		return formatVersion(r.getInt("regionhudversion"), r.getInt("regionhuddatetime"), html);
+		return formatVersion(r.getIntNullable("regionhudversion"), r.getIntNullable("regionhuddatetime"), html);
 	}
 
 	/**
@@ -487,7 +487,7 @@ public class Region extends TableRow {
 	public Set<Zone> getZones() {
 		Set<Zone> zones = new TreeSet<>();
 		for (ResultsRow r : dq("select distinct zoneid from zoneareas where regionid=?", getId())) {
-			zones.add(Zone.get(r.getInt()));
+			zones.add(Zone.get(r.getIntNullable()));
 		}
 		return zones;
 	}
@@ -537,8 +537,8 @@ public class Region extends TableRow {
 	@Nonnull
 	public String getGlobalCoordinates() {
 		ResultsRow r = dqone( "select regionx,regiony from regions where regionid=?", getId());
-		Integer x=r.getInt("regionx");
-		Integer y=r.getInt("regiony");
+		Integer x=r.getIntNullable("regionx");
+		Integer y=r.getIntNullable("regiony");
 		if (x==null || y==null) { throw new UserException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server"); }
 		return "<"+x+","+y+",0>";
 	}

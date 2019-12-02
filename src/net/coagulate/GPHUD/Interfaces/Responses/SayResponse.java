@@ -49,6 +49,7 @@ public class SayResponse implements Response {
 		return (sayas==null?"":sayas+": ")+reason;
 	}
 
+	@Nonnull
 	@Override
 	public String asText(@Nonnull State st) {
 		if (st.getCharacter() != null) {

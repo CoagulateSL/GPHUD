@@ -102,7 +102,7 @@ public class Zone extends TableRow {
 	public Set<ZoneArea> getZoneAreas() {
 		Set<ZoneArea> areas = new TreeSet<>();
 		for (ResultsRow r : dq("select zoneareaid from zoneareas where zoneid=?", getId())) {
-			areas.add(ZoneArea.get(r.getInt()));
+			areas.add(ZoneArea.get(r.getIntNullable()));
 		}
 		return areas;
 	}
@@ -132,7 +132,7 @@ public class Zone extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		Integer id = getInt("instanceid");
+		Integer id = getIntNullable("instanceid");
 		if (id == null) {
 			throw new SystemException("Zone " + getName() + " #" + getId() + " is not associated with an instance?");
 		}

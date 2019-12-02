@@ -5,7 +5,6 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.SL.SL;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.logging.Logger;
 
 /**

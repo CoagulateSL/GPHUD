@@ -61,7 +61,7 @@ public class MenuResponse implements Response {
 		return s.toString();
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

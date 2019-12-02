@@ -69,7 +69,7 @@ public class Maintenance extends Thread {
 			for (ResultsRow r : results) {
 				//System.out.println("About to background for a callback to character:"+r.getString("name"));
 				JSONObject ping = new JSONObject().put("incommand", "ping");
-				Transmission t = new PingTransmission(Char.get(r.getInt("characterid")), ping, r.getString("url"));
+				Transmission t = new PingTransmission(Char.get(r.getIntNullable("characterid")), ping, r.getStringNullable("url"));
 				t.start();
 				try { Thread.sleep(1000); } catch (InterruptedException e) {}
 			}
@@ -95,7 +95,7 @@ public class Maintenance extends Thread {
 			for (ResultsRow r : results) {
 				//System.out.println("About to background for a callback to region:"+r.getString("name"));
 				JSONObject ping = new JSONObject().put("incommand", "ping");
-				Transmission t = new Transmission((Region) null, ping, r.getString("url"));
+				Transmission t = new Transmission((Region) null, ping, r.getStringNullable("url"));
 				t.start();
 				try { Thread.sleep(1000); } catch (InterruptedException e) {}
 			}

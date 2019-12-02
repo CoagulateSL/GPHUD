@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public interface Renderable {
 	 * @param st
 	 * @return
 	 */
-	@Nullable
+	@Nonnull
 	String asText(State st);
 
 	/**
@@ -31,7 +32,7 @@ public interface Renderable {
 	 * @param rich Rich mode
 	 * @return
 	 */
-	@Nullable
+	@Nonnull
 	String asHtml(State st, boolean rich);
 
 	@Nullable

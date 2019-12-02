@@ -70,7 +70,7 @@ public class ScriptRuns extends TableRow {
 
 	@Nonnull
 	public Char getRespondant() {
-		return Char.get(getInt("respondant"));
+		return Char.get(getIntNullable("respondant"));
 	}
 
 	@Nullable

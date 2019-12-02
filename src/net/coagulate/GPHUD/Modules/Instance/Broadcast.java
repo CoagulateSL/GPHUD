@@ -28,7 +28,7 @@ public class Broadcast {
 			avfrom = st.getAvatarNullable().getName();
 			message += avfrom;
 		}
-		if (st.getCharacter() != null) {
+		if (st.getCharacterNullable() != null) {
 			if (!st.getCharacter().getName().equals(avfrom)) { message += "/" + st.getCharacter().getName(); }
 		}
 		message += ") : " + sendmessage;

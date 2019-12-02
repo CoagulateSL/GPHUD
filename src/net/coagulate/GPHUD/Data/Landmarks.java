@@ -25,7 +25,7 @@ public class Landmarks extends TableRow {
 	public static Set<Landmarks> getAll(@Nonnull Instance instance) {
 		Set<Landmarks> results=new HashSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
-			results.add(get(row.getInt("id")));
+			results.add(get(row.getIntNullable("id")));
 		}
 		return results;
 	}
@@ -79,7 +79,7 @@ public class Landmarks extends TableRow {
 
 	@Nonnull
 	public Region getRegion(boolean allowretired) {
-		return Region.get(getInt("regionid"),allowretired);
+		return Region.get(getIntNullable("regionid"),allowretired);
 	}
 
 	@Nonnull

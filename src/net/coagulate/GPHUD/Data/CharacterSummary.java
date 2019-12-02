@@ -11,7 +11,6 @@ import net.coagulate.SL.Data.User;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,18 +29,14 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	public boolean retired = false;
 	int id = 0;
 	String name = "";
-	@Nullable
-	Integer ownerid = 0;
+
+	int ownerid = 0;
 	String ownername = "";
-	@Nullable
-	Integer lastactive = 0;
+	int lastactive = 0;
 	boolean online = false;
-	@Nullable
-	Integer totalvisits = 0;
-	@Nullable
-	Integer recentvisits = 0;
-	@Nullable
-	Integer totalxp = 0;
+	int totalvisits = 0;
+	int recentvisits = 0;
+	int totalxp = 0;
 	@Nonnull
 	List<String> groupheaders = new ArrayList<>();
 	final Map<String, String> groups = new HashMap<>();
@@ -80,7 +75,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		if (retired) { r.setbgcolor("#ffe0e0"); }
 		r.add(Char.getLink(name, "characters", id));
 		r.add(User.getGPHUDLink(ownername, ownerid));
-		String tz = st.getAvatarNullable().getTimeZone();
+		String tz = st.getAvatar().getTimeZone();
 		r.add(fromUnixTime(lastactive, tz) + " " + tz);
 		r.add(online);
 		r.add(duration(totalvisits));

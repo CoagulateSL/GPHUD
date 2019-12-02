@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
@@ -15,11 +16,13 @@ public class Text implements Renderable {
 
 	public Text(String s) { content = s; }
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return content;
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		return content;

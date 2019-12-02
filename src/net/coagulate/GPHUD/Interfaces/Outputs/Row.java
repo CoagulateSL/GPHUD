@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -69,7 +70,7 @@ public class Row implements Renderable {
 		return s + "</tr>";
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(row);

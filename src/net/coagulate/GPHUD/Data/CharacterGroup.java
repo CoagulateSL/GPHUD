@@ -86,6 +86,7 @@ public class CharacterGroup extends TableRow {
 	public static CharacterGroup find(String name, @Nonnull Instance i) {
 		try {
 			Integer id = GPHUD.getDB().dqi( "select charactergroupid from charactergroups where name like ? and instanceid=?", name, i.getId());
+			if (id==null) { return null; }
 			return get(id);
 		} catch (NoDataException e) { return null; }
 	}
@@ -165,7 +166,7 @@ public class CharacterGroup extends TableRow {
 		if (character.getInstance() != getInstance()) {
 			throw new SystemException("Character (group) / Instance mismatch");
 		}
-		int exists = dqi( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
+		int exists = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		if (exists > 0) { throw new UserException("Character is already a member of group?"); }
 		// in competing group?
 		CharacterGroup competition = character.getGroup(this.getType());
@@ -184,7 +185,7 @@ public class CharacterGroup extends TableRow {
 		if (character.getInstance() != getInstance()) {
 			throw new SystemException("Character (group) / Instance mismatch");
 		}
-		int exists = dqi( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
+		int exists = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		if (exists == 0) { throw new UserException("Character not in group."); }
 	}

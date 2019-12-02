@@ -26,7 +26,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public abstract class Audit {
 
-	@Nullable
+	@Nonnull
 	public static Results getAudit(@Nullable Instance instance, @Nullable User avatar, @Nullable Char character) {
 		List<Object> parameters = new ArrayList<>();
 		String sql = "select * from audit where 1=1 ";
@@ -117,7 +117,7 @@ public abstract class Audit {
 					note,
 					st.sourcename,
 					getId(st.sourceowner),
-					getId(st.sourcedeveloper),
+					getId(st.getSourcedeveloper()),
 					getId(st.sourceregion),
 					st.sourcelocation);
 		} catch (DBException ex) {
@@ -149,7 +149,7 @@ public abstract class Audit {
 		table.add(headers);
 		String olddate = "";
 		for (ResultsRow r : rows) {
-			String[] datetime = fromUnixTime(r.getString("timedate"), timezone).split(" ");
+			String[] datetime = fromUnixTime(r.getStringNullable("timedate"), timezone).split(" ");
 			if (!olddate.equals(datetime[0])) {
 				net.coagulate.GPHUD.Interfaces.Outputs.Row t = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 				t.align("center");
@@ -161,11 +161,11 @@ public abstract class Audit {
 			table.add(t);
 			t.add(datetime[1]);
 
-			String sourcename = cleanse(r.getString("sourcename"));
-			String sourceowner = formatavatar(cache, r.getInt("sourceowner"));
-			String sourcedev = formatavatar(cache, r.getInt("sourcedeveloper"));
-			String sourceregion = formatregion(cache, r.getInt("sourceregion"));
-			String sourceloc = trimlocation(cleanse(r.getString("sourcelocation")));
+			String sourcename = cleanse(r.getStringNullable("sourcename"));
+			String sourceowner = formatavatar(cache, r.getIntNullable("sourceowner"));
+			String sourcedev = formatavatar(cache, r.getIntNullable("sourcedeveloper"));
+			String sourceregion = formatregion(cache, r.getIntNullable("sourceregion"));
+			String sourceloc = trimlocation(cleanse(r.getStringNullable("sourcelocation")));
 
 			if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
 				Table internal = new Table();
@@ -178,10 +178,10 @@ public abstract class Audit {
 				t.add(new ToolTip("[Via]", internal));
 			} else { t.add(""); }
 
-			String srcav = formatavatar(cache, r.getInt("sourceavatarid"));
-			String srcch = formatchar(cache, r.getInt("sourcecharacterid"));
-			String dstav = formatavatar(cache, r.getInt("destavatarid"));
-			String dstch = formatchar(cache, r.getInt("destcharacterid"));
+			String srcav = formatavatar(cache, r.getIntNullable("sourceavatarid"));
+			String srcch = formatchar(cache, r.getIntNullable("sourcecharacterid"));
+			String dstav = formatavatar(cache, r.getIntNullable("destavatarid"));
+			String dstch = formatchar(cache, r.getIntNullable("destcharacterid"));
 			t.add(new Cell(srcav + (srcav.isEmpty() || srcch.isEmpty() ? "" : "/") + srcch).align("right"));
 			// if we have nothing on one side
 			if ((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty())) {
@@ -190,15 +190,15 @@ public abstract class Audit {
 				t.add("&rarr;");
 			}
 			t.add(dstav + (dstav.isEmpty() || dstch.isEmpty() ? "" : "/") + dstch);
-			String changetype = cleanse(r.getString("changetype"));
-			String changeitem = cleanse(r.getString("changeditem"));
+			String changetype = cleanse(r.getStringNullable("changetype"));
+			String changeitem = cleanse(r.getStringNullable("changeditem"));
 			t.add(changetype + (changetype.isEmpty() || changeitem.isEmpty() ? "" : " - ") + changeitem);
 
-			String oldvaluestr = cleanse(r.getString("oldvalue"));
-			String newvaluestr = cleanse(r.getString("newvalue"));
+			String oldvaluestr = cleanse(r.getStringNullable("oldvalue"));
+			String newvaluestr = cleanse(r.getStringNullable("newvalue"));
 			Renderable oldvalue = notate(oldvaluestr, 10);
 			Renderable newvalue = notate(newvaluestr, 10);
-			Renderable notes = new Text(cleanse(r.getString("notes")));
+			Renderable notes = new Text(cleanse(r.getStringNullable("notes")));
 			t.add(new Cell(oldvalue).align("right"));
 			if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
 			t.add(newvalue);
@@ -227,7 +227,7 @@ public abstract class Audit {
 		return new Text(s);
 	}
 
-	@Nullable
+	@Nonnull
 	private static String cleanse(@Nullable String s) {
 		if (s == null) { return ""; }
 		return s;

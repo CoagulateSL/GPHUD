@@ -29,9 +29,9 @@ public class Scripts extends TableRow {
 		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
 		for (ResultsRow row:rows) {
 			o.openRow();
-			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getInt("id")+"\">"+row.getString("name")+"</a>");
-			Integer sourceversion=row.getInt("sourceversion");
-			Integer bytecodeversion=row.getInt("bytecodeversion");
+			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getIntNullable("id")+"\">"+row.getStringNullable("name")+"</a>");
+			Integer sourceversion=row.getIntNullable("sourceversion");
+			Integer bytecodeversion=row.getIntNullable("bytecodeversion");
 			if (Objects.equals(sourceversion, bytecodeversion)) {
 				o.add((sourceversion == null ? "None" : "" + sourceversion));
 				o.add((bytecodeversion == null ? "None" : "" + bytecodeversion));
@@ -58,7 +58,7 @@ public class Scripts extends TableRow {
 	public static Set<Scripts> getScript(@Nonnull Instance instance) {
 		Set<Scripts> scripts=new HashSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select id from scripts where instanceid=?",instance.getId())) {
-			scripts.add(new Scripts(row.getInt("id")));
+			scripts.add(new Scripts(row.getIntNullable("id")));
 		}
 		return scripts;
 	}
@@ -78,7 +78,7 @@ public class Scripts extends TableRow {
 	public static DropDownList getList(@Nonnull State st, String listname) {
 		DropDownList list=new DropDownList(listname);
 		for (ResultsRow row:GPHUD.getDB().dq("select id,name from scripts where instanceid=?",st.getInstance().getId())) {
-			list.add(""+row.getInt("id"),row.getString("name"));
+			list.add(""+row.getIntNullable("id"),row.getStringNullable("name"));
 		}
 		return list;
 	}
@@ -90,12 +90,12 @@ public class Scripts extends TableRow {
 		return  script;
 	}
 	public int getSourceVersion() {
-		Integer a = getInt("sourceversion");
+		Integer a = getIntNullable("sourceversion");
 		if (a == null) { return 0; }
 		return a;
 	}
 	public int getByteCodeVersion() {
-		Integer a=getInt("bytecodeversion");
+		Integer a= getIntNullable("bytecodeversion");
 		if (a==null) { return 0; }
 		return a;
 	}
@@ -113,7 +113,7 @@ public class Scripts extends TableRow {
 
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return Instance.get(getIntNullable("instanceid"));
 	}
 
 	@Nonnull

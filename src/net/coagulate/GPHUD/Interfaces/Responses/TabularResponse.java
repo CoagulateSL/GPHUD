@@ -35,6 +35,7 @@ public class TabularResponse extends Table implements Response {
 		return "<A tablulated response>";
 	}
 
+	@Nonnull
 	public String asText(State st) {
 		String s = "";
 		if (title != null && !title.isEmpty()) { s += new TextHeader(title).asText(st); }
@@ -42,6 +43,7 @@ public class TabularResponse extends Table implements Response {
 		return s;
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		String s = "";

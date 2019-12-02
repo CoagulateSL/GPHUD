@@ -6,6 +6,7 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -48,7 +49,7 @@ public class NullResponse implements Response {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("You can not interrogate the null response.");

@@ -81,7 +81,7 @@ public class VisitXP extends QuotaedXP {
 		try {
 			Results results = GPHUD.getDB().dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
 			for (ResultsRow r : results) {
-				Instance i = Instance.get(r.getInt());
+				Instance i = Instance.get(r.getIntNullable());
 				runAwards(i);
 			}
 		} catch (Exception e) {

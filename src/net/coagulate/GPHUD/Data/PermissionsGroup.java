@@ -69,7 +69,7 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return Instance.get(getIntNullable("instanceid"));
 	}
 
 	@Nonnull
@@ -105,9 +105,9 @@ public class PermissionsGroup extends TableRow {
 			for (ResultsRow r : results) {
 				try {
 					//Modules.validatePermission(st,r.getString()); - don't validate, some left over perms might be in the DB
-					permissions.add(r.getString());
+					permissions.add(r.getStringNullable());
 				} catch (IllegalArgumentException e) {
-					st.logger().warning("Permission exists in database but not in schema - [" + r.getString() + "]");
+					st.logger().warning("Permission exists in database but not in schema - [" + r.getStringNullable() + "]");
 				}
 			}
 			st.permissionsGroupCache.put(getId(), permissions);
@@ -126,11 +126,11 @@ public class PermissionsGroup extends TableRow {
 		Results results = dq("select avatarid,caninvite,cankick from permissionsgroupmembers where permissionsgroupid=?", getId());
 		for (ResultsRow r : results) {
 			PermissionsGroupMembership record = new PermissionsGroupMembership();
-			record.avatar = User.get(r.getInt("avatarid"));
+			record.avatar = User.get(r.getIntNullable("avatarid"));
 			record.caninvite = false;
-			if (r.getInt("caninvite") == 1) { record.caninvite = true; }
+			if (r.getIntNullable("caninvite") == 1) { record.caninvite = true; }
 			record.cankick = false;
-			if (r.getInt("cankick") == 1) { record.cankick = true; }
+			if (r.getIntNullable("cankick") == 1) { record.cankick = true; }
 			members.add(record);
 		}
 		return members;

@@ -17,7 +17,12 @@ import java.util.Set;
 public class Cell implements Renderable {
 
 	@Nullable
-	Renderable e;
+	Renderable e=null;
+	@Nonnull
+	Renderable e() {
+		if (e==null) { throw new SystemException("Cell content was null"); }
+		return e;
+	}
 	boolean header = false;
 	int colspan = 1;
 	String align = "";
@@ -44,12 +49,14 @@ public class Cell implements Renderable {
 		this.colspan = colspan;
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
-		if (header) { return "*" + e.asText(st) + "*"; }
-		return e.asText(st);
+		if (header) { return "*" + e().asText(st) + "*"; }
+		return e().asText(st);
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		String s = "";
@@ -57,13 +64,13 @@ public class Cell implements Renderable {
 		if (colspan > 1) { s += " colspan=" + colspan; }
 		if (!align.isEmpty()) { s += " align=" + align; }
 		s += ">";
-		s += e.asHtml(st, rich);
+		s += e().asHtml(st, rich);
 		s += "</";
 		if (header) { s += "th>"; } else { s += "td>"; }
 		return s;
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();

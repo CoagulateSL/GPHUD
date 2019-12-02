@@ -69,7 +69,7 @@ public abstract class View {
 		t.openRow();
 		t.add("SourceOwner").addNoNull(st.sourceowner.getGPHUDLink());
 		t.openRow();
-		t.add("SourceDev").addNoNull(st.sourcedeveloper.getGPHUDLink());
+		t.add("SourceDev").addNoNull(st.getSourcedeveloper().getGPHUDLink());
 		return t;
 	}
 
