@@ -2,8 +2,8 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Generated;
 
 public class JJTGSParserState {
-  private final java.util.List<Node> nodes;
-  private final java.util.List<Integer> marks;
+  private java.util.List<Node> nodes;
+  private java.util.List<Integer> marks;
 
   private int sp;        // number of nodes on stack
   private int mk;        // current mark

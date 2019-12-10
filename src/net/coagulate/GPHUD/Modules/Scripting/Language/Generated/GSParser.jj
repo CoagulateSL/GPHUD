@@ -557,7 +557,7 @@ void FunctionCall()               : {/*@bgen(jjtree) FunctionCall */
 /*@egen*/} {/*@bgen(jjtree) FunctionCall */
     try {
 /*@egen*/
-    FunctionName() "(" Parameters() ")"/*@bgen(jjtree)*/
+    FunctionName() "(" ( Parameters() )? ")"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

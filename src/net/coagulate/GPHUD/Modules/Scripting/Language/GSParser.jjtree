@@ -176,7 +176,7 @@ void FloatConstant() #FLoatConstant : {}
 }
 
 void FunctionCall() #FunctionCall : {} {
-    FunctionName() "(" Parameters() ")"
+    FunctionName() "(" ( Parameters() )? ")"
 }
 
 void FunctionName() #FunctionName : {} {
