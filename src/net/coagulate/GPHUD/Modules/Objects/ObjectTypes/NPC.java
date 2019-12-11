@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjectTypes;
 import net.coagulate.GPHUD.Data.Scripts;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
+import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -56,9 +57,15 @@ public class NPC extends ObjectType {
 	@Override
 	public void editForm(State st) {
 		Table t=new Table();
-		t.add("Character").add(Char.getNPCList(st,"character").setValue(""+json.getInt("character")));
+		t.add("Character");
+		DropDownList charlist = Char.getNPCList(st, "character");
+		if (json.has("character")) { charlist.setValue("" + json.getInt("character")); }
+		t.add(charlist);
 		t.openRow();
-		t.add("OnClick Script").add(Scripts.getList(st,"script").setValue(""+json.getInt("script")));
+		t.add("OnClick Script");
+		DropDownList scriptlist = Scripts.getList(st, "script");
+		if (json.has("script")) { scriptlist.setValue(""+json.getInt("script")); }
+		t.add(scriptlist);
 		t.openRow();
 		t.add(new Cell(new Button("Submit"),2));
 		t.openRow();
