@@ -43,8 +43,7 @@ public class GenericConfiguration {
 		for (Module module : Modules.getModules()) {
 			if ((m == null || m == module) && module.isEnabled(st)) {
 				Map<String, KV> kvmapall = module.getKVAppliesTo(simulated, dbo);
-				for (String s : kvmapall.keySet()) {
-					KV kv = kvmapall.get(s);
+				for (KV kv : kvmapall.values()) {
 					if (!kv.hidden()) {
 						kvtable.openRow();
 						if (dbo instanceof Char) {

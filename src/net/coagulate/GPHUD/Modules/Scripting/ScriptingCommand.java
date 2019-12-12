@@ -13,19 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptingCommand extends Command {
-	Scripts script;
+	final Scripts script;
 	public ScriptingCommand(Scripts script) { this.script=script; }
 	@Override
 	public Method getMethod() {
-		try { return this.getClass().getMethod("execute",new Class[]{State.class}); }
+		try { return this.getClass().getMethod("execute",State.class); }
 		catch (NoSuchMethodException e) { throw new SystemException("Reflection exception finding gsScriptCommand's execute() method",e); }
 	}
 
 	public Response execute(State st) {
 		GSVM vm=new GSVM(script.getByteCode());
 		//System.out.println("Script about to execute "+script.getNameSafe());
-		Response r=vm.execute(st);
-		return r;
+		return vm.execute(st);
 	}
 
 	@Override

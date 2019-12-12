@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class TextSubHeader implements Renderable {
 
-	Renderable content;
+	final Renderable content;
 
 	public TextSubHeader(String s) { content = new Text(s); }
 

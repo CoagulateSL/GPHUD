@@ -84,8 +84,7 @@ public class Message extends TableRow {
 	 * @return Number of messages
 	 */
 	public static int count(Char c) {
-		Integer id = GPHUD.getDB().dqi(true, "select count(*) from messages where characterid=?", c.getId());
-		return id;
+		return GPHUD.getDB().dqi(true, "select count(*) from messages where characterid=?", c.getId());
 	}
 
 	/**

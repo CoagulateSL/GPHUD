@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class SimpleResponse implements Response {
-	String message;
+	final String message;
 
 	public SimpleResponse(String message) { this.message = message; }
 

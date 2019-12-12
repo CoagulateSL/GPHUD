@@ -186,7 +186,7 @@ public abstract class Groups {
 
 	@URLs(url="/permissionsgroups/edit/*",requiresPermission = "Instance.ManagePermissions")
 	public static void editPermissions(State st,SafeMap values) {
-		String split[]=st.getDebasedNoQueryURL().split("/");
+		String[] split =st.getDebasedNoQueryURL().split("/");
 		if (split.length!=4) { throw new UserException("Incorrect number of query parameters ("+split.length+")"); }
 		Integer groupid=Integer.parseInt(split[3]);
 		PermissionsGroup pg=PermissionsGroup.get(groupid);
@@ -244,8 +244,7 @@ public abstract class Groups {
 		String r="";
 		TreeMap<String,Permission> sorted=new TreeMap<>();
 		for (Permission p:permissions) { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }
-		for (String element:sorted.keySet()) {
-			Permission p=sorted.get(element);
+		for (Permission p : sorted.values()) {
 			String fullname=p.getModule(st).getName()+"."+p.name();
 			boolean exists=false;
 			Permission a = Modules.get(st, Modules.extractModule(fullname)).getPermission(st, Modules.extractReference(fullname));

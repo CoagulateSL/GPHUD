@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 import net.coagulate.Core.Tools.UserException;
 
 public abstract class GSException extends UserException {
+	private static final long serialVersionUID=1L;
 	public GSException(String reason) {
 		super(reason);
 	}

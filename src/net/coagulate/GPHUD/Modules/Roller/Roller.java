@@ -73,8 +73,7 @@ public class Roller {
 
 		event += allrolls;
 		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, "RollOnly", null, null, "", event);
-		SayResponse say = new SayResponse(event, st.getCharacter().getName());
-		return say;
+		return new SayResponse(event, st.getCharacter().getName());
 	}
 
 	/**
@@ -121,8 +120,7 @@ public class Roller {
 		event += total + " (" + allrolls + ")";
 		st.roll = total;
 		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, "Roll", null, null, "" + total, event);
-		SayResponse say = new SayResponse(event, st.getCharacter().getName());
-		return say;
+		return new SayResponse(event, st.getCharacter().getName());
 	}
 
 	@Commands(context = Context.CHARACTER, description = "Default roll, only requests a reason", permitUserWeb = false)
@@ -221,8 +219,7 @@ public class Roller {
 		st.roll = total;
 		st.getTarget().roll = targettotal;
 		Audit.audit(st, Audit.OPERATOR.CHARACTER, st.getTarget().avatar(), st.getTarget().getCharacter(), "Roll", null, null, "" + total, event);
-		SayResponse say = new SayResponse(event, st.getCharacter().getName());
-		return say;
+		return new SayResponse(event, st.getCharacter().getName());
 	}
 
 

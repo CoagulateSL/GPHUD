@@ -6,7 +6,7 @@ import net.coagulate.GPHUD.Modules.KV;
  * @author Iain Price
  */
 public class GenericXPPeriodKV extends KV {
-	private String myname;
+	private final String myname;
 
 	public GenericXPPeriodKV(String name) { myname = name; }
 

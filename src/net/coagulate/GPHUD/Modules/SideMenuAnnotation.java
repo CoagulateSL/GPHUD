@@ -7,7 +7,7 @@ package net.coagulate.GPHUD.Modules;
  * @author Iain Price <gphud@predestined.net>
  */
 public class SideMenuAnnotation extends SideMenu {
-	SideMenus meta;
+	final SideMenus meta;
 	private boolean generated = true;
 
 	public SideMenuAnnotation(SideMenus meta) {

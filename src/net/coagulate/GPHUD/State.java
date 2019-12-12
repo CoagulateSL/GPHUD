@@ -34,7 +34,8 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  */
 public class State extends DumpableState {
 
-	public SafeMap postmap=null; // often unset at this point...
+	// map of post values read in the user interface
+	public SafeMap postmap=null;
 	public String callbackurl = null;
 	public Sources source = Sources.NONE;
 	public HttpRequest req = null;
@@ -43,7 +44,7 @@ public class State extends DumpableState {
 	// system interface puts input here
 	public JSONObject json = null;
 	// system interface sets to raw json string
-	public String jsoncommand = null;
+	public final String jsoncommand = null;
 	public InetAddress address = null;
 
 	public Header[] headers = null;
@@ -92,7 +93,7 @@ public class State extends DumpableState {
 	private Char character = null;
 	private Boolean superuser = null;
 	private Boolean instanceowner = null;
-	private Map<TableRow, Map<String, String>> kvmaps = new HashMap<>();
+	private final Map<TableRow, Map<String, String>> kvmaps = new HashMap<>();
 
 	public State() {}
 
@@ -201,7 +202,7 @@ public class State extends DumpableState {
 	public String getDebasedNoQueryURL() {
 		String ret = getDebasedURL();
 		//System.out.println("Pre parsing:"+ret);
-		if (ret.indexOf("?") != -1) { ret = ret.substring(0, ret.indexOf("?")); }
+		if (ret.contains("?")) { ret = ret.substring(0, ret.indexOf("?")); }
 		//System.out.println("Post parsing:"+ret);
 		return ret;
 	}
@@ -454,9 +455,7 @@ public class State extends DumpableState {
 			for (Event e : instance.getActiveEvents()) {
 				eventmap.put(e.getId(), e);
 			}
-			for (Integer id : eventmap.keySet()) {
-				check.add(eventmap.get(id));
-			}
+			check.addAll(eventmap.values());
 		}
 		// charactergroups in ID order
 		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.NONSPATIAL) {
@@ -465,9 +464,7 @@ public class State extends DumpableState {
 				for (CharacterGroup c : character.getGroups()) {
 					map.put(c.getId(), c);
 				}
-				for (Integer id : map.keySet()) {
-					check.add(map.get(id));
-				}
+				check.addAll(map.values());
 			}
 		}
 		//character
@@ -602,8 +599,7 @@ public class State extends DumpableState {
 		if (target == null) { throw new SystemException("Can not get kv " + kvname + " for null target"); }
 		KV kv = getKVDefinition(kvname);
 		if (kv == null) { throw new UserException("Failed to resolve " + kvname + " to a valid KV entity"); }
-		String value = getKVMap(target).get(kvname.toLowerCase());
-		return value;
+		return getKVMap(target).get(kvname.toLowerCase());
 	}
 
 	public String getKV(TableRow target, String kvname) {
@@ -623,9 +619,7 @@ public class State extends DumpableState {
 		}
 		String out;
 		try { out = Templater.template(this, s, evaluate, isint); } catch (Exception e) {
-			UserException ue = new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage());
-			ue.initCause(e);
-			throw ue;
+			throw new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
 		}
 		if (kv.type()== COLOR) {
 			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }
@@ -699,11 +693,11 @@ public class State extends DumpableState {
 		if (c == null) { c = getCharacterNullable(); }
 		simulated.setCharacter(c);
 		Set<Region> possibleregions = instance.getRegions(false);
-		Region simulatedregion = new ArrayList<Region>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
+		Region simulatedregion = new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
 		simulated.setRegion(simulatedregion);
 		Set<Zone> possiblezones = simulatedregion.getZones();
 		if (!possiblezones.isEmpty()) {
-			simulated.zone = new ArrayList<Zone>(possiblezones).get((int) (Math.floor(Math.random() * possiblezones.size())));
+			simulated.zone = new ArrayList<>(possiblezones).get((int) (Math.floor(Math.random() * possiblezones.size())));
 		}
 		return simulated;
 	}
@@ -717,7 +711,7 @@ public class State extends DumpableState {
 	 */
 	public Set<Attribute> getAttributes() {
 		if (attributes != null) { return attributes; }
-		attributes = new TreeSet<Attribute>();
+		attributes = new TreeSet<>();
 		Set<Attribute> db = Attribute.getAttributes(this);
 		attributes.addAll(db);
 		for (Module module : Modules.getModules()) {
@@ -763,6 +757,61 @@ public class State extends DumpableState {
 			} catch (Throwable e) { return "Exceptioned: " + e.toString(); }
 		}
 		return "";
+	}
+
+	public void fleshOut() {
+		// attempt to figure out some kinda completion for avatar/instance/char
+		if (avatar==null && instance==null && character==null) { return; } //meh, nothing to work with
+		if (avatar!=null && instance!=null && character!=null) { return; } //heh, the opposite, nothing to do
+		// well not sure there's a general solution so
+		if (avatar==null) {
+			if (character==null) {
+				if (instance==null) {
+					// NO avatar, NO character, NO instance
+					// pointless
+				} else {
+					// NO avatar, NO character, YES instance
+					// unworkable combo
+				}
+			} else {
+				if (instance==null) {
+					// NO avatar, YES character, NO instance
+					instance=character.getInstance();
+				} else {
+					// NO avatar, YES character, YES instance
+					character.validate(this);
+				}
+				avatar=character.getOwner();
+				updateCookie();
+			}
+		} else {
+			if (character==null) {
+				if (instance==null) {
+					// YES avatar, NO character, NO instance
+					character=Char.getMostRecent(avatar); instance=character.getInstance();
+				} else {
+					// YES avatar, NO character, YES instance
+					character=Char.getMostRecent(avatar, instance);
+				}
+				updateCookie();
+			} else {
+				if (instance==null) {
+					// YES avatar, YES character, NO instance
+					instance=character.getInstance(); updateCookie();
+				} else {
+					// YES avatar, YES character, YES instance
+				}
+			}
+		}
+
+	}
+
+	private void updateCookie() {
+		if (cookie!=null) {
+			if (cookie.getCharacter()!=character) { cookie.setCharacter(character); }
+			if (cookie.getAvatar()!=avatar) { cookie.setAvatar(avatar); }
+			if (cookie.getInstance()!=instance) { cookie.setInstance(instance); }
+		}
 	}
 
 

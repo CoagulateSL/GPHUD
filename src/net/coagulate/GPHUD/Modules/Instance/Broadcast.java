@@ -26,7 +26,7 @@ public class Broadcast {
 			message += avfrom;
 		}
 		if (st.getCharacter() != null) {
-			if (st.getCharacter().getName().equals(avfrom)) { } else { message += "/" + st.getCharacter().getName(); }
+			if (!st.getCharacter().getName().equals(avfrom)) { message += "/" + st.getCharacter().getName(); }
 		}
 		message += ") : " + sendmessage;
 		int sent = st.getInstance().broadcastAdmins(st, message);

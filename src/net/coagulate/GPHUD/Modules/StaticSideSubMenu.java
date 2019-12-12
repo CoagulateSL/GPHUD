@@ -7,10 +7,10 @@ package net.coagulate.GPHUD.Modules;
  */
 public class StaticSideSubMenu extends SideSubMenu {
 
-	private String url;
-	private String permission;
-	private int priority;
-	private String name;
+	private final String url;
+	private final String permission;
+	private final int priority;
+	private final String name;
 
 	public StaticSideSubMenu(String name, int priority, String url, String permission) {
 		this.name = name;

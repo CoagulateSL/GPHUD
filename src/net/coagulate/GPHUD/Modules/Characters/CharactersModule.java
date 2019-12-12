@@ -168,7 +168,7 @@ public class CharactersModule extends ModuleAnnotation {
 			                           String value) {
 		if (attribute == null) { return new ErrorResponse("You must supply an attribute to set"); }
 		attribute.validate(st);
-		if (attribute.getSelfModify() == false) {
+		if (!attribute.getSelfModify()) {
 			return new ErrorResponse("This attribute is not self modifiable, it can only be changed directly by an admin");
 		}
 		KV kv = st.getKVDefinition("Characters." + attribute.getName());
@@ -218,8 +218,8 @@ public class CharactersModule extends ModuleAnnotation {
 		Map<String, KV> ourmap = getKVDefinitions(st);
 		for (Attribute attr : st.getAttributes()) {
 			try {
-				addto.put("--" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", new Class[]{State.class, String.class}));
-				addto.put("--TARGET:" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", new Class[]{State.class, String.class}));
+				addto.put("--" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", State.class, String.class));
+				addto.put("--TARGET:" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", State.class, String.class));
 			} catch (NoSuchMethodException | SecurityException ex) {
 				SL.report("Templating referencing exception??", ex, st);
 				st.logger().log(SEVERE, "Exception referencing own templating method??", ex);

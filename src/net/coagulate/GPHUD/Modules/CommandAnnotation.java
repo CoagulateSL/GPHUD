@@ -71,7 +71,7 @@ public class CommandAnnotation extends Command {
 				// validate the choice method
 				String choicemethod = arg.choiceMethod();
 				try {
-					method.getDeclaringClass().getMethod(choicemethod, new Class[]{State.class});
+					method.getDeclaringClass().getMethod(choicemethod, State.class);
 				} catch (Exception e) {
 					throw new SystemException("Failed to instansiate choice method " + getFullName() + " / " + choicemethod);
 				}
@@ -108,7 +108,7 @@ public class CommandAnnotation extends Command {
 		arguments = new ArrayList<>();
 		boolean skipfirst = true; // first should be STATE
 		for (Parameter p : method.getParameters()) {
-			if (skipfirst) { skipfirst = false; } else { arguments.add((Argument) new ArgumentAnnotation(this, p)); }
+			if (skipfirst) { skipfirst = false; } else { arguments.add(new ArgumentAnnotation(this, p)); }
 		}
 	}
 

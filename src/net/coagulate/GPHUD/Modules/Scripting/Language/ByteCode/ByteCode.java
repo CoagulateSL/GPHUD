@@ -69,7 +69,7 @@ public abstract class ByteCode {
 
 	public abstract String explain();
 	public abstract void toByteCode(List<Byte> bytes);
-	public static Map<Byte,InstructionSet> map=new HashMap<>();
+	public static final Map<Byte,InstructionSet> map=new HashMap<>();
 
 	public enum InstructionSet { // max 255 instructions (haha)
 		Debug((byte)0),
@@ -97,10 +97,10 @@ public abstract class ByteCode {
 		LessThan((byte)22),
 		GreaterThanEqual((byte)23),
 		LessThanEqual((byte)24);
-		private byte value;
+		private final byte value;
 
 
-		private InstructionSet(byte value) {
+		InstructionSet(byte value) {
 			this.value = value;map.put(value,this);
 		}
 		public byte get() { return value; }

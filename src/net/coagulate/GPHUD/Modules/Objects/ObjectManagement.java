@@ -21,7 +21,6 @@ import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import org.apache.http.client.RedirectException;
 import org.json.JSONObject;
 
 public class ObjectManagement {
@@ -62,7 +61,7 @@ public class ObjectManagement {
 	}
 
 	@URL.URLs(url="/configuration/objects/createtype",requiresPermission="Objects.ObjectTypes")
-	public static void createObjectType(State st,SafeMap map) throws RedirectException {
+	public static void createObjectType(State st,SafeMap map) {
 		if (map.get("Create").equalsIgnoreCase("Create")) {
 			JSONObject jsonbase=new JSONObject();
 			jsonbase.put("behaviour",map.get("behaviour"));

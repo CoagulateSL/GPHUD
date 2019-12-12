@@ -29,15 +29,15 @@ public abstract class ManagePermissions {
 			Map<String, Permission> permissions = m.getPermissions(st);
 			if (!permissions.isEmpty()) {
 				t.add(new HeaderRow().add(new Cell(new TextSubHeader(m.getName()), 999)));
-				for (String permission : permissions.keySet()) {
+				for (Map.Entry<String, Permission> entry : permissions.entrySet()) {
 					Row r = new Row();
 					t.add(r);
-					r.setbgcolor(permissions.get(permission).getColor());
-					t.add(permission);
-					t.add(permissions.get(permission).description());
+					r.setbgcolor(entry.getValue().getColor());
+					t.add(entry.getKey());
+					t.add(entry.getValue().description());
 					boolean bump=true;
-					if (permissions.get(permission).isGenerated()) { t.add("<i>Generated</i>"); bump=false; }
-					if (permissions.get(permission).grantable() == false) {
+					if (entry.getValue().isGenerated()) { t.add("<i>Generated</i>"); bump=false; }
+					if (!entry.getValue().grantable()) {
 						if (bump) { t.add(""); }
 						t.add(new Color("red", "Ungrantable"));
 					}

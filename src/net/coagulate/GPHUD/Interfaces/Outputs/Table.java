@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Table implements Renderable {
-	List<Row> table = new ArrayList<>();
+	final List<Row> table = new ArrayList<>();
 	boolean border = false;
 	Row openrow = null;
 	private boolean nowrap = false;
@@ -80,9 +80,7 @@ public class Table implements Renderable {
 
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
-		for (Row row : table) { r.add(row); }
-		return r;
+		return new HashSet<>(table);
 	}
 
 	public void addNoNull(Renderable addable) {

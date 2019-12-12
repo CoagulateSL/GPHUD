@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 public class GSInvalidPopError extends GSInternalError {
+	private static final long serialVersionUID=1L;
 	public GSInvalidPopError(String reason) {
 		super(reason);
 	}

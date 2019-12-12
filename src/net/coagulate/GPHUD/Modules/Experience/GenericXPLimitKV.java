@@ -6,7 +6,7 @@ import net.coagulate.GPHUD.Modules.KV;
  * @author Iain Price
  */
 public class GenericXPLimitKV extends KV {
-	private String myname;
+	private final String myname;
 
 	public GenericXPLimitKV(String name) { myname = name; }
 

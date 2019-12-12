@@ -12,8 +12,8 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Link implements Renderable {
-	Renderable content;
-	String target;
+	final Renderable content;
+	final String target;
 
 	public Link(String label, String target) {
 		content = new Text(label);

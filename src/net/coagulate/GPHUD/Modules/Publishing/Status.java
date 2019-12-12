@@ -54,8 +54,8 @@ public class Status extends Publishing {
 		st.form.add(line+"<br>");
 		st.form.add(players+" players online.<br>");
 		if (listusers) {
-			for (String k:playerlist.keySet()) {
-				st.form.add(playerlist.get(k));
+			for (String s : playerlist.values()) {
+				st.form.add(s);
 			}
 		}
 		contentResizer(st);

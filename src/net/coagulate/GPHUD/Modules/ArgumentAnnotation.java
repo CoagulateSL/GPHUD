@@ -44,7 +44,7 @@ public class ArgumentAnnotation extends Argument {
 
 	public String choiceMethod() { return meta.choiceMethod(); }
 
-	public Class objectType() { return parameter.getType(); }
+	public Class<? extends Object> objectType() { return parameter.getType(); }
 
 	public String getName() { return parameter.getName(); }
 
@@ -55,7 +55,7 @@ public class ArgumentAnnotation extends Argument {
 	@SuppressWarnings("unchecked")
 	public List<String> getChoices(State st) throws SystemException {
 		try {
-			Method m = command.getMethod().getDeclaringClass().getMethod(choiceMethod(), new Class[]{State.class});
+			Method m = command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
 			return (List<String>) m.invoke(null, new Object[]{st});
 		} catch (IllegalAccessException ex) {
 			throw new SystemException("Access modifier problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);

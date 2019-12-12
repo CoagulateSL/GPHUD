@@ -5,8 +5,6 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
-import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.PrimaryCharacters;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.PasswordInput;
@@ -30,10 +28,7 @@ import org.apache.http.entity.StringEntity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import static java.util.logging.Level.*;
 
@@ -102,6 +97,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.source = State.Sources.USER;
 		//for (Header h:headers) { System.out.println(h.getName()+"="+h.getValue()); }
 
+		// Exception catcher, basically.  with redirection support
 		try {
 			st.resp.setStatusCode(HttpStatus.SC_OK);
 			st.resp.setEntity(new StringEntity(renderHTML(st), ContentType.TEXT_HTML));
@@ -137,8 +133,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return "";
 	}
 
+	// FIRST STEP of producing the page its self, this is all wrapped in a low level exception handler.
 	public String renderHTML(State st) {
 		// This is basically the page template, the supporting structure that surrounds a title/menu/body
+
+		// we compute the body first, so any changes it causes to the rest of the data (like logging out, menu changes etc) is reflected
 		String body = renderBodyProtected(st);
 		String p = "";
 		final boolean external=st.getDebasedNoQueryURL().toLowerCase().startsWith("/published/");
@@ -191,35 +190,37 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return p;
 	}
 
+	// SECOND STAGE - called by the outline code, this is a wrapper around renderBody that "nicely" handles all deeper exceptions
 	protected String renderBodyProtected(State st) {
 		// with all exception protections, in a 'sensible' way.
 		try {
+			// literally, just a wrapper
 			return renderBody(st);
 		} catch (Exception t) {
 			// Exception in processing the command
-			if (t instanceof RedirectionException) { throw (RedirectionException) t; }
+			if (t instanceof RedirectionException) { throw (RedirectionException) t; } // propagate to the top where it's handled
 			try {
 				t.printStackTrace();
 				if (t instanceof UserException) {
 					String r = "<h1>ERROR</h1><p>Sorry, your request could not be completed<br><pre>" + t.getLocalizedMessage() + "</pre></p>";
-					GPHUD.getLogger().log(INFO, "Page threw user mode exception " + t.toString());
+					GPHUD.getLogger().log(INFO, "UserInterface/UserException " + t.toString());
 					if (GPHUD.DEV) {
 						r += "<hr><h1 align=center>DEV MODE</h1><hr><h1>User Mode Exception</h1>" + ExceptionTools.dumpException(t) + "<Br><br>" + st.toHTML();
 						SL.report("GPHUD Web User Exception", t, st);
-						GPHUD.getLogger().log(WARNING, "Page threw user mode exception", t);
+						GPHUD.getLogger().log(WARNING, "UserInterface/UserException", t);
 					}
 					return r;
 				}
 				SL.report("GPHUD Web Other Exception", t, st);
-				GPHUD.getLogger().log(WARNING, "Page threw non user exception", t);
+				GPHUD.getLogger().log(WARNING, "UserInterface/NonUserException", t);
 				String r = "<h1>INTERNAL ERROR</h1><p>Sorry, your request could not be completed due to an internal error.</p>";
 				if (GPHUD.DEV) {
-					r += "<hr><h1 align=center>DEV MODE</h1><hr><h1>System Mode Exception</h1>" + ExceptionTools.dumpException(t) + "<Br><br>" + st.toHTML();
+					r += "<hr><h1 align=center>DEV MODE</h1><hr><h1>NonUser Exception</h1>" + ExceptionTools.dumpException(t) + "<Br><br>" + st.toHTML();
 				}
 				return r;
 			} catch (Exception f) {
 				GPHUD.getLogger().log(SEVERE, "Exception in exception handler", f);
-				return "EXCEPTION IN EXCEPTION HANDLER, PANIC!";
+				return "EXCEPTION IN EXCEPTION HANDLER, PANIC!"; // nice
 			}
 		}
 	}
@@ -242,9 +243,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			priorities.put(s.priority(), set);
 		}
 		// enumerate the priorities
-		for (Integer pri : priorities.keySet()) {
+		for (Set<SideSubMenu> sideSubMenus : priorities.values()) {
 			// enumerate the SideMenus
-			for (SideSubMenu s : priorities.get(pri)) {
+			for (SideSubMenu s : sideSubMenus) {
 				String u = s.getURL();
 				ret += "&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;<a href=\"/GPHUD" + u + "\">" + s.name() + "</a><br>";
 			}
@@ -277,9 +278,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			}
 		}
 		// enumerate the priorities
-		for (Integer pri : priorities.keySet()) {
+		for (Set<SideMenu> sideMenus : priorities.values()) {
 			// enumerate the SideMenus
-			for (SideMenu menu : priorities.get(pri)) {
+			for (SideMenu menu : sideMenus) {
 				String url = menu.url();
 				String name = menu.name();
 				r += "<a href=\"/GPHUD" + url + "\">" + name + "</a><br>";
@@ -361,48 +362,32 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 	public boolean isRich() { return true; }
 
+	// THIRD stage (process -> renderHTML (page layout) -> renderBodyProtected -> renderBody)
 	public String renderBody(State st) throws SystemException, UserException {
 		Form f = null;
 		SafeMap values = getPostValues(st);
 		st.postmap=values;
 		URL content = Modules.getURL(st, st.getDebasedNoQueryURL());
-		if (content.requiresAuthentication()) {
-			f = authenticationHook(st, values);
-			if (st.getCharacterNullable()==null && st.getAvatar()!=null) {
-				// pick up most recently played character
-				Char character=Char.getMostRecent(st.getAvatar(),st.getInstanceNullable());
-				if (character!=null) {
-					st.setInstance(character.getInstance());
-					st.setCharacter(character);
-				}
-			}
-			if (st.getInstanceNullable() == null && st.getCharacterNullable() != null) {
-				st.setInstance(st.getCharacter().getInstance());
-			}
-			// redirect the request if still no data
-			if (st.getInstanceNullable() == null) {
-				//hmm.  PrimaryChar doesn't work because thats instance dependant.
-				// just remap the URL.  and for that matter we need an exclusion list
-				if (interceptable(st.getDebasedNoQueryURL())) { st.setURL("/switch/instance"); }
-			}
-		}
+		// call authenticator, it will return null if it managed something, otherwise it returns a login form which we'll render and exit
+		if (content.requiresAuthentication()) { f = authenticationHook(st, values); }
+		if (f!=null) { st.form=f; return f.asHtml(st,isRich()); }
+		// some kinda login information exists
+		st.fleshOut();
 		content = Modules.getURL(st, st.getDebasedNoQueryURL());
 		//System.out.println("Post auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
-		if (f==null && st.getInstanceNullable()==null && interceptable(st.getDebasedNoQueryURL())) { content=Modules.getURL(st,"/GPHUD/switch/instance"); } //f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is inaccessible as no instance is currently selected")); }
-		if (f==null && st.getInstanceNullable()!=null && !content.getModule().isEnabled(st)) { f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString())); }
+		if (st.getInstanceNullable()==null && interceptable(st.getDebasedNoQueryURL())) { content=Modules.getURL(st,"/GPHUD/switch/instance"); } //f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is inaccessible as no instance is currently selected")); }
+		if (st.getInstanceNullable()!=null && !content.getModule().isEnabled(st)) { f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString())); }
 		//System.out.println("Post post-auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
-		if (f == null) {
-			f = new Form();
-			st.form = f;
-			if (!content.requiresPermission().isEmpty()) {
-				if (!st.hasPermission(content.requiresPermission())) {
-					st.logger().log(WARNING, "Attempted access to " + st.getDebasedURL() + " which requires missing permission " + content.requiresPermission());
-					throw new UserException("Access to this page is denied, you require permission " + content.requiresPermission());
-				}
+		f = new Form();
+		st.form = f;
+		if (!content.requiresPermission().isEmpty()) {
+			if (!st.hasPermission(content.requiresPermission())) {
+				st.logger().log(WARNING, "Attempted access to " + st.getDebasedURL() + " which requires missing permission " + content.requiresPermission());
+				throw new UserException("Access to this page is denied, you require permission " + content.requiresPermission());
 			}
-			content.run(st, values);
-			for (String value : values.keySet()) { f.readValue(value, values.get(value)); }
-		} else { st.form = f; }
+		}
+		content.run(st, values);
+		for (String value : values.keySet()) { f.readValue(value, values.get(value)); }
 
 		return f.asHtml(st, isRich());
 	}
@@ -424,7 +409,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// make a buffer, read, make a string, voila :P
 				int available = contentstream.available();
 				if (available == 0) { return values; } //not actually a post
-				byte array[] = new byte[available];
+				byte[] array = new byte[available];
 				contentstream.read(array);
 				String content = new String(array);
 				// parse the string into post variables
@@ -459,95 +444,49 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 	protected boolean cookieAuthenticationOnly() { return false; }
 
+
+	// this should probably be done better, i dont think we have to "split" on ; as i think the API will decompose that for us if we ask nicely
+	public String extractGPHUDCookie(State st) {
+		for (Header h : st.req.getHeaders("Cookie")) {
+			for (String piece : h.getValue().split(";")) {
+				piece = piece.trim();
+				if (piece.startsWith("gphud=")) {
+					return piece.substring(6);
+				}
+			}
+		}
+		return null;
+	}
+	public String extractClusterCookie(State st){
+		for (Header h : st.req.getHeaders("Cookie")) {
+			for (String piece : h.getValue().split(";")) {
+				piece = piece.trim();
+				if (piece.startsWith("coagulateslsessionid=")) {
+					return piece.substring("coagulateslsessionid=".length());
+				}
+			}
+		}
+		return null;
+	}
+
+
 	// override me if you want to disable authentication or something :P
 	// return "null" to proceed with normal stuff (modify the context, store auth results here).
 	// return a Form if you want to intercept the connection to authenticate it
+	//
+	// generally our job is to set up the avatar/instance/character stuff
 	public Form authenticationHook(State st, SafeMap values) throws SystemException {
 		boolean debug = false;
 		if (debug) { System.out.println("Calling authentication hook, URI is " + st.getDebasedURL()); }
-		String cookie = null;
-		String coagulateslcookie = null;
-		for (Header h : st.req.getHeaders("Cookie")) {
-			for (String piece : h.getValue().split(";")) {
-				if (debug) { System.out.println("Have a cookie: " + piece); }
-				piece = piece.trim();
-				if (piece.startsWith("coagulateslsessionid=")) {
-					coagulateslcookie = piece.substring("coagulateslsessionid=".length());
-					if (debug) { System.out.println("Extracted coagulate SL cookie from header " + coagulateslcookie); }
-				}
-				if (piece.startsWith("gphud=")) {
-					cookie = piece.substring(6);
-					if (debug) { System.out.println("Extracted cookie from header " + cookie); }
-				}
-			}
-		}
-		String array[] = st.getDebasedURL().split("\\?"); // URLs passed always takes precedence
-		for (String piece : array) {
-			if (piece.startsWith("gphud=")) {
-				cookie = piece.substring("gphud=".length());
-				if (debug) { System.out.println("Extracted cookie from URI " + cookie); }
-				st.resp.addHeader("Set-Cookie", "gphud=" + cookie + "; Path=/");
-				st.setURL(st.getFullURL().replaceAll("\\?gphud=.*", ""));
-				if (debug) { System.out.println("Redirecting to " + st.getDebasedURL()); }
-				throw new RedirectionException(st.getDebasedURL());
-			}
-		}
-		Cookies cookies = null;
-		if (cookie != null) {
-			if (debug) { System.out.println("getting cookie"); }
-			try {
-				cookies = new Cookies(cookie);
-			} catch (SystemException e) {} // logged out possibly, or expired and cleaned up
-		}
-		if (debug) { System.out.println("Cookies object is " + cookies); }
-		if (cookies != null) {
-			Instance instance = cookies.getInstance();
-			if (instance != null) { st.setInstance(instance); }
-			User av = cookies.getAvatar();
-			Char ch = cookies.getCharacter();
-			if (av != null) {
-				st.setAvatar(av);
-			}
-			if (ch != null) {
-				st.setCharacter(ch);
-			}
-			if (av == null && ch != null) { st.setAvatar(ch.getOwner()); }
-			if (av != null) {
-				st.cookiestring = cookie;
-				st.cookie = cookies;
-				return characterSelectionHook(st, values);
-			} // logged in, one way or the other, note we might not have an entity, and we want one
-		}
-		if (cookies == null && coagulateslcookie != null && !coagulateslcookie.isEmpty()) {
-			Session slsession = Session.get(coagulateslcookie);
-			if (slsession != null) {
-				if (debug) { System.out.println("Adopting Coagulate SL Session (?)"); }
-				User av = slsession.user();
-				if (av != null) {
-					st.setAvatar(av);
-					Char defaultchar = null;
-					try {
-						defaultchar = PrimaryCharacters.getPrimaryCharacter(st, false);
-					} catch (UserException e) {} // may have no characters etc
-					Instance instance = null;
-					if (defaultchar != null) {
-						instance = defaultchar.getInstance();
-						st.setInstance(instance);
-						st.setCharacter(defaultchar);
-					}
-					cookie = Cookies.generate(av, defaultchar, instance, true);
-					st.cookiestring = cookie;
-					try {
-						st.cookie = new Cookies(cookie);
-					} catch (SystemException ex) {
-						st.logger().log(SEVERE, "Cookie load gave exception, right after it was generated?", ex);
-					}
-					st.resp.addHeader("Set-Cookie", "gphud=" + cookie + "; Path=/");
-					st.logger().log(INFO, "SL Cluster Services SSO as " + av);
-					return characterSelectionHook(st, values);
-				}
-			}
-		}
+		// FIRSTLY, pick up any existing session data
+		String cookie = extractGPHUDCookie(st);
+		String coagulateslcookie = extractClusterCookie(st);
+		extractURLCookieAndRedirect(st);
+		Cookies cookies = Cookies.loadOrNull(cookie); // can i have cookie?
+		if (cookies!=null) { cookies.setStateFromCookies(st); } // already native logged in, load state from cookie
+		if (cookies == null && coagulateslcookie != null && !coagulateslcookie.isEmpty()) { setupStateFromCluster(st,coagulateslcookie); } // cluster login
+		// are we authenticated now?
+		if (st.avatar!=null || st.getCharacterNullable()!=null) { return null; }
 		if (cookieAuthenticationOnly()) {
 			Form failed = new Form();
 			if (cookie != null && !"".equals(cookie)) {
@@ -557,8 +496,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			}
 			return failed;
 		}
-		// assume we authenticated!
-		// this assumption eventually breaks as we put no login details in the context for later use
+
 		Form login = new Form();
 		Text topline = new Text("");
 		login.add(topline);
@@ -601,6 +539,34 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return login;
 	}
 
+	private void setupStateFromCluster(State st, String coagulateslcookie) {
+		Session slsession = Session.get(coagulateslcookie);
+		if (slsession != null) {
+			User av = slsession.user();
+			if (av != null) {
+				st.setAvatar(av);
+				String cookie = Cookies.generate(av, null, null, true);
+				st.cookiestring = cookie;
+				try { st.cookie = new Cookies(cookie); }
+				catch (SystemException ex) { st.logger().log(SEVERE, "Cookie load gave exception, right after it was generated?", ex); }
+				st.resp.addHeader("Set-Cookie", "gphud=" + cookie + "; Path=/");
+				st.logger().log(INFO, "SL Cluster Services SSO as " + av);
+			}
+		}
+	}
+
+	private void extractURLCookieAndRedirect(State st) {
+		String array[] = st.getDebasedURL().split("\\?"); // URLs passed always takes precedence
+		for (String piece : array) {
+			if (piece.startsWith("gphud=")) {
+				String cookie = piece.substring("gphud=".length());
+				st.resp.addHeader("Set-Cookie", "gphud=" + cookie + "; Path=/");
+				st.setURL(st.getFullURL().replaceAll("\\?gphud=.*", ""));
+				throw new RedirectionException(st.getDebasedURL());
+			}
+		}
+	}
+
 	// A login must select an avatar from its list of avatars, if it has more than one...
 	private Form characterSelectionHook(State st, Map<String, String> values) {
 		if (1 == 1) { return null; }
@@ -616,7 +582,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		Form selectavatars = new Form();
 		selectavatars.add(new TextHeader("Select a character"));
-		Map<Button, Char> buttons = new TreeMap<>();
+		Map<Button, Char> buttons = new HashMap<>();
 		for (Char e : characters) {
 			Button b = new Button(e.getName());
 			buttons.put(b, e);

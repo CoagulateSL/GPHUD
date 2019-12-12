@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Row implements Renderable {
-	List<Cell> row = new ArrayList<>();
+	final List<Cell> row = new ArrayList<>();
 	String bgcolor = "";
 	String alignment = "";
 
@@ -65,9 +65,7 @@ public class Row implements Renderable {
 
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
-		for (Cell c : row) { r.add(c); }
-		return r;
+		return new HashSet<>(row);
 	}
 
 	public void add(Integer ownerid) {

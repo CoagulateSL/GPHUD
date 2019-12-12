@@ -17,10 +17,10 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class URLAnnotation extends URL {
-	private static Set<String> inuse = new HashSet<>(); // a legitimate static in a non static class oO
-	private URLs meta;
-	private Module module;
-	private Method method;
+	private static final Set<String> inuse = new HashSet<>(); // a legitimate static in a non static class oO
+	private final URLs meta;
+	private final Module module;
+	private final Method method;
 	private boolean generated = true;
 
 	public URLAnnotation(Module module, Method method) throws SystemException, UserException {
@@ -70,7 +70,7 @@ public class URLAnnotation extends URL {
 
 	public void run(State st, SafeMap values) throws SystemException, UserException {
 		try {
-			method.invoke(null, new Object[]{st, values});
+			method.invoke(null, st, values);
 		} catch (IllegalAccessException ex) {
 			throw new SystemException("Illegal method access to content at " + st.getDebasedURL(), ex);
 		} catch (IllegalArgumentException ex) {

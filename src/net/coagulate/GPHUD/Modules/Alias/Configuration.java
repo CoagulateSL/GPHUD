@@ -44,7 +44,8 @@ public abstract class Configuration {
 
 		Map<String, Alias> aliases = Alias.getAliasMap(st);
 		int counter = 0;
-		for (String name : aliases.keySet()) {
+		for (Map.Entry<String, Alias> entry : aliases.entrySet()) {
+			String name = entry.getKey();
 			String innercontent = "";
 			if (st.hasPermission("alias.config")) {
 				innercontent += "<button style=\"border: 0;\" onclick=\"document.getElementById('delete-" + counter + "').style.display='inline';\">Delete</button>";
@@ -58,7 +59,7 @@ public abstract class Configuration {
 				innercontent += "</div>";
 				innercontent += "&nbsp;&nbsp;&nbsp;";
 			}
-			innercontent += "<a href=\"./alias/view/" + aliases.get(name).getId() + "\">" + name + "</a>";
+			innercontent += "<a href=\"./alias/view/" + entry.getValue().getId() + "\">" + name + "</a>";
 			innercontent += "<br>";
 			f.add(innercontent); // bleugh
 			counter++;
@@ -90,7 +91,7 @@ public abstract class Configuration {
 
 	@URLs(url = "/configuration/alias/view/*")
 	public static void viewAlias(State st, SafeMap values) throws SystemException, UserException {
-		String split[] = st.getDebasedURL().split("/");
+		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		Alias a = Alias.get(Integer.parseInt(id));
 		viewAlias(st, values, a);

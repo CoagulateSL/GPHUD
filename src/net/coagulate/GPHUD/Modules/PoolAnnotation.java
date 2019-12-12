@@ -7,8 +7,8 @@ package net.coagulate.GPHUD.Modules;
  * @author Iain Price <gphud@predestined.net>
  */
 public class PoolAnnotation extends Pool {
-	Pools meta;
-	Module module;
+	final Pools meta;
+	final Module module;
 	private boolean generated = true;
 
 	public PoolAnnotation(Module mod, Pools meta) {

@@ -16,7 +16,7 @@ import net.coagulate.GPHUD.State;
  */
 public class AttributePermission extends Permission {
 
-	Attribute a;
+	final Attribute a;
 
 	public AttributePermission(Attribute a) {
 		this.a = a;

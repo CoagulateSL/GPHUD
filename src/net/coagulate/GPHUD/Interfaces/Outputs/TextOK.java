@@ -10,7 +10,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TextOK implements Renderable {
-	protected String s;
+	protected final String s;
 
 	public TextOK(String s) { this.s = s; }
 

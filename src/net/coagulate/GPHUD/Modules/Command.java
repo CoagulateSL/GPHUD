@@ -79,6 +79,7 @@ public abstract class Command {
 
 	public abstract String getName();
 
+	@SuppressWarnings("fallthrough")
 	public Response run(State st, String[] args) throws SystemException, UserException {
 		final boolean debug=false;
 		List<Object> typedargs = new ArrayList<>();
@@ -99,82 +100,42 @@ public abstract class Command {
 				int maxlen = -1;
 				switch (type) {
 					case TEXT_CLEAN:
-						maxlen = argument.max();
-						break;
 					case TEXT_ONELINE:
-						maxlen = argument.max();
-						break;
 					case TEXT_INTERNAL_NAME:
-						maxlen = argument.max();
-						break;
 					case TEXT_MULTILINE:
 						maxlen = argument.max();
 						break;
 					case PASSWORD:
+					case CHOICE:
 						maxlen = 1024;
 						break;
 					case BOOLEAN:
 						maxlen = 8;
 						break;
 					case INTEGER:
-						maxlen = 32;
-						break;
 					case FLOAT:
 						maxlen = 32;
 						break;
-					case CHOICE:
-						maxlen = 1024;
-						break;
 					case CHARACTER:
-						maxlen = 64;
-						break;
+					case ATTRIBUTE_WRITABLE:
+					case ATTRIBUTE:
+					case COORDINATES:
+					case ZONE:
+					case REGION:
+					case MODULE:
+					case PERMISSION:
+					case PERMISSIONSGROUP:
+					case AVATAR_NEAR:
+					case AVATAR:
+					case CHARACTER_FACTION:
+					case CHARACTER_NEAR:
 					case CHARACTER_PLAYABLE:
 						maxlen = 64;
 						break;
-					case CHARACTER_NEAR:
-						maxlen = 64;
-						break;
-					case CHARACTER_FACTION:
-						maxlen = 64;
-						break;
-					case AVATAR:
-						maxlen = 64;
-						break;
-					case AVATAR_NEAR:
-						maxlen = 64;
-						break;
-					case PERMISSIONSGROUP:
-						maxlen = 64;
-						break;
-					case PERMISSION:
-						maxlen = 64;
-						break;
 					case CHARACTERGROUP:
-						maxlen = 128;
-						break;
+					case EVENT:
 					case KVLIST:
 						maxlen = 128;
-						break;
-					case MODULE:
-						maxlen = 64;
-						break;
-					case REGION:
-						maxlen = 64;
-						break;
-					case ZONE:
-						maxlen = 64;
-						break;
-					case COORDINATES:
-						maxlen = 64;
-						break;
-					case EVENT:
-						maxlen = 128;
-						break;
-					case ATTRIBUTE:
-						maxlen = 64;
-						break;
-					case ATTRIBUTE_WRITABLE:
-						maxlen = 64;
 						break;
 					default:
 						throw new AssertionError(type.name());
@@ -206,10 +167,10 @@ public abstract class Command {
 					case KVLIST:
 					case COORDINATES:
 						//System.out.println("Adding arg "+v);
-						typedargs.add(new String(v));
+						typedargs.add(v);
 						break;
 					case BOOLEAN:
-						if (v != null && ("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
+						if (("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
 							typedargs.add(Boolean.TRUE);
 						} else {
 							typedargs.add(Boolean.FALSE);
@@ -217,14 +178,14 @@ public abstract class Command {
 						break;
 					case INTEGER:
 						try {
-							typedargs.add(new Integer(v));
+							typedargs.add(Integer.valueOf(v));
 						} catch (NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}
 						break;
 					case FLOAT:
 						try {
-							typedargs.add(new Float(v));
+							typedargs.add(Float.valueOf(v));
 						} catch (NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}
@@ -411,8 +372,7 @@ public abstract class Command {
 				System.out.println("Go for invoke on " + getMethod());
 				for (Object o : args) {System.out.println(o); }
 			}
-			Response response = (Response) (getMethod().invoke(this, args));
-			return response;
+			return (Response) (getMethod().invoke(this, args));
 		} catch (IllegalAccessException ex) {
 			throw new SystemException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
 		} catch (IllegalArgumentException ex) {
@@ -592,16 +552,12 @@ public abstract class Command {
 				case COORDINATES:
 				case CHARACTER:
 				case CHARACTER_PLAYABLE: // FIXME this can be done properly
+				case FLOAT:
+				case INTEGER:
 					t.add(new TextInput(arg.getName()));
 					break;
 				case PASSWORD:
 					t.add(new PasswordInput(arg.getName()));
-					break;
-				case INTEGER:
-					t.add(new TextInput(arg.getName()));
-					break;
-				case FLOAT:
-					t.add(new TextInput(arg.getName()));
 					break;
 				case BOOLEAN:
 					t.add(new CheckBox(arg.getName()));
@@ -717,7 +673,7 @@ public abstract class Command {
 	}
 
 
-	public static enum Context {ANY, CHARACTER, AVATAR}
+	public enum Context {ANY, CHARACTER, AVATAR}
 
 	/**
 	 * Defines an exposed command.

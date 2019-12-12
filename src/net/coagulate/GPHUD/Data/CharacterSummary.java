@@ -24,7 +24,7 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class CharacterSummary implements Comparable {
+public class CharacterSummary implements Comparable<CharacterSummary> {
 	public boolean retired = false;
 	int id = 0;
 	String name = "";
@@ -36,7 +36,7 @@ public class CharacterSummary implements Comparable {
 	Integer recentvisits = 0;
 	Integer totalxp = 0;
 	List<String> groupheaders = new ArrayList<>();
-	Map<String, String> groups = new HashMap<>();
+	final Map<String, String> groups = new HashMap<>();
 
 	static String sortLink(String current, String link) {
 		if (link.equals(current)) { return "<a href=\"?sort=-" + link + "\">" + link + "</a> &darr;"; }
@@ -93,12 +93,11 @@ public class CharacterSummary implements Comparable {
 	}
 
 	@Override
-	public int compareTo(@NotNull Object o) {
+	public int compareTo(@NotNull CharacterSummary o) {
 		if (o == null) { throw new NullPointerException("Comparing character summary to a null object"); }
 		if (!(o instanceof CharacterSummary)) {
 			throw new ClassCastException("Can not compare a CharacterSummary to a " + o.getClass().getCanonicalName());
 		}
-		CharacterSummary compareto = (CharacterSummary) o;
-		return Integer.valueOf(id).compareTo(Integer.valueOf(compareto.id));
+		return Integer.compare(id, o.id);
 	}
 }

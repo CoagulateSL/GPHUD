@@ -52,7 +52,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// stream it into a buffer
 				HttpEntityEnclosingRequest r = (HttpEntityEnclosingRequest) req;
 				InputStream is = r.getEntity().getContent();
-				byte buffer[] = new byte[65 * 1024];
+				byte[] buffer = new byte[65 * 1024];
 				is.read(buffer);
 				String message = new String(buffer);
 				// DEBUGGING ONLY log entire JSON input
@@ -60,9 +60,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// JSONify it
 				JSONObject obj;
 				try { obj = new JSONObject(message); } catch (JSONException e) {
-					SystemException se = new SystemException("Parse error in '" + message + "'");
-					se.initCause(e);
-					throw se;
+					throw new SystemException("Parse error in '" + message + "'", e);
 				}
 				// stash it in the state
 				st.json = obj;
@@ -159,7 +157,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if ("X-SecondLife-Shard".equals(name)) { shard = value; }
 			if ("X-SecondLife-Local-Position".equals(name)) { position = value; }
 		}
-		if (shard == null || (!("Production".equals(shard)))) {
+		if ((!("Production".equals(shard)))) {
 			if (shard == null) { shard = "<null>"; }
 			GPHUD.getLogger().severe("Unknown shard [" + shard + "]");
 			return new TerminateResponse("Only accessible from Second Life Production systems.");

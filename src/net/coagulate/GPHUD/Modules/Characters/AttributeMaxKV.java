@@ -10,7 +10,7 @@ import net.coagulate.GPHUD.Modules.KV;
  */
 public class AttributeMaxKV extends KV {
 
-	Attribute attribute;
+	final Attribute attribute;
 
 	public AttributeMaxKV(Attribute attribute) {
 		this.attribute = attribute;

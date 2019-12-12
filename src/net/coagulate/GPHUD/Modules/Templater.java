@@ -31,8 +31,7 @@ public abstract class Templater {
 	}
 
 	public static Map<String, String> getTemplates(State st) {
-		Map<String, String> ret = new TreeMap<>();
-		ret.putAll(templates);
+		Map<String, String> ret = new TreeMap<>(templates);
 		for (Module m : Modules.getModules()) {
 			m.addTemplateDescriptions(st, ret);
 		}
@@ -40,8 +39,7 @@ public abstract class Templater {
 	}
 
 	public static Map<String, Method> getMethods(State st) {
-		Map<String, Method> ret = new TreeMap<>();
-		ret.putAll(methods);
+		Map<String, Method> ret = new TreeMap<>(methods);
 		for (Module m : Modules.getModules()) {
 			m.addTemplateMethods(st, ret);
 		}
@@ -74,7 +72,7 @@ public abstract class Templater {
 		if (st == null) { throw new SystemException("Null session state is not permitted"); }
 		boolean debug = false;
 		for (String subst : getTemplates(st).keySet()) {
-			if (string.indexOf(subst) != -1) {
+			if (string.contains(subst)) {
 				if (debug) { System.out.println("Check: " + subst); }
 				if (debug) { System.out.println("Pre: " + string); }
 				String value = "ERROR";
@@ -195,11 +193,22 @@ public abstract class Templater {
 					while (ch >= 'a' && ch <= 'z') nextChar();
 					String func = str.substring(startPos, this.pos);
 					x = parseFactor();
-					if ("sqrt".equals(func)) x = Math.sqrt(x);
-					else if ("sin".equals(func)) x = Math.sin(Math.toRadians(x));
-					else if ("cos".equals(func)) x = Math.cos(Math.toRadians(x));
-					else if ("tan".equals(func)) x = Math.tan(Math.toRadians(x));
-					else throw new UserException("Unknown function: " + func);
+					switch (func) {
+						case "sqrt":
+							x = Math.sqrt(x);
+							break;
+						case "sin":
+							x = Math.sin(Math.toRadians(x));
+							break;
+						case "cos":
+							x = Math.cos(Math.toRadians(x));
+							break;
+						case "tan":
+							x = Math.tan(Math.toRadians(x));
+							break;
+						default:
+							throw new UserException("Unknown function: " + func);
+					}
 				} else {
 					throw new UserException("Unexpected: " + (char) ch + " at " + pos + " in '" + str + "'");
 				}

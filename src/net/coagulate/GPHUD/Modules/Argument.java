@@ -21,7 +21,7 @@ public abstract class Argument {
 	public abstract boolean mandatory();
 
 	//public abstract String choiceMethod();
-	public abstract Class objectType();
+	public abstract Class<? extends Object> objectType();
 
 	public abstract String getName();
 
@@ -33,7 +33,7 @@ public abstract class Argument {
 
 	public abstract List<String> getChoices(State st);
 
-	public static enum ArgumentType {
+	public enum ArgumentType {
 		TEXT_ONELINE, TEXT_MULTILINE, PASSWORD, TEXT_CLEAN, TEXT_INTERNAL_NAME,
 		BOOLEAN, INTEGER, FLOAT,
 		CHOICE,

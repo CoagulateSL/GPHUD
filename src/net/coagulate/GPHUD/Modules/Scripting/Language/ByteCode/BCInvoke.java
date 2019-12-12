@@ -29,7 +29,7 @@ public class BCInvoke extends ByteCode {
 		String functionname=vm.popString().getContent();
 		Method function= GSFunctions.get(functionname);
 		int argcount=vm.popInteger().getContent();
-		ByteCodeDataType args[]=new ByteCodeDataType[argcount];
+		ByteCodeDataType[] args =new ByteCodeDataType[argcount];
 		for (int i=0;i<argcount;i++) { args[i]=vm.pop(); }
 		// MAGIC GOES HERE
 		// check the arguments, two forms are allowed, both have State and GSVM as the initial arguments
@@ -39,7 +39,7 @@ public class BCInvoke extends ByteCode {
 		if (!parameters[1].equals(GSVM.class)) { throw new GSInternalError("Second parameter to function "+functionname+" must be the GSVM"); }
 		// any arguments?
 		if (argcount!=0 || parameters.length!=2) {
-			if (parameters.length==3 && parameters[2].equals(new ByteCodeDataType[0].getClass())) {
+			if (parameters.length==3 && parameters[2].equals(ByteCodeDataType[].class)) {
 				// yes and the 3rd parameter catches them all (varargs style)
 				Object[] pass={st,vm,args};
 				invoke(st,vm,function,pass);
@@ -59,8 +59,7 @@ public class BCInvoke extends ByteCode {
 			return;
 		}
 		// no arguments
-		invoke(st,vm,function,new Object[0]);
-		return;
+		invoke(st,vm,function,new Object[]{st,vm});
 	}
 
 	private void invoke(State st, GSVM vm, Method function, Object[] parameters) {

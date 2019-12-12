@@ -9,8 +9,8 @@ import java.util.Set;
  * @author iain
  */
 public class Color implements Renderable {
-	Renderable content;
-	String color;
+	final Renderable content;
+	final String color;
 
 	public Color(String color, Renderable content) {
 		this.content = content;

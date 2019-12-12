@@ -5,14 +5,12 @@
  */
 package net.coagulate.GPHUD.Modules;
 
-import net.coagulate.Core.Tools.SystemException;
-
 /**
  * Wrapper for comparing objects by name in the modules workarea (DBObject handles database sorting).
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public abstract class NameComparable implements Comparable {
+public abstract class NameComparable implements Comparable<NameComparable> {
 
 	/**
 	 * Provide a name.
@@ -27,13 +25,9 @@ public abstract class NameComparable implements Comparable {
 	 * We rely on the names as the sorting order, and pass the buck to String.compareTo()
 	 */
 	@Override
-	public int compareTo(Object t) {
-		if (!NameComparable.class.isAssignableFrom(t.getClass())) {
-			throw new SystemException(t.getClass().getName() + " is not assignable from NameComparable");
-		}
+	public int compareTo(NameComparable t) {
 		String ours = name();
-		NameComparable them = (NameComparable) t;
-		String theirs = them.name();
+		String theirs = t.name();
 		return ours.compareTo(theirs);
 	}
 }

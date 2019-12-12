@@ -41,7 +41,7 @@ public abstract class Index {
 		for (Module m : Modules.getModules()) {
 			boolean hasconfig = !(m.getKVDefinitions(st).isEmpty());
 			if (m.hasConfig(st)) { hasconfig = true; }
-			if (m.canDisable() == true) {
+			if (m.canDisable()) {
 				configurable.openRow();
 				if (hasconfig && m.isEnabled(st)) {
 					configurable.add(new Link(m.getName(), "/GPHUD/configuration/" + m.getName()));
@@ -107,7 +107,7 @@ public abstract class Index {
 		String key = null;
 		st.form.noForm();
 		if (module.contains("/")) {
-			String split[] = module.split("/");
+			String[] split = module.split("/");
 			if (split.length == 2) {
 				module = split[0];
 				key = split[1];

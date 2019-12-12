@@ -12,7 +12,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TextHeader implements Renderable {
-	Renderable content;
+	final Renderable content;
 
 	public TextHeader(String s) { content = new Text(s); }
 

@@ -37,7 +37,7 @@ public abstract class Interface implements HttpRequestHandler {
 	// we dont really know about "/app" but apache does, and then hides it from us, which is both nice, and arbitary, either way really.
 	// it doesn't any more :)
 	public static String generateURL(State st, String ending) {
-		return "https://sl" + (GPHUD.DEV ? "dev" : "") + ".coagulate.net/" + base() + "/" + ending;
+		return "https://" + (GPHUD.DEV ? "dev." : "") + "coagulate.sl/" + base() + "/" + ending;
 	}
 
 	public static int convertVersion(String version) {
@@ -48,8 +48,7 @@ public abstract class Interface implements HttpRequestHandler {
 		if (major>99) { throw new SystemException("Major version number too high"); }
 		if (minor>99) { throw new SystemException("Minor version number too high"); }
 		if (bugfix>99) { throw new SystemException("Bugfix version number too high"); }
-		int output=10000 * major + 100 * minor + bugfix;
-		return output;
+		return 10000 * major + 100 * minor + bugfix;
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public abstract class Interface implements HttpRequestHandler {
 			String uri = req.getRequestLine().getUri();
 
 			// get requested Host: from the headers.
-			Header headers[] = req.getAllHeaders();
+			Header[] headers = req.getAllHeaders();
 			String host = "";
 			for (Header h : headers) {
 				if ("Host".equals(h.getName())) {host = h.getValue(); }

@@ -95,7 +95,6 @@ public abstract class KV extends NameComparable {
 		if (!(TableRow.class.isAssignableFrom(o.getClass()))) {
 			throw new SystemException("Object " + o.getClass() + " does not extend DBOBject while setting KV " + name());
 		}
-		TableRow applyto = (TableRow) o;
 		st.setKV(o, name(), value);
 		convey(st, value);
 	}
@@ -114,9 +113,9 @@ public abstract class KV extends NameComparable {
 		}
 	}
 
-	public static enum KVSCOPE {INSTANCE, SERVER, SPATIAL, NONSPATIAL, CHARACTER, ZONE, EVENT, COMPLETE}
+	public enum KVSCOPE {INSTANCE, SERVER, SPATIAL, NONSPATIAL, CHARACTER, ZONE, EVENT, COMPLETE}
 
-	public static enum KVTYPE {TEXT, INTEGER, FLOAT, UUID, BOOLEAN, COMMAND, COLOR}
+	public enum KVTYPE {TEXT, INTEGER, FLOAT, UUID, BOOLEAN, COMMAND, COLOR}
     /* DEAD CODE?
     public  boolean exclusiveTo(DBObject o) {
          switch (scope()) {
@@ -146,7 +145,7 @@ public abstract class KV extends NameComparable {
 
 	// Configurable THINGS
 	// Characters, Events, Zones, Regions, Instances, Avatars (To be removed?), CharacterGroups (to be added)
-	public static enum KVHIERARCHY {NONE, DELEGATING, AUTHORITATIVE, CUMULATIVE}
+	public enum KVHIERARCHY {NONE, DELEGATING, AUTHORITATIVE, CUMULATIVE}
 
 	/**
 	 * Defines a KVS element.

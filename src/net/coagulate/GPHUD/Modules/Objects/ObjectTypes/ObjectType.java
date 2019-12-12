@@ -46,8 +46,8 @@ public abstract class ObjectType {
 	public static DropDownList getDropDownList(State st) {
 		DropDownList behaviours = new DropDownList("behaviour");
 		Map<String, String> types = getObjectTypes(st);
-		for (String k:types.keySet()) {
-			behaviours.add(k,types.get(k));
+		for (Map.Entry<String, String> entry : types.entrySet()) {
+			behaviours.add(entry.getKey(), entry.getValue());
 		}
 		return behaviours;
 	}
@@ -69,5 +69,5 @@ public abstract class ObjectType {
 	public Response click(State st, Char clicker) { return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
 	public Response collide(State st, Char collider)  { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
-	enum MODE {NONE,CLICKABLE,PHANTOM};
+	enum MODE {NONE,CLICKABLE,PHANTOM}
 }

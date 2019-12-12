@@ -2,7 +2,8 @@ package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.Data.Scripts;
-import net.coagulate.GPHUD.Modules.*;
+import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.State;
 
 import java.util.HashMap;

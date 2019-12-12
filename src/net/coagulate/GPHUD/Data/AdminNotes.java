@@ -53,13 +53,13 @@ public class AdminNotes extends TableRow {
 	}
 
 	public static class AdminNote {
-		public int tds;
-		public Instance instance;
-		public User admin;
-		public User targetuser;
-		public Char targetchar;
-		public String note;
-		public boolean adminonly;
+		public final int tds;
+		public final Instance instance;
+		public final User admin;
+		public final User targetuser;
+		public final Char targetchar;
+		public final String note;
+		public final boolean adminonly;
 		public AdminNote(int tds,Instance instance, User admin, User targetuser, Char targetchar,String note,boolean adminonly) {
 			this.tds=tds;
 			this.instance=instance;

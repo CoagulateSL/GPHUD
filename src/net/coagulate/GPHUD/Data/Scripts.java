@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Scripts extends TableRow {
@@ -27,7 +28,7 @@ public class Scripts extends TableRow {
 			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getInt("id")+"\">"+row.getString("name")+"</a>");
 			Integer sourceversion=row.getInt("sourceversion");
 			Integer bytecodeversion=row.getInt("bytecodeversion");
-			if (sourceversion==bytecodeversion) {
+			if (Objects.equals(sourceversion, bytecodeversion)) {
 				o.add((sourceversion == null ? "None" : "" + sourceversion));
 				o.add((bytecodeversion == null ? "None" : "" + bytecodeversion));
 			} else {

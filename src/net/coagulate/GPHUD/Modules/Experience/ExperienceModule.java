@@ -83,7 +83,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public void validatePermission(State st, String permission) {
-		return; // really can't validate these as they can be dynamic
+		// really can't validate these as they can be dynamic
 	}
 
 	@Override
@@ -100,9 +100,9 @@ public class ExperienceModule extends ModuleAnnotation {
 	@Override
 	public Permission getPermission(State st, String itemname) {
 		Map<String, Permission> perms = getPermissions(st);
-		for (String s : perms.keySet()) {
-			if (s.equalsIgnoreCase(itemname)) {
-				return perms.get(s);
+		for (Map.Entry<String, Permission> entry : perms.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase(itemname)) {
+				return entry.getValue();
 			}
 		}
 		return super.getPermission(st, itemname);
@@ -110,8 +110,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String, Pool> getPoolMap(State st) {
-		Map<String, Pool> pools = new HashMap<>();
-		pools.putAll(poolmap);
+		Map<String, Pool> pools = new HashMap<>(poolmap);
 		if (st != null) {
 			if (st.getInstanceNullable() == null) { return pools; }
 			for (Attribute attr : st.getAttributes()) {
@@ -126,8 +125,8 @@ public class ExperienceModule extends ModuleAnnotation {
 	@Override
 	public Pool getPool(State st, String itemname) {
 		Map<String, Pool> pmap = getPoolMap(st);
-		for (String name : pmap.keySet()) {
-			if (name.equalsIgnoreCase(itemname)) { return pmap.get(name); }
+		for (Map.Entry<String, Pool> entry : pmap.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
 		}
 		throw new SystemException("Unable to retrieve pool " + itemname);
 	}
@@ -138,14 +137,13 @@ public class ExperienceModule extends ModuleAnnotation {
 			return kvmap.get(qualifiedname.toLowerCase());
 		}
 		Map<String, KV> map = getKVDefinitions(st);
-		for (String s : map.keySet()) { if ((s).equalsIgnoreCase(qualifiedname)) { return map.get(s); } }
+		for (Map.Entry<String, KV> entry : map.entrySet()) { if (entry.getKey().equalsIgnoreCase(qualifiedname)) { return entry.getValue(); } }
 		throw new SystemException("Invalid KV " + qualifiedname + " in module " + getName());
 	}
 
 	@Override
 	public Map<String, KV> getKVDefinitions(State st) {
-		Map<String, KV> map = new TreeMap<>();
-		map.putAll(kvmap);
+		Map<String, KV> map = new TreeMap<>(kvmap);
 		if (st.getInstanceNullable() == null) { return map; }
 		for (Attribute attr : st.getAttributes()) {
 			if (attr.getType() == EXPERIENCE) {

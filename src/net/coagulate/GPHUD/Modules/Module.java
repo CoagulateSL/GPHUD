@@ -26,8 +26,8 @@ import java.util.TreeSet;
  */
 public abstract class Module {
 
-	String name;
-	ModuleDefinition annotation;
+	final String name;
+	final ModuleDefinition annotation;
 
 
 	public Module(String name, ModuleDefinition annotation) {
@@ -86,9 +86,9 @@ public abstract class Module {
 
 	public boolean dependanciesEnabled(State st) {
 		if (requires(st).isEmpty()) { return true; }
-		String deps[] = requires(st).split(",");
+		String[] deps = requires(st).split(",");
 		for (String dep : deps) {
-			if (Modules.get(null, dep).isEnabled(st) == false) { return false; }
+			if (!Modules.get(null, dep).isEnabled(st)) { return false; }
 		}
 		return true;
 	}
@@ -114,7 +114,7 @@ public abstract class Module {
 			return !defaultDisable();
 		}
 		if (debug) { System.out.println("Return value " + enabled); }
-		return new Boolean(enabled);
+		return Boolean.parseBoolean(enabled);
 	}
 
 	public abstract Map<String, Permission> getPermissions(State st);
@@ -134,10 +134,10 @@ public abstract class Module {
 	public Map<String, KV> getKVAppliesTo(State st, TableRow dbo) {
 		Map<String, KV> fullset = getKVDefinitions(st);
 		Map<String, KV> filtered = new TreeMap<>();
-		for (String k : fullset.keySet()) {
-			KV v = fullset.get(k);
+		for (Map.Entry<String, KV> entry : fullset.entrySet()) {
+			KV v = entry.getValue();
 			if (v.appliesTo(dbo)) {
-				filtered.put(k, v);
+				filtered.put(entry.getKey(), v);
 			}
 		}
 		return filtered;
@@ -188,7 +188,7 @@ dead code?
 	public void addTemplateMethods(State st, Map<String, Method> ret) { }
 
 	public Set<CharacterAttribute> getAttributes(State st) {
-		return new TreeSet<CharacterAttribute>();
+		return new TreeSet<>();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)

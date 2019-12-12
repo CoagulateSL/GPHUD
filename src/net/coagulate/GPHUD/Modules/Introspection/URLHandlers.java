@@ -31,18 +31,18 @@ public abstract class URLHandlers {
 		Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("URL").add("Method"));
-		Map<String, Row> output = new TreeMap<String, Row>();
+		Map<String, Row> output = new TreeMap<>();
 		for (Module module : Modules.getModules()) {
 			for (URL url : module.getAllContents(st)) {
 				Row writeup = new Row();
-				writeup.add(url.url().toString());
+				writeup.add(url.url());
 				writeup.add(url.getMethodName());
 				writeup.add(url.requiresPermission());
-				output.put(url.url().toString(), writeup);
+				output.put(url.url(), writeup);
 			}
 		}
-		for (String url : output.keySet()) {
-			t.add(output.get(url));
+		for (Row row : output.values()) {
+			t.add(row);
 		}
 	}
 }

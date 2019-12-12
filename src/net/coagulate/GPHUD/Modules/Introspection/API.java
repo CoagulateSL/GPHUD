@@ -49,7 +49,7 @@ public abstract class API {
 			f.add("<b>" + p.getName() + "</b>");
 			f.add(" - Type: " + p.type());
 			if (p.type() == ArgumentType.CHOICE) {
-				String split[] = proposedcommand.split("\\.");
+				String[] split = proposedcommand.split("\\.");
 				String options = "";
 				for (String s : p.getChoices(st)) {
 					if (!options.isEmpty()) { options += ", "; }
@@ -103,13 +103,13 @@ public abstract class API {
 		for (Module m : Modules.getModules()) {
 			t.add(new HeaderRow().add(new Cell(new TextSubHeader(m.getName()), 999)));
 			Map<String, Command> commands = m.getCommands(st);
-			for (String command : commands.keySet()) {
+			for (Map.Entry<String, Command> entry : commands.entrySet()) {
 				t.openRow();
 				try {
-					Command c = commands.get(command);
+					Command c = entry.getValue();
 					t.openRow();
 					t.add(c.context().toString());
-					t.add("<a href=\"/GPHUD/introspection/api/" + m.getName() + "/" + command + "\">" + c.getName() + "</a>");
+					t.add("<a href=\"/GPHUD/introspection/api/" + m.getName() + "/" + entry.getKey() + "\">" + c.getName() + "</a>");
 					t.add(c.description());
 					if (c.requiresPermission().isEmpty()) { t.add(""); } else {
 						t.add(" [ " + c.requiresPermission() + " ] ");

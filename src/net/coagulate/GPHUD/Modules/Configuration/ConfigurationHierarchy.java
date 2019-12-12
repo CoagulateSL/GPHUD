@@ -178,8 +178,8 @@ public class ConfigurationHierarchy extends Form {
 					Boolean selected = null;
 					if ("true".equalsIgnoreCase(value)) { selected = true; }
 					if ("false".equalsIgnoreCase(value)) { selected = false; }
-					editor = "<input type=\"radio\" name=\"value-" + codename + "\" value=\"true\" " + ((selected != null && selected == true) ? "checked=checked" : "") + ">True";
-					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"false\" " + ((selected != null && selected == false) ? "checked=checked" : "") + ">False";
+					editor = "<input type=\"radio\" name=\"value-" + codename + "\" value=\"true\" " + ((selected != null && selected) ? "checked=checked" : "") + ">True";
+					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"false\" " + ((selected != null && !selected) ? "checked=checked" : "") + ">False";
 					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"\" " + ((selected == null) ? "checked=checked" : "") + ">Unset";
 					break;
 				case INTEGER:

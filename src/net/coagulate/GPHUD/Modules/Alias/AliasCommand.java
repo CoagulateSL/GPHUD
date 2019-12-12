@@ -26,9 +26,9 @@ import java.util.List;
  */
 public class AliasCommand extends Command {
 
-	JSONObject definition;
-	Command targetcommand;
-	String name;
+	final JSONObject definition;
+	final Command targetcommand;
+	final String name;
 	String fail = "";
 
 	public AliasCommand(State st, String name, JSONObject newdef) throws UserException, SystemException {
@@ -157,7 +157,7 @@ public class AliasCommand extends Command {
 
 
 		Command consider = this;
-		while (consider != null && consider instanceof AliasCommand) {
+		while (consider instanceof AliasCommand) {
 			AliasCommand ac = (AliasCommand) consider;
 			//System.out.println("Processing "+ac.getFullName());
 			for (String key : ac.getDefinition().keySet()) {

@@ -10,7 +10,7 @@ import net.coagulate.GPHUD.Modules.KV;
  */
 public class AttributeKV extends KV {
 
-	Attribute attribute;
+	final Attribute attribute;
 
 	public AttributeKV(Attribute attribute) {
 		this.attribute = attribute;

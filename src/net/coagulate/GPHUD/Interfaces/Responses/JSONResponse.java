@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class JSONResponse implements Response {
-	JSONObject json;
+	final JSONObject json;
 
 	public JSONResponse(JSONObject j) {
 		json = j;

@@ -121,8 +121,7 @@ public class Menus extends TableRow {
 	public JSONObject getJSON() throws SystemException {
 		String json = dqs(true, "select json from menus where menuid=?", getId());
 		if (json == null) { throw new SystemException("No (null) template for menu id " + getId()); }
-		JSONObject jsonobject = new JSONObject(json);
-		return jsonobject;
+		return new JSONObject(json);
 	}
 
 	/**

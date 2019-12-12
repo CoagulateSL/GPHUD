@@ -22,7 +22,7 @@ import static java.util.logging.Level.SEVERE;
  * @author iain
  */
 public abstract class Modules {
-	static Map<String, Module> modules = new TreeMap<>();
+	static final Map<String, Module> modules = new TreeMap<>();
 
 	static void register(Module mod) throws SystemException {
 		String name = mod.getName();
@@ -38,9 +38,7 @@ public abstract class Modules {
 	 * @return
 	 */
 	public static List<Module> getModules() {
-		List<Module> set = new ArrayList<>();
-		for (String name : modules.keySet()) { set.add(modules.get(name)); }
-		return set;
+		return new ArrayList<>(modules.values());
 	}
 
 	/**
@@ -111,8 +109,7 @@ public abstract class Modules {
 			throw new UserException("Invalid format, must be module.reference but we received " + qualified);
 		}
 		extractModule(qualified); // validates the module
-		String reference = parts[1];
-		return reference;
+		return parts[1];
 	}
 
 	// validate a KV mapping exists
@@ -193,9 +190,10 @@ public abstract class Modules {
 
 	public static Response getJSONTemplateResponse(State st, String command) throws UserException, SystemException { return new JSONResponse(getJSONTemplate(st, command)); }
 
+	@SuppressWarnings("fallthrough")
 	public static Response run(State st, String console) throws UserException, SystemException {
 		if (console == null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
-		String words[] = console.split(" ");
+		String[] words = console.split(" ");
 		int i = 0;
 		String command = words[0].toLowerCase();
 		if (command.startsWith("*")) { command = command.substring(1); }
@@ -204,7 +202,7 @@ public abstract class Modules {
 			return new ErrorResponse("Unable to find command '" + command + "' - " + e.getLocalizedMessage());
 		}
 		if (c == null) { return new ErrorResponse("Failed to find command " + command); }
-		if (c.permitConsole() == false) {
+		if (!c.permitConsole()) {
 			return new ErrorResponse("Command '" + command + "' can not be called from the console");
 		}
 		SafeMap parameters = new SafeMap();
@@ -249,8 +247,7 @@ public abstract class Modules {
 				}
 			}
 		}
-		Response response = c.run(st, parameters);
-		return response;
+		return c.run(st, parameters);
 	}
 
 
@@ -306,9 +303,7 @@ public abstract class Modules {
 		for (Module m : getModules()) {
 			if (m.isEnabled(st)) {
 				Map<String, KV> getkvs = m.getKVDefinitions(st);
-				for (String s : getkvs.keySet()) {
-					kvs.add(getkvs.get(s));
-				}
+				kvs.addAll(getkvs.values());
 			}
 		}
 		return kvs;

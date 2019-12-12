@@ -31,8 +31,7 @@ public abstract class KVMap {
 				t.openRow();
 				t.add(new HeaderRow().add(new TextSubHeader(m.getName())));
 				t.add(new HeaderRow().add("Name").add("Scope").add("Type").add("Hierarchy").add("Permission").add("Default").add("Description").add("ConveyedAs").add("DoesTemplates"));
-				for (String key : kvmap.keySet()) {
-					KV kv = kvmap.get(key);
+				for (KV kv : kvmap.values()) {
 					Row r = new Row();
 					if (kv.hidden()) { r.setbgcolor("#e0e0e0"); }
 					t.add(r);

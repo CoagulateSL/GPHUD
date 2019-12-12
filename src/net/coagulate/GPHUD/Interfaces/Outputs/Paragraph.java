@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class Paragraph implements Renderable {
 
-	Renderable content;
+	final Renderable content;
 
 	public Paragraph(String s) { content = new Text(s); }
 

@@ -12,16 +12,16 @@ import java.lang.reflect.Method;
  * @author Iain Price <gphud@predestined.net>
  */
 public class SideSubMenuAnnotation extends SideSubMenu {
-	SideSubMenus meta;
-	Method method;
-	URL url;
+	final SideSubMenus meta;
+	final Method method;
+	final URL url;
 	private boolean generated = true;
 
 	public SideSubMenuAnnotation(Method m) throws UserException, SystemException {
 		generated = false;
 		this.meta = m.getAnnotation(SideSubMenus.class);
 		method = m;
-		url = Modules.getURL(null, ((URLs) m.getAnnotation(URLs.class)).url());
+		url = Modules.getURL(null, m.getAnnotation(URLs.class).url());
 	}
 
 	public String name() { return meta.name(); }

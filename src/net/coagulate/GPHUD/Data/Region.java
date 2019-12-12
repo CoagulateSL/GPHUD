@@ -203,8 +203,7 @@ public class Region extends TableRow {
 	 */
 	public void verifyAvatars(String[] avatarsarray) {
 		String report = "";
-		Set<String> avatars = new HashSet<>();
-		for (String s : avatarsarray) { avatars.add(s); }
+		Set<String> avatars = new HashSet<>(Arrays.asList(avatarsarray));
 		Results db = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		// iterate over the current visits
 		for (ResultsRow row : db) {
@@ -259,7 +258,7 @@ public class Region extends TableRow {
 				for (ResultsRow row : urls) {
 					String url = row.getString("url");
 					JSONObject ping = new JSONObject().put("incommand", "ping");
-					Transmission t = new Transmission((Char) null, ping, url, 5);
+					Transmission t = new Transmission(null, ping, url, 5);
 					t.start();
 				}
 			} catch (Exception e) {
@@ -454,6 +453,7 @@ public class Region extends TableRow {
 	}
 	public void sendServerSync(JSONObject json) {
 		Transmission t=new Transmission(this, json);
+		//noinspection CallToThreadRun
 		t.run();
 		if (t.failed()) { throw new UserException("Connection to server failed"); }
 	}

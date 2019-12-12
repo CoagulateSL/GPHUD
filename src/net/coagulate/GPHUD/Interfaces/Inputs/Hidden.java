@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class Hidden extends Input {
 
-	String name;
+	final String name;
 
 	public Hidden(String name, String value) {
 		this.name = name;

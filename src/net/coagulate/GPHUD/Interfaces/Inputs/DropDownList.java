@@ -16,8 +16,8 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class DropDownList extends Input {
-	String name;
-	Map<String, String> choices = new TreeMap<>();
+	final String name;
+	final Map<String, String> choices = new TreeMap<>();
 
 	public DropDownList(String name) {
 		this.name = name;
@@ -30,7 +30,7 @@ public class DropDownList extends Input {
 		DropDownList commands = new DropDownList(name);
 		for (Module mod : Modules.getModules()) {
 			for (Command c : mod.getCommands(st).values()) {
-				if (allowgenerated == true || !c.isGenerated()) {
+				if (allowgenerated || !c.isGenerated()) {
 					commands.add(c.getFullName(), c.getFullName() + " - " + c.description());
 				}
 			}
@@ -48,10 +48,11 @@ public class DropDownList extends Input {
 		r += "<select name=\"" + name + "\"";
 		if (submitonchange) { r+="onchange=\"this.form.submit()\""; }
 		r+=">";
-		for (String option : choices.keySet()) {
+		for (Map.Entry<String, String> entry : choices.entrySet()) {
+			String option = entry.getKey();
 			r += "<option value=\"" + option + "\"";
 			if (option.equalsIgnoreCase(value)) { r += " selected"; }
-			r += ">" + choices.get(option) + "</option>";
+			r += ">" + entry.getValue() + "</option>";
 		}
 		r += "</select>";
 		return r;

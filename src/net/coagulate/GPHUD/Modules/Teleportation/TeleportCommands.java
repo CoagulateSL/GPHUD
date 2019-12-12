@@ -50,8 +50,8 @@ public class TeleportCommands {
 		}
 		position=position.replaceAll("\\(","").replaceAll("\\)","");
 		rotation=rotation.replaceAll("\\(","").replaceAll("\\)","");
-		String xyz[]=position.split(",");
-		String xyzs[]=rotation.split(",");
+		String[] xyz =position.split(",");
+		String[] xyzs =rotation.split(",");
 
 		float x=Float.parseFloat(xyz[0]);
 		float y=Float.parseFloat(xyz[1]);

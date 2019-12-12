@@ -9,8 +9,8 @@ package net.coagulate.GPHUD.Modules;
  * @author iain
  */
 public class KVValue {
-	private String value;
-	private String path;
+	private final String value;
+	private final String path;
 
 	public KVValue(String value, String path) {
 		this.value = value;
@@ -24,11 +24,11 @@ public class KVValue {
 	public String toString() { return value(); }
 
 	public Integer intValue() {
-		return new Integer(value());
+		return Integer.valueOf(value());
 	}
 
 	public Float floatValue() {
-		return new Float(value());
+		return Float.valueOf(value());
 	}
 
 	public boolean boolValue() {

@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
+import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
@@ -21,7 +22,7 @@ public class SQL {
 	@URLs(url = "/introspection/sql")
 	@SideSubMenu.SideSubMenus(name = "SQL", priority = 9999)
 	public static void sqlIndex(State st, SafeMap values) throws UserException {
-		if (!GPHUD.getDB().sqlLogging()) {
+		if (!DBConnection.sqlLogging()) {
 			st.form.add(new TextError("SQL auditing is disabled in this installation."));
 			return;
 		}
@@ -41,14 +42,15 @@ public class SQL {
 		Map<Long, Set<Row>> bytime = new TreeMap<>(Collections.reverseOrder());
 		Map<Double, Set<Row>> byper = new TreeMap<>(Collections.reverseOrder());
 
-		for (String sql : count.keySet()) {
-			int c = count.get(sql);
+		for (Map.Entry<String, Integer> entry : count.entrySet()) {
+			String sql = entry.getKey();
+			int c = entry.getValue();
 			long t = time.get(sql);
 			Row newrow = new Row();
 			newrow.add(c);
 			newrow.add(sql);
-			newrow.add(Long.toString(t) + "ms");
-			if (c>0) { newrow.add(Long.toString(t/c) + "ms"); }
+			newrow.add(t + "ms");
+			if (c>0) { newrow.add(t / c + "ms"); }
 			Set<Row> rowset = new HashSet<>();
 			if (bycount.containsKey(c)) { rowset = bycount.get(c); }
 			rowset.add(newrow);
@@ -70,24 +72,21 @@ public class SQL {
 		Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
-		for (Double l : byper.keySet()) {
-			Set<Row> set = byper.get(l);
+		for (Set<Row> set : byper.values()) {
 			for (Row r : set) { t.add(r); }
 		}
 		f.add(new TextSubHeader("By total execution time"));
 		t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
-		for (Long l : bytime.keySet()) {
-			Set<Row> set = bytime.get(l);
+		for (Set<Row> set : bytime.values()) {
 			for (Row r : set) { t.add(r); }
 		}
 		f.add(new TextSubHeader("By execution count"));
 		t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
-		for (Integer l : bycount.keySet()) {
-			Set<Row> set = bycount.get(l);
+		for (Set<Row> set : bycount.values()) {
 			for (Row r : set) { t.add(r); }
 		}
 

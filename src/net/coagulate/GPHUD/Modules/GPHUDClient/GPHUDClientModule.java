@@ -20,7 +20,7 @@ import java.util.TreeMap;
  */
 public class GPHUDClientModule extends ModuleAnnotation {
 
-	Map<String, KV> base = new TreeMap<>();
+	final Map<String, KV> base = new TreeMap<>();
 
 	public GPHUDClientModule(String name, ModuleDefinition def) throws SystemException, UserException {
 		super(name, def);
@@ -41,8 +41,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String, KV> getKVDefinitions(State st) {
-		Map<String, KV> kv = new TreeMap<>();
-		kv.putAll(base); // anotation defined KVs for us.
+		Map<String, KV> kv = new TreeMap<>(base); // anotation defined KVs for us.
 		// note we must NOT use modules.getallKVs() (ok thats not its name) because it will come back through here and thus infinite loop.
 		// instead we'll enumerate the modules other than ourselves, and then deal with ourselves.
 		for (Module m : Modules.getModules()) {
@@ -64,8 +63,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	}
 
 	private void keyConveyances(Map<String, KV> filterinto, Map<String, KV> filterfrom) {
-		for (String name : filterfrom.keySet()) {
-			KV kv = filterfrom.get(name);
+		for (KV kv : filterfrom.values()) {
 			String conveyas = kv.conveyas();
 			if (conveyas != null && !conveyas.isEmpty()) {
 				String newname = "conveyance-" + conveyas;

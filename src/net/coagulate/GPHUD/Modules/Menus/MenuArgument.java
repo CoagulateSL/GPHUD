@@ -16,8 +16,8 @@ import java.util.List;
  * @author Iain Price <gphud@predestined.net>
  */
 public class MenuArgument extends Argument {
-	Command command;
-	JSONObject meta;
+	final Command command;
+	final JSONObject meta;
 	String override = null;
 
 	public MenuArgument(Command command, JSONObject definition) {
@@ -63,7 +63,7 @@ public class MenuArgument extends Argument {
 	}
 
 	@Override
-	public Class objectType() {
+	public Class<String> objectType() {
 		return String.class;
 	}
 

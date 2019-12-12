@@ -24,8 +24,8 @@ import static java.util.logging.Level.*;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Transmission extends Thread {
-	public static boolean debugspawn = false;
-	String url;
+	public static final boolean debugspawn = false;
+	final String url;
 	JSONObject json = null;
 	JSONObject jsonresponse = null;
 	Objects object=null;

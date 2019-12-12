@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class TerminateResponse implements Response {
 
-	String reason;
+	final String reason;
 
 	public TerminateResponse(String r) {
 		reason = r;

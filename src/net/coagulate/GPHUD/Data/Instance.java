@@ -25,7 +25,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Instance extends TableRow {
 
-	private static Map<String, Integer> laststatused = new TreeMap<>(); // naughty, static data, but thats okay really for this
+	private static final Map<String, Integer> laststatused = new TreeMap<>(); // naughty, static data, but thats okay really for this
 
 	protected Instance(int id) { super(id); }
 
@@ -360,7 +360,6 @@ public class Instance extends TableRow {
 	 *
 	 * @param st Session state, from which sorting will be read via the URI, and instance will be used.
 	 * @return A list of CharacterSummary objects
-	 * @see CharacterSummary
 	 */
 	public List<CharacterSummary> getCharacterSummary(State st) {
 		String sortby = st.getDebasedURL().replaceAll("%20", " ");
@@ -446,14 +445,13 @@ public class Instance extends TableRow {
 				records.add(cs);
 				sorted.put(value, records);
 			}
-			List<String> sortedkeys = new ArrayList<>();
-			sortedkeys.addAll(sorted.keySet());
-			if (reverse) { Collections.sort(sortedkeys, Collections.reverseOrder()); } else {
+			List<String> sortedkeys = new ArrayList<>(sorted.keySet());
+			if (reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
 				Collections.sort(sortedkeys);
 			}
 			for (String key : sortedkeys) {
 				Set<CharacterSummary> set = sorted.get(key);
-				for (CharacterSummary c : set) { sortedlist.add(c); }
+				sortedlist.addAll(set);
 			}
 		} else {
 			Map<Integer, Set<CharacterSummary>> sorted = new TreeMap<>();
@@ -471,15 +469,14 @@ public class Instance extends TableRow {
 				records.add(cs);
 				sorted.put(value, records);
 			}
-			List<Integer> sortedkeys = new ArrayList<>();
-			sortedkeys.addAll(sorted.keySet());
-			if (!reverse) { Collections.sort(sortedkeys, Collections.reverseOrder()); } else {
+			List<Integer> sortedkeys = new ArrayList<>(sorted.keySet());
+			if (!reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
 				Collections.sort(sortedkeys);
 			} // note reverse is reversed for numbers
 			// default is biggest at top, smallest at bottom, which is reverse order as the NORMAL order.   alphabetic is a-z so forward order for the NORMAL order....
 			for (Integer key : sortedkeys) {
 				Set<CharacterSummary> set = sorted.get(key);
-				for (CharacterSummary c : set) { sortedlist.add(c); }
+				sortedlist.addAll(set);
 			}
 
 		}
@@ -647,9 +644,10 @@ public class Instance extends TableRow {
 				}
 			}
 		}
-		for (Region region : buffer.keySet()) {
-			if (debug) { System.out.println("PUSHREGION " + region + " : " + buffer.get(region)); }
-			region.sendServer(buffer.get(region));
+		for (Map.Entry<Region, JSONObject> entry : buffer.entrySet()) {
+			Region region = entry.getKey();
+			if (debug) { System.out.println("PUSHREGION " + region + " : " + entry.getValue()); }
+			region.sendServer(entry.getValue());
 		}
 	}
 

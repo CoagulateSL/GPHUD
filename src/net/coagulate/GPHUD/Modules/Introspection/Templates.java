@@ -31,12 +31,13 @@ public abstract class Templates {
 		f.add(t);
 		t.add(new HeaderRow().add("Template Keyword").add("Description").add("Provider").add("Current value"));
 		Map<String, String> templates = Templater.getTemplates(st);
-		for (String template : templates.keySet()) {
+		for (Map.Entry<String, String> entry : templates.entrySet()) {
+			String template = entry.getKey();
 			//System.out.println(template);
 			Method m = Templater.getMethod(st, template);
 			t.openRow();
 			t.add(template);
-			t.add(templates.get(template));
+			t.add(entry.getValue());
 			if (m == null) { t.add("<i>NULL</i>"); } else {
 				t.add(m.getDeclaringClass().getName() + "." + m.getName() + "()");
 			}
