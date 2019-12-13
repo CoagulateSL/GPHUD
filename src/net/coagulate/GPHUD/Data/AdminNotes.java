@@ -113,9 +113,9 @@ public class AdminNotes extends TableRow {
 				Instance.get(row.getInt("instanceid")),
 				User.get(row.getInt("adminid")),
 				User.get(row.getInt("targetuser")),
-				(row.getInt("targetchar")==null?null:Char.get(row.getInt("targetchar"))),
-				row.getString("note"),
-				row.getBool("adminonly")
+				(row.getIntNullable("targetchar")==null?null:Char.get(row.getInt("targetchar"))),
+				row.getStringNullable("note"),
+				row.getBoolNoNull("adminonly")
 		);
 	}
 

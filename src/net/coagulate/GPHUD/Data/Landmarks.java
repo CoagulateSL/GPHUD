@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.GPHUD;
@@ -24,7 +25,7 @@ public class Landmarks extends TableRow {
 	public static Set<Landmarks> getAll(@Nonnull Instance instance) {
 		Set<Landmarks> results=new HashSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
-			results.add(get(row.getInt("id")));
+			results.add(get(row.getIntNullable("id")));
 		}
 		return results;
 	}
@@ -45,9 +46,10 @@ public class Landmarks extends TableRow {
 
 	@Nullable
 	public static Landmarks find(@Nonnull Instance instance, String name) {
-		Integer id=GPHUD.getDB().dqi(false,"select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like ?",instance.getId(),name);
-		if (id==null) { return null; }
-		return new Landmarks(id);
+		try {
+			Integer id=GPHUD.getDB().dqi("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like ?",instance.getId(),name);
+			return new Landmarks(id);
+		} catch (NoDataException e) {return null;}
 	}
 
 	public static void create(@Nonnull Region region, String name, float x, float y, float z, float lax, float lay, float laz) {
@@ -77,7 +79,7 @@ public class Landmarks extends TableRow {
 
 	@Nonnull
 	public Region getRegion(boolean allowretired) {
-		return Region.get(getInt("regionid"),allowretired);
+		return Region.get(getIntNullable("regionid"),allowretired);
 	}
 
 	@Nonnull

@@ -4,7 +4,7 @@ import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.SL.SL;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.logging.Logger;
 
 /**
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public abstract class Table extends net.coagulate.Core.Database.Table {
 
-	@Nullable
+	@Nonnull
 	@Override
 	public DBConnection getDatabase() { return GPHUD.getDB(); }
 

@@ -100,13 +100,13 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nullable
 	public String[] getVectors() {
-		ResultsRow r = dqone(true, "select * from zoneareas where zoneareaid=?", getId());
-		Integer x1 = r.getInt("x1");
-		Integer y1 = r.getInt("y1");
-		Integer z1 = r.getInt("z1");
-		Integer x2 = r.getInt("x2");
-		Integer y2 = r.getInt("y2");
-		Integer z2 = r.getInt("z2");
+		ResultsRow r = dqone( "select * from zoneareas where zoneareaid=?", getId());
+		Integer x1 = r.getIntNullable("x1");
+		Integer y1 = r.getIntNullable("y1");
+		Integer z1 = r.getIntNullable("z1");
+		Integer x2 = r.getIntNullable("x2");
+		Integer y2 = r.getIntNullable("y2");
+		Integer z2 = r.getIntNullable("z2");
 		if (x1 == null || x2 == null ||
 				y1 == null || y2 == null ||
 				z1 == null || z2 == null) { return null; }
@@ -152,7 +152,7 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nonnull
 	public Region getRegion(boolean allowretired) {
-		Integer id = getInt("regionid");
+		Integer id = getIntNullable("regionid");
 		if (id == null) { throw new SystemException("Zone Area " + getId() + " has no associated region?"); }
 		return Region.get(id,allowretired);
 	}
@@ -164,7 +164,7 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nonnull
 	public Zone getZone() {
-		return Zone.get(dqi(true, "select zoneid from zoneareas where zoneareaid=?", getId()));
+		return Zone.get(dqi( "select zoneid from zoneareas where zoneareaid=?", getId()));
 	}
 
 	/**

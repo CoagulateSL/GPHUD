@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -40,7 +41,7 @@ public class Zone extends TableRow {
 	 * @throws UserException If the zone name is in use
 	 */
 	public static void create(@Nonnull Instance instance, String name) throws UserException {
-		if (GPHUD.getDB().dqi(true, "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
+		if (GPHUD.getDB().dqi( "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
 			throw new UserException("Zone name already in use");
 		}
 		GPHUD.getDB().d("insert into zones(instanceid,name) values(?,?)", instance.getId(), name);
@@ -54,10 +55,11 @@ public class Zone extends TableRow {
 	 * @return Zone object, or null
 	 */
 	@Nullable
-	public static Zone find(@Nonnull Instance instance, String name) {
-		Integer zoneid = GPHUD.getDB().dqi(false, "select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
-		if (zoneid == null) { return null; }
-		return get(zoneid);
+	public static Zone find(@Nonnull Instance instance, @Nonnull String name) {
+		try {
+			Integer zoneid = GPHUD.getDB().dqi("select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
+			return get(zoneid);
+		} catch (NoDataException e) { return null; }
 	}
 
 	static void wipeKV(@Nonnull Instance instance, String key) {
@@ -100,7 +102,7 @@ public class Zone extends TableRow {
 	public Set<ZoneArea> getZoneAreas() {
 		Set<ZoneArea> areas = new TreeSet<>();
 		for (ResultsRow r : dq("select zoneareaid from zoneareas where zoneid=?", getId())) {
-			areas.add(ZoneArea.get(r.getInt()));
+			areas.add(ZoneArea.get(r.getIntNullable()));
 		}
 		return areas;
 	}
@@ -130,7 +132,7 @@ public class Zone extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		Integer id = getInt("instanceid");
+		Integer id = getIntNullable("instanceid");
 		if (id == null) {
 			throw new SystemException("Zone " + getName() + " #" + getId() + " is not associated with an instance?");
 		}

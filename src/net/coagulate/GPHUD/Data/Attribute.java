@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -45,11 +46,12 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute find(@Nonnull Instance instance, String name) {
-		Integer id = GPHUD.getDB().dqi(false, "select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
-		if (id == null) {
-			throw new UserException("Unable to find attribute '" + name + "' in instance '" + instance + "'");
+		try {
+			int id = GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
+			return get(id);
+		} catch (NoDataException e) {
+			throw new UserException("Unable to find attribute '" + name + "' in instance '" + instance + "'",e);
 		}
-		return get(id);
 	}
 
 	/** Find an attribute that is a group by 'type'.
@@ -57,11 +59,12 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute findGroup(@NotNull Instance instance, String grouptype) {
-		Integer id=GPHUD.getDB().dqi(false,"select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
-		if (id==null) {
-			throw new UserException("Unable to find an attribute representing a group of type "+grouptype);
+		try {
+			int id = GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?", instance.getId(), grouptype);
+			return get(id);
+		} catch (NoDataException e) {
+			throw new UserException("Unable to find an attribute representing a group of type " + grouptype, e);
 		}
-		return get(id);
 	}
 
 	/**
@@ -118,7 +121,7 @@ public class Attribute extends TableRow {
 	 *
 	 * @return The Instance object
 	 */
-	@Nullable
+	@Nonnull
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}

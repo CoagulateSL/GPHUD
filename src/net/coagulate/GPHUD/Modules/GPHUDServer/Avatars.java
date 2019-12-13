@@ -33,7 +33,7 @@ public abstract class Avatars {
 			                                        String userlist) throws UserException {
 
 		// check authorisation, servers can only be deployed by the instance owner...
-		if (st.sourcedeveloper.getId() != 1) {
+		if (st.getSourcedeveloper().getId() != 1) {
 			return new ErrorResponse("Invalid developer source for priviledged call.");
 		}
 		Region region = st.getRegion();

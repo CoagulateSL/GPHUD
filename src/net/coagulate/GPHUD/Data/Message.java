@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
@@ -77,9 +78,10 @@ public class Message extends TableRow {
 	 */
 	@Nullable
 	public static Message getNextMessage(@Nonnull Char c) {
-		Integer id = GPHUD.getDB().dqi(false, "select messageid from messages where characterid=? order by expires  limit 0,1", c.getId());
-		if (id == null) { return null; }
-		return Message.get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? order by expires  limit 0,1", c.getId());
+			return Message.get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class Message extends TableRow {
 	 * @return Number of messages
 	 */
 	public static int count(@Nonnull Char c) {
-		return GPHUD.getDB().dqi(true, "select count(*) from messages where characterid=?", c.getId());
+		return GPHUD.getDB().dqi( "select count(*) from messages where characterid=?", c.getId());
 	}
 
 	/**
@@ -100,9 +102,10 @@ public class Message extends TableRow {
 	 */
 	@Nullable
 	public static Message getActiveMessage(@Nonnull Char c) {
-		Integer id = GPHUD.getDB().dqi(false, "select messageid from messages where characterid=? and expires=0", c.getId());
-		if (id == null) { return null; }
-		return Message.get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? and expires=0", c.getId());
+			return Message.get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -136,7 +139,7 @@ public class Message extends TableRow {
 	 */
 	@Nullable
 	public String getJSON() {
-		return dqs(true, "select json from messages where messageid=?", getId());
+		return dqs( "select json from messages where messageid=?", getId());
 	}
 
 	/**

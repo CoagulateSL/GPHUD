@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
@@ -17,6 +18,10 @@ public class BCLabel extends ByteCode {
 	public String explain() { return "Label (:"+id+")"; }
 	@Nullable
 	Integer address=null;
+	public int address() {
+		if (address==null) { throw new SystemException("Jump address is null"); }
+		return address;
+	}
 	public void toByteCode(@Nonnull List<Byte> bytes) {
 		address=bytes.size();
 	}

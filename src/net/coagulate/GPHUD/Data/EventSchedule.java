@@ -47,7 +47,7 @@ public class EventSchedule extends TableRow {
 		Set<EventSchedule> events = new TreeSet<>();
 		int now = UnixTime.getUnixTime();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
-			events.add(get(r.getInt()));
+			events.add(get(r.getIntNullable()));
 		}
 		return events;
 	}
@@ -62,7 +62,7 @@ public class EventSchedule extends TableRow {
 	public static Set<EventSchedule> get(@Nonnull Event e) {
 		Set<EventSchedule> schedule = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where eventid=?", e.getId())) {
-			schedule.add(get(r.getInt()));
+			schedule.add(get(r.getIntNullable()));
 		}
 		return schedule;
 	}
@@ -93,7 +93,7 @@ public class EventSchedule extends TableRow {
 
 	@Nullable
 	public Event getEvent() {
-		Integer id = getInt("eventid");
+		Integer id = getIntNullable("eventid");
 		if (id == null) { return null; }
 		return Event.get(id);
 	}
@@ -117,13 +117,13 @@ public class EventSchedule extends TableRow {
 	 */
 	@Nonnull
 	public net.coagulate.GPHUD.Interfaces.Outputs.Row asRow(String timezone) {
-		ResultsRow r = dqone(true, "select * from eventsschedule where eventsscheduleid=?", getId());
+		ResultsRow r = dqone( "select * from eventsschedule where eventsscheduleid=?", getId());
 		net.coagulate.GPHUD.Interfaces.Outputs.Row ret = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
-		ret.add(fromUnixTime(r.getInt("starttime"), timezone));
-		ret.add(fromUnixTime(r.getInt("endtime"), timezone));
-		ret.add(duration(r.getInt("endtime") - r.getInt("starttime")));
-		ret.add(r.getInt("started") == 1 ? "ACTIVE" : "");
-		ret.add(duration(r.getInt("repeatinterval")));
+		ret.add(fromUnixTime(r.getIntNullable("starttime"), timezone));
+		ret.add(fromUnixTime(r.getIntNullable("endtime"), timezone));
+		ret.add(duration(r.getIntNullable("endtime") - r.getIntNullable("starttime")));
+		ret.add(r.getIntNullable("started") == 1 ? "ACTIVE" : "");
+		ret.add(duration(r.getIntNullable("repeatinterval")));
 		return ret;
 	}
 
@@ -152,7 +152,7 @@ public class EventSchedule extends TableRow {
 	 * @return Interval in seconds between repetitions of this event
 	 */
 	public int getRepeat() {
-		return getInt("repeatinterval");
+		return getIntNullable("repeatinterval");
 	}
 
 	/**
@@ -207,9 +207,9 @@ public class EventSchedule extends TableRow {
 	public void awardFinalXP(int minutes, int limit) {
 		endAllVisits();
 		for (ResultsRow r : dq("select characterid,sum(endtime-starttime) as totaltime,sum(awarded) as awarded from eventvisits where eventscheduleid=? group by characterid", getId())) {
-			int charid = r.getInt("characterid");
-			int timespent = r.getInt("totaltime");
-			int awarded = r.getInt("awarded");
+			int charid = r.getIntNullable("characterid");
+			int timespent = r.getIntNullable("totaltime");
+			int awarded = r.getIntNullable("awarded");
 			int wanttoaward = timespent / (minutes * 60);
 			if (wanttoaward > limit) { wanttoaward = limit; }
 			wanttoaward -= awarded;
@@ -231,9 +231,9 @@ public class EventSchedule extends TableRow {
 
 	@Nonnull
 	public String describe(String timezone) {
-		ResultsRow r = dqone(true, "select * from eventsschedule where eventsscheduleid=?", getId());
-		String ret = fromUnixTime(r.getInt("starttime"), timezone);
-		ret += " - " + fromUnixTime(r.getInt("endtime"), timezone);
+		ResultsRow r = dqone( "select * from eventsschedule where eventsscheduleid=?", getId());
+		String ret = fromUnixTime(r.getIntNullable("starttime"), timezone);
+		ret += " - " + fromUnixTime(r.getIntNullable("endtime"), timezone);
 		return ret;
 	}
 
@@ -251,7 +251,7 @@ public class EventSchedule extends TableRow {
 	@Override
 	public String getName() {
 		// doesn't really have a name, so we'll make one up...
-		return pad(getInt("starttime"), 20) + "-" + pad(getInt("endtime"), 20) + "-" + getId();
+		return pad(getIntNullable("starttime"), 20) + "-" + pad(getIntNullable("endtime"), 20) + "-" + getId();
 	}
 
 	@Nonnull

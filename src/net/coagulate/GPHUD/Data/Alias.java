@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -40,7 +41,7 @@ public class Alias extends TableRow {
 	public static Map<String, Alias> getAliasMap(@Nonnull State st) {
 		Map<String, Alias> aliases = new TreeMap<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select name,aliasid from aliases where instanceid=?", st.getInstance().getId())) {
-			aliases.put(r.getString("name"), get(r.getInt("aliasid")));
+			aliases.put(r.getStringNullable("name"), get(r.getInt("aliasid")));
 		}
 		return aliases;
 	}
@@ -55,19 +56,20 @@ public class Alias extends TableRow {
 	public static Map<String, JSONObject> getTemplates(@Nonnull State st) {
 		Map<String, JSONObject> aliases = new TreeMap<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select name,template from aliases where instanceid=?", st.getInstance().getId())) {
-			aliases.put(r.getString("name"), new JSONObject(r.getString("template")));
+			aliases.put(r.getStringNullable("name"), new JSONObject(r.getStringNullable("template")));
 		}
 		return aliases;
 	}
 
 	@Nullable
 	public static Alias getAlias(@Nonnull State st, String name) {
-		Integer id = GPHUD.getDB().dqi(false, "select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
-		if (id == null) { return null; }
-		return get(id);
+		try {
+			Integer id = GPHUD.getDB().dqinn("select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
+			return get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
-	@Nullable
+	@Nonnull
 	public static Alias create(@Nonnull State st, @Nonnull String name, @Nonnull JSONObject template) throws UserException, SystemException {
 		if (getAlias(st, name) != null) { throw new UserException("Alias " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
@@ -112,7 +114,7 @@ public class Alias extends TableRow {
 
 	@Nonnull
 	public JSONObject getTemplate() throws SystemException {
-		String json = dqs(true, "select template from aliases where aliasid=?", getId());
+		String json = dqsnn( "select template from aliases where aliasid=?", getId());
 		return new JSONObject(json);
 	}
 

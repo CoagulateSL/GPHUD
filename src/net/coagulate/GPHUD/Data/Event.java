@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
@@ -42,9 +43,10 @@ public class Event extends TableRow {
 	 */
 	@Nullable
 	public static Event find(@Nonnull Instance instance, String name) {
-		Integer eventid = GPHUD.getDB().dqi(false, "select eventid from events where name like ? and instanceid=?", name, instance.getId());
-		if (eventid == null) { return null; }
-		return get(eventid);
+		try {
+			Integer eventid = GPHUD.getDB().dqi("select eventid from events where name like ? and instanceid=?", name, instance.getId());
+			return get(eventid);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -77,7 +79,7 @@ public class Event extends TableRow {
 	public static Set<Event> getAll(@Nonnull Instance instance) {
 		Set<Event> events = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventid from events where instanceid=?", instance.getId())) {
-			events.add(get(r.getInt()));
+			events.add(get(r.getIntNullable()));
 		}
 		return events;
 	}
@@ -93,7 +95,7 @@ public class Event extends TableRow {
 		Set<Event> events = new TreeSet<>();
 		int now = getUnixTime();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
-			events.add(get(r.getInt()));
+			events.add(get(r.getIntNullable()));
 		}
 		return events;
 
@@ -119,7 +121,7 @@ public class Event extends TableRow {
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?", now, now)) {
 			//System.out.println(r.getInt());
-			start.add(EventSchedule.get(r.getInt()));
+			start.add(EventSchedule.get(r.getIntNullable()));
 		}
 		return start;
 	}
@@ -137,7 +139,7 @@ public class Event extends TableRow {
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?", now)) {
 			//System.out.println(r.getInt());
-			stop.add(EventSchedule.get(r.getInt()));
+			stop.add(EventSchedule.get(r.getIntNullable()));
 		}
 		return stop;
 	}
@@ -168,7 +170,7 @@ public class Event extends TableRow {
 
 	@Nullable
 	public Instance getInstance() {
-		Integer id = getInt("instanceid");
+		Integer id = getIntNullable("instanceid");
 		if (id == null) { return null; }
 		return Instance.get(id);
 	}
@@ -194,7 +196,7 @@ public class Event extends TableRow {
 	public Set<Zone> getZones() {
 		Set<Zone> zones = new TreeSet<>();
 		for (ResultsRow r : dq("select zoneid from eventslocations where eventid=?", getId())) {
-			Integer zone = r.getInt();
+			Integer zone = r.getIntNullable();
 			zones.add(Zone.get(zone));
 		}
 		return zones;
@@ -206,7 +208,7 @@ public class Event extends TableRow {
 	 * @param zone Zone to add to the event
 	 */
 	public void addZone(@Nonnull Zone zone) {
-		Integer count = dqi(true, "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
+		Integer count = dqi( "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
 		if (count != 0) { return; }
 		d("insert into eventslocations(eventid,zoneid) values(?,?)", getId(), zone.getId());
 	}

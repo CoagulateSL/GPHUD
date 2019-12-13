@@ -39,7 +39,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nonnull
 	public abstract String getIdField();
 
-	@Nullable
+	@Nonnull
 	@Override
 	public final DBConnection getDatabase() { return GPHUD.getDB(); }
 
@@ -50,7 +50,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public void validate() {
 		if (validated) { return; }
-		int count = dqi(false, "select count(*) from " + getTableName() + " where " + getIdField() + "=?", getId());
+		int count = dqi( "select count(*) from " + getTableName() + " where " + getIdField() + "=?", getId());
 		if (count > 1) {
 			throw new TooMuchDataException("Too many rows - got " + count + " instead of 1 while validating " + getTableName() + " - " + getId());
 		}
@@ -75,7 +75,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getLinkTarget();
 
-	@Nullable
+	@Nonnull
 	public String getName() {
 		try { return (String) cacheGet("name"); } catch (CacheMiss ex) {}
 		String name = getString(getNameField());
@@ -102,13 +102,13 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Override
 	public String toString() { return getNameSafe() + "[#" + getId() + "]"; }
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return getNameSafe();
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		if (!rich) { return getNameSafe(); }
@@ -131,9 +131,9 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		try {
 			int id = 0;
 			if (instancelocal) {
-				id = dqi(true, "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ? and instanceid=?", s, st.getInstance().getId());
+				id = dqi( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ? and instanceid=?", s, st.getInstance().getId());
 			} else {
-				id = dqi(true, "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ?", s);
+				id = dqi( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ?", s);
 			}
 			if (id > 0) { return id; }
 		} catch (NoDataException e) { } catch (TooMuchDataException e) {
@@ -156,7 +156,8 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	public void setKV(State st, @Nonnull String key, @Nullable String value) {
 		kvcheck();
-		String oldvalue = dqs(false, "select v from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key);
+		String oldvalue = null;
+		try { oldvalue=dqs( "select v from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key); } catch (NoDataException e) {}
 		if (value == null && oldvalue == null) { return; }
 		if (value != null && value.equals(oldvalue)) { return; }
 		Modules.validateKV(st, key);
@@ -172,7 +173,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		kvcheck();
 		Map<String, String> result = new TreeMap<>();
 		for (ResultsRow row : dq("select k,v from " + getKVTable() + " where " + getKVIdField() + "=?", getId())) {
-			result.put(row.getString("k").toLowerCase(), row.getString("v"));
+			result.put(row.getStringNullable("k").toLowerCase(), row.getStringNullable("v"));
 		}
 		return result;
 	}

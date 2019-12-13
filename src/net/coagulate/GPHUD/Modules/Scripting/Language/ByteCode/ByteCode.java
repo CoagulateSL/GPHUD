@@ -26,7 +26,7 @@ public abstract class ByteCode {
 	public ParseNode node() { return sourcenode; }
 
 
-	@Nullable
+	@Nonnull
 	public static ByteCode load(@Nonnull GSVM vm) {
 		byte instruction = vm.bytecode[vm.PC];
 		InstructionSet decode = ByteCode.get(instruction);

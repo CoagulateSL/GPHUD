@@ -47,6 +47,7 @@ public class CommandAnnotation extends Command {
 		}
 	}
 
+	@Nonnull
 	public Method getMethod() { return method; }
 
 	public boolean isGenerated() { return generated; }
@@ -100,6 +101,7 @@ public class CommandAnnotation extends Command {
 
 	public boolean permitScripting() { return meta.permitScripting(); }
 
+	@Nonnull
 	public List<Argument> getArguments() { return arguments; }
 
 	public int getArgumentCount() { return getArguments().size(); }

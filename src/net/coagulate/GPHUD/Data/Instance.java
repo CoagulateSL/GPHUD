@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.SystemException;
@@ -38,7 +39,7 @@ public class Instance extends TableRow {
 	public static Set<Instance> getOurInstances() {
 		Set<Instance> instances = new TreeSet<>();
 		Results instancerows = GPHUD.getDB().dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and retired=0", Interface.getNode());
-		for (ResultsRow r : instancerows) { instances.add(Instance.get(r.getInt())); }
+		for (ResultsRow r : instancerows) { instances.add(Instance.get(r.getIntNullable())); }
 		return instances;
 	}
 
@@ -51,7 +52,7 @@ public class Instance extends TableRow {
 	public static Set<Instance> getInstances() {
 		Set<Instance> instances = new TreeSet<>();
 		Results instancerows = GPHUD.getDB().dq("select instanceid from instances");
-		for (ResultsRow r : instancerows) { instances.add(Instance.get(r.getInt())); }
+		for (ResultsRow r : instancerows) { instances.add(Instance.get(r.getIntNullable())); }
 		return instances;
 	}
 
@@ -61,9 +62,8 @@ public class Instance extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return An Instance representation
 	 */
-	@Nullable
-	public static Instance get(@Nullable Integer id) {
-		if (id == null) { return null; }
+	@Nonnull
+	public static Instance get(@Nonnull Integer id) {
 		return (Instance) factoryPut("Instance", id, new Instance(id));
 	}
 
@@ -83,7 +83,7 @@ public class Instance extends TableRow {
 	public static void create(@Nullable String name, @Nullable User caller) throws UserException {
 		if (name == null || "".equals(name)) { throw new SystemException("Can't create null or empty instance"); }
 		if (caller == null) { throw new SystemException("Owner can't be null"); }
-		Integer exists = GPHUD.getDB().dqi(false, "select count(*) from instances where name like ?", name);
+		Integer exists = GPHUD.getDB().dqi( "select count(*) from instances where name like ?", name);
 		if (exists != 0) {
 			throw new UserException("Instance already exists!");
 		}
@@ -99,9 +99,10 @@ public class Instance extends TableRow {
 	 */
 	@Nullable
 	public static Instance find(String name) {
-		Integer id = GPHUD.getDB().dqi(false, "select instanceid from instances where name=?", name);
-		if (id == null) { throw new UserException("Unable to find instance named '" + name + "'"); }
-		return get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi("select instanceid from instances where name=?", name);
+			return get(id);
+		} catch (NoDataException e) { throw new UserException("Unable to find instance named '" + name + "'",e); }
 	}
 
 	/**
@@ -115,7 +116,7 @@ public class Instance extends TableRow {
 		Set<Instance> instances = new TreeSet<>();
 		Results results = GPHUD.getDB().dq("select instanceid from instances where owner=?", owner.getId());
 		for (ResultsRow r : results) {
-			instances.add(get(r.getInt("instanceid")));
+			instances.add(get(r.getIntNullable("instanceid")));
 		}
 		return instances;
 	}
@@ -130,7 +131,7 @@ public class Instance extends TableRow {
 	 * @return Avatar that owns the instance
 	 */
 	public User getOwner() {
-		Integer id = getInt("owner");
+		Integer id = getIntNullable("owner");
 		return User.get(id);
 	}
 
@@ -171,7 +172,7 @@ public class Instance extends TableRow {
 		if (name == null) { throw new UserException("Can not create permissions group with null name"); }
 		name = name.trim();
 		if (name.isEmpty()) { throw new UserException("Can not create permissions group with blank name"); }
-		int exists = dqi(true, "select count(*) from permissionsgroups where name like ? and instanceid=?", name, getId());
+		int exists = dqi( "select count(*) from permissionsgroups where name like ? and instanceid=?", name, getId());
 		if (exists != 0) { throw new UserException("Group already exists? (" + exists + " results)"); }
 		d("insert into permissionsgroups(name,instanceid) values(?,?)", name, getId());
 	}
@@ -186,7 +187,7 @@ public class Instance extends TableRow {
 		Results results = dq("select permissionsgroupid from permissionsgroups where instanceid=?", getId());
 		Set<PermissionsGroup> set = new TreeSet<>();
 		for (ResultsRow r : results) {
-			set.add(PermissionsGroup.get(r.getInt("permissionsgroupid")));
+			set.add(PermissionsGroup.get(r.getIntNullable("permissionsgroupid")));
 		}
 		return set;
 	}
@@ -203,7 +204,7 @@ public class Instance extends TableRow {
 		Results results = dq("select regionid from regions where instanceid=? and authnode=? and retired<?", getId(), Interface.getNode(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
 		for (ResultsRow row : results) {
-			regions.add(Region.get(row.getInt("regionid"),allowretired));
+			regions.add(Region.get(row.getIntNullable("regionid"),allowretired));
 		}
 		return regions;
 	}
@@ -218,7 +219,7 @@ public class Instance extends TableRow {
 		Results results = dq("select regionid from regions where instanceid=? and retired<?", getId(),allowretired?2:1);
 		Set<Region> regions = new TreeSet<>();
 		for (ResultsRow row : results) {
-			regions.add(Region.get(row.getInt("regionid"),allowretired));
+			regions.add(Region.get(row.getIntNullable("regionid"),allowretired));
 		}
 		return regions;
 	}
@@ -236,8 +237,8 @@ public class Instance extends TableRow {
 		for (Region r : getRegions(false)) {
 			newstatus.append("[").append(r.getName()).append("#");
 			Integer visitors = r.getOpenVisitCount();
-			String url = dqs(true, "select url from regions where regionid=?", r.getId());
-			Integer urllast = dqi(true, "select urllast from regions where regionid=?", r.getId());
+			String url = dqs( "select url from regions where regionid=?", r.getId());
+			Integer urllast = dqi( "select urllast from regions where regionid=?", r.getId());
 			if (urllast == null) { urllast = getUnixTime(); }
 			if (url == null || url.isEmpty()) {
 				newstatus.append("ERROR:DISCONNECTED]");
@@ -278,7 +279,7 @@ public class Instance extends TableRow {
 		statusupdate.put("instancestatus", newstatus.toString());
 		statusupdate.put("statuscolor", statuscolor);
 		for (Region r : getOurRegions(false)) {
-			String url = r.getURL(true);
+			String url = r.getURLNullable();
 			if (url != null) {
 				if (canStatus(url)) {
 					Transmission t = new Transmission(r, statusupdate);
@@ -346,12 +347,12 @@ public class Instance extends TableRow {
 		targets.add(this.getOwner());
 		//System.out.println("Pre broadcast!");
 		Results results = dq("select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like 'instance.receiveadminmessages'", getId());
-		for (ResultsRow r : results) { targets.add(User.get(r.getInt())); }
+		for (ResultsRow r : results) { targets.add(User.get(r.getIntNullable())); }
 		//System.out.println("Avatars:"+targets.size());
 		Set<Char> chars = new TreeSet<>();
 		for (User a : targets) {
 			Results charlist = dq("select characterid from characters where instanceid=? and playedby=? and url is not null", getId(), a.getId());
-			for (ResultsRow rr : charlist) { chars.add(Char.get(rr.getInt())); }
+			for (ResultsRow rr : charlist) { chars.add(Char.get(rr.getIntNullable())); }
 		}
 		//System.out.println("Characters:"+chars.size());
 		for (Char c : chars) {
@@ -394,54 +395,54 @@ public class Instance extends TableRow {
 			groupheaders.add("Faction");
 		}
 		for (ResultsRow r : dq("select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'", getId())) {
-			groupheaders.add(r.getString());
+			groupheaders.add(r.getStringNullable());
 		}
 		for (ResultsRow r : dq("select * from characters where instanceid=?", getId())) {
-			Integer retired = r.getInt("retired");
-			int charid = r.getInt("characterid");
+			Integer retired = r.getIntNullable("retired");
+			int charid = r.getIntNullable("characterid");
 			CharacterSummary cr = new CharacterSummary();
 			cr.id = charid;
-			cr.lastactive = r.getInt("lastactive");
-			cr.name = r.getString("name");
-			cr.ownerid = r.getInt("owner");
+			cr.lastactive = r.getIntNullable("lastactive");
+			cr.name = r.getStringNullable("name");
+			cr.ownerid = r.getIntNullable("owner");
 			cr.groupheaders = groupheaders;
 			if (retired != 1) { cr.retired = false; } else { cr.retired = true; }
 			cr.online = false;
-			if (r.getString("url") != null && !r.getString("url").isEmpty()) { cr.online = true; }
+			if (r.getStringNullable("url") != null && !r.getStringNullable("url").isEmpty()) { cr.online = true; }
 			idmap.put(charid, cr);
 		}
 		for (ResultsRow r : dq("select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers.charactergroupid=charactergroups.charactergroupid and instanceid=?", getId())) {
-			int charid = r.getInt("characterid");
-			String grouptype = r.getString("type");
-			String groupname = r.getString("name");
+			int charid = r.getIntNullable("characterid");
+			String grouptype = r.getStringNullable("type");
+			String groupname = r.getStringNullable("name");
 			if (idmap.containsKey(charid)) {
 				CharacterSummary cr = idmap.get(charid);
 				cr.setGroup(grouptype, groupname);
 			}
 		}
 		for (ResultsRow r : dq("select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null group by characterid")) {
-			int id = r.getInt("characterid");
-			if (idmap.containsKey(id)) { idmap.get(id).totalvisits = r.getInt("totaltime"); }
+			int id = r.getIntNullable("characterid");
+			if (idmap.containsKey(id)) { idmap.get(id).totalvisits = r.getIntNullable("totaltime"); }
 		}
 		for (ResultsRow r : dq("select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null and starttime>? group by characterid", UnixTime.getUnixTime() - (Experience.getCycle(st)))) {
-			int id = r.getInt("characterid");
-			if (idmap.containsKey(id)) { idmap.get(id).recentvisits = r.getInt("totaltime"); }
+			int id = r.getIntNullable("characterid");
+			if (idmap.containsKey(id)) { idmap.get(id).recentvisits = r.getIntNullable("totaltime"); }
 		}
 		for (ResultsRow r : dq("select characterid,starttime from visits where endtime is null and starttime>?", UnixTime.getUnixTime() - (Experience.getCycle(st)))) {
-			int id = r.getInt("characterid");
-			int add = UnixTime.getUnixTime() - r.getInt("starttime");
+			int id = r.getIntNullable("characterid");
+			int add = UnixTime.getUnixTime() - r.getIntNullable("starttime");
 			if (idmap.containsKey(id)) {
 				idmap.get(id).recentvisits = idmap.get(id).recentvisits + add;
 				idmap.get(id).totalvisits = idmap.get(id).totalvisits + add;
 			}
 		}
 		for (ResultsRow r : dq("select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' group by characterid")) {
-			int id = r.getInt("characterid");
-			if (idmap.containsKey(id)) { idmap.get(id).totalxp = r.getInt("total"); }
+			int id = r.getIntNullable("characterid");
+			if (idmap.containsKey(id)) { idmap.get(id).totalxp = r.getIntNullable("total"); }
 		}
 		Map<Integer, String> avatarnames = new TreeMap<>();
 		for (ResultsRow r : SL.getDB().dq("select id,username from users")) {
-			avatarnames.put(r.getInt("id"), r.getString("username"));
+			avatarnames.put(r.getIntNullable("id"), r.getStringNullable("username"));
 		}
 		for (CharacterSummary cs : idmap.values()) {
 			cs.ownername = avatarnames.get(cs.ownerid);
@@ -510,7 +511,7 @@ public class Instance extends TableRow {
 	public Set<CharacterGroup> getGroupsForKeyword(String keyword) {
 		Set<CharacterGroup> groups = new TreeSet<>();
 		for (ResultsRow r : dq("select charactergroupid from charactergroups where instanceid=? and type=?", getId(), keyword)) {
-			groups.add(CharacterGroup.get(r.getInt()));
+			groups.add(CharacterGroup.get(r.getIntNullable()));
 		}
 		return groups;
 	}
@@ -524,7 +525,7 @@ public class Instance extends TableRow {
 	 * @throws UserException If the group can not be created, already exists, etc.
 	 */
 	public void createCharacterGroup(String name, boolean open, String keyword) {
-		int count = dqi(true, "select count(*) from charactergroups where instanceid=? and name like ?", getId(), name);
+		int count = dqi( "select count(*) from charactergroups where instanceid=? and name like ?", getId(), name);
 		if (count > 0) { throw new UserException("Failed to create group, already exists."); }
 		d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)", getId(), name, open, keyword);
 	}
@@ -539,7 +540,7 @@ public class Instance extends TableRow {
 	public Set<CharacterGroup> getCharacterGroups() {
 		Set<CharacterGroup> groups = new TreeSet<>();
 		for (ResultsRow r : dq("select charactergroupid from charactergroups where instanceid=?", getId())) {
-			groups.add(CharacterGroup.get(r.getInt()));
+			groups.add(CharacterGroup.get(r.getIntNullable()));
 		}
 		return groups;
 	}
@@ -564,9 +565,10 @@ public class Instance extends TableRow {
 	 */
 	@Nullable
 	public Zone getZone(String name) {
-		Integer id = dqi(false, "select zoneid from zones where instanceid=? and name like ?", getId(), name);
-		if (id == null) { return null; }
-		return Zone.get(id);
+		try {
+			Integer id = dqi("select zoneid from zones where instanceid=? and name like ?", getId(), name);
+			return Zone.get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	/**
@@ -578,7 +580,7 @@ public class Instance extends TableRow {
 	public Set<Zone> getZones() {
 		Set<Zone> zones = new TreeSet<>();
 		for (ResultsRow r : dq("select zoneid from zones where instanceid=?", getId())) {
-			zones.add(Zone.get(r.getInt()));
+			zones.add(Zone.get(r.getIntNullable()));
 		}
 		return zones;
 	}
@@ -646,7 +648,7 @@ public class Instance extends TableRow {
 					String playedby = null;
 					if (user!=null) { playedby=user.getUUID(); }
 					if (playedby==null) { // maybe its an object
-						playedby=dqs(false,"select uuid from objects where url like ?",c.getURL());
+						try { playedby=dqs("select uuid from objects where url like ?",c.getURL()); } catch (NoDataException e) {}
 					}
 					if (playedby!=null) {
 						String payloadstring = payload.toString();

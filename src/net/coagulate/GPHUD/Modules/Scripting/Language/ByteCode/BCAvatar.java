@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
@@ -12,8 +13,14 @@ import java.util.List;
 
 public class BCAvatar extends ByteCodeDataType {
 	@Nullable
-	private User content=null; @Nullable
-	public User getContent() { return content; }
+	private User content=null;
+	@Nullable
+	public User getContentNullable() { return content; }
+	@Nonnull
+	public User getContent() {
+		if (content==null) { throw new SystemException("getContent on null content"); }
+		return content;
+	}
 	public BCAvatar(ParseNode n) { super(n); }
 	public BCAvatar(ParseNode node, @Nullable User content) {
 		super(node);
@@ -26,7 +33,7 @@ public class BCAvatar extends ByteCodeDataType {
 		addInt(bytes,content.getId());
 	}
 	@Nonnull
-	@Override public String htmlDecode() { return "Avatar</td><td>"+content.getId(); }
+	@Override public String htmlDecode() { return "Avatar</td><td>"+ getContent().getId(); }
 
 	@Override
 	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
@@ -64,12 +71,12 @@ public class BCAvatar extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public BCString toBCString() {
-		return new BCString(node(),content.getName());
+		return new BCString(node(),getContent().getName());
 	}
 
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {
-		return new BCAvatar(node(),content);
+		return new BCAvatar(node(),getContent());
 	}
 }

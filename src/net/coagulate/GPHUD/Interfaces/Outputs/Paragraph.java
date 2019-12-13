@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class Paragraph implements Renderable {
 		return "<p>" + content.asHtml(st, rich) + "</p>";
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();

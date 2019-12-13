@@ -113,7 +113,7 @@ public class Form implements Renderable {
 		return response.toString();
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(list);

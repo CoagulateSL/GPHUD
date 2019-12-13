@@ -40,13 +40,13 @@ public class BCResponse extends ByteCodeDataType {
 		return copy;
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public BCString toBCString() {
 		return new BCString(null,message);
 	}
 
-	@Nullable
+	@Nonnull
 	public BCInteger toBCInteger() { return new BCInteger(null,(error?1:0)); }
 
 }

@@ -26,10 +26,10 @@ public class ObjectTypes extends TableRow {
 
 	@Nonnull
 	public static ObjectTypes create(@Nonnull State st, String name, @Nonnull JSONObject behaviour) {
-		int existing= GPHUD.getDB().dqi(true,"select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		int existing= GPHUD.getDB().dqi("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) { throw new UserException("ObjectType "+name+" already exists in instance "+st.getInstance()); }
 		GPHUD.getDB().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
-		int newid=GPHUD.getDB().dqi(true,"select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		int newid=GPHUD.getDB().dqi("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		return get(newid);
 	}
 
@@ -39,8 +39,8 @@ public class ObjectTypes extends TableRow {
 		r.append("<tr><th>Name</th><th>Behaviour</th></tr>");
 		for (ResultsRow row:GPHUD.getDB().dq("select * from objecttypes where instanceid=?",st.getInstance().getId())) {
 			r.append("<tr>");
-			ObjectTypes ot=get(row.getInt("id"));
-			r.append("<td><a href=\"/GPHUD/configuration/objects/objecttypes/").append(row.getInt("id")).append("\">").append(row.getString("name")).append("</a></td>");
+			ObjectTypes ot=get(row.getIntNullable("id"));
+			r.append("<td><a href=\"/GPHUD/configuration/objects/objecttypes/").append(row.getIntNullable("id")).append("\">").append(row.getStringNullable("name")).append("</a></td>");
 			r.append("<td>").append(ObjectType.materialise(st, ot).explainHtml()).append("</td>");
 			r.append("</tr>");
 		}
@@ -52,7 +52,7 @@ public class ObjectTypes extends TableRow {
 	public static Set<String> getObjectTypes(@Nonnull State st) {
 		Set<String> set=new TreeSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select name from objecttypes where instanceid=?",st.getInstance().getId())) {
-			set.add(row.getString("name"));
+			set.add(row.getStringNullable("name"));
 		}
 		return set;
 	}
@@ -61,7 +61,7 @@ public class ObjectTypes extends TableRow {
 	public static DropDownList getDropDownList(@Nonnull State st, String name) {
 		DropDownList list=new DropDownList(name);
 		for (ResultsRow row:GPHUD.getDB().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
-			list.add(row.getInt("id").toString(),row.getString("name"));
+			list.add(row.getIntNullable("id").toString(),row.getStringNullable("name"));
 		}
 		return list;
 	}
@@ -79,7 +79,7 @@ public class ObjectTypes extends TableRow {
 
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return Instance.get(getIntNullable("instanceid"));
 	}
 	@Nonnull
 	public JSONObject getBehaviour() {

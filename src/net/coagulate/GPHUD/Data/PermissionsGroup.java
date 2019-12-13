@@ -52,9 +52,10 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nullable
 	public static PermissionsGroup find(String name, @Nonnull Instance i) {
-		Integer id = GPHUD.getDB().dqi(false, "select permissionsgroupid from permissionsgroups where name like ? and instanceid=?", name, i.getId());
-		if (id == null) { return null; }
-		return get(id);
+		try {
+			Integer id = GPHUD.getDB().dqi("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?", name, i.getId());
+			return get(id);
+		} catch (NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -68,7 +69,7 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return Instance.get(getIntNullable("instanceid"));
 	}
 
 	@Nonnull
@@ -104,9 +105,9 @@ public class PermissionsGroup extends TableRow {
 			for (ResultsRow r : results) {
 				try {
 					//Modules.validatePermission(st,r.getString()); - don't validate, some left over perms might be in the DB
-					permissions.add(r.getString());
+					permissions.add(r.getStringNullable());
 				} catch (IllegalArgumentException e) {
-					st.logger().warning("Permission exists in database but not in schema - [" + r.getString() + "]");
+					st.logger().warning("Permission exists in database but not in schema - [" + r.getStringNullable() + "]");
 				}
 			}
 			st.permissionsGroupCache.put(getId(), permissions);
@@ -125,11 +126,11 @@ public class PermissionsGroup extends TableRow {
 		Results results = dq("select avatarid,caninvite,cankick from permissionsgroupmembers where permissionsgroupid=?", getId());
 		for (ResultsRow r : results) {
 			PermissionsGroupMembership record = new PermissionsGroupMembership();
-			record.avatar = User.get(r.getInt("avatarid"));
+			record.avatar = User.get(r.getIntNullable("avatarid"));
 			record.caninvite = false;
-			if (r.getInt("caninvite") == 1) { record.caninvite = true; }
+			if (r.getIntNullable("caninvite") == 1) { record.caninvite = true; }
 			record.cankick = false;
-			if (r.getInt("cankick") == 1) { record.cankick = true; }
+			if (r.getIntNullable("cankick") == 1) { record.cankick = true; }
 			members.add(record);
 		}
 		return members;
@@ -151,7 +152,7 @@ public class PermissionsGroup extends TableRow {
 	public boolean canInvite(@Nonnull State st) {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
-			int inviteflag = dqi(true, "select caninvite from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
+			int inviteflag = dqi( "select caninvite from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
 			if (inviteflag == 1) { return true; }
 			return false;
 		} catch (@Nonnull NullPointerException | NoDataException e) { return false; }
@@ -166,7 +167,7 @@ public class PermissionsGroup extends TableRow {
 	public boolean canEject(@Nonnull State st) {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
-			int inviteflag = dqi(true, "select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
+			int inviteflag = dqi( "select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
 			if (inviteflag == 1) { return true; }
 			return false;
 		} catch (@Nonnull NullPointerException | NoDataException e) { return false; }
@@ -179,7 +180,7 @@ public class PermissionsGroup extends TableRow {
 	 * @throws UserException Avatar can not be added, e.g. is already in group
 	 */
 	public void addMember(@Nonnull User avatar) throws UserException {
-		int exists = dqi(true, "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
+		int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		if (exists > 0) { throw new UserException("Avatar is already a member of group?"); }
 		d("insert into permissionsgroupmembers(permissionsgroupid,avatarid) values(?,?)", getId(), avatar.getId());
 	}
@@ -191,7 +192,7 @@ public class PermissionsGroup extends TableRow {
 	 * @throws UserException If the user can not be removed, such as not being in the group
 	 */
 	public void removeMember(@Nonnull User avatar) throws UserException {
-		int exists = dqi(true, "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
+		int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		d("delete from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		if (exists == 0) { throw new UserException("Avatar not in group."); }
 	}
@@ -205,7 +206,7 @@ public class PermissionsGroup extends TableRow {
 	 * @throws UserException If the user's permissions can not be updated, i.e. not in the group
 	 */
 	public void setUserPermissions(@Nonnull User a, Boolean caninvite, Boolean cankick) throws UserException {
-		int exists = dqi(true, "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), a.getId());
+		int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), a.getId());
 		if (exists == 0) { throw new UserException("Avatar not in group."); }
 		int inviteval = 0;
 		if (caninvite) { inviteval = 1; }
@@ -223,7 +224,7 @@ public class PermissionsGroup extends TableRow {
 	 */
 	public void addPermission(State st, @Nonnull String permission) throws UserException {
 		Modules.validatePermission(st, permission);
-		int exists = dqi(true, "select count(*) from permissions where permissionsgroupid=? and permission like ?", getId(), permission);
+		int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission like ?", getId(), permission);
 		if (exists != 0) { throw new UserException("Permission already exists on group."); }
 		d("insert into permissions(permissionsgroupid,permission) values(?,?)", getId(), permission);
 	}
@@ -235,7 +236,7 @@ public class PermissionsGroup extends TableRow {
 	 * @throws UserException If the permission can not be removed, e.g. is not part of the group.
 	 */
 	public void removePermission(String permission) throws UserException {
-		int exists = dqi(true, "select count(*) from permissions where permissionsgroupid=? and permission=?", getId(), permission);
+		int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission=?", getId(), permission);
 		if (exists == 0) { throw new UserException("Permission does not exist in group."); }
 		d("delete from permissions where permissionsgroupid=? and permission=?", getId(), permission);
 	}

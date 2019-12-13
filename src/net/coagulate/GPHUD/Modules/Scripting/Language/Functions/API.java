@@ -9,12 +9,11 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class API {
-	@Nullable
+	@Nonnull
 	@GSFunctions.GSFunction(description = "Calls a standard GPHUD API command",parameters = "Character caller - User invoking the API<br>String apicall - name of API command to call<br>BCList parameters - list of STRING parameters to the target API",returns = "A Response",notes = "")
 	public static BCResponse gsAPI(State st, @Nonnull GSVM vm, @Nonnull BCCharacter caller, @Nonnull BCString apicall, @Nonnull BCList parameters) {
 		if (vm.simulation) { return new BCResponse(null,new OKResponse("Simulation mode does not call APIs")); }

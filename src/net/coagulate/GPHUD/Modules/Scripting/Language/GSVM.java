@@ -20,8 +20,8 @@ public class GSVM {
 
 	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
 	public boolean suspended() { return suspended; }
-	@Nullable
-	public byte[] bytecode;
+	@Nonnull
+	public byte[] bytecode={};
 	public int PC=0;
 	int IC=0;
 	public int row=0;

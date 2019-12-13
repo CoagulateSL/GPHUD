@@ -54,7 +54,7 @@ public abstract class Command {
 		}
 	}
 
-	@Nullable
+	@Nonnull
 	public abstract Method getMethod();
 
 	public abstract boolean isGenerated();
@@ -75,6 +75,7 @@ public abstract class Command {
 
 	public abstract boolean permitScripting();
 
+	@Nonnull
 	public abstract List<Argument> getArguments();
 
 	public abstract int getArgumentCount();
