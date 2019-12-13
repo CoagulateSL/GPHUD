@@ -61,7 +61,7 @@ public class Objects extends TableRow {
 				String objecttype = st.postmap.get(row.getString("uuid"));
 				if (!objecttype.isEmpty()) {
 					Integer oldobjecttype=row.getInt("objecttype");
-					if (oldobjecttype!=Integer.parseInt(objecttype)) {
+					if (oldobjecttype==null || oldobjecttype!=Integer.parseInt(objecttype)) {
 						GPHUD.getDB().d("update objects set objecttype=? where id=?", objecttype, row.getInt("id"));
 						Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Set", "ObjectType", "", objecttype, "Set object type for " + row.getString("name") + " " + row.getString("uuid"));
 						ObjectType ot = ObjectType.materialise(st, ObjectTypes.get(Integer.parseInt(objecttype)));

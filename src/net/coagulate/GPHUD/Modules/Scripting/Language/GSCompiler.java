@@ -17,7 +17,7 @@ public class GSCompiler {
 		if (node instanceof GSExpression) { return 1; }
 		if (node instanceof GSParameter) { return 1; }
 		if (node instanceof GSTerm) { return 1; }
-		if (node instanceof GSFunctionCall) { return 2; }
+		if (node instanceof GSFunctionCall) { return -1; }
 		if (node instanceof GSStringConstant) { return 0; }
 		if (node instanceof GSIntegerConstant) { return 0; }
 		if (node instanceof GSIdentifier) { return 0; }
@@ -182,14 +182,15 @@ public class GSCompiler {
 		if (node instanceof GSFunctionCall) {
 			// lots of random glue lives in here, but actually the function call at this level is easy enough, it has a name and some parameters
 			checkType(node, 0, GSFunctionName.class);
-			checkType(node, 1, GSParameters.class);
+			if (node.jjtGetNumChildren()>1) { checkType(node, 1, GSParameters.class); }
 			// validate the function name
 			String functionname = node.child(0).tokens();
 			if (!validFunction(functionname)) {
 				throw new GSUnknownIdentifier("Function " + functionname + " does not exist");
 			}
 			// dump the paramters, in reverse order, (which starts with the paramter count), and finally the name and the invoking bytecode
-			compiled.addAll(compile(node.child(1)));
+			if (node.jjtGetNumChildren()>1) { compiled.addAll(compile(node.child(1))); } // assuming it has parameters
+			else { compiled.add(new BCInteger(node,0)); } // else zero parameters
 			compiled.add(new BCString(node,(node.child(0).tokens())));
 			addDebug(compiled,node);
 			compiled.add(new BCInvoke(node));
