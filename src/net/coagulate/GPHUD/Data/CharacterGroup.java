@@ -9,6 +9,8 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,19 +24,20 @@ public class CharacterGroup extends TableRow {
 
 	protected CharacterGroup(int id) { super(id); }
 
-	static void wipeKV(Instance instance, String key) {
+	static void wipeKV(@Nonnull Instance instance, String key) {
 		String kvtable = "charactergroupkvstore";
 		String maintable = "charactergroups";
 		String idcolumn = "charactergroupid";
 		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
 	}
 
+	@Nonnull
 	public static JSONObject createChoice(State st, Attribute a) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	// open groups only
-	public static void createChoice(State st, JSONObject json, String prefix, Attribute a) {
+	public static void createChoice(@Nonnull State st, @Nonnull JSONObject json, String prefix, @Nonnull Attribute a) {
 		final boolean debug = false;
 		json.put(prefix + "type", "SELECT");
 		json.put(prefix + "name", "value");
@@ -55,7 +58,8 @@ public class CharacterGroup extends TableRow {
 	 * @param name Name of group
 	 * @return CharacterGroup
 	 */
-	public static CharacterGroup resolve(State st, String name) {
+	@Nullable
+	public static CharacterGroup resolve(@Nonnull State st, String name) {
 		int id = new CharacterGroup(-1).resolveToID(st, name, true);
 		if (id == 0) { return null; }
 		return get(id);
@@ -67,6 +71,7 @@ public class CharacterGroup extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A Region representation
 	 */
+	@Nonnull
 	public static CharacterGroup get(int id) {
 		return (CharacterGroup) factoryPut("CharacterGroup", id, new CharacterGroup(id));
 	}
@@ -77,12 +82,14 @@ public class CharacterGroup extends TableRow {
 	 * @param name Name of region to locate
 	 * @return Region object for that region, or null if none is found.
 	 */
-	public static CharacterGroup find(String name, Instance i) {
+	@Nullable
+	public static CharacterGroup find(String name, @Nonnull Instance i) {
 		Integer id = GPHUD.getDB().dqi(false, "select charactergroupid from charactergroups where name like ? and instanceid=?", name, i.getId());
 		if (id == null) { return null; }
 		return get(id);
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "charactergroup"; }
 
@@ -91,20 +98,24 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @return The Instance object
 	 */
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "charactergroups";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "charactergroupid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
@@ -115,6 +126,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @return Set of Characters
 	 */
+	@Nonnull
 	public Set<Char> getMembers() {
 		Set<Char> members = new TreeSet<>();
 		Results results = dq("select characterid from charactergroupmembers where charactergroupid=?", getId());
@@ -137,6 +149,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @return Group type
 	 */
+	@Nullable
 	public String getType() { return dqs(true, "select type from charactergroups where charactergroupid=?", getId()); }
 
 
@@ -146,7 +159,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @param character Character to add
 	 */
-	public void addMember(Char character) {
+	public void addMember(@Nonnull Char character) {
 		// in group?
 		if (character.getInstance() != getInstance()) {
 			throw new SystemException("Character (group) / Instance mismatch");
@@ -166,7 +179,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @param character Character to remove
 	 */
-	public void removeMember(Char character) {
+	public void removeMember(@Nonnull Char character) {
 		if (character.getInstance() != getInstance()) {
 			throw new SystemException("Character (group) / Instance mismatch");
 		}
@@ -180,6 +193,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @return Character that owns the group
 	 */
+	@Nullable
 	public Char getOwner() {
 		Integer owner = dqi(true, "select owner from charactergroups where charactergroupid=?", getId());
 		if (owner == null) { return null; }
@@ -191,7 +205,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @param newowner Character to own the group
 	 */
-	public void setOwner(Char newowner) {
+	public void setOwner(@Nullable Char newowner) {
 		if (newowner == null) {
 			d("update charactergroups set owner=null where charactergroupid=?", getId());
 		} else {
@@ -206,7 +220,7 @@ public class CharacterGroup extends TableRow {
 	 * @param character Character to check
 	 * @return true if admin, false otherwise
 	 */
-	public boolean isAdmin(Char character) {
+	public boolean isAdmin(@Nonnull Char character) {
 		if (character.getInstance() != getInstance()) {
 			throw new SystemException("Character (group) / Instance mismatch");
 		}
@@ -224,7 +238,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @return true if admin, else false
 	 */
-	public boolean isAdmin(State st) { return isAdmin(st.getCharacter()); }
+	public boolean isAdmin(@Nonnull State st) { return isAdmin(st.getCharacter()); }
 
 	/**
 	 * Set admin status on a character in this group
@@ -232,7 +246,7 @@ public class CharacterGroup extends TableRow {
 	 * @param character Character to update
 	 * @param admin     true/false admin status
 	 */
-	public void setAdmin(Char character, boolean admin) {
+	public void setAdmin(@Nonnull Char character, boolean admin) {
 		d("update charactergroupmembers set isadmin=? where charactergroupid=? and characterid=?", admin, getId(), character.getId());
 	}
 
@@ -242,7 +256,7 @@ public class CharacterGroup extends TableRow {
 	 * @param character Character to search
 	 * @return true/false
 	 */
-	public boolean hasMember(Char character) {
+	public boolean hasMember(@Nonnull Char character) {
 		Integer count = dqi(true, "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		if (count == null) { throw new SystemException("Null response from count statement"); }
 		if (count > 1) {
@@ -252,11 +266,13 @@ public class CharacterGroup extends TableRow {
 		return false;
 	}
 
+	@Nonnull
 	public String getKVTable() { return "charactergroupkvstore"; }
 
+	@Nonnull
 	public String getKVIdField() { return "charactergroupid"; }
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) {
@@ -272,6 +288,7 @@ public class CharacterGroup extends TableRow {
 
 	public void setOpen(Boolean b) { set("open", b); }
 
+	@Nullable
 	public String getTypeNotNull() {
 		String ret = getType();
 		if (ret == null) { return ""; }

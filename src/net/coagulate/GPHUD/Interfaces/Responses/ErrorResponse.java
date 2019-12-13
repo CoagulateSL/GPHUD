@@ -4,6 +4,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * A response that represents an error with the command.
  *
@@ -15,6 +17,7 @@ public class ErrorResponse extends TextError implements Response {
 		super(r);
 	}
 
+	@Nonnull
 	@Override
 	public JSONObject asJSON(State st) {
 		JSONObject j = new JSONObject();
@@ -22,6 +25,7 @@ public class ErrorResponse extends TextError implements Response {
 		return j;
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "Error: "+s;

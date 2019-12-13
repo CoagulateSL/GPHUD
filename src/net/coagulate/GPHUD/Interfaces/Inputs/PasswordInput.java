@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.Inputs;
 
+import javax.annotation.Nonnull;
+
 /**
  * Implements a masked text input box.
  *
@@ -13,6 +15,7 @@ public class PasswordInput extends TextInput {
 
 	public PasswordInput(String name, String value) { super(name, value); }
 
+	@Nonnull
 	@Override
 	public String getType() { return "password"; }
 

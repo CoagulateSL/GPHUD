@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.SafeMap;
 
+import javax.annotation.Nonnull;
 import java.text.DateFormat;
 import java.util.*;
 
@@ -18,14 +19,17 @@ import java.util.*;
  */
 public abstract class DateTime {
 
-	private static String fromUnixTime(int date, DateFormat df) { return df.format(new Date(((long) (date)) * ((long) 1000))); }
+	@Nonnull
+	private static String fromUnixTime(int date, @Nonnull DateFormat df) { return df.format(new Date(((long) (date)) * ((long) 1000))); }
 
+	@Nonnull
 	public static String fromUnixTime(int date, String timezone) {
 		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 		df.setTimeZone(TimeZone.getTimeZone(timezone));
 		return fromUnixTime(date, df);
 	}
 
+	@Nonnull
 	public static Row inputRow(SafeMap values) {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
@@ -37,7 +41,8 @@ public abstract class DateTime {
 	 * @param values Existing values
 	 * @return appropriate table row
 	 */
-	public static Row inputDateTimeRow(String prefix, SafeMap values, String defaulttimezone) {
+	@Nonnull
+	public static Row inputDateTimeRow(String prefix, @Nonnull SafeMap values, String defaulttimezone) {
 		Row t = new Row();
 		String tz = values.get(prefix + "timezone");
 		if (tz == null || tz.isEmpty()) { tz = defaulttimezone; }
@@ -51,7 +56,8 @@ public abstract class DateTime {
 		return t;
 	}
 
-	private static TextInput ti(String prefix, String component, int size, SafeMap values) {
+	@Nonnull
+	private static TextInput ti(String prefix, String component, int size, @Nonnull SafeMap values) {
 		String name = prefix + component;
 		return new TextInput(name, values.get(name), size);
 	}
@@ -65,7 +71,8 @@ public abstract class DateTime {
 	 * @param spacers If true inserts blank cells to help line up with date input box
 	 * @return Table Row
 	 */
-	public static Row inputIntervalRow(String prefix, SafeMap values, boolean spacers) {
+	@Nonnull
+	public static Row inputIntervalRow(String prefix, @Nonnull SafeMap values, boolean spacers) {
 		Row t = new Row();
 		t.add(prefix);
 		t.add(ti(prefix, "day", 2, values));
@@ -85,7 +92,8 @@ public abstract class DateTime {
 	 * @param values Existing values
 	 * @return Table Row
 	 */
-	public static Row inputIntervalRow(String prefix, SafeMap values) {
+	@Nonnull
+	public static Row inputIntervalRow(String prefix, @Nonnull SafeMap values) {
 		return inputIntervalRow(prefix, values, false);
 	}
 
@@ -97,7 +105,7 @@ public abstract class DateTime {
 	 * @return Unix time for the input date time
 	 * @throws UserException If the numbers fail to parse
 	 */
-	public static int outputDateTime(String prefix, SafeMap values, String defaulttimezone) throws UserException {
+	public static int outputDateTime(String prefix, @Nonnull SafeMap values, String defaulttimezone) throws UserException {
 		try {
 			String timezone = values.get(prefix + "timezone");
 			if (timezone == null || timezone.isEmpty()) {
@@ -122,7 +130,7 @@ public abstract class DateTime {
 	 * @return Number of seconds
 	 * @throws UserException If the numbers fail to parse
 	 */
-	public static int outputInterval(String prefix, SafeMap values) throws UserException {
+	public static int outputInterval(String prefix, @Nonnull SafeMap values) throws UserException {
 		try {
 			int day = Integer.parseInt(values.get(prefix + "day"));
 			int hour = Integer.parseInt(values.get(prefix + "hour"));
@@ -137,6 +145,7 @@ public abstract class DateTime {
 		}
 	}
 
+	@Nonnull
 	public static List<String> getTimeZones() {
 		String[] tzs = TimeZone.getAvailableIDs();
 		List<String> tzlist = new ArrayList<>();
@@ -145,6 +154,7 @@ public abstract class DateTime {
 		return tzlist;
 	}
 
+	@Nonnull
 	public static DropDownList getTimeZoneList(String name, String value) {
 		DropDownList dropdown = new DropDownList(name);
 		for (String tz : getTimeZones()) { dropdown.add(tz); }

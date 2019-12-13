@@ -11,6 +11,8 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class GSVM {
@@ -18,6 +20,7 @@ public class GSVM {
 
 	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
 	public boolean suspended() { return suspended; }
+	@Nullable
 	public byte[] bytecode;
 	public int PC=0;
 	int IC=0;
@@ -26,8 +29,9 @@ public class GSVM {
 	private int startPC=0;
 	public final Stack<ByteCodeDataType> stack=new Stack<>();
 	final Map<String,ByteCodeDataType> variables=new HashMap<>();
+	@Nullable
 	String invokeonexit=null; public void invokeOnExit(String commandname) {invokeonexit=commandname;}
-	private void initialiseVM(State st) {
+	private void initialiseVM(@Nonnull State st) {
 		stack.clear();
 		PC=0;
 		IC=0;
@@ -37,12 +41,12 @@ public class GSVM {
 		variables.clear();
 		simulation=false;
 		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
-		variables.put("AVATAR",new BCAvatar(null,st.getAvatar()));
+		variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
 		for (Map.Entry<String, ByteCodeDataType> entry : introductions.entrySet()) { variables.put(entry.getKey(), entry.getValue()); }
 	}
 
 	public ByteCodeDataType get(String k) { return variables.get(k); }
-	public void set(String k,ByteCodeDataType v) {
+	public void set(String k, @Nonnull ByteCodeDataType v) {
 		// does it already exist?
 		ByteCodeDataType existing=get(k);
 		if (existing==null) {
@@ -55,20 +59,22 @@ public class GSVM {
 		if (existing.getClass().equals(BCInteger.class)) { variables.put(k,v.toBCInteger()); return; }
 		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+existing.getClass().getSimpleName());
 	}
+	@Nonnull
 	public String at() {
 		return "at row "+row+", column "+column+", PC="+startPC+
 				(startPC>=0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode.get(bytecode[startPC])+")":"");
 	}
 
-	public GSVM(Byte[] code) {
+	public GSVM(@Nonnull Byte[] code) {
 		bytecode = new byte[code.length];
 		{
 			for (int i = 0; i < code.length; i++) { bytecode[i] = code[i]; }
 		}
 	}
 
-	public GSVM(byte[] code) { bytecode = code; }
+	public GSVM(@Nullable byte[] code) { bytecode = code; }
 
+	@Nonnull
 	public String toHtml() {
 		PC=0;
 		StringBuilder line = new StringBuilder("<table>");
@@ -88,6 +94,7 @@ public class GSVM {
 
 	public void push(ByteCodeDataType add) { stack.push(add); }
 
+	@Nonnull
 	public BCString popString() {
 		ByteCodeDataType raw = pop();
 		if (!raw.getClass().equals(BCString.class)) {
@@ -95,6 +102,7 @@ public class GSVM {
 		}
 		return (BCString)raw;
 	}
+	@Nonnull
 	public BCInteger popInteger() {
 		ByteCodeDataType raw = pop();
 		if (!raw.getClass().equals(BCInteger.class)) {
@@ -103,6 +111,7 @@ public class GSVM {
 		return (BCInteger)raw;
 	}
 
+	@Nonnull
 	public BCList getList(String name) {
 		ByteCodeDataType raw=get(name);
 		if (raw==null) { throw new GSInvalidExpressionException("Variable "+name+" does not exist"); }
@@ -112,13 +121,15 @@ public class GSVM {
 		return (BCList)raw;
 	}
 
-	public Response execute(State st) {
+	@Nonnull
+	public Response execute(@Nonnull State st) {
 		// like simulation but we dont keep the whole execution trace
 		st.vm = this;
 		initialiseVM(st);
 		return executeloop(st);
 	}
-	private Response executeloop(State st) {
+	@Nonnull
+	private Response executeloop(@Nonnull State st) {
 		ExecutionStep currentstep= new ExecutionStep();
 		try {
 			while (PC<bytecode.length && !suspended) {
@@ -145,6 +156,7 @@ public class GSVM {
 		return new JSONResponse(json);
 	}
 
+	@Nonnull
 	public String dumpStateToHtml() {
 		StringBuilder ret= new StringBuilder();
 		ret.append("<h3>Stack</h3><br><table>");
@@ -177,7 +189,8 @@ public class GSVM {
 		if (!queue.containsKey(c)) { queue.put(c,new JSONObject()); }
 		return queue.get(c);
 	}
-	public Response dequeue(State st,Char target) {
+	@Nonnull
+	public Response dequeue(State st, Char target) {
 		final boolean debug=false;
 		JSONObject totarget=getQueue(target);
 		if (pid!=0) { totarget.put("processid",""+pid); }
@@ -191,7 +204,7 @@ public class GSVM {
 		return new JSONResponse(totarget);
 	}
 
-	public void queueSayAs(Char ch, String message) {
+	public void queueSayAs(@Nonnull Char ch, String message) {
 		JSONObject out=getQueue(ch);
 		String m="";
 		if (out.has("say")) { m=out.getString("say")+"\n"; }
@@ -231,7 +244,7 @@ public class GSVM {
 		out.put("incommand","runtemplate");
 		out.put("invoke","Scripting.StringResponse");
 	}
-	public void queueGetChoice(Char ch,String description,List<String> options) {
+	public void queueGetChoice(Char ch, String description, @Nonnull List<String> options) {
 		JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
@@ -244,7 +257,7 @@ public class GSVM {
 		out.put("invoke","Scripting.StringResponse");
 	}
 	boolean suspended=false;
-	public void suspend(State st,Char respondant) {
+	public void suspend(State st, @Nonnull Char respondant) {
 		variables.put(" PC",new BCInteger(null,PC));
 		variables.put(" IC",new BCInteger(null,IC));
 		variables.put(" SUSP",new BCInteger(null,suspensions));
@@ -281,7 +294,7 @@ public class GSVM {
 	}
 	private int pid=0;
 	private int suspensions=0;
-	public GSVM(ScriptRuns run,State st) {
+	public GSVM(@Nonnull ScriptRuns run, @Nonnull State st) {
 		st.vm=this;
 		// run the initialiser as prep
 		initialiseVM(st);
@@ -295,7 +308,8 @@ public class GSVM {
 		if (variables.containsKey((" ONEXIT"))) { invokeonexit=((BCString)variables.get(" ONEXIT")).getContent(); }
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
 	}
-	public Response resume(State st) { return executeloop(st); }
+	@Nonnull
+	public Response resume(@Nonnull State st) { return executeloop(st); }
 
 	final Map<String,ByteCodeDataType> introductions=new HashMap<>();
 	public void introduce(String target, ByteCodeDataType data) {
@@ -304,15 +318,18 @@ public class GSVM {
 
 	public static class ExecutionStep {
 		public int programcounter;
+		@Nullable
 		public String decode="";
 		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
 		public final Map<String,ByteCodeDataType> resultingvariables=new HashMap<>();
+		@Nullable
 		public Throwable t=null;
 		public int IC=0;
 	}
 
 	public boolean simulation=false;
-	public List<ExecutionStep> simulate(State st) {
+	@Nonnull
+	public List<ExecutionStep> simulate(@Nonnull State st) {
 		List<ExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM(st);
 		simulation=true;

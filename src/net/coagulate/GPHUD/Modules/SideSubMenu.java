@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 
 /**
@@ -29,11 +30,11 @@ public abstract class SideSubMenu {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface SideSubMenus {
-		String name();
+		@Nonnull String name();
 
 		int priority();
 
-		String requiresPermission() default "";
+		@Nonnull String requiresPermission() default "";
 	}
 
 }

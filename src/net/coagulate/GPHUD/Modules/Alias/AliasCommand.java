@@ -15,6 +15,8 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +29,13 @@ import java.util.List;
 public class AliasCommand extends Command {
 
 	final JSONObject definition;
+	@Nullable
 	final Command targetcommand;
 	final String name;
+	@Nonnull
 	String fail = "";
 
-	public AliasCommand(State st, String name, JSONObject newdef) throws UserException, SystemException {
+	public AliasCommand(@Nonnull State st, String name, JSONObject newdef) throws UserException, SystemException {
 		super();
 		definition = newdef;
 		this.name = name;
@@ -45,6 +49,7 @@ public class AliasCommand extends Command {
 
 	public JSONObject getDefinition() { return definition; }
 
+	@Nullable
 	public Command getTargetCommand() { return targetcommand; }
 
 	@Override
@@ -73,6 +78,7 @@ public class AliasCommand extends Command {
 	@Override
 	public int getArgumentCount() { return getArguments().size(); }
 
+	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
 		if (targetcommand == null) { return new ArrayList<>(); }
@@ -87,6 +93,7 @@ public class AliasCommand extends Command {
 		return remainingargs;
 	}
 
+	@Nonnull
 	@Override
 	public String getFullName() { return "Alias." + getName(); }
 
@@ -122,6 +129,7 @@ public class AliasCommand extends Command {
 		return targetcommand.permitUserWeb();
 	}
 
+	@Nonnull
 	@Override
 	public String getFullMethodName() {
 		if (targetcommand == null) { return "Can not invoke - " + fail; }
@@ -135,7 +143,7 @@ public class AliasCommand extends Command {
 	}
 
 	@Override
-	public Response run(State st, SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull State st, @Nonnull SafeMap parametermap) throws UserException, SystemException {
 		if (targetcommand == null) { throw new UserException("Error: Alias targets command " + name + ", " + fail); }
 		// assume target.  this sucks :P
 		if (parametermap.containsKey("target")) {
@@ -193,6 +201,7 @@ public class AliasCommand extends Command {
 		return super.run(st, parametermap);
 	}
 
+	@Nullable
 	@Override
 	public Method getMethod() {
 		if (targetcommand == null) { return null; }

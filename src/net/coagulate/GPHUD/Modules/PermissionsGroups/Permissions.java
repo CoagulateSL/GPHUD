@@ -17,6 +17,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Add/Remove permissions from a permissions group.
  *
@@ -28,11 +30,12 @@ public abstract class Permissions {
 		Modules.simpleHtml(st, "permissionsgroups.addpermission", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Add a permission to a permission group", requiresPermission = "Instance.ManagePermissions")
-	public static Response addPermission(State st,
-	                                     @Arguments(description = "Permissions group to add permission to", type = ArgumentType.PERMISSIONSGROUP)
+	public static Response addPermission(@Nonnull State st,
+	                                     @Nonnull @Arguments(description = "Permissions group to add permission to", type = ArgumentType.PERMISSIONSGROUP)
 			                                     PermissionsGroup permissionsgroup,
-	                                     @Arguments(description = "Permission to add to group", type = ArgumentType.PERMISSION)
+	                                     @Nonnull @Arguments(description = "Permission to add to group", type = ArgumentType.PERMISSION)
 			                                     String permission
 	) throws UserException, SystemException {
 		Modules.validatePermission(st, permission);
@@ -53,9 +56,10 @@ public abstract class Permissions {
 		Modules.simpleHtml(st, "permissionsgroups.delpermission", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Remove a permission from a permissions group", requiresPermission = "Instance.ManagePermissions")
-	public static Response delPermission(State st,
-	                                     @Arguments(description = "Permissions group to remove permission from", type = ArgumentType.PERMISSIONSGROUP)
+	public static Response delPermission(@Nonnull State st,
+	                                     @Nonnull @Arguments(description = "Permissions group to remove permission from", type = ArgumentType.PERMISSIONSGROUP)
 			                                     PermissionsGroup permissionsgroup,
 	                                     @Arguments(description = "Permission to remove from group", type = ArgumentType.TEXT_CLEAN, max = 256)
 			                                     String permission

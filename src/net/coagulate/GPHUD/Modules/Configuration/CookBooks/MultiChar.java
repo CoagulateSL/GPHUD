@@ -8,12 +8,14 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
 public class MultiChar extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/multi-char")
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.add(new TextHeader("Multiple Character Cookbook"));
 		boolean act = false;
@@ -34,7 +36,7 @@ public class MultiChar extends CookBook {
 		}
 	}
 
-	private static void run(State st, Table t, boolean act) {
+	private static void run(@Nonnull State st, @Nonnull Table t, boolean act) {
 		t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
 		setKV(st, act, t, st.getInstance(), "Instance.AutoNameCharacter", "false");
 		setKV(st, act, t, st.getInstance(), "Instance.CharacterSwitchEnabled", "true");

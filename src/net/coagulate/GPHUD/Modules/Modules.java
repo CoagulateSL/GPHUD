@@ -11,6 +11,8 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static java.util.logging.Level.SEVERE;
@@ -24,7 +26,7 @@ import static java.util.logging.Level.SEVERE;
 public abstract class Modules {
 	static final Map<String, Module> modules = new TreeMap<>();
 
-	static void register(Module mod) throws SystemException {
+	static void register(@Nonnull Module mod) throws SystemException {
 		String name = mod.getName();
 		if (modules.containsKey(name.toLowerCase())) {
 			throw new SystemException("Duplicate Module definition for " + name);
@@ -37,6 +39,7 @@ public abstract class Modules {
 	 *
 	 * @return
 	 */
+	@Nonnull
 	public static List<Module> getModules() {
 		return new ArrayList<>(modules.values());
 	}
@@ -47,7 +50,7 @@ public abstract class Modules {
 	 * @param modulename
 	 * @return
 	 */
-	public static boolean exists(String modulename) { return modules.containsKey(modulename.toLowerCase()); }
+	public static boolean exists(@Nonnull String modulename) { return modules.containsKey(modulename.toLowerCase()); }
 
 	/**
 	 * Get a module, optionally checking if its enabled.
@@ -57,7 +60,7 @@ public abstract class Modules {
 	 * @return the Module
 	 * @throws UserException if the module doesn't exist, or isn't enabled.
 	 */
-	public static Module get(State st, String nameorreference) throws UserException, SystemException {
+	public static Module get(@Nullable State st, @Nonnull String nameorreference) throws UserException, SystemException {
 		Module m = modules.get(extractModule(nameorreference).toLowerCase());
 		if (st != null && !m.isEnabled(st)) {
 			throw new UserException("Module " + m.getName() + " is not enabled in this instance");
@@ -82,7 +85,7 @@ public abstract class Modules {
 	 * @return The module section of the name
 	 * @throws UserException if the module does not exist or the input is in invalid format
 	 */
-	public static String extractModule(String qualified) throws UserException {
+	public static String extractModule(@Nonnull String qualified) throws UserException {
 		//System.out.println("QUALIFIED:"+qualified);
 		String[] parts = qualified.split("\\.");
 		if (parts.length < 1 || parts.length > 2) {
@@ -103,7 +106,7 @@ public abstract class Modules {
 	 * @return The reference part
 	 * @throws UserException if the module does not exist or the input is in invalid format
 	 */
-	public static String extractReference(String qualified) throws UserException {
+	public static String extractReference(@Nonnull String qualified) throws UserException {
 		String[] parts = qualified.split("\\.");
 		if (parts.length != 2) {
 			throw new UserException("Invalid format, must be module.reference but we received " + qualified);
@@ -113,11 +116,12 @@ public abstract class Modules {
 	}
 
 	// validate a KV mapping exists
-	public static void validateKV(State st, String key) throws UserException, SystemException {
+	public static void validateKV(State st, @Nonnull String key) throws UserException, SystemException {
 		get(null, key).validateKV(st, key);
 	}
 
-	public static URL getURL(State st, String url) throws UserException, SystemException {
+	@Nullable
+	public static URL getURL(State st, @Nonnull String url) throws UserException, SystemException {
 		return getURL(st, url, true);
 	}
 
@@ -131,7 +135,8 @@ public abstract class Modules {
 	 * @throws UserException   on page not found if and only if exception is true
 	 * @throws SystemException if multiple URLs match (internal error)
 	 */
-	public static URL getURL(State st, String url, boolean exception) throws UserException, SystemException {
+	@Nullable
+	public static URL getURL(State st, @Nonnull String url, boolean exception) throws UserException, SystemException {
 		final boolean debug=false;
 		if (url.toLowerCase().startsWith("/gphud/")) { url = url.substring(6); }
 		URL literal = null;
@@ -166,19 +171,21 @@ public abstract class Modules {
 		return null;
 	}
 
-	public static void validatePermission(State st, String requirespermission) throws UserException, SystemException {
+	public static void validatePermission(State st, @Nonnull String requirespermission) throws UserException, SystemException {
 		get(null, requirespermission).validatePermission(st, extractReference(requirespermission));
 	}
 
-	public static Command getCommand(State st, String proposedcommand) throws UserException, SystemException {
+	@Nullable
+	public static Command getCommand(State st, @Nonnull String proposedcommand) throws UserException, SystemException {
 		return get(st, proposedcommand).getCommand(st, extractReference(proposedcommand));
 	}
 
-	public static void getHtmlTemplate(State st, String qualifiedcommandname) throws UserException, SystemException {
+	public static void getHtmlTemplate(@Nonnull State st, @Nonnull String qualifiedcommandname) throws UserException, SystemException {
 		get(st, qualifiedcommandname).getCommand(st, extractReference(qualifiedcommandname)).getHtmlTemplate(st);
 	}
 
-	public static JSONObject getJSONTemplate(State st, String qualifiedcommandname) throws UserException, SystemException {
+	@Nonnull
+	public static JSONObject getJSONTemplate(@Nonnull State st, @Nonnull String qualifiedcommandname) throws UserException, SystemException {
 		Module module = get(st, qualifiedcommandname);
 		if (module == null) { throw new UserException("Unable to resolve module in " + qualifiedcommandname); }
 		Command command = module.getCommand(st, extractReference(qualifiedcommandname));
@@ -186,10 +193,11 @@ public abstract class Modules {
 		return command.getJSONTemplate(st);
 	}
 
-	public static Response getJSONTemplateResponse(State st, String command) throws UserException, SystemException { return new JSONResponse(getJSONTemplate(st, command)); }
+	@Nonnull
+	public static Response getJSONTemplateResponse(@Nonnull State st, @Nonnull String command) throws UserException, SystemException { return new JSONResponse(getJSONTemplate(st, command)); }
 
 	@SuppressWarnings("fallthrough")
-	public static Response run(State st, String console) throws UserException, SystemException {
+	public static Response run(@Nonnull State st, @Nullable String console) throws UserException, SystemException {
 		if (console == null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
 		String[] words = console.split(" ");
 		int i = 0;
@@ -249,7 +257,7 @@ public abstract class Modules {
 	}
 
 
-	public static Response run(State st, String qualifiedcommandname, SafeMap parametermap) throws UserException, SystemException {
+	public static Response run(@Nullable State st, @Nullable String qualifiedcommandname, @Nonnull SafeMap parametermap) throws UserException, SystemException {
 		if (st == null) { throw new SystemException("Null state"); }
 		if (qualifiedcommandname == null) { throw new SystemException("Null command"); }
 		if ("console".equalsIgnoreCase(qualifiedcommandname)) { st.source= State.Sources.CONSOLE; return run(st, parametermap.get("console")); }
@@ -260,19 +268,22 @@ public abstract class Modules {
 		return command.run(st, parametermap);
 	}
 
-	public static Response run(State st, String qualifiedcommandname, List<String> args) throws UserException, SystemException {
+	@Nonnull
+	public static Response run(@Nonnull State st, @Nonnull String qualifiedcommandname, @Nonnull List<String> args) throws UserException, SystemException {
 		return run(st, qualifiedcommandname, args.toArray(new String[]{}));
 	}
 
-	public static Response run(State st, String qualifiedcommandname, String[] args) throws UserException, SystemException {
+	@Nonnull
+	public static Response run(@Nonnull State st, @Nonnull String qualifiedcommandname, @Nonnull String[] args) throws UserException, SystemException {
 		return get(st, qualifiedcommandname).getCommand(st, extractReference(qualifiedcommandname)).run(st, args);
 	}
 
-	public static Permission getPermission(State st, String qualifiedname) throws UserException, SystemException {
+	public static Permission getPermission(State st, @Nonnull String qualifiedname) throws UserException, SystemException {
 		return get(st, qualifiedname).getPermission(st, extractReference(qualifiedname));
 	}
 
-	public static KV getKVDefinition(State st, String qualifiedname) throws UserException, SystemException {
+	@Nullable
+	public static KV getKVDefinition(State st, @Nullable String qualifiedname) throws UserException, SystemException {
 		KV kv = null;
 		if (qualifiedname == null) { throw new SystemException("Null qualified name for KV definition?"); }
 		if (qualifiedname.toLowerCase().endsWith(".enabled")) {
@@ -284,6 +295,7 @@ public abstract class Modules {
 		return kv;
 	}
 
+	@Nonnull
 	public static Set<String> getKVList(State st) {
 		Set<String> kvs = new TreeSet<>();
 		for (Module m : getModules()) {
@@ -296,6 +308,7 @@ public abstract class Modules {
 		return kvs;
 	}
 
+	@Nonnull
 	public static Set<KV> getKVSet(State st) {
 		Set<KV> kvs = new HashSet<>();
 		for (Module m : getModules()) {
@@ -307,7 +320,8 @@ public abstract class Modules {
 		return kvs;
 	}
 
-	public static SafeMap getConveyances(State st) {
+	@Nonnull
+	public static SafeMap getConveyances(@Nonnull State st) {
 		SafeMap convey = new SafeMap();
 		for (Module mod : getModules()) {
 			try {
@@ -328,17 +342,17 @@ public abstract class Modules {
 		return convey;
 	}
 
-	public static Pool getPool(State st, String qualifiedname) throws UserException, SystemException {
+	public static Pool getPool(State st, @Nonnull String qualifiedname) throws UserException, SystemException {
 		return get(st, qualifiedname).getPool(st, extractReference(qualifiedname));
 	}
 
-	public static Pool getPoolNotNull(State st, String qualifiedname) throws UserException, SystemException {
+	public static Pool getPoolNotNull(State st, @Nonnull String qualifiedname) throws UserException, SystemException {
 		Pool pool = getPool(st, qualifiedname);
 		if (pool == null) { throw new UserException("Unable to find pool " + qualifiedname); }
 		return pool;
 	}
 
-	public static void simpleHtml(State st, String command, SafeMap values) throws UserException, SystemException {
+	public static void simpleHtml(@Nullable State st, @Nullable String command, @Nullable SafeMap values) throws UserException, SystemException {
 		if (command == null) { throw new SystemException("Null command"); }
 		if (values == null) { throw new SystemException("Null values"); }
 		if (st == null) { throw new SystemException("Null state"); }
@@ -355,6 +369,7 @@ public abstract class Modules {
 		}
 	}
 
+	@Nonnull
 	public static Map<String, KV> getKVAppliesTo(State st, TableRow dbo) {
 		Map<String, KV> filtered = new TreeMap<>();
 		for (Module m : getModules()) {

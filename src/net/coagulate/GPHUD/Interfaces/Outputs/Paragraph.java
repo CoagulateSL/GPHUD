@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,16 +23,19 @@ public class Paragraph implements Renderable {
 		content = new Text("");
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		return content.asText(st) + "\n";
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		return "<p>" + content.asHtml(st, rich) + "</p>";
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();

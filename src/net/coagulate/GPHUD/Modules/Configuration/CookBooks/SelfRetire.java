@@ -8,12 +8,14 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
 public class SelfRetire extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/self-retire")
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.add(new TextHeader("Self Retirement Cookbook"));
 		boolean act = false;
@@ -34,7 +36,7 @@ public class SelfRetire extends CookBook {
 		}
 	}
 
-	private static void run(State st, Table t, boolean act) {
+	private static void run(@Nonnull State st, @Nonnull Table t, boolean act) {
 		t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
 		setKV(st, act, t, st.getInstance(), "Instance.AllowSelfRetire", "true");
 		createMenu(st, act, t, "RetireMe", "Are you SURE you wish to retire your character?  This action CAN NOT be undone.");

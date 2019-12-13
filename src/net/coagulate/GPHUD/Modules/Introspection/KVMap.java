@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Map;
 public abstract class KVMap {
 	@URLs(url = "/introspection/kvmap")
 	@SideSubMenus(name = "KeyValue Map", priority = 10)
-	public static void kvmap(State st, SafeMap values) {
+	public static void kvmap(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.add(new TextHeader("KV Mappings"));
 		Table t = new Table();

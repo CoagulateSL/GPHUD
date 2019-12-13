@@ -9,31 +9,36 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceUnavailableExcep
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 public class Output {
 
+	@Nonnull
 	@GSFunctions.GSFunction(description = "Causes the HUD to speak in local chat, as the character",
 			parameters = "Character - character whose HUD will emit the message<br>String - message to speak",
 			returns = "Integer - The number 0",
 			notes = "Messages are stacked up, per user, until the script completes or is suspended")
-	public static BCInteger gsSayAsChar(State st, GSVM vm, BCCharacter target, BCString message) {
+	public static BCInteger gsSayAsChar(State st, @Nonnull GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString message) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		vm.queueSayAs(target.getContent(),message.getContent());
 		return new BCInteger(null,0);
 	}
+	@Nonnull
 	@GSFunctions.GSFunction(description = "Causes the HUD to send a message to its wearer",
 			parameters = "Character - character whose HUD will message the wearer (the character themselves)<br>String - message to pass",
 			returns = "Integer - The number 0",
 			notes = "Messages are stacked up, per user, until the script completes or is suspended")
-	public static BCInteger gsSayToChar(State st, GSVM vm, BCCharacter target, BCString message) {
+	public static BCInteger gsSayToChar(State st, @Nonnull GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString message) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		vm.queueOwnerSay(target.getContent(),message.getContent());
 		return new BCInteger(null,0);
 	}
 
+	@Nonnull
 	@GSFunctions.GSFunction(description = "Teleports the plater",parameters = "BCCharacter - who to teleport<br>BCString - Landmark name to teleport to",returns="Integer - 0",notes="")
-	public static BCInteger gsTeleport(State st,GSVM vm,BCCharacter target,BCString landmark) {
+	public static BCInteger gsTeleport(@Nonnull State st, @Nonnull GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString landmark) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!Modules.get(null,"Teleportation").isEnabled(st)) { throw new GSResourceUnavailableException("Teleportation module is disabled, thus teleport function calls are disabled."); }
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }

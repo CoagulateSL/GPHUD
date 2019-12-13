@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,6 +27,7 @@ public class Alias extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return An Avatar representation
 	 */
+	@Nonnull
 	public static Alias get(int id) { return (Alias) factoryPut("Alias", id, new Alias(id)); }
 
 	/**
@@ -33,7 +36,8 @@ public class Alias extends TableRow {
 	 * @param st State
 	 * @return Map of Alias Name to Alias objects
 	 */
-	public static Map<String, Alias> getAliasMap(State st) {
+	@Nonnull
+	public static Map<String, Alias> getAliasMap(@Nonnull State st) {
 		Map<String, Alias> aliases = new TreeMap<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select name,aliasid from aliases where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getString("name"), get(r.getInt("aliasid")));
@@ -47,7 +51,8 @@ public class Alias extends TableRow {
 	 * @param st State
 	 * @return Map of Name to Template (JSON) mappings
 	 */
-	public static Map<String, JSONObject> getTemplates(State st) {
+	@Nonnull
+	public static Map<String, JSONObject> getTemplates(@Nonnull State st) {
 		Map<String, JSONObject> aliases = new TreeMap<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select name,template from aliases where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getString("name"), new JSONObject(r.getString("template")));
@@ -55,13 +60,15 @@ public class Alias extends TableRow {
 		return aliases;
 	}
 
-	public static Alias getAlias(State st, String name) {
+	@Nullable
+	public static Alias getAlias(@Nonnull State st, String name) {
 		Integer id = GPHUD.getDB().dqi(false, "select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
 		if (id == null) { return null; }
 		return get(id);
 	}
 
-	public static Alias create(State st, String name, JSONObject template) throws UserException, SystemException {
+	@Nullable
+	public static Alias create(@Nonnull State st, @Nonnull String name, @Nonnull JSONObject template) throws UserException, SystemException {
 		if (getAlias(st, name) != null) { throw new UserException("Alias " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
 			throw new UserException("Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
@@ -74,46 +81,54 @@ public class Alias extends TableRow {
 		return newalias;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "aliases";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "aliasid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/configuration/aliases/view/" + getId();
 	}
 
+	@Nonnull
 	public JSONObject getTemplate() throws SystemException {
 		String json = dqs(true, "select template from aliases where aliasid=?", getId());
 		return new JSONObject(json);
 	}
 
-	public void setTemplate(JSONObject template) {
+	public void setTemplate(@Nonnull JSONObject template) {
 		d("update aliases set template=? where aliasid=?", template.toString(), getId());
 	}
 
+	@Nullable
 	public String getKVTable() { return null; }
 
+	@Nullable
 	public String getKVIdField() { return null; }
 
 	public void flushKVCache(State st) {}
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Alias / State Instance mismatch"); }

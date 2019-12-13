@@ -15,6 +15,8 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * Deal with messages via a web interface.
  *
@@ -22,12 +24,12 @@ import org.json.JSONObject;
  */
 public abstract class Messages {
 	@URLs(url = "/hud/listmessages")
-	public static void messagesListHUD(State st, SafeMap values) throws SystemException, UserException {
+	public static void messagesListHUD(@Nonnull State st, SafeMap values) throws SystemException, UserException {
 		messagesList(st, values);
 	}
 
 	@URLs(url = "/messages/list")
-	public static void messagesList(State st, SafeMap values) throws SystemException, UserException {
+	public static void messagesList(@Nonnull State st, SafeMap values) throws SystemException, UserException {
 		Message m = st.getCharacter().getMessage();
 		Form f = st.form;
 		if (m == null) {
@@ -45,7 +47,7 @@ public abstract class Messages {
 
 	}
 
-	public static void displayFactionInvite(State st, SafeMap values, JSONObject j) throws UserException, SystemException {
+	public static void displayFactionInvite(@Nonnull State st, SafeMap values, @Nonnull JSONObject j) throws UserException, SystemException {
 		Form f = st.form;
 		Char from = Char.get(j.getInt("from"));
 		CharacterGroup to = CharacterGroup.get(j.getInt("to"));

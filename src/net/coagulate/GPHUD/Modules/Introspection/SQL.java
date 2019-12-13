@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -21,7 +22,7 @@ import java.util.*;
 public class SQL {
 	@URLs(url = "/introspection/sql")
 	@SideSubMenu.SideSubMenus(name = "SQL", priority = 9999)
-	public static void sqlIndex(State st, SafeMap values) throws UserException {
+	public static void sqlIndex(@Nonnull State st, SafeMap values) throws UserException {
 		if (!DBConnection.sqlLogging()) {
 			st.form.add(new TextError("SQL auditing is disabled in this installation."));
 			return;

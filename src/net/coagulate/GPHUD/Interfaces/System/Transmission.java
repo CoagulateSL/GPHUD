@@ -9,6 +9,8 @@ import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.GPHUD;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -25,17 +27,24 @@ import static java.util.logging.Level.*;
  */
 public class Transmission extends Thread {
 	public static final boolean debugspawn = false;
+	@Nullable
 	final String url;
+	@Nullable
 	JSONObject json = null;
+	@Nullable
 	JSONObject jsonresponse = null;
+	@Nullable
 	Objects object=null;
 	int delay = 0;
+	@Nullable
 	protected Char character = null;
+	@Nullable
 	Region region = null;
 	boolean succeeded=false;
 	public boolean failed() { return !succeeded; }
+	@Nullable
 	StackTraceElement[] caller=null;
-	public Transmission(Char character, JSONObject json, String oldurl) {
+	public Transmission(@Nullable Char character, @Nonnull JSONObject json, @Nullable String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to character " + character + " on url " + oldurl + " with json " + json.toString());
 			Thread.dumpStack();
@@ -46,7 +55,7 @@ public class Transmission extends Thread {
 		this.json = json;
 	}
 
-	public Transmission (Objects obj,JSONObject json) {
+	public Transmission (@Nullable Objects obj, @Nonnull JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to object " + obj + " with json " + json.toString());
 			Thread.dumpStack();
@@ -57,7 +66,7 @@ public class Transmission extends Thread {
 		this.json=json;
 	}
 
-	public Transmission(Char character, JSONObject json) {
+	public Transmission(@Nonnull Char character, @Nonnull JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to character " + character + " with json " + json.toString());
 			Thread.dumpStack();
@@ -68,7 +77,7 @@ public class Transmission extends Thread {
 		this.json = json;
 	}
 
-	public Transmission(Char character, JSONObject json, int i) {
+	public Transmission(@Nonnull Char character, @Nonnull JSONObject json, int i) {
 		if (debugspawn) {
 			System.out.println("Transmission to character " + character + " with json " + json.toString());
 			Thread.dumpStack();
@@ -80,7 +89,7 @@ public class Transmission extends Thread {
 		this.json = json;
 	}
 
-	public Transmission(Region region, JSONObject message) {
+	public Transmission(@Nonnull Region region, @Nullable JSONObject message) {
 		if (debugspawn) {
 			System.out.println("Transmission to region " + region + " with json " + json.toString());
 			Thread.dumpStack();
@@ -91,7 +100,7 @@ public class Transmission extends Thread {
 		json = message;
 	}
 
-	public Transmission(Region region, JSONObject message, int i) {
+	public Transmission(@Nonnull Region region, @Nullable JSONObject message, int i) {
 		if (debugspawn) {
 			System.out.println("Transmission to region " + region + " with json " + json.toString());
 			Thread.dumpStack();
@@ -103,7 +112,7 @@ public class Transmission extends Thread {
 		json = message;
 	}
 
-	public Transmission(Region r, JSONObject message, String oldurl) {
+	public Transmission(Region r, @Nullable JSONObject message, @Nullable String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to region " + region + " on url " + oldurl + " with json " + json.toString());
 			Thread.dumpStack();
@@ -113,7 +122,7 @@ public class Transmission extends Thread {
 		json = message;
 	}
 
-	public Transmission(Char aChar, JSONObject ping, String url, int i) {
+	public Transmission(Char aChar, @Nullable JSONObject ping, @Nullable String url, int i) {
 		if (debugspawn) {
 			System.out.println("DELAYED Transmission to character " + aChar + " on url " + url + " with delay " + i + " and json " + json.toString());
 			Thread.dumpStack();
@@ -125,6 +134,7 @@ public class Transmission extends Thread {
 	}
 
 
+	@Nullable
 	public JSONObject getResponse() { return jsonresponse; }
 
 	// can call .start() to background run this, or .run() to async run inline/inthread
@@ -203,6 +213,7 @@ public class Transmission extends Thread {
 		succeeded=true;
 	}
 
+	@Nonnull
 	private String sendAttempt() throws IOException {
 		boolean debug = false;
 		URLConnection transmission = new URL(url).openConnection();

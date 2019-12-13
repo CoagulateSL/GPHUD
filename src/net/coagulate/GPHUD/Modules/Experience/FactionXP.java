@@ -4,6 +4,8 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Implements Visit XP awards.
  *
@@ -12,12 +14,16 @@ import net.coagulate.GPHUD.State;
 public class FactionXP extends QuotaedXP {
 	public FactionXP(int id) { super(id); }
 
+	@Nonnull
 	public String getName() { return "FactionXP"; }
 
+	@Nonnull
 	public String poolName(State st) {return "Faction.FactionXP";}
 
+	@Nonnull
 	public String quotaKV(State st) {return "Faction.XPPerCycle";}
 
+	@Nonnull
 	public String periodKV(State st) { return "Faction.XPCycleLength"; }
 
 	public Module getModule() { return Modules.get(null, "Faction"); }

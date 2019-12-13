@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,23 +30,31 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	public boolean retired = false;
 	int id = 0;
 	String name = "";
+	@Nullable
 	Integer ownerid = 0;
 	String ownername = "";
+	@Nullable
 	Integer lastactive = 0;
 	boolean online = false;
+	@Nullable
 	Integer totalvisits = 0;
+	@Nullable
 	Integer recentvisits = 0;
+	@Nullable
 	Integer totalxp = 0;
+	@Nonnull
 	List<String> groupheaders = new ArrayList<>();
 	final Map<String, String> groups = new HashMap<>();
 
-	static String sortLink(String current, String link) {
+	@Nonnull
+	static String sortLink(String current, @Nonnull String link) {
 		if (link.equals(current)) { return "<a href=\"?sort=-" + link + "\">" + link + "</a> &darr;"; }
 		if (("-" + link).equals(current)) { return "<a href=\"?sort=" + link + "\">" + link + "</a> &uarr;"; }
 		return "<a href=\"?sort=" + link + "\">" + link + "</a>";
 	}
 
-	public Row headers(State st) throws UserException, SystemException {
+	@Nonnull
+	public Row headers(@Nonnull State st) throws UserException, SystemException {
 		String uri = st.getDebasedURL().replaceAll("%20", " ");
 		uri = uri.replaceFirst(".*?sort=", "");
 		Row r = new HeaderRow();
@@ -64,12 +74,13 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		return r;
 	}
 
-	public Row asRow(State st) throws UserException, SystemException {
+	@Nonnull
+	public Row asRow(@Nonnull State st) throws UserException, SystemException {
 		Row r = new Row();
 		if (retired) { r.setbgcolor("#ffe0e0"); }
 		r.add(Char.getLink(name, "characters", id));
 		r.add(User.getGPHUDLink(ownername, ownerid));
-		String tz = st.avatar().getTimeZone();
+		String tz = st.getAvatarNullable().getTimeZone();
 		r.add(fromUnixTime(lastactive, tz) + " " + tz);
 		r.add(online);
 		r.add(duration(totalvisits));

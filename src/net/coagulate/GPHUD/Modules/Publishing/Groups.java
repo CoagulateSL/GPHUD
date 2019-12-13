@@ -9,26 +9,27 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Groups extends Publishing {
 	@URL.URLs(url="/publishing/allgroups")
-	public static void allGroupsSample(State st, SafeMap values) {
+	public static void allGroupsSample(@Nonnull State st, SafeMap values) {
 		st.form.add(new TextHeader("All Groups And Members"));
 		published(st,"allgroups/" + st.getInstance().getId());
 	}
 
 	@URL.URLs(url="/publishing/group/*")
-	public static void oneGroupSample(State st, SafeMap values) {
+	public static void oneGroupSample(@Nonnull State st, SafeMap values) {
 		CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
 		st.form.add(new TextHeader("Group: "+group.getName()));
 		published(st,"group/" + group.getId());
 	}
 
 	@URL.URLs(url="/publishing/grouptype/*")
-	public static void groupTypeSample(State st, SafeMap values) {
+	public static void groupTypeSample(@Nonnull State st, SafeMap values) {
 		Instance instance=Instance.get(getPartInt(st,1));
 		String type=getPart(st,2);
 		st.form.add(new TextHeader("GroupType: "+type));
@@ -36,7 +37,7 @@ public class Groups extends Publishing {
 	}
 
 	@URL.URLs(url="/published/grouptype/*",requiresAuthentication = false)
-	public static void groupType(State st,SafeMap values) {
+	public static void groupType(@Nonnull State st, SafeMap values) {
 		Instance instance=Instance.get(getPartInt(st,1));
 		String type=getPart(st,2);
 		Set<String> output = new TreeSet<>();
@@ -52,7 +53,7 @@ public class Groups extends Publishing {
 	}
 
 	@URL.URLs(url="/published/group/*",requiresAuthentication = false)
-	public static void oneGroup(State st,SafeMap values) {
+	public static void oneGroup(@Nonnull State st, SafeMap values) {
 		CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
 		Instance instance=group.getInstance();
 		st.setInstance(instance);
@@ -64,7 +65,7 @@ public class Groups extends Publishing {
 	}
 
 	@URL.URLs(url="/published/allgroups/*",requiresAuthentication = false)
-	public static void allGroups(State st,SafeMap values) {
+	public static void allGroups(@Nonnull State st, SafeMap values) {
 		Instance instance=Instance.get(getPartInt(st,1));
 		st.setInstance(instance);
 		TreeMap<String,String> grouprows=new TreeMap<>();
@@ -82,7 +83,8 @@ public class Groups extends Publishing {
 		contentResizer(st);
 	}
 
-	private static String formatGroup(CharacterGroup group) {
+	@Nonnull
+	private static String formatGroup(@Nonnull CharacterGroup group) {
 		StringBuilder line= new StringBuilder("<tr><th colspan=2 align=left>" + group.getName() + (group.getType() != null ? " (<i>" + group.getType() + "</i>)" : "") + "</th></tr>");
 		TreeMap<String,String> charrows=new TreeMap<>();
 		for (Char ch:group.getMembers()) {

@@ -6,6 +6,8 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -24,8 +26,10 @@ public class DropDownList extends Input {
 		add("");
 	}
 
+	@Nonnull
 	public static DropDownList getCommandsList(State st, String name) { return getCommandsList(st, name, true); }
 
+	@Nonnull
 	public static DropDownList getCommandsList(State st, String name, boolean allowgenerated) {
 		DropDownList commands = new DropDownList(name);
 		for (Module mod : Modules.getModules()) {
@@ -42,6 +46,7 @@ public class DropDownList extends Input {
 
 	public void add(String choice, String label) { choices.put(choice, label); }
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		StringBuilder r = new StringBuilder();
@@ -58,6 +63,7 @@ public class DropDownList extends Input {
 		return r.toString();
 	}
 
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;
@@ -69,5 +75,6 @@ public class DropDownList extends Input {
 	}
 
 	boolean submitonchange=false;
+	@Nonnull
 	public DropDownList submitOnChange() { submitonchange=true; return this;}
 }

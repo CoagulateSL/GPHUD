@@ -9,12 +9,14 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
 public class UserTitler extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/user-titler")
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.add(new TextHeader("User Configurable Titler Cookbook"));
 		boolean act = false;
@@ -33,7 +35,7 @@ public class UserTitler extends CookBook {
 		}
 	}
 
-	private static void run(State st, Table t, boolean act) {
+	private static void run(@Nonnull State st, @Nonnull Table t, boolean act) {
 		t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
 		charAttribute(st, act, t, "TitlerText", "true", "TEXT", "", "FALSE", "FALSE", "");
 		String newvalue;//=st.getRawKV(st.getInstance(), "GPHUDClient.TitlerText");

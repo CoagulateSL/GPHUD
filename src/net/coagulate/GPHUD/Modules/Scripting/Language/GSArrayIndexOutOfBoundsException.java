@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
+import javax.annotation.Nonnull;
+
 public class GSArrayIndexOutOfBoundsException extends GSInvalidExpressionException {
 	private static final long serialVersionUID=1L;
 	public GSArrayIndexOutOfBoundsException(String reason) {
@@ -10,6 +12,7 @@ public class GSArrayIndexOutOfBoundsException extends GSInvalidExpressionExcepti
 		super(reason, cause);
 	}
 
+	@Nonnull
 	public String toString() { return "{GS Array Index Out Of Bounds Exception}: "+getLocalizedMessage(); }
 
 }

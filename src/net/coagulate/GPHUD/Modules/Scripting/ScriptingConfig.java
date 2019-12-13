@@ -24,6 +24,7 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULA
 
 public class ScriptingConfig {
 	@URL.URLs(url = "/configuration/scripting")
-	public static void configPage(State st, SafeMap values) {
+	public static void configPage(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.add(new TextHeader("Scripting Module"));
 		f.add(new Paragraph("List of scripts"));
@@ -44,7 +45,7 @@ public class ScriptingConfig {
 	}
 
 	@URL.URLs(url = "/configuration/scripting/create", requiresPermission = "Scripting.Create")
-	public static void createScript(State st, SafeMap values) {
+	public static void createScript(@Nonnull State st, @Nonnull SafeMap values) {
 		Form f = st.form;
 		if (!values.get("scriptname").isEmpty()) {
 			Scripts.create(st, values.get("scriptname"));
@@ -57,7 +58,7 @@ public class ScriptingConfig {
 	}
 
 	@URL.URLs(url = "/configuration/scripting/edit/*", requiresPermission = "Scripting.Create")
-	public static void editScript(State st, SafeMap values) {
+	public static void editScript(@Nonnull State st, @Nonnull SafeMap values) {
 		Form f = st.form;
 		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -155,7 +156,8 @@ public class ScriptingConfig {
 	}
 	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS}
 
-	private static String debug(State st,String script, STAGE stage) {
+	@Nonnull
+	private static String debug(@Nonnull State st, @Nonnull String script, STAGE stage) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(script.getBytes());
 		GSParser parser = new GSParser(bais);
 		parser.enable_tracing();
@@ -244,7 +246,8 @@ public class ScriptingConfig {
 		return "Did nothing (?)";
 	}
 
-	private static String formatStep(GSVM.ExecutionStep step) {
+	@Nonnull
+	private static String formatStep(@Nonnull GSVM.ExecutionStep step) {
 		StringBuilder output = new StringBuilder();
 		output.append("<tr><td>").append(step.IC).append("</td><th>").append(step.programcounter).append("</th><td>").append(step.decode).append("</td><td><table>");
 		for (int i = 0; i < step.resultingstack.size(); i++) {

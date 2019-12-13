@@ -16,6 +16,7 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	 * @param st Session State
 	 */
 	@Override
-	public void process(State st) {
+	public void process(@Nonnull State st) {
 		boolean debug = false;
 		st.source = State.Sources.SYSTEM;
 		//for (Header h:headers) { System.out.println(h.getName()+"="+h.getValue()); }
@@ -121,7 +122,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 
-	protected Response execute(State st) throws SystemException, UserException {
+	protected Response execute(@Nonnull State st) throws SystemException, UserException {
 		JSONObject obj = st.json;
 		// get developer key
 		String developerkey = obj.getString("developerkey");
@@ -233,7 +234,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 
-	private Response processUnregistered(State st) {
+	@Nonnull
+	private Response processUnregistered(@Nonnull State st) {
 		// region is not registered, all we allow is registration
 		// note connections from non-registered regions are cause to SUSPEND operation, unless you're a GPHUD Server, cos they do 'registration'
 		// if we're a "GPHUD Server" of some kind from dev id 1 then... bob's ya uncle, dont suspend :P
@@ -247,7 +249,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			return new ErrorResponse("Region not registered, only pre-registration commands may be run");
 		}
 		// only the server's owner can run these commands, call them the pre-reg commands
-		if (st.avatar() != st.sourceowner) {
+		if (st.getAvatarNullable() != st.sourceowner) {
 			return new ErrorResponse("Command not authorised.  Must be Server's owner for pre-registration commands.");
 		}
 
@@ -257,7 +259,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			console = console.substring(1);
 		}
 		if (console.startsWith("createinstance ")) {
-			User ava = st.avatar();
+			User ava = st.getAvatarNullable();
 			if (ava == null) { return new ErrorResponse("Null avatar associated with request??"); }
 			boolean ok = false;
 			if (ava.isSuperAdmin()) { ok = true; }
@@ -266,7 +268,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");
 			}
 			console = console.replaceFirst("createinstance ", "");
-			try { Instance.create(console, st.avatar()); } catch (UserException e) {
+			try { Instance.create(console, st.getAvatarNullable()); } catch (UserException e) {
 				return new ErrorResponse("Instance registration failed: " + e.getMessage());
 			}
 			Instance instance = Instance.find(console);
@@ -290,7 +292,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (console.startsWith("joininstance ")) {
 			console = console.replaceFirst("joininstance ", "");
 			Instance instance = Instance.find(console);
-			if (instance != null && instance.getOwner() != st.avatar()) {
+			if (instance != null && instance.getOwner() != st.getAvatarNullable()) {
 				return new ErrorResponse("Instance exists and does not belong to you");
 			}
 			if (instance == null) { return new ErrorResponse("Failed to find named instance, see *listinstances"); }
@@ -306,7 +308,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		if (console.startsWith("listinstances")) {
 			StringBuilder response = new StringBuilder("Instances:\n");
-			Set<Instance> instances = Instance.getInstances(st.avatar());
+			Set<Instance> instances = Instance.getInstances(st.getAvatarNullable());
 			for (Instance i : instances) { response.append(i.getName()).append("\n"); }
 			return new OKResponse(response.toString());
 		}

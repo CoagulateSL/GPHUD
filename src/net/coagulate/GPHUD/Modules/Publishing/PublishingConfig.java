@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public class PublishingConfig
 {
 	@URL.URLs(url = "/configuration/publishing")
-	public static void configPage(State st, SafeMap values) {
+	public static void configPage(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.add(new TextHeader("Links to published pages"));
 		f.add(new Text("<p><i><b>Note:</b> This feature is in early release, please feel free to submit ideas for published pages, layouts, options, formatting etc</i></p>"));

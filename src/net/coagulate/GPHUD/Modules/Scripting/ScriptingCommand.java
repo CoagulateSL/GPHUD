@@ -8,6 +8,8 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,8 @@ public class ScriptingCommand extends Command {
 		catch (NoSuchMethodException e) { throw new SystemException("Reflection exception finding gsScriptCommand's execute() method",e); }
 	}
 
-	public Response execute(State st) {
+	@Nonnull
+	public Response execute(@Nonnull State st) {
 		GSVM vm=new GSVM(script.getByteCode());
 		//System.out.println("Script about to execute "+script.getNameSafe());
 		return vm.execute(st);
@@ -32,16 +35,19 @@ public class ScriptingCommand extends Command {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public String description() {
 		return "Run script "+script.getName();
 	}
 
+	@Nonnull
 	@Override
 	public String requiresPermission() {
 		return "";
 	}
 
+	@Nonnull
 	@Override
 	public Context context() {
 		return Context.CHARACTER;
@@ -70,6 +76,7 @@ public class ScriptingCommand extends Command {
 		return false;
 	}
 
+	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
 		 return new ArrayList<>();
@@ -80,11 +87,13 @@ public class ScriptingCommand extends Command {
 		return 0;
 	}
 
+	@Nonnull
 	@Override
 	public String getFullName() {
 		return "Scripting."+script.getName();
 	}
 
+	@Nullable
 	@Override
 	public String getName() {
 		return script.getName();

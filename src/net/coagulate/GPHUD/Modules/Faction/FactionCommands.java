@@ -19,6 +19,9 @@ import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Faction controls for the FactionCommands.
  *
@@ -26,8 +29,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FactionCommands {
 
+	@Nullable
 	@Template(name = "FACTION", description = "Current faction name")
-	public static String getFactionName(State st, String key) {
+	public static String getFactionName(@Nullable State st, String key) {
 		if (st == null) { throw new UserException("State is null"); }
 		if (st.getCharacter() == null) { throw new UserException("Character is null"); }
 		CharacterGroup faction = st.getCharacter().getGroup("Faction");
@@ -35,9 +39,10 @@ public class FactionCommands {
 		return faction.getName();
 	}
 
+	@Nonnull
 	@Commands(description = "Award a point of faction XP to the target character", context = Context.CHARACTER)
-	public static Response awardXP(State st,
-	                               @Arguments(description = "Character to award a point of XP to", type = ArgumentType.CHARACTER_FACTION)
+	public static Response awardXP(@Nonnull State st,
+	                               @Nonnull @Arguments(description = "Character to award a point of XP to", type = ArgumentType.CHARACTER_FACTION)
 			                               Char target,
 	                               @Arguments(description = "Reason for the award", type = ArgumentType.TEXT_ONELINE, max = 512)
 			                               String reason) throws UserException, SystemException {
@@ -69,15 +74,17 @@ public class FactionCommands {
 		return new OKResponse("Granted a point of Faction XP to " + target.getName());
 	}
 
+	@Nonnull
 	@Commands(description = "Invite a player to your faction", context = Context.CHARACTER)
-	public static Response invite(State st,
-	                              @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER)
+	public static Response invite(@Nonnull State st,
+	                              @Nonnull @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER)
 			                              Char target) {
 		CharacterGroup ourfaction = st.getCharacter().getGroup("Faction");
 		if (ourfaction == null) { return new ErrorResponse("You are not in a faction"); }
 		return GroupCommands.invite(st, ourfaction, target);
 	}
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Eject a member from your faction")
 	public static Response eject(@NotNull State st,
 	                             @NotNull @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER_FACTION)

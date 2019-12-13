@@ -9,13 +9,15 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author iain
  */
 public class IntrospectionMenu {
 
 	@URLs(url = "/introspection/")
-	public static void menu(State st, SafeMap values) throws UserException, SystemException {
+	public static void menu(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.add(new TextHeader("GPHUD Introspection"));
 		f.add(new TextSubHeader("Global definitions"));

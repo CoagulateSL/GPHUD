@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Map;
 public abstract class ManagePermissions {
 	@URLs(url = "/introspection/permissions")
 	@SideSubMenus(name = "Permissions", priority = 20)
-	public static void createForm(State st, SafeMap values) {
+	public static void createForm(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.add(new TextHeader("Permission registrations"));
 		Table t = new Table();

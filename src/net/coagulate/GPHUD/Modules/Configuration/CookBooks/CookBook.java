@@ -15,13 +15,14 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.logging.Level;
 
 /**
  * @author Iain Price
  */
 public abstract class CookBook {
-	protected static void charAttribute(State st, boolean act, Table t, String attribute, String selfmodify, String attributetype, String grouptype, String useabilitypoints, String required, String defaultvalue) {
+	protected static void charAttribute(@Nonnull State st, boolean act, @Nonnull Table t, String attribute, String selfmodify, String attributetype, String grouptype, String useabilitypoints, String required, String defaultvalue) {
 		t.openRow();
 		t.add("Create attribute " + attribute);
 		try {
@@ -37,7 +38,7 @@ public abstract class CookBook {
 		st.purgeAttributeCache();
 	}
 
-	protected static void setKV(State st, boolean act, Table t, TableRow object, String attribute, String newvalue) {
+	protected static void setKV(@Nonnull State st, boolean act, @Nonnull Table t, @Nonnull TableRow object, @Nonnull String attribute, String newvalue) {
 		t.openRow();
 		t.add("Set KV " + attribute);
 		t.add("OK");
@@ -55,7 +56,7 @@ public abstract class CookBook {
 		}
 	}
 
-	protected static void createAlias(State st, boolean act, Table t, String aliasname, String target, JSONObject template) {
+	protected static void createAlias(@Nonnull State st, boolean act, @Nonnull Table t, @Nonnull String aliasname, String target, @Nonnull JSONObject template) {
 		t.openRow();
 		t.add("Create Alias " + aliasname);
 		try {
@@ -77,7 +78,7 @@ public abstract class CookBook {
 		}
 	}
 
-	protected static void createMenu(State st, boolean act, Table t, String name, String description) {
+	protected static void createMenu(@Nonnull State st, boolean act, @Nonnull Table t, @Nonnull String name, String description) {
 		t.openRow();
 		t.add("Create menu '" + name + "'");
 		Menus existing = Menus.getMenu(st, name);
@@ -94,11 +95,11 @@ public abstract class CookBook {
 		t.add("OK");
 	}
 
-	protected static void menu(State st, boolean act, Table t, String label, String command) {
+	protected static void menu(@Nonnull State st, boolean act, @Nonnull Table t, String label, String command) {
 		menu(st, act, t, "Main", label, command);
 	}
 
-	protected static void menu(State st, boolean act, Table t, String menuname, String label, String command) {
+	protected static void menu(@Nonnull State st, boolean act, @Nonnull Table t, String menuname, String label, String command) {
 		t.openRow();
 		t.add("Add menu item '" + label + "'");
 		Menus mainmenu = Menus.getMenu(st, menuname);
@@ -142,7 +143,7 @@ public abstract class CookBook {
 		t.add("OK");
 	}
 
-	protected static void confirmButton(State st, Form f) {
+	protected static void confirmButton(@Nonnull State st, @Nonnull Form f) {
 		f.add("");
 		if (st.hasPermission("Instance.CookBooks")) {
 			f.add(new TextSubHeader("You may click here to enact the cookbook"));

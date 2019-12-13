@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * fake url for side sub menus (ugly).
  *
@@ -31,6 +33,7 @@ public class ConfigurationURL extends URL {
 		return url;
 	}
 
+	@Nonnull
 	@Override
 	public String requiresPermission() {
 		return "";
@@ -46,6 +49,7 @@ public class ConfigurationURL extends URL {
 		return name;
 	}
 
+	@Nonnull
 	@Override
 	public String getMethodName() {
 		throw new SystemException("Stub url has no backing method");

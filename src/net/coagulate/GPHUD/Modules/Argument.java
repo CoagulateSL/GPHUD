@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.util.List;
 
@@ -14,8 +16,10 @@ public abstract class Argument {
 
 	public abstract boolean isGenerated();
 
+	@Nonnull
 	public abstract ArgumentType type();
 
+	@Nullable
 	public abstract String description();
 
 	public abstract boolean mandatory();
@@ -31,6 +35,7 @@ public abstract class Argument {
 
 	public abstract void overrideDescription(String n);
 
+	@Nonnull
 	public abstract List<String> getChoices(State st);
 
 	public enum ArgumentType {
@@ -59,13 +64,13 @@ public abstract class Argument {
 	@Documented
 	@Target(ElementType.PARAMETER)
 	public @interface Arguments {
-		ArgumentType type();
+		@Nonnull ArgumentType type();
 
-		String description();
+		@Nonnull String description();
 
 		boolean mandatory() default true;
 
-		String choiceMethod() default "";
+		@Nonnull String choiceMethod() default "";
 
 		boolean delayTemplating() default false;
 

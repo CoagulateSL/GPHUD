@@ -5,6 +5,8 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -12,7 +14,8 @@ import java.util.Set;
  */
 public class PrimaryCharacters {
 
-	private static Char getPrimaryCharacter_internal(Instance instance, User avatar) {
+	@Nonnull
+	private static Char getPrimaryCharacter_internal(@Nonnull Instance instance, @Nonnull User avatar) {
 		Integer primary = GPHUD.getDB().dqi(true, "select entityid from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
 		Char c = Char.get(primary);
 		if (c.retired()) {
@@ -28,9 +31,10 @@ public class PrimaryCharacters {
 	 * @param st Session state containing instance.
 	 * @return
 	 */
-	public static Char getPrimaryCharacter(State st, boolean autocreate) {
+	@Nullable
+	public static Char getPrimaryCharacter(@Nonnull State st, boolean autocreate) {
 		Instance instance = st.getInstance();
-		User avatar = st.getAvatar();
+		User avatar = st.getAvatarNullable();
 		try {
 			return getPrimaryCharacter_internal(instance, avatar);
 		} catch (NoDataException e) {
@@ -53,13 +57,13 @@ public class PrimaryCharacters {
 		}
 	}
 
-	public static void setPrimaryCharacter(State st, Char c) {
+	public static void setPrimaryCharacter(@Nonnull State st, @Nonnull Char c) {
 		c.validate(st);
-		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", st.avatar().getId(), st.getInstance().getId());
-		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.avatar().getId(), st.getInstance().getId(), c.getId());
+		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", st.getAvatarNullable().getId(), st.getInstance().getId());
+		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.getAvatarNullable().getId(), st.getInstance().getId(), c.getId());
 	}
 
-	public static void purge(Char ch) {
+	public static void purge(@Nonnull Char ch) {
 		GPHUD.getDB().d("delete from primarycharacters where entityid=?",ch.getId());
 	}
 }

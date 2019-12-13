@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Modules.Configuration;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.SideSubMenu;
 
+import javax.annotation.Nonnull;
+
 /**
  * Config submenu elements.
  *
@@ -30,6 +32,7 @@ public class ConfigurationSideSubMenu extends SideSubMenu {
 		return priority;
 	}
 
+	@Nonnull
 	@Override
 	public String requiresPermission() {
 		return "";
@@ -40,6 +43,7 @@ public class ConfigurationSideSubMenu extends SideSubMenu {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public String getURL() {
 		return "/configuration/" + m.getName();

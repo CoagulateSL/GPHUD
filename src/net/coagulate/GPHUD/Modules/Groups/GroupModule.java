@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.StaticSideSubMenu;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,8 +22,9 @@ public class GroupModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
+	@Nonnull
 	@Override
-	public Set<SideSubMenu> getSideSubMenus(State st) {
+	public Set<SideSubMenu> getSideSubMenus(@Nonnull State st) {
 		Set<SideSubMenu> ret = new HashSet<>();
 		int pri = 1;
 		for (String submenu : st.getCharacterGroupTypes()) {

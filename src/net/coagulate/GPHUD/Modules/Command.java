@@ -18,6 +18,8 @@ import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,14 +37,15 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Command {
 
-	static Object assertNotNull(Object o, String value, String type) throws UserException {
+	@Nullable
+	static Object assertNotNull(@Nullable Object o, String value, String type) throws UserException {
 		if (o == null) {
 			throw new UserException("Unable to resolve '" + value + "' to a " + type);
 		}
 		return o;
 	}
 
-	protected static void checkPublicStatic(Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -51,6 +54,7 @@ public abstract class Command {
 		}
 	}
 
+	@Nullable
 	public abstract Method getMethod();
 
 	public abstract boolean isGenerated();
@@ -75,12 +79,15 @@ public abstract class Command {
 
 	public abstract int getArgumentCount();
 
+	@Nonnull
 	public abstract String getFullName();
 
+	@Nullable
 	public abstract String getName();
 
+	@Nonnull
 	@SuppressWarnings("fallthrough")
-	public Response run(State st, String[] args) throws SystemException, UserException {
+	public Response run(@Nonnull State st, @Nonnull String[] args) throws SystemException, UserException {
 		final boolean debug=false;
 		List<Object> typedargs = new ArrayList<>();
 		int arg = 0;
@@ -269,7 +276,8 @@ public abstract class Command {
 	 * @return Command response
 	 * @throws SystemException
 	 */
-	Response run(State st, Object[] args) throws SystemException {
+	@Nonnull
+	Response run(@Nonnull State st, @Nonnull Object[] args) throws SystemException {
 		final boolean debug = false;
 		try {
 			// check permission
@@ -352,7 +360,7 @@ public abstract class Command {
 					if (st.getInstance() == null) {
 						return new ErrorResponse("Avatar context required and you are not connected to an instance.");
 					}
-					if (st.avatar() == null) {
+					if (st.getAvatarNullable() == null) {
 						return new ErrorResponse("Avatar context required, your request is lacking an avatar registration");
 					}
 					break;
@@ -394,7 +402,7 @@ public abstract class Command {
 
 	public List<Argument> getInvokingArguments() { return getArguments(); }
 
-	public Response run(State st, SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull State st, @Nonnull SafeMap parametermap) throws UserException, SystemException {
 		//System.out.println("Run in method "+this.getClass().getCanonicalName());
 		List<String> arguments = new ArrayList<>();
 		for (Argument arg : getInvokingArguments()) {
@@ -409,7 +417,7 @@ public abstract class Command {
 		return run(st, arguments.toArray(new String[]{}));
 	}
 
-	public void simpleHtml(State st, SafeMap values) throws UserException, SystemException {
+	public void simpleHtml(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		//System.out.println("HERE:"+getArgumentCount());
 		if (getArgumentCount() == 0 || values.submit()) {
 			Response response = run(st, values);
@@ -426,7 +434,8 @@ public abstract class Command {
 		getHtmlTemplate(st);
 	}
 
-	JSONObject getJSONTemplate(State st) throws UserException, SystemException {
+	@Nonnull
+	JSONObject getJSONTemplate(@Nonnull State st) throws UserException, SystemException {
 		JSONObject json = new JSONObject();
 		int arg = 0;
 		for (Argument argument : getArguments()) {
@@ -476,7 +485,7 @@ public abstract class Command {
 					json.put("arg" + arg + "type", "TEXTBOX");
 					break;
 				case CHARACTER_PLAYABLE:
-					Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatar());
+					Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
 					if (options.size() > 12) {
 						json.put("arg" + arg + "type", "TEXTBOX");
 					} else {
@@ -522,7 +531,7 @@ public abstract class Command {
 		return json;
 	}
 
-	void getHtmlTemplate(State st) throws UserException, SystemException {
+	void getHtmlTemplate(@Nonnull State st) throws UserException, SystemException {
 		Form f = st.form;
 		Table t = new Table();
 		f.add(t);
@@ -651,6 +660,7 @@ public abstract class Command {
 		}
 	}
 
+	@Nonnull
 	public String getFullMethodName() {
 		return getMethod().getDeclaringClass().getName() + "." + getMethod().getName() + "()";
 	}
@@ -670,11 +680,11 @@ public abstract class Command {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface Commands {
-		String description();
+		@Nonnull String description();
 
-		String requiresPermission() default "";
+		@Nonnull String requiresPermission() default "";
 
-		Context context();
+		@Nonnull Context context();
 
 		boolean permitJSON() default true;
 

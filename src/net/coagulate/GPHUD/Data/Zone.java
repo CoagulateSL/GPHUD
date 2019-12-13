@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,6 +27,7 @@ public class Zone extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A zone representation
 	 */
+	@Nonnull
 	public static Zone get(int id) {
 		return (Zone) factoryPut("Zone", id, new Zone(id));
 	}
@@ -36,7 +39,7 @@ public class Zone extends TableRow {
 	 * @param name     Name of the zone
 	 * @throws UserException If the zone name is in use
 	 */
-	public static void create(Instance instance, String name) throws UserException {
+	public static void create(@Nonnull Instance instance, String name) throws UserException {
 		if (GPHUD.getDB().dqi(true, "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
 			throw new UserException("Zone name already in use");
 		}
@@ -50,34 +53,39 @@ public class Zone extends TableRow {
 	 * @param name     Name of the zone
 	 * @return Zone object, or null
 	 */
-	public static Zone find(Instance instance, String name) {
+	@Nullable
+	public static Zone find(@Nonnull Instance instance, String name) {
 		Integer zoneid = GPHUD.getDB().dqi(false, "select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
 		if (zoneid == null) { return null; }
 		return get(zoneid);
 	}
 
-	static void wipeKV(Instance instance, String key) {
+	static void wipeKV(@Nonnull Instance instance, String key) {
 		String kvtable = "zonekvstore";
 		String maintable = "zones";
 		String idcolumn = "zoneid";
 		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "zones";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "zoneid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/configuration/zoning";
@@ -88,6 +96,7 @@ public class Zone extends TableRow {
 	 *
 	 * @return Set of ZoneAreas
 	 */
+	@Nonnull
 	public Set<ZoneArea> getZoneAreas() {
 		Set<ZoneArea> areas = new TreeSet<>();
 		for (ResultsRow r : dq("select zoneareaid from zoneareas where zoneid=?", getId())) {
@@ -102,6 +111,7 @@ public class Zone extends TableRow {
 	 *
 	 * @return String for the HUD to store zone data using
 	 */
+	@Nonnull
 	public String getTransportFormat() {
 		Set<ZoneArea> areas = getZoneAreas();
 		StringBuilder s = new StringBuilder();
@@ -118,6 +128,7 @@ public class Zone extends TableRow {
 	 *
 	 * @return Instance object
 	 */
+	@Nullable
 	public Instance getInstance() {
 		Integer id = getInt("instanceid");
 		if (id == null) {
@@ -133,17 +144,19 @@ public class Zone extends TableRow {
 	 * @param cornerOne Co-ordinate 1 as x,y,z string
 	 * @param cornerTwo Co-ordinate 2 as x,y,z string
 	 */
-	public void addArea(Region region, String cornerOne, String cornerTwo) {
+	public void addArea(@Nonnull Region region, String cornerOne, String cornerTwo) {
 		int[] c1 = ZoneArea.parseVector(cornerOne);
 		int[] c2 = ZoneArea.parseVector(cornerTwo);
 		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)", getId(), region.getId(), c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
 	}
 
+	@Nonnull
 	@Override
 	public String getKVTable() {
 		return "zonekvstore";
 	}
 
+	@Nonnull
 	@Override
 	public String getKVIdField() {
 		return "zoneid";
@@ -163,7 +176,7 @@ public class Zone extends TableRow {
 		getInstance().sendServers(json);
 	}
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Zone / State Instance mismatch"); }

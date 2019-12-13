@@ -12,11 +12,12 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 
 public class GSFunctions {
 	@URL.URLs(url = "/introspection/gsfunctions/*")
-	public static void renderCommand(State st, SafeMap values) throws UserException, SystemException {
+	public static void renderCommand(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		String uri = st.getDebasedURL();
 		if (!uri.startsWith("/introspection/gsfunctions/")) { throw new SystemException("URL Misconfiguratin?"); }
 		uri = uri.substring("/introspection/gsfunctions/".length());
@@ -47,7 +48,7 @@ public class GSFunctions {
 
 	@URL.URLs(url = "/introspection/gsfunctions")
 	@SideSubMenu.SideSubMenus(name = "GSFunctions", priority = 15)
-	public static void APIIndex(State st, SafeMap values) {
+	public static void APIIndex(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		Table t = new Table();
 		//t.border(true);

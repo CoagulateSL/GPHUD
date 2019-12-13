@@ -14,6 +14,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Set;
 public class SessionSwitch {
 
 	@URLs(url = "/switch/instance")
-	public static void switchInstance(State st, SafeMap values) throws UserException {
+	public static void switchInstance(@Nonnull State st, @Nonnull SafeMap values) throws UserException {
 		Form f = st.form;
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
@@ -37,7 +38,7 @@ public class SessionSwitch {
 				st.cookie.setInstance(i);
 				st.setCharacter(null);
 				st.cookie.setCharacter(st.getCharacterNullable());
-				st.avatar().setLastInstance(i);
+				st.getAvatarNullable().setLastInstance(i);
 				throw new RedirectionException("/switch/character");
 			}
 			ViewInstance.viewInstance(st, values, i);
@@ -47,20 +48,20 @@ public class SessionSwitch {
 	}
 
 	@URLs(url = "/switch/character")
-	public static void switchCharacter(State st, SafeMap values) throws UserException, SystemException {
+	public static void switchCharacter(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		if (st.getInstanceNullable() == null) { throw new RedirectionException("/switch/instance"); }
 		Form f = st.form;
 		if (!values.get("charid").isEmpty()) {
 			Char c = Char.get(Integer.parseInt(values.get("charid")));
 			c.validate(st);
-			if (c.getOwner() != st.avatar()) { throw new UserException("You do not own this character"); }
+			if (c.getOwner() != st.getAvatarNullable()) { throw new UserException("You do not own this character"); }
 			st.setCharacter(c);
 			st.cookie.setCharacter(st.getCharacter());
 			throw new RedirectionException("/");
 		}
 		f.noForm();
 		f.add(new TextHeader("Select Character"));
-		Set<Char> chars = Char.getCharacters(st.getInstance(), st.avatar());
+		Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
 		if (chars.isEmpty()) {
 			f.add("You have no characters at this instance, please select a new instance or navigate via the left side menu.");
 			return;

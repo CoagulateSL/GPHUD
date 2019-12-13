@@ -13,6 +13,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Front page and default config page.
  * <p>
@@ -23,7 +25,7 @@ import net.coagulate.GPHUD.State;
 public abstract class Index {
 
 	@URLs(url = "/configuration/")
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.noForm();
 		f.add(new TextHeader("GPHUD Module Configuration"));
@@ -94,7 +96,7 @@ public abstract class Index {
 	}
 
 	@URLs(url = "/configuration/view/*")
-	public static void kvDetailPage(State st, SafeMap values) {
+	public static void kvDetailPage(@Nonnull State st, @Nonnull SafeMap values) {
 		String kvname = st.getDebasedURL().replaceFirst("/configuration/view/", "").replaceFirst("/", ".");
 		KV kv = st.getKVDefinition(kvname);
 		st.form.noForm();
@@ -102,7 +104,7 @@ public abstract class Index {
 	}
 
 	@URLs(url = "/configuration/*")
-	public static void genericConfigurationPage(State st, SafeMap values) throws UserException, SystemException {
+	public static void genericConfigurationPage(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		String module = st.getDebasedURL().replaceFirst("/configuration/", "");
 		String key = null;
 		st.form.noForm();

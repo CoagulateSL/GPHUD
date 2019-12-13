@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * AuditView page.
  *
@@ -15,9 +17,9 @@ import net.coagulate.GPHUD.State;
 public class AuditView {
 
 	@URLs(url = "/audit", requiresPermission = "audit.view")
-	public static void audit(State st, SafeMap values) throws UserException {
+	public static void audit(@Nonnull State st, SafeMap values) throws UserException {
 		Results rows = net.coagulate.GPHUD.Data.Audit.getAudit(st.getInstance(), null, null);
-		Table table = net.coagulate.GPHUD.Data.Audit.formatAudit(rows, st.avatar().getTimeZone());
+		Table table = net.coagulate.GPHUD.Data.Audit.formatAudit(rows, st.getAvatarNullable().getTimeZone());
 		st.form.add(table);
 	}
 

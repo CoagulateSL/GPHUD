@@ -6,6 +6,7 @@ import net.coagulate.GPHUD.Interfaces.RedirectionException;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -20,10 +21,11 @@ public class URLAnnotation extends URL {
 	private static final Set<String> inuse = new HashSet<>(); // a legitimate static in a non static class oO
 	private final URLs meta;
 	private final Module module;
+	@Nonnull
 	private final Method method;
 	private boolean generated = true;
 
-	public URLAnnotation(Module module, Method method) throws SystemException, UserException {
+	public URLAnnotation(Module module, @Nonnull Method method) throws SystemException, UserException {
 		this.module = module;
 		this.method = method;
 		this.meta = method.getAnnotation(URLs.class);
@@ -34,12 +36,16 @@ public class URLAnnotation extends URL {
 
 	public boolean isGenerated() { return generated; }
 
+	@Nonnull
 	public Method getMethod() { return method; }
 
+	@Nonnull
 	public String url() { return meta.url(); }
 
+	@Nonnull
 	public String requiresPermission() { return meta.requiresPermission(); }
 
+	@Nonnull
 	public String getFullName() { return module.getName() + "." + getName(); }
 
 	public String getName() { return method.getName(); }
@@ -68,7 +74,7 @@ public class URLAnnotation extends URL {
 
 	}
 
-	public void run(State st, SafeMap values) throws SystemException, UserException {
+	public void run(@Nonnull State st, SafeMap values) throws SystemException, UserException {
 		try {
 			method.invoke(null, st, values);
 		} catch (IllegalAccessException ex) {
@@ -95,6 +101,7 @@ public class URLAnnotation extends URL {
 		return module;
 	}
 
+	@Nonnull
 	public String getMethodName() {
 		return method.getDeclaringClass().getName() + "." + method.getName() + "()";
 	}

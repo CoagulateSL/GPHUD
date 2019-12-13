@@ -9,6 +9,8 @@ import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -17,11 +19,13 @@ public class ObjectTypes extends TableRow {
 		super(id);
 	}
 
+	@Nonnull
 	public static ObjectTypes get(int id) {
 		return (ObjectTypes) factoryPut("ObjectTypes", id, new ObjectTypes(id));
 	}
 
-	public static ObjectTypes create(State st, String name, JSONObject behaviour) {
+	@Nonnull
+	public static ObjectTypes create(@Nonnull State st, String name, @Nonnull JSONObject behaviour) {
 		int existing= GPHUD.getDB().dqi(true,"select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) { throw new UserException("ObjectType "+name+" already exists in instance "+st.getInstance()); }
 		GPHUD.getDB().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
@@ -29,7 +33,8 @@ public class ObjectTypes extends TableRow {
 		return get(newid);
 	}
 
-	public static String dumpTypes(State st) {
+	@Nonnull
+	public static String dumpTypes(@Nonnull State st) {
 		StringBuilder r= new StringBuilder("<table>");
 		r.append("<tr><th>Name</th><th>Behaviour</th></tr>");
 		for (ResultsRow row:GPHUD.getDB().dq("select * from objecttypes where instanceid=?",st.getInstance().getId())) {
@@ -43,7 +48,8 @@ public class ObjectTypes extends TableRow {
 		return r.toString();
 	}
 
-	public static Set<String> getObjectTypes(State st) {
+	@Nonnull
+	public static Set<String> getObjectTypes(@Nonnull State st) {
 		Set<String> set=new TreeSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select name from objecttypes where instanceid=?",st.getInstance().getId())) {
 			set.add(row.getString("name"));
@@ -51,7 +57,8 @@ public class ObjectTypes extends TableRow {
 		return set;
 	}
 
-	public static DropDownList getDropDownList(State st,String name) {
+	@Nonnull
+	public static DropDownList getDropDownList(@Nonnull State st, String name) {
 		DropDownList list=new DropDownList(name);
 		for (ResultsRow row:GPHUD.getDB().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
 			list.add(row.getInt("id").toString(),row.getString("name"));
@@ -59,47 +66,55 @@ public class ObjectTypes extends TableRow {
 		return list;
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() { return "id"; }
 
 	@Override
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("ObjectTypes / State Instance mismatch"); }
 	}
 
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
+	@Nonnull
 	public JSONObject getBehaviour() {
 		String s=getString("behaviour");
 		if (s==null || s.isEmpty()) { return new JSONObject(); }
 		return new JSONObject(s);
 	}
-	public void setBehaviour(JSONObject json) {
+	public void setBehaviour(@Nonnull JSONObject json) {
 		set("behaviour",json.toString());
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() { return "name"; }
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "/GPHUD/configuration/objects/objecttypes/"+getId(); }
 
 	@Override
 	protected int getNameCacheTime() { return 600; }
 
+	@Nullable
 	@Override
 	public String getKVTable() {
 		return null;
 	}
 
+	@Nullable
 	@Override
 	public String getKVIdField() {
 		return null;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "objecttypes";

@@ -5,6 +5,8 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.Node;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.SimpleNode;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.Token;
 
+import javax.annotation.Nonnull;
+
 public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Generated.SimpleNode {
 	public ParseNode(int i) {
 		super(i);
@@ -15,8 +17,10 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 	}
 
 	public int children() { return jjtGetNumChildren(); }
+	@Nonnull
 	public ParseNode child(int i) { return ((ParseNode)jjtGetChild(i)); }
 
+	@Nonnull
 	public String tokens() {
 		StringBuilder s= new StringBuilder();
 		Token t=jjtGetFirstToken();
@@ -31,6 +35,7 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 		return s.toString();
 	}
 
+	@Nonnull
 	public String toHtml() {
 		StringBuilder s= new StringBuilder();
 		if (children!=null) {

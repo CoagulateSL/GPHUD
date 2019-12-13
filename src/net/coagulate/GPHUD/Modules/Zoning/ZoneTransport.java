@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Modules.Zoning;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Zone;
 
+import javax.annotation.Nonnull;
+
 /**
  * Packages up the zones in a simple-to-use format for the HUD.
  *
@@ -10,7 +12,8 @@ import net.coagulate.GPHUD.Data.Zone;
  */
 public abstract class ZoneTransport {
 
-	public static String createZoneTransport(Region r) {
+	@Nonnull
+	public static String createZoneTransport(@Nonnull Region r) {
 		StringBuilder response = new StringBuilder();
 		for (Zone z : r.getZones()) {
 			String s = z.getTransportFormat();

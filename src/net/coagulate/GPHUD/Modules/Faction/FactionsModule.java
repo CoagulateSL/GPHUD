@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.StaticSideSubMenu;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,8 +24,9 @@ public class FactionsModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
+	@Nonnull
 	@Override
-	public Set<SideSubMenu> getSideSubMenus(State st) {
+	public Set<SideSubMenu> getSideSubMenus(@Nonnull State st) {
 		Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
 		Set<SideSubMenu> ret = new HashSet<>();
 		for (CharacterGroup faction : factions) {
@@ -33,6 +35,7 @@ public class FactionsModule extends ModuleAnnotation {
 		return ret;
 	}
 
+	@Nonnull
 	@Override
 	public Set<CharacterAttribute> getAttributes(State st) {
 		Set<CharacterAttribute> ret = new HashSet<>();

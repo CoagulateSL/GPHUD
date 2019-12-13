@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 import static java.util.logging.Level.SEVERE;
@@ -26,7 +27,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 public class VisitXP extends QuotaedXP {
 	public VisitXP(int id) { super(id); }
 
-	public void runAwards(State st, Char ch) {
+	public void runAwards(@Nonnull State st, @Nonnull Char ch) {
 		try {
 			Module m = Modules.get(null, "Experience");
 			if (m.isEnabled(st)) {
@@ -60,7 +61,7 @@ public class VisitXP extends QuotaedXP {
 		}
 	}
 
-	public void runAwards(Instance i) {
+	public void runAwards(@Nonnull Instance i) {
 		try {
 			State st = new State();
 			st.setInstance(i);
@@ -88,12 +89,16 @@ public class VisitXP extends QuotaedXP {
 		}
 	}
 
+	@Nonnull
 	public String getName() { return "VisitXP"; }
 
+	@Nonnull
 	public String poolName(State st) {return "experience.visitxp";}
 
+	@Nonnull
 	public String quotaKV(State st) {return "Experience.VisitXPPerCycle";}
 
+	@Nonnull
 	public String periodKV(State st) { return "Experience.XPCycleDays"; }
 
 	public Module getModule() { return Modules.get(null, "Experience"); }

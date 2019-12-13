@@ -9,6 +9,8 @@ import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,6 +31,7 @@ public class Attribute extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A Region representation
 	 */
+	@Nonnull
 	public static Attribute get(int id) {
 		return (Attribute) factoryPut("Attribute", id, new Attribute(id));
 	}
@@ -40,7 +43,8 @@ public class Attribute extends TableRow {
 	 * @param name     Name of attribute to locate
 	 * @return Region object for that region, or null if none is found.
 	 */
-	public static Attribute find(Instance instance, String name) {
+	@Nonnull
+	public static Attribute find(@Nonnull Instance instance, String name) {
 		Integer id = GPHUD.getDB().dqi(false, "select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
 		if (id == null) {
 			throw new UserException("Unable to find attribute '" + name + "' in instance '" + instance + "'");
@@ -51,7 +55,8 @@ public class Attribute extends TableRow {
 	/** Find an attribute that is a group by 'type'.
 	 *
 	 */
-	public static Attribute findGroup(@NotNull Instance instance,String grouptype) {
+	@Nonnull
+	public static Attribute findGroup(@NotNull Instance instance, String grouptype) {
 		Integer id=GPHUD.getDB().dqi(false,"select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
 		if (id==null) {
 			throw new UserException("Unable to find an attribute representing a group of type "+grouptype);
@@ -65,7 +70,8 @@ public class Attribute extends TableRow {
 	 * @param st Infers state
 	 * @return Set of attribute for this instance
 	 */
-	public static Set<Attribute> getAttributes(State st) { return getAttributes(st.getInstance()); }
+	@Nonnull
+	public static Set<Attribute> getAttributes(@Nonnull State st) { return getAttributes(st.getInstance()); }
 
 	/**
 	 * Get the attributes for the instance.
@@ -73,7 +79,8 @@ public class Attribute extends TableRow {
 	 * @param instance The instance to query
 	 * @return Set of attribute for this instance
 	 */
-	public static Set<Attribute> getAttributes(Instance instance) {
+	@Nonnull
+	public static Set<Attribute> getAttributes(@Nonnull Instance instance) {
 		Set<Attribute> set = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select attributeid from attributes where instanceid=?", instance.getId())) {
 			set.add(Attribute.get(r.getInt()));
@@ -81,7 +88,7 @@ public class Attribute extends TableRow {
 		return set;
 	}
 
-	static void create(Instance instance, String name, Boolean selfmodify, String attributetype, String grouptype, Boolean usesabilitypoints, Boolean required, String defaultvalue) {
+	static void create(@Nonnull Instance instance, String name, Boolean selfmodify, String attributetype, String grouptype, Boolean usesabilitypoints, Boolean required, String defaultvalue) {
 		// =)
 		if ("".equals(defaultvalue)) { defaultvalue = null; }
 		GPHUD.getDB().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
@@ -95,12 +102,14 @@ public class Attribute extends TableRow {
 	 * @param name Attribute name
 	 * @return Attribute
 	 */
-	public static Attribute resolve(State st, String name) {
+	@Nullable
+	public static Attribute resolve(@Nonnull State st, String name) {
 		int id = new Attribute(-1).resolveToID(st, name, true);
 		if (id == 0) { return null; }
 		return get(id);
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "attributes"; }
 
@@ -109,32 +118,38 @@ public class Attribute extends TableRow {
 	 *
 	 * @return The Instance object
 	 */
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "attributes";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "attributeid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
+	@Nullable
 	@Override
 	public String getKVTable() { return null; }
 
+	@Nullable
 	@Override
 	public String getKVIdField() { return null; }
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Attribute / State Instance mismatch"); }
@@ -143,6 +158,7 @@ public class Attribute extends TableRow {
 	@Override
 	protected int getNameCacheTime() { return 60 * 60; } // 1 hour, attributes can NOT be renamed because they create a KV based on the name :P
 
+	@Nonnull
 	public ATTRIBUTETYPE getType() {
 		String type = null;
 		try { type = (String) cacheGet("type"); } catch (CacheMiss ex) {
@@ -160,6 +176,7 @@ public class Attribute extends TableRow {
 		throw new SystemException("Unhandled type " + type + " for attribute " + getId() + " " + getNameSafe());
 	}
 
+	@Nullable
 	public String getSubType() { return getString("grouptype"); }
 
 	public boolean usesAbilityPoints() { return getBool("usesabilitypoints"); }
@@ -175,6 +192,7 @@ public class Attribute extends TableRow {
 		set("required", required);
 	}
 
+	@Nullable
 	public String getDefaultValue() { return getString("defaultvalue"); }
 
 	/**
@@ -202,7 +220,8 @@ public class Attribute extends TableRow {
 		set("selfmodify", selfmodify);
 	}
 
-	public String getCharacterValue(State st) {
+	@Nullable
+	public String getCharacterValue(@Nonnull State st) {
 		if (isKV()) { return st.getKV("Characters." + getName()).value(); }
 		if (getType() == GROUP) {
 			CharacterGroup cg = st.getCharacter().getGroup(getSubType());
@@ -218,7 +237,8 @@ public class Attribute extends TableRow {
 		throw new SystemException("Unhandled non KV type " + getType());
 	}
 
-	public String getCharacterValueDescription(State st) {
+	@Nonnull
+	public String getCharacterValueDescription(@Nonnull State st) {
 		if (isKV()) { return st.getKV("Characters." + getName()).path(); }
 		if (getType() == POOL || getType() == EXPERIENCE) {
 			if (this instanceof QuotaedXP) {
@@ -250,6 +270,7 @@ public class Attribute extends TableRow {
 	 * @return the KVTYPE
 	 * @throws SystemException If the attribute is not of a KV represented attribute.
 	 */
+	@Nonnull
 	public KV.KVTYPE getKVType() throws SystemException {
 		ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVTYPE.INTEGER; }
@@ -265,6 +286,7 @@ public class Attribute extends TableRow {
 	 * @return The default value
 	 * @throws SystemException if this attribute type is not KV backed
 	 */
+	@Nonnull
 	public String getKVDefaultValue() throws SystemException {
 		ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return "0"; }
@@ -280,6 +302,7 @@ public class Attribute extends TableRow {
 	 * @return the appropriate KVHIERARCHY
 	 * @throws SystemException If this attribute is not backed by a KV type.
 	 */
+	@Nonnull
 	public KV.KVHIERARCHY getKVHierarchy() throws SystemException {
 		ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVHIERARCHY.CUMULATIVE; }

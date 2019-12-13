@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Interfaces;
 
 import net.coagulate.GPHUD.SafeMap;
 
+import javax.annotation.Nonnull;
+
 /**
  * Not really an exception, causes the interface to redirect the HTTP request to a new page.
  *
@@ -11,7 +13,7 @@ public class RedirectionException extends RuntimeException {
 	private static final long serialVersionUID=1L;
 	final String url;
 
-	public RedirectionException(SafeMap values) {
+	public RedirectionException(@Nonnull SafeMap values) {
 		this(values.get("okreturnurl"));
 	}
 

@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ import static java.util.logging.Level.FINE;
 public abstract class Templates {
 	@URLs(url = "/introspection/templates")
 	@SideSubMenus(name = "Templates", priority = 25)
-	public static void listTemplates(State st, SafeMap values) {
+	public static void listTemplates(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.add(new TextHeader("Templates available"));
 		Table t = new Table();

@@ -14,6 +14,8 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -24,7 +26,7 @@ import java.util.Map;
  */
 public class GenericConfiguration {
 
-	public static void page(State st, SafeMap values, TableRow dbo, State simulated) { page(st, values, dbo, simulated, null); }
+	public static void page(@Nonnull State st, SafeMap values, @Nonnull TableRow dbo, @Nonnull State simulated) { page(st, values, dbo, simulated, null); }
 
 	/**
 	 * Shows a generic configuration page for a module, within a given state, in the context of a particular object (always an Instance presently I think).
@@ -33,7 +35,7 @@ public class GenericConfiguration {
 	 * @param values Web form inputs
 	 * @param dbo    Context we are looking at (shows stuff specific to this object)
 	 */
-	public static void page(State st, SafeMap values, TableRow dbo, State simulated, Module m) {
+	public static void page(@Nonnull State st, SafeMap values, @Nonnull TableRow dbo, @Nonnull State simulated, @Nullable Module m) {
 		Form f = st.form;
 		f.noForm();
 		Table kvtable = new Table();

@@ -8,20 +8,26 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class ByteCode {
 
+	@Nullable
 	private ParseNode sourcenode=null;
-	public ByteCode(ParseNode n) { sourcenode=n; }
+	public ByteCode(@Nullable ParseNode n) { sourcenode=n; }
+	@Nonnull
 	public ByteCode node(ParseNode n)
 	{ sourcenode=n; return this; }
+	@Nullable
 	public ParseNode node() { return sourcenode; }
 
 
-	public static ByteCode load(GSVM vm) {
+	@Nullable
+	public static ByteCode load(@Nonnull GSVM vm) {
 		byte instruction = vm.bytecode[vm.PC];
 		InstructionSet decode = ByteCode.get(instruction);
 		if (decode == null) {
@@ -67,6 +73,7 @@ public abstract class ByteCode {
 		throw new SystemException("Failed to materialise instruction "+decode);
 	}
 
+	@Nonnull
 	public abstract String explain();
 	public abstract void toByteCode(List<Byte> bytes);
 	public static final Map<Byte,InstructionSet> map=new HashMap<>();
@@ -106,11 +113,12 @@ public abstract class ByteCode {
 		public byte get() { return value; }
 	}
 	public static InstructionSet get(byte b) { return map.get(b); }
+	@Nullable
 	public String htmlDecode() {
 		return this.getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
 	}
 
-	void addInt(List<Byte> bytes,int a) {
+	void addInt(@Nonnull List<Byte> bytes, int a) {
 		/*System.out.println("Writing "+
 				((byte)((a>>24) & 0xff))+" "+
 				((byte)((a>>16) & 0xff))+" "+
@@ -121,7 +129,7 @@ public abstract class ByteCode {
 		bytes.add((byte)((a>>8) & 0xff));
 		bytes.add((byte)(a&0xff));
 	}
-	void addShort(List<Byte> bytes,int a) {
+	void addShort(@Nonnull List<Byte> bytes, int a) {
 		bytes.add((byte)((a>>8) & 0xff));
 		bytes.add((byte)(a&0xff));
 	}

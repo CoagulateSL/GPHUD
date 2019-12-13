@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,16 +24,19 @@ public class Row implements Renderable {
 
 	public Row(String c) { add(c); }
 
+	@Nonnull
 	public Row add(Cell c) {
 		row.add(c);
 		return this;
 	}
 
+	@Nonnull
 	public Row add(String s) {
 		row.add(new Cell(new Text(s)));
 		return this;
 	}
 
+	@Nonnull
 	public Row add(Renderable r) {
 		row.add(new Cell(r));
 		return this;
@@ -40,6 +44,7 @@ public class Row implements Renderable {
 
 	public boolean isHeader() { return false; }
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		StringBuilder s = new StringBuilder();
@@ -50,6 +55,7 @@ public class Row implements Renderable {
 		return s.toString();
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		StringBuilder s = new StringBuilder("<tr");
@@ -63,6 +69,7 @@ public class Row implements Renderable {
 		return s + "</tr>";
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(row);

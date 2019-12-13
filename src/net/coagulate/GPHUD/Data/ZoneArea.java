@@ -5,6 +5,9 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * A 'zone' - an area of a region.
  *
@@ -20,6 +23,7 @@ public class ZoneArea extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A zone representation
 	 */
+	@Nonnull
 	public static ZoneArea get(int id) {
 		return (ZoneArea) factoryPut("ZoneArea", id, new ZoneArea(id));
 	}
@@ -30,6 +34,7 @@ public class ZoneArea extends TableRow {
 	 * @param s String vector, x,y,z format with optional angle brackets (SL format)
 	 * @return 3 part int array [x,y,z]
 	 */
+	@Nonnull
 	public static int[] parseVector(String s) {
 		s = s.replaceAll("<", "");
 		s = s.replaceAll(">", "");
@@ -50,22 +55,26 @@ public class ZoneArea extends TableRow {
 		return pos;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "zoneareas";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "zoneareaid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		String[] vectors = getVectors();
 		return vectors[0] + " - " + vectors[1];
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/configuration/zone/" + getId();
@@ -89,6 +98,7 @@ public class ZoneArea extends TableRow {
 	 *
 	 * @return Array pair of vectors as strings representing the corners of the bounding box.
 	 */
+	@Nullable
 	public String[] getVectors() {
 		ResultsRow r = dqone(true, "select * from zoneareas where zoneareaid=?", getId());
 		Integer x1 = r.getInt("x1");
@@ -140,6 +150,7 @@ public class ZoneArea extends TableRow {
 	 *
 	 * @return Region
 	 */
+	@Nonnull
 	public Region getRegion(boolean allowretired) {
 		Integer id = getInt("regionid");
 		if (id == null) { throw new SystemException("Zone Area " + getId() + " has no associated region?"); }
@@ -151,6 +162,7 @@ public class ZoneArea extends TableRow {
 	 *
 	 * @return Zone
 	 */
+	@Nonnull
 	public Zone getZone() {
 		return Zone.get(dqi(true, "select zoneid from zoneareas where zoneareaid=?", getId()));
 	}
@@ -162,14 +174,16 @@ public class ZoneArea extends TableRow {
 		d("delete from zoneareas where zoneareaid=?", getId());
 	}
 
+	@Nullable
 	public String getKVTable() { return null; }
 
+	@Nullable
 	public String getKVIdField() { return null; }
 
 	public void flushKVCache(State st) {}
 
 	@Override
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getZone().getInstance()) {
@@ -177,6 +191,7 @@ public class ZoneArea extends TableRow {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public String getName() {
 		String[] vectors = getVectors();

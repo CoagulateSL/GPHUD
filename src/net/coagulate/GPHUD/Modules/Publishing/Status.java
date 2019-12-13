@@ -8,32 +8,33 @@ import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.TreeMap;
 
 public class Status extends Publishing {
 	@URL.URLs(url="/publishing/status")
-	public static void statusSample(State st, SafeMap values) {
+	public static void statusSample(@Nonnull State st, SafeMap values) {
 		st.form.add(new TextHeader("Instance Status"));
 		published(st,"status/" + st.getInstance().getId());
 	}
 
 	@URL.URLs(url="/published/status/*",requiresAuthentication = false)
-	public static void status(State st,SafeMap values) {
+	public static void status(@Nonnull State st, SafeMap values) {
 		status(st, values, false);
 	}
 
 	@URL.URLs(url="/publishing/statusfull")
-	public static void statusFullSample(State st, SafeMap values) {
+	public static void statusFullSample(@Nonnull State st, SafeMap values) {
 		st.form.add(new TextHeader("Instance Status"));
 		published(st,"statusfull/" + st.getInstance().getId());
 	}
 
 	@URL.URLs(url="/published/statusfull/*",requiresAuthentication = false)
-	public static void statusFull(State st,SafeMap values) {
+	public static void statusFull(@Nonnull State st, SafeMap values) {
 		status(st, values, true);
 	}
 
-	private static void status(State st,SafeMap values,boolean listusers) {
+	private static void status(@Nonnull State st, SafeMap values, boolean listusers) {
 		Instance instance = Instance.get(getPartInt(st, 1));
 		st.setInstance(instance);
 		st.form.add("<b>"+instance.getName()+"</b> <i>GPHUD</i><br><br>");

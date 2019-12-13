@@ -6,6 +6,8 @@ import net.coagulate.Core.Tools.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,6 +28,7 @@ public class Event extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A zone representation
 	 */
+	@Nonnull
 	public static Event get(int id) {
 		return (Event) factoryPut("Event", id, new Event(id));
 	}
@@ -37,7 +40,8 @@ public class Event extends TableRow {
 	 * @param name     Name of event
 	 * @return Event object
 	 */
-	public static Event find(Instance instance, String name) {
+	@Nullable
+	public static Event find(@Nonnull Instance instance, String name) {
 		Integer eventid = GPHUD.getDB().dqi(false, "select eventid from events where name like ? and instanceid=?", name, instance.getId());
 		if (eventid == null) { return null; }
 		return get(eventid);
@@ -51,7 +55,8 @@ public class Event extends TableRow {
 	 * @return The new event
 	 * @throws UserException If the named event already exists
 	 */
-	public static Event create(Instance instance, String eventName) throws UserException {
+	@Nullable
+	public static Event create(@Nonnull Instance instance, String eventName) throws UserException {
 		Event event = find(instance, eventName);
 		if (event != null) { throw new UserException("Event " + eventName + " already exists."); }
 		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)", instance.getId(), eventName);
@@ -68,7 +73,8 @@ public class Event extends TableRow {
 	 * @param instance Instance to get events for
 	 * @return Set of Events
 	 */
-	public static Set<Event> getAll(Instance instance) {
+	@Nonnull
+	public static Set<Event> getAll(@Nonnull Instance instance) {
 		Set<Event> events = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventid from events where instanceid=?", instance.getId())) {
 			events.add(get(r.getInt()));
@@ -82,7 +88,8 @@ public class Event extends TableRow {
 	 * @param instance Instance to get active events for
 	 * @return Set of Events that are currently active and started
 	 */
-	static Set<Event> getActive(Instance instance) {
+	@Nonnull
+	static Set<Event> getActive(@Nonnull Instance instance) {
 		Set<Event> events = new TreeSet<>();
 		int now = getUnixTime();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
@@ -92,7 +99,7 @@ public class Event extends TableRow {
 
 	}
 
-	static void wipeKV(Instance instance, String key) {
+	static void wipeKV(@Nonnull Instance instance, String key) {
 		String kvtable = "eventskvstore";
 		String maintable = "events";
 		String idcolumn = "eventid";
@@ -104,6 +111,7 @@ public class Event extends TableRow {
 	 *
 	 * @return Set of event schedules that need to be started.
 	 */
+	@Nonnull
 	public static Set<EventSchedule> getStartingEvents() {
 		Set<EventSchedule> start = new TreeSet<>();
 		// find events where start time is in the past but "started"=0
@@ -121,6 +129,7 @@ public class Event extends TableRow {
 	 *
 	 * @return Set of event schedules that need to be stopped.
 	 */
+	@Nonnull
 	public static Set<EventSchedule> getStoppingEvents() {
 		Set<EventSchedule> stop = new TreeSet<>();
 		// find events where start time is in the past but "started"=0
@@ -133,37 +142,44 @@ public class Event extends TableRow {
 		return stop;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "events";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "eventid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/GPHUD/event/" + getId();
 	}
 
+	@Nullable
 	public Instance getInstance() {
 		Integer id = getInt("instanceid");
 		if (id == null) { return null; }
 		return Instance.get(id);
 	}
 
+	@Nonnull
 	@Override
 	public String getKVTable() {
 		return "eventskvstore";
 	}
 
+	@Nonnull
 	@Override
 	public String getKVIdField() {
 		return "eventid";
@@ -174,6 +190,7 @@ public class Event extends TableRow {
 	 *
 	 * @return Set of Zones
 	 */
+	@Nonnull
 	public Set<Zone> getZones() {
 		Set<Zone> zones = new TreeSet<>();
 		for (ResultsRow r : dq("select zoneid from eventslocations where eventid=?", getId())) {
@@ -188,7 +205,7 @@ public class Event extends TableRow {
 	 *
 	 * @param zone Zone to add to the event
 	 */
-	public void addZone(Zone zone) {
+	public void addZone(@Nonnull Zone zone) {
 		Integer count = dqi(true, "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
 		if (count != 0) { return; }
 		d("insert into eventslocations(eventid,zoneid) values(?,?)", getId(), zone.getId());
@@ -199,7 +216,7 @@ public class Event extends TableRow {
 	 *
 	 * @param zone Zone to remove from the event
 	 */
-	public void deleteZone(Zone zone) {
+	public void deleteZone(@Nonnull Zone zone) {
 		d("delete from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
 	}
 
@@ -208,6 +225,7 @@ public class Event extends TableRow {
 	 *
 	 * @return Set of EventSchedules
 	 */
+	@Nonnull
 	public Set<EventSchedule> getSchedule() {
 		return EventSchedule.get(this);
 	}
@@ -223,7 +241,7 @@ public class Event extends TableRow {
 		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)", getId(), startdate, enddate, interval);
 	}
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Event / State Instance mismatch"); }

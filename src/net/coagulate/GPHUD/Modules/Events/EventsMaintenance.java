@@ -9,6 +9,8 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -82,7 +84,7 @@ public abstract class EventsMaintenance {
 		}
 	}
 
-	public static void zoneTransition(State st, JSONObject response, Zone oldzone, Zone zone) {
+	public static void zoneTransition(@Nonnull State st, @Nonnull JSONObject response, @Nullable Zone oldzone, @Nullable Zone zone) {
 		boolean debug = false;
 		if (oldzone != null) { oldzone.validate(st); }
 		if (zone != null) { zone.validate(st); }

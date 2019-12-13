@@ -10,9 +10,12 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 public class Interactions {
+	@Nonnull
 	@Command.Commands(description = "Clicked Objects generate this command",context = Command.Context.AVATAR,permitJSON = false, permitUserWeb = false,permitConsole = false,permitScripting = false)
-	public static Response clicked(State st,
+	public static Response clicked(@Nonnull State st,
 	                               @Argument.Arguments(description = "Character clicking the object",type = Argument.ArgumentType.CHARACTER)
 	                               Char clicker) {
 
@@ -24,9 +27,10 @@ public class Interactions {
 		return ot.click(st,clicker);
 	}
 
+	@Nonnull
 	@Command.Commands(description = "Collided/VolumeDetect Objects generate this command",context = Command.Context.AVATAR,permitJSON = false, permitUserWeb = false,permitConsole = false,permitScripting = false)
-	public static Response collided(State st,
-	                               @Argument.Arguments(description = "Character colliding with the object",type = Argument.ArgumentType.CHARACTER)
+	public static Response collided(@Nonnull State st,
+	                                @Argument.Arguments(description = "Character colliding with the object",type = Argument.ArgumentType.CHARACTER)
 			                               Char collider) {
 
 		Objects object = Objects.findOrNull(st, st.objectkey);

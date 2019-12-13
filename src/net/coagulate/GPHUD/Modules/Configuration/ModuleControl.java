@@ -16,6 +16,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Enable or disable modules.  Instance owner only.
  *
@@ -23,9 +25,10 @@ import net.coagulate.GPHUD.State;
  */
 public abstract class ModuleControl {
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Disable the specified module", requiresPermission = "instance.ModuleEnablement")
-	public static Response disableModule(State st,
-	                                     @Arguments(type = ArgumentType.MODULE, description = "Module to disable")
+	public static Response disableModule(@Nonnull State st,
+	                                     @Nonnull @Arguments(type = ArgumentType.MODULE, description = "Module to disable")
 			                                     Module module) throws UserException, SystemException {
 		if (!module.canDisable()) {
 			return new ErrorResponse("The module " + module.getName() + " does not allow its self to be disabled, it is probably critical to system functionality");
@@ -41,9 +44,10 @@ public abstract class ModuleControl {
 		Modules.simpleHtml(st, "Configuration.DisableModule", values);
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Enabled the specified module", requiresPermission = "instance.ModuleEnablement")
-	public static Response enableModule(State st,
-	                                    @Arguments(type = ArgumentType.MODULE, description = "Module to enable")
+	public static Response enableModule(@Nonnull State st,
+	                                    @Nonnull @Arguments(type = ArgumentType.MODULE, description = "Module to enable")
 			                                    Module module) {
 		st.setKV(st.getInstance(), module.getName() + ".Enabled", "true");
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Enable Module", module.getName(), "", "", "Module enabled");

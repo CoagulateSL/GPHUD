@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Roller.Roller;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -17,8 +19,9 @@ import java.util.List;
  */
 public class ResetHealth {
 
+	@Nonnull
 	@Command.Commands(context = Command.Context.CHARACTER, description = "Reset the character's health to the initial value")
-	public static Response resetHealth(State st) {
+	public static Response resetHealth(@Nonnull State st) {
 		if (!st.getKV("health.allowreset").boolValue()) {
 			throw new UserException("Resetting of your health is not permitted.");
 		}
@@ -28,9 +31,10 @@ public class ResetHealth {
 		Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, st.getCharacter(), "SET", "Health.Health", oldhealth + "", newvalue + "", "Character reset their health");
 		return new SayResponse("reset health from " + oldhealth + " to " + newvalue, st.getCharacter().getName());
 	}
+	@Nonnull
 	@Command.Commands(context = Command.Context.CHARACTER, description = "Have a chance to heal a target player")
-	public static Response healRollChance(State st,
-	                                      @Argument.Arguments(description = "Target to heal", type = Argument.ArgumentType.CHARACTER_NEAR)
+	public static Response healRollChance(@Nonnull State st,
+	                                      @Nonnull @Argument.Arguments(description = "Target to heal", type = Argument.ArgumentType.CHARACTER_NEAR)
 			                                      Char target,
 	                                      @Argument.Arguments(description = "Number of dice to roll for chance to heal", type = Argument.ArgumentType.INTEGER)
 			                                      Integer chancedice,
@@ -74,17 +78,18 @@ public class ResetHealth {
 		return healRoll(st,target,healdice,healsides,healbias,reason);
 	}
 
+	@Nonnull
 	@Command.Commands(context = Command.Context.CHARACTER, description = "Heal a target player")
-	public static Response healRoll(State st,
-	                                @Argument.Arguments(description = "Target to heal", type = Argument.ArgumentType.CHARACTER_NEAR)
+	public static Response healRoll(@Nonnull State st,
+	                                @Nullable @Argument.Arguments(description = "Target to heal", type = Argument.ArgumentType.CHARACTER_NEAR)
 			                                Char target,
-	                                @Argument.Arguments(description = "Number of dice to roll", mandatory = false, type = Argument.ArgumentType.INTEGER)
+	                                @Nullable @Argument.Arguments(description = "Number of dice to roll", mandatory = false, type = Argument.ArgumentType.INTEGER)
 			                                Integer dice,
-	                                @Argument.Arguments(description = "Sides on dice", mandatory = false, type = Argument.ArgumentType.INTEGER)
+	                                @Nullable @Argument.Arguments(description = "Sides on dice", mandatory = false, type = Argument.ArgumentType.INTEGER)
 			                                Integer sides,
-	                                @Argument.Arguments(description = "Bias to roll", mandatory = false, type = Argument.ArgumentType.INTEGER)
+	                                @Nullable @Argument.Arguments(description = "Bias to roll", mandatory = false, type = Argument.ArgumentType.INTEGER)
 			                                Integer bias,
-	                                @Argument.Arguments(description = "Reason for heal", type = Argument.ArgumentType.TEXT_ONELINE, mandatory = false, max = 512)
+	                                @Nullable @Argument.Arguments(description = "Reason for heal", type = Argument.ArgumentType.TEXT_ONELINE, mandatory = false, max = 512)
 			                                String reason
 	) {
 		if (target == null) { throw new UserException("No target selected"); }

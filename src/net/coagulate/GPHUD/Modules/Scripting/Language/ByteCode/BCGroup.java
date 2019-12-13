@@ -5,27 +5,34 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class BCGroup extends ByteCodeDataType {
+	@Nullable
 	private CharacterGroup content=null;
 	public BCGroup(ParseNode node) { super(node); }
-	public BCGroup(ParseNode node,CharacterGroup content) { super(node); this.content=content; }
+	public BCGroup(ParseNode node, @Nullable CharacterGroup content) { super(node); this.content=content; }
+	@Nonnull
 	public String explain() { return "Group ("+content+")"; }
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.Group.get());
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content.getId());
 	}
+	@Nonnull
 	@Override public String htmlDecode() { return "Avatar</td><td>"+content.getId(); }
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		vm.push(this);
 	}
 
+	@Nullable
 	public CharacterGroup getContent() { return content; }
 
+	@Nullable
 	@Override
 	public ByteCodeDataType clone() {
 		return new BCGroup(node(),content);

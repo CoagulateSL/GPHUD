@@ -15,12 +15,15 @@ import net.coagulate.GPHUD.Modules.Teleportation.TeleportCommands;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 public abstract class Teleporter extends ObjectType {
-	protected Teleporter(State st, ObjectTypes object) {
+	protected Teleporter(State st, @Nonnull ObjectTypes object) {
 		super(st, object);
 	}
 
-	Response execute(State st, Char clicker) {
+	@Nonnull
+	Response execute(@Nonnull State st, @Nonnull Char clicker) {
 		if (!st.hasModule("Teleportation")) { throw new UserException("Teleporter can not function ; teleportation module is disabled at this instance."); }
 		JSONObject doteleport=new JSONObject();
 		doteleport.put("teleport",getTeleportTarget(st));
@@ -37,13 +40,14 @@ public abstract class Teleporter extends ObjectType {
 		return new JSONResponse(resp);
 	}
 
-	public String getTeleportTarget(State st) {
+	@Nonnull
+	public String getTeleportTarget(@Nonnull State st) {
 		Landmarks landmark = Landmarks.find(st.getInstance(), json.optString("teleporttarget", "unset"));
 		if (landmark==null) { throw new UserException("Teleport target is not set on clickTeleporter "+object.getName()); }
 		return landmark.getHUDRepresentation(false);
 	}
 
-	public void update(State st) {
+	public void update(@Nonnull State st) {
 		if (!st.postmap.get("target").isEmpty() || !st.postmap.get("teleportersays").isEmpty() || !st.postmap.get("hudsays").isEmpty()) {
 			boolean update = false;
 			String target = st.postmap.get("target");
@@ -67,7 +71,7 @@ public abstract class Teleporter extends ObjectType {
 		}
 	}
 
-	public void editForm(State st) {
+	public void editForm(@Nonnull State st) {
 		Table t=new Table();
 		t.add("Target Landmark").add(TeleportCommands.getDropDownList(st,"target",json.optString("teleporttarget","")));
 		t.openRow();

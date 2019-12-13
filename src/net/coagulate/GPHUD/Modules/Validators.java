@@ -2,11 +2,13 @@ package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.GPHUD.GPHUD;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Iain Price
  */
 public class Validators {
-	public static boolean uuid(String value) {
+	public static boolean uuid(@Nonnull String value) {
 		// something like 8dc52677-bea8-4fc3-b69b-21c5e2224306
 		if (value.length() != "8dc52677-bea8-4fc3-b69b-21c5e2224306".length()) {
 			GPHUD.getLogger("Validation").fine(value + " failed length check as UUID");
@@ -35,7 +37,7 @@ public class Validators {
 		return true;
 	}
 
-	public static boolean color(String value) {
+	public static boolean color(@Nonnull String value) {
 		// e.g. <1,0.5,1>
 		String[] parts = value.split(",");
 		if (parts.length != 3) {

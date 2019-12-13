@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,8 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public abstract class Audit {
 
-	public static Results getAudit(Instance instance, User avatar, Char character) {
+	@Nullable
+	public static Results getAudit(@Nullable Instance instance, @Nullable User avatar, @Nullable Char character) {
 		List<Object> parameters = new ArrayList<>();
 		String sql = "select * from audit where 1=1 ";
 		if (instance != null) {
@@ -46,12 +49,12 @@ public abstract class Audit {
 		return GPHUD.getDB().dq(sql, parameters.toArray(objectarray));
 	}
 
-	public static void audit(State st, OPERATOR op, User targetavatar, Char targetcharacter, String changetype, String changeditem, String oldvalue, String newvalue, String note) {
+	public static void audit(@Nonnull State st, OPERATOR op, User targetavatar, Char targetcharacter, String changetype, String changeditem, String oldvalue, String newvalue, String note) {
 		audit(true, st, op, targetavatar, targetcharacter, changetype, changeditem, oldvalue, newvalue, note);
 	}
 
-	public static void audit(boolean log, State st, OPERATOR op, User targetavatar, Char targetcharacter, String changetype, String changeditem, String oldvalue, String newvalue, String note) {
-		User avatar = st.avatar();
+	public static void audit(boolean log, @Nonnull State st, OPERATOR op, @Nullable User targetavatar, @Nullable Char targetcharacter, @Nullable String changetype, @Nullable String changeditem, @Nullable String oldvalue, @Nullable String newvalue, String note) {
+		User avatar = st.getAvatarNullable();
 		Char character = st.getCharacterNullable();
 		if (op == OPERATOR.AVATAR) { character = null; }
 		Instance stinstance = st.getInstanceNullable();
@@ -122,17 +125,18 @@ public abstract class Audit {
 		}
 	}
 
-	private static Object getId(TableRow r) {
+	private static Object getId(@Nullable TableRow r) {
 		if (r == null) { return new NullInteger(); }
 		return r.getId();
 	}
 
-	private static Object getId(User r) {
+	private static Object getId(@Nullable User r) {
 		if (r == null) { return new NullInteger(); }
 		return r.getId();
 	}
 
-	public static Table formatAudit(Results rows, String timezone) {
+	@Nonnull
+	public static Table formatAudit(@Nonnull Results rows, String timezone) {
 		Table table = new Table();
 		table.nowrap();
 		table.border(false);
@@ -215,29 +219,31 @@ public abstract class Audit {
 		return table;
 	}
 
-	private static Renderable notate(String s, int size) {
+	@Nonnull
+	private static Renderable notate(@Nonnull String s, int size) {
 		if (s.length() > size) {
 			return new ToolTip(s.substring(0, size), s);
 		}
 		return new Text(s);
 	}
 
-	private static String cleanse(String s) {
+	@Nullable
+	private static String cleanse(@Nullable String s) {
 		if (s == null) { return ""; }
 		return s;
 	}
 
-	private static String formatavatar(NameCache cache, Integer avatarid) {
+	private static String formatavatar(@Nonnull NameCache cache, @Nullable Integer avatarid) {
 		if (avatarid != null) { return cache.lookup(User.get(avatarid)); }
 		return "";
 	}
 
-	private static String formatchar(NameCache cache, Integer charid) {
+	private static String formatchar(@Nonnull NameCache cache, @Nullable Integer charid) {
 		if (charid != null) { return cache.lookup(Char.get(charid)); }
 		return "";
 	}
 
-	private static String formatregion(NameCache cache, Integer charid) {
+	private static String formatregion(@Nonnull NameCache cache, @Nullable Integer charid) {
 		if (charid != null) { return cache.lookup(Region.get(charid,true)); }
 		return "";
 	}

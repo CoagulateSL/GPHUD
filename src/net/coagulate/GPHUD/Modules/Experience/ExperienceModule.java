@@ -14,6 +14,8 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
@@ -31,13 +33,14 @@ public class ExperienceModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
+	@Nonnull
 	@Commands(context = AVATAR, description = "Award XP")
-	public static Response award(State st,
-	                             @Arguments(description = "Character to award to", type = CHARACTER)
+	public static Response award(@Nonnull State st,
+	                             @Nonnull @Arguments(description = "Character to award to", type = CHARACTER)
 			                             Char target,
-	                             @Arguments(description = "XP type to award", type = TEXT_INTERNAL_NAME, max = 32)
+	                             @Nonnull @Arguments(description = "XP type to award", type = TEXT_INTERNAL_NAME, max = 32)
 			                             String type,
-	                             @Arguments(description = "Ammount to award", type = INTEGER, max = 999999)
+	                             @Nullable @Arguments(description = "Ammount to award", type = INTEGER, max = 999999)
 			                             Integer ammount,
 	                             @Arguments(description = "Reason for award", type = TEXT_ONELINE, max = 128)
 			                             String reason
@@ -82,12 +85,12 @@ public class ExperienceModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public void validatePermission(State st, String permission) {
+	public void validatePermission(State st, @Nonnull String permission) {
 		// really can't validate these as they can be dynamic
 	}
 
 	@Override
-	public Map<String, Permission> getPermissions(State st) {
+	public Map<String, Permission> getPermissions(@Nonnull State st) {
 		Map<String, Permission> perms = super.getPermissions(st);
 		for (Attribute a : st.getAttributes()) {
 			if (a.getType() == EXPERIENCE) {
@@ -98,7 +101,7 @@ public class ExperienceModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public Permission getPermission(State st, String itemname) {
+	public Permission getPermission(@Nonnull State st, @Nonnull String itemname) {
 		Map<String, Permission> perms = getPermissions(st);
 		for (Map.Entry<String, Permission> entry : perms.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) {
@@ -108,8 +111,9 @@ public class ExperienceModule extends ModuleAnnotation {
 		return super.getPermission(st, itemname);
 	}
 
+	@Nonnull
 	@Override
-	public Map<String, Pool> getPoolMap(State st) {
+	public Map<String, Pool> getPoolMap(@Nullable State st) {
 		Map<String, Pool> pools = new HashMap<>(poolmap);
 		if (st != null) {
 			if (st.getInstanceNullable() == null) { return pools; }
@@ -123,7 +127,7 @@ public class ExperienceModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public Pool getPool(State st, String itemname) {
+	public Pool getPool(State st, @Nonnull String itemname) {
 		Map<String, Pool> pmap = getPoolMap(st);
 		for (Map.Entry<String, Pool> entry : pmap.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
@@ -132,7 +136,7 @@ public class ExperienceModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public KV getKVDefinition(State st, String qualifiedname) throws SystemException {
+	public KV getKVDefinition(@Nonnull State st, @Nonnull String qualifiedname) throws SystemException {
 		if (kvmap.containsKey(qualifiedname.toLowerCase())) {
 			return kvmap.get(qualifiedname.toLowerCase());
 		}
@@ -141,8 +145,9 @@ public class ExperienceModule extends ModuleAnnotation {
 		throw new SystemException("Invalid KV " + qualifiedname + " in module " + getName());
 	}
 
+	@Nonnull
 	@Override
-	public Map<String, KV> getKVDefinitions(State st) {
+	public Map<String, KV> getKVDefinitions(@Nonnull State st) {
 		Map<String, KV> map = new TreeMap<>(kvmap);
 		if (st.getInstanceNullable() == null) { return map; }
 		for (Attribute attr : st.getAttributes()) {
@@ -154,8 +159,9 @@ public class ExperienceModule extends ModuleAnnotation {
 		return map;
 	}
 
+	@Nonnull
 	@Override
-	public Set<CharacterAttribute> getAttributes(State st) {
+	public Set<CharacterAttribute> getAttributes(@Nonnull State st) {
 		Set<CharacterAttribute> ret = new HashSet<>();
 		if (st.hasModule("Events")) { ret.add(new EventXP(-1)); }
 		ret.add(new VisitXP(-1));

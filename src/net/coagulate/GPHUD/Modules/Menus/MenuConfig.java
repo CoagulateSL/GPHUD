@@ -15,6 +15,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Map;
 public abstract class MenuConfig {
 
 	@URLs(url = "/configuration/menus")
-	public static void configure(State st, SafeMap values) {
+	public static void configure(@Nonnull State st, SafeMap values) {
 		Form f = st.form;
 		f.add(new TextSubHeader("Dialog menu configuration"));
 		Map<String, Integer> menus = Menus.getMenusMap(st);
@@ -38,14 +39,14 @@ public abstract class MenuConfig {
 	}
 
 	@URLs(url = "/configuration/menus/view/*")
-	public static void viewMenus(State st, SafeMap values) throws SystemException, UserException {
+	public static void viewMenus(@Nonnull State st, @Nonnull SafeMap values) throws SystemException, UserException {
 		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		Menus m = Menus.get(Integer.parseInt(id));
 		viewMenus(st, values, m);
 	}
 
-	public static void viewMenus(State st, SafeMap values, Menus m) throws SystemException, UserException {
+	public static void viewMenus(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Menus m) throws SystemException, UserException {
 		if (m.getInstance() != st.getInstance()) {
 			throw new UserException("That menu belongs to a different instance");
 		}
@@ -96,7 +97,7 @@ public abstract class MenuConfig {
 	}
 
 	@URLs(url = "/configuration/menus/create", requiresPermission = "Menus.Config")
-	public static void createMenu(State st, SafeMap values) {
+	public static void createMenu(@Nonnull State st, @Nonnull SafeMap values) {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty()) {
 			Menus menu = Menus.create(st, values.get("name"), values.get("description"), new JSONObject());
 			throw new RedirectionException("./view/" + menu.getId());

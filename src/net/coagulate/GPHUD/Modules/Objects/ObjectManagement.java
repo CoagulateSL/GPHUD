@@ -23,10 +23,12 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 public class ObjectManagement {
 
 	@URL.URLs(url = "/configuration/objects",requiresPermission = "Objects.View")
-	public static void index(State st, SafeMap map) {
+	public static void index(@Nonnull State st, @Nonnull SafeMap map) {
 		Form f=st.form;
 		f.add(new TextHeader("Object Management"));
 		f.add(new TextSubHeader("Connected Objects"));
@@ -36,7 +38,7 @@ public class ObjectManagement {
 			if (obj!=null) {
 				obj.validate(st);
 				JSONObject reboot=new JSONObject();
-				reboot.put("reboot","Rebooted via web site by "+st.getAvatar());
+				reboot.put("reboot","Rebooted via web site by "+st.getAvatarNullable());
 				new Transmission(obj,reboot).start();
 				f.add("<p><i>Rebooted object "+obj.getName()+" "+uuid+"</i></p>");
 				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Reboot",obj.getName(),"","","Rebooted object "+uuid);
@@ -48,7 +50,7 @@ public class ObjectManagement {
 			if (obj!=null) {
 				obj.validate(st);
 				JSONObject shutdown=new JSONObject();
-				shutdown.put("shutdown","Shutdown via web site by "+st.getAvatar());
+				shutdown.put("shutdown","Shutdown via web site by "+st.getAvatarNullable());
 				new Transmission(obj,shutdown).start();
 				f.add("<p><i>Shutdown object "+obj.getName()+" "+uuid+"</i></p>");
 				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Shutdown",obj.getName(),"","","Shutdown object "+uuid);
@@ -61,7 +63,7 @@ public class ObjectManagement {
 	}
 
 	@URL.URLs(url="/configuration/objects/createtype",requiresPermission="Objects.ObjectTypes")
-	public static void createObjectType(State st,SafeMap map) {
+	public static void createObjectType(@Nonnull State st, @Nonnull SafeMap map) {
 		if (map.get("Create").equalsIgnoreCase("Create")) {
 			JSONObject jsonbase=new JSONObject();
 			jsonbase.put("behaviour",map.get("behaviour"));
@@ -78,7 +80,7 @@ public class ObjectManagement {
 	}
 
 	@URL.URLs(url="/configuration/objects/objecttypes/*",requiresPermission="Objects.ObjectTypes")
-	public static void editObjectType(State st,SafeMap map) {
+	public static void editObjectType(@Nonnull State st, SafeMap map) {
 		st.postmap=map;
 		String[] parts=st.getDebasedNoQueryURL().split("/");
 		if (parts.length<5) { throw new UserException("URI misformed, no ID found"); }
@@ -92,12 +94,13 @@ public class ObjectManagement {
 		ot.editForm(st);
 	}
 
+	@Nonnull
 	@Command.Commands(description = "Gets the Object Driver Script",permitScripting = false,permitUserWeb = false,context = Command.Context.AVATAR,requiresPermission = "Objects.GetDriver")
-	public static Response getDriver(State st) {
+	public static Response getDriver(@Nonnull State st) {
 		JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
 		json.put("itemname", "GPHUD Object Driver");
-		json.put("giveto", st.getAvatar().getUUID());
+		json.put("giveto", st.getAvatarNullable().getUUID());
 		st.getRegion().sendServer(json);
 		return new OKResponse("OK - Sent you an Object Driver script");
 	}

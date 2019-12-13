@@ -18,6 +18,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -27,7 +28,7 @@ import java.util.Map;
  */
 public abstract class Configuration {
 	@URLs(url = "/configuration/alias", requiresPermission = "Alias.Config")
-	public static void aliasesList(State st, SafeMap values) throws SystemException {
+	public static void aliasesList(@Nonnull State st, @Nonnull SafeMap values) throws SystemException {
 		Form f = st.form;
 		f.noForm();
 		f.add(new TextSubHeader("Alias Configuration"));
@@ -69,7 +70,7 @@ public abstract class Configuration {
 	}
 
 	@URLs(url = "/configuration/alias/create", requiresPermission = "Alias.Config")
-	public static void createAlias(State st, SafeMap values) throws SystemException, UserException {
+	public static void createAlias(@Nonnull State st, @Nonnull SafeMap values) throws SystemException, UserException {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {
 			JSONObject template = new JSONObject();
 			template.put("invoke", values.get("command"));
@@ -90,14 +91,14 @@ public abstract class Configuration {
 	}
 
 	@URLs(url = "/configuration/alias/view/*")
-	public static void viewAlias(State st, SafeMap values) throws SystemException, UserException {
+	public static void viewAlias(@Nonnull State st, @Nonnull SafeMap values) throws SystemException, UserException {
 		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
 		Alias a = Alias.get(Integer.parseInt(id));
 		viewAlias(st, values, a);
 	}
 
-	public static void viewAlias(State st, SafeMap values, Alias a) throws SystemException, UserException {
+	public static void viewAlias(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Alias a) throws SystemException, UserException {
 		a.validate(st);
 		Form f = st.form;
 		if ("Update".equals(values.get("Update"))) {

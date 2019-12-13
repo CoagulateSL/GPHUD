@@ -14,18 +14,21 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 public class RunCommand extends ObjectType {
-	protected RunCommand(State st, ObjectTypes object) {
+	protected RunCommand(State st, @Nonnull ObjectTypes object) {
 		super(st, object);
 	}
 
+	@Nonnull
 	@Override
 	public String explainHtml() {
 		return "Runs command "+json.optString("command","unset")+" on click";
 	}
 
 	@Override
-	public void editForm(State st) {
+	public void editForm(@Nonnull State st) {
 		Table t=new Table();
 		t.add("Command").add(DropDownList.getCommandsList(st,"command",true));
 		t.openRow();
@@ -34,7 +37,7 @@ public class RunCommand extends ObjectType {
 	}
 
 	@Override
-	public void update(State st) {
+	public void update(@Nonnull State st) {
 		String command=st.postmap.get("command");
 		if (!command.equals(json.optString("command",""))) {
 			json.put("command",st.postmap.get("command"));
@@ -42,18 +45,21 @@ public class RunCommand extends ObjectType {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public String explainText() {
 		return explainHtml();
 	}
 
+	@Nonnull
 	@Override
 	public MODE mode() {
 		return MODE.CLICKABLE;
 	}
 
+	@Nonnull
 	@Override
-	public Response click(State st, Char clicker) {
+	public Response click(@Nonnull State st, @Nonnull Char clicker) {
 		if (json.optString("command","").isEmpty()) { return new ErrorResponse("Command to invoke is not configured in this object type"); }
 		JSONObject resp = Modules.getJSONTemplate(st, json.getString("command"));
 		new Transmission(clicker,resp).start();

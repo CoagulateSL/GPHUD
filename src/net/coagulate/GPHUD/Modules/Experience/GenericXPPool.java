@@ -7,6 +7,9 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * @author Iain Price
  */
@@ -21,16 +24,18 @@ public class GenericXPPool extends Pool {
 	@Override
 	public boolean isGenerated() { return true; }
 
+	@Nonnull
 	@Override
 	public String description() { return myname + " pool"; }
 
+	@Nonnull
 	@Override
 	public String fullName() { return "Experience." + myname; }
 
 	@Override
 	public String name() { return myname; }
 
-	public void awardXP(State st, Char target, String reason, int ammount, boolean incontext) {
+	public void awardXP(@Nonnull State st, @Nonnull Char target, @Nullable String reason, int ammount, boolean incontext) {
 		State targetstate = State.getNonSpatial(target);
 		float period = targetstate.getKV(fullName() + "XPPeriod").floatValue();
 		int maxxp = targetstate.getKV(fullName() + "XPLimit").intValue();
@@ -50,7 +55,7 @@ public class GenericXPPool extends Pool {
 			if (incontext) {
 				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by " + st.getCharacter().getName() + " for " + reason);
 			} else {
-				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by ((" + st.getAvatar().getName() + ")) for " + reason);
+				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by ((" + st.getAvatarNullable().getName() + ")) for " + reason);
 			}
 		}
 	}

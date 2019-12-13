@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,8 +23,9 @@ public class MenuModule extends ModuleAnnotation {
 		super(name, annotation);
 	}
 
+	@Nonnull
 	@Override
-	public Map<String, Command> getCommands(State st) throws UserException, SystemException {
+	public Map<String, Command> getCommands(@Nonnull State st) throws UserException, SystemException {
 		Map<String, Command> commands = new TreeMap<>();
 		Map<String, JSONObject> templates = Menus.getTemplates(st);
 		for (Map.Entry<String, JSONObject> entry : templates.entrySet()) {
@@ -33,13 +35,14 @@ public class MenuModule extends ModuleAnnotation {
 		return commands;
 	}
 
+	@Nonnull
 	@Override
-	public Command getCommand(State st, String commandname) {
+	public Command getCommand(@Nonnull State st, @Nonnull String commandname) {
 		return new MenuCommand(st, commandname, Menus.getMenu(st, commandname).getJSON());
 	}
 
 	@Override
-	protected void initialiseInstance(State st) {
+	protected void initialiseInstance(@Nonnull State st) {
 		// some useful defaults
 		JSONObject j = new JSONObject();
 		j.put("button1", "Roll");

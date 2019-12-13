@@ -6,6 +6,7 @@ import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -26,7 +27,7 @@ public class CommandAnnotation extends Command {
 
 	protected CommandAnnotation() {}
 
-	public CommandAnnotation(Module owner, Method c) throws SystemException, UserException {
+	public CommandAnnotation(Module owner, @Nonnull Method c) throws SystemException, UserException {
 		//System.out.println(owner);
 		//System.out.println(c);
 		this.owner = owner;
@@ -37,7 +38,7 @@ public class CommandAnnotation extends Command {
 		generated = false;
 	}
 
-	protected static void checkPublicStatic(Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -80,10 +81,13 @@ public class CommandAnnotation extends Command {
 
 	}
 
+	@Nonnull
 	public String description() { return meta.description(); }
 
+	@Nonnull
 	public String requiresPermission() { return meta.requiresPermission(); }
 
+	@Nonnull
 	public Context context() { return meta.context(); }
 
 	public boolean permitJSON() { return meta.permitJSON(); }
@@ -100,6 +104,7 @@ public class CommandAnnotation extends Command {
 
 	public int getArgumentCount() { return getArguments().size(); }
 
+	@Nonnull
 	public String getFullName() { return owner.getName() + "." + getName(); }
 
 	public String getName() { return method.getName(); }
@@ -119,6 +124,7 @@ public class CommandAnnotation extends Command {
 	 * @return
 	 * @throws UserException
 	 */
+	@Nonnull
 	public List<String> getArgumentNames(State st) throws UserException {
 		List<String> arguments = new ArrayList<>();
 		for (Argument a : getArguments()) {
@@ -129,6 +135,7 @@ public class CommandAnnotation extends Command {
 
 	public List<Argument> getInvokingArguments() { return getArguments(); }
 
+	@Nonnull
 	public String getFullMethodName() {
 		return method.getDeclaringClass().getName() + "." + method.getName() + "()";
 	}

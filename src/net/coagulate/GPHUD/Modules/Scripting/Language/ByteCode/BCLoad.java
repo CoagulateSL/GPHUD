@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCLoad extends ByteCode {
@@ -13,13 +14,14 @@ public class BCLoad extends ByteCode {
 		super(n);
 	}
 
+	@Nonnull
 	public String explain() { return "LoadVariable (Pop name, push variable value)"; }
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.Load.get());
 	}
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		String name=vm.popString().getContent();
 		ByteCodeDataType val=vm.get(name);
 		if (val==null) { throw new GSUnknownIdentifier("Variable "+name+" is not defined"); }

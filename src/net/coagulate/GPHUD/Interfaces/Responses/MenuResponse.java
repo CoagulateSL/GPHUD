@@ -6,6 +6,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,30 +19,35 @@ import java.util.Set;
  */
 public class MenuResponse implements Response {
 
+	@Nullable
 	private String header = null;
 	private final List<Renderable> menu = new ArrayList<>();
 
 	public MenuResponse() {}
 
-	public MenuResponse(String title) { header = title; }
+	public MenuResponse(@Nullable String title) { header = title; }
 
 	public void add(Renderable r) { menu.add(r); }
 
+	@Nonnull
 	@Override
 	public JSONObject asJSON(State st) {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<A menu response>";
 	}
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Nonnull
 	@Override
 	public String asHtml(State st, boolean rich) {
 		StringBuilder s = new StringBuilder();
@@ -54,6 +61,7 @@ public class MenuResponse implements Response {
 		return s.toString();
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

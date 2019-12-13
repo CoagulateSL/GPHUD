@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.Core.Tools.SystemException;
 
+import javax.annotation.Nonnull;
+
 public class GSInternalError extends SystemException {
 	private static final long serialVersionUID=1L;
 	public GSInternalError(String reason) {
@@ -12,5 +14,6 @@ public class GSInternalError extends SystemException {
 		super(reason, cause);
 	}
 
+	@Nonnull
 	public String toString() { return "{GS Internal Error}: "+getLocalizedMessage(); }
 }

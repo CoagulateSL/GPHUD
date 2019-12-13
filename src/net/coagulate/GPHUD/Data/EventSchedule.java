@@ -8,6 +8,8 @@ import net.coagulate.GPHUD.Modules.Experience.EventXP;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,6 +31,7 @@ public class EventSchedule extends TableRow {
 	 * @param id the ID number we want to get
 	 * @return A zone representation
 	 */
+	@Nonnull
 	public static EventSchedule get(int id) {
 		return (EventSchedule) factoryPut("EventSchedule", id, new EventSchedule(id));
 	}
@@ -39,7 +42,8 @@ public class EventSchedule extends TableRow {
 	 * @param instance Instance to get the events for
 	 * @return Set of EventSchedules that are within start and end times, and have been started
 	 */
-	static Set<EventSchedule> getActive(Instance instance) {
+	@Nonnull
+	static Set<EventSchedule> getActive(@Nonnull Instance instance) {
 		Set<EventSchedule> events = new TreeSet<>();
 		int now = UnixTime.getUnixTime();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
@@ -54,7 +58,8 @@ public class EventSchedule extends TableRow {
 	 * @param e Event to load schedules for
 	 * @return Set of EventSchedules for this event
 	 */
-	public static Set<EventSchedule> get(Event e) {
+	@Nonnull
+	public static Set<EventSchedule> get(@Nonnull Event e) {
 		Set<EventSchedule> schedule = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where eventid=?", e.getId())) {
 			schedule.add(get(r.getInt()));
@@ -62,37 +67,44 @@ public class EventSchedule extends TableRow {
 		return schedule;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "eventsschedule";
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() {
 		return "eventsscheduleid";
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() {
 		throw new SystemException("Event Schedule does not support a naming attribute");
 	}
 
+	@Nullable
 	@Override
 	public String getLinkTarget() {
 		return null;
 	}
 
+	@Nullable
 	public Event getEvent() {
 		Integer id = getInt("eventid");
 		if (id == null) { return null; }
 		return Event.get(id);
 	}
 
+	@Nullable
 	@Override
 	public String getKVTable() {
 		return null;
 	}
 
+	@Nullable
 	@Override
 	public String getKVIdField() {
 		return null;
@@ -103,6 +115,7 @@ public class EventSchedule extends TableRow {
 	 *
 	 * @return (table) Row representing the event
 	 */
+	@Nonnull
 	public net.coagulate.GPHUD.Interfaces.Outputs.Row asRow(String timezone) {
 		ResultsRow r = dqone(true, "select * from eventsschedule where eventsscheduleid=?", getId());
 		net.coagulate.GPHUD.Interfaces.Outputs.Row ret = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
@@ -164,7 +177,7 @@ public class EventSchedule extends TableRow {
 	 *
 	 * @param c Character that is part of the event.
 	 */
-	public void startVisit(Char c) {
+	public void startVisit(@Nonnull Char c) {
 		d("insert into eventvisits(characterid,eventscheduleid,starttime) values(?,?,?)", c.getId(), getId(), UnixTime.getUnixTime());
 	}
 
@@ -173,7 +186,7 @@ public class EventSchedule extends TableRow {
 	 *
 	 * @param character Character that is leaving the event.
 	 */
-	public void endVisit(Char character) {
+	public void endVisit(@Nonnull Char character) {
 		d("update eventvisits set endtime=? where characterid=? and eventscheduleid=? and endtime is null", UnixTime.getUnixTime(), character.getId(), getId());
 	}
 
@@ -216,6 +229,7 @@ public class EventSchedule extends TableRow {
 		}
 	}
 
+	@Nonnull
 	public String describe(String timezone) {
 		ResultsRow r = dqone(true, "select * from eventsschedule where eventsscheduleid=?", getId());
 		String ret = fromUnixTime(r.getInt("starttime"), timezone);
@@ -223,7 +237,7 @@ public class EventSchedule extends TableRow {
 		return ret;
 	}
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getEvent().getInstance()) {
@@ -233,12 +247,14 @@ public class EventSchedule extends TableRow {
 
 	protected int getNameCacheTime() { return 0; } // doesn't support name, dont cache (will crash before even calling this)
 
+	@Nonnull
 	@Override
 	public String getName() {
 		// doesn't really have a name, so we'll make one up...
 		return pad(getInt("starttime"), 20) + "-" + pad(getInt("endtime"), 20) + "-" + getId();
 	}
 
+	@Nonnull
 	private String pad(Integer padmeint, int howmuch) {
 		StringBuilder padme = new StringBuilder(padmeint + "");
 		while (padme.length() < howmuch) { padme.append(" "); }

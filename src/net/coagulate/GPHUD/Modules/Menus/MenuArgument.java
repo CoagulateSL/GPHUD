@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
 public class MenuArgument extends Argument {
 	final Command command;
 	final JSONObject meta;
+	@Nullable
 	String override = null;
 
 	public MenuArgument(Command command, JSONObject definition) {
@@ -26,6 +29,7 @@ public class MenuArgument extends Argument {
 		this.meta = definition;
 	}
 
+	@Nonnull
 	public List<String> getChoices(State st) throws UserException, SystemException {
 		List<String> options = new ArrayList<>();
 		for (int i = 1; i <= 12; i++) {
@@ -36,12 +40,14 @@ public class MenuArgument extends Argument {
 		return options;
 	}
 
+	@Nullable
 	@Override
 	public String description() {
 		if (override != null) { return override; }
 		return "Choice of menu item";
 	}
 
+	@Nonnull
 	@Override
 	public String getName() {
 		return "choice";
@@ -57,11 +63,13 @@ public class MenuArgument extends Argument {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public ArgumentType type() {
 		return ArgumentType.CHOICE;
 	}
 
+	@Nonnull
 	@Override
 	public Class<String> objectType() {
 		return String.class;

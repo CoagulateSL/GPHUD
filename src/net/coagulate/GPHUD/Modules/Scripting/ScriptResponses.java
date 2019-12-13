@@ -12,13 +12,17 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class ScriptResponses {
 
+	@Nonnull
 	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
-	public static Response characterResponse(State st,
-	                                         @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER)
+	public static Response characterResponse(@Nonnull State st,
+	                                         @Nullable @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER)
 	                                         Integer processid,
-			                                 @Argument.Arguments(description = "The selected character",type = Argument.ArgumentType.CHARACTER)
+	                                         @Nullable @Argument.Arguments(description = "The selected character",type = Argument.ArgumentType.CHARACTER)
 	                                         Char response) {
 		if (response==null) { throw new SystemException("Well, we got a null character for some reason"); }
 		if (processid==null) { throw new SystemException("No process id"); }
@@ -30,11 +34,12 @@ public class ScriptResponses {
 		return vm.resume(st);
 	}
 
+	@Nonnull
 	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
-	public static Response stringResponse(State st,
-	                                         @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER)
+	public static Response stringResponse(@Nonnull State st,
+	                                      @Nullable @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER)
 			                                         Integer processid,
-	                                         @Argument.Arguments(description = "The string response",type = Argument.ArgumentType.TEXT_ONELINE, max = 1024)
+	                                      @Nullable @Argument.Arguments(description = "The string response",type = Argument.ArgumentType.TEXT_ONELINE, max = 1024)
 			                                         String response) {
 		if (response==null) { throw new SystemException("Well, we got a null string for some reason"); }
 		if (processid==null) { throw new SystemException("No process id"); }

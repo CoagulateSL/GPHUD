@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -19,6 +21,7 @@ public class Scripts extends TableRow {
 		super(id);
 	}
 
+	@Nonnull
 	public static Table getTable(Instance instance) {
 		Results rows = GPHUD.getDB().dq("select id,name,sourceversion,bytecodeversion from scripts order by id asc");
 		Table o=new Table();
@@ -39,17 +42,19 @@ public class Scripts extends TableRow {
 		return o;
 	}
 
-	public static void create(State st, String scriptname) {
+	public static void create(@Nonnull State st, String scriptname) {
 		Integer existing=GPHUD.getDB().dqi(true,"select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
 		if (existing>0) { throw new UserException("script with that name already exists"); }
 		GPHUD.getDB().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
 	}
 
+	@Nonnull
 	public static Scripts get(int id) {
 		return (Scripts) factoryPut("Scripts", id, new Scripts(id));
 	}
 
-	public static Set<Scripts> getScript(Instance instance) {
+	@Nonnull
+	public static Set<Scripts> getScript(@Nonnull Instance instance) {
 		Set<Scripts> scripts=new HashSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select id from scripts where instanceid=?",instance.getId())) {
 			scripts.add(new Scripts(row.getInt("id")));
@@ -57,17 +62,20 @@ public class Scripts extends TableRow {
 		return scripts;
 	}
 
-	public static Scripts find(State st, String commandname) {
+	@Nonnull
+	public static Scripts find(@Nonnull State st, String commandname) {
 		Integer id=GPHUD.getDB().dqi(true,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
 		return new Scripts(id);
 	}
-	public static Scripts findOrNull(State st, String commandname) {
+	@Nullable
+	public static Scripts findOrNull(@Nonnull State st, String commandname) {
 		Integer id=GPHUD.getDB().dqi(false,"select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
 		if (id==null) { return null; }
 		return new Scripts(id);
 	}
 
-	public static DropDownList getList(State st, String listname) {
+	@Nonnull
+	public static DropDownList getList(@Nonnull State st, String listname) {
 		DropDownList list=new DropDownList(listname);
 		for (ResultsRow row:GPHUD.getDB().dq("select id,name from scripts where instanceid=?",st.getInstance().getId())) {
 			list.add(""+row.getInt("id"),row.getString("name"));
@@ -75,6 +83,7 @@ public class Scripts extends TableRow {
 		return list;
 	}
 
+	@Nullable
 	public String getSource() {
 		String script=getString("source");
 		if (script==null) { script=""; }
@@ -91,45 +100,52 @@ public class Scripts extends TableRow {
 		return a;
 	}
 
+	@Nonnull
 	@Override
 	public String getIdField() { return "id"; }
 
 	@Override
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Script / State Instance mismatch"); }
 	}
 
+	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	@Nonnull
 	@Override
 	public String getNameField() { return "name"; }
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() { return "/GPHUD/configuration/scripting/edit/"+getId(); }
 
 	@Override
 	protected int getNameCacheTime() { return 600; }
 
+	@Nullable
 	@Override
 	public String getKVTable() {
 		return null;
 	}
 
+	@Nullable
 	@Override
 	public String getKVIdField() {
 		return null;
 	}
 
+	@Nonnull
 	@Override
 	public String getTableName() {
 		return "scripts";
 	}
 
-	public void setSource(String scriptsource) {
+	public void setSource(@Nonnull String scriptsource) {
 		validate();
 		String s=getSource();
 		if (scriptsource.equals(s)) { return; }
@@ -138,7 +154,7 @@ public class Scripts extends TableRow {
 		d("update scripts set source=?, sourceversion=? where id=?",scriptsource,version,getId());
 	}
 
-	public void setBytecode(Byte[] toByteCode, int version) {
+	public void setBytecode(@Nonnull Byte[] toByteCode, int version) {
 		validate();
 		d("update scripts set bytecode=?, bytecodeversion=? where id=?",toByteCode,version,getId());
 		if (GPHUD.DEV) {
@@ -154,6 +170,7 @@ public class Scripts extends TableRow {
 		}
 	}
 
+	@Nullable
 	public byte[] getByteCode() {
 		validate();
 		return getBytes("bytecode");

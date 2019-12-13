@@ -16,8 +16,11 @@ import net.coagulate.GPHUD.State;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+
 public class GroupCommands {
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER,description = "Join an open group")
 	public static Response join(@NotNull State st,
 	                            @Arguments(description = "Name of group to join",type = ArgumentType.CHARACTERGROUP)
@@ -51,9 +54,10 @@ public class GroupCommands {
 		return new OKResponse("You are now a member of "+group.getNameSafe());
 	}
 
+	@Nonnull
 	@Commands(description = "Invite a character to a group", context = Context.CHARACTER)
-	public static Response invite(State st,
-	                              @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to invite to")
+	public static Response invite(@Nonnull State st,
+	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to invite to")
 			                              CharacterGroup group,
 	                              @NotNull @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER)
 			                              Char target) {
@@ -69,6 +73,7 @@ public class GroupCommands {
 		return new OKResponse("Invite message sent to " + target.getName() + " for " + group.getName() + ", they have 48 hours to accept.");
 	}
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Eject a member from a group")
 	public static Response eject(@NotNull State st,
 	                             @NotNull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to eject from")

@@ -14,6 +14,8 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 import static java.util.logging.Level.WARNING;
@@ -24,9 +26,10 @@ import static java.util.logging.Level.WARNING;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Avatars {
+	@Nonnull
 	@Commands(context = Context.AVATAR, permitScripting = false, description = "Synchronise the avatars status with the regions contents, server use only.", permitConsole = false, permitUserWeb = false,permitObject = false)
-	public static Response setRegionAvatars(State st,
-	                                        @Arguments(description = "Comma separated list of avatar key=names on the sim", type = ArgumentType.TEXT_ONELINE, max = 65536)
+	public static Response setRegionAvatars(@Nonnull State st,
+	                                        @Nullable @Arguments(description = "Comma separated list of avatar key=names on the sim", type = ArgumentType.TEXT_ONELINE, max = 65536)
 			                                        String userlist) throws UserException {
 
 		// check authorisation, servers can only be deployed by the instance owner...

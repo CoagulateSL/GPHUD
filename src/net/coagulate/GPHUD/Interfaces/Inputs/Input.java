@@ -4,6 +4,8 @@ import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * For elements that read input (in HTML).
  *
@@ -16,8 +18,10 @@ public abstract class Input implements Renderable {
 
 	private String getValue() { return value; }
 
+	@Nonnull
 	public Input setValue(String value) { this.value = value; return this; }
 
+	@Nonnull
 	@Override
 	public String asText(State st) {
 		throw new SystemException("Textual output does not support Input elements");

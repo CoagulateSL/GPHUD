@@ -24,6 +24,8 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,8 @@ public class CharactersModule extends ModuleAnnotation {
 		super(name, def);
 	}
 
-	public static String templateAttribute(State st, String template) {
+	@Nullable
+	public static String templateAttribute(State st, @Nullable String template) {
 		if (template == null) { throw new SystemException("Null template?"); }
 		template = template.substring(2, template.length() - 2);
 		if (template.startsWith("TARGET:")) {
@@ -81,7 +84,7 @@ public class CharactersModule extends ModuleAnnotation {
 		throw new SystemException("Failed to resolve templateAttribute for " + attr + " of type " + attr.getType());
 	}
 
-	public static int spentAbilityPoints(State st) {
+	public static int spentAbilityPoints(@Nonnull State st) {
 		int total = 0;
 		for (Attribute attribute : st.getAttributes()) {
 			//System.out.println("ATTRIBUTE IS "+attribute);
@@ -95,12 +98,13 @@ public class CharactersModule extends ModuleAnnotation {
 		return total;
 	}
 
-	public static int maxAbilityPoints(State st) { return st.getKV("Experience.AbilityPoints").intValue(); }
+	public static int maxAbilityPoints(@Nonnull State st) { return st.getKV("Experience.AbilityPoints").intValue(); }
 
-	public static int abilityPointsRemaining(State st) { return maxAbilityPoints(st) - spentAbilityPoints(st); }
+	public static int abilityPointsRemaining(@Nonnull State st) { return maxAbilityPoints(st) - spentAbilityPoints(st); }
 
+	@Nonnull
 	@Template(name = "ABILITYPOINTS", description = "Number of ability points the character has")
-	public static String abilityPoints(State st, String key) {
+	public static String abilityPoints(@Nonnull State st, String key) {
 		if (st.getCharacterNullable() == null) { return ""; }
 		return abilityPointsRemaining(st) + "";
 	}
@@ -111,7 +115,8 @@ public class CharactersModule extends ModuleAnnotation {
 	 * @param st State which infers instance
 	 * @return List of attributes which can be raised by ability points
 	 */
-	public static List<String> getRaisableAttributesList(State st) {
+	@Nonnull
+	public static List<String> getRaisableAttributesList(@Nonnull State st) {
 		List<String> ret = new ArrayList<>();
 		for (Attribute attribute : st.getAttributes()) {
 			if (attribute.isKV() && attribute.usesAbilityPoints()) {
@@ -124,8 +129,9 @@ public class CharactersModule extends ModuleAnnotation {
 		return ret;
 	}
 
+	@Nonnull
 	@Commands(context = Command.Context.CHARACTER, description = "Spend an ability point to raise an attribute", permitUserWeb = false)
-	public static Response spendAbilityPoint(State st,
+	public static Response spendAbilityPoint(@Nonnull State st,
 	                                         @Arguments(choiceMethod = "getRaisableAttributesList", description = "Attribute to spend an ability point on", type = Argument.ArgumentType.CHOICE)
 			                                         String attribute) {
 		int remain = abilityPointsRemaining(st);
@@ -160,9 +166,10 @@ public class CharactersModule extends ModuleAnnotation {
 		return new OKResponse("Ability point spent on " + attribute + ", it increased to " + (existing + 1) + remaining);
 	}
 
+	@Nonnull
 	@Commands(context = Command.Context.CHARACTER, description = "Change a value about your own character")
-	public static Response set(State st,
-	                           @Arguments(type = Argument.ArgumentType.ATTRIBUTE_WRITABLE, description = "Attribute to set")
+	public static Response set(@Nonnull State st,
+	                           @Nullable @Arguments(type = Argument.ArgumentType.ATTRIBUTE_WRITABLE, description = "Attribute to set")
 			                           Attribute attribute,
 	                           @Arguments(type = Argument.ArgumentType.TEXT_ONELINE, description = "Value to use", mandatory = false, max = 4096)
 			                           String value) {
@@ -181,12 +188,13 @@ public class CharactersModule extends ModuleAnnotation {
 	//Map<String,KV> base=new TreeMap<>();
 	@Override
 	@Deprecated
-	public void registerKV(KV a) throws UserException {
+	public void registerKV(@Nonnull KV a) throws UserException {
 		throw new SystemException("It is no longer permitted to have manual registrations inside Characters module");
 	}
 
+	@Nonnull
 	@Override
-	public Map<String, KV> getKVDefinitions(State st) {
+	public Map<String, KV> getKVDefinitions(@Nonnull State st) {
 		//String attributes=st.getKV("Characters.Attributes");
 		Map<String, KV> kv = new TreeMap<>();
 		for (Attribute attribute : st.getAttributes()) {
@@ -199,13 +207,13 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public KV getKVDefinition(State st, String qualifiedname) throws SystemException {
+	public KV getKVDefinition(@Nonnull State st, @Nonnull String qualifiedname) throws SystemException {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}
 
 	@Override
-	public void addTemplateDescriptions(State st, Map<String, String> addto) {
+	public void addTemplateDescriptions(@Nonnull State st, @Nonnull Map<String, String> addto) {
 		Map<String, KV> ourmap = getKVDefinitions(st);
 		for (Attribute attr : st.getAttributes()) {
 			addto.put("--" + attr.getName().toUpperCase() + "--", "Character attribute " + attr.getName());
@@ -214,13 +222,13 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public void addTemplateMethods(State st, Map<String, Method> addto) {
+	public void addTemplateMethods(@Nonnull State st, @Nonnull Map<String, Method> addto) {
 		Map<String, KV> ourmap = getKVDefinitions(st);
 		for (Attribute attr : st.getAttributes()) {
 			try {
 				addto.put("--" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", State.class, String.class));
 				addto.put("--TARGET:" + attr.getName().toUpperCase() + "--", this.getClass().getMethod("templateAttribute", State.class, String.class));
-			} catch (NoSuchMethodException | SecurityException ex) {
+			} catch (@Nonnull NoSuchMethodException | SecurityException ex) {
 				SL.report("Templating referencing exception??", ex, st);
 				st.logger().log(SEVERE, "Exception referencing own templating method??", ex);
 			}
@@ -228,7 +236,7 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public Map<String, Permission> getPermissions(State st) {
+	public Map<String, Permission> getPermissions(@Nullable State st) {
 		Map<String, Permission> map = super.getPermissions(st);
 		if (st == null) { return map; }
 		for (Attribute a : st.getAttributes()) {

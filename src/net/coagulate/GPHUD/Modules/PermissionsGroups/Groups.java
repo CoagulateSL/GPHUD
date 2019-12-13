@@ -25,6 +25,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -36,7 +37,7 @@ public abstract class Groups {
 	public static final String GREEN="#dfffdf";
 
 	@URLs(url = "/permissionsgroups/view/*")
-	public static void view(State st, SafeMap values) throws UserException, SystemException {
+	public static void view(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		f.noForm();
 		String[] split = st.getDebasedURL().split("/");
@@ -133,13 +134,14 @@ public abstract class Groups {
 
 	@URLs(url = "/permissionsgroups/create", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Create", priority = 10)
-	public static void createGroupPage(State st, SafeMap values) throws UserException, SystemException {
+	public static void createGroupPage(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		if ("Submit".equals(values.get("Submit"))) { st.form.add(Modules.run(st, "permissionsgroups.create", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.create");
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Creates a new permissions group", requiresPermission = "Instance.ManagePermissions")
-	public static Response create(State st,
+	public static Response create(@Nonnull State st,
 	                              @Arguments(description = "Name of group to create", type = ArgumentType.TEXT_CLEAN, max = 64)
 			                              String name) throws UserException, SystemException {
 		try { st.getInstance().createPermissionsGroup(name); } catch (UserException e) {
@@ -149,8 +151,9 @@ public abstract class Groups {
 		return new OKResponse("Permissions Group created successfully!");
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "List permissions groups present at this instance")
-	public static Response list(State st) {
+	public static Response list(@Nonnull State st) {
 		TabularResponse r = new TabularResponse("Permissions groups");
 		Set<PermissionsGroup> groups = st.getInstance().getPermissionsGroups();
 		for (PermissionsGroup p : groups) {
@@ -161,20 +164,21 @@ public abstract class Groups {
 	}
 
 	@URLs(url = "/permissionsgroups/")
-	public static void listForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void listForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		st.form.add(Modules.run(st, "permissionsgroups.list", values));
 	}
 
 	@URLs(url = "/permissionsgroups/delete", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Delete", priority = 11, requiresPermission = "Instance.ManagePermissions")
-	public static void deleteForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void deleteForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		if ("Submit".equals(values.get("Submit"))) { st.form.add(Modules.run(st, "permissionsgroups.delete", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.delete");
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Deletes a permissions group")
-	public static Response delete(State st,
-	                              @Arguments(description = "Permissions group to delete", type = ArgumentType.PERMISSIONSGROUP)
+	public static Response delete(@Nonnull State st,
+	                              @Nonnull @Arguments(description = "Permissions group to delete", type = ArgumentType.PERMISSIONSGROUP)
 			                              PermissionsGroup permissionsgroup) throws UserException {
 		String success = "NOP";
 		permissionsgroup.validate(st);
@@ -185,7 +189,7 @@ public abstract class Groups {
 	}
 
 	@URLs(url="/permissionsgroups/edit/*",requiresPermission = "Instance.ManagePermissions")
-	public static void editPermissions(State st,SafeMap values) {
+	public static void editPermissions(@Nonnull State st, @Nonnull SafeMap values) {
 		String[] split =st.getDebasedNoQueryURL().split("/");
 		if (split.length!=4) { throw new UserException("Incorrect number of query parameters ("+split.length+")"); }
 		Integer groupid=Integer.parseInt(split[3]);
@@ -224,7 +228,7 @@ public abstract class Groups {
 		f.add(table);
 	}
 
-	private static void stampPermission(State st,PermissionsGroup pg,Module module, Permission permission, String s) {
+	private static void stampPermission(@Nonnull State st, @Nonnull PermissionsGroup pg, Module module, @Nonnull Permission permission, @Nonnull String s) {
 		boolean set=!s.isEmpty();
 		String name=permission.getModule(st).getName()+"."+permission.name();
 		if (pg.hasPermission(st,name)) {
@@ -240,7 +244,8 @@ public abstract class Groups {
 		}
 	}
 
-	private static String addPermissions(State st,Set<Permission> permissions, PermissionsGroup pg,String col) {
+	@Nonnull
+	private static String addPermissions(@Nonnull State st, @Nonnull Set<Permission> permissions, @Nonnull PermissionsGroup pg, String col) {
 		StringBuilder r=new StringBuilder("");
 		TreeMap<String,Permission> sorted=new TreeMap<>();
 		for (Permission p:permissions) { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }

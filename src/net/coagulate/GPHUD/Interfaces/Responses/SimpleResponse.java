@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -37,6 +38,7 @@ public class SimpleResponse implements Response {
 		return message;
 	}
 
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;

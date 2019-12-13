@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ import java.util.List;
 public class CharacterList {
 
 	@URLs(url = "/characters/list*", requiresPermission = "Characters.ViewAll")
-	public static void list(State st, SafeMap values) throws UserException, SystemException {
+	public static void list(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		List<CharacterSummary> list = st.getInstance().getCharacterSummary(st);
 		if (list.isEmpty()) {
 			st.form.add("No characters found");

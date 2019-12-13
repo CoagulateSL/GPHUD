@@ -7,6 +7,9 @@ import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Contains the data related to an attribute defined for an instance.
  *
@@ -16,10 +19,13 @@ public abstract class CharacterAttribute extends Attribute {
 
 	protected CharacterAttribute(int id) {super(id); } //throw new SystemException("Not valid on auto generated attribute");}
 
+	@Nullable
 	public abstract String getName();
 
+	@Nonnull
 	public abstract ATTRIBUTETYPE getType();
 
+	@Nonnull
 	public abstract String getSubType();
 
 	public abstract boolean usesAbilityPoints();
@@ -33,6 +39,7 @@ public abstract class CharacterAttribute extends Attribute {
 	 */
 	public void setRequired(Boolean required) {throw new UserException("Not valid on auto generated attribute");}
 
+	@Nonnull
 	public abstract String getDefaultValue();
 
 	/**
@@ -53,33 +60,43 @@ public abstract class CharacterAttribute extends Attribute {
 
 	public abstract boolean isKV();
 
+	@Nonnull
 	public abstract KV.KVTYPE getKVType();
 
+	@Nonnull
 	public abstract String getKVDefaultValue();
 
+	@Nonnull
 	public abstract KV.KVHIERARCHY getKVHierarchy();
 
+	@Nonnull
 	@Override
 	public String getLinkTarget() {throw new SystemException("Not valid on auto generated attribute");}
 
+	@Nonnull
 	public Instance getInstance() {throw new SystemException("Not valid on auto generated attribute");}
 
+	@Nonnull
 	@Override
 	public String getTableName() {throw new SystemException("Not valid on auto generated attribute");}
 
+	@Nonnull
 	@Override
 	public String getIdField() {throw new SystemException("Not valid on auto generated attribute");}
 
+	@Nonnull
 	@Override
 	public String getNameField() {throw new SystemException("Not valid on auto generated attribute");}
 
+	@Nullable
 	@Override
 	public String getKVTable() { return null; }
 
+	@Nullable
 	@Override
 	public String getKVIdField() { return null; }
 
-	public void validate(State st) throws SystemException {
+	public void validate(@Nonnull State st) throws SystemException {
 		validate();
 	}
 

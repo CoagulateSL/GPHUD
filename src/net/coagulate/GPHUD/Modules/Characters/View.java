@@ -30,6 +30,7 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,13 +48,14 @@ public abstract class View {
 
 	//TODO - FIX THE "boolean full=" section of all these functions, and decide what data is private as a result of this
 
+	@Nonnull
 	@Commands(context = Context.ANY, description = "Get status of this connection")
-	public static Response status(State st) {
+	public static Response status(@Nonnull State st) {
 		TabularResponse t = new TabularResponse();
 		t.openRow();
 		t.add("Node").addNoNull((GPHUD.DEV ? "DEVELOPMENT // " : "Production // ") + Interface.getNode());
 		t.openRow();
-		t.add("Avatar").addNoNull(st.avatar().getGPHUDLink());
+		t.add("Avatar").addNoNull(st.getAvatarNullable().getGPHUDLink());
 		t.openRow();
 		t.add("Character").addNoNull(st.getCharacter());
 		t.openRow();
@@ -72,7 +74,7 @@ public abstract class View {
 	}
 
 	@URLs(url = "/characters/view/*")
-	public static void viewCharacter(State st, SafeMap values) throws UserException, SystemException {
+	public static void viewCharacter(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		st.form.noForm();
 		//System.out.println(st.uri);
 		String[] split = st.getDebasedURL().split("/");
@@ -93,10 +95,10 @@ public abstract class View {
 		throw new SystemException("Unknown character view mode (length:" + split.length + " URI:" + st.getDebasedURL());
 	}
 
-	public static void viewCharacter(State st, SafeMap values, Char c, boolean brief) throws UserException, SystemException {
+	public static void viewCharacter(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Char c, boolean brief) throws UserException, SystemException {
 		boolean full = false;
 		State simulated = st.simulate(c);
-		String tz = st.avatar().getTimeZone();
+		String tz = st.getAvatarNullable().getTimeZone();
 		if (st.getCharacterNullable() == c) { full = true; }
 		if (st.hasPermission("Characters.ViewAll")) { full = true; }
 		Form f = st.form;
@@ -170,22 +172,25 @@ public abstract class View {
 		f.add(new TextSubHeader("KV Configuration"));
 		GenericConfiguration.page(st, values, c, simulated);
 		f.add(new TextSubHeader("Audit Trail"));
-		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), null, c), st.avatar().getTimeZone()));
+		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), null, c), st.getAvatarNullable().getTimeZone()));
 	}
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Show yourself privately your own character sheet",permitObject = false)
-	public static Response view(State st) {
+	public static Response view(@Nonnull State st) {
 		return new OKResponse(st.getKV("instance.ViewSelfTemplate").value());
 	}
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Publicly display your own character sheet")
-	public static Response show(State st) {
+	public static Response show(@Nonnull State st) {
 		return new SayResponse(st.getKV("instance.ShowSelfTemplate").value());
 	}
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Look at another's character sheet",permitObject = false)
-	public static Response look(State st,
-	                            @Arguments(type = Argument.ArgumentType.CHARACTER_NEAR, description = "Character to inspect")
+	public static Response look(@Nonnull State st,
+	                            @Nonnull @Arguments(type = Argument.ArgumentType.CHARACTER_NEAR, description = "Character to inspect")
 			                            Char character) {
 		character.validate(st);
 		State target = new State();

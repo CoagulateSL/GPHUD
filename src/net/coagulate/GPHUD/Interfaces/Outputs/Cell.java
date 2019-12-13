@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
 import net.coagulate.Core.Tools.SystemException;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import java.util.Set;
  */
 public class Cell implements Renderable {
 
+	@Nullable
 	Renderable e;
 	boolean header = false;
 	int colspan = 1;
@@ -23,7 +26,7 @@ public class Cell implements Renderable {
 
 	public Cell(String s) { e = new Text(s); }
 
-	public Cell(Renderable e) {
+	public Cell(@Nullable Renderable e) {
 		if (e == null) { throw new SystemException("Abstract Cell is not renderable."); }
 		this.e = e;
 	}
@@ -33,7 +36,7 @@ public class Cell implements Renderable {
 		this.colspan = colspan;
 	}
 
-	public Cell(Renderable e, int colspan) {
+	public Cell(@Nullable Renderable e, int colspan) {
 		if (e == null) {
 			throw new SystemException("Abstract Cell is not renderable");
 		}
@@ -60,6 +63,7 @@ public class Cell implements Renderable {
 		return s;
 	}
 
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		Set<Renderable> r = new HashSet<>();
@@ -67,11 +71,13 @@ public class Cell implements Renderable {
 		return r;
 	}
 
+	@Nonnull
 	public Cell th() {
 		header = true;
 		return this;
 	}
 
+	@Nonnull
 	public Cell align(String align) {
 		this.align = align;
 		return this;

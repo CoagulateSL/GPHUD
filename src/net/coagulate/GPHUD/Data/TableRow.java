@@ -8,6 +8,8 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,14 +28,18 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	public TableRow(int id) { super(id); }
 
+	@Nonnull
 	public static String getLink(String name, String target, int id) {
 		return new Link(name, "/GPHUD/" + target + "/view/" + id).asHtml(null, true);
 	}
 
+	@Nonnull
 	public String getIdColumn() { return getIdField(); }
 
+	@Nonnull
 	public abstract String getIdField();
 
+	@Nullable
 	@Override
 	public final DBConnection getDatabase() { return GPHUD.getDB(); }
 
@@ -63,10 +69,13 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public abstract void validate(State st) throws SystemException;
 
+	@Nullable
 	public abstract String getNameField();
 
+	@Nullable
 	public abstract String getLinkTarget();
 
+	@Nullable
 	public String getName() {
 		try { return (String) cacheGet("name"); } catch (CacheMiss ex) {}
 		String name = getString(getNameField());
@@ -79,6 +88,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	protected abstract int getNameCacheTime();
 
+	@Nullable
 	public String getNameSafe() {
 		try {
 			return getName();
@@ -88,24 +98,28 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		}
 	}
 
+	@Nonnull
 	@Override
 	public String toString() { return getNameSafe() + "[#" + getId() + "]"; }
 
+	@Nullable
 	@Override
 	public String asText(State st) {
 		return getNameSafe();
 	}
 
+	@Nullable
 	@Override
 	public String asHtml(State st, boolean rich) {
 		if (!rich) { return getNameSafe(); }
 		return getLink(getNameSafe(), getLinkTarget(), getId());
 	}
 
+	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() { return null; }
 
-	public int resolveToID(State st, String s, boolean instancelocal) {
+	public int resolveToID(@Nonnull State st, @Nullable String s, boolean instancelocal) {
 		boolean debug = false;
 		if (s == null) { return 0; }
 		if (s.isEmpty()) { return 0; }
@@ -128,8 +142,10 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		return 0;
 	}
 
+	@Nullable
 	public abstract String getKVTable();
 
+	@Nullable
 	public abstract String getKVIdField();
 
 	public void kvcheck() {
@@ -138,7 +154,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		}
 	}
 
-	public void setKV(State st, String key, String value) {
+	public void setKV(State st, @Nonnull String key, @Nullable String value) {
 		kvcheck();
 		String oldvalue = dqs(false, "select v from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key);
 		if (value == null && oldvalue == null) { return; }
@@ -151,6 +167,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		}
 	}
 
+	@Nonnull
 	public Map<String, String> loadKVs() {
 		kvcheck();
 		Map<String, String> result = new TreeMap<>();
@@ -165,7 +182,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * Implements the comparison operator for sorting (TreeSet etc)
 	 * We rely on the names as the sorting order, and pass the buck to String.compareTo()
 	 */
-	public int compareTo(TableRow t) {
+	public int compareTo(@Nonnull TableRow t) {
 		if (!TableRow.class.isAssignableFrom(t.getClass())) {
 			throw new SystemException(t.getClass().getName() + " is not assignable from DBObject");
 		}

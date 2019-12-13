@@ -15,11 +15,12 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ViewNotes {
 
-	public static void viewNotes(State st, User targetuser, Char targetchar, boolean top3only) {
+	public static void viewNotes(@Nonnull State st, @Nonnull User targetuser, @Nonnull Char targetchar, boolean top3only) {
 		boolean isadmin=st.hasPermission("Notes.View");
 		if (!isadmin) {
 			// if not an admin, can only view our OWN public notes
@@ -34,7 +35,7 @@ public class ViewNotes {
 		Form f=st.form;
 		f.add(new TextSubHeader("Administrator Notes (Last three only)"));
 		if (!notes.isEmpty()) {
-			f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
+			f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));
 			Table buttons=new Table();
 			if (st.hasPermission("Notes.Add")) {
 				f.noForm();
@@ -65,7 +66,7 @@ public class ViewNotes {
 		Modules.simpleHtml(st, "Notes.Avatar", values);
 	}
 	@URLs(url="/Notes/ViewChar/*")
-	public static void viewChar(State st,SafeMap values) throws UserException,SystemException {
+	public static void viewChar(@Nonnull State st, SafeMap values) throws UserException,SystemException {
 		Integer targetid=null;
 		String[] parts=st.getDebasedURL().split("\\/");
 		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (NumberFormatException e) {}
@@ -75,16 +76,16 @@ public class ViewNotes {
 		boolean admin=false;
 		if (st.hasPermission("Notes.View")) { admin=true; }
 		if (!admin) {
-			if (st.getAvatar()!=target.getOwner()) {
+			if (st.getAvatarNullable()!=target.getOwner()) {
 				throw new UserException("You can only view your own character");
 			}
 		}
 		Form f=st.form;
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatar().getTimeZone()));
+		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatarNullable().getTimeZone()));
 	}
 	@URLs(url="/Notes/ViewUser/*")
-	public static void viewUser(State st,SafeMap values) throws UserException,SystemException {
+	public static void viewUser(@Nonnull State st, SafeMap values) throws UserException,SystemException {
 		Integer targetid=null;
 		String[] parts=st.getDebasedURL().split("\\/");
 		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (NumberFormatException e) {}
@@ -94,23 +95,24 @@ public class ViewNotes {
 		boolean admin=false;
 		if (st.hasPermission("Notes.View")) { admin=true; }
 		if (!admin) {
-			if (st.getAvatar()!=target) {
+			if (st.getAvatarNullable()!=target) {
 				throw new UserException("You can only view your own character");
 			}
 		}
 		Form f=st.form;
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
+		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatarNullable().getTimeZone()));
 	}
 	@URLs(url ="/Notes/ViewAll",requiresPermission = "Notes.View")
-	public static void viewAll(State st, SafeMap values)  throws UserException, SystemException {
+	public static void viewAll(@Nonnull State st, SafeMap values)  throws UserException, SystemException {
 		Form f=st.form;
 		List<AdminNotes.AdminNote> notes = AdminNotes.get(st.getInstance());
 		f.add(new TextHeader("Admin Notes Log"));
-		f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
+		f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));
 	}
 
-	static Table formatNotes(List<AdminNotes.AdminNote> notes,String timezone) {
+	@Nonnull
+	static Table formatNotes(@Nonnull List<AdminNotes.AdminNote> notes, String timezone) {
 		Table nt = new Table();
 		nt.add(new HeaderRow().add("Time Date ("+timezone+")").add("Note Publicity Level").add("Admin").add("").add("Target").add("Note"));
 		for (AdminNotes.AdminNote note:notes) {

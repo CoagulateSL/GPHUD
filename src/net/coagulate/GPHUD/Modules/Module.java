@@ -11,6 +11,8 @@ import net.coagulate.GPHUD.Modules.Pool.Pools;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -37,7 +39,7 @@ public abstract class Module {
 
 	}
 
-	protected static void checkPublicStatic(Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -46,7 +48,7 @@ public abstract class Module {
 		}
 	}
 
-	public void kvConfigPage(State st) {
+	public void kvConfigPage(@Nonnull State st) {
 		st.form.add(new TextHeader("KV Configuration for module " + getName()));
 		GenericConfiguration.page(st, new SafeMap(), st.getInstance(), st.simulate(st.getCharacterNullable()), this);
 	}
@@ -55,31 +57,39 @@ public abstract class Module {
 
 	public String getName() { return name; }
 
-	Response run(State st, String commandname, String[] args) throws UserException, SystemException {
+	@Nonnull
+	Response run(@Nonnull State st, String commandname, @Nonnull String[] args) throws UserException, SystemException {
 		Command command = getCommand(st, commandname);
 		return command.run(st, args);
 	}
 
+	@Nullable
 	public abstract Set<SideSubMenu> getSideSubMenus(State st);
 
+	@Nonnull
 	public String requires(State st) { return annotation.requires(); }
 
+	@Nullable
 	public abstract URL getURL(State st, String url);
 
+	@Nonnull
 	public abstract Map<String, KV> getKVDefinitions(State st);
 
 	public abstract KV getKVDefinition(State st, String qualifiedname);
 
+	@Nullable
 	public abstract Command getCommand(State st, String commandname);
 
 	public abstract Pool getPool(State st, String itemname);
 
 	public abstract Permission getPermission(State st, String itemname);
 
+	@Nonnull
 	public abstract Map<String, Pool> getPoolMap(State st);
 
 	public abstract boolean hasPool(State st, Pools p);
 
+	@Nonnull
 	public abstract Map<String, Command> getCommands(State st);
 
 	public boolean hasConfig(State st) { return alwaysHasConfig(); }
@@ -93,7 +103,7 @@ public abstract class Module {
 		return true;
 	}
 
-	public boolean isEnabled(State st) throws UserException, SystemException {
+	public boolean isEnabled(@Nullable State st) throws UserException, SystemException {
 		boolean debug = false;
 		if (!canDisable()) {
 			return true;
@@ -113,10 +123,13 @@ public abstract class Module {
 
 	public abstract Map<String, Permission> getPermissions(State st);
 
+	@Nullable
 	public abstract SideMenu getSideMenu(State st);
 
+	@Nonnull
 	public abstract Set<URL> getAllContents(State st);
 
+	@Nonnull
 	public String description() { return annotation.description(); }
 
 	public boolean canDisable() { return annotation.canDisable(); }
@@ -125,6 +138,7 @@ public abstract class Module {
 
 	protected abstract void initialiseInstance(State st);
 
+	@Nonnull
 	public Map<String, KV> getKVAppliesTo(State st, TableRow dbo) {
 		Map<String, KV> fullset = getKVDefinitions(st);
 		Map<String, KV> filtered = new TreeMap<>();
@@ -154,20 +168,20 @@ dead code?
     }
     */
 
-	public void validateKV(State st, String key) {
+	public void validateKV(State st, @Nonnull String key) {
 		if (getKVDefinitions(st).containsKey(key.toLowerCase())) {
 			throw new SystemException("KV does not exist [" + key + "] in [" + this.getName() + "]");
 		}
 	}
 
-	public void validatePermission(State st, String permission) {
+	public void validatePermission(State st, @Nonnull String permission) {
 		Map<String, Permission> perms = getPermissions(st);
 		if (!perms.containsKey(permission.toLowerCase())) {
 			throw new SystemException("Permission does not exist [" + permission + "] in [" + this.getName() + "]");
 		}
 	}
 
-	public void validateCommand(State st, String command) {
+	public void validateCommand(State st, @Nonnull String command) {
 		if (!getCommands(st).containsKey(command.toLowerCase())) {
 			throw new SystemException("Command does not exist [" + command + "] in [" + this.getName() + "]");
 		}
@@ -181,6 +195,7 @@ dead code?
 
 	public void addTemplateMethods(State st, Map<String, Method> ret) { }
 
+	@Nonnull
 	public Set<CharacterAttribute> getAttributes(State st) {
 		return new TreeSet<>();
 	}
@@ -189,17 +204,17 @@ dead code?
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface ModuleDefinition {
-		String description();
+		@Nonnull String description();
 
 		boolean canDisable() default true;
 
 		boolean defaultDisable() default false;
 
-		String implementation() default "";
+		@Nonnull String implementation() default "";
 
 		boolean forceConfig() default false;
 
-		String requires() default "";
+		@Nonnull String requires() default "";
 	}
 
 }

@@ -8,6 +8,8 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * Send admin message.   Just a command stub.
  *
@@ -15,14 +17,15 @@ import net.coagulate.GPHUD.State;
  */
 public class Broadcast {
 
+	@Nonnull
 	@Commands(context = Context.ANY, description = "Send admin message", requiresPermission = "instance.SendAdminMessages")
-	public static Response admin(State st,
+	public static Response admin(@Nonnull State st,
 	                             @Arguments(description = "Message to broadcast", type = ArgumentType.TEXT_ONELINE, max = 200)
 			                             String sendmessage) {
 		String message = "(From ";
 		String avfrom = "";
-		if (st.avatar() != null) {
-			avfrom = st.avatar().getName();
+		if (st.getAvatarNullable() != null) {
+			avfrom = st.getAvatarNullable().getName();
 			message += avfrom;
 		}
 		if (st.getCharacter() != null) {

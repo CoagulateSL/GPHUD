@@ -11,6 +11,8 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author iain
  */
@@ -32,16 +34,19 @@ public class AttributePermission extends Permission {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public String name() {
 		return "Set"+a.getName();
 	}
 
+	@Nonnull
 	@Override
 	public String description() {
 		return "Permission to admin set attribute " + a.getNameSafe();
 	}
 
+	@Nonnull
 	@Override
 	public POWER power() {
 		return POWER.LOW;

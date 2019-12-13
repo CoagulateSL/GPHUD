@@ -16,6 +16,9 @@ import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Command units for zone control.
  *
@@ -23,8 +26,9 @@ import org.json.JSONObject;
  */
 public abstract class ZoneCommands {
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Create a new zone", requiresPermission = "Zoning.Config")
-	public static Response create(State st,
+	public static Response create(@Nonnull State st,
 	                              @Arguments(description = "Name of the zone", type = ArgumentType.TEXT_ONELINE, max = 64)
 			                              String name) {
 		Zone.create(st.getInstance(), name);
@@ -33,11 +37,12 @@ public abstract class ZoneCommands {
 
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Add a volume to a zone", requiresPermission = "Zoning.Config")
-	public static Response addVolume(State st,
-	                                 @Arguments(type = ArgumentType.ZONE, description = "Zone we are adding the volume to")
+	public static Response addVolume(@Nonnull State st,
+	                                 @Nonnull @Arguments(type = ArgumentType.ZONE, description = "Zone we are adding the volume to")
 			                                 Zone zone,
-	                                 @Arguments(type = ArgumentType.REGION, description = "Region for the volume")
+	                                 @Nonnull @Arguments(type = ArgumentType.REGION, description = "Region for the volume")
 			                                 Region region,
 	                                 @Arguments(type = ArgumentType.COORDINATES, description = "Co-ordinates for one corner of the volume cube")
 			                                 String cornerOne,
@@ -50,9 +55,10 @@ public abstract class ZoneCommands {
 
 	}
 
+	@Nonnull
 	@Commands(context = Context.CHARACTER, permitScripting = false,description = "Trigger a zone change event", permitConsole = false, permitUserWeb = false)
-	public static Response zoneTransition(State st,
-	                                      @Arguments(description = "Name of zone we transitioned into", type = ArgumentType.ZONE)
+	public static Response zoneTransition(@Nonnull State st,
+	                                      @Nullable @Arguments(description = "Name of zone we transitioned into", type = ArgumentType.ZONE)
 			                                      Zone zone) {
 		// check some things make sense
 		// note zone may be null, legally, and fairly often probably.
@@ -67,14 +73,16 @@ public abstract class ZoneCommands {
 		return new JSONResponse(response);
 	}
 
+	@Nullable
 	@Template(name = "ZONE", description = "Current zone")
-	public static String getZone(State st, String key) {
+	public static String getZone(@Nonnull State st, String key) {
 		if (st.zone == null) { return ""; }
 		return st.zone.getName();
 	}
 
+	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Delete a zone area", requiresPermission = "Zoning.Config")
-	public static Response deleteVolume(State st,
+	public static Response deleteVolume(@Nonnull State st,
 	                                    @Arguments(type = ArgumentType.INTEGER, description = "Internal ID for the zone volume")
 			                                    Integer zoneareaid) {
 		ZoneArea za = ZoneArea.get(zoneareaid);

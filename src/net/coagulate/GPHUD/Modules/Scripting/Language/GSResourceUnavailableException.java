@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
+import javax.annotation.Nonnull;
+
 public class GSResourceUnavailableException extends GSException {
 	private static final long serialVersionUID=1L;
 	public GSResourceUnavailableException(String reason) {
@@ -10,5 +12,6 @@ public class GSResourceUnavailableException extends GSException {
 		super(reason, cause);
 	}
 
+	@Nonnull
 	public String toString() { return "{GS Resource Unavailable Exception}: "+getLocalizedMessage(); }
 }

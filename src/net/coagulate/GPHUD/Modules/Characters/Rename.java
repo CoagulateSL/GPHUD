@@ -7,10 +7,13 @@ import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 public class Rename {
+	@Nonnull
 	@Command.Commands(context = Command.Context.AVATAR, description = "Rename a character", requiresPermission = "Characters.ForceRename")
 	public static Response rename(State st,
-	                              @Argument.Arguments(description = "Character to rename", type = Argument.ArgumentType.CHARACTER, max = 64)
+	                              @Nonnull @Argument.Arguments(description = "Character to rename", type = Argument.ArgumentType.CHARACTER, max = 64)
 			                              Char oldname,
 	                              @Argument.Arguments(description = "New name for character", max = 40, type = Argument.ArgumentType.TEXT_ONELINE)
 			                              String newname) {

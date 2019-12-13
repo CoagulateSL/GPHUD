@@ -6,6 +6,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCGreaterThanEqual extends ByteCode {
@@ -14,13 +15,14 @@ public class BCGreaterThanEqual extends ByteCode {
 	}
 
 	// Pop two, op, push result
+	@Nonnull
 	public String explain() { return "GreaterThan (Pop two, compare, push 1 if greater than, else 0)"; }
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.GreaterThanEqual.get());
 	}
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		ByteCodeDataType var1 = vm.pop();
 		ByteCodeDataType var2 = vm.pop();
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"

@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCLoadIndexed extends ByteCode {
@@ -13,13 +14,14 @@ public class BCLoadIndexed extends ByteCode {
 		super(n);
 	}
 
+	@Nonnull
 	public String explain() { return "LoadElement (Pop name, pop index, push variable value)"; }
-	public void toByteCode(List<Byte> bytes) {
+	public void toByteCode(@Nonnull List<Byte> bytes) {
 		bytes.add(InstructionSet.LoadIndexed.get());
 	}
 
 	@Override
-	public void execute(State st, GSVM vm, boolean simulation) {
+	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
 		String name=vm.popString().getContent();
 		int index=vm.popInteger().getContent();
 		BCList list=vm.getList(name);

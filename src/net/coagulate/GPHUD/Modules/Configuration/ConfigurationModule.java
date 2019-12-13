@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,7 @@ import java.util.TreeMap;
  */
 public class ConfigurationModule extends ModuleAnnotation {
 
+	@Nullable
 	Set<SideSubMenu> submenus;
 
 	public ConfigurationModule(String name, ModuleDefinition def) throws SystemException, UserException {
@@ -27,6 +29,7 @@ public class ConfigurationModule extends ModuleAnnotation {
 		submenus = null;
 	}
 
+	@Nullable
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(State st) {
 		if (submenus == null) {

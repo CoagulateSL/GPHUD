@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
+import javax.annotation.Nonnull;
+
 /**
  * API Introspection.
  *
@@ -18,7 +20,7 @@ import net.coagulate.GPHUD.State;
 public abstract class LevelCurve {
 	@URLs(url = "/introspection/levelcurve")
 	@SideSubMenus(name = "Level Curve", priority = 1)
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull State st, SafeMap values) throws UserException, SystemException {
 		Form f = st.form;
 		Table t = new Table();
 		f.add(t);
