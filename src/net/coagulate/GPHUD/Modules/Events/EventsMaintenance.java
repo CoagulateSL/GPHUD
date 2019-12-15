@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Events;
 
-import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Event;
 import net.coagulate.GPHUD.Data.EventSchedule;

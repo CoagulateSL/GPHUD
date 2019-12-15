@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.*;

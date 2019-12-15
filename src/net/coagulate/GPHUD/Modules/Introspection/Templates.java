@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;

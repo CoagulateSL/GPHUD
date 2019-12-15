@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Zoning;
 
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.Data.ZoneArea;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;

@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Scripts;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;

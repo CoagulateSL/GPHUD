@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
 import net.coagulate.Core.Database.DBConnection;
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.User.Form;

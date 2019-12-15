@@ -1,8 +1,8 @@
 package net.coagulate.GPHUD;
 
 import net.coagulate.Core.Tools.DumpableState;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Data.Objects;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextError;

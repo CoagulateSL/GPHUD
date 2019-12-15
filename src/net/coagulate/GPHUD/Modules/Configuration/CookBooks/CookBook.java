@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Configuration.CookBooks;
 
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Alias;
 import net.coagulate.GPHUD.Data.Menus;
 import net.coagulate.GPHUD.Data.TableRow;

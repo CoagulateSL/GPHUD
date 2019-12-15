@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD;
 
-import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpInetConnection;

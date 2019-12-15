@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.ExceptionTools;
-import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Scripts;
 import net.coagulate.GPHUD.GPHUD;

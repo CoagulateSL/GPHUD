@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
-import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjectTypes;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;

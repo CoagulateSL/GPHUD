@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Tools.MailTools;
-import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookies;
 import net.coagulate.GPHUD.Data.Objects;

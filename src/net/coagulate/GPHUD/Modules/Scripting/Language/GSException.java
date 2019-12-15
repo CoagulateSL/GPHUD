@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.UserException;
 
 import javax.annotation.Nonnull;
 

@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
-import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSUnknownIdentifier;
 
 import javax.annotation.Nonnull;

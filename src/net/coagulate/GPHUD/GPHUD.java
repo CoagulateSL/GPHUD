@@ -5,8 +5,8 @@ import net.coagulate.Core.Database.DBException;
 import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Tools.LogHandler;
-import net.coagulate.Core.Tools.SystemException;
-import net.coagulate.Core.Tools.UserException;
+import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 
 import javax.annotation.Nonnull;

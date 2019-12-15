@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.*;
-import net.coagulate.Core.Tools.SystemException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
