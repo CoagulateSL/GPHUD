@@ -27,7 +27,7 @@ public class Form implements Renderable {
 
 	final List<Renderable> list = new ArrayList<>();
 	@Nullable
-	String action = null;
+	String action;
 	/*
 	public Map<String, String> getValueMap() {
 		Map<String,String> parameters=new TreeMap<>();
@@ -53,7 +53,7 @@ public class Form implements Renderable {
 		add(new Hidden("okreturnurl", ""));
 	}
 
-	public Form(@Nonnull State st, boolean setreturnurl, String targeturl, String buttonname, @Nonnull String... inputs) throws SystemException {
+	public Form(@Nonnull final State st, final boolean setreturnurl, final String targeturl, final String buttonname, @Nonnull final String... inputs) throws SystemException {
 		setAction(targeturl);
 		if (setreturnurl) { add(new Hidden("okreturnurl", st.getDebasedURL())); }
 		add(new Button(buttonname, true));
@@ -66,43 +66,43 @@ public class Form implements Renderable {
 	}
 
 	@Nonnull
-	public Form add(String s) { return add(new Text(s)); }
+	public Form add(final String s) { return add(new Text(s)); }
 
 	@Nonnull
-	public Form add(Renderable e) {
+	public Form add(final Renderable e) {
 		list.add(e);
 		return this;
 	}
 
-	public void p(Renderable paragraph) {
+	public void p(final Renderable paragraph) {
 		add(new Paragraph(paragraph));
 	}
 
-	public void p(String text) { add(new Paragraph(text)); }
+	public void p(final String text) { add(new Paragraph(text)); }
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
-		StringBuilder response = new StringBuilder();
-		for (Renderable r : list) { response.append(r.asText(st)); }
+	public String asText(final State st) {
+		final StringBuilder response = new StringBuilder();
+		for (final Renderable r : list) { response.append(r.asText(st)); }
 		return response.toString();
 	}
 
 	@Nullable
 	public String getAction() { return action; }
 
-	public void setAction(@Nullable String a) { action = a; }
+	public void setAction(@Nullable final String a) { action = a; }
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
-		StringBuilder response = new StringBuilder();
+	public String asHtml(final State st, final boolean rich) {
+		final StringBuilder response = new StringBuilder();
 		if (form) {
 			response.append("<form method=post");
 			if (action != null && !action.isEmpty()) { response.append(" action=\"").append(action).append("\""); }
 			response.append(" style=\"border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n");
 		}
-		for (Renderable r : list) {
+		for (final Renderable r : list) {
 			if (!(r instanceof NullResponse)) { response.append(r.asHtml(st, rich)).append("\n"); }  // else { response+="{NULLRESPONSE}"; }
 
 
@@ -119,9 +119,9 @@ public class Form implements Renderable {
 		return new HashSet<>(list);
 	}
 
-	public void readValue(String key, String value) {
+	public void readValue(final String key, final String value) {
 		//System.out.println(key+"="+value);
-		Input i = findInput(key);
+		final Input i = findInput(key);
 		if (i == null) { return; }
 		i.setValue(value);
 	}
@@ -136,23 +136,23 @@ public class Form implements Renderable {
 	}
 	*/
 	@Nullable
-	public Input findInput(String name) {
+	public Input findInput(final String name) {
 		return scourRenderables(getSubRenderables(), name);
 	}
 
 	@Nullable
-	private Input scourRenderables(@Nonnull Set<Renderable> subrenderables, String name) {
-		for (Renderable r : subrenderables) {
+	private Input scourRenderables(@Nonnull final Set<Renderable> subrenderables, final String name) {
+		for (final Renderable r : subrenderables) {
 			if (r instanceof Input) {
-				Input i = (Input) r;
+				final Input i = (Input) r;
 				// if match
 				//System.out.println("Searching "+name+" against "+i.getName());
 				if (i.getName().equalsIgnoreCase(name)) { return i; }
 			}
 			// no match, recurse
-			Set<Renderable> subsub = r.getSubRenderables();
+			final Set<Renderable> subsub = r.getSubRenderables();
 			if (subsub != null) {
-				Input i = scourRenderables(subsub, name);
+				final Input i = scourRenderables(subsub, name);
 				if (i != null) { return i; }
 			}
 		}

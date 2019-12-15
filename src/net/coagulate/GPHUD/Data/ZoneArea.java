@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  */
 public class ZoneArea extends TableRow {
 
-	protected ZoneArea(int id) { super(id); }
+	protected ZoneArea(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -24,7 +24,7 @@ public class ZoneArea extends TableRow {
 	 * @return A zone representation
 	 */
 	@Nonnull
-	public static ZoneArea get(int id) {
+	public static ZoneArea get(final int id) {
 		return (ZoneArea) factoryPut("ZoneArea", id, new ZoneArea(id));
 	}
 
@@ -40,16 +40,16 @@ public class ZoneArea extends TableRow {
 		s = s.replaceAll(">", "");
 		s = s.replaceAll("\\(", "");
 		s = s.replaceAll("\\)", "");
-		String[] parts = s.split(",");
+		final String[] parts = s.split(",");
 		if (parts.length != 3) { throw new UserException("Could not decompose co-ordinates properly"); }
-		int[] pos = new int[3];
-		try { pos[0] = (int) Float.parseFloat(parts[0]); } catch (NumberFormatException e) {
+		final int[] pos = new int[3];
+		try { pos[0] = (int) Float.parseFloat(parts[0]); } catch (final NumberFormatException e) {
 			throw new UserException("Error processing X number " + parts[0] + " - " + e.getMessage());
 		}
-		try { pos[1] = (int) Float.parseFloat(parts[1]); } catch (NumberFormatException e) {
+		try { pos[1] = (int) Float.parseFloat(parts[1]); } catch (final NumberFormatException e) {
 			throw new UserException("Error processing Y number " + parts[1] + " - " + e.getMessage());
 		}
-		try { pos[2] = (int) Float.parseFloat(parts[2]); } catch (NumberFormatException e) {
+		try { pos[2] = (int) Float.parseFloat(parts[2]); } catch (final NumberFormatException e) {
 			throw new UserException("Error processing Z number " + parts[2] + " - " + e.getMessage());
 		}
 		return pos;
@@ -70,7 +70,7 @@ public class ZoneArea extends TableRow {
 	@Nonnull
 	@Override
 	public String getNameField() {
-		String[] vectors = getVectors();
+		final String[] vectors = getVectors();
 		return vectors[0] + " - " + vectors[1];
 	}
 
@@ -86,9 +86,9 @@ public class ZoneArea extends TableRow {
 	 * @param loc1 Corner 1 as vector string
 	 * @param loc2 Corner 2 as vector string
 	 */
-	public void setPos(String loc1, String loc2) {
-		int[] one = parseVector(loc1);
-		int[] two = parseVector(loc2);
+	public void setPos(final String loc1, final String loc2) {
+		final int[] one = parseVector(loc1);
+		final int[] two = parseVector(loc2);
 		d("update zoneareas set x1=?,y1=?,z1=?,x2=?,y2=?,z2=? where zoneareaid=?", one[0], one[1], one[2], two[0], two[1], two[2], getId());
 	}
 
@@ -100,13 +100,13 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nullable
 	public String[] getVectors() {
-		ResultsRow r = dqone( "select * from zoneareas where zoneareaid=?", getId());
-		Integer x1 = r.getIntNullable("x1");
-		Integer y1 = r.getIntNullable("y1");
-		Integer z1 = r.getIntNullable("z1");
-		Integer x2 = r.getIntNullable("x2");
-		Integer y2 = r.getIntNullable("y2");
-		Integer z2 = r.getIntNullable("z2");
+		final ResultsRow r = dqone( "select * from zoneareas where zoneareaid=?", getId());
+		final Integer x1 = r.getIntNullable("x1");
+		final Integer y1 = r.getIntNullable("y1");
+		final Integer z1 = r.getIntNullable("z1");
+		final Integer x2 = r.getIntNullable("x2");
+		final Integer y2 = r.getIntNullable("y2");
+		final Integer z2 = r.getIntNullable("z2");
 		if (x1 == null || x2 == null ||
 				y1 == null || y2 == null ||
 				z1 == null || z2 == null) { return null; }
@@ -139,7 +139,7 @@ public class ZoneArea extends TableRow {
 		}
 		vec1 += ">";
 		vec2 += ">";
-		String[] vectors = new String[2];
+		final String[] vectors = new String[2];
 		vectors[0] = vec1;
 		vectors[1] = vec2;
 		return vectors;
@@ -151,8 +151,8 @@ public class ZoneArea extends TableRow {
 	 * @return Region
 	 */
 	@Nonnull
-	public Region getRegion(boolean allowretired) {
-		Integer id = getIntNullable("regionid");
+	public Region getRegion(final boolean allowretired) {
+		final Integer id = getIntNullable("regionid");
 		if (id == null) { throw new SystemException("Zone Area " + getId() + " has no associated region?"); }
 		return Region.get(id,allowretired);
 	}
@@ -180,10 +180,10 @@ public class ZoneArea extends TableRow {
 	@Nullable
 	public String getKVIdField() { return null; }
 
-	public void flushKVCache(State st) {}
+	public void flushKVCache(final State st) {}
 
 	@Override
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getZone().getInstance()) {
@@ -194,7 +194,7 @@ public class ZoneArea extends TableRow {
 	@Nonnull
 	@Override
 	public String getName() {
-		String[] vectors = getVectors();
+		final String[] vectors = getVectors();
 		return getRegion(true).getName() + "@" + vectors[0] + "-" + vectors[1];
 	}
 

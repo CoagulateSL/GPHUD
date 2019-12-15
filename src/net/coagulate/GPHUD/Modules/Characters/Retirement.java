@@ -25,7 +25,7 @@ public abstract class Retirement {
 
 	@Nonnull
 	@Commands(context = Command.Context.CHARACTER, description = "Retires the current character, if permitted.",permitObject = false)
-	public static Response retireMe(@Nonnull State st) {
+	public static Response retireMe(@Nonnull final State st) {
 		if (!st.getKV("Instance.AllowSelfRetire").boolValue()) {
 			return new ErrorResponse("Retirement is not presently permitted");
 		}
@@ -33,16 +33,16 @@ public abstract class Retirement {
 			st.getCharacter().retire();
 			Audit.audit(true, st, Audit.OPERATOR.CHARACTER, st.getAvatarNullable(), st.getCharacter(), "SET", "RETIRED", Boolean.toString(st.getCharacter().retired()), "true", "Character self retired");
 		}
-		JSONObject json = new JSONObject();
+		final JSONObject json = new JSONObject();
 		json.put("reboot", "Character has retired");
 		return new JSONResponse(json);
 	}
 
 	@Nonnull
 	@Commands(context = Command.Context.AVATAR, description = "Force retire a character", requiresPermission = "Characters.Retire")
-	public static Response retireTarget(@Nonnull State st,
-	                                    @Nullable @Arguments(description = "Character to retire", type = ArgumentType.CHARACTER)
-			                                    Char target) {
+	public static Response retireTarget(@Nonnull final State st,
+	                                    @Nullable @Arguments(description = "Character to retire", type = ArgumentType.CHARACTER) final
+	                                    Char target) {
 		if (target == null) { return new ErrorResponse("Target character was null"); }
 		target.validate(st);
 		if (target.retired()) { return new OKResponse("Target character is already retired"); }

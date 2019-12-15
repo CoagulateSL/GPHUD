@@ -9,11 +9,11 @@ public class HeaderRow extends Row {
 
 	public HeaderRow() {super();}
 
-	public HeaderRow(Cell c) {
+	public HeaderRow(final Cell c) {
 		super(c);
 	}
 
-	public HeaderRow(String c) {
+	public HeaderRow(final String c) {
 		super(c);
 	}
 

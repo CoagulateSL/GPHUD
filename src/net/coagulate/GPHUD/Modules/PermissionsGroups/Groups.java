@@ -37,35 +37,35 @@ public abstract class Groups {
 	public static final String GREEN="#dfffdf";
 
 	@URLs(url = "/permissionsgroups/view/*")
-	public static void view(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		Form f = st.form();
+	public static void view(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+		final Form f = st.form();
 		f.noForm();
-		String[] split = st.getDebasedURL().split("/");
-		String id = split[split.length - 1];
-		PermissionsGroup pg = PermissionsGroup.get(Integer.parseInt(id));
+		final String[] split = st.getDebasedURL().split("/");
+		final String id = split[split.length - 1];
+		final PermissionsGroup pg = PermissionsGroup.get(Integer.parseInt(id));
 		pg.validate(st);
 		f.add(new TextHeader(pg.getName()));
-		Set<String> permissions = pg.getPermissions(st);
-		Table permtable = new Table();
+		final Set<String> permissions = pg.getPermissions(st);
+		final Table permtable = new Table();
 		f.add(new TextSubHeader("Permissions"));
 		if (!permissions.isEmpty()) { f.add(permtable); }
 		permtable.add(new HeaderRow().add("Permission").add("Description"));
-		for (String permission : permissions) {
+		for (final String permission : permissions) {
 			permtable.openRow();
 			permtable.add(permission);
 			try {
-				Permission rawpermission = Modules.getPermission(st, permission);
+				final Permission rawpermission = Modules.getPermission(st, permission);
 				if (rawpermission != null) {
 					permtable.add(rawpermission.description());
 					permtable.setBGColor(rawpermission.getColor());
 				} else {
 					permtable.add("<font color=red><i>Permission no longer exists</i></font>");
 				}
-			} catch (UserException permissionerror) {
+			} catch (final UserException permissionerror) {
 				permtable.add("Error: "+permissionerror.getLocalizedMessage()); permtable.setBGColor("#e0e0e0");
 			}
 			if (st.hasPermission("instance.managepermissions")) {
-				Form dp = new Form();
+				final Form dp = new Form();
 				dp.setAction("../delpermission");
 				dp.add(new Hidden("permissionsgroup", "" + pg.getName()));
 				dp.add(new Hidden("Permission", permission));
@@ -78,12 +78,12 @@ public abstract class Groups {
 			f.add("<a href=\"/GPHUD/permissionsgroups/edit/"+pg.getId()+"\">Edit Permissions</a>");
 		}
 		f.add(new TextSubHeader("Members"));
-		Set<PermissionsGroupMembership> members = pg.getMembers();
-		Table membertable = new Table();
+		final Set<PermissionsGroupMembership> members = pg.getMembers();
+		final Table membertable = new Table();
 		membertable.add(new HeaderRow().add("Member").add("Can Invite").add("Can Kick"));
 		if (!members.isEmpty()) { f.add(membertable); }
-		boolean caneject = pg.canEject(st);
-		for (PermissionsGroupMembership member : members) {
+		final boolean caneject = pg.canEject(st);
+		for (final PermissionsGroupMembership member : members) {
 			membertable.openRow();
 			membertable.add(member.avatar.getGPHUDLink());
 			if (member.caninvite) { membertable.add(new Color("green", "Yes")); } else {
@@ -93,7 +93,7 @@ public abstract class Groups {
 				membertable.add(new Color("red", "No"));
 			}
 			if (st.hasPermission("instance.managepermissions")) {
-				Form spf = new Form();
+				final Form spf = new Form();
 				spf.add(new Hidden("okreturnurl", st.getFullURL()));
 				membertable.add(spf);
 				spf.setAction("../setpermissions");
@@ -104,7 +104,7 @@ public abstract class Groups {
 				spf.add(new Button("Set Invite/Kick"));
 			}
 			if (caneject) {
-				Form ef = new Form();
+				final Form ef = new Form();
 				ef.add(new Hidden("okreturnurl", st.getFullURL()));
 				ef.setAction("../eject");
 				ef.add(new Hidden("permissionsgroup", "" + pg.getName()));
@@ -114,7 +114,7 @@ public abstract class Groups {
 			}
 		}
 		if (pg.canInvite(st)) {
-			Form invite = new Form();
+			final Form invite = new Form();
 			invite.add(new Hidden("okreturnurl", st.getFullURL()));
 			invite.setAction("../invite");
 			invite.add(new Hidden("permissionsgroup", "" + pg.getName()));
@@ -122,7 +122,7 @@ public abstract class Groups {
 			f.add(invite);
 		}
 		if (st.hasPermission("instance.managepermissions")) {
-			Form df = new Form();
+			final Form df = new Form();
 			df.setAction("../delete");
 			df.add(new Hidden("permissionsgroup", "" + pg.getName()));
 			df.add(new Button("DELETE GROUP"));
@@ -134,17 +134,17 @@ public abstract class Groups {
 
 	@URLs(url = "/permissionsgroups/create", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Create", priority = 10)
-	public static void createGroupPage(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
+	public static void createGroupPage(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st, "permissionsgroups.create", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.create");
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Creates a new permissions group", requiresPermission = "Instance.ManagePermissions")
-	public static Response create(@Nonnull State st,
-	                              @Arguments(description = "Name of group to create", type = ArgumentType.TEXT_CLEAN, max = 64)
-			                              String name) throws UserException, SystemException {
-		try { st.getInstance().createPermissionsGroup(name); } catch (UserException e) {
+	public static Response create(@Nonnull final State st,
+	                              @Arguments(description = "Name of group to create", type = ArgumentType.TEXT_CLEAN, max = 64) final
+	                              String name) throws UserException, SystemException {
+		try { st.getInstance().createPermissionsGroup(name); } catch (final UserException e) {
 			return new ErrorResponse("Failed to create permissions group - " + e.getLocalizedMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "PermissionsGroup", null, name, "Avatar created new permissions group");
@@ -153,10 +153,10 @@ public abstract class Groups {
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "List permissions groups present at this instance")
-	public static Response list(@Nonnull State st) {
-		TabularResponse r = new TabularResponse("Permissions groups");
-		Set<PermissionsGroup> groups = st.getInstance().getPermissionsGroups();
-		for (PermissionsGroup p : groups) {
+	public static Response list(@Nonnull final State st) {
+		final TabularResponse r = new TabularResponse("Permissions groups");
+		final Set<PermissionsGroup> groups = st.getInstance().getPermissionsGroups();
+		for (final PermissionsGroup p : groups) {
 			r.openRow();
 			r.add(p);
 		}
@@ -164,48 +164,48 @@ public abstract class Groups {
 	}
 
 	@URLs(url = "/permissionsgroups/")
-	public static void listForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
+	public static void listForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		st.form().add(Modules.run(st, "permissionsgroups.list", values));
 	}
 
 	@URLs(url = "/permissionsgroups/delete", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Delete", priority = 11, requiresPermission = "Instance.ManagePermissions")
-	public static void deleteForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
+	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st, "permissionsgroups.delete", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.delete");
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Deletes a permissions group")
-	public static Response delete(@Nonnull State st,
-	                              @Nonnull @Arguments(description = "Permissions group to delete", type = ArgumentType.PERMISSIONSGROUP)
-			                              PermissionsGroup permissionsgroup) throws UserException {
-		String success = "NOP";
+	public static Response delete(@Nonnull final State st,
+	                              @Nonnull @Arguments(description = "Permissions group to delete", type = ArgumentType.PERMISSIONSGROUP) final
+	                              PermissionsGroup permissionsgroup) throws UserException {
+		final String success = "NOP";
 		permissionsgroup.validate(st);
-		String name = permissionsgroup.getNameSafe();
+		final String name = permissionsgroup.getNameSafe();
 		permissionsgroup.delete();
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "DELETE", "AvatarGroup", name, null, "Avatar deleted permissions group");
 		return new OKResponse("Deleted permissions group " + name);
 	}
 
 	@URLs(url="/permissionsgroups/edit/*",requiresPermission = "Instance.ManagePermissions")
-	public static void editPermissions(@Nonnull State st, @Nonnull SafeMap values) {
-		String[] split =st.getDebasedNoQueryURL().split("/");
+	public static void editPermissions(@Nonnull final State st, @Nonnull final SafeMap values) {
+		final String[] split =st.getDebasedNoQueryURL().split("/");
 		if (split.length!=4) { throw new UserException("Incorrect number of query parameters ("+split.length+")"); }
-		Integer groupid=Integer.parseInt(split[3]);
-		PermissionsGroup pg=PermissionsGroup.get(groupid);
+		final Integer groupid=Integer.parseInt(split[3]);
+		final PermissionsGroup pg=PermissionsGroup.get(groupid);
 		pg.validate(st);
-		Form f= st.form();
+		final Form f= st.form();
 		f.add(new TextHeader("Edit permissions group "+pg.getName()));
 		// this is all a bit tedious really :)
-		Map<Permission.POWER,Set<Permission>> permissions=new HashMap<>();
+		final Map<Permission.POWER,Set<Permission>> permissions=new HashMap<>();
 		permissions.put(Permission.POWER.LOW,new HashSet<>());
 		permissions.put(Permission.POWER.MEDIUM,new HashSet<>());
 		permissions.put(Permission.POWER.HIGH,new HashSet<>());
 		permissions.put(Permission.POWER.UNKNOWN,new HashSet<>());
-		for (Module module:Modules.getModules()) {
+		for (final Module module:Modules.getModules()) {
 			if (module.isEnabled(st)) {
-				for (Permission permission:module.getPermissions(st).values()) {
+				for (final Permission permission:module.getPermissions(st).values()) {
 					if (permission.grantable()) {
 						permissions.get(permission.power()).add(permission);
 						if (values.containsKey("SET")) {
@@ -228,9 +228,9 @@ public abstract class Groups {
 		f.add(table);
 	}
 
-	private static void stampPermission(@Nonnull State st, @Nonnull PermissionsGroup pg, Module module, @Nonnull Permission permission, @Nonnull String s) {
-		boolean set=!s.isEmpty();
-		String name=permission.getModule(st).getName()+"."+permission.name();
+	private static void stampPermission(@Nonnull final State st, @Nonnull final PermissionsGroup pg, final Module module, @Nonnull final Permission permission, @Nonnull final String s) {
+		final boolean set=!s.isEmpty();
+		final String name=permission.getModule(st).getName()+"."+permission.name();
 		if (pg.hasPermission(st,name)) {
 			if (!set) {
 				pg.removePermission(name);
@@ -245,14 +245,14 @@ public abstract class Groups {
 	}
 
 	@Nonnull
-	private static String addPermissions(@Nonnull State st, @Nonnull Set<Permission> permissions, @Nonnull PermissionsGroup pg, String col) {
-		StringBuilder r=new StringBuilder("");
-		TreeMap<String,Permission> sorted=new TreeMap<>();
-		for (Permission p:permissions) { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }
-		for (Permission p : sorted.values()) {
-			String fullname=p.getModule(st).getName()+"."+p.name();
+	private static String addPermissions(@Nonnull final State st, @Nonnull final Set<Permission> permissions, @Nonnull final PermissionsGroup pg, final String col) {
+		final StringBuilder r=new StringBuilder();
+		final TreeMap<String,Permission> sorted=new TreeMap<>();
+		for (final Permission p:permissions) { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }
+		for (final Permission p : sorted.values()) {
+			final String fullname=p.getModule(st).getName()+"."+p.name();
 			boolean exists=false;
-			Permission a = Modules.get(st, Modules.extractModule(fullname)).getPermission(st, Modules.extractReference(fullname));
+			final Permission a = Modules.get(st, Modules.extractModule(fullname)).getPermission(st, Modules.extractReference(fullname));
 			if (a!=null) { exists=true; }
 			r.append("<tr bgcolor=").append(col).append("><td>").append(fullname).append("</td><td>").append(p.description()).append("</td><td>").append("<input type=checkbox name=\"").append(fullname).append("\" value=\"").append(fullname).append("\" ").append(pg.hasPermission(st, fullname) ? "checked" : "").append(">").append("</td><td>").append(exists ? "" : "Doesn't Exist").append("</td></tr>");
 		}

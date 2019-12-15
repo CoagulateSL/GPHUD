@@ -24,18 +24,18 @@ public class ConfigurationModule extends ModuleAnnotation {
 	@Nullable
 	Set<SideSubMenu> submenus;
 
-	public ConfigurationModule(String name, ModuleDefinition def) throws SystemException, UserException {
+	public ConfigurationModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
 		super(name, def);
 		submenus = null;
 	}
 
 	@Nullable
 	@Override
-	public Set<SideSubMenu> getSideSubMenus(State st) {
+	public Set<SideSubMenu> getSideSubMenus(final State st) {
 		if (submenus == null) {
 			submenus = new HashSet<>();
-			Map<String, SideSubMenu> map = new TreeMap<>();
-			for (Module m : Modules.getModules()) {
+			final Map<String, SideSubMenu> map = new TreeMap<>();
+			for (final Module m : Modules.getModules()) {
 				if (m.isEnabled(st)) {
 					if (m.alwaysHasConfig() || !m.getKVDefinitions(st).isEmpty()) {
 						map.put(m.getName(), new ConfigurationSideSubMenu(m));
@@ -44,7 +44,7 @@ public class ConfigurationModule extends ModuleAnnotation {
 				}
 			}
 			int priority = 1;
-			for (SideSubMenu sideSubMenu : map.values()) {
+			for (final SideSubMenu sideSubMenu : map.values()) {
 				((ConfigurationSideSubMenu) sideSubMenu).setPriority(priority);
 				priority++;
 			}

@@ -13,7 +13,7 @@ public class SafeMap extends TreeMap<String, String> {
 	private static final long serialVersionUID=1L;
 
 	@Nullable
-	private static String nonull(@Nullable String s) {
+	private static String nonull(@Nullable final String s) {
 		if (s == null) { return ""; }
 		return s;
 	}
@@ -21,10 +21,10 @@ public class SafeMap extends TreeMap<String, String> {
 	public boolean submit() { return ("Submit".equals(get("Submit"))); }
 
 	@Nonnull
-	public String get(String key) { return nonull(super.get(key)); }
+	public String get(final String key) { return nonull(super.get(key)); }
 
 	public void debugDump() {
-		for (String k : keySet()) {
+		for (final String k : keySet()) {
 			System.out.println("DEBUG DUMP SAFEMAP: " + k + "=" + get(k));
 		}
 	}

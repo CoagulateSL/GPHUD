@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price
  */
 public class Validators {
-	public static boolean uuid(@Nonnull String value) {
+	public static boolean uuid(@Nonnull final String value) {
 		// something like 8dc52677-bea8-4fc3-b69b-21c5e2224306
 		if (value.length() != "8dc52677-bea8-4fc3-b69b-21c5e2224306".length()) {
 			GPHUD.getLogger("Validation").fine(value + " failed length check as UUID");
@@ -37,9 +37,9 @@ public class Validators {
 		return true;
 	}
 
-	public static boolean color(@Nonnull String value) {
+	public static boolean color(@Nonnull final String value) {
 		// e.g. <1,0.5,1>
-		String[] parts = value.split(",");
+		final String[] parts = value.split(",");
 		if (parts.length != 3) {
 			GPHUD.getLogger("Validation").fine(value + " not 3 parts (commas)");
 			return false;
@@ -52,12 +52,12 @@ public class Validators {
 		// each part should parse to a float :P
 		for (int i = 0; i < 3; i++) {
 			try {
-				float f = Float.parseFloat(parts[i]);
+				final float f = Float.parseFloat(parts[i]);
 				if (f < 0 || f > 1) {
 					GPHUD.getLogger("Validation").fine(value + " failed float range 0<=x<=1 for " + parts[i]);
 					return false;
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				GPHUD.getLogger("Validation").fine(value + " failed float parse for " + parts[i]);
 				return false;
 			}

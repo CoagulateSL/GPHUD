@@ -15,17 +15,17 @@ import java.util.List;
 public class API {
 	@Nonnull
 	@GSFunctions.GSFunction(description = "Calls a standard GPHUD API command",parameters = "Character caller - User invoking the API<br>String apicall - name of API command to call<br>BCList parameters - list of STRING parameters to the target API",returns = "A Response",notes = "")
-	public static BCResponse gsAPI(State st, @Nonnull GSVM vm, @Nonnull BCCharacter caller, @Nonnull BCString apicall, @Nonnull BCList parameters) {
+	public static BCResponse gsAPI(final State st, @Nonnull final GSVM vm, @Nonnull final BCCharacter caller, @Nonnull final BCString apicall, @Nonnull final BCList parameters) {
 		if (vm.simulation) { return new BCResponse(null,new OKResponse("Simulation mode does not call APIs")); }
 		try {
-			List<String> args = new ArrayList<>();
-			for (ByteCodeDataType data : parameters.getContent()) {
+			final List<String> args = new ArrayList<>();
+			for (final ByteCodeDataType data : parameters.getContent()) {
 				args.add(data.toBCString().getContent());
 			}
-			State callingstate=new State(caller.getContent());
+			final State callingstate=new State(caller.getContent());
 			callingstate.source= State.Sources.SCRIPTING;
-			Response value = Modules.run(callingstate, apicall.getContent(), args);
+			final Response value = Modules.run(callingstate, apicall.getContent(), args);
 			return new BCResponse(null, value);
-		} catch (RuntimeException e) { throw new SystemException("gsAPI runtimed: "+e.toString(),e); }
+		} catch (final RuntimeException e) { throw new SystemException("gsAPI runtimed: "+ e,e); }
 	}
 }

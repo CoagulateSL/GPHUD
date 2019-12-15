@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class HealthTemplate {
 	@Nonnull
 	@Templater.Template(name = "HEALTH", description = "Character's health")
-	public static String abilityPoints(@Nonnull State st, String key) {
+	public static String abilityPoints(@Nonnull final State st, final String key) {
 		if (st.getCharacterNullable() == null) { return ""; }
 		return st.getKV("Health.Health").intValue().toString();
 	}

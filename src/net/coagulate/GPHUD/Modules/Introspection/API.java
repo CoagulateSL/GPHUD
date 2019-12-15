@@ -24,18 +24,18 @@ import java.util.Map;
  */
 public abstract class API {
 	@URLs(url = "/introspection/api/*")
-	public static void renderCommand(@Nonnull State st, SafeMap values) throws UserException, SystemException {
+	public static void renderCommand(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
 		String uri = st.getDebasedURL();
 		if (!uri.startsWith("/introspection/api/")) { throw new SystemException("URL Misconfiguratin?"); }
 		uri = uri.substring("/introspection/api/".length());
 
 		// if we get here, we're investigating a specific command
-		Form f = st.form();
+		final Form f = st.form();
 		String proposedcommand = uri;
 		proposedcommand = proposedcommand.replaceAll("/", ".");
 		proposedcommand = proposedcommand.replaceAll("[^A-Za-z0-9\\.]", "");  // limited character set.  XSS protect etc blah blah tainted user input blah
 
-		Command c = Modules.getCommandNullable(st, proposedcommand);
+		final Command c = Modules.getCommandNullable(st, proposedcommand);
 		if (c == null) {
 			f.add(new TextError("COMMAND NOT FOUND!"));
 			return;
@@ -45,14 +45,14 @@ public abstract class API {
 		f.add(new TextSubHeader("Description"));
 		f.add(c.description());
 		f.add(new TextSubHeader("Arguments"));
-		Table args = new Table();
-		for (Argument p : c.getArguments()) {
+		final Table args = new Table();
+		for (final Argument p : c.getArguments()) {
 			f.add("<b>" + p.getName() + "</b>");
 			f.add(" - Type: " + p.type());
 			if (p.type() == ArgumentType.CHOICE) {
-				String[] split = proposedcommand.split("\\.");
-				StringBuilder options = new StringBuilder();
-				for (String s : p.getChoices(st)) {
+				final String[] split = proposedcommand.split("\\.");
+				final StringBuilder options = new StringBuilder();
+				for (final String s : p.getChoices(st)) {
 					if (options.length() > 0) { options.append(", "); }
 					options.append(s);
 				}
@@ -96,18 +96,18 @@ public abstract class API {
 
 	@URLs(url = "/introspection/api/")
 	@SideSubMenus(name = "API", priority = 1)
-	public static void APIIndex(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
-		Table t = new Table();
+	public static void APIIndex(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
+		final Table t = new Table();
 		//t.border(true);
 		f.add(t);
-		for (Module m : Modules.getModules()) {
+		for (final Module m : Modules.getModules()) {
 			t.add(new HeaderRow().add(new Cell(new TextSubHeader(m.getName()), 999)));
-			Map<String, Command> commands = m.getCommands(st);
-			for (Map.Entry<String, Command> entry : commands.entrySet()) {
+			final Map<String, Command> commands = m.getCommands(st);
+			for (final Map.Entry<String, Command> entry : commands.entrySet()) {
 				t.openRow();
 				try {
-					Command c = entry.getValue();
+					final Command c = entry.getValue();
 					t.openRow();
 					t.add(c.context().toString());
 					t.add("<a href=\"/GPHUD/introspection/api/" + m.getName() + "/" + entry.getKey() + "\">" + c.getName() + "</a>");
@@ -129,7 +129,7 @@ public abstract class API {
 						t.add(new Color("red", "Object"));
 					}
 					if (c.isGenerated()) { t.add(new Color("blue", "Instance Specific")); } else { t.add(""); }
-				} catch (Exception e) { t.add("ERR:" + e.toString()); }
+				} catch (final Exception e) { t.add("ERR:" + e); }
 			}
 			t.openRow();
 			t.add(new Cell(new Separator(), 999));

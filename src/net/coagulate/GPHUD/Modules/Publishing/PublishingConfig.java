@@ -18,8 +18,8 @@ import java.util.List;
 public class PublishingConfig
 {
 	@URL.URLs(url = "/configuration/publishing")
-	public static void configPage(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void configPage(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.add(new TextHeader("Links to published pages"));
 		f.add(new Text("<p><i><b>Note:</b> This feature is in early release, please feel free to submit ideas for published pages, layouts, options, formatting etc</i></p>"));
 		f.noForm();
@@ -28,15 +28,15 @@ public class PublishingConfig
 			publishedany=true;
 			f.add("<b>Group Pages:</b> "+
 					"<a href=\"/GPHUD/publishing/allgroups\">All Groups And Members</a>");
-			List<String> grouptypes=new ArrayList<>();
-			for (CharacterGroup group:st.getInstance().getCharacterGroups()) {
+			final List<String> grouptypes=new ArrayList<>();
+			for (final CharacterGroup group:st.getInstance().getCharacterGroups()) {
 				f.add(" <a href=\"/GPHUD/publishing/group/"+group.getId()+"\">Group:"+group.getName()+"</a>");
-				String gt=group.getType();
+				final String gt=group.getType();
 				if (gt!=null) {
 					if (!grouptypes.contains(gt)) grouptypes.add(gt);
 				}
 			}
-			for (String type:grouptypes) {
+			for (final String type:grouptypes) {
 				f.add(" <a href=\"/GPHUD/publishing/grouptype/"+st.getInstance().getId()+"/"+type+"\">GroupType:"+type+"</a>");
 			}
 			f.add("<br>");

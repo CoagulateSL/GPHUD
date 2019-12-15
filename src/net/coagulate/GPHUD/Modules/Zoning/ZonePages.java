@@ -26,11 +26,11 @@ import javax.annotation.Nonnull;
 public abstract class ZonePages {
 
 	@URLs(url = "/configuration/zoning")
-	public static void listZones(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void listZones(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
-		for (Zone zone:st.getInstance().getZones()) {
+		for (final Zone zone:st.getInstance().getZones()) {
 			f.add(new Link(zone.getName(), "./zoning/view/" + zone.getId())).add("<br>");
 		}
 		f.add("<br>");
@@ -41,29 +41,29 @@ public abstract class ZonePages {
 	}
 
 	@URLs(url = "/configuration/zoning/create")
-	public static void createZone(State st, SafeMap values) {
+	public static void createZone(final State st, final SafeMap values) {
 		Modules.simpleHtml(st, "zoning.create", values);
 	}
 
 	@URLs(url = "/configuration/zoning/view/*")
-	public static void viewZone(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		String[] split = st.getDebasedURL().split("/");
-		String id = split[split.length - 1];
-		Zone z = Zone.get(Integer.parseInt(id));
+	public static void viewZone(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+		final String[] split = st.getDebasedURL().split("/");
+		final String id = split[split.length - 1];
+		final Zone z = Zone.get(Integer.parseInt(id));
 		viewZone(st, values, z, false);
 	}
 
-	public static void viewZone(@Nonnull State st, SafeMap values, @Nonnull Zone z, boolean brief) throws UserException, SystemException {
-		boolean full = false;
+	public static void viewZone(@Nonnull final State st, final SafeMap values, @Nonnull final Zone z, final boolean brief) throws UserException, SystemException {
+		final boolean full = false;
 		boolean admin = false;
 		if (st.hasPermission("zoning.config")) { admin = true; }
-		Form f = st.form();
+		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("Zone: " + z.getName()));
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
 		t.border(false);
-		for (ZoneArea a : z.getZoneAreas()) {
+		for (final ZoneArea a : z.getZoneAreas()) {
 			t.openRow().add("Location").add(a.getRegion(true).getName() + ", " + a.getVectors()[0] + " - " + a.getVectors()[1]);
 			if (admin) { t.add(new Form(st, true, "../deletearea", "Delete Area", "zoneareaid", a.getId() + "")); }
 		}
@@ -73,22 +73,22 @@ public abstract class ZonePages {
 	}
 
 	@URLs(url = "/configuration/zoning/setcorner1", requiresPermission = "zoning.config")
-	public static void setCornerOne(State st, SafeMap values) {
+	public static void setCornerOne(final State st, final SafeMap values) {
 		Modules.simpleHtml(st, "zoning.setcornerone", values);
 	}
 
 	@URLs(url = "/configuration/zoning/setcorner2", requiresPermission = "zoning.config")
-	public static void setCornerTwo(State st, SafeMap values) {
+	public static void setCornerTwo(final State st, final SafeMap values) {
 		Modules.simpleHtml(st, "zoning.setcornertwo", values);
 	}
 
 	@URLs(url = "/configuration/zoning/addarea", requiresPermission = "zoning.config")
-	public static void addVolume(State st, SafeMap values) {
+	public static void addVolume(final State st, final SafeMap values) {
 		Modules.simpleHtml(st, "zoning.addvolume", values);
 	}
 
 	@URLs(url = "/configuration/zoning/deletearea", requiresPermission = "zoning.config")
-	public static void delVolume(State st, @Nonnull SafeMap values) {
+	public static void delVolume(final State st, @Nonnull final SafeMap values) {
 		Modules.run(st, "zoning.deletevolume", values);
 		throw new RedirectionException(values.get("okreturnurl"));
 	}

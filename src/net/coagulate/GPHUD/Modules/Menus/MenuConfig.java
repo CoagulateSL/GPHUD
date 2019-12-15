@@ -26,11 +26,11 @@ import java.util.Map;
 public abstract class MenuConfig {
 
 	@URLs(url = "/configuration/menus")
-	public static void configure(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void configure(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.add(new TextSubHeader("Dialog menu configuration"));
-		Map<String, Integer> menus = Menus.getMenusMap(st);
-		for (Map.Entry<String, Integer> entry : menus.entrySet()) {
+		final Map<String, Integer> menus = Menus.getMenusMap(st);
+		for (final Map.Entry<String, Integer> entry : menus.entrySet()) {
 			f.add("<a href=\"./menus/view/" + entry.getValue() + "\">" + entry.getKey() + "</a><br>");
 		}
 		if (st.hasPermission("Menus.Config")) {
@@ -39,22 +39,22 @@ public abstract class MenuConfig {
 	}
 
 	@URLs(url = "/configuration/menus/view/*")
-	public static void viewMenus(@Nonnull State st, @Nonnull SafeMap values) throws SystemException, UserException {
-		String[] split = st.getDebasedURL().split("/");
-		String id = split[split.length - 1];
-		Menus m = Menus.get(Integer.parseInt(id));
+	public static void viewMenus(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
+		final String[] split = st.getDebasedURL().split("/");
+		final String id = split[split.length - 1];
+		final Menus m = Menus.get(Integer.parseInt(id));
 		viewMenus(st, values, m);
 	}
 
-	public static void viewMenus(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Menus m) throws SystemException, UserException {
+	public static void viewMenus(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Menus m) throws SystemException, UserException {
 		if (m.getInstance() != st.getInstance()) {
 			throw new UserException("That menu belongs to a different instance");
 		}
 		if (st.hasPermission("Menus.Config") && "Submit".equals(values.get("Submit"))) {
-			JSONObject json = new JSONObject();
+			final JSONObject json = new JSONObject();
 			for (int i = 1; i <= 12; i++) {
-				String button = values.get("button" + i);
-				String command = values.get("command" + i);
+				final String button = values.get("button" + i);
+				final String command = values.get("command" + i);
 				if (!button.isEmpty() && !command.isEmpty()) {
 					json.put("button" + i, button);
 					json.put("command" + i, command);
@@ -62,32 +62,32 @@ public abstract class MenuConfig {
 			}
 			m.setJSON(json);
 			if ("Main".equalsIgnoreCase(m.getName())) {
-				JSONObject broadcastupdate = new JSONObject();
+				final JSONObject broadcastupdate = new JSONObject();
 				broadcastupdate.put("incommand", "broadcast");
-				JSONObject legacymenu = Modules.getJSONTemplate(st, "menus.main");
+				final JSONObject legacymenu = Modules.getJSONTemplate(st, "menus.main");
 				broadcastupdate.put("legacymenu", legacymenu.toString());
 				st.getInstance().sendServers(broadcastupdate);
 			}
 		}
-		Form f = st.form();
+		final Form f = st.form();
 		f.add(new TextHeader("Menu '" + m.getName() + "'"));
 		f.add(new Paragraph("Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will be omitted from the menu.  Layout of buttons is as follows:"));
 		f.add(new Paragraph("Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen."));
-		Table example = new Table();
+		final Table example = new Table();
 		f.add(example);
 		example.openRow().add("10").add("11").add("12");
 		example.openRow().add("7").add("8").add("9");
 		example.openRow().add("4").add("5").add("6");
 		example.openRow().add("1").add("2").add("3");
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(new TextSubHeader("Button configuration"));
 		f.add(t);
-		JSONObject j = m.getJSON();
+		final JSONObject j = m.getJSON();
 		for (int i = 1; i <= 12; i++) {
 			t.openRow().add("Button " + i);
 			t.add(new TextInput("button" + i, j.optString("button" + i, "")));
 			t.openRow().add("");
-			DropDownList command = DropDownList.getCommandsList(st, "command" + i);
+			final DropDownList command = DropDownList.getCommandsList(st, "command" + i);
 			command.setValue(j.optString("command" + i, ""));
 			t.add(command);
 
@@ -97,14 +97,14 @@ public abstract class MenuConfig {
 	}
 
 	@URLs(url = "/configuration/menus/create", requiresPermission = "Menus.Config")
-	public static void createMenu(@Nonnull State st, @Nonnull SafeMap values) {
+	public static void createMenu(@Nonnull final State st, @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty()) {
-			Menus menu = Menus.create(st, values.get("name"), values.get("description"), new JSONObject());
+			final Menus menu = Menus.create(st, values.get("name"), values.get("description"), new JSONObject());
 			throw new RedirectionException("./view/" + menu.getId());
 		}
-		Form f = st.form();
+		final Form f = st.form();
 		f.add(new TextSubHeader("Create new Dialog Menu"));
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
 		t.openRow().add("Name").add(new TextInput("name"));
 		t.openRow().add("Description").add(new TextInput("description"));

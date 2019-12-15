@@ -27,7 +27,7 @@ public class NullResponse implements Response {
 
 	@Nonnull
 	@Override
-	public JSONObject asJSON(State st) {
+	public JSONObject asJSON(final State st) {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 
@@ -39,13 +39,13 @@ public class NullResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		throw new SystemException("You can not interrogate the null response.");
 	}
 

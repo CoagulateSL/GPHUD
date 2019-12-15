@@ -22,27 +22,27 @@ import java.util.TreeMap;
 public abstract class URLHandlers {
 	@URLs(url = "/introspection/urlhandlers")
 	@SideSubMenus(name = "URL Handlers", priority = 99)
-	public static void createForm(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void createForm(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.add(new TextHeader("URL Handler registrations"));
 		if (!st.isSuperUser()) {
 			f.add(new TextError("Sorry, this information is classified."));
 			return;
 		}
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("URL").add("Method"));
-		Map<String, Row> output = new TreeMap<>();
-		for (Module module : Modules.getModules()) {
-			for (URL url : module.getAllContents(st)) {
-				Row writeup = new Row();
+		final Map<String, Row> output = new TreeMap<>();
+		for (final Module module : Modules.getModules()) {
+			for (final URL url : module.getAllContents(st)) {
+				final Row writeup = new Row();
 				writeup.add(url.url());
 				writeup.add(url.getMethodName());
 				writeup.add(url.requiresPermission());
 				output.put(url.url(), writeup);
 			}
 		}
-		for (Row row : output.values()) {
+		for (final Row row : output.values()) {
 			t.add(row);
 		}
 	}

@@ -13,9 +13,9 @@ public class BCString extends ByteCodeDataType {
 	@Nonnull
 	public String getContent() { return content; }
 
-	public BCString(ParseNode n) {super(n);}
+	public BCString(final ParseNode n) {super(n);}
 
-	public BCString(ParseNode n, @Nonnull String content) {
+	public BCString(final ParseNode n, @Nonnull final String content) {
 		super(n);
 		if (content.length() > 65535) {
 			throw new GSResourceLimitExceededException("Attempt to make string longer than 65535 characters");
@@ -24,10 +24,10 @@ public class BCString extends ByteCodeDataType {
 }
 	@Nonnull
 	public String explain() { return "String ("+content+")"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.String.get());
 		addShort(bytes,content.length());
-		for (char c:content.toCharArray()) {
+		for (final char c:content.toCharArray()) {
 			bytes.add((byte)c);
 		}
 	}
@@ -35,24 +35,24 @@ public class BCString extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "String</td><td>"+content; }
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
 		vm.push(this);
 	}
 
 	@Override
-	public ByteCodeDataType add(@Nonnull ByteCodeDataType var) {
-		Class<? extends ByteCodeDataType> type=var.getClass();
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+		final Class<? extends ByteCodeDataType> type=var.getClass();
 		// <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 		if (type.equals(BCList.class)) { // special case, return a list
 			return new BCList(node(),this).add(var);
 		}
 		// for everything else
-		return new BCString(node(),this.content+(var.toBCString()));
+		return new BCString(node(), content +(var.toBCString()));
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType subtract(@Nonnull ByteCodeDataType var) {
+	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
 		// if the 2nd type is a number then we'll do number stuff :P
 		if (var.getClass().equals(BCInteger.class)) {
 			toBCInteger().subtract(var);
@@ -62,7 +62,7 @@ public class BCString extends ByteCodeDataType {
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType multiply(@Nonnull ByteCodeDataType var) {
+	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
 		// if the 2nd type is a number then we'll do number stuff :P
 		if (var.getClass().equals(BCInteger.class)) {
 			toBCInteger().subtract(var);
@@ -72,7 +72,7 @@ public class BCString extends ByteCodeDataType {
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType divide(@Nonnull ByteCodeDataType var) {
+	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
 		// if the 2nd type is a number then we'll do number stuff :P
 		if (var.getClass().equals(BCInteger.class)) {
 			toBCInteger().subtract(var);
@@ -90,6 +90,6 @@ public class BCString extends ByteCodeDataType {
 	@Override
 	public BCInteger toBCInteger() {
 		try { return new BCInteger(null,Integer.parseInt(getContent())); }
-		catch (NumberFormatException e) { throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer"); }
+		catch (final NumberFormatException e) { throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer"); }
 	}
 }

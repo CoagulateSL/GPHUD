@@ -28,16 +28,16 @@ import javax.annotation.Nonnull;
 public class ObjectManagement {
 
 	@URL.URLs(url = "/configuration/objects",requiresPermission = "Objects.View")
-	public static void index(@Nonnull State st, @Nonnull SafeMap map) {
-		Form f= st.form();
+	public static void index(@Nonnull final State st, @Nonnull final SafeMap map) {
+		final Form f= st.form();
 		f.add(new TextHeader("Object Management"));
 		f.add(new TextSubHeader("Connected Objects"));
 		if (map.containsKey("reboot") && st.hasPermission("Objects.RebootObjects")) {
-			String uuid=map.get("reboot");
-			Objects obj = Objects.findOrNull(st, uuid);
+			final String uuid=map.get("reboot");
+			final Objects obj = Objects.findOrNull(st, uuid);
 			if (obj!=null) {
 				obj.validate(st);
-				JSONObject reboot=new JSONObject();
+				final JSONObject reboot=new JSONObject();
 				reboot.put("reboot","Rebooted via web site by "+st.getAvatarNullable());
 				new Transmission(obj,reboot).start();
 				f.add("<p><i>Rebooted object "+obj.getName()+" "+uuid+"</i></p>");
@@ -45,11 +45,11 @@ public class ObjectManagement {
 			}
 		}
 		if (map.containsKey("reallyshutdown") && st.hasPermission("Objects.ShutdownObjects")) {
-			String uuid=map.get("reallyshutdown");
-			Objects obj = Objects.findOrNull(st, uuid);
+			final String uuid=map.get("reallyshutdown");
+			final Objects obj = Objects.findOrNull(st, uuid);
 			if (obj!=null) {
 				obj.validate(st);
-				JSONObject shutdown=new JSONObject();
+				final JSONObject shutdown=new JSONObject();
 				shutdown.put("shutdown","Shutdown via web site by "+st.getAvatarNullable());
 				new Transmission(obj,shutdown).start();
 				f.add("<p><i>Shutdown object "+obj.getName()+" "+uuid+"</i></p>");
@@ -63,32 +63,32 @@ public class ObjectManagement {
 	}
 
 	@URL.URLs(url="/configuration/objects/createtype",requiresPermission="Objects.ObjectTypes")
-	public static void createObjectType(@Nonnull State st, @Nonnull SafeMap map) {
+	public static void createObjectType(@Nonnull final State st, @Nonnull final SafeMap map) {
 		if (map.get("Create").equalsIgnoreCase("Create")) {
-			JSONObject jsonbase=new JSONObject();
+			final JSONObject jsonbase=new JSONObject();
 			jsonbase.put("behaviour",map.get("behaviour"));
-			ObjectTypes ot=ObjectTypes.create(st,map.get("name"),jsonbase);
+			final ObjectTypes ot=ObjectTypes.create(st,map.get("name"),jsonbase);
 			Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,"Create","ObjectType",null,map.get("name"),"Created new object type of behaviour "+map.get("behaviour"));
 			throw new RedirectionException("/GPHUD/configuration/objects/objecttypes/"+ot.getId());
 		}
-		Form f= st.form();
-		Table input=new Table(); f.add(input);
+		final Form f= st.form();
+		final Table input=new Table(); f.add(input);
 		input.add("Name").add(new TextInput("name"));
-		DropDownList behaviours= ObjectType.getDropDownList(st);
+		final DropDownList behaviours= ObjectType.getDropDownList(st);
 		input.openRow().add("Behaviour").add(behaviours);
 		input.openRow().add(new Cell(new Button("Create"),2));
 	}
 
 	@URL.URLs(url="/configuration/objects/objecttypes/*",requiresPermission="Objects.ObjectTypes")
-	public static void editObjectType(@Nonnull State st, SafeMap map) {
+	public static void editObjectType(@Nonnull final State st, final SafeMap map) {
 		st.postmap=map;
-		String[] parts=st.getDebasedNoQueryURL().split("/");
+		final String[] parts=st.getDebasedNoQueryURL().split("/");
 		if (parts.length<5) { throw new UserException("URI misformed, no ID found"); }
-		ObjectTypes t=ObjectTypes.get(Integer.parseInt(parts[4]));
+		final ObjectTypes t=ObjectTypes.get(Integer.parseInt(parts[4]));
 		t.validate(st);
-		Form f= st.form();
+		final Form f= st.form();
 		f.add(new TextHeader("Object Type: "+t.getName()));
-		ObjectType ot=ObjectType.materialise(st,t);
+		final ObjectType ot=ObjectType.materialise(st,t);
 		ot.update(st);
 		f.add(ot.explainHtml());
 		ot.editForm(st);
@@ -96,8 +96,8 @@ public class ObjectManagement {
 
 	@Nonnull
 	@Command.Commands(description = "Gets the Object Driver Script",permitScripting = false,permitUserWeb = false,context = Command.Context.AVATAR,requiresPermission = "Objects.GetDriver")
-	public static Response getDriver(@Nonnull State st) {
-		JSONObject json = new JSONObject();
+	public static Response getDriver(@Nonnull final State st) {
+		final JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
 		json.put("itemname", "GPHUD Object Driver");
 		json.put("giveto", st.getAvatarNullable().getUUID());

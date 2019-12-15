@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCStore extends ByteCode {
-	public BCStore(ParseNode n) {
+	public BCStore(final ParseNode n) {
 		super(n);
 	}
 
@@ -16,14 +16,14 @@ public class BCStore extends ByteCode {
 	// POP the NAME.  POP the content.
 	@Nonnull
 	public String explain() { return "Assign (Pop variable name, pop content, assign)"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Store.get());
 	}
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
-		String variablename = vm.popString().getContent();
-		ByteCodeDataType value = vm.pop();
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+		final String variablename = vm.popString().getContent();
+		final ByteCodeDataType value = vm.pop();
 		vm.set(variablename,value);
 	}
 

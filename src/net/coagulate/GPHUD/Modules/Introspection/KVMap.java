@@ -21,19 +21,19 @@ import java.util.Map;
 public abstract class KVMap {
 	@URLs(url = "/introspection/kvmap")
 	@SideSubMenus(name = "KeyValue Map", priority = 10)
-	public static void kvmap(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void kvmap(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.add(new TextHeader("KV Mappings"));
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
-		for (Module m : Modules.getModules()) {
-			Map<String, KV> kvmap = m.getKVDefinitions(st);
+		for (final Module m : Modules.getModules()) {
+			final Map<String, KV> kvmap = m.getKVDefinitions(st);
 			if (!kvmap.isEmpty()) {
 				t.openRow();
 				t.add(new HeaderRow().add(new TextSubHeader(m.getName())));
 				t.add(new HeaderRow().add("Name").add("Scope").add("Type").add("Hierarchy").add("Permission").add("Default").add("Description").add("ConveyedAs").add("DoesTemplates"));
-				for (KV kv : kvmap.values()) {
-					Row r = new Row();
+				for (final KV kv : kvmap.values()) {
+					final Row r = new Row();
 					if (kv.hidden()) { r.setbgcolor("#e0e0e0"); }
 					t.add(r);
 					r.add(kv.name());

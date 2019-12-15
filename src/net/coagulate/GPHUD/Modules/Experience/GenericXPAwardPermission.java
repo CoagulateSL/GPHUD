@@ -14,10 +14,10 @@ public class GenericXPAwardPermission extends Permission {
 
 	private final String myname;
 
-	public GenericXPAwardPermission(String name) { myname = name; }
+	public GenericXPAwardPermission(final String name) { myname = name; }
 
 	@Override
-	public Module getModule(State st) {
+	public Module getModule(final State st) {
 		return Modules.get(st,"Experience");
 	}
 

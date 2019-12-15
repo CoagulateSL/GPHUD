@@ -13,7 +13,7 @@ import java.util.List;
 
 public class BCAvatar extends ByteCodeDataType {
 	@Nullable
-	private User content=null;
+	private User content;
 	@Nullable
 	public User getContentNullable() { return content; }
 	@Nonnull
@@ -21,13 +21,13 @@ public class BCAvatar extends ByteCodeDataType {
 		if (content==null) { throw new SystemException("getContent on null content"); }
 		return content;
 	}
-	public BCAvatar(ParseNode n) { super(n); }
-	public BCAvatar(ParseNode node, @Nullable User content) {
+	public BCAvatar(final ParseNode n) { super(n); }
+	public BCAvatar(final ParseNode node, @Nullable final User content) {
 		super(node);
 		this.content=content; }
 	@Nonnull
 	public String explain() { return "Avatar ("+content+")"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Avatar.get());
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content.getId());
@@ -36,35 +36,35 @@ public class BCAvatar extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "Avatar</td><td>"+ getContent().getId(); }
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
 		// easy
 		vm.push(this);
 	}
 	//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 	@Nonnull
 	@Override
-	public ByteCodeDataType add(@Nonnull ByteCodeDataType var) {
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
 		// only makes sense if adding a string to an avatar, in which case we string everything
-		if (var.getClass().equals(BCString.class)) { return new BCString(node(),toString()+var.toString()); }
+		if (var.getClass().equals(BCString.class)) { return new BCString(node(),toString()+ var); }
 		throw new GSInvalidExpressionException("Can not perform BCAvatar + "+var.getClass().getSimpleName());
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType subtract(@Nonnull ByteCodeDataType var) {
+	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
 		// never makes sense
 		throw new GSInvalidExpressionException("Can not perform subtraction on a BCAvatar");
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType multiply(@Nonnull ByteCodeDataType var) {
+	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can not perform multiplication on a BCAvatar");
 	}
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType divide(@Nonnull ByteCodeDataType var) {
+	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can not perform division on a BCAvatar");
 	}
 

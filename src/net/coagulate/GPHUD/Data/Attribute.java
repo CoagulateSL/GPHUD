@@ -24,7 +24,7 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.*;
  */
 public class Attribute extends TableRow {
 
-	protected Attribute(int id) { super(id); }
+	protected Attribute(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -33,7 +33,7 @@ public class Attribute extends TableRow {
 	 * @return A Region representation
 	 */
 	@Nonnull
-	public static Attribute get(int id) {
+	public static Attribute get(final int id) {
 		return (Attribute) factoryPut("Attribute", id, new Attribute(id));
 	}
 
@@ -45,11 +45,11 @@ public class Attribute extends TableRow {
 	 * @return Region object for that region, or null if none is found.
 	 */
 	@Nonnull
-	public static Attribute find(@Nonnull Instance instance, String name) {
+	public static Attribute find(@Nonnull final Instance instance, final String name) {
 		try {
-			int id = GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
+			final int id = GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
 			return get(id);
-		} catch (NoDataException e) {
+		} catch (final NoDataException e) {
 			throw new UserException("Unable to find attribute '" + name + "' in instance '" + instance + "'",e);
 		}
 	}
@@ -58,11 +58,11 @@ public class Attribute extends TableRow {
 	 *
 	 */
 	@Nonnull
-	public static Attribute findGroup(@NotNull Instance instance, String grouptype) {
+	public static Attribute findGroup(@NotNull final Instance instance, final String grouptype) {
 		try {
-			int id = GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?", instance.getId(), grouptype);
+			final int id = GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?", instance.getId(), grouptype);
 			return get(id);
-		} catch (NoDataException e) {
+		} catch (final NoDataException e) {
 			throw new UserException("Unable to find an attribute representing a group of type " + grouptype, e);
 		}
 	}
@@ -74,7 +74,7 @@ public class Attribute extends TableRow {
 	 * @return Set of attribute for this instance
 	 */
 	@Nonnull
-	public static Set<Attribute> getAttributes(@Nonnull State st) { return getAttributes(st.getInstance()); }
+	public static Set<Attribute> getAttributes(@Nonnull final State st) { return getAttributes(st.getInstance()); }
 
 	/**
 	 * Get the attributes for the instance.
@@ -83,15 +83,15 @@ public class Attribute extends TableRow {
 	 * @return Set of attribute for this instance
 	 */
 	@Nonnull
-	public static Set<Attribute> getAttributes(@Nonnull Instance instance) {
-		Set<Attribute> set = new TreeSet<>();
-		for (ResultsRow r : GPHUD.getDB().dq("select attributeid from attributes where instanceid=?", instance.getId())) {
+	public static Set<Attribute> getAttributes(@Nonnull final Instance instance) {
+		final Set<Attribute> set = new TreeSet<>();
+		for (final ResultsRow r : GPHUD.getDB().dq("select attributeid from attributes where instanceid=?", instance.getId())) {
 			set.add(Attribute.get(r.getInt()));
 		}
 		return set;
 	}
 
-	static void create(@Nonnull Instance instance, String name, Boolean selfmodify, String attributetype, String grouptype, Boolean usesabilitypoints, Boolean required, String defaultvalue) {
+	static void create(@Nonnull final Instance instance, final String name, final Boolean selfmodify, final String attributetype, final String grouptype, final Boolean usesabilitypoints, final Boolean required, String defaultvalue) {
 		// =)
 		if ("".equals(defaultvalue)) { defaultvalue = null; }
 		GPHUD.getDB().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
@@ -106,8 +106,8 @@ public class Attribute extends TableRow {
 	 * @return Attribute
 	 */
 	@Nullable
-	public static Attribute resolve(@Nonnull State st, String name) {
-		int id = new Attribute(-1).resolveToID(st, name, true);
+	public static Attribute resolve(@Nonnull final State st, final String name) {
+		final int id = new Attribute(-1).resolveToID(st, name, true);
 		if (id == 0) { return null; }
 		return get(id);
 	}
@@ -152,7 +152,7 @@ public class Attribute extends TableRow {
 	@Override
 	public String getKVIdField() { return null; }
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Attribute / State Instance mismatch"); }
@@ -164,7 +164,7 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public ATTRIBUTETYPE getType() {
 		String type = null;
-		try { type = (String) cacheGet("type"); } catch (CacheMiss ex) {
+		try { type = (String) cacheGet("type"); } catch (final CacheMiss ex) {
 			type = getString("attributetype");
 			cachePut("type", type, getNameCacheTime());
 		}
@@ -191,7 +191,7 @@ public class Attribute extends TableRow {
 	 *
 	 * @param required New required flag state.
 	 */
-	public void setRequired(Boolean required) {
+	public void setRequired(final Boolean required) {
 		set("required", required);
 	}
 
@@ -203,7 +203,7 @@ public class Attribute extends TableRow {
 	 *
 	 * @param defaultvalue New default value
 	 */
-	public void setDefaultValue(String defaultvalue) {
+	public void setDefaultValue(final String defaultvalue) {
 		set("defaultvalue", defaultvalue);
 	}
 
@@ -219,21 +219,21 @@ public class Attribute extends TableRow {
 	 *
 	 * @param selfmodify Character can self modify the attribute
 	 */
-	public void setSelfModify(Boolean selfmodify) {
+	public void setSelfModify(final Boolean selfmodify) {
 		set("selfmodify", selfmodify);
 	}
 
 	@Nullable
-	public String getCharacterValue(@Nonnull State st) {
+	public String getCharacterValue(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters." + getName()).value(); }
 		if (getType() == GROUP) {
-			CharacterGroup cg = st.getCharacter().getGroup(getSubType());
+			final CharacterGroup cg = st.getCharacter().getGroup(getSubType());
 			if (cg == null) { return null; }
 			return cg.getName();
 		}
 		if (getType() == POOL || getType() == EXPERIENCE) {
 			if (this instanceof QuotaedXP) {
-				QuotaedXP xp = (QuotaedXP) this;
+				final QuotaedXP xp = (QuotaedXP) this;
 				return st.getCharacter().sumPool(xp.getPool(st)) + "";
 			} else { return "POOL"; }
 		}
@@ -241,11 +241,11 @@ public class Attribute extends TableRow {
 	}
 
 	@Nonnull
-	public String getCharacterValueDescription(@Nonnull State st) {
+	public String getCharacterValueDescription(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters." + getName()).path(); }
 		if (getType() == POOL || getType() == EXPERIENCE) {
 			if (this instanceof QuotaedXP) {
-				QuotaedXP xp = (QuotaedXP) this;
+				final QuotaedXP xp = (QuotaedXP) this;
 				return ("<i>(In last " + xp.periodRoughly(st) + " : " + xp.periodAwarded(st) + ")</i>") +
 						(", <i>Next available:" + xp.nextFree(st) + "</i>");
 			} else { return "POOL"; }
@@ -261,7 +261,7 @@ public class Attribute extends TableRow {
 	 * @return True if this attribute generates a KV.
 	 */
 	public boolean isKV() {
-		ATTRIBUTETYPE def = getType();
+		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER || def == FLOAT || def == TEXT || def == COLOR) { return true; }
 		if (def == POOL || def == GROUP || def == EXPERIENCE) { return false; }
 		throw new SystemException("Unknown attribute type " + def + " in attribute " + this);
@@ -275,7 +275,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public KV.KVTYPE getKVType() throws SystemException {
-		ATTRIBUTETYPE def = getType();
+		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVTYPE.INTEGER; }
 		if (def == FLOAT) { return KV.KVTYPE.FLOAT; }
 		if (def == TEXT) { return KV.KVTYPE.TEXT; }
@@ -291,7 +291,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public String getKVDefaultValue() throws SystemException {
-		ATTRIBUTETYPE def = getType();
+		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return "0"; }
 		if (def == FLOAT) { return "0"; }
 		if (def == TEXT) { return ""; }
@@ -307,7 +307,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public KV.KVHIERARCHY getKVHierarchy() throws SystemException {
-		ATTRIBUTETYPE def = getType();
+		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVHIERARCHY.CUMULATIVE; }
 		if (def == FLOAT) { return KV.KVHIERARCHY.CUMULATIVE; }
 		if (def == TEXT) { return KV.KVHIERARCHY.DELEGATING; }
@@ -320,7 +320,7 @@ public class Attribute extends TableRow {
 	 *
 	 * @param usesabilitypoints Flags new value
 	 */
-	public void setUsesAbilityPoints(Boolean usesabilitypoints) {
+	public void setUsesAbilityPoints(final Boolean usesabilitypoints) {
 		set("usesabilitypoints", usesabilitypoints);
 	}
 

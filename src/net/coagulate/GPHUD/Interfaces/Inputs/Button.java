@@ -16,26 +16,26 @@ public class Button extends Input {
 
 	final String name;
 	final String value;
-	boolean borderless = false;
+	boolean borderless;
 
 	//public boolean pressed() { if (getValue()==null || getValue().isEmpty()) { return false; } return true; }
-	public Button(String s) {
+	public Button(final String s) {
 		name = s;
 		value = s;
 	}
 
-	public Button(String n, String v) {
+	public Button(final String n, final String v) {
 		name = n;
 		value = v;
 	}
 
-	public Button(String s, boolean borderless) {
+	public Button(final String s, final boolean borderless) {
 		name = s;
 		value = s;
 		this.borderless = borderless;
 	}
 
-	public Button(String n, String v, boolean borderless) {
+	public Button(final String n, final String v, final boolean borderless) {
 		name = n;
 		value = v;
 		this.borderless = borderless;
@@ -48,7 +48,7 @@ public class Button extends Input {
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		String style = "";
 		if (borderless) {
 			style = "-webkit-appearance: textfield; border-top-width: 1px; border-right-width: 1px; border-left-width: 1px; border-bottom-width: 1px; padding-bottom: 0px; padding-top: 0px; padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;";

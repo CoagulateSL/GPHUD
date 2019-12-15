@@ -14,7 +14,7 @@ public class KVValue {
 	private final String value;
 	private final String path;
 
-	public KVValue(String value, String path) {
+	public KVValue(final String value, final String path) {
 		this.value = value;
 		this.path = path;
 	}

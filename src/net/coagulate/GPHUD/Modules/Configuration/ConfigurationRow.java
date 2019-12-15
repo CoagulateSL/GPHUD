@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConfigurationRow extends Row {
-	public ConfigurationRow(@Nonnull State st, TableRow dbo, @Nonnull KV kv, @Nonnull State simulated) throws UserException, SystemException {
-		String kvname = kv.fullname();
+	public ConfigurationRow(@Nonnull final State st, final TableRow dbo, @Nonnull final KV kv, @Nonnull final State simulated) throws UserException, SystemException {
+		final String kvname = kv.fullname();
 		//kv=st.getKVDefinition(kvname);
 		add(kv.name());
 		add(kv.description());
@@ -33,14 +33,14 @@ public class ConfigurationRow extends Row {
 			add(simulated.getRawKV(dbo, kv.fullname()));
 		}
 		if (st.hasPermission(kv.editpermission())) {
-			Form ev = new Form();
+			final Form ev = new Form();
 			ev.setAction("./setinstancevalue");
 			ev.add(new Hidden("key", kvname));
 			ev.add(new Hidden("value", simulated.getRawKV(dbo, kvname)));
 			ev.add(new Hidden("okreturnurl", st.getFullURL()));
 			ev.add(new Button("Edit Value", true));
 			add(ev);
-			Form rv = new Form();
+			final Form rv = new Form();
 			rv.setAction("./setinstancevalue");
 			rv.add(new Hidden("key", kvname));
 			rv.add(new Hidden("value", kv.defaultvalue()));

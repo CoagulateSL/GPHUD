@@ -16,18 +16,18 @@ import javax.annotation.Nonnull;
  */
 public class UserTitlerColor extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/user-titler-color")
-	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		Form f = st.form();
+	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+		final Form f = st.form();
 		f.add(new TextHeader("User Configurable Titler Color Cookbook"));
-		boolean act = false;
+		final boolean act = false;
 		f.add(new Paragraph("This cookbook will enable the user to set their own titler color, it will perform the following steps:"));
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
 		run(st, t, false);
 		if (values.containsKey("ACTIVATE COOKBOOK") && (st.hasPermission("instance.cookbooks"))) {
 			f.add("");
 			f.add(new TextSubHeader("EXECUTING COOKBOOK"));
-			Table runt = new Table();
+			final Table runt = new Table();
 			f.add(runt);
 			run(st, runt, true);
 		} else {
@@ -35,12 +35,12 @@ public class UserTitlerColor extends CookBook {
 		}
 	}
 
-	private static void run(@Nonnull State st, @Nonnull Table t, boolean act) {
+	private static void run(@Nonnull final State st, @Nonnull final Table t, final boolean act) {
 		t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
 		charAttribute(st, act, t, "TitlerColor", "true", "COLOR", "", "FALSE", "FALSE", "");
 		setKV(st, act, t, st.getInstance(), "GPHUDClient.TitlerColor", "--TITLERCOLOR--");
 		setKV(st, act, t, st.getInstance(), "Characters.TitlerColor", "<1,1,1>");
-		JSONObject mappings = new JSONObject();
+		final JSONObject mappings = new JSONObject();
 		mappings.put("attribute", "TitlerColor");
 		mappings.put("value-desc", "Please enter titler color in SL format i.e. <R,G,B> with values between 0.0 and 1.0");
 		createAlias(st, act, t, "SetTitlerColor", "characters.set", mappings);

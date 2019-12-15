@@ -22,24 +22,24 @@ public class GroupCommands {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER,description = "Join an open group")
-	public static Response join(@NotNull State st,
+	public static Response join(@NotNull final State st,
 	                            @Arguments(description = "Name of group to join",type = ArgumentType.CHARACTERGROUP)
-	                            @NotNull CharacterGroup group) {
+	                            @NotNull final CharacterGroup group) {
 
 		// is group open?
 		if (!group.isOpen()) { return new ErrorResponse("Can not join group "+group.getNameSafe()+", it is not open, you will need to be invited instead."); }
 		// does the group have a type
 		if (group.getType()!=null && !group.getType().isEmpty()) {
 			// it's a typed group, find the attribute it maps to
-			Attribute attribute = Attribute.findGroup(st.getInstance(), group.getType());
+			final Attribute attribute = Attribute.findGroup(st.getInstance(), group.getType());
 			if (!attribute.getSelfModify()) {
 				return new ErrorResponse("You can not change your " + attribute.getNameSafe() + " after character creation.");
 			}
 			// since its a typed group they /can/ self modify, we need to remove them from the old group first
-			CharacterGroup existinggroup = st.getCharacter().getGroup(group.getType());
+			final CharacterGroup existinggroup = st.getCharacter().getGroup(group.getType());
 			if (existinggroup != null) {
 				// try remove, in a weird way, note we bypass the permissions check on the target call here
-				Response remove = Management.remove(st, existinggroup, st.getCharacter());
+				final Response remove = Management.remove(st, existinggroup, st.getCharacter());
 				if (remove instanceof ErrorResponse) {
 					return new ErrorResponse("Can't switch group - would require you to leave " + existinggroup.getNameSafe() + " but this failed: " + ((ErrorResponse) remove).getMessage(st));
 				}
@@ -47,7 +47,7 @@ public class GroupCommands {
 			}
 		}
 		// well then, add tim
-		Response add=Management.add(st,group,st.getCharacter());
+		final Response add=Management.add(st,group,st.getCharacter());
 		if (add instanceof ErrorResponse) {
 			return new ErrorResponse("Failed to add to new group: "+((ErrorResponse) add).getMessage(st));
 		}
@@ -56,15 +56,15 @@ public class GroupCommands {
 
 	@Nonnull
 	@Commands(description = "Invite a character to a group", context = Context.CHARACTER)
-	public static Response invite(@Nonnull State st,
-	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to invite to")
-			                              CharacterGroup group,
-	                              @NotNull @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER)
-			                              Char target) {
+	public static Response invite(@Nonnull final State st,
+	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to invite to") final
+	                              CharacterGroup group,
+	                              @NotNull @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER) final
+	                                  Char target) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not an owner/admin for " + group.getName());
 		}
-		JSONObject invite = new JSONObject();
+		final JSONObject invite = new JSONObject();
 		invite.put("message", "factioninvite");
 		invite.put("from", st.getCharacter().getId());
 		invite.put("to", group.getId());
@@ -75,11 +75,11 @@ public class GroupCommands {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Eject a member from a group")
-	public static Response eject(@NotNull State st,
-	                             @NotNull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to eject from")
-			                             CharacterGroup group,
-	                             @NotNull @Arguments(description = "Character to eject from the group", type = ArgumentType.CHARACTER_FACTION)
-			                             Char member) {
+	public static Response eject(@NotNull final State st,
+	                             @NotNull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to eject from") final
+	                             CharacterGroup group,
+	                             @NotNull @Arguments(description = "Character to eject from the group", type = ArgumentType.CHARACTER_FACTION) final
+	                                 Char member) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not a lead/admin for " + group.getName());
 		}
@@ -93,7 +93,7 @@ public class GroupCommands {
 		if (group.isAdmin(member)) {
 			return new ErrorResponse("Will not eject " + member.getName() + " from " + group.getName() + ", they are an administrator and must be demoted first.");
 		}
-		try { group.removeMember(member); } catch (UserException e) {
+		try { group.removeMember(member); } catch (final UserException e) {
 			return new ErrorResponse("Failed to remove member - " + e.getMessage());
 		}
 		member.hudMessage("You have been removed from " + group.getName() + " by " + st.getCharacter().getName());

@@ -4,11 +4,11 @@ import javax.annotation.Nonnull;
 
 public class GSCastException extends GSInvalidExpressionException {
 	private static final long serialVersionUID=1L;
-	public GSCastException(String reason) {
+	public GSCastException(final String reason) {
 		super(reason);
 	}
 
-	public GSCastException(String reason, Throwable cause) {
+	public GSCastException(final String reason, final Throwable cause) {
 		super(reason, cause);
 	}
 

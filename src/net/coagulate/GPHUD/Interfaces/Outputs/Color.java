@@ -14,32 +14,32 @@ public class Color implements Renderable {
 	final Renderable content;
 	final String color;
 
-	public Color(String color, Renderable content) {
+	public Color(final String color, final Renderable content) {
 		this.content = content;
 		this.color = color;
 	}
 
-	public Color(String color, String content) {
+	public Color(final String color, final String content) {
 		this.content = new Text(content);
 		this.color = color;
 	}
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		return content.asText(st);
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		return "<font color=\"" + color + "\">" + content.asHtml(st, rich) + "</font>";
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
+		final Set<Renderable> r = new HashSet<>();
 		r.add(content);
 		return r;
 	}

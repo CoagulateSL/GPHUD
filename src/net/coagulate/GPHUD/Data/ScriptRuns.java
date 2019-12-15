@@ -9,22 +9,22 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ScriptRuns extends TableRow {
-	public ScriptRuns(int id) {
+	public ScriptRuns(final int id) {
 		super(id);
 	}
 
 	@Nonnull
-	public static ScriptRuns create(byte[] code, Byte[] initialiser, @Nonnull Char respondant) {
+	public static ScriptRuns create(final byte[] code, final Byte[] initialiser, @Nonnull final Char respondant) {
 		// user can only have one respondant open, this helps us get the ID but also is down to the stupidity of the HUD,
 		// and/or how painful/impractical it is to write complex IO in SL
 		GPHUD.getDB().d("delete from scriptruns where respondant=?",respondant.getId());
-		int expires=UnixTime.getUnixTime()+900;
+		final int expires=UnixTime.getUnixTime()+900;
 		GPHUD.getDB().d("insert into scriptruns(bytecode,initialiser,respondant,expires) values(?,?,?,?)",code,initialiser,respondant.getId(), expires);
 		return get(GPHUD.getDB().dqi("select id from scriptruns where initialiser=? and respondant=? and expires=?",initialiser,respondant.getId(),expires));
 	}
 
 	@Nonnull
-	public static ScriptRuns get(int id) {
+	public static ScriptRuns get(final int id) {
 		return (ScriptRuns) factoryPut("ScriptRuns", id, new ScriptRuns(id));
 	}
 
@@ -33,7 +33,7 @@ public class ScriptRuns extends TableRow {
 	public String getIdField() { return "id"; }
 
 	@Override
-	public void validate(State st) throws SystemException {
+	public void validate(final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 	}

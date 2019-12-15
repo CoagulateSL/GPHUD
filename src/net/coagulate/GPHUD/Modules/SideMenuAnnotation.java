@@ -12,7 +12,7 @@ public class SideMenuAnnotation extends SideMenu {
 	final SideMenus meta;
 	private boolean generated = true;
 
-	public SideMenuAnnotation(SideMenus meta) {
+	public SideMenuAnnotation(final SideMenus meta) {
 		generated = false;
 		this.meta = meta;
 	}

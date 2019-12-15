@@ -13,12 +13,12 @@ import javax.annotation.Nonnull;
 
 public class Management {
 	@URL.URLs(url = "/configuration/Teleportation")
-	public static void configuration(@Nonnull State st, SafeMap map) {
-		Form f= st.form();
+	public static void configuration(@Nonnull final State st, final SafeMap map) {
+		final Form f= st.form();
 		f.add(new TextHeader("Teleportation Landmarks"));
-		Table t=new Table(); f.add(t);
+		final Table t=new Table(); f.add(t);
 		t.add(new HeaderRow().add("Name").add("Region").add("Co-ordinates").add("Look at"));
-		for (Landmarks landmark:st.getInstance().getLandmarks()) {
+		for (final Landmarks landmark:st.getInstance().getLandmarks()) {
 			t.openRow();
 			t.add(landmark.getName());
 			t.add(landmark.getRegion(true).getName());

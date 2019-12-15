@@ -24,21 +24,21 @@ import javax.annotation.Nonnull;
  */
 public abstract class Messages {
 	@URLs(url = "/hud/listmessages")
-	public static void messagesListHUD(@Nonnull State st, SafeMap values) throws SystemException, UserException {
+	public static void messagesListHUD(@Nonnull final State st, final SafeMap values) throws SystemException, UserException {
 		messagesList(st, values);
 	}
 
 	@URLs(url = "/messages/list")
-	public static void messagesList(@Nonnull State st, SafeMap values) throws SystemException, UserException {
-		Message m = st.getCharacter().getMessage();
-		Form f = st.form();
+	public static void messagesList(@Nonnull final State st, final SafeMap values) throws SystemException, UserException {
+		final Message m = st.getCharacter().getMessage();
+		final Form f = st.form();
 		if (m == null) {
 			f.add(new TextError("You have no messages."));
 			return;
 		}
 		m.setActive();
-		JSONObject j = new JSONObject(m.getJSON());
-		String message = j.optString("message", "");
+		final JSONObject j = new JSONObject(m.getJSON());
+		final String message = j.optString("message", "");
 		if ("factioninvite".equalsIgnoreCase(message)) {
 			displayFactionInvite(st, values, j);
 			return;
@@ -47,10 +47,10 @@ public abstract class Messages {
 
 	}
 
-	public static void displayFactionInvite(@Nonnull State st, SafeMap values, @Nonnull JSONObject j) throws UserException, SystemException {
-		Form f = st.form();
-		Char from = Char.get(j.getInt("from"));
-		CharacterGroup to = CharacterGroup.get(j.getInt("to"));
+	public static void displayFactionInvite(@Nonnull final State st, final SafeMap values, @Nonnull final JSONObject j) throws UserException, SystemException {
+		final Form f = st.form();
+		final Char from = Char.get(j.getInt("from"));
+		final CharacterGroup to = CharacterGroup.get(j.getInt("to"));
 		f.add(new TextSubHeader("Invite"));
 		f.add("You have been invited to join the " + to.getName() + " by " + from.getName());
 		f.add(new Paragraph());

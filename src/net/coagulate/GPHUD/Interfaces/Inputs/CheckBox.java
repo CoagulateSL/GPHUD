@@ -15,9 +15,9 @@ import java.util.Set;
 public class CheckBox extends Input {
 	String name = "";
 
-	public CheckBox(String name) {this.name = name;}
+	public CheckBox(final String name) {this.name = name;}
 
-	public CheckBox(String name, String value) {
+	public CheckBox(final String name, final String value) {
 		this.name = name;
 		this.value = value;
 	}
@@ -29,7 +29,7 @@ public class CheckBox extends Input {
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		String r = "<input type=\"checkbox\" name=\"" + name + "\" ";
 		if (value != null && !value.isEmpty()) { r += "checked"; }
 		r += " />";

@@ -13,11 +13,11 @@ public class RedirectionException extends RuntimeException {
 	private static final long serialVersionUID=1L;
 	final String url;
 
-	public RedirectionException(@Nonnull SafeMap values) {
+	public RedirectionException(@Nonnull final SafeMap values) {
 		this(values.get("okreturnurl"));
 	}
 
-	public RedirectionException(String url) {
+	public RedirectionException(final String url) {
 		super("Redirecting to " + url);
 		this.url = url;
 	}

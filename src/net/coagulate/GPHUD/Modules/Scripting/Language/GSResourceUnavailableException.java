@@ -4,11 +4,11 @@ import javax.annotation.Nonnull;
 
 public class GSResourceUnavailableException extends GSException {
 	private static final long serialVersionUID=1L;
-	public GSResourceUnavailableException(String reason) {
+	public GSResourceUnavailableException(final String reason) {
 		super(reason);
 	}
 
-	public GSResourceUnavailableException(String reason, Throwable cause) {
+	public GSResourceUnavailableException(final String reason, final Throwable cause) {
 		super(reason, cause);
 	}
 

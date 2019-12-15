@@ -6,11 +6,11 @@ import javax.annotation.Nonnull;
 
 public class GSInternalError extends SystemException {
 	private static final long serialVersionUID=1L;
-	public GSInternalError(String reason) {
+	public GSInternalError(final String reason) {
 		super(reason);
 	}
 
-	public GSInternalError(String reason, Throwable cause) {
+	public GSInternalError(final String reason, final Throwable cause) {
 		super(reason, cause);
 	}
 

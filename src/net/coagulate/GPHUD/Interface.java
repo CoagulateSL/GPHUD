@@ -26,7 +26,7 @@ import static java.util.logging.Level.SEVERE;
 public abstract class Interface implements HttpRequestHandler {
 
 	@Nullable
-	public static String base = null;
+	public static String base;
 
 	public static String getNode() { return GPHUD.hostname; }
 
@@ -41,15 +41,15 @@ public abstract class Interface implements HttpRequestHandler {
 	// we dont really know about "/app" but apache does, and then hides it from us, which is both nice, and arbitary, either way really.
 	// it doesn't any more :)
 	@Nonnull
-	public static String generateURL(State st, String ending) {
+	public static String generateURL(final State st, final String ending) {
 		return "https://" + (GPHUD.DEV ? "dev." : "") + "coagulate.sl/" + base() + "/" + ending;
 	}
 
-	public static int convertVersion(@Nonnull String version) {
-		String[] versionparts = version.split("\\.");
-		int major=Integer.parseInt(versionparts[0]);
-		int minor=Integer.parseInt(versionparts[1]);
-		int bugfix=Integer.parseInt(versionparts[2]);
+	public static int convertVersion(@Nonnull final String version) {
+		final String[] versionparts = version.split("\\.");
+		final int major=Integer.parseInt(versionparts[0]);
+		final int minor=Integer.parseInt(versionparts[1]);
+		final int bugfix=Integer.parseInt(versionparts[2]);
 		if (major>99) { throw new SystemException("Major version number too high"); }
 		if (minor>99) { throw new SystemException("Minor version number too high"); }
 		if (bugfix>99) { throw new SystemException("Bugfix version number too high"); }
@@ -57,23 +57,22 @@ public abstract class Interface implements HttpRequestHandler {
 	}
 
 	@Override
-	public void handle(@Nonnull HttpRequest req, HttpResponse resp, @Nonnull HttpContext httpcontext) {
-		State st = new State(req, resp, httpcontext);
+	public void handle(@Nonnull final HttpRequest req, final HttpResponse resp, @Nonnull final HttpContext httpcontext) {
+		final State st = new State(req, resp, httpcontext);
 		try {
 			// create our state object
 
 			// get remote address.  Probably always localhost :P
-			@SuppressWarnings("deprecation")
-			HttpInetConnection connection = (HttpInetConnection) httpcontext.getAttribute(org.apache.http.protocol.ExecutionContext.HTTP_CONNECTION);
-			InetAddress ia = connection.getRemoteAddress();
+			@SuppressWarnings("deprecation") final HttpInetConnection connection = (HttpInetConnection) httpcontext.getAttribute(org.apache.http.protocol.ExecutionContext.HTTP_CONNECTION);
+			final InetAddress ia = connection.getRemoteAddress();
 
 			// the requested URI
-			String uri = req.getRequestLine().getUri();
+			final String uri = req.getRequestLine().getUri();
 
 			// get requested Host: from the headers.
-			Header[] headers = req.getAllHeaders();
+			final Header[] headers = req.getAllHeaders();
 			String host = "";
-			for (Header h : headers) {
+			for (final Header h : headers) {
 				if ("Host".equals(h.getName())) {host = h.getValue(); }
 			}
 
@@ -88,7 +87,7 @@ public abstract class Interface implements HttpRequestHandler {
 			st.host = host;
 			// process the page request
 			process(st);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// there is no INTENDED use case for this catch, each interface should have its own 'catchall' somewhere, but just in case
 			SL.report("Generic Interface caught exception", e, st);
 			GPHUD.getLogger().log(SEVERE, "Exception propagated to generic interface handler!", e);

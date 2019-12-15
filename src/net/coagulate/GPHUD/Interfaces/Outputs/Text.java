@@ -14,17 +14,17 @@ import java.util.Set;
 public class Text implements Renderable {
 	final String content;
 
-	public Text(String s) { content = s; }
+	public Text(final String s) { content = s; }
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		return content;
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		return content;
 	}
 

@@ -30,107 +30,107 @@ public class Transmission extends Thread {
 	@Nullable
 	final String url;
 	@Nullable
-	JSONObject json = null;
+	JSONObject json;
 	@Nullable
-	JSONObject jsonresponse = null;
+	JSONObject jsonresponse;
 	@Nullable
-	Objects object=null;
-	int delay = 0;
+	Objects object;
+	int delay;
 	@Nullable
-	protected Char character = null;
+	protected Char character;
 	@Nullable
-	Region region = null;
-	boolean succeeded=false;
+	Region region;
+	boolean succeeded;
 	public boolean failed() { return !succeeded; }
 	@Nullable
-	StackTraceElement[] caller=null;
-	public Transmission(@Nullable Char character, @Nonnull JSONObject json, @Nullable String oldurl) {
+	StackTraceElement[] caller;
+	public Transmission(@Nullable final Char character, @Nonnull final JSONObject json, @Nullable final String oldurl) {
 		if (debugspawn) {
-			System.out.println("Transmission to character " + character + " on url " + oldurl + " with json " + json.toString());
+			System.out.println("Transmission to character " + character + " on url " + oldurl + " with json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
 		this.character=character;
-		this.url = oldurl;
+		url = oldurl;
 		this.json = json;
 	}
 
-	public Transmission (@Nullable Objects obj, @Nonnull JSONObject json) {
+	public Transmission (@Nullable final Objects obj, @Nonnull final JSONObject json) {
 		if (debugspawn) {
-			System.out.println("Transmission to object " + obj + " with json " + json.toString());
+			System.out.println("Transmission to object " + obj + " with json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
-		this.object=obj;
-		this.url=object.getURL();
+		object =obj;
+		url =object.getURL();
 		this.json=json;
 	}
 
-	public Transmission(@Nonnull Char character, @Nonnull JSONObject json) {
+	public Transmission(@Nonnull final Char character, @Nonnull final JSONObject json) {
 		if (debugspawn) {
-			System.out.println("Transmission to character " + character + " with json " + json.toString());
+			System.out.println("Transmission to character " + character + " with json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
 		this.character = character;
-		this.url = character.getURL();
+		url = character.getURL();
 		this.json = json;
 	}
 
-	public Transmission(@Nonnull Char character, @Nonnull JSONObject json, int i) {
+	public Transmission(@Nonnull final Char character, @Nonnull final JSONObject json, final int i) {
 		if (debugspawn) {
-			System.out.println("Transmission to character " + character + " with json " + json.toString());
+			System.out.println("Transmission to character " + character + " with json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
 		this.character = character;
-		this.url = character.getURL();
-		this.delay = i;
+		url = character.getURL();
+		delay = i;
 		this.json = json;
 	}
 
-	public Transmission(@Nonnull Region region, @Nullable JSONObject message) {
+	public Transmission(@Nonnull final Region region, @Nullable final JSONObject message) {
 		if (debugspawn) {
-			System.out.println("Transmission to region " + region + " with json " + json.toString());
+			System.out.println("Transmission to region " + region + " with json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
 		this.region = region;
-		this.url = region.getURL();
+		url = region.getURL();
 		json = message;
 	}
 
-	public Transmission(@Nonnull Region region, @Nullable JSONObject message, int i) {
+	public Transmission(@Nonnull final Region region, @Nullable final JSONObject message, final int i) {
 		if (debugspawn) {
-			System.out.println("Transmission to region " + region + " with json " + json.toString());
+			System.out.println("Transmission to region " + region + " with json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
 		this.region = region;
-		this.url = region.getURL();
-		this.delay = i;
+		url = region.getURL();
+		delay = i;
 		json = message;
 	}
 
-	public Transmission(Region r, @Nullable JSONObject message, @Nullable String oldurl) {
+	public Transmission(final Region r, @Nullable final JSONObject message, @Nullable final String oldurl) {
 		if (debugspawn) {
-			System.out.println("Transmission to region " + region + " on url " + oldurl + " with json " + json.toString());
+			System.out.println("Transmission to region " + region + " on url " + oldurl + " with json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
-		this.url = oldurl;
+		url = oldurl;
 		json = message;
 	}
 
-	public Transmission(Char aChar, @Nullable JSONObject ping, @Nullable String url, int i) {
+	public Transmission(final Char aChar, @Nullable final JSONObject ping, @Nullable final String url, final int i) {
 		if (debugspawn) {
-			System.out.println("DELAYED Transmission to character " + aChar + " on url " + url + " with delay " + i + " and json " + json.toString());
+			System.out.println("DELAYED Transmission to character " + aChar + " on url " + url + " with delay " + i + " and json " + json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
-		this.json = ping;
+		json = ping;
 		this.url = url;
-		this.delay = i;
+		delay = i;
 	}
 
 
@@ -141,7 +141,7 @@ public class Transmission extends Thread {
 	@Override
 	public void run() {
 		try { runUnwrapped(); }
-		catch (Exception e) {
+		catch (final Exception e) {
 			Throwable step=e;
 			int sanity=100;
 			while (step.getCause()!=null && sanity>=0) {
@@ -150,7 +150,7 @@ public class Transmission extends Thread {
 				if (sanity==0) { GPHUD.getLogger("Transmission").log(SEVERE,"Excess exception stepping in Transmission exception reporter"); }
 			}
 			if (step.getCause()==null) {
-				SystemException se = new SystemException("Transmission caller stack trace");
+				final SystemException se = new SystemException("Transmission caller stack trace");
 				se.setStackTrace(caller);
 				step.initCause(se);
 			}
@@ -159,9 +159,9 @@ public class Transmission extends Thread {
 		}
 	}
 	public void runUnwrapped() {
-		boolean debug = false;
+		final boolean debug = false;
 		if (delay > 0) {
-			try { Thread.sleep(delay * 1000); } catch (InterruptedException e) {}
+			try { Thread.sleep(delay * 1000); } catch (final InterruptedException e) {}
 		}
 		int retries = 5;
 		if (character != null) { character.appendConveyance(new net.coagulate.GPHUD.State(character), json); }
@@ -170,42 +170,42 @@ public class Transmission extends Thread {
 		while (response == null && retries > 0) {
 			try {
 				response = sendAttempt();
-			} catch (FileNotFoundException e) {
-				GPHUD.getLogger().log(FINE, "404 on url, revoked connection while sending " + json.toString());
+			} catch (final FileNotFoundException e) {
+				GPHUD.getLogger().log(FINE, "404 on url, revoked connection while sending " + json);
 				GPHUD.purgeURL(url);
 				return;
-			} catch (MalformedURLException ex) {
-				GPHUD.getLogger().log(WARNING, "MALFORMED URL: " + url + ", revoked connection while sending " + json.toString());
+			} catch (final MalformedURLException ex) {
+				GPHUD.getLogger().log(WARNING, "MALFORMED URL: " + url + ", revoked connection while sending " + json);
 				GPHUD.purgeURL(url);
 				return;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				retries--;
 				GPHUD.getLogger().log(INFO, "IOException " + e.getMessage() + " retries=" + retries + " left");
-				try { Thread.sleep(5 * 1000); } catch (InterruptedException ee) {}
+				try { Thread.sleep(5 * 1000); } catch (final InterruptedException ee) {}
 			}
 		}
 		if (response == null) {
-			GPHUD.getLogger().log(WARNING, "Failed all retransmission attempts for " + json.toString());
+			GPHUD.getLogger().log(WARNING, "Failed all retransmission attempts for " + json);
 		}
 		if (response != null && !response.isEmpty()) {
 			try {
-				JSONObject j = new JSONObject(response);
+				final JSONObject j = new JSONObject(response);
 				jsonresponse = j;
-				String incommand = j.optString("incommand", "");
+				final String incommand = j.optString("incommand", "");
 				if ("pong".equals(incommand)) {
 					if (j.has("callback")) { Char.refreshURL(j.getString("callback")); }
 					if (j.has("callback")) { Region.refreshURL(j.getString("callback")); }
 					if (j.has("cookie")) { Cookies.refreshCookie(j.getString("cookie")); }
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				GPHUD.getLogger().log(WARNING, "Exception in response parser",e);
-				StringBuilder body= new StringBuilder(url + "\n<br>\n");
+				final StringBuilder body= new StringBuilder(url + "\n<br>\n");
 				body.append("Character:").append(character == null ? "null" : character.getNameSafe()).append("\n<br>\n");
-				for (StackTraceElement ele:caller) {
+				for (final StackTraceElement ele:caller) {
 					body.append("Caller: ").append(ele.getClassName()).append("/").append(ele.getMethodName()).append(":").append(ele.getLineNumber()).append("\n<br>\n");
 				}
 				body.append(response);
-				try { MailTools.mail("Failed response", body.toString()); } catch (MessagingException ee){
+				try { MailTools.mail("Failed response", body.toString()); } catch (final MessagingException ee){
 					GPHUD.getLogger().log(SEVERE,"Mail exception in response parser exception handler",ee);
 				}
 			}
@@ -215,8 +215,8 @@ public class Transmission extends Thread {
 
 	@Nonnull
 	private String sendAttempt() throws IOException {
-		boolean debug = false;
-		URLConnection transmission = new URL(url).openConnection();
+		final boolean debug = false;
+		final URLConnection transmission = new URL(url).openConnection();
 		transmission.setDoOutput(true);
 		transmission.setAllowUserInteraction(false);
 		transmission.setDoInput(true);
@@ -224,13 +224,13 @@ public class Transmission extends Thread {
 		transmission.setReadTimeout(35000);
 		transmission.connect();
 
-		OutputStreamWriter out = new OutputStreamWriter(transmission.getOutputStream());
-		out.write(json.toString() + "\n");
+		final OutputStreamWriter out = new OutputStreamWriter(transmission.getOutputStream());
+		out.write(json + "\n");
 		out.flush();
 		out.close();
-		BufferedReader rd = new BufferedReader(new InputStreamReader(transmission.getInputStream()));
+		final BufferedReader rd = new BufferedReader(new InputStreamReader(transmission.getInputStream()));
 		String line;
-		StringBuilder response = new StringBuilder();
+		final StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line).append("\n");
 		}

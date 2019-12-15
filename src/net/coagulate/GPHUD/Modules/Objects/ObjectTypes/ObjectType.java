@@ -21,16 +21,16 @@ public abstract class ObjectType {
 	@Nonnull
 	final JSONObject json;
 
-	protected ObjectType(State st, @Nonnull ObjectTypes object) {
-		this.state=st;
+	protected ObjectType(final State st, @Nonnull final ObjectTypes object) {
+		state =st;
 		this.object=object;
-		this.json=object.getBehaviour();
+		json =object.getBehaviour();
 	}
 
 	@Nonnull
-	public static ObjectType materialise(State st, @Nonnull ObjectTypes object) {
-		JSONObject json=object.getBehaviour();
-		String behaviour=json.optString("behaviour", "");
+	public static ObjectType materialise(final State st, @Nonnull final ObjectTypes object) {
+		final JSONObject json=object.getBehaviour();
+		final String behaviour=json.optString("behaviour", "");
 		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
 		if (behaviour.equals("PhantomTeleport")) { return new PhantomTeleporter(st,object); }
 		if (behaviour.equals("RunCommand")) { return new RunCommand(st,object); }
@@ -39,8 +39,8 @@ public abstract class ObjectType {
 	}
 
 	@Nonnull
-	public static Map<String,String> getObjectTypes(State st) {
-		Map<String,String> options=new TreeMap<>();
+	public static Map<String,String> getObjectTypes(final State st) {
+		final Map<String,String> options=new TreeMap<>();
 		options.put("ClickTeleport","Teleport user on click.");
 		options.put("PhantomTeleport","Teleport user on collision; becomes phantom.");
 		options.put("RunCommand","Causes the character to run a command when they click.");
@@ -49,10 +49,10 @@ public abstract class ObjectType {
 	}
 
 	@Nonnull
-	public static DropDownList getDropDownList(State st) {
-		DropDownList behaviours = new DropDownList("behaviour");
-		Map<String, String> types = getObjectTypes(st);
-		for (Map.Entry<String, String> entry : types.entrySet()) {
+	public static DropDownList getDropDownList(final State st) {
+		final DropDownList behaviours = new DropDownList("behaviour");
+		final Map<String, String> types = getObjectTypes(st);
+		for (final Map.Entry<String, String> entry : types.entrySet()) {
 			behaviours.add(entry.getKey(), entry.getValue());
 		}
 		return behaviours;
@@ -68,7 +68,7 @@ public abstract class ObjectType {
 	@Nonnull
 	public abstract String explainText();
 
-	public void payload(State st, @Nonnull JSONObject response) {
+	public void payload(final State st, @Nonnull final JSONObject response) {
 		response.put("mode",mode());
 	}
 
@@ -76,9 +76,9 @@ public abstract class ObjectType {
 	public abstract MODE mode();
 
 	@Nonnull
-	public Response click(State st, Char clicker) { return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
+	public Response click(final State st, final Char clicker) { return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
 	@Nonnull
-	public Response collide(State st, Char collider)  { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
+	public Response collide(final State st, final Char collider)  { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
 	enum MODE {NONE,CLICKABLE,PHANTOM}
 }

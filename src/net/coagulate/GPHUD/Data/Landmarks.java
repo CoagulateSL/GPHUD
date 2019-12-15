@@ -12,19 +12,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Landmarks extends TableRow {
-	public Landmarks(int id) {
+	public Landmarks(final int id) {
 		super(id);
 	}
 
 	@Nonnull
-	public static Landmarks get(int id) {
+	public static Landmarks get(final int id) {
 		return (Landmarks) factoryPut("Landmarks", id, new Landmarks(id));
 	}
 
 	@Nonnull
-	public static Set<Landmarks> getAll(@Nonnull Instance instance) {
-		Set<Landmarks> results=new HashSet<>();
-		for (ResultsRow row:GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
+	public static Set<Landmarks> getAll(@Nonnull final Instance instance) {
+		final Set<Landmarks> results=new HashSet<>();
+		for (final ResultsRow row:GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
 			results.add(get(row.getIntNullable("id")));
 		}
 		return results;
@@ -35,30 +35,30 @@ public class Landmarks extends TableRow {
 	public String getIdField() { return "id"; }
 
 	@Override
-	public void validate(State st) throws SystemException {
+	public void validate(final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 	}
 
-	public static void obliterate(@Nonnull Instance instance, String name) {
+	public static void obliterate(@Nonnull final Instance instance, final String name) {
 		GPHUD.getDB().d("delete landmarks from landmarks inner join regions on landmarks.regionid=regions.regionid where regions.instanceid=? and landmarks.name like ?",instance.getId(),name);
 	}
 
 	@Nullable
-	public static Landmarks find(@Nonnull Instance instance, String name) {
+	public static Landmarks find(@Nonnull final Instance instance, final String name) {
 		try {
-			Integer id=GPHUD.getDB().dqi("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like ?",instance.getId(),name);
+			final Integer id=GPHUD.getDB().dqi("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like ?",instance.getId(),name);
 			return new Landmarks(id);
-		} catch (NoDataException e) {return null;}
+		} catch (final NoDataException e) {return null;}
 	}
 
-	public static void create(@Nonnull Region region, String name, float x, float y, float z, float lax, float lay, float laz) {
+	public static void create(@Nonnull final Region region, final String name, final float x, final float y, final float z, final float lax, final float lay, final float laz) {
 		obliterate(region.getInstance(),name);
 		GPHUD.getDB().d("insert into landmarks(regionid,name,x,y,z,lookatx,lookaty,lookatz) values(?,?,?,?,?,?,?,?)",region.getId(),name,x,y,z,lax,lay,laz);
 	}
 
 	@Nonnull
-	public String getHUDRepresentation(boolean allowretired) {
+	public String getHUDRepresentation(final boolean allowretired) {
 		String tp="";
 		tp+=getRegion(allowretired).getGlobalCoordinates();
 		tp+="|";
@@ -78,7 +78,7 @@ public class Landmarks extends TableRow {
 	}
 
 	@Nonnull
-	public Region getRegion(boolean allowretired) {
+	public Region getRegion(final boolean allowretired) {
 		return Region.get(getIntNullable("regionid"),allowretired);
 	}
 

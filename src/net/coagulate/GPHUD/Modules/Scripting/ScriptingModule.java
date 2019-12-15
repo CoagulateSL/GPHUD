@@ -13,16 +13,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class ScriptingModule extends ModuleAnnotation {
-	public ScriptingModule(String name, ModuleDefinition annotation) {
+	public ScriptingModule(final String name, final ModuleDefinition annotation) {
 		super(name, annotation);
 	}
 
 	@Nullable
 	@Override
-	public Command getCommand(@Nonnull State st, @Nonnull String commandname) {
+	public Command getCommand(@Nonnull final State st, @Nonnull final String commandname) {
 		if (commandname.equalsIgnoreCase("characterresponse") ||
 			commandname.equalsIgnoreCase("stringresponse")) { return super.getCommand(st,commandname); }
-		Scripts script=Scripts.findOrNull(st,commandname.replaceFirst("gs",""));
+		final Scripts script=Scripts.findOrNull(st,commandname.replaceFirst("gs",""));
 		if (script==null) { throw new UserException("No script named "+commandname+" exists"); }
 		return new ScriptingCommand(script);
 	}
@@ -30,10 +30,10 @@ public class ScriptingModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Map<String, Command> getCommands(@Nonnull State st) {
-		Map<String,Command> commands=new HashMap<>();
-		Set<Scripts> scripts=st.getInstance().getScripts();
-		for (Scripts script:scripts) {
+	public Map<String, Command> getCommands(@Nonnull final State st) {
+		final Map<String,Command> commands=new HashMap<>();
+		final Set<Scripts> scripts=st.getInstance().getScripts();
+		for (final Scripts script:scripts) {
 			commands.put(script.getName(),new ScriptingCommand(script));
 		}
 		return commands;

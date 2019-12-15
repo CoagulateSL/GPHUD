@@ -32,14 +32,14 @@ public abstract class Module {
 	final ModuleDefinition annotation;
 
 
-	public Module(String name, ModuleDefinition annotation) {
+	public Module(final String name, final ModuleDefinition annotation) {
 		this.name = name;
 		this.annotation = annotation;
 		Modules.register(this);
 
 	}
 
-	protected static void checkPublicStatic(@Nonnull Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -48,7 +48,7 @@ public abstract class Module {
 		}
 	}
 
-	public void kvConfigPage(@Nonnull State st) {
+	public void kvConfigPage(@Nonnull final State st) {
 		st.form().add(new TextHeader("KV Configuration for module " + getName()));
 		GenericConfiguration.page(st, new SafeMap(), st.getInstance(), st.simulate(st.getCharacterNullable()), this);
 	}
@@ -58,8 +58,8 @@ public abstract class Module {
 	public String getName() { return name; }
 
 	@Nonnull
-	Response run(@Nonnull State st, String commandname, @Nonnull String[] args) throws UserException, SystemException {
-		Command command = getCommand(st, commandname);
+	Response run(@Nonnull final State st, final String commandname, @Nonnull final String[] args) throws UserException, SystemException {
+		final Command command = getCommand(st, commandname);
 		return command.run(st, args);
 	}
 
@@ -67,7 +67,7 @@ public abstract class Module {
 	public abstract Set<SideSubMenu> getSideSubMenus(State st);
 
 	@Nonnull
-	public String requires(State st) { return annotation.requires(); }
+	public String requires(final State st) { return annotation.requires(); }
 
 	@Nullable
 	public abstract URL getURL(State st, String url);
@@ -92,19 +92,19 @@ public abstract class Module {
 	@Nonnull
 	public abstract Map<String, Command> getCommands(State st);
 
-	public boolean hasConfig(State st) { return alwaysHasConfig(); }
+	public boolean hasConfig(final State st) { return alwaysHasConfig(); }
 
-	public boolean dependanciesEnabled(State st) {
+	public boolean dependanciesEnabled(final State st) {
 		if (requires(st).isEmpty()) { return true; }
-		String[] deps = requires(st).split(",");
-		for (String dep : deps) {
+		final String[] deps = requires(st).split(",");
+		for (final String dep : deps) {
 			if (!Modules.get(null, dep).isEnabled(st)) { return false; }
 		}
 		return true;
 	}
 
-	public boolean isEnabled(@Nullable State st) throws UserException, SystemException {
-		boolean debug = false;
+	public boolean isEnabled(@Nullable final State st) throws UserException, SystemException {
+		final boolean debug = false;
 		if (!canDisable()) {
 			return true;
 		}
@@ -114,7 +114,7 @@ public abstract class Module {
 		if (!dependanciesEnabled(st)) {
 			return false;
 		}
-		String enabled = st.getKV(getName() + ".enabled").value();
+		final String enabled = st.getKV(getName() + ".enabled").value();
 		if (enabled == null || enabled.isEmpty()) {
 			return !defaultDisable();
 		}
@@ -139,11 +139,11 @@ public abstract class Module {
 	protected abstract void initialiseInstance(State st);
 
 	@Nonnull
-	public Map<String, KV> getKVAppliesTo(State st, TableRow dbo) {
-		Map<String, KV> fullset = getKVDefinitions(st);
-		Map<String, KV> filtered = new TreeMap<>();
-		for (Map.Entry<String, KV> entry : fullset.entrySet()) {
-			KV v = entry.getValue();
+	public Map<String, KV> getKVAppliesTo(final State st, final TableRow dbo) {
+		final Map<String, KV> fullset = getKVDefinitions(st);
+		final Map<String, KV> filtered = new TreeMap<>();
+		for (final Map.Entry<String, KV> entry : fullset.entrySet()) {
+			final KV v = entry.getValue();
 			if (v.appliesTo(dbo)) {
 				filtered.put(entry.getKey(), v);
 			}
@@ -168,22 +168,22 @@ dead code?
     }
     */
 
-	public void validateKV(State st, @Nonnull String key) {
+	public void validateKV(final State st, @Nonnull final String key) {
 		if (getKVDefinitions(st).containsKey(key.toLowerCase())) {
-			throw new SystemException("KV does not exist [" + key + "] in [" + this.getName() + "]");
+			throw new SystemException("KV does not exist [" + key + "] in [" + getName() + "]");
 		}
 	}
 
-	public void validatePermission(State st, @Nonnull String permission) {
-		Map<String, Permission> perms = getPermissions(st);
+	public void validatePermission(final State st, @Nonnull final String permission) {
+		final Map<String, Permission> perms = getPermissions(st);
 		if (!perms.containsKey(permission.toLowerCase())) {
-			throw new SystemException("Permission does not exist [" + permission + "] in [" + this.getName() + "]");
+			throw new SystemException("Permission does not exist [" + permission + "] in [" + getName() + "]");
 		}
 	}
 
-	public void validateCommand(State st, @Nonnull String command) {
+	public void validateCommand(final State st, @Nonnull final String command) {
 		if (!getCommands(st).containsKey(command.toLowerCase())) {
-			throw new SystemException("Command does not exist [" + command + "] in [" + this.getName() + "]");
+			throw new SystemException("Command does not exist [" + command + "] in [" + getName() + "]");
 		}
 	}
 
@@ -191,12 +191,12 @@ dead code?
 		return annotation.forceConfig();
 	}
 
-	public void addTemplateDescriptions(State st, Map<String, String> templates) {}
+	public void addTemplateDescriptions(final State st, final Map<String, String> templates) {}
 
-	public void addTemplateMethods(State st, Map<String, Method> ret) { }
+	public void addTemplateMethods(final State st, final Map<String, Method> ret) { }
 
 	@Nonnull
-	public Set<CharacterAttribute> getAttributes(State st) {
+	public Set<CharacterAttribute> getAttributes(final State st) {
 		return new TreeSet<>();
 	}
 

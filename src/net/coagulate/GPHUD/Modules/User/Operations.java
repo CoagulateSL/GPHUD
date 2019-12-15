@@ -23,16 +23,16 @@ public abstract class Operations {
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, permitScripting = false, description = "Set your USER password (via authorised SL login ONLY)", permitUserWeb = false,permitObject = false)
-	public static Response setPassword(@Nonnull State st,
-	                                   @Nonnull @Arguments(description = "New password", type = ArgumentType.PASSWORD)
-			                                   String password) throws SystemException, UserException {
+	public static Response setPassword(@Nonnull final State st,
+	                                   @Nonnull @Arguments(description = "New password", type = ArgumentType.PASSWORD) final
+	                                   String password) throws SystemException, UserException {
 		if (st.getSourcedeveloper() != null && st.getSourcedeveloper().getId() != 1) {
 			throw new SystemException("RESTRICTED COMMAND");
 		}
 		if (st.getAvatarNullable() == null) {
 			return new ErrorResponse("Not connected to any user account?  Perhaps you need to register (via User.Register).  Session did not derive a USER context.");
 		}
-		try { st.getAvatarNullable().setPassword(password, "Via GPHUD"); } catch (UserException e) {
+		try { st.getAvatarNullable().setPassword(password, "Via GPHUD"); } catch (final UserException e) {
 			return new ErrorResponse(e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Replace", "Password", "[CENSORED]", "[CENSORED]", "User set password.");

@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 public class GenericXP extends QuotaedXP {
 	private final String myname;
 
-	public GenericXP(String name) {
+	public GenericXP(final String name) {
 		super(-1);
 		myname = name;
 	}
@@ -23,13 +23,13 @@ public class GenericXP extends QuotaedXP {
 	public String getName() { return myname; }
 
 	@Nonnull
-	public String poolName(State st) {return "Experience." + myname;}
+	public String poolName(final State st) {return "Experience." + myname;}
 
 	@Nonnull
-	public String quotaKV(State st) {return "Experience." + myname + "Limit"; }
+	public String quotaKV(final State st) {return "Experience." + myname + "Limit"; }
 
 	@Nonnull
-	public String periodKV(State st) { return "Experience." + myname + "Period"; }
+	public String periodKV(final State st) { return "Experience." + myname + "Period"; }
 
 	public Module getModule() { return Modules.get(null, "Experience"); }
 

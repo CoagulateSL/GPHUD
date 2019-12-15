@@ -21,17 +21,17 @@ public class MenuArgument extends Argument {
 	final Command command;
 	final JSONObject meta;
 	@Nullable
-	String override = null;
+	String override;
 
-	public MenuArgument(Command command, JSONObject definition) {
+	public MenuArgument(final Command command, final JSONObject definition) {
 		super();
 		this.command = command;
-		this.meta = definition;
+		meta = definition;
 	}
 
 	@Nonnull
-	public List<String> getChoices(State st) throws UserException, SystemException {
-		List<String> options = new ArrayList<>();
+	public List<String> getChoices(final State st) throws UserException, SystemException {
+		final List<String> options = new ArrayList<>();
 		for (int i = 1; i <= 12; i++) {
 			if (meta.has("button" + i)) {
 				options.add(meta.getString("button" + i));
@@ -81,7 +81,7 @@ public class MenuArgument extends Argument {
 	}
 
 	@Override
-	public void overrideDescription(String n) {
+	public void overrideDescription(final String n) {
 		override = n;
 	}
 

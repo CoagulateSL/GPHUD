@@ -12,12 +12,12 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class OKResponse extends TextOK implements Response {
-	public OKResponse(String message) { super(message); }
+	public OKResponse(final String message) { super(message); }
 
 	@Nonnull
 	@Override
-	public JSONObject asJSON(State st) {
-		JSONObject j = new JSONObject();
+	public JSONObject asJSON(final State st) {
+		final JSONObject j = new JSONObject();
 		j.put("message", asText(st));
 		return j;
 	}

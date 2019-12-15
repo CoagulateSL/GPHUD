@@ -24,11 +24,11 @@ import java.util.TreeSet;
  */
 public class PermissionsGroup extends TableRow {
 
-	protected PermissionsGroup(int id) { super(id); }
+	protected PermissionsGroup(final int id) { super(id); }
 
 	@Nullable
-	public static PermissionsGroup resolve(@Nonnull State st, String v) {
-		int id = new PermissionsGroup(-1).resolveToID(st, v, true);
+	public static PermissionsGroup resolve(@Nonnull final State st, final String v) {
+		final int id = new PermissionsGroup(-1).resolveToID(st, v, true);
 		if (id == 0) { return null; }
 		return get(id);
 	}
@@ -40,7 +40,7 @@ public class PermissionsGroup extends TableRow {
 	 * @return A Region representation
 	 */
 	@Nonnull
-	public static PermissionsGroup get(int id) {
+	public static PermissionsGroup get(final int id) {
 		return (PermissionsGroup) factoryPut("PermissionsGroup", id, new PermissionsGroup(id));
 	}
 
@@ -51,11 +51,11 @@ public class PermissionsGroup extends TableRow {
 	 * @return Region object for that region, or null if none is found.
 	 */
 	@Nullable
-	public static PermissionsGroup find(String name, @Nonnull Instance i) {
+	public static PermissionsGroup find(final String name, @Nonnull final Instance i) {
 		try {
-			Integer id = GPHUD.getDB().dqi("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?", name, i.getId());
+			final Integer id = GPHUD.getDB().dqi("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?", name, i.getId());
 			return get(id);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -97,16 +97,16 @@ public class PermissionsGroup extends TableRow {
 	 * @param st State
 	 * @return Set of String permissions
 	 */
-	public Set<String> getPermissions(@Nonnull State st) {
+	public Set<String> getPermissions(@Nonnull final State st) {
 		if (!st.permissionsGroupCache.containsKey(getId())) {
 
-			Set<String> permissions = new TreeSet<>();
-			Results results = dq("select permission from permissions where permissionsgroupid=?", getId());
-			for (ResultsRow r : results) {
+			final Set<String> permissions = new TreeSet<>();
+			final Results results = dq("select permission from permissions where permissionsgroupid=?", getId());
+			for (final ResultsRow r : results) {
 				try {
 					//Modules.validatePermission(st,r.getString()); - don't validate, some left over perms might be in the DB
 					permissions.add(r.getStringNullable());
-				} catch (IllegalArgumentException e) {
+				} catch (final IllegalArgumentException e) {
 					st.logger().warning("Permission exists in database but not in schema - [" + r.getStringNullable() + "]");
 				}
 			}
@@ -122,10 +122,10 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nonnull
 	public Set<PermissionsGroupMembership> getMembers() {
-		Set<PermissionsGroupMembership> members = new HashSet<>();
-		Results results = dq("select avatarid,caninvite,cankick from permissionsgroupmembers where permissionsgroupid=?", getId());
-		for (ResultsRow r : results) {
-			PermissionsGroupMembership record = new PermissionsGroupMembership();
+		final Set<PermissionsGroupMembership> members = new HashSet<>();
+		final Results results = dq("select avatarid,caninvite,cankick from permissionsgroupmembers where permissionsgroupid=?", getId());
+		for (final ResultsRow r : results) {
+			final PermissionsGroupMembership record = new PermissionsGroupMembership();
 			record.avatar = User.get(r.getIntNullable("avatarid"));
 			record.caninvite = false;
 			if (r.getIntNullable("caninvite") == 1) { record.caninvite = true; }
@@ -149,13 +149,13 @@ public class PermissionsGroup extends TableRow {
 	 * @param st State
 	 * @return true if the current avatar can invite to this group
 	 */
-	public boolean canInvite(@Nonnull State st) {
+	public boolean canInvite(@Nonnull final State st) {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
-			int inviteflag = dqi( "select caninvite from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
+			final int inviteflag = dqi( "select caninvite from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
 			if (inviteflag == 1) { return true; }
 			return false;
-		} catch (@Nonnull NullPointerException | NoDataException e) { return false; }
+		} catch (@Nonnull final NullPointerException | NoDataException e) { return false; }
 	}
 
 	/**
@@ -164,13 +164,13 @@ public class PermissionsGroup extends TableRow {
 	 * @param st State
 	 * @return true if the current avatar can eject from this group
 	 */
-	public boolean canEject(@Nonnull State st) {
+	public boolean canEject(@Nonnull final State st) {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
-			int inviteflag = dqi( "select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
+			final int inviteflag = dqi( "select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), st.getAvatarNullable().getId());
 			if (inviteflag == 1) { return true; }
 			return false;
-		} catch (@Nonnull NullPointerException | NoDataException e) { return false; }
+		} catch (@Nonnull final NullPointerException | NoDataException e) { return false; }
 	}
 
 	/**
@@ -179,8 +179,8 @@ public class PermissionsGroup extends TableRow {
 	 * @param avatar Avatar to add to the group
 	 * @throws UserException Avatar can not be added, e.g. is already in group
 	 */
-	public void addMember(@Nonnull User avatar) throws UserException {
-		int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
+	public void addMember(@Nonnull final User avatar) throws UserException {
+		final int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		if (exists > 0) { throw new UserException("Avatar is already a member of group?"); }
 		d("insert into permissionsgroupmembers(permissionsgroupid,avatarid) values(?,?)", getId(), avatar.getId());
 	}
@@ -191,8 +191,8 @@ public class PermissionsGroup extends TableRow {
 	 * @param avatar Avatar to remove from the group
 	 * @throws UserException If the user can not be removed, such as not being in the group
 	 */
-	public void removeMember(@Nonnull User avatar) throws UserException {
-		int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
+	public void removeMember(@Nonnull final User avatar) throws UserException {
+		final int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		d("delete from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		if (exists == 0) { throw new UserException("Avatar not in group."); }
 	}
@@ -205,8 +205,8 @@ public class PermissionsGroup extends TableRow {
 	 * @param cankick   Set the avatar's ability to remove other avatars from this group
 	 * @throws UserException If the user's permissions can not be updated, i.e. not in the group
 	 */
-	public void setUserPermissions(@Nonnull User a, Boolean caninvite, Boolean cankick) throws UserException {
-		int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), a.getId());
+	public void setUserPermissions(@Nonnull final User a, final Boolean caninvite, final Boolean cankick) throws UserException {
+		final int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), a.getId());
 		if (exists == 0) { throw new UserException("Avatar not in group."); }
 		int inviteval = 0;
 		if (caninvite) { inviteval = 1; }
@@ -222,9 +222,9 @@ public class PermissionsGroup extends TableRow {
 	 * @param permission Name of permission to add.
 	 * @throws UserException If the permissions is invalid, already added, etc.
 	 */
-	public void addPermission(State st, @Nonnull String permission) throws UserException {
+	public void addPermission(final State st, @Nonnull final String permission) throws UserException {
 		Modules.validatePermission(st, permission);
-		int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission like ?", getId(), permission);
+		final int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission like ?", getId(), permission);
 		if (exists != 0) { throw new UserException("Permission already exists on group."); }
 		d("insert into permissions(permissionsgroupid,permission) values(?,?)", getId(), permission);
 	}
@@ -235,8 +235,8 @@ public class PermissionsGroup extends TableRow {
 	 * @param permission Permission to remove
 	 * @throws UserException If the permission can not be removed, e.g. is not part of the group.
 	 */
-	public void removePermission(String permission) throws UserException {
-		int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission=?", getId(), permission);
+	public void removePermission(final String permission) throws UserException {
+		final int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission=?", getId(), permission);
 		if (exists == 0) { throw new UserException("Permission does not exist in group."); }
 		d("delete from permissions where permissionsgroupid=? and permission=?", getId(), permission);
 	}
@@ -247,10 +247,10 @@ public class PermissionsGroup extends TableRow {
 	@Nullable
 	public String getKVIdField() { return null; }
 
-	public void flushKVCache(State st) {}
+	public void flushKVCache(final State st) {}
 
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) {
@@ -260,8 +260,8 @@ public class PermissionsGroup extends TableRow {
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
 
-	public boolean hasPermission(@Nonnull State st, String fullname) {
-		for (String permission:getPermissions(st)) {
+	public boolean hasPermission(@Nonnull final State st, final String fullname) {
+		for (final String permission:getPermissions(st)) {
 			if (permission.equalsIgnoreCase(fullname)) { return true; }
 		}
 		return false;

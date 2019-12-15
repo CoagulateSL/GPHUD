@@ -22,7 +22,7 @@ import java.util.*;
 public class SQL {
 	@URLs(url = "/introspection/sql")
 	@SideSubMenu.SideSubMenus(name = "SQL", priority = 9999)
-	public static void sqlIndex(@Nonnull State st, SafeMap values) throws UserException {
+	public static void sqlIndex(@Nonnull final State st, final SafeMap values) throws UserException {
 		if (!DBConnection.sqlLogging()) {
 			st.form().add(new TextError("SQL auditing is disabled in this installation."));
 			return;
@@ -33,21 +33,21 @@ public class SQL {
 			return;
 		}
 
-		Map<String, Integer> count = new HashMap<>();
-		Map<String, Long> time = new HashMap<>();
-		Map<String, Double> per = new HashMap<>();
+		final Map<String, Integer> count = new HashMap<>();
+		final Map<String, Long> time = new HashMap<>();
+		final Map<String, Double> per = new HashMap<>();
 
 		GPHUD.getDB().getSqlLogs(count, time, per);
 
-		Map<Integer, Set<Row>> bycount = new TreeMap<>(Collections.reverseOrder());
-		Map<Long, Set<Row>> bytime = new TreeMap<>(Collections.reverseOrder());
-		Map<Double, Set<Row>> byper = new TreeMap<>(Collections.reverseOrder());
+		final Map<Integer, Set<Row>> bycount = new TreeMap<>(Collections.reverseOrder());
+		final Map<Long, Set<Row>> bytime = new TreeMap<>(Collections.reverseOrder());
+		final Map<Double, Set<Row>> byper = new TreeMap<>(Collections.reverseOrder());
 
-		for (Map.Entry<String, Integer> entry : count.entrySet()) {
-			String sql = entry.getKey();
-			int c = entry.getValue();
-			long t = time.get(sql);
-			Row newrow = new Row();
+		for (final Map.Entry<String, Integer> entry : count.entrySet()) {
+			final String sql = entry.getKey();
+			final int c = entry.getValue();
+			final long t = time.get(sql);
+			final Row newrow = new Row();
 			newrow.add(c);
 			newrow.add(sql);
 			newrow.add(t + "ms");
@@ -60,7 +60,7 @@ public class SQL {
 			if (bytime.containsKey(t)) { rowset = bytime.get(t); }
 			rowset.add(newrow);
 			bytime.put(t, rowset);
-			double avg = ((double)t) / ((double)c);
+			final double avg = ((double)t) / ((double)c);
 			rowset = new HashSet<>();
 			if (byper.containsKey(avg)) { rowset = byper.get(avg); }
 			rowset.add(newrow);
@@ -68,27 +68,27 @@ public class SQL {
 		}
 
 
-		Form f = st.form();
+		final Form f = st.form();
 		f.add(new TextSubHeader("By per call execution time"));
 		Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
-		for (Set<Row> set : byper.values()) {
-			for (Row r : set) { t.add(r); }
+		for (final Set<Row> set : byper.values()) {
+			for (final Row r : set) { t.add(r); }
 		}
 		f.add(new TextSubHeader("By total execution time"));
 		t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
-		for (Set<Row> set : bytime.values()) {
-			for (Row r : set) { t.add(r); }
+		for (final Set<Row> set : bytime.values()) {
+			for (final Row r : set) { t.add(r); }
 		}
 		f.add(new TextSubHeader("By execution count"));
 		t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
-		for (Set<Row> set : bycount.values()) {
-			for (Row r : set) { t.add(r); }
+		for (final Set<Row> set : bycount.values()) {
+			for (final Row r : set) { t.add(r); }
 		}
 
 

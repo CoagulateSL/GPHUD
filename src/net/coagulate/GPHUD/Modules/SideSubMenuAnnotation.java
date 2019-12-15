@@ -21,9 +21,9 @@ public class SideSubMenuAnnotation extends SideSubMenu {
 	final URL url;
 	private boolean generated = true;
 
-	public SideSubMenuAnnotation(@Nonnull Method m) throws UserException, SystemException {
+	public SideSubMenuAnnotation(@Nonnull final Method m) throws UserException, SystemException {
 		generated = false;
-		this.meta = m.getAnnotation(SideSubMenus.class);
+		meta = m.getAnnotation(SideSubMenus.class);
 		method = m;
 		url = Modules.getURL(null, m.getAnnotation(URLs.class).url());
 	}

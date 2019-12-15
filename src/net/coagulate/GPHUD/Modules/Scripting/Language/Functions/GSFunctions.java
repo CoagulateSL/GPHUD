@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GSFunctions {
-	public static Method get(String functionname) {
+	public static Method get(final String functionname) {
 		if (gsfunctions.containsKey(functionname)) { return gsfunctions.get(functionname); }
 		throw new GSUnknownIdentifier("Function call "+functionname+" is not defined.");
 	}
@@ -30,7 +30,7 @@ public class GSFunctions {
 	}
 
 	private static final Map<String, Method> gsfunctions=new HashMap<>();
-	public static void register(String string,Method method) {
+	public static void register(final String string, final Method method) {
 		if (gsfunctions.containsKey(string)) { throw new SystemException("Duplicate definition for gsFunction "+string); }
 		gsfunctions.put(string,method);
 	}

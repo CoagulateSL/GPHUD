@@ -42,13 +42,13 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
 public abstract class Login {
 	@Nonnull
 	@Commands(context = Context.AVATAR, permitConsole = false, permitUserWeb = false, permitScripting =false,description = "Register this session as a character connection",permitObject = false)
-	public static Response login(@Nonnull State st,
-	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128,mandatory = false)
-			                             String version,
-	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the HUD that is connecting", max = 128,mandatory = false)
-			                             String versiondate,
-	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128,mandatory = false)
-			                             String versiontime
+	public static Response login(@Nonnull final State st,
+	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the HUD that is connecting", max = 128,mandatory = false) final
+	                             String version,
+	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the HUD that is connecting", max = 128,mandatory = false) final
+	                                 String versiondate,
+	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128,mandatory = false) final
+	                                 String versiontime
 	) throws UserException, SystemException {
 		final boolean debug = false;
 		////// CHANGE ALL THIS, HAVE A
@@ -56,58 +56,58 @@ public abstract class Login {
 		////// THIS IS IMPORTANT TO RESOLVE A TARGET FROM AN AVATAR LATER WHEN TARGETTING FOR EXAMPLE
 
 		String url = null;
-		if (st.json() != null) { try { url = st.json().getString("callback"); } catch (JSONException e) {} }
+		if (st.json() != null) { try { url = st.json().getString("callback"); } catch (final JSONException e) {} }
 		if (url == null || "".equals(url)) {
 			st.logger().log(WARNING, "No callback URL sent with character registration");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
-		boolean autocreate = st.getKV("Instance.AutoNameCharacter").boolValue();
-		Char character = PrimaryCharacters.getPrimaryCharacter(st, autocreate);
+		final boolean autocreate = st.getKV("Instance.AutoNameCharacter").boolValue();
+		final Char character = PrimaryCharacters.getPrimaryCharacter(st, autocreate);
 		if (character == null) {
 			if (autocreate) {
 				throw new UserException("Failed to get/create a character for user " + st.getAvatarNullable());
 			} // autocreate or die :P
 			// if not auto create, offer "characters.create" i guess
-			JSONResponse response = new JSONResponse(Modules.getJSONTemplate(st, "characters.create"));
+			final JSONResponse response = new JSONResponse(Modules.getJSONTemplate(st, "characters.create"));
 			response.asJSON(st).put("hudtext", "Creating character...").put("hudcolor", "<1.0,0.75,0.75>").put("titlertext", "Creating character...").put("titlercolor", "<1.0,0.75,0.75>").put("message", "Welcome.  You do not have any characters, please create a new one.");
 			return response;
 		}
 		// we have a character at least
 		// before actually logging it in, we should check that it is 'complete'
 		st.getCharacter().setURL(url);
-		Region region = st.getRegion();
+		final Region region = st.getRegion();
 		st.getCharacter().setRegion(region);
 		character.setPlayedBy(st.getAvatarNullable());
-		State simulate = st.simulate(character);
-		String initscript=simulate.getKV("Instance.CharInitScript").toString();
+		final State simulate = st.simulate(character);
+		final String initscript=simulate.getKV("Instance.CharInitScript").toString();
 		String loginmessage="";
 		if (initscript!=null && (!initscript.isEmpty())) {
 			// let the init script have a "run"
-			Scripts init=Scripts.findOrNull(simulate, initscript);
+			final Scripts init=Scripts.findOrNull(simulate, initscript);
 			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; } else {
-				GSVM initialisecharacter = new GSVM(init.getByteCode());
+				final GSVM initialisecharacter = new GSVM(init.getByteCode());
 				initialisecharacter.invokeOnExit("characters.login");
-				Response response = initialisecharacter.execute(simulate);
+				final Response response = initialisecharacter.execute(simulate);
 				if (initialisecharacter.suspended()) { // bail here
 					return response;
 				} // else carry on and discard the response
 			}
 		}
-		for (Attribute a : st.getAttributes()) {
+		for (final Attribute a : st.getAttributes()) {
 			if (a.getRequired()) {
-				Attribute.ATTRIBUTETYPE type = a.getType();
+				final Attribute.ATTRIBUTETYPE type = a.getType();
 				switch (type) {
 					case TEXT: // mandatory text doesn't work at this time
 					case FLOAT:
 					case INTEGER:
-						String value = simulate.getRawKV(character,"characters." + a.getName());
+						final String value = simulate.getRawKV(character,"characters." + a.getName());
 						if (value == null || value.isEmpty()) {
-							KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
+							final KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
 							Float max=null;
 							if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
 							String maxstring="";
 							if (max!=null && max>0) { maxstring=", which must be no greater than "+max; }
-							JSONObject json = new JSONObject();
+							final JSONObject json = new JSONObject();
 							json.put("hudtext", "Initialising character...").put("hudcolor", "<1.0,0.75,0.75>")
 									.put("titlertext", "Initialising character...").put("titlercolor", "<1.0,0.75,0.75>")
 									.put("message", "Character creation requires you to input attribute " + a.getName()+maxstring);
@@ -123,7 +123,7 @@ public abstract class Login {
 						break;
 					case GROUP:
 						if (character.getGroup(a.getSubType()) == null) {
-							JSONObject json = new JSONObject();
+							final JSONObject json = new JSONObject();
 							json.put("hudtext", "Initialising character...").put("hudcolor", "<1.0,0.75,0.75>")
 									.put("titlertext", "Initialising character...").put("titlercolor", "<1.0,0.75,0.75>")
 									.put("message", "Character creation requires you to select a choice for attribute " + a.getName());
@@ -153,13 +153,13 @@ public abstract class Login {
         loginmessage+="\n\n";
         loginmessage+="Instance MOTD goes here";
         */
-		String oldavatarurl = st.getCharacter().getURL();
+		final String oldavatarurl = st.getCharacter().getURL();
 		if (oldavatarurl != null && !oldavatarurl.equals(url)) {
-			JSONObject shutdownjson = new JSONObject().put("incommand", "shutdown").put("shutdown", "Replaced by new registration");
-			Transmission shutdown = new Transmission((Char) null, shutdownjson, oldavatarurl);
+			final JSONObject shutdownjson = new JSONObject().put("incommand", "shutdown").put("shutdown", "Replaced by new registration");
+			final Transmission shutdown = new Transmission((Char) null, shutdownjson, oldavatarurl);
 			shutdown.start();
 		}
-		JSONObject registeringjson = new JSONObject().put("incommand", "registering");
+		final JSONObject registeringjson = new JSONObject().put("incommand", "registering");
 		String regmessage = "";
 		if (st.getInstance().getOwner().getId() == st.getAvatarNullable().getId()) {
 			// is instance owner
@@ -173,19 +173,19 @@ public abstract class Login {
 			regmessage = GPHUD.serverVersion();
 		}
 		registeringjson.put("message", regmessage);
-		Transmission registering = new Transmission((Char) null, registeringjson, url);
+		final Transmission registering = new Transmission((Char) null, registeringjson, url);
 		//noinspection CallToThreadRun
 		registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
 		Visits.initVisit(st, st.getCharacter(), region);
 		if (version != null && versiondate != null && versiontime != null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
 			region.recordHUDVersion(st, version, versiondate, versiontime);
 		}
-		Instance instance = st.getInstance();
-		String cookie = Cookies.generate(st.getAvatarNullable(), st.getCharacter(), instance, true);
-		JSONObject legacymenu = Modules.getJSONTemplate(st, "menus.main");
-		JSONObject rawresponse = new JSONObject();
+		final Instance instance = st.getInstance();
+		final String cookie = Cookies.generate(st.getAvatarNullable(), st.getCharacter(), instance, true);
+		final JSONObject legacymenu = Modules.getJSONTemplate(st, "menus.main");
+		final JSONObject rawresponse = new JSONObject();
 		if (st.hasModule("Experience")) {
-			int apremain = abilityPointsRemaining(st);
+			final int apremain = abilityPointsRemaining(st);
 			if (apremain > 0) {
 				new Transmission(st.getCharacter(), Modules.getJSONTemplate(st, "characters.spendabilitypoint"), 1).start();
 			}
@@ -197,7 +197,7 @@ public abstract class Login {
 		rawresponse.put("messagecount", st.getCharacter().messages());
 		st.getCharacter().initialConveyances(st, rawresponse);
 		rawresponse.put("zoning", ZoneTransport.createZoneTransport(region));
-		String logincommand=st.getKV("Instance.RunOnLogin").value();
+		final String logincommand=st.getKV("Instance.RunOnLogin").value();
 		if (logincommand!=null && (!logincommand.isEmpty())) {
 			rawresponse.put("logincommand",logincommand);
 		}
@@ -212,11 +212,11 @@ public abstract class Login {
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Create a new character",permitObject = false,permitScripting = false)
-	public static Response create(@Nonnull State st,
-	                              @Nullable @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max = 40)
-			                              String charactername) {
+	public static Response create(@Nonnull final State st,
+	                              @Nullable @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max = 40) final
+	                              String charactername) {
 		if (Char.resolve(st, charactername) != null) {
-			JSONObject json = Modules.getJSONTemplate(st, "characters.create");
+			final JSONObject json = Modules.getJSONTemplate(st, "characters.create");
 			json.put("message", "Character name already taken - please retry");
 			return new JSONResponse(json);
 		}
@@ -225,39 +225,39 @@ public abstract class Login {
 			return new ErrorResponse("You are not allowed to start a character name with the character >");
 		}
 		try {
-			User user = User.findOptional(charactername);
+			final User user = User.findOptional(charactername);
 			if (user != null) {
 				if (user != st.getAvatarNullable()) {
 					return new ErrorResponse("You may not name a character after an avatar, other than yourself");
 				}
 			}
-		} catch (NoDataException e) {}
-		boolean autoname = st.getKV("Instance.AutoNameCharacter").boolValue();
+		} catch (final NoDataException e) {}
+		final boolean autoname = st.getKV("Instance.AutoNameCharacter").boolValue();
 		if (autoname && !st.getAvatarNullable().getName().equalsIgnoreCase(charactername)) {
 			return new ErrorResponse("You must name your one and only character after your avatar");
 		}
-		int maxchars = st.getKV("Instance.MaxCharacters").intValue();
+		final int maxchars = st.getKV("Instance.MaxCharacters").intValue();
 		if (maxchars <= Char.getCharacters(st.getInstance(), st.getAvatarNullable()).size() && !st.hasPermission("Characters.ExceedCharLimits")) {
 			return new ErrorResponse("You are not allowed more than " + maxchars + " active characters");
 		}
-		boolean charswitchallowed = st.getKV("Instance.CharacterSwitchEnabled").boolValue();
+		final boolean charswitchallowed = st.getKV("Instance.CharacterSwitchEnabled").boolValue();
 		if (!charswitchallowed) {
 			return new ErrorResponse("You are not allowed to create or switch characters in this location");
 		}
 		Char.create(st, charactername);
-		Char c = Char.resolve(st, charactername);
+		final Char c = Char.resolve(st, charactername);
 		Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, c, "Create", "Character", "", charactername, "Avatar attempted to create character, result: " + c);
 		return login(st, null, null, null);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Switch to a character",permitObject = false,permitScripting = false)
-	public static Response select(@Nonnull State st,
-	                              @Nullable @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load")
-			                              Char character) {
+	public static Response select(@Nonnull final State st,
+	                              @Nullable @Arguments(type = ArgumentType.CHARACTER_PLAYABLE, description = "Character to load") final
+	                              Char character) {
 		if (character == null) { return new ErrorResponse("No such character"); }
 		if (character.getOwner() != st.getAvatarNullable()) { return new ErrorResponse("That character does not belong to you"); }
-		boolean charswitchallowed = st.getKV("Instance.CharacterSwitchEnabled").boolValue();
+		final boolean charswitchallowed = st.getKV("Instance.CharacterSwitchEnabled").boolValue();
 		if (!charswitchallowed) {
 			return new ErrorResponse("You are not allowed to create or switch characters in this location");
 		}
@@ -273,11 +273,11 @@ public abstract class Login {
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Initialise a character attribute",permitObject = false)
-	public static Response initialise(@Nonnull State st,
-	                                  @Nonnull @Arguments(type = ArgumentType.ATTRIBUTE, description = "Attribute to initialise")
-			                                  Attribute attribute,
-	                                  @Nonnull @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to initialise to", max = 4096)
-			                                  String value) {
+	public static Response initialise(@Nonnull final State st,
+	                                  @Nonnull @Arguments(type = ArgumentType.ATTRIBUTE, description = "Attribute to initialise") final
+	                                  Attribute attribute,
+	                                  @Nonnull @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to initialise to", max = 4096) final
+	                                      String value) {
 		//System.out.println("Initialise "+attribute+" to "+value);
 		final boolean debug=true;
 		switch (attribute.getType()) {
@@ -285,13 +285,13 @@ public abstract class Login {
 			case INTEGER:
 			case TEXT:
 				// its a KV.  check it has no KV already.
-				String existingvalue = st.getRawKV(st.getCharacter(),"characters."+attribute.getName());
+				final String existingvalue = st.getRawKV(st.getCharacter(),"characters."+attribute.getName());
 				if (existingvalue != null) {
 					return new ErrorResponse("Can not initialise a non null value (currently:" + existingvalue + ")");
 				}
 				// does it exceed the max, if a max is configured, or anything
 				if (attribute.getType()== Attribute.ATTRIBUTETYPE.FLOAT || attribute.getType()== Attribute.ATTRIBUTETYPE.INTEGER) {
-					KVValue maxkv=st.getKV("characters."+attribute.getName()+"MAX");
+					final KVValue maxkv=st.getKV("characters."+attribute.getName()+"MAX");
 					Float max=null;
 					System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv);
 					if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
@@ -299,7 +299,7 @@ public abstract class Login {
 					if (max!=null && max>0) {
 						System.out.println("About to check "+max+" > "+Float.parseFloat(value));
 						if (Float.parseFloat(value)>max) {
-							JSONObject json = new JSONObject();
+							final JSONObject json = new JSONObject();
 							json.put("hudtext", "Initialising character...").put("hudcolor", "<1.0,0.75,0.75>")
 									.put("titlertext", "Initialising character...").put("titlercolor", "<1.0,0.75,0.75>")
 									.put("message", "Character creation requires you to input attribute " + attribute.getName()+" WHICH MUST BE NO MORE THAN "+max);
@@ -318,12 +318,12 @@ public abstract class Login {
 				break;
 			case GROUP:
 				// its a group... check user has no group already
-				CharacterGroup group = st.getCharacter().getGroup(attribute.getSubType());
+				final CharacterGroup group = st.getCharacter().getGroup(attribute.getSubType());
 				if (group != null) {
 					return new ErrorResponse("You already have membership of '" + group.getNameSafe() + "' which is of type " + attribute.getSubType());
 				}
 				// check the target group is of the right type
-				CharacterGroup target = CharacterGroup.resolve(st, value);
+				final CharacterGroup target = CharacterGroup.resolve(st, value);
 				if (target == null) { return new ErrorResponse("Unable to find the requested group " + value); }
 				if (!target.getType().equals(attribute.getSubType())) {
 					return new ErrorResponse("Group " + target.getNameSafe() + " is of type " + target.getType() + " rather than the required " + attribute.getSubType() + " required by attribute " + attribute.getName());

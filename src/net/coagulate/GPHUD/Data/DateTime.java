@@ -20,17 +20,17 @@ import java.util.*;
 public abstract class DateTime {
 
 	@Nonnull
-	private static String fromUnixTime(int date, @Nonnull DateFormat df) { return df.format(new Date(((long) (date)) * ((long) 1000))); }
+	private static String fromUnixTime(final int date, @Nonnull final DateFormat df) { return df.format(new Date(((long) (date)) * ((long) 1000))); }
 
 	@Nonnull
-	public static String fromUnixTime(int date, String timezone) {
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+	public static String fromUnixTime(final int date, final String timezone) {
+		final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 		df.setTimeZone(TimeZone.getTimeZone(timezone));
 		return fromUnixTime(date, df);
 	}
 
 	@Nonnull
-	public static Row inputRow(SafeMap values) {
+	public static Row inputRow(final SafeMap values) {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
@@ -42,8 +42,8 @@ public abstract class DateTime {
 	 * @return appropriate table row
 	 */
 	@Nonnull
-	public static Row inputDateTimeRow(String prefix, @Nonnull SafeMap values, String defaulttimezone) {
-		Row t = new Row();
+	public static Row inputDateTimeRow(final String prefix, @Nonnull final SafeMap values, final String defaulttimezone) {
+		final Row t = new Row();
 		String tz = values.get(prefix + "timezone");
 		if (tz.isEmpty()) { tz = defaulttimezone; }
 		t.add(prefix);
@@ -57,8 +57,8 @@ public abstract class DateTime {
 	}
 
 	@Nonnull
-	private static TextInput ti(String prefix, String component, int size, @Nonnull SafeMap values) {
-		String name = prefix + component;
+	private static TextInput ti(final String prefix, final String component, final int size, @Nonnull final SafeMap values) {
+		final String name = prefix + component;
 		return new TextInput(name, values.get(name), size);
 	}
 
@@ -72,8 +72,8 @@ public abstract class DateTime {
 	 * @return Table Row
 	 */
 	@Nonnull
-	public static Row inputIntervalRow(String prefix, @Nonnull SafeMap values, boolean spacers) {
-		Row t = new Row();
+	public static Row inputIntervalRow(final String prefix, @Nonnull final SafeMap values, final boolean spacers) {
+		final Row t = new Row();
 		t.add(prefix);
 		t.add(ti(prefix, "day", 2, values));
 		if (spacers) {
@@ -93,7 +93,7 @@ public abstract class DateTime {
 	 * @return Table Row
 	 */
 	@Nonnull
-	public static Row inputIntervalRow(String prefix, @Nonnull SafeMap values) {
+	public static Row inputIntervalRow(final String prefix, @Nonnull final SafeMap values) {
 		return inputIntervalRow(prefix, values, false);
 	}
 
@@ -105,19 +105,19 @@ public abstract class DateTime {
 	 * @return Unix time for the input date time
 	 * @throws UserException If the numbers fail to parse
 	 */
-	public static int outputDateTime(String prefix, @Nonnull SafeMap values, String defaulttimezone) throws UserException {
+	public static int outputDateTime(final String prefix, @Nonnull final SafeMap values, final String defaulttimezone) throws UserException {
 		try {
 			String timezone = values.get(prefix + "timezone");
 			if (timezone.isEmpty()) {
 				timezone = defaulttimezone;
 			}
-			int day = Integer.parseInt(values.get(prefix + "day"));
-			int month = Integer.parseInt(values.get(prefix + "month"));
-			int year = Integer.parseInt(values.get(prefix + "year"));
-			int hour = Integer.parseInt(values.get(prefix + "hour"));
-			int minute = Integer.parseInt(values.get(prefix + "minute"));
+			final int day = Integer.parseInt(values.get(prefix + "day"));
+			final int month = Integer.parseInt(values.get(prefix + "month"));
+			final int year = Integer.parseInt(values.get(prefix + "year"));
+			final int hour = Integer.parseInt(values.get(prefix + "hour"));
+			final int minute = Integer.parseInt(values.get(prefix + "minute"));
 			return UnixTime.create(timezone, day, month, year, hour, minute);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new UserException("Failed to parse number : " + e.getMessage(), e);
 		}
 	}
@@ -130,7 +130,7 @@ public abstract class DateTime {
 	 * @return Number of seconds
 	 * @throws UserException If the numbers fail to parse
 	 */
-	public static int outputInterval(String prefix, @Nonnull SafeMap values) throws UserException {
+	public static int outputInterval(final String prefix, @Nonnull final SafeMap values) throws UserException {
 		try {
 			int day = Integer.parseInt(values.get(prefix + "day"));
 			int hour = Integer.parseInt(values.get(prefix + "hour"));
@@ -140,24 +140,24 @@ public abstract class DateTime {
 			hour = hour * 60 * 60;
 			minute = minute * 60;
 			return day + hour + minute;
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new UserException("Failed to parse number : " + e.getMessage(), e);
 		}
 	}
 
 	@Nonnull
 	public static List<String> getTimeZones() {
-		String[] tzs = TimeZone.getAvailableIDs();
-		List<String> tzlist = new ArrayList<>();
+		final String[] tzs = TimeZone.getAvailableIDs();
+		final List<String> tzlist = new ArrayList<>();
 		tzlist.add("America/Los_Angeles");
 		tzlist.addAll(Arrays.asList(tzs));
 		return tzlist;
 	}
 
 	@Nonnull
-	public static DropDownList getTimeZoneList(String name, String value) {
-		DropDownList dropdown = new DropDownList(name);
-		for (String tz : getTimeZones()) { dropdown.add(tz); }
+	public static DropDownList getTimeZoneList(final String name, final String value) {
+		final DropDownList dropdown = new DropDownList(name);
+		for (final String tz : getTimeZones()) { dropdown.add(tz); }
 		dropdown.setValue(value);
 		return dropdown;
 	}

@@ -25,17 +25,17 @@ import static java.util.logging.Level.FINE;
 public abstract class Templates {
 	@URLs(url = "/introspection/templates")
 	@SideSubMenus(name = "Templates", priority = 25)
-	public static void listTemplates(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void listTemplates(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.add(new TextHeader("Templates available"));
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Template Keyword").add("Description").add("Provider").add("Current value"));
-		Map<String, String> templates = Templater.getTemplates(st);
-		for (Map.Entry<String, String> entry : templates.entrySet()) {
-			String template = entry.getKey();
+		final Map<String, String> templates = Templater.getTemplates(st);
+		for (final Map.Entry<String, String> entry : templates.entrySet()) {
+			final String template = entry.getKey();
 			//System.out.println(template);
-			Method m = Templater.getMethod(st, template);
+			final Method m = Templater.getMethod(st, template);
 			t.openRow();
 			t.add(template);
 			t.add(entry.getValue());
@@ -43,7 +43,7 @@ public abstract class Templates {
 				t.add(m.getDeclaringClass().getName() + "." + m.getName() + "()");
 			}
 			String value = "WEIRD";
-			try { value = Templater.getValue(st, template, false, false); } catch (UserException e) {
+			try { value = Templater.getValue(st, template, false, false); } catch (final UserException e) {
 				value = "ERROR:" + e.getMessage();
 				st.logger().log(FINE, "Template gave user exception (not unexpected)", e);
 			}

@@ -21,15 +21,15 @@ import java.util.Set;
  */
 public abstract class UserLandingPage {
 	@URLs(url = "/")
-	public static void index(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		Form f = st.form();
+	public static void index(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+		final Form f = st.form();
 		f.add(new TextHeader("Welcome to GPHUD"));
 		if (st.getInstanceNullable() == null) {
 			SessionSwitch.switchInstance(st, values);
 			return;
 		}
 		if (st.getCharacterNullable() == null) {
-			Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
+			final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
 			if (chars.size() == 1) {
 				st.setCharacter(chars.iterator().next());
 				st.cookie.setCharacter(st.getCharacter());

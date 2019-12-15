@@ -20,14 +20,14 @@ public class ArgumentAnnotation extends Argument {
 	Parameter parameter;
 	Command command;
 	@Nullable
-	String overridedescription = null;
+	String overridedescription;
 	private boolean generated = true;
 
 	protected ArgumentAnnotation() {}
 
-	public ArgumentAnnotation(Command c, @Nonnull Parameter p) {
-		this.parameter = p;
-		this.command = c;
+	public ArgumentAnnotation(final Command c, @Nonnull final Parameter p) {
+		parameter = p;
+		command = c;
 		meta = p.getAnnotation(Arguments.class);
 		generated = false;
 	}
@@ -37,7 +37,7 @@ public class ArgumentAnnotation extends Argument {
 	@Nonnull
 	public ArgumentType type() { return meta.type(); }
 
-	public void overrideDescription(String n) { overridedescription = n; }
+	public void overrideDescription(final String n) { overridedescription = n; }
 
 	@Nullable
 	public String description() {
@@ -60,19 +60,19 @@ public class ArgumentAnnotation extends Argument {
 
 	@Nonnull
 	@SuppressWarnings("unchecked")
-	public List<String> getChoices(State st) throws SystemException {
+	public List<String> getChoices(final State st) throws SystemException {
 		try {
-			Method m = command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
+			final Method m = command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
 			return (List<String>) m.invoke(null, new Object[]{st});
-		} catch (IllegalAccessException ex) {
+		} catch (final IllegalAccessException ex) {
 			throw new SystemException("Access modifier problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (IllegalArgumentException ex) {
+		} catch (final IllegalArgumentException ex) {
 			throw new SystemException("Argument problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (InvocationTargetException ex) {
+		} catch (final InvocationTargetException ex) {
 			throw new SystemException("Target method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (NoSuchMethodException ex) {
+		} catch (final NoSuchMethodException ex) {
 			throw new SystemException("No such method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (SecurityException ex) {
+		} catch (final SecurityException ex) {
 			throw new SystemException("Security problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
 		}
 	}

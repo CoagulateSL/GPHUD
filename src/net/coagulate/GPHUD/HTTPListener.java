@@ -21,14 +21,14 @@ import static java.util.logging.Level.SEVERE;
  */
 public class HTTPListener {
 	@Nullable
-	private static HttpServer server = null;
-	private static boolean hasshutdown = false;
+	private static HttpServer server;
+	private static boolean hasshutdown;
 
-	public static void initialise(int port) {
+	public static void initialise(final int port) {
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 		try {
 			// start creating a server, on the port.  disable keepalive.  probably can get rid of that.
-			SocketConfig reuse = SocketConfig.custom().
+			final SocketConfig reuse = SocketConfig.custom().
 					setBacklogSize(100).
 					setSoReuseAddress(true).build();
 
@@ -47,7 +47,7 @@ public class HTTPListener {
 			if (server==null) { throw new SystemException("Server bootstrap is null?"); }
 			GPHUD.getLogger().config("HTTP Services starting up on port " + port);
 			server.start();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// "whoops"
 			GPHUD.getLogger().log(SEVERE, "Listener crashed", e);
 			System.exit(3);
@@ -55,7 +55,7 @@ public class HTTPListener {
 	}
 
 	public static void shutdown() {
-		boolean logging = !hasshutdown;
+		final boolean logging = !hasshutdown;
 		hasshutdown = true;
 		if (server != null) {
 			if (logging) { GPHUD.getLogger().info("Stopping listener gracefully"); }

@@ -25,13 +25,13 @@ public class ModuleAnnotation extends Module {
 	protected final Map<String, Pool> poolmap = new TreeMap<>();
 	protected final Map<String, KV> kvmap = new TreeMap<>();
 	@Nullable
-	SideMenu sidemenu = null;
+	SideMenu sidemenu;
 	final Map<String, Permission> permissions = new TreeMap<>();
 	final Set<SideSubMenu> sidemenus = new HashSet<>();
 	final Map<String, Command> commands = new TreeMap<>();
 	final Set<URL> contents = new HashSet<>();
 	private boolean generated = true;
-	public ModuleAnnotation(String name, ModuleDefinition def) throws SystemException, UserException {
+	public ModuleAnnotation(final String name, final ModuleDefinition def) throws SystemException, UserException {
 		super(name, def);
 		if (canDisable()) {
 			registerKV(new KVEnabled(this, defaultDisable() ? "false" : "true"));
@@ -41,14 +41,14 @@ public class ModuleAnnotation extends Module {
 	}
 
 	@Nullable
-	static Object assertNotNull(@Nullable Object o, String value, String type) throws UserException {
+	static Object assertNotNull(@Nullable final Object o, final String value, final String type) throws UserException {
 		if (o == null) {
 			throw new UserException("Unable to resolve '" + value + "' to a " + type);
 		}
 		return o;
 	}
 
-	protected static void checkPublicStatic(@Nonnull Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -60,21 +60,21 @@ public class ModuleAnnotation extends Module {
 	public boolean isGenerated() { return generated; }
 
 	@Nonnull
-	Response run(@Nonnull State st, @Nonnull String commandname, @Nonnull String[] args) throws UserException, SystemException {
-		Command command = getCommand(st, commandname);
+	Response run(@Nonnull final State st, @Nonnull final String commandname, @Nonnull final String[] args) throws UserException, SystemException {
+		final Command command = getCommand(st, commandname);
 		return command.run(st, args);
 	}
 
 	@Nullable
-	public Set<SideSubMenu> getSideSubMenus(State st) {
+	public Set<SideSubMenu> getSideSubMenus(final State st) {
 		return sidemenus;
 	}
 
 	@Nullable
-	public URL getURL(State st, @Nonnull String url) throws UserException, SystemException {
+	public URL getURL(final State st, @Nonnull final String url) throws UserException, SystemException {
 		final boolean debug=false;
 		URL liberalmatch = null;
-		for (URL m : contents) {
+		for (final URL m : contents) {
 			if (m.url().toLowerCase().equals(url.toLowerCase())) {
 				return m;
 			}
@@ -97,11 +97,11 @@ public class ModuleAnnotation extends Module {
 	}
 
 	@Nonnull
-	public Map<String, KV> getKVDefinitions(State st) {
+	public Map<String, KV> getKVDefinitions(final State st) {
 		return kvmap;
 	}
 
-	public KV getKVDefinition(State st, @Nonnull String qualifiedname) throws SystemException {
+	public KV getKVDefinition(final State st, @Nonnull final String qualifiedname) throws SystemException {
 		//for (String s:kvmap.keySet()) { System.out.println(s); }
 		if (!kvmap.containsKey(qualifiedname.toLowerCase())) {
 			throw new SystemException("Invalid KV " + qualifiedname + " in module " + getName());
@@ -110,47 +110,47 @@ public class ModuleAnnotation extends Module {
 	}
 
 	@Nullable
-	public Command getCommand(State st, @Nonnull String commandname) {
-		Command c = commands.get(commandname.toLowerCase());
-		if (c == null) { throw new UserException("No such command " + commandname + " in module " + this.name); }
+	public Command getCommand(final State st, @Nonnull final String commandname) {
+		final Command c = commands.get(commandname.toLowerCase());
+		if (c == null) { throw new UserException("No such command " + commandname + " in module " + name); }
 		return c;
 	}
 
-	public void registerPool(@Nonnull Pool element) {
+	public void registerPool(@Nonnull final Pool element) {
 		if (poolmap.containsKey(element.name().toLowerCase())) {
 			throw new SystemException("Attempt to register duplicate pool map " + element.name() + " in module " + getName());
 		}
 		poolmap.put(element.name().toLowerCase(), element);
 	}
 
-	public Pool getPool(State st, @Nonnull String itemname) {
+	public Pool getPool(final State st, @Nonnull final String itemname) {
 		return poolmap.get(itemname.toLowerCase());
 	}
 
-	public Permission getPermission(State st, @Nonnull String itemname) {
+	public Permission getPermission(final State st, @Nonnull final String itemname) {
 		return permissions.get(itemname.toLowerCase());
 	}
 
-	public void registerCommand(@Nonnull Command m) throws SystemException, UserException {
+	public void registerCommand(@Nonnull final Command m) throws SystemException, UserException {
 		commands.put(m.getName().toLowerCase(), m);
 	}
 
 
 	@Nonnull
-	public Map<String, Pool> getPoolMap(State st) {
+	public Map<String, Pool> getPoolMap(final State st) {
 		return poolmap;
 	}
 
-	public boolean hasPool(State st, Pools p) {
+	public boolean hasPool(final State st, final Pools p) {
 		return poolmap.containsValue(p);
 	}
 
 	@Nonnull
-	public Map<String, Command> getCommands(State st) throws UserException, SystemException {
+	public Map<String, Command> getCommands(final State st) throws UserException, SystemException {
 		return commands;
 	}
 
-	public void setSideMenu(State st, @Nonnull SideMenu a) throws UserException, SystemException {
+	public void setSideMenu(final State st, @Nonnull final SideMenu a) throws UserException, SystemException {
 		if (!a.requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, a.requiresPermission());
 		}
@@ -163,7 +163,7 @@ public class ModuleAnnotation extends Module {
 		sidemenu = a;
 	}
 
-	public void registerSideSubMenu(State st, @Nonnull SideSubMenu m) throws SystemException, UserException {
+	public void registerSideSubMenu(final State st, @Nonnull final SideSubMenu m) throws SystemException, UserException {
 		if (!m.requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, m.requiresPermission());
 		}
@@ -171,53 +171,53 @@ public class ModuleAnnotation extends Module {
 		sidemenus.add(m);
 	}
 
-	public Map<String, Permission> getPermissions(State st) {
+	public Map<String, Permission> getPermissions(final State st) {
 		return permissions;
 	}
 
 	@Nullable
-	public SideMenu getSideMenu(State st) {
+	public SideMenu getSideMenu(final State st) {
 		return sidemenu;
 	}
 
-	public void registerPermission(@Nonnull Permission a) {
+	public void registerPermission(@Nonnull final Permission a) {
 		if (permissions.containsKey(a.name().toLowerCase())) {
 			throw new SystemException("Attempt to redefine permission " + a.name() + " in module " + name);
 		}
 		permissions.put(a.name().toLowerCase(), a);
 	}
 
-	public void registerContent(URL m) throws UserException, SystemException {
+	public void registerContent(final URL m) throws UserException, SystemException {
 		//System.out.println("Module "+name+" gets URL "+m.url()+" mapping to "+m.getMethodName());
 		contents.add(m);
 	}
 
 	@Nonnull
-	public Set<URL> getAllContents(State st) {
+	public Set<URL> getAllContents(final State st) {
 		return contents;
 	}
 
-	public void registerKV(@Nonnull KV a) throws UserException {
+	public void registerKV(@Nonnull final KV a) throws UserException {
 		if (kvmap.containsKey(a.name().toLowerCase())) {
 			throw new SystemException("Attempt to redefine KV entry " + a.name() + " in module " + name);
 		}
 		kvmap.put(a.name().toLowerCase(), a);
 	}
 
-	public void validateKV(State st, @Nonnull String key) throws SystemException {
+	public void validateKV(final State st, @Nonnull final String key) throws SystemException {
 		if (Modules.getKVDefinition(st, key) == null) {
 			throw new SystemException("KV key " + key + " in module " + getName() + " does not exist");
 		}
 	}
 
-	public void validateCommand(State st, @Nonnull String command) throws SystemException {
+	public void validateCommand(final State st, @Nonnull final String command) throws SystemException {
 		if (!commands.containsKey(command.toLowerCase())) {
 			throw new SystemException("Command " + command + " does not exist in module " + getName());
 		}
 	}
 
 
-	protected void initialiseInstance(State st) {
+	protected void initialiseInstance(final State st) {
 		//no-op by default
 	}
 

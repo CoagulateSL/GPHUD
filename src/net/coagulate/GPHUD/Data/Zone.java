@@ -20,7 +20,7 @@ import java.util.TreeSet;
  */
 public class Zone extends TableRow {
 
-	protected Zone(int id) { super(id); }
+	protected Zone(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -29,7 +29,7 @@ public class Zone extends TableRow {
 	 * @return A zone representation
 	 */
 	@Nonnull
-	public static Zone get(int id) {
+	public static Zone get(final int id) {
 		return (Zone) factoryPut("Zone", id, new Zone(id));
 	}
 
@@ -40,7 +40,7 @@ public class Zone extends TableRow {
 	 * @param name     Name of the zone
 	 * @throws UserException If the zone name is in use
 	 */
-	public static void create(@Nonnull Instance instance, String name) throws UserException {
+	public static void create(@Nonnull final Instance instance, final String name) throws UserException {
 		if (GPHUD.getDB().dqi( "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
 			throw new UserException("Zone name already in use");
 		}
@@ -55,17 +55,17 @@ public class Zone extends TableRow {
 	 * @return Zone object, or null
 	 */
 	@Nullable
-	public static Zone find(@Nonnull Instance instance, @Nonnull String name) {
+	public static Zone find(@Nonnull final Instance instance, @Nonnull final String name) {
 		try {
-			Integer zoneid = GPHUD.getDB().dqi("select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
+			final Integer zoneid = GPHUD.getDB().dqi("select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
 			return get(zoneid);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
-	static void wipeKV(@Nonnull Instance instance, String key) {
-		String kvtable = "zonekvstore";
-		String maintable = "zones";
-		String idcolumn = "zoneid";
+	static void wipeKV(@Nonnull final Instance instance, final String key) {
+		final String kvtable = "zonekvstore";
+		final String maintable = "zones";
+		final String idcolumn = "zoneid";
 		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
 	}
 
@@ -100,8 +100,8 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public Set<ZoneArea> getZoneAreas() {
-		Set<ZoneArea> areas = new TreeSet<>();
-		for (ResultsRow r : dq("select zoneareaid from zoneareas where zoneid=?", getId())) {
+		final Set<ZoneArea> areas = new TreeSet<>();
+		for (final ResultsRow r : dq("select zoneareaid from zoneareas where zoneid=?", getId())) {
 			areas.add(ZoneArea.get(r.getIntNullable()));
 		}
 		return areas;
@@ -115,10 +115,10 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public String getTransportFormat() {
-		Set<ZoneArea> areas = getZoneAreas();
+		final Set<ZoneArea> areas = getZoneAreas();
 		StringBuilder s = new StringBuilder();
-		for (ZoneArea a : areas) {
-			String[] vectors = a.getVectors();
+		for (final ZoneArea a : areas) {
+			final String[] vectors = a.getVectors();
 			if (s.length() > 0) { s.append("|"); }
 			s = new StringBuilder(getName() + "|" + vectors[0] + "|" + vectors[1]);
 		}
@@ -132,7 +132,7 @@ public class Zone extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		Integer id = getIntNullable("instanceid");
+		final Integer id = getIntNullable("instanceid");
 		if (id == null) {
 			throw new SystemException("Zone " + getName() + " #" + getId() + " is not associated with an instance?");
 		}
@@ -146,9 +146,9 @@ public class Zone extends TableRow {
 	 * @param cornerOne Co-ordinate 1 as x,y,z string
 	 * @param cornerTwo Co-ordinate 2 as x,y,z string
 	 */
-	public void addArea(@Nonnull Region region, String cornerOne, String cornerTwo) {
-		int[] c1 = ZoneArea.parseVector(cornerOne);
-		int[] c2 = ZoneArea.parseVector(cornerTwo);
+	public void addArea(@Nonnull final Region region, final String cornerOne, final String cornerTwo) {
+		final int[] c1 = ZoneArea.parseVector(cornerOne);
+		final int[] c2 = ZoneArea.parseVector(cornerTwo);
 		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)", getId(), region.getId(), c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
 	}
 
@@ -169,8 +169,8 @@ public class Zone extends TableRow {
 	 *
 	 * @param message Zonemessage to send to the zone (?)
 	 */
-	public void broadcastMessage(String message) {
-		JSONObject json = new JSONObject();
+	public void broadcastMessage(final String message) {
+		final JSONObject json = new JSONObject();
 		json.put("incommand", "broadcast");
 		json.put("zonemessage", message);
 		json.put("zone", getName());
@@ -178,7 +178,7 @@ public class Zone extends TableRow {
 		getInstance().sendServers(json);
 	}
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Zone / State Instance mismatch"); }

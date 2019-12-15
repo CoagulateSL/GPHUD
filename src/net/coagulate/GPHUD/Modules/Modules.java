@@ -26,8 +26,8 @@ import static java.util.logging.Level.SEVERE;
 public abstract class Modules {
 	static final Map<String, Module> modules = new TreeMap<>();
 
-	static void register(@Nonnull Module mod) throws SystemException {
-		String name = mod.getName();
+	static void register(@Nonnull final Module mod) throws SystemException {
+		final String name = mod.getName();
 		if (modules.containsKey(name.toLowerCase())) {
 			throw new SystemException("Duplicate Module definition for " + name);
 		}
@@ -50,7 +50,7 @@ public abstract class Modules {
 	 * @param modulename
 	 * @return
 	 */
-	public static boolean exists(@Nonnull String modulename) { return modules.containsKey(modulename.toLowerCase()); }
+	public static boolean exists(@Nonnull final String modulename) { return modules.containsKey(modulename.toLowerCase()); }
 
 	/**
 	 * Get a module, optionally checking if its enabled.
@@ -60,17 +60,17 @@ public abstract class Modules {
 	 * @return the Module
 	 * @throws UserException if the module doesn't exist, or isn't enabled.
 	 */
-	public static Module get(@Nullable State st, @Nonnull String nameorreference) throws UserException, SystemException {
-		Module m = modules.get(extractModule(nameorreference).toLowerCase());
+	public static Module get(@Nullable final State st, @Nonnull final String nameorreference) throws UserException, SystemException {
+		final Module m = modules.get(extractModule(nameorreference).toLowerCase());
 		if (st != null && !m.isEnabled(st)) {
 			throw new UserException("Module " + m.getName() + " is not enabled in this instance");
 		}
 		if (st == null) { return m; }
 		// check dependancies
 		if (m.requires(st).isEmpty()) { return m; }
-		String[] dependancies = m.requires(st).split(",");
-		for (String dependancy : dependancies) {
-			Module m2 = get(null, dependancy);
+		final String[] dependancies = m.requires(st).split(",");
+		for (final String dependancy : dependancies) {
+			final Module m2 = get(null, dependancy);
 			if (!m2.isEnabled(st)) {
 				throw new UserException("Module " + m.getName() + " is not enabled in this instance because it depends on " + m2.getName() + " which is disabled");
 			}
@@ -85,13 +85,13 @@ public abstract class Modules {
 	 * @return The module section of the name
 	 * @throws UserException if the module does not exist or the input is in invalid format
 	 */
-	public static String extractModule(@Nonnull String qualified) throws UserException {
+	public static String extractModule(@Nonnull final String qualified) throws UserException {
 		//System.out.println("QUALIFIED:"+qualified);
-		String[] parts = qualified.split("\\.");
+		final String[] parts = qualified.split("\\.");
 		if (parts.length < 1 || parts.length > 2) {
 			throw new UserException("Invalid format, must be module or module.reference but we received " + qualified);
 		}
-		String name = parts[0];
+		final String name = parts[0];
 		//System.out.println("NAME:"+name);
 		if (!modules.containsKey(name.toLowerCase())) {
 			throw new UserException("Module " + name + " does not exist.");
@@ -106,8 +106,8 @@ public abstract class Modules {
 	 * @return The reference part
 	 * @throws UserException if the module does not exist or the input is in invalid format
 	 */
-	public static String extractReference(@Nonnull String qualified) throws UserException {
-		String[] parts = qualified.split("\\.");
+	public static String extractReference(@Nonnull final String qualified) throws UserException {
+		final String[] parts = qualified.split("\\.");
 		if (parts.length != 2) {
 			throw new UserException("Invalid format, must be module.reference but we received " + qualified);
 		}
@@ -116,12 +116,12 @@ public abstract class Modules {
 	}
 
 	// validate a KV mapping exists
-	public static void validateKV(State st, @Nonnull String key) throws UserException, SystemException {
+	public static void validateKV(final State st, @Nonnull final String key) throws UserException, SystemException {
 		get(null, key).validateKV(st, key);
 	}
 
 	@Nullable
-	public static URL getURL(State st, @Nonnull String url) throws UserException, SystemException {
+	public static URL getURL(final State st, @Nonnull final String url) throws UserException, SystemException {
 		return getURL(st, url, true);
 	}
 
@@ -136,13 +136,13 @@ public abstract class Modules {
 	 * @throws SystemException if multiple URLs match (internal error)
 	 */
 	@Nullable
-	public static URL getURL(State st, @Nonnull String url, boolean exception) throws UserException, SystemException {
+	public static URL getURL(final State st, @Nonnull String url, final boolean exception) throws UserException, SystemException {
 		final boolean debug=false;
 		if (url.toLowerCase().startsWith("/gphud/")) { url = url.substring(6); }
 		URL literal = null;
 		URL relaxed = null;
-		for (Module mod : modules.values()) {
-			URL proposed = mod.getURL(st, url);
+		for (final Module mod : modules.values()) {
+			final URL proposed = mod.getURL(st, url);
 			if (proposed != null) {
 				if (proposed.url().endsWith("*")) {
 					if (relaxed != null) {
@@ -171,58 +171,58 @@ public abstract class Modules {
 		return null;
 	}
 
-	public static void validatePermission(State st, @Nonnull String requirespermission) throws UserException, SystemException {
+	public static void validatePermission(final State st, @Nonnull final String requirespermission) throws UserException, SystemException {
 		get(null, requirespermission).validatePermission(st, extractReference(requirespermission));
 	}
 
 	@Nullable
-	public static Command getCommandNullable(State st, @Nonnull String proposedcommand) throws UserException, SystemException {
+	public static Command getCommandNullable(final State st, @Nonnull final String proposedcommand) throws UserException, SystemException {
 		return get(st, proposedcommand).getCommand(st, extractReference(proposedcommand));
 	}
 
 	@Nonnull
-	public static Command getCommand(State st, @Nonnull String proposedcommand) throws UserException, SystemException {
-		Command c=getCommandNullable(st,proposedcommand);
+	public static Command getCommand(final State st, @Nonnull final String proposedcommand) throws UserException, SystemException {
+		final Command c=getCommandNullable(st,proposedcommand);
 		if (c==null) { throw new UserException("Unable to locate command "+proposedcommand); }
 		return c;
 	}
 
-	public static void getHtmlTemplate(@Nonnull State st, @Nonnull String qualifiedcommandname) throws UserException, SystemException {
+	public static void getHtmlTemplate(@Nonnull final State st, @Nonnull final String qualifiedcommandname) throws UserException, SystemException {
 		get(st, qualifiedcommandname).getCommand(st, extractReference(qualifiedcommandname)).getHtmlTemplate(st);
 	}
 
 	@Nonnull
-	public static JSONObject getJSONTemplate(@Nonnull State st, @Nonnull String qualifiedcommandname) throws UserException, SystemException {
-		Module module = get(st, qualifiedcommandname);
+	public static JSONObject getJSONTemplate(@Nonnull final State st, @Nonnull final String qualifiedcommandname) throws UserException, SystemException {
+		final Module module = get(st, qualifiedcommandname);
 		if (module == null) { throw new UserException("Unable to resolve module in " + qualifiedcommandname); }
-		Command command = module.getCommand(st, extractReference(qualifiedcommandname));
+		final Command command = module.getCommand(st, extractReference(qualifiedcommandname));
 		if (command == null) { throw new UserException("Unable to resolve command in " + qualifiedcommandname); }
 		return command.getJSONTemplate(st);
 	}
 
 	@Nonnull
-	public static Response getJSONTemplateResponse(@Nonnull State st, @Nonnull String command) throws UserException, SystemException { return new JSONResponse(getJSONTemplate(st, command)); }
+	public static Response getJSONTemplateResponse(@Nonnull final State st, @Nonnull final String command) throws UserException, SystemException { return new JSONResponse(getJSONTemplate(st, command)); }
 
 	@SuppressWarnings("fallthrough")
-	public static Response run(@Nonnull State st, @Nullable String console) throws UserException, SystemException {
+	public static Response run(@Nonnull final State st, @Nullable final String console) throws UserException, SystemException {
 		if (console == null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
-		String[] words = console.split(" ");
+		final String[] words = console.split(" ");
 		int i = 0;
 		String command = words[0].toLowerCase();
 		if (command.startsWith("*")) { command = command.substring(1); }
 		Command c = null;
-		try { c = getCommandNullable(st, command); } catch (UserException e) {
+		try { c = getCommandNullable(st, command); } catch (final UserException e) {
 			return new ErrorResponse("Unable to find command '" + command + "' - " + e.getLocalizedMessage());
 		}
 		if (c == null) { return new ErrorResponse("Failed to find command " + command); }
 		if (!c.permitConsole()) {
 			return new ErrorResponse("Command '" + command + "' can not be called from the console");
 		}
-		SafeMap parameters = new SafeMap();
-		for (Argument arg : c.getArguments()) {
+		final SafeMap parameters = new SafeMap();
+		for (final Argument arg : c.getArguments()) {
 			i++;
 			if (i >= words.length) { return new ErrorResponse("Not enough parameters supplied"); }
-			String argname = arg.getName();
+			final String argname = arg.getName();
 			if (words[i] == null || words[i].isEmpty() || "-".equals(words[i])) {
 				parameters.put(argname, null);
 			} else {
@@ -264,33 +264,33 @@ public abstract class Modules {
 	}
 
 
-	public static Response run(@Nullable State st, @Nullable String qualifiedcommandname, @Nonnull SafeMap parametermap) throws UserException, SystemException {
+	public static Response run(@Nullable final State st, @Nullable final String qualifiedcommandname, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
 		if (st == null) { throw new SystemException("Null state"); }
 		if (qualifiedcommandname == null) { throw new SystemException("Null command"); }
 		if ("console".equalsIgnoreCase(qualifiedcommandname)) { st.source= State.Sources.CONSOLE; return run(st, parametermap.get("console")); }
-		Module module = get(st, qualifiedcommandname);
+		final Module module = get(st, qualifiedcommandname);
 		if (module == null) { throw new UserException("Unknown module in " + qualifiedcommandname); }
-		Command command = module.getCommand(st, extractReference(qualifiedcommandname));
+		final Command command = module.getCommand(st, extractReference(qualifiedcommandname));
 		if (command == null) { throw new UserException("Unknown command in " + qualifiedcommandname); }
 		return command.run(st, parametermap);
 	}
 
 	@Nonnull
-	public static Response run(@Nonnull State st, @Nonnull String qualifiedcommandname, @Nonnull List<String> args) throws UserException, SystemException {
+	public static Response run(@Nonnull final State st, @Nonnull final String qualifiedcommandname, @Nonnull final List<String> args) throws UserException, SystemException {
 		return run(st, qualifiedcommandname, args.toArray(new String[]{}));
 	}
 
 	@Nonnull
-	public static Response run(@Nonnull State st, @Nonnull String qualifiedcommandname, @Nonnull String[] args) throws UserException, SystemException {
+	public static Response run(@Nonnull final State st, @Nonnull final String qualifiedcommandname, @Nonnull final String[] args) throws UserException, SystemException {
 		return get(st, qualifiedcommandname).getCommand(st, extractReference(qualifiedcommandname)).run(st, args);
 	}
 
-	public static Permission getPermission(State st, @Nonnull String qualifiedname) throws UserException, SystemException {
+	public static Permission getPermission(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
 		return get(st, qualifiedname).getPermission(st, extractReference(qualifiedname));
 	}
 
 	@Nonnull
-	public static KV getKVDefinition(@Nonnull State st, @Nonnull String qualifiedname) throws UserException, SystemException {
+	public static KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
 		KV kv = null;
 		//if (qualifiedname == null) { throw new SystemException("Null qualified name for KV definition?"); }
 		if (qualifiedname.toLowerCase().endsWith(".enabled")) {
@@ -303,11 +303,11 @@ public abstract class Modules {
 	}
 
 	@Nonnull
-	public static Set<String> getKVList(State st) {
-		Set<String> kvs = new TreeSet<>();
-		for (Module m : getModules()) {
+	public static Set<String> getKVList(final State st) {
+		final Set<String> kvs = new TreeSet<>();
+		for (final Module m : getModules()) {
 			if (m.isEnabled(st)) {
-				for (String s : m.getKVDefinitions(st).keySet()) {
+				for (final String s : m.getKVDefinitions(st).keySet()) {
 					kvs.add(m.getName() + "." + s);
 				}
 			}
@@ -316,11 +316,11 @@ public abstract class Modules {
 	}
 
 	@Nonnull
-	public static Set<KV> getKVSet(State st) {
-		Set<KV> kvs = new HashSet<>();
-		for (Module m : getModules()) {
+	public static Set<KV> getKVSet(final State st) {
+		final Set<KV> kvs = new HashSet<>();
+		for (final Module m : getModules()) {
 			if (m.isEnabled(st)) {
-				Map<String, KV> getkvs = m.getKVDefinitions(st);
+				final Map<String, KV> getkvs = m.getKVDefinitions(st);
 				kvs.addAll(getkvs.values());
 			}
 		}
@@ -328,19 +328,19 @@ public abstract class Modules {
 	}
 
 	@Nonnull
-	public static SafeMap getConveyances(@Nonnull State st) {
-		SafeMap convey = new SafeMap();
-		for (Module mod : getModules()) {
+	public static SafeMap getConveyances(@Nonnull final State st) {
+		final SafeMap convey = new SafeMap();
+		for (final Module mod : getModules()) {
 			try {
 				if (mod.isEnabled(st)) {
-					for (String key : mod.getKVDefinitions(st).keySet()) {
-						KV kv = mod.getKVDefinition(st, key);
+					for (final String key : mod.getKVDefinitions(st).keySet()) {
+						final KV kv = mod.getKVDefinition(st, key);
 						// this seems broken?
-						String value = st.getKV(kv.fullname()).value();
+						final String value = st.getKV(kv.fullname()).value();
 						if (!kv.conveyas().isEmpty()) { convey.put(kv.conveyas(), value); }
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				SL.report("Conveyance error", e, st);
 				st.logger().log(SEVERE, "Exception compiling conveyance", e);
 			}
@@ -349,38 +349,38 @@ public abstract class Modules {
 		return convey;
 	}
 
-	public static Pool getPool(State st, @Nonnull String qualifiedname) throws UserException, SystemException {
+	public static Pool getPool(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
 		return get(st, qualifiedname).getPool(st, extractReference(qualifiedname));
 	}
 
-	public static Pool getPoolNotNull(State st, @Nonnull String qualifiedname) throws UserException, SystemException {
-		Pool pool = getPool(st, qualifiedname);
+	public static Pool getPoolNotNull(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
+		final Pool pool = getPool(st, qualifiedname);
 		if (pool == null) { throw new UserException("Unable to find pool " + qualifiedname); }
 		return pool;
 	}
 
-	public static void simpleHtml(@Nullable State st, @Nullable String command, @Nullable SafeMap values) throws UserException, SystemException {
+	public static void simpleHtml(@Nullable final State st, @Nullable final String command, @Nullable final SafeMap values) throws UserException, SystemException {
 		if (command == null) { throw new SystemException("Null command"); }
 		if (values == null) { throw new SystemException("Null values"); }
 		if (st == null) { throw new SystemException("Null state"); }
-		Module m = get(st, command);
+		final Module m = get(st, command);
 		if (m == null) { throw new UserException("No such module in " + command); }
-		Command c = m.getCommand(st, extractReference(command));
+		final Command c = m.getCommand(st, extractReference(command));
 		if (c == null) { throw new UserException("No such command in " + command); }
 		c.simpleHtml(st, values);
 	}
 
-	public static void initialiseInstance(State st) {
-		for (Module module : getModules()) {
+	public static void initialiseInstance(final State st) {
+		for (final Module module : getModules()) {
 			module.initialiseInstance(st);
 		}
 	}
 
 	@Nonnull
-	public static Map<String, KV> getKVAppliesTo(State st, TableRow dbo) {
-		Map<String, KV> filtered = new TreeMap<>();
-		for (Module m : getModules()) {
-			Map<String, KV> fullset = m.getKVAppliesTo(st, dbo);
+	public static Map<String, KV> getKVAppliesTo(final State st, final TableRow dbo) {
+		final Map<String, KV> filtered = new TreeMap<>();
+		for (final Module m : getModules()) {
+			final Map<String, KV> fullset = m.getKVAppliesTo(st, dbo);
 			filtered.putAll(fullset);
 		}
 		return filtered;

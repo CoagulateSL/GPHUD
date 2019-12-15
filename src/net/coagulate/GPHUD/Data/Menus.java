@@ -20,7 +20,7 @@ import java.util.TreeMap;
  */
 public class Menus extends TableRow {
 
-	protected Menus(int id) { super(id); }
+	protected Menus(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -29,7 +29,7 @@ public class Menus extends TableRow {
 	 * @return An Avatar representation
 	 */
 	@Nonnull
-	public static Menus get(int id) {
+	public static Menus get(final int id) {
 		return (Menus) factoryPut("Menus", id, new Menus(id));
 	}
 
@@ -40,9 +40,9 @@ public class Menus extends TableRow {
 	 * @return Map of String menu name to Integer menu ID for this instance.
 	 */
 	@Nonnull
-	public static Map<String, Integer> getMenusMap(@Nonnull State st) {
-		Map<String, Integer> aliases = new TreeMap<>();
-		for (ResultsRow r : GPHUD.getDB().dq("select name,menuid from menus where instanceid=?", st.getInstance().getId())) {
+	public static Map<String, Integer> getMenusMap(@Nonnull final State st) {
+		final Map<String, Integer> aliases = new TreeMap<>();
+		for (final ResultsRow r : GPHUD.getDB().dq("select name,menuid from menus where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"), r.getIntNullable("menuid"));
 		}
 		return aliases;
@@ -56,11 +56,11 @@ public class Menus extends TableRow {
 	 * @return Menus object
 	 */
 	@Nullable
-	public static Menus getMenu(@Nonnull State st, String name) {
+	public static Menus getMenu(@Nonnull final State st, final String name) {
 		try {
-			Integer id = GPHUD.getDB().dqi("select menuid from menus where instanceid=? and name like ?", st.getInstance().getId(), name);
+			final Integer id = GPHUD.getDB().dqi("select menuid from menus where instanceid=? and name like ?", st.getInstance().getId(), name);
 			return get(id);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
 	/**
@@ -74,13 +74,13 @@ public class Menus extends TableRow {
 	 * @throws UserException If the name is invalid or duplicated.
 	 */
 	@Nullable
-	public static Menus create(@Nonnull State st, @Nonnull String name, String description, @Nonnull JSONObject template) throws UserException {
+	public static Menus create(@Nonnull final State st, @Nonnull final String name, final String description, @Nonnull final JSONObject template) throws UserException {
 		if (getMenu(st, name) != null) { throw new UserException("Menu " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
 			throw new UserException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		GPHUD.getDB().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)", st.getInstance().getId(), name, description, template.toString());
-		Menus newalias = getMenu(st, name);
+		final Menus newalias = getMenu(st, name);
 		if (newalias == null) {
 			throw new SystemException("Failed to create alias " + name + " in instance id " + st.getInstance().getId() + ", created but not found?");
 		}
@@ -94,9 +94,9 @@ public class Menus extends TableRow {
 	 * @return Map of Name to JSONPayloads for all menus in this instance.
 	 */
 	@Nonnull
-	public static Map<String, JSONObject> getTemplates(@Nonnull State st) {
-		Map<String, JSONObject> aliases = new TreeMap<>();
-		for (ResultsRow r : GPHUD.getDB().dq("select name,description,json from menus where instanceid=?", st.getInstance().getId())) {
+	public static Map<String, JSONObject> getTemplates(@Nonnull final State st) {
+		final Map<String, JSONObject> aliases = new TreeMap<>();
+		for (final ResultsRow r : GPHUD.getDB().dq("select name,description,json from menus where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"), new JSONObject(r.getStringNullable("json")));
 		}
 		return aliases;
@@ -133,7 +133,7 @@ public class Menus extends TableRow {
 	 */
 	@Nonnull
 	public JSONObject getJSON() throws SystemException {
-		String json = dqs( "select json from menus where menuid=?", getId());
+		final String json = dqs( "select json from menus where menuid=?", getId());
 		if (json == null) { throw new SystemException("No (null) template for menu id " + getId()); }
 		return new JSONObject(json);
 	}
@@ -143,7 +143,7 @@ public class Menus extends TableRow {
 	 *
 	 * @param template JSON payload
 	 */
-	public void setJSON(@Nonnull JSONObject template) {
+	public void setJSON(@Nonnull final JSONObject template) {
 		d("update menus set json=? where menuid=?", template.toString(), getId());
 	}
 
@@ -154,7 +154,7 @@ public class Menus extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		Integer id = dqi("select instanceid from menus where menuid=?", getId());
+		final Integer id = dqi("select instanceid from menus where menuid=?", getId());
 		return Instance.get(id);
 	}
 
@@ -164,9 +164,9 @@ public class Menus extends TableRow {
 	@Nullable
 	public String getKVIdField() { return null; }
 
-	public void flushKVCache(State st) {}
+	public void flushKVCache(final State st) {}
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Menus / State Instance mismatch"); }

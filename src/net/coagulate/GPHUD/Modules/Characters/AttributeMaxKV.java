@@ -14,7 +14,7 @@ public class AttributeMaxKV extends KV {
 
 	final Attribute attribute;
 
-	public AttributeMaxKV(Attribute attribute) {
+	public AttributeMaxKV(final Attribute attribute) {
 		this.attribute = attribute;
 	}
 

@@ -21,17 +21,17 @@ import java.util.Map;
 public abstract class ManagePermissions {
 	@URLs(url = "/introspection/permissions")
 	@SideSubMenus(name = "Permissions", priority = 20)
-	public static void createForm(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void createForm(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.add(new TextHeader("Permission registrations"));
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
-		for (Module m : Modules.getModules()) {
-			Map<String, Permission> permissions = m.getPermissions(st);
+		for (final Module m : Modules.getModules()) {
+			final Map<String, Permission> permissions = m.getPermissions(st);
 			if (!permissions.isEmpty()) {
 				t.add(new HeaderRow().add(new Cell(new TextSubHeader(m.getName()), 999)));
-				for (Map.Entry<String, Permission> entry : permissions.entrySet()) {
-					Row r = new Row();
+				for (final Map.Entry<String, Permission> entry : permissions.entrySet()) {
+					final Row r = new Row();
 					t.add(r);
 					r.setbgcolor(entry.getValue().getColor());
 					t.add(entry.getKey());

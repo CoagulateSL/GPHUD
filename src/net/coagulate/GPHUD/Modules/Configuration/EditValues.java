@@ -26,20 +26,20 @@ import javax.annotation.Nonnull;
 public class EditValues {
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set an instance level configuration value")
-	public static Response setInstance(@Nonnull State st,
-	                                   @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
-			                                   String key,
-	                                   @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
-			                                   String value) throws UserException, SystemException {
+	public static Response setInstance(@Nonnull final State st,
+	                                   @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
+	                                   String key,
+	                                   @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
+	                                       String value) throws UserException, SystemException {
 		Modules.validateKV(st, key);
-		KV kv = Modules.getKVDefinition(st, key);
+		final KV kv = Modules.getKVDefinition(st, key);
 		if (!st.hasPermission(kv.editpermission())) {
 			return new ErrorResponse("You lack permission '" + kv.editpermission() + "' necessary to set the value of " + key);
 		}
 		if (!kv.appliesTo(st.getInstance())) {
 			return new ErrorResponse("KV " + kv.fullname() + " of scope " + kv.scope() + " does not apply to instances");
 		}
-		String oldvalue = st.getRawKV(st.getInstance(), key);
+		final String oldvalue = st.getRawKV(st.getInstance(), key);
 		st.setKV(st.getInstance(), key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetInstanceKV", key, oldvalue, value, "Changed instance level configuration");
 		// bit cludgy but...
@@ -50,29 +50,29 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setinstancevalue")
-	public static void setInstanceForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setInstanceForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "configuration.setinstance", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a region level configuration value")
-	public static Response setRegion(@Nonnull State st,
-	                                 @Nonnull @Arguments(type = ArgumentType.REGION, description = "Region to edit the key for")
-			                                 Region region,
-	                                 @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
-			                                 String key,
-	                                 @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
-			                                 String value) throws UserException, SystemException {
+	public static Response setRegion(@Nonnull final State st,
+	                                 @Nonnull @Arguments(type = ArgumentType.REGION, description = "Region to edit the key for") final
+	                                 Region region,
+	                                 @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
+	                                     String key,
+	                                 @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
+	                                     String value) throws UserException, SystemException {
 		region.validate(st);
 		Modules.validateKV(st, key);
-		KV kv = Modules.getKVDefinition(st, key);
+		final KV kv = Modules.getKVDefinition(st, key);
 		if (!st.hasPermission(kv.editpermission())) {
 			return new ErrorResponse("You lack permission '" + kv.editpermission() + "' necessary to set the value of " + key);
 		}
 		if (!kv.appliesTo(region)) {
 			return new ErrorResponse("KV " + kv.fullname() + " of scope " + kv.scope() + " does not apply to regions");
 		}
-		String oldvalue = st.getRawKV(region, key);
+		final String oldvalue = st.getRawKV(region, key);
 		st.setKV(region, key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetRegionKV", region.getName() + "/" + key, oldvalue, value, "Changed region level configuration");
 		// bit cludgy but...
@@ -84,58 +84,58 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setregionvalue")
-	public static void setRegionForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setRegionForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "configuration.setregion", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a key value for a zone")
-	public static Response setZone(@Nonnull State st,
-	                               @Nonnull @Arguments(type = ArgumentType.ZONE, description = "Name of the zone")
-			                               Zone zone,
-	                               @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set")
-			                               String key,
-	                               @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to set to", max = 4096)
-			                               String value) {
+	public static Response setZone(@Nonnull final State st,
+	                               @Nonnull @Arguments(type = ArgumentType.ZONE, description = "Name of the zone") final
+	                               Zone zone,
+	                               @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set") final
+	                                   String key,
+	                               @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Value to set to", max = 4096) final
+	                                   String value) {
 		zone.validate(st);
 		Modules.validateKV(st, key);
-		KV kv = Modules.getKVDefinition(st, key);
+		final KV kv = Modules.getKVDefinition(st, key);
 		if (!st.hasPermission(kv.editpermission())) {
 			return new ErrorResponse("You lack permission '" + kv.editpermission() + "' necessary to set the value of " + key);
 		}
 		if (!kv.appliesTo(zone)) {
 			return new ErrorResponse("KV " + kv.fullname() + " of scope " + kv.scope() + " does not apply to zones");
 		}
-		String oldvalue = st.getRawKV(zone, key);
+		final String oldvalue = st.getRawKV(zone, key);
 		st.setKV(zone, key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetZoneKV", zone.getName() + "/" + key, oldvalue, value, "Updated zone KV entry");
 		return new OKResponse("KV Store updated for zone '" + zone.getName() + "'");
 	}
 
 	@URLs(url = "/configuration/setzonevalue")
-	public static void setZoneForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setZoneForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "configuration.setzone", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set an event level configuration value")
-	public static Response setEvent(@Nonnull State st,
-	                                @Nonnull @Arguments(type = ArgumentType.EVENT, description = "Character group to edit the key for")
-			                                Event event,
-	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
-			                                String key,
-	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
-			                                String value) throws UserException, SystemException {
+	public static Response setEvent(@Nonnull final State st,
+	                                @Nonnull @Arguments(type = ArgumentType.EVENT, description = "Character group to edit the key for") final
+	                                Event event,
+	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
+	                                    String key,
+	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
+	                                    String value) throws UserException, SystemException {
 		event.validate(st);
 		Modules.validateKV(st, key);
-		KV kv = Modules.getKVDefinition(st, key);
+		final KV kv = Modules.getKVDefinition(st, key);
 		if (!st.hasPermission(kv.editpermission())) {
 			return new ErrorResponse("You lack permission '" + kv.editpermission() + "' necessary to set the value of " + key);
 		}
 		if (!kv.appliesTo(event)) {
 			return new ErrorResponse("KV " + kv.fullname() + " of scope " + kv.scope() + " does not apply to events");
 		}
-		String oldvalue = st.getRawKV(event, key);
+		final String oldvalue = st.getRawKV(event, key);
 		st.setKV(event, key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetEventKV", event.getName() + "/" + key, oldvalue, value, "Changed event level configuration");
 		return new OKResponse("Event KV store has been updated for event " + event.getName());
@@ -143,29 +143,29 @@ public class EditValues {
 
 
 	@URLs(url = "/configuration/seteventvalue")
-	public static void setEventForm(State st, SafeMap values) {
+	public static void setEventForm(final State st, final SafeMap values) {
 		Modules.simpleHtml(st, "configuration.setevent", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a character group level configuration value")
-	public static Response setGroup(@Nonnull State st,
-	                                @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Character group to edit the key for")
-			                                CharacterGroup group,
-	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
-			                                String key,
-	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
-			                                String value) throws UserException, SystemException {
+	public static Response setGroup(@Nonnull final State st,
+	                                @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Character group to edit the key for") final
+	                                CharacterGroup group,
+	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
+	                                    String key,
+	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
+	                                    String value) throws UserException, SystemException {
 		group.validate(st);
 		Modules.validateKV(st, key);
-		KV kv = Modules.getKVDefinition(st, key);
+		final KV kv = Modules.getKVDefinition(st, key);
 		if (!st.hasPermission(kv.editpermission())) {
 			return new ErrorResponse("You lack permission '" + kv.editpermission() + "' necessary to set the value of " + key);
 		}
 		if (!kv.appliesTo(group)) {
 			return new ErrorResponse("KV " + kv.fullname() + " of scope " + kv.scope() + " does not apply to character groups");
 		}
-		String oldvalue = st.getRawKV(group, key);
+		final String oldvalue = st.getRawKV(group, key);
 		st.setKV(group, key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetGroupKV", group.getName() + "/" + key, oldvalue, value, "Changed group level configuration");
 		// bit cludgy but...
@@ -178,29 +178,29 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setgroupvalue")
-	public static void setGroupForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setGroupForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "configuration.setgroup", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set a character level configuration value")
-	public static Response setChar(@Nonnull State st,
-	                               @Nonnull @Arguments(type = ArgumentType.CHARACTER, description = "Character to edit the key for")
-			                               Char character,
-	                               @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of")
-			                               String key,
-	                               @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096)
-			                               String value) throws UserException, SystemException {
+	public static Response setChar(@Nonnull final State st,
+	                               @Nonnull @Arguments(type = ArgumentType.CHARACTER, description = "Character to edit the key for") final
+	                               Char character,
+	                               @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
+	                                   String key,
+	                               @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
+	                                   String value) throws UserException, SystemException {
 		character.validate(st);
 		Modules.validateKV(st, key);
-		KV kv = Modules.getKVDefinition(st, key);
+		final KV kv = Modules.getKVDefinition(st, key);
 		if (!st.hasPermission(kv.editpermission())) {
 			return new ErrorResponse("You lack permission '" + kv.editpermission() + "' necessary to set the value of " + key);
 		}
 		if (!kv.appliesTo(character)) {
 			return new ErrorResponse("KV " + kv.fullname() + " of scope " + kv.scope() + " does not apply to characters");
 		}
-		String oldvalue = st.getRawKV(character, key);
+		final String oldvalue = st.getRawKV(character, key);
 		st.setKV(character, key, value);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetCharKV", character.getName() + "/" + key, oldvalue, value, "Changed character scope KV configuration");
 
@@ -208,12 +208,12 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setcharvalue")
-	public static void setCharForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setCharForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "configuration.setchar", values);
 	}
 
 	@URLs(url = "/configuration/setself")
-	public static void setSelfForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setSelfForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "characters.set", values);
 	}
 }

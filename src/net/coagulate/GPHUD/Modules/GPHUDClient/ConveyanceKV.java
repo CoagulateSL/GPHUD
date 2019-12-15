@@ -13,8 +13,8 @@ public class ConveyanceKV extends KV {
 
 	final String name;
 
-	public ConveyanceKV(String attribute) {
-		this.name = attribute;
+	public ConveyanceKV(final String attribute) {
+		name = attribute;
 	}
 
 	@Override

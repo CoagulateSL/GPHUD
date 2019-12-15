@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  */
 public class Message extends TableRow {
 
-	protected Message(int id) { super(id); }
+	protected Message(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -26,7 +26,7 @@ public class Message extends TableRow {
 	 * @return A Region representation
 	 */
 	@Nonnull
-	public static Message get(int id) {
+	public static Message get(final int id) {
 		return (Message) factoryPut("Message", id, new Message(id));
 	}
 
@@ -37,7 +37,7 @@ public class Message extends TableRow {
 	 * @param expires    UnixTime after which the message will not be activatable (and will be discarded)
 	 * @param message    The JSONObject message to enqueue
 	 */
-	static void add(@Nonnull Char targetchar, int expires, @Nonnull JSONObject message) {
+	static void add(@Nonnull final Char targetchar, final int expires, @Nonnull final JSONObject message) {
 		GPHUD.getDB().d("insert into messages(characterid,expires,json) values(?,?,?)", targetchar.getId(), expires, message.toString());
 	}
 
@@ -48,7 +48,7 @@ public class Message extends TableRow {
 	 * @param lifespanhours Hours to keep message
 	 * @param json          Message
 	 */
-	public static void queueHours(@Nonnull Char c, int lifespanhours, @Nonnull JSONObject json) { queue(c, lifespanhours * 60 * 60, json); }
+	public static void queueHours(@Nonnull final Char c, final int lifespanhours, @Nonnull final JSONObject json) { queue(c, lifespanhours * 60 * 60, json); }
 
 	/**
 	 * Convenience method to queue a message for days
@@ -57,7 +57,7 @@ public class Message extends TableRow {
 	 * @param lifespandays Days to keep message
 	 * @param json         Message
 	 */
-	public static void queueDays(@Nonnull Char c, int lifespandays, @Nonnull JSONObject json) { queueHours(c, lifespandays * 24, json); }
+	public static void queueDays(@Nonnull final Char c, final int lifespandays, @Nonnull final JSONObject json) { queueHours(c, lifespandays * 24, json); }
 
 	/**
 	 * Convenience method to queue a message for a given ammount of time
@@ -66,7 +66,7 @@ public class Message extends TableRow {
 	 * @param lifespanseconds How many seconds until message expires
 	 * @param json            Message
 	 */
-	public static void queue(@Nonnull Char c, int lifespanseconds, @Nonnull JSONObject json) {
+	public static void queue(@Nonnull final Char c, final int lifespanseconds, @Nonnull final JSONObject json) {
 		add(c, UnixTime.getUnixTime() + lifespanseconds, json);
 	}
 
@@ -77,11 +77,11 @@ public class Message extends TableRow {
 	 * @return Next message for the character, or null
 	 */
 	@Nullable
-	public static Message getNextMessage(@Nonnull Char c) {
+	public static Message getNextMessage(@Nonnull final Char c) {
 		try {
-			Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? order by expires  limit 0,1", c.getId());
+			final Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? order by expires  limit 0,1", c.getId());
 			return Message.get(id);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Message extends TableRow {
 	 * @param c Character
 	 * @return Number of messages
 	 */
-	public static int count(@Nonnull Char c) {
+	public static int count(@Nonnull final Char c) {
 		return GPHUD.getDB().dqi( "select count(*) from messages where characterid=?", c.getId());
 	}
 
@@ -101,11 +101,11 @@ public class Message extends TableRow {
 	 * @return The message, or null if there isn't one.
 	 */
 	@Nullable
-	public static Message getActiveMessage(@Nonnull Char c) {
+	public static Message getActiveMessage(@Nonnull final Char c) {
 		try {
-			Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? and expires=0", c.getId());
+			final Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? and expires=0", c.getId());
 			return Message.get(id);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -162,9 +162,9 @@ public class Message extends TableRow {
 	@Nullable
 	public String getKVIdField() { return null; }
 
-	public void flushKVCache(State st) {}
+	public void flushKVCache(final State st) {}
 
-	public void validate(State st) throws SystemException {
+	public void validate(final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 	}

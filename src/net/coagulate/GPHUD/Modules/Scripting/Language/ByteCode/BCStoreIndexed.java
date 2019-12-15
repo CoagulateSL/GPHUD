@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCStoreIndexed extends ByteCode {
-	public BCStoreIndexed(ParseNode n) {
+	public BCStoreIndexed(final ParseNode n) {
 		super(n);
 	}
 
@@ -17,17 +17,17 @@ public class BCStoreIndexed extends ByteCode {
 	// POP the NAME.  POP the index.  POP the content.
 	@Nonnull
 	public String explain() { return "AssignElement (Pop variable name, pop index, pop content, assign)"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.StoreIndexed.get());
 	}
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
-		BCString variablename=vm.popString();
-		BCInteger index=vm.popInteger();
-		ByteCodeDataType newvalue = vm.pop();
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+		final BCString variablename=vm.popString();
+		final BCInteger index=vm.popInteger();
+		final ByteCodeDataType newvalue = vm.pop();
 		// get the LIST
-		BCList oldvalue=vm.getList(variablename.getContent());
+		final BCList oldvalue=vm.getList(variablename.getContent());
 		// check length
 		if (index.getContent()>=oldvalue.getContent().size()) { throw new GSArrayIndexOutOfBoundsException("List "+variablename.getContent()+" is of size "+oldvalue.getContent().size()+" which is <= requested index "+index.getContent()); }
 		oldvalue.getContent().set(index.getContent(),newvalue);

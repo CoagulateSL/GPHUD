@@ -8,21 +8,21 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCDivide extends ByteCode {
-	public BCDivide(ParseNode n) {
+	public BCDivide(final ParseNode n) {
 		super(n);
 	}
 
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Divide (Pop two, divide, push result)"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Divide.get());
 	}
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
-		ByteCodeDataType arg1 = vm.pop();
-		ByteCodeDataType arg2 = vm.pop();
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+		final ByteCodeDataType arg1 = vm.pop();
+		final ByteCodeDataType arg2 = vm.pop();
 		vm.push(arg1.divide(arg2));
 	}
 }

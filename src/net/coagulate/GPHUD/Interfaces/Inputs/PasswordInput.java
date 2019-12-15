@@ -9,11 +9,11 @@ import javax.annotation.Nonnull;
  */
 public class PasswordInput extends TextInput {
 
-	public PasswordInput(String name) {
+	public PasswordInput(final String name) {
 		super(name);
 	}
 
-	public PasswordInput(String name, String value) { super(name, value); }
+	public PasswordInput(final String name, final String value) { super(name, value); }
 
 	@Nonnull
 	@Override

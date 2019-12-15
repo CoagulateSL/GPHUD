@@ -27,18 +27,18 @@ public class CommandAnnotation extends Command {
 
 	protected CommandAnnotation() {}
 
-	public CommandAnnotation(Module owner, @Nonnull Method c) throws SystemException, UserException {
+	public CommandAnnotation(final Module owner, @Nonnull final Method c) throws SystemException, UserException {
 		//System.out.println(owner);
 		//System.out.println(c);
 		this.owner = owner;
-		this.method = c;
-		this.meta = c.getAnnotation(Commands.class);
+		method = c;
+		meta = c.getAnnotation(Commands.class);
 		validate(null);
 		populateArguments();
 		generated = false;
 	}
 
-	protected static void checkPublicStatic(@Nonnull Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -52,7 +52,7 @@ public class CommandAnnotation extends Command {
 
 	public boolean isGenerated() { return generated; }
 
-	void validate(State st) throws SystemException, UserException {
+	void validate(final State st) throws SystemException, UserException {
 		if (!requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, requiresPermission());
 		}
@@ -64,17 +64,17 @@ public class CommandAnnotation extends Command {
 			throw new SystemException("Method " + getFullName() + " must take State as its first argument");
 		}
 		for (int i = 1; i < method.getParameters().length; i++) {
-			Parameter p = method.getParameters()[i];
-			Arguments arg = p.getAnnotation(Arguments.class);
+			final Parameter p = method.getParameters()[i];
+			final Arguments arg = p.getAnnotation(Arguments.class);
 			if (arg == null) {
 				throw new SystemException("Method " + getFullName() + "() argument " + (i + 1) + " (" + p.getName() + ") has no @Argument metadata");
 			}
 			if (arg.type() == ArgumentType.CHOICE) {
 				// validate the choice method
-				String choicemethod = arg.choiceMethod();
+				final String choicemethod = arg.choiceMethod();
 				try {
 					method.getDeclaringClass().getMethod(choicemethod, State.class);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					throw new SystemException("Failed to instansiate choice method " + getFullName() + " / " + choicemethod);
 				}
 			}
@@ -114,7 +114,7 @@ public class CommandAnnotation extends Command {
 	private void populateArguments() {
 		arguments = new ArrayList<>();
 		boolean skipfirst = true; // first should be STATE
-		for (Parameter p : method.getParameters()) {
+		for (final Parameter p : method.getParameters()) {
 			if (skipfirst) { skipfirst = false; } else { arguments.add(new ArgumentAnnotation(this, p)); }
 		}
 	}
@@ -127,9 +127,9 @@ public class CommandAnnotation extends Command {
 	 * @throws UserException
 	 */
 	@Nonnull
-	public List<String> getArgumentNames(State st) throws UserException {
-		List<String> arguments = new ArrayList<>();
-		for (Argument a : getArguments()) {
+	public List<String> getArgumentNames(final State st) throws UserException {
+		final List<String> arguments = new ArrayList<>();
+		for (final Argument a : getArguments()) {
 			arguments.add(a.getName());
 		}
 		return arguments;

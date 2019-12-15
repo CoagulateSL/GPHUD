@@ -23,40 +23,40 @@ import java.util.TreeMap;
 public class NameCache {
 
 	@Nullable
-	Map<Integer, String> avatarnames = null;
+	Map<Integer, String> avatarnames;
 	@Nullable
-	Map<Integer, String> characternames = null;
+	Map<Integer, String> characternames;
 	@Nullable
-	Map<Integer, String> instancenames = null;
+	Map<Integer, String> instancenames;
 	@Nullable
-	Map<Integer, String> regionnames = null;
+	Map<Integer, String> regionnames;
 
 	@Nonnull
-	private static Map<Integer, String> loadMap(String tablename, String idcolumn, String namecolumn) {
-		Map<Integer, String> results = new TreeMap<>();
-		Results rows = GPHUD.getDB().dq("select " + idcolumn + "," + namecolumn + " from " + tablename);
-		for (ResultsRow r : rows) {
+	private static Map<Integer, String> loadMap(final String tablename, final String idcolumn, final String namecolumn) {
+		final Map<Integer, String> results = new TreeMap<>();
+		final Results rows = GPHUD.getDB().dq("select " + idcolumn + "," + namecolumn + " from " + tablename);
+		for (final ResultsRow r : rows) {
 			results.put(r.getIntNullable(idcolumn), TableRow.getLink(r.getStringNullable(namecolumn), tablename, r.getIntNullable(idcolumn)));
 		}
 		return results;
 	}
 
-	public String lookup(@Nonnull User u) {
+	public String lookup(@Nonnull final User u) {
 		if (avatarnames == null) { avatarnames = User.loadMap(); }
 		return avatarnames.get(u.getId());
 	}
 
-	public String lookup(@Nonnull Char u) {
+	public String lookup(@Nonnull final Char u) {
 		if (characternames == null) { characternames = loadMap("characters", "characterid", "name"); }
 		return characternames.get(u.getId());
 	}
 
-	public String lookup(@Nonnull Instance u) {
+	public String lookup(@Nonnull final Instance u) {
 		if (instancenames == null) { instancenames = loadMap("instances", "instanceid", "name"); }
 		return instancenames.get(u.getId());
 	}
 
-	public String lookup(@Nonnull Region u) {
+	public String lookup(@Nonnull final Region u) {
 		if (regionnames == null) { regionnames = loadMap("regions", "regionid", "name"); }
 		return regionnames.get(u.getId());
 	}

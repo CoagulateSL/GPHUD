@@ -28,18 +28,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Roller {
 
 	@Nonnull
-	public static List<Integer> roll(@Nonnull State st, Integer dice, Integer sides) throws UserException, SystemException {
+	public static List<Integer> roll(@Nonnull final State st, final Integer dice, final Integer sides) throws UserException, SystemException {
 		return roll(st, st.getCharacter(), dice, sides);
 	}
 
 	@Nonnull
-	public static List<Integer> roll(@Nonnull State st, Char character, @Nullable Integer dice, @Nullable Integer sides) throws UserException, SystemException {
-		List<Integer> rolls = new ArrayList<>();
+	public static List<Integer> roll(@Nonnull final State st, final Char character, @Nullable Integer dice, @Nullable Integer sides) throws UserException, SystemException {
+		final List<Integer> rolls = new ArrayList<>();
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
 		if (dice > 100) { throw new UserException("Too many dice."); }
 		for (int i = 0; i < dice; i++) {
-			int num = ThreadLocalRandom.current().nextInt(1, sides + 1);
+			final int num = ThreadLocalRandom.current().nextInt(1, sides + 1);
 			rolls.add(num);
 		}
 		return rolls;
@@ -56,7 +56,7 @@ public class Roller {
 	 */
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Roll a given number of stated sided dice with a bias and reason", permitUserWeb = false)
-	public static Response rollOnly(@Nonnull State st,
+	public static Response rollOnly(@Nonnull final State st,
 	                                @Nullable @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false)
 			                                Integer dice,
 	                                @Nullable @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false)
@@ -70,8 +70,8 @@ public class Roller {
 		String event = "rolled " + dice + "d" + sides + " ";
 		event += "for " + reason + ", and rolled ";
 		String allrolls = "";
-		List<Integer> rolls = roll(st, dice, sides);
-		for (int num : rolls) {
+		final List<Integer> rolls = roll(st, dice, sides);
+		for (final int num : rolls) {
 			if (!"".equals(allrolls)) { allrolls += ", "; }
 			allrolls = allrolls + num;
 		}
@@ -93,7 +93,7 @@ public class Roller {
 	 */
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Roll a given number of stated sided dice with a bias and reason", permitUserWeb = false)
-	public static Response roll(@Nonnull State st,
+	public static Response roll(@Nonnull final State st,
 	                            @Nullable @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false)
 			                            Integer dice,
 	                            @Nullable @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false)
@@ -112,8 +112,8 @@ public class Roller {
 		event += "for " + reason + ", and rolled ";
 		int total = 0;
 		String allrolls = "";
-		List<Integer> rolls = roll(st, dice, sides);
-		for (int num : rolls) {
+		final List<Integer> rolls = roll(st, dice, sides);
+		for (final int num : rolls) {
 			if (!"".equals(allrolls)) { allrolls += ", "; }
 			total = total + num;
 			allrolls = allrolls + num;
@@ -131,24 +131,24 @@ public class Roller {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Default roll, only requests a reason", permitUserWeb = false)
-	public static Response rollDefault(@Nonnull State st,
-	                                   @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512)
-			                                   String reason) throws UserException, SystemException {
+	public static Response rollDefault(@Nonnull final State st,
+	                                   @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512) final
+	                                   String reason) throws UserException, SystemException {
 		return roll(st, null, null, 0, reason);
 	}
 
 	@Nonnull
 	@Templater.Template(name = "ROLL", description = "Any made roll")
-	public static String getRoll(@Nonnull State st, String key) {
+	public static String getRoll(@Nonnull final State st, final String key) {
 		if (st.roll == null) { throw new UserException("No roll made!"); }
 		return st.roll.toString();
 	}
 
 	@Nonnull
 	@Templater.Template(name = "TARGET:ROLL", description = "Any TARGET made roll")
-	public static String getTargetRoll(@Nonnull State st, String key) {
+	public static String getTargetRoll(@Nonnull final State st, final String key) {
 		if (st.getTargetNullable() == null) { throw new UserException("No target!"); }
-		State target = st.getTargetNullable();
+		final State target = st.getTargetNullable();
 		if (target.roll == null) { throw new UserException("Target not rolled!"); }
 		return target.roll.toString();
 	}
@@ -156,9 +156,9 @@ public class Roller {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Roll against another player", permitUserWeb = false)
-	public static Response rollAgainst(@Nonnull State st,
-	                                   @Nullable @Arguments(description = "Character to roll against", type = ArgumentType.CHARACTER_NEAR)
-			                                   Char target,
+	public static Response rollAgainst(@Nonnull final State st,
+	                                   @Nullable @Arguments(description = "Character to roll against", type = ArgumentType.CHARACTER_NEAR) final
+	                                   Char target,
 	                                   @Nullable @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false)
 			                                   Integer dice,
 	                                   @Nullable @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false)
@@ -189,21 +189,21 @@ public class Roller {
 		String allrolls = "";
 		int targettotal = 0;
 		String targetallrolls = "";
-		int attempts = 100;
+		final int attempts = 100;
 		while (total == targettotal && attempts > 0) {
 			total = 0;
 			allrolls = "";
 			targettotal = 0;
 			targetallrolls = "";
-			List<Integer> rolls = roll(st, dice, sides);
-			for (int num : rolls) {
+			final List<Integer> rolls = roll(st, dice, sides);
+			for (final int num : rolls) {
 				if (!"".equals(allrolls)) { allrolls += ", "; }
 				total = total + num;
 				allrolls = allrolls + num;
 			}
 			total = total + bias;
-			List<Integer> targetrolls = roll(st.getTargetNullable(), targetdice, targetsides);
-			for (int num : targetrolls) {
+			final List<Integer> targetrolls = roll(st.getTargetNullable(), targetdice, targetsides);
+			for (final int num : targetrolls) {
 				if (!"".equals(targetallrolls)) { targetallrolls += ", "; }
 				targettotal = targettotal + num;
 				targetallrolls = targetallrolls + num;
@@ -235,34 +235,34 @@ public class Roller {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Roll against another player", permitUserWeb = false)
-	public static Response rollDamageAgainst(@Nonnull State st,
-	                                         @Nonnull @Arguments(description = "Character to roll against", type = ArgumentType.CHARACTER_NEAR)
-			                                         Char target,
-	                                         @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false)
-			                                         Integer dice,
-	                                         @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false)
-			                                         Integer sides,
-	                                         @Arguments(description = "Optional bias to add to result", mandatory = false, type = ArgumentType.INTEGER)
-			                                         Integer bias,
-	                                         @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false)
-			                                         Integer targetdice,
-	                                         @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false)
-			                                         Integer targetsides,
-	                                         @Arguments(description = "Optional bias to add to result", mandatory = false, type = ArgumentType.INTEGER)
-			                                         Integer targetbias,
+	public static Response rollDamageAgainst(@Nonnull final State st,
+	                                         @Nonnull @Arguments(description = "Character to roll against", type = ArgumentType.CHARACTER_NEAR) final
+	                                         Char target,
+	                                         @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false) final
+	                                             Integer dice,
+	                                         @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false) final
+	                                             Integer sides,
+	                                         @Arguments(description = "Optional bias to add to result", mandatory = false, type = ArgumentType.INTEGER) final
+	                                             Integer bias,
+	                                         @Arguments(description = "Number of dice to roll", type = ArgumentType.INTEGER, mandatory = false) final
+	                                             Integer targetdice,
+	                                         @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false) final
+	                                             Integer targetsides,
+	                                         @Arguments(description = "Optional bias to add to result", mandatory = false, type = ArgumentType.INTEGER) final
+	                                             Integer targetbias,
 	                                         @Nullable @Arguments(description = "Damage to apply to target if they lose", mandatory = false, type = ArgumentType.TEXT_ONELINE, delayTemplating = true, max = 1024)
 			                                         String damage,
-	                                         @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512)
-			                                         String reason) throws UserException, SystemException {
+	                                         @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512) final
+	                                             String reason) throws UserException, SystemException {
 		//System.out.println("DAMAGE RECEIVED AS "+damage);
 		if (!st.hasModule("Health")) { throw new UserException("Health module is required to use rollDamageAgainst"); }
 		if (damage == null) { damage = "1"; }
-		Response response = rollAgainst(st, target, dice, sides, bias, targetdice, targetsides, targetbias, reason);
+		final Response response = rollAgainst(st, target, dice, sides, bias, targetdice, targetsides, targetbias, reason);
 		if (st.roll > st.getTargetNullable().roll) {
 			damage = damage.replaceAll("==", "--");
-			String output = Templater.template(st, damage, true, true);
+			final String output = Templater.template(st, damage, true, true);
 			Damage.apply(st, target, Integer.parseInt(output), reason);
-			SayResponse say = (SayResponse) response;
+			final SayResponse say = (SayResponse) response;
 			say.setText(say.getText() + " - Health now " + st.getRawKV(target, "Health.Health"));
 		}
 		return response;

@@ -19,17 +19,17 @@ import java.util.TreeMap;
  */
 public class MenuModule extends ModuleAnnotation {
 
-	public MenuModule(String name, ModuleDefinition annotation) {
+	public MenuModule(final String name, final ModuleDefinition annotation) {
 		super(name, annotation);
 	}
 
 	@Nonnull
 	@Override
-	public Map<String, Command> getCommands(@Nonnull State st) throws UserException, SystemException {
-		Map<String, Command> commands = new TreeMap<>();
-		Map<String, JSONObject> templates = Menus.getTemplates(st);
-		for (Map.Entry<String, JSONObject> entry : templates.entrySet()) {
-			String name = entry.getKey();
+	public Map<String, Command> getCommands(@Nonnull final State st) throws UserException, SystemException {
+		final Map<String, Command> commands = new TreeMap<>();
+		final Map<String, JSONObject> templates = Menus.getTemplates(st);
+		for (final Map.Entry<String, JSONObject> entry : templates.entrySet()) {
+			final String name = entry.getKey();
 			commands.put(name, new MenuCommand(st, name, entry.getValue()));
 		}
 		return commands;
@@ -37,12 +37,12 @@ public class MenuModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Command getCommand(@Nonnull State st, @Nonnull String commandname) {
+	public Command getCommand(@Nonnull final State st, @Nonnull final String commandname) {
 		return new MenuCommand(st, commandname, Menus.getMenu(st, commandname).getJSON());
 	}
 
 	@Override
-	protected void initialiseInstance(@Nonnull State st) {
+	protected void initialiseInstance(@Nonnull final State st) {
 		// some useful defaults
 		JSONObject j = new JSONObject();
 		j.put("button1", "Roll");

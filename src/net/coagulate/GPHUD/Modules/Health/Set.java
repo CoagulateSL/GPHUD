@@ -16,9 +16,9 @@ public class Set {
 
 	@Nonnull
 	@Command.Commands(description = "Set own health",context = Command.Context.CHARACTER)
-	public static Response set(@Nonnull State st,
-	                           @Argument.Arguments(description = "Ammount of health to set to",type = Argument.ArgumentType.INTEGER)
-                               Integer target
+	public static Response set(@Nonnull final State st,
+	                           @Argument.Arguments(description = "Ammount of health to set to",type = Argument.ArgumentType.INTEGER) final
+	                           Integer target
 	                           )
 	{
 		// is this command enabled?
@@ -32,9 +32,9 @@ public class Set {
 			return new ErrorResponse("You can not set your health higher than "+st.getKV("Health.InitialHealth").intValue());
 		}
 		// since health is actually a cumulative thing, lets see what the difference between the char's health and the total health is
-		String oldvalue=st.getKV("Health.health").value();
+		final String oldvalue=st.getKV("Health.health").value();
 		// so we want to set to the target - the baseline i guess
-		int setto=target;
+		final int setto=target;
 		st.setKV(st.getCharacter(),"health.health",setto+"");
 		st.purgeCache(st.getCharacter());
 		audit(st,Audit.OPERATOR.CHARACTER,st.getAvatarNullable(),st.getCharacter(),"Set","Health",oldvalue,target+"","Set character their own health");

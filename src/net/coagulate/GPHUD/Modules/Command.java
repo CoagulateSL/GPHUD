@@ -38,14 +38,14 @@ import static java.util.logging.Level.WARNING;
 public abstract class Command {
 
 	@Nonnull
-	static Object assertNotNull(@Nullable Object o, String value, String type) throws UserException {
+	static Object assertNotNull(@Nullable final Object o, final String value, final String type) throws UserException {
 		if (o == null) {
 			throw new UserException("Unable to resolve '" + value + "' to a " + type);
 		}
 		return o;
 	}
 
-	protected static void checkPublicStatic(@Nonnull Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -88,16 +88,16 @@ public abstract class Command {
 
 	@Nonnull
 	@SuppressWarnings("fallthrough")
-	public Response run(@Nonnull State st, @Nonnull String[] args) throws SystemException, UserException {
+	public Response run(@Nonnull final State st, @Nonnull final String[] args) throws SystemException, UserException {
 		final boolean debug=false;
-		List<Object> typedargs = new ArrayList<>();
+		final List<Object> typedargs = new ArrayList<>();
 		int arg = 0;
 		typedargs.add(st);
-		for (Argument argument : getInvokingArguments()) {
+		for (final Argument argument : getInvokingArguments()) {
 			if (argument == null) {
 				throw new SystemException("Argument metadata null on " + getFullName() + "() arg#" + (arg + 1));
 			}
-			ArgumentType type = argument.type();
+			final ArgumentType type = argument.type();
 			String v = null;
 			if (args.length>arg) { v=args[arg]; } else { v=""; }
 			arg++;
@@ -149,7 +149,7 @@ public abstract class Command {
 
 				}
 				if (maxlen < 1) {
-					st.logger().warning("Command " + this.getClass().getSimpleName() + " argument " + argument.getName() + " does not specify a max, assuming 65k...");
+					st.logger().warning("Command " + getClass().getSimpleName() + " argument " + argument.getName() + " does not specify a max, assuming 65k...");
 				} else {
 					if (v != null && v.length() > maxlen) {
 						throw new UserException(argument.getName() + " is " + v.length() + " characters long and must be no more than " + maxlen + ".  Input has not been processed, please try again");
@@ -186,19 +186,19 @@ public abstract class Command {
 					case INTEGER:
 						try {
 							typedargs.add(Integer.valueOf(v));
-						} catch (NumberFormatException e) {
+						} catch (final NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}
 						break;
 					case FLOAT:
 						try {
 							typedargs.add(Float.valueOf(v));
-						} catch (NumberFormatException e) {
+						} catch (final NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}
 						break;
 					case MODULE:
-						Module m = Modules.get(null, v);
+						final Module m = Modules.get(null, v);
 						if (m == null) { return new ErrorResponse("Unable to resolve module " + v); }
 						typedargs.add(m);
 						break;
@@ -206,7 +206,7 @@ public abstract class Command {
 					case ATTRIBUTE_WRITABLE:
 					case ATTRIBUTE:
 						Attribute attr = null;
-						for (Attribute a : st.getAttributes()) {
+						for (final Attribute a : st.getAttributes()) {
 							if (a.getName().equalsIgnoreCase(v)) {
 								if (attr != null) {
 									throw new SystemException("Duplicate attribute definition found for " + v);
@@ -235,9 +235,9 @@ public abstract class Command {
 						if (v.startsWith(">")) {
 							v = v.substring(1);
 							try {
-								User a = User.findMandatory(v);
+								final User a = User.findMandatory(v);
 								targchar = Char.getActive(a, st.getInstance());
-							} catch (NoDataException e) {
+							} catch (final NoDataException e) {
 								return new ErrorResponse("Unable to find character of avatar named '" + v + "'");
 							}
 						} else {
@@ -257,7 +257,7 @@ public abstract class Command {
 						break;
 					case AVATAR:
 					case AVATAR_NEAR:
-						User user = User.findOptional(v);
+						final User user = User.findOptional(v);
 						if (user==null) { return new ErrorResponse("Unable to find a known avatar named '"+v+"'"); }
 						typedargs.add(assertNotNull(user, v, "avatar"));
 						break;
@@ -278,7 +278,7 @@ public abstract class Command {
 	 * @throws SystemException
 	 */
 	@Nonnull
-	Response run(@Nonnull State st, @Nonnull Object[] args) throws SystemException {
+	Response run(@Nonnull final State st, @Nonnull final Object[] args) throws SystemException {
 		final boolean debug = false;
 		try {
 			// check permission
@@ -288,25 +288,25 @@ public abstract class Command {
 			// check required interface
 			boolean ok = false;
 			if (st.source== State.Sources.USER) {
-				if (!this.permitUserWeb()) {
+				if (!permitUserWeb()) {
 					return new ErrorResponse("This command can not be accessed via the Web interface");
 				}
 				ok = true;
 			}
 			if (st.source==State.Sources.SYSTEM) {
-				if (!this.permitJSON()) {
+				if (!permitJSON()) {
 					return new ErrorResponse("This command can not be accessed via the LSL System interface");
 				}
 				ok = true;
 			}
 			if (st.source==State.Sources.CONSOLE) {
-				if (!this.permitConsole()) {
+				if (!permitConsole()) {
 					return new ErrorResponse("This command can not be accessed via the console");
 				}
 				ok = true;
 			}
 			if (st.source== State.Sources.SCRIPTING) {
-				if (!this.permitScripting()) {
+				if (!permitScripting()) {
 					return new ErrorResponse("This command can not be access via the Scripting module");
 				}
 			}
@@ -317,7 +317,7 @@ public abstract class Command {
 				return new ErrorResponse("Incorrect number of arguments, " + getFullName() + " aka " + getMethod().getName() + " requires " + (getInvokingArgumentCount() + 1) + " and we got " + args.length);
 			}
 			String suspiciousname = "";
-			for (Argument a : getInvokingArguments()) {
+			for (final Argument a : getInvokingArguments()) {
 				if (a.getName().startsWith("arg") && a.getName().length() == 4) {
 					suspiciousname = ".  ***WARNING*** this argument name starts with 'arg' and may indicate javac was NOT invoked with the -parameter!!!";
 				}
@@ -333,7 +333,7 @@ public abstract class Command {
 							return new ErrorResponse("Argument " + a.getName() + " is mandatory and null was passed" + suspiciousname);
 						}
 						if (o instanceof String) {
-							String s = (String) o;
+							final String s = (String) o;
 							if (s.isEmpty()) {
 								return new ErrorResponse("Argument " + a.getName() + " is mandatory and a blank string was passed" + suspiciousname);
 							}
@@ -369,20 +369,20 @@ public abstract class Command {
 					throw new SystemException("Unhandled CONTEXT enum during pre-flight check in execute()");
 			}
 			return (Response) (getMethod().invoke(this, args));
-		} catch (IllegalAccessException ex) {
+		} catch (final IllegalAccessException ex) {
 			throw new SystemException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
-		} catch (IllegalArgumentException ex) {
-			SL.report("Command " + this.getName() + " failed", ex, st);
-			st.logger().log(WARNING, "Execute command " + this.getName() + " failed", ex);
+		} catch (final IllegalArgumentException ex) {
+			SL.report("Command " + getName() + " failed", ex, st);
+			st.logger().log(WARNING, "Execute command " + getName() + " failed", ex);
 			return new ErrorResponse("Illegal argument in " + getName());
-		} catch (InvocationTargetException ex) {
+		} catch (final InvocationTargetException ex) {
 			if (ex.getCause() != null && ex.getCause() instanceof UserException) {
 				return new ErrorResponse(getName() + " errored: \n--- " + ex.getCause().getLocalizedMessage());
 			}
 			if (ex.getCause() != null && ex.getCause() instanceof SystemException) {
 				throw ((SystemException) ex.getCause());
 			}
-			throw new SystemException("Exception " + ex.toString() + " from call to " + getName(), ex);
+			throw new SystemException("Exception " + ex + " from call to " + getName(), ex);
 		}
 	}
 
@@ -393,9 +393,9 @@ public abstract class Command {
 	 * @return
 	 * @throws UserException
 	 */
-	public List<String> getArgumentNames(State st) throws UserException {
-		List<String> arguments = new ArrayList<>();
-		for (Argument a : getArguments()) {
+	public List<String> getArgumentNames(final State st) throws UserException {
+		final List<String> arguments = new ArrayList<>();
+		for (final Argument a : getArguments()) {
 			arguments.add(a.getName());
 		}
 		return arguments;
@@ -403,10 +403,10 @@ public abstract class Command {
 
 	public List<Argument> getInvokingArguments() { return getArguments(); }
 
-	public Response run(@Nonnull State st, @Nonnull SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
 		//System.out.println("Run in method "+this.getClass().getCanonicalName());
-		List<String> arguments = new ArrayList<>();
-		for (Argument arg : getInvokingArguments()) {
+		final List<String> arguments = new ArrayList<>();
+		for (final Argument arg : getInvokingArguments()) {
 			if (parametermap.containsKey(arg.getName())) {
 				//System.out.println("Added argument "+arg.getName());
 				arguments.add(parametermap.get(arg.getName()));
@@ -418,10 +418,10 @@ public abstract class Command {
 		return run(st, arguments.toArray(new String[]{}));
 	}
 
-	public void simpleHtml(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
+	public void simpleHtml(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		//System.out.println("HERE:"+getArgumentCount());
 		if (getArgumentCount() == 0 || values.submit()) {
-			Response response = run(st, values);
+			final Response response = run(st, values);
 			// IF this is an OK response
 			if (response instanceof OKResponse) {
 				// and we have cached a 'return url'
@@ -436,10 +436,10 @@ public abstract class Command {
 	}
 
 	@Nonnull
-	JSONObject getJSONTemplate(@Nonnull State st) throws UserException, SystemException {
-		JSONObject json = new JSONObject();
+	JSONObject getJSONTemplate(@Nonnull final State st) throws UserException, SystemException {
+		final JSONObject json = new JSONObject();
 		int arg = 0;
-		for (Argument argument : getArguments()) {
+		for (final Argument argument : getArguments()) {
 			json.put("arg" + arg + "name", argument.getName());
 			json.put("arg" + arg + "description", argument.description());
 			switch (argument.type()) {
@@ -451,7 +451,7 @@ public abstract class Command {
 				case CHOICE:
 					json.put("arg" + arg + "type", "SELECT");
 					int button = 0;
-					for (String label : argument.getChoices(st)) {
+					for (final String label : argument.getChoices(st)) {
 						json.put("arg" + arg + "button" + button, label);
 						button++;
 					}
@@ -459,8 +459,8 @@ public abstract class Command {
 				case REGION:
 					json.put("arg" + arg + "type", "SELECT");
 					button = 0;
-					for (Region reg : st.getInstance().getRegions(false)) {
-						String label = reg.getName();
+					for (final Region reg : st.getInstance().getRegions(false)) {
+						final String label = reg.getName();
 						json.put("arg" + arg + "button" + button, label);
 						button++;
 					}
@@ -486,26 +486,26 @@ public abstract class Command {
 					json.put("arg" + arg + "type", "TEXTBOX");
 					break;
 				case CHARACTER_PLAYABLE:
-					Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatar());
+					final Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatar());
 					if (options.size() > 12) {
 						json.put("arg" + arg + "type", "TEXTBOX");
 					} else {
 						json.put("arg" + arg + "type", "SELECT");
 						button = 0;
-						for (Char c : options) {
+						for (final Char c : options) {
 							json.put("arg" + arg + "button" + button, c.getName());
 							button++;
 						}
 					}
 					break;
 				case CHARACTERGROUP:
-					Set<CharacterGroup> groups = st.getInstance().getCharacterGroups();
+					final Set<CharacterGroup> groups = st.getInstance().getCharacterGroups();
 					if (groups.size() > 12) {
 						json.put("arg" + arg + "type", "TEXTBOX");
 					} else {
 						json.put("arg" + arg + "type", "SELECT");
 						button = 0;
-						for (CharacterGroup g : groups) {
+						for (final CharacterGroup g : groups) {
 							json.put("arg" + arg + "button" + button, g.getName());
 							button++;
 						}
@@ -532,11 +532,11 @@ public abstract class Command {
 		return json;
 	}
 
-	void getHtmlTemplate(@Nonnull State st) throws UserException, SystemException {
-		Form f = st.form();
-		Table t = new Table();
+	void getHtmlTemplate(@Nonnull final State st) throws UserException, SystemException {
+		final Form f = st.form();
+		final Table t = new Table();
 		f.add(t);
-		for (Argument arg : getArguments()) {
+		for (final Argument arg : getArguments()) {
 			t.openRow();
 			//                t.add(p.getName());
 			t.add(arg.description());
@@ -561,91 +561,91 @@ public abstract class Command {
 					break;
 				case ATTRIBUTE_WRITABLE:
 				case ATTRIBUTE:
-					DropDownList attributes = new DropDownList(arg.getName());
-					for (Attribute a : st.getAttributes()) {
+					final DropDownList attributes = new DropDownList(arg.getName());
+					for (final Attribute a : st.getAttributes()) {
 						if (arg.type() == ArgumentType.ATTRIBUTE || a.getSelfModify()) { attributes.add(a.getName()); }
 					}
 					t.add(attributes);
 					break;
 				case CHARACTER_FACTION:
-					DropDownList factionmembers = new DropDownList(arg.getName());
-					CharacterGroup faction = st.getCharacter().getGroup("Faction");
+					final DropDownList factionmembers = new DropDownList(arg.getName());
+					final CharacterGroup faction = st.getCharacter().getGroup("Faction");
 					if (faction == null) {
 						throw new UserException("You are in no faction");
 					}
-					for (Char c : faction.getMembers()) {
+					for (final Char c : faction.getMembers()) {
 						factionmembers.add(c.getName());
 					}
 					t.add(factionmembers);
 					break;
 				case CHARACTER_NEAR:
-					DropDownList characters = new DropDownList(arg.getName());
-					for (Char c : st.getCharacter().getNearbyCharacters(st)) {
+					final DropDownList characters = new DropDownList(arg.getName());
+					for (final Char c : st.getCharacter().getNearbyCharacters(st)) {
 						characters.add(c.getName());
 					}
 					t.add(characters);
 					break;
 				case EVENT:
-					DropDownList eventlist = new DropDownList(arg.getName());
-					for (Event event : Event.getAll(st.getInstance())) {
+					final DropDownList eventlist = new DropDownList(arg.getName());
+					for (final Event event : Event.getAll(st.getInstance())) {
 						eventlist.add(event.getName());
 					}
 					t.add(eventlist);
 					break;
 				case MODULE:
-					DropDownList modulelist = new DropDownList(arg.getName());
-					for (Module amodule : Modules.getModules()) {
+					final DropDownList modulelist = new DropDownList(arg.getName());
+					for (final Module amodule : Modules.getModules()) {
 						modulelist.add(amodule.getName());
 					}
 					t.add(modulelist);
 					break;
 				case REGION:
-					DropDownList regionlist = new DropDownList(arg.getName());
-					for (Region aregion : st.getInstance().getRegions(false)) {
+					final DropDownList regionlist = new DropDownList(arg.getName());
+					for (final Region aregion : st.getInstance().getRegions(false)) {
 						regionlist.add(aregion.getName());
 					}
 					t.add(regionlist);
 					break;
 				case ZONE:
-					DropDownList zonelist = new DropDownList(arg.getName());
-					for (Zone azone : st.getInstance().getZones()) {
+					final DropDownList zonelist = new DropDownList(arg.getName());
+					for (final Zone azone : st.getInstance().getZones()) {
 						zonelist.add(azone.getName());
 					}
 					t.add(zonelist);
 					break;
 				case KVLIST:
-					DropDownList list = new DropDownList(arg.getName());
-					for (String g : Modules.getKVList(st)) {
+					final DropDownList list = new DropDownList(arg.getName());
+					for (final String g : Modules.getKVList(st)) {
 						list.add(g, g + " - " + st.getKVDefinition(g).description());
 					}
 					t.add(list);
 					break;
 				case CHARACTERGROUP:
-					DropDownList chargrouplist = new DropDownList(arg.getName());
-					for (CharacterGroup g : st.getInstance().getCharacterGroups()) {
+					final DropDownList chargrouplist = new DropDownList(arg.getName());
+					for (final CharacterGroup g : st.getInstance().getCharacterGroups()) {
 						chargrouplist.add(g.getNameSafe());
 					}
 					t.add(chargrouplist);
 					break;
 				case PERMISSIONSGROUP:
-					DropDownList permgrouplist = new DropDownList(arg.getName());
-					for (PermissionsGroup g : st.getInstance().getPermissionsGroups()) {
+					final DropDownList permgrouplist = new DropDownList(arg.getName());
+					for (final PermissionsGroup g : st.getInstance().getPermissionsGroups()) {
 						permgrouplist.add(g.getNameSafe());
 					}
 					t.add(permgrouplist);
 					break;
 				case PERMISSION:
-					DropDownList permlist = new DropDownList(arg.getName());
-					for (Module m : Modules.getModules()) {
-						for (String entry : m.getPermissions(st).keySet()) {
+					final DropDownList permlist = new DropDownList(arg.getName());
+					for (final Module m : Modules.getModules()) {
+						for (final String entry : m.getPermissions(st).keySet()) {
 							permlist.add(m.getName() + "." + entry);
 						}
 					}
 					t.add(permlist);
 					break;
 				case CHOICE:
-					DropDownList choicelist = new DropDownList(arg.getName());
-					for (String s : arg.getChoices(st)) {
+					final DropDownList choicelist = new DropDownList(arg.getName());
+					for (final String s : arg.getChoices(st)) {
 						choicelist.add(s);
 					}
 					t.add(choicelist);

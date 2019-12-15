@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCAdd extends ByteCode {
-	public BCAdd(ParseNode n) {
+	public BCAdd(final ParseNode n) {
 		super(n);
 	}
 
@@ -19,15 +19,15 @@ public class BCAdd extends ByteCode {
 	}
 	// Pop two, op, push result
 
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Add.get());
 	}
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
 		// add the next two stack elements and push the result.
-		ByteCodeDataType var1=vm.pop();
-		ByteCodeDataType var2=vm.pop();
+		final ByteCodeDataType var1=vm.pop();
+		final ByteCodeDataType var2=vm.pop();
 		// well now, rather depends on their types, some combinations aren't even valid... so have fun with THIS blob
 		vm.push(var1.add(var2));
 	}

@@ -14,7 +14,7 @@ public class AttributeKV extends KV {
 
 	final Attribute attribute;
 
-	public AttributeKV(Attribute attribute) {
+	public AttributeKV(final Attribute attribute) {
 		this.attribute = attribute;
 	}
 

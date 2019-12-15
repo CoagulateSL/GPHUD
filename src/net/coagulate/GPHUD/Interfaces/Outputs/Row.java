@@ -21,24 +21,24 @@ public class Row implements Renderable {
 
 	public Row() {}
 
-	public Row(Cell c) { add(c); }
+	public Row(final Cell c) { add(c); }
 
-	public Row(String c) { add(c); }
+	public Row(final String c) { add(c); }
 
 	@Nonnull
-	public Row add(Cell c) {
+	public Row add(final Cell c) {
 		row.add(c);
 		return this;
 	}
 
 	@Nonnull
-	public Row add(String s) {
+	public Row add(final String s) {
 		row.add(new Cell(new Text(s)));
 		return this;
 	}
 
 	@Nonnull
-	public Row add(Renderable r) {
+	public Row add(final Renderable r) {
 		row.add(new Cell(r));
 		return this;
 	}
@@ -47,9 +47,9 @@ public class Row implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
-		StringBuilder s = new StringBuilder();
-		for (Cell c : row) {
+	public String asText(final State st) {
+		final StringBuilder s = new StringBuilder();
+		for (final Cell c : row) {
 			if (s.length() > 0) { s.append(" : "); }
 			s.append(c.asText(st));
 		}
@@ -58,12 +58,12 @@ public class Row implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
-		StringBuilder s = new StringBuilder("<tr");
+	public String asHtml(final State st, final boolean rich) {
+		final StringBuilder s = new StringBuilder("<tr");
 		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
 		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }
 		s.append(">");
-		for (Cell c : row) {
+		for (final Cell c : row) {
 			c.header = isHeader();
 			s.append(c.asHtml(st, rich));
 		}
@@ -76,19 +76,19 @@ public class Row implements Renderable {
 		return new HashSet<>(row);
 	}
 
-	public void add(Integer ownerid) {
+	public void add(final Integer ownerid) {
 		add("" + ownerid);
 	}
 
-	public void add(boolean online) {
+	public void add(final boolean online) {
 		add(Boolean.toString(online));
 	}
 
-	public void setbgcolor(String setbgcolor) {
+	public void setbgcolor(final String setbgcolor) {
 		bgcolor = setbgcolor;
 	}
 
-	public void align(String alignment) {
+	public void align(final String alignment) {
 		this.alignment = alignment;
 	}
 

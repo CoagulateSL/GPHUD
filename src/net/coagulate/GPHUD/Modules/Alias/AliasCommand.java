@@ -35,7 +35,7 @@ public class AliasCommand extends Command {
 	@Nonnull
 	String fail = "";
 
-	public AliasCommand(@Nonnull State st, String name, JSONObject newdef) throws UserException, SystemException {
+	public AliasCommand(@Nonnull final State st, final String name, final JSONObject newdef) throws UserException, SystemException {
 		super();
 		definition = newdef;
 		this.name = name;
@@ -69,10 +69,10 @@ public class AliasCommand extends Command {
 
 
 	@Override
-	public List<String> getArgumentNames(State st) throws UserException {
+	public List<String> getArgumentNames(final State st) throws UserException {
 		if (targetcommand == null) { return new ArrayList<>(); }
-		List<String> args = targetcommand.getArgumentNames(st);
-		for (String key : definition.keySet()) {
+		final List<String> args = targetcommand.getArgumentNames(st);
+		for (final String key : definition.keySet()) {
 			args.remove(key);
 		}
 		return args;
@@ -85,9 +85,9 @@ public class AliasCommand extends Command {
 	@Override
 	public List<Argument> getArguments() {
 		if (targetcommand == null) { return new ArrayList<>(); }
-		List<Argument> args = targetcommand.getArguments();
-		List<Argument> remainingargs = new ArrayList<>();
-		for (Argument a : args) {
+		final List<Argument> args = targetcommand.getArguments();
+		final List<Argument> remainingargs = new ArrayList<>();
+		for (final Argument a : args) {
 			if (!definition.has(a.getName())) { remainingargs.add(a); }
 			if (definition.has(a.getName() + "-desc") && !definition.optString(a.getName() + "-desc", "").isEmpty()) {
 				a.overrideDescription(definition.getString(a.getName() + "-desc"));
@@ -136,7 +136,7 @@ public class AliasCommand extends Command {
 	@Override
 	public String getFullMethodName() {
 		if (targetcommand == null) { return "Can not invoke - " + fail; }
-		return this.getClass().getCanonicalName() + "(" + getName() + "), will invoke " + targetcommand.getFullMethodName();
+		return getClass().getCanonicalName() + "(" + getName() + "), will invoke " + targetcommand.getFullMethodName();
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class AliasCommand extends Command {
 	}
 
 	@Override
-	public Response run(@Nonnull State st, @Nonnull SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
 		if (targetcommand == null) { throw new UserException("Error: Alias targets command " + name + ", " + fail); }
 		// assume target.  this sucks :P
 		if (parametermap.containsKey("target")) {
@@ -155,9 +155,9 @@ public class AliasCommand extends Command {
 			if (v.startsWith(">")) {
 				v = v.substring(1);
 				try {
-					User a = User.findMandatory(v);
+					final User a = User.findMandatory(v);
 					targchar = Char.getActive(a, st.getInstance());
-				} catch (NoDataException e) {
+				} catch (final NoDataException e) {
 					throw new UserException("Unable to find character or avatar named '" + v + "'");
 				}
 			} else {
@@ -169,14 +169,14 @@ public class AliasCommand extends Command {
 
 		Command consider = this;
 		while (consider instanceof AliasCommand) {
-			AliasCommand ac = (AliasCommand) consider;
+			final AliasCommand ac = (AliasCommand) consider;
 			//System.out.println("Processing "+ac.getFullName());
-			for (String key : ac.getDefinition().keySet()) {
+			for (final String key : ac.getDefinition().keySet()) {
 				if (!"invoke".equalsIgnoreCase(key)) {
 					boolean numeric = false;
 					boolean integer = false;
 					boolean delaytemplating = false;
-					for (Argument arg : ac.getTargetCommand().getArguments()) {
+					for (final Argument arg : ac.getTargetCommand().getArguments()) {
 						if (arg.getName().equals(key)) {
 							if (arg.type() == ArgumentType.FLOAT || arg.type() == ArgumentType.INTEGER) {
 								numeric = true;

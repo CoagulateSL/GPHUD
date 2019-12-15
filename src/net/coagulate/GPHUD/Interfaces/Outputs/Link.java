@@ -17,32 +17,32 @@ public class Link implements Renderable {
 	final Renderable content;
 	final String target;
 
-	public Link(String label, String target) {
+	public Link(final String label, final String target) {
 		content = new Text(label);
 		this.target = target;
 	}
 
-	public Link(Renderable label, String target) {
+	public Link(final Renderable label, final String target) {
 		content = label;
 		this.target = target;
 	}
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		return ">" + content.asText(st) + "<";
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		return "<a href=\"" + target + "\">" + content.asHtml(st, rich) + "</a>";
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
+		final Set<Renderable> r = new HashSet<>();
 		r.add(content);
 		return r;
 	}

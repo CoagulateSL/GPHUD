@@ -19,11 +19,11 @@ public abstract class Input implements Renderable {
 	private String getValue() { return value; }
 
 	@Nonnull
-	public Input setValue(String value) { this.value = value; return this; }
+	public Input setValue(final String value) { this.value = value; return this; }
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		throw new SystemException("Textual output does not support Input elements");
 	}
 

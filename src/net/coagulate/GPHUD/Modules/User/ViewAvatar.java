@@ -34,18 +34,18 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 public abstract class ViewAvatar {
 
 	@URLs(url = "/avatars/view/*")
-	public static void viewAvatar(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		String[] split = st.getDebasedURL().split("/");
-		String id = split[split.length - 1];
-		User a = User.get(Integer.parseInt(id));
+	public static void viewAvatar(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+		final String[] split = st.getDebasedURL().split("/");
+		final String id = split[split.length - 1];
+		final User a = User.get(Integer.parseInt(id));
 		viewAvatar(st, values, a);
 	}
 
 
-	public static void viewAvatar(@Nonnull State st, SafeMap values, @Nonnull User a) throws UserException, SystemException {
+	public static void viewAvatar(@Nonnull final State st, final SafeMap values, @Nonnull final User a) throws UserException, SystemException {
 		boolean fullinstance = false;
 		boolean full = false;
-		String tz = st.getAvatarNullable().getTimeZone();
+		final String tz = st.getAvatarNullable().getTimeZone();
 		if (st.getAvatarNullable() == a) {
 			fullinstance = true;
 			full = true;
@@ -55,18 +55,18 @@ public abstract class ViewAvatar {
 			fullinstance = true;
 			full = true;
 		}
-		Form f = st.form();
+		final Form f = st.form();
 		f.noForm();
 		f.add(new TextSubHeader(a.getName()));
 		if (a.getId() == User.getSystem().getId()) {
 			f.p("<b>SYSTEM is a virtual avatar used as an actor for automatic events that are run by GPHUD itself, e.g. character creation, visit xp, and more</b>");
 		}
-		Table kvtable = new Table();
+		final Table kvtable = new Table();
 		f.add(kvtable);
-		for (Char c : Char.getCharacters(st.getInstance(), a)) {
+		for (final Char c : Char.getCharacters(st.getInstance(), a)) {
 			kvtable.openRow().add("Owned Character").add(c);
 		}
-		String lastactive = fromUnixTime(a.getLastActive(), tz) + " " + tz;
+		final String lastactive = fromUnixTime(a.getLastActive(), tz) + " " + tz;
 		kvtable.openRow().add("Last Active").add(lastactive);
 		kvtable.openRow().add("Selected Time Zone").add(tz);
 
@@ -74,9 +74,9 @@ public abstract class ViewAvatar {
 		kvtable.openRow().add("DeveloperKey").add("" + a.hasDeveloperKey());
 		if (!(full || fullinstance)) {
 			kvtable.openRow().add("<b>Avatar</b>").add("<b>Character</b>").add("<b>Instance</b>");
-			for (Char c : Char.getCharacters(a)) { kvtable.openRow().add("").add(c).add(c.getInstance()); }
-			Results rows = net.coagulate.GPHUD.Data.Audit.getAudit(st.getInstance(), a, null);
-			Table table = net.coagulate.GPHUD.Data.Audit.formatAudit(rows, a.getTimeZone());
+			for (final Char c : Char.getCharacters(a)) { kvtable.openRow().add("").add(c).add(c.getInstance()); }
+			final Results rows = net.coagulate.GPHUD.Data.Audit.getAudit(st.getInstance(), a, null);
+			final Table table = net.coagulate.GPHUD.Data.Audit.formatAudit(rows, a.getTimeZone());
 			st.form().add(table);
 
 
@@ -96,21 +96,21 @@ public abstract class ViewAvatar {
 	}
 
 	@URLs(url = "/avatars/settimezone")
-	public static void setTimeZone(State st, SafeMap value) {
+	public static void setTimeZone(final State st, final SafeMap value) {
 		Modules.simpleHtml(st, "User.SetTZ", value);
 	}
 
 	@Nonnull
 	@Commands(context = Command.Context.AVATAR,permitScripting = false,description = "Set displayed timezone for date/time events",permitObject = false)
-	public static Response setTZ(@Nonnull State st,
-	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", choiceMethod = "getTimeZones")
-			                             String timezone) {
+	public static Response setTZ(@Nonnull final State st,
+	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", choiceMethod = "getTimeZones") final
+	                             String timezone) {
 		st.getAvatarNullable().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");
 	}
 
 	@Nonnull
-	public static List<String> getTimeZones(State st) {
+	public static List<String> getTimeZones(final State st) {
 		return DateTime.getTimeZones();
 	}
 

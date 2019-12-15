@@ -20,7 +20,7 @@ import java.util.TreeMap;
  */
 public class Alias extends TableRow {
 
-	protected Alias(int id) { super(id); }
+	protected Alias(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -29,7 +29,7 @@ public class Alias extends TableRow {
 	 * @return An Avatar representation
 	 */
 	@Nonnull
-	public static Alias get(int id) { return (Alias) factoryPut("Alias", id, new Alias(id)); }
+	public static Alias get(final int id) { return (Alias) factoryPut("Alias", id, new Alias(id)); }
 
 	/**
 	 * Returns a map of aliases for this state.
@@ -38,9 +38,9 @@ public class Alias extends TableRow {
 	 * @return Map of Alias Name to Alias objects
 	 */
 	@Nonnull
-	public static Map<String, Alias> getAliasMap(@Nonnull State st) {
-		Map<String, Alias> aliases = new TreeMap<>();
-		for (ResultsRow r : GPHUD.getDB().dq("select name,aliasid from aliases where instanceid=?", st.getInstance().getId())) {
+	public static Map<String, Alias> getAliasMap(@Nonnull final State st) {
+		final Map<String, Alias> aliases = new TreeMap<>();
+		for (final ResultsRow r : GPHUD.getDB().dq("select name,aliasid from aliases where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"), get(r.getInt("aliasid")));
 		}
 		return aliases;
@@ -53,30 +53,30 @@ public class Alias extends TableRow {
 	 * @return Map of Name to Template (JSON) mappings
 	 */
 	@Nonnull
-	public static Map<String, JSONObject> getTemplates(@Nonnull State st) {
-		Map<String, JSONObject> aliases = new TreeMap<>();
-		for (ResultsRow r : GPHUD.getDB().dq("select name,template from aliases where instanceid=?", st.getInstance().getId())) {
+	public static Map<String, JSONObject> getTemplates(@Nonnull final State st) {
+		final Map<String, JSONObject> aliases = new TreeMap<>();
+		for (final ResultsRow r : GPHUD.getDB().dq("select name,template from aliases where instanceid=?", st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"), new JSONObject(r.getStringNullable("template")));
 		}
 		return aliases;
 	}
 
 	@Nullable
-	public static Alias getAlias(@Nonnull State st, String name) {
+	public static Alias getAlias(@Nonnull final State st, final String name) {
 		try {
-			Integer id = GPHUD.getDB().dqinn("select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
+			final Integer id = GPHUD.getDB().dqinn("select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
 			return get(id);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
 	@Nonnull
-	public static Alias create(@Nonnull State st, @Nonnull String name, @Nonnull JSONObject template) throws UserException, SystemException {
+	public static Alias create(@Nonnull final State st, @Nonnull final String name, @Nonnull final JSONObject template) throws UserException, SystemException {
 		if (getAlias(st, name) != null) { throw new UserException("Alias " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
 			throw new UserException("Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		GPHUD.getDB().d("insert into aliases(instanceid,name,template) values(?,?,?)", st.getInstance().getId(), name, template.toString());
-		Alias newalias = getAlias(st, name);
+		final Alias newalias = getAlias(st, name);
 		if (newalias == null) {
 			throw new SystemException("Failed to create alias " + name + " in instance id " + st.getInstance().getId() + ", created but not found?");
 		}
@@ -114,11 +114,11 @@ public class Alias extends TableRow {
 
 	@Nonnull
 	public JSONObject getTemplate() throws SystemException {
-		String json = dqsnn( "select template from aliases where aliasid=?", getId());
+		final String json = dqsnn( "select template from aliases where aliasid=?", getId());
 		return new JSONObject(json);
 	}
 
-	public void setTemplate(@Nonnull JSONObject template) {
+	public void setTemplate(@Nonnull final JSONObject template) {
 		d("update aliases set template=? where aliasid=?", template.toString(), getId());
 	}
 
@@ -128,9 +128,9 @@ public class Alias extends TableRow {
 	@Nullable
 	public String getKVIdField() { return null; }
 
-	public void flushKVCache(State st) {}
+	public void flushKVCache(final State st) {}
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Alias / State Instance mismatch"); }

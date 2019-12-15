@@ -23,7 +23,7 @@ public class JSONPushResponse implements Response {
 	String url;
 	Response nonjson;
 
-	public JSONPushResponse(JSONObject j, @Nullable String url, Response nonjson) {
+	public JSONPushResponse(final JSONObject j, @Nullable final String url, final Response nonjson) {
 		if (url == null || url.isEmpty() || "?".equals(url)) { throw new SystemException("Can not use the null URL"); }
 		json = j;
 		this.url = url;
@@ -31,7 +31,7 @@ public class JSONPushResponse implements Response {
 	}
 
 	@Override
-	public JSONObject asJSON(State st) {
+	public JSONObject asJSON(final State st) {
 		return json;
 	}
 
@@ -43,16 +43,16 @@ public class JSONPushResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
-		Transmission t = new Transmission((Char) null, json, url);
+	public String asText(final State st) {
+		final Transmission t = new Transmission((Char) null, json, url);
 		t.start();
 		return nonjson.asText(st);
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
-		Transmission t = new Transmission((Char) null, json, url);
+	public String asHtml(final State st, final boolean rich) {
+		final Transmission t = new Transmission((Char) null, json, url);
 		t.start();
 		return nonjson.asHtml(st, rich);
 	}

@@ -15,25 +15,25 @@ public class ToolTip implements Renderable {
 	private final String element;
 	private final Renderable tooltip;
 
-	public ToolTip(String element, String tooltip) {
+	public ToolTip(final String element, final String tooltip) {
 		this.element = element;
 		this.tooltip = new Text(tooltip);
 	}
 
-	public ToolTip(String element, Renderable tooltip) {
+	public ToolTip(final String element, final Renderable tooltip) {
 		this.element = element;
 		this.tooltip = tooltip;
 	}
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		return "<div class=\"tooltip\">" + element + "<span class=\"tooltiptext\">" + tooltip.asHtml(st, rich) + "</span></div>";
 	}
 

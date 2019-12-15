@@ -12,12 +12,12 @@ import java.util.List;
 
 public class BCGroup extends ByteCodeDataType {
 	@Nullable
-	private CharacterGroup content=null;
-	public BCGroup(ParseNode node) { super(node); }
-	public BCGroup(ParseNode node, @Nullable CharacterGroup content) { super(node); this.content=content; }
+	private CharacterGroup content;
+	public BCGroup(final ParseNode node) { super(node); }
+	public BCGroup(final ParseNode node, @Nullable final CharacterGroup content) { super(node); this.content=content; }
 	@Nonnull
 	public String explain() { return "Group ("+content+")"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Group.get());
 		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
 		addInt(bytes,content.getId());
@@ -26,7 +26,7 @@ public class BCGroup extends ByteCodeDataType {
 	@Override public String htmlDecode() { return "Avatar</td><td>"+getContent().getId(); }
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
 		vm.push(this);
 	}
 

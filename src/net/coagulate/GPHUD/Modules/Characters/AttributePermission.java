@@ -20,12 +20,12 @@ public class AttributePermission extends Permission {
 
 	final Attribute a;
 
-	public AttributePermission(Attribute a) {
+	public AttributePermission(final Attribute a) {
 		this.a = a;
 	}
 
 	@Override
-	public Module getModule(State st) {
+	public Module getModule(final State st) {
 		return Modules.get(st,"Characters");
 	}
 

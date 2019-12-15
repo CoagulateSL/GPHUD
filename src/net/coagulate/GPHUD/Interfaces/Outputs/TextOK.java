@@ -14,18 +14,18 @@ import java.util.Set;
 public class TextOK implements Renderable {
 	protected final String s;
 
-	public TextOK(String s) { this.s = s; }
+	public TextOK(final String s) { this.s = s; }
 
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		return "OK : " + s;
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		return "<font color=green>OK : " + s + "</font>";
 	}
 

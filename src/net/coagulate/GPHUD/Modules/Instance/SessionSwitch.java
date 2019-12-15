@@ -25,12 +25,12 @@ import java.util.Set;
 public class SessionSwitch {
 
 	@URLs(url = "/switch/instance")
-	public static void switchInstance(@Nonnull State st, @Nonnull SafeMap values) throws UserException {
-		Form f = st.form();
+	public static void switchInstance(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException {
+		final Form f = st.form();
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
-		for (Instance i : Instance.getInstances()) {
-			String id = i.getId() + "";
+		for (final Instance i : Instance.getInstances()) {
+			final String id = i.getId() + "";
 			f.add("<table><tr><td align=right width=250px><img src=\"" + i.getLogoURL(st) + "\" height=150px></td><td>");
 			f.add(new Button("Select Instance - " + id, "Select Instance - " + i.getName()));
 			if (!values.get("Select Instance - " + id).isEmpty()) {
@@ -48,11 +48,11 @@ public class SessionSwitch {
 	}
 
 	@URLs(url = "/switch/character")
-	public static void switchCharacter(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
+	public static void switchCharacter(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		if (st.getInstanceNullable() == null) { throw new RedirectionException("/switch/instance"); }
-		Form f = st.form();
+		final Form f = st.form();
 		if (!values.get("charid").isEmpty()) {
-			Char c = Char.get(Integer.parseInt(values.get("charid")));
+			final Char c = Char.get(Integer.parseInt(values.get("charid")));
 			c.validate(st);
 			if (c.getOwner() != st.getAvatarNullable()) { throw new UserException("You do not own this character"); }
 			st.setCharacter(c);
@@ -61,15 +61,15 @@ public class SessionSwitch {
 		}
 		f.noForm();
 		f.add(new TextHeader("Select Character"));
-		Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
+		final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
 		if (chars.isEmpty()) {
 			f.add("You have no characters at this instance, please select a new instance or navigate via the left side menu.");
 			return;
 		}
 		f.add(new Separator());
-		for (Char c : chars) {
-			String id = c.getId() + "";
-			String name = c.getName();
+		for (final Char c : chars) {
+			final String id = c.getId() + "";
+			final String name = c.getName();
 			f.add(new Form(st, true, "", "Select Character - " + name, "charid", id));
 			View.viewCharacter(st, values, c, true);
 			f.add(new Separator());

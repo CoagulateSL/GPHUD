@@ -20,18 +20,18 @@ import java.util.Set;
 public class MenuResponse implements Response {
 
 	@Nullable
-	private String header = null;
+	private String header;
 	private final List<Renderable> menu = new ArrayList<>();
 
 	public MenuResponse() {}
 
-	public MenuResponse(@Nullable String title) { header = title; }
+	public MenuResponse(@Nullable final String title) { header = title; }
 
-	public void add(Renderable r) { menu.add(r); }
+	public void add(final Renderable r) { menu.add(r); }
 
 	@Nonnull
 	@Override
-	public JSONObject asJSON(State st) {
+	public JSONObject asJSON(final State st) {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
@@ -43,16 +43,16 @@ public class MenuResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
-		StringBuilder s = new StringBuilder();
+	public String asHtml(final State st, final boolean rich) {
+		final StringBuilder s = new StringBuilder();
 		if (header != null && !header.isEmpty()) { s.append(new TextHeader(header).asHtml(st, rich)); }
-		for (Renderable r : menu) {
+		for (final Renderable r : menu) {
 			if (s.length() > 0) {
 				if (rich) { s.append("<br>"); } else { s.append(" | "); }
 			}

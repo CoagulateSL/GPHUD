@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class ConfigurationHierarchy extends Form {
 
-	public ConfigurationHierarchy(@Nullable State st, @Nullable KV kv, @Nullable State simulated, @Nonnull SafeMap parameters) {
+	public ConfigurationHierarchy(@Nullable final State st, @Nullable final KV kv, @Nullable State simulated, @Nonnull final SafeMap parameters) {
 		if (st == null) { throw new SystemException("Null state?"); }
 		if (simulated == null) { simulated = st; }
 		if (kv == null) { throw new SystemException("KV null?"); }
@@ -33,9 +33,9 @@ public class ConfigurationHierarchy extends Form {
 		add(new TextHeader(kv.fullname()));
 		add(kv.description()).br();
 		br();
-		String editperm = kv.editpermission();
+		final String editperm = kv.editpermission();
 		if (!editperm.isEmpty()) { add("<b>Requires Permission:</b> " + editperm).br(); }
-		String convey = kv.conveyas();
+		final String convey = kv.conveyas();
 		if (convey != null && !convey.isEmpty()) { add("<b>Conveyed as:</b> " + convey).br(); }
 		add("<b>KV Type:</b> " + kv.type()).br();
 		add("<b>Hierarchy Type:</b> " + kv.hierarchy()).br();
@@ -43,12 +43,12 @@ public class ConfigurationHierarchy extends Form {
 		if (kv.isGenerated()) { add("<b>Generated</b>").br(); }
 		if (kv.template()) { add("<b>Supports Templates</b>").br(); }
 		br();
-		String dboname = parameters.get("dbobject");
+		final String dboname = parameters.get("dbobject");
 		int id = -1;
 		if (parameters.containsKey("id")) { id = Integer.parseInt(parameters.get("id")); }
 		if (!dboname.isEmpty() && id >= 0) {
 			String value = "";
-			String magickey = "value-" + dboname + "-" + id;
+			final String magickey = "value-" + dboname + "-" + id;
 			if (parameters.containsKey(magickey)) { value = parameters.get(magickey); }
 			TableRow dbo = null;
 			String type = "unknown";
@@ -78,13 +78,13 @@ public class ConfigurationHierarchy extends Form {
 			}
 			if (dbo == null) { throw new SystemException("Did not get a DBO from " + dboname); }
 			if (st.hasPermission(kv.editpermission())) {
-				String oldvalue = st.getRawKV(dbo, kv.fullname());
+				final String oldvalue = st.getRawKV(dbo, kv.fullname());
 				try {
 					st.setKV(dbo, kv.fullname(), value);
 					Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Set" + type + "KV", kv.fullname(), oldvalue, value, "Changed " + type + "/" + dbo.getNameSafe() + " configuration");
 					add("<font color=green>OK: Value updated</font>");
 					st.purgeCache(dbo);
-				} catch (UserException e) {
+				} catch (final UserException e) {
 					add("<font color=red>ERROR: " + e.getLocalizedMessage() + "</font>");
 				}
 			} else {
@@ -93,20 +93,20 @@ public class ConfigurationHierarchy extends Form {
 			br();
 		}
 
-		Table h = new Table();
+		final Table h = new Table();
 		add(h);
 		//h.border(true);
 		h.openRow();
 		h.add("SYSTEM");
 		h.add("Default");
 		h.add(kv.defaultvalue());
-		Instance instance = simulated.getInstance();
-		Set<String> alledits = new HashSet<>();
+		final Instance instance = simulated.getInstance();
+		final Set<String> alledits = new HashSet<>();
 		if (kv.appliesTo(instance)) { addKVRow(st, h, kv, instance, simulated, alledits); }
-		for (Region r : instance.getRegions(false)) { if (kv.appliesTo(r)) { addKVRow(st, h, kv, r, simulated, alledits); } }
-		for (Zone z : instance.getZones()) { if (kv.appliesTo(z)) { addKVRow(st, h, kv, z, simulated, alledits); } }
-		for (Event e : instance.getEvents()) { if (kv.appliesTo(e)) { addKVRow(st, h, kv, e, simulated, alledits); } }
-		for (CharacterGroup cg : instance.getCharacterGroups()) {
+		for (final Region r : instance.getRegions(false)) { if (kv.appliesTo(r)) { addKVRow(st, h, kv, r, simulated, alledits); } }
+		for (final Zone z : instance.getZones()) { if (kv.appliesTo(z)) { addKVRow(st, h, kv, z, simulated, alledits); } }
+		for (final Event e : instance.getEvents()) { if (kv.appliesTo(e)) { addKVRow(st, h, kv, e, simulated, alledits); } }
+		for (final CharacterGroup cg : instance.getCharacterGroups()) {
 			if (kv.appliesTo(cg)) { addKVRow(st, h, kv, cg, simulated, alledits); }
 		}
 		if (simulated.getCharacterNullable() != null) {
@@ -115,23 +115,23 @@ public class ConfigurationHierarchy extends Form {
 			}
 		}
 		try {
-			KVValue kvexample = simulated.getKV(kv.fullname());
+			final KVValue kvexample = simulated.getKV(kv.fullname());
 			h.openRow();
 			h.add("<i>Example</i>").add("<i>" + kvexample.path() + "</i>").add("<i>" + kvexample.value() + "</i>");
-		} catch (UserException ue) {
+		} catch (final UserException ue) {
 			h.openRow();
 			h.add("<b>ERROR</b>").add(ue.getLocalizedMessage()).add("<b>ERROR</b>");
 		}
 		add("<script>");
 		add("function hideAllEdits() {");
-		for (String s : alledits) {
+		for (final String s : alledits) {
 			add("document.getElementById('" + s + "').style.display='none';");
 		}
 		add("}");
 		add("</script>");
 	}
 
-	void addKVRow(@Nonnull State st, @Nonnull Table t, @Nonnull KV kv, @Nullable TableRow dbo, @Nonnull State simulated, @Nonnull Set<String> alledits) {
+	void addKVRow(@Nonnull final State st, @Nonnull final Table t, @Nonnull final KV kv, @Nullable final TableRow dbo, @Nonnull final State simulated, @Nonnull final Set<String> alledits) {
 		if (dbo == null) { throw new SystemException("Add KV Row for Null DBO?"); }
 		t.openRow();
 		if (dbo instanceof CharacterGroup) {
@@ -143,7 +143,7 @@ public class ConfigurationHierarchy extends Form {
 		t.add(value);
 		if (kv.editpermission().isEmpty() || st.hasPermission(kv.editpermission())) {
 			String typefield = "";
-			String typename = dbo.getName();
+			final String typename = dbo.getName();
 			String targeturl = "";
 			if (dbo instanceof Instance) {
 				targeturl = "/" + Interface.base() + "/configuration/setinstancevalue";
@@ -171,7 +171,7 @@ public class ConfigurationHierarchy extends Form {
 			}
 			String kvvalue = simulated.getRawKV(dbo, kv.fullname());
 			if (kvvalue == null) { kvvalue = ""; }
-			String codename = dbo.getKVTable() + "-" + dbo.getId();
+			final String codename = dbo.getKVTable() + "-" + dbo.getId();
 			alledits.add("edit-" + codename);
 			String editor = null;
 			//t.add(new Form(st, true, targeturl, "Edit",typefield,typename,"key",kv.fullname(),"value",kvvalue));
@@ -197,7 +197,7 @@ public class ConfigurationHierarchy extends Form {
 					editor = "<input size=36 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
 					break;
 				case COMMAND:
-					DropDownList d = DropDownList.getCommandsList(st, "value-" + codename, true);
+					final DropDownList d = DropDownList.getCommandsList(st, "value-" + codename, true);
 					d.setValue(value);
 					editor = d.asHtml(st, true);
 					break;
@@ -227,7 +227,7 @@ public class ConfigurationHierarchy extends Form {
 			if (dbo instanceof Char && dbo == st.getCharacterNullable()) {
 				Attribute selfeditable = null;
 				// vet against attributes
-				for (Attribute attr : st.getAttributes()) {
+				for (final Attribute attr : st.getAttributes()) {
 					if (attr.isKV() && kv.fullname().equalsIgnoreCase("Characters." + attr.getName())) {
 						if (attr.getSelfModify()) {
 							selfeditable = attr;

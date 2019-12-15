@@ -4,11 +4,11 @@ import javax.annotation.Nonnull;
 
 public class GSInvalidPopError extends GSInternalError {
 	private static final long serialVersionUID=1L;
-	public GSInvalidPopError(String reason) {
+	public GSInvalidPopError(final String reason) {
 		super(reason);
 	}
 
-	public GSInvalidPopError(String reason, Throwable cause) {
+	public GSInvalidPopError(final String reason, final Throwable cause) {
 		super(reason, cause);
 	}
 

@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  */
 public abstract class CharacterAttribute extends Attribute {
 
-	protected CharacterAttribute(int id) {super(id); } //throw new SystemException("Not valid on auto generated attribute");}
+	protected CharacterAttribute(final int id) {super(id); } //throw new SystemException("Not valid on auto generated attribute");}
 
 	@Nonnull
 	public abstract String getName();
@@ -37,7 +37,7 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param required New required flag state.
 	 */
-	public void setRequired(Boolean required) {throw new UserException("Not valid on auto generated attribute");}
+	public void setRequired(final Boolean required) {throw new UserException("Not valid on auto generated attribute");}
 
 	@Nonnull
 	public abstract String getDefaultValue();
@@ -47,7 +47,7 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param defaultvalue New default value
 	 */
-	public void setDefaultValue(String defaultvalue) {throw new UserException("Not valid on auto generated attribute");}
+	public void setDefaultValue(final String defaultvalue) {throw new UserException("Not valid on auto generated attribute");}
 
 	public abstract boolean getSelfModify();
 
@@ -56,7 +56,7 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param selfmodify Character can self modify the attribute
 	 */
-	public void setSelfModify(Boolean selfmodify) {throw new UserException("Not valid on auto generated attribute");}
+	public void setSelfModify(final Boolean selfmodify) {throw new UserException("Not valid on auto generated attribute");}
 
 	public abstract boolean isKV();
 
@@ -96,7 +96,7 @@ public abstract class CharacterAttribute extends Attribute {
 	@Override
 	public String getKVIdField() { return null; }
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		validate();
 	}
 
@@ -105,7 +105,7 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param usesabilitypoints Flags new value
 	 */
-	public void setUsesAbilityPoints(Boolean usesabilitypoints) {throw new SystemException("Not valid on auto generated attribute");}
+	public void setUsesAbilityPoints(final Boolean usesabilitypoints) {throw new SystemException("Not valid on auto generated attribute");}
 
 	/**
 	 * Deletes this attribute, and its data.

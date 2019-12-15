@@ -25,20 +25,20 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  * @author Iain Price <gphud@predestined.net>
  */
 public class VisitXP extends QuotaedXP {
-	public VisitXP(int id) { super(id); }
+	public VisitXP(final int id) { super(id); }
 
-	public void runAwards(@Nonnull State st, @Nonnull Char ch) {
+	public void runAwards(@Nonnull final State st, @Nonnull final Char ch) {
 		try {
-			Module m = Modules.get(null, "Experience");
+			final Module m = Modules.get(null, "Experience");
 			if (m.isEnabled(st)) {
 				st.setCharacter(ch);
-				int perweek = st.getKV("Experience.VisitXPPerCycle").intValue();
-				int duration = st.getKV("Experience.VisitXPDuration").intValue();
-				int points = st.getKV("Experience.VisitXPPoints").intValue();
-				int since = getUnixTime() - (Experience.getCycle(st));
+				final int perweek = st.getKV("Experience.VisitXPPerCycle").intValue();
+				final int duration = st.getKV("Experience.VisitXPDuration").intValue();
+				final int points = st.getKV("Experience.VisitXPPoints").intValue();
+				final int since = getUnixTime() - (Experience.getCycle(st));
 				int timethisweek = ch.sumVisits(since);
 				timethisweek = timethisweek / 60;
-				int xpthisweek = ch.sumPoolSince(Modules.getPool(null, "Experience.VisitXP"), since);
+				final int xpthisweek = ch.sumPoolSince(Modules.getPool(null, "Experience.VisitXP"), since);
 				//System.out.println("Sum total visit time for "+ch+" is "+timethisweek);
 				//System.out.println("Sum visit xp in that time period is "+xpthisweek);
 				//System.out.println("Config is "+points+" per "+duration+" total "+perweek);
@@ -48,43 +48,43 @@ public class VisitXP extends QuotaedXP {
 				if ((xpthisweek + wanttogive) > perweek) { wanttogive = perweek - xpthisweek; }
 				//System.out.println("Capped wanttogive "+wanttogive);
 				if (wanttogive <= 0) { return; }
-				Pool visitxp = Modules.getPool(st, "experience.visitxp");
+				final Pool visitxp = Modules.getPool(st, "experience.visitxp");
 				ch.addPool(st, visitxp, wanttogive, "Awarded XP for time on sim");
-				State fakestate = new State();
+				final State fakestate = new State();
 				fakestate.setInstance(st.getInstance());
 				fakestate.setAvatar(User.getSystem());
 				ch.hudMessage("You were awared 1 point of Visit XP, you will be eligable for your next point " + nextFree(st));
 				Audit.audit(fakestate, Audit.OPERATOR.AVATAR, null, ch, "Pool Add", "VisitXP", null, "" + wanttogive, "Awarded XP for time on sim");
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Exception running awards for character " + ch.getNameSafe() + " #" + ch.getId(), e);
 		}
 	}
 
-	public void runAwards(@Nonnull Instance i) {
+	public void runAwards(@Nonnull final Instance i) {
 		try {
-			State st = new State();
+			final State st = new State();
 			st.setInstance(i);
 			st.setAvatar(User.getSystem());
-			for (Region r : i.getRegions(false)) {
-				Set<Char> visitors = r.getOpenVisits();
-				for (Char visitor : visitors) {
+			for (final Region r : i.getRegions(false)) {
+				final Set<Char> visitors = r.getOpenVisits();
+				for (final Char visitor : visitors) {
 					runAwards(st, visitor);
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Exception running awards for instance " + i.getNameSafe() + " #" + i.getId(), e);
 		}
 	}
 
 	public void runAwards() {
 		try {
-			Results results = GPHUD.getDB().dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
-			for (ResultsRow r : results) {
-				Instance i = Instance.get(r.getIntNullable());
+			final Results results = GPHUD.getDB().dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
+			for (final ResultsRow r : results) {
+				final Instance i = Instance.get(r.getIntNullable());
 				runAwards(i);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Exception running awards outer task", e);
 		}
 	}
@@ -93,13 +93,13 @@ public class VisitXP extends QuotaedXP {
 	public String getName() { return "VisitXP"; }
 
 	@Nonnull
-	public String poolName(State st) {return "experience.visitxp";}
+	public String poolName(final State st) {return "experience.visitxp";}
 
 	@Nonnull
-	public String quotaKV(State st) {return "Experience.VisitXPPerCycle";}
+	public String quotaKV(final State st) {return "Experience.VisitXPPerCycle";}
 
 	@Nonnull
-	public String periodKV(State st) { return "Experience.XPCycleDays"; }
+	public String periodKV(final State st) { return "Experience.XPCycleDays"; }
 
 	public Module getModule() { return Modules.get(null, "Experience"); }
 

@@ -16,9 +16,9 @@ public class Paragraph implements Renderable {
 
 	final Renderable content;
 
-	public Paragraph(String s) { content = new Text(s); }
+	public Paragraph(final String s) { content = new Text(s); }
 
-	public Paragraph(Renderable r) { content = r; }
+	public Paragraph(final Renderable r) { content = r; }
 
 	public Paragraph() {
 		content = new Text("");
@@ -26,20 +26,20 @@ public class Paragraph implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		return content.asText(st) + "\n";
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		return "<p>" + content.asHtml(st, rich) + "</p>";
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		Set<Renderable> r = new HashSet<>();
+		final Set<Renderable> r = new HashSet<>();
 		r.add(content);
 		return r;
 	}

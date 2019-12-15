@@ -15,9 +15,9 @@ import java.util.Set;
 public class PrimaryCharacters {
 
 	@Nonnull
-	private static Char getPrimaryCharacter_internal(@Nonnull Instance instance, @Nonnull User avatar) {
-		Integer primary = GPHUD.getDB().dqi( "select entityid from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
-		Char c = Char.get(primary);
+	private static Char getPrimaryCharacter_internal(@Nonnull final Instance instance, @Nonnull final User avatar) {
+		final Integer primary = GPHUD.getDB().dqi( "select entityid from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
+		final Char c = Char.get(primary);
 		if (c.retired()) {
 			GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
 			throw new NoDataException("Primary character is retired");
@@ -32,18 +32,18 @@ public class PrimaryCharacters {
 	 * @return
 	 */
 	@Nullable
-	public static Char getPrimaryCharacter(@Nonnull State st, boolean autocreate) {
-		Instance instance = st.getInstance();
-		User avatar = st.getAvatarNullable();
+	public static Char getPrimaryCharacter(@Nonnull final State st, final boolean autocreate) {
+		final Instance instance = st.getInstance();
+		final User avatar = st.getAvatarNullable();
 		try {
 			return getPrimaryCharacter_internal(instance, avatar);
-		} catch (NoDataException e) {
+		} catch (final NoDataException e) {
 			// hmm, well, lets make them one then.
 			Set<Char> characterset = Char.getCharacters(instance, avatar);
 			if (characterset.isEmpty()) {
 				if (!autocreate) { return null; }
 				// make them a character
-				st.logger().info("Created default character for " + avatar.toString());
+				st.logger().info("Created default character for " + avatar);
 				Char.create(st, avatar.getName());
 				characterset = Char.getCharacters(instance, avatar);
 				if (characterset.isEmpty()) {
@@ -57,13 +57,13 @@ public class PrimaryCharacters {
 		}
 	}
 
-	public static void setPrimaryCharacter(@Nonnull State st, @Nonnull Char c) {
+	public static void setPrimaryCharacter(@Nonnull final State st, @Nonnull final Char c) {
 		c.validate(st);
 		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", st.getAvatarNullable().getId(), st.getInstance().getId());
 		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.getAvatarNullable().getId(), st.getInstance().getId(), c.getId());
 	}
 
-	public static void purge(@Nonnull Char ch) {
+	public static void purge(@Nonnull final Char ch) {
 		GPHUD.getDB().d("delete from primarycharacters where entityid=?",ch.getId());
 	}
 }

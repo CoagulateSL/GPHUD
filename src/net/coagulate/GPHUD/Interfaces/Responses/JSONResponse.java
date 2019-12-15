@@ -17,12 +17,12 @@ import java.util.Set;
 public class JSONResponse implements Response {
 	final JSONObject json;
 
-	public JSONResponse(JSONObject j) {
+	public JSONResponse(final JSONObject j) {
 		json = j;
 	}
 
 	@Override
-	public JSONObject asJSON(State st) {
+	public JSONObject asJSON(final State st) {
 		return json;
 	}
 
@@ -34,13 +34,13 @@ public class JSONResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		throw new SystemException("JSONResponse can not be converted to Text");
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		throw new SystemException("JSONResponse can not be converted to HTML");
 	}
 

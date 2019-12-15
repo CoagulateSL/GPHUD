@@ -25,22 +25,22 @@ import javax.annotation.Nonnull;
 public abstract class Index {
 
 	@URLs(url = "/configuration/")
-	public static void createForm(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		Form f = st.form();
+	public static void createForm(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("GPHUD Module Configuration"));
 		f.add(new Paragraph("Here, the <b>INSTANCE OWNER</b> may enable and disable certain (non-core) modules to enable or disable functionality."));
 		f.add(new TextSubHeader("Core Modules"));
 		f.add(new Paragraph("These may not be disabled as they provide core functionality needed for the system to operate"));
-		Table core = new Table();
+		final Table core = new Table();
 		f.add(core);
 		core.add(new HeaderRow().add("Name").add("Description"));
 		f.add(new TextSubHeader("Optional Modules"));
 		f.add(new Paragraph("These modules can be disabled as they are optional, though you may consider some of them, such as the 'roller', to be 'core', it can be disabled, but probably makes no sense to do so.  Be aware certain modules may depend on other modules and may refuse to enable themselves."));
-		Table configurable = new Table();
+		final Table configurable = new Table();
 		f.add(configurable);
 		configurable.add(new HeaderRow().add("Name").add("Description").add("Status"));
-		for (Module m : Modules.getModules()) {
+		for (final Module m : Modules.getModules()) {
 			boolean hasconfig = !(m.getKVDefinitions(st).isEmpty());
 			if (m.hasConfig(st)) { hasconfig = true; }
 			if (m.canDisable()) {
@@ -54,7 +54,7 @@ public abstract class Index {
 				if (m.isEnabled(st)) { //IF DISABLED etc etc check new Boolean(st.getInstanceKV("modules."+m.getName()))) {
 					configurable.add(new Color("green", "ENABLED"));
 					if (st.hasPermission("instance.moduleenablement")) {
-						Form disable = new Form();
+						final Form disable = new Form();
 						disable.setAction("./disablemodule");
 						disable.add(new Hidden("module", m.getName()));
 						disable.add(new Hidden("okreturnurl", st.getFullURL()));
@@ -65,7 +65,7 @@ public abstract class Index {
 					configurable.add(new Color("red", "Disabled"));
 					if (st.hasPermission("instance.moduleenablement")) {
 						// only enableable if all the dependancies are enabled.  Note we dont check this on disables because reverse deps are annoying, and deps just disable themselves :P
-						Form enable = new Form();
+						final Form enable = new Form();
 						enable.setAction("./enablemodule");
 						enable.add(new Hidden("module", m.getName()));
 						enable.add(new Hidden("okreturnurl", st.getFullURL()));
@@ -86,7 +86,7 @@ public abstract class Index {
 		f.add(new TextSubHeader("Cookbooks"));
 		f.add(new Paragraph("Cookbooks provide a set of sequenced operations that modify your configuration and add features.  Everything these do can be done by hand and they merely provide a convenience measure."));
 		f.add(new Paragraph("Clicking a cookbook will show you the steps that would be enacted.  Anyone may view a cookbook, but only the Instance.PlayCookBook may enact the cookbook due to the scale of changes"));
-		Table books = new Table();
+		final Table books = new Table();
 		f.add(books);
 		books.add(new HeaderRow().add("Name").add("Description"));
 		books.openRow().add(new Link("User Changable Titler", "/GPHUD/configuration/cookbooks/user-titler")).add("Allows the character to modify a text string that is appended to their titler");
@@ -96,30 +96,30 @@ public abstract class Index {
 	}
 
 	@URLs(url = "/configuration/view/*")
-	public static void kvDetailPage(@Nonnull State st, @Nonnull SafeMap values) {
-		String kvname = st.getDebasedURL().replaceFirst("/configuration/view/", "").replaceFirst("/", ".");
-		KV kv = st.getKVDefinition(kvname);
+	public static void kvDetailPage(@Nonnull final State st, @Nonnull final SafeMap values) {
+		final String kvname = st.getDebasedURL().replaceFirst("/configuration/view/", "").replaceFirst("/", ".");
+		final KV kv = st.getKVDefinition(kvname);
 		st.form().noForm();
 		st.form().add(new ConfigurationHierarchy(st, kv, st, values));
 	}
 
 	@URLs(url = "/configuration/*")
-	public static void genericConfigurationPage(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
+	public static void genericConfigurationPage(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		String module = st.getDebasedURL().replaceFirst("/configuration/", "");
 		String key = null;
 		st.form().noForm();
 		if (module.contains("/")) {
-			String[] split = module.split("/");
+			final String[] split = module.split("/");
 			if (split.length == 2) {
 				module = split[0];
 				key = split[1];
 			}
 		}
-		Module m = Modules.get(st, module);
+		final Module m = Modules.get(st, module);
 		if (key == null) {
 			m.kvConfigPage(st);
 		} else {
-			KV kv = st.getKVDefinition(module + "." + key);
+			final KV kv = st.getKVDefinition(module + "." + key);
 
 			st.form().add(new ConfigurationHierarchy(st, kv, st.simulate(st.getCharacter()), values));
 		}

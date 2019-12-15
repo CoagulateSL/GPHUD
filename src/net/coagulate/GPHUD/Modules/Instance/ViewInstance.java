@@ -20,24 +20,24 @@ import javax.annotation.Nonnull;
 public abstract class ViewInstance {
 
 	@URLs(url = "/instances/view/*")
-	public static void viewInstance(@Nonnull State st, SafeMap values) throws UserException, SystemException {
+	public static void viewInstance(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
 		//System.out.println(st.uri);
-		String[] split = st.getDebasedURL().split("/");
+		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
-		String id = split[split.length - 1];
-		Instance i = Instance.get(Integer.parseInt(id));
+		final String id = split[split.length - 1];
+		final Instance i = Instance.get(Integer.parseInt(id));
 		viewInstance(st, values, i);
 	}
 
-	public static void viewInstance(@Nonnull State st, SafeMap values, @Nonnull Instance i) throws UserException {
-		String tz = st.getAvatarNullable().getTimeZone();
+	public static void viewInstance(@Nonnull final State st, final SafeMap values, @Nonnull final Instance i) throws UserException {
+		final String tz = st.getAvatarNullable().getTimeZone();
 		boolean full = false;
 		if (st.isSuperUser()) { full = true; }
-		Table map = new Table();
+		final Table map = new Table();
 		st.form().add(map);
 		map.openRow().add("Name").add(i.getName());
 		map.openRow().add("Owner").add(i.getOwner().getGPHUDLink());
-		for (Region r : i.getRegions(false)) {
+		for (final Region r : i.getRegions(false)) {
 			map.openRow().add("Region").add(r).add(r.getOnlineStatus(tz));
 			map.openRow().add("").add("").add("Server " + r.getServerVersion(true));
 			map.openRow().add("").add("").add("HUD " + r.getHUDVersion(true));

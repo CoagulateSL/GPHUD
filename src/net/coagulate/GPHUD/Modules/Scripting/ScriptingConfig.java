@@ -35,8 +35,8 @@ import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULA
 
 public class ScriptingConfig {
 	@URL.URLs(url = "/configuration/scripting")
-	public static void configPage(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void configPage(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.add(new TextHeader("Scripting Module"));
 		f.add(new Paragraph("List of scripts"));
 		f.add(Scripts.getTable(st.getInstance()));
@@ -45,8 +45,8 @@ public class ScriptingConfig {
 	}
 
 	@URL.URLs(url = "/configuration/scripting/create", requiresPermission = "Scripting.Create")
-	public static void createScript(@Nonnull State st, @Nonnull SafeMap values) {
-		Form f = st.form();
+	public static void createScript(@Nonnull final State st, @Nonnull final SafeMap values) {
+		final Form f = st.form();
 		if (!values.get("scriptname").isEmpty()) {
 			Scripts.create(st, values.get("scriptname"));
 			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Create",values.get("scriptname"),"","","Created script");
@@ -58,53 +58,53 @@ public class ScriptingConfig {
 	}
 
 	@URL.URLs(url = "/configuration/scripting/edit/*", requiresPermission = "Scripting.Create")
-	public static void editScript(@Nonnull State st, @Nonnull SafeMap values) {
-		Form f = st.form();
-		String[] split = st.getDebasedURL().split("/");
+	public static void editScript(@Nonnull final State st, @Nonnull final SafeMap values) {
+		final Form f = st.form();
+		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
-		String id = split[split.length - 1];
-		Scripts script = Scripts.get(Integer.parseInt(id));
+		final String id = split[split.length - 1];
+		final Scripts script = Scripts.get(Integer.parseInt(id));
 		script.validate(st);
 		if (!values.get("scriptsource").isEmpty()) {
 			script.setSource(values.get("scriptsource"));
 			f.p("Script source saved OK!");
-			String source=script.getSource();
-			int version=script.getSourceVersion();
+			final String source=script.getSource();
+			final int version=script.getSourceVersion();
 			// try compile
 			try {
-				ByteArrayInputStream bais = new ByteArrayInputStream(source.getBytes());
-				GSParser parser = new GSParser(bais);
+				final ByteArrayInputStream bais = new ByteArrayInputStream(source.getBytes());
+				final GSParser parser = new GSParser(bais);
 				parser.enable_tracing();
 				GSStart gsscript = null;
 				try {
 					gsscript = parser.Start();
-				} catch (Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+				} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 					if (e instanceof ParseException) {
-						ParseException pe = (ParseException) e;
+						final ParseException pe = (ParseException) e;
 						String tokenimage = "";
 						tokenimage = "Last token: " + pe.currentToken.image + "<br>";
-						f.p("<b>Parse failed:</b> " + e.toString() + "<br>" + tokenimage);
+						f.p("<b>Parse failed:</b> " + e + "<br>" + tokenimage);
 					} else {
-						f.p("<b>Parse failed:</b> " + e.toString());
+						f.p("<b>Parse failed:</b> " + e);
 					}
 					Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","ParseFail","Saved script, with parse failures");
 				}
 				if (gsscript!=null) {
-					GSCompiler compiler = new GSCompiler(gsscript);
+					final GSCompiler compiler = new GSCompiler(gsscript);
 					compiler.compile();
 					script.setBytecode(compiler.toByteCode(), version);
 					f.p("Script compiled and saved OK!");
 					Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
 				}
-			} catch (NullPointerException ex) {
+			} catch (final NullPointerException ex) {
 				throw new SystemException("Null pointer exception in compiler",ex);
-			} catch (Throwable t) {
-				f.p("Compilation failed; "+t.toString());
+			} catch (final Throwable t) {
+				f.p("Compilation failed; "+ t);
 				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
 			}
 		}
 		f.add(new TextHeader("Edit script " + script.getName()));
-		Table versions = new Table();
+		final Table versions = new Table();
 		versions.add("Source code version").add(script.getSourceVersion() + "");
 		versions.openRow();
 		if (script.getSourceVersion() != script.getByteCodeVersion()) {
@@ -157,36 +157,36 @@ public class ScriptingConfig {
 	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS}
 
 	@Nonnull
-	private static String debug(@Nonnull State st, @Nonnull String script, STAGE stage) {
-		ByteArrayInputStream bais = new ByteArrayInputStream(script.getBytes());
-		GSParser parser = new GSParser(bais);
+	private static String debug(@Nonnull final State st, @Nonnull final String script, final STAGE stage) {
+		final ByteArrayInputStream bais = new ByteArrayInputStream(script.getBytes());
+		final GSParser parser = new GSParser(bais);
 		parser.enable_tracing();
 		GSStart gsscript = null;
 		try {
 			gsscript = parser.Start();
 			if (stage==STAGE.PARSER) { return gsscript.toHtml(); }
-		} catch (Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+		} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 			if (e instanceof ParseException) {
-				ParseException pe = (ParseException) e;
+				final ParseException pe = (ParseException) e;
 				String tokenimage = "";
 				tokenimage = "Last token: " + pe.currentToken.image + "<br>";
-				return "<b>Parse failed:</b> " + e.toString() + "<br>" + tokenimage;
+				return "<b>Parse failed:</b> " + e + "<br>" + tokenimage;
 			}
-			return "<b>Parse failed:</b> " + e.toString();
+			return "<b>Parse failed:</b> " + e;
 		}
 
-		GSCompiler compiler;
+		final GSCompiler compiler;
 		if (gsscript != null) {
 			try {
 				compiler = new GSCompiler(gsscript);
 				if (stage==STAGE.COMPILER) {
-					List<ByteCode> bytecode = compiler.compile();
-					StringBuilder code = new StringBuilder("<pre><table border=0>");
-					for (ByteCode bc : bytecode) {
+					final List<ByteCode> bytecode = compiler.compile();
+					final StringBuilder code = new StringBuilder("<pre><table border=0>");
+					for (final ByteCode bc : bytecode) {
 						code.append("<tr><td>").append(bc.node() != null ? bc.node().tokens() : "").append("</td><td>").append(bc.explain().replaceFirst(" \\(", "</td><td><i>(")).append("</i></td><td>");
-						ArrayList<Byte> bcl = new ArrayList<>();
+						final ArrayList<Byte> bcl = new ArrayList<>();
 						bc.toByteCode(bcl);
-						for (Byte b : bcl) {
+						for (final Byte b : bcl) {
 							code.append(b).append(" ");
 						}
 						code.append("</td></tr>");
@@ -194,15 +194,15 @@ public class ScriptingConfig {
 					code.append("</table></pre>");
 					return code.toString();
 				}
-			} catch (NullPointerException ex) {
+			} catch (final NullPointerException ex) {
 				throw new SystemException("Null pointer exception in compiler",ex);
-			} catch (Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-				return "<b>Compilation failed:</b> " + e.toString();
+			} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+				return "<b>Compilation failed:</b> " + e;
 			}
 
-			Byte[] rawcode= compiler.toByteCode();
+			final Byte[] rawcode= compiler.toByteCode();
 			if (stage==STAGE.BYTECODE) {
-				StringBuilder bcstring = new StringBuilder("<pre><table border=0><tr>");
+				final StringBuilder bcstring = new StringBuilder("<pre><table border=0><tr>");
 				for (int i = 0; i < rawcode.length; i++) {
 					if ((i % 25) == 0) { bcstring.append("</tr><tr><th>").append(i).append("</th>"); }
 					bcstring.append("<td>").append(rawcode[i]).append("</td>");
@@ -211,17 +211,17 @@ public class ScriptingConfig {
 				return bcstring.toString();
 			}
 
-			GSVM gsvm=new GSVM(rawcode);
+			final GSVM gsvm=new GSVM(rawcode);
 			if (stage==STAGE.DISASSEMBLY) {
 				return gsvm.toHtml();
 			}
 
 			try {
 				if (stage== SIMULATION || stage==RESULTS) {
-					long start=System.currentTimeMillis();
-					List<GSVM.ExecutionStep> steps = gsvm.simulate(st);
-					long end=System.currentTimeMillis();
-					StringBuilder output= new StringBuilder("<p><i>Run time: " + (end - start) + " ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>");
+					final long start=System.currentTimeMillis();
+					final List<GSVM.ExecutionStep> steps = gsvm.simulate(st);
+					final long end=System.currentTimeMillis();
+					final StringBuilder output= new StringBuilder("<p><i>Run time: " + (end - start) + " ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>");
 					if (stage==SIMULATION) {
 							// no more than 100 steps now
 						int index=steps.size()-100;
@@ -237,24 +237,24 @@ public class ScriptingConfig {
 					return output.toString();
 				}
 
-			} catch (ArrayIndexOutOfBoundsException ex) {
+			} catch (final ArrayIndexOutOfBoundsException ex) {
 				throw new SystemException("Array index out of bounds in compiler/simulator",ex);
-			} catch (Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-				return "<b>Simulation failed:</b> " + e.toString();
+			} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+				return "<b>Simulation failed:</b> " + e;
 			}
 		}
 		return "Did nothing (?)";
 	}
 
 	@Nonnull
-	private static String formatStep(@Nonnull GSVM.ExecutionStep step) {
-		StringBuilder output = new StringBuilder();
+	private static String formatStep(@Nonnull final GSVM.ExecutionStep step) {
+		final StringBuilder output = new StringBuilder();
 		output.append("<tr><td>").append(step.IC).append("</td><th>").append(step.programcounter).append("</th><td>").append(step.decode).append("</td><td><table>");
 		for (int i = 0; i < step.resultingstack.size(); i++) {
 			output.append("<tr><th>").append(i).append("</th><td>").append(step.resultingstack.get(i).htmlDecode()).append("</td></tr>");
 		}
 		output.append("</table></td><td><table>");
-		for (Map.Entry<String, ByteCodeDataType> entry : step.resultingvariables.entrySet()) {
+		for (final Map.Entry<String, ByteCodeDataType> entry : step.resultingvariables.entrySet()) {
 			String decode = "???";
 			if (entry.getValue() != null) {
 				decode = entry.getValue().htmlDecode();

@@ -28,7 +28,7 @@ import static java.util.logging.Level.WARNING;
 public abstract class Avatars {
 	@Nonnull
 	@Commands(context = Context.AVATAR, permitScripting = false, description = "Synchronise the avatars status with the regions contents, server use only.", permitConsole = false, permitUserWeb = false,permitObject = false)
-	public static Response setRegionAvatars(@Nonnull State st,
+	public static Response setRegionAvatars(@Nonnull final State st,
 	                                        @Nullable @Arguments(description = "Comma separated list of avatar key=names on the sim", type = ArgumentType.TEXT_ONELINE, max = 65536)
 			                                        String userlist) throws UserException {
 
@@ -36,30 +36,30 @@ public abstract class Avatars {
 		if (st.getSourcedeveloper().getId() != 1) {
 			return new ErrorResponse("Invalid developer source for priviledged call.");
 		}
-		Region region = st.getRegion();
+		final Region region = st.getRegion();
 		if (!region.getURL().equals(st.callbackurl)) {
 			return new ErrorResponse("Invalid callback URL, you do not match the registered region server");
 		}
 		if (userlist == null) { userlist = ""; }
-		Set<User> openvisits = region.getAvatarOpenVisits();
+		final Set<User> openvisits = region.getAvatarOpenVisits();
 
-		for (String element : userlist.split(",")) {
+		for (final String element : userlist.split(",")) {
 			//System.out.println(element);
-			String[] p = element.split("=");
+			final String[] p = element.split("=");
 			if (p.length == 2) {
 				try {
-					User thisavi = User.findOrCreateAvatar(p[1], p[0]);
+					final User thisavi = User.findOrCreateAvatar(p[1], p[0]);
 					// we DONT init visits this way =)  character registration does
 					openvisits.remove(thisavi);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					st.logger().log(WARNING, "Avatar joiner registration failed, ", e);
 				}
 			}
 		}
 		region.departingAvatars(st, openvisits);
-		Instance instance = st.getInstance();
+		final Instance instance = st.getInstance();
 		//instance.updateStatus();
-		JSONObject json=new JSONObject();
+		final JSONObject json=new JSONObject();
 		json.put("autoattach",st.getKV("gphudserver.autoattach"));
 		json.put("parcelonly",st.getKV("gphudserver.parcelonly"));
 		return new JSONResponse(json);

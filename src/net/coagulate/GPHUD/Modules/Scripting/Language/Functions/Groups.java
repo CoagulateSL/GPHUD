@@ -11,8 +11,8 @@ import javax.annotation.Nonnull;
 public class Groups {
 	@Nonnull
 	@GSFunctions.GSFunction(description = "Gets the group name for a given attribute",returns = "String - name of group of appropriate subtype, or the empty string if none",notes = "",parameters = "Character - character to interrogate<br>String - type of group to get")
-	public static BCString gsGetGroupByType(State st, GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString grouptype) {
-		CharacterGroup group=target.getContent().getGroup(grouptype.getContent());
+	public static BCString gsGetGroupByType(final State st, final GSVM vm, @Nonnull final BCCharacter target, @Nonnull final BCString grouptype) {
+		final CharacterGroup group=target.getContent().getGroup(grouptype.getContent());
 		String name="";
 		if (group!=null) { name=group.getName(); }
 		return new BCString(null,name);

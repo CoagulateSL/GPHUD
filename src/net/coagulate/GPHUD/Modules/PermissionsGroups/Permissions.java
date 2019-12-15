@@ -26,25 +26,25 @@ import javax.annotation.Nonnull;
  */
 public abstract class Permissions {
 	@URLs(url = "/permissionsgroups/addpermission", requiresPermission = "Instance.ManagePermissions")
-	public static void addPermissionForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void addPermissionForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.addpermission", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Add a permission to a permission group", requiresPermission = "Instance.ManagePermissions")
-	public static Response addPermission(@Nonnull State st,
-	                                     @Nonnull @Arguments(description = "Permissions group to add permission to", type = ArgumentType.PERMISSIONSGROUP)
-			                                     PermissionsGroup permissionsgroup,
-	                                     @Nonnull @Arguments(description = "Permission to add to group", type = ArgumentType.PERMISSION)
-			                                     String permission
+	public static Response addPermission(@Nonnull final State st,
+	                                     @Nonnull @Arguments(description = "Permissions group to add permission to", type = ArgumentType.PERMISSIONSGROUP) final
+	                                     PermissionsGroup permissionsgroup,
+	                                     @Nonnull @Arguments(description = "Permission to add to group", type = ArgumentType.PERMISSION) final
+	                                         String permission
 	) throws UserException, SystemException {
 		Modules.validatePermission(st, permission);
-		Permission permissionref = Modules.getPermission(st, permission);
+		final Permission permissionref = Modules.getPermission(st, permission);
 		if (permissionref==null) { return new ErrorResponse("The permission '"+permission+"' did not resolve properly (does not exist?)"); }
 		if (!permissionref.grantable()) {
 			return new ErrorResponse("The permission '" + permission + "' is not grantable through user action.");
 		}
-		try { permissionsgroup.addPermission(st, permission); } catch (UserException e) {
+		try { permissionsgroup.addPermission(st, permission); } catch (final UserException e) {
 			return new ErrorResponse("Failed to add permission to permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Add Permission", permissionsgroup.getNameSafe(), null, permission, "Permission added to permissions group");
@@ -52,19 +52,19 @@ public abstract class Permissions {
 	}
 
 	@URLs(url = "/permissionsgroups/delpermission", requiresPermission = "Instance.ManagePermissions")
-	public static void delPermissionForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void delPermissionForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.delpermission", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Remove a permission from a permissions group", requiresPermission = "Instance.ManagePermissions")
-	public static Response delPermission(@Nonnull State st,
-	                                     @Nonnull @Arguments(description = "Permissions group to remove permission from", type = ArgumentType.PERMISSIONSGROUP)
-			                                     PermissionsGroup permissionsgroup,
-	                                     @Arguments(description = "Permission to remove from group", type = ArgumentType.TEXT_CLEAN, max = 256)
-			                                     String permission
+	public static Response delPermission(@Nonnull final State st,
+	                                     @Nonnull @Arguments(description = "Permissions group to remove permission from", type = ArgumentType.PERMISSIONSGROUP) final
+	                                     PermissionsGroup permissionsgroup,
+	                                     @Arguments(description = "Permission to remove from group", type = ArgumentType.TEXT_CLEAN, max = 256) final
+	                                         String permission
 	) throws UserException, SystemException {
-		try { permissionsgroup.removePermission(permission); } catch (UserException e) {
+		try { permissionsgroup.removePermission(permission); } catch (final UserException e) {
 			return new ErrorResponse("Failed to remove permission from permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Del Permission", permissionsgroup.getNameSafe(), permission, null, "Permission removed from permissions group");

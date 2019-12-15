@@ -19,9 +19,9 @@ public class Broadcast {
 
 	@Nonnull
 	@Commands(context = Context.ANY, description = "Send admin message", requiresPermission = "instance.SendAdminMessages")
-	public static Response admin(@Nonnull State st,
-	                             @Arguments(description = "Message to broadcast", type = ArgumentType.TEXT_ONELINE, max = 200)
-			                             String sendmessage) {
+	public static Response admin(@Nonnull final State st,
+	                             @Arguments(description = "Message to broadcast", type = ArgumentType.TEXT_ONELINE, max = 200) final
+	                             String sendmessage) {
 		String message = "(From ";
 		String avfrom = "";
 		if (st.getAvatarNullable() != null) {
@@ -32,7 +32,7 @@ public class Broadcast {
 			if (!st.getCharacter().getName().equals(avfrom)) { message += "/" + st.getCharacter().getName(); }
 		}
 		message += ") : " + sendmessage;
-		int sent = st.getInstance().broadcastAdmins(st, message);
+		final int sent = st.getInstance().broadcastAdmins(st, message);
 		return new OKResponse("Sent to " + sent + " admins");
 	}
 }

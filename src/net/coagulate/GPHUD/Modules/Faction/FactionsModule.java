@@ -20,16 +20,16 @@ import java.util.Set;
  */
 public class FactionsModule extends ModuleAnnotation {
 
-	public FactionsModule(String name, ModuleDefinition def) throws SystemException, UserException {
+	public FactionsModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
 		super(name, def);
 	}
 
 	@Nonnull
 	@Override
-	public Set<SideSubMenu> getSideSubMenus(@Nonnull State st) {
-		Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
-		Set<SideSubMenu> ret = new HashSet<>();
-		for (CharacterGroup faction : factions) {
+	public Set<SideSubMenu> getSideSubMenus(@Nonnull final State st) {
+		final Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
+		final Set<SideSubMenu> ret = new HashSet<>();
+		for (final CharacterGroup faction : factions) {
 			ret.add(new StaticSideSubMenu(faction.getName(), faction.getId(), "/factions/view/" + faction.getId(), ""));
 		}
 		return ret;
@@ -37,8 +37,8 @@ public class FactionsModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Set<CharacterAttribute> getAttributes(State st) {
-		Set<CharacterAttribute> ret = new HashSet<>();
+	public Set<CharacterAttribute> getAttributes(final State st) {
+		final Set<CharacterAttribute> ret = new HashSet<>();
 		ret.add(new FactionAttribute(-1));
 		return ret;
 	}

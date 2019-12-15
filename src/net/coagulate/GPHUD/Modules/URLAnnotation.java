@@ -25,10 +25,10 @@ public class URLAnnotation extends URL {
 	private final Method method;
 	private boolean generated = true;
 
-	public URLAnnotation(Module module, @Nonnull Method method) throws SystemException, UserException {
+	public URLAnnotation(final Module module, @Nonnull final Method method) throws SystemException, UserException {
 		this.module = module;
 		this.method = method;
-		this.meta = method.getAnnotation(URLs.class);
+		meta = method.getAnnotation(URLs.class);
 		checkUnique();
 		validate(null);
 		generated = false;
@@ -55,13 +55,13 @@ public class URLAnnotation extends URL {
 		inuse.add(url());
 	}
 
-	private void validate(State st) throws UserException, SystemException {
+	private void validate(final State st) throws UserException, SystemException {
 		if (!requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, requiresPermission());
 		}
 		Module.checkPublicStatic(method);
-		Class<?>[] params = method.getParameterTypes();
-		String fullname = method.getDeclaringClass().getName() + "." + method.getName();
+		final Class<?>[] params = method.getParameterTypes();
+		final String fullname = method.getDeclaringClass().getName() + "." + method.getName();
 		if (params.length != 2) {
 			throw new SystemException("Method " + fullname + " must have 2 arguments (State,SafeMap) but has " + params.length);
 		}
@@ -74,15 +74,15 @@ public class URLAnnotation extends URL {
 
 	}
 
-	public void run(@Nonnull State st, SafeMap values) throws SystemException, UserException {
+	public void run(@Nonnull final State st, final SafeMap values) throws SystemException, UserException {
 		try {
 			method.invoke(null, st, values);
-		} catch (IllegalAccessException ex) {
+		} catch (final IllegalAccessException ex) {
 			throw new SystemException("Illegal method access to content at " + st.getDebasedURL(), ex);
-		} catch (IllegalArgumentException ex) {
+		} catch (final IllegalArgumentException ex) {
 			throw new SystemException("Illegal arguments on content, should be (State,Map<String,String>), at " + st.getDebasedURL(), ex);
-		} catch (InvocationTargetException ex) {
-			Throwable contained = ex.getCause();
+		} catch (final InvocationTargetException ex) {
+			final Throwable contained = ex.getCause();
 			if (contained instanceof RedirectionException) { throw (RedirectionException) contained; }
 			if (contained instanceof SystemException) { throw (SystemException) contained; }
 			if (contained instanceof UserException) { throw (UserException) contained; }

@@ -21,7 +21,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Event extends TableRow {
 
-	protected Event(int id) { super(id); }
+	protected Event(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -30,7 +30,7 @@ public class Event extends TableRow {
 	 * @return A zone representation
 	 */
 	@Nonnull
-	public static Event get(int id) {
+	public static Event get(final int id) {
 		return (Event) factoryPut("Event", id, new Event(id));
 	}
 
@@ -42,11 +42,11 @@ public class Event extends TableRow {
 	 * @return Event object
 	 */
 	@Nullable
-	public static Event find(@Nonnull Instance instance, String name) {
+	public static Event find(@Nonnull final Instance instance, final String name) {
 		try {
-			int eventid = GPHUD.getDB().dqinn("select eventid from events where name like ? and instanceid=?", name, instance.getId());
+			final int eventid = GPHUD.getDB().dqinn("select eventid from events where name like ? and instanceid=?", name, instance.getId());
 			return get(eventid);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class Event extends TableRow {
 	 * @throws UserException If the named event already exists
 	 */
 	@Nonnull
-	public static Event create(@Nonnull Instance instance, String eventName) throws UserException {
+	public static Event create(@Nonnull final Instance instance, final String eventName) throws UserException {
 		Event event = find(instance, eventName);
 		if (event != null) { throw new UserException("Event " + eventName + " already exists."); }
 		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)", instance.getId(), eventName);
@@ -76,9 +76,9 @@ public class Event extends TableRow {
 	 * @return Set of Events
 	 */
 	@Nonnull
-	public static Set<Event> getAll(@Nonnull Instance instance) {
-		Set<Event> events = new TreeSet<>();
-		for (ResultsRow r : GPHUD.getDB().dq("select eventid from events where instanceid=?", instance.getId())) {
+	public static Set<Event> getAll(@Nonnull final Instance instance) {
+		final Set<Event> events = new TreeSet<>();
+		for (final ResultsRow r : GPHUD.getDB().dq("select eventid from events where instanceid=?", instance.getId())) {
 			events.add(get(r.getInt()));
 		}
 		return events;
@@ -91,20 +91,20 @@ public class Event extends TableRow {
 	 * @return Set of Events that are currently active and started
 	 */
 	@Nonnull
-	static Set<Event> getActive(@Nonnull Instance instance) {
-		Set<Event> events = new TreeSet<>();
-		int now = getUnixTime();
-		for (ResultsRow r : GPHUD.getDB().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
+	static Set<Event> getActive(@Nonnull final Instance instance) {
+		final Set<Event> events = new TreeSet<>();
+		final int now = getUnixTime();
+		for (final ResultsRow r : GPHUD.getDB().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
 			events.add(get(r.getInt()));
 		}
 		return events;
 
 	}
 
-	static void wipeKV(@Nonnull Instance instance, String key) {
-		String kvtable = "eventskvstore";
-		String maintable = "events";
-		String idcolumn = "eventid";
+	static void wipeKV(@Nonnull final Instance instance, final String key) {
+		final String kvtable = "eventskvstore";
+		final String maintable = "events";
+		final String idcolumn = "eventid";
 		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
 	}
 
@@ -115,11 +115,11 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public static Set<EventSchedule> getStartingEvents() {
-		Set<EventSchedule> start = new TreeSet<>();
+		final Set<EventSchedule> start = new TreeSet<>();
 		// find events where start time is in the past but "started"=0
-		int now = getUnixTime();
+		final int now = getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?", now, now)) {
+		for (final ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?", now, now)) {
 			//System.out.println(r.getInt());
 			start.add(EventSchedule.get(r.getInt()));
 		}
@@ -133,11 +133,11 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public static Set<EventSchedule> getStoppingEvents() {
-		Set<EventSchedule> stop = new TreeSet<>();
+		final Set<EventSchedule> stop = new TreeSet<>();
 		// find events where start time is in the past but "started"=0
-		int now = getUnixTime();
+		final int now = getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?", now)) {
+		for (final ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?", now)) {
 			//System.out.println(r.getInt());
 			stop.add(EventSchedule.get(r.getInt()));
 		}
@@ -192,9 +192,9 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public Set<Zone> getZones() {
-		Set<Zone> zones = new TreeSet<>();
-		for (ResultsRow r : dq("select zoneid from eventslocations where eventid=?", getId())) {
-			int zone = r.getInt();
+		final Set<Zone> zones = new TreeSet<>();
+		for (final ResultsRow r : dq("select zoneid from eventslocations where eventid=?", getId())) {
+			final int zone = r.getInt();
 			zones.add(Zone.get(zone));
 		}
 		return zones;
@@ -205,8 +205,8 @@ public class Event extends TableRow {
 	 *
 	 * @param zone Zone to add to the event
 	 */
-	public void addZone(@Nonnull Zone zone) {
-		int count = dqinn( "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
+	public void addZone(@Nonnull final Zone zone) {
+		final int count = dqinn( "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
 		if (count != 0) { return; }
 		d("insert into eventslocations(eventid,zoneid) values(?,?)", getId(), zone.getId());
 	}
@@ -216,7 +216,7 @@ public class Event extends TableRow {
 	 *
 	 * @param zone Zone to remove from the event
 	 */
-	public void deleteZone(@Nonnull Zone zone) {
+	public void deleteZone(@Nonnull final Zone zone) {
 		d("delete from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
 	}
 
@@ -237,11 +237,11 @@ public class Event extends TableRow {
 	 * @param enddate   EndTime start of the event
 	 * @param interval  How often to repeat the event, for repeating events
 	 */
-	public void addSchedule(int startdate, int enddate, int interval) {
+	public void addSchedule(final int startdate, final int enddate, final int interval) {
 		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)", getId(), startdate, enddate, interval);
 	}
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Event / State Instance mismatch"); }

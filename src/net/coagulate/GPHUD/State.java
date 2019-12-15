@@ -38,131 +38,131 @@ public class State extends DumpableState {
 
 	// map of post values read in the user interface
 	@Nullable
-	public SafeMap postmap=null;
+	public SafeMap postmap;
 	@Nullable
-	public String callbackurl = null;
+	public String callbackurl;
 	@Nonnull
 	public Sources source = Sources.NONE;
 	@Nullable
-	public HttpRequest req = null;
+	public HttpRequest req;
 	@Nullable
-	public HttpResponse resp = null;
+	public HttpResponse resp;
 	@Nullable
-	public HttpContext context = null;
+	public HttpContext context;
 	// system interface puts input here
 	@Nullable
-	private JSONObject json = null;
+	private JSONObject json;
 	// system interface sets to raw json string
 	@Nullable
 	public final String jsoncommand = null;
 	@Nullable
-	public InetAddress address = null;
+	public InetAddress address;
 
 	@Nullable
-	public Header[] headers = null;
+	public Header[] headers;
 	//requested host
 	@Nullable
-	public String host = null;
+	public String host;
 	// web interface stores an error here for rendering
 	@Nullable
-	public Exception exception = null;
+	public Exception exception;
 	// web interface stores the logged in userid if applicable
 	@Nullable
-	public String username = null;
+	public String username;
 	// system interface sets this if we're "runas" someone other than the owner
-	public boolean issuid = false;
+	public boolean issuid;
 	// web interface logged in user ID, may be null if they cookie in as an avatar :)
 	// avatar, from web interface, or second life
 	@Nullable
-	public User avatar = null;
+	public User avatar;
 	// web interface cookie, used to logout things
 	@Nullable
-	public Cookies cookie = null;
+	public Cookies cookie;
 	@Nullable
-	public String cookiestring = null;
+	public String cookiestring;
 	@Nullable
-	private Form form = null;
+	private Form form;
 	// system interface puts the object originating the request here
 	@Nullable
-	private User sourceowner = null;
+	private User sourceowner;
 	@Nullable
-	public String sourcename = null;
+	public String sourcename;
 	@Nullable
-	private User sourcedeveloper = null;
+	private User sourcedeveloper;
 	@Nullable
-	public Region sourceregion = null;
+	public Region sourceregion;
 	@Nullable
-	public String sourcelocation = null;
+	public String sourcelocation;
 
 	// used by the HUD interface to stash things briefly
 	public String command;
 	@Nullable
-	public Zone zone = null;
+	public Zone zone;
 	// used by the HUD interface to stash things briefly
 	public boolean sendshow;
 	@Nullable
-	public Integer roll = null;
+	public Integer roll;
 	@Nullable
 	public GSVM vm;
 	@Nonnull
 	public Map<Integer,Set<String>> permissionsGroupCache=new HashMap<>();
 	@Nullable
-	public String objectkey=null;
+	public String objectkey;
 	@Nullable
-	public Objects object=null;
+	public Objects object;
 
 	public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
 	@Nullable
-	Set<String> permissionscache = null;
+	Set<String> permissionscache;
 	@Nullable
-	Set<Attribute> attributes = null;
+	Set<Attribute> attributes;
 	@Nullable
-	private String uri = null;
+	private String uri;
 	@Nullable
-	private State target = null;
+	private State target;
 	@Nullable
-	private String regionname = null;
+	private String regionname;
 	@Nullable
-	private Region region = null;
+	private Region region;
 	@Nullable
-	private Instance instance = null;
+	private Instance instance;
 	// character
 	@Nullable
-	private Char character = null;
+	private Char character;
 	@Nullable
-	private Boolean superuser = null;
+	private Boolean superuser;
 	@Nullable
-	private Boolean instanceowner = null;
+	private Boolean instanceowner;
 	private final Map<TableRow, Map<String, String>> kvmaps = new HashMap<>();
 
 	public State() {}
 
 
-	public State(@Nullable HttpRequest req, @Nullable HttpResponse resp, @Nullable HttpContext context) {
+	public State(@Nullable final HttpRequest req, @Nullable final HttpResponse resp, @Nullable final HttpContext context) {
 		this.req = req;
 		this.resp = resp;
 		this.context = context;
 	}
 
-	public State(@Nonnull Char c) {
-		this.character = c;
-		this.avatar = c.getPlayedBy();
-		this.instance = c.getInstance();
-		this.region = c.getRegion();
-		this.zone = c.getZone();
+	public State(@Nonnull final Char c) {
+		character = c;
+		avatar = c.getPlayedBy();
+		instance = c.getInstance();
+		region = c.getRegion();
+		zone = c.getZone();
 	}
 
-	public State(@Nullable Instance i, @Nullable Region r, @Nullable Zone z, @Nonnull Char c) {
-		this.instance = i;
-		this.region = r;
-		this.zone = z;
-		this.character = c;
-		this.avatar = c.getPlayedBy();
+	public State(@Nullable final Instance i, @Nullable final Region r, @Nullable final Zone z, @Nonnull final Char c) {
+		instance = i;
+		region = r;
+		zone = z;
+		character = c;
+		avatar = c.getPlayedBy();
 	}
 
 	@Nonnull
-	public static State getNonSpatial(@Nonnull Char c) {
-		State ret = new State();
+	public static State getNonSpatial(@Nonnull final Char c) {
+		final State ret = new State();
 		ret.setInstance(c.getInstance());
 		ret.setAvatar(c.getOwner());
 		ret.setCharacter(c);
@@ -173,7 +173,7 @@ public class State extends DumpableState {
 	// web interface sets this to the "logged in CHARACTER" object
 	// system interface sets to instance
 
-	public boolean hasModule(@Nonnull String module) throws UserException, SystemException {
+	public boolean hasModule(@Nonnull final String module) throws UserException, SystemException {
 		if (Modules.get(null, module).isEnabled(this)) { return true; }
 		return false;
 	}
@@ -181,11 +181,11 @@ public class State extends DumpableState {
 	@Nonnull
 	public Set<String> getCharacterGroupTypes() {
 		final boolean debug = false;
-		Set<String> types = new TreeSet<>();
+		final Set<String> types = new TreeSet<>();
 		types.add("");
-		for (Attribute a : getAttributes()) {
+		for (final Attribute a : getAttributes()) {
 			if (a.getType() == Attribute.ATTRIBUTETYPE.GROUP) {
-				String grouptype = a.getSubType();
+				final String grouptype = a.getSubType();
 				if (grouptype != null && !grouptype.isEmpty()) { types.add(grouptype); }
 			}
 		}
@@ -193,28 +193,28 @@ public class State extends DumpableState {
 	}
 
 	@Nullable
-	public Attribute getAttributeOrException(@Nonnull String name) {
-		Attribute a = getAttribute(name);
+	public Attribute getAttributeOrException(@Nonnull final String name) {
+		final Attribute a = getAttribute(name);
 		if (a == null) { throw new UserException("No such character attribute '" + name + "'"); }
 		return a;
 	}
 
 	@Nullable
-	public Attribute getAttribute(@Nonnull String name) {
-		Set<Attribute> map = getAttributes();
-		for (Attribute a : map) {
+	public Attribute getAttribute(@Nonnull final String name) {
+		final Set<Attribute> map = getAttributes();
+		for (final Attribute a : map) {
 			if (name.equalsIgnoreCase(a.getName())) { return a; }
 		}
 		return null;
 	}
 
 	@Nullable
-	public Attribute getAttribute(@Nonnull CharacterGroup group) {
-		boolean debug = false;
-		String keyword = group.getType();
-		for (Attribute attr : getAttributes()) {
+	public Attribute getAttribute(@Nonnull final CharacterGroup group) {
+		final boolean debug = false;
+		final String keyword = group.getType();
+		for (final Attribute attr : getAttributes()) {
 			if (attr.getType()== Attribute.ATTRIBUTETYPE.GROUP) {
-				String type = attr.getSubType();
+				final String type = attr.getSubType();
 				if (type.equals(keyword)) {
 					return attr;
 				}
@@ -253,7 +253,7 @@ public class State extends DumpableState {
 		return ret;
 	}
 
-	public void setURL(String url) { uri = url; }
+	public void setURL(final String url) { uri = url; }
 
 	@Nullable
 	public State getTargetNullable() { return target; }
@@ -264,12 +264,12 @@ public class State extends DumpableState {
 		return target;
 	}
 
-	public void setTarget(@Nonnull Char c) {
+	public void setTarget(@Nonnull final Char c) {
 		target = new State(instance, region, zone, c);
 	}
 
 	@Nonnull
-	public KVValue getTargetKV(String kvname) { return target.getKV(kvname); }
+	public KVValue getTargetKV(final String kvname) { return target.getKV(kvname); }
 
 	/**
 	 * Get the region name - this is EITHER the name of the Region object (see getRegion()) or a temporary string.
@@ -285,7 +285,7 @@ public class State extends DumpableState {
 		return regionname;
 	}
 
-	public void setRegionName(String regionname) {
+	public void setRegionName(final String regionname) {
 		this.regionname = regionname;
 	}
 
@@ -296,12 +296,12 @@ public class State extends DumpableState {
 	 */
 	@Nonnull
 	public Region getRegion() {
-		Region r = getRegionNullable();
+		final Region r = getRegionNullable();
 		if (r == null) { throw new UserException("No region has been selected"); }
 		return r;
 	}
 
-	public void setRegion(@Nonnull Region region) {
+	public void setRegion(@Nonnull final Region region) {
 		region.validate(this);
 		this.region = region;
 	}
@@ -314,15 +314,15 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public Char getCharacter() {
-		Char c = getCharacterNullable();
+		final Char c = getCharacterNullable();
 		if (c == null) { throw new UserException("No character is selected"); }
 		return c;
 	}
 
-	public void setCharacter(@Nullable Char character) {
+	public void setCharacter(@Nullable final Char character) {
 		if (character != null) { character.validate(this); }
 		this.character = character;
-		if (this.character != null && this.avatar == null) { avatar = character.getPlayedBy(); }
+		if (this.character != null && avatar == null) { avatar = character.getPlayedBy(); }
 	}
 
 	@Nullable
@@ -340,7 +340,7 @@ public class State extends DumpableState {
 		return avatar;
 	}
 
-	public void setAvatar(@Nullable User avatar) {
+	public void setAvatar(@Nullable final User avatar) {
 		this.avatar = avatar;
 	}
 
@@ -351,12 +351,12 @@ public class State extends DumpableState {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		Instance i = getInstanceNullable();
+		final Instance i = getInstanceNullable();
 		if (i == null) { throw new UserException("No instance has been selected"); }
 		return i;
 	}
 
-	public void setInstance(@Nullable Instance instance) {
+	public void setInstance(@Nullable final Instance instance) {
 		if (instance != null) { instance.validate(this); }
 		this.instance = instance;
 	}
@@ -395,7 +395,7 @@ public class State extends DumpableState {
 		String response = "";
 		if (character != null) {
 			response += character.toString();
-			if (avatar != null) { response += "/Avatar:" + avatar.toString() + ""; }
+			if (avatar != null) { response += "/Avatar:" + avatar + ""; }
 			return response;
 		}
 		if (avatar != null) { return avatar.toString(); }
@@ -429,14 +429,14 @@ public class State extends DumpableState {
 	 * @param permission Permission string to check
 	 * @return true/false
 	 */
-	public boolean hasPermission(@Nullable String permission) {
+	public boolean hasPermission(@Nullable final String permission) {
 		if (permission == null || permission.isEmpty()) { return true; }
 //        Modules.validatePermission(permission);
 		if (isSuperUser()) { return true; }
 		if (isInstanceOwner()) { return true; }
 		preparePermissionsCache();
 		if (permissionscache == null) { return false; }
-		for (String check : permissionscache) { if (check.equalsIgnoreCase(permission)) { return true; } }
+		for (final String check : permissionscache) { if (check.equalsIgnoreCase(permission)) { return true; } }
 		return false;
 	}
 
@@ -447,8 +447,8 @@ public class State extends DumpableState {
 	 * @param permission name of permission
 	 * @return True/false
 	 */
-	public boolean hasPermissionOrAnnotateForm(String permission) {
-		boolean haspermission = hasPermission(permission);
+	public boolean hasPermissionOrAnnotateForm(final String permission) {
+		final boolean haspermission = hasPermission(permission);
 		if (haspermission) { return haspermission; }
 		form().add(new TextError("Insufficient permissions: You require " + permission));
 		return haspermission;
@@ -474,20 +474,20 @@ public class State extends DumpableState {
 		return instanceowner;
 	}
 
-	public boolean deniedPermission(@Nullable String permission) throws UserException {
+	public boolean deniedPermission(@Nullable final String permission) throws UserException {
 		if (permission == null || permission.isEmpty()) { return true; }
-		if (this.hasPermission(permission)) { return false; }
+		if (hasPermission(permission)) { return false; }
 		form().add(new TextError("Permission Denied!  You require permission " + permission + " to access this content"));
 		return true;
 	}
 
-	public void assertPermission(@Nullable String permission) throws SystemException, UserException {
+	public void assertPermission(@Nullable final String permission) throws SystemException, UserException {
 		if (permission == null || permission.isEmpty()) { return; }
 		if (hasPermission(permission)) { return; }
 		throw new SystemException("ALERT! Permission assertion failed on permission " + permission);
 	}
 
-	private Map<String, String> getKVMap(@Nullable TableRow dbo) {
+	private Map<String, String> getKVMap(@Nullable final TableRow dbo) {
 		if (dbo == null) { throw new SystemException("Can not get KV map for null object"); }
 		if (!kvmaps.containsKey(dbo)) {
 			kvmaps.put(dbo, dbo.loadKVs());
@@ -495,24 +495,24 @@ public class State extends DumpableState {
 		return kvmaps.get(dbo);
 	}
 
-	private boolean kvDefined(@Nullable TableRow o, @Nonnull KV kv) {
+	private boolean kvDefined(@Nullable final TableRow o, @Nonnull final KV kv) {
 		if (o == null) { throw new SystemException("Can not check kv definition on a null object"); }
-		Map<String, String> kvmap = getKVMap(o);
+		final Map<String, String> kvmap = getKVMap(o);
 		if (kvmap.containsKey(kv.fullname().toLowerCase())) { return true; }
 		return false;
 	}
 
 	@Nonnull
-	public KV getKVDefinition(String kvname) {
+	public KV getKVDefinition(final String kvname) {
 		return Modules.getKVDefinition(this, kvname);
 	}
 
 	@Nonnull
-	public List<TableRow> getTargetList(@Nonnull KV kv) {
-		boolean debug = false;
-		KV.KVSCOPE scope = kv.scope();
+	public List<TableRow> getTargetList(@Nonnull final KV kv) {
+		final boolean debug = false;
+		final KV.KVSCOPE scope = kv.scope();
 		// create a ordered list of all the relevant objects, wether valued or not
-		List<TableRow> check = new ArrayList<>();
+		final List<TableRow> check = new ArrayList<>();
 		// in DELEGATING order
 		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.SERVER || scope == KV.KVSCOPE.SPATIAL || scope == KV.KVSCOPE.INSTANCE || scope == KV.KVSCOPE.NONSPATIAL) {
 			if (instance != null) { check.add(instance); }
@@ -525,8 +525,8 @@ public class State extends DumpableState {
 		}
 		// events in ID order
 		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.SPATIAL || scope == KV.KVSCOPE.EVENT) {
-			Map<Integer, Event> eventmap = new TreeMap<>();
-			for (Event e : instance.getActiveEvents()) {
+			final Map<Integer, Event> eventmap = new TreeMap<>();
+			for (final Event e : instance.getActiveEvents()) {
 				eventmap.put(e.getId(), e);
 			}
 			check.addAll(eventmap.values());
@@ -534,8 +534,8 @@ public class State extends DumpableState {
 		// charactergroups in ID order
 		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.NONSPATIAL) {
 			if (character != null) {
-				Map<Integer, CharacterGroup> map = new TreeMap<>();
-				for (CharacterGroup c : character.getGroups()) {
+				final Map<Integer, CharacterGroup> map = new TreeMap<>();
+				for (final CharacterGroup c : character.getGroups()) {
 					map.put(c.getId(), c);
 				}
 				check.addAll(map.values());
@@ -550,9 +550,9 @@ public class State extends DumpableState {
 
 	// tells us which is the target from where we would derive a value.
 	@Nullable
-	public TableRow determineTarget(@Nonnull KV kv) {
-		boolean debug = false;
-		List<TableRow> targets = getTargetList(kv);
+	public TableRow determineTarget(@Nonnull final KV kv) {
+		final boolean debug = false;
+		final List<TableRow> targets = getTargetList(kv);
 		TableRow ret = null;
 		switch (kv.hierarchy()) {
 			case NONE:
@@ -565,7 +565,7 @@ public class State extends DumpableState {
 				break;
 			case AUTHORITATIVE:
 				// from highest to lowest, first value we find takes precedence.
-				for (TableRow dbo : targets) {
+				for (final TableRow dbo : targets) {
 					if (ret == null) { // already found? do nothing
 						if (kvDefined(dbo, kv) && getKV(dbo, kv.fullname()) != null) { ret = dbo; }
 					}
@@ -573,7 +573,7 @@ public class State extends DumpableState {
 				break;
 			case DELEGATING:
 				// rather the inverse logic, just take the 'lowest' match
-				for (TableRow dbo : targets) {
+				for (final TableRow dbo : targets) {
 					if (kvDefined(dbo, kv) && getKV(dbo, kv.fullname()) != null) { ret = dbo; }
 				}
 				break;
@@ -586,23 +586,23 @@ public class State extends DumpableState {
 	}
 
 	@Nonnull
-	public KVValue getKV(@Nullable String kvname) {
+	public KVValue getKV(@Nullable final String kvname) {
 		try {
-			StringBuilder path = new StringBuilder();
+			final StringBuilder path = new StringBuilder();
 			final boolean debug = false;
 			if (kvname == null) {
-				SystemException ex=new SystemException("Get KV on null K");
+				final SystemException ex=new SystemException("Get KV on null K");
 				logger().log(Level.WARNING,"Get KV on null K",ex);
 				throw ex;
 			}
-			KV kv = getKVDefinition(kvname);
+			final KV kv = getKVDefinition(kvname);
 			if (kv.hierarchy() == KV.KVHIERARCHY.CUMULATIVE) {
 				float sum = 0;
 				boolean triggered = false;
-				List<TableRow> list = getTargetList(kv);
+				final List<TableRow> list = getTargetList(kv);
 				if (!list.isEmpty()) {
-					for (TableRow dbo : getTargetList(kv)) {
-						String raw = getKV(dbo, kvname);
+					for (final TableRow dbo : getTargetList(kv)) {
+						final String raw = getKV(dbo, kvname);
 						if (raw != null && !raw.isEmpty()) {
 							sum = sum + Float.parseFloat(raw);
 							triggered = true;
@@ -618,23 +618,23 @@ public class State extends DumpableState {
 				}
 				return new KVValue(templateDefault(kv), "Template Default");
 			} else {
-				TableRow target = determineTarget(kv);
+				final TableRow target = determineTarget(kv);
 				if (target == null) {
 					return new KVValue(templateDefault(kv), "No Target Template Default");
 				}
-				String value = getKV(target, kvname);
+				final String value = getKV(target, kvname);
 				if (value == null) {
 					return new KVValue(templateDefault(kv), "Null Value Template Default");
 				}
 				return new KVValue(getKV(target, kvname), "Direct value from " + target.getClass().getSimpleName() + " " + target.getNameSafe());
 			}
-		} catch (RuntimeException re) {
+		} catch (final RuntimeException re) {
 			throw new UserException("Failed to evaluate KV " + kvname + ": " + re.getLocalizedMessage(), re);
 		}
 	}
 
-	public String templateDefault(@Nonnull KV kv) {
-		String s = kv.defaultvalue();
+	public String templateDefault(@Nonnull final KV kv) {
+		final String s = kv.defaultvalue();
 		if (!kv.template()) { return s; }
 		boolean evaluate = false;
 		boolean isint = false;
@@ -646,17 +646,17 @@ public class State extends DumpableState {
 		return Templater.template(this, s, evaluate, isint);
 	}
 
-	public String getRawKV(@Nullable TableRow target, @Nonnull String kvname) {
+	public String getRawKV(@Nullable final TableRow target, @Nonnull final String kvname) {
 		if (target == null) { throw new SystemException("Can not get kv " + kvname + " for null target"); }
-		KV kv = getKVDefinition(kvname);
+		final KV kv = getKVDefinition(kvname);
 		if (kv == null) { throw new UserException("Failed to resolve " + kvname + " to a valid KV entity"); }
 		return getKVMap(target).get(kvname.toLowerCase());
 	}
 
-	public String getKV(@Nonnull TableRow target, @Nonnull String kvname) {
-		boolean debug = false;
-		String s = getRawKV(target, kvname);
-		KV kv = getKVDefinition(kvname);
+	public String getKV(@Nonnull final TableRow target, @Nonnull final String kvname) {
+		final boolean debug = false;
+		final String s = getRawKV(target, kvname);
+		final KV kv = getKVDefinition(kvname);
 		if (!kv.template()) { return s; }
 		boolean evaluate = false;
 		boolean isint = false;
@@ -666,7 +666,7 @@ public class State extends DumpableState {
 			isint = true;
 		}
 		String out;
-		try { out = Templater.template(this, s, evaluate, isint); } catch (Exception e) {
+		try { out = Templater.template(this, s, evaluate, isint); } catch (final Exception e) {
 			throw new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
 		}
 		if (kv.type()== COLOR) {
@@ -676,22 +676,22 @@ public class State extends DumpableState {
 		return out;
 	}
 
-	public void purgeCache(TableRow dbo) { kvmaps.remove(dbo); }
+	public void purgeCache(final TableRow dbo) { kvmaps.remove(dbo); }
 
-	public void setKV(@Nonnull TableRow dbo, @Nonnull String key, @Nullable String value) {
+	public void setKV(@Nonnull final TableRow dbo, @Nonnull final String key, @Nullable String value) {
 		if (value != null && !value.isEmpty()) {
-			KV definition = this.getKVDefinition(key);
+			final KV definition = getKVDefinition(key);
 			if (!definition.template()) { // these are hard to verify :P
 				switch (definition.type()) {
 					case TEXT: // no checking here :P
 						break;
 					case INTEGER: // check it parses into an int
-						try { Integer.parseInt(value); } catch (NumberFormatException e) {
+						try { Integer.parseInt(value); } catch (final NumberFormatException e) {
 							throw new UserException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
 						}
 						break;
 					case FLOAT:
-						try { Float.parseFloat(value); } catch (NumberFormatException e) {
+						try { Float.parseFloat(value); } catch (final NumberFormatException e) {
 							throw new UserException(key + " must be a number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
 						}
 						break;
@@ -707,9 +707,9 @@ public class State extends DumpableState {
 						}
 						break;
 					case COMMAND:
-						try { Modules.getCommandNullable(this, value); } catch (SystemException e) {
+						try { Modules.getCommandNullable(this, value); } catch (final SystemException e) {
 							throw new UserException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error");
-						} catch (UserException f) {
+						} catch (final UserException f) {
 							throw new UserException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")");
 						}
 						break;
@@ -736,14 +736,14 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public State simulate(@Nullable Char c) {
-		State simulated = new State();
+		final State simulated = new State();
 		simulated.setInstance(getInstance());
 		if (c == null) { c = getCharacterNullable(); }
 		simulated.setCharacter(c);
-		Set<Region> possibleregions = instance.getRegions(false);
-		Region simulatedregion = new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
+		final Set<Region> possibleregions = instance.getRegions(false);
+		final Region simulatedregion = new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
 		simulated.setRegion(simulatedregion);
-		Set<Zone> possiblezones = simulatedregion.getZones();
+		final Set<Zone> possiblezones = simulatedregion.getZones();
 		if (!possiblezones.isEmpty()) {
 			simulated.zone = new ArrayList<>(possiblezones).get((int) (Math.floor(Math.random() * possiblezones.size())));
 		}
@@ -761,9 +761,9 @@ public class State extends DumpableState {
 	public Set<Attribute> getAttributes() {
 		if (attributes != null) { return attributes; }
 		attributes = new TreeSet<>();
-		Set<Attribute> db = Attribute.getAttributes(this);
+		final Set<Attribute> db = Attribute.getAttributes(this);
 		attributes.addAll(db);
-		for (Module module : Modules.getModules()) {
+		for (final Module module : Modules.getModules()) {
 			//System.out.println("checking module "+module.getName());
 			if (module.isEnabled(this)) {
 				//System.out.println("is enabled true "+module.getName());
@@ -775,7 +775,7 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public String toString() {
-		StringBuilder ret = new StringBuilder();
+		final StringBuilder ret = new StringBuilder();
 		if (instance != null) {
 			if (ret.length() > 0) { ret.append(", "); }
 			ret.append("Instance:").append(instance.getName());
@@ -789,7 +789,7 @@ public class State extends DumpableState {
 			ret.append("Zone:").append(zone.getName());
 		}
 		if (character != null) {
-			for (CharacterGroup c : character.getGroups()) {
+			for (final CharacterGroup c : character.getGroups()) {
 				if (ret.length() > 0) { ret.append(", "); }
 				ret.append("Group:").append(c.getName());
 			}
@@ -805,7 +805,7 @@ public class State extends DumpableState {
 		if (vm!=null) {
 			try {
 				return vm.dumpStateToHtml();
-			} catch (Throwable e) { return "Exceptioned: " + e.toString(); }
+			} catch (final Throwable e) { return "Exceptioned: " + e; }
 		}
 		return "";
 	}
@@ -876,11 +876,11 @@ public class State extends DumpableState {
 		return sourcedeveloper;
 	}
 
-	public void setSourcedeveloper(@Nullable User sourcedeveloper) {
+	public void setSourcedeveloper(@Nullable final User sourcedeveloper) {
 		this.sourcedeveloper = sourcedeveloper;
 	}
 
-	public void setForm(@Nonnull Form form) {
+	public void setForm(@Nonnull final Form form) {
 		this.form = form;
 	}
 
@@ -890,7 +890,7 @@ public class State extends DumpableState {
 		return json;
 	}
 
-	public void setJson(@Nullable JSONObject json) {
+	public void setJson(@Nullable final JSONObject json) {
 		this.json = json;
 	}
 
@@ -900,7 +900,7 @@ public class State extends DumpableState {
 		return sourceowner;
 	}
 
-	public void setSourceowner(@Nullable User sourceowner) {
+	public void setSourceowner(@Nullable final User sourceowner) {
 		this.sourceowner = sourceowner;
 	}
 

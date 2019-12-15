@@ -27,43 +27,43 @@ public abstract class Templater {
 	private static final Map<String, String> templates = new TreeMap<>();
 	private static final Map<String, Method> methods = new TreeMap<>();
 
-	private static void add(String key, String description, Method method) {
+	private static void add(final String key, final String description, final Method method) {
 		templates.put("--" + key + "--", description);
 		methods.put("--" + key + "--", method);
 	}
 
 	@Nonnull
-	public static Map<String, String> getTemplates(State st) {
-		Map<String, String> ret = new TreeMap<>(templates);
-		for (Module m : Modules.getModules()) {
+	public static Map<String, String> getTemplates(final State st) {
+		final Map<String, String> ret = new TreeMap<>(templates);
+		for (final Module m : Modules.getModules()) {
 			m.addTemplateDescriptions(st, ret);
 		}
 		return ret;
 	}
 
 	@Nonnull
-	public static Map<String, Method> getMethods(State st) {
-		Map<String, Method> ret = new TreeMap<>(methods);
-		for (Module m : Modules.getModules()) {
+	public static Map<String, Method> getMethods(final State st) {
+		final Map<String, Method> ret = new TreeMap<>(methods);
+		for (final Module m : Modules.getModules()) {
 			m.addTemplateMethods(st, ret);
 		}
 		return ret;
 	}
 
-	public static void register(@Nonnull Template template, Method m) {
+	public static void register(@Nonnull final Template template, final Method m) {
 		add(template.name(), template.description(), m);
 	}
 
-	public static Method getMethod(State st, String name) { return getMethods(st).get(name); }
+	public static Method getMethod(final State st, final String name) { return getMethods(st).get(name); }
 
-	public static String template(@Nonnull State st, String string, boolean evaluate, boolean integer) {
+	public static String template(@Nonnull final State st, String string, final boolean evaluate, final boolean integer) {
 		string = template(st, string);
 		if (string == null) { return string; }
 		if ("".equals(string)) { return ""; }
 		try {
 			if (evaluate && !integer) { return eval(string) + ""; }
 			if (evaluate && integer) { return "" + ((int) (eval(string))); }
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			SL.report("Expression failed for " + string, e, st);
 			st.logger().log(WARNING, "Failed to complete expression evaluation for '" + string + "' - we got error " + e.getMessage(), e);
 			throw e;
@@ -72,14 +72,14 @@ public abstract class Templater {
 	}
 
 	@Nullable
-	private static String template(@Nullable State st, @Nullable String string) throws UserException {
+	private static String template(@Nullable final State st, @Nullable String string) throws UserException {
 		if (string == null) { return string; }
 		if (st == null) { throw new SystemException("Null session state is not permitted"); }
-		boolean debug = false;
-		for (String subst : getTemplates(st).keySet()) {
+		final boolean debug = false;
+		for (final String subst : getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
 				String value = "ERROR";
-				try { value = getValue(st, subst); } catch (UserException e) { value = "Error: " + e.getMessage(); }
+				try { value = getValue(st, subst); } catch (final UserException e) { value = "Error: " + e.getMessage(); }
 				string = string.replaceAll(subst, Matcher.quoteReplacement(value));
 			}
 		}
@@ -87,23 +87,23 @@ public abstract class Templater {
 	}
 
 	@Nonnull
-	public static String getValue(@Nonnull State st, String keyword, boolean evaluate, boolean integer) {
+	public static String getValue(@Nonnull final State st, final String keyword, final boolean evaluate, final boolean integer) {
 		if (evaluate && integer) { return ((int) eval(getValue(st, keyword))) + ""; }
 		if (evaluate) { return eval(getValue(st, keyword)) + ""; }
 		return getValue(st, keyword);
 	}
 
 	@Nonnull
-	private static String getValue(@Nonnull State st, String keyword) {
-		Method m = getMethods(st).get(keyword);
+	private static String getValue(@Nonnull final State st, final String keyword) {
+		final Method m = getMethods(st).get(keyword);
 		if (m != null) {
 			try {
 				return (String) m.invoke(null, st, keyword);
-			} catch (@Nonnull IllegalAccessException | IllegalArgumentException ex) {
+			} catch (@Nonnull final IllegalAccessException | IllegalArgumentException ex) {
 				SL.report("Templating exception", ex, st);
 				st.logger().log(SEVERE, "Exception running templater method", ex);
 				throw new SystemException("Templater exceptioned", ex);
-			} catch (InvocationTargetException e) {
+			} catch (final InvocationTargetException e) {
 				if (e.getCause() instanceof UserException) { throw (UserException) e.getCause(); }
 				if (e.getCause() instanceof SystemException) { throw (SystemException) e.getCause(); }
 				throw new SystemException("Unable to invoke target", e);
@@ -114,7 +114,7 @@ public abstract class Templater {
 
 	@Nullable
 	@Template(name = "NAME", description = "Character Name")
-	public static String getCharacterName(@Nonnull State st, String key) {
+	public static String getCharacterName(@Nonnull final State st, final String key) {
 		if (st.getCharacterNullable() == null) { return ""; }
 		return st.getCharacter().getName();
 	}
@@ -122,14 +122,14 @@ public abstract class Templater {
 	// some standard templates
 
 	@Template(name = "AVATAR", description = "Avatar Name")
-	public static String getAvatarName(@Nonnull State st, String key) {
+	public static String getAvatarName(@Nonnull final State st, final String key) {
 		if (st.getAvatarNullable() == null) { return ""; }
 		return st.getAvatarNullable().getName();
 	}
 
 	@Nonnull
 	@Template(name = "NEWLINE", description = "Newline character")
-	public static String newline(State st, String key) { return "\n"; }
+	public static String newline(final State st, final String key) { return "\n"; }
 
 	//https://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form
 	// boann@stackoverflow.com
@@ -141,7 +141,7 @@ public abstract class Templater {
 				ch = (++pos < str.length()) ? str.charAt(pos) : -1;
 			}
 
-			boolean eat(int charToEat) {
+			boolean eat(final int charToEat) {
 				while (ch == ' ') nextChar();
 				if (ch == charToEat) {
 					nextChar();
@@ -152,7 +152,7 @@ public abstract class Templater {
 
 			double parse() {
 				nextChar();
-				double x = parseExpression();
+				final double x = parseExpression();
 				if (pos < str.length())
 					throw new UserException("Unexpected: " + (char) ch + " at position " + pos + " in '" + str + "'");
 				return x;
@@ -187,16 +187,16 @@ public abstract class Templater {
 				if (eat('-')) return -parseFactor(); // unary minus
 
 				double x;
-				int startPos = this.pos;
+				final int startPos = pos;
 				if (eat('(')) { // parentheses
 					x = parseExpression();
 					eat(')');
 				} else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
 					while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-					x = Double.parseDouble(str.substring(startPos, this.pos));
+					x = Double.parseDouble(str.substring(startPos, pos));
 				} else if (ch >= 'a' && ch <= 'z') { // functions
 					while (ch >= 'a' && ch <= 'z') nextChar();
-					String func = str.substring(startPos, this.pos);
+					final String func = str.substring(startPos, pos);
 					x = parseFactor();
 					switch (func) {
 						case "sqrt":

@@ -28,7 +28,7 @@ public class MenuCommand extends Command {
 	final String description = "Pick a menu item item item. :P";
 	final String name;
 
-	public MenuCommand(State st, String name, JSONObject newdef) throws UserException, SystemException {
+	public MenuCommand(final State st, final String name, final JSONObject newdef) throws UserException, SystemException {
 		super();
 		definition = newdef;
 		this.name = name;
@@ -45,8 +45,8 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public List<String> getArgumentNames(State st) throws UserException {
-		List<String> args = new ArrayList<>();
+	public List<String> getArgumentNames(final State st) throws UserException {
+		final List<String> args = new ArrayList<>();
 		args.add("choice");
 		return args;
 	}
@@ -57,7 +57,7 @@ public class MenuCommand extends Command {
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
-		List<Argument> args = new ArrayList<>();
+		final List<Argument> args = new ArrayList<>();
 		args.add(new MenuArgument(this, definition));
 		return args;
 	}
@@ -85,7 +85,7 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public String getFullMethodName() { return this.getClass() + ".run()"; }
+	public String getFullMethodName() { return getClass() + ".run()"; }
 
 	@Nonnull
 	@Override
@@ -93,8 +93,8 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public Response run(@Nonnull State st, @Nonnull SafeMap parametermap) throws UserException, SystemException {
-		String selected = parametermap.get("choice");
+	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
+		final String selected = parametermap.get("choice");
 		int choice = 0;
 		for (int i = 1; i <= 12; i++) { if (definition.optString("button" + i, "").equals(selected)) { choice = i; } }
 		return Modules.getJSONTemplateResponse(st, definition.getString("command" + choice));
@@ -104,8 +104,8 @@ public class MenuCommand extends Command {
 	@Override
 	public Method getMethod() {
 		try {
-			return this.getClass().getDeclaredMethod("run", State.class, SafeMap.class);
-		} catch (@Nonnull NoSuchMethodException | SecurityException ex) {
+			return getClass().getDeclaredMethod("run", State.class, SafeMap.class);
+		} catch (@Nonnull final NoSuchMethodException | SecurityException ex) {
 			throw new SystemException("Issue locating RUN command for MenuCommand, this makes no sense :)");
 		}
 	}

@@ -32,15 +32,15 @@ import java.util.Set;
  */
 public abstract class Management {
 	@URLs(url = "/factions")
-	public static void manage(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void manage(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.noForm();
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(new TextHeader("Faction Management"));
-		Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
+		final Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
 		f.add(t);
 		t.add(new HeaderRow().add("Name").add("Leader").add("Members"));
-		for (CharacterGroup g : factions) {
+		for (final CharacterGroup g : factions) {
 			t.openRow().add(new Link(g.getName(), "/GPHUD/factions/view/" + g.getId()));
 			String owner = "None";
 			if (g.getOwner() != null) { owner = g.getOwner().asHtml(st, true); }
@@ -48,7 +48,7 @@ public abstract class Management {
 			t.add(g.getMembers().size() + " members");
 		}
 		if (st.hasPermission("Faction.Create")) {
-			Form create = new Form();
+			final Form create = new Form();
 			f.add(create);
 			create.setAction("./factions/create");
 			create.add(new Hidden("okreturnurl", st.getFullURL()));
@@ -57,16 +57,16 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/create", requiresPermission = "Faction.Create")
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Faction.create", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Create a faction group", requiresPermission = "Faction.Create")
-	public static Response create(@Nonnull State st,
-	                              @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the faction", max = 128)
-			                              String name) {
-		try { st.getInstance().createCharacterGroup(name, false, "Faction"); } catch (UserException e) {
+	public static Response create(@Nonnull final State st,
+	                              @Arguments(type = ArgumentType.TEXT_CLEAN, description = "Name of the faction", max = 128) final
+	                              String name) {
+		try { st.getInstance().createCharacterGroup(name, false, "Faction"); } catch (final UserException e) {
 			return new ErrorResponse("Failed to create faction: " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create Faction", name, null, name, "Created new faction " + name);
@@ -74,13 +74,13 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/view/*")
-	public static void viewFaction(@Nonnull State st, SafeMap values) throws SystemException {
+	public static void viewFaction(@Nonnull final State st, final SafeMap values) throws SystemException {
 
 		//System.out.println(st.uri);
-		String[] split = st.getDebasedURL().split("/");
+		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
-		String id = split[split.length - 1];
-		CharacterGroup faction = CharacterGroup.get(Integer.parseInt(id));
+		final String id = split[split.length - 1];
+		final CharacterGroup faction = CharacterGroup.get(Integer.parseInt(id));
 		if ("Faction".equals(faction.getType())) {
 			viewFaction(st, values, faction);
 		} else {
@@ -88,32 +88,32 @@ public abstract class Management {
 		}
 	}
 
-	public static void viewFaction(@Nonnull State st, SafeMap values, @Nonnull CharacterGroup faction) throws SystemException {
-		Form f = st.form();
+	public static void viewFaction(@Nonnull final State st, final SafeMap values, @Nonnull final CharacterGroup faction) throws SystemException {
+		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader(faction.getName()));
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(t);
 		String owner = "None";
 		if (faction.getOwner() != null) {
 			owner = faction.getOwner().asHtml(st, true);
 		}
-		Char factionowner = faction.getOwner();
+		final Char factionowner = faction.getOwner();
 		t.openRow().add("Owner").add(owner);
 		if (st.hasPermission("Faction.SetOwner")) {
-			Form setowner = new Form();
+			final Form setowner = new Form();
 			setowner.setAction("../setowner");
 			setowner.add(new Hidden("faction", faction.getName()));
 			setowner.add(new Hidden("okreturnurl", st.getFullURL()));
 			setowner.add(new Button("Set Owner", true));
 			t.add(setowner);
 		}
-		Set<Char> members = faction.getMembers();
+		final Set<Char> members = faction.getMembers();
 		t.openRow().add("Members").add(members.size() + " members");
-		for (Char c : members) {
+		for (final Char c : members) {
 			t.openRow().add("").add(c);
 			if (st.hasPermission("Faction.SetFaction")) {
-				Form removeform = new Form();
+				final Form removeform = new Form();
 				removeform.setAction("../remove");
 				removeform.add(new Hidden("faction", faction.getName()));
 				removeform.add(new Hidden("member", c.getName()));
@@ -136,22 +136,22 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/setowner", requiresPermission = "Faction.SetOwner")
-	public static void setOwnerForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setOwnerForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Faction.SetOwner", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Set the leader of a faction", requiresPermission = "Faction.SetOwner")
-	public static Response setOwner(@Nonnull State st,
-	                                @Nonnull @Arguments(description = "Faction to change the leader of", type = ArgumentType.CHARACTERGROUP)
-			                                CharacterGroup faction,
-	                                @Nullable @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false)
-			                                Char newowner) {
+	public static Response setOwner(@Nonnull final State st,
+	                                @Nonnull @Arguments(description = "Faction to change the leader of", type = ArgumentType.CHARACTERGROUP) final
+	                                CharacterGroup faction,
+	                                @Nullable @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false) final
+	                                    Char newowner) {
 		// group must be a faction group
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
-		Char oldowner = faction.getOwner();
+		final Char oldowner = faction.getOwner();
 		String oldownername = null;
 		if (oldowner != null) { oldownername = oldowner.getName(); }
 		if (newowner == oldowner) {
@@ -168,7 +168,7 @@ public abstract class Management {
 		}
 		// or a member
 		boolean ingroup = false;
-		for (Char c : faction.getMembers()) { if (c == newowner) { ingroup = true; }}
+		for (final Char c : faction.getMembers()) { if (c == newowner) { ingroup = true; }}
 		if (!ingroup) {
 			return new ErrorResponse("New leader " + newowner.getName() + " must be in faction " + faction.getName());
 		}
@@ -182,32 +182,32 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/add", requiresPermission = "Faction.SetFaction")
-	public static void addForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void addForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Faction.Add", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Add a member to this faction", requiresPermission = "Faction.SetOwner")
-	public static Response add(@Nonnull State st,
-	                           @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to add character to")
-			                           CharacterGroup faction,
-	                           @Nonnull @Arguments(description = "Character to add to the faction", type = ArgumentType.CHARACTER)
-			                           Char newmember) throws UserException {
+	public static Response add(@Nonnull final State st,
+	                           @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to add character to") final
+	                           CharacterGroup faction,
+	                           @Nonnull @Arguments(description = "Character to add to the faction", type = ArgumentType.CHARACTER) final
+	                               Char newmember) throws UserException {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
-		CharacterGroup existingfaction = newmember.getGroup("Faction");
+		final CharacterGroup existingfaction = newmember.getGroup("Faction");
 		// refuse if they're the faction leader
 		//System.out.println("EXISTINGFACTION "+existingfaction.getId());
 		if (existingfaction != null && existingfaction.getOwner() == newmember) {
 			return new ErrorResponse("Refusing to move character " + newmember.getName() + ", they are currently faction leader of " + existingfaction.getName() + ", you must manually eject them from that position");
 		}
-		String success = "";
+		final String success = "";
 		if (existingfaction != null) { existingfaction.removeMember(newmember); }
 		if (!success.isEmpty()) {
 			return new ErrorResponse("Failed to remove " + newmember.getName() + " from their existing faction " + faction.getName() + " : " + success);
 		}
-		try { faction.addMember(newmember); } catch (UserException e) {
+		try { faction.addMember(newmember); } catch (final UserException e) {
 			return new ErrorResponse("Failed to add " + newmember.getName() + " to " + faction.getName() + ", they are probably in no faction now! - " + e.getMessage());
 		}
 		String oldfactionname = null;
@@ -222,21 +222,21 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/remove", requiresPermission = "Faction.SetFaction")
-	public static void removeForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void removeForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Faction.Remove", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Remove a member from this faction", requiresPermission = "Faction.SetOwner")
-	public static Response remove(@Nonnull State st,
-	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to remove character from")
-			                              CharacterGroup faction,
-	                              @Nonnull @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER)
-			                              Char member) {
+	public static Response remove(@Nonnull final State st,
+	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to remove character from") final
+	                              CharacterGroup faction,
+	                              @Nonnull @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER) final
+	                                  Char member) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
-		CharacterGroup existingfaction = member.getGroup("Faction");
+		final CharacterGroup existingfaction = member.getGroup("Faction");
 		// refuse if they're not in this group (!)
 		if (existingfaction != faction) {
 			return new ErrorResponse("Can not remove " + member.getName() + " from " + faction.getName() + " because they are instead in " + existingfaction.getName());
@@ -245,7 +245,7 @@ public abstract class Management {
 		if (faction.getOwner() == member) {
 			return new ErrorResponse("Will not remove " + member.getName() + " from " + faction.getName() + ", they are the faction leader, you must demote them by replacing them or leaving the faction leaderless.");
 		}
-		try { existingfaction.removeMember(member); } catch (UserException e) {
+		try { existingfaction.removeMember(member); } catch (final UserException e) {
 			return new ErrorResponse("Failed to remove member - " + e.getMessage());
 		}
 		member.hudMessage("You have been removed from faction " + faction.getName() + " by (( " + st.getAvatarNullable().getName() + " ))");
@@ -254,38 +254,38 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/delete", requiresPermission = "Faction.Delete")
-	public static void deleteForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void deleteForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Faction.Delete", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, description = "Delete a faction", requiresPermission = "Faction.Delete")
-	public static Response delete(@Nonnull State st,
-	                              @Nonnull @Arguments(description = "Faction to delete", type = ArgumentType.CHARACTERGROUP)
-			                              CharacterGroup faction) {
+	public static Response delete(@Nonnull final State st,
+	                              @Nonnull @Arguments(description = "Faction to delete", type = ArgumentType.CHARACTERGROUP) final
+	                              CharacterGroup faction) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
-		String factionname = faction.getName();
+		final String factionname = faction.getName();
 		faction.delete();
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "DeleteFaction", factionname, factionname, null, "Faction was deleted");
 		return new OKResponse(factionname + " was deleted");
 	}
 
 	@URLs(url = "/factions/setadmin")
-	public static void setAdminForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setAdminForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Faction.SetAdmin", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.ANY, description = "Set the faction admin flag on a user")
-	public static Response setAdmin(@Nonnull State st,
-	                                @Nonnull @Arguments(description = "Faction to set the character's admin flag on", type = ArgumentType.CHARACTERGROUP)
-			                                CharacterGroup faction,
-	                                @Nonnull @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER)
-			                                Char character,
-	                                @Arguments(description = "Admin flag to set on the character in this faction", type = ArgumentType.BOOLEAN)
-			                                boolean admin) throws SystemException {
+	public static Response setAdmin(@Nonnull final State st,
+	                                @Nonnull @Arguments(description = "Faction to set the character's admin flag on", type = ArgumentType.CHARACTERGROUP) final
+	                                CharacterGroup faction,
+	                                @Nonnull @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER) final
+	                                    Char character,
+	                                @Arguments(description = "Admin flag to set on the character in this faction", type = ArgumentType.BOOLEAN) final
+	                                    boolean admin) throws SystemException {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
@@ -299,7 +299,7 @@ public abstract class Management {
 		if (!ok) {
 			return new ErrorResponse("You must be faction owner, or have Faction.Create permissions to set admin flags");
 		}
-		boolean oldflag = faction.isAdmin(character);
+		final boolean oldflag = faction.isAdmin(character);
 		faction.setAdmin(character, admin);
 		if (admin) {
 			character.hudMessage("You are now a faction administrator for " + faction.getName());

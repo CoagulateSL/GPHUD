@@ -15,16 +15,16 @@ public class PermissionAnnotation extends Permission {
 	final Permissions meta;
 	private boolean generated = true;
 	@Nullable
-	private String modulename=null;
+	private String modulename;
 
-	public PermissionAnnotation(Permissions m, @Nullable String modulename) {
+	public PermissionAnnotation(final Permissions m, @Nullable final String modulename) {
 		meta = m;
 		generated = false;
 		this.modulename=modulename;
 	}
 
 	@Override
-	public Module getModule(State st) {
+	public Module getModule(final State st) {
 		return Modules.get(st,modulename);
 	}
 

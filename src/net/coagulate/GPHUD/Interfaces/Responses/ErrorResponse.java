@@ -13,14 +13,14 @@ import javax.annotation.Nonnull;
  */
 public class ErrorResponse extends TextError implements Response {
 
-	public ErrorResponse(String r) {
+	public ErrorResponse(final String r) {
 		super(r);
 	}
 
 	@Nonnull
 	@Override
-	public JSONObject asJSON(State st) {
-		JSONObject j = new JSONObject();
+	public JSONObject asJSON(final State st) {
+		final JSONObject j = new JSONObject();
 		j.put("error", asText(st));
 		return j;
 	}

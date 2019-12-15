@@ -17,10 +17,10 @@ import java.util.Set;
 public class SimpleResponse implements Response {
 	final String message;
 
-	public SimpleResponse(String message) { this.message = message; }
+	public SimpleResponse(final String message) { this.message = message; }
 
 	@Override
-	public JSONObject asJSON(State st) {
+	public JSONObject asJSON(final State st) {
 		return new JSONObject().put("message", message);
 	}
 
@@ -31,13 +31,13 @@ public class SimpleResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		return message;
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		return message;
 	}
 

@@ -14,11 +14,11 @@ public class ConfigurationSideSubMenu extends SideSubMenu {
 	int priority = 999;
 	final Module m;
 
-	public ConfigurationSideSubMenu(Module m) {
+	public ConfigurationSideSubMenu(final Module m) {
 		this.m = m;
 	}
 
-	public void setPriority(int priority) {
+	public void setPriority(final int priority) {
 		this.priority = priority;
 	}
 

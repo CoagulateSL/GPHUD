@@ -15,7 +15,7 @@ public class Randomness {
 					parameters = "Integer minimum - smallest number that can be returned by this function.<br>" +
 							"Integer maximum - largest number that can be returned by this function.",
 					returns = "Integer - random number in the range (inclusive) minimum-maximum")
-	public static BCInteger gsRand(State st, GSVM vm, @Nonnull BCInteger minimum, @Nonnull BCInteger maximum) {
+	public static BCInteger gsRand(final State st, final GSVM vm, @Nonnull final BCInteger minimum, @Nonnull final BCInteger maximum) {
 		return new BCInteger(null,ThreadLocalRandom.current().nextInt(minimum.toInteger(), maximum.toInteger() + 1));
 	}
 }

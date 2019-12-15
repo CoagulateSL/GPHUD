@@ -16,12 +16,12 @@ import java.util.Set;
  */
 public class Table implements Renderable {
 	final List<Row> table = new ArrayList<>();
-	boolean border = false;
+	boolean border;
 	@Nullable
-	Row openrow = null;
-	private boolean nowrap = false;
+	Row openrow;
+	private boolean nowrap;
 
-	public void border(boolean border) { this.border = border; }
+	public void border(final boolean border) { this.border = border; }
 
 	@Nonnull
 	public Table openRow() {
@@ -38,29 +38,29 @@ public class Table implements Renderable {
 	}
 
 	@Nonnull
-	public Table add(Row r) {
+	public Table add(final Row r) {
 		table.add(r);
 		openrow = r;
 		return this;
 	}
 
 	@Nonnull
-	public Table add(String s) {
+	public Table add(final String s) {
 		add(new Text(s));
 		return this;
 	}
 
 	@Nonnull
-	public Table add(@Nonnull Boolean b) { return add(b.toString()); }
+	public Table add(@Nonnull final Boolean b) { return add(b.toString()); }
 
 	@Nonnull
-	public Table add(Renderable e) {
+	public Table add(final Renderable e) {
 		add(new Cell(e));
 		return this;
 	}
 
 	@Nonnull
-	public Table add(Cell e) {
+	public Table add(final Cell e) {
 		if (openrow == null) { openRow(); }
 		openrow.add(e);
 		return this;
@@ -68,9 +68,9 @@ public class Table implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
-		StringBuilder res = new StringBuilder();
-		for (Row r : table) {
+	public String asText(final State st) {
+		final StringBuilder res = new StringBuilder();
+		for (final Row r : table) {
 			if (res.length() > 0) { res.append("\n"); }
 			res.append(r.asText(st));
 		}
@@ -79,13 +79,13 @@ public class Table implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
-		StringBuilder s = new StringBuilder();
+	public String asHtml(final State st, final boolean rich) {
+		final StringBuilder s = new StringBuilder();
 		s.append("<table");
 		if (border) { s.append(" border=1"); }
 		if (nowrap) { s.append(" style=\"white-space: nowrap;\""); }
 		s.append(">");
-		for (Row r : table) { s.append(r.asHtml(st, rich)); }
+		for (final Row r : table) { s.append(r.asHtml(st, rich)); }
 		s.append("</table>");
 		return s.toString();
 	}
@@ -96,11 +96,11 @@ public class Table implements Renderable {
 		return new HashSet<>(table);
 	}
 
-	public void addNoNull(@Nullable Renderable addable) {
+	public void addNoNull(@Nullable final Renderable addable) {
 		if (addable == null) { add(""); } else { add(addable); }
 	}
 
-	public void addNoNull(@Nullable String addable) {
+	public void addNoNull(@Nullable final String addable) {
 		if (addable == null) { add(""); } else { add(addable); }
 	}
 
@@ -110,5 +110,5 @@ public class Table implements Renderable {
 
 	public void nowrap() { nowrap = true; }
 
-	public void setBGColor(String bgcolor){ openrow.setbgcolor(bgcolor);}
+	public void setBGColor(final String bgcolor){ openrow.setbgcolor(bgcolor);}
 }

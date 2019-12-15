@@ -12,7 +12,7 @@ public class StaticSideSubMenu extends SideSubMenu {
 	private final int priority;
 	private final String name;
 
-	public StaticSideSubMenu(String name, int priority, String url, String permission) {
+	public StaticSideSubMenu(final String name, final int priority, final String url, final String permission) {
 		this.name = name;
 		this.priority = priority;
 		this.url = url;

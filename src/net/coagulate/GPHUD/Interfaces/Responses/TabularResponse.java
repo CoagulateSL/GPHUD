@@ -15,16 +15,16 @@ import javax.annotation.Nullable;
  */
 public class TabularResponse extends Table implements Response {
 	@Nullable
-	String title = null;
+	String title;
 
 	public TabularResponse() {}
 
-	public TabularResponse(@Nullable String message) { title = message; }
+	public TabularResponse(@Nullable final String message) { title = message; }
 
 	@Nonnull
 	@Override
-	public JSONObject asJSON(State st) {
-		JSONObject j = new JSONObject();
+	public JSONObject asJSON(final State st) {
+		final JSONObject j = new JSONObject();
 		j.put("message", asText(st));
 		return j;
 	}
@@ -36,7 +36,7 @@ public class TabularResponse extends Table implements Response {
 	}
 
 	@Nonnull
-	public String asText(State st) {
+	public String asText(final State st) {
 		String s = "";
 		if (title != null && !title.isEmpty()) { s += new TextHeader(title).asText(st); }
 		s += super.asText(st);
@@ -45,7 +45,7 @@ public class TabularResponse extends Table implements Response {
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		String s = "";
 		if (title != null && !title.isEmpty()) { s += new TextHeader(title).asHtml(st, rich); }
 		s += super.asHtml(st, rich);

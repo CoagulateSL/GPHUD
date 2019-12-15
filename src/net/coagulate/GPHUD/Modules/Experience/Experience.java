@@ -20,7 +20,7 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
 public abstract class Experience {
 	@Nonnull
 	@Template(name = "TOTALXP", description = "Total experience")
-	public static String getTotalXP(@Nonnull State st, String key) {
+	public static String getTotalXP(@Nonnull final State st, final String key) {
 		if (!st.hasModule("Experience")) { return ""; }
 		if (st.getCharacterNullable() == null) { return ""; }
 		return getExperience(st, st.getCharacter()) + "";
@@ -28,15 +28,15 @@ public abstract class Experience {
 
 	@Nonnull
 	@Template(name = "LEVEL", description = "Current Level")
-	public static String getLevel(@Nonnull State st, String key) {
+	public static String getLevel(@Nonnull final State st, final String key) {
 		if (!st.hasModule("Experience")) { return ""; }
 		if (st.getCharacterNullable() == null) { return ""; }
 		return toLevel(st, getExperience(st, st.getCharacter())) + "";
 	}
 
-	public static int toLevel(@Nonnull State st, int xp) throws UserException, SystemException {
+	public static int toLevel(@Nonnull final State st, final int xp) throws UserException, SystemException {
 		if (!st.hasModule("Experience")) { return 0; }
-		int step = st.getKV("Experience.LevelXPStep").intValue();
+		final int step = st.getKV("Experience.LevelXPStep").intValue();
 		int tolevel = 0;
 		for (int i = 0; i <= 1000; i++) {
 			tolevel = (int) (tolevel + Math.floor(((float) i) / ((float) step)) + 1);
@@ -46,7 +46,7 @@ public abstract class Experience {
 
 	}
 
-	public static int getExperience(@Nonnull State st, @Nonnull Char character) throws UserException, SystemException {
+	public static int getExperience(@Nonnull final State st, @Nonnull final Char character) throws UserException, SystemException {
 		int sum = 0;
 		if (Modules.get(null, "experience").isEnabled(st)) {
 			sum += character.sumPool(Modules.getPool(st, "Experience.VisitXP"));
@@ -57,7 +57,7 @@ public abstract class Experience {
 		if (Modules.get(null, "Events").isEnabled(st)) {
 			sum += character.sumPool(Modules.getPool(st, "Events.EventXP"));
 		}
-		for (Attribute a : st.getAttributes()) {
+		for (final Attribute a : st.getAttributes()) {
 			if (a.getType() == EXPERIENCE) {
 				sum += character.sumPool(Modules.getPool(st, "Experience." + a.getName() + "XP"));
 			}
@@ -66,13 +66,13 @@ public abstract class Experience {
 	}
 
 	@Nonnull
-	public static String getCycleLabel(@Nonnull State st) throws UserException, SystemException {
+	public static String getCycleLabel(@Nonnull final State st) throws UserException, SystemException {
 		if (Modules.get(null, "Experience").isEnabled(st)) {
 			return Math.round(st.getKV("Experience.XPCycleDays").floatValue()) + " days";
 		} else { return "week"; }
 	}
 
-	public static int getCycle(@Nonnull State st) throws UserException, SystemException {
+	public static int getCycle(@Nonnull final State st) throws UserException, SystemException {
 		if (Modules.get(null, "Experience").isEnabled(st)) {
 			return (int) (60 * 60 * 24 * st.getKV("Experience.XPCycleDays").floatValue());
 		} else {

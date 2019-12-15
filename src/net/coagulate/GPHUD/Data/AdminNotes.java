@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class AdminNotes extends TableRow {
 
-	protected AdminNotes(int id) { super(id); }
+	protected AdminNotes(final int id) { super(id); }
 
 	/**
 	 * Factory style constructor
@@ -29,7 +29,7 @@ public class AdminNotes extends TableRow {
 	 * @return An AdminNotes representation
 	 */
 	@Nonnull
-	public static AdminNotes get(int id) {
+	public static AdminNotes get(final int id) {
 		return (AdminNotes) factoryPut("AdminNotes", id, new AdminNotes(id));
 	}
 
@@ -43,7 +43,7 @@ public class AdminNotes extends TableRow {
 	 * @param note The note to record
 	 * @param adminonly Is this note only visible to admins (else also to the player)
 	 */
-	public static void add(@NotNull Instance instance, @NotNull User admin, @NotNull User target, @Nullable Char targetchar, @NotNull String note, boolean adminonly) {
+	public static void add(@NotNull final Instance instance, @NotNull final User admin, @NotNull final User target, @Nullable final Char targetchar, @NotNull final String note, final boolean adminonly) {
 		GPHUD.getDB().d("insert into adminnotes(tds,instanceid,adminid,targetuser,targetchar,note,adminonly) values(?,?,?,?,?,?,?)",
 				UnixTime.getUnixTime(),
 				instance.getId(),
@@ -62,7 +62,7 @@ public class AdminNotes extends TableRow {
 		public final Char targetchar;
 		public final String note;
 		public final boolean adminonly;
-		public AdminNote(int tds,Instance instance, User admin, User targetuser, Char targetchar,String note,boolean adminonly) {
+		public AdminNote(final int tds, final Instance instance, final User admin, final User targetuser, final Char targetchar, final String note, final boolean adminonly) {
 			this.tds=tds;
 			this.instance=instance;
 			this.admin=admin;
@@ -74,9 +74,9 @@ public class AdminNotes extends TableRow {
 	}
 
 	@Nonnull
-	public static List<AdminNote> get(@Nonnull Instance instance, @Nonnull User user, @Nonnull Char character, boolean showall, boolean toponly) {
-		List<AdminNote> results=new ArrayList<>();
-		for (ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+
+	public static List<AdminNote> get(@Nonnull final Instance instance, @Nonnull final User user, @Nonnull final Char character, final boolean showall, final boolean toponly) {
+		final List<AdminNote> results=new ArrayList<>();
+		for (final ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+
 						(showall?"":" and adminonly=0")+" order by tds desc"+
 						(toponly?" limit 0,3":""),
 				instance.getId(),
@@ -88,9 +88,9 @@ public class AdminNotes extends TableRow {
 		return results;
 	}
 	@Nonnull
-	public static List<AdminNote> get(@Nonnull Instance instance, @Nonnull User user, boolean showall, boolean toponly) {
-		List<AdminNote> results=new ArrayList<>();
-		for (ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? and targetuser=?"+
+	public static List<AdminNote> get(@Nonnull final Instance instance, @Nonnull final User user, final boolean showall, final boolean toponly) {
+		final List<AdminNote> results=new ArrayList<>();
+		for (final ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? and targetuser=?"+
 						(showall?"":" and adminonly=0")+" order by tds desc"+
 						(toponly?" limit 0,3":""),
 				instance.getId(),
@@ -100,14 +100,14 @@ public class AdminNotes extends TableRow {
 		return results;
 	}
 	@Nonnull
-	public static List<AdminNote> get(@Nonnull Instance instance) {
-		List<AdminNote> results=new ArrayList<>();
-		for (ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? order by tds desc",
+	public static List<AdminNote> get(@Nonnull final Instance instance) {
+		final List<AdminNote> results=new ArrayList<>();
+		for (final ResultsRow row:GPHUD.getDB().dq("select * from adminnotes where instanceid=? order by tds desc",
 				instance.getId())) results.add(resultify(row));
 		return results;
 	}
 	@Nonnull
-	private static AdminNote resultify(@Nonnull ResultsRow row) {
+	private static AdminNote resultify(@Nonnull final ResultsRow row) {
 		return new AdminNote(
 				row.getInt("tds"),
 				Instance.get(row.getInt("instanceid")),
@@ -150,9 +150,9 @@ public class AdminNotes extends TableRow {
 	@javax.annotation.Nullable
 	public String getKVIdField() { return null; }
 
-	public void flushKVCache(State st) {}
+	public void flushKVCache(final State st) {}
 
-	public void validate(State st) throws SystemException {
+	public void validate(final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 	}

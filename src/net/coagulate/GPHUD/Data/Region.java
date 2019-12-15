@@ -33,17 +33,17 @@ import static net.coagulate.Core.Tools.UnixTime.*;
  */
 public class Region extends TableRow {
 
-	protected Region(int id) { super(id); }
+	protected Region(final int id) { super(id); }
 
 	/**
 	 * Update the last used time of a URL.
 	 *
 	 * @param url URL to refresh
 	 */
-	public static void refreshURL(String url) {
-		String t = "regions";
-		int refreshifolderthan = UnixTime.getUnixTime() - TableRow.REFRESH_INTERVAL;
-		int toupdate = GPHUD.getDB().dqi( "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
+	public static void refreshURL(final String url) {
+		final String t = "regions";
+		final int refreshifolderthan = UnixTime.getUnixTime() - TableRow.REFRESH_INTERVAL;
+		final int toupdate = GPHUD.getDB().dqi( "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
 		if (toupdate == 0) { return; }
 		if (toupdate > 1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on " + t + " url " + url);
@@ -52,10 +52,10 @@ public class Region extends TableRow {
 		GPHUD.getDB().d("update " + t + " set urllast=?,authnode=? where url=?", UnixTime.getUnixTime(), Interface.getNode(), url);
 	}
 
-	static void wipeKV(@Nonnull Instance instance, String key) {
-		String kvtable = "regionkvstore";
-		String maintable = "regions";
-		String idcolumn = "regionid";
+	static void wipeKV(@Nonnull final Instance instance, final String key) {
+		final String kvtable = "regionkvstore";
+		final String maintable = "regions";
+		final String idcolumn = "regionid";
 		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
 	}
 
@@ -66,10 +66,10 @@ public class Region extends TableRow {
 	 * @return A Region representation
 	 */
 	@Nonnull
-	public static Region get(int id, boolean allowretired) {
-		Region r= (Region) factoryPut("Region", id, new Region(id));
+	public static Region get(final int id, final boolean allowretired) {
+		final Region r= (Region) factoryPut("Region", id, new Region(id));
 		if (r.isRetired() && (!allowretired)) {
-			UserException exception=new UserException("Attempt to access retired region");
+			final UserException exception=new UserException("Attempt to access retired region");
 			GPHUD.getLogger("Regions").log(WARNING,"Attempt to access retired region",exception);
 			throw exception;
 		}
@@ -87,16 +87,16 @@ public class Region extends TableRow {
 	 * @return Region object for that region, or null if none is found.
 	 */
 	@Nullable
-	public static Region findNullable(String name, boolean allowretired) {
+	public static Region findNullable(final String name, final boolean allowretired) {
 		try {
-			Integer regionid = GPHUD.getDB().dqi("select regionid from regions where name=?", name);
+			final Integer regionid = GPHUD.getDB().dqi("select regionid from regions where name=?", name);
 			return get(regionid, allowretired);
-		} catch (NoDataException e) { return null; }
+		} catch (final NoDataException e) { return null; }
 	}
 
 	@Nonnull
-	public static Region find(String name, boolean allowretired) {
-		Region r=findNullable(name,allowretired);
+	public static Region find(final String name, final boolean allowretired) {
+		final Region r=findNullable(name,allowretired);
 		if (r==null) { throw new UserException("No active region named '"+name+"' found"); }
 		return r;
 	}
@@ -109,11 +109,11 @@ public class Region extends TableRow {
 	 * @return A blank string on success, or a text hudMessage explaining any problem.
 	 */
 	@Nonnull
-	public static String joinInstance(String region, @Nonnull Instance i) {
+	public static String joinInstance(final String region, @Nonnull final Instance i) {
 		// TO DO - lacks validation
-		Integer exists = GPHUD.getDB().dqi( "select count(*) from regions where name=?", region);
+		final Integer exists = GPHUD.getDB().dqi( "select count(*) from regions where name=?", region);
 		if (exists == 0) {
-			GPHUD.getLogger().info("Joined region '" + region + "' to instance " + i.toString());
+			GPHUD.getLogger().info("Joined region '" + region + "' to instance " + i);
 			GPHUD.getDB().d("insert into regions(name,instanceid) values(?,?)", region, i.getId());
 			return "";
 		}
@@ -169,7 +169,7 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public String getURL() {
-		String url=getURLNullable();
+		final String url=getURLNullable();
 		if (url == null) {
 			throw new UserException("This region has no callback URL");
 		}
@@ -183,10 +183,10 @@ public class Region extends TableRow {
 	 *
 	 * @param url Targets URL
 	 */
-	public void setURL(String url) {
+	public void setURL(final String url) {
 		String oldurl = null;
-		try { oldurl = getURL(); } catch (UserException e) {} // should only mean there was a null URL
-		int now = getUnixTime();
+		try { oldurl = getURL(); } catch (final UserException e) {} // should only mean there was a null URL
+		final int now = getUnixTime();
 
 		if (oldurl != null && oldurl.equals(url)) {
 			if ((now - getURLLast()) > 60) {
@@ -197,8 +197,8 @@ public class Region extends TableRow {
 
 		if (oldurl != null && !("".equals(oldurl))) {
 			GPHUD.getLogger().info("Sending shutdown to old URL : " + oldurl);
-			JSONObject tx = new JSONObject().put("incommand", "shutdown").put("shutdown", "Connection replaced by new region server");
-			Transmission t = new Transmission(this, tx, oldurl);
+			final JSONObject tx = new JSONObject().put("incommand", "shutdown").put("shutdown", "Connection replaced by new region server");
+			final Transmission t = new Transmission(this, tx, oldurl);
 			t.start();
 		}
 
@@ -223,14 +223,14 @@ public class Region extends TableRow {
 	 *
 	 * @param avatarsarray Array of ALL avatar names in the region.
 	 */
-	public void verifyAvatars(String[] avatarsarray) {
-		String report = "";
-		Set<String> avatars = new HashSet<>(Arrays.asList(avatarsarray));
-		Results db = dq("select avatarid from visits where regionid=? and endtime is null", getId());
+	public void verifyAvatars(final String[] avatarsarray) {
+		final String report = "";
+		final Set<String> avatars = new HashSet<>(Arrays.asList(avatarsarray));
+		final Results db = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		// iterate over the current visits
-		for (ResultsRow row : db) {
-			int avatarid = row.getIntNullable("avatarid");
-			String name = User.get(avatarid).getName();
+		for (final ResultsRow row : db) {
+			final int avatarid = row.getIntNullable("avatarid");
+			final String name = User.get(avatarid).getName();
 			// make sure those visits are in the list of avatars
 			if (avatars.contains(name)) {
 				avatars.remove(name); // matches an avatar on the sim.
@@ -241,7 +241,7 @@ public class Region extends TableRow {
 			}
 		}
 		// whatever is left in the set isn't logged in the db yet.  we dont care but...
-		for (String s : avatars) {
+		for (final String s : avatars) {
 			GPHUD.getLogger().info("Avatar " + s + " is present on sim but not in visits DB, hopefully they'll register soon.");
 		}
 	}
@@ -252,36 +252,36 @@ public class Region extends TableRow {
 	 * @param st      State
 	 * @param avatars List of Avatar UUIDs or Names that have left the sim.
 	 */
-	public void departingAvatars(@Nonnull State st, @Nonnull Set<User> avatars) {
-		boolean debug = false;
-		for (User avatar : avatars) {
+	public void departingAvatars(@Nonnull final State st, @Nonnull final Set<User> avatars) {
+		final boolean debug = false;
+		for (final User avatar : avatars) {
 			// for all the departing avatars
 			try {
-				int avatarid = avatar.getId();
+				final int avatarid = avatar.getId();
 				// if the avatar exists, see if there's a visit
-				Results rows = dq("select characterid from visits where avatarid=? and regionid=? and endtime is null", avatarid, getId());
-				int count = rows.size();
+				final Results rows = dq("select characterid from visits where avatarid=? and regionid=? and endtime is null", avatarid, getId());
+				final int count = rows.size();
 				if (count > 0) {
 					st.logger().info("Disconnected avatar " + avatar.getName());
 					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?", UnixTime.getUnixTime(), getId(), avatarid);
 				}
 				// computer visit XP ((TODO REFACTOR ME?))
-				for (ResultsRow r : rows) {
-					State temp = new State();
+				for (final ResultsRow r : rows) {
+					final State temp = new State();
 					temp.setInstance(st.getInstance());
 					temp.setCharacter(Char.get(r.getIntNullable("characterid")));
 					new VisitXP(-1).runAwards(st, temp.getCharacter());
 				}
-				int instanceid = this.getInstance().getId();
-				Results urls = dq("select url from characters where instanceid=? and playedby=? and url is not null", instanceid, avatarid);
+				final int instanceid = getInstance().getId();
+				final Results urls = dq("select url from characters where instanceid=? and playedby=? and url is not null", instanceid, avatarid);
 				// if the visitor (character) has URLs send them a ping, which will probably 404 and remove its self
-				for (ResultsRow row : urls) {
-					String url = row.getStringNullable("url");
-					JSONObject ping = new JSONObject().put("incommand", "ping");
-					Transmission t = new Transmission(null, ping, url, 5);
+				for (final ResultsRow row : urls) {
+					final String url = row.getStringNullable("url");
+					final JSONObject ping = new JSONObject().put("incommand", "ping");
+					final Transmission t = new Transmission(null, ping, url, 5);
 					t.start();
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				st.logger().log(SEVERE, "Exception in departingAvatars", e);
 			}
 		}
@@ -296,28 +296,28 @@ public class Region extends TableRow {
 	 * @param versiondate Parsable date (see FireStorm preprocessor macro __DATE__)
 	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
 	 */
-	public void recordVersion(@Nonnull State st, String type, @Nonnull String version, String versiondate, String versiontime) {
+	public void recordVersion(@Nonnull final State st, final String type, @Nonnull final String version, final String versiondate, final String versiontime) {
 		Date d = null;
 		try {
-			SimpleDateFormat df = new SimpleDateFormat("MMM d yyyy HH:mm:ss");
+			final SimpleDateFormat df = new SimpleDateFormat("MMM d yyyy HH:mm:ss");
 			df.setLenient(true);
 			String datetime = versiondate + " " + versiontime;
 			datetime = datetime.replaceAll("  ", " ");
 			d = df.parse(datetime);
-		} catch (ParseException ex) {
+		} catch (final ParseException ex) {
 			st.logger().log(SEVERE, "Failed to parse date time from " + versiondate + " " + versiontime, ex);
 		}
-		ResultsRow regiondata = dqone( "select region" + type + "version,region" + type + "datetime from regions where regionid=?", getId());
-		Integer oldversion = regiondata.getIntNullable("region" + type + "version");
-		Integer olddatetime = regiondata.getIntNullable("region" + type + "datetime");
-		int newversion = Interface.convertVersion(version);
-		int newdatetime = (int) (d.getTime() / 1000.0);
+		final ResultsRow regiondata = dqone( "select region" + type + "version,region" + type + "datetime from regions where regionid=?", getId());
+		final Integer oldversion = regiondata.getIntNullable("region" + type + "version");
+		final Integer olddatetime = regiondata.getIntNullable("region" + type + "datetime");
+		final int newversion = Interface.convertVersion(version);
+		final int newdatetime = (int) (d.getTime() / 1000.0);
 		if (oldversion == null || olddatetime == null || olddatetime < newdatetime || oldversion < newversion) {
 			d("update regions set region" + type + "version=?,region" + type + "datetime=? where regionid=?", newversion, newdatetime, getId());
-			String olddesc = formatVersion(oldversion, olddatetime, false);
-			String newdesc = formatVersion(newversion, newdatetime, false);
+			final String olddesc = formatVersion(oldversion, olddatetime, false);
+			final String newdesc = formatVersion(newversion, newdatetime, false);
 			st.logger().info("Version upgrade of " + type + " from " + olddesc + " to " + newdesc);
-			State fake = new State();
+			final State fake = new State();
 			fake.setInstance(st.getInstance());
 			fake.setAvatar(User.getSystem());
 			Audit.audit(fake, Audit.OPERATOR.AVATAR, null, null, "Upgrade", type, olddesc, newdesc, "Product version upgraded");
@@ -333,9 +333,9 @@ public class Region extends TableRow {
 	 * @return String form of the version information passed
 	 */
 	@Nonnull
-	private String formatVersion(@Nullable Integer version, @Nullable Integer datetime, boolean html) {
+	private String formatVersion(@Nullable final Integer version, @Nullable final Integer datetime, final boolean html) {
 		String v = "";
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+		final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 		df.setTimeZone(TimeZone.getTimeZone("GMT"));
 		if (version == null) { v += "v??? "; } else {
 			v = v + "v" + (version / 10000) + "." + ((version / 100) % 100) + "." + (version % 100) + " ";
@@ -356,7 +356,7 @@ public class Region extends TableRow {
 	 * @param versiondate Preprocessor macro _DATE_ in Firestorm
 	 * @param versiontime Preprocessor macro _TIME_ in Firestorm
 	 */
-	public void recordHUDVersion(@Nonnull State st, @Nonnull String version, String versiondate, String versiontime) {
+	public void recordHUDVersion(@Nonnull final State st, @Nonnull final String version, final String versiondate, final String versiontime) {
 		recordVersion(st, "hud", version, versiondate, versiontime);
 	}
 
@@ -368,7 +368,7 @@ public class Region extends TableRow {
 	 * @param versiondate Preprocessor macro _DATE_
 	 * @param versiontime Preprocessor macro _TIME_
 	 */
-	public void recordServerVersion(@Nonnull State st, @Nonnull String version, String versiondate, String versiontime) {
+	public void recordServerVersion(@Nonnull final State st, @Nonnull final String version, final String versiondate, final String versiontime) {
 		recordVersion(st, "server", version, versiondate, versiontime);
 	}
 
@@ -379,20 +379,20 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public Set<Char> getOpenVisits() {
-		Set<Char> characters = new TreeSet<>();
-		Results results = dq("select characterid from visits where regionid=? and endtime is null", getId());
-		for (ResultsRow r : results) {
+		final Set<Char> characters = new TreeSet<>();
+		final Results results = dq("select characterid from visits where regionid=? and endtime is null", getId());
+		for (final ResultsRow r : results) {
 			characters.add(Char.get(r.getIntNullable("characterid")));
 		}
 		return characters;
 	}
 	@Nonnull
 	public Set<User> getAvatarOpenVisits() {
-		Set<User> users = new HashSet<>();
-		Results results = dq("select avatarid from visits where regionid=? and endtime is null", getId());
-		for (ResultsRow r : results) {
+		final Set<User> users = new HashSet<>();
+		final Results results = dq("select avatarid from visits where regionid=? and endtime is null", getId());
+		for (final ResultsRow r : results) {
 			try { users.add(User.get(r.getIntNullable("avatarid"))); }
-			catch (Exception e) {}
+			catch (final Exception e) {}
 		}
 		return users;
 	}
@@ -403,14 +403,14 @@ public class Region extends TableRow {
 	 * @return String, starts with OFFLINE or STALLED if problematic, otherwise "Online"
 	 */
 	@Nonnull
-	public String getOnlineStatus(String timezone) {
-		Integer urllast = getURLLast();
+	public String getOnlineStatus(final String timezone) {
+		final Integer urllast = getURLLast();
 		if (isRetired()) { return "Retired"; }
 		if (urllast == null) { return "OFFLINE forever?"; }
 		if (getURLNullable() == null || getURLNullable().isEmpty()) {
 			return "OFFLINE for " + duration(getUnixTime() - urllast);
 		}
-		String authnode = getAuthNode();
+		final String authnode = getAuthNode();
 		if ((getUnixTime() - urllast) > (15 * 60)) {
 			return "STALLED at " + fromUnixTime(urllast, timezone) + " via server " + authnode;
 		}
@@ -434,8 +434,8 @@ public class Region extends TableRow {
 	 * @return Server version string
 	 */
 	@Nonnull
-	public String getServerVersion(boolean html) {
-		ResultsRow r = dqone( "select regionserverversion,regionserverdatetime from regions where regionid=?", getId());
+	public String getServerVersion(final boolean html) {
+		final ResultsRow r = dqone( "select regionserverversion,regionserverdatetime from regions where regionid=?", getId());
 		return formatVersion(r.getIntNullable("regionserverversion"), r.getIntNullable("regionserverdatetime"), html);
 	}
 
@@ -446,8 +446,8 @@ public class Region extends TableRow {
 	 * @return HUD version string
 	 */
 	@Nonnull
-	public String getHUDVersion(boolean html) {
-		ResultsRow r = dqone( "select regionhudversion,regionhuddatetime from regions where regionid=?", getId());
+	public String getHUDVersion(final boolean html) {
+		final ResultsRow r = dqone( "select regionhudversion,regionhuddatetime from regions where regionid=?", getId());
 		return formatVersion(r.getIntNullable("regionhudversion"), r.getIntNullable("regionhuddatetime"), html);
 	}
 
@@ -457,13 +457,13 @@ public class Region extends TableRow {
 	 * @return True if the region requires an update, false otherwise
 	 */
 	public boolean needsUpdate() {
-		Integer ourserver = dqi( "select regionserverversion from regions where regionid=?", getId());
-		Integer maxserver = dqi( "select MAX(regionserverversion) from regions");
+		final Integer ourserver = dqi( "select regionserverversion from regions where regionid=?", getId());
+		final Integer maxserver = dqi( "select MAX(regionserverversion) from regions");
 		if (ourserver != null && maxserver != null) {
 			if (maxserver > ourserver) { return true; }
 		}
-		Integer ourhud = dqi( "select regionhudversion from regions where regionid=?", getId());
-		Integer maxhud = dqi( "select MAX(regionhudversion) from regions");
+		final Integer ourhud = dqi( "select regionhudversion from regions where regionid=?", getId());
+		final Integer maxhud = dqi( "select MAX(regionhudversion) from regions");
 		if (ourhud != null && maxhud != null) {
 			if (maxhud > ourhud) { return true; }
 		}
@@ -475,11 +475,11 @@ public class Region extends TableRow {
 	 *
 	 * @param json JSON Message to send
 	 */
-	public void sendServer(JSONObject json) {
+	public void sendServer(final JSONObject json) {
 		new Transmission(this, json).start();
 	}
-	public void sendServerSync(JSONObject json) {
-		Transmission t=new Transmission(this, json);
+	public void sendServerSync(final JSONObject json) {
+		final Transmission t=new Transmission(this, json);
 		//noinspection CallToThreadRun
 		t.run();
 		if (t.failed()) { throw new UserException("Connection to server failed"); }
@@ -492,8 +492,8 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public Set<Zone> getZones() {
-		Set<Zone> zones = new TreeSet<>();
-		for (ResultsRow r : dq("select distinct zoneid from zoneareas where regionid=?", getId())) {
+		final Set<Zone> zones = new TreeSet<>();
+		for (final ResultsRow r : dq("select distinct zoneid from zoneareas where regionid=?", getId())) {
 			zones.add(Zone.get(r.getIntNullable()));
 		}
 		return zones;
@@ -503,10 +503,10 @@ public class Region extends TableRow {
 	 * Broadcast the new zoning for this region via the region server
 	 */
 	public void pushZoning() {
-		JSONObject j = new JSONObject();
+		final JSONObject j = new JSONObject();
 		j.put("incommand", "broadcast");
 		j.put("zoning", ZoneTransport.createZoneTransport(this));
-		Transmission t = new Transmission(this, j);
+		final Transmission t = new Transmission(this, j);
 		t.start();
 	}
 
@@ -522,7 +522,7 @@ public class Region extends TableRow {
 		return "regionid";
 	}
 
-	public void validate(@Nonnull State st) throws SystemException {
+	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemException("Region / State Instance mismatch"); }
@@ -535,7 +535,7 @@ public class Region extends TableRow {
 		return dqi( "select count(*) from visits where endtime is null and regionid=?", getId());
 	}
 
-	public void setGlobalCoordinates(int x, int y) {
+	public void setGlobalCoordinates(final int x, final int y) {
 		d("update regions set regionx=?,regiony=? where regionid=?",x,y,getId());
 	}
 
@@ -543,9 +543,9 @@ public class Region extends TableRow {
 
 	@Nonnull
 	public String getGlobalCoordinates() {
-		ResultsRow r = dqone( "select regionx,regiony from regions where regionid=?", getId());
-		Integer x=r.getIntNullable("regionx");
-		Integer y=r.getIntNullable("regiony");
+		final ResultsRow r = dqone( "select regionx,regiony from regions where regionid=?", getId());
+		final Integer x=r.getIntNullable("regionx");
+		final Integer y=r.getIntNullable("regiony");
 		if (x==null || y==null) { throw new UserException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server"); }
 		return "<"+x+","+y+",0>";
 	}

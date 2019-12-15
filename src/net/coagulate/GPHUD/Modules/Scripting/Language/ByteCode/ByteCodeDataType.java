@@ -10,32 +10,32 @@ import javax.annotation.Nullable;
 
 public abstract class ByteCodeDataType extends ByteCode {
 
-	public ByteCodeDataType(ParseNode n) {
+	public ByteCodeDataType(final ParseNode n) {
 		super(n);
 	}
 
 	@Nullable
-	public ByteCodeDataType add(@Nonnull ByteCodeDataType var) { return new BCString(node(),toString()+var.toString()); }
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) { return new BCString(node(),toString()+ var); }
 	@Nullable
-	public ByteCodeDataType subtract(@Nonnull ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not subtract using type "+var.getClass().getSimpleName()); }
+	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not subtract using type "+var.getClass().getSimpleName()); }
 	@Nullable
-	public ByteCodeDataType multiply(@Nonnull ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not multiply using type "+var.getClass().getSimpleName()); }
+	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not multiply using type "+var.getClass().getSimpleName()); }
 	@Nullable
-	public ByteCodeDataType divide(@Nonnull ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not divide using type "+var.getClass().getSimpleName()); }
+	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not divide using type "+var.getClass().getSimpleName()); }
 
 	@Nonnull
 	public BCString toBCString() {
-		if (this.getClass().equals(BCString.class)) { return (BCString)this; }
-		throw new GSCastException("Can not cast "+this.getClass().getSimpleName()+" to BCString");
+		if (getClass().equals(BCString.class)) { return (BCString)this; }
+		throw new GSCastException("Can not cast "+ getClass().getSimpleName()+" to BCString");
 	}
 	@Nonnull
 	public BCInteger toBCInteger() {
-		if (this.getClass().equals(BCInteger.class)) { return (BCInteger)this; }
-		throw new GSCastException("Can not cast "+this.getClass().getSimpleName()+" to BCInteger");
+		if (getClass().equals(BCInteger.class)) { return (BCInteger)this; }
+		throw new GSCastException("Can not cast "+ getClass().getSimpleName()+" to BCInteger");
 	}
 	@Nonnull
 	public BCList toBCList() {
-		if (this.getClass().equals(BCList.class)) { return (BCList)this; } return new BCList(node(),this); }
+		if (getClass().equals(BCList.class)) { return (BCList)this; } return new BCList(node(),this); }
 
 	@Nonnull
 	public String toString() { return toBCString().getContent(); }
@@ -44,7 +44,7 @@ public abstract class ByteCodeDataType extends ByteCode {
 	@Nullable
 	public abstract ByteCodeDataType clone();
 
-	public void stack(@Nonnull GSVM vm) {
+	public void stack(@Nonnull final GSVM vm) {
 		vm.push(this);
 	}
 }

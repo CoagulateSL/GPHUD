@@ -12,19 +12,19 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class FactionXP extends QuotaedXP {
-	public FactionXP(int id) { super(id); }
+	public FactionXP(final int id) { super(id); }
 
 	@Nonnull
 	public String getName() { return "FactionXP"; }
 
 	@Nonnull
-	public String poolName(State st) {return "Faction.FactionXP";}
+	public String poolName(final State st) {return "Faction.FactionXP";}
 
 	@Nonnull
-	public String quotaKV(State st) {return "Faction.XPPerCycle";}
+	public String quotaKV(final State st) {return "Faction.XPPerCycle";}
 
 	@Nonnull
-	public String periodKV(State st) { return "Faction.XPCycleLength"; }
+	public String periodKV(final State st) { return "Faction.XPCycleLength"; }
 
 	public Module getModule() { return Modules.get(null, "Faction"); }
 

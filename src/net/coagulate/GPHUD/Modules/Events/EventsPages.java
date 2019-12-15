@@ -29,12 +29,12 @@ public class EventsPages {
 
 
 	@URLs(url = "/events")
-	public static void listEvents(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void listEvents(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("Events Listing"));
-		Set<Event> events = st.getInstance().getEvents();
-		for (Event e : events) {
+		final Set<Event> events = st.getInstance().getEvents();
+		for (final Event e : events) {
 			f.add(new Link(e.getName(), e.getLinkTarget()));
 			f.add("<br>");
 		}
@@ -46,34 +46,34 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/events/create", requiresPermission = "events.create")
-	public static void createEvent(@Nonnull State st, SafeMap values) {
-		Form f = st.form();
+	public static void createEvent(@Nonnull final State st, final SafeMap values) {
+		final Form f = st.form();
 		Modules.simpleHtml(st, "events.create", values);
-		Command c = Modules.getCommandNullable(st, "events.create");
+		final Command c = Modules.getCommandNullable(st, "events.create");
 	}
 
 
 	@URLs(url = "/event/*")
-	public static void viewEvent(@Nonnull State st, SafeMap values) throws UserException, SystemException {
+	public static void viewEvent(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
 		//System.out.println(st.uri);
-		String[] split = st.getDebasedURL().split("/");
+		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
-		String id = split[split.length - 1];
-		Event e = Event.get(Integer.parseInt(id));
+		final String id = split[split.length - 1];
+		final Event e = Event.get(Integer.parseInt(id));
 		viewEvent(st, values, e, false);
 	}
 
-	public static void viewEvent(@Nonnull State st, SafeMap values, @Nonnull Event e, boolean brief) throws UserException, SystemException {
+	public static void viewEvent(@Nonnull final State st, final SafeMap values, @Nonnull final Event e, final boolean brief) throws UserException, SystemException {
 		e.validate(st);
-		Form f = st.form();
+		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("Event: " + e.getName()));
 
 		f.add(new TextSubHeader("Zones"));
-		Table z = new Table();
+		final Table z = new Table();
 		f.add(z);
-		Set<Zone> zones = e.getZones();
-		for (Zone location : zones) {
+		final Set<Zone> zones = e.getZones();
+		for (final Zone location : zones) {
 			z.openRow().add(location);
 			if (st.hasPermission("events.locations")) {
 				z.add(new Form(st, true, "./deletelocation", "Remove Zone", "event", e.getName(), "zone", location.getName()));
@@ -83,15 +83,15 @@ public class EventsPages {
 			z.openRow().add(new Cell(new Form(st, true, "./addlocation", "Add Zone", "event", e.getName()), 2));
 		}
 
-		String tz = st.getAvatar().getTimeZone();
+		final String tz = st.getAvatar().getTimeZone();
 		//f.add(new TextSubHeader("Schedule"));
-		Set<EventSchedule> schedule = e.getSchedule();
-		Table sch = new Table();
+		final Set<EventSchedule> schedule = e.getSchedule();
+		final Table sch = new Table();
 		sch.border(true);
 		f.add(sch);
 		sch.add(new HeaderRow().add("Start (" + tz + ")").add("End (" + tz + ")").add("Duration").add("Active").add("Repeats"));
-		for (EventSchedule es : schedule) {
-			Row esrow = es.asRow(tz);
+		for (final EventSchedule es : schedule) {
+			final Row esrow = es.asRow(tz);
 			if (st.hasPermission("events.schedule")) {
 				esrow.add(new Form(st, true, "./deleteschedule", "Remove", "eventscheduleid", es.getId() + ""));
 			}
@@ -105,19 +105,19 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/event/addlocation", requiresPermission = "events.locations")
-	public static void addLocation(State st, SafeMap values) {
+	public static void addLocation(final State st, final SafeMap values) {
 		Modules.simpleHtml(st, "events.addlocation", values);
 	}
 
 	@URLs(url = "/event/deletelocation", requiresPermission = "events.locations")
-	public static void deleteLocation(State st, SafeMap values) {
+	public static void deleteLocation(final State st, final SafeMap values) {
 		Modules.simpleHtml(st, "events.deletelocation", values);
 	}
 
 	@URLs(url = "/event/deleteschedule", requiresPermission = "events.schedule")
-	public static void deleteSchedule(@Nonnull State st, @Nonnull SafeMap values) {
-		String id = values.get("eventscheduleid");
-		EventSchedule es = EventSchedule.get(Integer.parseInt(id));
+	public static void deleteSchedule(@Nonnull final State st, @Nonnull final SafeMap values) {
+		final String id = values.get("eventscheduleid");
+		final EventSchedule es = EventSchedule.get(Integer.parseInt(id));
 		es.validate(st);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "DeleteSchedule", es.getEvent().getName(), es.describe("America/Los_Angeles") + " SLT", null, "Avatar deleted event schedule");
 		es.delete();
@@ -125,29 +125,29 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/event/addschedule", requiresPermission = "events.schedule")
-	public static void addSchedule(@Nonnull State st, @Nonnull SafeMap values) {
-		String eventname = values.get("event");
-		String defaulttz = st.getAvatar().getTimeZone();
-		Event event = Event.find(st.getInstance(), eventname);
+	public static void addSchedule(@Nonnull final State st, @Nonnull final SafeMap values) {
+		final String eventname = values.get("event");
+		final String defaulttz = st.getAvatar().getTimeZone();
+		final Event event = Event.find(st.getInstance(), eventname);
 		if (event==null) { st.form().add(new TextError("Event no longer exists")); return; }
 		event.validate(st);
 		if ("Add".equals(values.get("Add"))) {
 			try {
-				int startdate = DateTime.outputDateTime("Start", values, defaulttz);
-				int enddate = DateTime.outputDateTime("End", values, defaulttz);
-				int repeat = DateTime.outputInterval("Repeat", values);
+				final int startdate = DateTime.outputDateTime("Start", values, defaulttz);
+				final int enddate = DateTime.outputDateTime("End", values, defaulttz);
+				final int repeat = DateTime.outputInterval("Repeat", values);
 				event.addSchedule(startdate, enddate, repeat);
 				Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "AddSchedule", event.getName(), null, DateTime.fromUnixTime(startdate, "America/Los_Angeles") + " SLT repeat " + UnixTime.duration(repeat), "Schedule added to event");
 				throw new RedirectionException(values);
-			} catch (UserException e) {
+			} catch (final UserException e) {
 				st.form().add(new TextError(e.getMessage()));
 			}
 		}
-		Form f = st.form();
+		final Form f = st.form();
 		f.add(new Hidden("event", eventname));
 		f.add(new TextSubHeader("Schedule event " + eventname));
-		String tz = st.getAvatar().getTimeZone();
-		Table t = new Table();
+		final String tz = st.getAvatar().getTimeZone();
+		final Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("").add("DD").add("MM").add("YYYY").add("HH").add("MM"));
 		t.add(DateTime.inputDateTimeRow("Start", values, tz));

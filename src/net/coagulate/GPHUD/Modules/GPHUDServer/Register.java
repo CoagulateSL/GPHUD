@@ -34,27 +34,27 @@ public abstract class Register {
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, permitScripting = false, permitConsole = false, permitUserWeb = false, description = "Registers this connection as the region server connection",requiresPermission = "Instance.ServerOperator",permitObject = false)
-	public static Response register(@Nonnull State st,
-	                                @Nonnull @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the Server that is connecting", max = 64)
-			                                String version,
-	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the Server that is connecting", max = 64)
-			                                String versiondate,
-	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the Server that is connecting", max = 64)
-			                                String versiontime) throws UserException, SystemException {
+	public static Response register(@Nonnull final State st,
+	                                @Nonnull @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version number of the Server that is connecting", max = 64) final
+	                                String version,
+	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the Server that is connecting", max = 64) final
+	                                    String versiondate,
+	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the Server that is connecting", max = 64) final
+	                                    String versiontime) throws UserException, SystemException {
 		// check authorisation, servers can only be deployed by the instance owner...
-		String regionname = st.getRegionName();
-		Instance instance = st.getInstance();
+		final String regionname = st.getRegionName();
+		final Instance instance = st.getInstance();
 		/* -- NOW obsoleted and actually uses the permissions checking code (?)
 		if (st.avatar() != instance.getOwner() && st.avatar().isSuperAdmin()==false) {
 			st.logger().log(WARNING, "Not the instance owner (who is " + instance.getOwner() + ")");
 			return new TerminateResponse("You are not the instance owner, you can not deploy server nodes");
 		}
 		 */
-		Region region = st.getRegion();
-		for (Header header:st.headers) {
+		final Region region = st.getRegion();
+		for (final Header header:st.headers) {
 			if (header.getName().equalsIgnoreCase("X-SecondLife-Region")) {
 				//System.out.println("Element: "+header.getValue());
-				Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
+				final Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
 				if (match.matches()) {
 					region.setGlobalCoordinates(Integer.parseInt(match.group(1)),Integer.parseInt(match.group(2)));
 				} else {
@@ -63,23 +63,23 @@ public abstract class Register {
 			}
 		}
 		String url = null;
-		try { url = st.json().getString("callback"); } catch (JSONException e) {}
+		try { url = st.json().getString("callback"); } catch (final JSONException e) {}
 		if (url == null || "".equals(url)) {
 			st.logger().log(WARNING, "No callback URL sent with registration");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
 		region.setURL(url);
 		st.logger().log(INFO, "Sending post registration message to " + regionname);
-		JSONObject registered = new JSONObject().put("incommand", "registered");
+		final JSONObject registered = new JSONObject().put("incommand", "registered");
 		String regmessage = "";
 		regmessage = GPHUD.serverVersion() + " [https://coagulate.sl/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 		if (st.getRegion().needsUpdate()) {
 			regmessage += "\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version.\n=====";
 		}
 		registered.put("message", regmessage);
-		Transmission t = new Transmission(region, registered);
+		final Transmission t = new Transmission(region, registered);
 		t.start();
-		JSONObject j = new JSONObject();
+		final JSONObject j = new JSONObject();
 		region.recordServerVersion(st, version, versiondate, versiontime);
 		j.put("incommand", "registering");
 		j.put("instancename", instance.getName());
@@ -90,8 +90,8 @@ public abstract class Register {
 		return new JSONResponse(j);
 	}
 
-	public static void sendAttachConfig(@Nonnull State st) {
-		JSONObject j = new JSONObject();
+	public static void sendAttachConfig(@Nonnull final State st) {
+		final JSONObject j = new JSONObject();
 		j.put("autoattach", st.getKV("GPHUDServer.AutoAttach"));
 		j.put("parcelonly", st.getKV("GPHUDServer.ParcelONLY"));
 		st.getInstance().sendServers(j);

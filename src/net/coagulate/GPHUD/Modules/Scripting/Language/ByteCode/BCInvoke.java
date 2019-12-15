@@ -15,27 +15,27 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class BCInvoke extends ByteCode {
-	public BCInvoke(ParseNode n) {
+	public BCInvoke(final ParseNode n) {
 		super(n);
 	}
 
 	// Invoke a function.  Pop name, arg count, N*arguments
 	@Nonnull
 	public String explain() { return "Invoke (pop function name, pop arg count, pop arguments, push result)"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Invoke.get());
 	}
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
-		String functionname=vm.popString().getContent();
-		Method function= GSFunctions.get(functionname);
-		int argcount=vm.popInteger().getContent();
-		ByteCodeDataType[] args =new ByteCodeDataType[argcount];
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+		final String functionname=vm.popString().getContent();
+		final Method function= GSFunctions.get(functionname);
+		final int argcount=vm.popInteger().getContent();
+		final ByteCodeDataType[] args =new ByteCodeDataType[argcount];
 		for (int i=0;i<argcount;i++) { args[i]=vm.pop(); }
 		// MAGIC GOES HERE
 		// check the arguments, two forms are allowed, both have State and GSVM as the initial arguments
-		Class<?>[] parameters = function.getParameterTypes();
+		final Class<?>[] parameters = function.getParameterTypes();
 		if (parameters.length<2) { throw new GSInternalError("Function call "+functionname+" does not have at least 2 arguments"); }
 		if (!parameters[0].equals(State.class)) { throw new GSInternalError("First parameter to function "+functionname+" must be the State"); }
 		if (!parameters[1].equals(GSVM.class)) { throw new GSInternalError("Second parameter to function "+functionname+" must be the GSVM"); }
@@ -43,14 +43,14 @@ public class BCInvoke extends ByteCode {
 		if (argcount!=0 || parameters.length!=2) {
 			if (parameters.length==3 && parameters[2].equals(ByteCodeDataType[].class)) {
 				// yes and the 3rd parameter catches them all (varargs style)
-				Object[] pass={st,vm,args};
+				final Object[] pass={st,vm,args};
 				invoke(st,vm,function,pass);
 				return;
 			}
 			// otherwise we have multiple arguments at both ends, does it match?
 			if (argcount!=(parameters.length-2)) { throw new GSInvalidFunctionCall("Call to "+functionname+" has incorrect number of arguments - it requires "+(parameters.length-2)+" and was supplied "+argcount); }
 			// okay, number of arguments matches, what about the individual types
-			Object[] pass=new Object[parameters.length];
+			final Object[] pass=new Object[parameters.length];
 			pass[0]=st;
 			pass[1]=vm;
 			for (int i=0;i<argcount;i++) {
@@ -64,23 +64,23 @@ public class BCInvoke extends ByteCode {
 		invoke(st,vm,function,new Object[]{st,vm});
 	}
 
-	private void invoke(State st, @Nonnull GSVM vm, @Nonnull Method function, Object[] parameters) {
+	private void invoke(final State st, @Nonnull final GSVM vm, @Nonnull final Method function, final Object[] parameters) {
 		Object rawret= null;
 		try {
 			rawret = function.invoke(null, parameters);
-		} catch (IllegalAccessException e) {
+		} catch (final IllegalAccessException e) {
 			throw new GSInternalError("Method access to "+function.getName()+" in "+function.getDeclaringClass()+" is not permitted.  Check access qualifier is public.");
-		} catch (InvocationTargetException e) {
-			Throwable t=e.getCause();
+		} catch (final InvocationTargetException e) {
+			final Throwable t=e.getCause();
 			if (t!=null) {
 				if (UserException.class.isAssignableFrom(t.getClass())) { throw ((UserException)t); }
 				if (SystemException.class.isAssignableFrom(t.getClass())) { throw ((SystemException)t); }
-				if (RuntimeException.class.isAssignableFrom(t.getClass())) { throw new GSInvalidFunctionCall("Function "+function.getName()+" errored: "+t.toString(),t); }
+				if (RuntimeException.class.isAssignableFrom(t.getClass())) { throw new GSInvalidFunctionCall("Function "+function.getName()+" errored: "+ t,t); }
 				throw new GSInternalError("Unhandled exception in GPHUDScript invoke bytecode calling "+function.getName()+" in "+function.getDeclaringClass().getSimpleName(),t);
 			}
 			throw new GSInternalError("No cause to invocation target exception from "+function.getDeclaringClass().getSimpleName()+"/"+function.getName(),e);
 		}
-		ByteCodeDataType ret=(ByteCodeDataType)rawret;
+		final ByteCodeDataType ret=(ByteCodeDataType)rawret;
 		ret.stack(vm);
 	}
 }

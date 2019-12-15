@@ -28,13 +28,13 @@ import java.util.Map;
  */
 public abstract class Configuration {
 	@URLs(url = "/configuration/alias", requiresPermission = "Alias.Config")
-	public static void aliasesList(@Nonnull State st, @Nonnull SafeMap values) throws SystemException {
-		Form f = st.form();
+	public static void aliasesList(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException {
+		final Form f = st.form();
 		f.noForm();
 		f.add(new TextSubHeader("Alias Configuration"));
 
 		if (values.containsKey("deletealias") && st.hasPermission("alias.config")) {
-			Alias alias = Alias.getAlias(st, values.get("deletealias"));
+			final Alias alias = Alias.getAlias(st, values.get("deletealias"));
 			if (alias == null) {
 				f.add("<p color=red>Alias '" + values.get("deletealias") + "' was not fount</p>");
 			} else {
@@ -43,10 +43,10 @@ public abstract class Configuration {
 			}
 		}
 
-		Map<String, Alias> aliases = Alias.getAliasMap(st);
+		final Map<String, Alias> aliases = Alias.getAliasMap(st);
 		int counter = 0;
-		for (Map.Entry<String, Alias> entry : aliases.entrySet()) {
-			String name = entry.getKey();
+		for (final Map.Entry<String, Alias> entry : aliases.entrySet()) {
+			final String name = entry.getKey();
 			String innercontent = "";
 			if (st.hasPermission("alias.config")) {
 				innercontent += "<button style=\"border: 0;\" onclick=\"document.getElementById('delete-" + counter + "').style.display='inline';\">Delete</button>";
@@ -70,20 +70,20 @@ public abstract class Configuration {
 	}
 
 	@URLs(url = "/configuration/alias/create", requiresPermission = "Alias.Config")
-	public static void createAlias(@Nonnull State st, @Nonnull SafeMap values) throws SystemException, UserException {
+	public static void createAlias(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {
-			JSONObject template = new JSONObject();
+			final JSONObject template = new JSONObject();
 			template.put("invoke", values.get("command"));
 			try {
-				Alias newalias = Alias.create(st, values.get("name"), template);
+				final Alias newalias = Alias.create(st, values.get("name"), template);
 				Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Alias", null, values.get("command"), "Avatar created new alias");
 				throw new RedirectionException("./view/" + newalias.getId());
-			} catch (UserException e) {
+			} catch (final UserException e) {
 				st.form().add(new Paragraph(new TextError("Creation failed : " + e.getMessage())));
 			}
 		}
-		Form f = st.form();
-		Table t = new Table();
+		final Form f = st.form();
+		final Table t = new Table();
 		f.add(t);
 		t.openRow().add("Alias Name").add(new TextInput("name"));
 		t.openRow().add("Base Command").add(DropDownList.getCommandsList(st, "command", false));
@@ -91,21 +91,21 @@ public abstract class Configuration {
 	}
 
 	@URLs(url = "/configuration/alias/view/*")
-	public static void viewAlias(@Nonnull State st, @Nonnull SafeMap values) throws SystemException, UserException {
-		String[] split = st.getDebasedURL().split("/");
-		String id = split[split.length - 1];
-		Alias a = Alias.get(Integer.parseInt(id));
+	public static void viewAlias(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
+		final String[] split = st.getDebasedURL().split("/");
+		final String id = split[split.length - 1];
+		final Alias a = Alias.get(Integer.parseInt(id));
 		viewAlias(st, values, a);
 	}
 
-	public static void viewAlias(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Alias a) throws SystemException, UserException {
+	public static void viewAlias(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Alias a) throws SystemException, UserException {
 		a.validate(st);
-		Form f = st.form();
+		final Form f = st.form();
 		if ("Update".equals(values.get("Update"))) {
 			if (st.hasPermissionOrAnnotateForm("Alias.Config")) {
-				JSONObject old = a.getTemplate();
-				JSONObject template = new JSONObject();
-				for (String k : values.keySet()) {
+				final JSONObject old = a.getTemplate();
+				final JSONObject template = new JSONObject();
+				for (final String k : values.keySet()) {
 					if (!"Update".equals(k)) { template.put(k, values.get(k)); }
 				}
 				template.put("invoke", old.get("invoke"));
@@ -114,27 +114,27 @@ public abstract class Configuration {
 				f.add(new TextOK("Template Updated"));
 			}
 		}
-		Table t = new Table();
+		final Table t = new Table();
 		f.add(new TextHeader("Alias Configuration : " + a.getName()));
-		JSONObject template = a.getTemplate();
+		final JSONObject template = a.getTemplate();
 		f.add(new Paragraph("Invokes command " + template.getString("invoke")));
 		f.add(new Paragraph(new TextSubHeader("Template")));
 		f.add(t);
 		t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description").add("Replaced Description"));
-		Command c = Modules.getCommand(st, template.getString("invoke"));
-		for (Argument arg : c.getArguments()) {
+		final Command c = Modules.getCommand(st, template.getString("invoke"));
+		for (final Argument arg : c.getArguments()) {
 			if (!template.has(arg.getName())) { template.put(arg.getName(), ""); }
 		}
 
-		for (String name : template.keySet()) {
+		for (final String name : template.keySet()) {
 			if (!"invoke".equals(name) && !name.endsWith("-desc")) {
 				t.openRow().add(name).add(new TextInput(name, template.getString(name)));
 				Argument arg = null;
-				for (Argument anarg : c.getArguments()) { if (anarg.getName().equals(name)) { arg = anarg; }}
+				for (final Argument anarg : c.getArguments()) { if (anarg.getName().equals(name)) { arg = anarg; }}
 				if (arg != null) {
 					t.add(arg.type().toString());
 					t.add(arg.description());
-					String desc = template.optString(name + "-desc", "");
+					final String desc = template.optString(name + "-desc", "");
 					t.add(new TextInput(name + "-desc", desc));
 					if (arg.delayTemplating()) { t.add("  <i> ( This parameter uses delayed templating ) </i>"); }
 				}

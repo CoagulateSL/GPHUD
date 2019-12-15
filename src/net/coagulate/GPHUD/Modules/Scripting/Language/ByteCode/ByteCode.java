@@ -17,19 +17,19 @@ import java.util.Map;
 public abstract class ByteCode {
 
 	@Nullable
-	private ParseNode sourcenode=null;
-	public ByteCode(@Nullable ParseNode n) { sourcenode=n; }
+	private ParseNode sourcenode;
+	public ByteCode(@Nullable final ParseNode n) { sourcenode=n; }
 	@Nonnull
-	public ByteCode node(ParseNode n)
+	public ByteCode node(final ParseNode n)
 	{ sourcenode=n; return this; }
 	@Nullable
 	public ParseNode node() { return sourcenode; }
 
 
 	@Nonnull
-	public static ByteCode load(@Nonnull GSVM vm) {
-		byte instruction = vm.bytecode[vm.PC];
-		InstructionSet decode = ByteCode.get(instruction);
+	public static ByteCode load(@Nonnull final GSVM vm) {
+		final byte instruction = vm.bytecode[vm.PC];
+		final InstructionSet decode = ByteCode.get(instruction);
 		if (decode == null) {
 			throw new SystemException("Unable to decode instruction " + instruction + " at index " + vm.PC);
 		}
@@ -43,14 +43,14 @@ public abstract class ByteCode {
 			case BranchIfZero: return new BCBranchIfZero(null,vm.getInt());
 			case Avatar: return new BCAvatar(null,User.get(vm.getInt()));
 			case String:
-				int length = vm.getShort();
-				byte[] string = new byte[length];
-				try { System.arraycopy(vm.bytecode, vm.PC, string, 0, length); } catch (RuntimeException e)
+				final int length = vm.getShort();
+				final byte[] string = new byte[length];
+				try { System.arraycopy(vm.bytecode, vm.PC, string, 0, length); } catch (final RuntimeException e)
 				{
 					throw new SystemException("Failed to arraycopy " + length + " from pos " + vm.PC, e);
 				}
 				vm.PC += length;
-				String str = new String(string);
+				final String str = new String(string);
 				return new BCString(null,str);
 			case Debug: return new BCDebug(null,vm.getShort(),vm.getShort());
 			case Divide: return new BCDivide(null);
@@ -107,18 +107,18 @@ public abstract class ByteCode {
 		private final byte value;
 
 
-		InstructionSet(byte value) {
+		InstructionSet(final byte value) {
 			this.value = value;map.put(value,this);
 		}
 		public byte get() { return value; }
 	}
-	public static InstructionSet get(byte b) { return map.get(b); }
+	public static InstructionSet get(final byte b) { return map.get(b); }
 	@Nullable
 	public String htmlDecode() {
-		return this.getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
+		return getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
 	}
 
-	void addInt(@Nonnull List<Byte> bytes, int a) {
+	void addInt(@Nonnull final List<Byte> bytes, final int a) {
 		/*System.out.println("Writing "+
 				((byte)((a>>24) & 0xff))+" "+
 				((byte)((a>>16) & 0xff))+" "+
@@ -129,7 +129,7 @@ public abstract class ByteCode {
 		bytes.add((byte)((a>>8) & 0xff));
 		bytes.add((byte)(a&0xff));
 	}
-	void addShort(@Nonnull List<Byte> bytes, int a) {
+	void addShort(@Nonnull final List<Byte> bytes, final int a) {
 		bytes.add((byte)((a>>8) & 0xff));
 		bytes.add((byte)(a&0xff));
 	}

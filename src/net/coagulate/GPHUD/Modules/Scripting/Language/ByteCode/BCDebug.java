@@ -8,9 +8,9 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCDebug extends ByteCode {
-	private int line=0;
-	private int column=0;
-	public BCDebug(ParseNode n, int line, int column) { super(n); this.line=line; this.column=column; }
+	private int line;
+	private int column;
+	public BCDebug(final ParseNode n, final int line, final int column) { super(n); this.line=line; this.column=column; }
 
 	@Nonnull
 	@Override
@@ -19,7 +19,7 @@ public class BCDebug extends ByteCode {
 	}
 
 	@Override
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Debug.get());
 		addShort(bytes,line);
 		addShort(bytes,column);
@@ -28,7 +28,7 @@ public class BCDebug extends ByteCode {
 	@Override public String htmlDecode() { return "Debug</td><td>"+line+":"+column; }
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
 		vm.column=column; vm.row=line;
 	}
 }

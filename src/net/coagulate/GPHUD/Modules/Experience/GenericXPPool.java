@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 public class GenericXPPool extends Pool {
 	private final String myname;
 
-	public GenericXPPool(String name) {
+	public GenericXPPool(final String name) {
 		super();
 		myname = name;
 	}
@@ -36,12 +36,12 @@ public class GenericXPPool extends Pool {
 	@Override
 	public String name() { return myname; }
 
-	public void awardXP(@Nonnull State st, @Nonnull Char target, @Nullable String reason, int ammount, boolean incontext) {
-		State targetstate = State.getNonSpatial(target);
-		float period = targetstate.getKV(fullName() + "XPPeriod").floatValue();
-		int maxxp = targetstate.getKV(fullName() + "XPLimit").intValue();
-		Pool pool = Modules.getPool(targetstate, "Experience." + myname + "XP");
-		int awarded = target.sumPoolDays(pool, period);
+	public void awardXP(@Nonnull final State st, @Nonnull final Char target, @Nullable final String reason, final int ammount, final boolean incontext) {
+		final State targetstate = State.getNonSpatial(target);
+		final float period = targetstate.getKV(fullName() + "XPPeriod").floatValue();
+		final int maxxp = targetstate.getKV(fullName() + "XPLimit").intValue();
+		final Pool pool = Modules.getPool(targetstate, "Experience." + myname + "XP");
+		final int awarded = target.sumPoolDays(pool, period);
 		if (awarded >= maxxp) {
 			throw new UserException("This character has already reached their " + pool.name() + " XP limit.  They will next be eligable for a point in " + target.poolNextFree(pool, maxxp, period));
 		}

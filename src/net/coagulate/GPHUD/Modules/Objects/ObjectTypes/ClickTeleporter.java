@@ -8,7 +8,7 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class ClickTeleporter extends Teleporter {
-	ClickTeleporter(State st, @Nonnull ObjectTypes object) {
+	ClickTeleporter(final State st, @Nonnull final ObjectTypes object) {
 		super(st,object);
 	}
 
@@ -26,17 +26,17 @@ public class ClickTeleporter extends Teleporter {
 
 	@Nonnull
 	@Override
-	public Response click(@Nonnull State st, @Nonnull Char clicker) {
+	public Response click(@Nonnull final State st, @Nonnull final Char clicker) {
 		return execute(st,clicker);
 	}
 
 	@Override
-	public void editForm(@Nonnull State st) {
+	public void editForm(@Nonnull final State st) {
 		super.editForm(st);
 	}
 
 	@Override
-	public void update(@Nonnull State st) {
+	public void update(@Nonnull final State st) {
 		super.update(st);
 	}
 

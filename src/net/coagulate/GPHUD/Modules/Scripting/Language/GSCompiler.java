@@ -12,7 +12,7 @@ import java.util.List;
 public class GSCompiler {
 
 	private int jumpnumber=1;
-	private int expectedChildren(ParseNode node) {
+	private int expectedChildren(final ParseNode node) {
 		if (node instanceof GSStart) { return -1; }
 		if (node instanceof GSInitialiser) { return 3; }
 		if (node instanceof GSExpression) { return 1; }
@@ -34,20 +34,20 @@ public class GSCompiler {
 	}
 	@Nonnull
 	private final ParseNode startnode;
-	public GSCompiler(Node passednode) {
+	public GSCompiler(final Node passednode) {
 		if (!(passednode instanceof ParseNode)) { throw new SystemException("Compiler error - passed node is of type "+passednode.getClass().getCanonicalName()+" which is not a ParseNode implementation"); }
 		startnode=(ParseNode) passednode;
 	}
 
 	@Nonnull
 	public Byte[] toByteCode() {
-		List<ByteCode> bytecodelist=compile();
+		final List<ByteCode> bytecodelist=compile();
 		// twopass
 		List<Byte> bytecode=new ArrayList<>();
-		for (ByteCode bc:bytecodelist) { bc.toByteCode(bytecode); }
+		for (final ByteCode bc:bytecodelist) { bc.toByteCode(bytecode); }
 		// redo. now that forward references are completed
 		bytecode=new ArrayList<>();
-		for (ByteCode bc:bytecodelist) { bc.toByteCode(bytecode); }
+		for (final ByteCode bc:bytecodelist) { bc.toByteCode(bytecode); }
 		return bytecode.toArray(new Byte[]{});
 	}
 	// The compiler has a stack (Last In First Out) which it uses to store 'things'
@@ -57,11 +57,11 @@ public class GSCompiler {
 
 	private int lastdebuglineno=-1;
 	private int lastdebugcolno=-1;
-	private void addDebug(@Nonnull List<ByteCode> compiled, @Nonnull ParseNode node) {
-		Token firsttoken=node.jjtGetFirstToken();
+	private void addDebug(@Nonnull final List<ByteCode> compiled, @Nonnull final ParseNode node) {
+		final Token firsttoken=node.jjtGetFirstToken();
 		if (firsttoken!=null) {
-			int lineno = firsttoken.beginLine;
-			int colno = firsttoken.beginColumn;
+			final int lineno = firsttoken.beginLine;
+			final int colno = firsttoken.beginColumn;
 			if (lineno != lastdebuglineno || colno != lastdebugcolno) {
 				compiled.add(new BCDebug(node,lineno, colno));
 				lastdebuglineno = lineno;
@@ -70,8 +70,8 @@ public class GSCompiler {
 		}
 	}
 	@Nonnull
-	private List<ByteCode> compile(@Nonnull ParseNode node) {
-		List<ByteCode> compiled=new ArrayList<>();
+	private List<ByteCode> compile(@Nonnull final ParseNode node) {
+		final List<ByteCode> compiled=new ArrayList<>();
 		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) { throw new SystemException(node.getClass().getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn); }
 
 
@@ -89,7 +89,7 @@ public class GSCompiler {
 			checkType(node,1, GSIdentifier.class);
 			checkType(node,2, GSExpression.class);
 			boolean typed=false;
-			String type=node.child(0).tokens();
+			final String type=node.child(0).tokens();
 			// INITIALISE the variable - reverse place name and null content.  Then we just implement "set variable".
 			if (type.equals("String")) { compiled.add(new BCString(node)); typed=true; }
 			if (type.equals("Response")) { compiled.add(new BCResponse(node)); typed=true; }
@@ -99,7 +99,7 @@ public class GSCompiler {
 			if (type.equals("Character")) { compiled.add(new BCCharacter(node)); typed=true; }
 			if (type.equals("List")) { compiled.add(new BCList(node)); typed=true; }
 			if (!typed) { throw new SystemException("Unable to initialise variable of type "+type+" (not implemented)"); }
-			BCString identifier=new BCString(node.child(1),node.child(1).tokens());
+			final BCString identifier=new BCString(node.child(1),node.child(1).tokens());
 			compiled.add(identifier);
 			addDebug(compiled,node);
 			compiled.add(new BCInitialise(node));
@@ -113,7 +113,7 @@ public class GSCompiler {
 		if (node instanceof GSAssignment) { // similar to end of GSInitialiser code
 			checkType(node,0,GSIdentifierOrList.class);
 			checkType(node,1,GSExpression.class);
-			ParseNode target = node.child(0).child(0);
+			final ParseNode target = node.child(0).child(0);
 			// this may be a NORMAL VARIABLE (GSIdentifier) or a SPECIFIC LIST ELEMENT (GSIdentifierWithIndex)
 			if (target.getClass().equals(GSIdentifier.class)) {
 				// assign/varname/value
@@ -154,8 +154,8 @@ public class GSCompiler {
 			checkType(node,1,GSStatement.class);
 			// evaluate the condition, branch if zero, otherwise run the statement
 			compiled.addAll(compile(node.child(0))); // compile condition
-			BCLabel posttruth=new BCLabel(node,jumpnumber++);
-			BCLabel postfalse=new BCLabel(node,jumpnumber++);
+			final BCLabel posttruth=new BCLabel(node,jumpnumber++);
+			final BCLabel postfalse=new BCLabel(node,jumpnumber++);
 			addDebug(compiled,node);
 			compiled.add(new BCBranchIfZero(node,posttruth)); // if false, branch to posttruth
 			compiled.addAll(compile(node.child(1))); // truth
@@ -170,8 +170,8 @@ public class GSCompiler {
 		if (node instanceof GSWhileLoop) {
 			checkType(node,0,GSExpression.class);
 			checkType(node,1,GSStatement.class);
-			BCLabel start=new BCLabel(node,jumpnumber++);
-			BCLabel end=new BCLabel(node,jumpnumber++);
+			final BCLabel start=new BCLabel(node,jumpnumber++);
+			final BCLabel end=new BCLabel(node,jumpnumber++);
 			// check condition, exit if false, code block, repeat
 			addDebug(compiled,node);
 			compiled.add(start);
@@ -189,7 +189,7 @@ public class GSCompiler {
 			checkType(node, 0, GSFunctionName.class);
 			if (node.jjtGetNumChildren()>1) { checkType(node, 1, GSParameters.class); }
 			// validate the function name
-			String functionname = node.child(0).tokens();
+			final String functionname = node.child(0).tokens();
 			if (!validFunction(functionname)) {
 				throw new GSUnknownIdentifier("Function " + functionname + " does not exist");
 			}
@@ -219,7 +219,7 @@ public class GSCompiler {
 			compiled.addAll(compile(node.child(2)));  // reverse polish
 			compiled.addAll(compile(node.child(0)));  // so first term is pushed last!
 			boolean handledop=false;
-			String op=node.child(1).tokens();
+			final String op=node.child(1).tokens();
 			//"+" | "-" | "*" | "/" | "==" | "!="
 			addDebug(compiled,node);
 			if (op.equals("+")) { handledop=true; compiled.add(new BCAdd(node.child(1))); }
@@ -266,14 +266,14 @@ public class GSCompiler {
 		throw new SystemException("Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
 	}
 
-	private void checkType(@Nonnull ParseNode node, int pos, @Nonnull Class<? extends ParseNode> clazz) {
+	private void checkType(@Nonnull final ParseNode node, final int pos, @Nonnull final Class<? extends ParseNode> clazz) {
 		if (node.jjtGetNumChildren()<pos) { throw new SystemException("Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+clazz.getName()); }
-		Node child=node.jjtGetChild(pos);
+		final Node child=node.jjtGetChild(pos);
 		if (!child.getClass().equals(clazz)) { throw new SystemException("Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+" not the expected "+clazz.getName()); }
 	}
 
-	private boolean validFunction(String name) {
-		for (String funname: GSFunctions.getAll().keySet()) {
+	private boolean validFunction(final String name) {
+		for (final String funname: GSFunctions.getAll().keySet()) {
 			if (funname.equals(name)) { return true; }
 		}
 		return false;

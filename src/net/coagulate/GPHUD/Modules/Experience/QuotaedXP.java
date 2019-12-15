@@ -20,7 +20,7 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.POOL;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class QuotaedXP extends CharacterAttribute {
-	protected QuotaedXP(int id) { super(id); }
+	protected QuotaedXP(final int id) { super(id); }
 
 	public abstract Module getModule();
 
@@ -31,35 +31,35 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Name of the quotaed pool
 	 */
 	@Nullable
-	public String poolName(State st) { return getName(); }
+	public String poolName(final State st) { return getName(); }
 
 	@Nonnull
-	public Pool getPool(State st) { return Modules.getPoolNotNull(st, poolName(st)); }
+	public Pool getPool(final State st) { return Modules.getPoolNotNull(st, poolName(st)); }
 
 	/**
 	 * Name of the KV that controls the quota per period
 	 */
 	@Nonnull
-	public String quotaKV(State st) { throw new SystemException("Override this method!"); }
+	public String quotaKV(final State st) { throw new SystemException("Override this method!"); }
 
 	@Nonnull
-	public Integer quota(@Nonnull State st) { return st.getKV(quotaKV(st)).intValue(); }
+	public Integer quota(@Nonnull final State st) { return st.getKV(quotaKV(st)).intValue(); }
 
 	/**
 	 * Name of the KV that controls the period (in days)
 	 */
 	@Nonnull
-	public String periodKV(State st) { throw new SystemException("Override this method!"); }
+	public String periodKV(final State st) { throw new SystemException("Override this method!"); }
 
 	@Nonnull
-	public Float period(@Nonnull State st) { return st.getKV(periodKV(st)).floatValue(); }
+	public Float period(@Nonnull final State st) { return st.getKV(periodKV(st)).floatValue(); }
 
 	/**
 	 * Return the period, in seconds
 	 */
-	public int periodSeconds(@Nonnull State st) {
-		float days = period(st);
-		float seconds = days * 24 * 60 * 60;
+	public int periodSeconds(@Nonnull final State st) {
+		final float days = period(st);
+		final float seconds = days * 24 * 60 * 60;
 		return (int) seconds;
 	}
 
@@ -67,44 +67,44 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Text explanation of when the next point of XP will be available, sometimes "NOW!"
 	 */
 	@Nonnull
-	public String nextFree(@Nonnull State st) {
+	public String nextFree(@Nonnull final State st) {
 		return st.getCharacter().poolNextFree(getPool(st), quota(st), period(st));
 	}
 
 	/**
 	 * Calculate the starting unix time to covered by the period
 	 */
-	public int periodStart(@Nonnull State st) { return getUnixTime() - (periodSeconds(st)); }
+	public int periodStart(@Nonnull final State st) { return getUnixTime() - (periodSeconds(st)); }
 
 	/**
 	 * Calculate the ammount awarded in the period
 	 */
-	public int periodAwarded(@Nonnull State st) {
+	public int periodAwarded(@Nonnull final State st) {
 		return st.getCharacter().sumPoolSince(getPool(st), periodStart(st));
 	}
 
 	/**
 	 * Cap an award based on ammount already earned
 	 */
-	public int capAward(@Nonnull State st, int award) {
-		int awarded = periodAwarded(st);
-		int cap = quota(st);
+	public int capAward(@Nonnull final State st, final int award) {
+		final int awarded = periodAwarded(st);
+		final int cap = quota(st);
 		if ((awarded + award) < cap) { return award; } // still under the cap
-		int capped = cap - awarded;
+		final int capped = cap - awarded;
 		if (capped <= 0) { return 0; } // hmm
 		return Math.min(capped, award);
 	}
 
-	public int cappedSystemAward(@Nonnull State st, int award, String description) {
-		int cappedaward = capAward(st, award);
+	public int cappedSystemAward(@Nonnull final State st, final int award, final String description) {
+		final int cappedaward = capAward(st, award);
 		st.getCharacter().addPoolSystem(st, getPool(st), cappedaward, description);
 		return cappedaward;
 	}
 
 
 	@Nonnull
-	public String periodRoughly(@Nonnull State st) {
-		int seconds = periodSeconds(st);
+	public String periodRoughly(@Nonnull final State st) {
+		final int seconds = periodSeconds(st);
 		float days = (float) seconds;
 		days = days / (60 * 60 * 24);
 		return Math.round(days) + " days";

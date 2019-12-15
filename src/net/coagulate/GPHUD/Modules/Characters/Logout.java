@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  */
 public class Logout {
 	@URLs(url = "/logout")
-	public static void logout(@Nonnull State st, SafeMap values) {
+	public static void logout(@Nonnull final State st, final SafeMap values) {
 		st.form().add("Good Bye!");
 		if (st.cookiestring != null) { Cookies.delete(st.cookiestring); }
 		st.cookie = null;
@@ -29,7 +29,7 @@ public class Logout {
 
 	@Nonnull
 	@Command.Commands(description = "Log out or disconnect this character",context= Command.Context.CHARACTER,permitScripting = false,permitUserWeb = false,permitConsole = false,permitObject = false)
-	public static Response logout(@Nonnull State st) {
+	public static Response logout(@Nonnull final State st) {
 		if (st.getCharacterNullable()!=null) {
 			st.getCharacter().closeVisits(st);
 			st.getCharacter().closeURL(st);

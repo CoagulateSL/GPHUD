@@ -50,8 +50,8 @@ public abstract class View {
 
 	@Nonnull
 	@Commands(context = Context.ANY, description = "Get status of this connection")
-	public static Response status(@Nonnull State st) {
-		TabularResponse t = new TabularResponse();
+	public static Response status(@Nonnull final State st) {
+		final TabularResponse t = new TabularResponse();
 		t.openRow();
 		t.add("Node").addNoNull((GPHUD.DEV ? "DEVELOPMENT // " : "Production // ") + Interface.getNode());
 		t.openRow();
@@ -74,57 +74,57 @@ public abstract class View {
 	}
 
 	@URLs(url = "/characters/view/*")
-	public static void viewCharacter(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
+	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		st.form().noForm();
 		//System.out.println(st.uri);
-		String[] split = st.getDebasedURL().split("/");
+		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		if (split.length == 4) {
-			String id = split[split.length - 1];
-			Char c = Char.get(Integer.parseInt(id));
+			final String id = split[split.length - 1];
+			final Char c = Char.get(Integer.parseInt(id));
 			viewCharacter(st, values, c, false);
 			return;
 		}
 		if (split.length == 6) {
-			String id = split[3];
-			Char c = Char.get(Integer.parseInt(id));
-			String attribute = split[4] + "." + split[5];
+			final String id = split[3];
+			final Char c = Char.get(Integer.parseInt(id));
+			final String attribute = split[4] + "." + split[5];
 			st.form().add(new ConfigurationHierarchy(st, st.getKVDefinition(attribute), st.simulate(c), values));
 			return;
 		}
 		throw new SystemException("Unknown character view mode (length:" + split.length + " URI:" + st.getDebasedURL());
 	}
 
-	public static void viewCharacter(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Char c, boolean brief) throws UserException, SystemException {
+	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Char c, final boolean brief) throws UserException, SystemException {
 		boolean full = false;
-		State simulated = st.simulate(c);
-		String tz = st.getAvatarNullable().getTimeZone();
+		final State simulated = st.simulate(c);
+		final String tz = st.getAvatarNullable().getTimeZone();
 		if (st.getCharacterNullable() == c) { full = true; }
 		if (st.hasPermission("Characters.ViewAll")) { full = true; }
-		Form f = st.form();
+		final Form f = st.form();
 		f.add(new TextSubHeader(c.getName()));
-		Table kvtable = new Table();
+		final Table kvtable = new Table();
 		f.add(kvtable);
 		kvtable.openRow().add("Owning Avatar").add(c.getOwner().getGPHUDLink());
-		String lastplayed = fromUnixTime(c.getLastPlayed(), tz);
+		final String lastplayed = fromUnixTime(c.getLastPlayed(), tz);
 		kvtable.openRow().add("Last Played").add(lastplayed).add(tz);
 		kvtable.openRow().add("Connected");
 		if (c.getURL() == null || c.getURL().isEmpty()) { kvtable.add("No"); } else { kvtable.add("Yes"); }
 		if (st.hasModule("Experience")) {
 			kvtable.openRow().add("Experience");
-			int xp = Experience.getExperience(st, c);
+			final int xp = Experience.getExperience(st, c);
 			kvtable.add(xp + " XP").add("Level " + Experience.toLevel(st, xp));
 		}
-		kvtable.openRow().add(new Cell("<i>Assuming " + simulated.toString() + "</i>", 5));
+		kvtable.openRow().add(new Cell("<i>Assuming " + simulated + "</i>", 5));
 		kvtable.openRow().add(new Cell(new TextSubHeader("Attributes"), 5));
-		Set<String> experiences = new HashSet<>();
-		for (Attribute a : st.getAttributes()) {
+		final Set<String> experiences = new HashSet<>();
+		for (final Attribute a : st.getAttributes()) {
 			if (a.getType() == EXPERIENCE) { experiences.add(a.getName() + "XP"); }
 		}
-		for (Attribute a : st.getAttributes()) {
+		for (final Attribute a : st.getAttributes()) {
 			String content = "";
 			boolean isxp = false;
-			for (String s : experiences) { if (s.equalsIgnoreCase(a.getName())) { isxp = true; }}
+			for (final String s : experiences) { if (s.equalsIgnoreCase(a.getName())) { isxp = true; }}
 			if (isxp && st.hasPermission("experience.award" + a.getName())) {
 				content = "<button id=\"award-" + a.getName() + "\" "
 						+ "style=\"margin: 0\" "
@@ -132,12 +132,12 @@ public abstract class View {
 						+ "document.getElementById('award-" + a.getName() + "').style.display='none';"
 						+ "document.getElementById('editor-award-" + a.getName() + "').style.display='block';"
 						+ "\">Award</button>";
-				String target = values.get("target");
-				String ammountstring = values.get("xp-ammount");
-				String reason = values.getOrDefault("xp-reason", "");
+				final String target = values.get("target");
+				final String ammountstring = values.get("xp-ammount");
+				final String reason = values.getOrDefault("xp-reason", "");
 				int ammount = 1;
 				if (ammountstring != null && !ammountstring.isEmpty()) {
-					try { ammount = Integer.parseInt(ammountstring); } catch (NumberFormatException e) {}
+					try { ammount = Integer.parseInt(ammountstring); } catch (final NumberFormatException e) {}
 				}
 				content += "<div id=\"editor-award-" + a.getName() + "\" style=\"display: none;\">"
 						+ "<form method=post>"
@@ -146,12 +146,12 @@ public abstract class View {
 						+ "</form>"
 						+ "</div>";
 				if (values.containsKey("Award") && values.getOrDefault("target", "").equalsIgnoreCase(a.getName()) && !reason.isEmpty()) {
-					Pool p = Modules.getPool(st, "Experience." + a.getName());
-					GenericXPPool gen = (GenericXPPool) p;
+					final Pool p = Modules.getPool(st, "Experience." + a.getName());
+					final GenericXPPool gen = (GenericXPPool) p;
 					try {
 						gen.awardXP(st, c, reason, ammount, false);
 						content = "<font color=green><b>&nbsp;&nbsp;&nbsp;OK: </b>Awarded " + ammount + " " + a.getName() + " to " + c.getName() + "</font>";
-					} catch (UserException e) {
+					} catch (final UserException e) {
 						content = "<font color=red><b>&nbsp;&nbsp;&nbsp;Error: </b>" + e.getLocalizedMessage() + "</font>";
 					}
 				}
@@ -177,23 +177,23 @@ public abstract class View {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Show yourself privately your own character sheet",permitObject = false)
-	public static Response view(@Nonnull State st) {
+	public static Response view(@Nonnull final State st) {
 		return new OKResponse(st.getKV("instance.ViewSelfTemplate").value());
 	}
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Publicly display your own character sheet")
-	public static Response show(@Nonnull State st) {
+	public static Response show(@Nonnull final State st) {
 		return new SayResponse(st.getKV("instance.ShowSelfTemplate").value());
 	}
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Look at another's character sheet",permitObject = false)
-	public static Response look(@Nonnull State st,
-	                            @Nonnull @Arguments(type = Argument.ArgumentType.CHARACTER_NEAR, description = "Character to inspect")
-			                            Char character) {
+	public static Response look(@Nonnull final State st,
+	                            @Nonnull @Arguments(type = Argument.ArgumentType.CHARACTER_NEAR, description = "Character to inspect") final
+	                            Char character) {
 		character.validate(st);
-		State target = new State();
+		final State target = new State();
 		target.setInstance(st.getInstance());
 		target.setRegion(st.getRegion());
 		target.setCharacter(character);

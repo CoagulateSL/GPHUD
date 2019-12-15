@@ -4,11 +4,11 @@ import javax.annotation.Nonnull;
 
 public class GSInvalidFunctionCall extends GSException {
 	private static final long serialVersionUID=1L;
-	public GSInvalidFunctionCall(String reason) {
+	public GSInvalidFunctionCall(final String reason) {
 		super(reason);
 	}
 
-	public GSInvalidFunctionCall(String reason, Throwable cause) {
+	public GSInvalidFunctionCall(final String reason, final Throwable cause) {
 		super(reason, cause);
 	}
 

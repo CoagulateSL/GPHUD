@@ -18,8 +18,8 @@ public class KVAnnotation extends KV {
 
 	KVAnnotation() {}
 
-	public KVAnnotation(Module m, KVS meta) throws UserException, SystemException {
-		this.module = m;
+	public KVAnnotation(final Module m, final KVS meta) throws UserException, SystemException {
+		module = m;
 		this.meta = meta;
 		validate(null);
 		generated = false;
@@ -59,7 +59,7 @@ public class KVAnnotation extends KV {
 	public boolean hidden() { return meta.hidden(); }
 
 
-	private void validate(State st) throws UserException, SystemException {
+	private void validate(final State st) throws UserException, SystemException {
 		if (!editpermission().isEmpty()) {
 			Modules.validatePermission(st, editpermission());
 		}

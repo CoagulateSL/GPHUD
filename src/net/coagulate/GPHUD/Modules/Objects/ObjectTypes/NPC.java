@@ -19,26 +19,26 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class NPC extends ObjectType {
-	protected NPC(State st, @Nonnull ObjectTypes object) {
+	protected NPC(final State st, @Nonnull final ObjectTypes object) {
 		super(st, object);
 	}
 
 	@Nonnull
 	@Override
-	public Response click(@Nonnull State st, @Nonnull Char clicker) {
+	public Response click(@Nonnull final State st, @Nonnull final Char clicker) {
 		// do we have a character set
 		if (!json.has("character")) { return new ErrorResponse("No character is associated with this NPC object"); }
-		Integer charid=json.getInt("character");
-		Char ch=Char.get(charid);
+		final Integer charid=json.getInt("character");
+		final Char ch=Char.get(charid);
 		ch.validate(st);
 		st.setCharacter(ch);
 		if (!json.has("script")) { return new ErrorResponse("No script is associated with this NPC object"); }
-		Integer scriptid=json.getInt("script");
-		Scripts script=Scripts.get(scriptid);
+		final Integer scriptid=json.getInt("script");
+		final Scripts script=Scripts.get(scriptid);
 		script.validate(st);
-		GSVM vm=new GSVM(script.getByteCode());
+		final GSVM vm=new GSVM(script.getByteCode());
 		vm.introduce("TARGET",new BCCharacter(null,clicker));
-		JSONObject jsonresponse = vm.execute(st).asJSON(st);
+		final JSONObject jsonresponse = vm.execute(st).asJSON(st);
 		//System.out.println(response.asJSON(st));
 		ch.appendConveyance(st,jsonresponse);
 		clicker.considerPushingConveyances();
@@ -47,8 +47,8 @@ public class NPC extends ObjectType {
 
 	@Nullable
 	Char getChar() {
-		String chid=json.optString("character","");
-		String chname="";
+		final String chid=json.optString("character","");
+		final String chname="";
 		if (chid==null || chid.isEmpty()) { return null; }
 		return Char.get(Integer.parseInt(chid));
 	}
@@ -56,20 +56,20 @@ public class NPC extends ObjectType {
 	@Nonnull
 	@Override
 	public String explainHtml() {
-		Char ch=getChar();
+		final Char ch=getChar();
 		return "An interactive NPC - "+(ch==null?"no character set":ch.toString());
 	}
 
 	@Override
-	public void editForm(@Nonnull State st) {
-		Table t=new Table();
+	public void editForm(@Nonnull final State st) {
+		final Table t=new Table();
 		t.add("Character");
-		DropDownList charlist = Char.getNPCList(st, "character");
+		final DropDownList charlist = Char.getNPCList(st, "character");
 		if (json.has("character")) { charlist.setValue("" + json.getInt("character")); }
 		t.add(charlist);
 		t.openRow();
 		t.add("OnClick Script");
-		DropDownList scriptlist = Scripts.getList(st, "script");
+		final DropDownList scriptlist = Scripts.getList(st, "script");
 		if (json.has("script")) { scriptlist.setValue(""+json.getInt("script")); }
 		t.add(scriptlist);
 		t.openRow();
@@ -82,10 +82,10 @@ public class NPC extends ObjectType {
 	}
 
 	@Override
-	public void update(@Nonnull State st) {
+	public void update(@Nonnull final State st) {
 		boolean update=false;
 		if (st.postmap.containsKey("character")) {
-			int charid=Integer.parseInt(st.postmap.get("character"));
+			final int charid=Integer.parseInt(st.postmap.get("character"));
 			Char.get(charid).validate(st);
 			if ((!json.has("character")) || charid!=json.getInt("character")) {
 				update = true;
@@ -93,8 +93,8 @@ public class NPC extends ObjectType {
 			}
 		}
 		if (st.postmap.containsKey("script")) {
-			int scriptid=Integer.parseInt(st.postmap.get("script"));
-			Scripts script=Scripts.get(scriptid);
+			final int scriptid=Integer.parseInt(st.postmap.get("script"));
+			final Scripts script=Scripts.get(scriptid);
 			script.validate(st);
 			if ((!json.has("script")) || scriptid!=json.getInt("script")) {
 				json.put("script",scriptid);
@@ -117,11 +117,11 @@ public class NPC extends ObjectType {
 	}
 
 	@Override
-	public void payload(@Nonnull State st, @Nonnull JSONObject response) {
+	public void payload(@Nonnull final State st, @Nonnull final JSONObject response) {
 		super.payload(st, response);
 		if (!json.has("character")) { return; }
-		Integer charid=json.getInt("character");
-		Char ch=Char.get(charid);
+		final Integer charid=json.getInt("character");
+		final Char ch=Char.get(charid);
 		ch.validate(st);
 		ch.setRegion(st.getRegion());
 		st.setCharacter(ch);

@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 
 public class RunCommand extends ObjectType {
-	protected RunCommand(State st, @Nonnull ObjectTypes object) {
+	protected RunCommand(final State st, @Nonnull final ObjectTypes object) {
 		super(st, object);
 	}
 
@@ -28,8 +28,8 @@ public class RunCommand extends ObjectType {
 	}
 
 	@Override
-	public void editForm(@Nonnull State st) {
-		Table t=new Table();
+	public void editForm(@Nonnull final State st) {
+		final Table t=new Table();
 		t.add("Command").add(DropDownList.getCommandsList(st,"command",true));
 		t.openRow();
 		t.add(new Cell(new Button("Submit"),2));
@@ -37,8 +37,8 @@ public class RunCommand extends ObjectType {
 	}
 
 	@Override
-	public void update(@Nonnull State st) {
-		String command=st.postmap.get("command");
+	public void update(@Nonnull final State st) {
+		final String command=st.postmap.get("command");
 		if (!command.equals(json.optString("command",""))) {
 			json.put("command",st.postmap.get("command"));
 			object.setBehaviour(json);
@@ -59,9 +59,9 @@ public class RunCommand extends ObjectType {
 
 	@Nonnull
 	@Override
-	public Response click(@Nonnull State st, @Nonnull Char clicker) {
+	public Response click(@Nonnull final State st, @Nonnull final Char clicker) {
 		if (json.optString("command","").isEmpty()) { return new ErrorResponse("Command to invoke is not configured in this object type"); }
-		JSONObject resp = Modules.getJSONTemplate(st, json.getString("command"));
+		final JSONObject resp = Modules.getJSONTemplate(st, json.getString("command"));
 		new Transmission(clicker,resp).start();
 		return new JSONResponse(new JSONObject());
 	}

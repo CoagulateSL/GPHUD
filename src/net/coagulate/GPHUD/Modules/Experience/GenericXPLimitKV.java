@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public class GenericXPLimitKV extends KV {
 	private final String myname;
 
-	public GenericXPLimitKV(String name) { myname = name; }
+	public GenericXPLimitKV(final String name) { myname = name; }
 
 	public boolean isGenerated() { return true; }
 

@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public class GenericXPPeriodKV extends KV {
 	private final String myname;
 
-	public GenericXPPeriodKV(String name) { myname = name; }
+	public GenericXPPeriodKV(final String name) { myname = name; }
 
 	public boolean isGenerated() { return true; }
 

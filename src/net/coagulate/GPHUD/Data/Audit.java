@@ -27,8 +27,8 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 public abstract class Audit {
 
 	@Nonnull
-	public static Results getAudit(@Nullable Instance instance, @Nullable User avatar, @Nullable Char character) {
-		List<Object> parameters = new ArrayList<>();
+	public static Results getAudit(@Nullable final Instance instance, @Nullable final User avatar, @Nullable final Char character) {
+		final List<Object> parameters = new ArrayList<>();
 		String sql = "select * from audit where 1=1 ";
 		if (instance != null) {
 			sql += "and instanceid=? ";
@@ -45,19 +45,19 @@ public abstract class Audit {
 			parameters.add(character.getId());
 		}
 		sql += " order by timedate desc limit 0,500";
-		Object[] objectarray = new Object[0];
+		final Object[] objectarray = new Object[0];
 		return GPHUD.getDB().dq(sql, parameters.toArray(objectarray));
 	}
 
-	public static void audit(@Nonnull State st, OPERATOR op, User targetavatar, Char targetcharacter, String changetype, String changeditem, String oldvalue, String newvalue, String note) {
+	public static void audit(@Nonnull final State st, final OPERATOR op, final User targetavatar, final Char targetcharacter, final String changetype, final String changeditem, final String oldvalue, final String newvalue, final String note) {
 		audit(true, st, op, targetavatar, targetcharacter, changetype, changeditem, oldvalue, newvalue, note);
 	}
 
-	public static void audit(boolean log, @Nonnull State st, OPERATOR op, @Nullable User targetavatar, @Nullable Char targetcharacter, @Nullable String changetype, @Nullable String changeditem, @Nullable String oldvalue, @Nullable String newvalue, String note) {
-		User avatar = st.getAvatarNullable();
+	public static void audit(final boolean log, @Nonnull final State st, final OPERATOR op, @Nullable final User targetavatar, @Nullable final Char targetcharacter, @Nullable final String changetype, @Nullable final String changeditem, @Nullable final String oldvalue, @Nullable final String newvalue, final String note) {
+		final User avatar = st.getAvatarNullable();
 		Char character = st.getCharacterNullable();
 		if (op == OPERATOR.AVATAR) { character = null; }
-		Instance stinstance = st.getInstanceNullable();
+		final Instance stinstance = st.getInstanceNullable();
 		if (log) {
 			String instance = "NoInstance";
 			if (stinstance != null) { instance = stinstance.getName(); }
@@ -120,55 +120,55 @@ public abstract class Audit {
 					getId(st.getSourcedeveloper()),
 					getId(st.sourceregion),
 					st.sourcelocation);
-		} catch (DBException ex) {
+		} catch (final DBException ex) {
 			st.logger().log(WARNING, "Audit logging failure", ex);
 		}
 	}
 
-	private static Object getId(@Nullable TableRow r) {
+	private static Object getId(@Nullable final TableRow r) {
 		if (r == null) { return new NullInteger(); }
 		return r.getId();
 	}
 
-	private static Object getId(@Nullable User r) {
+	private static Object getId(@Nullable final User r) {
 		if (r == null) { return new NullInteger(); }
 		return r.getId();
 	}
 
 	@Nonnull
-	public static Table formatAudit(@Nonnull Results rows, String timezone) {
+	public static Table formatAudit(@Nonnull final Results rows, final String timezone) {
 		Table table = new Table();
 		table.nowrap();
 		table.border(false);
-		NameCache cache = new NameCache();
-		net.coagulate.GPHUD.Interfaces.Outputs.Row headers = new HeaderRow();
+		final NameCache cache = new NameCache();
+		final net.coagulate.GPHUD.Interfaces.Outputs.Row headers = new HeaderRow();
 		String tzheader = timezone;
-		String[] tzparts = tzheader.split("/");
+		final String[] tzparts = tzheader.split("/");
 		if (tzparts.length == 2) { tzheader = tzparts[1]; }
 		headers.add(tzheader).add("").add("Source").add("").add("Target").add("Change").add("Old Value").add("").add("New Value").add("Notes");
 		table.add(headers);
 		String olddate = "";
-		for (ResultsRow r : rows) {
-			String[] datetime = fromUnixTime(r.getStringNullable("timedate"), timezone).split(" ");
+		for (final ResultsRow r : rows) {
+			final String[] datetime = fromUnixTime(r.getStringNullable("timedate"), timezone).split(" ");
 			if (!olddate.equals(datetime[0])) {
-				net.coagulate.GPHUD.Interfaces.Outputs.Row t = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
+				final net.coagulate.GPHUD.Interfaces.Outputs.Row t = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 				t.align("center");
 				table.add(t);
 				t.add(new Cell("<table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\">" + datetime[0] + "</span></td><td width=50%><hr></td></tr></table>", 99999));
 				olddate = datetime[0];
 			}
-			net.coagulate.GPHUD.Interfaces.Outputs.Row t = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
+			final net.coagulate.GPHUD.Interfaces.Outputs.Row t = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 			table.add(t);
 			t.add(datetime[1]);
 
-			String sourcename = cleanse(r.getStringNullable("sourcename"));
-			String sourceowner = formatavatar(cache, r.getIntNullable("sourceowner"));
-			String sourcedev = formatavatar(cache, r.getIntNullable("sourcedeveloper"));
-			String sourceregion = formatregion(cache, r.getIntNullable("sourceregion"));
-			String sourceloc = trimlocation(cleanse(r.getStringNullable("sourcelocation")));
+			final String sourcename = cleanse(r.getStringNullable("sourcename"));
+			final String sourceowner = formatavatar(cache, r.getIntNullable("sourceowner"));
+			final String sourcedev = formatavatar(cache, r.getIntNullable("sourcedeveloper"));
+			final String sourceregion = formatregion(cache, r.getIntNullable("sourceregion"));
+			final String sourceloc = trimlocation(cleanse(r.getStringNullable("sourcelocation")));
 
 			if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
-				Table internal = new Table();
+				final Table internal = new Table();
 				internal.nowrap();
 				internal.add(new Cell("Source name:").th()).add(sourcename).closeRow();
 				internal.add(new Cell("Source owner:").th()).add(sourceowner).closeRow();
@@ -178,10 +178,10 @@ public abstract class Audit {
 				t.add(new ToolTip("[Via]", internal));
 			} else { t.add(""); }
 
-			String srcav = formatavatar(cache, r.getIntNullable("sourceavatarid"));
-			String srcch = formatchar(cache, r.getIntNullable("sourcecharacterid"));
-			String dstav = formatavatar(cache, r.getIntNullable("destavatarid"));
-			String dstch = formatchar(cache, r.getIntNullable("destcharacterid"));
+			final String srcav = formatavatar(cache, r.getIntNullable("sourceavatarid"));
+			final String srcch = formatchar(cache, r.getIntNullable("sourcecharacterid"));
+			final String dstav = formatavatar(cache, r.getIntNullable("destavatarid"));
+			final String dstch = formatchar(cache, r.getIntNullable("destcharacterid"));
 			t.add(new Cell(srcav + (srcav.isEmpty() || srcch.isEmpty() ? "" : "/") + srcch).align("right"));
 			// if we have nothing on one side
 			if ((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty())) {
@@ -190,15 +190,15 @@ public abstract class Audit {
 				t.add("&rarr;");
 			}
 			t.add(dstav + (dstav.isEmpty() || dstch.isEmpty() ? "" : "/") + dstch);
-			String changetype = cleanse(r.getStringNullable("changetype"));
-			String changeitem = cleanse(r.getStringNullable("changeditem"));
+			final String changetype = cleanse(r.getStringNullable("changetype"));
+			final String changeitem = cleanse(r.getStringNullable("changeditem"));
 			t.add(changetype + (changetype.isEmpty() || changeitem.isEmpty() ? "" : " - ") + changeitem);
 
-			String oldvaluestr = cleanse(r.getStringNullable("oldvalue"));
-			String newvaluestr = cleanse(r.getStringNullable("newvalue"));
-			Renderable oldvalue = notate(oldvaluestr, 10);
-			Renderable newvalue = notate(newvaluestr, 10);
-			Renderable notes = new Text(cleanse(r.getStringNullable("notes")));
+			final String oldvaluestr = cleanse(r.getStringNullable("oldvalue"));
+			final String newvaluestr = cleanse(r.getStringNullable("newvalue"));
+			final Renderable oldvalue = notate(oldvaluestr, 10);
+			final Renderable newvalue = notate(newvaluestr, 10);
+			final Renderable notes = new Text(cleanse(r.getStringNullable("notes")));
 			t.add(new Cell(oldvalue).align("right"));
 			if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
 			t.add(newvalue);
@@ -220,7 +220,7 @@ public abstract class Audit {
 	}
 
 	@Nonnull
-	private static Renderable notate(@Nonnull String s, int size) {
+	private static Renderable notate(@Nonnull final String s, final int size) {
 		if (s.length() > size) {
 			return new ToolTip(s.substring(0, size), s);
 		}
@@ -228,39 +228,39 @@ public abstract class Audit {
 	}
 
 	@Nonnull
-	private static String cleanse(@Nullable String s) {
+	private static String cleanse(@Nullable final String s) {
 		if (s == null) { return ""; }
 		return s;
 	}
 
-	private static String formatavatar(@Nonnull NameCache cache, @Nullable Integer avatarid) {
+	private static String formatavatar(@Nonnull final NameCache cache, @Nullable final Integer avatarid) {
 		if (avatarid != null) { return cache.lookup(User.get(avatarid)); }
 		return "";
 	}
 
-	private static String formatchar(@Nonnull NameCache cache, @Nullable Integer charid) {
+	private static String formatchar(@Nonnull final NameCache cache, @Nullable final Integer charid) {
 		if (charid != null) { return cache.lookup(Char.get(charid)); }
 		return "";
 	}
 
-	private static String formatregion(@Nonnull NameCache cache, @Nullable Integer charid) {
+	private static String formatregion(@Nonnull final NameCache cache, @Nullable final Integer charid) {
 		if (charid != null) { return cache.lookup(Region.get(charid,true)); }
 		return "";
 	}
 
 	private static String trimlocation(String s) {
-		String olds = s;
+		final String olds = s;
 		s = s.replaceAll("\\(", "");
 		s = s.replaceAll("\\)", "");
 		s = s.replaceAll(" ", "");
-		String[] xyz = s.split(",");
+		final String[] xyz = s.split(",");
 		if (xyz.length != 3) { return olds; }
 		try {
-			float x = Float.parseFloat(xyz[0]);
-			float y = Float.parseFloat(xyz[1]);
-			float z = Float.parseFloat(xyz[2]);
+			final float x = Float.parseFloat(xyz[0]);
+			final float y = Float.parseFloat(xyz[1]);
+			final float z = Float.parseFloat(xyz[2]);
 			return ((int) x) + "," + ((int) y) + "," + ((int) z);
-		} catch (NumberFormatException e) { return olds; }
+		} catch (final NumberFormatException e) { return olds; }
 	}
 
 	public enum OPERATOR {AVATAR, CHARACTER}

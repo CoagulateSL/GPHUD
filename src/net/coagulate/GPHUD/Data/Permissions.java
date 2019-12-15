@@ -21,10 +21,10 @@ public class Permissions {
 	 * @return Set of permissions.
 	 */
 	@Nonnull
-	public static Set<String> getPermissions(@Nonnull Instance i, @Nonnull User u) {
-		Set<String> permissions = new TreeSet<>();
-		Results results = GPHUD.getDB().dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups.permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroupmembers.avatarid=?", i.getId(), u.getId());
-		for (ResultsRow r : results) {
+	public static Set<String> getPermissions(@Nonnull final Instance i, @Nonnull final User u) {
+		final Set<String> permissions = new TreeSet<>();
+		final Results results = GPHUD.getDB().dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups.permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroupmembers.avatarid=?", i.getId(), u.getId());
+		for (final ResultsRow r : results) {
 			permissions.add(r.getStringNullable());
 		}
 		return permissions;

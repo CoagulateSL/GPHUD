@@ -18,14 +18,14 @@ public class TerminateResponse implements Response {
 
 	final String reason;
 
-	public TerminateResponse(String r) {
+	public TerminateResponse(final String r) {
 		reason = r;
 	}
 
 	@Nonnull
 	@Override
-	public JSONObject asJSON(State st) {
-		JSONObject j = new JSONObject();
+	public JSONObject asJSON(final State st) {
+		final JSONObject j = new JSONObject();
 		j.put("terminate", reason);
 		return j;
 	}
@@ -38,13 +38,13 @@ public class TerminateResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		throw new SystemException("This request is TERMINATED - " + reason);
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st, boolean rich) {
+	public String asHtml(final State st, final boolean rich) {
 		throw new SystemException("This request is TERMINATED - " + reason);
 	}
 

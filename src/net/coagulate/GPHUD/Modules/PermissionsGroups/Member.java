@@ -27,20 +27,20 @@ import javax.annotation.Nonnull;
 public abstract class Member {
 
 	@URLs(url = "/permissionsgroups/eject", requiresPermission = "Instance.ManagePermissions")
-	public static void ejectForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void ejectForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.eject", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Remove a member from a permissions group")
-	public static Response eject(@Nonnull State st,
-	                             @Nonnull @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to remove member from")
-			                             PermissionsGroup permissionsgroup,
-	                             @Nonnull @Arguments(description = "Avatar to remove from the group", type = ArgumentType.AVATAR)
-			                             User avatar
+	public static Response eject(@Nonnull final State st,
+	                             @Nonnull @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to remove member from") final
+	                             PermissionsGroup permissionsgroup,
+	                             @Nonnull @Arguments(description = "Avatar to remove from the group", type = ArgumentType.AVATAR) final
+	                                 User avatar
 	) throws UserException, SystemException {
 		if (!permissionsgroup.canEject(st)) { return new ErrorResponse("No permission to eject from this group"); }
-		try { permissionsgroup.removeMember(avatar); } catch (UserException e) {
+		try { permissionsgroup.removeMember(avatar); } catch (final UserException e) {
 			return new ErrorResponse("Failed to remove user from permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, avatar, null, "Remove Member", permissionsgroup.getNameSafe(), null, avatar.getName(), "Avatar removed avatar from permissions group");
@@ -48,20 +48,20 @@ public abstract class Member {
 	}
 
 	@URLs(url = "/permissionsgroups/invite", requiresPermission = "Instance.ManagePermissions")
-	public static void createForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void createForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.invite", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Adds a user to a permissions group")
-	public static Response invite(@Nonnull State st,
-	                              @Nonnull @Arguments(description = "Permissions group to join avatar to", type = ArgumentType.PERMISSIONSGROUP)
-			                              PermissionsGroup permissionsgroup,
-	                              @Nonnull @Arguments(description = "Avatar to join to group", type = ArgumentType.AVATAR)
-			                              User avatar
+	public static Response invite(@Nonnull final State st,
+	                              @Nonnull @Arguments(description = "Permissions group to join avatar to", type = ArgumentType.PERMISSIONSGROUP) final
+	                              PermissionsGroup permissionsgroup,
+	                              @Nonnull @Arguments(description = "Avatar to join to group", type = ArgumentType.AVATAR) final
+	                                  User avatar
 	) throws UserException, SystemException {
 		if (!permissionsgroup.canInvite(st)) { return new ErrorResponse("No permission to invite to this group"); }
-		try { permissionsgroup.addMember(avatar); } catch (UserException e) {
+		try { permissionsgroup.addMember(avatar); } catch (final UserException e) {
 			return new ErrorResponse("Failed to add user to permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, avatar, null, "Add Member", permissionsgroup.getNameSafe(), null, avatar.getName(), "Avatar added avatar to permissions group");
@@ -69,22 +69,22 @@ public abstract class Member {
 	}
 
 	@URLs(url = "/permissionsgroups/setpermissions", requiresPermission = "Instance.ManagePermissions")
-	public static void setPermissionsForm(State st, SafeMap values) throws UserException, SystemException {
+	public static void setPermissionsForm(final State st, final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.setpermissions", values);
 	}
 
 	@Nonnull
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Set a users permissions over a permissions group")
-	public static Response setPermissions(@Nonnull State st,
-	                                      @Nonnull @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to set a users permissions in")
-			                                      PermissionsGroup permissionsgroup,
-	                                      @Nonnull @Arguments(type = ArgumentType.AVATAR, description = "Avatar in the group to set permissions of")
-			                                      User avatar,
-	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user invite people to this group")
-			                                      Boolean caninvite,
-	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user remove people from this group")
-			                                      Boolean cankick) throws UserException, SystemException {
-		try { permissionsgroup.setUserPermissions(avatar, caninvite, cankick); } catch (UserException e) {
+	public static Response setPermissions(@Nonnull final State st,
+	                                      @Nonnull @Arguments(type = ArgumentType.PERMISSIONSGROUP, description = "Permissions group to set a users permissions in") final
+	                                      PermissionsGroup permissionsgroup,
+	                                      @Nonnull @Arguments(type = ArgumentType.AVATAR, description = "Avatar in the group to set permissions of") final
+	                                          User avatar,
+	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user invite people to this group") final
+	                                          Boolean caninvite,
+	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user remove people from this group") final
+	                                          Boolean cankick) throws UserException, SystemException {
+		try { permissionsgroup.setUserPermissions(avatar, caninvite, cankick); } catch (final UserException e) {
 			return new ErrorResponse("Failed to set user permissions on group  - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, avatar, null, "SetUserPermissions", permissionsgroup.getName(), null, "CanInvite:" + caninvite + " CanKick:" + cankick, "Avatar updated avatars permissions to invite/kick from permissions group");

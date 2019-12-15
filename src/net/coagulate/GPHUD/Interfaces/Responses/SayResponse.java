@@ -19,23 +19,23 @@ public class SayResponse implements Response {
 
 	String reason;
 	@Nullable
-	String sayas = null;
+	String sayas;
 
-	public SayResponse(String r) { reason = r; }
+	public SayResponse(final String r) { reason = r; }
 
-	public SayResponse(String r, @Nullable String sayas) {
+	public SayResponse(final String r, @Nullable final String sayas) {
 		reason = r;
 		this.sayas = sayas;
 	}
 
 	public String getText() { return reason; }
 
-	public void setText(String text) { this.reason = text; }
+	public void setText(final String text) { reason = text; }
 
 	@Nonnull
 	@Override
-	public JSONObject asJSON(State st) {
-		JSONObject json = new JSONObject();
+	public JSONObject asJSON(final State st) {
+		final JSONObject json = new JSONObject();
 		if (sayas != null) {
 			json.put("sayas", sayas);
 			json.put("say", "/me " + reason);
@@ -51,19 +51,19 @@ public class SayResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asText(@Nonnull State st) {
+	public String asText(@Nonnull final State st) {
 		if (st.getCharacter() != null) {
-			Transmission t = new Transmission(st.getCharacter(), this.asJSON(st));
+			final Transmission t = new Transmission(st.getCharacter(), asJSON(st));
 			t.start();
 		}
-		String message;
+		final String message;
 		if (sayas != null) { message = "\"" + sayas + " " + reason + "\""; } else { message = "\"" + reason + "\""; }
 		return message;
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(@Nonnull State st, boolean rich) {
+	public String asHtml(@Nonnull final State st, final boolean rich) {
 		return new Paragraph(asText(st)).asHtml(st, rich);
 	}
 

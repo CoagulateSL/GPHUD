@@ -28,9 +28,9 @@ public abstract class NameComparable implements Comparable<NameComparable> {
 	 * We rely on the names as the sorting order, and pass the buck to String.compareTo()
 	 */
 	@Override
-	public int compareTo(@Nonnull NameComparable t) {
-		String ours = name();
-		String theirs = t.name();
+	public int compareTo(@Nonnull final NameComparable t) {
+		final String ours = name();
+		final String theirs = t.name();
 		return ours.compareTo(theirs);
 	}
 }

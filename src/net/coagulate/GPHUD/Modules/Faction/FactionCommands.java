@@ -31,24 +31,24 @@ public class FactionCommands {
 
 	@Nonnull
 	@Template(name = "FACTION", description = "Current faction name")
-	public static String getFactionName(@Nullable State st, String key) {
+	public static String getFactionName(@Nullable final State st, final String key) {
 		if (st == null) { throw new UserException("State is null"); }
-		CharacterGroup faction = st.getCharacter().getGroup("Faction");
+		final CharacterGroup faction = st.getCharacter().getGroup("Faction");
 		if (faction == null) { return ""; }
 		return faction.getName();
 	}
 
 	@Nonnull
 	@Commands(description = "Award a point of faction XP to the target character", context = Context.CHARACTER)
-	public static Response awardXP(@Nonnull State st,
-	                               @Nonnull @Arguments(description = "Character to award a point of XP to", type = ArgumentType.CHARACTER_FACTION)
-			                               Char target,
-	                               @Arguments(description = "Reason for the award", type = ArgumentType.TEXT_ONELINE, max = 512)
-			                               String reason) throws UserException, SystemException {
+	public static Response awardXP(@Nonnull final State st,
+	                               @Nonnull @Arguments(description = "Character to award a point of XP to", type = ArgumentType.CHARACTER_FACTION) final
+	                               Char target,
+	                               @Arguments(description = "Reason for the award", type = ArgumentType.TEXT_ONELINE, max = 512) final
+	                                   String reason) throws UserException, SystemException {
 		// things to check...
 		// players are in the same faction
-		CharacterGroup ourfaction = st.getCharacter().getGroup("Faction");
-		CharacterGroup theirfaction = target.getGroup("Faction");
+		final CharacterGroup ourfaction = st.getCharacter().getGroup("Faction");
+		final CharacterGroup theirfaction = target.getGroup("Faction");
 		if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
 		if (theirfaction==null) { return new ErrorResponse(target.getName()+" is not in a faction"); }
 		if (ourfaction != theirfaction) {
@@ -57,10 +57,10 @@ public class FactionCommands {
 		if (!ourfaction.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You do not have admin permissions in your faction");
 		}
-		float period = st.getKV("Faction.XPCycleLength").floatValue();
-		int maxxp = st.getKV("Faction.XPPerCycle").intValue();
-		Pool factionxp = Modules.getPool(st, "Faction.FactionXP");
-		int awarded = target.sumPoolDays(factionxp, period);
+		final float period = st.getKV("Faction.XPCycleLength").floatValue();
+		final int maxxp = st.getKV("Faction.XPPerCycle").intValue();
+		final Pool factionxp = Modules.getPool(st, "Faction.FactionXP");
+		final int awarded = target.sumPoolDays(factionxp, period);
 		if (awarded >= maxxp) {
 			return new ErrorResponse("This character has already reached their Faction XP Limit.  They will next be eligable for a point in " + target.poolNextFree(factionxp, maxxp, period));
 		}
@@ -75,20 +75,20 @@ public class FactionCommands {
 
 	@Nonnull
 	@Commands(description = "Invite a player to your faction", context = Context.CHARACTER)
-	public static Response invite(@Nonnull State st,
-	                              @Nonnull @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER)
-			                              Char target) {
-		CharacterGroup ourfaction = st.getCharacter().getGroup("Faction");
+	public static Response invite(@Nonnull final State st,
+	                              @Nonnull @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER) final
+	                              Char target) {
+		final CharacterGroup ourfaction = st.getCharacter().getGroup("Faction");
 		if (ourfaction == null) { return new ErrorResponse("You are not in a faction"); }
 		return GroupCommands.invite(st, ourfaction, target);
 	}
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Eject a member from your faction")
-	public static Response eject(@NotNull State st,
-	                             @NotNull @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER_FACTION)
-			                             Char member) {
-		CharacterGroup faction = st.getCharacter().getGroup("Faction");
+	public static Response eject(@NotNull final State st,
+	                             @NotNull @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER_FACTION) final
+	                             Char member) {
+		final CharacterGroup faction = st.getCharacter().getGroup("Faction");
 		if (faction == null) { return new ErrorResponse("You are not in a faction!"); }
 		return GroupCommands.eject(st, faction, member);
 	}

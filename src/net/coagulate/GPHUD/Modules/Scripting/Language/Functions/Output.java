@@ -18,7 +18,7 @@ public class Output {
 			parameters = "Character - character whose HUD will emit the message<br>String - message to speak",
 			returns = "Integer - The number 0",
 			notes = "Messages are stacked up, per user, until the script completes or is suspended")
-	public static BCInteger gsSayAsChar(State st, @Nonnull GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString message) {
+	public static BCInteger gsSayAsChar(final State st, @Nonnull final GSVM vm, @Nonnull final BCCharacter target, @Nonnull final BCString message) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		vm.queueSayAs(target.getContent(),message.getContent());
@@ -29,7 +29,7 @@ public class Output {
 			parameters = "Character - character whose HUD will message the wearer (the character themselves)<br>String - message to pass",
 			returns = "Integer - The number 0",
 			notes = "Messages are stacked up, per user, until the script completes or is suspended")
-	public static BCInteger gsSayToChar(State st, @Nonnull GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString message) {
+	public static BCInteger gsSayToChar(final State st, @Nonnull final GSVM vm, @Nonnull final BCCharacter target, @Nonnull final BCString message) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		vm.queueOwnerSay(target.getContent(),message.getContent());
@@ -38,11 +38,11 @@ public class Output {
 
 	@Nonnull
 	@GSFunctions.GSFunction(description = "Teleports the plater",parameters = "BCCharacter - who to teleport<br>BCString - Landmark name to teleport to",returns="Integer - 0",notes="")
-	public static BCInteger gsTeleport(@Nonnull State st, @Nonnull GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString landmark) {
+	public static BCInteger gsTeleport(@Nonnull final State st, @Nonnull final GSVM vm, @Nonnull final BCCharacter target, @Nonnull final BCString landmark) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!Modules.get(null,"Teleportation").isEnabled(st)) { throw new GSResourceUnavailableException("Teleportation module is disabled, thus teleport function calls are disabled."); }
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
-		Landmarks t=st.getInstance().getLandmark(landmark.getContent());
+		final Landmarks t=st.getInstance().getLandmark(landmark.getContent());
 		if (t==null) { throw new GSResourceUnavailableException("Can not find landmark "+landmark.getContent()); }
 		vm.queueTeleport(target.getContent(),t.getHUDRepresentation(false));
 		return new BCInteger(null,0);

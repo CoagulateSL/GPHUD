@@ -10,28 +10,28 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCGreaterThan extends ByteCode {
-	public BCGreaterThan(ParseNode n) {
+	public BCGreaterThan(final ParseNode n) {
 		super(n);
 	}
 
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "GreaterThan (Pop two, compare, push 1 if greater than, else 0)"; }
-	public void toByteCode(@Nonnull List<Byte> bytes) {
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.GreaterThan.get());
 	}
 
 	@Override
-	public void execute(State st, @Nonnull GSVM vm, boolean simulation) {
-		ByteCodeDataType var1 = vm.pop();
-		ByteCodeDataType var2 = vm.pop();
+	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+		final ByteCodeDataType var1 = vm.pop();
+		final ByteCodeDataType var2 = vm.pop();
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 		if (!var1.getClass().equals(var2.getClass())) // no match then
 		{ vm.push(new BCInteger(null,0)); return; }
-		Class<? extends ByteCodeDataType> type=var1.getClass();
+		final Class<? extends ByteCodeDataType> type=var1.getClass();
 		if (type.equals(BCString.class)) {
-			String s1 = var1.toString();
-			String s2 = var2.toString();
+			final String s1 = var1.toString();
+			final String s2 = var2.toString();
 			if (s1.compareTo(s2)>0) {
 				vm.push(new BCInteger(null,1));
 				return;
@@ -40,8 +40,8 @@ public class BCGreaterThan extends ByteCode {
 			return;
 		}
 		if (type.equals(BCInteger.class)) {
-			int s1=var1.toInteger();
-			int s2=var2.toInteger();
+			final int s1=var1.toInteger();
+			final int s2=var2.toInteger();
 			if (s1>s2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
 			return;
 		}

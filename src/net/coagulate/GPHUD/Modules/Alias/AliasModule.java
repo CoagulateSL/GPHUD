@@ -17,7 +17,7 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class AliasModule extends ModuleAnnotation {
-	public AliasModule(String name, ModuleDefinition definition) {
+	public AliasModule(final String name, final ModuleDefinition definition) {
 		super(name, definition);
 	}
 
@@ -29,11 +29,11 @@ public class AliasModule extends ModuleAnnotation {
 	 */
 	@Nonnull
 	@Override
-	public Map<String, Command> getCommands(@Nonnull State st) {
-		Map<String, Command> commands = new TreeMap<>();
-		Map<String, JSONObject> templates = Alias.getTemplates(st);
-		for (Map.Entry<String, JSONObject> entry : templates.entrySet()) {
-			String name = entry.getKey();
+	public Map<String, Command> getCommands(@Nonnull final State st) {
+		final Map<String, Command> commands = new TreeMap<>();
+		final Map<String, JSONObject> templates = Alias.getTemplates(st);
+		for (final Map.Entry<String, JSONObject> entry : templates.entrySet()) {
+			final String name = entry.getKey();
 			commands.put(name, new AliasCommand(st, name, entry.getValue()));
 		}
 		return commands;
@@ -41,17 +41,17 @@ public class AliasModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Command getCommand(@Nonnull State st, @Nonnull String commandname) {
-		Alias alias = Alias.getAlias(st, commandname);
+	public Command getCommand(@Nonnull final State st, @Nonnull final String commandname) {
+		final Alias alias = Alias.getAlias(st, commandname);
 		if (alias == null) { throw new UserException("Unknown command alias." + commandname); }
-		JSONObject template = alias.getTemplate();
+		final JSONObject template = alias.getTemplate();
 		return new AliasCommand(st, commandname, template);
 	}
 
 	@Override
-	protected void initialiseInstance(@Nonnull State st) {
+	protected void initialiseInstance(@Nonnull final State st) {
 		// some useful defaults
-		JSONObject j = new JSONObject();
+		final JSONObject j = new JSONObject();
 		j.put("invoke", "Roller.Roll");
 		j.put("sides", "100");
 		j.put("bias", "--LEVEL--");

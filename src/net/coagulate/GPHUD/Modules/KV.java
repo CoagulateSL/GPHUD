@@ -50,7 +50,7 @@ public abstract class KV extends NameComparable {
 
 	public boolean hidden() { return false; }
 
-	public boolean appliesTo(TableRow o) {
+	public boolean appliesTo(final TableRow o) {
 		switch (scope()) {
 			case CHARACTER:
 				if (o instanceof Char) { return true; }
@@ -93,13 +93,13 @@ public abstract class KV extends NameComparable {
 		}
 	}
 
-	public void assertAppliesTo(TableRow o) {
+	public void assertAppliesTo(final TableRow o) {
 		if (!appliesTo(o)) {
 			throw new UserException("Can not apply scope " + scope() + " to " + name());
 		}
 	}
 
-	public void setKV(@Nonnull State st, @Nonnull TableRow o, String value) throws UserException, SystemException {
+	public void setKV(@Nonnull final State st, @Nonnull final TableRow o, final String value) throws UserException, SystemException {
 		assertAppliesTo(o);
 		if (!(TableRow.class.isAssignableFrom(o.getClass()))) {
 			throw new SystemException("Object " + o.getClass() + " does not extend DBOBject while setting KV " + name());
@@ -108,15 +108,15 @@ public abstract class KV extends NameComparable {
 		convey(st, value);
 	}
 
-	public void convey(@Nonnull State st, String value) throws UserException, SystemException {
+	public void convey(@Nonnull final State st, final String value) throws UserException, SystemException {
 		if (!conveyas().isEmpty()) {
-			Set<Region> regions = st.getInstance().getRegions(false);
-			JSONObject message = new JSONObject();
+			final Set<Region> regions = st.getInstance().getRegions(false);
+			final JSONObject message = new JSONObject();
 			message.put("incommand", "broadcast");
 			message.put(conveyas(), value);
-			for (Region r : regions) {
+			for (final Region r : regions) {
 				st.logger().log(FINE, "Conveying to " + r + " '" + name() + "' " + conveyas() + "=" + value);
-				Transmission t = new Transmission(r, message);
+				final Transmission t = new Transmission(r, message);
 				t.start();
 			}
 		}

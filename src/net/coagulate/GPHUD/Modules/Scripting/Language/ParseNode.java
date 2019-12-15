@@ -8,21 +8,21 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.Token;
 import javax.annotation.Nonnull;
 
 public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Generated.SimpleNode {
-	public ParseNode(int i) {
+	public ParseNode(final int i) {
 		super(i);
 	}
 
-	public ParseNode(GSParser p, int i) {
+	public ParseNode(final GSParser p, final int i) {
 		super(p, i);
 	}
 
 	public int children() { return jjtGetNumChildren(); }
 	@Nonnull
-	public ParseNode child(int i) { return ((ParseNode)jjtGetChild(i)); }
+	public ParseNode child(final int i) { return ((ParseNode)jjtGetChild(i)); }
 
 	@Nonnull
 	public String tokens() {
-		StringBuilder s= new StringBuilder();
+		final StringBuilder s= new StringBuilder();
 		Token t=jjtGetFirstToken();
 		if (t!=null) {
 			boolean last=false;
@@ -40,8 +40,8 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 		StringBuilder s= new StringBuilder();
 		if (children!=null) {
 			s = new StringBuilder("<ul>");
-			for (Node nnode : children) {
-				SimpleNode node=(SimpleNode)nnode;
+			for (final Node nnode : children) {
+				final SimpleNode node=(SimpleNode)nnode;
 				s.append("<li><b>");
 				s.append(node.getClass().getName().replaceFirst("net.coagulate.GPHUD.Modules.Scripting.Language.Generated.", ""));
 				s.append(" : </b><i>");
