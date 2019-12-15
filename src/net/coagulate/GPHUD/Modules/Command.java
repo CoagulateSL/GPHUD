@@ -1,7 +1,12 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputTooLongException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Inputs.*;
@@ -40,17 +45,17 @@ public abstract class Command {
 	@Nonnull
 	static Object assertNotNull(@Nullable final Object o, final String value, final String type) throws UserException {
 		if (o == null) {
-			throw new UserException("Unable to resolve '" + value + "' to a " + type);
+			throw new UserInputLookupFailureException("Unable to resolve '" + value + "' to a " + type);
 		}
 		return o;
 	}
 
 	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
 		}
 	}
 
@@ -95,7 +100,7 @@ public abstract class Command {
 		typedargs.add(st);
 		for (final Argument argument : getInvokingArguments()) {
 			if (argument == null) {
-				throw new SystemException("Argument metadata null on " + getFullName() + "() arg#" + (arg + 1));
+				throw new SystemImplementationException("Argument metadata null on " + getFullName() + "() arg#" + (arg + 1));
 			}
 			final ArgumentType type = argument.type();
 			String v = null;
@@ -152,7 +157,7 @@ public abstract class Command {
 					st.logger().warning("Command " + getClass().getSimpleName() + " argument " + argument.getName() + " does not specify a max, assuming 65k...");
 				} else {
 					if (v != null && v.length() > maxlen) {
-						throw new UserException(argument.getName() + " is " + v.length() + " characters long and must be no more than " + maxlen + ".  Input has not been processed, please try again");
+						throw new UserInputTooLongException(argument.getName() + " is " + v.length() + " characters long and must be no more than " + maxlen + ".  Input has not been processed, please try again");
 					}
 				}
 				switch (type) {
@@ -209,12 +214,12 @@ public abstract class Command {
 						for (final Attribute a : st.getAttributes()) {
 							if (a.getName().equalsIgnoreCase(v)) {
 								if (attr != null) {
-									throw new SystemException("Duplicate attribute definition found for " + v);
+									throw new SystemConsistencyException("Duplicate attribute definition found for " + v);
 								}
 								if (type == ArgumentType.ATTRIBUTE || a.getSelfModify()) { attr = a; }
 							}
 						}
-						if (attr == null) { throw new UserException("Unable to resolve '" + v + "' to an attribute"); }
+						if (attr == null) { throw new UserInputLookupFailureException("Unable to resolve '" + v + "' to an attribute"); }
 						typedargs.add(attr);
 						break;
                         /*Char targetchar=Char.resolve(st, v);
@@ -262,7 +267,7 @@ public abstract class Command {
 						typedargs.add(assertNotNull(user, v, "avatar"));
 						break;
 					default:
-						throw new SystemException("Unhandled ENUM TYPE in executor:" + type);
+						throw new SystemImplementationException("Unhandled ENUM TYPE in executor:" + type);
 				}
 			}
 		}
@@ -366,11 +371,11 @@ public abstract class Command {
 					}
 					break;
 				default:
-					throw new SystemException("Unhandled CONTEXT enum during pre-flight check in execute()");
+					throw new SystemImplementationException("Unhandled CONTEXT enum during pre-flight check in execute()");
 			}
 			return (Response) (getMethod().invoke(this, args));
 		} catch (final IllegalAccessException ex) {
-			throw new SystemException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
+			throw new SystemImplementationException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
 		} catch (final IllegalArgumentException ex) {
 			SL.report("Command " + getName() + " failed", ex, st);
 			st.logger().log(WARNING, "Execute command " + getName() + " failed", ex);
@@ -382,7 +387,7 @@ public abstract class Command {
 			if (ex.getCause() != null && ex.getCause() instanceof SystemException) {
 				throw ((SystemException) ex.getCause());
 			}
-			throw new SystemException("Exception " + ex + " from call to " + getName(), ex);
+			throw new SystemImplementationException("Exception " + ex + " from call to " + getName(), ex);
 		}
 	}
 
@@ -522,7 +527,7 @@ public abstract class Command {
 					json.put("arg" + arg + "type", "SENSOR");
 					break;
 				default:
-					throw new SystemException("Unhandled ENUM TYPE in getJSONTemplate():" + argument.type());
+					throw new SystemImplementationException("Unhandled ENUM TYPE in getJSONTemplate():" + argument.type());
 			}
 			arg++;
 		}
@@ -571,7 +576,7 @@ public abstract class Command {
 					final DropDownList factionmembers = new DropDownList(arg.getName());
 					final CharacterGroup faction = st.getCharacter().getGroup("Faction");
 					if (faction == null) {
-						throw new UserException("You are in no faction");
+						throw new UserInputStateException("You are in no faction");
 					}
 					for (final Char c : faction.getMembers()) {
 						factionmembers.add(c.getName());
@@ -651,7 +656,7 @@ public abstract class Command {
 					t.add(choicelist);
 					break;
 				default:
-					throw new SystemException("Unhandled ENUM TYPE in populateForm():" + arg.type());
+					throw new SystemImplementationException("Unhandled ENUM TYPE in populateForm():" + arg.type());
 			}
 		}
 		if (getArgumentCount() > 0) {

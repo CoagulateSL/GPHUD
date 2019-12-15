@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Teleportation;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Landmarks;
 import net.coagulate.GPHUD.Data.Region;
@@ -64,7 +64,7 @@ public class TeleportCommands {
 		final float projectx= (float) Math.cos(angle);
 		final float projecty= -(float) Math.sin(angle);
 
-		if (position==null || rotation==null) { throw new UserException("Unable to calculate your location/rotation information"); }
+		if (position==null || rotation==null) { throw new UserInputEmptyException("Unable to calculate your location/rotation information"); }
 
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
 

@@ -140,11 +140,11 @@ public class GSVM {
 			}
 		} catch (final Throwable t) {
 			if (t instanceof SystemException) {
-				throw new SystemException("VM exception: "+ t +" "+at(),t);
+				throw new GSInternalError("VM exception: "+ t +" "+at(),t);
 			}
-			if (t instanceof UserException) { throw new UserException("Script error: "+ t +" "+at(),t); }
-			if (t instanceof RuntimeException) { throw new SystemException("VM Runtime: "+ t +" "+at(),t); }
-			throw new SystemException("VM Uncaught: "+ t +" "+at(),t);
+			if (t instanceof UserException) { throw new GSExecutionException("Script error: "+ t +" "+at(),t); }
+			if (t instanceof RuntimeException) { throw new GSInternalError("VM Runtime: "+ t +" "+at(),t); }
+			throw new GSInternalError("VM Uncaught: "+ t +" "+at(),t);
 		}
 		st.vm=null;
 		final JSONObject json = dequeue(st, st.getCharacter()).asJSON(st);

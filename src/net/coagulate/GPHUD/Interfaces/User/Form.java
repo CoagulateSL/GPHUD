@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.User;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
@@ -58,7 +59,7 @@ public class Form implements Renderable {
 		if (setreturnurl) { add(new Hidden("okreturnurl", st.getDebasedURL())); }
 		add(new Button(buttonname, true));
 		if ((inputs.length % 2) == 1) {
-			throw new SystemException("Input varargs must be even (key,value pairs), we got " + inputs.length);
+			throw new SystemImplementationException("Input varargs must be even (key,value pairs), we got " + inputs.length);
 		}
 		for (int i = 0; i < inputs.length; i += 2) {
 			add(new Hidden(inputs[i], inputs[i + 1]));

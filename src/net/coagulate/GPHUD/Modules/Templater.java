@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
@@ -72,9 +74,8 @@ public abstract class Templater {
 	}
 
 	@Nullable
-	private static String template(@Nullable final State st, @Nullable String string) throws UserException {
+	private static String template(@Nonnull final State st, @Nullable String string) throws UserException {
 		if (string == null) { return string; }
-		if (st == null) { throw new SystemException("Null session state is not permitted"); }
 		final boolean debug = false;
 		for (final String subst : getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
@@ -102,14 +103,14 @@ public abstract class Templater {
 			} catch (@Nonnull final IllegalAccessException | IllegalArgumentException ex) {
 				SL.report("Templating exception", ex, st);
 				st.logger().log(SEVERE, "Exception running templater method", ex);
-				throw new SystemException("Templater exceptioned", ex);
+				throw new SystemImplementationException("Templater exceptioned", ex);
 			} catch (final InvocationTargetException e) {
 				if (e.getCause() instanceof UserException) { throw (UserException) e.getCause(); }
 				if (e.getCause() instanceof SystemException) { throw (SystemException) e.getCause(); }
-				throw new SystemException("Unable to invoke target", e);
+				throw new SystemImplementationException("Unable to invoke target", e);
 			}
 		}
-		throw new SystemException("No template implementation for " + keyword);
+		throw new SystemImplementationException("No template implementation for " + keyword);
 	}
 
 	@Nullable
@@ -154,7 +155,7 @@ public abstract class Templater {
 				nextChar();
 				final double x = parseExpression();
 				if (pos < str.length())
-					throw new UserException("Unexpected: " + (char) ch + " at position " + pos + " in '" + str + "'");
+					throw new UserInputValidationParseException("Unexpected: " + (char) ch + " at position " + pos + " in '" + str + "'");
 				return x;
 			}
 
@@ -212,10 +213,10 @@ public abstract class Templater {
 							x = Math.tan(Math.toRadians(x));
 							break;
 						default:
-							throw new UserException("Unknown function: " + func);
+							throw new UserInputValidationParseException("Unknown function: " + func);
 					}
 				} else {
-					throw new UserException("Unexpected: " + (char) ch + " at " + pos + " in '" + str + "'");
+					throw new UserInputValidationParseException("Unexpected: " + (char) ch + " at " + pos + " in '" + str + "'");
 				}
 
 				if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation

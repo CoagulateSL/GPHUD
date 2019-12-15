@@ -1,8 +1,9 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
@@ -27,7 +28,7 @@ public class ObjectTypes extends TableRow {
 	@Nonnull
 	public static ObjectTypes create(@Nonnull final State st, final String name, @Nonnull final JSONObject behaviour) {
 		final int existing= GPHUD.getDB().dqi("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
-		if (existing>0) { throw new UserException("ObjectType "+name+" already exists in instance "+st.getInstance()); }
+		if (existing>0) { throw new UserInputDuplicateValueException("ObjectType "+name+" already exists in instance "+st.getInstance()); }
 		GPHUD.getDB().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
 		final int newid=GPHUD.getDB().dqi("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		return get(newid);
@@ -74,7 +75,7 @@ public class ObjectTypes extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("ObjectTypes / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("ObjectTypes / State Instance mismatch"); }
 	}
 
 	@Nullable

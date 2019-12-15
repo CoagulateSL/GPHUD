@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.Responses;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -35,18 +35,18 @@ public class JSONResponse implements Response {
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		throw new SystemException("JSONResponse can not be converted to Text");
+		throw new SystemImplementationException("JSONResponse can not be converted to Text");
 	}
 
 	@Nonnull
 	@Override
 	public String asHtml(final State st, final boolean rich) {
-		throw new SystemException("JSONResponse can not be converted to HTML");
+		throw new SystemImplementationException("JSONResponse can not be converted to HTML");
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		throw new SystemException("JSONResponse can not be interrogated as a Form");
+		throw new SystemImplementationException("JSONResponse can not be interrogated as a Form");
 	}
 }

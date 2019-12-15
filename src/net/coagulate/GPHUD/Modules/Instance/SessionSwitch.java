@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
@@ -54,7 +55,7 @@ public class SessionSwitch {
 		if (!values.get("charid").isEmpty()) {
 			final Char c = Char.get(Integer.parseInt(values.get("charid")));
 			c.validate(st);
-			if (c.getOwner() != st.getAvatarNullable()) { throw new UserException("You do not own this character"); }
+			if (c.getOwner() != st.getAvatarNullable()) { throw new UserAccessDeniedException("You do not own this character"); }
 			st.setCharacter(c);
 			st.cookie.setCharacter(st.getCharacter());
 			throw new RedirectionException("/");

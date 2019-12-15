@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.Responses;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -39,13 +39,13 @@ public class TerminateResponse implements Response {
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		throw new SystemException("This request is TERMINATED - " + reason);
+		throw new SystemConsistencyException("This request is TERMINATED - " + reason);
 	}
 
 	@Nonnull
 	@Override
 	public String asHtml(final State st, final boolean rich) {
-		throw new SystemException("This request is TERMINATED - " + reason);
+		throw new SystemConsistencyException("This request is TERMINATED - " + reason);
 	}
 
 	@Nullable

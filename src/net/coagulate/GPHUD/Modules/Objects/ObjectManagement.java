@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Objects;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.ObjectTypes;
 import net.coagulate.GPHUD.Data.Objects;
@@ -83,7 +83,7 @@ public class ObjectManagement {
 	public static void editObjectType(@Nonnull final State st, final SafeMap map) {
 		st.postmap=map;
 		final String[] parts=st.getDebasedNoQueryURL().split("/");
-		if (parts.length<5) { throw new UserException("URI misformed, no ID found"); }
+		if (parts.length<5) { throw new UserInputValidationParseException("URI misformed, no ID found"); }
 		final ObjectTypes t=ObjectTypes.get(Integer.parseInt(parts[4]));
 		t.validate(st);
 		final Form f= st.form();

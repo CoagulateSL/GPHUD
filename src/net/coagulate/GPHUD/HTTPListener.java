@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.bootstrap.HttpServer;
@@ -44,7 +44,7 @@ public class HTTPListener {
 			bootstrap.registerHandler("/*", new net.coagulate.GPHUD.Interfaces.User.Interface());
 			bootstrap.registerHandler("/shutdown", new net.coagulate.GPHUD.UnauthenticatedShutdown());
 			server = bootstrap.create();
-			if (server==null) { throw new SystemException("Server bootstrap is null?"); }
+			if (server==null) { throw new SystemInitialisationException("Server bootstrap is null?"); }
 			GPHUD.getLogger().config("HTTP Services starting up on port " + port);
 			server.start();
 		} catch (final IOException e) {

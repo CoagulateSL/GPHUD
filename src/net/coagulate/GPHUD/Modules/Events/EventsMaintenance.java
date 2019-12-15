@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Events;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Event;
 import net.coagulate.GPHUD.Data.EventSchedule;
@@ -70,8 +70,8 @@ public abstract class EventsMaintenance {
 			String minutes = temp.getKV(e, "Events.ThisEventXPMinutes");
 			if (limit==null) { limit=temp.getKV("Events.ThisEventXPLimit").value(); }
 			if (minutes==null) { minutes=temp.getKV( "Events.ThisEventXPMinutes").value(); }
-			if (limit==null) { throw new SystemException("Limit is null in maintenance events awards closure"); }
-			if (minutes==null) { throw new SystemException("Minutes is null in maintenance events awards closure"); }
+			if (limit==null) { throw new SystemConsistencyException("Limit is null in maintenance events awards closure"); }
+			if (minutes==null) { throw new SystemConsistencyException("Minutes is null in maintenance events awards closure"); }
 			schedule.awardFinalXP(Integer.parseInt(minutes), Integer.parseInt(limit));
 			schedule.ended();
 			e.getInstance().pushConveyances(); // TODO also something that pushes XP update messages.  probably another generated conveyance or something :P

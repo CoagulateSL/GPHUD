@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Menus;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
@@ -48,7 +49,7 @@ public abstract class MenuConfig {
 
 	public static void viewMenus(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Menus m) throws SystemException, UserException {
 		if (m.getInstance() != st.getInstance()) {
-			throw new UserException("That menu belongs to a different instance");
+			throw new UserInputStateException("That menu belongs to a different instance");
 		}
 		if (st.hasPermission("Menus.Config") && "Submit".equals(values.get("Submit"))) {
 			final JSONObject json = new JSONObject();

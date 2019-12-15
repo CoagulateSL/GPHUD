@@ -4,6 +4,7 @@ import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.DBException;
 import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.Tools.LogHandler;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
@@ -55,7 +56,7 @@ public class GPHUD {
 
 	@Nonnull
 	public static DBConnection getDB() {
-		if (db==null) { throw new SystemException("Calling DB before DB is initialised"); }
+		if (db==null) { throw new SystemInitialisationException("Calling DB before DB is initialised"); }
 		return db;
 	}
 
@@ -80,7 +81,7 @@ public class GPHUD {
 			log().config("Server operating on node " + Interface.getNode());
 			validateNode(hostname);
 		} catch (final UnknownHostException e) {
-			throw new SystemException("Unable to resolve local host name", e);
+			throw new SystemInitialisationException("Unable to resolve local host name", e);
 		}
 
 		log().config("Loading configuration file...");
@@ -220,7 +221,7 @@ public class GPHUD {
 				"neptune".equalsIgnoreCase(node) ||
 				"pluto".equalsIgnoreCase(node)
 		) { return; }
-		throw new SystemException("Unrecognised node name, this would break the scheduler");
+		throw new SystemInitialisationException("Unrecognised node name, this would break the scheduler");
 	}
 
 	// spread the servers over a cycle (which is modulo 4), which is just a reduced timestamp anyway (timesync IMPORTANT!)
@@ -315,7 +316,7 @@ public class GPHUD {
 
 	@Nonnull
 	public static Logger log() {
-		if (log==null) { throw new SystemException("Log not yet initialised"); }
+		if (log==null) { throw new SystemInitialisationException("Log not yet initialised"); }
 		return log;
 	}
 }

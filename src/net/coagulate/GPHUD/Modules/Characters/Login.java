@@ -1,7 +1,9 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
@@ -65,7 +67,7 @@ public abstract class Login {
 		final Char character = PrimaryCharacters.getPrimaryCharacter(st, autocreate);
 		if (character == null) {
 			if (autocreate) {
-				throw new UserException("Failed to get/create a character for user " + st.getAvatarNullable());
+				throw new UserInputStateException("Failed to get/create a character for user " + st.getAvatarNullable());
 			} // autocreate or die :P
 			// if not auto create, offer "characters.create" i guess
 			final JSONResponse response = new JSONResponse(Modules.getJSONTemplate(st, "characters.create"));
@@ -140,7 +142,7 @@ public abstract class Login {
 						//System.out.println("Character "+character+" validation check for pool "+a+" has no currently defined meaning.  NO-OP.  Passing check.");
 						break;
 					default:
-						throw new SystemException("Unhandled attribute type " + type);
+						throw new SystemConsistencyException("Unhandled attribute type " + type);
 				}
 			}
 		}
@@ -331,7 +333,7 @@ public abstract class Login {
 				target.addMember(st.getCharacter());
 				break;
 			case POOL:
-				throw new UserException("Attempt to initialise pool attribute is invalid.");
+				throw new UserInputStateException("Attempt to initialise pool attribute is invalid.");
 		}
 		Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, st.getCharacter(), "Initialise", attribute.getName(), null, value, "Character creation initialised attribute");
 		return login(st, null, null, null);

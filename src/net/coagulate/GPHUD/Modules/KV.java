@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
@@ -84,25 +86,25 @@ public abstract class KV extends NameComparable {
 						o instanceof Event ||
 						o instanceof CharacterGroup ||
 						o instanceof Char) { return true; }
-				throw new SystemException("KV of COMPLETE scope was passed unknown DBObject " + o.getClass().getName() + ".  Ammend whitelist or debug caller.");
+				throw new SystemImplementationException("KV of COMPLETE scope was passed unknown DBObject " + o.getClass().getName() + ".  Ammend whitelist or debug caller.");
 			case ZONE:
 				if (o instanceof Zone) { return true; }
 				return false;
 			default:
-				throw new SystemException("Unhandled scope " + scope());
+				throw new SystemImplementationException("Unhandled scope " + scope());
 		}
 	}
 
 	public void assertAppliesTo(final TableRow o) {
 		if (!appliesTo(o)) {
-			throw new UserException("Can not apply scope " + scope() + " to " + name());
+			throw new UserInputStateException("Can not apply scope " + scope() + " to " + name());
 		}
 	}
 
 	public void setKV(@Nonnull final State st, @Nonnull final TableRow o, final String value) throws UserException, SystemException {
 		assertAppliesTo(o);
 		if (!(TableRow.class.isAssignableFrom(o.getClass()))) {
-			throw new SystemException("Object " + o.getClass() + " does not extend DBOBject while setting KV " + name());
+			throw new SystemImplementationException("Object " + o.getClass() + " does not extend DBOBject while setting KV " + name());
 		}
 		st.setKV(o, name(), value);
 		convey(st, value);

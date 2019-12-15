@@ -1,8 +1,9 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -41,16 +42,16 @@ public class ZoneArea extends TableRow {
 		s = s.replaceAll("\\(", "");
 		s = s.replaceAll("\\)", "");
 		final String[] parts = s.split(",");
-		if (parts.length != 3) { throw new UserException("Could not decompose co-ordinates properly"); }
+		if (parts.length != 3) { throw new UserInputValidationParseException("Could not decompose co-ordinates properly"); }
 		final int[] pos = new int[3];
 		try { pos[0] = (int) Float.parseFloat(parts[0]); } catch (final NumberFormatException e) {
-			throw new UserException("Error processing X number " + parts[0] + " - " + e.getMessage());
+			throw new UserInputValidationParseException("Error processing X number " + parts[0] + " - " + e.getMessage());
 		}
 		try { pos[1] = (int) Float.parseFloat(parts[1]); } catch (final NumberFormatException e) {
-			throw new UserException("Error processing Y number " + parts[1] + " - " + e.getMessage());
+			throw new UserInputValidationParseException("Error processing Y number " + parts[1] + " - " + e.getMessage());
 		}
 		try { pos[2] = (int) Float.parseFloat(parts[2]); } catch (final NumberFormatException e) {
-			throw new UserException("Error processing Z number " + parts[2] + " - " + e.getMessage());
+			throw new UserInputValidationParseException("Error processing Z number " + parts[2] + " - " + e.getMessage());
 		}
 		return pos;
 	}
@@ -153,7 +154,7 @@ public class ZoneArea extends TableRow {
 	@Nonnull
 	public Region getRegion(final boolean allowretired) {
 		final Integer id = getIntNullable("regionid");
-		if (id == null) { throw new SystemException("Zone Area " + getId() + " has no associated region?"); }
+		if (id == null) { throw new SystemConsistencyException("Zone Area " + getId() + " has no associated region?"); }
 		return Region.get(id,allowretired);
 	}
 
@@ -187,7 +188,7 @@ public class ZoneArea extends TableRow {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getZone().getInstance()) {
-			throw new SystemException("ZoneArea / State Instance mismatch");
+			throw new SystemConsistencyException("ZoneArea / State Instance mismatch");
 		}
 	}
 

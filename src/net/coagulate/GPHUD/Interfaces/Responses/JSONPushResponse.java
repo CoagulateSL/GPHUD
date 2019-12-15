@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.Responses;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
@@ -24,7 +25,7 @@ public class JSONPushResponse implements Response {
 	Response nonjson;
 
 	public JSONPushResponse(final JSONObject j, @Nullable final String url, final Response nonjson) {
-		if (url == null || url.isEmpty() || "?".equals(url)) { throw new SystemException("Can not use the null URL"); }
+		if (url == null || url.isEmpty() || "?".equals(url)) { throw new SystemBadValueException("Can not use the null URL"); }
 		json = j;
 		this.url = url;
 		this.nonjson = nonjson;
@@ -60,6 +61,6 @@ public class JSONPushResponse implements Response {
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		throw new SystemException("JSONResponse can not be interrogated as a Form");
+		throw new SystemImplementationException("JSONResponse can not be interrogated as a Form");
 	}
 }

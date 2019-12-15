@@ -1,8 +1,9 @@
 package net.coagulate.GPHUD.Data;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Tools.UnixTime;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.Row;
@@ -31,7 +32,7 @@ public abstract class DateTime {
 
 	@Nonnull
 	public static Row inputRow(final SafeMap values) {
-		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new SystemImplementationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	/**
@@ -118,7 +119,7 @@ public abstract class DateTime {
 			final int minute = Integer.parseInt(values.get(prefix + "minute"));
 			return UnixTime.create(timezone, day, month, year, hour, minute);
 		} catch (final NumberFormatException e) {
-			throw new UserException("Failed to parse number : " + e.getMessage(), e);
+			throw new UserInputValidationParseException("Failed to parse number : " + e.getMessage(), e);
 		}
 	}
 
@@ -141,7 +142,7 @@ public abstract class DateTime {
 			minute = minute * 60;
 			return day + hour + minute;
 		} catch (final NumberFormatException e) {
-			throw new UserException("Failed to parse number : " + e.getMessage(), e);
+			throw new UserInputValidationParseException("Failed to parse number : " + e.getMessage(), e);
 		}
 	}
 

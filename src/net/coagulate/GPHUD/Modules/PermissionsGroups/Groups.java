@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.PermissionsGroups;
 
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
@@ -191,7 +192,7 @@ public abstract class Groups {
 	@URLs(url="/permissionsgroups/edit/*",requiresPermission = "Instance.ManagePermissions")
 	public static void editPermissions(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final String[] split =st.getDebasedNoQueryURL().split("/");
-		if (split.length!=4) { throw new UserException("Incorrect number of query parameters ("+split.length+")"); }
+		if (split.length!=4) { throw new UserInputValidationParseException("Incorrect number of query parameters ("+split.length+")"); }
 		final Integer groupid=Integer.parseInt(split[3]);
 		final PermissionsGroup pg=PermissionsGroup.get(groupid);
 		pg.validate(st);

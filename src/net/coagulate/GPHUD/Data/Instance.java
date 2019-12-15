@@ -3,7 +3,11 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
@@ -81,11 +85,11 @@ public class Instance extends TableRow {
 	 * @throws UserException If the instance already exists (by name)
 	 */
 	public static void create(@Nullable final String name, @Nullable final User caller) throws UserException {
-		if (name == null || "".equals(name)) { throw new SystemException("Can't create null or empty instance"); }
-		if (caller == null) { throw new SystemException("Owner can't be null"); }
+		if (name == null || "".equals(name)) { throw new SystemBadValueException("Can't create null or empty instance"); }
+		if (caller == null) { throw new SystemBadValueException("Owner can't be null"); }
 		final int exists = GPHUD.getDB().dqinn( "select count(*) from instances where name like ?", name);
 		if (exists != 0) {
-			throw new UserException("Instance already exists!");
+			throw new UserInputDuplicateValueException("Instance already exists!");
 		}
 		GPHUD.getLogger().info(caller.getName() + " created new instance '" + name + "'");
 		GPHUD.getDB().d("insert into instances(owner,name) value(?,?)", caller.getId(), name);
@@ -102,7 +106,7 @@ public class Instance extends TableRow {
 		try {
 			final int id = GPHUD.getDB().dqinn("select instanceid from instances where name=?", name);
 			return get(id);
-		} catch (final NoDataException e) { throw new UserException("Unable to find instance named '" + name + "'",e); }
+		} catch (final NoDataException e) { throw new UserInputLookupFailureException("Unable to find instance named '" + name + "'",e); }
 	}
 
 	/**
@@ -168,11 +172,11 @@ public class Instance extends TableRow {
 	 * @throws UserException if the group has no name or already exists.
 	 */
 	public void createPermissionsGroup(@Nullable String name) throws UserException {
-		if (name == null) { throw new UserException("Can not create permissions group with null name"); }
+		if (name == null) { throw new UserInputEmptyException("Can not create permissions group with null name"); }
 		name = name.trim();
-		if (name.isEmpty()) { throw new UserException("Can not create permissions group with blank name"); }
+		if (name.isEmpty()) { throw new UserInputEmptyException("Can not create permissions group with blank name"); }
 		final int exists = dqinn( "select count(*) from permissionsgroups where name like ? and instanceid=?", name, getId());
-		if (exists != 0) { throw new UserException("Group already exists? (" + exists + " results)"); }
+		if (exists != 0) { throw new UserInputDuplicateValueException("Group already exists? (" + exists + " results)"); }
 		d("insert into permissionsgroups(name,instanceid) values(?,?)", name, getId());
 	}
 
@@ -523,7 +527,7 @@ public class Instance extends TableRow {
 	 */
 	public void createCharacterGroup(final String name, final boolean open, final String keyword) {
 		final int count = dqinn( "select count(*) from charactergroups where instanceid=? and name like ?", getId(), name);
-		if (count > 0) { throw new UserException("Failed to create group, already exists."); }
+		if (count > 0) { throw new UserInputDuplicateValueException("Failed to create group, already exists."); }
 		d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)", getId(), name, open, keyword);
 	}
 

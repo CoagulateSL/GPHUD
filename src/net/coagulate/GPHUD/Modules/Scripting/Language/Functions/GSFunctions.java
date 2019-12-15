@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSUnknownIdentifier;
 
 import javax.annotation.Nonnull;
@@ -31,7 +31,7 @@ public class GSFunctions {
 
 	private static final Map<String, Method> gsfunctions=new HashMap<>();
 	public static void register(final String string, final Method method) {
-		if (gsfunctions.containsKey(string)) { throw new SystemException("Duplicate definition for gsFunction "+string); }
+		if (gsfunctions.containsKey(string)) { throw new SystemImplementationException("Duplicate definition for gsFunction "+string); }
 		gsfunctions.put(string,method);
 	}
 	@Nonnull

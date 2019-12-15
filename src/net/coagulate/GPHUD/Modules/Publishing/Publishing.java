@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Publishing;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.State;
@@ -14,7 +14,7 @@ public class Publishing {
 	}
 	static String getPart(@Nonnull final State st, final int part) {
 		final String[] split=st.getDebasedNoQueryURL().split("/");
-		if ((part+2)>=split.length) { throw new UserException("Missing identifier "+part); }
+		if ((part+2)>=split.length) { throw new UserInputEmptyException("Missing identifier "+part); }
 		return split[part+2];
 	}
 

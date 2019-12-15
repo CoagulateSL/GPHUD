@@ -20,7 +20,6 @@ import net.coagulate.GPHUD.State;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Faction controls for the FactionCommands.
@@ -31,8 +30,7 @@ public class FactionCommands {
 
 	@Nonnull
 	@Template(name = "FACTION", description = "Current faction name")
-	public static String getFactionName(@Nullable final State st, final String key) {
-		if (st == null) { throw new UserException("State is null"); }
+	public static String getFactionName(@Nonnull final State st, final String key) {
 		final CharacterGroup faction = st.getCharacter().getGroup("Faction");
 		if (faction == null) { return ""; }
 		return faction.getName();

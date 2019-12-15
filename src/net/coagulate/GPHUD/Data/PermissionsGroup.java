@@ -3,7 +3,10 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -181,7 +184,7 @@ public class PermissionsGroup extends TableRow {
 	 */
 	public void addMember(@Nonnull final User avatar) throws UserException {
 		final int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
-		if (exists > 0) { throw new UserException("Avatar is already a member of group?"); }
+		if (exists > 0) { throw new UserInputDuplicateValueException("Avatar is already a member of group?"); }
 		d("insert into permissionsgroupmembers(permissionsgroupid,avatarid) values(?,?)", getId(), avatar.getId());
 	}
 
@@ -194,7 +197,7 @@ public class PermissionsGroup extends TableRow {
 	public void removeMember(@Nonnull final User avatar) throws UserException {
 		final int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
 		d("delete from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId());
-		if (exists == 0) { throw new UserException("Avatar not in group."); }
+		if (exists == 0) { throw new UserInputStateException("Avatar not in group."); }
 	}
 
 	/**
@@ -207,7 +210,7 @@ public class PermissionsGroup extends TableRow {
 	 */
 	public void setUserPermissions(@Nonnull final User a, final Boolean caninvite, final Boolean cankick) throws UserException {
 		final int exists = dqi( "select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), a.getId());
-		if (exists == 0) { throw new UserException("Avatar not in group."); }
+		if (exists == 0) { throw new UserInputStateException("Avatar not in group."); }
 		int inviteval = 0;
 		if (caninvite) { inviteval = 1; }
 		int kickval = 0;
@@ -225,7 +228,7 @@ public class PermissionsGroup extends TableRow {
 	public void addPermission(final State st, @Nonnull final String permission) throws UserException {
 		Modules.validatePermission(st, permission);
 		final int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission like ?", getId(), permission);
-		if (exists != 0) { throw new UserException("Permission already exists on group."); }
+		if (exists != 0) { throw new UserInputDuplicateValueException("Permission already exists on group."); }
 		d("insert into permissions(permissionsgroupid,permission) values(?,?)", getId(), permission);
 	}
 
@@ -237,7 +240,7 @@ public class PermissionsGroup extends TableRow {
 	 */
 	public void removePermission(final String permission) throws UserException {
 		final int exists = dqi( "select count(*) from permissions where permissionsgroupid=? and permission=?", getId(), permission);
-		if (exists == 0) { throw new UserException("Permission does not exist in group."); }
+		if (exists == 0) { throw new UserInputStateException("Permission does not exist in group."); }
 		d("delete from permissions where permissionsgroupid=? and permission=?", getId(), permission);
 	}
 
@@ -254,7 +257,7 @@ public class PermissionsGroup extends TableRow {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) {
-			throw new SystemException("PermissionsGroup / State Instance mismatch");
+			throw new SystemConsistencyException("PermissionsGroup / State Instance mismatch");
 		}
 	}
 

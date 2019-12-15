@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -106,7 +107,7 @@ public class MenuCommand extends Command {
 		try {
 			return getClass().getDeclaredMethod("run", State.class, SafeMap.class);
 		} catch (@Nonnull final NoSuchMethodException | SecurityException ex) {
-			throw new SystemException("Issue locating RUN command for MenuCommand, this makes no sense :)");
+			throw new SystemImplementationException("Issue locating RUN command for MenuCommand, this makes no sense :)");
 		}
 	}
 

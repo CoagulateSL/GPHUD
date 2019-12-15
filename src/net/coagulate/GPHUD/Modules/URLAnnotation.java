@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
 import net.coagulate.GPHUD.SafeMap;
@@ -51,7 +53,7 @@ public class URLAnnotation extends URL {
 	public String getName() { return method.getName(); }
 
 	public void checkUnique() throws SystemException {
-		if (inuse.contains(url())) { throw new SystemException("URL " + url() + " is already claimed"); }
+		if (inuse.contains(url())) { throw new SystemImplementationException("URL " + url() + " is already claimed"); }
 		inuse.add(url());
 	}
 
@@ -63,13 +65,13 @@ public class URLAnnotation extends URL {
 		final Class<?>[] params = method.getParameterTypes();
 		final String fullname = method.getDeclaringClass().getName() + "." + method.getName();
 		if (params.length != 2) {
-			throw new SystemException("Method " + fullname + " must have 2 arguments (State,SafeMap) but has " + params.length);
+			throw new SystemImplementationException("Method " + fullname + " must have 2 arguments (State,SafeMap) but has " + params.length);
 		}
 		if (params[0] != State.class) {
-			throw new SystemException("Method " + fullname + " must have State as its first argument");
+			throw new SystemImplementationException("Method " + fullname + " must have State as its first argument");
 		}
 		if (params[1] != SafeMap.class) {
-			throw new SystemException("Method " + fullname + " must have SafeMap as its second argument");
+			throw new SystemImplementationException("Method " + fullname + " must have SafeMap as its second argument");
 		}
 
 	}
@@ -78,21 +80,21 @@ public class URLAnnotation extends URL {
 		try {
 			method.invoke(null, st, values);
 		} catch (final IllegalAccessException ex) {
-			throw new SystemException("Illegal method access to content at " + st.getDebasedURL(), ex);
+			throw new SystemImplementationException("Illegal method access to content at " + st.getDebasedURL(), ex);
 		} catch (final IllegalArgumentException ex) {
-			throw new SystemException("Illegal arguments on content, should be (State,Map<String,String>), at " + st.getDebasedURL(), ex);
+			throw new SystemImplementationException("Illegal arguments on content, should be (State,Map<String,String>), at " + st.getDebasedURL(), ex);
 		} catch (final InvocationTargetException ex) {
 			final Throwable contained = ex.getCause();
 			if (contained instanceof RedirectionException) { throw (RedirectionException) contained; }
 			if (contained instanceof SystemException) { throw (SystemException) contained; }
 			if (contained instanceof UserException) { throw (UserException) contained; }
 			if (contained instanceof NumberFormatException) {
-				throw new UserException("Number Format Exception", contained);
+				throw new UserInputValidationParseException("Number Format Exception", contained);
 			}
 			if (contained instanceof NullPointerException) {
-				throw new SystemException("Null Pointer Exception", contained);
+				throw new SystemImplementationException("Null Pointer Exception", contained);
 			}
-			throw new SystemException("Non GPHUD exception inside page at " + st.getDebasedURL(), contained);
+			throw new SystemImplementationException("Non GPHUD exception inside page at " + st.getDebasedURL(), contained);
 		}
 	}
 

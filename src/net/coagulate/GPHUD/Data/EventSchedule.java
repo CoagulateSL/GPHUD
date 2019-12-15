@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
@@ -82,7 +84,7 @@ public class EventSchedule extends TableRow {
 	@Nonnull
 	@Override
 	public String getNameField() {
-		throw new SystemException("Event Schedule does not support a naming attribute");
+		throw new SystemImplementationException("Event Schedule does not support a naming attribute");
 	}
 
 	@Nullable
@@ -240,7 +242,7 @@ public class EventSchedule extends TableRow {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getEvent().getInstance()) {
-			throw new SystemException("EventSchedule / State Instance mismatch");
+			throw new SystemConsistencyException("EventSchedule / State Instance mismatch");
 		}
 	}
 

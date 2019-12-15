@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Audit;
@@ -16,6 +17,7 @@ import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCode;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCodeDataType;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSCompiler;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.GSParser;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.GSStart;
@@ -97,7 +99,7 @@ public class ScriptingConfig {
 					Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
 				}
 			} catch (final NullPointerException ex) {
-				throw new SystemException("Null pointer exception in compiler",ex);
+				throw new GSInternalError("Null pointer exception in compiler",ex);
 			} catch (final Throwable t) {
 				f.p("Compilation failed; "+ t);
 				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
@@ -195,7 +197,7 @@ public class ScriptingConfig {
 					return code.toString();
 				}
 			} catch (final NullPointerException ex) {
-				throw new SystemException("Null pointer exception in compiler",ex);
+				throw new GSInternalError("Null pointer exception in compiler",ex);
 			} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 				return "<b>Compilation failed:</b> " + e;
 			}
@@ -238,7 +240,7 @@ public class ScriptingConfig {
 				}
 
 			} catch (final ArrayIndexOutOfBoundsException ex) {
-				throw new SystemException("Array index out of bounds in compiler/simulator",ex);
+				throw new GSInternalError("Array index out of bounds in compiler/simulator",ex);
 			} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 				return "<b>Simulation failed:</b> " + e;
 			}

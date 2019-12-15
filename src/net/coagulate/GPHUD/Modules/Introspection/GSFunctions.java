@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -19,7 +20,7 @@ public class GSFunctions {
 	@URL.URLs(url = "/introspection/gsfunctions/*")
 	public static void renderCommand(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
 		String uri = st.getDebasedURL();
-		if (!uri.startsWith("/introspection/gsfunctions/")) { throw new SystemException("URL Misconfiguratin?"); }
+		if (!uri.startsWith("/introspection/gsfunctions/")) { throw new SystemImplementationException("URL Misconfiguratin?"); }
 		uri = uri.substring("/introspection/gsfunctions/".length());
 
 		// if we get here, we're investigating a specific command

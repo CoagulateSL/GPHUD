@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
@@ -40,10 +41,10 @@ public class CommandAnnotation extends Command {
 
 	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
 		}
 	}
 
@@ -58,16 +59,16 @@ public class CommandAnnotation extends Command {
 		}
 		Module.checkPublicStatic(method);
 		if (method.getParameterCount() == 0) {
-			throw new SystemException("Method " + getFullName() + "() takes zero arguments but must take 'State' as its first argument");
+			throw new SystemImplementationException("Method " + getFullName() + "() takes zero arguments but must take 'State' as its first argument");
 		}
 		if ((method.getParameters()[0]).getClass().getCanonicalName().equalsIgnoreCase(State.class.getCanonicalName())) {
-			throw new SystemException("Method " + getFullName() + " must take State as its first argument");
+			throw new SystemImplementationException("Method " + getFullName() + " must take State as its first argument");
 		}
 		for (int i = 1; i < method.getParameters().length; i++) {
 			final Parameter p = method.getParameters()[i];
 			final Arguments arg = p.getAnnotation(Arguments.class);
 			if (arg == null) {
-				throw new SystemException("Method " + getFullName() + "() argument " + (i + 1) + " (" + p.getName() + ") has no @Argument metadata");
+				throw new SystemImplementationException("Method " + getFullName() + "() argument " + (i + 1) + " (" + p.getName() + ") has no @Argument metadata");
 			}
 			if (arg.type() == ArgumentType.CHOICE) {
 				// validate the choice method
@@ -75,7 +76,7 @@ public class CommandAnnotation extends Command {
 				try {
 					method.getDeclaringClass().getMethod(choicemethod, State.class);
 				} catch (final Exception e) {
-					throw new SystemException("Failed to instansiate choice method " + getFullName() + " / " + choicemethod);
+					throw new SystemImplementationException("Failed to instansiate choice method " + getFullName() + " / " + choicemethod);
 				}
 			}
 		}

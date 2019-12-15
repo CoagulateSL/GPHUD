@@ -2,7 +2,9 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
@@ -60,11 +62,11 @@ public class Event extends TableRow {
 	@Nonnull
 	public static Event create(@Nonnull final Instance instance, final String eventName) throws UserException {
 		Event event = find(instance, eventName);
-		if (event != null) { throw new UserException("Event " + eventName + " already exists."); }
+		if (event != null) { throw new UserInputDuplicateValueException("Event " + eventName + " already exists."); }
 		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)", instance.getId(), eventName);
 		event = find(instance, eventName);
 		if (event == null) {
-			throw new SystemException("Failed to create event " + eventName + " for instance " + instance.getName() + ", no error, just doesn't get found...");
+			throw new SystemConsistencyException("Failed to create event " + eventName + " for instance " + instance.getName() + ", no error, just doesn't get found...");
 		}
 		return event;
 	}
@@ -244,7 +246,7 @@ public class Event extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Event / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Event / State Instance mismatch"); }
 	}
 
 	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds

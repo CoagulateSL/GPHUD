@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Alias;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
@@ -43,7 +43,7 @@ public class AliasModule extends ModuleAnnotation {
 	@Override
 	public Command getCommand(@Nonnull final State st, @Nonnull final String commandname) {
 		final Alias alias = Alias.getAlias(st, commandname);
-		if (alias == null) { throw new UserException("Unknown command alias." + commandname); }
+		if (alias == null) { throw new UserInputLookupFailureException("Unknown command alias." + commandname); }
 		final JSONObject template = alias.getTemplate();
 		return new AliasCommand(st, commandname, template);
 	}

@@ -3,10 +3,15 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.Core.Tools.MailTools;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Tools.UnixTime;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.MailTools;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
@@ -79,7 +84,7 @@ public class Char extends TableRow {
 			final int i = GPHUD.getDB().dqinn("select characterid from characters where playedby=? and instanceid=?", avatar.getId(), instance.getId());
 			return get(i);
 		} catch (final NoDataException e) {
-			throw new UserException("Avatar " + avatar.getName() + " is not wearing the HUD or is not logged in as a character presently.", e);
+			throw new UserInputStateException("Avatar " + avatar.getName() + " is not wearing the HUD or is not logged in as a character presently.", e);
 		}
 	}
 
@@ -366,8 +371,7 @@ public class Char extends TableRow {
 	 * @param since Unix Time to count points since
 	 * @return Number of points in the given period.
 	 */
-	public int sumPoolSince(@Nullable final Pool p, final int since) {
-		if (p == null) { throw new SystemException("Null pool not permitted"); }
+	public int sumPoolSince(@Nonnull final Pool p, final int since) {
 		final Integer sum = dqi( "select sum(adjustment) from characterpools where characterid=? and poolname like ? and timedate>=?", getId(), p.fullName(), since);
 		if (sum == null) { return 0; }
 		return sum;
@@ -398,17 +402,17 @@ public class Char extends TableRow {
 		final List<Char> chars = new ArrayList<>();
 		final String uri = character.getURL();
 		if (uri == null || uri.isEmpty()) {
-			throw new UserException("Your character does not have a valid in-world presence");
+			throw new UserInputStateException("Your character does not have a valid in-world presence");
 		}
 		final JSONObject radarrequest = new JSONObject().put("incommand", "radar");
 		final Transmission t = new Transmission(this, radarrequest);
 		//noinspection CallToThreadRun
 		t.run();
 		final JSONObject j = t.getResponse();
-		if (j == null) { throw new SystemException("Failed to get a useful response from the remote HUD"); }
+		if (j == null) { throw new SystemRemoteFailureException("Failed to get a useful response from the remote HUD"); }
 		final String avatars = j.optString("avatars", "");
 		if (avatars == null || avatars.isEmpty()) {
-			throw new UserException("Sorry, you are not near any other avatars");
+			throw new UserInputEmptyException("Sorry, you are not near any other avatars");
 		}
 		for (final String key : avatars.split(",")) {
 			final User a = User.findOptional(key);
@@ -797,7 +801,7 @@ public class Char extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Char / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Char / State Instance mismatch"); }
 	}
 
 	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
@@ -816,7 +820,7 @@ public class Char extends TableRow {
 	public void rename(final String newname) {
 		final int count = dqinn( "select count(*) from characters where name like ? and instanceid=?", newname, getInstance().getId());
 		if (count != 0) {
-			throw new UserException("Unable to rename character '" + getName() + "' to '" + newname + "', that name is already taken.");
+			throw new UserInputDuplicateValueException("Unable to rename character '" + getName() + "' to '" + newname + "', that name is already taken.");
 		}
 		set("name", newname);
 	}

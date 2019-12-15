@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
@@ -106,7 +107,7 @@ public class Objects extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Object / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Object / State Instance mismatch"); }
 	}
 
 	@Nonnull
@@ -154,7 +155,7 @@ public class Objects extends TableRow {
 		if (object==null) {
 			GPHUD.getDB().d("insert into objects(uuid,name,regionid,owner,location,lastrx,url,version) values(?,?,?,?,?,?,?,?)",uuid,name,region.getId(),owner.getId(),location, UnixTime.getUnixTime(),url,version);
 			object=findOrNull(st,uuid);
-			if (object==null) { throw new SystemException("Object not found for uuid "+uuid+" after creating it"); }
+			if (object==null) { throw new SystemConsistencyException("Object not found for uuid "+uuid+" after creating it"); }
 		} else {
 			GPHUD.getDB().d("update objects set name=?,regionid=?,owner=?,location=?,lastrx=?,url=?,version=? where id=?",name,region.getId(),owner.getId(),location,UnixTime.getUnixTime(),url,version,object.getId());
 		}

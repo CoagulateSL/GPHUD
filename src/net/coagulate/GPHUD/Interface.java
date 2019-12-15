@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpInetConnection;
@@ -50,9 +50,9 @@ public abstract class Interface implements HttpRequestHandler {
 		final int major=Integer.parseInt(versionparts[0]);
 		final int minor=Integer.parseInt(versionparts[1]);
 		final int bugfix=Integer.parseInt(versionparts[2]);
-		if (major>99) { throw new SystemException("Major version number too high"); }
-		if (minor>99) { throw new SystemException("Minor version number too high"); }
-		if (bugfix>99) { throw new SystemException("Bugfix version number too high"); }
+		if (major>99) { throw new SystemBadValueException("Major version number too high"); }
+		if (minor>99) { throw new SystemBadValueException("Minor version number too high"); }
+		if (bugfix>99) { throw new SystemBadValueException("Bugfix version number too high"); }
 		return 10000 * major + 100 * minor + bugfix;
 	}
 

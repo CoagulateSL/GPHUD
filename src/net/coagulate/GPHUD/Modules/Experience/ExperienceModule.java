@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
@@ -132,7 +133,7 @@ public class ExperienceModule extends ModuleAnnotation {
 		for (final Map.Entry<String, Pool> entry : pmap.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
 		}
-		throw new SystemException("Unable to retrieve pool " + itemname);
+		throw new SystemImplementationException("Unable to retrieve pool " + itemname);
 	}
 
 	@Override
@@ -142,7 +143,7 @@ public class ExperienceModule extends ModuleAnnotation {
 		}
 		final Map<String, KV> map = getKVDefinitions(st);
 		for (final Map.Entry<String, KV> entry : map.entrySet()) { if (entry.getKey().equalsIgnoreCase(qualifiedname)) { return entry.getValue(); } }
-		throw new SystemException("Invalid KV " + qualifiedname + " in module " + getName());
+		throw new SystemImplementationException("Invalid KV " + qualifiedname + " in module " + getName());
 	}
 
 	@Nonnull

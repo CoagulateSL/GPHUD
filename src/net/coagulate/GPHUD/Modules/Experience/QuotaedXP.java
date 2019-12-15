@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Module;
@@ -40,7 +40,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Name of the KV that controls the quota per period
 	 */
 	@Nonnull
-	public String quotaKV(final State st) { throw new SystemException("Override this method!"); }
+	public String quotaKV(final State st) { throw new SystemImplementationException("Override this method!"); }
 
 	@Nonnull
 	public Integer quota(@Nonnull final State st) { return st.getKV(quotaKV(st)).intValue(); }
@@ -49,7 +49,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Name of the KV that controls the period (in days)
 	 */
 	@Nonnull
-	public String periodKV(final State st) { throw new SystemException("Override this method!"); }
+	public String periodKV(final State st) { throw new SystemImplementationException("Override this method!"); }
 
 	@Nonnull
 	public Float period(@Nonnull final State st) { return st.getKV(periodKV(st)).floatValue(); }
@@ -114,7 +114,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	@Nonnull
 	@Override
 	public String getName() {
-		throw new SystemException("Override this method!");
+		throw new SystemImplementationException("Override this method!");
 	}
 
 	@Nonnull
@@ -158,19 +158,19 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	@Nonnull
 	@Override
 	public KV.KVTYPE getKVType() {
-		throw new SystemException("Is not a KV");
+		throw new SystemImplementationException("Is not a KV");
 	}
 
 	@Nonnull
 	@Override
 	public String getKVDefaultValue() {
-		throw new SystemException("Is not a KV");
+		throw new SystemImplementationException("Is not a KV");
 	}
 
 	@Nonnull
 	@Override
 	public KV.KVHIERARCHY getKVHierarchy() {
-		throw new SystemException("Is not a KV");
+		throw new SystemImplementationException("Is not a KV");
 	}
 
 

@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -14,7 +14,7 @@ public class BCBranchIfZero extends ByteCode {
 	@Nullable
 	private final BCLabel target;
 	private BCLabel target() {
-		if (target==null) { throw new SystemException("Target is null"); }
+		if (target==null) { throw new GSInternalError("Target is null"); }
 		return target;
 	}
 	public BCBranchIfZero(final ParseNode n, @Nullable final BCLabel target) { super(n); this.target=target; }

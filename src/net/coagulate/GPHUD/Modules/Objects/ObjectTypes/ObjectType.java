@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjectTypes;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
@@ -35,7 +35,7 @@ public abstract class ObjectType {
 		if (behaviour.equals("PhantomTeleport")) { return new PhantomTeleporter(st,object); }
 		if (behaviour.equals("RunCommand")) { return new RunCommand(st,object); }
 		if (behaviour.equals("NPC")) { return new NPC(st,object); }
-		throw new SystemException("Behaviour "+behaviour+" is not known!");
+		throw new SystemImplementationException("Behaviour "+behaviour+" is not known!");
 	}
 
 	@Nonnull

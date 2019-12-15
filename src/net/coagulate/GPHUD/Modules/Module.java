@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
@@ -41,10 +42,10 @@ public abstract class Module {
 
 	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
 		}
 	}
 
@@ -170,20 +171,20 @@ dead code?
 
 	public void validateKV(final State st, @Nonnull final String key) {
 		if (getKVDefinitions(st).containsKey(key.toLowerCase())) {
-			throw new SystemException("KV does not exist [" + key + "] in [" + getName() + "]");
+			throw new SystemImplementationException("KV does not exist [" + key + "] in [" + getName() + "]");
 		}
 	}
 
 	public void validatePermission(final State st, @Nonnull final String permission) {
 		final Map<String, Permission> perms = getPermissions(st);
 		if (!perms.containsKey(permission.toLowerCase())) {
-			throw new SystemException("Permission does not exist [" + permission + "] in [" + getName() + "]");
+			throw new SystemImplementationException("Permission does not exist [" + permission + "] in [" + getName() + "]");
 		}
 	}
 
 	public void validateCommand(final State st, @Nonnull final String command) {
 		if (!getCommands(st).containsKey(command.toLowerCase())) {
-			throw new SystemException("Command does not exist [" + command + "] in [" + getName() + "]");
+			throw new SystemImplementationException("Command does not exist [" + command + "] in [" + getName() + "]");
 		}
 	}
 

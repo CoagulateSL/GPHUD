@@ -1,6 +1,9 @@
 package net.coagulate.GPHUD.Modules.Notes;
 
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.AdminNotes;
 import net.coagulate.GPHUD.Data.Char;
@@ -70,14 +73,14 @@ public class ViewNotes {
 		Integer targetid=null;
 		final String[] parts=st.getDebasedURL().split("\\/");
 		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (final NumberFormatException e) {}
-		if (targetid==null) { throw new UserException("Failed to extract character id from "+parts[parts.length-1]); }
+		if (targetid==null) { throw new UserInputValidationParseException("Failed to extract character id from "+parts[parts.length-1]); }
 		final Char target=Char.get(targetid);
-		if (st.getInstance()!=target.getInstance()) { throw new UserException("State instance/target mismatch"); }
+		if (st.getInstance()!=target.getInstance()) { throw new UserInputStateException("State instance/target mismatch"); }
 		boolean admin=false;
 		if (st.hasPermission("Notes.View")) { admin=true; }
 		if (!admin) {
 			if (st.getAvatarNullable()!=target.getOwner()) {
-				throw new UserException("You can only view your own character");
+				throw new UserAccessDeniedException("You can only view your own character");
 			}
 		}
 		final Form f= st.form();
@@ -89,14 +92,14 @@ public class ViewNotes {
 		Integer targetid=null;
 		final String[] parts=st.getDebasedURL().split("\\/");
 		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (final NumberFormatException e) {}
-		if (targetid==null) { throw new UserException("Failed to extract user id from "+parts[parts.length-1]); }
+		if (targetid==null) { throw new UserInputValidationParseException("Failed to extract user id from "+parts[parts.length-1]); }
 		final User target=User.get(targetid);
 
 		boolean admin=false;
 		if (st.hasPermission("Notes.View")) { admin=true; }
 		if (!admin) {
 			if (st.getAvatarNullable()!=target) {
-				throw new UserException("You can only view your own character");
+				throw new UserAccessDeniedException("You can only view your own character");
 			}
 		}
 		final Form f= st.form();

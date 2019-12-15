@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
@@ -60,7 +61,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// JSONify it
 				final JSONObject obj;
 				try { obj = new JSONObject(message); } catch (final JSONException e) {
-					throw new SystemException("Parse error in '" + message + "'", e);
+					throw new SystemBadValueException("Parse error in '" + message + "'", e);
 				}
 				// stash it in the state
 				st.setJson(obj);
@@ -74,7 +75,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// attempt to run the command
 				// load the original conveyances
 				final Response response = execute(st);
-				if (response == null) { throw new SystemException("NULL RESPONSE FROM EXECUTE!!!"); }
+				if (response == null) { throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!"); }
 				// convert response to JSON
 				final JSONObject jsonresponse = response.asJSON(st);
 				// did titler change?

@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL;
@@ -52,12 +52,12 @@ public class ConfigurationURL extends URL {
 	@Nonnull
 	@Override
 	public String getMethodName() {
-		throw new SystemException("Stub url has no backing method");
+		throw new SystemImplementationException("Stub url has no backing method");
 	}
 
 	@Override
 	public void run(final State st, final SafeMap values) {
-		throw new SystemException("Stub url can not be run");
+		throw new SystemImplementationException("Stub url can not be run");
 	}
 
 	@Override

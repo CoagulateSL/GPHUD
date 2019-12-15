@@ -3,7 +3,12 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
@@ -69,7 +74,7 @@ public class Region extends TableRow {
 	public static Region get(final int id, final boolean allowretired) {
 		final Region r= (Region) factoryPut("Region", id, new Region(id));
 		if (r.isRetired() && (!allowretired)) {
-			final UserException exception=new UserException("Attempt to access retired region");
+			final UserException exception=new UserInputStateException("Attempt to access retired region");
 			GPHUD.getLogger("Regions").log(WARNING,"Attempt to access retired region",exception);
 			throw exception;
 		}
@@ -97,7 +102,7 @@ public class Region extends TableRow {
 	@Nonnull
 	public static Region find(final String name, final boolean allowretired) {
 		final Region r=findNullable(name,allowretired);
-		if (r==null) { throw new UserException("No active region named '"+name+"' found"); }
+		if (r==null) { throw new UserInputLookupFailureException("No active region named '"+name+"' found"); }
 		return r;
 	}
 
@@ -171,7 +176,7 @@ public class Region extends TableRow {
 	public String getURL() {
 		final String url=getURLNullable();
 		if (url == null) {
-			throw new UserException("This region has no callback URL");
+			throw new SystemBadValueException("This region has no callback URL");
 		}
 		return url;
 	}
@@ -482,7 +487,7 @@ public class Region extends TableRow {
 		final Transmission t=new Transmission(this, json);
 		//noinspection CallToThreadRun
 		t.run();
-		if (t.failed()) { throw new UserException("Connection to server failed"); }
+		if (t.failed()) { throw new UserRemoteFailureException("Connection to server failed"); }
 	}
 
 	/**
@@ -525,7 +530,7 @@ public class Region extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Region / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Region / State Instance mismatch"); }
 	}
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
@@ -546,7 +551,7 @@ public class Region extends TableRow {
 		final ResultsRow r = dqone( "select regionx,regiony from regions where regionid=?", getId());
 		final Integer x=r.getIntNullable("regionx");
 		final Integer y=r.getIntNullable("regiony");
-		if (x==null || y==null) { throw new UserException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server"); }
+		if (x==null || y==null) { throw new UserRemoteFailureException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server"); }
 		return "<"+x+","+y+",0>";
 	}
     

@@ -1,10 +1,10 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -26,6 +26,6 @@ public class API {
 			callingstate.source= State.Sources.SCRIPTING;
 			final Response value = Modules.run(callingstate, apicall.getContent(), args);
 			return new BCResponse(null, value);
-		} catch (final RuntimeException e) { throw new SystemException("gsAPI runtimed: "+ e,e); }
+		} catch (final RuntimeException e) { throw new GSInternalError("gsAPI runtimed: "+ e,e); }
 	}
 }

@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
@@ -19,7 +18,7 @@ public class BCLabel extends ByteCode {
 	@Nullable
 	Integer address;
 	public int address() {
-		if (address==null) { throw new SystemException("Jump address is null"); }
+		if (address==null) { throw new GSInternalError("Jump address is null"); }
 		return address;
 	}
 	public void toByteCode(@Nonnull final List<Byte> bytes) {

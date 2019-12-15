@@ -1,10 +1,13 @@
 package net.coagulate.GPHUD;
 
-import net.coagulate.Core.Tools.DumpableState;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
-import net.coagulate.GPHUD.Data.*;
+import net.coagulate.Core.Tools.DumpableState;
 import net.coagulate.GPHUD.Data.Objects;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Module;
@@ -21,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
@@ -195,7 +197,7 @@ public class State extends DumpableState {
 	@Nullable
 	public Attribute getAttributeOrException(@Nonnull final String name) {
 		final Attribute a = getAttribute(name);
-		if (a == null) { throw new UserException("No such character attribute '" + name + "'"); }
+		if (a == null) { throw new UserInputLookupFailureException("No such character attribute '" + name + "'"); }
 		return a;
 	}
 
@@ -233,13 +235,13 @@ public class State extends DumpableState {
 	// requested uri
 	@Nonnull
 	public String getFullURL() {
-		if (uri==null) { throw new SystemException("Attempted to get URI but it's null?"); }
+		if (uri==null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
 		return uri;
 	}
 
 	@Nonnull
 	public String getDebasedURL() {
-		if (uri == null) { throw new SystemException("Attempted to get URI but it's null?"); }
+		if (uri == null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
 		if (uri.startsWith("/GPHUD/")) { return uri.substring(6); }
 		return uri;
 	}
@@ -260,7 +262,7 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public State getTarget() {
-		if (target==null) { throw new UserException("There is no selected target"); }
+		if (target==null) { throw new UserInputStateException("There is no selected target"); }
 		return target;
 	}
 
@@ -297,7 +299,7 @@ public class State extends DumpableState {
 	@Nonnull
 	public Region getRegion() {
 		final Region r = getRegionNullable();
-		if (r == null) { throw new UserException("No region has been selected"); }
+		if (r == null) { throw new UserInputStateException("No region has been selected"); }
 		return r;
 	}
 
@@ -315,7 +317,7 @@ public class State extends DumpableState {
 	@Nonnull
 	public Char getCharacter() {
 		final Char c = getCharacterNullable();
-		if (c == null) { throw new UserException("No character is selected"); }
+		if (c == null) { throw new UserInputStateException("No character is selected"); }
 		return c;
 	}
 
@@ -336,7 +338,7 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public User getAvatar() {
-		if (avatar==null) { throw new UserException("There is no logged in avatar"); }
+		if (avatar==null) { throw new UserInputStateException("There is no logged in avatar"); }
 		return avatar;
 	}
 
@@ -352,7 +354,7 @@ public class State extends DumpableState {
 	@Nonnull
 	public Instance getInstance() {
 		final Instance i = getInstanceNullable();
-		if (i == null) { throw new UserException("No instance has been selected"); }
+		if (i == null) { throw new UserInputStateException("No instance has been selected"); }
 		return i;
 	}
 
@@ -484,19 +486,17 @@ public class State extends DumpableState {
 	public void assertPermission(@Nullable final String permission) throws SystemException, UserException {
 		if (permission == null || permission.isEmpty()) { return; }
 		if (hasPermission(permission)) { return; }
-		throw new SystemException("ALERT! Permission assertion failed on permission " + permission);
+		throw new SystemConsistencyException("ALERT! Permission assertion failed on permission " + permission);
 	}
 
-	private Map<String, String> getKVMap(@Nullable final TableRow dbo) {
-		if (dbo == null) { throw new SystemException("Can not get KV map for null object"); }
+	private Map<String, String> getKVMap(@Nonnull final TableRow dbo) {
 		if (!kvmaps.containsKey(dbo)) {
 			kvmaps.put(dbo, dbo.loadKVs());
 		}
 		return kvmaps.get(dbo);
 	}
 
-	private boolean kvDefined(@Nullable final TableRow o, @Nonnull final KV kv) {
-		if (o == null) { throw new SystemException("Can not check kv definition on a null object"); }
+	private boolean kvDefined(@Nonnull final TableRow o, @Nonnull final KV kv) {
 		final Map<String, String> kvmap = getKVMap(o);
 		if (kvmap.containsKey(kv.fullname().toLowerCase())) { return true; }
 		return false;
@@ -557,7 +557,7 @@ public class State extends DumpableState {
 		switch (kv.hierarchy()) {
 			case NONE:
 				if (targets.size() > 1) {
-					throw new SystemException("NONE hierarchy type returned " + targets.size() + " results... unable to compute :P");
+					throw new SystemImplementationException("NONE hierarchy type returned " + targets.size() + " results... unable to compute :P");
 				}
 				if (targets.size() == 1) {
 					ret = targets.get(0); // "the" element
@@ -578,23 +578,18 @@ public class State extends DumpableState {
 				}
 				break;
 			case CUMULATIVE:
-				throw new SystemException("Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV()");
+				throw new SystemImplementationException("Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV()");
 			default:
-				throw new SystemException("Unknown hierarchy type " + kv.hierarchy());
+				throw new SystemImplementationException("Unknown hierarchy type " + kv.hierarchy());
 		}
 		return ret;
 	}
 
 	@Nonnull
-	public KVValue getKV(@Nullable final String kvname) {
+	public KVValue getKV(@Nonnull final String kvname) {
 		try {
 			final StringBuilder path = new StringBuilder();
 			final boolean debug = false;
-			if (kvname == null) {
-				final SystemException ex=new SystemException("Get KV on null K");
-				logger().log(Level.WARNING,"Get KV on null K",ex);
-				throw ex;
-			}
 			final KV kv = getKVDefinition(kvname);
 			if (kv.hierarchy() == KV.KVHIERARCHY.CUMULATIVE) {
 				float sum = 0;
@@ -629,7 +624,7 @@ public class State extends DumpableState {
 				return new KVValue(getKV(target, kvname), "Direct value from " + target.getClass().getSimpleName() + " " + target.getNameSafe());
 			}
 		} catch (final RuntimeException re) {
-			throw new UserException("Failed to evaluate KV " + kvname + ": " + re.getLocalizedMessage(), re);
+			throw new UserConfigurationException("Failed to evaluate KV " + kvname + ": " + re.getLocalizedMessage(), re);
 		}
 	}
 
@@ -646,10 +641,9 @@ public class State extends DumpableState {
 		return Templater.template(this, s, evaluate, isint);
 	}
 
-	public String getRawKV(@Nullable final TableRow target, @Nonnull final String kvname) {
-		if (target == null) { throw new SystemException("Can not get kv " + kvname + " for null target"); }
+	public String getRawKV(@Nonnull final TableRow target, @Nonnull final String kvname) {
 		final KV kv = getKVDefinition(kvname);
-		if (kv == null) { throw new UserException("Failed to resolve " + kvname + " to a valid KV entity"); }
+		if (kv == null) { throw new UserInputLookupFailureException("Failed to resolve " + kvname + " to a valid KV entity"); }
 		return getKVMap(target).get(kvname.toLowerCase());
 	}
 
@@ -667,7 +661,7 @@ public class State extends DumpableState {
 		}
 		String out;
 		try { out = Templater.template(this, s, evaluate, isint); } catch (final Exception e) {
-			throw new UserException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
+			throw new UserConfigurationException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
 		}
 		if (kv.type()== COLOR) {
 			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }
@@ -687,40 +681,40 @@ public class State extends DumpableState {
 						break;
 					case INTEGER: // check it parses into an int
 						try { Integer.parseInt(value); } catch (final NumberFormatException e) {
-							throw new UserException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
+							throw new UserInputValidationParseException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
 						}
 						break;
 					case FLOAT:
 						try { Float.parseFloat(value); } catch (final NumberFormatException e) {
-							throw new UserException(key + " must be a number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
+							throw new UserInputValidationParseException(key + " must be a number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
 						}
 						break;
 					case UUID:
 						if (!Validators.uuid(value)) {
-							throw new UserException(key + " must be a UUID , you entered '" + value + "'");
+							throw new UserInputValidationParseException(key + " must be a UUID , you entered '" + value + "'");
 						}
 						break;
 					case BOOLEAN:
 						value = value.toLowerCase();
 						if (!("true".equals(value) || "false".equals(value))) {
-							throw new UserException(key + " must be true/false");
+							throw new UserInputValidationParseException(key + " must be true/false");
 						}
 						break;
 					case COMMAND:
 						try { Modules.getCommandNullable(this, value); } catch (final SystemException e) {
-							throw new UserException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error");
+							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error");
 						} catch (final UserException f) {
-							throw new UserException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")");
+							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")");
 						}
 						break;
 					case COLOR:
 						if (!Validators.color(value)) {
-							throw new UserException(key + " must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you entered '" + value + "')");
+							throw new UserInputValidationParseException(key + " must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you entered '" + value + "')");
 						}
 						// does it have lsl surrounds?
 						break;
 					default:
-						throw new SystemException("No validator defined for KV type " + definition.type() + " in " + key);
+						throw new SystemImplementationException("No validator defined for KV type " + definition.type() + " in " + key);
 				}
 			}
 			if (definition.type() == COLOR) {
@@ -866,13 +860,13 @@ public class State extends DumpableState {
 	}
 
 	public Form form() {
-		if (form==null) { throw new SystemException("Getting form but no form defined?"); }
+		if (form==null) { throw new SystemConsistencyException("Getting form but no form defined?"); }
 		return form();
 	}
 
 	@Nonnull
 	public User getSourcedeveloper() {
-		if (sourcedeveloper==null) { throw new SystemException("There is no source developer!"); }
+		if (sourcedeveloper==null) { throw new SystemConsistencyException("There is no source developer!"); }
 		return sourcedeveloper;
 	}
 
@@ -886,7 +880,7 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public JSONObject json() {
-		if (json==null) { throw new SystemException("JSON is null when retrieved"); }
+		if (json==null) { throw new SystemConsistencyException("JSON is null when retrieved"); }
 		return json;
 	}
 
@@ -896,7 +890,7 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public User getSourceowner() {
-		if (sourceowner==null) { throw new SystemException("There is no source owner?"); }
+		if (sourceowner==null) { throw new SystemConsistencyException("There is no source owner?"); }
 		return sourceowner;
 	}
 

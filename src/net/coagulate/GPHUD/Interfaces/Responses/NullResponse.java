@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.Responses;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -28,30 +28,30 @@ public class NullResponse implements Response {
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
-		throw new SystemException("You can not interrogate the null response.");
+		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
 
 	@Nonnull
 	@Override
 	public String scriptResponse() {
-		throw new SystemException("You can not interrogate the null response.");
+		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
 
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		throw new SystemException("You can not interrogate the null response.");
+		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
 
 	@Nonnull
 	@Override
 	public String asHtml(final State st, final boolean rich) {
-		throw new SystemException("You can not interrogate the null response.");
+		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		throw new SystemException("You can not interrogate the null response.");
+		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
 }

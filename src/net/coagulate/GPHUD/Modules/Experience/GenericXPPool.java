@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -43,12 +44,12 @@ public class GenericXPPool extends Pool {
 		final Pool pool = Modules.getPool(targetstate, "Experience." + myname + "XP");
 		final int awarded = target.sumPoolDays(pool, period);
 		if (awarded >= maxxp) {
-			throw new UserException("This character has already reached their " + pool.name() + " XP limit.  They will next be eligable for a point in " + target.poolNextFree(pool, maxxp, period));
+			throw new UserInputStateException("This character has already reached their " + pool.name() + " XP limit.  They will next be eligable for a point in " + target.poolNextFree(pool, maxxp, period));
 		}
 		if ((awarded + ammount) > maxxp) {
-			throw new UserException("This will push the character beyond their " + pool.name() + " XP limit, they can be awarded " + (maxxp - awarded) + " XP right now");
+			throw new UserInputStateException("This will push the character beyond their " + pool.name() + " XP limit, they can be awarded " + (maxxp - awarded) + " XP right now");
 		}
-		if (reason==null) { throw new UserException("You must supply a reason"); }
+		if (reason==null) { throw new UserInputEmptyException("You must supply a reason"); }
 		// else award xp :P
 		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Pool Add", pool.name() + "XP", null, ammount + "", reason);
 		target.addPool(st, pool, ammount, reason);

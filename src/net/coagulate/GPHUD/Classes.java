@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.ClassTools;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
@@ -75,7 +76,7 @@ public abstract class Classes {
 				final Constructor<?> cons = target.getConstructor(String.class, ModuleDefinition.class);
 				cons.newInstance(modulename, a);
 			} catch (@Nonnull final ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-				throw new SystemException("Instansiating module failed: " + ex, ex);
+				throw new SystemImplementationException("Instansiating module failed: " + ex, ex);
 			}
 		}
 	}
@@ -146,7 +147,7 @@ public abstract class Classes {
 				if (firstparam) { firstparam = false; } else {
 					final Argument.Arguments[] annotations = p.getAnnotationsByType(Argument.Arguments.class);
 					if (annotations.length != 1) {
-						throw new SystemException("Command " + modulename + "/" + m.getName() + " parameter " + p.getName() + " has no Arguments annotation");
+						throw new SystemImplementationException("Command " + modulename + "/" + m.getName() + " parameter " + p.getName() + " has no Arguments annotation");
 					}
 					final Argument.Arguments annotation = annotations[0];
 					final boolean requiresmax;
@@ -182,11 +183,11 @@ public abstract class Classes {
 							requiresmax = false;
 							break;
 						default:
-							throw new SystemException("Unchecked argument type " + annotation.type().name());
+							throw new SystemImplementationException("Unchecked argument type " + annotation.type().name());
 
 					}
 					if (requiresmax && annotation.max() < 0) {
-						throw new SystemException("Missing MAX parameter on argument annotation in [" + modulename + "]" + m.getClass().getSimpleName() + "/" + m.getName() + "/" + p.getName());
+						throw new SystemImplementationException("Missing MAX parameter on argument annotation in [" + modulename + "]" + m.getClass().getSimpleName() + "/" + m.getName() + "/" + p.getName());
 					}
 				}
 			}

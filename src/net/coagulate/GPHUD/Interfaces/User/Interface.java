@@ -1,5 +1,8 @@
 package net.coagulate.GPHUD.Interfaces.User;
 
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
@@ -393,7 +396,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (!content.requiresPermission().isEmpty()) {
 			if (!st.hasPermission(content.requiresPermission())) {
 				st.logger().log(WARNING, "Attempted access to " + st.getDebasedURL() + " which requires missing permission " + content.requiresPermission());
-				throw new UserException("Access to this page is denied, you require permission " + content.requiresPermission());
+				throw new UserAccessDeniedException("Access to this page is denied, you require permission " + content.requiresPermission());
 			}
 		}
 		content.run(st, values);
@@ -433,7 +436,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					String value = "";
 					if (keyvalue.length > 1) { value = URLDecoder.decode(keyvalue[1], "UTF-8"); }
 					if (keyvalue.length > 2) {
-						throw new SystemException("Unexpected parsing of line '" + part + "' - got " + keyvalue.length + " fields");
+						throw new SystemBadValueException("Unexpected parsing of line '" + part + "' - got " + keyvalue.length + " fields");
 					}
 					if (value != null && !value.isEmpty()) { values.put(key, value); }
 					//System.out.println("HTTP POST ["+key+"]=["+value+"]");
@@ -536,7 +539,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					st.cookiestring = cookie;
 					try {
 						st.cookie = new Cookies(cookie);
-					} catch (final SystemException ex) {
+					} catch (final UserException ex) {
 						st.logger().log(SEVERE, "Cookie load gave exception, right after it was generated?", ex);
 					}
 					st.resp.addHeader("Set-Cookie", "gphud=" + cookie + "; Path=/");
@@ -561,7 +564,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final String cookie = Cookies.generate(av, null, null, true);
 				st.cookiestring = cookie;
 				try { st.cookie = new Cookies(cookie); }
-				catch (final SystemException ex) { st.logger().log(SEVERE, "Cookie load gave exception, right after it was generated?", ex); }
+				catch (final UserException ex) { st.logger().log(SEVERE, "Cookie load gave exception, right after it was generated?", ex); }
 				st.resp.addHeader("Set-Cookie", "gphud=" + cookie + "; Path=/");
 				st.logger().log(INFO, "SL Cluster Services SSO as " + av);
 			}

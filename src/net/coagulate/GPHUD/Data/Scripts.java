@@ -3,8 +3,10 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
@@ -45,7 +47,7 @@ public class Scripts extends TableRow {
 
 	public static void create(@Nonnull final State st, final String scriptname) {
 		final Integer existing=GPHUD.getDB().dqi("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
-		if (existing>0) { throw new UserException("script with that name already exists"); }
+		if (existing>0) { throw new UserInputDuplicateValueException("script with that name already exists"); }
 		GPHUD.getDB().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
 	}
 
@@ -108,7 +110,7 @@ public class Scripts extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Script / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Script / State Instance mismatch"); }
 	}
 
 	@Nullable
@@ -160,11 +162,11 @@ public class Scripts extends TableRow {
 		if (GPHUD.DEV) {
 			final byte[] compareto = getByteCode();
 			if (compareto.length != toByteCode.length) {
-				throw new SystemException("Length mismatch, wrote " + toByteCode.length + " and read " + compareto.length);
+				throw new SystemImplementationException( "Length mismatch, wrote " + toByteCode.length + " and read " + compareto.length);
 			}
 			for (int i = 0; i < compareto.length; i++) {
 				if (compareto[i] != toByteCode[i]) {
-					throw new SystemException("Difference at " + i + " - we wrote " + toByteCode[i] + " and read " + compareto[i]);
+					throw new SystemImplementationException("Difference at " + i + " - we wrote " + toByteCode[i] + " and read " + compareto[i]);
 				}
 			}
 		}
@@ -184,7 +186,7 @@ public class Scripts extends TableRow {
 		GPHUD.getDB().d("delete from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
 		for (int i=0;i<256;i++) {
 			if (b[i] != out[i]) {
-				throw new SystemException("Comparison error on " + i + " - " + b[i] + " gave " + out[i]);
+				throw new SystemImplementationException("Comparison error on " + i + " - " + b[i] + " gave " + out[i]);
 			}
 		}
 	}

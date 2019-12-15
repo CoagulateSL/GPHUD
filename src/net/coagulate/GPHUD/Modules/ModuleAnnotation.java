@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Pool.Pools;
@@ -43,17 +45,17 @@ public class ModuleAnnotation extends Module {
 	@Nullable
 	static Object assertNotNull(@Nullable final Object o, final String value, final String type) throws UserException {
 		if (o == null) {
-			throw new UserException("Unable to resolve '" + value + "' to a " + type);
+			throw new UserInputLookupFailureException("Unable to resolve '" + value + "' to a " + type);
 		}
 		return o;
 	}
 
 	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
 		}
 	}
 
@@ -84,7 +86,7 @@ public class ModuleAnnotation extends Module {
 				if (url.toLowerCase().startsWith(compareto)) {
 					if (liberalmatch != null) {
 						if (liberalmatch.url().length() == m.url().length()) {
-							throw new SystemException("Multiple liberal matches for " + url + " - " + m.getFullName() + " conflicts with " + liberalmatch.getFullName());
+							throw new SystemImplementationException("Multiple liberal matches for " + url + " - " + m.getFullName() + " conflicts with " + liberalmatch.getFullName());
 						}
 						if (m.url().length() > liberalmatch.url().length()) { liberalmatch = m; }
 					} else {
@@ -104,7 +106,7 @@ public class ModuleAnnotation extends Module {
 	public KV getKVDefinition(final State st, @Nonnull final String qualifiedname) throws SystemException {
 		//for (String s:kvmap.keySet()) { System.out.println(s); }
 		if (!kvmap.containsKey(qualifiedname.toLowerCase())) {
-			throw new SystemException("Invalid KV " + qualifiedname + " in module " + getName());
+			throw new SystemImplementationException("Invalid KV " + qualifiedname + " in module " + getName());
 		}
 		return kvmap.get(qualifiedname.toLowerCase());
 	}
@@ -112,13 +114,13 @@ public class ModuleAnnotation extends Module {
 	@Nullable
 	public Command getCommand(final State st, @Nonnull final String commandname) {
 		final Command c = commands.get(commandname.toLowerCase());
-		if (c == null) { throw new UserException("No such command " + commandname + " in module " + name); }
+		if (c == null) { throw new UserInputLookupFailureException("No such command " + commandname + " in module " + name); }
 		return c;
 	}
 
 	public void registerPool(@Nonnull final Pool element) {
 		if (poolmap.containsKey(element.name().toLowerCase())) {
-			throw new SystemException("Attempt to register duplicate pool map " + element.name() + " in module " + getName());
+			throw new SystemImplementationException("Attempt to register duplicate pool map " + element.name() + " in module " + getName());
 		}
 		poolmap.put(element.name().toLowerCase(), element);
 	}
@@ -155,10 +157,10 @@ public class ModuleAnnotation extends Module {
 			Modules.validatePermission(st, a.requiresPermission());
 		}
 		if (Modules.getURL(null, a.url()) == null) {
-			throw new SystemException("Side menu definition " + a.name() + " references url " + a.url() + " which can not be found");
+			throw new SystemImplementationException("Side menu definition " + a.name() + " references url " + a.url() + " which can not be found");
 		}
 		if (sidemenu != null) {
-			throw new SystemException("Attempt to replace side menu detected - is " + sidemenu.name() + " but replacing with " + a.name());
+			throw new SystemImplementationException("Attempt to replace side menu detected - is " + sidemenu.name() + " but replacing with " + a.name());
 		}
 		sidemenu = a;
 	}
@@ -182,7 +184,7 @@ public class ModuleAnnotation extends Module {
 
 	public void registerPermission(@Nonnull final Permission a) {
 		if (permissions.containsKey(a.name().toLowerCase())) {
-			throw new SystemException("Attempt to redefine permission " + a.name() + " in module " + name);
+			throw new SystemImplementationException("Attempt to redefine permission " + a.name() + " in module " + name);
 		}
 		permissions.put(a.name().toLowerCase(), a);
 	}
@@ -199,20 +201,20 @@ public class ModuleAnnotation extends Module {
 
 	public void registerKV(@Nonnull final KV a) throws UserException {
 		if (kvmap.containsKey(a.name().toLowerCase())) {
-			throw new SystemException("Attempt to redefine KV entry " + a.name() + " in module " + name);
+			throw new SystemImplementationException("Attempt to redefine KV entry " + a.name() + " in module " + name);
 		}
 		kvmap.put(a.name().toLowerCase(), a);
 	}
 
 	public void validateKV(final State st, @Nonnull final String key) throws SystemException {
 		if (Modules.getKVDefinition(st, key) == null) {
-			throw new SystemException("KV key " + key + " in module " + getName() + " does not exist");
+			throw new SystemImplementationException("KV key " + key + " in module " + getName() + " does not exist");
 		}
 	}
 
 	public void validateCommand(final State st, @Nonnull final String command) throws SystemException {
 		if (!commands.containsKey(command.toLowerCase())) {
-			throw new SystemException("Command " + command + " does not exist in module " + getName());
+			throw new SystemImplementationException("Command " + command + " does not exist in module " + getName());
 		}
 	}
 

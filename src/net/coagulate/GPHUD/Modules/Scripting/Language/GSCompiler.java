@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
@@ -30,12 +31,12 @@ public class GSCompiler {
 		if (node instanceof GSList) { return -1; }
 		if (node instanceof GSListIndex) { return 2; }
 		if (node instanceof GSWhileLoop) { return 2; }
-		throw new SystemException("Expected Children not defined for node "+node.getClass().getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
+		throw new SystemImplementationException("Expected Children not defined for node "+node.getClass().getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
 	@Nonnull
 	private final ParseNode startnode;
 	public GSCompiler(final Node passednode) {
-		if (!(passednode instanceof ParseNode)) { throw new SystemException("Compiler error - passed node is of type "+passednode.getClass().getCanonicalName()+" which is not a ParseNode implementation"); }
+		if (!(passednode instanceof ParseNode)) { throw new SystemImplementationException("Compiler error - passed node is of type "+passednode.getClass().getCanonicalName()+" which is not a ParseNode implementation"); }
 		startnode=(ParseNode) passednode;
 	}
 
@@ -72,7 +73,7 @@ public class GSCompiler {
 	@Nonnull
 	private List<ByteCode> compile(@Nonnull final ParseNode node) {
 		final List<ByteCode> compiled=new ArrayList<>();
-		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) { throw new SystemException(node.getClass().getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn); }
+		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) { throw new SystemImplementationException(node.getClass().getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn); }
 
 
 		if (node instanceof GSStart || node instanceof GSExpression || node instanceof GSParameter || node instanceof GSTerm || node instanceof GSStatement) { // expression just breaks down into 1 of X executable subtypes
@@ -98,7 +99,7 @@ public class GSCompiler {
 			if (type.equals("Group")) { compiled.add(new BCGroup(node)); typed=true; }
 			if (type.equals("Character")) { compiled.add(new BCCharacter(node)); typed=true; }
 			if (type.equals("List")) { compiled.add(new BCList(node)); typed=true; }
-			if (!typed) { throw new SystemException("Unable to initialise variable of type "+type+" (not implemented)"); }
+			if (!typed) { throw new SystemImplementationException("Unable to initialise variable of type "+type+" (not implemented)"); }
 			final BCString identifier=new BCString(node.child(1),node.child(1).tokens());
 			compiled.add(identifier);
 			addDebug(compiled,node);
@@ -132,7 +133,7 @@ public class GSCompiler {
 				compiled.add(new BCStoreIndexed(node));
 				return compiled;
 			}
-			throw new SystemException("Compiler error: Unknown type of Assignment: "+target.getClass().getName());
+			throw new SystemImplementationException("Compiler error: Unknown type of Assignment: "+target.getClass().getName());
 		}
 
 		if (node instanceof GSStringConstant) {
@@ -263,13 +264,13 @@ public class GSCompiler {
 			return compiled;
 		}
 
-		throw new SystemException("Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
+		throw new SystemImplementationException("Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
 	}
 
 	private void checkType(@Nonnull final ParseNode node, final int pos, @Nonnull final Class<? extends ParseNode> clazz) {
-		if (node.jjtGetNumChildren()<pos) { throw new SystemException("Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+clazz.getName()); }
+		if (node.jjtGetNumChildren()<pos) { throw new GSInternalError("Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+clazz.getName()); }
 		final Node child=node.jjtGetChild(pos);
-		if (!child.getClass().equals(clazz)) { throw new SystemException("Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+" not the expected "+clazz.getName()); }
+		if (!child.getClass().equals(clazz)) { throw new GSInternalError("Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+" not the expected "+clazz.getName()); }
 	}
 
 	private boolean validFunction(final String name) {

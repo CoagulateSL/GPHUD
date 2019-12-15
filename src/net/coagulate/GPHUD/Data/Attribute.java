@@ -2,8 +2,11 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
@@ -50,7 +53,7 @@ public class Attribute extends TableRow {
 			final int id = GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
 			return get(id);
 		} catch (final NoDataException e) {
-			throw new UserException("Unable to find attribute '" + name + "' in instance '" + instance + "'",e);
+			throw new UserInputLookupFailureException("Unable to find attribute '" + name + "' in instance '" + instance + "'",e);
 		}
 	}
 
@@ -63,7 +66,7 @@ public class Attribute extends TableRow {
 			final int id = GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?", instance.getId(), grouptype);
 			return get(id);
 		} catch (final NoDataException e) {
-			throw new UserException("Unable to find an attribute representing a group of type " + grouptype, e);
+			throw new UserInputLookupFailureException("Unable to find an attribute representing a group of type " + grouptype, e);
 		}
 	}
 
@@ -155,7 +158,7 @@ public class Attribute extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Attribute / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Attribute / State Instance mismatch"); }
 	}
 
 	@Override
@@ -168,7 +171,7 @@ public class Attribute extends TableRow {
 			type = getString("attributetype");
 			cachePut("type", type, getNameCacheTime());
 		}
-		if (type == null) { throw new SystemException("Null type for attribute " + getId() + " " + getNameSafe()); }
+		if (type == null) { throw new SystemBadValueException("Null type for attribute " + getId() + " " + getNameSafe()); }
 		if ("text".equalsIgnoreCase(type)) { return TEXT; }
 		if ("integer".equalsIgnoreCase(type)) { return INTEGER; }
 		if ("group".equalsIgnoreCase(type)) { return GROUP; }
@@ -176,7 +179,7 @@ public class Attribute extends TableRow {
 		if ("float".equalsIgnoreCase(type)) { return FLOAT; }
 		if ("color".equalsIgnoreCase(type)) { return COLOR; }
 		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
-		throw new SystemException("Unhandled type " + type + " for attribute " + getId() + " " + getNameSafe());
+		throw new SystemImplementationException("Unhandled type " + type + " for attribute " + getId() + " " + getNameSafe());
 	}
 
 	@Nullable
@@ -237,7 +240,7 @@ public class Attribute extends TableRow {
 				return st.getCharacter().sumPool(xp.getPool(st)) + "";
 			} else { return "POOL"; }
 		}
-		throw new SystemException("Unhandled non KV type " + getType());
+		throw new SystemImplementationException("Unhandled non KV type " + getType());
 	}
 
 	@Nonnull
@@ -251,7 +254,7 @@ public class Attribute extends TableRow {
 			} else { return "POOL"; }
 		}
 		if (getType() == GROUP) { return ""; }
-		throw new SystemException("Unhandled type " + getType());
+		throw new SystemImplementationException("Unhandled type " + getType());
 	}
 
 	/**
@@ -264,7 +267,7 @@ public class Attribute extends TableRow {
 		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER || def == FLOAT || def == TEXT || def == COLOR) { return true; }
 		if (def == POOL || def == GROUP || def == EXPERIENCE) { return false; }
-		throw new SystemException("Unknown attribute type " + def + " in attribute " + this);
+		throw new SystemImplementationException("Unknown attribute type " + def + " in attribute " + this);
 	}
 
 	/**
@@ -280,7 +283,7 @@ public class Attribute extends TableRow {
 		if (def == FLOAT) { return KV.KVTYPE.FLOAT; }
 		if (def == TEXT) { return KV.KVTYPE.TEXT; }
 		if (def == COLOR) { return KV.KVTYPE.COLOR; }
-		throw new SystemException("Non KV attribute type " + def + " in attribute " + this);
+		throw new SystemImplementationException("Non KV attribute type " + def + " in attribute " + this);
 	}
 
 	/**
@@ -296,7 +299,7 @@ public class Attribute extends TableRow {
 		if (def == FLOAT) { return "0"; }
 		if (def == TEXT) { return ""; }
 		if (def == COLOR) { return "<1,1,1>"; }
-		throw new SystemException("Unhandled KV attribute type " + def + " in attribute " + this);
+		throw new SystemImplementationException("Unhandled KV attribute type " + def + " in attribute " + this);
 	}
 
 	/**
@@ -312,7 +315,7 @@ public class Attribute extends TableRow {
 		if (def == FLOAT) { return KV.KVHIERARCHY.CUMULATIVE; }
 		if (def == TEXT) { return KV.KVHIERARCHY.DELEGATING; }
 		if (def == COLOR) { return KV.KVHIERARCHY.DELEGATING; }
-		throw new SystemException("Unhandled attribute type " + def + " in attribute " + this);
+		throw new SystemImplementationException("Unhandled attribute type " + def + " in attribute " + this);
 	}
 
 	/**

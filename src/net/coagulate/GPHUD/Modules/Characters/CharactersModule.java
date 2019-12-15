@@ -6,7 +6,11 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
@@ -48,24 +52,23 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Nullable
-	public static String templateAttribute(State st, @Nullable String template) {
-		if (template == null) { throw new SystemException("Null template?"); }
+	public static String templateAttribute(State st, @Nonnull String template) {
 		template = template.substring(2, template.length() - 2);
 		if (template.startsWith("TARGET:")) {
 			template = template.substring(7);
 			st = st.getTargetNullable();
-			if (st == null) { throw new UserException("No target!"); }
+			if (st == null) { throw new UserInputEmptyException("No target!"); }
 		}
 		Attribute attr = null;
 		for (final Attribute a : st.getAttributes()) {
 			if (a.getName().equalsIgnoreCase(template)) {
 				if (attr != null) {
-					throw new SystemException("Unexpected duplicate resolution for attribute " + attr.getName() + " and " + a.getName());
+					throw new SystemConsistencyException("Unexpected duplicate resolution for attribute " + attr.getName() + " and " + a.getName());
 				}
 				attr = a;
 			}
 		}
-		if (attr == null) { throw new SystemException("Failed to resolve attribute definition " + template); }
+		if (attr == null) { throw new SystemConsistencyException("Failed to resolve attribute definition " + template); }
 		//System.out.println(attr);
 		if (attr.isKV()) {
 			return st.getKV("characters." + template).value();
@@ -81,7 +84,7 @@ public class CharactersModule extends ModuleAnnotation {
 				return st.getCharacter().sumPool(xp.getPool(st)) + "";
 			} else { return "POOL"; }
 		}
-		throw new SystemException("Failed to resolve templateAttribute for " + attr + " of type " + attr.getType());
+		throw new SystemConsistencyException("Failed to resolve templateAttribute for " + attr + " of type " + attr.getType());
 	}
 
 	public static int spentAbilityPoints(@Nonnull final State st) {
@@ -141,13 +144,13 @@ public class CharactersModule extends ModuleAnnotation {
 			return new ErrorResponse("This attribute can not be increased through ability points");
 		}
 		if (attr.getKVType() != KV.KVTYPE.FLOAT && attr.getKVType() != KV.KVTYPE.INTEGER) {
-			throw new UserException("Can not increase a non integer/float attribute type");
+			throw new UserInputStateException("Can not increase a non integer/float attribute type");
 		}
 		final int existing = st.getKV("Characters." + attribute).intValue();
 		final int max = st.getKV("Characters." + attribute + "max").intValue();
 		if (max != 0) {
 			if (existing >= max) {
-				throw new UserException("You may not increase " + attribute + " any further, the maximum is " + max);
+				throw new UserInputStateException("You may not increase " + attribute + " any further, the maximum is " + max);
 			}
 		}
 		final String localstr = st.getKV(st.getCharacter(), "Characters." + attribute);
@@ -189,7 +192,7 @@ public class CharactersModule extends ModuleAnnotation {
 	@Override
 	@Deprecated
 	public void registerKV(@Nonnull final KV a) throws UserException {
-		throw new SystemException("It is no longer permitted to have manual registrations inside Characters module");
+		throw new SystemImplementationException("It is no longer permitted to have manual registrations inside Characters module");
 	}
 
 	@Nonnull

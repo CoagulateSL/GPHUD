@@ -1,8 +1,9 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -31,7 +32,7 @@ public abstract class ByteCode {
 		final byte instruction = vm.bytecode[vm.PC];
 		final InstructionSet decode = ByteCode.get(instruction);
 		if (decode == null) {
-			throw new SystemException("Unable to decode instruction " + instruction + " at index " + vm.PC);
+			throw new GSInternalError("Unable to decode instruction " + instruction + " at index " + vm.PC);
 		}
 		vm.PC++;
 		switch (decode) {
@@ -47,7 +48,7 @@ public abstract class ByteCode {
 				final byte[] string = new byte[length];
 				try { System.arraycopy(vm.bytecode, vm.PC, string, 0, length); } catch (final RuntimeException e)
 				{
-					throw new SystemException("Failed to arraycopy " + length + " from pos " + vm.PC, e);
+					throw new GSInternalError("Failed to arraycopy " + length + " from pos " + vm.PC, e);
 				}
 				vm.PC += length;
 				final String str = new String(string);
@@ -70,7 +71,7 @@ public abstract class ByteCode {
 			case LessThanEqual: return new BCLessThanEqual(null);
 			case GreaterThanEqual: return new BCGreaterThanEqual(null);
 		}
-		throw new SystemException("Failed to materialise instruction "+decode);
+		throw new SystemImplementationException("Failed to materialise instruction "+decode);
 	}
 
 	@Nonnull

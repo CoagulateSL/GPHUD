@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
@@ -92,7 +93,7 @@ public abstract class View {
 			st.form().add(new ConfigurationHierarchy(st, st.getKVDefinition(attribute), st.simulate(c), values));
 			return;
 		}
-		throw new SystemException("Unknown character view mode (length:" + split.length + " URI:" + st.getDebasedURL());
+		throw new SystemConsistencyException("Unknown character view mode (length:" + split.length + " URI:" + st.getDebasedURL());
 	}
 
 	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Char c, final boolean brief) throws UserException, SystemException {

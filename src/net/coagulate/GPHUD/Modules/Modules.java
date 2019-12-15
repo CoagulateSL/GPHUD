@@ -1,6 +1,10 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -29,7 +33,7 @@ public abstract class Modules {
 	static void register(@Nonnull final Module mod) throws SystemException {
 		final String name = mod.getName();
 		if (modules.containsKey(name.toLowerCase())) {
-			throw new SystemException("Duplicate Module definition for " + name);
+			throw new SystemImplementationException("Duplicate Module definition for " + name);
 		}
 		modules.put(name.toLowerCase(), mod);
 	}
@@ -63,7 +67,7 @@ public abstract class Modules {
 	public static Module get(@Nullable final State st, @Nonnull final String nameorreference) throws UserException, SystemException {
 		final Module m = modules.get(extractModule(nameorreference).toLowerCase());
 		if (st != null && !m.isEnabled(st)) {
-			throw new UserException("Module " + m.getName() + " is not enabled in this instance");
+			throw new UserConfigurationException("Module " + m.getName() + " is not enabled in this instance");
 		}
 		if (st == null) { return m; }
 		// check dependancies
@@ -72,7 +76,7 @@ public abstract class Modules {
 		for (final String dependancy : dependancies) {
 			final Module m2 = get(null, dependancy);
 			if (!m2.isEnabled(st)) {
-				throw new UserException("Module " + m.getName() + " is not enabled in this instance because it depends on " + m2.getName() + " which is disabled");
+				throw new UserConfigurationException("Module " + m.getName() + " is not enabled in this instance because it depends on " + m2.getName() + " which is disabled");
 			}
 		}
 		return m;
@@ -89,12 +93,12 @@ public abstract class Modules {
 		//System.out.println("QUALIFIED:"+qualified);
 		final String[] parts = qualified.split("\\.");
 		if (parts.length < 1 || parts.length > 2) {
-			throw new UserException("Invalid format, must be module or module.reference but we received " + qualified);
+			throw new UserInputValidationParseException("Invalid format, must be module or module.reference but we received " + qualified);
 		}
 		final String name = parts[0];
 		//System.out.println("NAME:"+name);
 		if (!modules.containsKey(name.toLowerCase())) {
-			throw new UserException("Module " + name + " does not exist.");
+			throw new UserInputLookupFailureException("Module " + name + " does not exist.");
 		}
 		return name;
 	}
@@ -109,7 +113,7 @@ public abstract class Modules {
 	public static String extractReference(@Nonnull final String qualified) throws UserException {
 		final String[] parts = qualified.split("\\.");
 		if (parts.length != 2) {
-			throw new UserException("Invalid format, must be module.reference but we received " + qualified);
+			throw new UserInputValidationParseException("Invalid format, must be module.reference but we received " + qualified);
 		}
 		extractModule(qualified); // validates the module
 		return parts[1];
@@ -148,7 +152,7 @@ public abstract class Modules {
 					if (relaxed != null) {
 						// break if matching prefix length, otherwise...
 						if (relaxed.url().length() == proposed.url().length()) {
-							throw new SystemException("Multiple relaxed matches between " + proposed.url() + " and " + relaxed.url());
+							throw new SystemImplementationException("Multiple relaxed matches between " + proposed.url() + " and " + relaxed.url());
 						}
 						if (relaxed.url().length() < proposed.url().length()) {
 							relaxed = proposed;
@@ -156,7 +160,7 @@ public abstract class Modules {
 					} else { relaxed = proposed; }
 				} else {
 					if (literal != null) {
-						throw new SystemException("Multiple literal matches between " + proposed.url() + " and " + literal.url());
+						throw new SystemImplementationException("Multiple literal matches between " + proposed.url() + " and " + literal.url());
 					}
 					literal = proposed;
 				}
@@ -167,7 +171,7 @@ public abstract class Modules {
 		// otherwise the relaxed match
 		if (relaxed != null) { return relaxed; }
 		// if not then its a 404.  do we exception or return null?
-		if (exception) { throw new UserException("404 // Page not found [" + url + "]"); }
+		if (exception) { throw new UserInputLookupFailureException("404 // Page not found [" + url + "]"); }
 		return null;
 	}
 
@@ -183,7 +187,7 @@ public abstract class Modules {
 	@Nonnull
 	public static Command getCommand(final State st, @Nonnull final String proposedcommand) throws UserException, SystemException {
 		final Command c=getCommandNullable(st,proposedcommand);
-		if (c==null) { throw new UserException("Unable to locate command "+proposedcommand); }
+		if (c==null) { throw new UserInputLookupFailureException("Unable to locate command "+proposedcommand); }
 		return c;
 	}
 
@@ -194,9 +198,9 @@ public abstract class Modules {
 	@Nonnull
 	public static JSONObject getJSONTemplate(@Nonnull final State st, @Nonnull final String qualifiedcommandname) throws UserException, SystemException {
 		final Module module = get(st, qualifiedcommandname);
-		if (module == null) { throw new UserException("Unable to resolve module in " + qualifiedcommandname); }
+		if (module == null) { throw new UserInputLookupFailureException("Unable to resolve module in " + qualifiedcommandname); }
 		final Command command = module.getCommand(st, extractReference(qualifiedcommandname));
-		if (command == null) { throw new UserException("Unable to resolve command in " + qualifiedcommandname); }
+		if (command == null) { throw new UserInputLookupFailureException("Unable to resolve command in " + qualifiedcommandname); }
 		return command.getJSONTemplate(st);
 	}
 
@@ -264,14 +268,12 @@ public abstract class Modules {
 	}
 
 
-	public static Response run(@Nullable final State st, @Nullable final String qualifiedcommandname, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
-		if (st == null) { throw new SystemException("Null state"); }
-		if (qualifiedcommandname == null) { throw new SystemException("Null command"); }
+	public static Response run(@Nonnull final State st, @Nonnull final String qualifiedcommandname, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
 		if ("console".equalsIgnoreCase(qualifiedcommandname)) { st.source= State.Sources.CONSOLE; return run(st, parametermap.get("console")); }
 		final Module module = get(st, qualifiedcommandname);
-		if (module == null) { throw new UserException("Unknown module in " + qualifiedcommandname); }
+		if (module == null) { throw new UserInputLookupFailureException("Unknown module in " + qualifiedcommandname); }
 		final Command command = module.getCommand(st, extractReference(qualifiedcommandname));
-		if (command == null) { throw new UserException("Unknown command in " + qualifiedcommandname); }
+		if (command == null) { throw new UserInputLookupFailureException("Unknown command in " + qualifiedcommandname); }
 		return command.run(st, parametermap);
 	}
 
@@ -298,7 +300,7 @@ public abstract class Modules {
 		} else {
 			kv = get(st, qualifiedname).getKVDefinition(st, extractReference(qualifiedname));
 		}
-		if (kv == null) { throw new SystemException("Failed to resolve KV definition " + qualifiedname); }
+		if (kv == null) { throw new SystemImplementationException("Failed to resolve KV definition " + qualifiedname); }
 		return kv;
 	}
 
@@ -355,18 +357,15 @@ public abstract class Modules {
 
 	public static Pool getPoolNotNull(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
 		final Pool pool = getPool(st, qualifiedname);
-		if (pool == null) { throw new UserException("Unable to find pool " + qualifiedname); }
+		if (pool == null) { throw new UserInputLookupFailureException("Unable to find pool " + qualifiedname); }
 		return pool;
 	}
 
-	public static void simpleHtml(@Nullable final State st, @Nullable final String command, @Nullable final SafeMap values) throws UserException, SystemException {
-		if (command == null) { throw new SystemException("Null command"); }
-		if (values == null) { throw new SystemException("Null values"); }
-		if (st == null) { throw new SystemException("Null state"); }
+	public static void simpleHtml(@Nonnull final State st, @Nonnull final String command, @Nonnull final SafeMap values) throws UserException, SystemException {
 		final Module m = get(st, command);
-		if (m == null) { throw new UserException("No such module in " + command); }
+		if (m == null) { throw new UserInputLookupFailureException("No such module in " + command); }
 		final Command c = m.getCommand(st, extractReference(command));
-		if (c == null) { throw new UserException("No such command in " + command); }
+		if (c == null) { throw new UserInputLookupFailureException("No such command in " + command); }
 		c.simpleHtml(st, values);
 	}
 

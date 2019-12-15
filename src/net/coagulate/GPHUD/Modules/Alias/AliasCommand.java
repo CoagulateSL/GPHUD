@@ -1,7 +1,11 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -51,7 +55,7 @@ public class AliasCommand extends Command {
 
 	@Nonnull
 	public Command getTargetCommand() {
-		if (targetcommand==null) { throw new SystemException("Attempt to access null target command in Alias Command "+getName()); }
+		if (targetcommand==null) { throw new SystemBadValueException("Attempt to access null target command in Alias Command "+getName()); }
 		return targetcommand;
 	}
 
@@ -147,7 +151,7 @@ public class AliasCommand extends Command {
 
 	@Override
 	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
-		if (targetcommand == null) { throw new UserException("Error: Alias targets command " + name + ", " + fail); }
+		if (targetcommand == null) { throw new UserConfigurationException("Error: Alias targets command " + name + ", " + fail); }
 		// assume target.  this sucks :P
 		if (parametermap.containsKey("target")) {
 			String v = parametermap.get("target");
@@ -158,7 +162,7 @@ public class AliasCommand extends Command {
 					final User a = User.findMandatory(v);
 					targchar = Char.getActive(a, st.getInstance());
 				} catch (final NoDataException e) {
-					throw new UserException("Unable to find character or avatar named '" + v + "'");
+					throw new UserInputLookupFailureException("Unable to find character or avatar named '" + v + "'");
 				}
 			} else {
 				targchar = Char.resolve(st, v);
@@ -207,7 +211,7 @@ public class AliasCommand extends Command {
 	@Nonnull
 	@Override
 	public Method getMethod() {
-		if (targetcommand == null) { throw new SystemException("Unable to getMethod on null targetcommand"); }
+		if (targetcommand == null) { throw new SystemImplementationException("Unable to getMethod on null targetcommand"); }
 		return targetcommand.getMethod();
 	}
 

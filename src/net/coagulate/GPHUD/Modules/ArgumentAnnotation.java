@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.State;
 
@@ -65,15 +66,15 @@ public class ArgumentAnnotation extends Argument {
 			final Method m = command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
 			return (List<String>) m.invoke(null, new Object[]{st});
 		} catch (final IllegalAccessException ex) {
-			throw new SystemException("Access modifier problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
+			throw new SystemImplementationException("Access modifier problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
 		} catch (final IllegalArgumentException ex) {
-			throw new SystemException("Argument problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
+			throw new SystemImplementationException("Argument problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
 		} catch (final InvocationTargetException ex) {
-			throw new SystemException("Target method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
+			throw new SystemImplementationException("Target method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
 		} catch (final NoSuchMethodException ex) {
-			throw new SystemException("No such method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
+			throw new SystemImplementationException("No such method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
 		} catch (final SecurityException ex) {
-			throw new SystemException("Security problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
+			throw new SystemImplementationException("Security problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
 		}
 	}
 

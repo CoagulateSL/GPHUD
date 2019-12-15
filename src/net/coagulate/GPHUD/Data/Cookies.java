@@ -3,9 +3,10 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.NullInteger;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Tools.Tokens;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Tokens;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -30,7 +31,7 @@ public class Cookies {
 	@Nullable
 	private ResultsRow r;
 	private ResultsRow r() {
-		if (r==null) { throw new SystemException("No cookie loaded?"); }
+		if (r==null) { throw new SystemConsistencyException("No cookie loaded?"); }
 		return r;
 	}
 	private final String cookie;
@@ -39,7 +40,7 @@ public class Cookies {
 	 * Load existing cookie store.
 	 *
 	 * @param cookie Cookie to load
-	 * @throws SystemException if the cookie does not exist or has expired.
+	 * @throws UserException if the cookie does not exist or has expired.
 	 */
 	public Cookies(final String cookie) {
 		this.cookie = cookie;
@@ -114,7 +115,7 @@ public class Cookies {
 		if (cookie != null) {
 			try {
 				return new Cookies(cookie);
-			} catch (final SystemException e) {} // logged out possibly, or expired and cleaned up
+			} catch (final UserException e) {} // logged out possibly, or expired and cleaned up
 		}
 		return null;
 	}
@@ -123,14 +124,14 @@ public class Cookies {
 	 * Check cookie is valid.
 	 * Checks cookie hasn't expired, exists, and if necessary refreshes it.
 	 *
-	 * @throws SystemException if the cookie fails validation in any way.
+	 * @throws UserException if the cookie fails validation in any way.
 	 */
-	private void validateCookie() throws SystemException {
-		try { load(); } catch (final NoDataException e) { throw new SystemException("Cookie Expired!", e); }
+	private void validateCookie() throws UserException {
+		try { load(); } catch (final NoDataException e) { throw new UserInputStateException("Cookie Expired!", e); }
 		final int expires = r().getInt("expires");
 		if (expires < getUnixTime()) {
 			GPHUD.getDB().d("delete from cookies where cookie=?", cookie);
-			throw new SystemException("Cookie Expired!");
+			throw new UserInputStateException("Cookie Expired!");
 		}
 		// if expires within 20 minutes, set expires to 30 minutes :P
 		if (r().getInt("renewable") == 0) { return; }
@@ -194,7 +195,7 @@ public class Cookies {
 			final Instance i = getInstance();
 			if (i != null) { // if has instance, character should be from it...
 				if (character.getInstance() != i) {
-					throw new UserException("Character is not from the selected instance");
+					throw new SystemConsistencyException("Character is not from the selected instance");
 				}
 			} else {
 				// if instance /is/ null, then set it :P

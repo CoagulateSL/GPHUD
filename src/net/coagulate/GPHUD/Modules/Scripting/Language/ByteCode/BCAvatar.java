@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
@@ -18,7 +18,7 @@ public class BCAvatar extends ByteCodeDataType {
 	public User getContentNullable() { return content; }
 	@Nonnull
 	public User getContent() {
-		if (content==null) { throw new SystemException("getContent on null content"); }
+		if (content==null) { throw new GSInternalError("getContent on null content"); }
 		return content;
 	}
 	public BCAvatar(final ParseNode n) { super(n); }

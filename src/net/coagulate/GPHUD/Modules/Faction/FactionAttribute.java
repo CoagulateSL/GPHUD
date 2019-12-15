@@ -5,7 +5,7 @@
  */
 package net.coagulate.GPHUD.Modules.Faction;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.KV;
 
@@ -61,19 +61,19 @@ public class FactionAttribute extends CharacterAttribute {
 	@Nonnull
 	@Override
 	public KV.KVTYPE getKVType() {
-		throw new SystemException("Invalid KV call to faction group attribute");
+		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
 
 	@Nonnull
 	@Override
 	public String getKVDefaultValue() {
-		throw new SystemException("Invalid KV call to faction group attribute");
+		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
 
 	@Nonnull
 	@Override
 	public KV.KVHIERARCHY getKVHierarchy() {
-		throw new SystemException("Invalid KV call to faction group attribute");
+		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
 
 	@Nonnull

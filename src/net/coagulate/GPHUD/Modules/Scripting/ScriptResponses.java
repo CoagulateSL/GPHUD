@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ScriptRuns;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -13,19 +12,16 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ScriptResponses {
 
 	@Nonnull
 	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
 	public static Response characterResponse(@Nonnull final State st,
-	                                         @Nullable @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER) final
+	                                         @Nonnull @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER) final
 	                                         Integer processid,
-	                                         @Nullable @Argument.Arguments(description = "The selected character",type = Argument.ArgumentType.CHARACTER) final
+	                                         @Nonnull @Argument.Arguments(description = "The selected character",type = Argument.ArgumentType.CHARACTER) final
 	                                             Char response) {
-		if (response==null) { throw new SystemException("Well, we got a null character for some reason"); }
-		if (processid==null) { throw new SystemException("No process id"); }
 		final ScriptRuns run = ScriptRuns.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) { return new ErrorResponse("Script was not expecting a response from you (?)"); }
 		final GSVM vm=new GSVM(run,st);
@@ -37,12 +33,10 @@ public class ScriptResponses {
 	@Nonnull
 	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
 	public static Response stringResponse(@Nonnull final State st,
-	                                      @Nullable @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER) final
+	                                      @Nonnull @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER) final
 	                                      Integer processid,
-	                                      @Nullable @Argument.Arguments(description = "The string response",type = Argument.ArgumentType.TEXT_ONELINE, max = 1024) final
+	                                      @Nonnull @Argument.Arguments(description = "The string response",type = Argument.ArgumentType.TEXT_ONELINE, max = 1024) final
 	                                          String response) {
-		if (response==null) { throw new SystemException("Well, we got a null string for some reason"); }
-		if (processid==null) { throw new SystemException("No process id"); }
 		final ScriptRuns run = ScriptRuns.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) { return new ErrorResponse("Script was not expecting a response from you (?)"); }
 		final GSVM vm=new GSVM(run,st);

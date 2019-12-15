@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Scripts;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
@@ -21,7 +21,7 @@ public class ScriptingCommand extends Command {
 	@Override
 	public Method getMethod() {
 		try { return getClass().getMethod("execute",State.class); }
-		catch (final NoSuchMethodException e) { throw new SystemException("Reflection exception finding gsScriptCommand's execute() method",e); }
+		catch (final NoSuchMethodException e) { throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",e); }
 	}
 
 	@Nonnull

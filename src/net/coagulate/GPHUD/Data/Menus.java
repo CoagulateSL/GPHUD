@@ -2,7 +2,11 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
@@ -75,14 +79,14 @@ public class Menus extends TableRow {
 	 */
 	@Nullable
 	public static Menus create(@Nonnull final State st, @Nonnull final String name, final String description, @Nonnull final JSONObject template) throws UserException {
-		if (getMenu(st, name) != null) { throw new UserException("Menu " + name + " already exists"); }
+		if (getMenu(st, name) != null) { throw new UserInputDuplicateValueException("Menu " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
-			throw new UserException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
+			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		GPHUD.getDB().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)", st.getInstance().getId(), name, description, template.toString());
 		final Menus newalias = getMenu(st, name);
 		if (newalias == null) {
-			throw new SystemException("Failed to create alias " + name + " in instance id " + st.getInstance().getId() + ", created but not found?");
+			throw new SystemConsistencyException("Failed to create alias " + name + " in instance id " + st.getInstance().getId() + ", created but not found?");
 		}
 		return newalias;
 	}
@@ -134,7 +138,7 @@ public class Menus extends TableRow {
 	@Nonnull
 	public JSONObject getJSON() throws SystemException {
 		final String json = dqs( "select json from menus where menuid=?", getId());
-		if (json == null) { throw new SystemException("No (null) template for menu id " + getId()); }
+		if (json == null) { throw new SystemBadValueException("No (null) template for menu id " + getId()); }
 		return new JSONObject(json);
 	}
 
@@ -169,7 +173,7 @@ public class Menus extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Menus / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Menus / State Instance mismatch"); }
 	}
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour

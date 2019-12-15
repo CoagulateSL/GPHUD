@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
+import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -25,7 +26,7 @@ public class Distribution {
 			Region.find("Cerasi",false).sendServerSync(json);
 		}
 		catch (final UserException e) {
-			throw new UserException("Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+e.getLocalizedMessage()+"]");
+			throw new UserRemoteFailureException("Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+e.getLocalizedMessage()+"]");
 		}
 		return new OKResponse("A new region server should be en route to you from the master server");
 	}

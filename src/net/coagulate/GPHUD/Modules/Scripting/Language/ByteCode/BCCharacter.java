@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
@@ -17,7 +17,7 @@ public class BCCharacter extends ByteCodeDataType {
 	private Char content;
 	@Nonnull
 	public Char getContent() {
-		if (content==null) { throw new SystemException("Getting an uninitialised BCCharacter's contents"); }
+		if (content==null) { throw new GSInternalError("Getting an uninitialised BCCharacter's contents"); }
 		return content;
 	}
 	public BCCharacter(final ParseNode n, @Nonnull final Char content) { super(n); this.content=content; }

@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -35,7 +35,7 @@ public class BCGroup extends ByteCodeDataType {
 
 	@Nonnull
 	public CharacterGroup getContent() {
-		if (content==null) { throw new SystemException("Group has no content (group)"); }
+		if (content==null) { throw new GSInternalError("Group has no content (group)"); }
 		return content;
 	}
 

@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Publishing;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.Instance;
@@ -42,7 +42,7 @@ public class Groups extends Publishing {
 		final String type=getPart(st,2);
 		final Set<String> output = new TreeSet<>();
 		st.setInstance(instance);
-		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
+		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
 		for (final CharacterGroup group:instance.getGroupsForKeyword(type)) {
 			output.add(formatGroup(group));
 		}
@@ -57,7 +57,7 @@ public class Groups extends Publishing {
 		final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
 		final Instance instance=group.getInstance();
 		st.setInstance(instance);
-		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
+		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
 		st.form().add("<table border=0>");
 		st.form().add(formatGroup(group));
 		st.form().add("</table>");
@@ -69,7 +69,7 @@ public class Groups extends Publishing {
 		final Instance instance=Instance.get(getPartInt(st,1));
 		st.setInstance(instance);
 		final TreeMap<String,String> grouprows=new TreeMap<>();
-		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
+		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
 		st.form().add("<table border=0>");
 		for (final CharacterGroup group:instance.getCharacterGroups()) {
 			final String line=formatGroup(group);

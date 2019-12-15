@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
@@ -39,7 +41,7 @@ public abstract class GetMessages {
 		final JSONObject j = new JSONObject(m.getJSON());
 		final String message = j.optString("message", "");
 		if ("factioninvite".equalsIgnoreCase(message)) { return processFactionInvite(st, j); }
-		throw new SystemException("Unable to find a message parser in GPHUDClient for message type '" + message + "'");
+		throw new SystemImplementationException("Unable to find a message parser in GPHUDClient for message type '" + message + "'");
 	}
 
 	@Nonnull
@@ -70,7 +72,7 @@ public abstract class GetMessages {
 		final JSONObject j = new JSONObject(m.getJSON());
 		final String message = j.optString("message", "");
 		if ("factioninvite".equalsIgnoreCase(message)) { return processFactionInviteResponse(st, m, j, response); }
-		throw new SystemException("Unable to find a message RESPONSE parser in GPHUDClient for message type '" + message + "'");
+		throw new SystemImplementationException("Unable to find a message RESPONSE parser in GPHUDClient for message type '" + message + "'");
 	}
 
 	@Nonnull
@@ -78,7 +80,7 @@ public abstract class GetMessages {
 		final boolean accepted;
 		if ("Accept".equalsIgnoreCase(response)) { accepted = true; } else {
 			if ("Reject".equalsIgnoreCase(response)) { accepted = false; } else {
-				throw new UserException("Expected Accept or Reject response");
+				throw new UserInputValidationParseException("Expected Accept or Reject response");
 			}
 		}
 		final CharacterGroup targetgroup = CharacterGroup.get(j.getInt("to"));

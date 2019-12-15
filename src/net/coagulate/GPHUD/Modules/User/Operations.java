@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.User;
 
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -27,7 +28,7 @@ public abstract class Operations {
 	                                   @Nonnull @Arguments(description = "New password", type = ArgumentType.PASSWORD) final
 	                                   String password) throws SystemException, UserException {
 		if (st.getSourcedeveloper() != null && st.getSourcedeveloper().getId() != 1) {
-			throw new SystemException("RESTRICTED COMMAND");
+			throw new UserAccessDeniedException("RESTRICTED COMMAND");
 		}
 		if (st.getAvatarNullable() == null) {
 			return new ErrorResponse("Not connected to any user account?  Perhaps you need to register (via User.Register).  Session did not derive a USER context.");

@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Health;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -23,7 +24,7 @@ public class ResetHealth {
 	@Command.Commands(context = Command.Context.CHARACTER, description = "Reset the character's health to the initial value")
 	public static Response resetHealth(@Nonnull final State st) {
 		if (!st.getKV("health.allowreset").boolValue()) {
-			throw new UserException("Resetting of your health is not permitted.");
+			throw new UserAccessDeniedException("Resetting of your health is not permitted.");
 		}
 		final int oldhealth = st.getKV("health.health").intValue();
 		final int newvalue = st.getKV("health.initialhealth").intValue();
@@ -92,7 +93,7 @@ public class ResetHealth {
 	                                @Nullable @Argument.Arguments(description = "Reason for heal", type = Argument.ArgumentType.TEXT_ONELINE, mandatory = false, max = 512)
 			                                String reason
 	) {
-		if (target == null) { throw new UserException("No target selected"); }
+		if (target == null) { throw new UserInputEmptyException("No target selected"); }
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
 		if (bias == null) { bias = 0; }

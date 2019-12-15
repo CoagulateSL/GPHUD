@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.Outputs;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,7 @@ public class Cell implements Renderable {
 	Renderable e;
 	@Nonnull
 	Renderable e() {
-		if (e==null) { throw new SystemException("Cell content was null"); }
+		if (e==null) { throw new SystemBadValueException("Cell content was null"); }
 		return e;
 	}
 	boolean header;
@@ -32,7 +33,7 @@ public class Cell implements Renderable {
 	public Cell(final String s) { e = new Text(s); }
 
 	public Cell(@Nullable final Renderable e) {
-		if (e == null) { throw new SystemException("Abstract Cell is not renderable."); }
+		if (e == null) { throw new SystemImplementationException("Abstract Cell is not renderable."); }
 		this.e = e;
 	}
 
@@ -43,7 +44,7 @@ public class Cell implements Renderable {
 
 	public Cell(@Nullable final Renderable e, final int colspan) {
 		if (e == null) {
-			throw new SystemException("Abstract Cell is not renderable");
+			throw new SystemImplementationException("Abstract Cell is not renderable");
 		}
 		this.e = e;
 		this.colspan = colspan;

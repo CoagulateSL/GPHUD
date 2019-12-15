@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interface;
@@ -25,10 +25,8 @@ import java.util.Set;
  */
 public class ConfigurationHierarchy extends Form {
 
-	public ConfigurationHierarchy(@Nullable final State st, @Nullable final KV kv, @Nullable State simulated, @Nonnull final SafeMap parameters) {
-		if (st == null) { throw new SystemException("Null state?"); }
+	public ConfigurationHierarchy(@Nonnull final State st, @Nonnull final KV kv, @Nullable State simulated, @Nonnull final SafeMap parameters) {
 		if (simulated == null) { simulated = st; }
-		if (kv == null) { throw new SystemException("KV null?"); }
 		noForm();
 		add(new TextHeader(kv.fullname()));
 		add(kv.description()).br();
@@ -76,7 +74,7 @@ public class ConfigurationHierarchy extends Form {
 				dbo = Zone.get(id);
 				type = "Zone";
 			}
-			if (dbo == null) { throw new SystemException("Did not get a DBO from " + dboname); }
+			if (dbo == null) { throw new SystemImplementationException("Did not get a DBO from " + dboname); }
 			if (st.hasPermission(kv.editpermission())) {
 				final String oldvalue = st.getRawKV(dbo, kv.fullname());
 				try {
@@ -131,8 +129,7 @@ public class ConfigurationHierarchy extends Form {
 		add("</script>");
 	}
 
-	void addKVRow(@Nonnull final State st, @Nonnull final Table t, @Nonnull final KV kv, @Nullable final TableRow dbo, @Nonnull final State simulated, @Nonnull final Set<String> alledits) {
-		if (dbo == null) { throw new SystemException("Add KV Row for Null DBO?"); }
+	void addKVRow(@Nonnull final State st, @Nonnull final Table t, @Nonnull final KV kv, @Nonnull final TableRow dbo, @Nonnull final State simulated, @Nonnull final Set<String> alledits) {
 		t.openRow();
 		if (dbo instanceof CharacterGroup) {
 			t.add(dbo.getClass().getSimpleName() + " : " + ((CharacterGroup) dbo).getTypeNotNull());
@@ -205,7 +202,7 @@ public class ConfigurationHierarchy extends Form {
 					editor = "<input size=30 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
 					break;
 				default:
-					throw new SystemException("No editor for type " + kv.type() + " for object " + dbo.getKVTable() + "." + dbo.getNameSafe());
+					throw new SystemImplementationException("No editor for type " + kv.type() + " for object " + dbo.getKVTable() + "." + dbo.getNameSafe());
 			}
 			editor += "<input type=hidden name=dbobject value=\"" + dbo.getKVTable() + "\">";
 			editor += "<input type=hidden name=id value=\"" + dbo.getId() + "\">";

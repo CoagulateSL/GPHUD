@@ -3,8 +3,11 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Database.TooMuchDataException;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -164,14 +167,14 @@ public class CharacterGroup extends TableRow {
 	public void addMember(@Nonnull final Char character) {
 		// in group?
 		if (character.getInstance() != getInstance()) {
-			throw new SystemException("Character (group) / Instance mismatch");
+			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
 		final int exists = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		if (exists > 0) { throw new UserException("Character is already a member of group?"); }
+		if (exists > 0) { throw new UserInputDuplicateValueException("Character is already a member of group?"); }
 		// in competing group?
 		final CharacterGroup competition = character.getGroup(getType());
 		if (competition != null) {
-			throw new UserException("Unable to join new group, already in a group of type " + getType() + " - " + competition.getName());
+			throw new UserInputDuplicateValueException("Unable to join new group, already in a group of type " + getType() + " - " + competition.getName());
 		}
 		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)", getId(), character.getId());
 	}
@@ -183,11 +186,11 @@ public class CharacterGroup extends TableRow {
 	 */
 	public void removeMember(@Nonnull final Char character) {
 		if (character.getInstance() != getInstance()) {
-			throw new SystemException("Character (group) / Instance mismatch");
+			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
 		final int exists = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		if (exists == 0) { throw new UserException("Character not in group."); }
+		if (exists == 0) { throw new UserInputStateException("Character not in group."); }
 	}
 
 	/**
@@ -224,7 +227,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	public boolean isAdmin(@Nonnull final Char character) {
 		if (character.getInstance() != getInstance()) {
-			throw new SystemException("Character (group) / Instance mismatch");
+			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
 		if (getOwner() == character) { return true; }
 		try {
@@ -259,10 +262,9 @@ public class CharacterGroup extends TableRow {
 	 * @return true/false
 	 */
 	public boolean hasMember(@Nonnull final Char character) {
-		final Integer count = dqi( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		if (count == null) { throw new SystemException("Null response from count statement"); }
+		final int count = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
 		if (count > 1) {
-			throw new SystemException("Matched too many members (" + count + ") for " + character + " in CG " + getId() + " - " + getName());
+			throw new TooMuchDataException("Matched too many members (" + count + ") for " + character + " in CG " + getId() + " - " + getName());
 		}
 		if (count == 1) { return true; }
 		return false;
@@ -278,7 +280,7 @@ public class CharacterGroup extends TableRow {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) {
-			throw new SystemException("CharacterGroup / State Instance mismatch");
+			throw new SystemConsistencyException("CharacterGroup / State Instance mismatch");
 		}
 	}
 

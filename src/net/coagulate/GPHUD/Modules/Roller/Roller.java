@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.Roller;
 
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
@@ -37,7 +39,7 @@ public class Roller {
 		final List<Integer> rolls = new ArrayList<>();
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
-		if (dice > 100) { throw new UserException("Too many dice."); }
+		if (dice > 100) { throw new UserConfigurationException("Too many dice."); }
 		for (int i = 0; i < dice; i++) {
 			final int num = ThreadLocalRandom.current().nextInt(1, sides + 1);
 			rolls.add(num);
@@ -66,7 +68,7 @@ public class Roller {
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
 		if (reason == null) { reason = "No Reason"; }
-		if (dice > 100) { throw new UserException("Too many dice."); }
+		if (dice > 100) { throw new UserConfigurationException("Too many dice."); }
 		String event = "rolled " + dice + "d" + sides + " ";
 		event += "for " + reason + ", and rolled ";
 		String allrolls = "";
@@ -106,7 +108,7 @@ public class Roller {
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
 		if (bias == null) { bias = 0; }
 		if (reason == null) { reason = "No Reason"; }
-		if (dice > 100) { throw new UserException("Too many dice."); }
+		if (dice > 100) { throw new UserConfigurationException("Too many dice."); }
 		String event = "rolled " + dice + "d" + sides + " ";
 		if (bias != 0) { event += "(with bias " + bias + ") "; }
 		event += "for " + reason + ", and rolled ";
@@ -140,16 +142,16 @@ public class Roller {
 	@Nonnull
 	@Templater.Template(name = "ROLL", description = "Any made roll")
 	public static String getRoll(@Nonnull final State st, final String key) {
-		if (st.roll == null) { throw new UserException("No roll made!"); }
+		if (st.roll == null) { throw new UserInputStateException("No roll made!"); }
 		return st.roll.toString();
 	}
 
 	@Nonnull
 	@Templater.Template(name = "TARGET:ROLL", description = "Any TARGET made roll")
 	public static String getTargetRoll(@Nonnull final State st, final String key) {
-		if (st.getTargetNullable() == null) { throw new UserException("No target!"); }
+		if (st.getTargetNullable() == null) { throw new UserInputStateException("No target!"); }
 		final State target = st.getTargetNullable();
-		if (target.roll == null) { throw new UserException("Target not rolled!"); }
+		if (target.roll == null) { throw new UserInputStateException("Target not rolled!"); }
 		return target.roll.toString();
 	}
 
@@ -173,7 +175,7 @@ public class Roller {
 			                                   Integer targetbias,
 	                                   @Nullable @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512)
 			                                   String reason) throws UserException, SystemException {
-		if (target == null) { throw new UserException("No target selected"); }
+		if (target == null) { throw new UserInputStateException("No target selected"); }
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
 		if (bias == null) { bias = 0; }
@@ -181,8 +183,8 @@ public class Roller {
 		if (targetdice == null) { targetdice = dice; }
 		if (targetsides == null) { targetsides = sides; }
 		if (targetbias == null) { targetbias = bias; }
-		if (dice > 100) { throw new UserException("Too many dice."); }
-		if (targetdice > 100) { throw new UserException("Too many dice for target."); }
+		if (dice > 100) { throw new UserConfigurationException("Too many dice."); }
+		if (targetdice > 100) { throw new UserConfigurationException("Too many dice for target."); }
 		st.setTarget(target);
 
 		int total = 0;
@@ -210,7 +212,7 @@ public class Roller {
 			}
 			targettotal = targettotal + targetbias;
 		}
-		if (attempts < 2) { throw new UserException("Unable to resolve a non draw result in 100 rolls"); }
+		if (attempts < 2) { throw new UserConfigurationException("Unable to resolve a non draw result in 100 rolls"); }
 
 
 		String event = "rolled against " + target.getName() + ", using " + dice + "d" + sides;
@@ -255,7 +257,7 @@ public class Roller {
 	                                         @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512) final
 	                                             String reason) throws UserException, SystemException {
 		//System.out.println("DAMAGE RECEIVED AS "+damage);
-		if (!st.hasModule("Health")) { throw new UserException("Health module is required to use rollDamageAgainst"); }
+		if (!st.hasModule("Health")) { throw new UserConfigurationException("Health module is required to use rollDamageAgainst"); }
 		if (damage == null) { damage = "1"; }
 		final Response response = rollAgainst(st, target, dice, sides, bias, targetdice, targetsides, targetbias, reason);
 		if (st.roll > st.getTargetNullable().roll) {

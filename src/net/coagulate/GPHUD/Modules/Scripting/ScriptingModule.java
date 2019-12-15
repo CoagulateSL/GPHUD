@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Scripts;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
@@ -23,7 +23,7 @@ public class ScriptingModule extends ModuleAnnotation {
 		if (commandname.equalsIgnoreCase("characterresponse") ||
 			commandname.equalsIgnoreCase("stringresponse")) { return super.getCommand(st,commandname); }
 		final Scripts script=Scripts.findOrNull(st,commandname.replaceFirst("gs",""));
-		if (script==null) { throw new UserException("No script named "+commandname+" exists"); }
+		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists"); }
 		return new ScriptingCommand(script);
 	}
 

@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.Responses;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.State;
@@ -32,7 +32,7 @@ public class MenuResponse implements Response {
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
-		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new SystemImplementationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Nonnull
@@ -44,7 +44,7 @@ public class MenuResponse implements Response {
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new SystemImplementationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Nonnull
@@ -64,7 +64,7 @@ public class MenuResponse implements Response {
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		throw new SystemException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new SystemImplementationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }

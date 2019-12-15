@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -27,7 +27,7 @@ public abstract class SetOwner {
 	public static Response setOwner(@Nonnull final State st,
 	                                @Nullable @Arguments(description = "New owner for this instance", type = ArgumentType.AVATAR) final
 	                                User avatar) {
-		if (!st.isSuperUser()) { throw new UserException("Instance transfer may only be performed by a SUPERADMIN"); }
+		if (!st.isSuperUser()) { throw new UserAccessDeniedException("Instance transfer may only be performed by a SUPERADMIN"); }
 		if (avatar == null) { return new ErrorResponse("Target avatar is null or not found"); }
 		final User oldowner = st.getInstance().getOwner();
 		st.getInstance().setOwner(avatar);

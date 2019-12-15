@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Char;
@@ -150,7 +151,7 @@ public class Transmission extends Thread {
 				if (sanity==0) { GPHUD.getLogger("Transmission").log(SEVERE,"Excess exception stepping in Transmission exception reporter"); }
 			}
 			if (step.getCause()==null) {
-				final SystemException se = new SystemException("Transmission caller stack trace");
+				final SystemException se = new SystemImplementationException("Transmission caller stack trace");
 				se.setStackTrace(caller);
 				step.initCause(se);
 			}

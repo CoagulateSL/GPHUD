@@ -2,7 +2,9 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
@@ -42,7 +44,7 @@ public class Zone extends TableRow {
 	 */
 	public static void create(@Nonnull final Instance instance, final String name) throws UserException {
 		if (GPHUD.getDB().dqi( "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
-			throw new UserException("Zone name already in use");
+			throw new UserInputDuplicateValueException("Zone name already in use");
 		}
 		GPHUD.getDB().d("insert into zones(instanceid,name) values(?,?)", instance.getId(), name);
 	}
@@ -134,7 +136,7 @@ public class Zone extends TableRow {
 	public Instance getInstance() {
 		final Integer id = getIntNullable("instanceid");
 		if (id == null) {
-			throw new SystemException("Zone " + getName() + " #" + getId() + " is not associated with an instance?");
+			throw new SystemConsistencyException("Zone " + getName() + " #" + getId() + " is not associated with an instance?");
 		}
 		return Instance.get(id);
 	}
@@ -181,7 +183,7 @@ public class Zone extends TableRow {
 	public void validate(@Nonnull final State st) throws SystemException {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemException("Zone / State Instance mismatch"); }
+		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Zone / State Instance mismatch"); }
 	}
 
 	@Override

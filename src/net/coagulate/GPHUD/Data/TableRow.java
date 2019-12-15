@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.*;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
@@ -150,7 +151,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	public void kvcheck() {
 		if (getKVTable() == null || getKVIdField() == null) {
-			throw new SystemException("DBObject " + getClass().getName() + " does not support KV mappings");
+			throw new SystemImplementationException("DBObject " + getClass().getName() + " does not support KV mappings");
 		}
 	}
 
@@ -185,7 +186,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public int compareTo(@Nonnull final TableRow t) {
 		if (!TableRow.class.isAssignableFrom(t.getClass())) {
-			throw new SystemException(t.getClass().getName() + " is not assignable from DBObject");
+			throw new SystemImplementationException(t.getClass().getName() + " is not assignable from DBObject");
 		}
 		final String ours = getNameSafe();
 		final String theirs = t.getNameSafe();

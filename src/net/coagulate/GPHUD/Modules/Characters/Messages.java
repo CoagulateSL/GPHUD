@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
@@ -43,7 +44,7 @@ public abstract class Messages {
 			displayFactionInvite(st, values, j);
 			return;
 		}
-		throw new SystemException("Malformed message " + m.getId() + ", contains no message");
+		throw new SystemConsistencyException("Malformed message " + m.getId() + ", contains no message");
 
 	}
 

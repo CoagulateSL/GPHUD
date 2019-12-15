@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.Inputs;
 
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.State;
 
@@ -24,7 +24,7 @@ public abstract class Input implements Renderable {
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		throw new SystemException("Textual output does not support Input elements");
+		throw new SystemImplementationException("Textual output does not support Input elements");
 	}
 
 }

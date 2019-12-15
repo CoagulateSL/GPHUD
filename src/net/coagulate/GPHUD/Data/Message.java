@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
@@ -123,7 +124,7 @@ public class Message extends TableRow {
 	@Nonnull
 	@Override
 	public String getNameField() {
-		throw new SystemException("Messages don't have names");
+		throw new SystemImplementationException("Messages don't have names");
 	}
 
 	@Nonnull
