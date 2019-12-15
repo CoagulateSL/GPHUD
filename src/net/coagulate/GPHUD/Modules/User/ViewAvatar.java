@@ -55,7 +55,7 @@ public abstract class ViewAvatar {
 			fullinstance = true;
 			full = true;
 		}
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextSubHeader(a.getName()));
 		if (a.getId() == User.getSystem().getId()) {
@@ -77,7 +77,7 @@ public abstract class ViewAvatar {
 			for (Char c : Char.getCharacters(a)) { kvtable.openRow().add("").add(c).add(c.getInstance()); }
 			Results rows = net.coagulate.GPHUD.Data.Audit.getAudit(st.getInstance(), a, null);
 			Table table = net.coagulate.GPHUD.Data.Audit.formatAudit(rows, a.getTimeZone());
-			st.form.add(table);
+			st.form().add(table);
 
 
 			if (st.getAvatarNullable() != null && st.getAvatarNullable() == a) {

@@ -60,7 +60,7 @@ public abstract class CookBook {
 		t.openRow();
 		t.add("Create Alias " + aliasname);
 		try {
-			Modules.getCommand(st, "alias." + aliasname);
+			Modules.getCommandNullable(st, "alias." + aliasname);
 			t.add("Already Exists?");
 		} catch (UserException e) { t.add("OK"); }
 		if (!act) {

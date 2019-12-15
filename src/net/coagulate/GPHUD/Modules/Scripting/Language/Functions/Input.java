@@ -7,7 +7,6 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,7 +33,7 @@ public class Input {
 		return new BCString(null,"");
 	}
 
-	@Nullable
+	@Nonnull
 	@GSFunctions.GSFunction(description = "Triggers the character's HUD to offer a choice (menu box)",parameters = "Character - target - The character to ask<br>String - message - Description for the dialog box<br>List - A list of strings the user may choose from",notes = "",returns = "String - The user's selection")
 	public static BCString gsGetChoice(@Nonnull State st, @Nonnull GSVM vm, @Nonnull BCCharacter target, @Nonnull BCString message, @Nonnull BCList choices) {
 		if (vm.simulation) {

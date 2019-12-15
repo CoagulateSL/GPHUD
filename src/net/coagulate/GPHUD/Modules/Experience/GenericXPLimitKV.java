@@ -41,5 +41,6 @@ public class GenericXPLimitKV extends KV {
 
 	public boolean template() { return true; }
 
+	@Nonnull
 	public String name() { return myname; }
 }

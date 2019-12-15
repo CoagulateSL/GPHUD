@@ -41,5 +41,6 @@ public class GenericXPPeriodKV extends KV {
 
 	public boolean template() { return true; }
 
+	@Nonnull
 	public String name() { return myname; }
 }

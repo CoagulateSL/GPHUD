@@ -51,7 +51,7 @@ public class State extends DumpableState {
 	public HttpContext context = null;
 	// system interface puts input here
 	@Nullable
-	public JSONObject json = null;
+	private JSONObject json = null;
 	// system interface sets to raw json string
 	@Nullable
 	public final String jsoncommand = null;
@@ -81,10 +81,10 @@ public class State extends DumpableState {
 	@Nullable
 	public String cookiestring = null;
 	@Nullable
-	public Form form = null;
+	private Form form = null;
 	// system interface puts the object originating the request here
 	@Nullable
-	public User sourceowner = null;
+	private User sourceowner = null;
 	@Nullable
 	public String sourcename = null;
 	@Nullable
@@ -256,7 +256,13 @@ public class State extends DumpableState {
 	public void setURL(String url) { uri = url; }
 
 	@Nullable
-	public State getTarget() { return target; }
+	public State getTargetNullable() { return target; }
+
+	@Nonnull
+	public State getTarget() {
+		if (target==null) { throw new UserException("There is no selected target"); }
+		return target;
+	}
 
 	public void setTarget(@Nonnull Char c) {
 		target = new State(instance, region, zone, c);
@@ -374,8 +380,8 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public String getOwnerString() {
-		if (sourceowner == null) { return "<null>"; }
-		return sourceowner.toString();
+		if (getSourceowner() == null) { return "<null>"; }
+		return getSourceowner().toString();
 	}
 
 	@Nullable
@@ -444,7 +450,7 @@ public class State extends DumpableState {
 	public boolean hasPermissionOrAnnotateForm(String permission) {
 		boolean haspermission = hasPermission(permission);
 		if (haspermission) { return haspermission; }
-		form.add(new TextError("Insufficient permissions: You require " + permission));
+		form().add(new TextError("Insufficient permissions: You require " + permission));
 		return haspermission;
 	}
 
@@ -471,7 +477,7 @@ public class State extends DumpableState {
 	public boolean deniedPermission(@Nullable String permission) throws UserException {
 		if (permission == null || permission.isEmpty()) { return true; }
 		if (this.hasPermission(permission)) { return false; }
-		form.add(new TextError("Permission Denied!  You require permission " + permission + " to access this content"));
+		form().add(new TextError("Permission Denied!  You require permission " + permission + " to access this content"));
 		return true;
 	}
 
@@ -701,7 +707,7 @@ public class State extends DumpableState {
 						}
 						break;
 					case COMMAND:
-						try { Modules.getCommand(this, value); } catch (SystemException e) {
+						try { Modules.getCommandNullable(this, value); } catch (SystemException e) {
 							throw new UserException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error");
 						} catch (UserException f) {
 							throw new UserException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")");
@@ -861,7 +867,7 @@ public class State extends DumpableState {
 
 	public Form form() {
 		if (form==null) { throw new SystemException("Getting form but no form defined?"); }
-		return form;
+		return form();
 	}
 
 	@Nonnull
@@ -872,6 +878,30 @@ public class State extends DumpableState {
 
 	public void setSourcedeveloper(@Nullable User sourcedeveloper) {
 		this.sourcedeveloper = sourcedeveloper;
+	}
+
+	public void setForm(@Nonnull Form form) {
+		this.form = form;
+	}
+
+	@Nonnull
+	public JSONObject json() {
+		if (json==null) { throw new SystemException("JSON is null when retrieved"); }
+		return json;
+	}
+
+	public void setJson(@Nullable JSONObject json) {
+		this.json = json;
+	}
+
+	@Nonnull
+	public User getSourceowner() {
+		if (sourceowner==null) { throw new SystemException("There is no source owner?"); }
+		return sourceowner;
+	}
+
+	public void setSourceowner(@Nullable User sourceowner) {
+		this.sourceowner = sourceowner;
 	}
 
 

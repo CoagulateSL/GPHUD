@@ -31,7 +31,7 @@ public abstract class ViewRegion {
 		boolean full = false;
 		if (st.isSuperUser()) { full = true; }
 		Table map = new Table();
-		st.form.add(map);
+		st.form().add(map);
 		map.openRow().add("Name").add(r.getName());
 		map.openRow().add("Instance").add(r.getInstance());
 		map.openRow().add("Communications").add(r.getOnlineStatus(st.getAvatarNullable().getTimeZone()));

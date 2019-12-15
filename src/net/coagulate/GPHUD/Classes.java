@@ -39,11 +39,10 @@ public abstract class Classes {
 
 	private static final boolean LOGREGISTERS = false;
 	@Nullable
-	private static Logger log = null;
+	private static Logger log=null;
 
 	// Start recursing through the elements in the classpath.  So many exceptions returned!
 	static void initialise() throws SystemException, UserException {
-		log = GPHUD.getLogger("Classes");
 		ClassTools.initialise();
 		loadModules();
 		loadPermissions();
@@ -69,7 +68,7 @@ public abstract class Classes {
 				String implementation = a.implementation();
 				String modulename = getModuleName(c);
 				if (LOGREGISTERS)
-					log.config("Registering module " + modulename + (implementation.isEmpty() ? "" : " [" + implementation + "]"));
+					log().config("Registering module " + modulename + (implementation.isEmpty() ? "" : " [" + implementation + "]"));
 				String creatingclass = "net.coagulate.GPHUD.Modules.ModuleAnnotation";
 				if (!implementation.isEmpty()) { creatingclass = implementation; }
 				Class<?> target = Class.forName(creatingclass);
@@ -85,7 +84,7 @@ public abstract class Classes {
 		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(Permissions.class)) {
 			String modulename = getModuleName(c);
 			for (Annotation a : c.getAnnotationsByType(Permissions.class)) {
-				if (LOGREGISTERS) log.config("Registering permission " + modulename + "/" + ((Permissions) a).name());
+				if (LOGREGISTERS) log().config("Registering permission " + modulename + "/" + ((Permissions) a).name());
 				((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation((Permissions) a,modulename));
 			}
 		}
@@ -94,7 +93,7 @@ public abstract class Classes {
 			for (Annotation as : c.getAnnotationsByType(Permissionss.class)) {
 				for (Permissions a : ((Permissionss) as).value()) {
 					if (LOGREGISTERS)
-						log.config("Registering permissions " + modulename + "/" + a.name());
+						log().config("Registering permissions " + modulename + "/" + a.name());
 					((ModuleAnnotation) Modules.get(null, modulename)).registerPermission(new PermissionAnnotation(a,modulename));
 				}
 			}
@@ -105,14 +104,14 @@ public abstract class Classes {
 		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(KVS.class)) {
 			String modulename = getModuleName(c);
 			KVS a = c.getAnnotation(KVS.class);
-			if (LOGREGISTERS) log.config("Registering KV " + modulename + "/" + a.name());
+			if (LOGREGISTERS) log().config("Registering KV " + modulename + "/" + a.name());
 			((ModuleAnnotation) Modules.get(null, modulename)).registerKV(new KVAnnotation(Modules.get(null, modulename), a));
 		}
 		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(KVSS.class)) {
 			String modulename = getModuleName(c);
 			KVSS a = c.getAnnotation(KVSS.class);
 			for (KVS element : a.value()) {
-				if (LOGREGISTERS) log.config("Registering KVS " + modulename + "/" + element.name());
+				if (LOGREGISTERS) log().config("Registering KVS " + modulename + "/" + element.name());
 				((ModuleAnnotation) Modules.get(null, modulename)).registerKV(new KVAnnotation(Modules.get(null, modulename), element));
 			}
 		}
@@ -122,14 +121,14 @@ public abstract class Classes {
 		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(Pools.class)) {
 			String modulename = getModuleName(c);
 			Pools a = c.getAnnotation(Pools.class);
-			if (LOGREGISTERS) log.config("Registering pool " + modulename + "/" + a.name());
+			if (LOGREGISTERS) log().config("Registering pool " + modulename + "/" + a.name());
 			((ModuleAnnotation) Modules.get(null, modulename)).registerPool(new PoolAnnotation(Modules.get(null, modulename), a));
 		}
 		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(Poolss.class)) {
 			String modulename = getModuleName(c);
 			Poolss a = c.getAnnotation(Poolss.class);
 			for (Pools element : a.value()) {
-				if (LOGREGISTERS) log.config("Registering pools " + modulename + "/" + ((Pools) a).name());
+				if (LOGREGISTERS) log().config("Registering pools " + modulename + "/" + ((Pools) a).name());
 				((ModuleAnnotation) Modules.get(null, modulename)).registerPool(new PoolAnnotation(Modules.get(null, modulename), (Pools) a));
 			}
 		}
@@ -139,7 +138,7 @@ public abstract class Classes {
 		for (Method m : ClassTools.getAnnotatedMethods(Commands.class)) {
 			String modulename = getModuleName(m.getDeclaringClass());
 			Annotation a = m.getAnnotation(Commands.class);
-			if (LOGREGISTERS) log.config("Registering command " + modulename + "/" + m.getName());
+			if (LOGREGISTERS) log().config("Registering command " + modulename + "/" + m.getName());
 			((ModuleAnnotation) Modules.get(null, modulename)).registerCommand(new CommandAnnotation(Modules.get(null, modulename), m));
 			// validate command argument annotations
 			boolean firstparam = true;
@@ -150,7 +149,7 @@ public abstract class Classes {
 						throw new SystemException("Command " + modulename + "/" + m.getName() + " parameter " + p.getName() + " has no Arguments annotation");
 					}
 					Argument.Arguments annotation = annotations[0];
-					boolean requiresmax = false;
+					boolean requiresmax;
 					switch (annotation.type()) {
 						case TEXT_CLEAN:
 						case TEXT_ONELINE:
@@ -199,7 +198,7 @@ public abstract class Classes {
 			if (m.getDeclaringClass().getName().startsWith("net.coagulate.GPHUD.Modules")) {
 				String modulename = getModuleName(m.getDeclaringClass());
 				Annotation a = m.getAnnotation(URLs.class);
-				if (LOGREGISTERS) log.config("Registering URL handler " + modulename + "/" + m.getName());
+				if (LOGREGISTERS) log().config("Registering URL handler " + modulename + "/" + m.getName());
 				((ModuleAnnotation) Modules.get(null, modulename)).registerContent(new URLAnnotation(Modules.get(null, modulename), m));
 			}
 		}
@@ -209,7 +208,7 @@ public abstract class Classes {
 		for (Class<? extends Object> c : ClassTools.getAnnotatedClasses(SideMenus.class)) {
 			String modulename = getModuleName(c);
 			SideMenus a = c.getAnnotation(SideMenus.class);
-			if (LOGREGISTERS) log.config("Registering side menu " + modulename + "/" + a.name());
+			if (LOGREGISTERS) log().config("Registering side menu " + modulename + "/" + a.name());
 			((ModuleAnnotation) Modules.get(null, modulename)).setSideMenu(null, new SideMenuAnnotation(a));
 		}
 		for (Method m : ClassTools.getAnnotatedMethods(SideSubMenus.class)) {
@@ -217,7 +216,7 @@ public abstract class Classes {
 				String modulename = getModuleName(m.getDeclaringClass());
 				SideSubMenus a = m.getAnnotation(SideSubMenus.class);
 				if (LOGREGISTERS)
-					log.config("Registering side sub menu " + modulename + "/" + a.name());
+					log().config("Registering side sub menu " + modulename + "/" + a.name());
 				((ModuleAnnotation) Modules.get(null, modulename)).registerSideSubMenu(null, new SideSubMenuAnnotation(m));
 			}
 		}
@@ -228,7 +227,7 @@ public abstract class Classes {
 			if (m.getDeclaringClass().getName().startsWith("net.coagulate.GPHUD.Modules")) {
 				String modulename = getModuleName(m.getDeclaringClass());
 				Template a = m.getAnnotation(Template.class);
-				if (LOGREGISTERS) log.config("Registering template " + a.name());
+				if (LOGREGISTERS) log().config("Registering template " + a.name());
 				Templater.register(a, m);
 			}
 		}
@@ -237,10 +236,15 @@ public abstract class Classes {
 	private static void loadGSFunctions() {
 		for (Method m : ClassTools.getAnnotatedMethods(GSFunctions.GSFunction.class)) {
 			Annotation a = m.getAnnotation(GSFunctions.GSFunction.class);
-			if (LOGREGISTERS) log.config("Registering gsFunction " + m.getName());
+			if (LOGREGISTERS) log().config("Registering gsFunction " + m.getName());
 			GSFunctions.register(m.getName(),m);
 		}
 	}
 
 
+	@Nonnull
+	private static Logger log() {
+		if (log==null) { log=GPHUD.getLogger("Classes"); }
+		return log;
+	}
 }

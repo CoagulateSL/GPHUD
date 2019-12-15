@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class UserTitlerColor extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/user-titler-color")
 	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("User Configurable Titler Color Cookbook"));
 		boolean act = false;
 		f.add(new Paragraph("This cookbook will enable the user to set their own titler color, it will perform the following steps:"));

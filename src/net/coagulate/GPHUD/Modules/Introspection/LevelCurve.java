@@ -21,7 +21,7 @@ public abstract class LevelCurve {
 	@URLs(url = "/introspection/levelcurve")
 	@SideSubMenus(name = "Level Curve", priority = 1)
 	public static void createForm(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		Table t = new Table();
 		f.add(t);
 		t.border(true);

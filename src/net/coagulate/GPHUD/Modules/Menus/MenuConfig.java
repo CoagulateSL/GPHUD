@@ -27,7 +27,7 @@ public abstract class MenuConfig {
 
 	@URLs(url = "/configuration/menus")
 	public static void configure(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextSubHeader("Dialog menu configuration"));
 		Map<String, Integer> menus = Menus.getMenusMap(st);
 		for (Map.Entry<String, Integer> entry : menus.entrySet()) {
@@ -69,7 +69,7 @@ public abstract class MenuConfig {
 				st.getInstance().sendServers(broadcastupdate);
 			}
 		}
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Menu '" + m.getName() + "'"));
 		f.add(new Paragraph("Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will be omitted from the menu.  Layout of buttons is as follows:"));
 		f.add(new Paragraph("Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen."));
@@ -102,7 +102,7 @@ public abstract class MenuConfig {
 			Menus menu = Menus.create(st, values.get("name"), values.get("description"), new JSONObject());
 			throw new RedirectionException("./view/" + menu.getId());
 		}
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextSubHeader("Create new Dialog Menu"));
 		Table t = new Table();
 		f.add(t);

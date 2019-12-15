@@ -17,14 +17,14 @@ import java.util.TreeSet;
 public class Groups extends Publishing {
 	@URL.URLs(url="/publishing/allgroups")
 	public static void allGroupsSample(@Nonnull State st, SafeMap values) {
-		st.form.add(new TextHeader("All Groups And Members"));
+		st.form().add(new TextHeader("All Groups And Members"));
 		published(st,"allgroups/" + st.getInstance().getId());
 	}
 
 	@URL.URLs(url="/publishing/group/*")
 	public static void oneGroupSample(@Nonnull State st, SafeMap values) {
 		CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
-		st.form.add(new TextHeader("Group: "+group.getName()));
+		st.form().add(new TextHeader("Group: "+group.getName()));
 		published(st,"group/" + group.getId());
 	}
 
@@ -32,7 +32,7 @@ public class Groups extends Publishing {
 	public static void groupTypeSample(@Nonnull State st, SafeMap values) {
 		Instance instance=Instance.get(getPartInt(st,1));
 		String type=getPart(st,2);
-		st.form.add(new TextHeader("GroupType: "+type));
+		st.form().add(new TextHeader("GroupType: "+type));
 		published(st,"grouptype/" +instance.getId()+"/"+ type);
 	}
 
@@ -46,9 +46,9 @@ public class Groups extends Publishing {
 		for (CharacterGroup group:instance.getGroupsForKeyword(type)) {
 			output.add(formatGroup(group));
 		}
-		st.form.add("<table border=0>");
-		for (String s:output) st.form.add(s);
-		st.form.add("</table>");
+		st.form().add("<table border=0>");
+		for (String s:output) st.form().add(s);
+		st.form().add("</table>");
 		contentResizer(st);
 	}
 
@@ -58,9 +58,9 @@ public class Groups extends Publishing {
 		Instance instance=group.getInstance();
 		st.setInstance(instance);
 		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
-		st.form.add("<table border=0>");
-		st.form.add(formatGroup(group));
-		st.form.add("</table>");
+		st.form().add("<table border=0>");
+		st.form().add(formatGroup(group));
+		st.form().add("</table>");
 		contentResizer(st);
 	}
 
@@ -70,7 +70,7 @@ public class Groups extends Publishing {
 		st.setInstance(instance);
 		TreeMap<String,String> grouprows=new TreeMap<>();
 		if (!st.getKV("Publishing.PublishGroups").boolValue()) { throw new UserException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE"); }
-		st.form.add("<table border=0>");
+		st.form().add("<table border=0>");
 		for (CharacterGroup group:instance.getCharacterGroups()) {
 			String line=formatGroup(group);
 			String type=group.getType();
@@ -78,8 +78,8 @@ public class Groups extends Publishing {
 			String sortby=type+group.getName();
 			grouprows.put(sortby,line);
 		}
-		for (String s : grouprows.values()) { st.form.add(s); }
-		st.form.add("</table>");
+		for (String s : grouprows.values()) { st.form().add(s); }
+		st.form().add("</table>");
 		contentResizer(st);
 	}
 

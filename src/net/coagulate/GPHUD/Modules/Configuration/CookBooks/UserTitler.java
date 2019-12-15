@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class UserTitler extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/user-titler")
 	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("User Configurable Titler Cookbook"));
 		boolean act = false;
 		f.add(new Paragraph("This cookbook will enable the user to append their own textual data to the Titler text, it will perform the following steps:"));

@@ -49,7 +49,7 @@ public abstract class Module {
 	}
 
 	public void kvConfigPage(@Nonnull State st) {
-		st.form.add(new TextHeader("KV Configuration for module " + getName()));
+		st.form().add(new TextHeader("KV Configuration for module " + getName()));
 		GenericConfiguration.page(st, new SafeMap(), st.getInstance(), st.simulate(st.getCharacterNullable()), this);
 	}
 

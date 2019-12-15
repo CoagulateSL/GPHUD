@@ -30,7 +30,7 @@ public class EventsPages {
 
 	@URLs(url = "/events")
 	public static void listEvents(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("Events Listing"));
 		Set<Event> events = st.getInstance().getEvents();
@@ -47,9 +47,9 @@ public class EventsPages {
 
 	@URLs(url = "/events/create", requiresPermission = "events.create")
 	public static void createEvent(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		Modules.simpleHtml(st, "events.create", values);
-		Command c = Modules.getCommand(st, "events.create");
+		Command c = Modules.getCommandNullable(st, "events.create");
 	}
 
 
@@ -65,7 +65,7 @@ public class EventsPages {
 
 	public static void viewEvent(@Nonnull State st, SafeMap values, @Nonnull Event e, boolean brief) throws UserException, SystemException {
 		e.validate(st);
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("Event: " + e.getName()));
 
@@ -83,7 +83,7 @@ public class EventsPages {
 			z.openRow().add(new Cell(new Form(st, true, "./addlocation", "Add Zone", "event", e.getName()), 2));
 		}
 
-		String tz = st.getAvatarNullable().getTimeZone();
+		String tz = st.getAvatar().getTimeZone();
 		//f.add(new TextSubHeader("Schedule"));
 		Set<EventSchedule> schedule = e.getSchedule();
 		Table sch = new Table();
@@ -117,7 +117,6 @@ public class EventsPages {
 	@URLs(url = "/event/deleteschedule", requiresPermission = "events.schedule")
 	public static void deleteSchedule(@Nonnull State st, @Nonnull SafeMap values) {
 		String id = values.get("eventscheduleid");
-		if (id == null) { st.form.add(new TextError("Null id to remove?")); }
 		EventSchedule es = EventSchedule.get(Integer.parseInt(id));
 		es.validate(st);
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "DeleteSchedule", es.getEvent().getName(), es.describe("America/Los_Angeles") + " SLT", null, "Avatar deleted event schedule");
@@ -128,8 +127,9 @@ public class EventsPages {
 	@URLs(url = "/event/addschedule", requiresPermission = "events.schedule")
 	public static void addSchedule(@Nonnull State st, @Nonnull SafeMap values) {
 		String eventname = values.get("event");
-		String defaulttz = st.getAvatarNullable().getTimeZone();
+		String defaulttz = st.getAvatar().getTimeZone();
 		Event event = Event.find(st.getInstance(), eventname);
+		if (event==null) { st.form().add(new TextError("Event no longer exists")); return; }
 		event.validate(st);
 		if ("Add".equals(values.get("Add"))) {
 			try {
@@ -140,13 +140,13 @@ public class EventsPages {
 				Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "AddSchedule", event.getName(), null, DateTime.fromUnixTime(startdate, "America/Los_Angeles") + " SLT repeat " + UnixTime.duration(repeat), "Schedule added to event");
 				throw new RedirectionException(values);
 			} catch (UserException e) {
-				st.form.add(new TextError(e.getMessage()));
+				st.form().add(new TextError(e.getMessage()));
 			}
 		}
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new Hidden("event", eventname));
 		f.add(new TextSubHeader("Schedule event " + eventname));
-		String tz = st.getAvatarNullable().getTimeZone();
+		String tz = st.getAvatar().getTimeZone();
 		Table t = new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("").add("DD").add("MM").add("YYYY").add("HH").add("MM"));

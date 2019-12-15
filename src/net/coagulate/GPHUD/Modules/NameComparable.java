@@ -6,7 +6,6 @@
 package net.coagulate.GPHUD.Modules;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Wrapper for comparing objects by name in the modules workarea (DBObject handles database sorting).
@@ -20,7 +19,7 @@ public abstract class NameComparable implements Comparable<NameComparable> {
 	 *
 	 * @return String name, which will be used for sorting
 	 */
-	@Nullable
+	@Nonnull
 	public abstract String name();
 
 	/**

@@ -22,7 +22,7 @@ import java.util.Set;
 public abstract class UserLandingPage {
 	@URLs(url = "/")
 	public static void index(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Welcome to GPHUD"));
 		if (st.getInstanceNullable() == null) {
 			SessionSwitch.switchInstance(st, values);

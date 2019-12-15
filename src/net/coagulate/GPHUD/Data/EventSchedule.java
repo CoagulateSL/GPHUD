@@ -47,7 +47,7 @@ public class EventSchedule extends TableRow {
 		Set<EventSchedule> events = new TreeSet<>();
 		int now = UnixTime.getUnixTime();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
-			events.add(get(r.getIntNullable()));
+			events.add(get(r.getInt()));
 		}
 		return events;
 	}
@@ -62,7 +62,7 @@ public class EventSchedule extends TableRow {
 	public static Set<EventSchedule> get(@Nonnull Event e) {
 		Set<EventSchedule> schedule = new TreeSet<>();
 		for (ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where eventid=?", e.getId())) {
-			schedule.add(get(r.getIntNullable()));
+			schedule.add(get(r.getInt()));
 		}
 		return schedule;
 	}
@@ -91,10 +91,9 @@ public class EventSchedule extends TableRow {
 		return null;
 	}
 
-	@Nullable
+	@Nonnull
 	public Event getEvent() {
-		Integer id = getIntNullable("eventid");
-		if (id == null) { return null; }
+		int id = getInt("eventid");
 		return Event.get(id);
 	}
 
@@ -119,11 +118,11 @@ public class EventSchedule extends TableRow {
 	public net.coagulate.GPHUD.Interfaces.Outputs.Row asRow(String timezone) {
 		ResultsRow r = dqone( "select * from eventsschedule where eventsscheduleid=?", getId());
 		net.coagulate.GPHUD.Interfaces.Outputs.Row ret = new net.coagulate.GPHUD.Interfaces.Outputs.Row();
-		ret.add(fromUnixTime(r.getIntNullable("starttime"), timezone));
-		ret.add(fromUnixTime(r.getIntNullable("endtime"), timezone));
-		ret.add(duration(r.getIntNullable("endtime") - r.getIntNullable("starttime")));
-		ret.add(r.getIntNullable("started") == 1 ? "ACTIVE" : "");
-		ret.add(duration(r.getIntNullable("repeatinterval")));
+		ret.add(fromUnixTime(r.getInt("starttime"), timezone));
+		ret.add(fromUnixTime(r.getInt("endtime"), timezone));
+		ret.add(duration(r.getInt("endtime") - r.getInt("starttime")));
+		ret.add(r.getInt("started") == 1 ? "ACTIVE" : "");
+		ret.add(duration(r.getInt("repeatinterval")));
 		return ret;
 	}
 
@@ -152,7 +151,7 @@ public class EventSchedule extends TableRow {
 	 * @return Interval in seconds between repetitions of this event
 	 */
 	public int getRepeat() {
-		return getIntNullable("repeatinterval");
+		return getInt("repeatinterval");
 	}
 
 	/**
@@ -207,9 +206,9 @@ public class EventSchedule extends TableRow {
 	public void awardFinalXP(int minutes, int limit) {
 		endAllVisits();
 		for (ResultsRow r : dq("select characterid,sum(endtime-starttime) as totaltime,sum(awarded) as awarded from eventvisits where eventscheduleid=? group by characterid", getId())) {
-			int charid = r.getIntNullable("characterid");
-			int timespent = r.getIntNullable("totaltime");
-			int awarded = r.getIntNullable("awarded");
+			int charid = r.getInt("characterid");
+			int timespent = r.getInt("totaltime");
+			int awarded = r.getInt("awarded");
 			int wanttoaward = timespent / (minutes * 60);
 			if (wanttoaward > limit) { wanttoaward = limit; }
 			wanttoaward -= awarded;
@@ -232,8 +231,8 @@ public class EventSchedule extends TableRow {
 	@Nonnull
 	public String describe(String timezone) {
 		ResultsRow r = dqone( "select * from eventsschedule where eventsscheduleid=?", getId());
-		String ret = fromUnixTime(r.getIntNullable("starttime"), timezone);
-		ret += " - " + fromUnixTime(r.getIntNullable("endtime"), timezone);
+		String ret = fromUnixTime(r.getInt("starttime"), timezone);
+		ret += " - " + fromUnixTime(r.getInt("endtime"), timezone);
 		return ret;
 	}
 

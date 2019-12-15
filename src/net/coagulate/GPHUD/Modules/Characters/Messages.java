@@ -31,7 +31,7 @@ public abstract class Messages {
 	@URLs(url = "/messages/list")
 	public static void messagesList(@Nonnull State st, SafeMap values) throws SystemException, UserException {
 		Message m = st.getCharacter().getMessage();
-		Form f = st.form;
+		Form f = st.form();
 		if (m == null) {
 			f.add(new TextError("You have no messages."));
 			return;
@@ -48,7 +48,7 @@ public abstract class Messages {
 	}
 
 	public static void displayFactionInvite(@Nonnull State st, SafeMap values, @Nonnull JSONObject j) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		Char from = Char.get(j.getInt("from"));
 		CharacterGroup to = CharacterGroup.get(j.getInt("to"));
 		f.add(new TextSubHeader("Invite"));

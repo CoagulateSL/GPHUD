@@ -29,6 +29,10 @@ public class Cookies {
 	// i.e. 1/3rd of time gone (10 minutes), 20 minutes left, then refresh cookie.
 	@Nullable
 	private ResultsRow r;
+	private ResultsRow r() {
+		if (r==null) { throw new SystemException("No cookie loaded?"); }
+		return r;
+	}
 	private final String cookie;
 
 	/**
@@ -58,7 +62,7 @@ public class Cookies {
 	 */
 	public static void refreshCookie(String cookie) {
 		int refreshifexpiresbefore = getUnixTime() + COOKIE_REFRESH;
-		int toupdate = GPHUD.getDB().dqi( "select count(*) from cookies where cookie=? and expires<? and renewable=1", cookie, refreshifexpiresbefore);
+		int toupdate = GPHUD.getDB().dqinn( "select count(*) from cookies where cookie=? and expires<? and renewable=1", cookie, refreshifexpiresbefore);
 		if (toupdate == 0) { return; }
 		if (toupdate > 1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on cookie " + cookie);
@@ -123,13 +127,13 @@ public class Cookies {
 	 */
 	private void validateCookie() throws SystemException {
 		try { load(); } catch (NoDataException e) { throw new SystemException("Cookie Expired!", e); }
-		int expires = r.getIntNullable("expires");
+		int expires = r().getInt("expires");
 		if (expires < getUnixTime()) {
 			GPHUD.getDB().d("delete from cookies where cookie=?", cookie);
 			throw new SystemException("Cookie Expired!");
 		}
 		// if expires within 20 minutes, set expires to 30 minutes :P
-		if (r.getIntNullable("renewable") == 0) { return; }
+		if (r().getInt("renewable") == 0) { return; }
 		int now = getUnixTime();
 		if (expires < (now + COOKIE_REFRESH)) {
 			GPHUD.getDB().d("update cookies set expires=? where cookie=?", now + COOKIE_LIFESPAN, cookie);
@@ -148,7 +152,7 @@ public class Cookies {
 	 */
 	@Nullable
 	public User getAvatar() {
-		Integer avatarid = r.getIntNullable("avatarid");
+		Integer avatarid = r().getIntNullable("avatarid");
 		if (avatarid == null) { return null; }
 		return User.get(avatarid);
 	}
@@ -173,7 +177,7 @@ public class Cookies {
 	 */
 	@Nullable
 	public Char getCharacter() {
-		Integer entityid = r.getIntNullable("characterid");
+		Integer entityid = r().getIntNullable("characterid");
 		if (entityid == null) { return null; }
 		return Char.get(entityid);
 	}
@@ -194,7 +198,7 @@ public class Cookies {
 				}
 			} else {
 				// if instance /is/ null, then set it :P
-				setInstance(i);
+				setInstance(null);
 			}
 		}
 		GPHUD.getDB().d("update cookies set characterid=? where cookie=?", id, cookie);
@@ -208,7 +212,7 @@ public class Cookies {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		Integer instanceid = r.getIntNullable("instanceid");
+		Integer instanceid = r().getIntNullable("instanceid");
 		if (instanceid == null) { return null; }
 		return Instance.get(instanceid);
 	}

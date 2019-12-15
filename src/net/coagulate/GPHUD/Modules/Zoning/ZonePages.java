@@ -27,7 +27,7 @@ public abstract class ZonePages {
 
 	@URLs(url = "/configuration/zoning")
 	public static void listZones(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
 		for (Zone zone:st.getInstance().getZones()) {
@@ -57,7 +57,7 @@ public abstract class ZonePages {
 		boolean full = false;
 		boolean admin = false;
 		if (st.hasPermission("zoning.config")) { admin = true; }
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("Zone: " + z.getName()));
 		Table t = new Table();

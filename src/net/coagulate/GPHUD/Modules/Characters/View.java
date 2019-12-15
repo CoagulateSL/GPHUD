@@ -67,7 +67,7 @@ public abstract class View {
 		t.openRow();
 		t.add("Source").addNoNull(st.sourcename);
 		t.openRow();
-		t.add("SourceOwner").addNoNull(st.sourceowner.getGPHUDLink());
+		t.add("SourceOwner").addNoNull(st.getSourceowner().getGPHUDLink());
 		t.openRow();
 		t.add("SourceDev").addNoNull(st.getSourcedeveloper().getGPHUDLink());
 		return t;
@@ -75,7 +75,7 @@ public abstract class View {
 
 	@URLs(url = "/characters/view/*")
 	public static void viewCharacter(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		st.form.noForm();
+		st.form().noForm();
 		//System.out.println(st.uri);
 		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -89,7 +89,7 @@ public abstract class View {
 			String id = split[3];
 			Char c = Char.get(Integer.parseInt(id));
 			String attribute = split[4] + "." + split[5];
-			st.form.add(new ConfigurationHierarchy(st, st.getKVDefinition(attribute), st.simulate(c), values));
+			st.form().add(new ConfigurationHierarchy(st, st.getKVDefinition(attribute), st.simulate(c), values));
 			return;
 		}
 		throw new SystemException("Unknown character view mode (length:" + split.length + " URI:" + st.getDebasedURL());
@@ -101,7 +101,7 @@ public abstract class View {
 		String tz = st.getAvatarNullable().getTimeZone();
 		if (st.getCharacterNullable() == c) { full = true; }
 		if (st.hasPermission("Characters.ViewAll")) { full = true; }
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextSubHeader(c.getName()));
 		Table kvtable = new Table();
 		f.add(kvtable);

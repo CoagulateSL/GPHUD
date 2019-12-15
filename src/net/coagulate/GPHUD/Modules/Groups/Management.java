@@ -41,7 +41,7 @@ public abstract class Management {
 	}
 
 	public static void manage(@Nonnull State st, SafeMap values, @Nullable String typefilter) {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		Table t = new Table();
 		f.add(new TextHeader("Group Management"));
@@ -125,7 +125,7 @@ public abstract class Management {
 	}
 
 	public static void viewGroup(@Nonnull State st, SafeMap values, @Nonnull CharacterGroup group) throws SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader(group.getName()));
 		Table t = new Table();

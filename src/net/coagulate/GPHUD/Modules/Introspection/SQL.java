@@ -24,12 +24,12 @@ public class SQL {
 	@SideSubMenu.SideSubMenus(name = "SQL", priority = 9999)
 	public static void sqlIndex(@Nonnull State st, SafeMap values) throws UserException {
 		if (!DBConnection.sqlLogging()) {
-			st.form.add(new TextError("SQL auditing is disabled in this installation."));
+			st.form().add(new TextError("SQL auditing is disabled in this installation."));
 			return;
 		}
 
 		if (!st.isSuperUser()) {
-			st.form.add(new TextError("You are not permitted to view this information"));
+			st.form().add(new TextError("You are not permitted to view this information"));
 			return;
 		}
 
@@ -68,7 +68,7 @@ public class SQL {
 		}
 
 
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextSubHeader("By per call execution time"));
 		Table t = new Table();
 		f.add(t);

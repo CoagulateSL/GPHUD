@@ -35,7 +35,7 @@ public abstract class API {
 		proposedcommand = proposedcommand.replaceAll("/", ".");
 		proposedcommand = proposedcommand.replaceAll("[^A-Za-z0-9\\.]", "");  // limited character set.  XSS protect etc blah blah tainted user input blah
 
-		Command c = Modules.getCommand(st, proposedcommand);
+		Command c = Modules.getCommandNullable(st, proposedcommand);
 		if (c == null) {
 			f.add(new TextError("COMMAND NOT FOUND!"));
 			return;

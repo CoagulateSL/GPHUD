@@ -34,7 +34,7 @@ public class ConfigurationHierarchy extends Form {
 		add(kv.description()).br();
 		br();
 		String editperm = kv.editpermission();
-		if (editperm != null && !editperm.isEmpty()) { add("<b>Requires Permission:</b> " + editperm).br(); }
+		if (!editperm.isEmpty()) { add("<b>Requires Permission:</b> " + editperm).br(); }
 		String convey = kv.conveyas();
 		if (convey != null && !convey.isEmpty()) { add("<b>Conveyed as:</b> " + convey).br(); }
 		add("<b>KV Type:</b> " + kv.type()).br();
@@ -46,7 +46,7 @@ public class ConfigurationHierarchy extends Form {
 		String dboname = parameters.get("dbobject");
 		int id = -1;
 		if (parameters.containsKey("id")) { id = Integer.parseInt(parameters.get("id")); }
-		if (dboname != null && !dboname.isEmpty() && id >= 0) {
+		if (!dboname.isEmpty() && id >= 0) {
 			String value = "";
 			String magickey = "value-" + dboname + "-" + id;
 			if (parameters.containsKey(magickey)) { value = parameters.get(magickey); }
@@ -185,29 +185,23 @@ public class ConfigurationHierarchy extends Form {
 					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"\" " + ((selected == null) ? "checked=checked" : "") + ">Unset";
 					break;
 				case INTEGER:
-					if (value == null) { value = ""; }
 					editor = "<input size=10 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
 					break;
 				case TEXT:
-					if (value == null) { value = ""; }
 					editor = "<input size=80 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
 					break;
 				case FLOAT:
-					if (value == null) { value = ""; }
 					editor = "<input size=20 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
 					break;
 				case UUID:
-					if (value == null) { value = ""; }
 					editor = "<input size=36 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
 					break;
 				case COMMAND:
-					if (value == null) { value = ""; }
 					DropDownList d = DropDownList.getCommandsList(st, "value-" + codename, true);
 					d.setValue(value);
 					editor = d.asHtml(st, true);
 					break;
 				case COLOR:
-					if (value == null) { value = ""; }
 					editor = "<input size=30 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
 					break;
 				default:

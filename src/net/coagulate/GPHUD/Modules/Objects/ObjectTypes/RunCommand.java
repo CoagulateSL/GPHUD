@@ -33,7 +33,7 @@ public class RunCommand extends ObjectType {
 		t.add("Command").add(DropDownList.getCommandsList(st,"command",true));
 		t.openRow();
 		t.add(new Cell(new Button("Submit"),2));
-		st.form.add(t);
+		st.form().add(t);
 	}
 
 	@Override

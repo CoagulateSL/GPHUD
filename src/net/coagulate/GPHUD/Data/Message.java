@@ -137,9 +137,9 @@ public class Message extends TableRow {
 	 *
 	 * @return JSONObject payload
 	 */
-	@Nullable
+	@Nonnull
 	public String getJSON() {
-		return dqs( "select json from messages where messageid=?", getId());
+		return dqsnn( "select json from messages where messageid=?", getId());
 	}
 
 	/**

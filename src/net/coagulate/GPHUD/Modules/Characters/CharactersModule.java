@@ -53,7 +53,7 @@ public class CharactersModule extends ModuleAnnotation {
 		template = template.substring(2, template.length() - 2);
 		if (template.startsWith("TARGET:")) {
 			template = template.substring(7);
-			st = st.getTarget();
+			st = st.getTargetNullable();
 			if (st == null) { throw new UserException("No target!"); }
 		}
 		Attribute attr = null;

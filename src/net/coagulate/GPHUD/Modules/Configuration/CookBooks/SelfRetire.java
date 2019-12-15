@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class SelfRetire extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/self-retire")
 	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Self Retirement Cookbook"));
 		boolean act = false;
 		f.add(new Paragraph("This cookbook will enable the user to retire their own character through the menu."));

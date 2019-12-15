@@ -148,7 +148,7 @@ public class Objects extends TableRow {
 		return "objects";
 	}
 
-	@Nullable
+	@Nonnull
 	public static Objects connect(State st, String uuid, String name, @Nonnull Region region, @Nonnull User owner, String location, String url, int version) {
 		Objects object=findOrNull(st,uuid);
 		if (object==null) {

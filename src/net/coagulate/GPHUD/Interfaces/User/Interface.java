@@ -380,7 +380,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		URL content = Modules.getURL(st, st.getDebasedNoQueryURL());
 		// call authenticator, it will return null if it managed something, otherwise it returns a login form which we'll render and exit
 		if (content.requiresAuthentication()) { f = authenticationHook(st, values); }
-		if (f!=null) { st.form=f; return f.asHtml(st,isRich()); }
+		if (f!=null) { st.setForm(f); return f.asHtml(st,isRich()); }
 		// some kinda login information exists
 		st.fleshOut();
 		content = Modules.getURL(st, st.getDebasedNoQueryURL());
@@ -389,7 +389,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (st.getInstanceNullable()!=null && !content.getModule().isEnabled(st)) { f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString())); }
 		//System.out.println("Post post-auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
 		f = new Form();
-		st.form = f;
+		st.setForm(f);
 		if (!content.requiresPermission().isEmpty()) {
 			if (!st.hasPermission(content.requiresPermission())) {
 				st.logger().log(WARNING, "Attempted access to " + st.getDebasedURL() + " which requires missing permission " + content.requiresPermission());
@@ -405,7 +405,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	@Nonnull
 	public SafeMap getPostValues(@Nonnull State st) {
 		SafeMap values = new SafeMap();
-		Form f = st.form;
+		Form f = st.form();
 		HttpRequest req = st.req;
 		// needs to have an entity to be a post
 		if (req instanceof HttpEntityEnclosingRequest) {
@@ -519,7 +519,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		t.add("Password:").add(new PasswordInput("password")).closeRow();
 		t.add(new Button("Submit"));
 		login.add(t);
-		st.form = login;
+		st.setForm(login);
 		String username = values.get("username");
 		String password = values.get("password");
 		String failed = "";
@@ -603,7 +603,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			selectavatars.add(b);
 			selectavatars.add("<br>");
 		}
-		st.form = selectavatars;
+		st.setForm(selectavatars);
 		for (Char e : characters) {
 			if (values.get(e.getName()) != null && !values.get(e.getName()).isEmpty()) {
 				st.setCharacter(e);

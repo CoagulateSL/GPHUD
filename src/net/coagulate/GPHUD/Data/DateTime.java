@@ -45,7 +45,7 @@ public abstract class DateTime {
 	public static Row inputDateTimeRow(String prefix, @Nonnull SafeMap values, String defaulttimezone) {
 		Row t = new Row();
 		String tz = values.get(prefix + "timezone");
-		if (tz == null || tz.isEmpty()) { tz = defaulttimezone; }
+		if (tz.isEmpty()) { tz = defaulttimezone; }
 		t.add(prefix);
 		t.add(ti(prefix, "day", 2, values));
 		t.add(ti(prefix, "month", 2, values));
@@ -108,7 +108,7 @@ public abstract class DateTime {
 	public static int outputDateTime(String prefix, @Nonnull SafeMap values, String defaulttimezone) throws UserException {
 		try {
 			String timezone = values.get(prefix + "timezone");
-			if (timezone == null || timezone.isEmpty()) {
+			if (timezone.isEmpty()) {
 				timezone = defaulttimezone;
 			}
 			int day = Integer.parseInt(values.get(prefix + "day"));

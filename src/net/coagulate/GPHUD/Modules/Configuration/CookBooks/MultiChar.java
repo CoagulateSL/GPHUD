@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class MultiChar extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/multi-char")
 	public static void createForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Multiple Character Cookbook"));
 		boolean act = false;
 		f.add(new Paragraph("This cookbook will enable the user to create multiple characters and not assume avatar naming."));

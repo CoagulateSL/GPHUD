@@ -19,7 +19,7 @@ public class PublishingConfig
 {
 	@URL.URLs(url = "/configuration/publishing")
 	public static void configPage(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Links to published pages"));
 		f.add(new Text("<p><i><b>Note:</b> This feature is in early release, please feel free to submit ideas for published pages, layouts, options, formatting etc</i></p>"));
 		f.noForm();

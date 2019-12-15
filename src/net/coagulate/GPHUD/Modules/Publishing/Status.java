@@ -14,7 +14,7 @@ import java.util.TreeMap;
 public class Status extends Publishing {
 	@URL.URLs(url="/publishing/status")
 	public static void statusSample(@Nonnull State st, SafeMap values) {
-		st.form.add(new TextHeader("Instance Status"));
+		st.form().add(new TextHeader("Instance Status"));
 		published(st,"status/" + st.getInstance().getId());
 	}
 
@@ -25,7 +25,7 @@ public class Status extends Publishing {
 
 	@URL.URLs(url="/publishing/statusfull")
 	public static void statusFullSample(@Nonnull State st, SafeMap values) {
-		st.form.add(new TextHeader("Instance Status"));
+		st.form().add(new TextHeader("Instance Status"));
 		published(st,"statusfull/" + st.getInstance().getId());
 	}
 
@@ -37,7 +37,7 @@ public class Status extends Publishing {
 	private static void status(@Nonnull State st, SafeMap values, boolean listusers) {
 		Instance instance = Instance.get(getPartInt(st, 1));
 		st.setInstance(instance);
-		st.form.add("<b>"+instance.getName()+"</b> <i>GPHUD</i><br><br>");
+		st.form().add("<b>"+instance.getName()+"</b> <i>GPHUD</i><br><br>");
 		StringBuilder line= new StringBuilder("Regions: ");
 		boolean first=true;
 		int players=0;
@@ -52,11 +52,11 @@ public class Status extends Publishing {
 				playerlist.put(c.getOwner().getName(),c.getOwner().getName()+" <i>as</i> "+c.getName()+"<br>");
 			}
 		}
-		st.form.add(line+"<br>");
-		st.form.add(players+" players online.<br>");
+		st.form().add(line+"<br>");
+		st.form().add(players+" players online.<br>");
 		if (listusers) {
 			for (String s : playerlist.values()) {
-				st.form.add(s);
+				st.form().add(s);
 			}
 		}
 		contentResizer(st);

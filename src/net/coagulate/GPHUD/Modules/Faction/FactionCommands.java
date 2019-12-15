@@ -29,11 +29,10 @@ import javax.annotation.Nullable;
  */
 public class FactionCommands {
 
-	@Nullable
+	@Nonnull
 	@Template(name = "FACTION", description = "Current faction name")
 	public static String getFactionName(@Nullable State st, String key) {
 		if (st == null) { throw new UserException("State is null"); }
-		if (st.getCharacter() == null) { throw new UserException("Character is null"); }
 		CharacterGroup faction = st.getCharacter().getGroup("Faction");
 		if (faction == null) { return ""; }
 		return faction.getName();

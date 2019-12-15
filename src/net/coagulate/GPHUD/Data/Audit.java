@@ -116,7 +116,7 @@ public abstract class Audit {
 					newvalue,
 					note,
 					st.sourcename,
-					getId(st.sourceowner),
+					getId(st.getSourceowner()),
 					getId(st.getSourcedeveloper()),
 					getId(st.sourceregion),
 					st.sourcelocation);

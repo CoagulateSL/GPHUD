@@ -147,8 +147,8 @@ public class Roller {
 	@Nonnull
 	@Templater.Template(name = "TARGET:ROLL", description = "Any TARGET made roll")
 	public static String getTargetRoll(@Nonnull State st, String key) {
-		if (st.getTarget() == null) { throw new UserException("No target!"); }
-		State target = st.getTarget();
+		if (st.getTargetNullable() == null) { throw new UserException("No target!"); }
+		State target = st.getTargetNullable();
 		if (target.roll == null) { throw new UserException("Target not rolled!"); }
 		return target.roll.toString();
 	}
@@ -202,7 +202,7 @@ public class Roller {
 				allrolls = allrolls + num;
 			}
 			total = total + bias;
-			List<Integer> targetrolls = roll(st.getTarget(), targetdice, targetsides);
+			List<Integer> targetrolls = roll(st.getTargetNullable(), targetdice, targetsides);
 			for (int num : targetrolls) {
 				if (!"".equals(targetallrolls)) { targetallrolls += ", "; }
 				targettotal = targettotal + num;
@@ -227,8 +227,8 @@ public class Roller {
 		}
 		event += "(" + total + "v" + targettotal + ")";
 		st.roll = total;
-		st.getTarget().roll = targettotal;
-		Audit.audit(st, Audit.OPERATOR.CHARACTER, st.getTarget().getAvatarNullable(), st.getTarget().getCharacter(), "Roll", null, null, "" + total, event);
+		st.getTargetNullable().roll = targettotal;
+		Audit.audit(st, Audit.OPERATOR.CHARACTER, st.getTargetNullable().getAvatarNullable(), st.getTargetNullable().getCharacter(), "Roll", null, null, "" + total, event);
 		return new SayResponse(event, st.getCharacter().getName());
 	}
 
@@ -258,7 +258,7 @@ public class Roller {
 		if (!st.hasModule("Health")) { throw new UserException("Health module is required to use rollDamageAgainst"); }
 		if (damage == null) { damage = "1"; }
 		Response response = rollAgainst(st, target, dice, sides, bias, targetdice, targetsides, targetbias, reason);
-		if (st.roll > st.getTarget().roll) {
+		if (st.roll > st.getTargetNullable().roll) {
 			damage = damage.replaceAll("==", "--");
 			String output = Templater.template(st, damage, true, true);
 			Damage.apply(st, target, Integer.parseInt(output), reason);

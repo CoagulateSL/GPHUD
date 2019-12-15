@@ -26,7 +26,7 @@ public class SessionSwitch {
 
 	@URLs(url = "/switch/instance")
 	public static void switchInstance(@Nonnull State st, @Nonnull SafeMap values) throws UserException {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
 		for (Instance i : Instance.getInstances()) {
@@ -50,7 +50,7 @@ public class SessionSwitch {
 	@URLs(url = "/switch/character")
 	public static void switchCharacter(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		if (st.getInstanceNullable() == null) { throw new RedirectionException("/switch/instance"); }
-		Form f = st.form;
+		Form f = st.form();
 		if (!values.get("charid").isEmpty()) {
 			Char c = Char.get(Integer.parseInt(values.get("charid")));
 			c.validate(st);

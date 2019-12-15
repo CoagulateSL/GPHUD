@@ -29,7 +29,7 @@ public class ObjectManagement {
 
 	@URL.URLs(url = "/configuration/objects",requiresPermission = "Objects.View")
 	public static void index(@Nonnull State st, @Nonnull SafeMap map) {
-		Form f=st.form;
+		Form f= st.form();
 		f.add(new TextHeader("Object Management"));
 		f.add(new TextSubHeader("Connected Objects"));
 		if (map.containsKey("reboot") && st.hasPermission("Objects.RebootObjects")) {
@@ -71,7 +71,7 @@ public class ObjectManagement {
 			Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,"Create","ObjectType",null,map.get("name"),"Created new object type of behaviour "+map.get("behaviour"));
 			throw new RedirectionException("/GPHUD/configuration/objects/objecttypes/"+ot.getId());
 		}
-		Form f=st.form;
+		Form f= st.form();
 		Table input=new Table(); f.add(input);
 		input.add("Name").add(new TextInput("name"));
 		DropDownList behaviours= ObjectType.getDropDownList(st);
@@ -86,7 +86,7 @@ public class ObjectManagement {
 		if (parts.length<5) { throw new UserException("URI misformed, no ID found"); }
 		ObjectTypes t=ObjectTypes.get(Integer.parseInt(parts[4]));
 		t.validate(st);
-		Form f=st.form;
+		Form f= st.form();
 		f.add(new TextHeader("Object Type: "+t.getName()));
 		ObjectType ot=ObjectType.materialise(st,t);
 		ot.update(st);

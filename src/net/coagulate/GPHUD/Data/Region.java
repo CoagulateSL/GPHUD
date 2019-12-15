@@ -87,11 +87,18 @@ public class Region extends TableRow {
 	 * @return Region object for that region, or null if none is found.
 	 */
 	@Nullable
-	public static Region find(String name, boolean allowretired) {
+	public static Region findNullable(String name, boolean allowretired) {
 		try {
 			Integer regionid = GPHUD.getDB().dqi("select regionid from regions where name=?", name);
 			return get(regionid, allowretired);
 		} catch (NoDataException e) { return null; }
+	}
+
+	@Nonnull
+	public static Region find(String name, boolean allowretired) {
+		Region r=findNullable(name,allowretired);
+		if (r==null) { throw new UserException("No active region named '"+name+"' found"); }
+		return r;
 	}
 
 	/**

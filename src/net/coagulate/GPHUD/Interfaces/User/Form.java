@@ -113,7 +113,7 @@ public class Form implements Renderable {
 		return response.toString();
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(list);
@@ -147,7 +147,7 @@ public class Form implements Renderable {
 				Input i = (Input) r;
 				// if match
 				//System.out.println("Searching "+name+" against "+i.getName());
-				if (i != null && i.getName().equalsIgnoreCase(name)) { return i; }
+				if (i.getName().equalsIgnoreCase(name)) { return i; }
 			}
 			// no match, recurse
 			Set<Renderable> subsub = r.getSubRenderables();

@@ -22,7 +22,7 @@ public abstract class KVMap {
 	@URLs(url = "/introspection/kvmap")
 	@SideSubMenus(name = "KeyValue Map", priority = 10)
 	public static void kvmap(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("KV Mappings"));
 		Table t = new Table();
 		f.add(t);

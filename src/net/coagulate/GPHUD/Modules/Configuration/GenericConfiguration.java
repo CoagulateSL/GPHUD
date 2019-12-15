@@ -36,7 +36,7 @@ public class GenericConfiguration {
 	 * @param dbo    Context we are looking at (shows stuff specific to this object)
 	 */
 	public static void page(@Nonnull State st, SafeMap values, @Nonnull TableRow dbo, @Nonnull State simulated, @Nullable Module m) {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		Table kvtable = new Table();
 		f.add(kvtable);

@@ -40,7 +40,7 @@ public class AliasCommand extends Command {
 		definition = newdef;
 		this.name = name;
 		if (st.hasModule(definition.getString("invoke"))) {
-			targetcommand = Modules.getCommand(st, definition.getString("invoke"));
+			targetcommand = Modules.getCommandNullable(st, definition.getString("invoke"));
 		} else {
 			targetcommand = null;
 			fail = "Module " + Modules.extractModule(definition.getString("invoke")) + " is not enabled.";

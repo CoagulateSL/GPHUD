@@ -29,7 +29,7 @@ import java.util.Map;
 public abstract class Configuration {
 	@URLs(url = "/configuration/alias", requiresPermission = "Alias.Config")
 	public static void aliasesList(@Nonnull State st, @Nonnull SafeMap values) throws SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextSubHeader("Alias Configuration"));
 
@@ -79,10 +79,10 @@ public abstract class Configuration {
 				Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Alias", null, values.get("command"), "Avatar created new alias");
 				throw new RedirectionException("./view/" + newalias.getId());
 			} catch (UserException e) {
-				st.form.add(new Paragraph(new TextError("Creation failed : " + e.getMessage())));
+				st.form().add(new Paragraph(new TextError("Creation failed : " + e.getMessage())));
 			}
 		}
-		Form f = st.form;
+		Form f = st.form();
 		Table t = new Table();
 		f.add(t);
 		t.openRow().add("Alias Name").add(new TextInput("name"));
@@ -100,7 +100,7 @@ public abstract class Configuration {
 
 	public static void viewAlias(@Nonnull State st, @Nonnull SafeMap values, @Nonnull Alias a) throws SystemException, UserException {
 		a.validate(st);
-		Form f = st.form;
+		Form f = st.form();
 		if ("Update".equals(values.get("Update"))) {
 			if (st.hasPermissionOrAnnotateForm("Alias.Config")) {
 				JSONObject old = a.getTemplate();

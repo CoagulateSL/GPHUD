@@ -4,7 +4,6 @@ import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Modules.KV;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Wraps a dynamic attribute KV for characters.
@@ -24,7 +23,7 @@ public class AttributeKV extends KV {
 		return true;
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String name() {
 		return attribute.getName();

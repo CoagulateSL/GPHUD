@@ -72,7 +72,7 @@ public class GSVM {
 		}
 	}
 
-	public GSVM(@Nullable byte[] code) { bytecode = code; }
+	public GSVM(@Nonnull byte[] code) { bytecode = code; }
 
 	@Nonnull
 	public String toHtml() {
@@ -139,7 +139,7 @@ public class GSVM {
 				ByteCode.load(this).execute(st,this,false);
 			}
 		} catch (Throwable t) {
-			if (t instanceof SystemException || t instanceof GSInternalError) {
+			if (t instanceof SystemException) {
 				throw new SystemException("VM exception: "+t.toString()+" "+at(),t);
 			}
 			if (t instanceof UserException) { throw new UserException("Script error: "+t.toString()+" "+at(),t); }

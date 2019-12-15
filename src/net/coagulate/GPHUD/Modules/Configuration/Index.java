@@ -26,7 +26,7 @@ public abstract class Index {
 
 	@URLs(url = "/configuration/")
 	public static void createForm(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("GPHUD Module Configuration"));
 		f.add(new Paragraph("Here, the <b>INSTANCE OWNER</b> may enable and disable certain (non-core) modules to enable or disable functionality."));
@@ -99,15 +99,15 @@ public abstract class Index {
 	public static void kvDetailPage(@Nonnull State st, @Nonnull SafeMap values) {
 		String kvname = st.getDebasedURL().replaceFirst("/configuration/view/", "").replaceFirst("/", ".");
 		KV kv = st.getKVDefinition(kvname);
-		st.form.noForm();
-		st.form.add(new ConfigurationHierarchy(st, kv, st, values));
+		st.form().noForm();
+		st.form().add(new ConfigurationHierarchy(st, kv, st, values));
 	}
 
 	@URLs(url = "/configuration/*")
 	public static void genericConfigurationPage(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
 		String module = st.getDebasedURL().replaceFirst("/configuration/", "");
 		String key = null;
-		st.form.noForm();
+		st.form().noForm();
 		if (module.contains("/")) {
 			String[] split = module.split("/");
 			if (split.length == 2) {
@@ -121,7 +121,7 @@ public abstract class Index {
 		} else {
 			KV kv = st.getKVDefinition(module + "." + key);
 
-			st.form.add(new ConfigurationHierarchy(st, kv, st.simulate(st.getCharacter()), values));
+			st.form().add(new ConfigurationHierarchy(st, kv, st.simulate(st.getCharacter()), values));
 		}
 	}
 }

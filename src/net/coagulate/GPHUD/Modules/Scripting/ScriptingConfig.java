@@ -36,7 +36,7 @@ import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULA
 public class ScriptingConfig {
 	@URL.URLs(url = "/configuration/scripting")
 	public static void configPage(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Scripting Module"));
 		f.add(new Paragraph("List of scripts"));
 		f.add(Scripts.getTable(st.getInstance()));
@@ -46,7 +46,7 @@ public class ScriptingConfig {
 
 	@URL.URLs(url = "/configuration/scripting/create", requiresPermission = "Scripting.Create")
 	public static void createScript(@Nonnull State st, @Nonnull SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		if (!values.get("scriptname").isEmpty()) {
 			Scripts.create(st, values.get("scriptname"));
 			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Create",values.get("scriptname"),"","","Created script");
@@ -59,7 +59,7 @@ public class ScriptingConfig {
 
 	@URL.URLs(url = "/configuration/scripting/edit/*", requiresPermission = "Scripting.Create")
 	public static void editScript(@Nonnull State st, @Nonnull SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		String id = split[split.length - 1];

@@ -73,11 +73,11 @@ public class ScriptRuns extends TableRow {
 		return Char.get(getIntNullable("respondant"));
 	}
 
-	@Nullable
+	@Nonnull
 	public byte[] getInitialiser() {
 		return getBytes("initialiser");
 	}
-	@Nullable
+	@Nonnull
 	public byte[] getByteCode() {
 		return getBytes("bytecode");
 	}

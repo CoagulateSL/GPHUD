@@ -22,7 +22,7 @@ public abstract class ManagePermissions {
 	@URLs(url = "/introspection/permissions")
 	@SideSubMenus(name = "Permissions", priority = 20)
 	public static void createForm(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("Permission registrations"));
 		Table t = new Table();
 		f.add(t);

@@ -56,7 +56,7 @@ public abstract class Login {
 		////// THIS IS IMPORTANT TO RESOLVE A TARGET FROM AN AVATAR LATER WHEN TARGETTING FOR EXAMPLE
 
 		String url = null;
-		if (st.json != null) { try { url = st.json.getString("callback"); } catch (JSONException e) {} }
+		if (st.json() != null) { try { url = st.json().getString("callback"); } catch (JSONException e) {} }
 		if (url == null || "".equals(url)) {
 			st.logger().log(WARNING, "No callback URL sent with character registration");
 			return new ErrorResponse("You are not set up with a callback URL");
@@ -119,7 +119,6 @@ public abstract class Login {
 							json.put("arg0description", "You must select a " + a.getName() + " for your Character before you can use it"+maxstring);
 							json.put("arg0type","TEXTBOX");
 							return new JSONResponse(json);
-						} else {
 						}
 						break;
 					case GROUP:
@@ -135,7 +134,6 @@ public abstract class Login {
 							json.put("attribute", a.getName());
 							json.put("arg0description", "You must select a " + a.getName() + " for your Character before you can use it");
 							return new JSONResponse(json);
-						} else {
 						}
 						break;
 					case POOL:

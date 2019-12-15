@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 public class Logout {
 	@URLs(url = "/logout")
 	public static void logout(@Nonnull State st, SafeMap values) {
-		st.form.add("Good Bye!");
+		st.form().add("Good Bye!");
 		if (st.cookiestring != null) { Cookies.delete(st.cookiestring); }
 		st.cookie = null;
 		st.cookiestring = null;

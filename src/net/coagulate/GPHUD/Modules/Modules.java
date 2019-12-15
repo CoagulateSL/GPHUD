@@ -176,8 +176,15 @@ public abstract class Modules {
 	}
 
 	@Nullable
-	public static Command getCommand(State st, @Nonnull String proposedcommand) throws UserException, SystemException {
+	public static Command getCommandNullable(State st, @Nonnull String proposedcommand) throws UserException, SystemException {
 		return get(st, proposedcommand).getCommand(st, extractReference(proposedcommand));
+	}
+
+	@Nonnull
+	public static Command getCommand(State st, @Nonnull String proposedcommand) throws UserException, SystemException {
+		Command c=getCommandNullable(st,proposedcommand);
+		if (c==null) { throw new UserException("Unable to locate command "+proposedcommand); }
+		return c;
 	}
 
 	public static void getHtmlTemplate(@Nonnull State st, @Nonnull String qualifiedcommandname) throws UserException, SystemException {
@@ -204,7 +211,7 @@ public abstract class Modules {
 		String command = words[0].toLowerCase();
 		if (command.startsWith("*")) { command = command.substring(1); }
 		Command c = null;
-		try { c = getCommand(st, command); } catch (UserException e) {
+		try { c = getCommandNullable(st, command); } catch (UserException e) {
 			return new ErrorResponse("Unable to find command '" + command + "' - " + e.getLocalizedMessage());
 		}
 		if (c == null) { return new ErrorResponse("Failed to find command " + command); }

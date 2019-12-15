@@ -22,6 +22,7 @@ public class ConveyanceKV extends KV {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public String name() {
 		return name;

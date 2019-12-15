@@ -80,6 +80,6 @@ public abstract class Teleporter extends ObjectType {
 		t.add("HUD says to wearer").add(new TextInput("hudsays",json.optString("hudsays","")));
 		t.openRow();
 		t.add(new Cell(new Button("Update"),2));
-		st.form.add(t);
+		st.form().add(t);
 	}
 }

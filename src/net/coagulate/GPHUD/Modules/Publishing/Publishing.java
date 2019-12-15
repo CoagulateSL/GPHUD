@@ -18,11 +18,11 @@ public class Publishing {
 		return split[part+2];
 	}
 
-	static void contentResizer(@Nonnull State st) {st.form.add("<script type=\"text/javascript\" src=\"https://coagulate.sl/resources/iframeResizer.contentWindow.min.js\"></script>");}
+	static void contentResizer(@Nonnull State st) {st.form().add("<script type=\"text/javascript\" src=\"https://coagulate.sl/resources/iframeResizer.contentWindow.min.js\"></script>");}
 
 	static void published(@Nonnull State st, String inline) {
 		String id="GPHudFrame"+((int)((Math.random()*1000000.0)));
-		Form f=st.form;
+		Form f= st.form();
 		example(f,"<style>\n" +
 				"  iframe {\n" +
 				"    width: 1px;\n" +

@@ -33,7 +33,7 @@ import java.util.Set;
 public abstract class Management {
 	@URLs(url = "/factions")
 	public static void manage(@Nonnull State st, SafeMap values) {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		Table t = new Table();
 		f.add(new TextHeader("Faction Management"));
@@ -84,12 +84,12 @@ public abstract class Management {
 		if ("Faction".equals(faction.getType())) {
 			viewFaction(st, values, faction);
 		} else {
-			st.form.add(new TextError("This is not a faction group"));
+			st.form().add(new TextError("This is not a faction group"));
 		}
 	}
 
 	public static void viewFaction(@Nonnull State st, SafeMap values, @Nonnull CharacterGroup faction) throws SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader(faction.getName()));
 		Table t = new Table();

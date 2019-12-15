@@ -34,7 +34,7 @@ public abstract class ViewInstance {
 		boolean full = false;
 		if (st.isSuperUser()) { full = true; }
 		Table map = new Table();
-		st.form.add(map);
+		st.form().add(map);
 		map.openRow().add("Name").add(i.getName());
 		map.openRow().add("Owner").add(i.getOwner().getGPHUDLink());
 		for (Region r : i.getRegions(false)) {

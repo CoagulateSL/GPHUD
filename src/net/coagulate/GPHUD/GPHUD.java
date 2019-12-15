@@ -46,12 +46,11 @@ public class GPHUD {
 	@Nullable
 	private static DBConnection db = null;
 
-	public static Logger getLogger(String subspace) { return Logger.getLogger(log.getName() + "." + subspace); }
+	public static Logger getLogger(String subspace) { return Logger.getLogger(log().getName() + "." + subspace); }
 
 	@Nonnull
 	public static Logger getLogger() {
-		if (log==null) { throw new SystemException("Accessing logger before logger is initialised"); }
-		return log;
+		return log();
 	}
 
 	@Nonnull
@@ -75,29 +74,29 @@ public class GPHUD {
 		LogHandler.initialise();
 		log = Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
-		log.config("GPHUD Server starting up... " + VERSION);
+		log().config("GPHUD Server starting up... " + VERSION);
 		try {
 			hostname = java.net.InetAddress.getLocalHost().getHostName().replaceAll(".coagulate.net", "");
-			log.config("Server operating on node " + Interface.getNode());
+			log().config("Server operating on node " + Interface.getNode());
 			validateNode(hostname);
 		} catch (UnknownHostException e) {
 			throw new SystemException("Unable to resolve local host name", e);
 		}
 
-		log.config("Loading configuration file...");
+		log().config("Loading configuration file...");
 		if (args.length != 1) {
-			log.severe("Incorrect number of command line parameters, should be exactly 1, the location of a configuration file.");
+			log().severe("Incorrect number of command line parameters, should be exactly 1, the location of a configuration file.");
 			System.exit(1);
 		}
 
 		// config
 		loadConfig(args[0]);
-		log.config("Loaded " + CONFIG.size() + " configuration elements from the file");
+		log().config("Loaded " + CONFIG.size() + " configuration elements from the file");
 		validateConfig();
 
 		if ("1".equals(get("DEV"))) {
 			DEV = true;
-			log.config("Configuration declares us as a DEVELOPMENT NODE");
+			log().config("Configuration declares us as a DEVELOPMENT NODE");
 		}
 		// Initialise the Database layer
 		dbInit();
@@ -109,11 +108,11 @@ public class GPHUD {
 		HTTPListener.initialise(Integer.parseInt(get("PORT")));
 		//
 
-		log.config("Database is ready, HTTP socket is open, startup has successfully completed.");
+		log().config("Database is ready, HTTP socket is open, startup has successfully completed.");
 		// twiddle thumbs
-		log.info("Main thread entering pre-maintenance sleep.");
+		log().info("Main thread entering pre-maintenance sleep.");
 		syncToMinute();
-		log.info("Main thread entering maintenance loop.");
+		log().info("Main thread entering maintenance loop.");
 
 		while (true) // until shutdown time, however we do that
 		{
@@ -123,25 +122,25 @@ public class GPHUD {
 				try { Thread.sleep(45000); } catch (InterruptedException e) { }
 				if (thread.isAlive()) {
 					thread.interrupt();
-					log.warning("Maintenance loop ran for 45 seconds, interrupting!");
+					log().warning("Maintenance loop ran for 45 seconds, interrupting!");
 				}
 				try { Thread.sleep(5000); } catch (InterruptedException e) { }
 				if (thread.isAlive()) {
-					log.severe("Maintenance loop ran for 45 seconds and failed to interrupt within 5 seconds!");
+					log().severe("Maintenance loop ran for 45 seconds and failed to interrupt within 5 seconds!");
 				}
 				try { Thread.sleep(5000); } catch (InterruptedException e) { }
 				if (thread.isAlive()) {
-					log.severe("Maintenance failed interrupt, trying to force STOP()!");
+					log().severe("Maintenance failed interrupt, trying to force STOP()!");
 					thread.stop();
 				}
 				syncToMinute();
 				if (thread.isAlive()) {
-					log.severe("Maintenance loop failed to stop().  Terminating application.");
+					log().severe("Maintenance loop failed to stop().  Terminating application.");
 					System.exit(4);
 				}
 
 			} catch (Exception e) {
-				log.log(SEVERE, "Maintenance thread threw unchecked exception?", e);
+				log().log(SEVERE, "Maintenance thread threw unchecked exception?", e);
 			}
 		}
 		// error, unreachable code :P
@@ -160,13 +159,13 @@ public class GPHUD {
 					int splitat = line.indexOf('=');
 					if (splitat == -1 || splitat == (line.length() - 1)) {
 						// = not found, or the split (=) is the last character, so finding the 'value' would probably array out of bounds.  Setting blank values is not supported :P
-						log.warning("Invalid configuration line: " + line);
+						log().warning("Invalid configuration line: " + line);
 					} else {
 						String key = line.substring(0, splitat);
 						String value = line.substring(splitat + 1);
 						key = key.toUpperCase();
 						if (CONFIG.containsKey(key)) {
-							log.warning("Duplicate definition of " + key + " in configuration file, using last declaration");
+							log().warning("Duplicate definition of " + key + " in configuration file, using last declaration");
 						}
 						CONFIG.put(key, value);
 					}
@@ -174,23 +173,22 @@ public class GPHUD {
 				line = file.readLine();
 			}
 		} catch (FileNotFoundException e) {
-			log.log(SEVERE, "File not found accessing " + filename, e);
+			log().log(SEVERE, "File not found accessing " + filename, e);
 			System.exit(1);
 		} catch (IOException e) {
-			log.log(SEVERE, "IOException reading configuration file " + filename, e);
+			log().log(SEVERE, "IOException reading configuration file " + filename, e);
 			System.exit(1);
 		}
 	}
 
 	private static void validateConfig() {
 		// basically a list of musthaves
-		boolean ok = true; // allow us to make all checks rather than bail at the first problem
-		ok = requireConfig("DBHOST") && ok;
+		boolean ok = requireConfig("DBHOST");
 		ok = requireConfig("DBNAME") && ok;
 		ok = requireConfig("DBUSER") && ok;
 		ok = requireConfig("DBPASS") && ok;
 		if (!ok) {
-			log.severe("Failed configuration validation.  Exiting.");
+			log().severe("Failed configuration validation.  Exiting.");
 			System.exit(1);
 		}
 		// support some default settings too
@@ -202,7 +200,7 @@ public class GPHUD {
 	private static boolean requireConfig(String keyword) {
 		keyword = keyword.toUpperCase();
 		if (CONFIG.containsKey(keyword)) { return true; }
-		log.severe("Missing mandatory configuration element '" + keyword + "'");
+		log().severe("Missing mandatory configuration element '" + keyword + "'");
 		return false;
 	}
 
@@ -266,13 +264,13 @@ public class GPHUD {
 		try {
 			for (ResultsRow row:getDB().dq("select characterid,regionid from characters where url=?",url)) {
 				try {
-					Integer charid=row.getIntNullable("characterid");
-					Integer regionid=row.getIntNullable("regionid");
+					int charid=row.getInt("characterid");
+					int regionid=row.getInt("regionid");
 					Char ch=Char.get(charid);
 					State st=State.getNonSpatial(ch);
-					Integer howmany=getDB().dqi("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
+					int howmany=getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
 					if (howmany>0) {
-						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatarNullable().getName()+" as character "+st.getCharacter().getName()+", not reported as region leaver.");
+						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName()+", not reported as region leaver.");
 					}
 					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
 					getDB().d("update objects set url=null where url=?",url);
@@ -294,13 +292,13 @@ public class GPHUD {
 		GPHUD.nodeid = nodeid;
 		log = Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
-		log.config("GPHUD as module starting up... " + VERSION);
-		log.config("Server operating on node " + hostname);
+		log().config("GPHUD as module starting up... " + VERSION);
+		log().config("Server operating on node " + hostname);
 		//Classes.initialise(); if (1==1) { System.exit(0); }
 
 		if (isdev) {
-			DEV = isdev;
-			log.config("Configuration declares us as a DEVELOPMENT NODE");
+			DEV = true;
+			log().config("Configuration declares us as a DEVELOPMENT NODE");
 		}
 		// Initialise the Database layer
 		db = new MariaDBConnection("GPHUD" + (isdev ? "DEV" : ""), jdbc);
@@ -315,4 +313,9 @@ public class GPHUD {
 	}
 
 
+	@Nonnull
+	public static Logger log() {
+		if (log==null) { throw new SystemException("Log not yet initialised"); }
+		return log;
+	}
 }

@@ -32,7 +32,7 @@ public class ViewNotes {
 		//
 		// we either have notes, or the user is an admin, in which case the 'add note' button makes this section barely worth rendering :P
 		//
-		Form f=st.form;
+		Form f= st.form();
 		f.add(new TextSubHeader("Administrator Notes (Last three only)"));
 		if (!notes.isEmpty()) {
 			f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));
@@ -80,7 +80,7 @@ public class ViewNotes {
 				throw new UserException("You can only view your own character");
 			}
 		}
-		Form f=st.form;
+		Form f= st.form();
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
 		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatarNullable().getTimeZone()));
 	}
@@ -99,13 +99,13 @@ public class ViewNotes {
 				throw new UserException("You can only view your own character");
 			}
 		}
-		Form f=st.form;
+		Form f= st.form();
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
 		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatarNullable().getTimeZone()));
 	}
 	@URLs(url ="/Notes/ViewAll",requiresPermission = "Notes.View")
 	public static void viewAll(@Nonnull State st, SafeMap values)  throws UserException, SystemException {
-		Form f=st.form;
+		Form f= st.form();
 		List<AdminNotes.AdminNote> notes = AdminNotes.get(st.getInstance());
 		f.add(new TextHeader("Admin Notes Log"));
 		f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));

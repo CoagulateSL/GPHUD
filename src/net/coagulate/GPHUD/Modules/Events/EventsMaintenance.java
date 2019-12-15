@@ -100,6 +100,7 @@ public abstract class EventsMaintenance {
 		}
 		if (wasin == null && nowin == null) { return; } //didn't enter
 		if (wasin == nowin) { return; } // didn't leave
+		//noinspection ConstantConditions // simply looks clearer
 		if (wasin != nowin) { //transitioned
 			if (wasin != null) {
 				String exitmessage = st.getKV(wasin.getEvent(), "events.eventexitmessage");

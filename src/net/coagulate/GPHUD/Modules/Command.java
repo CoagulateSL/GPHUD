@@ -37,7 +37,7 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Command {
 
-	@Nullable
+	@Nonnull
 	static Object assertNotNull(@Nullable Object o, String value, String type) throws UserException {
 		if (o == null) {
 			throw new UserException("Unable to resolve '" + value + "' to a " + type);
@@ -95,7 +95,7 @@ public abstract class Command {
 		typedargs.add(st);
 		for (Argument argument : getInvokingArguments()) {
 			if (argument == null) {
-				throw new SystemException("Argument metadata null on " + getFullName() + "() arg#" + (arg + 1) + " " + argument.getName());
+				throw new SystemException("Argument metadata null on " + getFullName() + "() arg#" + (arg + 1));
 			}
 			ArgumentType type = argument.type();
 			String v = null;
@@ -199,7 +199,7 @@ public abstract class Command {
 						break;
 					case MODULE:
 						Module m = Modules.get(null, v);
-						if (m == null) { return new ErrorResponse("Unable to resolve module " + m); }
+						if (m == null) { return new ErrorResponse("Unable to resolve module " + v); }
 						typedargs.add(m);
 						break;
 					//case FLOAT:
@@ -247,7 +247,7 @@ public abstract class Command {
 						else {return new ErrorResponse("Unable to find character named '" + v + "'");}
 						break;
 					case REGION:
-						typedargs.add(assertNotNull(Region.find(v,false), v, "region name"));
+						typedargs.add(assertNotNull(Region.findNullable(v,false), v, "region name"));
 						break;
 					case EVENT:
 						typedargs.add(assertNotNull(Event.find(st.getInstance(), v), v, "event name"));
@@ -350,15 +350,15 @@ public abstract class Command {
 				case ANY:
 					break;
 				case CHARACTER:
-					if (st.getInstance() == null) {
+					if (st.getInstanceNullable() == null) {
 						return new ErrorResponse("Character context required and you are not connected to an instance.");
 					}
-					if (st.getCharacter() == null) {
+					if (st.getCharacterNullable() == null) {
 						return new ErrorResponse("Character context required, your request is lacking a character registration");
 					}
 					break;
 				case AVATAR:
-					if (st.getInstance() == null) {
+					if (st.getInstanceNullable() == null) {
 						return new ErrorResponse("Avatar context required and you are not connected to an instance.");
 					}
 					if (st.getAvatarNullable() == null) {
@@ -430,7 +430,7 @@ public abstract class Command {
 					throw new RedirectionException(values.get("okreturnurl"));
 				}
 			}
-			st.form.add(response);
+			st.form().add(response);
 		}
 		getHtmlTemplate(st);
 	}
@@ -486,7 +486,7 @@ public abstract class Command {
 					json.put("arg" + arg + "type", "TEXTBOX");
 					break;
 				case CHARACTER_PLAYABLE:
-					Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
+					Set<Char> options = Char.getCharacters(st.getInstance(), st.getAvatar());
 					if (options.size() > 12) {
 						json.put("arg" + arg + "type", "TEXTBOX");
 					} else {
@@ -533,7 +533,7 @@ public abstract class Command {
 	}
 
 	void getHtmlTemplate(@Nonnull State st) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		Table t = new Table();
 		f.add(t);
 		for (Argument arg : getArguments()) {

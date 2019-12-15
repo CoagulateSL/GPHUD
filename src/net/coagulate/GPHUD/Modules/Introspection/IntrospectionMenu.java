@@ -18,7 +18,7 @@ public class IntrospectionMenu {
 
 	@URLs(url = "/introspection/")
 	public static void menu(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.add(new TextHeader("GPHUD Introspection"));
 		f.add(new TextSubHeader("Global definitions"));
 		f.p("This is a developer feature that allows you to look around the internals of GPHUD.");

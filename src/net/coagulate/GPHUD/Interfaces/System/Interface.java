@@ -63,7 +63,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					throw new SystemException("Parse error in '" + message + "'", e);
 				}
 				// stash it in the state
-				st.json = obj;
+				st.setJson(obj);
 				// refresh tokens if necessary
 				if (obj.has("callback")) { st.callbackurl = obj.getString("callback"); }
 				if (obj.has("callback")) { Char.refreshURL(obj.getString("callback")); }
@@ -123,7 +123,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 
 	protected Response execute(@Nonnull State st) throws SystemException, UserException {
-		JSONObject obj = st.json;
+		JSONObject obj = st.json();
 		// get developer key
 		String developerkey = obj.getString("developerkey");
 		// resolve the developer, or error
@@ -132,7 +132,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.logger().warning("Unable to resolve developer for request " + st.jsoncommand);
 			return new TerminateResponse("Developer key is not known");
 		}
-		st.json.remove("developerkey");
+		st.json().remove("developerkey");
 		st.setSourcedeveloper(developer);
 
 
@@ -170,10 +170,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.setRegionName(regionname);
 		st.issuid = false;
 		st.sourcename = objectname;
-		st.sourceregion = Region.find(regionname,false);
+		st.sourceregion = Region.findNullable(regionname,false);
 		st.sourcelocation = position;
 		User owner = User.findOrCreateAvatar(ownername, ownerkey);
-		st.sourceowner = owner;
+		st.setSourceowner(owner);
 		st.objectkey=objectkey;
 		st.setAvatar(owner);
 		// hooks to allow things to run as "not the objects owner" (the default)
@@ -192,7 +192,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.issuid = true;
 		}
 		// load region from database, if it exists
-		Region region = Region.find(regionname,false);
+		Region region = Region.findNullable(regionname,false);
 		if (region == null) {
 			return processUnregistered(st);
 		} else {
@@ -220,8 +220,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				} catch (JSONException e) {}
 				if (st.getCharacterNullable() != null) { st.zone = st.getCharacter().getZone(); }
 				SafeMap parametermap = new SafeMap();
-				for (String key : st.json.keySet()) {
-					String value = st.json.get(key).toString();
+				for (String key : st.json().keySet()) {
+					String value = st.json().get(key).toString();
 					//System.out.println(key+"="+(value==null?"NULL":value));
 					parametermap.put(key, value);
 				}
@@ -241,20 +241,20 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// if we're a "GPHUD Server" of some kind from dev id 1 then... bob's ya uncle, dont suspend :P
 		String regionname = st.getRegionName();
 		if (st.getSourcedeveloper().getId() != 1 || !st.sourcename.startsWith("GPHUD Region Server")) {
-			GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting with " + st.sourcename + " from developer " + st.getSourcedeveloper() + " owner by " + st.sourceowner);
+			GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting with " + st.sourcename + " from developer " + st.getSourcedeveloper() + " owner by " + st.getSourceowner());
 			return new TerminateResponse("Region not registered.");
 		}
-		GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting, recognised as GPHUD server owned by " + st.sourceowner);
-		if (!"console".equals(st.json.getString("command"))) {
+		GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting, recognised as GPHUD server owned by " + st.getSourceowner());
+		if (!"console".equals(st.json().getString("command"))) {
 			return new ErrorResponse("Region not registered, only pre-registration commands may be run");
 		}
 		// only the server's owner can run these commands, call them the pre-reg commands
-		if (st.getAvatarNullable() != st.sourceowner) {
+		if (st.getAvatarNullable() != st.getSourceowner()) {
 			return new ErrorResponse("Command not authorised.  Must be Server's owner for pre-registration commands.");
 		}
 
 		// authorised, is a GPHUD Server by developer Iain Maltz (me), caller is the owner, command is console.  Lets go!
-		String console = st.json.getString("console");
+		String console = st.json().getString("console");
 		if (console.charAt(0) == '*') {
 			console = console.substring(1);
 		}
@@ -280,7 +280,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (!"".equals(success)) {
 				return new ErrorResponse("Region registration failed after instance creation: " + success);
 			}
-			Region region = Region.find(regionname,false);
+			Region region = Region.findNullable(regionname,false);
 			st.setRegion(region);
 			st.sourceregion = region;
 			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Join", "Instance", "", regionname, "Joined instance " + console);
@@ -297,7 +297,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			}
 			if (instance == null) { return new ErrorResponse("Failed to find named instance, see *listinstances"); }
 			String success = Region.joinInstance(regionname, instance);
-			Region region = Region.find(regionname,false);
+			Region region = Region.findNullable(regionname,false);
 			st.setInstance(instance);
 			st.setRegion(region);
 			st.sourceregion = region;

@@ -38,7 +38,7 @@ public abstract class Groups {
 
 	@URLs(url = "/permissionsgroups/view/*")
 	public static void view(@Nonnull State st, SafeMap values) throws UserException, SystemException {
-		Form f = st.form;
+		Form f = st.form();
 		f.noForm();
 		String[] split = st.getDebasedURL().split("/");
 		String id = split[split.length - 1];
@@ -135,7 +135,7 @@ public abstract class Groups {
 	@URLs(url = "/permissionsgroups/create", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Create", priority = 10)
 	public static void createGroupPage(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		if ("Submit".equals(values.get("Submit"))) { st.form.add(Modules.run(st, "permissionsgroups.create", values)); }
+		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st, "permissionsgroups.create", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.create");
 	}
 
@@ -165,13 +165,13 @@ public abstract class Groups {
 
 	@URLs(url = "/permissionsgroups/")
 	public static void listForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		st.form.add(Modules.run(st, "permissionsgroups.list", values));
+		st.form().add(Modules.run(st, "permissionsgroups.list", values));
 	}
 
 	@URLs(url = "/permissionsgroups/delete", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Delete", priority = 11, requiresPermission = "Instance.ManagePermissions")
 	public static void deleteForm(@Nonnull State st, @Nonnull SafeMap values) throws UserException, SystemException {
-		if ("Submit".equals(values.get("Submit"))) { st.form.add(Modules.run(st, "permissionsgroups.delete", values)); }
+		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st, "permissionsgroups.delete", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.delete");
 	}
 
@@ -195,7 +195,7 @@ public abstract class Groups {
 		Integer groupid=Integer.parseInt(split[3]);
 		PermissionsGroup pg=PermissionsGroup.get(groupid);
 		pg.validate(st);
-		Form f=st.form;
+		Form f= st.form();
 		f.add(new TextHeader("Edit permissions group "+pg.getName()));
 		// this is all a bit tedious really :)
 		Map<Permission.POWER,Set<Permission>> permissions=new HashMap<>();
