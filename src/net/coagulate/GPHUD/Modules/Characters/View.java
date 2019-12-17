@@ -165,7 +165,7 @@ public abstract class View {
 			kvtable.add(a.getName());
 			//System.out.println("About to print attribute "+a.getName());
 			String value = a.getCharacterValue(simulated);
-			kvtable.add(value==null?value:"");
+			kvtable.add(value!=null?value:"");
 			kvtable.add(a.getCharacterValueDescription(simulated));
 			kvtable.add(content);
 		}
