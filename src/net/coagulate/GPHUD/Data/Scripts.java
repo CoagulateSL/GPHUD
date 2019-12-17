@@ -46,7 +46,7 @@ public class Scripts extends TableRow {
 	}
 
 	public static void create(@Nonnull final State st, final String scriptname) {
-		final Integer existing=GPHUD.getDB().dqi("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
+		final int existing=GPHUD.getDB().dqinn("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
 		if (existing>0) { throw new UserInputDuplicateValueException("script with that name already exists"); }
 		GPHUD.getDB().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
 	}
@@ -60,20 +60,20 @@ public class Scripts extends TableRow {
 	public static Set<Scripts> getScript(@Nonnull final Instance instance) {
 		final Set<Scripts> scripts=new HashSet<>();
 		for (final ResultsRow row:GPHUD.getDB().dq("select id from scripts where instanceid=?",instance.getId())) {
-			scripts.add(new Scripts(row.getIntNullable("id")));
+			scripts.add(new Scripts(row.getInt("id")));
 		}
 		return scripts;
 	}
 
 	@Nonnull
 	public static Scripts find(@Nonnull final State st, final String commandname) {
-		final Integer id=GPHUD.getDB().dqi("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
+		final int id=GPHUD.getDB().dqinn("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
 		return new Scripts(id);
 	}
 	@Nullable
 	public static Scripts findOrNull(@Nonnull final State st, final String commandname) {
 		try { return find(st,commandname); }
-		catch (final NoDataException e) {return null; }
+		catch (@Nonnull final NoDataException e) {return null; }
 	}
 
 	@Nonnull
@@ -85,7 +85,7 @@ public class Scripts extends TableRow {
 		return list;
 	}
 
-	@Nullable
+	@Nonnull
 	public String getSource() {
 		String script=getString("source");
 		if (script==null) { script=""; }
@@ -115,7 +115,7 @@ public class Scripts extends TableRow {
 
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getIntNullable("instanceid"));
+		return Instance.get(getInt("instanceid"));
 	}
 
 	@Nonnull
@@ -172,12 +172,13 @@ public class Scripts extends TableRow {
 		}
 	}
 
-	@Nullable
+	@Nonnull
 	public byte[] getByteCode() {
 		validate();
 		return getBytes("bytecode");
 	}
 
+	/*
 	public static void test() {
 		final byte[] b=new byte[255];
 		for (int i=0;i<256;i++) { b[i]=((byte)(0xff & i)); }
@@ -189,5 +190,5 @@ public class Scripts extends TableRow {
 				throw new SystemImplementationException("Comparison error on " + i + " - " + b[i] + " gave " + out[i]);
 			}
 		}
-	}
+	}*/
 }

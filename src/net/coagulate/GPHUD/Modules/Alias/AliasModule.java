@@ -41,7 +41,7 @@ public class AliasModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Command getCommand(@Nonnull final State st, @Nonnull final String commandname) {
+	public Command getCommandNullable(@Nonnull final State st, @Nonnull final String commandname) {
 		final Alias alias = Alias.getAlias(st, commandname);
 		if (alias == null) { throw new UserInputLookupFailureException("Unknown command alias." + commandname); }
 		final JSONObject template = alias.getTemplate();

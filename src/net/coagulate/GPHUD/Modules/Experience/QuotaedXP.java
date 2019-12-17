@@ -9,7 +9,6 @@ import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.POOL;
@@ -30,11 +29,11 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	/**
 	 * Name of the quotaed pool
 	 */
-	@Nullable
+	@Nonnull
 	public String poolName(final State st) { return getName(); }
 
 	@Nonnull
-	public Pool getPool(final State st) { return Modules.getPoolNotNull(st, poolName(st)); }
+	public Pool getPool(final State st) { return Modules.getPool(st, poolName(st)); }
 
 	/**
 	 * Name of the KV that controls the quota per period

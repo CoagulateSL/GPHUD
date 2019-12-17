@@ -46,7 +46,7 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/events/create", requiresPermission = "events.create")
-	public static void createEvent(@Nonnull final State st, final SafeMap values) {
+	public static void createEvent(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final Form f = st.form();
 		Modules.simpleHtml(st, "events.create", values);
 		final Command c = Modules.getCommandNullable(st, "events.create");
@@ -105,12 +105,12 @@ public class EventsPages {
 	}
 
 	@URLs(url = "/event/addlocation", requiresPermission = "events.locations")
-	public static void addLocation(final State st, final SafeMap values) {
+	public static void addLocation(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "events.addlocation", values);
 	}
 
 	@URLs(url = "/event/deletelocation", requiresPermission = "events.locations")
-	public static void deleteLocation(final State st, final SafeMap values) {
+	public static void deleteLocation(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "events.deletelocation", values);
 	}
 
@@ -139,7 +139,7 @@ public class EventsPages {
 				event.addSchedule(startdate, enddate, repeat);
 				Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "AddSchedule", event.getName(), null, DateTime.fromUnixTime(startdate, "America/Los_Angeles") + " SLT repeat " + UnixTime.duration(repeat), "Schedule added to event");
 				throw new RedirectionException(values);
-			} catch (final UserException e) {
+			} catch (@Nonnull final UserException e) {
 				st.form().add(new TextError(e.getMessage()));
 			}
 		}

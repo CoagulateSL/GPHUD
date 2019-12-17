@@ -47,10 +47,11 @@ public class TeleportCommands {
 	                                      String name) {
 		String position=null;
 		String rotation=null;
-		for (final Header h:st.headers) {
+		for (final Header h: st.headers()) {
 			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Position")) { position=h.getValue(); }
 			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Rotation")) { rotation=h.getValue(); }
 		}
+		if (position==null || rotation==null) { throw new UserInputEmptyException("Unable to calculate your location/rotation information"); }
 		position=position.replaceAll("\\(","").replaceAll("\\)","");
 		rotation=rotation.replaceAll("\\(","").replaceAll("\\)","");
 		final String[] xyz =position.split(",");
@@ -63,8 +64,6 @@ public class TeleportCommands {
 
 		final float projectx= (float) Math.cos(angle);
 		final float projecty= -(float) Math.sin(angle);
-
-		if (position==null || rotation==null) { throw new UserInputEmptyException("Unable to calculate your location/rotation information"); }
 
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
 

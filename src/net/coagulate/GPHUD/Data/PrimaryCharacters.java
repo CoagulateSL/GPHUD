@@ -16,7 +16,7 @@ public class PrimaryCharacters {
 
 	@Nonnull
 	private static Char getPrimaryCharacter_internal(@Nonnull final Instance instance, @Nonnull final User avatar) {
-		final Integer primary = GPHUD.getDB().dqi( "select entityid from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
+		final int primary = GPHUD.getDB().dqinn( "select entityid from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
 		final Char c = Char.get(primary);
 		if (c.retired()) {
 			GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", avatar.getId(), instance.getId());
@@ -34,10 +34,10 @@ public class PrimaryCharacters {
 	@Nullable
 	public static Char getPrimaryCharacter(@Nonnull final State st, final boolean autocreate) {
 		final Instance instance = st.getInstance();
-		final User avatar = st.getAvatarNullable();
+		final User avatar = st.getAvatar();
 		try {
 			return getPrimaryCharacter_internal(instance, avatar);
-		} catch (final NoDataException e) {
+		} catch (@Nonnull final NoDataException e) {
 			// hmm, well, lets make them one then.
 			Set<Char> characterset = Char.getCharacters(instance, avatar);
 			if (characterset.isEmpty()) {
@@ -59,8 +59,8 @@ public class PrimaryCharacters {
 
 	public static void setPrimaryCharacter(@Nonnull final State st, @Nonnull final Char c) {
 		c.validate(st);
-		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", st.getAvatarNullable().getId(), st.getInstance().getId());
-		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.getAvatarNullable().getId(), st.getInstance().getId(), c.getId());
+		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?", st.getAvatar().getId(), st.getInstance().getId());
+		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)", st.getAvatar().getId(), st.getInstance().getId(), c.getId());
 	}
 
 	public static void purge(@Nonnull final Char ch) {

@@ -69,7 +69,7 @@ public class Alias extends TableRow {
 		try {
 			final Integer id = GPHUD.getDB().dqinn("select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
 			return get(id);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull

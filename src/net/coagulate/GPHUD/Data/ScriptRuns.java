@@ -20,7 +20,7 @@ public class ScriptRuns extends TableRow {
 		GPHUD.getDB().d("delete from scriptruns where respondant=?",respondant.getId());
 		final int expires=UnixTime.getUnixTime()+900;
 		GPHUD.getDB().d("insert into scriptruns(bytecode,initialiser,respondant,expires) values(?,?,?,?)",code,initialiser,respondant.getId(), expires);
-		return get(GPHUD.getDB().dqi("select id from scriptruns where initialiser=? and respondant=? and expires=?",initialiser,respondant.getId(),expires));
+		return get(GPHUD.getDB().dqinn("select id from scriptruns where initialiser=? and respondant=? and expires=?",initialiser,respondant.getId(),expires));
 	}
 
 	@Nonnull
@@ -70,7 +70,7 @@ public class ScriptRuns extends TableRow {
 
 	@Nonnull
 	public Char getRespondant() {
-		return Char.get(getIntNullable("respondant"));
+		return Char.get(getInt("respondant"));
 	}
 
 	@Nonnull

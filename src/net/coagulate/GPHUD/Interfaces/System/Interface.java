@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
@@ -48,25 +49,26 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		//for (Header h:headers) { System.out.println(h.getName()+"="+h.getValue()); }
 		try {
 			// does it contain a "body" (its a POST request, it should...)
-			final HttpRequest req = st.req;
-			final HttpResponse resp = st.resp;
+			final HttpRequest req = st.req();
+			final HttpResponse resp = st.resp();
 			if (req instanceof HttpEntityEnclosingRequest) {
 				// stream it into a buffer
 				final HttpEntityEnclosingRequest r = (HttpEntityEnclosingRequest) req;
 				final InputStream is = r.getEntity().getContent();
 				final byte[] buffer = new byte[65 * 1024];
-				is.read(buffer);
+				final int ammountread=is.read(buffer);
+				if (ammountread==-1) { throw new SystemInitialisationException("Reading from HTTP Response gave immediate EOF?"); }
 				final String message = new String(buffer);
 				// DEBUGGING ONLY log entire JSON input
 				// JSONify it
 				final JSONObject obj;
-				try { obj = new JSONObject(message); } catch (final JSONException e) {
+				try { obj = new JSONObject(message); } catch (@Nonnull final JSONException e) {
 					throw new SystemBadValueException("Parse error in '" + message + "'", e);
 				}
 				// stash it in the state
 				st.setJson(obj);
 				// refresh tokens if necessary
-				if (obj.has("callback")) { st.callbackurl = obj.getString("callback"); }
+				if (obj.has("callback")) { st.callbackurl(obj.getString("callback")); }
 				if (obj.has("callback")) { Char.refreshURL(obj.getString("callback")); }
 				if (obj.has("callback")) { Region.refreshURL(obj.getString("callback")); }
 				if (obj.has("cookie")) { Cookies.refreshCookie(obj.getString("cookie")); }
@@ -100,22 +102,22 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			// probably some user snooping around with a browser :P
 			resp.setStatusCode(HttpStatus.SC_BAD_REQUEST);
 			resp.setEntity(new StringEntity("<html><body><pre>Hello there :) What are you doing here?</pre></body></html>", ContentType.TEXT_HTML));
-		} catch (final UserException e) {
+		} catch (@Nonnull final UserException e) {
 			SL.report("GPHUD system interface user error", e, st);
 			GPHUD.getLogger().log(WARNING, "User generated error : " + e.getLocalizedMessage(), e);
-			final HttpResponse resp = st.resp;
+			final HttpResponse resp = st.resp();
 			resp.setStatusCode(HttpStatus.SC_OK);
 			resp.setEntity(new StringEntity("{\"error\":\"" + e.getLocalizedMessage() + "\"}", ContentType.APPLICATION_JSON));
 			resp.setStatusCode(HttpStatus.SC_OK);
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			try {
 				SL.report("GPHUD system interface error", e, st);
 				GPHUD.getLogger().log(SEVERE, "System Interface caught unhandled Exception : " + e.getLocalizedMessage(), e);
-				final HttpResponse resp = st.resp;
+				final HttpResponse resp = st.resp();
 				resp.setStatusCode(HttpStatus.SC_OK);
 				resp.setEntity(new StringEntity("{\"error\":\"Internal error occured, sorry.\"}", ContentType.APPLICATION_JSON));
 				resp.setStatusCode(HttpStatus.SC_OK);
-			} catch (final Exception ex) {
+			} catch (@Nonnull final Exception ex) {
 				SL.report("Error in system interface error handler", ex, st);
 				GPHUD.getLogger().log(SEVERE, "Exception in exception handler - " + ex.getLocalizedMessage(), ex);
 			}
@@ -130,7 +132,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// resolve the developer, or error
 		final User developer = User.resolveDeveloperKey(developerkey);
 		if (developer == null) {
-			st.logger().warning("Unable to resolve developer for request " + st.jsoncommand);
+			st.logger().warning("Unable to resolve developer for request " + obj);
 			return new TerminateResponse("Developer key is not known");
 		}
 		st.json().remove("developerkey");
@@ -145,7 +147,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		String shard = null;
 		String objectkey=null;
 		String position = "???";
-		for (final Header h : st.headers) {
+		for (final Header h : st.headers()) {
 			//Log.log(Log.INFO,"SYSTEM","SystemInterface",h.getName()+"="+h.getValue());
 			final String name = h.getName();
 			final String value = h.getValue();
@@ -162,7 +164,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			GPHUD.getLogger().severe("Unknown shard [" + shard + "]");
 			return new TerminateResponse("Only accessible from Second Life Production systems.");
 		}
-		if (ownername == null || objectname == null || regionname == null) {
+		if (ownername == null || objectname == null || regionname == null || ownerkey==null) {
 			GPHUD.getLogger().severe("Failed to decode headers expected from SL");
 			return new TerminateResponse("Parse failure");
 		}
@@ -170,7 +172,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 		st.setRegionName(regionname);
 		st.issuid = false;
-		st.sourcename = objectname;
+		st.setSourcename(objectname);
 		st.sourceregion = Region.findNullable(regionname,false);
 		st.sourcelocation = position;
 		final User owner = User.findOrCreateAvatar(ownername, ownerkey);
@@ -179,7 +181,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.setAvatar(owner);
 		// hooks to allow things to run as "not the objects owner" (the default)
 		String runasavatar = null;
-		try { runasavatar = obj.getString("runasavatar"); } catch (final JSONException e) {}
+		try { runasavatar = obj.getString("runasavatar"); } catch (@Nonnull final JSONException e) {}
 		if (runasavatar != null && (!("".equals(runasavatar)))) {
 			st.setAvatar(User.findMandatory(runasavatar));
 			st.issuid = true;
@@ -187,7 +189,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.object=Objects.findOrNull(st,objectkey);
 		if (st.object!=null) { st.object.updateRX(); }
 		String runascharacter = null;
-		try { runascharacter = obj.getString("runascharacter"); } catch (final JSONException e) {}
+		try { runascharacter = obj.getString("runascharacter"); } catch (@Nonnull final JSONException e) {}
 		if (runascharacter != null && (!("".equals(runascharacter)))) {
 			st.setCharacter(Char.get(Integer.parseInt(runascharacter)));
 			st.issuid = true;
@@ -218,7 +220,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				try {
 					obj.getString("runasnocharacter");
 					st.setCharacter(null);
-				} catch (final JSONException e) {}
+				} catch (@Nonnull final JSONException e) {}
 				if (st.getCharacterNullable() != null) { st.zone = st.getCharacter().getZone(); }
 				final SafeMap parametermap = new SafeMap();
 				for (final String key : st.json().keySet()) {
@@ -227,7 +229,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					parametermap.put(key, value);
 				}
 				final String command = obj.getString("command");
-				st.postmap=parametermap;
+				st.postmap(parametermap);
 				return Modules.run(st, obj.getString("command"), parametermap);
 			}
 		}
@@ -241,8 +243,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// note connections from non-registered regions are cause to SUSPEND operation, unless you're a GPHUD Server, cos they do 'registration'
 		// if we're a "GPHUD Server" of some kind from dev id 1 then... bob's ya uncle, dont suspend :P
 		final String regionname = st.getRegionName();
-		if (st.getSourcedeveloper().getId() != 1 || !st.sourcename.startsWith("GPHUD Region Server")) {
-			GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting with " + st.sourcename + " from developer " + st.getSourcedeveloper() + " owner by " + st.getSourceowner());
+		if (st.getSourcedeveloper().getId() != 1 || !st.getSourcename().startsWith("GPHUD Region Server")) {
+			GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting with " + st.getSourcename() + " from developer " + st.getSourcedeveloper() + " owner by " + st.getSourceowner());
 			return new TerminateResponse("Region not registered.");
 		}
 		GPHUD.getLogger().log(WARNING, "Region '" + regionname + "' not registered but connecting, recognised as GPHUD server owned by " + st.getSourceowner());
@@ -269,11 +271,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");
 			}
 			console = console.replaceFirst("createinstance ", "");
-			try { Instance.create(console, st.getAvatarNullable()); } catch (final UserException e) {
+			try { Instance.create(console, st.getAvatarNullable()); } catch (@Nonnull final UserException e) {
 				return new ErrorResponse("Instance registration failed: " + e.getMessage());
 			}
 			final Instance instance = Instance.find(console);
-			if (instance == null) { return new ErrorResponse("Failed to find instance after registering it :("); }
 			st.setInstance(instance);
 			//ava.canCreate(false);
 			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Instance", "", console, "");
@@ -281,7 +282,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (!"".equals(success)) {
 				return new ErrorResponse("Region registration failed after instance creation: " + success);
 			}
-			final Region region = Region.findNullable(regionname,false);
+			final Region region = Region.find(regionname,false);
 			st.setRegion(region);
 			st.sourceregion = region;
 			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Join", "Instance", "", regionname, "Joined instance " + console);
@@ -293,12 +294,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (console.startsWith("joininstance ")) {
 			console = console.replaceFirst("joininstance ", "");
 			final Instance instance = Instance.find(console);
-			if (instance != null && instance.getOwner() != st.getAvatarNullable()) {
+			if (instance.getOwner() != st.getAvatar()) {
 				return new ErrorResponse("Instance exists and does not belong to you");
 			}
-			if (instance == null) { return new ErrorResponse("Failed to find named instance, see *listinstances"); }
 			final String success = Region.joinInstance(regionname, instance);
-			final Region region = Region.findNullable(regionname,false);
+			final Region region = Region.find(regionname,false);
 			st.setInstance(instance);
 			st.setRegion(region);
 			st.sourceregion = region;

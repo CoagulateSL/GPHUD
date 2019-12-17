@@ -10,7 +10,6 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.util.Set;
 
@@ -42,7 +41,7 @@ public abstract class KV extends NameComparable {
 
 	public abstract String defaultvalue();
 
-	@Nullable
+	@Nonnull
 	public abstract String conveyas();
 
 	@Nonnull
@@ -103,9 +102,6 @@ public abstract class KV extends NameComparable {
 
 	public void setKV(@Nonnull final State st, @Nonnull final TableRow o, final String value) throws UserException, SystemException {
 		assertAppliesTo(o);
-		if (!(TableRow.class.isAssignableFrom(o.getClass()))) {
-			throw new SystemImplementationException("Object " + o.getClass() + " does not extend DBOBject while setting KV " + name());
-		}
 		st.setKV(o, name(), value);
 		convey(st, value);
 	}

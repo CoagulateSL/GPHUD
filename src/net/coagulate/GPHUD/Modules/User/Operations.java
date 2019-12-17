@@ -27,13 +27,13 @@ public abstract class Operations {
 	public static Response setPassword(@Nonnull final State st,
 	                                   @Nonnull @Arguments(description = "New password", type = ArgumentType.PASSWORD) final
 	                                   String password) throws SystemException, UserException {
-		if (st.getSourcedeveloper() != null && st.getSourcedeveloper().getId() != 1) {
+		if (st.getSourcedeveloper().getId() != 1) {
 			throw new UserAccessDeniedException("RESTRICTED COMMAND");
 		}
 		if (st.getAvatarNullable() == null) {
 			return new ErrorResponse("Not connected to any user account?  Perhaps you need to register (via User.Register).  Session did not derive a USER context.");
 		}
-		try { st.getAvatarNullable().setPassword(password, "Via GPHUD"); } catch (final UserException e) {
+		try { st.getAvatar().setPassword(password, "Via GPHUD"); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse(e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Replace", "Password", "[CENSORED]", "[CENSORED]", "User set password.");

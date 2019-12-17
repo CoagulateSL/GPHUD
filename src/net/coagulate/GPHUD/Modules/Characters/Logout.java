@@ -20,7 +20,7 @@ public class Logout {
 	public static void logout(@Nonnull final State st, final SafeMap values) {
 		st.form().add("Good Bye!");
 		if (st.cookiestring != null) { Cookies.delete(st.cookiestring); }
-		st.cookie = null;
+		st.cookie(null);
 		st.cookiestring = null;
 		st.setAvatar(null);
 		st.setCharacter(null);
@@ -33,7 +33,7 @@ public class Logout {
 		if (st.getCharacterNullable()!=null) {
 			st.getCharacter().closeVisits(st);
 			st.getCharacter().closeURL(st);
-			st.logger().info("Logout from avatar " + st.getAvatarNullable().getName()+" as character "+st.getCharacter().getName());
+			st.logger().info("Logout from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName());
 		}
 		return new TerminateResponse("Logout complete");
 	}

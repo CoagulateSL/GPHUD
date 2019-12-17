@@ -52,7 +52,7 @@ public class Attribute extends TableRow {
 		try {
 			final int id = GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?", name, instance.getId());
 			return get(id);
-		} catch (final NoDataException e) {
+		} catch (@Nonnull final NoDataException e) {
 			throw new UserInputLookupFailureException("Unable to find attribute '" + name + "' in instance '" + instance + "'",e);
 		}
 	}
@@ -61,11 +61,11 @@ public class Attribute extends TableRow {
 	 *
 	 */
 	@Nonnull
-	public static Attribute findGroup(@NotNull final Instance instance, final String grouptype) {
+	public static Attribute findGroup(final @NotNull Instance instance, final String grouptype) {
 		try {
 			final int id = GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?", instance.getId(), grouptype);
 			return get(id);
-		} catch (final NoDataException e) {
+		} catch (@Nonnull final NoDataException e) {
 			throw new UserInputLookupFailureException("Unable to find an attribute representing a group of type " + grouptype, e);
 		}
 	}
@@ -166,8 +166,8 @@ public class Attribute extends TableRow {
 
 	@Nonnull
 	public ATTRIBUTETYPE getType() {
-		String type = null;
-		try { type = (String) cacheGet("type"); } catch (final CacheMiss ex) {
+		String type;
+		try { type = (String) cacheGet("type"); } catch (@Nonnull final CacheMiss ex) {
 			type = getString("attributetype");
 			cachePut("type", type, getNameCacheTime());
 		}

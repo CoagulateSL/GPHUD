@@ -65,15 +65,15 @@ public class ArgumentAnnotation extends Argument {
 		try {
 			final Method m = command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
 			return (List<String>) m.invoke(null, new Object[]{st});
-		} catch (final IllegalAccessException ex) {
+		} catch (@Nonnull final IllegalAccessException ex) {
 			throw new SystemImplementationException("Access modifier problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (final IllegalArgumentException ex) {
+		} catch (@Nonnull final IllegalArgumentException ex) {
 			throw new SystemImplementationException("Argument problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (final InvocationTargetException ex) {
+		} catch (@Nonnull final InvocationTargetException ex) {
 			throw new SystemImplementationException("Target method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (final NoSuchMethodException ex) {
+		} catch (@Nonnull final NoSuchMethodException ex) {
 			throw new SystemImplementationException("No such method problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
-		} catch (final SecurityException ex) {
+		} catch (@Nonnull final SecurityException ex) {
 			throw new SystemImplementationException("Security problem loading choices from " + command.getFullName() + "/" + choiceMethod() + "()", ex);
 		}
 	}

@@ -1,11 +1,8 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
-import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.ExceptionTools;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Scripts;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.Paragraph;
@@ -22,6 +19,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.GSParser;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.GSStart;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.ParseException;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
@@ -80,10 +78,10 @@ public class ScriptingConfig {
 				GSStart gsscript = null;
 				try {
 					gsscript = parser.Start();
-				} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+				} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 					if (e instanceof ParseException) {
 						final ParseException pe = (ParseException) e;
-						String tokenimage = "";
+						final String tokenimage;
 						tokenimage = "Last token: " + pe.currentToken.image + "<br>";
 						f.p("<b>Parse failed:</b> " + e + "<br>" + tokenimage);
 					} else {
@@ -98,9 +96,9 @@ public class ScriptingConfig {
 					f.p("Script compiled and saved OK!");
 					Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
 				}
-			} catch (final NullPointerException ex) {
+			} catch (@Nonnull final NullPointerException ex) {
 				throw new GSInternalError("Null pointer exception in compiler",ex);
-			} catch (final Throwable t) {
+			} catch (@Nonnull final Throwable t) {
 				f.p("Compilation failed; "+ t);
 				Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
 			}
@@ -128,7 +126,7 @@ public class ScriptingConfig {
 		f.add(new Button("View Simulation", "View Simulation"));
 		f.add(new Button("View Results", "View Results"));
 		f.add(new Button("View ALL", "View ALL"));
-		if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
+		//if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
 		f.br();
 		if (values.get("View Parse Tree").equals("View Parse Tree") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
@@ -154,7 +152,7 @@ public class ScriptingConfig {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
 			f.add(debug(st,script.getSource(), STAGE.RESULTS));
 		}
-		if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
+		//if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}
 	public enum STAGE {PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS}
 
@@ -163,14 +161,14 @@ public class ScriptingConfig {
 		final ByteArrayInputStream bais = new ByteArrayInputStream(script.getBytes());
 		final GSParser parser = new GSParser(bais);
 		parser.enable_tracing();
-		GSStart gsscript = null;
+		final GSStart gsscript;
 		try {
 			gsscript = parser.Start();
 			if (stage==STAGE.PARSER) { return gsscript.toHtml(); }
-		} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+		} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 			if (e instanceof ParseException) {
 				final ParseException pe = (ParseException) e;
-				String tokenimage = "";
+				final String tokenimage;
 				tokenimage = "Last token: " + pe.currentToken.image + "<br>";
 				return "<b>Parse failed:</b> " + e + "<br>" + tokenimage;
 			}
@@ -178,72 +176,71 @@ public class ScriptingConfig {
 		}
 
 		final GSCompiler compiler;
-		if (gsscript != null) {
-			try {
-				compiler = new GSCompiler(gsscript);
-				if (stage==STAGE.COMPILER) {
-					final List<ByteCode> bytecode = compiler.compile();
-					final StringBuilder code = new StringBuilder("<pre><table border=0>");
-					for (final ByteCode bc : bytecode) {
-						code.append("<tr><td>").append(bc.node() != null ? bc.node().tokens() : "").append("</td><td>").append(bc.explain().replaceFirst(" \\(", "</td><td><i>(")).append("</i></td><td>");
-						final ArrayList<Byte> bcl = new ArrayList<>();
-						bc.toByteCode(bcl);
-						for (final Byte b : bcl) {
-							code.append(b).append(" ");
-						}
-						code.append("</td></tr>");
+		try {
+			compiler = new GSCompiler(gsscript);
+			if (stage==STAGE.COMPILER) {
+				final List<ByteCode> bytecode = compiler.compile();
+				final StringBuilder code = new StringBuilder("<pre><table border=0>");
+				for (final ByteCode bc : bytecode) {
+					final ParseNode bcnode = bc.node();
+					code.append("<tr><td>").append(bcnode != null ? bcnode.tokens() : "").append("</td><td>").append(bc.explain().replaceFirst(" \\(", "</td><td><i>(")).append("</i></td><td>");
+					final ArrayList<Byte> bcl = new ArrayList<>();
+					bc.toByteCode(bcl);
+					for (final Byte b : bcl) {
+						code.append(b).append(" ");
 					}
-					code.append("</table></pre>");
-					return code.toString();
+					code.append("</td></tr>");
 				}
-			} catch (final NullPointerException ex) {
-				throw new GSInternalError("Null pointer exception in compiler",ex);
-			} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-				return "<b>Compilation failed:</b> " + e;
+				code.append("</table></pre>");
+				return code.toString();
 			}
+		} catch (@Nonnull final NullPointerException ex) {
+			throw new GSInternalError("Null pointer exception in compiler",ex);
+		} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+			return "<b>Compilation failed:</b> " + e;
+		}
 
-			final Byte[] rawcode= compiler.toByteCode();
-			if (stage==STAGE.BYTECODE) {
-				final StringBuilder bcstring = new StringBuilder("<pre><table border=0><tr>");
-				for (int i = 0; i < rawcode.length; i++) {
-					if ((i % 25) == 0) { bcstring.append("</tr><tr><th>").append(i).append("</th>"); }
-					bcstring.append("<td>").append(rawcode[i]).append("</td>");
-				}
-				bcstring.append("</tr></table></pre>");
-				return bcstring.toString();
+		final Byte[] rawcode= compiler.toByteCode();
+		if (stage==STAGE.BYTECODE) {
+			final StringBuilder bcstring = new StringBuilder("<pre><table border=0><tr>");
+			for (int i = 0; i < rawcode.length; i++) {
+				if ((i % 25) == 0) { bcstring.append("</tr><tr><th>").append(i).append("</th>"); }
+				bcstring.append("<td>").append(rawcode[i]).append("</td>");
 			}
+			bcstring.append("</tr></table></pre>");
+			return bcstring.toString();
+		}
 
-			final GSVM gsvm=new GSVM(rawcode);
-			if (stage==STAGE.DISASSEMBLY) {
-				return gsvm.toHtml();
-			}
+		final GSVM gsvm=new GSVM(rawcode);
+		if (stage==STAGE.DISASSEMBLY) {
+			return gsvm.toHtml();
+		}
 
-			try {
-				if (stage== SIMULATION || stage==RESULTS) {
-					final long start=System.currentTimeMillis();
-					final List<GSVM.ExecutionStep> steps = gsvm.simulate(st);
-					final long end=System.currentTimeMillis();
-					final StringBuilder output= new StringBuilder("<p><i>Run time: " + (end - start) + " ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>");
-					if (stage==SIMULATION) {
-							// no more than 100 steps now
-						int index=steps.size()-100;
-						if (index<0) { index=0; }
-						for (;index<steps.size();index++) {
-							output.append(formatStep(steps.get(index)));
-						}
-					} else {
-						if (steps.size()>1) { output.append(formatStep(steps.get(steps.size() - 2))); }
-						if (steps.size()>0) { output.append(formatStep(steps.get(steps.size() - 1))); }
+		try {
+			if (stage== SIMULATION || stage==RESULTS) {
+				final long start=System.currentTimeMillis();
+				final List<GSVM.ExecutionStep> steps = gsvm.simulate(st);
+				final long end=System.currentTimeMillis();
+				final StringBuilder output= new StringBuilder("<p><i>Run time: " + (end - start) + " ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>");
+				if (stage==SIMULATION) {
+						// no more than 100 steps now
+					int index=steps.size()-100;
+					if (index<0) { index=0; }
+					for (;index<steps.size();index++) {
+						output.append(formatStep(steps.get(index)));
 					}
-					output.append("</table>");
-					return output.toString();
+				} else {
+					if (steps.size()>1) { output.append(formatStep(steps.get(steps.size() - 2))); }
+					if (steps.size()>0) { output.append(formatStep(steps.get(steps.size() - 1))); }
 				}
-
-			} catch (final ArrayIndexOutOfBoundsException ex) {
-				throw new GSInternalError("Array index out of bounds in compiler/simulator",ex);
-			} catch (final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-				return "<b>Simulation failed:</b> " + e;
+				output.append("</table>");
+				return output.toString();
 			}
+
+		} catch (@Nonnull final ArrayIndexOutOfBoundsException ex) {
+			throw new GSInternalError("Array index out of bounds in compiler/simulator",ex);
+		} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+			return "<b>Simulation failed:</b> " + e;
 		}
 		return "Did nothing (?)";
 	}

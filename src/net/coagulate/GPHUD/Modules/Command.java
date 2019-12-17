@@ -88,7 +88,7 @@ public abstract class Command {
 	@Nonnull
 	public abstract String getFullName();
 
-	@Nullable
+	@Nonnull
 	public abstract String getName();
 
 	@Nonnull
@@ -103,13 +103,13 @@ public abstract class Command {
 				throw new SystemImplementationException("Argument metadata null on " + getFullName() + "() arg#" + (arg + 1));
 			}
 			final ArgumentType type = argument.type();
-			String v = null;
+			String v;
 			if (args.length>arg) { v=args[arg]; } else { v=""; }
 			arg++;
 			if ((v == null || "".equals(v)) && type != ArgumentType.BOOLEAN) {
 				typedargs.add(null);
 			} else {
-				int maxlen = -1;
+				final int maxlen;
 				switch (type) {
 					case TEXT_CLEAN:
 					case TEXT_ONELINE:
@@ -167,7 +167,7 @@ public abstract class Command {
 						}
 						// dont put anything here, follow up into the next thing
 					case TEXT_CLEAN:
-						if (v.matches(".*[^a-zA-Z0-9\\.'\\-, ].*")) {
+						if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
 							return new ErrorResponse(argument.getName() + " should only consist of typable characters (a-z 0-9 .'-,) and you entered '" + v + "'");
 						}
 						// dont put anything here, follow up into the next thing
@@ -191,14 +191,14 @@ public abstract class Command {
 					case INTEGER:
 						try {
 							typedargs.add(Integer.valueOf(v));
-						} catch (final NumberFormatException e) {
+						} catch (@Nonnull final NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}
 						break;
 					case FLOAT:
 						try {
 							typedargs.add(Float.valueOf(v));
-						} catch (final NumberFormatException e) {
+						} catch (@Nonnull final NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '" + v + "' to a number for argument " + argument.getName());
 						}
 						break;
@@ -236,13 +236,13 @@ public abstract class Command {
 					case CHARACTER:
 					case CHARACTER_PLAYABLE:
 					case CHARACTER_NEAR:
-						Char targchar = null;
+						final Char targchar;
 						if (v.startsWith(">")) {
 							v = v.substring(1);
 							try {
 								final User a = User.findMandatory(v);
 								targchar = Char.getActive(a, st.getInstance());
-							} catch (final NoDataException e) {
+							} catch (@Nonnull final NoDataException e) {
 								return new ErrorResponse("Unable to find character of avatar named '" + v + "'");
 							}
 						} else {
@@ -291,24 +291,20 @@ public abstract class Command {
 				return new ErrorResponse("Permission is denied, you require '" + requiresPermission() + "'");
 			}
 			// check required interface
-			boolean ok = false;
 			if (st.source== State.Sources.USER) {
 				if (!permitUserWeb()) {
 					return new ErrorResponse("This command can not be accessed via the Web interface");
 				}
-				ok = true;
 			}
 			if (st.source==State.Sources.SYSTEM) {
 				if (!permitJSON()) {
 					return new ErrorResponse("This command can not be accessed via the LSL System interface");
 				}
-				ok = true;
 			}
 			if (st.source==State.Sources.CONSOLE) {
 				if (!permitConsole()) {
 					return new ErrorResponse("This command can not be accessed via the console");
 				}
-				ok = true;
 			}
 			if (st.source== State.Sources.SCRIPTING) {
 				if (!permitScripting()) {
@@ -374,13 +370,13 @@ public abstract class Command {
 					throw new SystemImplementationException("Unhandled CONTEXT enum during pre-flight check in execute()");
 			}
 			return (Response) (getMethod().invoke(this, args));
-		} catch (final IllegalAccessException ex) {
+		} catch (@Nonnull final IllegalAccessException ex) {
 			throw new SystemImplementationException("Command programming error in " + getName() + " - run() access modifier is incorrect", ex);
-		} catch (final IllegalArgumentException ex) {
+		} catch (@Nonnull final IllegalArgumentException ex) {
 			SL.report("Command " + getName() + " failed", ex, st);
 			st.logger().log(WARNING, "Execute command " + getName() + " failed", ex);
 			return new ErrorResponse("Illegal argument in " + getName());
-		} catch (final InvocationTargetException ex) {
+		} catch (@Nonnull final InvocationTargetException ex) {
 			if (ex.getCause() != null && ex.getCause() instanceof UserException) {
 				return new ErrorResponse(getName() + " errored: \n--- " + ex.getCause().getLocalizedMessage());
 			}

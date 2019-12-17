@@ -2,13 +2,13 @@ package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.Configuration.GenericConfiguration;
-import net.coagulate.GPHUD.Modules.Pool.Pools;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
@@ -79,8 +79,16 @@ public abstract class Module {
 	public abstract KV getKVDefinition(State st, String qualifiedname);
 
 	@Nullable
-	public abstract Command getCommand(State st, String commandname);
+	public abstract Command getCommandNullable(State st, String commandname);
 
+	@Nonnull
+	public Command getCommand(final State st, final String commandname) {
+		final Command ret=getCommandNullable(st,commandname);
+		if (ret==null) { throw new UserInputLookupFailureException("Unable to find command "+commandname+" in module "+getName()); }
+		return ret;
+	}
+
+	@Nonnull
 	public abstract Pool getPool(State st, String itemname);
 
 	public abstract Permission getPermission(State st, String itemname);
@@ -88,7 +96,7 @@ public abstract class Module {
 	@Nonnull
 	public abstract Map<String, Pool> getPoolMap(State st);
 
-	public abstract boolean hasPool(State st, Pools p);
+	//public abstract boolean hasPool(State st, Pools p);
 
 	@Nonnull
 	public abstract Map<String, Command> getCommands(State st);

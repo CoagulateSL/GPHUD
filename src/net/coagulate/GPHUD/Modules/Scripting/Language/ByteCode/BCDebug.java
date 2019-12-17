@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCDebug extends ByteCode {
-	private int line;
-	private int column;
+	private final int line;
+	private final int column;
 	public BCDebug(final ParseNode n, final int line, final int column) { super(n); this.line=line; this.column=column; }
 
 	@Nonnull

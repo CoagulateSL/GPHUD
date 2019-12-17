@@ -25,7 +25,7 @@ public class URLAnnotation extends URL {
 	private final Module module;
 	@Nonnull
 	private final Method method;
-	private boolean generated = true;
+	private final boolean generated;
 
 	public URLAnnotation(final Module module, @Nonnull final Method method) throws SystemException, UserException {
 		this.module = module;
@@ -79,11 +79,11 @@ public class URLAnnotation extends URL {
 	public void run(@Nonnull final State st, final SafeMap values) throws SystemException, UserException {
 		try {
 			method.invoke(null, st, values);
-		} catch (final IllegalAccessException ex) {
+		} catch (@Nonnull final IllegalAccessException ex) {
 			throw new SystemImplementationException("Illegal method access to content at " + st.getDebasedURL(), ex);
-		} catch (final IllegalArgumentException ex) {
+		} catch (@Nonnull final IllegalArgumentException ex) {
 			throw new SystemImplementationException("Illegal arguments on content, should be (State,Map<String,String>), at " + st.getDebasedURL(), ex);
-		} catch (final InvocationTargetException ex) {
+		} catch (@Nonnull final InvocationTargetException ex) {
 			final Throwable contained = ex.getCause();
 			if (contained instanceof RedirectionException) { throw (RedirectionException) contained; }
 			if (contained instanceof SystemException) { throw (SystemException) contained; }

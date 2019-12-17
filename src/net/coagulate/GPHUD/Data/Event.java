@@ -48,7 +48,7 @@ public class Event extends TableRow {
 		try {
 			final int eventid = GPHUD.getDB().dqinn("select eventid from events where name like ? and instanceid=?", name, instance.getId());
 			return get(eventid);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**

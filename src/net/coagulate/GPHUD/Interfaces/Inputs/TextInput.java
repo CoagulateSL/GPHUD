@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TextInput extends Input {
-	String name = "";
+	final String name;
 	@Nullable
 	Integer width;
 

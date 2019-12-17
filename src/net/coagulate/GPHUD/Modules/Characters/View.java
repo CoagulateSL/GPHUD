@@ -56,7 +56,7 @@ public abstract class View {
 		t.openRow();
 		t.add("Node").addNoNull((GPHUD.DEV ? "DEVELOPMENT // " : "Production // ") + Interface.getNode());
 		t.openRow();
-		t.add("Avatar").addNoNull(st.getAvatarNullable().getGPHUDLink());
+		t.add("Avatar").addNoNull(st.getAvatar().getGPHUDLink());
 		t.openRow();
 		t.add("Character").addNoNull(st.getCharacter());
 		t.openRow();
@@ -66,7 +66,7 @@ public abstract class View {
 		t.openRow();
 		t.add("Zone").addNoNull(st.zone);
 		t.openRow();
-		t.add("Source").addNoNull(st.sourcename);
+		t.add("Source").addNoNull(st.getSourcename());
 		t.openRow();
 		t.add("SourceOwner").addNoNull(st.getSourceowner().getGPHUDLink());
 		t.openRow();
@@ -97,17 +97,19 @@ public abstract class View {
 	}
 
 	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Char c, final boolean brief) throws UserException, SystemException {
-		boolean full = false;
+		//boolean full = false;
 		final State simulated = st.simulate(c);
-		final String tz = st.getAvatarNullable().getTimeZone();
-		if (st.getCharacterNullable() == c) { full = true; }
-		if (st.hasPermission("Characters.ViewAll")) { full = true; }
+		final String tz = st.getAvatar().getTimeZone();
+		//if (st.getCharacterNullable() == c) { full = true; }
+		//if (st.hasPermission("Characters.ViewAll")) { full = true; }
 		final Form f = st.form();
 		f.add(new TextSubHeader(c.getName()));
 		final Table kvtable = new Table();
 		f.add(kvtable);
 		kvtable.openRow().add("Owning Avatar").add(c.getOwner().getGPHUDLink());
-		final String lastplayed = fromUnixTime(c.getLastPlayed(), tz);
+		String lastplayed = "Never";
+		final Integer lastplayedstored=c.getLastPlayed();
+		if (lastplayedstored!=null) { lastplayed=fromUnixTime(lastplayedstored, tz); }
 		kvtable.openRow().add("Last Played").add(lastplayed).add(tz);
 		kvtable.openRow().add("Connected");
 		if (c.getURL() == null || c.getURL().isEmpty()) { kvtable.add("No"); } else { kvtable.add("Yes"); }
@@ -137,8 +139,8 @@ public abstract class View {
 				final String ammountstring = values.get("xp-ammount");
 				final String reason = values.getOrDefault("xp-reason", "");
 				int ammount = 1;
-				if (ammountstring != null && !ammountstring.isEmpty()) {
-					try { ammount = Integer.parseInt(ammountstring); } catch (final NumberFormatException e) {}
+				if (!ammountstring.isEmpty()) {
+					try { ammount = Integer.parseInt(ammountstring); } catch (@Nonnull final NumberFormatException e) {}
 				}
 				content += "<div id=\"editor-award-" + a.getName() + "\" style=\"display: none;\">"
 						+ "<form method=post>"
@@ -152,7 +154,7 @@ public abstract class View {
 					try {
 						gen.awardXP(st, c, reason, ammount, false);
 						content = "<font color=green><b>&nbsp;&nbsp;&nbsp;OK: </b>Awarded " + ammount + " " + a.getName() + " to " + c.getName() + "</font>";
-					} catch (final UserException e) {
+					} catch (@Nonnull final UserException e) {
 						content = "<font color=red><b>&nbsp;&nbsp;&nbsp;Error: </b>" + e.getLocalizedMessage() + "</font>";
 					}
 				}
@@ -173,7 +175,7 @@ public abstract class View {
 		f.add(new TextSubHeader("KV Configuration"));
 		GenericConfiguration.page(st, values, c, simulated);
 		f.add(new TextSubHeader("Audit Trail"));
-		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), null, c), st.getAvatarNullable().getTimeZone()));
+		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(), null, c), st.getAvatar().getTimeZone()));
 	}
 
 	@Nonnull

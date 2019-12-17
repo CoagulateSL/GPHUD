@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class CheckBox extends Input {
-	String name = "";
+	final String name;
 
 	public CheckBox(final String name) {this.name = name;}
 

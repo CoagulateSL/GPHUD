@@ -28,6 +28,7 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 public class CharacterSummary implements Comparable<CharacterSummary> {
 	public boolean retired;
 	int id;
+	@Nonnull
 	String name = "";
 
 	int ownerid;
@@ -97,7 +98,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	}
 
 	@Override
-	public int compareTo(@NotNull final CharacterSummary o) {
+	public int compareTo(final @NotNull CharacterSummary o) {
 		return Integer.compare(id, o.id);
 	}
 }

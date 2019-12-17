@@ -17,10 +17,10 @@ public abstract class ZoneTransport {
 		final StringBuilder response = new StringBuilder();
 		for (final Zone z : r.getZones()) {
 			final String s = z.getTransportFormat();
-			if (s != null) {
-				if (response.length() > 0) { response.append("|"); }
-				response.append(s);
-			}
+			//if (s != null) {
+			if (response.length() > 0) { response.append("|"); }
+			response.append(s);
+			//}
 		}
 		return response.toString();
 	}

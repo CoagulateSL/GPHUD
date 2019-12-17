@@ -23,8 +23,8 @@ public class Visits {
 	 * @param region    region that is being visited
 	 */
 	public static void initVisit(@Nonnull final State st, @Nonnull final Char character, @Nonnull final Region region) {
-		final User avatar = st.getAvatarNullable();
-		final int updates = GPHUD.getDB().dqi( "select count(*) from visits where avatarid=? and endtime is null", avatar.getId());
+		final User avatar = st.getAvatar();
+		final int updates = GPHUD.getDB().dqinn( "select count(*) from visits where avatarid=? and endtime is null", avatar.getId());
 		if (updates > 0) {
 			st.logger().fine("Force terminating " + updates + " visits");
 			GPHUD.getDB().d("update visits set endtime=? where avatarid=? and endtime is null", getUnixTime(), avatar.getId());

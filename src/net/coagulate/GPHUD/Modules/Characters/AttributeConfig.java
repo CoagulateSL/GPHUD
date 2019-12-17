@@ -89,7 +89,7 @@ public class AttributeConfig {
 
 
 	@URLs(url = "/configuration/characters/addattribute", requiresPermission = "Characters.CreateAttribute")
-	public static void addAttribute(final State st, final SafeMap values) {
+	public static void addAttribute(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Characters.CreateAttribute", values);
 	}
 
@@ -149,7 +149,7 @@ public class AttributeConfig {
 	}
 
 	@URLs(url = "/configuration/characters/toggleap", requiresPermission = "Characters.CreateAttribute")
-	public static void toggleAP(final State st, final SafeMap values) {
+	public static void toggleAP(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Characters.SetAP", values);
 	}
 
@@ -170,7 +170,7 @@ public class AttributeConfig {
 
 
 	@URLs(url = "/configuration/characters/toggleselfmodify", requiresPermission = "Characters.CreateAttribute")
-	public static void toggleSelfModify(final State st, final SafeMap values) {
+	public static void toggleSelfModify(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Characters.SetSelfModify", values);
 	}
 
@@ -190,7 +190,7 @@ public class AttributeConfig {
 	}
 
 	@URLs(url = "/configuration/characters/togglerequired", requiresPermission = "Characters.CreateAttribute")
-	public static void toggleRequired(final State st, final SafeMap values) {
+	public static void toggleRequired(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Characters.SetRequired", values);
 	}
 
@@ -210,7 +210,7 @@ public class AttributeConfig {
 	}
 
 	@URLs(url = "/configuration/characters/setdefaultvalue", requiresPermission = "Characters.CreateAttribute")
-	public static void setDefaultValue(final State st, final SafeMap values) {
+	public static void setDefaultValue(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Characters.SetDefault", values);
 	}
 
@@ -231,7 +231,7 @@ public class AttributeConfig {
 	}
 
 	@URLs(url = "/configuration/characters/deleteattribute", requiresPermission = "Characters.DeleteAttribute")
-	public static void deleteAttributeForm(final State st, final SafeMap values) {
+	public static void deleteAttributeForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Characters.deleteAttribute", values);
 	}
 

@@ -118,7 +118,7 @@ public abstract class DateTime {
 			final int hour = Integer.parseInt(values.get(prefix + "hour"));
 			final int minute = Integer.parseInt(values.get(prefix + "minute"));
 			return UnixTime.create(timezone, day, month, year, hour, minute);
-		} catch (final NumberFormatException e) {
+		} catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Failed to parse number : " + e.getMessage(), e);
 		}
 	}
@@ -141,7 +141,7 @@ public abstract class DateTime {
 			hour = hour * 60 * 60;
 			minute = minute * 60;
 			return day + hour + minute;
-		} catch (final NumberFormatException e) {
+		} catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Failed to parse number : " + e.getMessage(), e);
 		}
 	}

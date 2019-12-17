@@ -53,7 +53,7 @@ public class Input {
 	@GSFunctions.GSFunction(description = "Checks if a string can be converted into a number successfull",parameters = "String - string to test",notes = "",returns = "Integer - 1 if the string can convert to an integer, 0 if it fails to do so (and will crash your script if you try)")
 	public static BCInteger gsIsANumber(final State st, final GSVM vm, @Nonnull final BCString teststring) {
 		try { teststring.toBCInteger(); }
-		catch (final GSCastException e) { return new BCInteger(null,0); }
+		catch (@Nonnull final GSCastException e) { return new BCInteger(null,0); }
 		return new BCInteger(null,1);
 	}
 

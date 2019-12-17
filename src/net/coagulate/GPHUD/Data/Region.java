@@ -5,12 +5,13 @@ import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
@@ -48,7 +49,7 @@ public class Region extends TableRow {
 	public static void refreshURL(final String url) {
 		final String t = "regions";
 		final int refreshifolderthan = UnixTime.getUnixTime() - TableRow.REFRESH_INTERVAL;
-		final int toupdate = GPHUD.getDB().dqi( "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
+		final int toupdate = GPHUD.getDB().dqinn( "select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
 		if (toupdate == 0) { return; }
 		if (toupdate > 1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on " + t + " url " + url);
@@ -94,9 +95,9 @@ public class Region extends TableRow {
 	@Nullable
 	public static Region findNullable(final String name, final boolean allowretired) {
 		try {
-			final Integer regionid = GPHUD.getDB().dqi("select regionid from regions where name=?", name);
+			final int regionid = GPHUD.getDB().dqinn("select regionid from regions where name=?", name);
 			return get(regionid, allowretired);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -116,7 +117,7 @@ public class Region extends TableRow {
 	@Nonnull
 	public static String joinInstance(final String region, @Nonnull final Instance i) {
 		// TO DO - lacks validation
-		final Integer exists = GPHUD.getDB().dqi( "select count(*) from regions where name=?", region);
+		final int exists = GPHUD.getDB().dqinn( "select count(*) from regions where name=?", region);
 		if (exists == 0) {
 			GPHUD.getLogger().info("Joined region '" + region + "' to instance " + i);
 			GPHUD.getDB().d("insert into regions(name,instanceid) values(?,?)", region, i.getId());
@@ -134,9 +135,9 @@ public class Region extends TableRow {
 	 *
 	 * @return The Instance object
 	 */
-	@Nullable
+	@Nonnull
 	public Instance getInstance() {
-		return Instance.get(getIntNullable("instanceid"));
+		return Instance.get(getInt("instanceid"));
 	}
 
 	@Nonnull
@@ -190,7 +191,7 @@ public class Region extends TableRow {
 	 */
 	public void setURL(final String url) {
 		String oldurl = null;
-		try { oldurl = getURL(); } catch (final UserException e) {} // should only mean there was a null URL
+		try { oldurl = getURL(); } catch (@Nonnull final UserException e) {} // should only mean there was a null URL
 		final int now = getUnixTime();
 
 		if (oldurl != null && oldurl.equals(url)) {
@@ -216,9 +217,9 @@ public class Region extends TableRow {
 	 *
 	 * @return UnixTime the last time this server's url was refreshed / used
 	 */
-	@Nullable
+	@Nonnull
 	public Integer getURLLast() {
-		return getIntNullable("urllast");
+		return getInt("urllast");
 	}
 
 	/**
@@ -234,7 +235,7 @@ public class Region extends TableRow {
 		final Results db = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		// iterate over the current visits
 		for (final ResultsRow row : db) {
-			final int avatarid = row.getIntNullable("avatarid");
+			final int avatarid = row.getInt("avatarid");
 			final String name = User.get(avatarid).getName();
 			// make sure those visits are in the list of avatars
 			if (avatars.contains(name)) {
@@ -274,7 +275,7 @@ public class Region extends TableRow {
 				for (final ResultsRow r : rows) {
 					final State temp = new State();
 					temp.setInstance(st.getInstance());
-					temp.setCharacter(Char.get(r.getIntNullable("characterid")));
+					temp.setCharacter(Char.get(r.getInt("characterid")));
 					new VisitXP(-1).runAwards(st, temp.getCharacter());
 				}
 				final int instanceid = getInstance().getId();
@@ -286,7 +287,7 @@ public class Region extends TableRow {
 					final Transmission t = new Transmission(null, ping, url, 5);
 					t.start();
 				}
-			} catch (final Exception e) {
+			} catch (@Nonnull final Exception e) {
 				st.logger().log(SEVERE, "Exception in departingAvatars", e);
 			}
 		}
@@ -302,15 +303,15 @@ public class Region extends TableRow {
 	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
 	 */
 	public void recordVersion(@Nonnull final State st, final String type, @Nonnull final String version, final String versiondate, final String versiontime) {
-		Date d = null;
+		final Date d;
 		try {
 			final SimpleDateFormat df = new SimpleDateFormat("MMM d yyyy HH:mm:ss");
 			df.setLenient(true);
 			String datetime = versiondate + " " + versiontime;
-			datetime = datetime.replaceAll("  ", " ");
+			datetime = datetime.replaceAll(" {2}", " ");
 			d = df.parse(datetime);
-		} catch (final ParseException ex) {
-			st.logger().log(SEVERE, "Failed to parse date time from " + versiondate + " " + versiontime, ex);
+		} catch (@Nonnull final ParseException ex) {
+			throw new SystemImplementationException("Failed to parse date time from " + versiondate + " " + versiontime, ex);
 		}
 		final ResultsRow regiondata = dqone( "select region" + type + "version,region" + type + "datetime from regions where regionid=?", getId());
 		final Integer oldversion = regiondata.getIntNullable("region" + type + "version");
@@ -387,7 +388,7 @@ public class Region extends TableRow {
 		final Set<Char> characters = new TreeSet<>();
 		final Results results = dq("select characterid from visits where regionid=? and endtime is null", getId());
 		for (final ResultsRow r : results) {
-			characters.add(Char.get(r.getIntNullable("characterid")));
+			characters.add(Char.get(r.getInt("characterid")));
 		}
 		return characters;
 	}
@@ -396,8 +397,8 @@ public class Region extends TableRow {
 		final Set<User> users = new HashSet<>();
 		final Results results = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		for (final ResultsRow r : results) {
-			try { users.add(User.get(r.getIntNullable("avatarid"))); }
-			catch (final Exception e) {}
+			try { users.add(User.get(r.getInt("avatarid"))); }
+			catch (@Nonnull final Exception e) {}
 		}
 		return users;
 	}
@@ -409,9 +410,9 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public String getOnlineStatus(final String timezone) {
-		final Integer urllast = getURLLast();
+		final int urllast = getURLLast();
 		if (isRetired()) { return "Retired"; }
-		if (urllast == null) { return "OFFLINE forever?"; }
+		if (urllast == 0) { return "OFFLINE forever?"; }
 		if (getURLNullable() == null || getURLNullable().isEmpty()) {
 			return "OFFLINE for " + duration(getUnixTime() - urllast);
 		}
@@ -499,7 +500,7 @@ public class Region extends TableRow {
 	public Set<Zone> getZones() {
 		final Set<Zone> zones = new TreeSet<>();
 		for (final ResultsRow r : dq("select distinct zoneid from zoneareas where regionid=?", getId())) {
-			zones.add(Zone.get(r.getIntNullable()));
+			zones.add(Zone.get(r.getInt()));
 		}
 		return zones;
 	}
@@ -535,9 +536,9 @@ public class Region extends TableRow {
 
 	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
 
-	@Nullable
+	@Nonnull
 	public Integer getOpenVisitCount() {
-		return dqi( "select count(*) from visits where endtime is null and regionid=?", getId());
+		return dqinn( "select count(*) from visits where endtime is null and regionid=?", getId());
 	}
 
 	public void setGlobalCoordinates(final int x, final int y) {

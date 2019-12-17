@@ -22,9 +22,8 @@ public class GroupCommands {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER,description = "Join an open group")
-	public static Response join(@NotNull final State st,
-	                            @Arguments(description = "Name of group to join",type = ArgumentType.CHARACTERGROUP)
-	                            @NotNull final CharacterGroup group) {
+	public static Response join(final @NotNull State st,
+	                            @Arguments(description = "Name of group to join", type = ArgumentType.CHARACTERGROUP) final @NotNull CharacterGroup group) {
 
 		// is group open?
 		if (!group.isOpen()) { return new ErrorResponse("Can not join group "+group.getNameSafe()+", it is not open, you will need to be invited instead."); }
@@ -59,7 +58,7 @@ public class GroupCommands {
 	public static Response invite(@Nonnull final State st,
 	                              @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to invite to") final
 	                              CharacterGroup group,
-	                              @NotNull @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER) final
+	                              @Arguments(description = "Character to invite", type = ArgumentType.CHARACTER) final @NotNull
 	                                  Char target) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not an owner/admin for " + group.getName());
@@ -75,10 +74,10 @@ public class GroupCommands {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Eject a member from a group")
-	public static Response eject(@NotNull final State st,
-	                             @NotNull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to eject from") final
+	public static Response eject(final @NotNull State st,
+	                             @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to eject from") final @NotNull
 	                             CharacterGroup group,
-	                             @NotNull @Arguments(description = "Character to eject from the group", type = ArgumentType.CHARACTER_FACTION) final
+	                             @Arguments(description = "Character to eject from the group", type = ArgumentType.CHARACTER_FACTION) final @NotNull
 	                                 Char member) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not a lead/admin for " + group.getName());
@@ -93,7 +92,7 @@ public class GroupCommands {
 		if (group.isAdmin(member)) {
 			return new ErrorResponse("Will not eject " + member.getName() + " from " + group.getName() + ", they are an administrator and must be demoted first.");
 		}
-		try { group.removeMember(member); } catch (final UserException e) {
+		try { group.removeMember(member); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove member - " + e.getMessage());
 		}
 		member.hudMessage("You have been removed from " + group.getName() + " by " + st.getCharacter().getName());

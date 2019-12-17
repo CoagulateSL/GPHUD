@@ -58,7 +58,8 @@ public abstract class Login {
 		////// THIS IS IMPORTANT TO RESOLVE A TARGET FROM AN AVATAR LATER WHEN TARGETTING FOR EXAMPLE
 
 		String url = null;
-		if (st.json() != null) { try { url = st.json().getString("callback"); } catch (final JSONException e) {} }
+		st.json();
+		try { url = st.json().getString("callback"); } catch (@Nonnull final JSONException e) {}
 		if (url == null || "".equals(url)) {
 			st.logger().log(WARNING, "No callback URL sent with character registration");
 			return new ErrorResponse("You are not set up with a callback URL");
@@ -79,7 +80,7 @@ public abstract class Login {
 		st.getCharacter().setURL(url);
 		final Region region = st.getRegion();
 		st.getCharacter().setRegion(region);
-		character.setPlayedBy(st.getAvatarNullable());
+		character.setPlayedBy(st.getAvatar());
 		final State simulate = st.simulate(character);
 		final String initscript=simulate.getKV("Instance.CharInitScript").toString();
 		String loginmessage="";
@@ -106,7 +107,7 @@ public abstract class Login {
 						if (value == null || value.isEmpty()) {
 							final KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
 							Float max=null;
-							if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
+							if (!maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
 							String maxstring="";
 							if (max!=null && max>0) { maxstring=", which must be no greater than "+max; }
 							final JSONObject json = new JSONObject();
@@ -162,8 +163,8 @@ public abstract class Login {
 			shutdown.start();
 		}
 		final JSONObject registeringjson = new JSONObject().put("incommand", "registering");
-		String regmessage = "";
-		if (st.getInstance().getOwner().getId() == st.getAvatarNullable().getId()) {
+		String regmessage;
+		if (st.getInstance().getOwner().getId() == st.getAvatar().getId()) {
 			// is instance owner
 			regmessage = GPHUD.serverVersion() + " [https://coagulate.sl/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 			if (st.getRegion().needsUpdate()) {
@@ -192,7 +193,7 @@ public abstract class Login {
 				new Transmission(st.getCharacter(), Modules.getJSONTemplate(st, "characters.spendabilitypoint"), 1).start();
 			}
 		}
-		if (loginmessage!=null && (!loginmessage.isEmpty())) { rawresponse.put("message",loginmessage); }
+		if (!loginmessage.isEmpty()) { rawresponse.put("message",loginmessage); }
 		rawresponse.put("incommand", "registered");
 		rawresponse.put("cookie", cookie);
 		rawresponse.put("legacymenu", legacymenu.toString());
@@ -233,13 +234,13 @@ public abstract class Login {
 					return new ErrorResponse("You may not name a character after an avatar, other than yourself");
 				}
 			}
-		} catch (final NoDataException e) {}
+		} catch (@Nonnull final NoDataException e) {}
 		final boolean autoname = st.getKV("Instance.AutoNameCharacter").boolValue();
-		if (autoname && !st.getAvatarNullable().getName().equalsIgnoreCase(charactername)) {
+		if (autoname && !st.getAvatar().getName().equalsIgnoreCase(charactername)) {
 			return new ErrorResponse("You must name your one and only character after your avatar");
 		}
 		final int maxchars = st.getKV("Instance.MaxCharacters").intValue();
-		if (maxchars <= Char.getCharacters(st.getInstance(), st.getAvatarNullable()).size() && !st.hasPermission("Characters.ExceedCharLimits")) {
+		if (maxchars <= Char.getCharacters(st.getInstance(), st.getAvatar()).size() && !st.hasPermission("Characters.ExceedCharLimits")) {
 			return new ErrorResponse("You are not allowed more than " + maxchars + " active characters");
 		}
 		final boolean charswitchallowed = st.getKV("Instance.CharacterSwitchEnabled").boolValue();
@@ -266,10 +267,10 @@ public abstract class Login {
 		if (character.retired()) {
 			return new ErrorResponse("Character '" + character + "' has been retired and can not be selected");
 		}
-		GPHUD.purgeURL(st.callbackurl);
+		GPHUD.purgeURL(st.callbackurl());
 		if (st.getCharacterNullable() != null) { st.purgeCache(st.getCharacter()); }
 		PrimaryCharacters.setPrimaryCharacter(st, character);
-		character.setURL(st.callbackurl);
+		character.setURL(st.callbackurl());
 		return login(st, null, null, null);
 	}
 
@@ -296,7 +297,7 @@ public abstract class Login {
 					final KVValue maxkv=st.getKV("characters."+attribute.getName()+"MAX");
 					Float max=null;
 					System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv);
-					if (maxkv!=null && !maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
+					if (!maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
 					System.out.println("Max is "+max);
 					if (max!=null && max>0) {
 						System.out.println("About to check "+max+" > "+Float.parseFloat(value));
@@ -327,7 +328,9 @@ public abstract class Login {
 				// check the target group is of the right type
 				final CharacterGroup target = CharacterGroup.resolve(st, value);
 				if (target == null) { return new ErrorResponse("Unable to find the requested group " + value); }
-				if (!target.getType().equals(attribute.getSubType())) {
+				final String targettype = target.getType();
+				if (targettype==null) { return new ErrorResponse("Group "+target.getNameSafe()+" is not a typed group"); }
+				if (!targettype.equals(attribute.getSubType())) {
 					return new ErrorResponse("Group " + target.getNameSafe() + " is of type " + target.getType() + " rather than the required " + attribute.getSubType() + " required by attribute " + attribute.getName());
 				}
 				target.addMember(st.getCharacter());

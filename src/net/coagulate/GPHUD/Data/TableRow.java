@@ -51,7 +51,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public void validate() {
 		if (validated) { return; }
-		final int count = dqi( "select count(*) from " + getTableName() + " where " + getIdField() + "=?", getId());
+		final int count = dqinn( "select count(*) from " + getTableName() + " where " + getIdField() + "=?", getId());
 		if (count > 1) {
 			throw new TooMuchDataException("Too many rows - got " + count + " instead of 1 while validating " + getTableName() + " - " + getId());
 		}
@@ -78,7 +78,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	@Nonnull
 	public String getName() {
-		try { return (String) cacheGet("name"); } catch (final CacheMiss ex) {}
+		try { return (String) cacheGet("name"); } catch (@Nonnull final CacheMiss ex) {}
 		final String name = getString(getNameField());
 		if (name == null) { return "<null>"; }
 		if ("".equals(name)) { return "<blank>"; }
@@ -89,11 +89,11 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	protected abstract int getNameCacheTime();
 
-	@Nullable
+	@Nonnull
 	public String getNameSafe() {
 		try {
 			return getName();
-		} catch (final DBException ex) {
+		} catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE, "SAFE MODE SQLEXCEPTION", ex);
 			return "SQLEXCEPTION";
 		}
@@ -128,16 +128,16 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			// is it an ID
 			final int id = Integer.parseInt(s);
 			if (id > 0) { return id; }
-		} catch (final NumberFormatException e) {} // not a number then :P
+		} catch (@Nonnull final NumberFormatException e) {} // not a number then :P
 		try {
-			int id = 0;
+			final int id;
 			if (instancelocal) {
-				id = dqi( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ? and instanceid=?", s, st.getInstance().getId());
+				id = dqinn( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ? and instanceid=?", s, st.getInstance().getId());
 			} else {
-				id = dqi( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ?", s);
+				id = dqinn( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ?", s);
 			}
 			if (id > 0) { return id; }
-		} catch (final NoDataException e) { } catch (final TooMuchDataException e) {
+		} catch (@Nonnull final NoDataException e) { } catch (@Nonnull final TooMuchDataException e) {
 			GPHUD.getLogger().warning("Multiple matches searching for " + s + " in " + getClass());
 		}
 		return 0;
@@ -158,7 +158,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	public void setKV(final State st, @Nonnull final String key, @Nullable final String value) {
 		kvcheck();
 		String oldvalue = null;
-		try { oldvalue=dqs( "select v from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key); } catch (final NoDataException e) {}
+		try { oldvalue=dqs( "select v from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key); } catch (@Nonnull final NoDataException e) {}
 		if (value == null && oldvalue == null) { return; }
 		if (value != null && value.equals(oldvalue)) { return; }
 		Modules.validateKV(st, key);
@@ -185,9 +185,9 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * We rely on the names as the sorting order, and pass the buck to String.compareTo()
 	 */
 	public int compareTo(@Nonnull final TableRow t) {
-		if (!TableRow.class.isAssignableFrom(t.getClass())) {
+		/*if (!TableRow.class.isAssignableFrom(t.getClass())) {
 			throw new SystemImplementationException(t.getClass().getName() + " is not assignable from DBObject");
-		}
+		}*/
 		final String ours = getNameSafe();
 		final String theirs = t.getNameSafe();
 		return ours.compareTo(theirs);

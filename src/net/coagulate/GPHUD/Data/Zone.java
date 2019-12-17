@@ -43,7 +43,7 @@ public class Zone extends TableRow {
 	 * @throws UserException If the zone name is in use
 	 */
 	public static void create(@Nonnull final Instance instance, final String name) throws UserException {
-		if (GPHUD.getDB().dqi( "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
+		if (GPHUD.getDB().dqinn( "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
 			throw new UserInputDuplicateValueException("Zone name already in use");
 		}
 		GPHUD.getDB().d("insert into zones(instanceid,name) values(?,?)", instance.getId(), name);
@@ -59,9 +59,9 @@ public class Zone extends TableRow {
 	@Nullable
 	public static Zone find(@Nonnull final Instance instance, @Nonnull final String name) {
 		try {
-			final Integer zoneid = GPHUD.getDB().dqi("select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
+			final int zoneid = GPHUD.getDB().dqinn("select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
 			return get(zoneid);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	static void wipeKV(@Nonnull final Instance instance, final String key) {
@@ -104,7 +104,7 @@ public class Zone extends TableRow {
 	public Set<ZoneArea> getZoneAreas() {
 		final Set<ZoneArea> areas = new TreeSet<>();
 		for (final ResultsRow r : dq("select zoneareaid from zoneareas where zoneid=?", getId())) {
-			areas.add(ZoneArea.get(r.getIntNullable()));
+			areas.add(ZoneArea.get(r.getInt()));
 		}
 		return areas;
 	}
@@ -121,8 +121,10 @@ public class Zone extends TableRow {
 		StringBuilder s = new StringBuilder();
 		for (final ZoneArea a : areas) {
 			final String[] vectors = a.getVectors();
-			if (s.length() > 0) { s.append("|"); }
-			s = new StringBuilder(getName() + "|" + vectors[0] + "|" + vectors[1]);
+			if (vectors!=null) {
+				if (s.length() > 0) { s.append("|"); }
+				s = new StringBuilder(getName() + "|" + vectors[0] + "|" + vectors[1]);
+			}
 		}
 		return s.toString();
 	}
@@ -132,7 +134,7 @@ public class Zone extends TableRow {
 	 *
 	 * @return Instance object
 	 */
-	@Nullable
+	@Nonnull
 	public Instance getInstance() {
 		final Integer id = getIntNullable("instanceid");
 		if (id == null) {

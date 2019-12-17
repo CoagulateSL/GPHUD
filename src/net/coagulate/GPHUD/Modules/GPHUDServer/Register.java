@@ -51,7 +51,7 @@ public abstract class Register {
 		}
 		 */
 		final Region region = st.getRegion();
-		for (final Header header:st.headers) {
+		for (final Header header: st.headers()) {
 			if (header.getName().equalsIgnoreCase("X-SecondLife-Region")) {
 				//System.out.println("Element: "+header.getValue());
 				final Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
@@ -63,7 +63,7 @@ public abstract class Register {
 			}
 		}
 		String url = null;
-		try { url = st.json().getString("callback"); } catch (final JSONException e) {}
+		try { url = st.json().getString("callback"); } catch (@Nonnull final JSONException e) {}
 		if (url == null || "".equals(url)) {
 			st.logger().log(WARNING, "No callback URL sent with registration");
 			return new ErrorResponse("You are not set up with a callback URL");
@@ -71,7 +71,7 @@ public abstract class Register {
 		region.setURL(url);
 		st.logger().log(INFO, "Sending post registration message to " + regionname);
 		final JSONObject registered = new JSONObject().put("incommand", "registered");
-		String regmessage = "";
+		String regmessage;
 		regmessage = GPHUD.serverVersion() + " [https://coagulate.sl/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 		if (st.getRegion().needsUpdate()) {
 			regmessage += "\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version.\n=====";

@@ -44,7 +44,7 @@ public class AdminNotes extends TableRow {
 	 * @param note The note to record
 	 * @param adminonly Is this note only visible to admins (else also to the player)
 	 */
-	public static void add(@NotNull final Instance instance, @NotNull final User admin, @NotNull final User target, @Nullable final Char targetchar, @NotNull final String note, final boolean adminonly) {
+	public static void add(final @NotNull Instance instance, final @NotNull User admin, final @NotNull User target, final @Nullable Char targetchar, final @NotNull String note, final boolean adminonly) {
 		GPHUD.getDB().d("insert into adminnotes(tds,instanceid,adminid,targetuser,targetchar,note,adminonly) values(?,?,?,?,?,?,?)",
 				UnixTime.getUnixTime(),
 				instance.getId(),

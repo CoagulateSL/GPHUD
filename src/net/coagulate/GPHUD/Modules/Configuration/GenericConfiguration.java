@@ -61,7 +61,7 @@ public class GenericConfiguration {
 							final KVValue kvval = simulated.getKV(kv.fullname());
 							kvtable.add(kvval.value());
 							kvtable.add(kvval.path());
-						} catch (final UserException e) {
+						} catch (@Nonnull final UserException e) {
 							kvtable.add("<b>ERROR</b>");
 							kvtable.add(e.getLocalizedMessage());
 						}

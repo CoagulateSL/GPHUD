@@ -21,7 +21,7 @@ public class GSVM {
 	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
 	public boolean suspended() { return suspended; }
 	@Nonnull
-	public byte[] bytecode={};
+	public byte[] bytecode;
 	public int PC;
 	int IC;
 	public int row;
@@ -84,7 +84,7 @@ public class GSVM {
 				final ByteCode instruction = ByteCode.load(this);
 				line.append(instruction.htmlDecode());
 			}
-			catch (final Exception e) { line.append("</td></tr><tr><td colspan=5>").append(e).append("</tD></tr></table>"); return line.toString(); }
+			catch (@Nonnull final Exception e) { line.append("</td></tr><tr><td colspan=5>").append(e).append("</tD></tr></table>"); return line.toString(); }
 			line.append("</td></tr>");
 		}
 		return line + "</td></tr></table>";
@@ -134,11 +134,12 @@ public class GSVM {
 		try {
 			while (PC<bytecode.length && !suspended) {
 				increaseIC();
+				//noinspection UnusedAssignment
 				currentstep= new ExecutionStep();
 				startPC=PC;
 				ByteCode.load(this).execute(st,this,false);
 			}
-		} catch (final Throwable t) {
+		} catch (@Nonnull final Throwable t) {
 			if (t instanceof SystemException) {
 				throw new GSInternalError("VM exception: "+ t +" "+at(),t);
 			}
@@ -351,7 +352,7 @@ public class GSVM {
 				frame.IC=IC;
 				simulationsteps.add(frame);
 			}
-		} catch (final Throwable e) {
+		} catch (@Nonnull final Throwable e) {
 			final ExecutionStep step= new ExecutionStep();
 			step.t=e;
 			step.decode=at();

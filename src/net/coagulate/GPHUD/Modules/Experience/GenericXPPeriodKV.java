@@ -3,7 +3,6 @@ package net.coagulate.GPHUD.Modules.Experience;
 import net.coagulate.GPHUD.Modules.KV;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @author Iain Price
@@ -33,8 +32,8 @@ public class GenericXPPeriodKV extends KV {
 	@Nonnull
 	public String defaultvalue() { return "6.75"; }
 
-	@Nullable
-	public String conveyas() { return null; }
+	@Nonnull
+	public String conveyas() { return ""; }
 
 	@Nonnull
 	public KVHIERARCHY hierarchy() { return KVHIERARCHY.CUMULATIVE; }

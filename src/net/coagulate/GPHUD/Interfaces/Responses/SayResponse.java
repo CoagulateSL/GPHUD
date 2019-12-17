@@ -52,7 +52,7 @@ public class SayResponse implements Response {
 	@Nonnull
 	@Override
 	public String asText(@Nonnull final State st) {
-		if (st.getCharacter() != null) {
+		if (st.getCharacterNullable() != null) {
 			final Transmission t = new Transmission(st.getCharacter(), asJSON(st));
 			t.start();
 		}

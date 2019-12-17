@@ -83,8 +83,8 @@ public class FactionCommands {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, description = "Eject a member from your faction")
-	public static Response eject(@NotNull final State st,
-	                             @NotNull @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER_FACTION) final
+	public static Response eject(final @NotNull State st,
+	                             @Arguments(description = "Character to remove from the faction", type = ArgumentType.CHARACTER_FACTION) final @NotNull
 	                             Char member) {
 		final CharacterGroup faction = st.getCharacter().getGroup("Faction");
 		if (faction == null) { return new ErrorResponse("You are not in a faction!"); }

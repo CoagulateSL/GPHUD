@@ -124,9 +124,11 @@ public abstract class Modules {
 		get(null, key).validateKV(st, key);
 	}
 
-	@Nullable
+	@Nonnull
 	public static URL getURL(final State st, @Nonnull final String url) throws UserException, SystemException {
-		return getURL(st, url, true);
+		final URL ret=getURLNullable(st, url);
+		if (ret==null) { throw new UserInputLookupFailureException("404 - URL mapping was not found"); }
+		return ret;
 	}
 
 	/**
@@ -134,13 +136,12 @@ public abstract class Modules {
 	 *
 	 * @param st        Session state
 	 * @param url       URL
-	 * @param exception True to exception on unknown URL, otherwise returns null
 	 * @return URL object, or null (if exception==false)
 	 * @throws UserException   on page not found if and only if exception is true
 	 * @throws SystemException if multiple URLs match (internal error)
 	 */
 	@Nullable
-	public static URL getURL(final State st, @Nonnull String url, final boolean exception) throws UserException, SystemException {
+	public static URL getURLNullable(final State st, @Nonnull String url) throws UserException, SystemException {
 		final boolean debug=false;
 		if (url.toLowerCase().startsWith("/gphud/")) { url = url.substring(6); }
 		URL literal = null;
@@ -171,7 +172,6 @@ public abstract class Modules {
 		// otherwise the relaxed match
 		if (relaxed != null) { return relaxed; }
 		// if not then its a 404.  do we exception or return null?
-		if (exception) { throw new UserInputLookupFailureException("404 // Page not found [" + url + "]"); }
 		return null;
 	}
 
@@ -181,7 +181,7 @@ public abstract class Modules {
 
 	@Nullable
 	public static Command getCommandNullable(final State st, @Nonnull final String proposedcommand) throws UserException, SystemException {
-		return get(st, proposedcommand).getCommand(st, extractReference(proposedcommand));
+		return get(st, proposedcommand).getCommandNullable(st, extractReference(proposedcommand));
 	}
 
 	@Nonnull
@@ -199,7 +199,7 @@ public abstract class Modules {
 	public static JSONObject getJSONTemplate(@Nonnull final State st, @Nonnull final String qualifiedcommandname) throws UserException, SystemException {
 		final Module module = get(st, qualifiedcommandname);
 		if (module == null) { throw new UserInputLookupFailureException("Unable to resolve module in " + qualifiedcommandname); }
-		final Command command = module.getCommand(st, extractReference(qualifiedcommandname));
+		final Command command = module.getCommandNullable(st, extractReference(qualifiedcommandname));
 		if (command == null) { throw new UserInputLookupFailureException("Unable to resolve command in " + qualifiedcommandname); }
 		return command.getJSONTemplate(st);
 	}
@@ -214,8 +214,8 @@ public abstract class Modules {
 		int i = 0;
 		String command = words[0].toLowerCase();
 		if (command.startsWith("*")) { command = command.substring(1); }
-		Command c = null;
-		try { c = getCommandNullable(st, command); } catch (final UserException e) {
+		final Command c;
+		try { c = getCommandNullable(st, command); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Unable to find command '" + command + "' - " + e.getLocalizedMessage());
 		}
 		if (c == null) { return new ErrorResponse("Failed to find command " + command); }
@@ -272,7 +272,7 @@ public abstract class Modules {
 		if ("console".equalsIgnoreCase(qualifiedcommandname)) { st.source= State.Sources.CONSOLE; return run(st, parametermap.get("console")); }
 		final Module module = get(st, qualifiedcommandname);
 		if (module == null) { throw new UserInputLookupFailureException("Unknown module in " + qualifiedcommandname); }
-		final Command command = module.getCommand(st, extractReference(qualifiedcommandname));
+		final Command command = module.getCommandNullable(st, extractReference(qualifiedcommandname));
 		if (command == null) { throw new UserInputLookupFailureException("Unknown command in " + qualifiedcommandname); }
 		return command.run(st, parametermap);
 	}
@@ -293,16 +293,23 @@ public abstract class Modules {
 
 	@Nonnull
 	public static KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
-		KV kv = null;
+		final KV kv = getKVDefinitionNullable(st, qualifiedname);
+		if (kv == null) { throw new UserInputLookupFailureException("Failed to resolve KV definition " + qualifiedname); }
+		return kv;
+	}
+
+	@Nullable
+	public static KV getKVDefinitionNullable(@Nonnull final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
+		final KV kv;
 		//if (qualifiedname == null) { throw new SystemException("Null qualified name for KV definition?"); }
 		if (qualifiedname.toLowerCase().endsWith(".enabled")) {
 			kv = get(null, qualifiedname).getKVDefinition(st, extractReference(qualifiedname));
 		} else {
 			kv = get(st, qualifiedname).getKVDefinition(st, extractReference(qualifiedname));
 		}
-		if (kv == null) { throw new SystemImplementationException("Failed to resolve KV definition " + qualifiedname); }
 		return kv;
 	}
+
 
 	@Nonnull
 	public static Set<String> getKVList(final State st) {
@@ -342,7 +349,7 @@ public abstract class Modules {
 						if (!kv.conveyas().isEmpty()) { convey.put(kv.conveyas(), value); }
 					}
 				}
-			} catch (final Exception e) {
+			} catch (@Nonnull final Exception e) {
 				SL.report("Conveyance error", e, st);
 				st.logger().log(SEVERE, "Exception compiling conveyance", e);
 			}
@@ -351,20 +358,20 @@ public abstract class Modules {
 		return convey;
 	}
 
-	public static Pool getPool(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
+	@Nonnull // sad but true
+	public static Pool getPoolNullable(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
 		return get(st, qualifiedname).getPool(st, extractReference(qualifiedname));
 	}
 
-	public static Pool getPoolNotNull(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
-		final Pool pool = getPool(st, qualifiedname);
-		if (pool == null) { throw new UserInputLookupFailureException("Unable to find pool " + qualifiedname); }
-		return pool;
+	@Nonnull
+	public static Pool getPool(final State st, @Nonnull final String qualifiedname) throws UserException, SystemException {
+		return getPoolNullable(st, qualifiedname);
 	}
 
 	public static void simpleHtml(@Nonnull final State st, @Nonnull final String command, @Nonnull final SafeMap values) throws UserException, SystemException {
 		final Module m = get(st, command);
 		if (m == null) { throw new UserInputLookupFailureException("No such module in " + command); }
-		final Command c = m.getCommand(st, extractReference(command));
+		final Command c = m.getCommandNullable(st, extractReference(command));
 		if (c == null) { throw new UserInputLookupFailureException("No such command in " + command); }
 		c.simpleHtml(st, values);
 	}

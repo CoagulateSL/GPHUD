@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConfigurationRow extends Row {
-	public ConfigurationRow(@Nonnull final State st, final TableRow dbo, @Nonnull final KV kv, @Nonnull final State simulated) throws UserException, SystemException {
+	public ConfigurationRow(@Nonnull final State st, @Nonnull final TableRow dbo, @Nonnull final KV kv, @Nonnull final State simulated) throws UserException, SystemException {
 		final String kvname = kv.fullname();
 		//kv=st.getKVDefinition(kvname);
 		add(kv.name());

@@ -7,7 +7,6 @@ import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -17,11 +16,11 @@ public class ScriptingModule extends ModuleAnnotation {
 		super(name, annotation);
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
-	public Command getCommand(@Nonnull final State st, @Nonnull final String commandname) {
+	public Command getCommandNullable(@Nonnull final State st, @Nonnull final String commandname) {
 		if (commandname.equalsIgnoreCase("characterresponse") ||
-			commandname.equalsIgnoreCase("stringresponse")) { return super.getCommand(st,commandname); }
+			commandname.equalsIgnoreCase("stringresponse")) { return super.getCommandNullable(st,commandname); }
 		final Scripts script=Scripts.findOrNull(st,commandname.replaceFirst("gs",""));
 		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists"); }
 		return new ScriptingCommand(script);

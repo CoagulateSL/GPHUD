@@ -45,7 +45,7 @@ public abstract class ViewAvatar {
 	public static void viewAvatar(@Nonnull final State st, final SafeMap values, @Nonnull final User a) throws UserException, SystemException {
 		boolean fullinstance = false;
 		boolean full = false;
-		final String tz = st.getAvatarNullable().getTimeZone();
+		final String tz = st.getAvatar().getTimeZone();
 		if (st.getAvatarNullable() == a) {
 			fullinstance = true;
 			full = true;
@@ -96,7 +96,7 @@ public abstract class ViewAvatar {
 	}
 
 	@URLs(url = "/avatars/settimezone")
-	public static void setTimeZone(final State st, final SafeMap value) {
+	public static void setTimeZone(@Nonnull final State st, @Nonnull final SafeMap value) {
 		Modules.simpleHtml(st, "User.SetTZ", value);
 	}
 
@@ -105,7 +105,7 @@ public abstract class ViewAvatar {
 	public static Response setTZ(@Nonnull final State st,
 	                             @Arguments(type = Argument.ArgumentType.CHOICE, description = "Prefered Time Zone", choiceMethod = "getTimeZones") final
 	                             String timezone) {
-		st.getAvatarNullable().setTimeZone(timezone);
+		st.getAvatar().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");
 	}
 

@@ -12,7 +12,7 @@ import java.util.TreeMap;
 public class SafeMap extends TreeMap<String, String> {
 	private static final long serialVersionUID=1L;
 
-	@Nullable
+	@Nonnull
 	private static String nonull(@Nullable final String s) {
 		if (s == null) { return ""; }
 		return s;

@@ -59,8 +59,8 @@ public abstract class Audit {
 		if (op == OPERATOR.AVATAR) { character = null; }
 		final Instance stinstance = st.getInstanceNullable();
 		if (log) {
-			String instance = "NoInstance";
-			if (stinstance != null) { instance = stinstance.getName(); }
+			//String instance = "NoInstance";
+			//if (stinstance != null) { instance = stinstance.getName(); }
 			String actor = "";
 			if (avatar != null) {
 				actor += "A:" + avatar.getName();
@@ -115,12 +115,12 @@ public abstract class Audit {
 					oldvalue,
 					newvalue,
 					note,
-					st.sourcename,
+					st.getSourcename(),
 					getId(st.getSourceowner()),
 					getId(st.getSourcedeveloper()),
 					getId(st.sourceregion),
 					st.sourcelocation);
-		} catch (final DBException ex) {
+		} catch (@Nonnull final DBException ex) {
 			st.logger().log(WARNING, "Audit logging failure", ex);
 		}
 	}
@@ -260,7 +260,7 @@ public abstract class Audit {
 			final float y = Float.parseFloat(xyz[1]);
 			final float z = Float.parseFloat(xyz[2]);
 			return ((int) x) + "," + ((int) y) + "," + ((int) z);
-		} catch (final NumberFormatException e) { return olds; }
+		} catch (@Nonnull final NumberFormatException e) { return olds; }
 	}
 
 	public enum OPERATOR {AVATAR, CHARACTER}

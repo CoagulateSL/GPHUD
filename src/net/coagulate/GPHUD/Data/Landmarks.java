@@ -25,7 +25,7 @@ public class Landmarks extends TableRow {
 	public static Set<Landmarks> getAll(@Nonnull final Instance instance) {
 		final Set<Landmarks> results=new HashSet<>();
 		for (final ResultsRow row:GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
-			results.add(get(row.getIntNullable("id")));
+			results.add(get(row.getInt("id")));
 		}
 		return results;
 	}
@@ -47,9 +47,9 @@ public class Landmarks extends TableRow {
 	@Nullable
 	public static Landmarks find(@Nonnull final Instance instance, final String name) {
 		try {
-			final Integer id=GPHUD.getDB().dqi("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like ?",instance.getId(),name);
+			final int id=GPHUD.getDB().dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like ?",instance.getId(),name);
 			return new Landmarks(id);
-		} catch (final NoDataException e) {return null;}
+		} catch (@Nonnull final NoDataException e) {return null;}
 	}
 
 	public static void create(@Nonnull final Region region, final String name, final float x, final float y, final float z, final float lax, final float lay, final float laz) {
@@ -79,7 +79,7 @@ public class Landmarks extends TableRow {
 
 	@Nonnull
 	public Region getRegion(final boolean allowretired) {
-		return Region.get(getIntNullable("regionid"),allowretired);
+		return Region.get(getInt("regionid"),allowretired);
 	}
 
 	@Nonnull

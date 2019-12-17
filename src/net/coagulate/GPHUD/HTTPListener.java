@@ -6,6 +6,7 @@ import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +48,7 @@ public class HTTPListener {
 			if (server==null) { throw new SystemInitialisationException("Server bootstrap is null?"); }
 			GPHUD.getLogger().config("HTTP Services starting up on port " + port);
 			server.start();
-		} catch (final IOException e) {
+		} catch (@Nonnull final IOException e) {
 			// "whoops"
 			GPHUD.getLogger().log(SEVERE, "Listener crashed", e);
 			System.exit(3);

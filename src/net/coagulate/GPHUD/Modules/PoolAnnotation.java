@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class PoolAnnotation extends Pool {
 	final Pools meta;
 	final Module module;
-	private boolean generated = true;
+	private final boolean generated;
 
 	public PoolAnnotation(final Module mod, final Pools meta) {
 		module = mod;

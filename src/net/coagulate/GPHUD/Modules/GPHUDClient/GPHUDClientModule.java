@@ -68,7 +68,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	private void keyConveyances(@Nonnull final Map<String, KV> filterinto, @Nonnull final Map<String, KV> filterfrom) {
 		for (final KV kv : filterfrom.values()) {
 			final String conveyas = kv.conveyas();
-			if (conveyas != null && !conveyas.isEmpty()) {
+			if (!conveyas.isEmpty()) {
 				final String newname = "conveyance-" + conveyas;
 				//System.out.println("CREATING CONVEYANCE KV "+newname);
 				filterinto.put(newname, new ConveyanceKV(newname));

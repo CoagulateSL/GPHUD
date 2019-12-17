@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.*;
@@ -233,6 +232,7 @@ public class GSCompiler {
 			if (op.equals("<")) { handledop=true; compiled.add(new BCLessThan(node.child(1))); }
 			if (op.equals(">=")) { handledop=true; compiled.add(new BCGreaterThanEqual(node.child(1))); }
 			if (op.equals("<=")) { handledop=true; compiled.add(new BCLessThanEqual(node.child(1))); }
+			if (!handledop) { throw new GSInternalError("Binary operation of unknown type "+op); }
 			return compiled;
 		}
 

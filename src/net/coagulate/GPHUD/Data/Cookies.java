@@ -30,6 +30,7 @@ public class Cookies {
 	// i.e. 1/3rd of time gone (10 minutes), 20 minutes left, then refresh cookie.
 	@Nullable
 	private ResultsRow r;
+	@Nonnull
 	private ResultsRow r() {
 		if (r==null) { throw new SystemConsistencyException("No cookie loaded?"); }
 		return r;
@@ -88,9 +89,11 @@ public class Cookies {
 		expire = expire + COOKIE_LIFESPAN;
 		int renewableint = 0;
 		if (renewable) { renewableint = 1; }
+		/*
 		String id = "";
 		if (avatar != null) { id += " Avatar:" + avatar; }
 		if (character != null) { id += " Character:" + character; }
+		 */
 		GPHUD.getDB().d("insert into cookies(cookie,expires,renewable,avatarid,characterid,instanceid) values(?,?,?,?,?,?)", cookie,
 				expire,
 				renewableint,
@@ -115,7 +118,7 @@ public class Cookies {
 		if (cookie != null) {
 			try {
 				return new Cookies(cookie);
-			} catch (final UserException e) {} // logged out possibly, or expired and cleaned up
+			} catch (@Nonnull final UserException e) {} // logged out possibly, or expired and cleaned up
 		}
 		return null;
 	}
@@ -127,7 +130,7 @@ public class Cookies {
 	 * @throws UserException if the cookie fails validation in any way.
 	 */
 	private void validateCookie() throws UserException {
-		try { load(); } catch (final NoDataException e) { throw new UserInputStateException("Cookie Expired!", e); }
+		try { load(); } catch (@Nonnull final NoDataException e) { throw new UserInputStateException("Cookie Expired!", e); }
 		final int expires = r().getInt("expires");
 		if (expires < getUnixTime()) {
 			GPHUD.getDB().d("delete from cookies where cookie=?", cookie);
@@ -243,7 +246,7 @@ public class Cookies {
 		if (av == null && ch != null) { st.setAvatar(ch.getOwner()); }
 		if (av != null) {
 			st.cookiestring = cookie;
-			st.cookie = this;
+			st.cookie(this);
 		}
 	}
 }

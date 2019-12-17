@@ -6,6 +6,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
+import javax.annotation.Nonnull;
+
 import static java.util.logging.Level.SEVERE;
 
 // sample primitive handler :P
@@ -16,7 +18,7 @@ public class UnauthenticatedShutdown implements HttpRequestHandler {
 		if (GPHUD.DEV) {
 			GPHUD.getLogger().log(SEVERE, "UNAUTHENTICATED SHUTDOWN HANDLER IS ACTIVE AND HAS BEEN CALLED");
 			HTTPListener.shutdown();
-			try { Thread.sleep(1000); } catch (final InterruptedException e) {}
+			try { Thread.sleep(1000); } catch (@Nonnull final InterruptedException e) {}
 			GPHUD.getLogger().log(SEVERE, "Terminating execution NOW!");
 			System.exit(2);
 		}

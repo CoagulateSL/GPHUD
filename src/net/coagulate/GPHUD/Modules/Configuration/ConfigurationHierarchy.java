@@ -34,7 +34,7 @@ public class ConfigurationHierarchy extends Form {
 		final String editperm = kv.editpermission();
 		if (!editperm.isEmpty()) { add("<b>Requires Permission:</b> " + editperm).br(); }
 		final String convey = kv.conveyas();
-		if (convey != null && !convey.isEmpty()) { add("<b>Conveyed as:</b> " + convey).br(); }
+		if (!convey.isEmpty()) { add("<b>Conveyed as:</b> " + convey).br(); }
 		add("<b>KV Type:</b> " + kv.type()).br();
 		add("<b>Hierarchy Type:</b> " + kv.hierarchy()).br();
 		add("<b>Hierarchy Scope:</b> " + kv.scope()).br();
@@ -82,7 +82,7 @@ public class ConfigurationHierarchy extends Form {
 					Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Set" + type + "KV", kv.fullname(), oldvalue, value, "Changed " + type + "/" + dbo.getNameSafe() + " configuration");
 					add("<font color=green>OK: Value updated</font>");
 					st.purgeCache(dbo);
-				} catch (final UserException e) {
+				} catch (@Nonnull final UserException e) {
 					add("<font color=red>ERROR: " + e.getLocalizedMessage() + "</font>");
 				}
 			} else {
@@ -116,7 +116,7 @@ public class ConfigurationHierarchy extends Form {
 			final KVValue kvexample = simulated.getKV(kv.fullname());
 			h.openRow();
 			h.add("<i>Example</i>").add("<i>" + kvexample.path() + "</i>").add("<i>" + kvexample.value() + "</i>");
-		} catch (final UserException ue) {
+		} catch (@Nonnull final UserException ue) {
 			h.openRow();
 			h.add("<b>ERROR</b>").add(ue.getLocalizedMessage()).add("<b>ERROR</b>");
 		}
@@ -139,6 +139,7 @@ public class ConfigurationHierarchy extends Form {
 		if (value == null) { value = ""; }
 		t.add(value);
 		if (kv.editpermission().isEmpty() || st.hasPermission(kv.editpermission())) {
+			/*
 			String typefield = "";
 			final String typename = dbo.getName();
 			String targeturl = "";
@@ -166,11 +167,12 @@ public class ConfigurationHierarchy extends Form {
 				targeturl = "/" + Interface.base() + "/configuration/setcharvalue";
 				typefield = "character";
 			}
+			*/
 			String kvvalue = simulated.getRawKV(dbo, kv.fullname());
 			if (kvvalue == null) { kvvalue = ""; }
 			final String codename = dbo.getKVTable() + "-" + dbo.getId();
 			alledits.add("edit-" + codename);
-			String editor = null;
+			String editor;
 			//t.add(new Form(st, true, targeturl, "Edit",typefield,typename,"key",kv.fullname(),"value",kvvalue));
 			switch (kv.type()) {
 				case BOOLEAN:

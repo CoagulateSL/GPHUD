@@ -48,7 +48,7 @@ public abstract class Retirement {
 		if (target.retired()) { return new OKResponse("Target character is already retired"); }
 		target.retire();
 		Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, target, "SET", "RETIRED", Boolean.toString(target.retired()), "true", "Character retired by administrator");
-		target.hudMessage("This character has been retired by Administrator '" + st.getAvatarNullable().getName() + "'");
+		target.hudMessage("This character has been retired by Administrator '" + st.getAvatar().getName() + "'");
 		target.push("reboot", "Restarting due to character being retired.");
 		return new OKResponse("Target character is retired");
 	}

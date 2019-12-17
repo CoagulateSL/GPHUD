@@ -56,7 +56,7 @@ public class VisitXP extends QuotaedXP {
 				ch.hudMessage("You were awared 1 point of Visit XP, you will be eligable for your next point " + nextFree(st));
 				Audit.audit(fakestate, Audit.OPERATOR.AVATAR, null, ch, "Pool Add", "VisitXP", null, "" + wanttogive, "Awarded XP for time on sim");
 			}
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Exception running awards for character " + ch.getNameSafe() + " #" + ch.getId(), e);
 		}
 	}
@@ -72,7 +72,7 @@ public class VisitXP extends QuotaedXP {
 					runAwards(st, visitor);
 				}
 			}
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Exception running awards for instance " + i.getNameSafe() + " #" + i.getId(), e);
 		}
 	}
@@ -81,10 +81,10 @@ public class VisitXP extends QuotaedXP {
 		try {
 			final Results results = GPHUD.getDB().dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
 			for (final ResultsRow r : results) {
-				final Instance i = Instance.get(r.getIntNullable());
+				final Instance i = Instance.get(r.getInt());
 				runAwards(i);
 			}
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Exception running awards outer task", e);
 		}
 	}

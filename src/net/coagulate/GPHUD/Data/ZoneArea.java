@@ -44,13 +44,13 @@ public class ZoneArea extends TableRow {
 		final String[] parts = s.split(",");
 		if (parts.length != 3) { throw new UserInputValidationParseException("Could not decompose co-ordinates properly"); }
 		final int[] pos = new int[3];
-		try { pos[0] = (int) Float.parseFloat(parts[0]); } catch (final NumberFormatException e) {
+		try { pos[0] = (int) Float.parseFloat(parts[0]); } catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Error processing X number " + parts[0] + " - " + e.getMessage());
 		}
-		try { pos[1] = (int) Float.parseFloat(parts[1]); } catch (final NumberFormatException e) {
+		try { pos[1] = (int) Float.parseFloat(parts[1]); } catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Error processing Y number " + parts[1] + " - " + e.getMessage());
 		}
-		try { pos[2] = (int) Float.parseFloat(parts[2]); } catch (final NumberFormatException e) {
+		try { pos[2] = (int) Float.parseFloat(parts[2]); } catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Error processing Z number " + parts[2] + " - " + e.getMessage());
 		}
 		return pos;
@@ -72,6 +72,7 @@ public class ZoneArea extends TableRow {
 	@Override
 	public String getNameField() {
 		final String[] vectors = getVectors();
+		if (vectors==null) { return "NoPosition"; }
 		return vectors[0] + " - " + vectors[1];
 	}
 
@@ -165,7 +166,7 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nonnull
 	public Zone getZone() {
-		return Zone.get(dqi( "select zoneid from zoneareas where zoneareaid=?", getId()));
+		return Zone.get(dqinn( "select zoneid from zoneareas where zoneareaid=?", getId()));
 	}
 
 	/**
@@ -196,6 +197,7 @@ public class ZoneArea extends TableRow {
 	@Override
 	public String getName() {
 		final String[] vectors = getVectors();
+		if (vectors==null) { return getRegion(true).getName()+"@NoPosition"; }
 		return getRegion(true).getName() + "@" + vectors[0] + "-" + vectors[1];
 	}
 

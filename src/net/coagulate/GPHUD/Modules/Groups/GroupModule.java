@@ -32,7 +32,7 @@ public class GroupModule extends ModuleAnnotation {
 				ret.add(new StaticSideSubMenu(submenu, pri++, "/groups/type/" + submenu, ""));
 			}
 		}
-		ret.add(new StaticSideSubMenu("Other", pri++, "/groups/type/BLANK", ""));
+		ret.add(new StaticSideSubMenu("Other", pri+1, "/groups/type/BLANK", ""));
 		return ret;
 	}
 

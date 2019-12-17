@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class Permissions {
 	@URLs(url = "/permissionsgroups/addpermission", requiresPermission = "Instance.ManagePermissions")
-	public static void addPermissionForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void addPermissionForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.addpermission", values);
 	}
 
@@ -44,7 +44,7 @@ public abstract class Permissions {
 		if (!permissionref.grantable()) {
 			return new ErrorResponse("The permission '" + permission + "' is not grantable through user action.");
 		}
-		try { permissionsgroup.addPermission(st, permission); } catch (final UserException e) {
+		try { permissionsgroup.addPermission(st, permission); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to add permission to permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Add Permission", permissionsgroup.getNameSafe(), null, permission, "Permission added to permissions group");
@@ -52,7 +52,7 @@ public abstract class Permissions {
 	}
 
 	@URLs(url = "/permissionsgroups/delpermission", requiresPermission = "Instance.ManagePermissions")
-	public static void delPermissionForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void delPermissionForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.delpermission", values);
 	}
 
@@ -64,7 +64,7 @@ public abstract class Permissions {
 	                                     @Arguments(description = "Permission to remove from group", type = ArgumentType.TEXT_CLEAN, max = 256) final
 	                                         String permission
 	) throws UserException, SystemException {
-		try { permissionsgroup.removePermission(permission); } catch (final UserException e) {
+		try { permissionsgroup.removePermission(permission); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove permission from permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Del Permission", permissionsgroup.getNameSafe(), permission, null, "Permission removed from permissions group");

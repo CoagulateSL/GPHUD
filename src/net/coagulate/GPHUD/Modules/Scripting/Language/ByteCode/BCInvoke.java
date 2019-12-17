@@ -65,12 +65,12 @@ public class BCInvoke extends ByteCode {
 	}
 
 	private void invoke(final State st, @Nonnull final GSVM vm, @Nonnull final Method function, final Object[] parameters) {
-		Object rawret= null;
+		final Object rawret;
 		try {
 			rawret = function.invoke(null, parameters);
-		} catch (final IllegalAccessException e) {
+		} catch (@Nonnull final IllegalAccessException e) {
 			throw new GSInternalError("Method access to "+function.getName()+" in "+function.getDeclaringClass()+" is not permitted.  Check access qualifier is public.");
-		} catch (final InvocationTargetException e) {
+		} catch (@Nonnull final InvocationTargetException e) {
 			final Throwable t=e.getCause();
 			if (t!=null) {
 				if (UserException.class.isAssignableFrom(t.getClass())) { throw ((UserException)t); }

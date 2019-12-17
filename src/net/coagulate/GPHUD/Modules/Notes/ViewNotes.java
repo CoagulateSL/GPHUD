@@ -38,7 +38,7 @@ public class ViewNotes {
 		final Form f= st.form();
 		f.add(new TextSubHeader("Administrator Notes (Last three only)"));
 		if (!notes.isEmpty()) {
-			f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));
+			f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
 			final Table buttons=new Table();
 			if (st.hasPermission("Notes.Add")) {
 				f.noForm();
@@ -61,18 +61,18 @@ public class ViewNotes {
 		}
 	}
 	@URLs(url="/Notes/AddCharacterNote",requiresPermission = "Notes.Add")
-	public static void addCharacterNote(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void addCharacterNote(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Notes.Character", values);
 	}
 	@URLs(url="/Notes/AddAvatarNote",requiresPermission = "Notes.Add")
-	public static void addAvatarNote(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void addAvatarNote(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Notes.Avatar", values);
 	}
 	@URLs(url="/Notes/ViewChar/*")
 	public static void viewChar(@Nonnull final State st, final SafeMap values) throws UserException,SystemException {
 		Integer targetid=null;
-		final String[] parts=st.getDebasedURL().split("\\/");
-		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (final NumberFormatException e) {}
+		final String[] parts=st.getDebasedURL().split("/");
+		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
 		if (targetid==null) { throw new UserInputValidationParseException("Failed to extract character id from "+parts[parts.length-1]); }
 		final Char target=Char.get(targetid);
 		if (st.getInstance()!=target.getInstance()) { throw new UserInputStateException("State instance/target mismatch"); }
@@ -85,13 +85,13 @@ public class ViewNotes {
 		}
 		final Form f= st.form();
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatarNullable().getTimeZone()));
+		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatar().getTimeZone()));
 	}
 	@URLs(url="/Notes/ViewUser/*")
 	public static void viewUser(@Nonnull final State st, final SafeMap values) throws UserException,SystemException {
 		Integer targetid=null;
-		final String[] parts=st.getDebasedURL().split("\\/");
-		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (final NumberFormatException e) {}
+		final String[] parts=st.getDebasedURL().split("/");
+		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
 		if (targetid==null) { throw new UserInputValidationParseException("Failed to extract user id from "+parts[parts.length-1]); }
 		final User target=User.get(targetid);
 
@@ -104,14 +104,14 @@ public class ViewNotes {
 		}
 		final Form f= st.form();
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatarNullable().getTimeZone()));
+		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
 	}
 	@URLs(url ="/Notes/ViewAll",requiresPermission = "Notes.View")
 	public static void viewAll(@Nonnull final State st, final SafeMap values)  throws UserException, SystemException {
 		final Form f= st.form();
 		final List<AdminNotes.AdminNote> notes = AdminNotes.get(st.getInstance());
 		f.add(new TextHeader("Admin Notes Log"));
-		f.add(formatNotes(notes,st.getAvatarNullable().getTimeZone()));
+		f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
 	}
 
 	@Nonnull

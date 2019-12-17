@@ -8,7 +8,6 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -58,14 +57,15 @@ public abstract class Templater {
 
 	public static Method getMethod(final State st, final String name) { return getMethods(st).get(name); }
 
-	public static String template(@Nonnull final State st, String string, final boolean evaluate, final boolean integer) {
+	@Nonnull
+	public static String template(@Nonnull final State st, @Nonnull String string, final boolean evaluate, final boolean integer) {
 		string = template(st, string);
-		if (string == null) { return string; }
 		if ("".equals(string)) { return ""; }
 		try {
 			if (evaluate && !integer) { return eval(string) + ""; }
+			//noinspection ConstantConditions
 			if (evaluate && integer) { return "" + ((int) (eval(string))); }
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			SL.report("Expression failed for " + string, e, st);
 			st.logger().log(WARNING, "Failed to complete expression evaluation for '" + string + "' - we got error " + e.getMessage(), e);
 			throw e;
@@ -73,14 +73,13 @@ public abstract class Templater {
 		return string;
 	}
 
-	@Nullable
-	private static String template(@Nonnull final State st, @Nullable String string) throws UserException {
-		if (string == null) { return string; }
+	@Nonnull
+	private static String template(@Nonnull final State st, @Nonnull String string) throws UserException {
 		final boolean debug = false;
 		for (final String subst : getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
-				String value = "ERROR";
-				try { value = getValue(st, subst); } catch (final UserException e) { value = "Error: " + e.getMessage(); }
+				String value;
+				try { value = getValue(st, subst); } catch (@Nonnull final UserException e) { value = "Error: " + e.getMessage(); }
 				string = string.replaceAll(subst, Matcher.quoteReplacement(value));
 			}
 		}
@@ -104,7 +103,7 @@ public abstract class Templater {
 				SL.report("Templating exception", ex, st);
 				st.logger().log(SEVERE, "Exception running templater method", ex);
 				throw new SystemImplementationException("Templater exceptioned", ex);
-			} catch (final InvocationTargetException e) {
+			} catch (@Nonnull final InvocationTargetException e) {
 				if (e.getCause() instanceof UserException) { throw (UserException) e.getCause(); }
 				if (e.getCause() instanceof SystemException) { throw (SystemException) e.getCause(); }
 				throw new SystemImplementationException("Unable to invoke target", e);
@@ -113,7 +112,7 @@ public abstract class Templater {
 		throw new SystemImplementationException("No template implementation for " + keyword);
 	}
 
-	@Nullable
+	@Nonnull
 	@Template(name = "NAME", description = "Character Name")
 	public static String getCharacterName(@Nonnull final State st, final String key) {
 		if (st.getCharacterNullable() == null) { return ""; }

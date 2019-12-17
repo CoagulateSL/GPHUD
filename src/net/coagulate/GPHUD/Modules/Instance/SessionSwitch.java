@@ -36,10 +36,10 @@ public class SessionSwitch {
 			f.add(new Button("Select Instance - " + id, "Select Instance - " + i.getName()));
 			if (!values.get("Select Instance - " + id).isEmpty()) {
 				st.setInstance(i);
-				st.cookie.setInstance(i);
+				st.cookie().setInstance(i);
 				st.setCharacter(null);
-				st.cookie.setCharacter(st.getCharacterNullable());
-				st.getAvatarNullable().setLastInstance(i);
+				st.cookie().setCharacter(st.getCharacterNullable());
+				st.getAvatar().setLastInstance(i);
 				throw new RedirectionException("/switch/character");
 			}
 			ViewInstance.viewInstance(st, values, i);
@@ -57,12 +57,12 @@ public class SessionSwitch {
 			c.validate(st);
 			if (c.getOwner() != st.getAvatarNullable()) { throw new UserAccessDeniedException("You do not own this character"); }
 			st.setCharacter(c);
-			st.cookie.setCharacter(st.getCharacter());
+			st.cookie().setCharacter(st.getCharacter());
 			throw new RedirectionException("/");
 		}
 		f.noForm();
 		f.add(new TextHeader("Select Character"));
-		final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
+		final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatar());
 		if (chars.isEmpty()) {
 			f.add("You have no characters at this instance, please select a new instance or navigate via the left side menu.");
 			return;

@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Experience;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
@@ -127,13 +128,14 @@ public class ExperienceModule extends ModuleAnnotation {
 		return pools;
 	}
 
+	@Nonnull
 	@Override
 	public Pool getPool(final State st, @Nonnull final String itemname) {
 		final Map<String, Pool> pmap = getPoolMap(st);
 		for (final Map.Entry<String, Pool> entry : pmap.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
 		}
-		throw new SystemImplementationException("Unable to retrieve pool " + itemname);
+		throw new UserInputLookupFailureException("Unable to retrieve pool " + itemname+" in Experience module");
 	}
 
 	@Override

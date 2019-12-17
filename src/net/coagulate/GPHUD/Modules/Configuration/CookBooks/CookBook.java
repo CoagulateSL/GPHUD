@@ -28,7 +28,7 @@ public abstract class CookBook {
 		try {
 			st.getKVDefinition("Characters." + attribute);
 			t.add("Already Exists?");
-		} catch (final SystemException e) { t.add("OK"); }
+		} catch (@Nonnull final SystemException e) { t.add("OK"); }
 		if (!act) {
 			t.add("Create a character attribute " + attribute);
 			return;
@@ -49,7 +49,7 @@ public abstract class CookBook {
 		try {
 			st.setKV(object, attribute, newvalue);
 			t.add("OK");
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			SL.report("Cookbook setKV " + object + "/" + attribute + "=" + newvalue, e, st);
 			GPHUD.getLogger("CookBook").log(Level.INFO, "Exception in setKV " + object + "/" + attribute + "=" + newvalue, e);
 			t.add("Error: " + e.getLocalizedMessage());
@@ -62,7 +62,7 @@ public abstract class CookBook {
 		try {
 			Modules.getCommandNullable(st, "alias." + aliasname);
 			t.add("Already Exists?");
-		} catch (final UserException e) { t.add("OK"); }
+		} catch (@Nonnull final UserException e) { t.add("OK"); }
 		if (!act) {
 			t.add("Create Alias " + aliasname + " around command " + target);
 			return;
@@ -71,7 +71,7 @@ public abstract class CookBook {
 			template.put("invoke", target);
 			Alias.create(st, aliasname, template);
 			t.add("Created alias");
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			SL.report("Cookbook createAlias " + aliasname + "->" + target + "=" + template, e, st);
 			GPHUD.getLogger("CookBook").log(Level.INFO, "Exception in alias " + aliasname + "->" + target + "=" + template, e);
 			t.add("Error: " + e.getLocalizedMessage());
@@ -81,7 +81,7 @@ public abstract class CookBook {
 	protected static void createMenu(@Nonnull final State st, final boolean act, @Nonnull final Table t, @Nonnull final String name, final String description) {
 		t.openRow();
 		t.add("Create menu '" + name + "'");
-		final Menus existing = Menus.getMenu(st, name);
+		final Menus existing = Menus.getMenuNullable(st, name);
 		if (existing != null) { t.add("AlreadyExists"); } else { t.add("OK"); }
 		if (!act) {
 			t.add("Create a blank menu: " + description);
@@ -99,10 +99,10 @@ public abstract class CookBook {
 		menu(st, act, t, "Main", label, command);
 	}
 
-	protected static void menu(@Nonnull final State st, final boolean act, @Nonnull final Table t, final String menuname, final String label, final String command) {
+	protected static void menu(@Nonnull final State st, final boolean act, @Nonnull final Table t, @Nonnull final String menuname, final String label, final String command) {
 		t.openRow();
 		t.add("Add menu item '" + label + "'");
-		final Menus mainmenu = Menus.getMenu(st, menuname);
+		final Menus mainmenu = Menus.getMenuNullable(st, menuname);
 		JSONObject menu = null;
 		if (mainmenu != null) { menu = mainmenu.getJSON(); }
 		int empty = -1;

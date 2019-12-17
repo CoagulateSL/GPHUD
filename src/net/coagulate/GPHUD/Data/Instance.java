@@ -106,7 +106,7 @@ public class Instance extends TableRow {
 		try {
 			final int id = GPHUD.getDB().dqinn("select instanceid from instances where name=?", name);
 			return get(id);
-		} catch (final NoDataException e) { throw new UserInputLookupFailureException("Unable to find instance named '" + name + "'",e); }
+		} catch (@Nonnull final NoDataException e) { throw new UserInputLookupFailureException("Unable to find instance named '" + name + "'",e); }
 	}
 
 	/**
@@ -569,7 +569,7 @@ public class Instance extends TableRow {
 		try {
 			final int id = dqinn("select zoneid from zones where instanceid=? and name like ?", getId(), name);
 			return Zone.get(id);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -649,7 +649,7 @@ public class Instance extends TableRow {
 					String playedby = null;
 					if (user!=null) { playedby=user.getUUID(); }
 					if (playedby==null) { // maybe its an object
-						try { playedby=dqs("select uuid from objects where url like ?",c.getURL()); } catch (final NoDataException e) {}
+						try { playedby=dqs("select uuid from objects where url like ?",c.getURL()); } catch (@Nonnull final NoDataException e) {}
 					}
 					if (playedby!=null) {
 						final String payloadstring = payload.toString();

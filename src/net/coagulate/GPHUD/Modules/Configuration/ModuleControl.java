@@ -40,7 +40,7 @@ public abstract class ModuleControl {
 	}
 
 	@URLs(url = "/configuration/disablemodule", requiresPermission = "instance.ModuleEnablement")
-	public static void disableModuleForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void disableModuleForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Configuration.DisableModule", values);
 	}
 
@@ -55,7 +55,7 @@ public abstract class ModuleControl {
 	}
 
 	@URLs(url = "/configuration/enablemodule", requiresPermission = "instance.ModuleEnablement")
-	public static void enableModuleForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void enableModuleForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Configuration.EnableModule", values);
 	}
 }

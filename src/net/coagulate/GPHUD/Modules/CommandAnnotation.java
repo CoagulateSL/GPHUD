@@ -75,7 +75,7 @@ public class CommandAnnotation extends Command {
 				final String choicemethod = arg.choiceMethod();
 				try {
 					method.getDeclaringClass().getMethod(choicemethod, State.class);
-				} catch (final Exception e) {
+				} catch (@Nonnull final Exception e) {
 					throw new SystemImplementationException("Failed to instansiate choice method " + getFullName() + " / " + choicemethod);
 				}
 			}
@@ -110,6 +110,7 @@ public class CommandAnnotation extends Command {
 	@Nonnull
 	public String getFullName() { return owner.getName() + "." + getName(); }
 
+	@Nonnull
 	public String getName() { return method.getName(); }
 
 	private void populateArguments() {
@@ -136,6 +137,7 @@ public class CommandAnnotation extends Command {
 		return arguments;
 	}
 
+	@Nonnull
 	public List<Argument> getInvokingArguments() { return getArguments(); }
 
 	@Nonnull

@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  */
 public class SideMenuAnnotation extends SideMenu {
 	final SideMenus meta;
-	private boolean generated = true;
+	private final boolean generated;
 
 	public SideMenuAnnotation(final SideMenus meta) {
 		generated = false;

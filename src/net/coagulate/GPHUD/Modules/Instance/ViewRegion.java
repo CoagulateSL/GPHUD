@@ -28,13 +28,12 @@ public abstract class ViewRegion {
 	}
 
 	public static void viewRegion(@Nonnull final State st, final SafeMap values, @Nonnull final Region r) throws UserException {
-		boolean full = false;
-		if (st.isSuperUser()) { full = true; }
+		final boolean full = false;
 		final Table map = new Table();
 		st.form().add(map);
 		map.openRow().add("Name").add(r.getName());
 		map.openRow().add("Instance").add(r.getInstance());
-		map.openRow().add("Communications").add(r.getOnlineStatus(st.getAvatarNullable().getTimeZone()));
+		map.openRow().add("Communications").add(r.getOnlineStatus(st.getAvatar().getTimeZone()));
 		map.openRow().add("Server Version").add(r.getServerVersion(true));
 		map.openRow().add("HUD Version").add(r.getHUDVersion(true));
 		if (r.needsUpdate()) { map.openRow().add("").add(new Color("orange", "Update Required")); }

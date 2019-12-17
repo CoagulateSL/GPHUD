@@ -80,7 +80,7 @@ public class GPHUD {
 			hostname = java.net.InetAddress.getLocalHost().getHostName().replaceAll(".coagulate.net", "");
 			log().config("Server operating on node " + Interface.getNode());
 			validateNode(hostname);
-		} catch (final UnknownHostException e) {
+		} catch (@Nonnull final UnknownHostException e) {
 			throw new SystemInitialisationException("Unable to resolve local host name", e);
 		}
 
@@ -120,16 +120,16 @@ public class GPHUD {
 			try {
 				final Maintenance thread = new Maintenance();
 				thread.start();
-				try { Thread.sleep(45000); } catch (final InterruptedException e) { }
+				try { Thread.sleep(45000); } catch (@Nonnull final InterruptedException e) { }
 				if (thread.isAlive()) {
 					thread.interrupt();
 					log().warning("Maintenance loop ran for 45 seconds, interrupting!");
 				}
-				try { Thread.sleep(5000); } catch (final InterruptedException e) { }
+				try { Thread.sleep(5000); } catch (@Nonnull final InterruptedException e) { }
 				if (thread.isAlive()) {
 					log().severe("Maintenance loop ran for 45 seconds and failed to interrupt within 5 seconds!");
 				}
-				try { Thread.sleep(5000); } catch (final InterruptedException e) { }
+				try { Thread.sleep(5000); } catch (@Nonnull final InterruptedException e) { }
 				if (thread.isAlive()) {
 					log().severe("Maintenance failed interrupt, trying to force STOP()!");
 					thread.stop();
@@ -140,7 +140,7 @@ public class GPHUD {
 					System.exit(4);
 				}
 
-			} catch (final Exception e) {
+			} catch (@Nonnull final Exception e) {
 				log().log(SEVERE, "Maintenance thread threw unchecked exception?", e);
 			}
 		}
@@ -173,10 +173,10 @@ public class GPHUD {
 				}
 				line = file.readLine();
 			}
-		} catch (final FileNotFoundException e) {
+		} catch (@Nonnull final FileNotFoundException e) {
 			log().log(SEVERE, "File not found accessing " + filename, e);
 			System.exit(1);
-		} catch (final IOException e) {
+		} catch (@Nonnull final IOException e) {
 			log().log(SEVERE, "IOException reading configuration file " + filename, e);
 			System.exit(1);
 		}
@@ -253,7 +253,7 @@ public class GPHUD {
 	private static void syncToMinute() {
 		int seconds = Calendar.getInstance().get(Calendar.SECOND);
 		seconds = 60 - seconds;
-		try {Thread.sleep((long) (seconds * 1000.0)); } catch (final InterruptedException e) {}
+		try {Thread.sleep((long) (seconds * 1000.0)); } catch (@Nonnull final InterruptedException e) {}
 	}
 
 	public static void dbInit() {
@@ -275,15 +275,15 @@ public class GPHUD {
 					}
 					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
 					getDB().d("update objects set url=null where url=?",url);
-				} catch (final Exception e) {}
+				} catch (@Nonnull final Exception e) {}
 			}
 			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?", url);
-		} catch (final DBException ex) {
+		} catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE, "Failed to purge URL from characters", ex);
 		}
 		try {
 			getDB().d("update regions set url=null,authnode=null where url=?", url);
-		} catch (final DBException ex) {
+		} catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE, "Failed to purge URL from regions", ex);
 		}
 	}

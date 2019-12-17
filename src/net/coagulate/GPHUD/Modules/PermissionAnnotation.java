@@ -4,7 +4,6 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Wraps a permission.
@@ -13,11 +12,11 @@ import javax.annotation.Nullable;
  */
 public class PermissionAnnotation extends Permission {
 	final Permissions meta;
-	private boolean generated = true;
-	@Nullable
-	private String modulename;
+	private final boolean generated;
+	@Nonnull
+	private final String modulename;
 
-	public PermissionAnnotation(final Permissions m, @Nullable final String modulename) {
+	public PermissionAnnotation(final Permissions m, @Nonnull final String modulename) {
 		meta = m;
 		generated = false;
 		this.modulename=modulename;

@@ -30,7 +30,7 @@ public abstract class Interface implements HttpRequestHandler {
 
 	public static String getNode() { return GPHUD.hostname; }
 
-	@Nullable
+	@Nonnull
 	public static String base() {
 		if (base == null) {
 			if ("luna".equalsIgnoreCase(Interface.getNode())) { base = "app-iain"; } else { base = "app"; }
@@ -81,13 +81,13 @@ public abstract class Interface implements HttpRequestHandler {
 
 			// stash the remote address, uri, the headers array, request and response in the context
 			//System.out.println(req.getRequestLine().toString());
-			st.address = ia;
+			st.address(ia);
 			st.setURL(uri);
-			st.headers = headers;
+			st.headers(headers);
 			st.host = host;
 			// process the page request
 			process(st);
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			// there is no INTENDED use case for this catch, each interface should have its own 'catchall' somewhere, but just in case
 			SL.report("Generic Interface caught exception", e, st);
 			GPHUD.getLogger().log(SEVERE, "Exception propagated to generic interface handler!", e);

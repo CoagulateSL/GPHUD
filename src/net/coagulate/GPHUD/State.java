@@ -40,15 +40,16 @@ public class State extends DumpableState {
 
 	// map of post values read in the user interface
 	@Nullable
-	public SafeMap postmap;
+	private SafeMap postmap;
 	@Nullable
-	public String callbackurl;
+	private String callbackurl;
 	@Nonnull
 	public Sources source = Sources.NONE;
 	@Nullable
-	public HttpRequest req;
+	private HttpRequest req;
 	@Nullable
-	public HttpResponse resp;
+	private HttpResponse resp;
+
 	@Nullable
 	public HttpContext context;
 	// system interface puts input here
@@ -56,12 +57,10 @@ public class State extends DumpableState {
 	private JSONObject json;
 	// system interface sets to raw json string
 	@Nullable
-	public final String jsoncommand = null;
-	@Nullable
-	public InetAddress address;
+	private InetAddress address;
 
 	@Nullable
-	public Header[] headers;
+	private Header[] headers;
 	//requested host
 	@Nullable
 	public String host;
@@ -79,7 +78,7 @@ public class State extends DumpableState {
 	public User avatar;
 	// web interface cookie, used to logout things
 	@Nullable
-	public Cookies cookie;
+	private Cookies cookie;
 	@Nullable
 	public String cookiestring;
 	@Nullable
@@ -88,7 +87,7 @@ public class State extends DumpableState {
 	@Nullable
 	private User sourceowner;
 	@Nullable
-	public String sourcename;
+	private String sourcename;
 	@Nullable
 	private User sourcedeveloper;
 	@Nullable
@@ -141,8 +140,8 @@ public class State extends DumpableState {
 
 
 	public State(@Nullable final HttpRequest req, @Nullable final HttpResponse resp, @Nullable final HttpContext context) {
-		this.req = req;
-		this.resp = resp;
+		req(req);
+		resp(resp);
 		this.context = context;
 	}
 
@@ -217,7 +216,7 @@ public class State extends DumpableState {
 		for (final Attribute attr : getAttributes()) {
 			if (attr.getType()== Attribute.ATTRIBUTETYPE.GROUP) {
 				final String type = attr.getSubType();
-				if (type.equals(keyword)) {
+				if (type!=null && type.equals(keyword)) {
 					return attr;
 				}
 			}
@@ -271,7 +270,7 @@ public class State extends DumpableState {
 	}
 
 	@Nonnull
-	public KVValue getTargetKV(final String kvname) { return target.getKV(kvname); }
+	public KVValue getTargetKV(@Nonnull final String kvname) { return getTarget().getKV(kvname); }
 
 	/**
 	 * Get the region name - this is EITHER the name of the Region object (see getRegion()) or a temporary string.
@@ -382,7 +381,6 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public String getOwnerString() {
-		if (getSourceowner() == null) { return "<null>"; }
 		return getSourceowner().toString();
 	}
 
@@ -451,9 +449,9 @@ public class State extends DumpableState {
 	 */
 	public boolean hasPermissionOrAnnotateForm(final String permission) {
 		final boolean haspermission = hasPermission(permission);
-		if (haspermission) { return haspermission; }
+		if (haspermission) { return true; }
 		form().add(new TextError("Insufficient permissions: You require " + permission));
-		return haspermission;
+		return false;
 	}
 
 	@Nullable
@@ -503,7 +501,7 @@ public class State extends DumpableState {
 	}
 
 	@Nonnull
-	public KV getKVDefinition(final String kvname) {
+	public KV getKVDefinition(@Nonnull final String kvname) {
 		return Modules.getKVDefinition(this, kvname);
 	}
 
@@ -526,7 +524,7 @@ public class State extends DumpableState {
 		// events in ID order
 		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.SPATIAL || scope == KV.KVSCOPE.EVENT) {
 			final Map<Integer, Event> eventmap = new TreeMap<>();
-			for (final Event e : instance.getActiveEvents()) {
+			for (final Event e : getInstance().getActiveEvents()) {
 				eventmap.put(e.getId(), e);
 			}
 			check.addAll(eventmap.values());
@@ -623,7 +621,7 @@ public class State extends DumpableState {
 				}
 				return new KVValue(getKV(target, kvname), "Direct value from " + target.getClass().getSimpleName() + " " + target.getNameSafe());
 			}
-		} catch (final RuntimeException re) {
+		} catch (@Nonnull final RuntimeException re) {
 			throw new UserConfigurationException("Failed to evaluate KV " + kvname + ": " + re.getLocalizedMessage(), re);
 		}
 	}
@@ -643,7 +641,7 @@ public class State extends DumpableState {
 
 	public String getRawKV(@Nonnull final TableRow target, @Nonnull final String kvname) {
 		final KV kv = getKVDefinition(kvname);
-		if (kv == null) { throw new UserInputLookupFailureException("Failed to resolve " + kvname + " to a valid KV entity"); }
+		//if (kv == null) { throw new UserInputLookupFailureException("Failed to resolve " + kvname + " to a valid KV entity"); }
 		return getKVMap(target).get(kvname.toLowerCase());
 	}
 
@@ -660,7 +658,7 @@ public class State extends DumpableState {
 			isint = true;
 		}
 		String out;
-		try { out = Templater.template(this, s, evaluate, isint); } catch (final Exception e) {
+		try { out = Templater.template(this, s, evaluate, isint); } catch (@Nonnull final Exception e) {
 			throw new UserConfigurationException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
 		}
 		if (kv.type()== COLOR) {
@@ -680,12 +678,12 @@ public class State extends DumpableState {
 					case TEXT: // no checking here :P
 						break;
 					case INTEGER: // check it parses into an int
-						try { Integer.parseInt(value); } catch (final NumberFormatException e) {
+						try { Integer.parseInt(value); } catch (@Nonnull final NumberFormatException e) {
 							throw new UserInputValidationParseException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
 						}
 						break;
 					case FLOAT:
-						try { Float.parseFloat(value); } catch (final NumberFormatException e) {
+						try { Float.parseFloat(value); } catch (@Nonnull final NumberFormatException e) {
 							throw new UserInputValidationParseException(key + " must be a number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
 						}
 						break;
@@ -701,9 +699,9 @@ public class State extends DumpableState {
 						}
 						break;
 					case COMMAND:
-						try { Modules.getCommandNullable(this, value); } catch (final SystemException e) {
+						try { Modules.getCommandNullable(this, value); } catch (@Nonnull final SystemException e) {
 							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error");
-						} catch (final UserException f) {
+						} catch (@Nonnull final UserException f) {
 							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")");
 						}
 						break;
@@ -725,7 +723,7 @@ public class State extends DumpableState {
 		dbo.setKV(this, key, value);
 		purgeCache(dbo);
 		// push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
-		instance.pushConveyances();
+		getInstance().pushConveyances();
 	}
 
 	@Nonnull
@@ -734,7 +732,7 @@ public class State extends DumpableState {
 		simulated.setInstance(getInstance());
 		if (c == null) { c = getCharacterNullable(); }
 		simulated.setCharacter(c);
-		final Set<Region> possibleregions = instance.getRegions(false);
+		final Set<Region> possibleregions = getInstance().getRegions(false);
 		final Region simulatedregion = new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
 		simulated.setRegion(simulatedregion);
 		final Set<Zone> possiblezones = simulatedregion.getZones();
@@ -799,7 +797,7 @@ public class State extends DumpableState {
 		if (vm!=null) {
 			try {
 				return vm.dumpStateToHtml();
-			} catch (final Throwable e) { return "Exceptioned: " + e; }
+			} catch (@Nonnull final Throwable e) { return "Exceptioned: " + e; }
 		}
 		return "";
 	}
@@ -811,6 +809,7 @@ public class State extends DumpableState {
 		// well not sure there's a general solution so
 		if (avatar==null) {
 			if (character==null) {
+				//noinspection ConstantConditions,StatementWithEmptyBody
 				if (instance==null) {
 					// NO avatar, NO character, NO instance
 					// pointless
@@ -833,13 +832,14 @@ public class State extends DumpableState {
 			if (character==null) {
 				if (instance==null) {
 					// YES avatar, NO character, NO instance
-					character=Char.getMostRecent(avatar); instance=character.getInstance();
+					character=Char.getMostRecent(avatar); instance=getCharacter().getInstance();
 				} else {
 					// YES avatar, NO character, YES instance
 					character=Char.getMostRecent(avatar, instance);
 				}
 				updateCookie();
 			} else {
+				//noinspection ConstantConditions,StatementWithEmptyBody
 				if (instance==null) {
 					// YES avatar, YES character, NO instance
 					instance=character.getInstance(); updateCookie();
@@ -852,16 +852,17 @@ public class State extends DumpableState {
 	}
 
 	private void updateCookie() {
-		if (cookie!=null) {
-			if (cookie.getCharacter()!=character) { cookie.setCharacter(character); }
-			if (cookie.getAvatar()!=avatar) { cookie.setAvatar(avatar); }
-			if (cookie.getInstance()!=instance) { cookie.setInstance(instance); }
+		if (hasCookie()) {
+			if (cookie().getCharacter()!=character) { cookie().setCharacter(character); }
+			if (cookie().getAvatar()!=avatar) { cookie().setAvatar(getAvatar()); }
+			if (cookie().getInstance()!=instance) { cookie().setInstance(instance); }
 		}
 	}
 
+	@Nonnull
 	public Form form() {
 		if (form==null) { throw new SystemConsistencyException("Getting form but no form defined?"); }
-		return form();
+		return form;
 	}
 
 	@Nonnull
@@ -896,6 +897,86 @@ public class State extends DumpableState {
 
 	public void setSourceowner(@Nullable final User sourceowner) {
 		this.sourceowner = sourceowner;
+	}
+
+	@Nonnull public HttpResponse resp() {
+		if (resp==null) { throw new SystemImplementationException("There is no HTTP Response object"); }
+		return resp;
+	}
+
+	public void resp(@Nullable final HttpResponse resp) {
+		this.resp = resp;
+	}
+
+	@Nonnull public HttpRequest req() {
+		if (req==null) { throw new SystemImplementationException("There is no HTTP Request object"); }
+		return req;
+	}
+
+	public void req(@Nullable final HttpRequest req) {
+		this.req = req;
+	}
+
+	@Nonnull
+	public Header[] headers() {
+		if (headers==null) { throw new SystemImplementationException("Headers are null"); }
+		return headers;
+	}
+
+	public void headers(@Nullable final Header[] headers) {
+		this.headers = headers;
+	}
+
+	@Nonnull
+	public String getSourcename() {
+		if (sourcename==null) { throw new SystemImplementationException("Source name is null"); }
+		return sourcename;
+	}
+
+	public void setSourcename(@Nullable final String sourcename) {
+		this.sourcename = sourcename;
+	}
+
+	@Nonnull
+	public InetAddress address() {
+		if (address==null) { throw new SystemImplementationException("Remote host address is null"); }
+		return address;
+	}
+
+	public void address(@Nullable final InetAddress address) {
+		this.address = address;
+	}
+
+	@Nonnull
+	public Cookies cookie() {
+		if (cookie==null) { throw new SystemImplementationException("Cookies are null"); }
+		return cookie;
+	}
+
+	public void cookie(@Nullable final Cookies cookie) {
+		this.cookie = cookie;
+	}
+
+	public boolean hasCookie() { if (cookie==null) { return false; } return true; }
+
+	@Nonnull
+	public String callbackurl() {
+		if (callbackurl==null) { throw new SystemImplementationException("Callback URL is null"); }
+		return callbackurl;
+	}
+
+	public void callbackurl(@Nullable final String callbackurl) {
+		this.callbackurl = callbackurl;
+	}
+
+	@Nonnull
+	public SafeMap postmap() {
+		if (postmap==null) { throw new SystemImplementationException("Post map is null"); }
+		return postmap;
+	}
+
+	public void postmap(@Nullable final SafeMap postmap) {
+		this.postmap = postmap;
 	}
 
 

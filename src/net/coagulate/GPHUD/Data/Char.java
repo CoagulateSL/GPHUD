@@ -83,7 +83,7 @@ public class Char extends TableRow {
 		try {
 			final int i = GPHUD.getDB().dqinn("select characterid from characters where playedby=? and instanceid=?", avatar.getId(), instance.getId());
 			return get(i);
-		} catch (final NoDataException e) {
+		} catch (@Nonnull final NoDataException e) {
 			throw new UserInputStateException("Avatar " + avatar.getName() + " is not wearing the HUD or is not logged in as a character presently.", e);
 		}
 	}
@@ -180,7 +180,7 @@ public class Char extends TableRow {
 		final Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 order by lastactive desc limit 0,1",avatar.getId());
 		if (results.empty()) { return null; }
 		try { return Char.get(results.iterator().next().getInt("characterid")); }
-		catch (final Exception e) { // weird
+		catch (@Nonnull final Exception e) { // weird
 			GPHUD.getLogger().log(SEVERE,"Exception while instansiating most recently used character?",e);
 			return null;
 		}
@@ -191,7 +191,7 @@ public class Char extends TableRow {
 		final Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",avatar.getId(),optionalinstance.getId());
 		if (results.empty()) { return null; }
 		try { return Char.get(results.iterator().next().getInt("characterid")); }
-		catch (final Exception e) { // weird
+		catch (@Nonnull final Exception e) { // weird
 			GPHUD.getLogger().log(SEVERE,"Exception while instansiating most recently used character?",e);
 			return null;
 		}
@@ -384,7 +384,7 @@ public class Char extends TableRow {
 	 * @param days Number of days ago to start counting from.
 	 * @return Number of points in the pool in the selected time range.
 	 */
-	public int sumPoolDays(final Pool p, final float days) {
+	public int sumPoolDays(@Nonnull final Pool p, final float days) {
 		final int seconds = (int) (days * 60.0 * 60.0 * 24.0);
 		return sumPoolSince(p, getUnixTime() - seconds);
 	}
@@ -418,7 +418,7 @@ public class Char extends TableRow {
 			final User a = User.findOptional(key);
 			if (a != null) {
 				Char c = null;
-				try { c = Char.getActive(a, st.getInstance()); } catch (final UserException e) {
+				try { c = Char.getActive(a, st.getInstance()); } catch (@Nonnull final UserException e) {
 				}
 				if (c != null) { chars.add(c); }
 			}
@@ -460,7 +460,7 @@ public class Char extends TableRow {
 		for (final ResultsRow r : results) {
 			final String name = r.getString();
 			if (st.hasModule(name)) {
-				final Pool p = Modules.getPool(st, name);
+				final Pool p = Modules.getPoolNullable(st, name);
 				pools.add(p);
 			}
 		}
@@ -479,7 +479,7 @@ public class Char extends TableRow {
 			final Integer group = dqi("select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers.charactergroupid where characterid=? and charactergroups.type=?", getId(), grouptype);
 			if (group==null) { return null; }
 			return CharacterGroup.get(group);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -612,7 +612,7 @@ public class Char extends TableRow {
 			final Integer id = dqi("select zoneid from characters where characterid=?", getId());
 			if (id==null) { return null; }
 			return Zone.get(id);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -670,7 +670,7 @@ public class Char extends TableRow {
 		for (final KV kv : Modules.getKVSet(st)) {
 			if (kv != null) {
 				final String conveyas = kv.conveyas();
-				if (conveyas != null && !(conveyas.isEmpty())) {
+				if (!conveyas.isEmpty()) {
 					conveyances.add(kv);
 				}
 			}
@@ -692,7 +692,7 @@ public class Char extends TableRow {
 		for (final KV kv : getConveyances(st)) {
 			try {
 				conveyances.put(kv, st.getKV("gphudclient.conveyance-" + kv.conveyas()).value());
-			} catch (final SystemException e) {
+			} catch (@Nonnull final SystemException e) {
 				st.logger().log(SEVERE, "Exceptioned loading conveyance " + kv.conveyas() + " in instance " + st.getInstanceString() + " - " + e.getLocalizedMessage());
 			}
 		}
@@ -715,7 +715,7 @@ public class Char extends TableRow {
 				final String oldvalue = entry.getValue();
 				final String newvalue = st.getKV(kv.fullname()).value();
 				final String conveyas = kv.conveyas();
-				if (conveyas!=null && !conveyas.isEmpty()) {
+				if (!conveyas.isEmpty()) {
 					payload.put(conveyas, newvalue); // always put in init
 					if (!oldvalue.equals(newvalue)) {
 						setKV(st, "gphudclient.conveyance-" + kv.conveyas(), newvalue); // skip cache flush
@@ -741,7 +741,7 @@ public class Char extends TableRow {
 				final String oldvalue = entry.getValue();
 				final String newvalue = st.getKV(kv.fullname()).value();
 				final String conveyas=kv.conveyas();
-				if (conveyas!=null && !conveyas.isEmpty()) {
+				if (!conveyas.isEmpty()) {
 					if (!oldvalue.equals(newvalue)) {
 						payload.put(conveyas, newvalue);
 						setKV(st, "gphudclient.conveyance-" + kv.conveyas(), newvalue); // skip cache update/flush

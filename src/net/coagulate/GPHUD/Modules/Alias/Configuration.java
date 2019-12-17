@@ -78,7 +78,7 @@ public abstract class Configuration {
 				final Alias newalias = Alias.create(st, values.get("name"), template);
 				Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "Alias", null, values.get("command"), "Avatar created new alias");
 				throw new RedirectionException("./view/" + newalias.getId());
-			} catch (final UserException e) {
+			} catch (@Nonnull final UserException e) {
 				st.form().add(new Paragraph(new TextError("Creation failed : " + e.getMessage())));
 			}
 		}

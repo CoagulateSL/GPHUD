@@ -37,7 +37,7 @@ public abstract class Avatars {
 			return new ErrorResponse("Invalid developer source for priviledged call.");
 		}
 		final Region region = st.getRegion();
-		if (!region.getURL().equals(st.callbackurl)) {
+		if (!region.getURL().equals(st.callbackurl())) {
 			return new ErrorResponse("Invalid callback URL, you do not match the registered region server");
 		}
 		if (userlist == null) { userlist = ""; }
@@ -51,7 +51,7 @@ public abstract class Avatars {
 					final User thisavi = User.findOrCreateAvatar(p[1], p[0]);
 					// we DONT init visits this way =)  character registration does
 					openvisits.remove(thisavi);
-				} catch (final Exception e) {
+				} catch (@Nonnull final Exception e) {
 					st.logger().log(WARNING, "Avatar joiner registration failed, ", e);
 				}
 			}

@@ -95,7 +95,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/create", requiresPermission = "Groups.Create")
-	public static void createForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Groups.create", values);
 	}
 
@@ -106,7 +106,7 @@ public abstract class Management {
 	                              String name,
 	                              @Arguments(type = ArgumentType.CHOICE, description = "Type of the group", mandatory = false, choiceMethod = "groupTypes") final
 	                                  String type) {
-		try { st.getInstance().createCharacterGroup(name, false, type); } catch (final UserException e) {
+		try { st.getInstance().createCharacterGroup(name, false, type); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create group: " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create Group", type, null, name, "Created new group " + name + " of type " + type);
@@ -178,7 +178,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/setowner", requiresPermission = "Groups.SetOwner")
-	public static void setOwnerForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void setOwnerForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Groups.SetOwner", values);
 	}
 
@@ -187,17 +187,20 @@ public abstract class Management {
 	public static Response setOwner(@Nonnull final State st,
 	                                @Nonnull @Arguments(description = "Group to change the leader of", type = ArgumentType.CHARACTERGROUP) final
 	                                CharacterGroup group,
-	                                @Nonnull @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false) final
+	                                @Nullable @Arguments(description = "New leader, optionally", type = ArgumentType.CHARACTER, mandatory = false) final
 	                                    Char newowner) {
 		final Char oldowner = group.getOwner();
 		String oldownername = null;
 		if (oldowner != null) { oldownername = oldowner.getName(); }
 		if (newowner == oldowner) {
+			if (newowner==null) { return new OKResponse("That group already has no leader"); }
 			return new OKResponse("That character (" + newowner.getName() + ") is already the group leader");
 		}
 		if (newowner == null) {
 			group.setOwner(null);
 			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetOwner", group.getName(), oldownername, null, "Group leader removed");
+			// following is always true otherwise newowner(from this if) and oldowner(from the following) are null which is handled by "that group already has no leader"
+			//noinspection ConstantConditions
 			if (oldowner != null) {
 				oldowner.hudMessage(("You are no longer the group leader for " + group.getName()));
 			}
@@ -217,7 +220,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/add", requiresPermission = "Groups.SetGroup")
-	public static void addForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void addForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Groups.Add", values);
 	}
 
@@ -240,7 +243,7 @@ public abstract class Management {
 			return new ErrorResponse("Refusing to move character " + newmember.getName() + ", they are currently group leader of " + existinggroup.getName() + ", you must manually eject them from that position");
 		}
 		if (existinggroup != null) { existinggroup.removeMember(newmember); }
-		try { group.addMember(newmember); } catch (final UserException e) {
+		try { group.addMember(newmember); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to add " + newmember.getName() + " to " + group.getName() + ", they are probably in no group now! - " + e.getMessage());
 		}
 		String oldgroupname = null;
@@ -255,7 +258,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/remove", requiresPermission = "Groups.SetGroup")
-	public static void removeForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void removeForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Groups.Remove", values);
 	}
 
@@ -269,7 +272,7 @@ public abstract class Management {
 		if (group.getOwner() == member) {
 			return new ErrorResponse("Will not remove " + member.getName() + " from " + group.getName() + ", they are the group leader, you must demote them by replacing them or leaving the group leaderless.");
 		}
-		try { group.removeMember(member); } catch (final UserException e) {
+		try { group.removeMember(member); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove member - " + e.getMessage());
 		}
 		member.hudMessage("You have been removed from group " + group.getName());
@@ -278,7 +281,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/delete", requiresPermission = "Groups.Delete")
-	public static void deleteForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Groups.Delete", values);
 	}
 
@@ -294,7 +297,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/setadmin")
-	public static void setAdminForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void setAdminForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Groups.SetAdmin", values);
 	}
 
@@ -329,7 +332,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/setopen")
-	public static void setOpenForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void setOpenForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "Groups.SetOpen", values);
 	}
 

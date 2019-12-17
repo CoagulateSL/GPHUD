@@ -91,7 +91,7 @@ public class CharacterGroup extends TableRow {
 			final Integer id = GPHUD.getDB().dqi( "select charactergroupid from charactergroups where name like ? and instanceid=?", name, i.getId());
 			if (id==null) { return null; }
 			return get(id);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -235,7 +235,7 @@ public class CharacterGroup extends TableRow {
 			if (adminflag == null) { return false; }
 			if (adminflag == 1) { return true; }
 			return false;
-		} catch (final NoDataException e) { return false; }
+		} catch (@Nonnull final NoDataException e) { return false; }
 	}
 
 	/**

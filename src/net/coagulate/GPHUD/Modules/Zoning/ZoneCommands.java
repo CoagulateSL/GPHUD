@@ -73,7 +73,7 @@ public abstract class ZoneCommands {
 		return new JSONResponse(response);
 	}
 
-	@Nullable
+	@Nonnull
 	@Template(name = "ZONE", description = "Current zone")
 	public static String getZone(@Nonnull final State st, final String key) {
 		if (st.zone == null) { return ""; }
@@ -91,7 +91,9 @@ public abstract class ZoneCommands {
 		final String[] vectors = za.getVectors();
 		final Region region = za.getRegion(true);
 		za.delete();
-		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Delete Area", zone.getName(), vectors[0] + " - " + vectors[1], null, "Area removed from zone");
+		String position="NoPosition";
+		if (vectors!=null) { position=vectors[0] + " - " + vectors[1]; }
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Delete Area", zone.getName(), position, null, "Area removed from zone");
 		region.pushZoning();
 		return new OKResponse("Zone area removed from zone " + zone.getName());
 	}

@@ -20,15 +20,15 @@ public class Connect {
 	@Command.Commands(description = "Connects to the system as an object",context = Command.Context.AVATAR,permitConsole = false,permitUserWeb = false,permitScripting = false,permitJSON = false)
 	public static Response connect(@Nonnull final State st) {
 		if (!st.hasPermission("Objects.Connect")) {
-			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"REJECTED","Connection","","","Rejected GPHUD Object connection from "+st.sourcename+" at "+st.sourceregion+"/"+st.sourcelocation);
+			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"REJECTED","Connection","","","Rejected GPHUD Object connection from "+ st.getSourcename() +" at "+st.sourceregion+"/"+st.sourcelocation);
 			return new TerminateResponse("You do not have permissions to connect objects at this instance!");
 		}
 		final int version= Interface.convertVersion(st.json().getString("version"));
 		final int maxversion=Objects.getMaxVersion();
 		final Objects oldobject=Objects.findOrNull(st,st.objectkey);
-		final Objects obj= Objects.connect(st,st.objectkey,st.sourcename,st.getRegion(), st.getSourceowner(),st.sourcelocation,st.callbackurl,version);
+		final Objects obj= Objects.connect(st,st.objectkey, st.getSourcename(),st.getRegion(), st.getSourceowner(),st.sourcelocation, st.callbackurl(),version);
 		if (oldobject==null) {
-			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"New","Connection","",st.sourcename,"Conected new object at "+st.sourceregion+"/"+st.sourcelocation);
+			Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"New","Connection","", st.getSourcename(),"Conected new object at "+st.sourceregion+"/"+st.sourcelocation);
 		}
 		String versionsuffix="";
 		if (maxversion>version) { versionsuffix=" (An updated version of this script is available)"; }

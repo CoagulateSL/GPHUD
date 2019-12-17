@@ -29,10 +29,10 @@ public abstract class UserLandingPage {
 			return;
 		}
 		if (st.getCharacterNullable() == null) {
-			final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatarNullable());
+			final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatar());
 			if (chars.size() == 1) {
 				st.setCharacter(chars.iterator().next());
-				st.cookie.setCharacter(st.getCharacter());
+				st.cookie().setCharacter(st.getCharacter());
 			} else {
 				SessionSwitch.switchCharacter(st, values);
 				return;

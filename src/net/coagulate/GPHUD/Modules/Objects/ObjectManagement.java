@@ -81,7 +81,7 @@ public class ObjectManagement {
 
 	@URL.URLs(url="/configuration/objects/objecttypes/*",requiresPermission="Objects.ObjectTypes")
 	public static void editObjectType(@Nonnull final State st, final SafeMap map) {
-		st.postmap=map;
+		st.postmap(map);
 		final String[] parts=st.getDebasedNoQueryURL().split("/");
 		if (parts.length<5) { throw new UserInputValidationParseException("URI misformed, no ID found"); }
 		final ObjectTypes t=ObjectTypes.get(Integer.parseInt(parts[4]));
@@ -100,7 +100,7 @@ public class ObjectManagement {
 		final JSONObject json = new JSONObject();
 		json.put("incommand", "servergive");
 		json.put("itemname", "GPHUD Object Driver");
-		json.put("giveto", st.getAvatarNullable().getUUID());
+		json.put("giveto", st.getAvatar().getUUID());
 		st.getRegion().sendServer(json);
 		return new OKResponse("OK - Sent you an Object Driver script");
 	}

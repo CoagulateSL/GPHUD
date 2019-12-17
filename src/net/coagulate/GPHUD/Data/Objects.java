@@ -27,19 +27,19 @@ public class Objects extends TableRow {
 
 	@Nonnull
 	public static Objects find(final State st, final String uuid) {
-		final Integer id=GPHUD.getDB().dqi("select id from objects where uuid=?",uuid);
+		final int id=GPHUD.getDB().dqinn("select id from objects where uuid=?",uuid);
 		return new Objects(id);
 	}
 	@Nullable
 	public static Objects findOrNull(final State st, final String uuid) {
 		try { return find(st,uuid); }
-		catch (final NoDataException e) { return null; }
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	public static int getMaxVersion() {
 		try {
-			return GPHUD.getDB().dqi("select max(version) as maxver from objects");
-		} catch (final NoDataException e) { return 0; }
+			return GPHUD.getDB().dqinn("select max(version) as maxver from objects");
+		} catch (@Nonnull final NoDataException e) { return 0; }
 	}
 
 	@Nullable
@@ -54,20 +54,20 @@ public class Objects extends TableRow {
 		final Instance instance=st.getInstance();
 		final StringBuilder r= new StringBuilder("<table border=0><tr><th>UUID</th><th>name</th><th>Owner</th><th>Region</th><th>Location</th><th>Version</th><th>Last RX</th><Th>Object Type</th></tr>");
 		for (final ResultsRow row:GPHUD.getDB().dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions.instanceid=?",instance.getId())) {
-			final int since=row.getIntNullable("since");
+			final int since=row.getInt("since");
 			String bgcol="#dfffdf";
 			if (since>16*60) { bgcol="#ffffdf"; }
 			if (since>60*60) { bgcol="#ffdfdf"; }
 			r.append("<tr bgcolor=").append(bgcol).append(">");
 			r.append("<td>").append(row.getStringNullable("uuid")).append("</td>");
 			r.append("<td>").append(row.getStringNullable("name")).append("</td>");
-			r.append("<td>").append(User.get(row.getIntNullable("owner")).getGPHUDLink()).append("</td>");
-			r.append("<td>").append(Region.get(row.getIntNullable("regionid"), true).asHtml(st, true)).append("</td>");
+			r.append("<td>").append(User.get(row.getInt("owner")).getGPHUDLink()).append("</td>");
+			r.append("<td>").append(Region.get(row.getInt("regionid"), true).asHtml(st, true)).append("</td>");
 			r.append("<td>").append(row.getStringNullable("location")).append("</td>");
 			r.append("<td>").append(row.getIntNullable("version")).append("</td>");
 			r.append("<td>").append(UnixTime.duration(since)).append(" ago</td>");
 			if (st.hasPermission("Objects.MapObjects")) {
-				String objecttype = st.postmap.get(row.getStringNullable("uuid"));
+				String objecttype = st.postmap().get(row.getString("uuid"));
 				if (!objecttype.isEmpty()) {
 					final Integer oldobjecttype=row.getIntNullable("objecttype");
 					if (oldobjecttype==null || oldobjecttype!=Integer.parseInt(objecttype)) {
@@ -76,7 +76,7 @@ public class Objects extends TableRow {
 						final ObjectType ot = ObjectType.materialise(st, ObjectTypes.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload = new JSONObject();
 						ot.payload(st, reconfigurepayload);
-						new Transmission(Objects.get(row.getIntNullable("id")), reconfigurepayload).start();
+						new Transmission(Objects.get(row.getInt("id")), reconfigurepayload).start();
 					}
 				} else { objecttype=row.getStringNullable("objecttype"); }
 				r.append("<td>").append(ObjectTypes.getDropDownList(st, row.getStringNullable("uuid")).submitOnChange().setValue(objecttype).asHtml(st, true)).append("</td>"); // editing too, have fun with that.
@@ -87,7 +87,7 @@ public class Objects extends TableRow {
 				r.append("<td><button type=Submit name=reboot value=\"").append(row.getStringNullable("uuid")).append("\">Reboot</button></td>");
 			}
 			if (st.hasPermission("Objects.ShutdownObjects")) {
-				if (row.getStringNullable("uuid").equals(st.postmap.get("shutdown"))) {
+				if (row.getStringNullable("uuid").equals(st.postmap().get("shutdown"))) {
 					r.append("<td><button type=Submit name=reallyshutdown value=\"").append(row.getStringNullable("uuid")).append("\">CONFIRM SHUTDOWN - THE OBJECT OWNER MUST REBOOT IT TO RESUME SERVICE</button></td>");
 				} else {
 					r.append("<td><button type=Submit name=shutdown value=\"").append(row.getStringNullable("uuid")).append("\">Shutdown</button></td>");
@@ -111,7 +111,7 @@ public class Objects extends TableRow {
 	}
 
 	@Nonnull
-	public Region getRegion() { return Region.get(getIntNullable("regionid"),true); }
+	public Region getRegion() { return Region.get(getInt("regionid"),true); }
 
 	@Nullable
 	public String getLocation() { return getString("location"); }

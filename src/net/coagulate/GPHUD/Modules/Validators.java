@@ -57,7 +57,7 @@ public class Validators {
 					GPHUD.getLogger("Validation").fine(value + " failed float range 0<=x<=1 for " + parts[i]);
 					return false;
 				}
-			} catch (final NumberFormatException e) {
+			} catch (@Nonnull final NumberFormatException e) {
 				GPHUD.getLogger("Validation").fine(value + " failed float parse for " + parts[i]);
 				return false;
 			}

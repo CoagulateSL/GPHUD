@@ -48,19 +48,19 @@ public abstract class Teleporter extends ObjectType {
 	}
 
 	public void update(@Nonnull final State st) {
-		if (!st.postmap.get("target").isEmpty() || !st.postmap.get("teleportersays").isEmpty() || !st.postmap.get("hudsays").isEmpty()) {
+		if (!st.postmap().get("target").isEmpty() || !st.postmap().get("teleportersays").isEmpty() || !st.postmap().get("hudsays").isEmpty()) {
 			boolean update = false;
-			final String target = st.postmap.get("target");
+			final String target = st.postmap().get("target");
 			if (!target.equals(json.optString("teleporttarget", ""))) {
 				json.put("teleporttarget", target);
 				update = true;
 			}
-			final String teleportersays=st.postmap.get("teleportersays");
+			final String teleportersays= st.postmap().get("teleportersays");
 			if (!target.equals(json.optString("teleportersays",""))) {
 				json.put("teleportersays",teleportersays);
 				update=true;
 			}
-			final String hudsays=st.postmap.get("hudsays");
+			final String hudsays= st.postmap().get("hudsays");
 			if (!target.equals(json.optString("hudsays",""))) {
 				json.put("hudsays",hudsays);
 				update=true;

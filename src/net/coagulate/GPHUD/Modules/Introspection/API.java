@@ -34,7 +34,7 @@ public abstract class API {
 		final Form f = st.form();
 		String proposedcommand = uri;
 		proposedcommand = proposedcommand.replaceAll("/", ".");
-		proposedcommand = proposedcommand.replaceAll("[^A-Za-z0-9\\.]", "");  // limited character set.  XSS protect etc blah blah tainted user input blah
+		proposedcommand = proposedcommand.replaceAll("[^A-Za-z0-9.]", "");  // limited character set.  XSS protect etc blah blah tainted user input blah
 
 		final Command c = Modules.getCommandNullable(st, proposedcommand);
 		if (c == null) {
@@ -130,7 +130,7 @@ public abstract class API {
 						t.add(new Color("red", "Object"));
 					}
 					if (c.isGenerated()) { t.add(new Color("blue", "Instance Specific")); } else { t.add(""); }
-				} catch (final Exception e) { t.add("ERR:" + e); }
+				} catch (@Nonnull final Exception e) { t.add("ERR:" + e); }
 			}
 			t.openRow();
 			t.add(new Cell(new Separator(), 999));

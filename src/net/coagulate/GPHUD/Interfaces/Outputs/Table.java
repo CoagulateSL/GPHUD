@@ -110,5 +110,5 @@ public class Table implements Renderable {
 
 	public void nowrap() { nowrap = true; }
 
-	public void setBGColor(final String bgcolor){ openrow.setbgcolor(bgcolor);}
+	public void setBGColor(final String bgcolor){ if (openrow==null) { openRow(); } openrow.setbgcolor(bgcolor);}
 }

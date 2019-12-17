@@ -101,13 +101,13 @@ public abstract class GetMessages {
 				return new OKResponse("Invitation invalid, you are leader of " + currentgroup.getName());
 			}
 			if (currentgroup != null) {
-				try { currentgroup.removeMember(st.getCharacter()); } catch (final UserException e) {
+				try { currentgroup.removeMember(st.getCharacter()); } catch (@Nonnull final UserException e) {
 					Audit.audit(st, Audit.OPERATOR.CHARACTER, null, Char.get(j.getInt("from")), "Invite Invalid", targetgroup.getName(), null, null, "Invite to group " + targetgroup.getName() + " failed, leaving old group " + currentgroup.getName() + " errored - " + e.getMessage());
 					return new ErrorResponse("Unable to leave existing group - " + e.getMessage());
 				}
 			}
 		}
-		try { targetgroup.addMember(st.getCharacter()); } catch (final UserException e) {
+		try { targetgroup.addMember(st.getCharacter()); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Unable to join - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, Char.get(j.getInt("from")), "Invite Accepted", targetgroup.getName(), null, null, "Accepted group invite to " + targetgroup.getName());

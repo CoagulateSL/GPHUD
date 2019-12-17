@@ -80,9 +80,9 @@ public class Message extends TableRow {
 	@Nullable
 	public static Message getNextMessage(@Nonnull final Char c) {
 		try {
-			final Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? order by expires  limit 0,1", c.getId());
+			final int id = GPHUD.getDB().dqinn("select messageid from messages where characterid=? order by expires  limit 0,1", c.getId());
 			return Message.get(id);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class Message extends TableRow {
 	 * @return Number of messages
 	 */
 	public static int count(@Nonnull final Char c) {
-		return GPHUD.getDB().dqi( "select count(*) from messages where characterid=?", c.getId());
+		return GPHUD.getDB().dqinn( "select count(*) from messages where characterid=?", c.getId());
 	}
 
 	/**
@@ -104,9 +104,9 @@ public class Message extends TableRow {
 	@Nullable
 	public static Message getActiveMessage(@Nonnull final Char c) {
 		try {
-			final Integer id = GPHUD.getDB().dqi("select messageid from messages where characterid=? and expires=0", c.getId());
+			final int id = GPHUD.getDB().dqinn("select messageid from messages where characterid=? and expires=0", c.getId());
 			return Message.get(id);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull

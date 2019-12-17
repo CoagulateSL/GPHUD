@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 public abstract class Member {
 
 	@URLs(url = "/permissionsgroups/eject", requiresPermission = "Instance.ManagePermissions")
-	public static void ejectForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void ejectForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.eject", values);
 	}
 
@@ -40,7 +40,7 @@ public abstract class Member {
 	                                 User avatar
 	) throws UserException, SystemException {
 		if (!permissionsgroup.canEject(st)) { return new ErrorResponse("No permission to eject from this group"); }
-		try { permissionsgroup.removeMember(avatar); } catch (final UserException e) {
+		try { permissionsgroup.removeMember(avatar); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove user from permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, avatar, null, "Remove Member", permissionsgroup.getNameSafe(), null, avatar.getName(), "Avatar removed avatar from permissions group");
@@ -48,7 +48,7 @@ public abstract class Member {
 	}
 
 	@URLs(url = "/permissionsgroups/invite", requiresPermission = "Instance.ManagePermissions")
-	public static void createForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.invite", values);
 	}
 
@@ -61,7 +61,7 @@ public abstract class Member {
 	                                  User avatar
 	) throws UserException, SystemException {
 		if (!permissionsgroup.canInvite(st)) { return new ErrorResponse("No permission to invite to this group"); }
-		try { permissionsgroup.addMember(avatar); } catch (final UserException e) {
+		try { permissionsgroup.addMember(avatar); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to add user to permissions group - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, avatar, null, "Add Member", permissionsgroup.getNameSafe(), null, avatar.getName(), "Avatar added avatar to permissions group");
@@ -69,7 +69,7 @@ public abstract class Member {
 	}
 
 	@URLs(url = "/permissionsgroups/setpermissions", requiresPermission = "Instance.ManagePermissions")
-	public static void setPermissionsForm(final State st, final SafeMap values) throws UserException, SystemException {
+	public static void setPermissionsForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
 		Modules.simpleHtml(st, "permissionsgroups.setpermissions", values);
 	}
 
@@ -84,7 +84,7 @@ public abstract class Member {
 	                                          Boolean caninvite,
 	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user remove people from this group") final
 	                                          Boolean cankick) throws UserException, SystemException {
-		try { permissionsgroup.setUserPermissions(avatar, caninvite, cankick); } catch (final UserException e) {
+		try { permissionsgroup.setUserPermissions(avatar, caninvite, cankick); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to set user permissions on group  - " + e.getMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, avatar, null, "SetUserPermissions", permissionsgroup.getName(), null, "CanInvite:" + caninvite + " CanKick:" + cankick, "Avatar updated avatars permissions to invite/kick from permissions group");

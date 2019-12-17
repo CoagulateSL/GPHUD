@@ -104,6 +104,7 @@ public class AliasCommand extends Command {
 	@Override
 	public String getFullName() { return "Alias." + getName(); }
 
+	@Nonnull
 	public String getName() { return name; }
 
 	@Override
@@ -155,13 +156,13 @@ public class AliasCommand extends Command {
 		// assume target.  this sucks :P
 		if (parametermap.containsKey("target")) {
 			String v = parametermap.get("target");
-			Char targchar = null;
+			final Char targchar;
 			if (v.startsWith(">")) {
 				v = v.substring(1);
 				try {
 					final User a = User.findMandatory(v);
 					targchar = Char.getActive(a, st.getInstance());
-				} catch (final NoDataException e) {
+				} catch (@Nonnull final NoDataException e) {
 					throw new UserInputLookupFailureException("Unable to find character or avatar named '" + v + "'");
 				}
 			} else {

@@ -13,6 +13,7 @@ public class BCBranchIfZero extends ByteCode {
 
 	@Nullable
 	private final BCLabel target;
+	@Nonnull
 	private BCLabel target() {
 		if (target==null) { throw new GSInternalError("Target is null"); }
 		return target;

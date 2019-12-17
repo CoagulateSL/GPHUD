@@ -30,9 +30,8 @@ public abstract class ViewInstance {
 	}
 
 	public static void viewInstance(@Nonnull final State st, final SafeMap values, @Nonnull final Instance i) throws UserException {
-		final String tz = st.getAvatarNullable().getTimeZone();
-		boolean full = false;
-		if (st.isSuperUser()) { full = true; }
+		final String tz = st.getAvatar().getTimeZone();
+		final boolean full = false;
 		final Table map = new Table();
 		st.form().add(map);
 		map.openRow().add("Name").add(i.getName());

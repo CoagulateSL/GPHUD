@@ -90,6 +90,6 @@ public class BCString extends ByteCodeDataType {
 	@Override
 	public BCInteger toBCInteger() {
 		try { return new BCInteger(null,Integer.parseInt(getContent())); }
-		catch (final NumberFormatException e) { throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer"); }
+		catch (@Nonnull final NumberFormatException e) { throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer"); }
 	}
 }

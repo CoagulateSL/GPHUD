@@ -96,7 +96,7 @@ public class CharactersModule extends ModuleAnnotation {
 					final String spent = st.getKV(st.getCharacter(), "Characters." + attribute.getName());
 					if (spent != null && !spent.isEmpty()) { total = total + Integer.parseInt(spent); }
 				}
-			} catch (final NoDataException e) {} // attribute deleted race condition
+			} catch (@Nonnull final NoDataException e) {} // attribute deleted race condition
 		}
 		return total;
 	}

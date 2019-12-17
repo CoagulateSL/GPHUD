@@ -9,7 +9,6 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class ScriptingCommand extends Command {
 	@Override
 	public Method getMethod() {
 		try { return getClass().getMethod("execute",State.class); }
-		catch (final NoSuchMethodException e) { throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",e); }
+		catch (@Nonnull final NoSuchMethodException e) { throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",e); }
 	}
 
 	@Nonnull
@@ -94,7 +93,7 @@ public class ScriptingCommand extends Command {
 		return "Scripting."+script.getName();
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String getName() {
 		return script.getName();

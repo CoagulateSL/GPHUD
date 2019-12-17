@@ -6,6 +6,7 @@ import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
@@ -60,11 +61,18 @@ public class Menus extends TableRow {
 	 * @return Menus object
 	 */
 	@Nullable
-	public static Menus getMenu(@Nonnull final State st, final String name) {
+	public static Menus getMenuNullable(@Nonnull final State st, @Nonnull final String name) {
 		try {
-			final Integer id = GPHUD.getDB().dqi("select menuid from menus where instanceid=? and name like ?", st.getInstance().getId(), name);
+			final int id = GPHUD.getDB().dqinn("select menuid from menus where instanceid=? and name like ?", st.getInstance().getId(), name);
 			return get(id);
-		} catch (final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) { return null; }
+	}
+
+	@Nonnull
+	public static Menus getMenu(@Nonnull final State st, @Nonnull final String name) {
+		final Menus ret=getMenuNullable(st,name);
+		if (ret==null) { throw new UserInputLookupFailureException("No menu called "+name+" is found"); }
+		return ret;
 	}
 
 	/**
@@ -77,14 +85,14 @@ public class Menus extends TableRow {
 	 * @return the new Menus object
 	 * @throws UserException If the name is invalid or duplicated.
 	 */
-	@Nullable
+	@Nonnull
 	public static Menus create(@Nonnull final State st, @Nonnull final String name, final String description, @Nonnull final JSONObject template) throws UserException {
-		if (getMenu(st, name) != null) { throw new UserInputDuplicateValueException("Menu " + name + " already exists"); }
+		if (getMenuNullable(st, name) != null) { throw new UserInputDuplicateValueException("Menu " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
 			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		GPHUD.getDB().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)", st.getInstance().getId(), name, description, template.toString());
-		final Menus newalias = getMenu(st, name);
+		final Menus newalias = getMenuNullable(st, name);
 		if (newalias == null) {
 			throw new SystemConsistencyException("Failed to create alias " + name + " in instance id " + st.getInstance().getId() + ", created but not found?");
 		}
@@ -158,7 +166,7 @@ public class Menus extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		final Integer id = dqi("select instanceid from menus where menuid=?", getId());
+		final int id = dqinn("select instanceid from menus where menuid=?", getId());
 		return Instance.get(id);
 	}
 

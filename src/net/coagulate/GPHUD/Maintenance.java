@@ -36,12 +36,12 @@ public class Maintenance extends Thread {
 
 	public static void purgeConnections() {
 		try {
-			final Integer purgecount=GPHUD.getDB().dqi("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+			final int purgecount=GPHUD.getDB().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 			if (purgecount>0) {
 				GPHUD.getLogger().log(FINE,"Purging "+purgecount+" disconnected objects");
 				GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 			}
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"purgeConnections Exceptioned!",e);
 		}
 	}
@@ -49,13 +49,13 @@ public class Maintenance extends Thread {
 	public static void purgeOldCookies() {
 		try {
 			final int now = UnixTime.getUnixTime();
-			final int before = GPHUD.getDB().dqi( "select count(*) from cookies");
+			final int before = GPHUD.getDB().dqinn( "select count(*) from cookies");
 			GPHUD.getDB().d("delete from cookies where expires<?", now);
-			final int after = GPHUD.getDB().dqi( "select count(*) from cookies");
+			final int after = GPHUD.getDB().dqinn( "select count(*) from cookies");
 			if (before != after) {
 				GPHUD.getLogger().log(FINE, "Cookies cleaned from " + before + " to " + after + " (" + (after - before) + ")");
 			}
-		} catch (final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Cookie expiration task exceptioned!", e);
 		}
 	}
@@ -69,9 +69,9 @@ public class Maintenance extends Thread {
 			for (final ResultsRow r : results) {
 				//System.out.println("About to background for a callback to character:"+r.getString("name"));
 				final JSONObject ping = new JSONObject().put("incommand", "ping");
-				final Transmission t = new PingTransmission(Char.get(r.getIntNullable("characterid")), ping, r.getStringNullable("url"));
+				final Transmission t = new PingTransmission(Char.get(r.getInt("characterid")), ping, r.getStringNullable("url"));
 				t.start();
-				try { Thread.sleep(1000); } catch (final InterruptedException e) {}
+				try { Thread.sleep(1000); } catch (@Nonnull final InterruptedException e) {}
 			}
 		} //else { GPHUD.getLogger().log(FINE,"Pinging out to no character URLs"); }
 	}
@@ -82,7 +82,12 @@ public class Maintenance extends Thread {
 		}
 		public void run() {
 			super.run();
-			if (!failed()) { character.pinged(); }
+			if (!failed()) {
+				if (character==null) { // erm
+					return;
+				}
+				character.pinged();
+			}
 		}
 	}
 
@@ -97,7 +102,7 @@ public class Maintenance extends Thread {
 				final JSONObject ping = new JSONObject().put("incommand", "ping");
 				final Transmission t = new Transmission((Region) null, ping, r.getStringNullable("url"));
 				t.start();
-				try { Thread.sleep(1000); } catch (final InterruptedException e) {}
+				try { Thread.sleep(1000); } catch (@Nonnull final InterruptedException e) {}
 			}
 		}
 	}
@@ -109,7 +114,7 @@ public class Maintenance extends Thread {
 			try {
 				//GPHUD.getLogger().log(FINER,"Pushing status update for instance "+i.getName());
 				i.updateStatus();
-			} catch (final Exception e) {
+			} catch (@Nonnull final Exception e) {
 				GPHUD.getLogger().log(WARNING, "Exception while pushing status update for instance " + i.getNameSafe());
 			}
 		}
@@ -121,42 +126,42 @@ public class Maintenance extends Thread {
 
 	// for calling from OTHER MAINTENANCE CODE (GPHUD from SL)
 	public static void gphudMaintenance() {
-		try { Maintenance.refreshCharacterURLs(); } catch (final Exception e) {
+		try { Maintenance.refreshCharacterURLs(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance refresh character URLs caught an exception", e);
 		}
-		try { Maintenance.refreshRegionURLs(); } catch (final Exception e) {
+		try { Maintenance.refreshRegionURLs(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance refresh region URLs caught an exception", e);
 		}
 
 		// this stuff all must run 'exclusively' across the cluster...
 		final LockTest lock = new LockTest(LOCK_NUMBER_GPHUD_MAINTENANCE);
 		final int lockserial;
-		try { lockserial = lock.lock(60); } catch (final LockException e) {
+		try { lockserial = lock.lock(60); } catch (@Nonnull final LockException e) {
 			GPHUD.getLogger().finer("Maintenance didn't aquire lock: " + e.getLocalizedMessage());
 			return;
 		} // maintenance session already locked
 
-		try { Maintenance.startEvents(); } catch (final Exception e) {
+		try { Maintenance.startEvents(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance start events caught an exception", e);
 		}
 
 		lock.extendLock(lockserial, 60);
-		try { Maintenance.purgeOldCookies(); } catch (final Exception e) {
+		try { Maintenance.purgeOldCookies(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance run purge cookies caught an exception", e);
 		}
 
 		lock.extendLock(lockserial, 60);
-		try { Maintenance.purgeConnections(); } catch (final Exception e) {
+		try { Maintenance.purgeConnections(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance run purge connections caught an exception", e);
 		}
 
 		lock.extendLock(lockserial, 60);
-		try { new VisitXP(-1).runAwards(); } catch (final Exception e) {
+		try { new VisitXP(-1).runAwards(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance run awards run caught an exception", e);
 		}
 
 		lock.extendLock(lockserial, 60);
-		try { if ((cycle % UPDATEINTERVAL) == 0) { Maintenance.updateInstances(); } } catch (final Exception e) {
+		try { if ((cycle % UPDATEINTERVAL) == 0) { Maintenance.updateInstances(); } } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance update Instances caught an exception", e);
 		}
 
@@ -164,10 +169,10 @@ public class Maintenance extends Thread {
 	}
 
 	public void runAlways() {
-		try { refreshCharacterURLs(); } catch (final Exception e) {
+		try { refreshCharacterURLs(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance refresh character URLs caught an exception", e);
 		}
-		try { refreshRegionURLs(); } catch (final Exception e) {
+		try { refreshRegionURLs(); } catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE, "Maintenance refresh region URLs caught an exception", e);
 		}
 	}
@@ -184,16 +189,16 @@ public class Maintenance extends Thread {
 		if (c.get(Calendar.SECOND) > 30) { now++; }
 		if (now >= 60) { now -= 60; }
 		if (GPHUD.ourCycle(now)) {
-			try { startEvents(); } catch (final Exception e) {
+			try { startEvents(); } catch (@Nonnull final Exception e) {
 				GPHUD.getLogger().log(SEVERE, "Maintenance start events caught an exception", e);
 			}
-			try { purgeOldCookies(); } catch (final Exception e) {
+			try { purgeOldCookies(); } catch (@Nonnull final Exception e) {
 				GPHUD.getLogger().log(SEVERE, "Maintenance run purge cookies caught an exception", e);
 			}
-			try { new VisitXP(-1).runAwards(); } catch (final Exception e) {
+			try { new VisitXP(-1).runAwards(); } catch (@Nonnull final Exception e) {
 				GPHUD.getLogger().log(SEVERE, "Maintenance run awards run caught an exception", e);
 			}
-			try { if ((cycle % UPDATEINTERVAL) == 0) { updateInstances(); } } catch (final Exception e) {
+			try { if ((cycle % UPDATEINTERVAL) == 0) { updateInstances(); } } catch (@Nonnull final Exception e) {
 				GPHUD.getLogger().log(SEVERE, "Maintenance update Instances caught an exception", e);
 			}
 		}

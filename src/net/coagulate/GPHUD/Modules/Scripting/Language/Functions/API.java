@@ -26,6 +26,6 @@ public class API {
 			callingstate.source= State.Sources.SCRIPTING;
 			final Response value = Modules.run(callingstate, apicall.getContent(), args);
 			return new BCResponse(null, value);
-		} catch (final RuntimeException e) { throw new GSInternalError("gsAPI runtimed: "+ e,e); }
+		} catch (@Nonnull final RuntimeException e) { throw new GSInternalError("gsAPI runtimed: "+ e,e); }
 	}
 }

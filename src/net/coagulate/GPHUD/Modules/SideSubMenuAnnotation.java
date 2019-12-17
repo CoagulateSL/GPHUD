@@ -5,7 +5,6 @@ import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**
@@ -17,9 +16,9 @@ public class SideSubMenuAnnotation extends SideSubMenu {
 	final SideSubMenus meta;
 	@Nonnull
 	final Method method;
-	@Nullable
+	@Nonnull
 	final URL url;
-	private boolean generated = true;
+	private final boolean generated;
 
 	public SideSubMenuAnnotation(@Nonnull final Method m) throws UserException, SystemException {
 		generated = false;
@@ -39,6 +38,7 @@ public class SideSubMenuAnnotation extends SideSubMenu {
 	public boolean isGenerated() { return generated; }
 
 
+	@Nonnull
 	public String getURL() {
 		return url.url();
 	}

@@ -67,6 +67,7 @@ public class MenuCommand extends Command {
 	@Override
 	public String getFullName() { return "Menus." + getName(); }
 
+	@Nonnull
 	public String getName() { return name; }
 
 	@Override

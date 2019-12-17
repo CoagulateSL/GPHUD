@@ -5,7 +5,6 @@ import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
-import net.coagulate.GPHUD.Modules.Pool.Pools;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -32,7 +31,7 @@ public class ModuleAnnotation extends Module {
 	final Set<SideSubMenu> sidemenus = new HashSet<>();
 	final Map<String, Command> commands = new TreeMap<>();
 	final Set<URL> contents = new HashSet<>();
-	private boolean generated = true;
+	private final boolean generated;
 	public ModuleAnnotation(final String name, final ModuleDefinition def) throws SystemException, UserException {
 		super(name, def);
 		if (canDisable()) {
@@ -42,7 +41,7 @@ public class ModuleAnnotation extends Module {
 		generated = false;
 	}
 
-	@Nullable
+	@Nonnull
 	static Object assertNotNull(@Nullable final Object o, final String value, final String type) throws UserException {
 		if (o == null) {
 			throw new UserInputLookupFailureException("Unable to resolve '" + value + "' to a " + type);
@@ -63,7 +62,7 @@ public class ModuleAnnotation extends Module {
 
 	@Nonnull
 	Response run(@Nonnull final State st, @Nonnull final String commandname, @Nonnull final String[] args) throws UserException, SystemException {
-		final Command command = getCommand(st, commandname);
+		final Command command = getCommandNullable(st, commandname);
 		return command.run(st, args);
 	}
 
@@ -111,8 +110,8 @@ public class ModuleAnnotation extends Module {
 		return kvmap.get(qualifiedname.toLowerCase());
 	}
 
-	@Nullable
-	public Command getCommand(final State st, @Nonnull final String commandname) {
+	@Nonnull
+	public Command getCommandNullable(final State st, @Nonnull final String commandname) {
 		final Command c = commands.get(commandname.toLowerCase());
 		if (c == null) { throw new UserInputLookupFailureException("No such command " + commandname + " in module " + name); }
 		return c;
@@ -125,8 +124,11 @@ public class ModuleAnnotation extends Module {
 		poolmap.put(element.name().toLowerCase(), element);
 	}
 
+	@Nonnull
 	public Pool getPool(final State st, @Nonnull final String itemname) {
-		return poolmap.get(itemname.toLowerCase());
+		final Pool p=poolmap.get(itemname.toLowerCase());
+		if (p==null) { throw new UserInputLookupFailureException("There is no pool named "+itemname+" in module "+getName()); }
+		return p;
 	}
 
 	public Permission getPermission(final State st, @Nonnull final String itemname) {
@@ -143,9 +145,10 @@ public class ModuleAnnotation extends Module {
 		return poolmap;
 	}
 
+	/* this function is garbage and unused, poolmap doesn't map to "Pools" but "Pool"...
 	public boolean hasPool(final State st, final Pools p) {
 		return poolmap.containsValue(p);
-	}
+	}*/
 
 	@Nonnull
 	public Map<String, Command> getCommands(final State st) throws UserException, SystemException {
@@ -156,7 +159,7 @@ public class ModuleAnnotation extends Module {
 		if (!a.requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, a.requiresPermission());
 		}
-		if (Modules.getURL(null, a.url()) == null) {
+		if (Modules.getURLNullable(null, a.url()) == null) {
 			throw new SystemImplementationException("Side menu definition " + a.name() + " references url " + a.url() + " which can not be found");
 		}
 		if (sidemenu != null) {
@@ -206,9 +209,9 @@ public class ModuleAnnotation extends Module {
 		kvmap.put(a.name().toLowerCase(), a);
 	}
 
-	public void validateKV(final State st, @Nonnull final String key) throws SystemException {
-		if (Modules.getKVDefinition(st, key) == null) {
-			throw new SystemImplementationException("KV key " + key + " in module " + getName() + " does not exist");
+	public void validateKV(@Nonnull final State st, @Nonnull final String key) throws SystemException {
+		if (Modules.getKVDefinitionNullable(st, key) == null) {
+			throw new UserInputLookupFailureException("KV key " + key + " in module " + getName() + " does not exist");
 		}
 	}
 

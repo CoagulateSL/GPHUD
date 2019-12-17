@@ -62,7 +62,7 @@ public abstract class Groups {
 				} else {
 					permtable.add("<font color=red><i>Permission no longer exists</i></font>");
 				}
-			} catch (final UserException permissionerror) {
+			} catch (@Nonnull final UserException permissionerror) {
 				permtable.add("Error: "+permissionerror.getLocalizedMessage()); permtable.setBGColor("#e0e0e0");
 			}
 			if (st.hasPermission("instance.managepermissions")) {
@@ -145,7 +145,7 @@ public abstract class Groups {
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(description = "Name of group to create", type = ArgumentType.TEXT_CLEAN, max = 64) final
 	                              String name) throws UserException, SystemException {
-		try { st.getInstance().createPermissionsGroup(name); } catch (final UserException e) {
+		try { st.getInstance().createPermissionsGroup(name); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create permissions group - " + e.getLocalizedMessage());
 		}
 		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "PermissionsGroup", null, name, "Avatar created new permissions group");

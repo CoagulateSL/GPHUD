@@ -42,8 +42,8 @@ public abstract class Templates {
 			if (m == null) { t.add("<i>NULL</i>"); } else {
 				t.add(m.getDeclaringClass().getName() + "." + m.getName() + "()");
 			}
-			String value = "WEIRD";
-			try { value = Templater.getValue(st, template, false, false); } catch (final UserException e) {
+			String value;
+			try { value = Templater.getValue(st, template, false, false); } catch (@Nonnull final UserException e) {
 				value = "ERROR:" + e.getMessage();
 				st.logger().log(FINE, "Template gave user exception (not unexpected)", e);
 			}

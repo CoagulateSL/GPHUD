@@ -27,10 +27,10 @@ public class ObjectTypes extends TableRow {
 
 	@Nonnull
 	public static ObjectTypes create(@Nonnull final State st, final String name, @Nonnull final JSONObject behaviour) {
-		final int existing= GPHUD.getDB().dqi("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		final int existing= GPHUD.getDB().dqinn("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) { throw new UserInputDuplicateValueException("ObjectType "+name+" already exists in instance "+st.getInstance()); }
 		GPHUD.getDB().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
-		final int newid=GPHUD.getDB().dqi("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		final int newid=GPHUD.getDB().dqinn("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		return get(newid);
 	}
 
@@ -40,7 +40,7 @@ public class ObjectTypes extends TableRow {
 		r.append("<tr><th>Name</th><th>Behaviour</th></tr>");
 		for (final ResultsRow row:GPHUD.getDB().dq("select * from objecttypes where instanceid=?",st.getInstance().getId())) {
 			r.append("<tr>");
-			final ObjectTypes ot=get(row.getIntNullable("id"));
+			final ObjectTypes ot=get(row.getInt("id"));
 			r.append("<td><a href=\"/GPHUD/configuration/objects/objecttypes/").append(row.getIntNullable("id")).append("\">").append(row.getStringNullable("name")).append("</a></td>");
 			r.append("<td>").append(ObjectType.materialise(st, ot).explainHtml()).append("</td>");
 			r.append("</tr>");
@@ -62,7 +62,7 @@ public class ObjectTypes extends TableRow {
 	public static DropDownList getDropDownList(@Nonnull final State st, final String name) {
 		final DropDownList list=new DropDownList(name);
 		for (final ResultsRow row:GPHUD.getDB().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
-			list.add(row.getIntNullable("id").toString(),row.getStringNullable("name"));
+			list.add(row.getInt("id")+"",row.getStringNullable("name"));
 		}
 		return list;
 	}
@@ -80,7 +80,7 @@ public class ObjectTypes extends TableRow {
 
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getIntNullable("instanceid"));
+		return Instance.get(getInt("instanceid"));
 	}
 	@Nonnull
 	public JSONObject getBehaviour() {

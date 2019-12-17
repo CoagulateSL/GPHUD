@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Roller;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
@@ -191,12 +192,13 @@ public class Roller {
 		String allrolls = "";
 		int targettotal = 0;
 		String targetallrolls = "";
-		final int attempts = 100;
+		int attempts = 100;
 		while (total == targettotal && attempts > 0) {
 			total = 0;
 			allrolls = "";
 			targettotal = 0;
 			targetallrolls = "";
+			attempts--;
 			final List<Integer> rolls = roll(st, dice, sides);
 			for (final int num : rolls) {
 				if (!"".equals(allrolls)) { allrolls += ", "; }
@@ -204,7 +206,7 @@ public class Roller {
 				allrolls = allrolls + num;
 			}
 			total = total + bias;
-			final List<Integer> targetrolls = roll(st.getTargetNullable(), targetdice, targetsides);
+			final List<Integer> targetrolls = roll(st.getTarget(), targetdice, targetsides);
 			for (final int num : targetrolls) {
 				if (!"".equals(targetallrolls)) { targetallrolls += ", "; }
 				targettotal = targettotal + num;
@@ -229,8 +231,8 @@ public class Roller {
 		}
 		event += "(" + total + "v" + targettotal + ")";
 		st.roll = total;
-		st.getTargetNullable().roll = targettotal;
-		Audit.audit(st, Audit.OPERATOR.CHARACTER, st.getTargetNullable().getAvatarNullable(), st.getTargetNullable().getCharacter(), "Roll", null, null, "" + total, event);
+		st.getTarget().roll = targettotal;
+		Audit.audit(st, Audit.OPERATOR.CHARACTER, st.getTarget().getAvatarNullable(), st.getTarget().getCharacter(), "Roll", null, null, "" + total, event);
 		return new SayResponse(event, st.getCharacter().getName());
 	}
 
@@ -260,7 +262,8 @@ public class Roller {
 		if (!st.hasModule("Health")) { throw new UserConfigurationException("Health module is required to use rollDamageAgainst"); }
 		if (damage == null) { damage = "1"; }
 		final Response response = rollAgainst(st, target, dice, sides, bias, targetdice, targetsides, targetbias, reason);
-		if (st.roll > st.getTargetNullable().roll) {
+		if (st.roll==null || st.getTarget().roll==null) { throw new SystemImplementationException("Wierdness with null roll results"); }
+		if (st.roll > st.getTarget().roll) {
 			damage = damage.replaceAll("==", "--");
 			final String output = Templater.template(st, damage, true, true);
 			Damage.apply(st, target, Integer.parseInt(output), reason);
