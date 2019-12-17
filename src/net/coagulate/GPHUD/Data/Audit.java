@@ -116,8 +116,8 @@ public abstract class Audit {
 					newvalue,
 					note,
 					st.getSourcenameNullable(),
-					getId(st.getSourceowner()),
-					getId(st.getSourcedeveloper()),
+					getId(st.getSourceownerNullable()),
+					getId(st.getSourcedeveloperNullable()),
 					getId(st.sourceregion),
 					st.sourcelocation);
 		} catch (@Nonnull final DBException ex) {

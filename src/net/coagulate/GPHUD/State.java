@@ -871,6 +871,11 @@ public class State extends DumpableState {
 		return sourcedeveloper;
 	}
 
+	@Nullable
+	public User getSourcedeveloperNullable() {
+		return sourcedeveloper;
+	}
+
 	public void setSourcedeveloper(@Nullable final User sourcedeveloper) {
 		this.sourcedeveloper = sourcedeveloper;
 	}
@@ -892,6 +897,11 @@ public class State extends DumpableState {
 	@Nonnull
 	public User getSourceowner() {
 		if (sourceowner==null) { throw new SystemConsistencyException("There is no source owner?"); }
+		return sourceowner;
+	}
+
+	@Nullable
+	public User getSourceownerNullable() {
 		return sourceowner;
 	}
 
