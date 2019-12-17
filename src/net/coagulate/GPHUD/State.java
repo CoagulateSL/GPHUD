@@ -927,6 +927,8 @@ public class State extends DumpableState {
 		this.headers = headers;
 	}
 
+	@Nullable
+	public String getSourcenameNullable() { return sourcename; }
 	@Nonnull
 	public String getSourcename() {
 		if (sourcename==null) { throw new SystemImplementationException("Source name is null"); }

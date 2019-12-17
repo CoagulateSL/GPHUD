@@ -3,7 +3,6 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
@@ -177,7 +176,7 @@ public class Region extends TableRow {
 	public String getURL() {
 		final String url=getURLNullable();
 		if (url == null) {
-			throw new SystemBadValueException("This region has no callback URL");
+			throw new UserRemoteFailureException("This region has no callback URL");
 		}
 		return url;
 	}

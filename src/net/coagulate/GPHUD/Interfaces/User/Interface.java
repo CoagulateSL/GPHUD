@@ -414,7 +414,6 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	@Nonnull
 	public SafeMap getPostValues(@Nonnull final State st) {
 		final SafeMap values = new SafeMap();
-		final Form f = st.form();
 		final HttpRequest req = st.req();
 		// needs to have an entity to be a post
 		if (req instanceof HttpEntityEnclosingRequest) {

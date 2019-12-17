@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -58,7 +59,8 @@ public abstract class Templater {
 	public static Method getMethod(final State st, final String name) { return getMethods(st).get(name); }
 
 	@Nonnull
-	public static String template(@Nonnull final State st, @Nonnull String string, final boolean evaluate, final boolean integer) {
+	public static String template(@Nonnull final State st, @Nullable String string, final boolean evaluate, final boolean integer) {
+		if (string==null) { string=""; }
 		string = template(st, string);
 		if ("".equals(string)) { return ""; }
 		try {
