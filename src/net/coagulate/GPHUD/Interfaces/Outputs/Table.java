@@ -45,7 +45,7 @@ public class Table implements Renderable {
 	}
 
 	@Nonnull
-	public Table add(final String s) {
+	public Table add(@Nonnull final String s) {
 		add(new Text(s));
 		return this;
 	}
