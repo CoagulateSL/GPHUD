@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDServer;
 
 import net.coagulate.Core.Exceptions.UserException;
-import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -57,7 +56,7 @@ public abstract class Avatars {
 			}
 		}
 		region.departingAvatars(st, openvisits);
-		final Instance instance = st.getInstance();
+		//final Instance instance = st.getInstance();
 		//instance.updateStatus();
 		final JSONObject json=new JSONObject();
 		json.put("autoattach",st.getKV("gphudserver.autoattach"));
