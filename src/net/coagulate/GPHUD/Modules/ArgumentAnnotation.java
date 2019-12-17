@@ -40,7 +40,7 @@ public class ArgumentAnnotation extends Argument {
 
 	public void overrideDescription(final String n) { overridedescription = n; }
 
-	@Nullable
+	@Nonnull
 	public String description() {
 		if (overridedescription != null) { return overridedescription; }
 		return meta.description();

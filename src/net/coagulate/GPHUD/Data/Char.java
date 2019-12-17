@@ -213,7 +213,7 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public String getURL() {
-		return getString("url");
+		return getStringNullable("url");
 	}
 
 	/**

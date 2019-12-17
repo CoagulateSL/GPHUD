@@ -168,7 +168,7 @@ public class Attribute extends TableRow {
 	public ATTRIBUTETYPE getType() {
 		String type;
 		try { type = (String) cacheGet("type"); } catch (@Nonnull final CacheMiss ex) {
-			type = getString("attributetype");
+			type = getStringNullable("attributetype");
 			cachePut("type", type, getNameCacheTime());
 		}
 		if (type == null) { throw new SystemBadValueException("Null type for attribute " + getId() + " " + getNameSafe()); }
@@ -183,7 +183,7 @@ public class Attribute extends TableRow {
 	}
 
 	@Nullable
-	public String getSubType() { return getString("grouptype"); }
+	public String getSubType() { return getStringNullable("grouptype"); }
 
 	public boolean usesAbilityPoints() { return getBool("usesabilitypoints"); }
 
@@ -199,7 +199,7 @@ public class Attribute extends TableRow {
 	}
 
 	@Nullable
-	public String getDefaultValue() { return getString("defaultvalue"); }
+	public String getDefaultValue() { return getStringNullable("defaultvalue"); }
 
 	/**
 	 * Set the default value for this attribute.

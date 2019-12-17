@@ -114,7 +114,7 @@ public class Objects extends TableRow {
 	public Region getRegion() { return Region.get(getInt("regionid"),true); }
 
 	@Nullable
-	public String getLocation() { return getString("location"); }
+	public String getLocation() { return getStringNullable("location"); }
 	@Nullable
 	public Instance getInstance() {
 		return getRegion().getInstance();
@@ -167,7 +167,7 @@ public class Objects extends TableRow {
 
 	@Nullable
 	public String getURL() {
-		return getString("url");
+		return getStringNullable("url");
 	}
 
 	public void updateRX() {

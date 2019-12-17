@@ -70,11 +70,11 @@ public class Landmarks extends TableRow {
 
 	@Nonnull
 	public String getCoordinates() {
-		return "<"+getFloat("x")+","+getFloat("y")+","+getFloat("z")+">";
+		return "<"+ getFloatNullable("x")+","+ getFloatNullable("y")+","+ getFloatNullable("z")+">";
 	}
 	@Nonnull
 	public String getLookAt() {
-		return "<"+getFloat("lookatx")+","+getFloat("lookaty")+","+getFloat("lookatz")+">";
+		return "<"+ getFloatNullable("lookatx")+","+ getFloatNullable("lookaty")+","+ getFloatNullable("lookatz")+">";
 	}
 
 	@Nonnull

@@ -84,7 +84,7 @@ public class ObjectTypes extends TableRow {
 	}
 	@Nonnull
 	public JSONObject getBehaviour() {
-		final String s=getString("behaviour");
+		final String s= getStringNullable("behaviour");
 		if (s==null || s.isEmpty()) { return new JSONObject(); }
 		return new JSONObject(s);
 	}

@@ -164,7 +164,7 @@ public class Region extends TableRow {
 	 */
 	@Nullable
 	public String getURLNullable() {
-		return getString("url");
+		return getStringNullable("url");
 	}
 
 	/**

@@ -87,7 +87,7 @@ public class Scripts extends TableRow {
 
 	@Nonnull
 	public String getSource() {
-		String script=getString("source");
+		String script= getStringNullable("source");
 		if (script==null) { script=""; }
 		return  script;
 	}

@@ -3,7 +3,6 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public abstract class Argument {
 	@Nonnull
 	public abstract ArgumentType type();
 
-	@Nullable
+	@Nonnull
 	public abstract String description();
 
 	public abstract boolean mandatory();

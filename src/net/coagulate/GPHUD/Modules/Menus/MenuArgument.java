@@ -40,7 +40,7 @@ public class MenuArgument extends Argument {
 		return options;
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
 	public String description() {
 		if (override != null) { return override; }
