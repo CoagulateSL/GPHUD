@@ -37,7 +37,7 @@ public class Output {
 	}
 
 	@Nonnull
-	@GSFunctions.GSFunction(description = "Teleports the plater",parameters = "BCCharacter - who to teleport<br>BCString - Landmark name to teleport to",returns="Integer - 0",notes="")
+	@GSFunctions.GSFunction(description = "Teleports the player",parameters = "BCCharacter - who to teleport<br>BCString - Landmark name to teleport to",returns="Integer - 0",notes="")
 	public static BCInteger gsTeleport(@Nonnull final State st, @Nonnull final GSVM vm, @Nonnull final BCCharacter target, @Nonnull final BCString landmark) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		if (!Modules.get(null,"Teleportation").isEnabled(st)) { throw new GSResourceUnavailableException("Teleportation module is disabled, thus teleport function calls are disabled."); }
