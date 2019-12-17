@@ -14,7 +14,7 @@ import java.util.Set;
 public class Text implements Renderable {
 	final String content;
 
-	public Text(final String s) { content = s; }
+	public Text(@Nonnull final String s) { content = s; }
 
 	@Nonnull
 	@Override
