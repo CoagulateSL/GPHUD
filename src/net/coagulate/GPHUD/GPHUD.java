@@ -6,7 +6,6 @@ import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.Tools.LogHandler;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Data.Char;
 
 import javax.annotation.Nonnull;
@@ -67,7 +66,6 @@ public class GPHUD {
 
 	/**
 	 * @param args the command line arguments
-	 * @throws SystemException
 	 */
 	@SuppressWarnings("deprecation")
 	public static void main(@Nonnull final String[] args) {
@@ -119,16 +117,16 @@ public class GPHUD {
 			try {
 				final Maintenance thread = new Maintenance();
 				thread.start();
-				try { Thread.sleep(45000); } catch (@Nonnull final InterruptedException e) { }
+				try { Thread.sleep(45000); } catch (@Nonnull final InterruptedException ignored) { }
 				if (thread.isAlive()) {
 					thread.interrupt();
 					log().warning("Maintenance loop ran for 45 seconds, interrupting!");
 				}
-				try { Thread.sleep(5000); } catch (@Nonnull final InterruptedException e) { }
+				try { Thread.sleep(5000); } catch (@Nonnull final InterruptedException ignored) { }
 				if (thread.isAlive()) {
 					log().severe("Maintenance loop ran for 45 seconds and failed to interrupt within 5 seconds!");
 				}
-				try { Thread.sleep(5000); } catch (@Nonnull final InterruptedException e) { }
+				try { Thread.sleep(5000); } catch (@Nonnull final InterruptedException ignored) { }
 				if (thread.isAlive()) {
 					log().severe("Maintenance failed interrupt, trying to force STOP()!");
 					thread.stop();
@@ -252,7 +250,7 @@ public class GPHUD {
 	private static void syncToMinute() {
 		int seconds = Calendar.getInstance().get(Calendar.SECOND);
 		seconds = 60 - seconds;
-		try {Thread.sleep((long) (seconds * 1000.0)); } catch (@Nonnull final InterruptedException e) {}
+		try {Thread.sleep((long) (seconds * 1000.0)); } catch (@Nonnull final InterruptedException ignored) {}
 	}
 
 	public static void dbInit() {
@@ -264,17 +262,17 @@ public class GPHUD {
 		try {
 			for (final ResultsRow row:getDB().dq("select characterid,regionid from characters where url=?",url)) {
 				try {
-					final int charid=row.getInt("characterid");
-					final int regionid=row.getInt("regionid");
-					final Char ch=Char.get(charid);
-					final State st=State.getNonSpatial(ch);
-					final int howmany=getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
-					if (howmany>0) {
-						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName()+", not reported as region leaver.");
+					final int charid = row.getInt("characterid");
+					final int regionid = row.getInt("regionid");
+					final Char ch = Char.get(charid);
+					final State st = State.getNonSpatial(ch);
+					final int howmany = getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?", charid, regionid);
+					if (howmany > 0) {
+						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatar().getName() + " as character " + st.getCharacter().getName() + ", not reported as region leaver.");
 					}
-					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
-					getDB().d("update objects set url=null where url=?",url);
-				} catch (@Nonnull final Exception e) {}
+					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null", charid, regionid);
+					getDB().d("update objects set url=null where url=?", url);
+				} catch (@Nonnull final Exception ignored) {}
 			}
 			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?", url);
 		} catch (@Nonnull final DBException ex) {

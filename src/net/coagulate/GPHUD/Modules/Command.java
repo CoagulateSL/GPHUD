@@ -280,7 +280,6 @@ public abstract class Command {
 	 * @param st   Session state
 	 * @param args Arguments of appropriate type for receiving method (or exceptions)
 	 * @return Command response
-	 * @throws SystemException
 	 */
 	@Nonnull
 	Response run(@Nonnull final State st, @Nonnull final Object[] args) {
@@ -390,9 +389,8 @@ public abstract class Command {
 	/**
 	 * Get the name of the arguments.
 	 *
-	 * @param st
-	 * @return
-	 * @throws UserException
+	 * @param st state
+	 * @return list of argument names
 	 */
 	public List<String> getArgumentNames(final State st) {
 		final List<String> arguments = new ArrayList<>();

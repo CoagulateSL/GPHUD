@@ -41,7 +41,7 @@ public abstract class Modules {
 	/**
 	 * Get a list of all modules registered.
 	 *
-	 * @return
+	 * @return list of module objects
 	 */
 	@Nonnull
 	public static List<Module> getModules() {
@@ -51,8 +51,8 @@ public abstract class Modules {
 	/**
 	 * Check a given module exists.
 	 *
-	 * @param modulename
-	 * @return
+	 * @param modulename module to check for
+	 * @return true if exists, false otherwise
 	 */
 	public static boolean exists(@Nonnull final String modulename) { return modules.containsKey(modulename.toLowerCase()); }
 

@@ -169,7 +169,7 @@ public class Region extends TableRow {
 	/**
 	 * Gets the URL associated with this region's server
 	 *
-	 * @return
+	 * @return the URL, or user errors
 	 */
 	@Nonnull
 	public String getURL() {
@@ -189,7 +189,9 @@ public class Region extends TableRow {
 	 */
 	public void setURL(final String url) {
 		String oldurl = null;
-		try { oldurl = getURL(); } catch (@Nonnull final UserException e) {} // should only mean there was a null URL
+		try {
+			oldurl = getURL();
+		} catch (@Nonnull final UserException ignored) {} // should only mean there was a null URL
 		final int now = getUnixTime();
 
 		if (oldurl != null && oldurl.equals(url)) {
@@ -395,8 +397,7 @@ public class Region extends TableRow {
 		final Set<User> users = new HashSet<>();
 		final Results results = dq("select avatarid from visits where regionid=? and endtime is null", getId());
 		for (final ResultsRow r : results) {
-			try { users.add(User.get(r.getInt("avatarid"))); }
-			catch (@Nonnull final Exception e) {}
+			try { users.add(User.get(r.getInt("avatarid"))); } catch (@Nonnull final Exception ignored) {}
 		}
 		return users;
 	}

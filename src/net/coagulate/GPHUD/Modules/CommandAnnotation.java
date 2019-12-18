@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.State;
@@ -123,9 +122,8 @@ public class CommandAnnotation extends Command {
 	/**
 	 * Get the name of the arguments.
 	 *
-	 * @param st
-	 * @return
-	 * @throws UserException
+	 * @param st state
+	 * @return list of argument names
 	 */
 	@Nonnull
 	public List<String> getArgumentNames(final State st) {

@@ -29,7 +29,7 @@ public class PrimaryCharacters {
 	 * Get a primary character for this avatar in a particular instance, or create one.
 	 *
 	 * @param st Session state containing instance.
-	 * @return
+	 * @return the primary character, or null (?)
 	 */
 	@Nullable
 	public static Char getPrimaryCharacter(@Nonnull final State st, final boolean autocreate) {

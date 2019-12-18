@@ -98,7 +98,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	 * We basically just encapsulate all requests in an Exception handler that will spew errors as HTML errors (rather than JSON errors).
 	 * These are rather useless in production, but in DEV we dump the stack traces too.
 	 *
-	 * @param st
+	 * @param st state
 	 */
 	@Override
 	public void process(@Nonnull final State st) {

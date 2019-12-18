@@ -80,7 +80,7 @@ public class Cookies {
 	 * @param character Character object to bind to, may be null
 	 * @param instance  Instance object to bind to, may be null
 	 * @param renewable Cookie can be refreshed
-	 * @return
+	 * @return the cookie string
 	 */
 	@Nonnull
 	public static String generate(@Nullable final User avatar, @Nullable final Char character, final Instance instance, final boolean renewable) {
@@ -118,7 +118,7 @@ public class Cookies {
 		if (cookie != null) {
 			try {
 				return new Cookies(cookie);
-			} catch (@Nonnull final UserException e) {} // logged out possibly, or expired and cleaned up
+			} catch (@Nonnull final UserException ignored) {} // logged out possibly, or expired and cleaned up
 		}
 		return null;
 	}
