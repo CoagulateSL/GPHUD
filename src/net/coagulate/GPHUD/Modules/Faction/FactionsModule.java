@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Faction;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
@@ -20,7 +18,7 @@ import java.util.Set;
  */
 public class FactionsModule extends ModuleAnnotation {
 
-	public FactionsModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public FactionsModule(final String name, final ModuleDefinition def) {
 		super(name, def);
 	}
 

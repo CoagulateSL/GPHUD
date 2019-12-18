@@ -3,10 +3,8 @@ package net.coagulate.GPHUD.Modules.Alias;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
@@ -39,7 +37,7 @@ public class AliasCommand extends Command {
 	@Nonnull
 	String fail = "";
 
-	public AliasCommand(@Nonnull final State st, final String name, final JSONObject newdef) throws UserException, SystemException {
+	public AliasCommand(@Nonnull final State st, final String name, final JSONObject newdef) {
 		super();
 		definition = newdef;
 		this.name = name;
@@ -73,7 +71,7 @@ public class AliasCommand extends Command {
 
 
 	@Override
-	public List<String> getArgumentNames(final State st) throws UserException {
+	public List<String> getArgumentNames(final State st) {
 		if (targetcommand == null) { return new ArrayList<>(); }
 		final List<String> args = targetcommand.getArgumentNames(st);
 		for (final String key : definition.keySet()) {
@@ -151,7 +149,7 @@ public class AliasCommand extends Command {
 	}
 
 	@Override
-	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) {
 		if (targetcommand == null) { throw new UserConfigurationException("Error: Alias targets command " + name + ", " + fail); }
 		// assume target.  this sucks :P
 		if (parametermap.containsKey("target")) {

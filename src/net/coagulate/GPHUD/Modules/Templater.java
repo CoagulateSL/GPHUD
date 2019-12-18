@@ -76,7 +76,7 @@ public abstract class Templater {
 	}
 
 	@Nonnull
-	private static String template(@Nonnull final State st, @Nonnull String string) throws UserException {
+	private static String template(@Nonnull final State st, @Nonnull String string) {
 		final boolean debug = false;
 		for (final String subst : getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
@@ -135,7 +135,7 @@ public abstract class Templater {
 
 	//https://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form
 	// boann@stackoverflow.com
-	public static double eval(@Nonnull final String str) throws UserException {
+	public static double eval(@Nonnull final String str) {
 		return new Object() {
 			int pos = -1, ch;
 

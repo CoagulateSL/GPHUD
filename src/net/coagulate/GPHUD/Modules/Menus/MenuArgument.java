@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
@@ -30,7 +28,7 @@ public class MenuArgument extends Argument {
 	}
 
 	@Nonnull
-	public List<String> getChoices(final State st) throws UserException, SystemException {
+	public List<String> getChoices(final State st) {
 		final List<String> options = new ArrayList<>();
 		for (int i = 1; i <= 12; i++) {
 			if (meta.has("button" + i)) {

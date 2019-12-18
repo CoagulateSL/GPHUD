@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.*;
@@ -23,7 +21,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 
 	final Map<String, KV> base = new TreeMap<>();
 
-	public GPHUDClientModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public GPHUDClientModule(final String name, final ModuleDefinition def) {
 		super(name, def);
 	}
 
@@ -37,7 +35,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public void registerKV(@Nonnull final KV a) throws UserException {
+	public void registerKV(@Nonnull final KV a) {
 		base.put(a.name().toLowerCase(), a);
 	}
 
@@ -59,7 +57,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public KV getKVDefinition(final State st, @Nonnull final String qualifiedname) throws SystemException {
+	public KV getKVDefinition(final State st, @Nonnull final String qualifiedname) {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
 		if (base.containsKey(qualifiedname.toLowerCase())) { return base.get(qualifiedname.toLowerCase()); }
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());

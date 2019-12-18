@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -61,7 +60,7 @@ public class ArgumentAnnotation extends Argument {
 
 	@Nonnull
 	@SuppressWarnings("unchecked")
-	public List<String> getChoices(final State st) throws SystemException {
+	public List<String> getChoices(final State st) {
 		try {
 			final Method m = command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
 			return (List<String>) m.invoke(null, new Object[]{st});

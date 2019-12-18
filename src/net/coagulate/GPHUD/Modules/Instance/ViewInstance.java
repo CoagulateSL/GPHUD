@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Outputs.Color;
@@ -20,7 +18,7 @@ import javax.annotation.Nonnull;
 public abstract class ViewInstance {
 
 	@URLs(url = "/instances/view/*")
-	public static void viewInstance(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void viewInstance(@Nonnull final State st, final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -29,7 +27,7 @@ public abstract class ViewInstance {
 		viewInstance(st, values, i);
 	}
 
-	public static void viewInstance(@Nonnull final State st, final SafeMap values, @Nonnull final Instance i) throws UserException {
+	public static void viewInstance(@Nonnull final State st, final SafeMap values, @Nonnull final Instance i) {
 		final String tz = st.getAvatar().getTimeZone();
 		final boolean full = false;
 		final Table map = new Table();

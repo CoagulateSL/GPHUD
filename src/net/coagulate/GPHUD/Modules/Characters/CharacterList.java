@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.CharacterSummary;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Modules.URL.URLs;
@@ -19,7 +17,7 @@ import java.util.List;
 public class CharacterList {
 
 	@URLs(url = "/characters/list*", requiresPermission = "Characters.ViewAll")
-	public static void list(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void list(@Nonnull final State st, final SafeMap values) {
 		final List<CharacterSummary> list = st.getInstance().getCharacterSummary(st);
 		if (list.isEmpty()) {
 			st.form().add("No characters found");

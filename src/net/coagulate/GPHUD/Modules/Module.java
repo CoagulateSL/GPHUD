@@ -1,9 +1,7 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -40,7 +38,7 @@ public abstract class Module {
 
 	}
 
-	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -59,7 +57,7 @@ public abstract class Module {
 	public String getName() { return name; }
 
 	@Nonnull
-	Response run(@Nonnull final State st, final String commandname, @Nonnull final String[] args) throws UserException, SystemException {
+	Response run(@Nonnull final State st, final String commandname, @Nonnull final String[] args) {
 		final Command command = getCommand(st, commandname);
 		return command.run(st, args);
 	}
@@ -112,7 +110,7 @@ public abstract class Module {
 		return true;
 	}
 
-	public boolean isEnabled(@Nullable final State st) throws UserException, SystemException {
+	public boolean isEnabled(@Nullable final State st) {
 		final boolean debug = false;
 		if (!canDisable()) {
 			return true;

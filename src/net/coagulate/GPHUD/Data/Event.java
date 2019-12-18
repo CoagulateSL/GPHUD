@@ -3,7 +3,6 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
@@ -60,7 +59,7 @@ public class Event extends TableRow {
 	 * @throws UserException If the named event already exists
 	 */
 	@Nonnull
-	public static Event create(@Nonnull final Instance instance, final String eventName) throws UserException {
+	public static Event create(@Nonnull final Instance instance, final String eventName) {
 		Event event = find(instance, eventName);
 		if (event != null) { throw new UserInputDuplicateValueException("Event " + eventName + " already exists."); }
 		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)", instance.getId(), eventName);
@@ -243,7 +242,7 @@ public class Event extends TableRow {
 		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)", getId(), startdate, enddate, interval);
 	}
 
-	public void validate(@Nonnull final State st) throws SystemException {
+	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Event / State Instance mismatch"); }

@@ -1,8 +1,6 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
@@ -26,7 +24,7 @@ import java.util.Set;
 public class SessionSwitch {
 
 	@URLs(url = "/switch/instance")
-	public static void switchInstance(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException {
+	public static void switchInstance(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final Form f = st.form();
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
@@ -49,7 +47,7 @@ public class SessionSwitch {
 	}
 
 	@URLs(url = "/switch/character")
-	public static void switchCharacter(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void switchCharacter(@Nonnull final State st, @Nonnull final SafeMap values) {
 		if (st.getInstanceNullable() == null) { throw new RedirectionException("/switch/instance"); }
 		final Form f = st.form();
 		if (!values.get("charid").isEmpty()) {

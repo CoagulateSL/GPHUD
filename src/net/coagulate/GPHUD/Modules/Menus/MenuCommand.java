@@ -1,8 +1,6 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
@@ -29,7 +27,7 @@ public class MenuCommand extends Command {
 	final String description = "Pick a menu item item item. :P";
 	final String name;
 
-	public MenuCommand(final State st, final String name, final JSONObject newdef) throws UserException, SystemException {
+	public MenuCommand(final State st, final String name, final JSONObject newdef) {
 		super();
 		definition = newdef;
 		this.name = name;
@@ -46,7 +44,7 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public List<String> getArgumentNames(final State st) throws UserException {
+	public List<String> getArgumentNames(final State st) {
 		final List<String> args = new ArrayList<>();
 		args.add("choice");
 		return args;
@@ -95,7 +93,7 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) {
 		final String selected = parametermap.get("choice");
 		int choice = 0;
 		for (int i = 1; i <= 12; i++) { if (definition.optString("button" + i, "").equals(selected)) { choice = i; } }

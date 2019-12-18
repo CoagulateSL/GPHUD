@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.User;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
 import net.coagulate.GPHUD.Interfaces.Inputs.Input;
@@ -54,7 +53,7 @@ public class Form implements Renderable {
 		add(new Hidden("okreturnurl", ""));
 	}
 
-	public Form(@Nonnull final State st, final boolean setreturnurl, final String targeturl, final String buttonname, @Nonnull final String... inputs) throws SystemException {
+	public Form(@Nonnull final State st, final boolean setreturnurl, final String targeturl, final String buttonname, @Nonnull final String... inputs) {
 		setAction(targeturl);
 		if (setreturnurl) { add(new Hidden("okreturnurl", st.getDebasedURL())); }
 		add(new Button(buttonname, true));

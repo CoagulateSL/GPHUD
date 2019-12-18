@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.GPHUDServer;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.GPHUD;
@@ -40,7 +38,7 @@ public abstract class Register {
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version date of the Server that is connecting", max = 64) final
 	                                    String versiondate,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the Server that is connecting", max = 64) final
-	                                    String versiontime) throws UserException, SystemException {
+	                                    String versiontime) {
 		// check authorisation, servers can only be deployed by the instance owner...
 		final String regionname = st.getRegionName();
 		final Instance instance = st.getInstance();

@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
@@ -75,7 +74,7 @@ public abstract class View {
 	}
 
 	@URLs(url = "/characters/view/*")
-	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values) {
 		st.form().noForm();
 		//System.out.println(st.uri);
 		final String[] split = st.getDebasedURL().split("/");
@@ -96,7 +95,7 @@ public abstract class View {
 		throw new SystemConsistencyException("Unknown character view mode (length:" + split.length + " URI:" + st.getDebasedURL());
 	}
 
-	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Char c, final boolean brief) throws UserException, SystemException {
+	public static void viewCharacter(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Char c, final boolean brief) {
 		//boolean full = false;
 		final State simulated = st.simulate(c);
 		final String tz = st.getAvatar().getTimeZone();

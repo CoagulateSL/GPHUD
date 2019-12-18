@@ -4,7 +4,6 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
@@ -84,7 +83,7 @@ public class Instance extends TableRow {
 	 * @return Blank string on success, otherwise error hudMessage
 	 * @throws UserException If the instance already exists (by name)
 	 */
-	public static void create(@Nullable final String name, @Nullable final User caller) throws UserException {
+	public static void create(@Nullable final String name, @Nullable final User caller) {
 		if (name == null || "".equals(name)) { throw new SystemBadValueException("Can't create null or empty instance"); }
 		if (caller == null) { throw new SystemBadValueException("Owner can't be null"); }
 		final int exists = GPHUD.getDB().dqinn( "select count(*) from instances where name like ?", name);
@@ -171,7 +170,7 @@ public class Instance extends TableRow {
 	 * @param name Name of the permissions group
 	 * @throws UserException if the group has no name or already exists.
 	 */
-	public void createPermissionsGroup(@Nullable String name) throws UserException {
+	public void createPermissionsGroup(@Nullable String name) {
 		if (name == null) { throw new UserInputEmptyException("Can not create permissions group with null name"); }
 		name = name.trim();
 		if (name.isEmpty()) { throw new UserInputEmptyException("Can not create permissions group with blank name"); }
@@ -668,7 +667,7 @@ public class Instance extends TableRow {
 		}
 	}
 
-	public void validate(final State st) throws SystemException {
+	public void validate(final State st) {
 		if (validated) { return; }
 		validate();
 	}

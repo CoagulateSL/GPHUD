@@ -2,9 +2,7 @@ package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -51,7 +49,7 @@ public abstract class Login {
 	                                 String versiondate,
 	                             @Nullable @Arguments(type = ArgumentType.TEXT_ONELINE, description = "Version time of the HUD that is connecting", max = 128,mandatory = false) final
 	                                 String versiontime
-	) throws UserException, SystemException {
+	) {
 		final boolean debug = false;
 		////// CHANGE ALL THIS, HAVE A
 		////// "USINGCHARACTER" COLUMN FOR <AVATAR> TYPES

@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Faction;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
@@ -57,7 +56,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/create", requiresPermission = "Faction.Create")
-	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Faction.create", values);
 	}
 
@@ -74,7 +73,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/view/*")
-	public static void viewFaction(@Nonnull final State st, final SafeMap values) throws SystemException {
+	public static void viewFaction(@Nonnull final State st, final SafeMap values) {
 
 		//System.out.println(st.uri);
 		final String[] split = st.getDebasedURL().split("/");
@@ -88,7 +87,7 @@ public abstract class Management {
 		}
 	}
 
-	public static void viewFaction(@Nonnull final State st, final SafeMap values, @Nonnull final CharacterGroup faction) throws SystemException {
+	public static void viewFaction(@Nonnull final State st, final SafeMap values, @Nonnull final CharacterGroup faction) {
 		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader(faction.getName()));
@@ -136,7 +135,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/setowner", requiresPermission = "Faction.SetOwner")
-	public static void setOwnerForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setOwnerForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Faction.SetOwner", values);
 	}
 
@@ -180,7 +179,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/add", requiresPermission = "Faction.SetFaction")
-	public static void addForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void addForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Faction.Add", values);
 	}
 
@@ -190,7 +189,7 @@ public abstract class Management {
 	                           @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Faction to add character to") final
 	                           CharacterGroup faction,
 	                           @Nonnull @Arguments(description = "Character to add to the faction", type = ArgumentType.CHARACTER) final
-	                               Char newmember) throws UserException {
+	                               Char newmember) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}
@@ -217,7 +216,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/remove", requiresPermission = "Faction.SetFaction")
-	public static void removeForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void removeForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Faction.Remove", values);
 	}
 
@@ -250,7 +249,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/delete", requiresPermission = "Faction.Delete")
-	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Faction.Delete", values);
 	}
 
@@ -269,7 +268,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/factions/setadmin")
-	public static void setAdminForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setAdminForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Faction.SetAdmin", values);
 	}
 
@@ -281,7 +280,7 @@ public abstract class Management {
 	                                @Nonnull @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER) final
 	                                    Char character,
 	                                @Arguments(description = "Admin flag to set on the character in this faction", type = ArgumentType.BOOLEAN) final
-	                                    boolean admin) throws SystemException {
+	                                    boolean admin) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName() + " is not a faction.");
 		}

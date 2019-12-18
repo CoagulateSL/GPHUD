@@ -1,10 +1,8 @@
 package net.coagulate.GPHUD.Modules.Notes;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.AdminNotes;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.DateTime;
@@ -61,15 +59,15 @@ public class ViewNotes {
 		}
 	}
 	@URLs(url="/Notes/AddCharacterNote",requiresPermission = "Notes.Add")
-	public static void addCharacterNote(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void addCharacterNote(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Notes.Character", values);
 	}
 	@URLs(url="/Notes/AddAvatarNote",requiresPermission = "Notes.Add")
-	public static void addAvatarNote(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void addAvatarNote(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Notes.Avatar", values);
 	}
 	@URLs(url="/Notes/ViewChar/*")
-	public static void viewChar(@Nonnull final State st, final SafeMap values) throws UserException,SystemException {
+	public static void viewChar(@Nonnull final State st, final SafeMap values) {
 		Integer targetid=null;
 		final String[] parts=st.getDebasedURL().split("/");
 		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
@@ -88,7 +86,7 @@ public class ViewNotes {
 		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatar().getTimeZone()));
 	}
 	@URLs(url="/Notes/ViewUser/*")
-	public static void viewUser(@Nonnull final State st, final SafeMap values) throws UserException,SystemException {
+	public static void viewUser(@Nonnull final State st, final SafeMap values) {
 		Integer targetid=null;
 		final String[] parts=st.getDebasedURL().split("/");
 		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
@@ -107,7 +105,7 @@ public class ViewNotes {
 		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
 	}
 	@URLs(url ="/Notes/ViewAll",requiresPermission = "Notes.View")
-	public static void viewAll(@Nonnull final State st, final SafeMap values)  throws UserException, SystemException {
+	public static void viewAll(@Nonnull final State st, final SafeMap values) {
 		final Form f= st.form();
 		final List<AdminNotes.AdminNote> notes = AdminNotes.get(st.getInstance());
 		f.add(new TextHeader("Admin Notes Log"));

@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Menus;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
@@ -25,7 +23,7 @@ public class MenuModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Map<String, Command> getCommands(@Nonnull final State st) throws UserException, SystemException {
+	public Map<String, Command> getCommands(@Nonnull final State st) {
 		final Map<String, Command> commands = new TreeMap<>();
 		final Map<String, JSONObject> templates = Menus.getTemplates(st);
 		for (final Map.Entry<String, JSONObject> entry : templates.entrySet()) {

@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
@@ -153,7 +152,7 @@ public class AdminNotes extends TableRow {
 
 	public void flushKVCache(final State st) {}
 
-	public void validate(final State st) throws SystemException {
+	public void validate(final State st) {
 		if (validated) { return; }
 		validate();
 	}

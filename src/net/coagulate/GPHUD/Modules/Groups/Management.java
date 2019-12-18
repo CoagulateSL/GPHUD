@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Groups;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
@@ -95,7 +94,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/create", requiresPermission = "Groups.Create")
-	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Groups.create", values);
 	}
 
@@ -114,7 +113,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/view/*")
-	public static void viewGroup(@Nonnull final State st, final SafeMap values) throws SystemException {
+	public static void viewGroup(@Nonnull final State st, final SafeMap values) {
 
 		//System.out.println(st.uri);
 		final String[] split = st.getDebasedURL().split("/");
@@ -124,7 +123,7 @@ public abstract class Management {
 		viewGroup(st, values, group);
 	}
 
-	public static void viewGroup(@Nonnull final State st, final SafeMap values, @Nonnull final CharacterGroup group) throws SystemException {
+	public static void viewGroup(@Nonnull final State st, final SafeMap values, @Nonnull final CharacterGroup group) {
 		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader(group.getName()));
@@ -178,7 +177,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/setowner", requiresPermission = "Groups.SetOwner")
-	public static void setOwnerForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setOwnerForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Groups.SetOwner", values);
 	}
 
@@ -220,7 +219,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/add", requiresPermission = "Groups.SetGroup")
-	public static void addForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void addForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Groups.Add", values);
 	}
 
@@ -230,7 +229,7 @@ public abstract class Management {
 	                           @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP, description = "Group to add character to") final
 	                           CharacterGroup group,
 	                           @Nonnull @Arguments(description = "Character to add to the group", type = ArgumentType.CHARACTER) final
-	                               Char newmember) throws UserException {
+	                               Char newmember) {
 		final boolean debug = false;
 		final Attribute attr = st.getAttribute(group);
 		String grouptype = null;
@@ -258,7 +257,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/remove", requiresPermission = "Groups.SetGroup")
-	public static void removeForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void removeForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Groups.Remove", values);
 	}
 
@@ -281,7 +280,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/delete", requiresPermission = "Groups.Delete")
-	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Groups.Delete", values);
 	}
 
@@ -297,7 +296,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/setadmin")
-	public static void setAdminForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setAdminForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Groups.SetAdmin", values);
 	}
 
@@ -309,7 +308,7 @@ public abstract class Management {
 	                                @Nonnull @Arguments(description = "Character to set the admin flag on", type = ArgumentType.CHARACTER) final
 	                                    Char character,
 	                                @Arguments(description = "Admin flag to set on the character in this group", type = ArgumentType.BOOLEAN) final
-	                                    boolean admin) throws SystemException {
+	                                    boolean admin) {
 		if (!group.hasMember(character)) {
 			return new ErrorResponse(character.getName() + " is not a member of group " + group.getName());
 		}
@@ -332,7 +331,7 @@ public abstract class Management {
 	}
 
 	@URLs(url = "/groups/setopen")
-	public static void setOpenForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setOpenForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Groups.SetOpen", values);
 	}
 
@@ -342,7 +341,7 @@ public abstract class Management {
 	                               @Nonnull @Arguments(description = "Group to modify", type = ArgumentType.CHARACTERGROUP) final
 	                               CharacterGroup group,
 	                               @Arguments(description = "Group open?", type = ArgumentType.BOOLEAN) final
-	                                   boolean open) throws SystemException {
+	                                   boolean open) {
 		group.validate(st);
 		// must be instance admin or group owner
 		final boolean oldflag = group.isOpen();

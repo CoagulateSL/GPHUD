@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Zoning;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.Data.ZoneArea;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
@@ -46,14 +44,14 @@ public abstract class ZonePages {
 	}
 
 	@URLs(url = "/configuration/zoning/view/*")
-	public static void viewZone(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void viewZone(@Nonnull final State st, final SafeMap values) {
 		final String[] split = st.getDebasedURL().split("/");
 		final String id = split[split.length - 1];
 		final Zone z = Zone.get(Integer.parseInt(id));
 		viewZone(st, values, z, false);
 	}
 
-	public static void viewZone(@Nonnull final State st, final SafeMap values, @Nonnull final Zone z, final boolean brief) throws UserException, SystemException {
+	public static void viewZone(@Nonnull final State st, final SafeMap values, @Nonnull final Zone z, final boolean brief) {
 		final boolean full = false;
 		boolean admin = false;
 		if (st.hasPermission("zoning.config")) { admin = true; }

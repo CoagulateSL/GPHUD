@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -24,7 +22,7 @@ public class ConfigurationModule extends ModuleAnnotation {
 	@Nullable
 	Set<SideSubMenu> submenus;
 
-	public ConfigurationModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public ConfigurationModule(final String name, final ModuleDefinition def) {
 		super(name, def);
 		submenus = null;
 	}

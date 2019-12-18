@@ -1,8 +1,6 @@
 package net.coagulate.GPHUD.Modules.User;
 
 import net.coagulate.Core.Database.Results;
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.DateTime;
@@ -34,7 +32,7 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 public abstract class ViewAvatar {
 
 	@URLs(url = "/avatars/view/*")
-	public static void viewAvatar(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void viewAvatar(@Nonnull final State st, final SafeMap values) {
 		final String[] split = st.getDebasedURL().split("/");
 		final String id = split[split.length - 1];
 		final User a = User.get(Integer.parseInt(id));
@@ -42,7 +40,7 @@ public abstract class ViewAvatar {
 	}
 
 
-	public static void viewAvatar(@Nonnull final State st, final SafeMap values, @Nonnull final User a) throws UserException, SystemException {
+	public static void viewAvatar(@Nonnull final State st, final SafeMap values, @Nonnull final User a) {
 		boolean fullinstance = false;
 		boolean full = false;
 		final String tz = st.getAvatar().getTimeZone();

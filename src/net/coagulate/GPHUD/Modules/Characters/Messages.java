@@ -1,8 +1,6 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.Message;
@@ -25,12 +23,12 @@ import javax.annotation.Nonnull;
  */
 public abstract class Messages {
 	@URLs(url = "/hud/listmessages")
-	public static void messagesListHUD(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
+	public static void messagesListHUD(@Nonnull final State st, @Nonnull final SafeMap values) {
 		messagesList(st, values);
 	}
 
 	@URLs(url = "/messages/list")
-	public static void messagesList(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
+	public static void messagesList(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final Message m = st.getCharacter().getMessage();
 		final Form f = st.form();
 		if (m == null) {
@@ -48,7 +46,7 @@ public abstract class Messages {
 
 	}
 
-	public static void displayFactionInvite(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final JSONObject j) throws UserException, SystemException {
+	public static void displayFactionInvite(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final JSONObject j) {
 		final Form f = st.form();
 		final Char from = Char.get(j.getInt("from"));
 		final CharacterGroup to = CharacterGroup.get(j.getInt("to"));

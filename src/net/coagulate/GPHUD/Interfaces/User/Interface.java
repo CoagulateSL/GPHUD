@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Interfaces.User;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.ExceptionTools;
@@ -270,7 +269,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 	@Nonnull
-	String dynamicSideMenus(@Nonnull final State st) throws UserException, SystemException {
+	String dynamicSideMenus(@Nonnull final State st) {
 		final StringBuilder r = new StringBuilder();
 		final Map<Integer, Set<SideMenu>> priorities = new TreeMap<>();
 		// collect sidemenus, by priority
@@ -312,7 +311,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 	@Nonnull
-	String renderSideMenu(@Nonnull final State st) throws UserException, SystemException {
+	String renderSideMenu(@Nonnull final State st) {
 		final StringBuilder s = new StringBuilder();
 		s.append(GPHUD.menuPanelEnvironment()).append("<hr width=150px>");
 		final boolean loggedin = true;
@@ -382,7 +381,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 	// THIRD stage (process -> renderHTML (page layout) -> renderBodyProtected -> renderBody)
 	@Nonnull
-	public String renderBody(@Nonnull final State st) throws SystemException, UserException {
+	public String renderBody(@Nonnull final State st) {
 		Form f = null;
 		final SafeMap values = getPostValues(st);
 		st.postmap(values);
@@ -498,7 +497,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	//
 	// generally our job is to set up the avatar/instance/character stuff
 	@Nullable
-	public Form authenticationHook(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException {
+	public Form authenticationHook(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final boolean debug = false;
 		// FIRSTLY, pick up any existing session data
 		String cookie = extractGPHUDCookie(st);

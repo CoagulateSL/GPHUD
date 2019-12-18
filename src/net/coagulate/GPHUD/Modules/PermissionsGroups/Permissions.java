@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.PermissionsGroups;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
@@ -26,7 +25,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class Permissions {
 	@URLs(url = "/permissionsgroups/addpermission", requiresPermission = "Instance.ManagePermissions")
-	public static void addPermissionForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void addPermissionForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "permissionsgroups.addpermission", values);
 	}
 
@@ -37,7 +36,7 @@ public abstract class Permissions {
 	                                     PermissionsGroup permissionsgroup,
 	                                     @Nonnull @Arguments(description = "Permission to add to group", type = ArgumentType.PERMISSION) final
 	                                         String permission
-	) throws UserException, SystemException {
+	) {
 		Modules.validatePermission(st, permission);
 		final Permission permissionref = Modules.getPermission(st, permission);
 		if (permissionref==null) { return new ErrorResponse("The permission '"+permission+"' did not resolve properly (does not exist?)"); }
@@ -52,7 +51,7 @@ public abstract class Permissions {
 	}
 
 	@URLs(url = "/permissionsgroups/delpermission", requiresPermission = "Instance.ManagePermissions")
-	public static void delPermissionForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void delPermissionForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "permissionsgroups.delpermission", values);
 	}
 
@@ -63,7 +62,7 @@ public abstract class Permissions {
 	                                     PermissionsGroup permissionsgroup,
 	                                     @Arguments(description = "Permission to remove from group", type = ArgumentType.TEXT_CLEAN, max = 256) final
 	                                         String permission
-	) throws UserException, SystemException {
+	) {
 		try { permissionsgroup.removePermission(permission); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove permission from permissions group - " + e.getMessage());
 		}

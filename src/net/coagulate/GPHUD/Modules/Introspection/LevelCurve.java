@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
@@ -20,7 +18,7 @@ import javax.annotation.Nonnull;
 public abstract class LevelCurve {
 	@URLs(url = "/introspection/levelcurve")
 	@SideSubMenus(name = "Level Curve", priority = 1)
-	public static void createForm(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, final SafeMap values) {
 		final Form f = st.form();
 		final Table t = new Table();
 		f.add(t);

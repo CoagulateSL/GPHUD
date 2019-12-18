@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.PermissionsGroups;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
@@ -27,7 +26,7 @@ import javax.annotation.Nonnull;
 public abstract class Member {
 
 	@URLs(url = "/permissionsgroups/eject", requiresPermission = "Instance.ManagePermissions")
-	public static void ejectForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void ejectForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "permissionsgroups.eject", values);
 	}
 
@@ -38,7 +37,7 @@ public abstract class Member {
 	                             PermissionsGroup permissionsgroup,
 	                             @Nonnull @Arguments(description = "Avatar to remove from the group", type = ArgumentType.AVATAR) final
 	                                 User avatar
-	) throws UserException, SystemException {
+	) {
 		if (!permissionsgroup.canEject(st)) { return new ErrorResponse("No permission to eject from this group"); }
 		try { permissionsgroup.removeMember(avatar); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove user from permissions group - " + e.getMessage());
@@ -48,7 +47,7 @@ public abstract class Member {
 	}
 
 	@URLs(url = "/permissionsgroups/invite", requiresPermission = "Instance.ManagePermissions")
-	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "permissionsgroups.invite", values);
 	}
 
@@ -59,7 +58,7 @@ public abstract class Member {
 	                              PermissionsGroup permissionsgroup,
 	                              @Nonnull @Arguments(description = "Avatar to join to group", type = ArgumentType.AVATAR) final
 	                                  User avatar
-	) throws UserException, SystemException {
+	) {
 		if (!permissionsgroup.canInvite(st)) { return new ErrorResponse("No permission to invite to this group"); }
 		try { permissionsgroup.addMember(avatar); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to add user to permissions group - " + e.getMessage());
@@ -69,7 +68,7 @@ public abstract class Member {
 	}
 
 	@URLs(url = "/permissionsgroups/setpermissions", requiresPermission = "Instance.ManagePermissions")
-	public static void setPermissionsForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setPermissionsForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "permissionsgroups.setpermissions", values);
 	}
 
@@ -83,7 +82,7 @@ public abstract class Member {
 	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user invite people to this group") final
 	                                          Boolean caninvite,
 	                                      @Arguments(type = ArgumentType.BOOLEAN, description = "Can the user remove people from this group") final
-	                                          Boolean cankick) throws UserException, SystemException {
+	                                          Boolean cankick) {
 		try { permissionsgroup.setUserPermissions(avatar, caninvite, cankick); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to set user permissions on group  - " + e.getMessage());
 		}

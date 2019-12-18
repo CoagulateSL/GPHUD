@@ -129,7 +129,7 @@ public class Cookies {
 	 *
 	 * @throws UserException if the cookie fails validation in any way.
 	 */
-	private void validateCookie() throws UserException {
+	private void validateCookie() {
 		try { load(); } catch (@Nonnull final NoDataException e) { throw new UserInputStateException("Cookie Expired!", e); }
 		final int expires = r().getInt("expires");
 		if (expires < getUnixTime()) {

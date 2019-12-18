@@ -1,9 +1,7 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
@@ -100,13 +98,13 @@ public abstract class KV extends NameComparable {
 		}
 	}
 
-	public void setKV(@Nonnull final State st, @Nonnull final TableRow o, final String value) throws UserException, SystemException {
+	public void setKV(@Nonnull final State st, @Nonnull final TableRow o, final String value) {
 		assertAppliesTo(o);
 		st.setKV(o, name(), value);
 		convey(st, value);
 	}
 
-	public void convey(@Nonnull final State st, final String value) throws UserException, SystemException {
+	public void convey(@Nonnull final State st, final String value) {
 		if (!conveyas().isEmpty()) {
 			final Set<Region> regions = st.getInstance().getRegions(false);
 			final JSONObject message = new JSONObject();

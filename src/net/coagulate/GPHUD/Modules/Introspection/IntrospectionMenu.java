@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
 import net.coagulate.GPHUD.Interfaces.User.Form;
@@ -17,7 +15,7 @@ import javax.annotation.Nonnull;
 public class IntrospectionMenu {
 
 	@URLs(url = "/introspection/")
-	public static void menu(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void menu(@Nonnull final State st, final SafeMap values) {
 		final Form f = st.form();
 		f.add(new TextHeader("GPHUD Introspection"));
 		f.add(new TextSubHeader("Global definitions"));

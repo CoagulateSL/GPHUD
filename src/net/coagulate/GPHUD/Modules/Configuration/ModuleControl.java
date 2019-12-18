@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -29,7 +27,7 @@ public abstract class ModuleControl {
 	@Commands(context = Context.AVATAR, description = "Disable the specified module", requiresPermission = "instance.ModuleEnablement")
 	public static Response disableModule(@Nonnull final State st,
 	                                     @Nonnull @Arguments(type = ArgumentType.MODULE, description = "Module to disable") final
-	                                     Module module) throws UserException, SystemException {
+	                                     Module module) {
 		if (!module.canDisable()) {
 			return new ErrorResponse("The module " + module.getName() + " does not allow its self to be disabled, it is probably critical to system functionality");
 		}
@@ -40,7 +38,7 @@ public abstract class ModuleControl {
 	}
 
 	@URLs(url = "/configuration/disablemodule", requiresPermission = "instance.ModuleEnablement")
-	public static void disableModuleForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void disableModuleForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Configuration.DisableModule", values);
 	}
 
@@ -55,7 +53,7 @@ public abstract class ModuleControl {
 	}
 
 	@URLs(url = "/configuration/enablemodule", requiresPermission = "instance.ModuleEnablement")
-	public static void enableModuleForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void enableModuleForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "Configuration.EnableModule", values);
 	}
 }

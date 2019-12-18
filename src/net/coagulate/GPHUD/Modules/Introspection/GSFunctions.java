@@ -1,8 +1,6 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
@@ -18,7 +16,7 @@ import java.lang.reflect.Method;
 
 public class GSFunctions {
 	@URL.URLs(url = "/introspection/gsfunctions/*")
-	public static void renderCommand(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void renderCommand(@Nonnull final State st, final SafeMap values) {
 		String uri = st.getDebasedURL();
 		if (!uri.startsWith("/introspection/gsfunctions/")) { throw new SystemImplementationException("URL Misconfiguratin?"); }
 		uri = uri.substring("/introspection/gsfunctions/".length());

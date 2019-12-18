@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Outputs.Color;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -18,7 +16,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class ViewRegion {
 	@URLs(url = "/regions/view/*")
-	public static void viewRegion(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void viewRegion(@Nonnull final State st, final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -27,7 +25,7 @@ public abstract class ViewRegion {
 		viewRegion(st, values, r);
 	}
 
-	public static void viewRegion(@Nonnull final State st, final SafeMap values, @Nonnull final Region r) throws UserException {
+	public static void viewRegion(@Nonnull final State st, final SafeMap values, @Nonnull final Region r) {
 		final boolean full = false;
 		final Table map = new Table();
 		st.form().add(map);

@@ -1,9 +1,7 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.State;
 
@@ -32,7 +30,7 @@ public class ModuleAnnotation extends Module {
 	final Map<String, Command> commands = new TreeMap<>();
 	final Set<URL> contents = new HashSet<>();
 	private final boolean generated;
-	public ModuleAnnotation(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public ModuleAnnotation(final String name, final ModuleDefinition def) {
 		super(name, def);
 		if (canDisable()) {
 			registerKV(new KVEnabled(this, defaultDisable() ? "false" : "true"));
@@ -42,14 +40,14 @@ public class ModuleAnnotation extends Module {
 	}
 
 	@Nonnull
-	static Object assertNotNull(@Nullable final Object o, final String value, final String type) throws UserException {
+	static Object assertNotNull(@Nullable final Object o, final String value, final String type) {
 		if (o == null) {
 			throw new UserInputLookupFailureException("Unable to resolve '" + value + "' to a " + type);
 		}
 		return o;
 	}
 
-	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -61,7 +59,7 @@ public class ModuleAnnotation extends Module {
 	public boolean isGenerated() { return generated; }
 
 	@Nonnull
-	Response run(@Nonnull final State st, @Nonnull final String commandname, @Nonnull final String[] args) throws UserException, SystemException {
+	Response run(@Nonnull final State st, @Nonnull final String commandname, @Nonnull final String[] args) {
 		final Command command = getCommandNullable(st, commandname);
 		return command.run(st, args);
 	}
@@ -72,7 +70,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	@Nullable
-	public URL getURL(final State st, @Nonnull final String url) throws UserException, SystemException {
+	public URL getURL(final State st, @Nonnull final String url) {
 		final boolean debug=false;
 		URL liberalmatch = null;
 		for (final URL m : contents) {
@@ -102,7 +100,7 @@ public class ModuleAnnotation extends Module {
 		return kvmap;
 	}
 
-	public KV getKVDefinition(final State st, @Nonnull final String qualifiedname) throws SystemException {
+	public KV getKVDefinition(final State st, @Nonnull final String qualifiedname) {
 		//for (String s:kvmap.keySet()) { System.out.println(s); }
 		if (!kvmap.containsKey(qualifiedname.toLowerCase())) {
 			throw new SystemImplementationException("Invalid KV " + qualifiedname + " in module " + getName());
@@ -135,7 +133,7 @@ public class ModuleAnnotation extends Module {
 		return permissions.get(itemname.toLowerCase());
 	}
 
-	public void registerCommand(@Nonnull final Command m) throws SystemException, UserException {
+	public void registerCommand(@Nonnull final Command m) {
 		commands.put(m.getName().toLowerCase(), m);
 	}
 
@@ -151,11 +149,11 @@ public class ModuleAnnotation extends Module {
 	}*/
 
 	@Nonnull
-	public Map<String, Command> getCommands(final State st) throws UserException, SystemException {
+	public Map<String, Command> getCommands(final State st) {
 		return commands;
 	}
 
-	public void setSideMenu(final State st, @Nonnull final SideMenu a) throws UserException, SystemException {
+	public void setSideMenu(final State st, @Nonnull final SideMenu a) {
 		if (!a.requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, a.requiresPermission());
 		}
@@ -168,7 +166,7 @@ public class ModuleAnnotation extends Module {
 		sidemenu = a;
 	}
 
-	public void registerSideSubMenu(final State st, @Nonnull final SideSubMenu m) throws SystemException, UserException {
+	public void registerSideSubMenu(final State st, @Nonnull final SideSubMenu m) {
 		if (!m.requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, m.requiresPermission());
 		}
@@ -192,7 +190,7 @@ public class ModuleAnnotation extends Module {
 		permissions.put(a.name().toLowerCase(), a);
 	}
 
-	public void registerContent(final URL m) throws UserException, SystemException {
+	public void registerContent(final URL m) {
 		//System.out.println("Module "+name+" gets URL "+m.url()+" mapping to "+m.getMethodName());
 		contents.add(m);
 	}
@@ -202,20 +200,20 @@ public class ModuleAnnotation extends Module {
 		return contents;
 	}
 
-	public void registerKV(@Nonnull final KV a) throws UserException {
+	public void registerKV(@Nonnull final KV a) {
 		if (kvmap.containsKey(a.name().toLowerCase())) {
 			throw new SystemImplementationException("Attempt to redefine KV entry " + a.name() + " in module " + name);
 		}
 		kvmap.put(a.name().toLowerCase(), a);
 	}
 
-	public void validateKV(@Nonnull final State st, @Nonnull final String key) throws SystemException {
+	public void validateKV(@Nonnull final State st, @Nonnull final String key) {
 		if (Modules.getKVDefinitionNullable(st, key) == null) {
 			throw new UserInputLookupFailureException("KV key " + key + " in module " + getName() + " does not exist");
 		}
 	}
 
-	public void validateCommand(final State st, @Nonnull final String command) throws SystemException {
+	public void validateCommand(final State st, @Nonnull final String command) {
 		if (!commands.containsKey(command.toLowerCase())) {
 			throw new SystemImplementationException("Command " + command + " does not exist in module " + getName());
 		}

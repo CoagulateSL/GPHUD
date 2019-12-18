@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration.CookBooks;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.URL;
@@ -16,7 +14,7 @@ import javax.annotation.Nonnull;
  */
 public class UserTitlerColor extends CookBook {
 	@URL.URLs(url = "/configuration/cookbooks/user-titler-color")
-	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final Form f = st.form();
 		f.add(new TextHeader("User Configurable Titler Color Cookbook"));
 		final boolean act = false;

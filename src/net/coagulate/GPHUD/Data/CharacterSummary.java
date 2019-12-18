@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Data;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Row;
@@ -50,7 +48,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	}
 
 	@Nonnull
-	public Row headers(@Nonnull final State st) throws UserException, SystemException {
+	public Row headers(@Nonnull final State st) {
 		String uri = st.getDebasedURL().replaceAll("%20", " ");
 		uri = uri.replaceFirst(".*?sort=", "");
 		final Row r = new HeaderRow();
@@ -71,7 +69,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	}
 
 	@Nonnull
-	public Row asRow(@Nonnull final State st) throws UserException, SystemException {
+	public Row asRow(@Nonnull final State st) {
 		final Row r = new Row();
 		if (retired) { r.setbgcolor("#ffe0e0"); }
 		r.add(Char.getLink(name, "characters", id));

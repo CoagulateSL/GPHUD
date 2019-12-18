@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Groups;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.StaticSideSubMenu;
@@ -18,7 +16,7 @@ import java.util.Set;
  */
 public class GroupModule extends ModuleAnnotation {
 
-	public GroupModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public GroupModule(final String name, final ModuleDefinition def) {
 		super(name, def);
 	}
 

@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
@@ -25,7 +23,7 @@ import javax.annotation.Nonnull;
 public abstract class Index {
 
 	@URLs(url = "/configuration/")
-	public static void createForm(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void createForm(@Nonnull final State st, final SafeMap values) {
 		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("GPHUD Module Configuration"));
@@ -104,7 +102,7 @@ public abstract class Index {
 	}
 
 	@URLs(url = "/configuration/*")
-	public static void genericConfigurationPage(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void genericConfigurationPage(@Nonnull final State st, @Nonnull final SafeMap values) {
 		String module = st.getDebasedURL().replaceFirst("/configuration/", "");
 		String key = null;
 		st.form().noForm();

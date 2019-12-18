@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Events;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
@@ -54,7 +53,7 @@ public class EventsPages {
 
 
 	@URLs(url = "/event/*")
-	public static void viewEvent(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void viewEvent(@Nonnull final State st, final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split = st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -63,7 +62,7 @@ public class EventsPages {
 		viewEvent(st, values, e, false);
 	}
 
-	public static void viewEvent(@Nonnull final State st, final SafeMap values, @Nonnull final Event e, final boolean brief) throws UserException, SystemException {
+	public static void viewEvent(@Nonnull final State st, final SafeMap values, @Nonnull final Event e, final boolean brief) {
 		e.validate(st);
 		final Form f = st.form();
 		f.noForm();

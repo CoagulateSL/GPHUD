@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 
@@ -35,7 +34,7 @@ public class Landmarks extends TableRow {
 	public String getIdField() { return "id"; }
 
 	@Override
-	public void validate(final State st) throws SystemException {
+	public void validate(final State st) {
 		if (validated) { return; }
 		validate();
 	}

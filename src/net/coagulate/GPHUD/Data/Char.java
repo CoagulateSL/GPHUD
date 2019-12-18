@@ -798,7 +798,7 @@ public class Char extends TableRow {
 		set("playedby", avatar.getId());
 	}
 
-	public void validate(@Nonnull final State st) throws SystemException {
+	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Char / State Instance mismatch"); }

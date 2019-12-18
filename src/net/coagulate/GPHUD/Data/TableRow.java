@@ -68,7 +68,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * @param st State
 	 * @throws SystemException If there is a mismatch between state and this object
 	 */
-	public abstract void validate(State st) throws SystemException;
+	public abstract void validate(State st);
 
 	@Nullable
 	public abstract String getNameField();

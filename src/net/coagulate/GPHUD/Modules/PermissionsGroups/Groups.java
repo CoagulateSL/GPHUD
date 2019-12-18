@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.PermissionsGroups;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
@@ -38,7 +37,7 @@ public abstract class Groups {
 	public static final String GREEN="#dfffdf";
 
 	@URLs(url = "/permissionsgroups/view/*")
-	public static void view(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void view(@Nonnull final State st, final SafeMap values) {
 		final Form f = st.form();
 		f.noForm();
 		final String[] split = st.getDebasedURL().split("/");
@@ -135,7 +134,7 @@ public abstract class Groups {
 
 	@URLs(url = "/permissionsgroups/create", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Create", priority = 10)
-	public static void createGroupPage(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void createGroupPage(@Nonnull final State st, @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st, "permissionsgroups.create", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.create");
 	}
@@ -144,7 +143,7 @@ public abstract class Groups {
 	@Commands(context = Context.AVATAR, description = "Creates a new permissions group", requiresPermission = "Instance.ManagePermissions")
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(description = "Name of group to create", type = ArgumentType.TEXT_CLEAN, max = 64) final
-	                              String name) throws UserException, SystemException {
+	                              String name) {
 		try { st.getInstance().createPermissionsGroup(name); } catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create permissions group - " + e.getLocalizedMessage());
 		}
@@ -165,13 +164,13 @@ public abstract class Groups {
 	}
 
 	@URLs(url = "/permissionsgroups/")
-	public static void listForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void listForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		st.form().add(Modules.run(st, "permissionsgroups.list", values));
 	}
 
 	@URLs(url = "/permissionsgroups/delete", requiresPermission = "Instance.ManagePermissions")
 	@SideSubMenus(name = "Delete", priority = 11, requiresPermission = "Instance.ManagePermissions")
-	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void deleteForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st, "permissionsgroups.delete", values)); }
 		Modules.getHtmlTemplate(st, "permissionsgroups.delete");
 	}
@@ -180,7 +179,7 @@ public abstract class Groups {
 	@Commands(context = Context.AVATAR, requiresPermission = "Instance.ManagePermissions", description = "Deletes a permissions group")
 	public static Response delete(@Nonnull final State st,
 	                              @Nonnull @Arguments(description = "Permissions group to delete", type = ArgumentType.PERMISSIONSGROUP) final
-	                              PermissionsGroup permissionsgroup) throws UserException {
+	                              PermissionsGroup permissionsgroup) {
 		final String success = "NOP";
 		permissionsgroup.validate(st);
 		final String name = permissionsgroup.getNameSafe();

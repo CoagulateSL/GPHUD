@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.User;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
@@ -26,7 +25,7 @@ public abstract class Operations {
 	@Commands(context = Context.AVATAR, permitScripting = false, description = "Set your USER password (via authorised SL login ONLY)", permitUserWeb = false,permitObject = false)
 	public static Response setPassword(@Nonnull final State st,
 	                                   @Nonnull @Arguments(description = "New password", type = ArgumentType.PASSWORD) final
-	                                   String password) throws SystemException, UserException {
+	                                   String password) {
 		if (st.getSourcedeveloper().getId() != 1) {
 			throw new UserAccessDeniedException("RESTRICTED COMMAND");
 		}

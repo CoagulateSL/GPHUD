@@ -43,14 +43,14 @@ import static java.util.logging.Level.WARNING;
 public abstract class Command {
 
 	@Nonnull
-	static Object assertNotNull(@Nullable final Object o, final String value, final String type) throws UserException {
+	static Object assertNotNull(@Nullable final Object o, final String value, final String type) {
 		if (o == null) {
 			throw new UserInputLookupFailureException("Unable to resolve '" + value + "' to a " + type);
 		}
 		return o;
 	}
 
-	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -93,7 +93,7 @@ public abstract class Command {
 
 	@Nonnull
 	@SuppressWarnings("fallthrough")
-	public Response run(@Nonnull final State st, @Nonnull final String[] args) throws SystemException, UserException {
+	public Response run(@Nonnull final State st, @Nonnull final String[] args) {
 		final boolean debug=false;
 		final List<Object> typedargs = new ArrayList<>();
 		int arg = 0;
@@ -283,7 +283,7 @@ public abstract class Command {
 	 * @throws SystemException
 	 */
 	@Nonnull
-	Response run(@Nonnull final State st, @Nonnull final Object[] args) throws SystemException {
+	Response run(@Nonnull final State st, @Nonnull final Object[] args) {
 		final boolean debug = false;
 		try {
 			// check permission
@@ -394,7 +394,7 @@ public abstract class Command {
 	 * @return
 	 * @throws UserException
 	 */
-	public List<String> getArgumentNames(final State st) throws UserException {
+	public List<String> getArgumentNames(final State st) {
 		final List<String> arguments = new ArrayList<>();
 		for (final Argument a : getArguments()) {
 			arguments.add(a.getName());
@@ -404,7 +404,7 @@ public abstract class Command {
 
 	public List<Argument> getInvokingArguments() { return getArguments(); }
 
-	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) throws UserException, SystemException {
+	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) {
 		//System.out.println("Run in method "+this.getClass().getCanonicalName());
 		final List<String> arguments = new ArrayList<>();
 		for (final Argument arg : getInvokingArguments()) {
@@ -419,7 +419,7 @@ public abstract class Command {
 		return run(st, arguments.toArray(new String[]{}));
 	}
 
-	public void simpleHtml(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public void simpleHtml(@Nonnull final State st, @Nonnull final SafeMap values) {
 		//System.out.println("HERE:"+getArgumentCount());
 		if (getArgumentCount() == 0 || values.submit()) {
 			final Response response = run(st, values);
@@ -437,7 +437,7 @@ public abstract class Command {
 	}
 
 	@Nonnull
-	JSONObject getJSONTemplate(@Nonnull final State st) throws UserException, SystemException {
+	JSONObject getJSONTemplate(@Nonnull final State st) {
 		final JSONObject json = new JSONObject();
 		int arg = 0;
 		for (final Argument argument : getArguments()) {
@@ -533,7 +533,7 @@ public abstract class Command {
 		return json;
 	}
 
-	void getHtmlTemplate(@Nonnull final State st) throws UserException, SystemException {
+	void getHtmlTemplate(@Nonnull final State st) {
 		final Form f = st.form();
 		final Table t = new Table();
 		f.add(t);

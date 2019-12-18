@@ -3,10 +3,8 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -73,7 +71,7 @@ public class Alias extends TableRow {
 	}
 
 	@Nonnull
-	public static Alias create(@Nonnull final State st, @Nonnull final String name, @Nonnull final JSONObject template) throws UserException, SystemException {
+	public static Alias create(@Nonnull final State st, @Nonnull final String name, @Nonnull final JSONObject template) {
 		if (getAlias(st, name) != null) { throw new UserInputDuplicateValueException("Alias " + name + " already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
 			throw new UserInputValidationParseException("Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
@@ -116,7 +114,7 @@ public class Alias extends TableRow {
 	}
 
 	@Nonnull
-	public JSONObject getTemplate() throws SystemException {
+	public JSONObject getTemplate() {
 		final String json = dqsnn( "select template from aliases where aliasid=?", getId());
 		return new JSONObject(json);
 	}
@@ -133,7 +131,7 @@ public class Alias extends TableRow {
 
 	public void flushKVCache(final State st) {}
 
-	public void validate(@Nonnull final State st) throws SystemException {
+	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Alias / State Instance mismatch"); }

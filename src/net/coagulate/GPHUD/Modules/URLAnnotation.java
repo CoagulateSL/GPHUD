@@ -27,7 +27,7 @@ public class URLAnnotation extends URL {
 	private final Method method;
 	private final boolean generated;
 
-	public URLAnnotation(final Module module, @Nonnull final Method method) throws SystemException, UserException {
+	public URLAnnotation(final Module module, @Nonnull final Method method) {
 		this.module = module;
 		this.method = method;
 		meta = method.getAnnotation(URLs.class);
@@ -52,12 +52,12 @@ public class URLAnnotation extends URL {
 
 	public String getName() { return method.getName(); }
 
-	public void checkUnique() throws SystemException {
+	public void checkUnique() {
 		if (inuse.contains(url())) { throw new SystemImplementationException("URL " + url() + " is already claimed"); }
 		inuse.add(url());
 	}
 
-	private void validate(final State st) throws UserException, SystemException {
+	private void validate(final State st) {
 		if (!requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, requiresPermission());
 		}
@@ -76,7 +76,7 @@ public class URLAnnotation extends URL {
 
 	}
 
-	public void run(@Nonnull final State st, final SafeMap values) throws SystemException, UserException {
+	public void run(@Nonnull final State st, final SafeMap values) {
 		try {
 			method.invoke(null, st, values);
 		} catch (@Nonnull final IllegalAccessException ex) {

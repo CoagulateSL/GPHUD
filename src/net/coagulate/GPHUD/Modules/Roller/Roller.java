@@ -1,10 +1,8 @@
 package net.coagulate.GPHUD.Modules.Roller;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -31,12 +29,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Roller {
 
 	@Nonnull
-	public static List<Integer> roll(@Nonnull final State st, final Integer dice, final Integer sides) throws UserException, SystemException {
+	public static List<Integer> roll(@Nonnull final State st, final Integer dice, final Integer sides) {
 		return roll(st, st.getCharacter(), dice, sides);
 	}
 
 	@Nonnull
-	public static List<Integer> roll(@Nonnull final State st, final Char character, @Nullable Integer dice, @Nullable Integer sides) throws UserException, SystemException {
+	public static List<Integer> roll(@Nonnull final State st, final Char character, @Nullable Integer dice, @Nullable Integer sides) {
 		final List<Integer> rolls = new ArrayList<>();
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
@@ -65,7 +63,7 @@ public class Roller {
 	                                @Nullable @Arguments(description = "Number of sides on dice", type = ArgumentType.INTEGER, mandatory = false)
 			                                Integer sides,
 	                                @Nullable @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512)
-			                                String reason) throws UserException, SystemException {
+			                                String reason) {
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
 		if (reason == null) { reason = "No Reason"; }
@@ -104,7 +102,7 @@ public class Roller {
 	                            @Nullable @Arguments(description = "Optional bias to add to result", mandatory = false, type = ArgumentType.INTEGER)
 			                            Integer bias,
 	                            @Nullable @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512)
-			                            String reason) throws UserException, SystemException {
+			                            String reason) {
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
 		if (bias == null) { bias = 0; }
@@ -136,7 +134,7 @@ public class Roller {
 	@Commands(context = Context.CHARACTER, description = "Default roll, only requests a reason", permitUserWeb = false)
 	public static Response rollDefault(@Nonnull final State st,
 	                                   @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512) final
-	                                   String reason) throws UserException, SystemException {
+	                                   String reason) {
 		return roll(st, null, null, 0, reason);
 	}
 
@@ -175,7 +173,7 @@ public class Roller {
 	                                   @Nullable @Arguments(description = "Optional bias to add to result", mandatory = false, type = ArgumentType.INTEGER)
 			                                   Integer targetbias,
 	                                   @Nullable @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512)
-			                                   String reason) throws UserException, SystemException {
+			                                   String reason) {
 		if (target == null) { throw new UserInputStateException("No target selected"); }
 		if (dice == null) { dice = st.getKV("roller.defaultcount").intValue(); }
 		if (sides == null) { sides = st.getKV("roller.defaultsides").intValue(); }
@@ -257,7 +255,7 @@ public class Roller {
 	                                         @Nullable @Arguments(description = "Damage to apply to target if they lose", mandatory = false, type = ArgumentType.TEXT_ONELINE, delayTemplating = true, max = 1024)
 			                                         String damage,
 	                                         @Arguments(description = "Logged reason for the roll", type = ArgumentType.TEXT_ONELINE, max = 512) final
-	                                             String reason) throws UserException, SystemException {
+	                                             String reason) {
 		//System.out.println("DAMAGE RECEIVED AS "+damage);
 		if (!st.hasModule("Health")) { throw new UserConfigurationException("Health module is required to use rollDamageAgainst"); }
 		if (damage == null) { damage = "1"; }

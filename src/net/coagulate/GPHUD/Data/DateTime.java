@@ -106,7 +106,7 @@ public abstract class DateTime {
 	 * @return Unix time for the input date time
 	 * @throws UserException If the numbers fail to parse
 	 */
-	public static int outputDateTime(final String prefix, @Nonnull final SafeMap values, final String defaulttimezone) throws UserException {
+	public static int outputDateTime(final String prefix, @Nonnull final SafeMap values, final String defaulttimezone) {
 		try {
 			String timezone = values.get(prefix + "timezone");
 			if (timezone.isEmpty()) {
@@ -131,7 +131,7 @@ public abstract class DateTime {
 	 * @return Number of seconds
 	 * @throws UserException If the numbers fail to parse
 	 */
-	public static int outputInterval(final String prefix, @Nonnull final SafeMap values) throws UserException {
+	public static int outputInterval(final String prefix, @Nonnull final SafeMap values) {
 		try {
 			int day = Integer.parseInt(values.get(prefix + "day"));
 			int hour = Integer.parseInt(values.get(prefix + "hour"));

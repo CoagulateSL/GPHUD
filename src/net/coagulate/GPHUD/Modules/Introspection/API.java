@@ -1,8 +1,6 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Argument;
@@ -25,7 +23,7 @@ import java.util.Map;
  */
 public abstract class API {
 	@URLs(url = "/introspection/api/*")
-	public static void renderCommand(@Nonnull final State st, final SafeMap values) throws UserException, SystemException {
+	public static void renderCommand(@Nonnull final State st, final SafeMap values) {
 		String uri = st.getDebasedURL();
 		if (!uri.startsWith("/introspection/api/")) { throw new SystemImplementationException("URL Misconfiguratin?"); }
 		uri = uri.substring("/introspection/api/".length());

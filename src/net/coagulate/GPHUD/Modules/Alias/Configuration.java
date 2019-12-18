@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Alias;
 import net.coagulate.GPHUD.Data.Audit;
@@ -28,7 +27,7 @@ import java.util.Map;
  */
 public abstract class Configuration {
 	@URLs(url = "/configuration/alias", requiresPermission = "Alias.Config")
-	public static void aliasesList(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException {
+	public static void aliasesList(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final Form f = st.form();
 		f.noForm();
 		f.add(new TextSubHeader("Alias Configuration"));
@@ -70,7 +69,7 @@ public abstract class Configuration {
 	}
 
 	@URLs(url = "/configuration/alias/create", requiresPermission = "Alias.Config")
-	public static void createAlias(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
+	public static void createAlias(@Nonnull final State st, @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {
 			final JSONObject template = new JSONObject();
 			template.put("invoke", values.get("command"));
@@ -91,14 +90,14 @@ public abstract class Configuration {
 	}
 
 	@URLs(url = "/configuration/alias/view/*")
-	public static void viewAlias(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
+	public static void viewAlias(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final String[] split = st.getDebasedURL().split("/");
 		final String id = split[split.length - 1];
 		final Alias a = Alias.get(Integer.parseInt(id));
 		viewAlias(st, values, a);
 	}
 
-	public static void viewAlias(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Alias a) throws SystemException, UserException {
+	public static void viewAlias(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Alias a) {
 		a.validate(st);
 		final Form f = st.form();
 		if ("Update".equals(values.get("Update"))) {

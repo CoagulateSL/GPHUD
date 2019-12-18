@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Faction;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -42,7 +40,7 @@ public class FactionCommands {
 	                               @Nonnull @Arguments(description = "Character to award a point of XP to", type = ArgumentType.CHARACTER_FACTION) final
 	                               Char target,
 	                               @Arguments(description = "Reason for the award", type = ArgumentType.TEXT_ONELINE, max = 512) final
-	                                   String reason) throws UserException, SystemException {
+	                                   String reason) {
 		// things to check...
 		// players are in the same faction
 		final CharacterGroup ourfaction = st.getCharacter().getGroup("Faction");

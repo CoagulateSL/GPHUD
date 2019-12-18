@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.GPHUDServer;
 
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -29,7 +28,7 @@ public abstract class Avatars {
 	@Commands(context = Context.AVATAR, permitScripting = false, description = "Synchronise the avatars status with the regions contents, server use only.", permitConsole = false, permitUserWeb = false,permitObject = false)
 	public static Response setRegionAvatars(@Nonnull final State st,
 	                                        @Nullable @Arguments(description = "Comma separated list of avatar key=names on the sim", type = ArgumentType.TEXT_ONELINE, max = 65536)
-			                                        String userlist) throws UserException {
+			                                        String userlist) {
 
 		// check authorisation, servers can only be deployed by the instance owner...
 		if (st.getSourcedeveloper().getId() != 1) {

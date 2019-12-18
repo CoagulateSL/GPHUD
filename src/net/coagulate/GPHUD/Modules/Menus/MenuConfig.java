@@ -1,8 +1,6 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Menus;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
@@ -40,14 +38,14 @@ public abstract class MenuConfig {
 	}
 
 	@URLs(url = "/configuration/menus/view/*")
-	public static void viewMenus(@Nonnull final State st, @Nonnull final SafeMap values) throws SystemException, UserException {
+	public static void viewMenus(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final String[] split = st.getDebasedURL().split("/");
 		final String id = split[split.length - 1];
 		final Menus m = Menus.get(Integer.parseInt(id));
 		viewMenus(st, values, m);
 	}
 
-	public static void viewMenus(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Menus m) throws SystemException, UserException {
+	public static void viewMenus(@Nonnull final State st, @Nonnull final SafeMap values, @Nonnull final Menus m) {
 		if (m.getInstance() != st.getInstance()) {
 			throw new UserInputStateException("That menu belongs to a different instance");
 		}

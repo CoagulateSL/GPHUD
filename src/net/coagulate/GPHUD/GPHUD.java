@@ -7,7 +7,6 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.Tools.LogHandler;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 
 import javax.annotation.Nonnull;
@@ -71,7 +70,7 @@ public class GPHUD {
 	 * @throws SystemException
 	 */
 	@SuppressWarnings("deprecation")
-	public static void main(@Nonnull final String[] args) throws SystemException, UserException {
+	public static void main(@Nonnull final String[] args) {
 		LogHandler.initialise();
 		log = Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
@@ -213,7 +212,7 @@ public class GPHUD {
 
 	public static String get(@Nonnull final String keyword) { return CONFIG.get(keyword.toUpperCase()); }
 
-	private static void validateNode(final String node) throws SystemException {
+	private static void validateNode(final String node) {
 		if ("luna".equalsIgnoreCase(node) ||
 				"sol".equalsIgnoreCase(node) ||
 				"saturn".equalsIgnoreCase(node) ||

@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -30,7 +28,7 @@ public class EditValues {
 	                                   @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
 	                                   String key,
 	                                   @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
-	                                       String value) throws UserException, SystemException {
+	                                       String value) {
 		Modules.validateKV(st, key);
 		final KV kv = Modules.getKVDefinition(st, key);
 		if (!st.hasPermission(kv.editpermission())) {
@@ -50,7 +48,7 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setinstancevalue")
-	public static void setInstanceForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setInstanceForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "configuration.setinstance", values);
 	}
 
@@ -62,7 +60,7 @@ public class EditValues {
 	                                 @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
 	                                     String key,
 	                                 @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
-	                                     String value) throws UserException, SystemException {
+	                                     String value) {
 		region.validate(st);
 		Modules.validateKV(st, key);
 		final KV kv = Modules.getKVDefinition(st, key);
@@ -84,7 +82,7 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setregionvalue")
-	public static void setRegionForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setRegionForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "configuration.setregion", values);
 	}
 
@@ -113,7 +111,7 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setzonevalue")
-	public static void setZoneForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setZoneForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "configuration.setzone", values);
 	}
 
@@ -125,7 +123,7 @@ public class EditValues {
 	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
 	                                    String key,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
-	                                    String value) throws UserException, SystemException {
+	                                    String value) {
 		event.validate(st);
 		Modules.validateKV(st, key);
 		final KV kv = Modules.getKVDefinition(st, key);
@@ -155,7 +153,7 @@ public class EditValues {
 	                                @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
 	                                    String key,
 	                                @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
-	                                    String value) throws UserException, SystemException {
+	                                    String value) {
 		group.validate(st);
 		Modules.validateKV(st, key);
 		final KV kv = Modules.getKVDefinition(st, key);
@@ -178,7 +176,7 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setgroupvalue")
-	public static void setGroupForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setGroupForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "configuration.setgroup", values);
 	}
 
@@ -190,7 +188,7 @@ public class EditValues {
 	                               @Nonnull @Arguments(type = ArgumentType.KVLIST, description = "Key to set the value of") final
 	                                   String key,
 	                               @Arguments(type = ArgumentType.TEXT_ONELINE, description = "New value for the key", max = 4096) final
-	                                   String value) throws UserException, SystemException {
+	                                   String value) {
 		character.validate(st);
 		Modules.validateKV(st, key);
 		final KV kv = Modules.getKVDefinition(st, key);
@@ -208,12 +206,12 @@ public class EditValues {
 	}
 
 	@URLs(url = "/configuration/setcharvalue")
-	public static void setCharForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setCharForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "configuration.setchar", values);
 	}
 
 	@URLs(url = "/configuration/setself")
-	public static void setSelfForm(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void setSelfForm(@Nonnull final State st, @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st, "characters.set", values);
 	}
 }

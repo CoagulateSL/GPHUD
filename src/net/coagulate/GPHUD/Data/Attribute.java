@@ -155,7 +155,7 @@ public class Attribute extends TableRow {
 	@Override
 	public String getKVIdField() { return null; }
 
-	public void validate(@Nonnull final State st) throws SystemException {
+	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
 		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Attribute / State Instance mismatch"); }
@@ -277,7 +277,7 @@ public class Attribute extends TableRow {
 	 * @throws SystemException If the attribute is not of a KV represented attribute.
 	 */
 	@Nonnull
-	public KV.KVTYPE getKVType() throws SystemException {
+	public KV.KVTYPE getKVType() {
 		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVTYPE.INTEGER; }
 		if (def == FLOAT) { return KV.KVTYPE.FLOAT; }
@@ -293,7 +293,7 @@ public class Attribute extends TableRow {
 	 * @throws SystemException if this attribute type is not KV backed
 	 */
 	@Nonnull
-	public String getKVDefaultValue() throws SystemException {
+	public String getKVDefaultValue() {
 		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return "0"; }
 		if (def == FLOAT) { return "0"; }
@@ -309,7 +309,7 @@ public class Attribute extends TableRow {
 	 * @throws SystemException If this attribute is not backed by a KV type.
 	 */
 	@Nonnull
-	public KV.KVHIERARCHY getKVHierarchy() throws SystemException {
+	public KV.KVHIERARCHY getKVHierarchy() {
 		final ATTRIBUTETYPE def = getType();
 		if (def == INTEGER) { return KV.KVHIERARCHY.CUMULATIVE; }
 		if (def == FLOAT) { return KV.KVHIERARCHY.CUMULATIVE; }

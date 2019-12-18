@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
@@ -28,7 +27,7 @@ public class CommandAnnotation extends Command {
 
 	protected CommandAnnotation() {}
 
-	public CommandAnnotation(final Module owner, @Nonnull final Method c) throws SystemException, UserException {
+	public CommandAnnotation(final Module owner, @Nonnull final Method c) {
 		//System.out.println(owner);
 		//System.out.println(c);
 		this.owner = owner;
@@ -39,7 +38,7 @@ public class CommandAnnotation extends Command {
 		generated = false;
 	}
 
-	protected static void checkPublicStatic(@Nonnull final Method m) throws SystemException {
+	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
@@ -53,7 +52,7 @@ public class CommandAnnotation extends Command {
 
 	public boolean isGenerated() { return generated; }
 
-	void validate(final State st) throws SystemException, UserException {
+	void validate(final State st) {
 		if (!requiresPermission().isEmpty()) {
 			Modules.validatePermission(st, requiresPermission());
 		}
@@ -129,7 +128,7 @@ public class CommandAnnotation extends Command {
 	 * @throws UserException
 	 */
 	@Nonnull
-	public List<String> getArgumentNames(final State st) throws UserException {
+	public List<String> getArgumentNames(final State st) {
 		final List<String> arguments = new ArrayList<>();
 		for (final Argument a : getArguments()) {
 			arguments.add(a.getName());

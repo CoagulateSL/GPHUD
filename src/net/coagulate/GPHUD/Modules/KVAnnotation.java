@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -18,7 +16,7 @@ public class KVAnnotation extends KV {
 
 	KVAnnotation() {}
 
-	public KVAnnotation(final Module m, final KVS meta) throws UserException, SystemException {
+	public KVAnnotation(final Module m, final KVS meta) {
 		module = m;
 		this.meta = meta;
 		validate(null);
@@ -59,7 +57,7 @@ public class KVAnnotation extends KV {
 	public boolean hidden() { return meta.hidden(); }
 
 
-	private void validate(final State st) throws UserException, SystemException {
+	private void validate(final State st) {
 		if (!editpermission().isEmpty()) {
 			Modules.validatePermission(st, editpermission());
 		}

@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -34,7 +32,7 @@ public abstract class Experience {
 		return toLevel(st, getExperience(st, st.getCharacter())) + "";
 	}
 
-	public static int toLevel(@Nonnull final State st, final int xp) throws UserException, SystemException {
+	public static int toLevel(@Nonnull final State st, final int xp) {
 		if (!st.hasModule("Experience")) { return 0; }
 		final int step = st.getKV("Experience.LevelXPStep").intValue();
 		int tolevel = 0;
@@ -46,7 +44,7 @@ public abstract class Experience {
 
 	}
 
-	public static int getExperience(@Nonnull final State st, @Nonnull final Char character) throws UserException, SystemException {
+	public static int getExperience(@Nonnull final State st, @Nonnull final Char character) {
 		int sum = 0;
 		if (Modules.get(null, "experience").isEnabled(st)) {
 			sum += character.sumPool(Modules.getPool(st, "Experience.VisitXP"));
@@ -66,13 +64,13 @@ public abstract class Experience {
 	}
 
 	@Nonnull
-	public static String getCycleLabel(@Nonnull final State st) throws UserException, SystemException {
+	public static String getCycleLabel(@Nonnull final State st) {
 		if (Modules.get(null, "Experience").isEnabled(st)) {
 			return Math.round(st.getKV("Experience.XPCycleDays").floatValue()) + " days";
 		} else { return "week"; }
 	}
 
-	public static int getCycle(@Nonnull final State st) throws UserException, SystemException {
+	public static int getCycle(@Nonnull final State st) {
 		if (Modules.get(null, "Experience").isEnabled(st)) {
 			return (int) (60 * 60 * 24 * st.getKV("Experience.XPCycleDays").floatValue());
 		} else {

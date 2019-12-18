@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Instance;
@@ -97,7 +96,7 @@ public abstract class CharacterAttribute extends Attribute {
 	@Override
 	public String getKVIdField() { return null; }
 
-	public void validate(@Nonnull final State st) throws SystemException {
+	public void validate(@Nonnull final State st) {
 		validate();
 	}
 

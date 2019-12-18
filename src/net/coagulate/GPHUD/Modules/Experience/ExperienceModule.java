@@ -1,9 +1,7 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -31,7 +29,7 @@ import static net.coagulate.GPHUD.Modules.Command.Context.AVATAR;
  */
 public class ExperienceModule extends ModuleAnnotation {
 
-	public ExperienceModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public ExperienceModule(final String name, final ModuleDefinition def) {
 		super(name, def);
 	}
 
@@ -139,7 +137,7 @@ public class ExperienceModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) throws SystemException {
+	public KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) {
 		if (kvmap.containsKey(qualifiedname.toLowerCase())) {
 			return kvmap.get(qualifiedname.toLowerCase());
 		}

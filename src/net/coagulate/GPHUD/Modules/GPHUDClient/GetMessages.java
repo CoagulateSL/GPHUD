@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
@@ -33,7 +32,7 @@ public abstract class GetMessages {
 
 	@Nonnull
 	@Commands(context = Context.CHARACTER, permitScripting = false, description = "Get a message", permitConsole = false, permitUserWeb = false)
-	public static Response getMessage(@Nonnull final State st) throws SystemException, UserException {
+	public static Response getMessage(@Nonnull final State st) {
 		final Message m = st.getCharacter().getMessage();
 		if (m == null) { return new ErrorResponse("You have no outstanding messages."); }
 		m.setActive();
@@ -45,7 +44,7 @@ public abstract class GetMessages {
 	}
 
 	@Nonnull
-	private static Response processFactionInvite(@Nonnull final State st, @Nonnull final JSONObject j) throws UserException, SystemException {
+	private static Response processFactionInvite(@Nonnull final State st, @Nonnull final JSONObject j) {
 		final Char from = Char.get(j.getInt("from"));
 		final CharacterGroup faction = CharacterGroup.get(j.getInt("to"));
 		final JSONObject template = Modules.getJSONTemplate(st, "gphudclient.acceptrejectmessage");
@@ -54,7 +53,7 @@ public abstract class GetMessages {
 	}
 
 	@Nonnull
-	public static List<String> getAcceptReject(final State st) throws UserException {
+	public static List<String> getAcceptReject(final State st) {
 		final List<String> options = new ArrayList<>();
 		options.add("Accept");
 		options.add("Reject");
@@ -65,7 +64,7 @@ public abstract class GetMessages {
 	@Commands(context = Context.CHARACTER, description = "Accept/Reject a message", permitScripting = false, permitConsole = false, permitUserWeb = false)
 	public static Response acceptRejectMessage(@Nonnull final State st,
 	                                           @Arguments(type = ArgumentType.CHOICE, description = "Accept or Reject the message", choiceMethod = "getAcceptReject") final
-	                                           String response) throws SystemException, UserException {
+	                                           String response) {
 		final Message m = st.getCharacter().getActiveMessage();
 		if (m == null) { return new ErrorResponse("You have no active message."); }
 
@@ -76,7 +75,7 @@ public abstract class GetMessages {
 	}
 
 	@Nonnull
-	private static Response processFactionInviteResponse(@Nonnull final State st, @Nonnull final Message m, @Nonnull final JSONObject j, final String response) throws UserException {
+	private static Response processFactionInviteResponse(@Nonnull final State st, @Nonnull final Message m, @Nonnull final JSONObject j, final String response) {
 		final boolean accepted;
 		if ("Accept".equalsIgnoreCase(response)) { accepted = true; } else {
 			if ("Reject".equalsIgnoreCase(response)) { accepted = false; } else {

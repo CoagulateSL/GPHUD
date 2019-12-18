@@ -174,7 +174,7 @@ public class State extends DumpableState {
 	// web interface sets this to the "logged in CHARACTER" object
 	// system interface sets to instance
 
-	public boolean hasModule(@Nonnull final String module) throws UserException, SystemException {
+	public boolean hasModule(@Nonnull final String module) {
 		if (Modules.get(null, module).isEnabled(this)) { return true; }
 		return false;
 	}
@@ -474,14 +474,14 @@ public class State extends DumpableState {
 		return instanceowner;
 	}
 
-	public boolean deniedPermission(@Nullable final String permission) throws UserException {
+	public boolean deniedPermission(@Nullable final String permission) {
 		if (permission == null || permission.isEmpty()) { return true; }
 		if (hasPermission(permission)) { return false; }
 		form().add(new TextError("Permission Denied!  You require permission " + permission + " to access this content"));
 		return true;
 	}
 
-	public void assertPermission(@Nullable final String permission) throws SystemException, UserException {
+	public void assertPermission(@Nullable final String permission) {
 		if (permission == null || permission.isEmpty()) { return; }
 		if (hasPermission(permission)) { return; }
 		throw new SystemConsistencyException("ALERT! Permission assertion failed on permission " + permission);

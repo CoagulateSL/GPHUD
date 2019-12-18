@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.User.Form;
@@ -21,7 +19,7 @@ import java.util.Set;
  */
 public abstract class UserLandingPage {
 	@URLs(url = "/")
-	public static void index(@Nonnull final State st, @Nonnull final SafeMap values) throws UserException, SystemException {
+	public static void index(@Nonnull final State st, @Nonnull final SafeMap values) {
 		final Form f = st.form();
 		f.add(new TextHeader("Welcome to GPHUD"));
 		if (st.getInstanceNullable() == null) {

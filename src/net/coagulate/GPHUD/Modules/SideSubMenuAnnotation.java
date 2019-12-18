@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 
 import javax.annotation.Nonnull;
@@ -20,7 +18,7 @@ public class SideSubMenuAnnotation extends SideSubMenu {
 	final URL url;
 	private final boolean generated;
 
-	public SideSubMenuAnnotation(@Nonnull final Method m) throws UserException, SystemException {
+	public SideSubMenuAnnotation(@Nonnull final Method m) {
 		generated = false;
 		meta = m.getAnnotation(SideSubMenus.class);
 		method = m;

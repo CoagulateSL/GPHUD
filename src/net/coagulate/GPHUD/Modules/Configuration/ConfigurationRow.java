@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
@@ -19,7 +17,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConfigurationRow extends Row {
-	public ConfigurationRow(@Nonnull final State st, @Nonnull final TableRow dbo, @Nonnull final KV kv, @Nonnull final State simulated) throws UserException, SystemException {
+	public ConfigurationRow(@Nonnull final State st, @Nonnull final TableRow dbo, @Nonnull final KV kv, @Nonnull final State simulated) {
 		final String kvname = kv.fullname();
 		//kv=st.getKVDefinition(kvname);
 		add(kv.name());

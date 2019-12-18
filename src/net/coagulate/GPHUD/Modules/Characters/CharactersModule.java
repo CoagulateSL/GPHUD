@@ -8,10 +8,8 @@ package net.coagulate.GPHUD.Modules.Characters;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -47,7 +45,7 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.*;
 public class CharactersModule extends ModuleAnnotation {
 
 
-	public CharactersModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public CharactersModule(final String name, final ModuleDefinition def) {
 		super(name, def);
 	}
 
@@ -191,7 +189,7 @@ public class CharactersModule extends ModuleAnnotation {
 	//Map<String,KV> base=new TreeMap<>();
 	@Override
 	@Deprecated
-	public void registerKV(@Nonnull final KV a) throws UserException {
+	public void registerKV(@Nonnull final KV a) {
 		throw new SystemImplementationException("It is no longer permitted to have manual registrations inside Characters module");
 	}
 
@@ -210,7 +208,7 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) throws SystemException {
+	public KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}

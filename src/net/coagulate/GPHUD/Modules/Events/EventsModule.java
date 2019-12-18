@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Events;
 
-import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Event;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.Modules.SideSubMenu;
@@ -19,7 +17,7 @@ import java.util.Set;
  */
 public class EventsModule extends ModuleAnnotation {
 
-	public EventsModule(final String name, final ModuleDefinition def) throws SystemException, UserException {
+	public EventsModule(final String name, final ModuleDefinition def) {
 		super(name, def);
 	}
 

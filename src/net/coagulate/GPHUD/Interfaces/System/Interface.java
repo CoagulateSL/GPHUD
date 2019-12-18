@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
-import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
@@ -125,7 +124,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 
-	protected Response execute(@Nonnull final State st) throws SystemException, UserException {
+	protected Response execute(@Nonnull final State st) {
 		final JSONObject obj = st.json();
 		// get developer key
 		final String developerkey = obj.getString("developerkey");
