@@ -28,11 +28,12 @@ public class Event extends TableRow {
 	 * Factory style constructor
 	 *
 	 * @param id the ID number we want to get
+	 *
 	 * @return A zone representation
 	 */
 	@Nonnull
 	public static Event get(final int id) {
-		return (Event) factoryPut("Event", id, new Event(id));
+		return (Event) factoryPut("Event",id,new Event(id));
 	}
 
 	/**
@@ -40,12 +41,19 @@ public class Event extends TableRow {
 	 *
 	 * @param instance Instance we're searching
 	 * @param name     Name of event
+	 *
 	 * @return Event object
 	 */
 	@Nullable
-	public static Event find(@Nonnull final Instance instance, final String name) {
+	public static Event find(@Nonnull final Instance instance,
+	                         final String name)
+	{
 		try {
-			final int eventid = GPHUD.getDB().dqinn("select eventid from events where name like ? and instanceid=?", name, instance.getId());
+			final int eventid=GPHUD.getDB()
+			                       .dqinn("select eventid from events where name like ? and instanceid=?",
+			                              name,
+			                              instance.getId()
+			                             );
 			return get(eventid);
 		} catch (@Nonnull final NoDataException e) { return null; }
 	}
@@ -55,17 +63,21 @@ public class Event extends TableRow {
 	 *
 	 * @param instance  Instance for the event
 	 * @param eventName Name of the event
+	 *
 	 * @return The new event
+	 *
 	 * @throws UserException If the named event already exists
 	 */
 	@Nonnull
-	public static Event create(@Nonnull final Instance instance, final String eventName) {
-		Event event = find(instance, eventName);
-		if (event != null) { throw new UserInputDuplicateValueException("Event " + eventName + " already exists."); }
-		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)", instance.getId(), eventName);
-		event = find(instance, eventName);
-		if (event == null) {
-			throw new SystemConsistencyException("Failed to create event " + eventName + " for instance " + instance.getName() + ", no error, just doesn't get found...");
+	public static Event create(@Nonnull final Instance instance,
+	                           final String eventName)
+	{
+		Event event=find(instance,eventName);
+		if (event!=null) { throw new UserInputDuplicateValueException("Event "+eventName+" already exists."); }
+		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)",instance.getId(),eventName);
+		event=find(instance,eventName);
+		if (event==null) {
+			throw new SystemConsistencyException("Failed to create event "+eventName+" for instance "+instance.getName()+", no error, just doesn't get found...");
 		}
 		return event;
 	}
@@ -74,12 +86,13 @@ public class Event extends TableRow {
 	 * Get all the events for an instance.
 	 *
 	 * @param instance Instance to get events for
+	 *
 	 * @return Set of Events
 	 */
 	@Nonnull
 	public static Set<Event> getAll(@Nonnull final Instance instance) {
-		final Set<Event> events = new TreeSet<>();
-		for (final ResultsRow r : GPHUD.getDB().dq("select eventid from events where instanceid=?", instance.getId())) {
+		final Set<Event> events=new TreeSet<>();
+		for (final ResultsRow r: GPHUD.getDB().dq("select eventid from events where instanceid=?",instance.getId())) {
 			events.add(get(r.getInt()));
 		}
 		return events;
@@ -89,24 +102,36 @@ public class Event extends TableRow {
 	 * Get all currently active events for an instance.
 	 *
 	 * @param instance Instance to get active events for
+	 *
 	 * @return Set of Events that are currently active and started
 	 */
 	@Nonnull
 	static Set<Event> getActive(@Nonnull final Instance instance) {
-		final Set<Event> events = new TreeSet<>();
-		final int now = getUnixTime();
-		for (final ResultsRow r : GPHUD.getDB().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1", instance.getId(), now, now)) {
+		final Set<Event> events=new TreeSet<>();
+		final int now=getUnixTime();
+		for (final ResultsRow r: GPHUD.getDB()
+		                              .dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+		                                  instance.getId(),
+		                                  now,
+		                                  now
+		                                 )) {
 			events.add(get(r.getInt()));
 		}
 		return events;
 
 	}
 
-	static void wipeKV(@Nonnull final Instance instance, final String key) {
-		final String kvtable = "eventskvstore";
-		final String maintable = "events";
-		final String idcolumn = "eventid";
-		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
+	static void wipeKV(@Nonnull final Instance instance,
+	                   final String key)
+	{
+		final String kvtable="eventskvstore";
+		final String maintable="events";
+		final String idcolumn="eventid";
+		GPHUD.getDB()
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		        key,
+		        instance.getId()
+		       );
 	}
 
 	/**
@@ -116,11 +141,15 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public static Set<EventSchedule> getStartingEvents() {
-		final Set<EventSchedule> start = new TreeSet<>();
+		final Set<EventSchedule> start=new TreeSet<>();
 		// find events where start time is in the past but "started"=0
-		final int now = getUnixTime();
+		final int now=getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (final ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?", now, now)) {
+		for (final ResultsRow r: GPHUD.getDB()
+		                              .dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?",
+		                                  now,
+		                                  now
+		                                 )) {
 			//System.out.println(r.getInt());
 			start.add(EventSchedule.get(r.getInt()));
 		}
@@ -134,11 +163,14 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public static Set<EventSchedule> getStoppingEvents() {
-		final Set<EventSchedule> stop = new TreeSet<>();
+		final Set<EventSchedule> stop=new TreeSet<>();
 		// find events where start time is in the past but "started"=0
-		final int now = getUnixTime();
+		final int now=getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (final ResultsRow r : GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?", now)) {
+		for (final ResultsRow r: GPHUD.getDB()
+		                              .dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?",
+		                                  now
+		                                 )) {
 			//System.out.println(r.getInt());
 			stop.add(EventSchedule.get(r.getInt()));
 		}
@@ -166,7 +198,7 @@ public class Event extends TableRow {
 	@Nonnull
 	@Override
 	public String getLinkTarget() {
-		return "/GPHUD/event/" + getId();
+		return "/GPHUD/event/"+getId();
 	}
 
 	@Nonnull
@@ -193,9 +225,9 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public Set<Zone> getZones() {
-		final Set<Zone> zones = new TreeSet<>();
-		for (final ResultsRow r : dq("select zoneid from eventslocations where eventid=?", getId())) {
-			final int zone = r.getInt();
+		final Set<Zone> zones=new TreeSet<>();
+		for (final ResultsRow r: dq("select zoneid from eventslocations where eventid=?",getId())) {
+			final int zone=r.getInt();
 			zones.add(Zone.get(zone));
 		}
 		return zones;
@@ -207,9 +239,9 @@ public class Event extends TableRow {
 	 * @param zone Zone to add to the event
 	 */
 	public void addZone(@Nonnull final Zone zone) {
-		final int count = dqinn( "select count(*) from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
-		if (count != 0) { return; }
-		d("insert into eventslocations(eventid,zoneid) values(?,?)", getId(), zone.getId());
+		final int count=dqinn("select count(*) from eventslocations where eventid=? and zoneid=?",getId(),zone.getId());
+		if (count!=0) { return; }
+		d("insert into eventslocations(eventid,zoneid) values(?,?)",getId(),zone.getId());
 	}
 
 	/**
@@ -218,7 +250,7 @@ public class Event extends TableRow {
 	 * @param zone Zone to remove from the event
 	 */
 	public void deleteZone(@Nonnull final Zone zone) {
-		d("delete from eventslocations where eventid=? and zoneid=?", getId(), zone.getId());
+		d("delete from eventslocations where eventid=? and zoneid=?",getId(),zone.getId());
 	}
 
 	/**
@@ -238,14 +270,21 @@ public class Event extends TableRow {
 	 * @param enddate   EndTime start of the event
 	 * @param interval  How often to repeat the event, for repeating events
 	 */
-	public void addSchedule(final int startdate, final int enddate, final int interval) {
-		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)", getId(), startdate, enddate, interval);
+	public void addSchedule(final int startdate,
+	                        final int enddate,
+	                        final int interval)
+	{
+		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)",getId(),
+		  startdate,enddate,interval
+		 );
 	}
 
 	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Event / State Instance mismatch"); }
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("Event / State Instance mismatch");
+		}
 	}
 
 	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds

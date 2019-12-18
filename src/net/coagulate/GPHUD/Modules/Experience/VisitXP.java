@@ -27,65 +27,78 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 public class VisitXP extends QuotaedXP {
 	public VisitXP(final int id) { super(id); }
 
-	public void runAwards(@Nonnull final State st, @Nonnull final Char ch) {
+	public void runAwards(@Nonnull final State st,
+	                      @Nonnull final Char ch)
+	{
 		try {
-			final Module m = Modules.get(null, "Experience");
+			final Module m=Modules.get(null,"Experience");
 			if (m.isEnabled(st)) {
 				st.setCharacter(ch);
-				final int perweek = st.getKV("Experience.VisitXPPerCycle").intValue();
-				final int duration = st.getKV("Experience.VisitXPDuration").intValue();
-				final int points = st.getKV("Experience.VisitXPPoints").intValue();
-				final int since = getUnixTime() - (Experience.getCycle(st));
-				int timethisweek = ch.sumVisits(since);
-				timethisweek = timethisweek / 60;
-				final int xpthisweek = ch.sumPoolSince(Modules.getPool(null, "Experience.VisitXP"), since);
+				final int perweek=st.getKV("Experience.VisitXPPerCycle").intValue();
+				final int duration=st.getKV("Experience.VisitXPDuration").intValue();
+				final int points=st.getKV("Experience.VisitXPPoints").intValue();
+				final int since=getUnixTime()-(Experience.getCycle(st));
+				int timethisweek=ch.sumVisits(since);
+				timethisweek=timethisweek/60;
+				final int xpthisweek=ch.sumPoolSince(Modules.getPool(null,"Experience.VisitXP"),since);
 				//System.out.println("Sum total visit time for "+ch+" is "+timethisweek);
 				//System.out.println("Sum visit xp in that time period is "+xpthisweek);
 				//System.out.println("Config is "+points+" per "+duration+" total "+perweek);
 				if (duration==0) { return; }
-				int wanttogive = (timethisweek / duration) * points - xpthisweek;
+				int wanttogive=(timethisweek/duration)*points-xpthisweek;
 				//System.out.println("Uncapped wanttogive "+wanttogive);
-				if ((xpthisweek + wanttogive) > perweek) { wanttogive = perweek - xpthisweek; }
+				if ((xpthisweek+wanttogive)>perweek) { wanttogive=perweek-xpthisweek; }
 				//System.out.println("Capped wanttogive "+wanttogive);
-				if (wanttogive <= 0) { return; }
-				final Pool visitxp = Modules.getPool(st, "experience.visitxp");
-				ch.addPool(st, visitxp, wanttogive, "Awarded XP for time on sim");
-				final State fakestate = new State();
+				if (wanttogive<=0) { return; }
+				final Pool visitxp=Modules.getPool(st,"experience.visitxp");
+				ch.addPool(st,visitxp,wanttogive,"Awarded XP for time on sim");
+				final State fakestate=new State();
 				fakestate.setInstance(st.getInstance());
 				fakestate.setAvatar(User.getSystem());
-				ch.hudMessage("You were awared 1 point of Visit XP, you will be eligable for your next point " + nextFree(st));
-				Audit.audit(fakestate, Audit.OPERATOR.AVATAR, null, ch, "Pool Add", "VisitXP", null, "" + wanttogive, "Awarded XP for time on sim");
+				ch.hudMessage("You were awared 1 point of Visit XP, you will be eligable for your next point "+nextFree(
+						st));
+				Audit.audit(fakestate,
+				            Audit.OPERATOR.AVATAR,
+				            null,
+				            ch,
+				            "Pool Add",
+				            "VisitXP",
+				            null,
+				            ""+wanttogive,
+				            "Awarded XP for time on sim"
+				           );
 			}
 		} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE, "Exception running awards for character " + ch.getNameSafe() + " #" + ch.getId(), e);
+			GPHUD.getLogger().log(SEVERE,"Exception running awards for character "+ch.getNameSafe()+" #"+ch.getId(),e);
 		}
 	}
 
 	public void runAwards(@Nonnull final Instance i) {
 		try {
-			final State st = new State();
+			final State st=new State();
 			st.setInstance(i);
 			st.setAvatar(User.getSystem());
-			for (final Region r : i.getRegions(false)) {
-				final Set<Char> visitors = r.getOpenVisits();
-				for (final Char visitor : visitors) {
-					runAwards(st, visitor);
+			for (final Region r: i.getRegions(false)) {
+				final Set<Char> visitors=r.getOpenVisits();
+				for (final Char visitor: visitors) {
+					runAwards(st,visitor);
 				}
 			}
 		} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE, "Exception running awards for instance " + i.getNameSafe() + " #" + i.getId(), e);
+			GPHUD.getLogger().log(SEVERE,"Exception running awards for instance "+i.getNameSafe()+" #"+i.getId(),e);
 		}
 	}
 
 	public void runAwards() {
 		try {
-			final Results results = GPHUD.getDB().dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
-			for (final ResultsRow r : results) {
-				final Instance i = Instance.get(r.getInt());
+			final Results results=GPHUD.getDB()
+			                           .dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
+			for (final ResultsRow r: results) {
+				final Instance i=Instance.get(r.getInt());
 				runAwards(i);
 			}
 		} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE, "Exception running awards outer task", e);
+			GPHUD.getLogger().log(SEVERE,"Exception running awards outer task",e);
 		}
 	}
 
@@ -101,7 +114,7 @@ public class VisitXP extends QuotaedXP {
 	@Nonnull
 	public String periodKV(final State st) { return "Experience.XPCycleDays"; }
 
-	public Module getModule() { return Modules.get(null, "Experience"); }
+	public Module getModule() { return Modules.get(null,"Experience"); }
 
 
 }

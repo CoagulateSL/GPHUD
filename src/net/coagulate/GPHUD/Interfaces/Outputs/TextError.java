@@ -14,20 +14,22 @@ import java.util.Set;
 public class TextError implements Renderable {
 	protected final String s;
 
-	public TextError(final String s) { this.s = s; }
+	public TextError(final String s) { this.s=s; }
 
 	public String getMessage(final State st) { return s; }
 
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		return ">>> ERROR : " + s;
+		return ">>> ERROR : "+s;
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		return "<font color=red><b> *** ERROR : " + s + " ***</b></font>";
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		return "<font color=red><b> *** ERROR : "+s+" ***</b></font>";
 	}
 
 	@Nullable

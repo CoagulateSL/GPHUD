@@ -17,26 +17,28 @@ public class TextSubHeader implements Renderable {
 
 	final Renderable content;
 
-	public TextSubHeader(final String s) { content = new Text(s); }
+	public TextSubHeader(final String s) { content=new Text(s); }
 
-	public TextSubHeader(final Renderable r) { content = r; }
+	public TextSubHeader(final Renderable r) { content=r; }
 
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		return "=== " + content.asText(st) + " ===\n";
+		return "=== "+content.asText(st)+" ===\n";
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		return "<h3>" + content.asHtml(st, rich) + "</h3>";
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		return "<h3>"+content.asHtml(st,rich)+"</h3>";
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		final Set<Renderable> r = new HashSet<>();
+		final Set<Renderable> r=new HashSet<>();
 		r.add(content);
 		return r;
 	}

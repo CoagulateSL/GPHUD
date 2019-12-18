@@ -11,15 +11,15 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphuid@predestined.net>
  */
 public class ConfigurationSideSubMenu extends SideSubMenu {
-	int priority = 999;
 	final Module m;
+	int priority=999;
 
 	public ConfigurationSideSubMenu(final Module m) {
-		this.m = m;
+		this.m=m;
 	}
 
 	public void setPriority(final int priority) {
-		this.priority = priority;
+		this.priority=priority;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class ConfigurationSideSubMenu extends SideSubMenu {
 	@Nonnull
 	@Override
 	public String getURL() {
-		return "/configuration/" + m.getName();
+		return "/configuration/"+m.getName();
 	}
 
 

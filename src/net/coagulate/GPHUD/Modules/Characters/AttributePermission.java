@@ -21,7 +21,7 @@ public class AttributePermission extends Permission {
 	final Attribute a;
 
 	public AttributePermission(final Attribute a) {
-		this.a = a;
+		this.a=a;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class AttributePermission extends Permission {
 	@Nonnull
 	@Override
 	public String description() {
-		return "Permission to admin set attribute " + a.getNameSafe();
+		return "Permission to admin set attribute "+a.getNameSafe();
 	}
 
 	@Nonnull

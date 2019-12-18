@@ -22,27 +22,29 @@ public class ConfigurationModule extends ModuleAnnotation {
 	@Nullable
 	Set<SideSubMenu> submenus;
 
-	public ConfigurationModule(final String name, final ModuleDefinition def) {
-		super(name, def);
-		submenus = null;
+	public ConfigurationModule(final String name,
+	                           final ModuleDefinition def)
+	{
+		super(name,def);
+		submenus=null;
 	}
 
 	@Nullable
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(final State st) {
-		if (submenus == null) {
-			submenus = new HashSet<>();
-			final Map<String, SideSubMenu> map = new TreeMap<>();
-			for (final Module m : Modules.getModules()) {
+		if (submenus==null) {
+			submenus=new HashSet<>();
+			final Map<String,SideSubMenu> map=new TreeMap<>();
+			for (final Module m: Modules.getModules()) {
 				if (m.isEnabled(st)) {
 					if (m.alwaysHasConfig() || !m.getKVDefinitions(st).isEmpty()) {
-						map.put(m.getName(), new ConfigurationSideSubMenu(m));
+						map.put(m.getName(),new ConfigurationSideSubMenu(m));
 						submenus.add(map.get(m.getName()));
 					}
 				}
 			}
-			int priority = 1;
-			for (final SideSubMenu sideSubMenu : map.values()) {
+			int priority=1;
+			for (final SideSubMenu sideSubMenu: map.values()) {
 				((ConfigurationSideSubMenu) sideSubMenu).setPriority(priority);
 				priority++;
 			}

@@ -17,8 +17,10 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 
 public class RunCommand extends ObjectType {
-	protected RunCommand(final State st, @Nonnull final ObjectTypes object) {
-		super(st, object);
+	protected RunCommand(final State st,
+	                     @Nonnull final ObjectTypes object)
+	{
+		super(st,object);
 	}
 
 	@Nonnull
@@ -38,9 +40,9 @@ public class RunCommand extends ObjectType {
 
 	@Override
 	public void update(@Nonnull final State st) {
-		final String command= st.postmap().get("command");
+		final String command=st.postmap().get("command");
 		if (!command.equals(json.optString("command",""))) {
-			json.put("command", st.postmap().get("command"));
+			json.put("command",st.postmap().get("command"));
 			object.setBehaviour(json);
 		}
 	}
@@ -59,9 +61,13 @@ public class RunCommand extends ObjectType {
 
 	@Nonnull
 	@Override
-	public Response click(@Nonnull final State st, @Nonnull final Char clicker) {
-		if (json.optString("command","").isEmpty()) { return new ErrorResponse("Command to invoke is not configured in this object type"); }
-		final JSONObject resp = Modules.getJSONTemplate(st, json.getString("command"));
+	public Response click(@Nonnull final State st,
+	                      @Nonnull final Char clicker)
+	{
+		if (json.optString("command","").isEmpty()) {
+			return new ErrorResponse("Command to invoke is not configured in this object type");
+		}
+		final JSONObject resp=Modules.getJSONTemplate(st,json.getString("command"));
 		new Transmission(clicker,resp).start();
 		return new JSONResponse(new JSONObject());
 	}

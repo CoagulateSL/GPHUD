@@ -13,10 +13,12 @@ public class PoolAnnotation extends Pool {
 	final Module module;
 	private final boolean generated;
 
-	public PoolAnnotation(final Module mod, final Pools meta) {
-		module = mod;
-		this.meta = meta;
-		generated = false;
+	public PoolAnnotation(final Module mod,
+	                      final Pools meta)
+	{
+		module=mod;
+		this.meta=meta;
+		generated=false;
 	}
 
 	public boolean isGenerated() { return generated; }
@@ -31,6 +33,6 @@ public class PoolAnnotation extends Pool {
 	public String getName() { return name(); }
 
 	@Nonnull
-	public String fullName() { return module.getName() + "." + getName(); }
+	public String fullName() { return module.getName()+"."+getName(); }
 
 }

@@ -15,9 +15,9 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Row implements Renderable {
-	final List<Cell> row = new ArrayList<>();
-	String bgcolor = "";
-	String alignment = "";
+	final List<Cell> row=new ArrayList<>();
+	String bgcolor="";
+	String alignment="";
 
 	public Row() {}
 
@@ -48,9 +48,9 @@ public class Row implements Renderable {
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		final StringBuilder s = new StringBuilder();
-		for (final Cell c : row) {
-			if (s.length() > 0) { s.append(" : "); }
+		final StringBuilder s=new StringBuilder();
+		for (final Cell c: row) {
+			if (s.length()>0) { s.append(" : "); }
 			s.append(c.asText(st));
 		}
 		return s.toString();
@@ -58,16 +58,18 @@ public class Row implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		final StringBuilder s = new StringBuilder("<tr");
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		final StringBuilder s=new StringBuilder("<tr");
 		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
 		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }
 		s.append(">");
-		for (final Cell c : row) {
-			c.header = isHeader();
-			s.append(c.asHtml(st, rich));
+		for (final Cell c: row) {
+			c.header=isHeader();
+			s.append(c.asHtml(st,rich));
 		}
-		return s + "</tr>";
+		return s+"</tr>";
 	}
 
 	@Nullable
@@ -77,7 +79,7 @@ public class Row implements Renderable {
 	}
 
 	public void add(final Integer ownerid) {
-		add("" + ownerid);
+		add(""+ownerid);
 	}
 
 	public void add(final boolean online) {
@@ -85,11 +87,11 @@ public class Row implements Renderable {
 	}
 
 	public void setbgcolor(final String setbgcolor) {
-		bgcolor = setbgcolor;
+		bgcolor=setbgcolor;
 	}
 
 	public void align(final String alignment) {
-		this.alignment = alignment;
+		this.alignment=alignment;
 	}
 
 }

@@ -13,8 +13,8 @@ public class SideMenuAnnotation extends SideMenu {
 	private final boolean generated;
 
 	public SideMenuAnnotation(final SideMenus meta) {
-		generated = false;
-		this.meta = meta;
+		generated=false;
+		this.meta=meta;
 	}
 
 	public boolean isGenerated() { return generated; }

@@ -27,11 +27,12 @@ public class Zone extends TableRow {
 	 * Factory style constructor
 	 *
 	 * @param id the ID number we want to get
+	 *
 	 * @return A zone representation
 	 */
 	@Nonnull
 	public static Zone get(final int id) {
-		return (Zone) factoryPut("Zone", id, new Zone(id));
+		return (Zone) factoryPut("Zone",id,new Zone(id));
 	}
 
 	/**
@@ -39,13 +40,18 @@ public class Zone extends TableRow {
 	 *
 	 * @param instance Instance the zone binds to
 	 * @param name     Name of the zone
+	 *
 	 * @throws UserException If the zone name is in use
 	 */
-	public static void create(@Nonnull final Instance instance, final String name) {
-		if (GPHUD.getDB().dqinn( "select count(*) from zones where instanceid=? and name like ?", instance.getId(), name) > 0) {
+	public static void create(@Nonnull final Instance instance,
+	                          final String name)
+	{
+		if (GPHUD.getDB()
+		         .dqinn("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0)
+		{
 			throw new UserInputDuplicateValueException("Zone name already in use");
 		}
-		GPHUD.getDB().d("insert into zones(instanceid,name) values(?,?)", instance.getId(), name);
+		GPHUD.getDB().d("insert into zones(instanceid,name) values(?,?)",instance.getId(),name);
 	}
 
 	/**
@@ -53,21 +59,34 @@ public class Zone extends TableRow {
 	 *
 	 * @param instance Instance to search
 	 * @param name     Name of the zone
+	 *
 	 * @return Zone object, or null
 	 */
 	@Nullable
-	public static Zone find(@Nonnull final Instance instance, @Nonnull final String name) {
+	public static Zone find(@Nonnull final Instance instance,
+	                        @Nonnull final String name)
+	{
 		try {
-			final int zoneid = GPHUD.getDB().dqinn("select zoneid from zones where name like ? and instanceid=?", name, instance.getId());
+			final int zoneid=GPHUD.getDB()
+			                      .dqinn("select zoneid from zones where name like ? and instanceid=?",
+			                             name,
+			                             instance.getId()
+			                            );
 			return get(zoneid);
 		} catch (@Nonnull final NoDataException e) { return null; }
 	}
 
-	static void wipeKV(@Nonnull final Instance instance, final String key) {
-		final String kvtable = "zonekvstore";
-		final String maintable = "zones";
-		final String idcolumn = "zoneid";
-		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
+	static void wipeKV(@Nonnull final Instance instance,
+	                   final String key)
+	{
+		final String kvtable="zonekvstore";
+		final String maintable="zones";
+		final String idcolumn="zoneid";
+		GPHUD.getDB()
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		        key,
+		        instance.getId()
+		       );
 	}
 
 	@Nonnull
@@ -101,8 +120,8 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public Set<ZoneArea> getZoneAreas() {
-		final Set<ZoneArea> areas = new TreeSet<>();
-		for (final ResultsRow r : dq("select zoneareaid from zoneareas where zoneid=?", getId())) {
+		final Set<ZoneArea> areas=new TreeSet<>();
+		for (final ResultsRow r: dq("select zoneareaid from zoneareas where zoneid=?",getId())) {
 			areas.add(ZoneArea.get(r.getInt()));
 		}
 		return areas;
@@ -116,13 +135,13 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public String getTransportFormat() {
-		final Set<ZoneArea> areas = getZoneAreas();
-		StringBuilder s = new StringBuilder();
-		for (final ZoneArea a : areas) {
-			final String[] vectors = a.getVectors();
+		final Set<ZoneArea> areas=getZoneAreas();
+		StringBuilder s=new StringBuilder();
+		for (final ZoneArea a: areas) {
+			final String[] vectors=a.getVectors();
 			if (vectors!=null) {
-				if (s.length() > 0) { s.append("|"); }
-				s = new StringBuilder(getName() + "|" + vectors[0] + "|" + vectors[1]);
+				if (s.length()>0) { s.append("|"); }
+				s=new StringBuilder(getName()+"|"+vectors[0]+"|"+vectors[1]);
 			}
 		}
 		return s.toString();
@@ -135,9 +154,9 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		final Integer id = getIntNullable("instanceid");
-		if (id == null) {
-			throw new SystemConsistencyException("Zone " + getName() + " #" + getId() + " is not associated with an instance?");
+		final Integer id=getIntNullable("instanceid");
+		if (id==null) {
+			throw new SystemConsistencyException("Zone "+getName()+" #"+getId()+" is not associated with an instance?");
 		}
 		return Instance.get(id);
 	}
@@ -149,10 +168,22 @@ public class Zone extends TableRow {
 	 * @param cornerOne Co-ordinate 1 as x,y,z string
 	 * @param cornerTwo Co-ordinate 2 as x,y,z string
 	 */
-	public void addArea(@Nonnull final Region region, final String cornerOne, final String cornerTwo) {
-		final int[] c1 = ZoneArea.parseVector(cornerOne);
-		final int[] c2 = ZoneArea.parseVector(cornerTwo);
-		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)", getId(), region.getId(), c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
+	public void addArea(@Nonnull final Region region,
+	                    final String cornerOne,
+	                    final String cornerTwo)
+	{
+		final int[] c1=ZoneArea.parseVector(cornerOne);
+		final int[] c2=ZoneArea.parseVector(cornerTwo);
+		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)",
+		  getId(),
+		  region.getId(),
+		  c1[0],
+		  c1[1],
+		  c1[2],
+		  c2[0],
+		  c2[1],
+		  c2[2]
+		 );
 	}
 
 	@Nonnull
@@ -173,22 +204,22 @@ public class Zone extends TableRow {
 	 * @param message Zonemessage to send to the zone (?)
 	 */
 	public void broadcastMessage(final String message) {
-		final JSONObject json = new JSONObject();
-		json.put("incommand", "broadcast");
-		json.put("zonemessage", message);
-		json.put("zone", getName());
-		GPHUD.getLogger().info("Sending broadcast to zone " + getName() + " in instance " + getInstance().getName() + " - " + message);
+		final JSONObject json=new JSONObject();
+		json.put("incommand","broadcast");
+		json.put("zonemessage",message);
+		json.put("zone",getName());
+		GPHUD.getLogger().info("Sending broadcast to zone "+getName()+" in instance "+getInstance().getName()+" - "+message);
 		getInstance().sendServers(json);
 	}
 
 	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) { throw new SystemConsistencyException("Zone / State Instance mismatch"); }
+		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Zone / State Instance mismatch"); }
 	}
 
 	@Override
-	protected int getNameCacheTime() { return 60 * 60; } // this name doesn't change, cache 1 hour
+	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 }
 

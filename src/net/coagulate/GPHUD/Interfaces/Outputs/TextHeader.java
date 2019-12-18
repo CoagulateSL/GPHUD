@@ -16,26 +16,28 @@ import java.util.Set;
 public class TextHeader implements Renderable {
 	final Renderable content;
 
-	public TextHeader(final String s) { content = new Text(s); }
+	public TextHeader(final String s) { content=new Text(s); }
 
-	public TextHeader(final Renderable r) { content = r; }
+	public TextHeader(final Renderable r) { content=r; }
 
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		return "===== " + content.asText(st) + " =====\n";
+		return "===== "+content.asText(st)+" =====\n";
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		return "<h1>" + content.asHtml(st, rich) + "</h1>";
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		return "<h1>"+content.asHtml(st,rich)+"</h1>";
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		final Set<Renderable> r = new HashSet<>();
+		final Set<Renderable> r=new HashSet<>();
 		r.add(content);
 		return r;
 	}

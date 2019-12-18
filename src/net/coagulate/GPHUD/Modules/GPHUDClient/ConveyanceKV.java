@@ -14,7 +14,7 @@ public class ConveyanceKV extends KV {
 	final String name;
 
 	public ConveyanceKV(final String attribute) {
-		name = attribute;
+		name=attribute;
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class ConveyanceKV extends KV {
 	@Nonnull
 	@Override
 	public String fullname() {
-		return "GPHUDClient." + name();
+		return "GPHUDClient."+name();
 	}
 
 	@Override

@@ -16,21 +16,23 @@ import java.util.Set;
  */
 public class GroupModule extends ModuleAnnotation {
 
-	public GroupModule(final String name, final ModuleDefinition def) {
-		super(name, def);
+	public GroupModule(final String name,
+	                   final ModuleDefinition def)
+	{
+		super(name,def);
 	}
 
 	@Nonnull
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(@Nonnull final State st) {
-		final Set<SideSubMenu> ret = new HashSet<>();
-		int pri = 1;
-		for (final String submenu : st.getCharacterGroupTypes()) {
+		final Set<SideSubMenu> ret=new HashSet<>();
+		int pri=1;
+		for (final String submenu: st.getCharacterGroupTypes()) {
 			if (!submenu.isEmpty()) {
-				ret.add(new StaticSideSubMenu(submenu, pri++, "/groups/type/" + submenu, ""));
+				ret.add(new StaticSideSubMenu(submenu,pri++,"/groups/type/"+submenu,""));
 			}
 		}
-		ret.add(new StaticSideSubMenu("Other", pri+1, "/groups/type/BLANK", ""));
+		ret.add(new StaticSideSubMenu("Other",pri+1,"/groups/type/BLANK",""));
 		return ret;
 	}
 

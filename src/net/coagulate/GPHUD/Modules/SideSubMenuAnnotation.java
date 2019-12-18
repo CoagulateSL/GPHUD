@@ -19,10 +19,10 @@ public class SideSubMenuAnnotation extends SideSubMenu {
 	private final boolean generated;
 
 	public SideSubMenuAnnotation(@Nonnull final Method m) {
-		generated = false;
-		meta = m.getAnnotation(SideSubMenus.class);
-		method = m;
-		url = Modules.getURL(null, m.getAnnotation(URLs.class).url());
+		generated=false;
+		meta=m.getAnnotation(SideSubMenus.class);
+		method=m;
+		url=Modules.getURL(null,m.getAnnotation(URLs.class).url());
 	}
 
 	@Nonnull

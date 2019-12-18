@@ -15,14 +15,18 @@ public class BCSubtract extends ByteCode {
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Subtract (Pop two, push one-two)"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Subtract.get());
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
-		final ByteCodeDataType arg1 = vm.pop();
-		final ByteCodeDataType arg2 = vm.pop();
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
+		final ByteCodeDataType arg1=vm.pop();
+		final ByteCodeDataType arg2=vm.pop();
 		vm.push(arg1.subtract(arg2));
 	}
 }

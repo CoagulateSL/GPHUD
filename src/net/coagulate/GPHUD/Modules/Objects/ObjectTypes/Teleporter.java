@@ -18,18 +18,25 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 
 public abstract class Teleporter extends ObjectType {
-	protected Teleporter(final State st, @Nonnull final ObjectTypes object) {
-		super(st, object);
+	protected Teleporter(final State st,
+	                     @Nonnull final ObjectTypes object)
+	{
+		super(st,object);
 	}
 
 	@Nonnull
-	Response execute(@Nonnull final State st, @Nonnull final Char clicker) {
-		if (!st.hasModule("Teleportation")) { throw new UserConfigurationException("Teleporter can not function ; teleportation module is disabled at this instance."); }
+	Response execute(@Nonnull final State st,
+	                 @Nonnull final Char clicker)
+	{
+		if (!st.hasModule("Teleportation")) {
+			throw new UserConfigurationException(
+					"Teleporter can not function ; teleportation module is disabled at this instance.");
+		}
 		final JSONObject doteleport=new JSONObject();
 		doteleport.put("teleport",getTeleportTarget(st));
 		final String hudsays=json.optString("hudsays","");
 		if (!hudsays.isEmpty()) {
-			doteleport.put("message", hudsays);
+			doteleport.put("message",hudsays);
 		}
 		new Transmission(clicker,doteleport).start();
 		final String teleportersays=json.optString("teleportersays","");
@@ -42,25 +49,30 @@ public abstract class Teleporter extends ObjectType {
 
 	@Nonnull
 	public String getTeleportTarget(@Nonnull final State st) {
-		final Landmarks landmark = Landmarks.find(st.getInstance(), json.optString("teleporttarget", "unset"));
-		if (landmark==null) { throw new UserConfigurationException("Teleport target is not set on clickTeleporter "+object.getName()); }
+		final Landmarks landmark=Landmarks.find(st.getInstance(),json.optString("teleporttarget","unset"));
+		if (landmark==null) {
+			throw new UserConfigurationException("Teleport target is not set on clickTeleporter "+object.getName());
+		}
 		return landmark.getHUDRepresentation(false);
 	}
 
 	public void update(@Nonnull final State st) {
-		if (!st.postmap().get("target").isEmpty() || !st.postmap().get("teleportersays").isEmpty() || !st.postmap().get("hudsays").isEmpty()) {
-			boolean update = false;
-			final String target = st.postmap().get("target");
-			if (!target.equals(json.optString("teleporttarget", ""))) {
-				json.put("teleporttarget", target);
-				update = true;
+		if (!st.postmap().get("target").isEmpty() || !st.postmap().get("teleportersays").isEmpty() || !st.postmap()
+		                                                                                                 .get("hudsays")
+		                                                                                                 .isEmpty())
+		{
+			boolean update=false;
+			final String target=st.postmap().get("target");
+			if (!target.equals(json.optString("teleporttarget",""))) {
+				json.put("teleporttarget",target);
+				update=true;
 			}
-			final String teleportersays= st.postmap().get("teleportersays");
+			final String teleportersays=st.postmap().get("teleportersays");
 			if (!target.equals(json.optString("teleportersays",""))) {
 				json.put("teleportersays",teleportersays);
 				update=true;
 			}
-			final String hudsays= st.postmap().get("hudsays");
+			final String hudsays=st.postmap().get("hudsays");
 			if (!target.equals(json.optString("hudsays",""))) {
 				json.put("hudsays",hudsays);
 				update=true;

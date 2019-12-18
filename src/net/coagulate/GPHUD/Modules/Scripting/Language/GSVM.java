@@ -18,19 +18,55 @@ import java.util.*;
 public class GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
 
-	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
-	public boolean suspended() { return suspended; }
+	public final Stack<ByteCodeDataType> stack=new Stack<>();
+	final Map<String,ByteCodeDataType> variables=new HashMap<>();
+	final Map<Char,JSONObject> queue=new HashMap<>();
+	final Map<String,ByteCodeDataType> introductions=new HashMap<>();
 	@Nonnull
 	public byte[] bytecode;
 	public int PC;
-	int IC;
 	public int row;
 	public int column;
-	private int startPC;
-	public final Stack<ByteCodeDataType> stack=new Stack<>();
-	final Map<String,ByteCodeDataType> variables=new HashMap<>();
+	public boolean simulation;
+	int IC;
 	@Nullable
-	String invokeonexit; public void invokeOnExit(final String commandname) {invokeonexit=commandname;}
+	String invokeonexit;
+	boolean suspended;
+	private int startPC;
+	private int pid;
+	private int suspensions;
+
+	public GSVM(@Nonnull final Byte[] code) {
+		bytecode=new byte[code.length];
+		{
+			for (int i=0;i<code.length;i++) { bytecode[i]=code[i]; }
+		}
+	}
+
+	public GSVM(@Nonnull final byte[] code) { bytecode=code; }
+
+	public GSVM(@Nonnull final ScriptRuns run,
+	            @Nonnull final State st)
+	{
+		st.vm=this;
+		// run the initialiser as prep
+		initialiseVM(st);
+		bytecode=run.getInitialiser();
+		executeloop(st);
+		// stack and variables should be restored
+		bytecode=run.getByteCode();
+		PC=((BCInteger) (variables.get(" PC"))).getContent();
+		IC=((BCInteger) (variables.get(" IC"))).getContent();
+		suspensions=((BCInteger) (variables.get(" SUSP"))).getContent();
+		if (variables.containsKey((" ONEXIT"))) { invokeonexit=((BCString) variables.get(" ONEXIT")).getContent(); }
+		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
+	}
+
+	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
+	public boolean suspended() { return suspended; }
+
+	public void invokeOnExit(final String commandname) {invokeonexit=commandname;}
+
 	private void initialiseVM(@Nonnull final State st) {
 		stack.clear();
 		PC=0;
@@ -42,52 +78,63 @@ public class GSVM {
 		simulation=false;
 		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
 		variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
-		for (final Map.Entry<String, ByteCodeDataType> entry : introductions.entrySet()) { variables.put(entry.getKey(), entry.getValue()); }
+		for (final Map.Entry<String,ByteCodeDataType> entry: introductions.entrySet()) {
+			variables.put(entry.getKey(),entry.getValue());
+		}
 	}
 
 	public ByteCodeDataType get(final String k) { return variables.get(k); }
-	public void set(final String k, @Nonnull final ByteCodeDataType v) {
+
+	public void set(final String k,
+	                @Nonnull final ByteCodeDataType v)
+	{
 		// does it already exist?
 		final ByteCodeDataType existing=get(k);
 		if (existing==null) {
-			variables.put(k, v); // hopefully we're initialising :P
+			variables.put(k,v); // hopefully we're initialising :P
 			return;
 		}
-		if (existing.getClass().equals(v.getClass())) { variables.put(k,v); return; }
+		if (existing.getClass().equals(v.getClass())) {
+			variables.put(k,v);
+			return;
+		}
 		// auto polymorphism.
-		if (existing.getClass().equals(BCString.class)) { variables.put(k,v.toBCString()); return; }
-		if (existing.getClass().equals(BCInteger.class)) { variables.put(k,v.toBCInteger()); return; }
-		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+existing.getClass().getSimpleName());
+		if (existing.getClass().equals(BCString.class)) {
+			variables.put(k,v.toBCString());
+			return;
+		}
+		if (existing.getClass().equals(BCInteger.class)) {
+			variables.put(k,v.toBCInteger());
+			return;
+		}
+		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass()
+		                                                                        .getSimpleName()+" to "+k+" which is of type "+existing
+				.getClass()
+				.getSimpleName());
 	}
+
 	@Nonnull
 	public String at() {
-		return "at row "+row+", column "+column+", PC="+startPC+
-				(startPC>=0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode.get(bytecode[startPC])+")":"");
+		return "at row "+row+", column "+column+", PC="+startPC+(startPC >= 0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode
+				.get(bytecode[startPC])+")":"");
 	}
-
-	public GSVM(@Nonnull final Byte[] code) {
-		bytecode = new byte[code.length];
-		{
-			for (int i = 0; i < code.length; i++) { bytecode[i] = code[i]; }
-		}
-	}
-
-	public GSVM(@Nonnull final byte[] code) { bytecode = code; }
 
 	@Nonnull
 	public String toHtml() {
 		PC=0;
-		final StringBuilder line = new StringBuilder("<table>");
-		while (PC < bytecode.length) {
+		final StringBuilder line=new StringBuilder("<table>");
+		while (PC<bytecode.length) {
 			line.append("<tr><th>").append(PC).append("</th><td>");
 			try {
-				final ByteCode instruction = ByteCode.load(this);
+				final ByteCode instruction=ByteCode.load(this);
 				line.append(instruction.htmlDecode());
+			} catch (@Nonnull final Exception e) {
+				line.append("</td></tr><tr><td colspan=5>").append(e).append("</tD></tr></table>");
+				return line.toString();
 			}
-			catch (@Nonnull final Exception e) { line.append("</td></tr><tr><td colspan=5>").append(e).append("</tD></tr></table>"); return line.toString(); }
 			line.append("</td></tr>");
 		}
-		return line + "</td></tr></table>";
+		return line+"</td></tr></table>";
 	}
 
 	public ByteCodeDataType pop() { return stack.pop(); }
@@ -96,19 +143,20 @@ public class GSVM {
 
 	@Nonnull
 	public BCString popString() {
-		final ByteCodeDataType raw = pop();
+		final ByteCodeDataType raw=pop();
 		if (!raw.getClass().equals(BCString.class)) {
 			throw new GSInvalidPopError("Expected BCString on stack, got "+raw.getClass().getSimpleName());
 		}
-		return (BCString)raw;
+		return (BCString) raw;
 	}
+
 	@Nonnull
 	public BCInteger popInteger() {
-		final ByteCodeDataType raw = pop();
+		final ByteCodeDataType raw=pop();
 		if (!raw.getClass().equals(BCInteger.class)) {
 			throw new GSInvalidPopError("Expected BCInteger on stack, got "+raw.getClass().getSimpleName());
 		}
-		return (BCInteger)raw;
+		return (BCInteger) raw;
 	}
 
 	@Nonnull
@@ -118,64 +166,75 @@ public class GSVM {
 		if (!raw.getClass().equals(BCList.class)) {
 			throw new GSInvalidExpressionException("Variable "+name+" is not a List");
 		}
-		return (BCList)raw;
+		return (BCList) raw;
 	}
 
 	@Nonnull
 	public Response execute(@Nonnull final State st) {
 		// like simulation but we dont keep the whole execution trace
-		st.vm = this;
+		st.vm=this;
 		initialiseVM(st);
 		return executeloop(st);
 	}
+
 	@Nonnull
 	private Response executeloop(@Nonnull final State st) {
-		ExecutionStep currentstep= new ExecutionStep();
+		ExecutionStep currentstep=new ExecutionStep();
 		try {
 			while (PC<bytecode.length && !suspended) {
 				increaseIC();
 				//noinspection UnusedAssignment
-				currentstep= new ExecutionStep();
+				currentstep=new ExecutionStep();
 				startPC=PC;
 				ByteCode.load(this).execute(st,this,false);
 			}
 		} catch (@Nonnull final Throwable t) {
 			if (t instanceof SystemException) {
-				throw new GSInternalError("VM exception: "+ t +" "+at(),t);
+				throw new GSInternalError("VM exception: "+t+" "+at(),t);
 			}
-			if (t instanceof UserException) { throw new GSExecutionException("Script error: "+ t +" "+at(),t); }
-			if (t instanceof RuntimeException) { throw new GSInternalError("VM Runtime: "+ t +" "+at(),t); }
-			throw new GSInternalError("VM Uncaught: "+ t +" "+at(),t);
+			if (t instanceof UserException) { throw new GSExecutionException("Script error: "+t+" "+at(),t); }
+			if (t instanceof RuntimeException) { throw new GSInternalError("VM Runtime: "+t+" "+at(),t); }
+			throw new GSInternalError("VM Uncaught: "+t+" "+at(),t);
 		}
 		st.vm=null;
-		final JSONObject json = dequeue(st, st.getCharacter()).asJSON(st);
+		final JSONObject json=dequeue(st,st.getCharacter()).asJSON(st);
 		if (invokeonexit!=null && !suspended) {
-			json.put("incommand", "runtemplate");
-			json.put("args", "0");
-			json.put("invoke", invokeonexit);
+			json.put("incommand","runtemplate");
+			json.put("args","0");
+			json.put("invoke",invokeonexit);
 		}
 		return new JSONResponse(json);
 	}
 
 	@Nonnull
 	public String dumpStateToHtml() {
-		final StringBuilder ret= new StringBuilder();
+		final StringBuilder ret=new StringBuilder();
 		ret.append("<h3>Stack</h3><br><table>");
 		for (int i=0;i<stack.size();i++) {
-			ret.append("<tr><th>").append(i).append("</th><td>").append(stack.get(i).getClass().getSimpleName()).append("</td><td>").append(stack.get(i).explain()).append("</td></tr>");
+			ret.append("<tr><th>")
+			   .append(i)
+			   .append("</th><td>")
+			   .append(stack.get(i).getClass().getSimpleName())
+			   .append("</td><td>")
+			   .append(stack.get(i).explain())
+			   .append("</td></tr>");
 		}
 		ret.append("</table>");
 		ret.append("<h3>Variable store</h3><br><table>");
-		for (final Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
+		for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
 			ret.append("<tr><th>").append(entry.getKey()).append("</th>");
-			final ByteCodeDataType value = entry.getValue();
-			ret.append("<td>").append(value.getClass().getSimpleName()).append("</td><td>").append(value.explain()).append("</td></tr>");
+			final ByteCodeDataType value=entry.getValue();
+			ret.append("<td>")
+			   .append(value.getClass().getSimpleName())
+			   .append("</td><td>")
+			   .append(value.explain())
+			   .append("</td></tr>");
 		}
 		ret.append("</table>");
 		ret.append("<h3>Byte code</h3><br>");
 		ret.append("<pre><table border=0><tr>");
-		for (int i = 0; i < bytecode.length; i++) {
-			if ((i % 25) == 0) { ret.append("</tr><tr><th>").append(i).append("</th>"); }
+		for (int i=0;i<bytecode.length;i++) {
+			if ((i%25)==0) { ret.append("</tr><tr><th>").append(i).append("</th>"); }
 			ret.append("<td>").append(bytecode[i]).append("</td>");
 		}
 		ret.append("</tr></table></pre>");
@@ -185,27 +244,30 @@ public class GSVM {
 		return ret.toString();
 	}
 
-	final Map<Char,JSONObject> queue =new HashMap<>();
 	private JSONObject getQueue(final Char c) {
 		if (!queue.containsKey(c)) { queue.put(c,new JSONObject()); }
 		return queue.get(c);
 	}
+
 	@Nonnull
-	public Response dequeue(final State st, final Char target) {
+	public Response dequeue(final State st,
+	                        final Char target)
+	{
 		final boolean debug=false;
 		final JSONObject totarget=getQueue(target);
 		if (pid!=0) { totarget.put("processid",""+pid); }
-		if (queue.containsKey(target)) { queue.remove(target);
-		}
-		for (final Char k:queue.keySet()) {
-			final JSONObject totransmit = getQueue(k);
+		queue.remove(target);
+		for (final Char k: queue.keySet()) {
+			final JSONObject totransmit=getQueue(k);
 			if (pid!=0) { totransmit.put("processid",""+pid); }
 			new Transmission(k,totransmit).start();
 		}
 		return new JSONResponse(totarget);
 	}
 
-	public void queueSayAs(@Nonnull final Char ch, final String message) {
+	public void queueSayAs(@Nonnull final Char ch,
+	                       final String message)
+	{
 		final JSONObject out=getQueue(ch);
 		String m="";
 		if (out.has("say")) { m=out.getString("say")+"\n"; }
@@ -214,19 +276,26 @@ public class GSVM {
 		out.put("sayas",ch.getName());
 	}
 
-	public void queueTeleport(final Char content, final String hudRepresentation) {
+	public void queueTeleport(final Char content,
+	                          final String hudRepresentation)
+	{
 		final JSONObject queue=getQueue(content);
 		queue.put("teleport",hudRepresentation);
 	}
 
-	public void queueOwnerSay(final Char ch, final String message) {
+	public void queueOwnerSay(final Char ch,
+	                          final String message)
+	{
 		final JSONObject out=getQueue(ch);
 		String m="";
 		if (out.has("message")) { m=out.getString("message")+"\n"; }
 		m=m+message;
 		out.put("message",m);
 	}
-	public void queueSelectCharacter(final Char ch, final String description) {
+
+	public void queueSelectCharacter(final Char ch,
+	                                 final String description)
+	{
 		final JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
@@ -236,7 +305,10 @@ public class GSVM {
 		out.put("incommand","runtemplate");
 		out.put("invoke","Scripting.CharacterResponse");
 	}
-	public void queueGetText(final Char ch, final String description) {
+
+	public void queueGetText(final Char ch,
+	                         final String description)
+	{
 		final JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
@@ -245,7 +317,11 @@ public class GSVM {
 		out.put("incommand","runtemplate");
 		out.put("invoke","Scripting.StringResponse");
 	}
-	public void queueGetChoice(final Char ch, final String description, @Nonnull final List<String> options) {
+
+	public void queueGetChoice(final Char ch,
+	                           final String description,
+	                           @Nonnull final List<String> options)
+	{
 		final JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
@@ -257,103 +333,82 @@ public class GSVM {
 		out.put("incommand","runtemplate");
 		out.put("invoke","Scripting.StringResponse");
 	}
-	boolean suspended;
-	public void suspend(final State st, @Nonnull final Char respondant) {
+
+	public void suspend(final State st,
+	                    @Nonnull final Char respondant)
+	{
 		variables.put(" PC",new BCInteger(null,PC));
 		variables.put(" IC",new BCInteger(null,IC));
 		variables.put(" SUSP",new BCInteger(null,suspensions));
 		if (invokeonexit!=null) { variables.put(" ONEXIT",new BCString(null,invokeonexit)); }
 		suspensions++;
-		if (suspensions>10) { throw new GSResourceLimitExceededException("Maximum number of VM suspensions reached - too many user input requests?"); }
+		if (suspensions>10) {
+			throw new GSResourceLimitExceededException(
+					"Maximum number of VM suspensions reached - too many user input requests?");
+		}
 		// simulations dont suspend.  but do update the variables and fake a suspension count.  for completeness :P
 		if (simulation) { return; }
 		suspended=true;
-		final List<ByteCode> initlist = new ArrayList<>(stack);
-		for (final Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
-			final ByteCodeDataType bcd= entry.getValue();
+		final List<ByteCode> initlist=new ArrayList<>(stack);
+		for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
+			final ByteCodeDataType bcd=entry.getValue();
 			if (!bcd.getClass().equals(BCList.class)) {
 				initlist.add(bcd);
 			} else {
-				final BCList list=(BCList)bcd;
+				final BCList list=(BCList) bcd;
 				initlist.addAll(list.getContent());
 				initlist.add(list);
 			}
-			initlist.add(new BCString(null, entry.getKey()));
+			initlist.add(new BCString(null,entry.getKey()));
 			initlist.add(new BCInitialise(null));
 		}
 
 		List<Byte> initbc=new ArrayList<>();
-		for (final ByteCode bc:initlist) { bc.toByteCode(initbc); }
+		for (final ByteCode bc: initlist) { bc.toByteCode(initbc); }
 		// redo. now that forward references are completed
 		initbc=new ArrayList<>();
-		for (final ByteCode bc:initlist) { bc.toByteCode(initbc); }
+		for (final ByteCode bc: initlist) { bc.toByteCode(initbc); }
 		final Byte[] initialiser=initbc.toArray(new Byte[]{});
 
 		final ScriptRuns run=ScriptRuns.create(bytecode,initialiser,respondant);
 		pid=run.getId();
 		//return dequeue(st,st.getCharacter(),run.getId());
 	}
-	private int pid;
-	private int suspensions;
-	public GSVM(@Nonnull final ScriptRuns run, @Nonnull final State st) {
-		st.vm=this;
-		// run the initialiser as prep
-		initialiseVM(st);
-		bytecode=run.getInitialiser();
-		executeloop(st);
-		// stack and variables should be restored
-		bytecode=run.getByteCode();
-		PC=((BCInteger)(variables.get(" PC"))).getContent();
-		IC=((BCInteger)(variables.get(" IC"))).getContent();
-		suspensions=((BCInteger)(variables.get(" SUSP"))).getContent();
-		if (variables.containsKey((" ONEXIT"))) { invokeonexit=((BCString)variables.get(" ONEXIT")).getContent(); }
-		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
-	}
+
 	@Nonnull
 	public Response resume(@Nonnull final State st) { return executeloop(st); }
 
-	final Map<String,ByteCodeDataType> introductions=new HashMap<>();
-	public void introduce(final String target, final ByteCodeDataType data) {
+	public void introduce(final String target,
+	                      final ByteCodeDataType data)
+	{
 		introductions.put(target,data);
 	}
 
-	public static class ExecutionStep {
-		public int programcounter;
-		@Nullable
-		public String decode="";
-		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
-		public final Map<String,ByteCodeDataType> resultingvariables=new HashMap<>();
-		@Nullable
-		public Throwable t;
-		public int IC;
-	}
-
-	public boolean simulation;
 	@Nonnull
 	public List<ExecutionStep> simulate(@Nonnull final State st) {
 		final List<ExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM(st);
 		simulation=true;
 		try {
-			while (PC < bytecode.length) {
+			while (PC<bytecode.length) {
 				increaseIC();
-				final ExecutionStep frame = new ExecutionStep();
-				frame.programcounter = PC;
-				startPC = PC;
-				final ByteCode instruction = ByteCode.load(this);
-				frame.decode = instruction.htmlDecode();
-				instruction.execute(st, this,true);
+				final ExecutionStep frame=new ExecutionStep();
+				frame.programcounter=PC;
+				startPC=PC;
+				final ByteCode instruction=ByteCode.load(this);
+				frame.decode=instruction.htmlDecode();
+				instruction.execute(st,this,true);
 				for (int i=0;i<stack.size();i++) { frame.resultingstack.push(stack.elementAt(i).clone()); }
-				for (final Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
-					ByteCodeDataType clone = null;
-					if (entry.getValue() !=null) { clone= entry.getValue().clone(); }
+				for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
+					ByteCodeDataType clone=null;
+					if (entry.getValue()!=null) { clone=entry.getValue().clone(); }
 					frame.resultingvariables.put(entry.getKey(),clone);
 				}
 				frame.IC=IC;
 				simulationsteps.add(frame);
 			}
 		} catch (@Nonnull final Throwable e) {
-			final ExecutionStep step= new ExecutionStep();
+			final ExecutionStep step=new ExecutionStep();
 			step.t=e;
 			step.decode=at();
 			simulationsteps.add(step);
@@ -362,25 +417,37 @@ public class GSVM {
 	}
 
 	public int getInt() {
-		final int a=bytecode[PC] & 0xff;
-		final int b=bytecode[PC+1] & 0xff;
-		final int c=bytecode[PC+2] & 0xff;
-		final int d= bytecode[PC + 3] & 0xff;
+		final int a=bytecode[PC]&0xff;
+		final int b=bytecode[PC+1]&0xff;
+		final int c=bytecode[PC+2]&0xff;
+		final int d=bytecode[PC+3]&0xff;
 		final int ret=(a<<24)+(b<<16)+(c<<8)+d;
 		//System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
 		PC+=4;
 		return ret;
 	}
 
-	public int getShort()
-	{
-		final int ret=((((int) bytecode[PC]&0xff)<<8)+(((int) bytecode[PC +1]&0xff)));
-		PC +=2;
+	public int getShort() {
+		final int ret=((((int) bytecode[PC]&0xff)<<8)+(((int) bytecode[PC+1]&0xff)));
+		PC+=2;
 		return ret;
 	}
 
 	private void increaseIC() {
 		IC++;
-		if (IC>10000) { throw new GSResourceLimitExceededException("Instruction count exceeded, infinite loop (or complex script)?"); }
+		if (IC>10000) {
+			throw new GSResourceLimitExceededException("Instruction count exceeded, infinite loop (or complex script)?");
+		}
+	}
+
+	public static class ExecutionStep {
+		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
+		public final Map<String,ByteCodeDataType> resultingvariables=new HashMap<>();
+		public int programcounter;
+		@Nullable
+		public String decode="";
+		@Nullable
+		public Throwable t;
+		public int IC;
 	}
 }

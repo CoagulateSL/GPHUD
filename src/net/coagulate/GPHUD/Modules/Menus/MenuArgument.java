@@ -21,18 +21,20 @@ public class MenuArgument extends Argument {
 	@Nullable
 	String override;
 
-	public MenuArgument(final Command command, final JSONObject definition) {
+	public MenuArgument(final Command command,
+	                    final JSONObject definition)
+	{
 		super();
-		this.command = command;
-		meta = definition;
+		this.command=command;
+		meta=definition;
 	}
 
 	@Nonnull
 	public List<String> getChoices(final State st) {
-		final List<String> options = new ArrayList<>();
-		for (int i = 1; i <= 12; i++) {
-			if (meta.has("button" + i)) {
-				options.add(meta.getString("button" + i));
+		final List<String> options=new ArrayList<>();
+		for (int i=1;i<=12;i++) {
+			if (meta.has("button"+i)) {
+				options.add(meta.getString("button"+i));
 			}
 		}
 		return options;
@@ -41,7 +43,7 @@ public class MenuArgument extends Argument {
 	@Nonnull
 	@Override
 	public String description() {
-		if (override != null) { return override; }
+		if (override!=null) { return override; }
 		return "Choice of menu item";
 	}
 
@@ -80,7 +82,7 @@ public class MenuArgument extends Argument {
 
 	@Override
 	public void overrideDescription(final String n) {
-		override = n;
+		override=n;
 	}
 
 	@Override

@@ -14,9 +14,11 @@ import javax.annotation.Nonnull;
  */
 public class IntrospectionMenu {
 
-	@URLs(url = "/introspection/")
-	public static void menu(@Nonnull final State st, final SafeMap values) {
-		final Form f = st.form();
+	@URLs(url="/introspection/")
+	public static void menu(@Nonnull final State st,
+	                        final SafeMap values)
+	{
+		final Form f=st.form();
 		f.add(new TextHeader("GPHUD Introspection"));
 		f.add(new TextSubHeader("Global definitions"));
 		f.p("This is a developer feature that allows you to look around the internals of GPHUD.");

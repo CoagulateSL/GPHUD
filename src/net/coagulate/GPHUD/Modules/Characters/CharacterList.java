@@ -16,17 +16,19 @@ import java.util.List;
  */
 public class CharacterList {
 
-	@URLs(url = "/characters/list*", requiresPermission = "Characters.ViewAll")
-	public static void list(@Nonnull final State st, final SafeMap values) {
-		final List<CharacterSummary> list = st.getInstance().getCharacterSummary(st);
+	@URLs(url="/characters/list*", requiresPermission="Characters.ViewAll")
+	public static void list(@Nonnull final State st,
+	                        final SafeMap values)
+	{
+		final List<CharacterSummary> list=st.getInstance().getCharacterSummary(st);
 		if (list.isEmpty()) {
 			st.form().add("No characters found");
 			return;
 		}
-		final Table t = new Table();
+		final Table t=new Table();
 		st.form().add(t);
 		t.border(true);
 		t.add(list.get(0).headers(st));
-		for (final CharacterSummary s : list) { /*if (!s.retired)*/ { t.add(s.asRow(st)); } }
+		for (final CharacterSummary s: list) { /*if (!s.retired)*/ { t.add(s.asRow(st)); } }
 	}
 }

@@ -22,27 +22,31 @@ public class CommandAnnotation extends Command {
 	Commands meta;
 	Method method;
 	List<Argument> arguments;
-	private boolean generated = true;
+	private boolean generated=true;
 
 	protected CommandAnnotation() {}
 
-	public CommandAnnotation(final Module owner, @Nonnull final Method c) {
+	public CommandAnnotation(final Module owner,
+	                         @Nonnull final Method c)
+	{
 		//System.out.println(owner);
 		//System.out.println(c);
-		this.owner = owner;
-		method = c;
-		meta = c.getAnnotation(Commands.class);
+		this.owner=owner;
+		method=c;
+		meta=c.getAnnotation(Commands.class);
 		validate(null);
 		populateArguments();
-		generated = false;
+		generated=false;
 	}
 
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass()
+			                                                   .getName()+"/"+m.getName()+" must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be public");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass()
+			                                                   .getName()+"/"+m.getName()+" must be public");
 		}
 	}
 
@@ -53,28 +57,31 @@ public class CommandAnnotation extends Command {
 
 	void validate(final State st) {
 		if (!requiresPermission().isEmpty()) {
-			Modules.validatePermission(st, requiresPermission());
+			Modules.validatePermission(st,requiresPermission());
 		}
 		Module.checkPublicStatic(method);
-		if (method.getParameterCount() == 0) {
-			throw new SystemImplementationException("Method " + getFullName() + "() takes zero arguments but must take 'State' as its first argument");
+		if (method.getParameterCount()==0) {
+			throw new SystemImplementationException("Method "+getFullName()+"() takes zero arguments but must take 'State' as its first argument");
 		}
-		if ((method.getParameters()[0]).getClass().getCanonicalName().equalsIgnoreCase(State.class.getCanonicalName())) {
-			throw new SystemImplementationException("Method " + getFullName() + " must take State as its first argument");
+		if ((method.getParameters()[0]).getClass()
+		                               .getCanonicalName()
+		                               .equalsIgnoreCase(State.class.getCanonicalName()))
+		{
+			throw new SystemImplementationException("Method "+getFullName()+" must take State as its first argument");
 		}
-		for (int i = 1; i < method.getParameters().length; i++) {
-			final Parameter p = method.getParameters()[i];
-			final Arguments arg = p.getAnnotation(Arguments.class);
-			if (arg == null) {
-				throw new SystemImplementationException("Method " + getFullName() + "() argument " + (i + 1) + " (" + p.getName() + ") has no @Argument metadata");
+		for (int i=1;i<method.getParameters().length;i++) {
+			final Parameter p=method.getParameters()[i];
+			final Arguments arg=p.getAnnotation(Arguments.class);
+			if (arg==null) {
+				throw new SystemImplementationException("Method "+getFullName()+"() argument "+(i+1)+" ("+p.getName()+") has no @Argument metadata");
 			}
-			if (arg.type() == ArgumentType.CHOICE) {
+			if (arg.type()==ArgumentType.CHOICE) {
 				// validate the choice method
-				final String choicemethod = arg.choiceMethod();
+				final String choicemethod=arg.choiceMethod();
 				try {
-					method.getDeclaringClass().getMethod(choicemethod, State.class);
+					method.getDeclaringClass().getMethod(choicemethod,State.class);
 				} catch (@Nonnull final Exception e) {
-					throw new SystemImplementationException("Failed to instansiate choice method " + getFullName() + " / " + choicemethod);
+					throw new SystemImplementationException("Failed to instansiate choice method "+getFullName()+" / "+choicemethod);
 				}
 			}
 		}
@@ -106,16 +113,16 @@ public class CommandAnnotation extends Command {
 	public int getArgumentCount() { return getArguments().size(); }
 
 	@Nonnull
-	public String getFullName() { return owner.getName() + "." + getName(); }
+	public String getFullName() { return owner.getName()+"."+getName(); }
 
 	@Nonnull
 	public String getName() { return method.getName(); }
 
 	private void populateArguments() {
-		arguments = new ArrayList<>();
-		boolean skipfirst = true; // first should be STATE
-		for (final Parameter p : method.getParameters()) {
-			if (skipfirst) { skipfirst = false; } else { arguments.add(new ArgumentAnnotation(this, p)); }
+		arguments=new ArrayList<>();
+		boolean skipfirst=true; // first should be STATE
+		for (final Parameter p: method.getParameters()) {
+			if (skipfirst) { skipfirst=false; } else { arguments.add(new ArgumentAnnotation(this,p)); }
 		}
 	}
 
@@ -123,12 +130,13 @@ public class CommandAnnotation extends Command {
 	 * Get the name of the arguments.
 	 *
 	 * @param st state
+	 *
 	 * @return list of argument names
 	 */
 	@Nonnull
 	public List<String> getArgumentNames(final State st) {
-		final List<String> arguments = new ArrayList<>();
-		for (final Argument a : getArguments()) {
+		final List<String> arguments=new ArrayList<>();
+		for (final Argument a: getArguments()) {
 			arguments.add(a.getName());
 		}
 		return arguments;
@@ -139,7 +147,7 @@ public class CommandAnnotation extends Command {
 
 	@Nonnull
 	public String getFullMethodName() {
-		return method.getDeclaringClass().getName() + "." + method.getName() + "()";
+		return method.getDeclaringClass().getName()+"."+method.getName()+"()";
 	}
 
 	public int getInvokingArgumentCount() {

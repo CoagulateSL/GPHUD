@@ -15,7 +15,7 @@ public class AttributeMaxKV extends KV {
 	final Attribute attribute;
 
 	public AttributeMaxKV(final Attribute attribute) {
-		this.attribute = attribute;
+		this.attribute=attribute;
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class AttributeMaxKV extends KV {
 	@Nonnull
 	@Override
 	public String name() {
-		return attribute.getName() + "MAX";
+		return attribute.getName()+"MAX";
 	}
 
 	@Nonnull
@@ -44,7 +44,7 @@ public class AttributeMaxKV extends KV {
 	@Nonnull
 	@Override
 	public String description() {
-		return "Character attribute " + attribute.getName() + " maximum allowed value";
+		return "Character attribute "+attribute.getName()+" maximum allowed value";
 	}
 
 	@Nonnull
@@ -74,7 +74,7 @@ public class AttributeMaxKV extends KV {
 	@Nonnull
 	@Override
 	public String fullname() {
-		return "Characters." + name();
+		return "Characters."+name();
 	}
 
 	@Override

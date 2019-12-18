@@ -26,6 +26,6 @@ public class EventXP extends QuotaedXP {
 	@Nonnull
 	public String periodKV(final State st) { return "Events.EventXPPeriod"; }
 
-	public Module getModule() { return Modules.get(null, "Events"); }
+	public Module getModule() { return Modules.get(null,"Events"); }
 
 }

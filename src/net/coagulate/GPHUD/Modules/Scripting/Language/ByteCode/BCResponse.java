@@ -13,21 +13,30 @@ import java.util.List;
 public class BCResponse extends ByteCodeDataType {
 	String message="";
 	boolean error;
+
 	public BCResponse(final ParseNode n) {super(n);}
-	public BCResponse(final ParseNode n, @Nonnull final Response content) {
+
+	public BCResponse(final ParseNode n,
+	                  @Nonnull final Response content)
+	{
 		super(n);
-		message =content.scriptResponse();
+		message=content.scriptResponse();
 		if (content instanceof ErrorResponse) { error=true; }
 	}
+
 	@Nonnull
 	public String explain() { return "Response ("+(error?"ERROR:":"")+message+")"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Response.get());
 		//throw new SystemException("Not implemented");
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
 		vm.push(this);
 	}
 

@@ -23,16 +23,18 @@ import java.util.Set;
  */
 public class SessionSwitch {
 
-	@URLs(url = "/switch/instance")
-	public static void switchInstance(@Nonnull final State st, @Nonnull final SafeMap values) {
-		final Form f = st.form();
+	@URLs(url="/switch/instance")
+	public static void switchInstance(@Nonnull final State st,
+	                                  @Nonnull final SafeMap values)
+	{
+		final Form f=st.form();
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
-		for (final Instance i : Instance.getInstances()) {
-			final String id = i.getId() + "";
-			f.add("<table><tr><td align=right width=250px><img src=\"" + i.getLogoURL(st) + "\" height=150px></td><td>");
-			f.add(new Button("Select Instance - " + id, "Select Instance - " + i.getName()));
-			if (!values.get("Select Instance - " + id).isEmpty()) {
+		for (final Instance i: Instance.getInstances()) {
+			final String id=i.getId()+"";
+			f.add("<table><tr><td align=right width=250px><img src=\""+i.getLogoURL(st)+"\" height=150px></td><td>");
+			f.add(new Button("Select Instance - "+id,"Select Instance - "+i.getName()));
+			if (!values.get("Select Instance - "+id).isEmpty()) {
 				st.setInstance(i);
 				st.cookie().setInstance(i);
 				st.setCharacter(null);
@@ -40,37 +42,41 @@ public class SessionSwitch {
 				st.getAvatar().setLastInstance(i);
 				throw new RedirectionException("/switch/character");
 			}
-			ViewInstance.viewInstance(st, values, i);
+			ViewInstance.viewInstance(st,values,i);
 			f.add("</tr></table>");
 			f.add(new Separator());
 		}
 	}
 
-	@URLs(url = "/switch/character")
-	public static void switchCharacter(@Nonnull final State st, @Nonnull final SafeMap values) {
-		if (st.getInstanceNullable() == null) { throw new RedirectionException("/switch/instance"); }
-		final Form f = st.form();
+	@URLs(url="/switch/character")
+	public static void switchCharacter(@Nonnull final State st,
+	                                   @Nonnull final SafeMap values)
+	{
+		if (st.getInstanceNullable()==null) { throw new RedirectionException("/switch/instance"); }
+		final Form f=st.form();
 		if (!values.get("charid").isEmpty()) {
-			final Char c = Char.get(Integer.parseInt(values.get("charid")));
+			final Char c=Char.get(Integer.parseInt(values.get("charid")));
 			c.validate(st);
-			if (c.getOwner() != st.getAvatarNullable()) { throw new UserAccessDeniedException("You do not own this character"); }
+			if (c.getOwner()!=st.getAvatarNullable()) {
+				throw new UserAccessDeniedException("You do not own this character");
+			}
 			st.setCharacter(c);
 			st.cookie().setCharacter(st.getCharacter());
 			throw new RedirectionException("/");
 		}
 		f.noForm();
 		f.add(new TextHeader("Select Character"));
-		final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatar());
+		final Set<Char> chars=Char.getCharacters(st.getInstance(),st.getAvatar());
 		if (chars.isEmpty()) {
 			f.add("You have no characters at this instance, please select a new instance or navigate via the left side menu.");
 			return;
 		}
 		f.add(new Separator());
-		for (final Char c : chars) {
-			final String id = c.getId() + "";
-			final String name = c.getName();
-			f.add(new Form(st, true, "", "Select Character - " + name, "charid", id));
-			View.viewCharacter(st, values, c, true);
+		for (final Char c: chars) {
+			final String id=c.getId()+"";
+			final String name=c.getName();
+			f.add(new Form(st,true,"","Select Character - "+name,"charid",id));
+			View.viewCharacter(st,values,c,true);
 			f.add(new Separator());
 		}
 	}

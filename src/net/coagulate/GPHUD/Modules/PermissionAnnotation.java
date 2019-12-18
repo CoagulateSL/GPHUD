@@ -16,9 +16,11 @@ public class PermissionAnnotation extends Permission {
 	@Nonnull
 	private final String modulename;
 
-	public PermissionAnnotation(final Permissions m, @Nonnull final String modulename) {
-		meta = m;
-		generated = false;
+	public PermissionAnnotation(final Permissions m,
+	                            @Nonnull final String modulename)
+	{
+		meta=m;
+		generated=false;
 		this.modulename=modulename;
 	}
 

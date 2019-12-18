@@ -17,47 +17,55 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
  */
 public abstract class Experience {
 	@Nonnull
-	@Template(name = "TOTALXP", description = "Total experience")
-	public static String getTotalXP(@Nonnull final State st, final String key) {
+	@Template(name="TOTALXP", description="Total experience")
+	public static String getTotalXP(@Nonnull final State st,
+	                                final String key)
+	{
 		if (!st.hasModule("Experience")) { return ""; }
-		if (st.getCharacterNullable() == null) { return ""; }
-		return getExperience(st, st.getCharacter()) + "";
+		if (st.getCharacterNullable()==null) { return ""; }
+		return getExperience(st,st.getCharacter())+"";
 	}
 
 	@Nonnull
-	@Template(name = "LEVEL", description = "Current Level")
-	public static String getLevel(@Nonnull final State st, final String key) {
+	@Template(name="LEVEL", description="Current Level")
+	public static String getLevel(@Nonnull final State st,
+	                              final String key)
+	{
 		if (!st.hasModule("Experience")) { return ""; }
-		if (st.getCharacterNullable() == null) { return ""; }
-		return toLevel(st, getExperience(st, st.getCharacter())) + "";
+		if (st.getCharacterNullable()==null) { return ""; }
+		return toLevel(st,getExperience(st,st.getCharacter()))+"";
 	}
 
-	public static int toLevel(@Nonnull final State st, final int xp) {
+	public static int toLevel(@Nonnull final State st,
+	                          final int xp)
+	{
 		if (!st.hasModule("Experience")) { return 0; }
-		final int step = st.getKV("Experience.LevelXPStep").intValue();
-		int tolevel = 0;
-		for (int i = 0; i <= 1000; i++) {
-			tolevel = (int) (tolevel + Math.floor(((float) i) / ((float) step)) + 1);
-			if (tolevel > xp) { return i; }
+		final int step=st.getKV("Experience.LevelXPStep").intValue();
+		int tolevel=0;
+		for (int i=0;i<=1000;i++) {
+			tolevel=(int) (tolevel+Math.floor(((float) i)/((float) step))+1);
+			if (tolevel>xp) { return i; }
 		}
 		return 1000;
 
 	}
 
-	public static int getExperience(@Nonnull final State st, @Nonnull final Char character) {
-		int sum = 0;
-		if (Modules.get(null, "experience").isEnabled(st)) {
-			sum += character.sumPool(Modules.getPool(st, "Experience.VisitXP"));
+	public static int getExperience(@Nonnull final State st,
+	                                @Nonnull final Char character)
+	{
+		int sum=0;
+		if (Modules.get(null,"experience").isEnabled(st)) {
+			sum+=character.sumPool(Modules.getPool(st,"Experience.VisitXP"));
 		}
-		if (Modules.get(null, "faction").isEnabled(st)) {
-			sum += character.sumPool(Modules.getPool(st, "Faction.FactionXP"));
+		if (Modules.get(null,"faction").isEnabled(st)) {
+			sum+=character.sumPool(Modules.getPool(st,"Faction.FactionXP"));
 		}
-		if (Modules.get(null, "Events").isEnabled(st)) {
-			sum += character.sumPool(Modules.getPool(st, "Events.EventXP"));
+		if (Modules.get(null,"Events").isEnabled(st)) {
+			sum+=character.sumPool(Modules.getPool(st,"Events.EventXP"));
 		}
-		for (final Attribute a : st.getAttributes()) {
-			if (a.getType() == EXPERIENCE) {
-				sum += character.sumPool(Modules.getPool(st, "Experience." + a.getName() + "XP"));
+		for (final Attribute a: st.getAttributes()) {
+			if (a.getType()==EXPERIENCE) {
+				sum+=character.sumPool(Modules.getPool(st,"Experience."+a.getName()+"XP"));
 			}
 		}
 		return sum;
@@ -65,16 +73,16 @@ public abstract class Experience {
 
 	@Nonnull
 	public static String getCycleLabel(@Nonnull final State st) {
-		if (Modules.get(null, "Experience").isEnabled(st)) {
-			return Math.round(st.getKV("Experience.XPCycleDays").floatValue()) + " days";
+		if (Modules.get(null,"Experience").isEnabled(st)) {
+			return Math.round(st.getKV("Experience.XPCycleDays").floatValue())+" days";
 		} else { return "week"; }
 	}
 
 	public static int getCycle(@Nonnull final State st) {
-		if (Modules.get(null, "Experience").isEnabled(st)) {
-			return (int) (60 * 60 * 24 * st.getKV("Experience.XPCycleDays").floatValue());
+		if (Modules.get(null,"Experience").isEnabled(st)) {
+			return (int) (60*60*24*st.getKV("Experience.XPCycleDays").floatValue());
 		} else {
-			return 60 * 60 * 24 * 7;
+			return 60*60*24*7;
 		}
 	}
 

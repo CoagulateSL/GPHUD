@@ -17,21 +17,28 @@ public class BCEquality extends ByteCode {
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Equality (Pop two, compare, push 1 for match, 0 for no match)"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Equality.get());
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
-		final ByteCodeDataType var1 = vm.pop();
-		final ByteCodeDataType var2 = vm.pop();
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
+		final ByteCodeDataType var1=vm.pop();
+		final ByteCodeDataType var2=vm.pop();
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 		if (!var1.getClass().equals(var2.getClass())) // no match then
-		{ vm.push(new BCInteger(null,0)); return; }
+		{
+			vm.push(new BCInteger(null,0));
+			return;
+		}
 		final Class<? extends ByteCodeDataType> type=var1.getClass();
 		if (type.equals(BCString.class)) {
-			final String s1 = var1.toString();
-			final String s2 = var2.toString();
+			final String s1=var1.toString();
+			final String s2=var2.toString();
 			if (s1.equals(s2)) {
 				vm.push(new BCInteger(null,1));
 				return;
@@ -46,20 +53,20 @@ public class BCEquality extends ByteCode {
 			return;
 		}
 		if (type.equals(BCCharacter.class)) {
-			final int id1=((BCCharacter)var1).getContent().getId();
-			final int id2=((BCCharacter)var2).getContent().getId();
+			final int id1=((BCCharacter) var1).getContent().getId();
+			final int id2=((BCCharacter) var2).getContent().getId();
 			if (id1==id2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
 			return;
 		}
 		if (type.equals(BCAvatar.class)) {
-			final int id1=((BCAvatar)var1).getContent().getId();
-			final int id2=((BCAvatar)var2).getContent().getId();
+			final int id1=((BCAvatar) var1).getContent().getId();
+			final int id2=((BCAvatar) var2).getContent().getId();
 			if (id1==id2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
 			return;
 		}
 		if (type.equals(BCGroup.class)) {
-			final int id1=((BCGroup)var1).getContent().getId();
-			final int id2=((BCGroup)var2).getContent().getId();
+			final int id1=((BCGroup) var1).getContent().getId();
+			final int id2=((BCGroup) var2).getContent().getId();
 			if (id1==id2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
 			return;
 		}

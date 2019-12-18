@@ -16,14 +16,18 @@ public class BCStore extends ByteCode {
 	// POP the NAME.  POP the content.
 	@Nonnull
 	public String explain() { return "Assign (Pop variable name, pop content, assign)"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Store.get());
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
-		final String variablename = vm.popString().getContent();
-		final ByteCodeDataType value = vm.pop();
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
+		final String variablename=vm.popString().getContent();
+		final ByteCodeDataType value=vm.pop();
 		vm.set(variablename,value);
 	}
 

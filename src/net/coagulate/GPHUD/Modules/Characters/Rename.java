@@ -11,12 +11,11 @@ import javax.annotation.Nonnull;
 
 public class Rename {
 	@Nonnull
-	@Command.Commands(context = Command.Context.AVATAR, description = "Rename a character", requiresPermission = "Characters.ForceRename")
+	@Command.Commands(context=Command.Context.AVATAR, description="Rename a character", requiresPermission="Characters.ForceRename")
 	public static Response rename(final State st,
-	                              @Nonnull @Argument.Arguments(description = "Character to rename", type = Argument.ArgumentType.CHARACTER, max = 64) final
-	                              Char oldname,
-	                              @Argument.Arguments(description = "New name for character", max = 40, type = Argument.ArgumentType.TEXT_ONELINE) final
-	                                  String newname) {
+	                              @Nonnull @Argument.Arguments(description="Character to rename", type=Argument.ArgumentType.CHARACTER, max=64) final Char oldname,
+	                              @Argument.Arguments(description="New name for character", max=40, type=Argument.ArgumentType.TEXT_ONELINE) final String newname)
+	{
 		oldname.rename(newname);
 		return new OKResponse("Character has been renamed");
 	}

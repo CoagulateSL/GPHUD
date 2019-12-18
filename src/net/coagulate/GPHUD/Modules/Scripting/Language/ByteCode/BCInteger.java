@@ -10,23 +10,47 @@ import java.util.List;
 
 public class BCInteger extends ByteCodeDataType {
 	private Integer content=0;
+
 	public BCInteger(final ParseNode n) { super(n); }
-	public BCInteger(final ParseNode n, final Integer content) { super(n); this.content=content; }
-	public BCInteger(final ParseNode n, @Nonnull final String tokens) { super(n);
-		content =Integer.parseInt(tokens); }
+
+	public BCInteger(final ParseNode n,
+	                 final Integer content)
+	{
+		super(n);
+		this.content=content;
+	}
+
+	public BCInteger(final ParseNode n,
+	                 @Nonnull final String tokens)
+	{
+		super(n);
+		content=Integer.parseInt(tokens);
+	}
 
 	@Nonnull
 	public String explain() { return "Integer ("+content+")"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Integer.get());
-		if (content==null) { bytes.add((byte)0); bytes.add((byte)0); bytes.add((byte)0); bytes.add((byte)0);return; }
+		if (content==null) {
+			bytes.add((byte) 0);
+			bytes.add((byte) 0);
+			bytes.add((byte) 0);
+			bytes.add((byte) 0);
+			return;
+		}
 		addInt(bytes,content);
 	}
+
 	@Nonnull
-	@Override public String htmlDecode() { return "Integer</td><td>"+content; }
+	@Override
+	public String htmlDecode() { return "Integer</td><td>"+content; }
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
 		vm.push(this);
 	}
 

@@ -8,7 +8,9 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class ClickTeleporter extends Teleporter {
-	ClickTeleporter(final State st, @Nonnull final ObjectTypes object) {
+	ClickTeleporter(final State st,
+	                @Nonnull final ObjectTypes object)
+	{
 		super(st,object);
 	}
 
@@ -17,6 +19,7 @@ public class ClickTeleporter extends Teleporter {
 	public String explainHtml() {
 		return "A Click Teleporter : Teleport user on activation to "+json.optString("teleporttarget","(unset)");
 	}
+
 	@Nonnull
 	public String explainText() { return explainHtml(); }
 
@@ -26,7 +29,9 @@ public class ClickTeleporter extends Teleporter {
 
 	@Nonnull
 	@Override
-	public Response click(@Nonnull final State st, @Nonnull final Char clicker) {
+	public Response click(@Nonnull final State st,
+	                      @Nonnull final Char clicker)
+	{
 		return execute(st,clicker);
 	}
 

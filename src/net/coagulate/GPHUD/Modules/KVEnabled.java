@@ -12,9 +12,11 @@ public class KVEnabled extends KV {
 	final Module module;
 	final String def;
 
-	public KVEnabled(final Module m, final String def) {
-		module = m;
-		this.def = def;
+	public KVEnabled(final Module m,
+	                 final String def)
+	{
+		module=m;
+		this.def=def;
 	} // technically is generated, but generated really means "instance specific", and these KVs aren't, they're just a convenience for writing the static declaration.
 
 	@Nonnull
@@ -48,7 +50,7 @@ public class KVEnabled extends KV {
 	@Nonnull
 	@Override
 	public String fullname() {
-		return module.getName() + "." + name();
+		return module.getName()+"."+name();
 	}
 
 	@Override

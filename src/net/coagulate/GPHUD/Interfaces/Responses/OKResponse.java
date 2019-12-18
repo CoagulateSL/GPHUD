@@ -17,8 +17,8 @@ public class OKResponse extends TextOK implements Response {
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
-		final JSONObject j = new JSONObject();
-		j.put("message", asText(st));
+		final JSONObject j=new JSONObject();
+		j.put("message",asText(st));
 		return j;
 	}
 

@@ -8,15 +8,20 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class PhantomTeleporter extends Teleporter {
-	PhantomTeleporter(final State st, @Nonnull final ObjectTypes object) {
+	PhantomTeleporter(final State st,
+	                  @Nonnull final ObjectTypes object)
+	{
 		super(st,object);
 	}
 
 	@Nonnull
 	@Override
 	public String explainHtml() {
-		return "A Phantom Teleporter : Teleport user on collision (intersection) to "+json.optString("teleporttarget","(unset)");
+		return "A Phantom Teleporter : Teleport user on collision (intersection) to "+json.optString("teleporttarget",
+		                                                                                             "(unset)"
+		                                                                                            );
 	}
+
 	@Nonnull
 	public String explainText() { return explainHtml(); }
 
@@ -26,7 +31,9 @@ public class PhantomTeleporter extends Teleporter {
 
 	@Nonnull
 	@Override
-	public Response collide(@Nonnull final State st, @Nonnull final Char clicker) {
+	public Response collide(@Nonnull final State st,
+	                        @Nonnull final Char clicker)
+	{
 		return execute(st,clicker);
 	}
 

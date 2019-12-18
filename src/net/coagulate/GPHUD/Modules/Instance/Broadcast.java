@@ -18,21 +18,21 @@ import javax.annotation.Nonnull;
 public class Broadcast {
 
 	@Nonnull
-	@Commands(context = Context.ANY, description = "Send admin message", requiresPermission = "instance.SendAdminMessages")
+	@Commands(context=Context.ANY, description="Send admin message", requiresPermission="instance.SendAdminMessages")
 	public static Response admin(@Nonnull final State st,
-	                             @Arguments(description = "Message to broadcast", type = ArgumentType.TEXT_ONELINE, max = 200) final
-	                             String sendmessage) {
-		String message = "(From ";
-		String avfrom = "";
-		if (st.getAvatarNullable() != null) {
-			avfrom = st.getAvatarNullable().getName();
-			message += avfrom;
+	                             @Arguments(description="Message to broadcast", type=ArgumentType.TEXT_ONELINE, max=200) final String sendmessage)
+	{
+		String message="(From ";
+		String avfrom="";
+		if (st.getAvatarNullable()!=null) {
+			avfrom=st.getAvatarNullable().getName();
+			message+=avfrom;
 		}
-		if (st.getCharacterNullable() != null) {
-			if (!st.getCharacter().getName().equals(avfrom)) { message += "/" + st.getCharacter().getName(); }
+		if (st.getCharacterNullable()!=null) {
+			if (!st.getCharacter().getName().equals(avfrom)) { message+="/"+st.getCharacter().getName(); }
 		}
-		message += ") : " + sendmessage;
-		final int sent = st.getInstance().broadcastAdmins(st, message);
-		return new OKResponse("Sent to " + sent + " admins");
+		message+=") : "+sendmessage;
+		final int sent=st.getInstance().broadcastAdmins(st,message);
+		return new OKResponse("Sent to "+sent+" admins");
 	}
 }

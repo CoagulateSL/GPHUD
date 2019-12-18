@@ -37,7 +37,9 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param required New required flag state.
 	 */
-	public void setRequired(final Boolean required) {throw new UserInputStateException("Not valid on auto generated attribute");}
+	public void setRequired(final Boolean required) {
+		throw new UserInputStateException("Not valid on auto generated attribute");
+	}
 
 	@Nonnull
 	public abstract String getDefaultValue();
@@ -47,7 +49,9 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param defaultvalue New default value
 	 */
-	public void setDefaultValue(final String defaultvalue) {throw new UserInputStateException("Not valid on auto generated attribute");}
+	public void setDefaultValue(final String defaultvalue) {
+		throw new UserInputStateException("Not valid on auto generated attribute");
+	}
 
 	public abstract boolean getSelfModify();
 
@@ -56,7 +60,9 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param selfmodify Character can self modify the attribute
 	 */
-	public void setSelfModify(final Boolean selfmodify) {throw new UserInputStateException("Not valid on auto generated attribute");}
+	public void setSelfModify(final Boolean selfmodify) {
+		throw new UserInputStateException("Not valid on auto generated attribute");
+	}
 
 	public abstract boolean isKV();
 
@@ -105,7 +111,9 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param usesabilitypoints Flags new value
 	 */
-	public void setUsesAbilityPoints(final Boolean usesabilitypoints) {throw new SystemImplementationException("Not valid on auto generated attribute");}
+	public void setUsesAbilityPoints(final Boolean usesabilitypoints) {
+		throw new SystemImplementationException("Not valid on auto generated attribute");
+	}
 
 	/**
 	 * Deletes this attribute, and its data.

@@ -12,10 +12,12 @@ import java.lang.annotation.*;
  */
 public abstract class Permission {
 
-	public abstract Module getModule(State st);
 	public static final String RED="#ffdfdf";
 	public static final String YELLOW="#ffffdf";
 	public static final String GREEN="#dfffdf";
+
+	public abstract Module getModule(State st);
+
 	@Nonnull
 	public String getColor() {
 		if (power()==POWER.HIGH) { return RED; }
@@ -23,13 +25,6 @@ public abstract class Permission {
 		if (power()==POWER.LOW) { return GREEN; }
 		return "#dfdfdf";
 	}
-
-	/*
-		LOW - stuff that doesn't break the instance and that the admins can probably reverse (time consumingly)
-		MEDIUM - stuff that might break the instance, but can be repaired, or partially restored
-		HIGH - stuff that destroys things, likely to cause rollbacks if misused
-		 */
-	public enum POWER {LOW,MEDIUM,HIGH,UNKNOWN}
 
 	public abstract boolean isGenerated();
 
@@ -44,9 +39,20 @@ public abstract class Permission {
 
 	public abstract boolean grantable();
 
+	/*
+		LOW - stuff that doesn't break the instance and that the admins can probably reverse (time consumingly)
+		MEDIUM - stuff that might break the instance, but can be repaired, or partially restored
+		HIGH - stuff that destroys things, likely to cause rollbacks if misused
+		 */
+	public enum POWER {
+		LOW,
+		MEDIUM,
+		HIGH,
+		UNKNOWN
+	}
+
 	/**
 	 * Defines a module permission, declare these (repeatedly) on your module's constructor.
-	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented

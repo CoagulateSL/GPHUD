@@ -16,21 +16,21 @@ public class GenericXP extends QuotaedXP {
 
 	public GenericXP(final String name) {
 		super(-1);
-		myname = name;
+		myname=name;
 	}
 
 	@Nonnull
 	public String getName() { return myname; }
 
 	@Nonnull
-	public String poolName(final State st) {return "Experience." + myname;}
+	public String poolName(final State st) {return "Experience."+myname;}
 
 	@Nonnull
-	public String quotaKV(final State st) {return "Experience." + myname + "Limit"; }
+	public String quotaKV(final State st) {return "Experience."+myname+"Limit"; }
 
 	@Nonnull
-	public String periodKV(final State st) { return "Experience." + myname + "Period"; }
+	public String periodKV(final State st) { return "Experience."+myname+"Period"; }
 
-	public Module getModule() { return Modules.get(null, "Experience"); }
+	public Module getModule() { return Modules.get(null,"Experience"); }
 
 }

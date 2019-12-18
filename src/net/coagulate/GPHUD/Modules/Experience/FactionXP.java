@@ -26,6 +26,6 @@ public class FactionXP extends QuotaedXP {
 	@Nonnull
 	public String periodKV(final State st) { return "Faction.XPCycleLength"; }
 
-	public Module getModule() { return Modules.get(null, "Faction"); }
+	public Module getModule() { return Modules.get(null,"Faction"); }
 
 }

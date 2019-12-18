@@ -19,7 +19,7 @@ public class GenericXPPool extends Pool {
 
 	public GenericXPPool(final String name) {
 		super();
-		myname = name;
+		myname=name;
 	}
 
 	@Override
@@ -27,37 +27,47 @@ public class GenericXPPool extends Pool {
 
 	@Nonnull
 	@Override
-	public String description() { return myname + " pool"; }
+	public String description() { return myname+" pool"; }
 
 	@Nonnull
 	@Override
-	public String fullName() { return "Experience." + myname; }
+	public String fullName() { return "Experience."+myname; }
 
 	@Nonnull
 	@Override
 	public String name() { return myname; }
 
-	public void awardXP(@Nonnull final State st, @Nonnull final Char target, @Nullable final String reason, final int ammount, final boolean incontext) {
-		final State targetstate = State.getNonSpatial(target);
-		final float period = targetstate.getKV(fullName() + "XPPeriod").floatValue();
-		final int maxxp = targetstate.getKV(fullName() + "XPLimit").intValue();
-		final Pool pool = Modules.getPool(targetstate, "Experience." + myname + "XP");
-		final int awarded = target.sumPoolDays(pool, period);
+	public void awardXP(@Nonnull final State st,
+	                    @Nonnull final Char target,
+	                    @Nullable final String reason,
+	                    final int ammount,
+	                    final boolean incontext)
+	{
+		final State targetstate=State.getNonSpatial(target);
+		final float period=targetstate.getKV(fullName()+"XPPeriod").floatValue();
+		final int maxxp=targetstate.getKV(fullName()+"XPLimit").intValue();
+		final Pool pool=Modules.getPool(targetstate,"Experience."+myname+"XP");
+		final int awarded=target.sumPoolDays(pool,period);
 		if (awarded >= maxxp) {
-			throw new UserInputStateException("This character has already reached their " + pool.name() + " XP limit.  They will next be eligable for a point in " + target.poolNextFree(pool, maxxp, period));
+			throw new UserInputStateException("This character has already reached their "+pool.name()+" XP limit.  They will next be eligable for a point in "+target
+					.poolNextFree(pool,maxxp,period));
 		}
-		if ((awarded + ammount) > maxxp) {
-			throw new UserInputStateException("This will push the character beyond their " + pool.name() + " XP limit, they can be awarded " + (maxxp - awarded) + " XP right now");
+		if ((awarded+ammount)>maxxp) {
+			throw new UserInputStateException("This will push the character beyond their "+pool.name()+" XP limit, they can be awarded "+(maxxp-awarded)+" XP right now");
 		}
 		if (reason==null) { throw new UserInputEmptyException("You must supply a reason"); }
 		// else award xp :P
-		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Pool Add", pool.name() + "XP", null, ammount + "", reason);
-		target.addPool(st, pool, ammount, reason);
-		if (target != st.getCharacter()) {
+		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add",pool.name()+"XP",null,ammount+"",reason);
+		target.addPool(st,pool,ammount,reason);
+		if (target!=st.getCharacter()) {
 			if (incontext) {
-				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by " + st.getCharacter().getName() + " for " + reason);
+				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by "+st
+						.getCharacter()
+						.getName()+" for "+reason);
 			} else {
-				target.hudMessage("You were granted " + ammount + " point" + (ammount == 1 ? "" : "s") + " of " + pool.name() + " XP by ((" + st.getAvatar().getName() + ")) for " + reason);
+				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by (("+st
+						.getAvatar()
+						.getName()+")) for "+reason);
 			}
 		}
 	}

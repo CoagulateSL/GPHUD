@@ -13,7 +13,9 @@ public class PasswordInput extends TextInput {
 		super(name);
 	}
 
-	public PasswordInput(final String name, final String value) { super(name, value); }
+	public PasswordInput(final String name,
+	                     final String value)
+	{ super(name,value); }
 
 	@Nonnull
 	@Override

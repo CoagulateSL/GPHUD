@@ -23,41 +23,46 @@ import java.util.TreeMap;
 public class NameCache {
 
 	@Nullable
-	Map<Integer, String> avatarnames;
+	Map<Integer,String> avatarnames;
 	@Nullable
-	Map<Integer, String> characternames;
+	Map<Integer,String> characternames;
 	@Nullable
-	Map<Integer, String> instancenames;
+	Map<Integer,String> instancenames;
 	@Nullable
-	Map<Integer, String> regionnames;
+	Map<Integer,String> regionnames;
 
 	@Nonnull
-	private static Map<Integer, String> loadMap(final String tablename, final String idcolumn, final String namecolumn) {
-		final Map<Integer, String> results = new TreeMap<>();
-		final Results rows = GPHUD.getDB().dq("select " + idcolumn + "," + namecolumn + " from " + tablename);
-		for (final ResultsRow r : rows) {
-			results.put(r.getIntNullable(idcolumn), TableRow.getLink(r.getStringNullable(namecolumn), tablename, r.getInt(idcolumn)));
+	private static Map<Integer,String> loadMap(final String tablename,
+	                                           final String idcolumn,
+	                                           final String namecolumn)
+	{
+		final Map<Integer,String> results=new TreeMap<>();
+		final Results rows=GPHUD.getDB().dq("select "+idcolumn+","+namecolumn+" from "+tablename);
+		for (final ResultsRow r: rows) {
+			results.put(r.getIntNullable(idcolumn),
+			            TableRow.getLink(r.getStringNullable(namecolumn),tablename,r.getInt(idcolumn))
+			           );
 		}
 		return results;
 	}
 
 	public String lookup(@Nonnull final User u) {
-		if (avatarnames == null) { avatarnames = User.loadMap(); }
+		if (avatarnames==null) { avatarnames=User.loadMap(); }
 		return avatarnames.get(u.getId());
 	}
 
 	public String lookup(@Nonnull final Char u) {
-		if (characternames == null) { characternames = loadMap("characters", "characterid", "name"); }
+		if (characternames==null) { characternames=loadMap("characters","characterid","name"); }
 		return characternames.get(u.getId());
 	}
 
 	public String lookup(@Nonnull final Instance u) {
-		if (instancenames == null) { instancenames = loadMap("instances", "instanceid", "name"); }
+		if (instancenames==null) { instancenames=loadMap("instances","instanceid","name"); }
 		return instancenames.get(u.getId());
 	}
 
 	public String lookup(@Nonnull final Region u) {
-		if (regionnames == null) { regionnames = loadMap("regions", "regionid", "name"); }
+		if (regionnames==null) { regionnames=loadMap("regions","regionid","name"); }
 		return regionnames.get(u.getId());
 	}
 }

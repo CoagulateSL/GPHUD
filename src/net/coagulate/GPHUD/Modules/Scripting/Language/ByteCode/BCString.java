@@ -8,34 +8,43 @@ import java.util.List;
 
 public class BCString extends ByteCodeDataType {
 	@Nonnull
-	private String content = "";
+	private String content="";
+
+	public BCString(final ParseNode n) {super(n);}
+
+	public BCString(final ParseNode n,
+	                @Nonnull final String content)
+	{
+		super(n);
+		if (content.length()>65535) {
+			throw new GSResourceLimitExceededException("Attempt to make string longer than 65535 characters");
+		}
+		this.content=content;
+	}
 
 	@Nonnull
 	public String getContent() { return content; }
 
-	public BCString(final ParseNode n) {super(n);}
-
-	public BCString(final ParseNode n, @Nonnull final String content) {
-		super(n);
-		if (content.length() > 65535) {
-			throw new GSResourceLimitExceededException("Attempt to make string longer than 65535 characters");
-		}
-		this.content=content;
-}
 	@Nonnull
 	public String explain() { return "String ("+content+")"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.String.get());
 		addShort(bytes,content.length());
-		for (final char c:content.toCharArray()) {
-			bytes.add((byte)c);
+		for (final char c: content.toCharArray()) {
+			bytes.add((byte) c);
 		}
 	}
+
 	@Nonnull
-	@Override public String htmlDecode() { return "String</td><td>"+content; }
+	@Override
+	public String htmlDecode() { return "String</td><td>"+content; }
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
 		vm.push(this);
 	}
 
@@ -47,7 +56,7 @@ public class BCString extends ByteCodeDataType {
 			return new BCList(node(),this).add(var);
 		}
 		// for everything else
-		return new BCString(node(), content +(var.toBCString()));
+		return new BCString(node(),content+(var.toBCString()));
 	}
 
 	@Nonnull
@@ -89,7 +98,10 @@ public class BCString extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public BCInteger toBCInteger() {
-		try { return new BCInteger(null,Integer.parseInt(getContent())); }
-		catch (@Nonnull final NumberFormatException e) { throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer"); }
+		try {
+			return new BCInteger(null,Integer.parseInt(getContent()));
+		} catch (@Nonnull final NumberFormatException e) {
+			throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer");
+		}
 	}
 }

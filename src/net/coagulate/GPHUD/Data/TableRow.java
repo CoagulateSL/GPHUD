@@ -23,15 +23,18 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  * @author Iain Price
  */
 public abstract class TableRow extends net.coagulate.Core.Database.TableRow implements Renderable, Comparable<TableRow> {
-	public static final int REFRESH_INTERVAL = 60;
+	public static final int REFRESH_INTERVAL=60;
+	final Map<String,CacheElement> cache=new HashMap<>();
 	boolean validated;
-	final Map<String, CacheElement> cache = new HashMap<>();
 
 	public TableRow(final int id) { super(id); }
 
 	@Nonnull
-	public static String getLink(final String name, final String target, final int id) {
-		return new Link(name, "/GPHUD/" + target + "/view/" + id).asHtml(null, true);
+	public static String getLink(final String name,
+	                             final String target,
+	                             final int id)
+	{
+		return new Link(name,"/GPHUD/"+target+"/view/"+id).asHtml(null,true);
 	}
 
 	@Nonnull
@@ -51,14 +54,14 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public void validate() {
 		if (validated) { return; }
-		final int count = dqinn( "select count(*) from " + getTableName() + " where " + getIdField() + "=?", getId());
-		if (count > 1) {
-			throw new TooMuchDataException("Too many rows - got " + count + " instead of 1 while validating " + getTableName() + " - " + getId());
+		final int count=dqinn("select count(*) from "+getTableName()+" where "+getIdField()+"=?",getId());
+		if (count>1) {
+			throw new TooMuchDataException("Too many rows - got "+count+" instead of 1 while validating "+getTableName()+" - "+getId());
 		}
-		if (count < 1) {
-			throw new NoDataException("No rows - got " + count + " instead of 1 while validating " + getTableName() + " - " + getId());
+		if (count<1) {
+			throw new NoDataException("No rows - got "+count+" instead of 1 while validating "+getTableName()+" - "+getId());
 		}
-		validated = true;
+		validated=true;
 	}
 
 	/**
@@ -66,6 +69,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * This is intended to ensure that 'things' make sense, such as the Character is part of the State's instance etc.
 	 *
 	 * @param st State
+	 *
 	 * @throws SystemException If there is a mismatch between state and this object
 	 */
 	public abstract void validate(State st);
@@ -79,12 +83,12 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nonnull
 	public String getName() {
 		try { return (String) cacheGet("name"); } catch (@Nonnull final CacheMiss ex) {}
-		final String name = getStringNullable(getNameField());
-		if (name == null) { return "<null>"; }
+		final String name=getStringNullable(getNameField());
+		if (name==null) { return "<null>"; }
 		if ("".equals(name)) { return "<blank>"; }
-		final int cachetime = getNameCacheTime();
-		if (cachetime == 0) { return name; } // dont cache some things
-		return (String) cachePut("name", name, getNameCacheTime());
+		final int cachetime=getNameCacheTime();
+		if (cachetime==0) { return name; } // dont cache some things
+		return (String) cachePut("name",name,getNameCacheTime());
 	}
 
 	protected abstract int getNameCacheTime();
@@ -94,14 +98,14 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		try {
 			return getName();
 		} catch (@Nonnull final DBException ex) {
-			GPHUD.getLogger().log(SEVERE, "SAFE MODE SQLEXCEPTION", ex);
+			GPHUD.getLogger().log(SEVERE,"SAFE MODE SQLEXCEPTION",ex);
 			return "SQLEXCEPTION";
 		}
 	}
 
 	@Nonnull
 	@Override
-	public String toString() { return getNameSafe() + "[#" + getId() + "]"; }
+	public String toString() { return getNameSafe()+"[#"+getId()+"]"; }
 
 	@Nonnull
 	@Override
@@ -111,34 +115,42 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
 		if (!rich) { return getNameSafe(); }
-		return getLink(getNameSafe(), getLinkTarget(), getId());
+		return getLink(getNameSafe(),getLinkTarget(),getId());
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() { return null; }
 
-	public int resolveToID(@Nonnull final State st, @Nullable final String s, final boolean instancelocal) {
-		final boolean debug = false;
-		if (s == null) { return 0; }
+	public int resolveToID(@Nonnull final State st,
+	                       @Nullable final String s,
+	                       final boolean instancelocal)
+	{
+		final boolean debug=false;
+		if (s==null) { return 0; }
 		if (s.isEmpty()) { return 0; }
 		try {
 			// is it an ID
-			final int id = Integer.parseInt(s);
-			if (id > 0) { return id; }
+			final int id=Integer.parseInt(s);
+			if (id>0) { return id; }
 		} catch (@Nonnull final NumberFormatException e) {} // not a number then :P
 		try {
 			final int id;
 			if (instancelocal) {
-				id = dqinn( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ? and instanceid=?", s, st.getInstance().getId());
+				id=dqinn("select "+getIdField()+" from "+getTableName()+" where "+getNameField()+" like ? and instanceid=?",
+				         s,
+				         st.getInstance().getId()
+				        );
 			} else {
-				id = dqinn( "select " + getIdField() + " from " + getTableName() + " where " + getNameField() + " like ?", s);
+				id=dqinn("select "+getIdField()+" from "+getTableName()+" where "+getNameField()+" like ?",s);
 			}
-			if (id > 0) { return id; }
+			if (id>0) { return id; }
 		} catch (@Nonnull final NoDataException e) { } catch (@Nonnull final TooMuchDataException e) {
-			GPHUD.getLogger().warning("Multiple matches searching for " + s + " in " + getClass());
+			GPHUD.getLogger().warning("Multiple matches searching for "+s+" in "+getClass());
 		}
 		return 0;
 	}
@@ -150,63 +162,72 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	public abstract String getKVIdField();
 
 	public void kvcheck() {
-		if (getKVTable() == null || getKVIdField() == null) {
-			throw new SystemImplementationException("DBObject " + getClass().getName() + " does not support KV mappings");
+		if (getKVTable()==null || getKVIdField()==null) {
+			throw new SystemImplementationException("DBObject "+getClass().getName()+" does not support KV mappings");
 		}
 	}
 
-	public void setKV(final State st, @Nonnull final String key, @Nullable final String value) {
+	public void setKV(final State st,
+	                  @Nonnull final String key,
+	                  @Nullable final String value)
+	{
 		kvcheck();
-		String oldvalue = null;
-		try { oldvalue=dqs( "select v from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key); } catch (@Nonnull final NoDataException e) {}
-		if (value == null && oldvalue == null) { return; }
-		if (value != null && value.equals(oldvalue)) { return; }
-		Modules.validateKV(st, key);
-		if (value == null || value.isEmpty()) {
-			d("delete from " + getKVTable() + " where " + getKVIdField() + "=? and k like ?", getId(), key);
+		String oldvalue=null;
+		try {
+			oldvalue=dqs("select v from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
+		} catch (@Nonnull final NoDataException e) {}
+		if (value==null && oldvalue==null) { return; }
+		if (value!=null && value.equals(oldvalue)) { return; }
+		Modules.validateKV(st,key);
+		if (value==null || value.isEmpty()) {
+			d("delete from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
 		} else {
-			d("replace into " + getKVTable() + "(" + getKVIdField() + ",k,v) values(?,?,?)", getId(), key, value);
+			d("replace into "+getKVTable()+"("+getKVIdField()+",k,v) values(?,?,?)",getId(),key,value);
 		}
 	}
 
 	@Nonnull
-	public Map<String, String> loadKVs() {
+	public Map<String,String> loadKVs() {
 		kvcheck();
-		final Map<String, String> result = new TreeMap<>();
-		for (final ResultsRow row : dq("select k,v from " + getKVTable() + " where " + getKVIdField() + "=?", getId())) {
-			result.put(row.getStringNullable("k").toLowerCase(), row.getStringNullable("v"));
+		final Map<String,String> result=new TreeMap<>();
+		for (final ResultsRow row: dq("select k,v from "+getKVTable()+" where "+getKVIdField()+"=?",getId())) {
+			result.put(row.getStringNullable("k").toLowerCase(),row.getStringNullable("v"));
 		}
 		return result;
 	}
 
-	@Override
-	/** Provide a sorting order based on names.
+	/**
+	 * Provide a sorting order based on names.
 	 * Implements the comparison operator for sorting (TreeSet etc)
 	 * We rely on the names as the sorting order, and pass the buck to String.compareTo()
 	 */
+	@Override
 	public int compareTo(@Nonnull final TableRow t) {
 		/*if (!TableRow.class.isAssignableFrom(t.getClass())) {
 			throw new SystemImplementationException(t.getClass().getName() + " is not assignable from DBObject");
 		}*/
-		final String ours = getNameSafe();
-		final String theirs = t.getNameSafe();
+		final String ours=getNameSafe();
+		final String theirs=t.getNameSafe();
 		return ours.compareTo(theirs);
 	}
 
 	Object cacheGet(final String key) throws CacheMiss {
 		if (!cache.containsKey(key)) { throw new CacheMiss(); }
-		final CacheElement ele = cache.get(key);
+		final CacheElement ele=cache.get(key);
 		if (ele==null) { throw new CacheMiss(); }
-		if (ele.expires < getUnixTime()) {
+		if (ele.expires<getUnixTime()) {
 			cache.remove(key);
 			throw new CacheMiss();
 		}
 		return ele.element;
 	}
 
-	Object cachePut(final String key, final Object object, final int lifetimeseconds) {
-		final CacheElement ele = new CacheElement(object, getUnixTime() + lifetimeseconds);
-		cache.put(key, ele);
+	Object cachePut(final String key,
+	                final Object object,
+	                final int lifetimeseconds)
+	{
+		final CacheElement ele=new CacheElement(object,getUnixTime()+lifetimeseconds);
+		cache.put(key,ele);
 		return object;
 	}
 
@@ -214,9 +235,11 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		public final Object element;
 		public final int expires;
 
-		public CacheElement(final Object element, final int expires) {
-			this.element = element;
-			this.expires = expires;
+		public CacheElement(final Object element,
+		                    final int expires)
+		{
+			this.element=element;
+			this.expires=expires;
 		}
 	}
 

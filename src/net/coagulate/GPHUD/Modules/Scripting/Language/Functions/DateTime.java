@@ -9,8 +9,10 @@ import javax.annotation.Nonnull;
 
 public class DateTime {
 	@Nonnull
-	@GSFunctions.GSFunction(description = "Gets the current UNIX/Epoch time (e.g. llGetUnixTime)",notes = "",parameters = "",returns = "Integer - current Epoch time (number of seconds since 01/01/1970)")
-	public static BCInteger gsGetUnixTime(final State st, final GSVM vm) {
-		return new BCInteger(null, UnixTime.getUnixTime());
+	@GSFunctions.GSFunction(description="Gets the current UNIX/Epoch time (e.g. llGetUnixTime)", notes="", parameters="", returns="Integer - current Epoch time (number of seconds since 01/01/1970)")
+	public static BCInteger gsGetUnixTime(final State st,
+	                                      final GSVM vm)
+	{
+		return new BCInteger(null,UnixTime.getUnixTime());
 	}
 }

@@ -61,66 +61,82 @@ public abstract class KV extends NameComparable {
 				if (o instanceof Instance) { return true; }
 				return false;
 			case SERVER:
-				if (o instanceof Instance ||
-						o instanceof Region) { return true; }
+				if (o instanceof Instance || o instanceof Region) { return true; }
 				return false;
 			case NONSPATIAL:
-				if (o instanceof Instance ||
-						o instanceof CharacterGroup ||
-						o instanceof Char) { return true; }
+				if (o instanceof Instance || o instanceof CharacterGroup || o instanceof Char) { return true; }
 				return false;
 			case SPATIAL:
-				if (o instanceof Instance ||
-						o instanceof Region ||
-						o instanceof Zone ||
-						o instanceof Event) { return true; }
+				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event) {
+					return true;
+				}
 				return false;
 			case COMPLETE:
 				// probably should just return true but...
-				if (o instanceof Instance ||
-						o instanceof Region ||
-						o instanceof Zone ||
-						o instanceof Event ||
-						o instanceof CharacterGroup ||
-						o instanceof Char) { return true; }
-				throw new SystemImplementationException("KV of COMPLETE scope was passed unknown DBObject " + o.getClass().getName() + ".  Ammend whitelist or debug caller.");
+				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event || o instanceof CharacterGroup || o instanceof Char) {
+					return true;
+				}
+				throw new SystemImplementationException("KV of COMPLETE scope was passed unknown DBObject "+o.getClass()
+				                                                                                             .getName()+".  Ammend whitelist or debug caller.");
 			case ZONE:
 				if (o instanceof Zone) { return true; }
 				return false;
 			default:
-				throw new SystemImplementationException("Unhandled scope " + scope());
+				throw new SystemImplementationException("Unhandled scope "+scope());
 		}
 	}
 
 	public void assertAppliesTo(final TableRow o) {
 		if (!appliesTo(o)) {
-			throw new UserInputStateException("Can not apply scope " + scope() + " to " + name());
+			throw new UserInputStateException("Can not apply scope "+scope()+" to "+name());
 		}
 	}
 
-	public void setKV(@Nonnull final State st, @Nonnull final TableRow o, final String value) {
+	public void setKV(@Nonnull final State st,
+	                  @Nonnull final TableRow o,
+	                  final String value)
+	{
 		assertAppliesTo(o);
-		st.setKV(o, name(), value);
-		convey(st, value);
+		st.setKV(o,name(),value);
+		convey(st,value);
 	}
 
-	public void convey(@Nonnull final State st, final String value) {
+	public void convey(@Nonnull final State st,
+	                   final String value)
+	{
 		if (!conveyas().isEmpty()) {
-			final Set<Region> regions = st.getInstance().getRegions(false);
-			final JSONObject message = new JSONObject();
-			message.put("incommand", "broadcast");
-			message.put(conveyas(), value);
-			for (final Region r : regions) {
-				st.logger().log(FINE, "Conveying to " + r + " '" + name() + "' " + conveyas() + "=" + value);
-				final Transmission t = new Transmission(r, message);
+			final Set<Region> regions=st.getInstance().getRegions(false);
+			final JSONObject message=new JSONObject();
+			message.put("incommand","broadcast");
+			message.put(conveyas(),value);
+			for (final Region r: regions) {
+				st.logger().log(FINE,"Conveying to "+r+" '"+name()+"' "+conveyas()+"="+value);
+				final Transmission t=new Transmission(r,message);
 				t.start();
 			}
 		}
 	}
 
-	public enum KVSCOPE {INSTANCE, SERVER, SPATIAL, NONSPATIAL, CHARACTER, ZONE, EVENT, COMPLETE}
+	public enum KVSCOPE {
+		INSTANCE,
+		SERVER,
+		SPATIAL,
+		NONSPATIAL,
+		CHARACTER,
+		ZONE,
+		EVENT,
+		COMPLETE
+	}
 
-	public enum KVTYPE {TEXT, INTEGER, FLOAT, UUID, BOOLEAN, COMMAND, COLOR}
+	public enum KVTYPE {
+		TEXT,
+		INTEGER,
+		FLOAT,
+		UUID,
+		BOOLEAN,
+		COMMAND,
+		COLOR
+	}
     /* DEAD CODE?
     public  boolean exclusiveTo(DBObject o) {
          switch (scope()) {
@@ -150,11 +166,15 @@ public abstract class KV extends NameComparable {
 
 	// Configurable THINGS
 	// Characters, Events, Zones, Regions, Instances, Avatars (To be removed?), CharacterGroups (to be added)
-	public enum KVHIERARCHY {NONE, DELEGATING, AUTHORITATIVE, CUMULATIVE}
+	public enum KVHIERARCHY {
+		NONE,
+		DELEGATING,
+		AUTHORITATIVE,
+		CUMULATIVE
+	}
 
 	/**
 	 * Defines a KVS element.
-	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented

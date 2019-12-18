@@ -19,13 +19,13 @@ import java.util.Set;
  */
 public class MenuResponse implements Response {
 
+	private final List<Renderable> menu=new ArrayList<>();
 	@Nullable
 	private String header;
-	private final List<Renderable> menu = new ArrayList<>();
 
 	public MenuResponse() {}
 
-	public MenuResponse(@Nullable final String title) { header = title; }
+	public MenuResponse(@Nullable final String title) { header=title; }
 
 	public void add(final Renderable r) { menu.add(r); }
 
@@ -49,14 +49,16 @@ public class MenuResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		final StringBuilder s = new StringBuilder();
-		if (header != null && !header.isEmpty()) { s.append(new TextHeader(header).asHtml(st, rich)); }
-		for (final Renderable r : menu) {
-			if (s.length() > 0) {
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		final StringBuilder s=new StringBuilder();
+		if (header!=null && !header.isEmpty()) { s.append(new TextHeader(header).asHtml(st,rich)); }
+		for (final Renderable r: menu) {
+			if (s.length()>0) {
 				if (rich) { s.append("<br>"); } else { s.append(" | "); }
 			}
-			s.append(r.asHtml(st, rich));
+			s.append(r.asHtml(st,rich));
 		}
 		return s.toString();
 	}

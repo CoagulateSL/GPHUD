@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
 public class GenericXPLimitKV extends KV {
 	private final String myname;
 
-	public GenericXPLimitKV(final String name) { myname = name; }
+	public GenericXPLimitKV(final String name) { myname=name; }
 
 	public boolean isGenerated() { return true; }
 
 	@Nonnull
-	public String fullname() { return "Experience." + myname; }
+	public String fullname() { return "Experience."+myname; }
 
 	@Nonnull
 	public KVSCOPE scope() { return KVSCOPE.NONSPATIAL; }
@@ -24,7 +24,7 @@ public class GenericXPLimitKV extends KV {
 	public KVTYPE type() { return KVTYPE.INTEGER; }
 
 	@Nonnull
-	public String description() { return "Maximum " + myname + " per cycle"; }
+	public String description() { return "Maximum "+myname+" per cycle"; }
 
 	@Nonnull
 	public String editpermission() { return "Experience.ConfigureXP"; }

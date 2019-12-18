@@ -19,13 +19,13 @@ public class TabularResponse extends Table implements Response {
 
 	public TabularResponse() {}
 
-	public TabularResponse(@Nullable final String message) { title = message; }
+	public TabularResponse(@Nullable final String message) { title=message; }
 
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
-		final JSONObject j = new JSONObject();
-		j.put("message", asText(st));
+		final JSONObject j=new JSONObject();
+		j.put("message",asText(st));
 		return j;
 	}
 
@@ -37,18 +37,20 @@ public class TabularResponse extends Table implements Response {
 
 	@Nonnull
 	public String asText(final State st) {
-		String s = "";
-		if (title != null && !title.isEmpty()) { s += new TextHeader(title).asText(st); }
-		s += super.asText(st);
+		String s="";
+		if (title!=null && !title.isEmpty()) { s+=new TextHeader(title).asText(st); }
+		s+=super.asText(st);
 		return s;
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		String s = "";
-		if (title != null && !title.isEmpty()) { s += new TextHeader(title).asHtml(st, rich); }
-		s += super.asHtml(st, rich);
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		String s="";
+		if (title!=null && !title.isEmpty()) { s+=new TextHeader(title).asHtml(st,rich); }
+		s+=super.asHtml(st,rich);
 		return s;
 	}
 }

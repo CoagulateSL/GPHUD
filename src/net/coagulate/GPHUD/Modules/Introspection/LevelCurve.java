@@ -16,18 +16,20 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class LevelCurve {
-	@URLs(url = "/introspection/levelcurve")
-	@SideSubMenus(name = "Level Curve", priority = 1)
-	public static void createForm(@Nonnull final State st, final SafeMap values) {
-		final Form f = st.form();
-		final Table t = new Table();
+	@URLs(url="/introspection/levelcurve")
+	@SideSubMenus(name="Level Curve", priority=1)
+	public static void createForm(@Nonnull final State st,
+	                              final SafeMap values)
+	{
+		final Form f=st.form();
+		final Table t=new Table();
 		f.add(t);
 		t.border(true);
-		for (int row = 0; row < 1000; row += 10) {
+		for (int row=0;row<1000;row+=10) {
 			t.openRow();
-			for (int column = 0; column < 10; column++) {
-				final int xp = row + column;
-				t.add(xp + "xp = Lvl " + Experience.toLevel(st, xp));
+			for (int column=0;column<10;column++) {
+				final int xp=row+column;
+				t.add(xp+"xp = Lvl "+Experience.toLevel(st,xp));
 			}
 		}
 	}

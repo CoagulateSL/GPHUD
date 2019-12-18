@@ -15,7 +15,7 @@ public class AttributeKV extends KV {
 	final Attribute attribute;
 
 	public AttributeKV(final Attribute attribute) {
-		this.attribute = attribute;
+		this.attribute=attribute;
 	}
 
 	@Override
@@ -44,13 +44,13 @@ public class AttributeKV extends KV {
 	@Nonnull
 	@Override
 	public String description() {
-		return "Character attribute " + attribute.getName();
+		return "Character attribute "+attribute.getName();
 	}
 
 	@Nonnull
 	@Override
 	public String editpermission() {
-		return "Characters.Set" + name();
+		return "Characters.Set"+name();
 	}
 
 	@Nonnull
@@ -74,7 +74,7 @@ public class AttributeKV extends KV {
 	@Nonnull
 	@Override
 	public String fullname() {
-		return "Characters." + name();
+		return "Characters."+name();
 	}
 
 	@Override

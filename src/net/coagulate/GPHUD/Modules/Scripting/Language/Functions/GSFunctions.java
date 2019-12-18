@@ -10,10 +10,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GSFunctions {
+	private static final Map<String,Method> gsfunctions=new HashMap<>();
+
 	public static Method get(final String functionname) {
 		if (gsfunctions.containsKey(functionname)) { return gsfunctions.get(functionname); }
 		throw new GSUnknownIdentifier("Function call "+functionname+" is not defined.");
 	}
+
+	public static void register(final String string,
+	                            final Method method)
+	{
+		if (gsfunctions.containsKey(string)) {
+			throw new SystemImplementationException("Duplicate definition for gsFunction "+string);
+		}
+		gsfunctions.put(string,method);
+	}
+
+	@Nonnull
+	public static Map<String,Method> getAll() { return gsfunctions; }
 
 	/**
 	 * Defines an exposed command.
@@ -24,16 +38,11 @@ public class GSFunctions {
 	@Target(ElementType.METHOD)
 	public @interface GSFunction {
 		@Nonnull String description();
+
 		@Nonnull String parameters();
+
 		@Nonnull String returns();
+
 		@Nonnull String notes();
 	}
-
-	private static final Map<String, Method> gsfunctions=new HashMap<>();
-	public static void register(final String string, final Method method) {
-		if (gsfunctions.containsKey(string)) { throw new SystemImplementationException("Duplicate definition for gsFunction "+string); }
-		gsfunctions.put(string,method);
-	}
-	@Nonnull
-	public static Map<String, Method> getAll() { return gsfunctions; }
 }

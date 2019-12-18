@@ -3,7 +3,10 @@ package net.coagulate.GPHUD;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.User.*;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.DumpableState;
 import net.coagulate.GPHUD.Data.Objects;
@@ -38,29 +41,11 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  */
 public class State extends DumpableState {
 
-	// map of post values read in the user interface
-	@Nullable
-	private SafeMap postmap;
-	@Nullable
-	private String callbackurl;
+	private final Map<TableRow,Map<String,String>> kvmaps=new HashMap<>();
 	@Nonnull
-	public Sources source = Sources.NONE;
-	@Nullable
-	private HttpRequest req;
-	@Nullable
-	private HttpResponse resp;
-
+	public Sources source=Sources.NONE;
 	@Nullable
 	public HttpContext context;
-	// system interface puts input here
-	@Nullable
-	private JSONObject json;
-	// system interface sets to raw json string
-	@Nullable
-	private InetAddress address;
-
-	@Nullable
-	private Header[] headers;
 	//requested host
 	@Nullable
 	public String host;
@@ -76,25 +61,12 @@ public class State extends DumpableState {
 	// avatar, from web interface, or second life
 	@Nullable
 	public User avatar;
-	// web interface cookie, used to logout things
-	@Nullable
-	private Cookies cookie;
 	@Nullable
 	public String cookiestring;
-	@Nullable
-	private Form form;
-	// system interface puts the object originating the request here
-	@Nullable
-	private User sourceowner;
-	@Nullable
-	private String sourcename;
-	@Nullable
-	private User sourcedeveloper;
 	@Nullable
 	public Region sourceregion;
 	@Nullable
 	public String sourcelocation;
-
 	// used by the HUD interface to stash things briefly
 	public String command;
 	@Nullable
@@ -111,12 +83,39 @@ public class State extends DumpableState {
 	public String objectkey;
 	@Nullable
 	public Objects object;
-
-	public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
 	@Nullable
 	Set<String> permissionscache;
 	@Nullable
 	Set<Attribute> attributes;
+	// map of post values read in the user interface
+	@Nullable
+	private SafeMap postmap;
+	@Nullable
+	private String callbackurl;
+	@Nullable
+	private HttpRequest req;
+	@Nullable
+	private HttpResponse resp;
+	// system interface puts input here
+	@Nullable
+	private JSONObject json;
+	// system interface sets to raw json string
+	@Nullable
+	private InetAddress address;
+	@Nullable
+	private Header[] headers;
+	// web interface cookie, used to logout things
+	@Nullable
+	private Cookies cookie;
+	@Nullable
+	private Form form;
+	// system interface puts the object originating the request here
+	@Nullable
+	private User sourceowner;
+	@Nullable
+	private String sourcename;
+	@Nullable
+	private User sourcedeveloper;
 	@Nullable
 	private String uri;
 	@Nullable
@@ -134,60 +133,68 @@ public class State extends DumpableState {
 	private Boolean superuser;
 	@Nullable
 	private Boolean instanceowner;
-	private final Map<TableRow, Map<String, String>> kvmaps = new HashMap<>();
 
 	public State() {}
 
-
-	public State(@Nullable final HttpRequest req, @Nullable final HttpResponse resp, @Nullable final HttpContext context) {
+	public State(@Nullable final HttpRequest req,
+	             @Nullable final HttpResponse resp,
+	             @Nullable final HttpContext context)
+	{
 		req(req);
 		resp(resp);
-		this.context = context;
+		this.context=context;
 	}
+
 
 	public State(@Nonnull final Char c) {
-		character = c;
-		avatar = c.getPlayedBy();
-		instance = c.getInstance();
-		region = c.getRegion();
-		zone = c.getZone();
+		character=c;
+		avatar=c.getPlayedBy();
+		instance=c.getInstance();
+		region=c.getRegion();
+		zone=c.getZone();
 	}
 
-	public State(@Nullable final Instance i, @Nullable final Region r, @Nullable final Zone z, @Nonnull final Char c) {
-		instance = i;
-		region = r;
-		zone = z;
-		character = c;
-		avatar = c.getPlayedBy();
+	public State(@Nullable final Instance i,
+	             @Nullable final Region r,
+	             @Nullable final Zone z,
+	             @Nonnull final Char c)
+	{
+		instance=i;
+		region=r;
+		zone=z;
+		character=c;
+		avatar=c.getPlayedBy();
 	}
 
 	@Nonnull
 	public static State getNonSpatial(@Nonnull final Char c) {
-		final State ret = new State();
+		final State ret=new State();
 		ret.setInstance(c.getInstance());
 		ret.setAvatar(c.getOwner());
 		ret.setCharacter(c);
 		return ret;
 	}
 
+	public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
+
 	// system interface sets to "runas" - defaults to object owner but can be overridden.  THIS IS "WHO WE ARE RUNNING AS"
 	// web interface sets this to the "logged in CHARACTER" object
 	// system interface sets to instance
 
 	public boolean hasModule(@Nonnull final String module) {
-		if (Modules.get(null, module).isEnabled(this)) { return true; }
+		if (Modules.get(null,module).isEnabled(this)) { return true; }
 		return false;
 	}
 
 	@Nonnull
 	public Set<String> getCharacterGroupTypes() {
-		final boolean debug = false;
-		final Set<String> types = new TreeSet<>();
+		final boolean debug=false;
+		final Set<String> types=new TreeSet<>();
 		types.add("");
-		for (final Attribute a : getAttributes()) {
-			if (a.getType() == Attribute.ATTRIBUTETYPE.GROUP) {
-				final String grouptype = a.getSubType();
-				if (grouptype != null && !grouptype.isEmpty()) { types.add(grouptype); }
+		for (final Attribute a: getAttributes()) {
+			if (a.getType()==Attribute.ATTRIBUTETYPE.GROUP) {
+				final String grouptype=a.getSubType();
+				if (grouptype!=null && !grouptype.isEmpty()) { types.add(grouptype); }
 			}
 		}
 		return types;
@@ -195,15 +202,15 @@ public class State extends DumpableState {
 
 	@Nullable
 	public Attribute getAttributeOrException(@Nonnull final String name) {
-		final Attribute a = getAttribute(name);
-		if (a == null) { throw new UserInputLookupFailureException("No such character attribute '" + name + "'"); }
+		final Attribute a=getAttribute(name);
+		if (a==null) { throw new UserInputLookupFailureException("No such character attribute '"+name+"'"); }
 		return a;
 	}
 
 	@Nullable
 	public Attribute getAttribute(@Nonnull final String name) {
-		final Set<Attribute> map = getAttributes();
-		for (final Attribute a : map) {
+		final Set<Attribute> map=getAttributes();
+		for (final Attribute a: map) {
 			if (name.equalsIgnoreCase(a.getName())) { return a; }
 		}
 		return null;
@@ -211,11 +218,11 @@ public class State extends DumpableState {
 
 	@Nullable
 	public Attribute getAttribute(@Nonnull final CharacterGroup group) {
-		final boolean debug = false;
-		final String keyword = group.getType();
-		for (final Attribute attr : getAttributes()) {
-			if (attr.getType()== Attribute.ATTRIBUTETYPE.GROUP) {
-				final String type = attr.getSubType();
+		final boolean debug=false;
+		final String keyword=group.getType();
+		for (final Attribute attr: getAttributes()) {
+			if (attr.getType()==Attribute.ATTRIBUTETYPE.GROUP) {
+				final String type=attr.getSubType();
 				if (type!=null && type.equals(keyword)) {
 					return attr;
 				}
@@ -225,9 +232,9 @@ public class State extends DumpableState {
 	}
 
 	public Logger logger() {
-		String subspace = getInstanceString();
-		if (avatar != null) { subspace += "." + avatar.getName(); }
-		if (character != null) { subspace += "." + character.getNameSafe(); }
+		String subspace=getInstanceString();
+		if (avatar!=null) { subspace+="."+avatar.getName(); }
+		if (character!=null) { subspace+="."+character.getNameSafe(); }
 		return GPHUD.getLogger(subspace);
 	}
 
@@ -240,21 +247,21 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public String getDebasedURL() {
-		if (uri == null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
+		if (uri==null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
 		if (uri.startsWith("/GPHUD/")) { return uri.substring(6); }
 		return uri;
 	}
 
 	@Nonnull
 	public String getDebasedNoQueryURL() {
-		String ret = getDebasedURL();
+		String ret=getDebasedURL();
 		//System.out.println("Pre parsing:"+ret);
-		if (ret.contains("?")) { ret = ret.substring(0, ret.indexOf("?")); }
+		if (ret.contains("?")) { ret=ret.substring(0,ret.indexOf("?")); }
 		//System.out.println("Post parsing:"+ret);
 		return ret;
 	}
 
-	public void setURL(final String url) { uri = url; }
+	public void setURL(final String url) { uri=url; }
 
 	@Nullable
 	public State getTargetNullable() { return target; }
@@ -266,7 +273,7 @@ public class State extends DumpableState {
 	}
 
 	public void setTarget(@Nonnull final Char c) {
-		target = new State(instance, region, zone, c);
+		target=new State(instance,region,zone,c);
 	}
 
 	@Nonnull
@@ -281,13 +288,13 @@ public class State extends DumpableState {
 	 */
 	@Nullable
 	public String getRegionName() {
-		if (region != null) { return region.getName(); }
+		if (region!=null) { return region.getName(); }
 		// this fallback is used as a stub when we're registering a region and nothing more.
 		return regionname;
 	}
 
 	public void setRegionName(final String regionname) {
-		this.regionname = regionname;
+		this.regionname=regionname;
 	}
 
 	/**
@@ -297,38 +304,38 @@ public class State extends DumpableState {
 	 */
 	@Nonnull
 	public Region getRegion() {
-		final Region r = getRegionNullable();
-		if (r == null) { throw new UserInputStateException("No region has been selected"); }
+		final Region r=getRegionNullable();
+		if (r==null) { throw new UserInputStateException("No region has been selected"); }
 		return r;
 	}
 
 	public void setRegion(@Nonnull final Region region) {
 		region.validate(this);
-		this.region = region;
+		this.region=region;
 	}
 
 	@Nullable
 	public Region getRegionNullable() {
-		if (region != null) { region.validate(this); }
+		if (region!=null) { region.validate(this); }
 		return region;
 	}
 
 	@Nonnull
 	public Char getCharacter() {
-		final Char c = getCharacterNullable();
-		if (c == null) { throw new UserInputStateException("No character is selected"); }
+		final Char c=getCharacterNullable();
+		if (c==null) { throw new UserInputStateException("No character is selected"); }
 		return c;
 	}
 
 	public void setCharacter(@Nullable final Char character) {
-		if (character != null) { character.validate(this); }
-		this.character = character;
-		if (this.character != null && avatar == null) { avatar = character.getPlayedBy(); }
+		if (character!=null) { character.validate(this); }
+		this.character=character;
+		if (this.character!=null && avatar==null) { avatar=character.getPlayedBy(); }
 	}
 
 	@Nullable
 	public Char getCharacterNullable() {
-		if (character != null) { character.validate(this); }
+		if (character!=null) { character.validate(this); }
 		return character;
 	}
 
@@ -342,7 +349,7 @@ public class State extends DumpableState {
 	}
 
 	public void setAvatar(@Nullable final User avatar) {
-		this.avatar = avatar;
+		this.avatar=avatar;
 	}
 
 	/**
@@ -352,31 +359,31 @@ public class State extends DumpableState {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		final Instance i = getInstanceNullable();
-		if (i == null) { throw new UserInputStateException("No instance has been selected"); }
+		final Instance i=getInstanceNullable();
+		if (i==null) { throw new UserInputStateException("No instance has been selected"); }
 		return i;
 	}
 
 	public void setInstance(@Nullable final Instance instance) {
-		if (instance != null) { instance.validate(this); }
-		this.instance = instance;
+		if (instance!=null) { instance.validate(this); }
+		this.instance=instance;
 	}
 
 	@Nullable
 	public Instance getInstanceNullable() {
-		if (instance != null) { instance.validate(this); }
+		if (instance!=null) { instance.validate(this); }
 		return instance;
 	}
 
 	@Nonnull
 	public String getInstanceString() {
-		if (instance == null) { return "<null>"; }
+		if (instance==null) { return "<null>"; }
 		return instance.toString();
 	}
 
 	@Nullable
 	public String getInstanceAndRegionString() {
-		return getInstanceString() + " @ " + getRegionName();
+		return getInstanceString()+" @ "+getRegionName();
 	}
 
 	@Nonnull
@@ -386,38 +393,38 @@ public class State extends DumpableState {
 
 	@Nullable
 	public String getURIString() {
-		if (uri == null) { return "<null>"; }
+		if (uri==null) { return "<null>"; }
 		return uri;
 	}
 
 	@Nonnull
 	public String getIdString() {
-		String response = "";
-		if (character != null) {
-			response += character.toString();
-			if (avatar != null) { response += "/Avatar:" + avatar + ""; }
+		String response="";
+		if (character!=null) {
+			response+=character.toString();
+			if (avatar!=null) { response+="/Avatar:"+avatar+""; }
 			return response;
 		}
-		if (avatar != null) { return avatar.toString(); }
+		if (avatar!=null) { return avatar.toString(); }
 		return "NOID#?";
 	}
 
-	public void flushSuperUser() { superuser = null; }
+	public void flushSuperUser() { superuser=null; }
 
-	private void populateSuperUser() { if (superuser == null && avatar != null) { superuser = avatar.isSuperAdmin(); } }
+	private void populateSuperUser() { if (superuser==null && avatar!=null) { superuser=avatar.isSuperAdmin(); } }
 
 	public boolean isSuperUser() {
 		populateSuperUser();
-		if (superuser == null) { return false; }
+		if (superuser==null) { return false; }
 		return superuser;
 	}
 
-	public void flushPermissionsCache() { permissionscache = null; }
+	public void flushPermissionsCache() { permissionscache=null; }
 
 	private void preparePermissionsCache() {
-		if (permissionscache == null && avatar != null && instance != null) {
-			permissionscache = new HashSet<>();
-			permissionscache.addAll(Permissions.getPermissions(instance, avatar));
+		if (permissionscache==null && avatar!=null && instance!=null) {
+			permissionscache=new HashSet<>();
+			permissionscache.addAll(Permissions.getPermissions(instance,avatar));
 		}
 	}
 
@@ -427,16 +434,17 @@ public class State extends DumpableState {
 	 * DO NOT USE THIS TO PROTECT SUPERUSER ONLY OPERATIONS IN ANY WAY, INSTANCE OWNERS CAN ALWAYS DO EVERYTHING THE PERMISSION SYSTEM ALLOWS.
 	 *
 	 * @param permission Permission string to check
+	 *
 	 * @return true/false
 	 */
 	public boolean hasPermission(@Nullable final String permission) {
-		if (permission == null || permission.isEmpty()) { return true; }
-//        Modules.validatePermission(permission);
+		if (permission==null || permission.isEmpty()) { return true; }
+		//        Modules.validatePermission(permission);
 		if (isSuperUser()) { return true; }
 		if (isInstanceOwner()) { return true; }
 		preparePermissionsCache();
-		if (permissionscache == null) { return false; }
-		for (final String check : permissionscache) { if (check.equalsIgnoreCase(permission)) { return true; } }
+		if (permissionscache==null) { return false; }
+		for (final String check: permissionscache) { if (check.equalsIgnoreCase(permission)) { return true; } }
 		return false;
 	}
 
@@ -445,12 +453,13 @@ public class State extends DumpableState {
 	 * Writes an error to the FORM if not present
 	 *
 	 * @param permission name of permission
+	 *
 	 * @return True/false
 	 */
 	public boolean hasPermissionOrAnnotateForm(final String permission) {
-		final boolean haspermission = hasPermission(permission);
+		final boolean haspermission=hasPermission(permission);
 		if (haspermission) { return true; }
-		form().add(new TextError("Insufficient permissions: You require " + permission));
+		form().add(new TextError("Insufficient permissions: You require "+permission));
 		return false;
 	}
 
@@ -460,88 +469,90 @@ public class State extends DumpableState {
 		return permissionscache;
 	}
 
-	public void flushInstanceOwner() { instanceowner = null; }
+	public void flushInstanceOwner() { instanceowner=null; }
 
 	private void prepareInstanceOwner() {
-		if (instanceowner == null && instance != null && avatar != null) {
-			instanceowner = instance.getOwner() == avatar;
+		if (instanceowner==null && instance!=null && avatar!=null) {
+			instanceowner=instance.getOwner()==avatar;
 		}
 	}
 
 	public boolean isInstanceOwner() {
 		prepareInstanceOwner();
-		if (instanceowner == null) { return false; }
+		if (instanceowner==null) { return false; }
 		return instanceowner;
 	}
 
 	public boolean deniedPermission(@Nullable final String permission) {
-		if (permission == null || permission.isEmpty()) { return true; }
+		if (permission==null || permission.isEmpty()) { return true; }
 		if (hasPermission(permission)) { return false; }
-		form().add(new TextError("Permission Denied!  You require permission " + permission + " to access this content"));
+		form().add(new TextError("Permission Denied!  You require permission "+permission+" to access this content"));
 		return true;
 	}
 
 	public void assertPermission(@Nullable final String permission) {
-		if (permission == null || permission.isEmpty()) { return; }
+		if (permission==null || permission.isEmpty()) { return; }
 		if (hasPermission(permission)) { return; }
-		throw new SystemConsistencyException("ALERT! Permission assertion failed on permission " + permission);
+		throw new SystemConsistencyException("ALERT! Permission assertion failed on permission "+permission);
 	}
 
-	private Map<String, String> getKVMap(@Nonnull final TableRow dbo) {
+	private Map<String,String> getKVMap(@Nonnull final TableRow dbo) {
 		if (!kvmaps.containsKey(dbo)) {
-			kvmaps.put(dbo, dbo.loadKVs());
+			kvmaps.put(dbo,dbo.loadKVs());
 		}
 		return kvmaps.get(dbo);
 	}
 
-	private boolean kvDefined(@Nonnull final TableRow o, @Nonnull final KV kv) {
-		final Map<String, String> kvmap = getKVMap(o);
+	private boolean kvDefined(@Nonnull final TableRow o,
+	                          @Nonnull final KV kv)
+	{
+		final Map<String,String> kvmap=getKVMap(o);
 		if (kvmap.containsKey(kv.fullname().toLowerCase())) { return true; }
 		return false;
 	}
 
 	@Nonnull
 	public KV getKVDefinition(@Nonnull final String kvname) {
-		return Modules.getKVDefinition(this, kvname);
+		return Modules.getKVDefinition(this,kvname);
 	}
 
 	@Nonnull
 	public List<TableRow> getTargetList(@Nonnull final KV kv) {
-		final boolean debug = false;
-		final KV.KVSCOPE scope = kv.scope();
+		final boolean debug=false;
+		final KV.KVSCOPE scope=kv.scope();
 		// create a ordered list of all the relevant objects, wether valued or not
-		final List<TableRow> check = new ArrayList<>();
+		final List<TableRow> check=new ArrayList<>();
 		// in DELEGATING order
-		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.SERVER || scope == KV.KVSCOPE.SPATIAL || scope == KV.KVSCOPE.INSTANCE || scope == KV.KVSCOPE.NONSPATIAL) {
-			if (instance != null) { check.add(instance); }
+		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SERVER || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.INSTANCE || scope==KV.KVSCOPE.NONSPATIAL) {
+			if (instance!=null) { check.add(instance); }
 		}
-		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.SERVER || scope == KV.KVSCOPE.SPATIAL) {
-			if (region != null) { check.add(region); }
+		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SERVER || scope==KV.KVSCOPE.SPATIAL) {
+			if (region!=null) { check.add(region); }
 		}
-		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.SPATIAL || scope == KV.KVSCOPE.ZONE) {
-			if (zone != null) { check.add(zone); }
+		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.ZONE) {
+			if (zone!=null) { check.add(zone); }
 		}
 		// events in ID order
-		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.SPATIAL || scope == KV.KVSCOPE.EVENT) {
-			final Map<Integer, Event> eventmap = new TreeMap<>();
-			for (final Event e : getInstance().getActiveEvents()) {
-				eventmap.put(e.getId(), e);
+		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.EVENT) {
+			final Map<Integer,Event> eventmap=new TreeMap<>();
+			for (final Event e: getInstance().getActiveEvents()) {
+				eventmap.put(e.getId(),e);
 			}
 			check.addAll(eventmap.values());
 		}
 		// charactergroups in ID order
-		if (scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.NONSPATIAL) {
-			if (character != null) {
-				final Map<Integer, CharacterGroup> map = new TreeMap<>();
-				for (final CharacterGroup c : character.getGroups()) {
-					map.put(c.getId(), c);
+		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
+			if (character!=null) {
+				final Map<Integer,CharacterGroup> map=new TreeMap<>();
+				for (final CharacterGroup c: character.getGroups()) {
+					map.put(c.getId(),c);
 				}
 				check.addAll(map.values());
 			}
 		}
 		//character
-		if (scope == KV.KVSCOPE.CHARACTER || scope == KV.KVSCOPE.COMPLETE || scope == KV.KVSCOPE.NONSPATIAL) {
-			if (character != null) { check.add(character); }
+		if (scope==KV.KVSCOPE.CHARACTER || scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
+			if (character!=null) { check.add(character); }
 		}
 		return check;
 	}
@@ -549,36 +560,37 @@ public class State extends DumpableState {
 	// tells us which is the target from where we would derive a value.
 	@Nullable
 	public TableRow determineTarget(@Nonnull final KV kv) {
-		final boolean debug = false;
-		final List<TableRow> targets = getTargetList(kv);
-		TableRow ret = null;
+		final boolean debug=false;
+		final List<TableRow> targets=getTargetList(kv);
+		TableRow ret=null;
 		switch (kv.hierarchy()) {
 			case NONE:
-				if (targets.size() > 1) {
-					throw new SystemImplementationException("NONE hierarchy type returned " + targets.size() + " results... unable to compute :P");
+				if (targets.size()>1) {
+					throw new SystemImplementationException("NONE hierarchy type returned "+targets.size()+" results... unable to compute :P");
 				}
-				if (targets.size() == 1) {
-					ret = targets.get(0); // "the" element
+				if (targets.size()==1) {
+					ret=targets.get(0); // "the" element
 				}
 				break;
 			case AUTHORITATIVE:
 				// from highest to lowest, first value we find takes precedence.
-				for (final TableRow dbo : targets) {
-					if (ret == null) { // already found? do nothing
-						if (kvDefined(dbo, kv) && getKV(dbo, kv.fullname()) != null) { ret = dbo; }
+				for (final TableRow dbo: targets) {
+					if (ret==null) { // already found? do nothing
+						if (kvDefined(dbo,kv) && getKV(dbo,kv.fullname())!=null) { ret=dbo; }
 					}
 				}
 				break;
 			case DELEGATING:
 				// rather the inverse logic, just take the 'lowest' match
-				for (final TableRow dbo : targets) {
-					if (kvDefined(dbo, kv) && getKV(dbo, kv.fullname()) != null) { ret = dbo; }
+				for (final TableRow dbo: targets) {
+					if (kvDefined(dbo,kv) && getKV(dbo,kv.fullname())!=null) { ret=dbo; }
 				}
 				break;
 			case CUMULATIVE:
-				throw new SystemImplementationException("Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV()");
+				throw new SystemImplementationException(
+						"Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV()");
 			default:
-				throw new SystemImplementationException("Unknown hierarchy type " + kv.hierarchy());
+				throw new SystemImplementationException("Unknown hierarchy type "+kv.hierarchy());
 		}
 		return ret;
 	}
@@ -586,82 +598,99 @@ public class State extends DumpableState {
 	@Nonnull
 	public KVValue getKV(@Nonnull final String kvname) {
 		try {
-			final StringBuilder path = new StringBuilder();
-			final boolean debug = false;
-			final KV kv = getKVDefinition(kvname);
-			if (kv.hierarchy() == KV.KVHIERARCHY.CUMULATIVE) {
-				float sum = 0;
-				boolean triggered = false;
-				final List<TableRow> list = getTargetList(kv);
+			final StringBuilder path=new StringBuilder();
+			final boolean debug=false;
+			final KV kv=getKVDefinition(kvname);
+			if (kv.hierarchy()==KV.KVHIERARCHY.CUMULATIVE) {
+				float sum=0;
+				boolean triggered=false;
+				final List<TableRow> list=getTargetList(kv);
 				if (!list.isEmpty()) {
-					for (final TableRow dbo : getTargetList(kv)) {
-						final String raw = getKV(dbo, kvname);
-						if (raw != null && !raw.isEmpty()) {
-							sum = sum + Float.parseFloat(raw);
-							triggered = true;
-							if (kv.type() == KV.KVTYPE.INTEGER) {
-								path.append(" +").append(Integer.parseInt(raw)).append(" (").append(dbo.getNameSafe()).append(")");
-							} else { path.append(" +").append(Float.parseFloat(raw)).append(" (").append(dbo.getNameSafe()).append(")"); }
+					for (final TableRow dbo: getTargetList(kv)) {
+						final String raw=getKV(dbo,kvname);
+						if (raw!=null && !raw.isEmpty()) {
+							sum=sum+Float.parseFloat(raw);
+							triggered=true;
+							if (kv.type()==KV.KVTYPE.INTEGER) {
+								path.append(" +")
+								    .append(Integer.parseInt(raw))
+								    .append(" (")
+								    .append(dbo.getNameSafe())
+								    .append(")");
+							} else {
+								path.append(" +")
+								    .append(Float.parseFloat(raw))
+								    .append(" (")
+								    .append(dbo.getNameSafe())
+								    .append(")");
+							}
 						}
 					}
 					if (triggered) {
-						if (kv.type() == KV.KVTYPE.INTEGER) { return new KVValue(((int) sum) + "", path.toString()); }
-						return new KVValue(sum + "", path.toString());
+						if (kv.type()==KV.KVTYPE.INTEGER) { return new KVValue(((int) sum)+"",path.toString()); }
+						return new KVValue(sum+"",path.toString());
 					}
 				}
-				return new KVValue(templateDefault(kv), "Template Default");
+				return new KVValue(templateDefault(kv),"Template Default");
 			} else {
-				final TableRow target = determineTarget(kv);
-				if (target == null) {
-					return new KVValue(templateDefault(kv), "No Target Template Default");
+				final TableRow target=determineTarget(kv);
+				if (target==null) {
+					return new KVValue(templateDefault(kv),"No Target Template Default");
 				}
-				final String value = getKV(target, kvname);
-				if (value == null) {
-					return new KVValue(templateDefault(kv), "Null Value Template Default");
+				final String value=getKV(target,kvname);
+				if (value==null) {
+					return new KVValue(templateDefault(kv),"Null Value Template Default");
 				}
-				return new KVValue(getKV(target, kvname), "Direct value from " + target.getClass().getSimpleName() + " " + target.getNameSafe());
+				return new KVValue(getKV(target,kvname),
+				                   "Direct value from "+target.getClass().getSimpleName()+" "+target.getNameSafe()
+				);
 			}
 		} catch (@Nonnull final RuntimeException re) {
-			throw new UserConfigurationException("Failed to evaluate KV " + kvname + ": " + re.getLocalizedMessage(), re);
+			throw new UserConfigurationException("Failed to evaluate KV "+kvname+": "+re.getLocalizedMessage(),re);
 		}
 	}
 
 	public String templateDefault(@Nonnull final KV kv) {
-		final String s = kv.defaultvalue();
+		final String s=kv.defaultvalue();
 		if (!kv.template()) { return s; }
-		boolean evaluate = false;
-		boolean isint = false;
-		if (kv.type() == KV.KVTYPE.FLOAT) { evaluate = true; }
-		if (kv.type() == KV.KVTYPE.INTEGER) {
-			evaluate = true;
-			isint = true;
+		boolean evaluate=false;
+		boolean isint=false;
+		if (kv.type()==KV.KVTYPE.FLOAT) { evaluate=true; }
+		if (kv.type()==KV.KVTYPE.INTEGER) {
+			evaluate=true;
+			isint=true;
 		}
-		return Templater.template(this, s, evaluate, isint);
+		return Templater.template(this,s,evaluate,isint);
 	}
 
-	public String getRawKV(@Nonnull final TableRow target, @Nonnull final String kvname) {
-		final KV kv = getKVDefinition(kvname);
+	public String getRawKV(@Nonnull final TableRow target,
+	                       @Nonnull final String kvname)
+	{
+		final KV kv=getKVDefinition(kvname);
 		//if (kv == null) { throw new UserInputLookupFailureException("Failed to resolve " + kvname + " to a valid KV entity"); }
 		return getKVMap(target).get(kvname.toLowerCase());
 	}
 
-	public String getKV(@Nonnull final TableRow target, @Nonnull final String kvname) {
-		final boolean debug = false;
-		final String s = getRawKV(target, kvname);
-		final KV kv = getKVDefinition(kvname);
+	public String getKV(@Nonnull final TableRow target,
+	                    @Nonnull final String kvname)
+	{
+		final boolean debug=false;
+		final String s=getRawKV(target,kvname);
+		final KV kv=getKVDefinition(kvname);
 		if (!kv.template()) { return s; }
-		boolean evaluate = false;
-		boolean isint = false;
-		if (kv.type() == KV.KVTYPE.FLOAT) { evaluate = true; }
-		if (kv.type() == KV.KVTYPE.INTEGER) {
-			evaluate = true;
-			isint = true;
+		boolean evaluate=false;
+		boolean isint=false;
+		if (kv.type()==KV.KVTYPE.FLOAT) { evaluate=true; }
+		if (kv.type()==KV.KVTYPE.INTEGER) {
+			evaluate=true;
+			isint=true;
 		}
 		String out;
-		try { out = Templater.template(this, s, evaluate, isint); } catch (@Nonnull final Exception e) {
-			throw new UserConfigurationException("Failed loading KV " + kvname + " for " + target.getTableName() + " " + target.getNameSafe() + " : " + e.getLocalizedMessage(), e);
+		try { out=Templater.template(this,s,evaluate,isint); } catch (@Nonnull final Exception e) {
+			throw new UserConfigurationException("Failed loading KV "+kvname+" for "+target.getTableName()+" "+target.getNameSafe()+" : "+e
+					.getLocalizedMessage(),e);
 		}
-		if (kv.type()== COLOR) {
+		if (kv.type()==COLOR) {
 			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }
 			while (out.endsWith(">>")) { out=out.replaceFirst(">>",">"); }
 		}
@@ -670,57 +699,63 @@ public class State extends DumpableState {
 
 	public void purgeCache(final TableRow dbo) { kvmaps.remove(dbo); }
 
-	public void setKV(@Nonnull final TableRow dbo, @Nonnull final String key, @Nullable String value) {
-		if (value != null && !value.isEmpty()) {
-			final KV definition = getKVDefinition(key);
+	public void setKV(@Nonnull final TableRow dbo,
+	                  @Nonnull final String key,
+	                  @Nullable String value)
+	{
+		if (value!=null && !value.isEmpty()) {
+			final KV definition=getKVDefinition(key);
 			if (!definition.template()) { // these are hard to verify :P
 				switch (definition.type()) {
 					case TEXT: // no checking here :P
 						break;
 					case INTEGER: // check it parses into an int
 						try { Integer.parseInt(value); } catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
+							throw new UserInputValidationParseException(key+" must be a whole number, you entered '"+value+"' ("+e
+									.getLocalizedMessage()+")");
 						}
 						break;
 					case FLOAT:
 						try { Float.parseFloat(value); } catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key + " must be a number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")");
+							throw new UserInputValidationParseException(key+" must be a number, you entered '"+value+"' ("+e
+									.getLocalizedMessage()+")");
 						}
 						break;
 					case UUID:
 						if (!Validators.uuid(value)) {
-							throw new UserInputValidationParseException(key + " must be a UUID , you entered '" + value + "'");
+							throw new UserInputValidationParseException(key+" must be a UUID , you entered '"+value+"'");
 						}
 						break;
 					case BOOLEAN:
-						value = value.toLowerCase();
+						value=value.toLowerCase();
 						if (!("true".equals(value) || "false".equals(value))) {
-							throw new UserInputValidationParseException(key + " must be true/false");
+							throw new UserInputValidationParseException(key+" must be true/false");
 						}
 						break;
 					case COMMAND:
-						try { Modules.getCommandNullable(this, value); } catch (@Nonnull final SystemException e) {
-							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error");
+						try { Modules.getCommandNullable(this,value); } catch (@Nonnull final SystemException e) {
+							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' and it gave a weird error");
 						} catch (@Nonnull final UserException f) {
-							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")");
+							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' ("+f
+									.getLocalizedMessage()+")");
 						}
 						break;
 					case COLOR:
 						if (!Validators.color(value)) {
-							throw new UserInputValidationParseException(key + " must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you entered '" + value + "')");
+							throw new UserInputValidationParseException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you entered '"+value+"')");
 						}
 						// does it have lsl surrounds?
 						break;
 					default:
-						throw new SystemImplementationException("No validator defined for KV type " + definition.type() + " in " + key);
+						throw new SystemImplementationException("No validator defined for KV type "+definition.type()+" in "+key);
 				}
 			}
-			if (definition.type() == COLOR) {
-				if (!value.contains("<") || !value.contains(">")) { value = "<" + value + ">"; }
+			if (definition.type()==COLOR) {
+				if (!value.contains("<") || !value.contains(">")) { value="<"+value+">"; }
 			}
 		}
 		purgeCache(dbo);
-		dbo.setKV(this, key, value);
+		dbo.setKV(this,key,value);
 		purgeCache(dbo);
 		// push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
 		getInstance().pushConveyances();
@@ -728,21 +763,22 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public State simulate(@Nullable Char c) {
-		final State simulated = new State();
+		final State simulated=new State();
 		simulated.setInstance(getInstance());
-		if (c == null) { c = getCharacterNullable(); }
+		if (c==null) { c=getCharacterNullable(); }
 		simulated.setCharacter(c);
-		final Set<Region> possibleregions = getInstance().getRegions(false);
-		final Region simulatedregion = new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random() * possibleregions.size())));
+		final Set<Region> possibleregions=getInstance().getRegions(false);
+		final Region simulatedregion=new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random()*possibleregions
+				.size())));
 		simulated.setRegion(simulatedregion);
-		final Set<Zone> possiblezones = simulatedregion.getZones();
+		final Set<Zone> possiblezones=simulatedregion.getZones();
 		if (!possiblezones.isEmpty()) {
-			simulated.zone = new ArrayList<>(possiblezones).get((int) (Math.floor(Math.random() * possiblezones.size())));
+			simulated.zone=new ArrayList<>(possiblezones).get((int) (Math.floor(Math.random()*possiblezones.size())));
 		}
 		return simulated;
 	}
 
-	public void purgeAttributeCache() { attributes = null; }
+	public void purgeAttributeCache() { attributes=null; }
 
 	/**
 	 * Get attributes for an instance.
@@ -751,11 +787,11 @@ public class State extends DumpableState {
 	 */
 	@Nonnull
 	public Set<Attribute> getAttributes() {
-		if (attributes != null) { return attributes; }
-		attributes = new TreeSet<>();
-		final Set<Attribute> db = Attribute.getAttributes(this);
+		if (attributes!=null) { return attributes; }
+		attributes=new TreeSet<>();
+		final Set<Attribute> db=Attribute.getAttributes(this);
 		attributes.addAll(db);
-		for (final Module module : Modules.getModules()) {
+		for (final Module module: Modules.getModules()) {
 			//System.out.println("checking module "+module.getName());
 			if (module.isEnabled(this)) {
 				//System.out.println("is enabled true "+module.getName());
@@ -767,25 +803,25 @@ public class State extends DumpableState {
 
 	@Nonnull
 	public String toString() {
-		final StringBuilder ret = new StringBuilder();
-		if (instance != null) {
-			if (ret.length() > 0) { ret.append(", "); }
+		final StringBuilder ret=new StringBuilder();
+		if (instance!=null) {
+			if (ret.length()>0) { ret.append(", "); }
 			ret.append("Instance:").append(instance.getName());
 		}
-		if (region != null) {
-			if (ret.length() > 0) { ret.append(", "); }
+		if (region!=null) {
+			if (ret.length()>0) { ret.append(", "); }
 			ret.append("Region:").append(region.getName());
 		}
-		if (zone != null) {
-			if (ret.length() > 0) { ret.append(", "); }
+		if (zone!=null) {
+			if (ret.length()>0) { ret.append(", "); }
 			ret.append("Zone:").append(zone.getName());
 		}
-		if (character != null) {
-			for (final CharacterGroup c : character.getGroups()) {
-				if (ret.length() > 0) { ret.append(", "); }
+		if (character!=null) {
+			for (final CharacterGroup c: character.getGroups()) {
+				if (ret.length()>0) { ret.append(", "); }
 				ret.append("Group:").append(c.getName());
 			}
-			if (ret.length() > 0) { ret.append(", "); }
+			if (ret.length()>0) { ret.append(", "); }
 			ret.append("Char:").append(character.getName());
 		}
 		return ret.toString();
@@ -797,7 +833,7 @@ public class State extends DumpableState {
 		if (vm!=null) {
 			try {
 				return vm.dumpStateToHtml();
-			} catch (@Nonnull final Throwable e) { return "Exceptioned: " + e; }
+			} catch (@Nonnull final Throwable e) { return "Exceptioned: "+e; }
 		}
 		return "";
 	}
@@ -832,17 +868,19 @@ public class State extends DumpableState {
 			if (character==null) {
 				if (instance==null) {
 					// YES avatar, NO character, NO instance
-					character=Char.getMostRecent(avatar); instance=getCharacter().getInstance();
+					character=Char.getMostRecent(avatar);
+					instance=getCharacter().getInstance();
 				} else {
 					// YES avatar, NO character, YES instance
-					character=Char.getMostRecent(avatar, instance);
+					character=Char.getMostRecent(avatar,instance);
 				}
 				updateCookie();
 			} else {
 				//noinspection ConstantConditions,StatementWithEmptyBody
 				if (instance==null) {
 					// YES avatar, YES character, NO instance
-					instance=character.getInstance(); updateCookie();
+					instance=character.getInstance();
+					updateCookie();
 				} else {
 					// YES avatar, YES character, YES instance
 				}
@@ -871,17 +909,17 @@ public class State extends DumpableState {
 		return sourcedeveloper;
 	}
 
+	public void setSourcedeveloper(@Nullable final User sourcedeveloper) {
+		this.sourcedeveloper=sourcedeveloper;
+	}
+
 	@Nullable
 	public User getSourcedeveloperNullable() {
 		return sourcedeveloper;
 	}
 
-	public void setSourcedeveloper(@Nullable final User sourcedeveloper) {
-		this.sourcedeveloper = sourcedeveloper;
-	}
-
 	public void setForm(@Nonnull final Form form) {
-		this.form = form;
+		this.form=form;
 	}
 
 	@Nonnull
@@ -891,7 +929,7 @@ public class State extends DumpableState {
 	}
 
 	public void setJson(@Nullable final JSONObject json) {
-		this.json = json;
+		this.json=json;
 	}
 
 	@Nonnull
@@ -900,31 +938,33 @@ public class State extends DumpableState {
 		return sourceowner;
 	}
 
+	public void setSourceowner(@Nullable final User sourceowner) {
+		this.sourceowner=sourceowner;
+	}
+
 	@Nullable
 	public User getSourceownerNullable() {
 		return sourceowner;
 	}
 
-	public void setSourceowner(@Nullable final User sourceowner) {
-		this.sourceowner = sourceowner;
-	}
-
-	@Nonnull public HttpResponse resp() {
+	@Nonnull
+	public HttpResponse resp() {
 		if (resp==null) { throw new SystemImplementationException("There is no HTTP Response object"); }
 		return resp;
 	}
 
 	public void resp(@Nullable final HttpResponse resp) {
-		this.resp = resp;
+		this.resp=resp;
 	}
 
-	@Nonnull public HttpRequest req() {
+	@Nonnull
+	public HttpRequest req() {
 		if (req==null) { throw new SystemImplementationException("There is no HTTP Request object"); }
 		return req;
 	}
 
 	public void req(@Nullable final HttpRequest req) {
-		this.req = req;
+		this.req=req;
 	}
 
 	@Nonnull
@@ -934,11 +974,12 @@ public class State extends DumpableState {
 	}
 
 	public void headers(@Nullable final Header[] headers) {
-		this.headers = headers;
+		this.headers=headers;
 	}
 
 	@Nullable
 	public String getSourcenameNullable() { return sourcename; }
+
 	@Nonnull
 	public String getSourcename() {
 		if (sourcename==null) { throw new SystemImplementationException("Source name is null"); }
@@ -946,7 +987,7 @@ public class State extends DumpableState {
 	}
 
 	public void setSourcename(@Nullable final String sourcename) {
-		this.sourcename = sourcename;
+		this.sourcename=sourcename;
 	}
 
 	@Nonnull
@@ -956,7 +997,7 @@ public class State extends DumpableState {
 	}
 
 	public void address(@Nullable final InetAddress address) {
-		this.address = address;
+		this.address=address;
 	}
 
 	@Nonnull
@@ -966,10 +1007,13 @@ public class State extends DumpableState {
 	}
 
 	public void cookie(@Nullable final Cookies cookie) {
-		this.cookie = cookie;
+		this.cookie=cookie;
 	}
 
-	public boolean hasCookie() { if (cookie==null) { return false; } return true; }
+	public boolean hasCookie() {
+		if (cookie==null) { return false; }
+		return true;
+	}
 
 	@Nonnull
 	public String callbackurl() {
@@ -978,7 +1022,7 @@ public class State extends DumpableState {
 	}
 
 	public void callbackurl(@Nullable final String callbackurl) {
-		this.callbackurl = callbackurl;
+		this.callbackurl=callbackurl;
 	}
 
 	@Nonnull
@@ -988,9 +1032,16 @@ public class State extends DumpableState {
 	}
 
 	public void postmap(@Nullable final SafeMap postmap) {
-		this.postmap = postmap;
+		this.postmap=postmap;
 	}
 
 
-	public enum Sources {NONE, SYSTEM, USER, CONSOLE, SCRIPTING, OBJECT}
+	public enum Sources {
+		NONE,
+		SYSTEM,
+		USER,
+		CONSOLE,
+		SCRIPTING,
+		OBJECT
+	}
 }

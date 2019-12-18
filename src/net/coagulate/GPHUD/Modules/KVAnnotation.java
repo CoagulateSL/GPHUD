@@ -11,22 +11,24 @@ import javax.annotation.Nonnull;
  */
 public class KVAnnotation extends KV {
 	KVS meta;
-	boolean generated = true;
+	boolean generated=true;
 	Module module;
 
 	KVAnnotation() {}
 
-	public KVAnnotation(final Module m, final KVS meta) {
-		module = m;
-		this.meta = meta;
+	public KVAnnotation(final Module m,
+	                    final KVS meta)
+	{
+		module=m;
+		this.meta=meta;
 		validate(null);
-		generated = false;
+		generated=false;
 	}
 
 	public boolean isGenerated() { return generated; }
 
 	@Nonnull
-	public String fullname() { return module.getName() + "." + meta.name(); }
+	public String fullname() { return module.getName()+"."+meta.name(); }
 
 	@Nonnull
 	public String name() { return meta.name(); }
@@ -59,7 +61,7 @@ public class KVAnnotation extends KV {
 
 	private void validate(final State st) {
 		if (!editpermission().isEmpty()) {
-			Modules.validatePermission(st, editpermission());
+			Modules.validatePermission(st,editpermission());
 		}
 	}
 

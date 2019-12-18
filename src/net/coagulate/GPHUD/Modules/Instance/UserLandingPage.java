@@ -18,24 +18,26 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class UserLandingPage {
-	@URLs(url = "/")
-	public static void index(@Nonnull final State st, @Nonnull final SafeMap values) {
-		final Form f = st.form();
+	@URLs(url="/")
+	public static void index(@Nonnull final State st,
+	                         @Nonnull final SafeMap values)
+	{
+		final Form f=st.form();
 		f.add(new TextHeader("Welcome to GPHUD"));
-		if (st.getInstanceNullable() == null) {
-			SessionSwitch.switchInstance(st, values);
+		if (st.getInstanceNullable()==null) {
+			SessionSwitch.switchInstance(st,values);
 			return;
 		}
-		if (st.getCharacterNullable() == null) {
-			final Set<Char> chars = Char.getCharacters(st.getInstance(), st.getAvatar());
-			if (chars.size() == 1) {
+		if (st.getCharacterNullable()==null) {
+			final Set<Char> chars=Char.getCharacters(st.getInstance(),st.getAvatar());
+			if (chars.size()==1) {
 				st.setCharacter(chars.iterator().next());
 				st.cookie().setCharacter(st.getCharacter());
 			} else {
-				SessionSwitch.switchCharacter(st, values);
+				SessionSwitch.switchCharacter(st,values);
 				return;
 			}
 		}
-		View.viewCharacter(st, values, st.getCharacter(), true);
+		View.viewCharacter(st,values,st.getCharacter(),true);
 	}
 }

@@ -14,14 +14,18 @@ public class Color implements Renderable {
 	final Renderable content;
 	final String color;
 
-	public Color(final String color, final Renderable content) {
-		this.content = content;
-		this.color = color;
+	public Color(final String color,
+	             final Renderable content)
+	{
+		this.content=content;
+		this.color=color;
 	}
 
-	public Color(final String color, final String content) {
-		this.content = new Text(content);
-		this.color = color;
+	public Color(final String color,
+	             final String content)
+	{
+		this.content=new Text(content);
+		this.color=color;
 	}
 
 	@Nonnull
@@ -32,14 +36,16 @@ public class Color implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		return "<font color=\"" + color + "\">" + content.asHtml(st, rich) + "</font>";
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		return "<font color=\""+color+"\">"+content.asHtml(st,rich)+"</font>";
 	}
 
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
-		final Set<Renderable> r = new HashSet<>();
+		final Set<Renderable> r=new HashSet<>();
 		r.add(content);
 		return r;
 	}

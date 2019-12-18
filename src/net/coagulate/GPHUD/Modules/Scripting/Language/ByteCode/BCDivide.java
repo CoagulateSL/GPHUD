@@ -15,14 +15,18 @@ public class BCDivide extends ByteCode {
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Divide (Pop two, divide, push result)"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Divide.get());
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
-		final ByteCodeDataType arg1 = vm.pop();
-		final ByteCodeDataType arg2 = vm.pop();
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
+		final ByteCodeDataType arg1=vm.pop();
+		final ByteCodeDataType arg2=vm.pop();
 		vm.push(arg1.divide(arg2));
 	}
 }

@@ -16,17 +16,22 @@ public class BCLoadIndexed extends ByteCode {
 
 	@Nonnull
 	public String explain() { return "LoadElement (Pop name, pop index, push variable value)"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.LoadIndexed.get());
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
 		final String name=vm.popString().getContent();
 		final int index=vm.popInteger().getContent();
 		final BCList list=vm.getList(name);
-		if (index>=list.getContent().size()) {
-			throw new GSArrayIndexOutOfBoundsException("List "+name+" is "+list.getContent().size()+" long but requested access to element "+index);
+		if (index >= list.getContent().size()) {
+			throw new GSArrayIndexOutOfBoundsException("List "+name+" is "+list.getContent()
+			                                                                   .size()+" long but requested access to element "+index);
 		}
 		vm.push(list.getContent().get(index));
 	}

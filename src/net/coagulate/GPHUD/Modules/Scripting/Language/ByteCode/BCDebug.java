@@ -10,7 +10,15 @@ import java.util.List;
 public class BCDebug extends ByteCode {
 	private final int line;
 	private final int column;
-	public BCDebug(final ParseNode n, final int line, final int column) { super(n); this.line=line; this.column=column; }
+
+	public BCDebug(final ParseNode n,
+	               final int line,
+	               final int column)
+	{
+		super(n);
+		this.line=line;
+		this.column=column;
+	}
 
 	@Nonnull
 	@Override
@@ -24,11 +32,17 @@ public class BCDebug extends ByteCode {
 		addShort(bytes,line);
 		addShort(bytes,column);
 	}
+
 	@Nonnull
-	@Override public String htmlDecode() { return "Debug</td><td>"+line+":"+column; }
+	@Override
+	public String htmlDecode() { return "Debug</td><td>"+line+":"+column; }
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
-		vm.column=column; vm.row=line;
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
+		vm.column=column;
+		vm.row=line;
 	}
 }

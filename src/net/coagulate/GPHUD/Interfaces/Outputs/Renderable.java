@@ -18,6 +18,7 @@ public interface Renderable {
 	 * Used for textual output into Second Life (llSay() etc)
 	 *
 	 * @param st state
+	 *
 	 * @return this element as text
 	 */
 	@Nonnull
@@ -28,12 +29,14 @@ public interface Renderable {
 	 * Used for non admin HTML interfaces like the HUD's web panel and Admin interface.
 	 * non admin interface sets rich to false - dont link to admin pages for entities etc.
 	 *
-	 * @param st state
+	 * @param st   state
 	 * @param rich Rich mode
+	 *
 	 * @return this element as html
 	 */
 	@Nonnull
-	String asHtml(State st, boolean rich);
+	String asHtml(State st,
+	              boolean rich);
 
 	@Nullable
 	Set<Renderable> getSubRenderables();

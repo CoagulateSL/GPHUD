@@ -17,28 +17,33 @@ import javax.annotation.Nonnull;
  */
 public abstract class ViewInstance {
 
-	@URLs(url = "/instances/view/*")
-	public static void viewInstance(@Nonnull final State st, final SafeMap values) {
+	@URLs(url="/instances/view/*")
+	public static void viewInstance(@Nonnull final State st,
+	                                final SafeMap values)
+	{
 		//System.out.println(st.uri);
-		final String[] split = st.getDebasedURL().split("/");
+		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
-		final String id = split[split.length - 1];
-		final Instance i = Instance.get(Integer.parseInt(id));
-		viewInstance(st, values, i);
+		final String id=split[split.length-1];
+		final Instance i=Instance.get(Integer.parseInt(id));
+		viewInstance(st,values,i);
 	}
 
-	public static void viewInstance(@Nonnull final State st, final SafeMap values, @Nonnull final Instance i) {
-		final String tz = st.getAvatar().getTimeZone();
-		final boolean full = false;
-		final Table map = new Table();
+	public static void viewInstance(@Nonnull final State st,
+	                                final SafeMap values,
+	                                @Nonnull final Instance i)
+	{
+		final String tz=st.getAvatar().getTimeZone();
+		final boolean full=false;
+		final Table map=new Table();
 		st.form().add(map);
 		map.openRow().add("Name").add(i.getName());
 		map.openRow().add("Owner").add(i.getOwner().getGPHUDLink());
-		for (final Region r : i.getRegions(false)) {
+		for (final Region r: i.getRegions(false)) {
 			map.openRow().add("Region").add(r).add(r.getOnlineStatus(tz));
-			map.openRow().add("").add("").add("Server " + r.getServerVersion(true));
-			map.openRow().add("").add("").add("HUD " + r.getHUDVersion(true));
-			if (r.needsUpdate()) { map.openRow().add("").add("").add(new Color("orange", "Update Required")); }
+			map.openRow().add("").add("").add("Server "+r.getServerVersion(true));
+			map.openRow().add("").add("").add("HUD "+r.getHUDVersion(true));
+			if (r.needsUpdate()) { map.openRow().add("").add("").add(new Color("orange","Update Required")); }
 		}
 	}
 

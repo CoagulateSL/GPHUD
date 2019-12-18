@@ -14,7 +14,7 @@ public class GenericXPAwardPermission extends Permission {
 
 	private final String myname;
 
-	public GenericXPAwardPermission(final String name) { myname = name; }
+	public GenericXPAwardPermission(final String name) { myname=name; }
 
 	@Override
 	public Module getModule(final State st) {
@@ -27,13 +27,13 @@ public class GenericXPAwardPermission extends Permission {
 	@Nonnull
 	@Override
 	public String name() {
-		return "award" + myname + "XP";
+		return "award"+myname+"XP";
 	}
 
 	@Nonnull
 	@Override
 	public String description() {
-		return "Allow this user to award " + myname + " XP, up to the weekly limits";
+		return "Allow this user to award "+myname+" XP, up to the weekly limits";
 	}
 
 	@Nonnull

@@ -15,11 +15,9 @@ import static net.coagulate.GPHUD.Data.Audit.audit;
 public class Set {
 
 	@Nonnull
-	@Command.Commands(description = "Set own health",context = Command.Context.CHARACTER)
+	@Command.Commands(description="Set own health", context=Command.Context.CHARACTER)
 	public static Response set(@Nonnull final State st,
-	                           @Argument.Arguments(description = "Ammount of health to set to",type = Argument.ArgumentType.INTEGER) final
-	                           Integer target
-	                           )
+	                           @Argument.Arguments(description="Ammount of health to set to", type=Argument.ArgumentType.INTEGER) final Integer target)
 	{
 		// is this command enabled?
 		if (!st.getKV("Health.allowSelfSet").boolValue()) {
@@ -29,7 +27,8 @@ public class Set {
 			return new ErrorResponse("You can not set your health to a negative value");
 		}
 		if (target>st.getKV("Health.initialHealth").intValue()) {
-			return new ErrorResponse("You can not set your health higher than "+st.getKV("Health.InitialHealth").intValue());
+			return new ErrorResponse("You can not set your health higher than "+st.getKV("Health.InitialHealth")
+			                                                                      .intValue());
 		}
 		// since health is actually a cumulative thing, lets see what the difference between the char's health and the total health is
 		final String oldvalue=st.getKV("Health.health").value();
@@ -37,7 +36,16 @@ public class Set {
 		final int setto=target;
 		st.setKV(st.getCharacter(),"health.health",setto+"");
 		st.purgeCache(st.getCharacter());
-		audit(st,Audit.OPERATOR.CHARACTER,st.getAvatarNullable(),st.getCharacter(),"Set","Health",oldvalue,target+"","Set character their own health");
+		audit(st,
+		      Audit.OPERATOR.CHARACTER,
+		      st.getAvatarNullable(),
+		      st.getCharacter(),
+		      "Set",
+		      "Health",
+		      oldvalue,
+		      target+"",
+		      "Set character their own health"
+		     );
 		return new SayResponse("set their health to "+target,st.getCharacter().getName());
 	}
 }

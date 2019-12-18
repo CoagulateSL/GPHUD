@@ -4,12 +4,15 @@ import javax.annotation.Nonnull;
 
 public class GSArrayIndexOutOfBoundsException extends GSInvalidExpressionException {
 	private static final long serialVersionUID=1L;
+
 	public GSArrayIndexOutOfBoundsException(final String reason) {
 		super(reason);
 	}
 
-	public GSArrayIndexOutOfBoundsException(final String reason, final Throwable cause) {
-		super(reason, cause);
+	public GSArrayIndexOutOfBoundsException(final String reason,
+	                                        final Throwable cause)
+	{
+		super(reason,cause);
 	}
 
 	@Nonnull

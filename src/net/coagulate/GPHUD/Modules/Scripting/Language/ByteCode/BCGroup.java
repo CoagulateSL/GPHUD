@@ -13,20 +13,40 @@ import java.util.List;
 public class BCGroup extends ByteCodeDataType {
 	@Nullable
 	private CharacterGroup content;
+
 	public BCGroup(final ParseNode node) { super(node); }
-	public BCGroup(final ParseNode node, @Nullable final CharacterGroup content) { super(node); this.content=content; }
+
+	public BCGroup(final ParseNode node,
+	               @Nullable final CharacterGroup content)
+	{
+		super(node);
+		this.content=content;
+	}
+
 	@Nonnull
 	public String explain() { return "Group ("+content+")"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Group.get());
-		if (content==null) { bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff); bytes.add((byte)0xff);return; }
+		if (content==null) {
+			bytes.add((byte) 0xff);
+			bytes.add((byte) 0xff);
+			bytes.add((byte) 0xff);
+			bytes.add((byte) 0xff);
+			return;
+		}
 		addInt(bytes,content.getId());
 	}
+
 	@Nonnull
-	@Override public String htmlDecode() { return "Avatar</td><td>"+getContent().getId(); }
+	@Override
+	public String htmlDecode() { return "Avatar</td><td>"+getContent().getId(); }
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
 		vm.push(this);
 	}
 

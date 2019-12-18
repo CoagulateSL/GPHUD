@@ -17,17 +17,19 @@ import java.util.Set;
  */
 public class EventsModule extends ModuleAnnotation {
 
-	public EventsModule(final String name, final ModuleDefinition def) {
-		super(name, def);
+	public EventsModule(final String name,
+	                    final ModuleDefinition def)
+	{
+		super(name,def);
 	}
 
 	@Nonnull
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(@Nonnull final State st) {
-		final Set<Event> events = st.getInstance().getEvents();
-		final Set<SideSubMenu> ret = new HashSet<>();
-		for (final Event event : events) {
-			ret.add(new StaticSideSubMenu(event.getName(), event.getId(), "/events/view/" + event.getId(), ""));
+		final Set<Event> events=st.getInstance().getEvents();
+		final Set<SideSubMenu> ret=new HashSet<>();
+		for (final Event event: events) {
+			ret.add(new StaticSideSubMenu(event.getName(),event.getId(),"/events/view/"+event.getId(),""));
 		}
 		return ret;
 	}

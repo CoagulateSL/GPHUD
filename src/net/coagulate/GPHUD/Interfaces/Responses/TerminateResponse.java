@@ -19,14 +19,14 @@ public class TerminateResponse implements Response {
 	final String reason;
 
 	public TerminateResponse(final String r) {
-		reason = r;
+		reason=r;
 	}
 
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
-		final JSONObject j = new JSONObject();
-		j.put("terminate", reason);
+		final JSONObject j=new JSONObject();
+		j.put("terminate",reason);
 		return j;
 	}
 
@@ -39,13 +39,15 @@ public class TerminateResponse implements Response {
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		throw new SystemConsistencyException("This request is TERMINATED - " + reason);
+		throw new SystemConsistencyException("This request is TERMINATED - "+reason);
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		throw new SystemConsistencyException("This request is TERMINATED - " + reason);
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		throw new SystemConsistencyException("This request is TERMINATED - "+reason);
 	}
 
 	@Nullable

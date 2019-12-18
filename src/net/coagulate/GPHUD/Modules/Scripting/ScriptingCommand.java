@@ -15,12 +15,17 @@ import java.util.List;
 
 public class ScriptingCommand extends Command {
 	final Scripts script;
+
 	public ScriptingCommand(final Scripts script) { this.script=script; }
+
 	@Nonnull
 	@Override
 	public Method getMethod() {
-		try { return getClass().getMethod("execute",State.class); }
-		catch (@Nonnull final NoSuchMethodException e) { throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",e); }
+		try { return getClass().getMethod("execute",State.class); } catch (@Nonnull final NoSuchMethodException e) {
+			throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",
+			                                        e
+			);
+		}
 	}
 
 	@Nonnull
@@ -79,7 +84,7 @@ public class ScriptingCommand extends Command {
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
-		 return new ArrayList<>();
+		return new ArrayList<>();
 	}
 
 	@Override

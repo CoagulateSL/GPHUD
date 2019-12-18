@@ -14,11 +14,11 @@ public abstract class ZoneTransport {
 
 	@Nonnull
 	public static String createZoneTransport(@Nonnull final Region r) {
-		final StringBuilder response = new StringBuilder();
-		for (final Zone z : r.getZones()) {
-			final String s = z.getTransportFormat();
+		final StringBuilder response=new StringBuilder();
+		for (final Zone z: r.getZones()) {
+			final String s=z.getTransportFormat();
 			//if (s != null) {
-			if (response.length() > 0) { response.append("|"); }
+			if (response.length()>0) { response.append("|"); }
 			response.append(s);
 			//}
 		}

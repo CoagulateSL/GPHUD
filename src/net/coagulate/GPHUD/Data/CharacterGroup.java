@@ -26,28 +26,40 @@ public class CharacterGroup extends TableRow {
 
 	protected CharacterGroup(final int id) { super(id); }
 
-	static void wipeKV(@Nonnull final Instance instance, final String key) {
-		final String kvtable = "charactergroupkvstore";
-		final String maintable = "charactergroups";
-		final String idcolumn = "charactergroupid";
-		GPHUD.getDB().d("delete from " + kvtable + " using " + kvtable + "," + maintable + " where " + kvtable + ".k like ? and " + kvtable + "." + idcolumn + "=" + maintable + "." + idcolumn + " and " + maintable + ".instanceid=?", key, instance.getId());
+	static void wipeKV(@Nonnull final Instance instance,
+	                   final String key)
+	{
+		final String kvtable="charactergroupkvstore";
+		final String maintable="charactergroups";
+		final String idcolumn="charactergroupid";
+		GPHUD.getDB()
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		        key,
+		        instance.getId()
+		       );
 	}
 
 	@Nonnull
-	public static JSONObject createChoice(final State st, final Attribute a) {
+	public static JSONObject createChoice(final State st,
+	                                      final Attribute a)
+	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	// open groups only
-	public static void createChoice(@Nonnull final State st, @Nonnull final JSONObject json, final String prefix, @Nonnull final Attribute a) {
-		final boolean debug = false;
-		json.put(prefix + "type", "SELECT");
-		json.put(prefix + "name", "value");
-		int count = 0;
-		for (final CharacterGroup cg : st.getInstance().getGroupsForKeyword(a.getSubType())) {
+	public static void createChoice(@Nonnull final State st,
+	                                @Nonnull final JSONObject json,
+	                                final String prefix,
+	                                @Nonnull final Attribute a)
+	{
+		final boolean debug=false;
+		json.put(prefix+"type","SELECT");
+		json.put(prefix+"name","value");
+		int count=0;
+		for (final CharacterGroup cg: st.getInstance().getGroupsForKeyword(a.getSubType())) {
 			//System.out.println("Scanning CG "+cg.getNameSafe());
 			if (cg.isOpen()) {
-				json.put(prefix + "button" + count, cg.getName());
+				json.put(prefix+"button"+count,cg.getName());
 				count++;
 			}
 		}
@@ -58,12 +70,15 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @param st   State
 	 * @param name Name of group
+	 *
 	 * @return CharacterGroup
 	 */
 	@Nullable
-	public static CharacterGroup resolve(@Nonnull final State st, final String name) {
-		final int id = new CharacterGroup(-1).resolveToID(st, name, true);
-		if (id == 0) { return null; }
+	public static CharacterGroup resolve(@Nonnull final State st,
+	                                     final String name)
+	{
+		final int id=new CharacterGroup(-1).resolveToID(st,name,true);
+		if (id==0) { return null; }
 		return get(id);
 	}
 
@@ -71,23 +86,31 @@ public class CharacterGroup extends TableRow {
 	 * Factory style constructor
 	 *
 	 * @param id the ID number we want to get
+	 *
 	 * @return A Region representation
 	 */
 	@Nonnull
 	public static CharacterGroup get(final int id) {
-		return (CharacterGroup) factoryPut("CharacterGroup", id, new CharacterGroup(id));
+		return (CharacterGroup) factoryPut("CharacterGroup",id,new CharacterGroup(id));
 	}
 
 	/**
 	 * Find a character group by name.
 	 *
 	 * @param name Name of character group to locate
+	 *
 	 * @return Character group, or null if not found
 	 */
 	@Nullable
-	public static CharacterGroup find(final String name, @Nonnull final Instance i) {
+	public static CharacterGroup find(final String name,
+	                                  @Nonnull final Instance i)
+	{
 		try {
-			final Integer id = GPHUD.getDB().dqi( "select charactergroupid from charactergroups where name like ? and instanceid=?", name, i.getId());
+			final Integer id=GPHUD.getDB()
+			                      .dqi("select charactergroupid from charactergroups where name like ? and instanceid=?",
+			                           name,
+			                           i.getId()
+			                          );
 			if (id==null) { return null; }
 			return get(id);
 		} catch (@Nonnull final NoDataException e) { return null; }
@@ -132,10 +155,10 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nonnull
 	public Set<Char> getMembers() {
-		final Set<Char> members = new TreeSet<>();
-		final Results results = dq("select characterid from charactergroupmembers where charactergroupid=?", getId());
-		for (final ResultsRow r : results) {
-			final Char record = Char.get(r.getInt());
+		final Set<Char> members=new TreeSet<>();
+		final Results results=dq("select characterid from charactergroupmembers where charactergroupid=?",getId());
+		for (final ResultsRow r: results) {
+			final Char record=Char.get(r.getInt());
 			members.add(record);
 		}
 		return members;
@@ -145,7 +168,7 @@ public class CharacterGroup extends TableRow {
 	 * Delete this character group
 	 */
 	public void delete() {
-		d("delete from charactergroups where charactergroupid=?", getId());
+		d("delete from charactergroups where charactergroupid=?",getId());
 	}
 
 	/**
@@ -154,7 +177,7 @@ public class CharacterGroup extends TableRow {
 	 * @return Group type
 	 */
 	@Nullable
-	public String getType() { return dqs( "select type from charactergroups where charactergroupid=?", getId()); }
+	public String getType() { return dqs("select type from charactergroups where charactergroupid=?",getId()); }
 
 
 	/**
@@ -165,17 +188,21 @@ public class CharacterGroup extends TableRow {
 	 */
 	public void addMember(@Nonnull final Char character) {
 		// in group?
-		if (character.getInstance() != getInstance()) {
+		if (character.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
-		final int exists = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		if (exists > 0) { throw new UserInputDuplicateValueException("Character is already a member of group?"); }
+		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
+		                       getId(),
+		                       character.getId()
+		                      );
+		if (exists>0) { throw new UserInputDuplicateValueException("Character is already a member of group?"); }
 		// in competing group?
-		final CharacterGroup competition = character.getGroup(getType());
-		if (competition != null) {
-			throw new UserInputDuplicateValueException("Unable to join new group, already in a group of type " + getType() + " - " + competition.getName());
+		final CharacterGroup competition=character.getGroup(getType());
+		if (competition!=null) {
+			throw new UserInputDuplicateValueException("Unable to join new group, already in a group of type "+getType()+" - "+competition
+					.getName());
 		}
-		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)", getId(), character.getId());
+		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
 	}
 
 	/**
@@ -184,12 +211,15 @@ public class CharacterGroup extends TableRow {
 	 * @param character Character to remove
 	 */
 	public void removeMember(@Nonnull final Char character) {
-		if (character.getInstance() != getInstance()) {
+		if (character.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
-		final int exists = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		d("delete from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		if (exists == 0) { throw new UserInputStateException("Character not in group."); }
+		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
+		                       getId(),
+		                       character.getId()
+		                      );
+		d("delete from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
+		if (exists==0) { throw new UserInputStateException("Character not in group."); }
 	}
 
 	/**
@@ -199,8 +229,8 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public Char getOwner() {
-		final Integer owner = dqi( "select owner from charactergroups where charactergroupid=?", getId());
-		if (owner == null) { return null; }
+		final Integer owner=dqi("select owner from charactergroups where charactergroupid=?",getId());
+		if (owner==null) { return null; }
 		return Char.get(owner);
 	}
 
@@ -210,10 +240,10 @@ public class CharacterGroup extends TableRow {
 	 * @param newowner Character to own the group
 	 */
 	public void setOwner(@Nullable final Char newowner) {
-		if (newowner == null) {
-			d("update charactergroups set owner=null where charactergroupid=?", getId());
+		if (newowner==null) {
+			d("update charactergroups set owner=null where charactergroupid=?",getId());
 		} else {
-			d("update charactergroups set owner=? where charactergroupid=?", newowner.getId(), getId());
+			d("update charactergroups set owner=? where charactergroupid=?",newowner.getId(),getId());
 		}
 	}
 
@@ -222,17 +252,22 @@ public class CharacterGroup extends TableRow {
 	 * Group owner is always an admin
 	 *
 	 * @param character Character to check
+	 *
 	 * @return true if admin, false otherwise
 	 */
 	public boolean isAdmin(@Nonnull final Char character) {
-		if (character.getInstance() != getInstance()) {
+		if (character.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
-		if (getOwner() == character) { return true; }
+		if (getOwner()==character) { return true; }
 		try {
-			final Integer adminflag = dqi( "select isadmin from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-			if (adminflag == null) { return false; }
-			if (adminflag == 1) { return true; }
+			final Integer adminflag=dqi(
+					"select isadmin from charactergroupmembers where charactergroupid=? and characterid=?",
+					getId(),
+					character.getId()
+			                           );
+			if (adminflag==null) { return false; }
+			if (adminflag==1) { return true; }
 			return false;
 		} catch (@Nonnull final NoDataException e) { return false; }
 	}
@@ -250,22 +285,31 @@ public class CharacterGroup extends TableRow {
 	 * @param character Character to update
 	 * @param admin     true/false admin status
 	 */
-	public void setAdmin(@Nonnull final Char character, final boolean admin) {
-		d("update charactergroupmembers set isadmin=? where charactergroupid=? and characterid=?", admin, getId(), character.getId());
+	public void setAdmin(@Nonnull final Char character,
+	                     final boolean admin)
+	{
+		d("update charactergroupmembers set isadmin=? where charactergroupid=? and characterid=?",admin,
+		  getId(),
+		  character.getId()
+		 );
 	}
 
 	/**
 	 * Check a character is a member of this group.
 	 *
 	 * @param character Character to search
+	 *
 	 * @return true/false
 	 */
 	public boolean hasMember(@Nonnull final Char character) {
-		final int count = dqinn( "select count(*) from charactergroupmembers where charactergroupid=? and characterid=?", getId(), character.getId());
-		if (count > 1) {
-			throw new TooMuchDataException("Matched too many members (" + count + ") for " + character + " in CG " + getId() + " - " + getName());
+		final int count=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
+		                      getId(),
+		                      character.getId()
+		                     );
+		if (count>1) {
+			throw new TooMuchDataException("Matched too many members ("+count+") for "+character+" in CG "+getId()+" - "+getName());
 		}
-		if (count == 1) { return true; }
+		if (count==1) { return true; }
 		return false;
 	}
 
@@ -278,7 +322,7 @@ public class CharacterGroup extends TableRow {
 	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
-		if (st.getInstance() != getInstance()) {
+		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("CharacterGroup / State Instance mismatch");
 		}
 	}
@@ -289,12 +333,12 @@ public class CharacterGroup extends TableRow {
 		return getBool("open");
 	}
 
-	public void setOpen(final Boolean b) { set("open", b); }
+	public void setOpen(final Boolean b) { set("open",b); }
 
 	@Nullable
 	public String getTypeNotNull() {
-		final String ret = getType();
-		if (ret == null) { return ""; }
+		final String ret=getType();
+		if (ret==null) { return ""; }
 		return ret;
 	}
 

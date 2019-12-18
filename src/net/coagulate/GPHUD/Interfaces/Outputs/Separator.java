@@ -21,7 +21,9 @@ public class Separator implements Renderable {
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
 		return "<hr>";
 	}
 

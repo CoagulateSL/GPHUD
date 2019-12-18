@@ -16,9 +16,11 @@ public class Hidden extends Input {
 
 	final String name;
 
-	public Hidden(final String name, final String value) {
-		this.name = name;
-		this.value = value;
+	public Hidden(final String name,
+	              final String value)
+	{
+		this.name=name;
+		this.value=value;
 	}
 
 	@Override
@@ -28,8 +30,10 @@ public class Hidden extends Input {
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		return "<input type=hidden name=\"" + getName() + "\" value=\"" + value + "\">";
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		return "<input type=hidden name=\""+getName()+"\" value=\""+value+"\">";
 	}
 
 	@Nullable

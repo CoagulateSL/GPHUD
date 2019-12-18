@@ -16,14 +16,15 @@ import javax.annotation.Nonnull;
 public class ScriptResponses {
 
 	@Nonnull
-	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
+	@Command.Commands(description="Internal use by scripting engine", permitScripting=false, context=Command.Context.CHARACTER, permitUserWeb=false, permitConsole=false)
 	public static Response characterResponse(@Nonnull final State st,
-	                                         @Nonnull @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER) final
-	                                         Integer processid,
-	                                         @Nonnull @Argument.Arguments(description = "The selected character",type = Argument.ArgumentType.CHARACTER) final
-	                                             Char response) {
-		final ScriptRuns run = ScriptRuns.get(processid);
-		if (run.getRespondant()!=st.getCharacter()) { return new ErrorResponse("Script was not expecting a response from you (?)"); }
+	                                         @Nonnull @Argument.Arguments(description="Script PID", type=Argument.ArgumentType.INTEGER) final Integer processid,
+	                                         @Nonnull @Argument.Arguments(description="The selected character", type=Argument.ArgumentType.CHARACTER) final Char response)
+	{
+		final ScriptRuns run=ScriptRuns.get(processid);
+		if (run.getRespondant()!=st.getCharacter()) {
+			return new ErrorResponse("Script was not expecting a response from you (?)");
+		}
 		final GSVM vm=new GSVM(run,st);
 		// inject response
 		vm.push(new BCCharacter(null,response));
@@ -31,14 +32,15 @@ public class ScriptResponses {
 	}
 
 	@Nonnull
-	@Command.Commands(description = "Internal use by scripting engine", permitScripting = false, context = Command.Context.CHARACTER,permitUserWeb = false,permitConsole = false)
+	@Command.Commands(description="Internal use by scripting engine", permitScripting=false, context=Command.Context.CHARACTER, permitUserWeb=false, permitConsole=false)
 	public static Response stringResponse(@Nonnull final State st,
-	                                      @Nonnull @Argument.Arguments(description="Script PID",type= Argument.ArgumentType.INTEGER) final
-	                                      Integer processid,
-	                                      @Nonnull @Argument.Arguments(description = "The string response",type = Argument.ArgumentType.TEXT_ONELINE, max = 1024) final
-	                                          String response) {
-		final ScriptRuns run = ScriptRuns.get(processid);
-		if (run.getRespondant()!=st.getCharacter()) { return new ErrorResponse("Script was not expecting a response from you (?)"); }
+	                                      @Nonnull @Argument.Arguments(description="Script PID", type=Argument.ArgumentType.INTEGER) final Integer processid,
+	                                      @Nonnull @Argument.Arguments(description="The string response", type=Argument.ArgumentType.TEXT_ONELINE, max=1024) final String response)
+	{
+		final ScriptRuns run=ScriptRuns.get(processid);
+		if (run.getRespondant()!=st.getCharacter()) {
+			return new ErrorResponse("Script was not expecting a response from you (?)");
+		}
 		final GSVM vm=new GSVM(run,st);
 		// inject response
 		vm.push(new BCString(null,response));

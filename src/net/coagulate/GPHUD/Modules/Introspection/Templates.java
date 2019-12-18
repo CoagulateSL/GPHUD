@@ -23,29 +23,31 @@ import static java.util.logging.Level.FINE;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Templates {
-	@URLs(url = "/introspection/templates")
-	@SideSubMenus(name = "Templates", priority = 25)
-	public static void listTemplates(@Nonnull final State st, final SafeMap values) {
-		final Form f = st.form();
+	@URLs(url="/introspection/templates")
+	@SideSubMenus(name="Templates", priority=25)
+	public static void listTemplates(@Nonnull final State st,
+	                                 final SafeMap values)
+	{
+		final Form f=st.form();
 		f.add(new TextHeader("Templates available"));
-		final Table t = new Table();
+		final Table t=new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Template Keyword").add("Description").add("Provider").add("Current value"));
-		final Map<String, String> templates = Templater.getTemplates(st);
-		for (final Map.Entry<String, String> entry : templates.entrySet()) {
-			final String template = entry.getKey();
+		final Map<String,String> templates=Templater.getTemplates(st);
+		for (final Map.Entry<String,String> entry: templates.entrySet()) {
+			final String template=entry.getKey();
 			//System.out.println(template);
-			final Method m = Templater.getMethod(st, template);
+			final Method m=Templater.getMethod(st,template);
 			t.openRow();
 			t.add(template);
 			t.add(entry.getValue());
-			if (m == null) { t.add("<i>NULL</i>"); } else {
-				t.add(m.getDeclaringClass().getName() + "." + m.getName() + "()");
+			if (m==null) { t.add("<i>NULL</i>"); } else {
+				t.add(m.getDeclaringClass().getName()+"."+m.getName()+"()");
 			}
 			String value;
-			try { value = Templater.getValue(st, template, false, false); } catch (@Nonnull final UserException e) {
-				value = "ERROR:" + e.getMessage();
-				st.logger().log(FINE, "Template gave user exception (not unexpected)", e);
+			try { value=Templater.getValue(st,template,false,false); } catch (@Nonnull final UserException e) {
+				value="ERROR:"+e.getMessage();
+				st.logger().log(FINE,"Template gave user exception (not unexpected)",e);
 			}
 			t.add(value);
 		}

@@ -15,30 +15,44 @@ public abstract class ByteCodeDataType extends ByteCode {
 	}
 
 	@Nullable
-	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) { return new BCString(node(),toString()+ var); }
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) { return new BCString(node(),toString()+var); }
+
 	@Nullable
-	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not subtract using type "+var.getClass().getSimpleName()); }
+	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
+		throw new GSInvalidExpressionException("Can not subtract using type "+var.getClass().getSimpleName());
+	}
+
 	@Nullable
-	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not multiply using type "+var.getClass().getSimpleName()); }
+	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
+		throw new GSInvalidExpressionException("Can not multiply using type "+var.getClass().getSimpleName());
+	}
+
 	@Nullable
-	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) { throw new GSInvalidExpressionException("Can not divide using type "+var.getClass().getSimpleName()); }
+	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
+		throw new GSInvalidExpressionException("Can not divide using type "+var.getClass().getSimpleName());
+	}
 
 	@Nonnull
 	public BCString toBCString() {
-		if (getClass().equals(BCString.class)) { return (BCString)this; }
-		throw new GSCastException("Can not cast "+ getClass().getSimpleName()+" to BCString");
+		if (getClass().equals(BCString.class)) { return (BCString) this; }
+		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCString");
 	}
+
 	@Nonnull
 	public BCInteger toBCInteger() {
-		if (getClass().equals(BCInteger.class)) { return (BCInteger)this; }
-		throw new GSCastException("Can not cast "+ getClass().getSimpleName()+" to BCInteger");
+		if (getClass().equals(BCInteger.class)) { return (BCInteger) this; }
+		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCInteger");
 	}
+
 	@Nonnull
 	public BCList toBCList() {
-		if (getClass().equals(BCList.class)) { return (BCList)this; } return new BCList(node(),this); }
+		if (getClass().equals(BCList.class)) { return (BCList) this; }
+		return new BCList(node(),this);
+	}
 
 	@Nonnull
 	public String toString() { return toBCString().getContent(); }
+
 	public int toInteger() { return toBCInteger().getContent(); }
 
 	@Nullable

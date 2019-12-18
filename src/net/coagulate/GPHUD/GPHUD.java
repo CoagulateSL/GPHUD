@@ -32,11 +32,11 @@ import static java.util.logging.Level.SEVERE;
  * @author Iain Price <gphud@predestined.net>
  */
 public class GPHUD {
-	public static final String VERSION = "v3.11.0";
-	public static final String VERSION_DATE = "Dec 18th 2019";
+	public static final String VERSION="v3.11.0";
+	public static final String VERSION_DATE="Dec 18th 2019";
 	// config KV store
-	private static final Map<String, String> CONFIG = new TreeMap<>();
-	public static String hostname = "UNSET";
+	private static final Map<String,String> CONFIG=new TreeMap<>();
+	public static String hostname="UNSET";
 	@Nullable
 	public static Integer nodeid;
 	public static boolean DEV; // make this auto detect some day... or in the ini file :P
@@ -45,7 +45,7 @@ public class GPHUD {
 	@Nullable
 	private static DBConnection db;
 
-	public static Logger getLogger(final String subspace) { return Logger.getLogger(log().getName() + "." + subspace); }
+	public static Logger getLogger(final String subspace) { return Logger.getLogger(log().getName()+"."+subspace); }
 
 	@Nonnull
 	public static Logger getLogger() {
@@ -70,30 +70,31 @@ public class GPHUD {
 	@SuppressWarnings("deprecation")
 	public static void main(@Nonnull final String[] args) {
 		LogHandler.initialise();
-		log = Logger.getLogger("net.coagulate.GPHUD");
+		log=Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
-		log().config("GPHUD Server starting up... " + VERSION);
+		log().config("GPHUD Server starting up... "+VERSION);
 		try {
-			hostname = java.net.InetAddress.getLocalHost().getHostName().replaceAll(".coagulate.net", "");
-			log().config("Server operating on node " + Interface.getNode());
+			hostname=java.net.InetAddress.getLocalHost().getHostName().replaceAll(".coagulate.net","");
+			log().config("Server operating on node "+Interface.getNode());
 			validateNode(hostname);
 		} catch (@Nonnull final UnknownHostException e) {
-			throw new SystemInitialisationException("Unable to resolve local host name", e);
+			throw new SystemInitialisationException("Unable to resolve local host name",e);
 		}
 
 		log().config("Loading configuration file...");
-		if (args.length != 1) {
-			log().severe("Incorrect number of command line parameters, should be exactly 1, the location of a configuration file.");
+		if (args.length!=1) {
+			log().severe(
+					"Incorrect number of command line parameters, should be exactly 1, the location of a configuration file.");
 			System.exit(1);
 		}
 
 		// config
 		loadConfig(args[0]);
-		log().config("Loaded " + CONFIG.size() + " configuration elements from the file");
+		log().config("Loaded "+CONFIG.size()+" configuration elements from the file");
 		validateConfig();
 
 		if ("1".equals(get("DEV"))) {
-			DEV = true;
+			DEV=true;
 			log().config("Configuration declares us as a DEVELOPMENT NODE");
 		}
 		// Initialise the Database layer
@@ -115,7 +116,7 @@ public class GPHUD {
 		while (true) // until shutdown time, however we do that
 		{
 			try {
-				final Maintenance thread = new Maintenance();
+				final Maintenance thread=new Maintenance();
 				thread.start();
 				try { Thread.sleep(45000); } catch (@Nonnull final InterruptedException ignored) { }
 				if (thread.isAlive()) {
@@ -138,7 +139,7 @@ public class GPHUD {
 				}
 
 			} catch (@Nonnull final Exception e) {
-				log().log(SEVERE, "Maintenance thread threw unchecked exception?", e);
+				log().log(SEVERE,"Maintenance thread threw unchecked exception?",e);
 			}
 		}
 		// error, unreachable code :P
@@ -148,76 +149,76 @@ public class GPHUD {
 	}
 
 	public static void loadConfig(@Nonnull final String filename) {
-		try (final BufferedReader file = new BufferedReader(new FileReader(filename))) {
-			String line = file.readLine();
-			while (line != null) {
-				line = line.trim();
-				if (line.length() != 0 && !line.startsWith("#")) {
+		try (final BufferedReader file=new BufferedReader(new FileReader(filename))) {
+			String line=file.readLine();
+			while (line!=null) {
+				line=line.trim();
+				if (line.length()!=0 && !line.startsWith("#")) {
 					// if its not blank or comment, then process as a "KEY=VALUE" line
-					final int splitat = line.indexOf('=');
-					if (splitat == -1 || splitat == (line.length() - 1)) {
+					final int splitat=line.indexOf('=');
+					if (splitat==-1 || splitat==(line.length()-1)) {
 						// = not found, or the split (=) is the last character, so finding the 'value' would probably array out of bounds.  Setting blank values is not supported :P
-						log().warning("Invalid configuration line: " + line);
+						log().warning("Invalid configuration line: "+line);
 					} else {
-						String key = line.substring(0, splitat);
-						final String value = line.substring(splitat + 1);
-						key = key.toUpperCase();
+						String key=line.substring(0,splitat);
+						final String value=line.substring(splitat+1);
+						key=key.toUpperCase();
 						if (CONFIG.containsKey(key)) {
-							log().warning("Duplicate definition of " + key + " in configuration file, using last declaration");
+							log().warning("Duplicate definition of "+key+" in configuration file, using last declaration");
 						}
-						CONFIG.put(key, value);
+						CONFIG.put(key,value);
 					}
 				}
-				line = file.readLine();
+				line=file.readLine();
 			}
 		} catch (@Nonnull final FileNotFoundException e) {
-			log().log(SEVERE, "File not found accessing " + filename, e);
+			log().log(SEVERE,"File not found accessing "+filename,e);
 			System.exit(1);
 		} catch (@Nonnull final IOException e) {
-			log().log(SEVERE, "IOException reading configuration file " + filename, e);
+			log().log(SEVERE,"IOException reading configuration file "+filename,e);
 			System.exit(1);
 		}
 	}
 
 	private static void validateConfig() {
 		// basically a list of musthaves
-		boolean ok = requireConfig("DBHOST");
-		ok = requireConfig("DBNAME") && ok;
-		ok = requireConfig("DBUSER") && ok;
-		ok = requireConfig("DBPASS") && ok;
+		boolean ok=requireConfig("DBHOST");
+		ok=requireConfig("DBNAME") && ok;
+		ok=requireConfig("DBUSER") && ok;
+		ok=requireConfig("DBPASS") && ok;
 		if (!ok) {
 			log().severe("Failed configuration validation.  Exiting.");
 			System.exit(1);
 		}
 		// support some default settings too
-		defaultConfig("PORT", "13579");
-		defaultConfig("UNAUTHENTICATEDSHUTDOWN", "0");
-		defaultConfig("DEV", "0");
+		defaultConfig("PORT","13579");
+		defaultConfig("UNAUTHENTICATEDSHUTDOWN","0");
+		defaultConfig("DEV","0");
 	}
 
 	private static boolean requireConfig(String keyword) {
-		keyword = keyword.toUpperCase();
+		keyword=keyword.toUpperCase();
 		if (CONFIG.containsKey(keyword)) { return true; }
-		log().severe("Missing mandatory configuration element '" + keyword + "'");
+		log().severe("Missing mandatory configuration element '"+keyword+"'");
 		return false;
 	}
 
-	private static void defaultConfig(String keyword, final String value) {
-		keyword = keyword.toUpperCase();
+	private static void defaultConfig(String keyword,
+	                                  final String value)
+	{
+		keyword=keyword.toUpperCase();
 		if (CONFIG.containsKey(keyword)) { return; }
-		CONFIG.put(keyword, value);
+		CONFIG.put(keyword,value);
 	}
 
 	public static String get(@Nonnull final String keyword) { return CONFIG.get(keyword.toUpperCase()); }
 
 	private static void validateNode(final String node) {
-		if ("luna".equalsIgnoreCase(node) ||
-				"sol".equalsIgnoreCase(node) ||
-				"saturn".equalsIgnoreCase(node) ||
-				"mars".equalsIgnoreCase(node) ||
-				"neptune".equalsIgnoreCase(node) ||
-				"pluto".equalsIgnoreCase(node)
-		) { return; }
+		if ("luna".equalsIgnoreCase(node) || "sol".equalsIgnoreCase(node) || "saturn".equalsIgnoreCase(node) || "mars".equalsIgnoreCase(
+				node) || "neptune".equalsIgnoreCase(node) || "pluto".equalsIgnoreCase(node))
+		{
+			return;
+		}
 		throw new SystemInitialisationException("Unrecognised node name, this would break the scheduler");
 	}
 
@@ -225,11 +226,11 @@ public class GPHUD {
 	// note zones 1 and 3 are left blank, to allow a little time desync safety (a few minutes worth, which is more than my system monitoring allows, but avoiding running them back to back is good).
 	// luna being a stand alone dev system runs both 1 and 3.  as does sol if DEV
 	public static boolean ourCycle(int cyclenumber) {
-		cyclenumber = cyclenumber % 2;
-		final String node = hostname;
+		cyclenumber=cyclenumber%2;
+		final String node=hostname;
 		if (DEV) { return true; }
-		if ("sol".equalsIgnoreCase(node) && cyclenumber == 0) { return true; }     // sol, runs slot 0 on production
-		if ("pluto".equalsIgnoreCase(node) && cyclenumber == 1) {
+		if ("sol".equalsIgnoreCase(node) && cyclenumber==0) { return true; }     // sol, runs slot 0 on production
+		if ("pluto".equalsIgnoreCase(node) && cyclenumber==1) {
 			return true;
 		}  // pluto only runs prod, and runs in slot 1
 		return false;
@@ -237,69 +238,87 @@ public class GPHUD {
 
 	@Nonnull
 	public static String environment() {
-		final String node = hostname;
-		if (DEV) { return "[==DEVELOPMENT // " + node + "==]\n \n"; }
-		return "[Production // " + node + "]\n \n";
+		final String node=hostname;
+		if (DEV) { return "[==DEVELOPMENT // "+node+"==]\n \n"; }
+		return "[Production // "+node+"]\n \n";
 	}
 
 	@Nonnull
 	public static String menuPanelEnvironment() {
-		return "&gt; " + (DEV ? "DEVELOPMENT" : "Production") + "<br>&gt; " + hostname + "<br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
+		return "&gt; "+(DEV?"DEVELOPMENT":"Production")+"<br>&gt; "+hostname+"<br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
 	}
 
 	private static void syncToMinute() {
-		int seconds = Calendar.getInstance().get(Calendar.SECOND);
-		seconds = 60 - seconds;
-		try {Thread.sleep((long) (seconds * 1000.0)); } catch (@Nonnull final InterruptedException ignored) {}
+		int seconds=Calendar.getInstance().get(Calendar.SECOND);
+		seconds=60-seconds;
+		try {Thread.sleep((long) (seconds*1000.0)); } catch (@Nonnull final InterruptedException ignored) {}
 	}
 
 	public static void dbInit() {
-		db = new MariaDBConnection("GPHUD", get("DBHOST"), get("DBUSER"), get("DBPASS"), get("DBNAME"));
+		db=new MariaDBConnection("GPHUD",get("DBHOST"),get("DBUSER"),get("DBPASS"),get("DBNAME"));
 	}
 
 	public static void purgeURL(final String url) {
 		//System.out.println("Purge URL "+url);
 		try {
-			for (final ResultsRow row:getDB().dq("select characterid,regionid from characters where url=?",url)) {
+			for (final ResultsRow row: getDB().dq("select characterid,regionid from characters where url=?",url)) {
 				try {
-					final int charid = row.getInt("characterid");
-					final int regionid = row.getInt("regionid");
-					final Char ch = Char.get(charid);
-					final State st = State.getNonSpatial(ch);
-					final int howmany = getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?", charid, regionid);
-					if (howmany > 0) {
-						st.logger().info("HUD disconnected (404) from avatar " + st.getAvatar().getName() + " as character " + st.getCharacter().getName() + ", not reported as region leaver.");
+					final int charid=row.getInt("characterid");
+					final int regionid=row.getInt("regionid");
+					final Char ch=Char.get(charid);
+					final State st=State.getNonSpatial(ch);
+					final int howmany=getDB().dqinn(
+							"select count(*) from visits visits where endtime is null and characterid=? and regionid=?",
+							charid,
+							regionid
+					                               );
+					if (howmany>0) {
+						st.logger()
+						  .info("HUD disconnected (404) from avatar "+st.getAvatar()
+						                                                .getName()+" as character "+st.getCharacter()
+						                                                                              .getName()+", not reported as region leaver.");
 					}
-					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null", charid, regionid);
-					getDB().d("update objects set url=null where url=?", url);
+					getDB().d(
+							"update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",
+							charid,
+							regionid
+					         );
+					getDB().d("update objects set url=null where url=?",url);
 				} catch (@Nonnull final Exception ignored) {}
 			}
-			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?", url);
+			getDB().d(
+					"update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?",
+					url
+			         );
 		} catch (@Nonnull final DBException ex) {
-			GPHUD.getLogger().log(SEVERE, "Failed to purge URL from characters", ex);
+			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from characters",ex);
 		}
 		try {
-			getDB().d("update regions set url=null,authnode=null where url=?", url);
+			getDB().d("update regions set url=null,authnode=null where url=?",url);
 		} catch (@Nonnull final DBException ex) {
-			GPHUD.getLogger().log(SEVERE, "Failed to purge URL from regions", ex);
+			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from regions",ex);
 		}
 	}
 
-	public static void initialiseAsModule(final boolean isdev, final String jdbc, final String hostname, final int nodeid) {
-		GPHUD.hostname = hostname;
-		GPHUD.nodeid = nodeid;
-		log = Logger.getLogger("net.coagulate.GPHUD");
+	public static void initialiseAsModule(final boolean isdev,
+	                                      final String jdbc,
+	                                      final String hostname,
+	                                      final int nodeid)
+	{
+		GPHUD.hostname=hostname;
+		GPHUD.nodeid=nodeid;
+		log=Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
-		log().config("GPHUD as module starting up... " + VERSION);
-		log().config("Server operating on node " + hostname);
+		log().config("GPHUD as module starting up... "+VERSION);
+		log().config("Server operating on node "+hostname);
 		//Classes.initialise(); if (1==1) { System.exit(0); }
 
 		if (isdev) {
-			DEV = true;
+			DEV=true;
 			log().config("Configuration declares us as a DEVELOPMENT NODE");
 		}
 		// Initialise the Database layer
-		db = new MariaDBConnection("GPHUD" + (isdev ? "DEV" : ""), jdbc);
+		db=new MariaDBConnection("GPHUD"+(isdev?"DEV":""),jdbc);
 
 		// Annotation parser
 		Classes.initialise();
@@ -307,7 +326,7 @@ public class GPHUD {
 
 	@Nonnull
 	public static String serverVersion() {
-		return "GPHUD Cluster " + VERSION + " " + VERSION_DATE + " (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
+		return "GPHUD Cluster "+VERSION+" "+VERSION_DATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
 	}
 
 

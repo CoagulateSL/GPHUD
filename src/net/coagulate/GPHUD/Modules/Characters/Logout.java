@@ -16,24 +16,27 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Logout {
-	@URLs(url = "/logout")
-	public static void logout(@Nonnull final State st, final SafeMap values) {
+	@URLs(url="/logout")
+	public static void logout(@Nonnull final State st,
+	                          final SafeMap values)
+	{
 		st.form().add("Good Bye!");
-		if (st.cookiestring != null) { Cookies.delete(st.cookiestring); }
+		if (st.cookiestring!=null) { Cookies.delete(st.cookiestring); }
 		st.cookie(null);
-		st.cookiestring = null;
+		st.cookiestring=null;
 		st.setAvatar(null);
 		st.setCharacter(null);
 		st.setInstance(null);
 	}
 
 	@Nonnull
-	@Command.Commands(description = "Log out or disconnect this character",context= Command.Context.CHARACTER,permitScripting = false,permitUserWeb = false,permitConsole = false,permitObject = false)
+	@Command.Commands(description="Log out or disconnect this character", context=Command.Context.CHARACTER, permitScripting=false, permitUserWeb=false, permitConsole=false, permitObject=false)
 	public static Response logout(@Nonnull final State st) {
 		if (st.getCharacterNullable()!=null) {
 			st.getCharacter().closeVisits(st);
 			st.getCharacter().closeURL(st);
-			st.logger().info("Logout from avatar " + st.getAvatar().getName()+" as character "+st.getCharacter().getName());
+			st.logger()
+			  .info("Logout from avatar "+st.getAvatar().getName()+" as character "+st.getCharacter().getName());
 		}
 		return new TerminateResponse("Logout complete");
 	}

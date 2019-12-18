@@ -12,14 +12,17 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Input implements Renderable {
-	String value = "";
+	String value="";
 
 	public abstract String getName();
 
 	private String getValue() { return value; }
 
 	@Nonnull
-	public Input setValue(final String value) { this.value = value; return this; }
+	public Input setValue(final String value) {
+		this.value=value;
+		return this;
+	}
 
 	@Nonnull
 	@Override

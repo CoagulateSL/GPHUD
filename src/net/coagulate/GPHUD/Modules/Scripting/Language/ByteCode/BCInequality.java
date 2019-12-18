@@ -15,14 +15,18 @@ public class BCInequality extends ByteCode {
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Inequality (Pop two, push 1 if unequal, 0 if equal)"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Inequality.get());
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
 		// cheat
-		new BCEquality(node()).execute(st, vm, true);
+		new BCEquality(node()).execute(st,vm,true);
 		int result=vm.popInteger().toInteger();
 		if (result==0) { result=1; } else { result=0; }
 		vm.push(new BCInteger(node(),result));

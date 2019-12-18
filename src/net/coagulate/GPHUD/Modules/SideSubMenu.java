@@ -23,7 +23,6 @@ public abstract class SideSubMenu {
 	/**
 	 * Defines a sidemenu "sub" link.
 	 * Must be connected to a method that also contains an @URLs
-	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented

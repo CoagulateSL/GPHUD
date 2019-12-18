@@ -24,14 +24,17 @@ public class MenuCommand extends Command {
 	final JSONObject definition;
 	@Nonnull
 	final Command targetcommand;
-	final String description = "Pick a menu item item item. :P";
+	final String description="Pick a menu item item item. :P";
 	final String name;
 
-	public MenuCommand(final State st, final String name, final JSONObject newdef) {
+	public MenuCommand(final State st,
+	                   final String name,
+	                   final JSONObject newdef)
+	{
 		super();
-		definition = newdef;
-		this.name = name;
-		targetcommand = this;
+		definition=newdef;
+		this.name=name;
+		targetcommand=this;
 	}
 
 	@Nonnull
@@ -45,7 +48,7 @@ public class MenuCommand extends Command {
 	@Nonnull
 	@Override
 	public List<String> getArgumentNames(final State st) {
-		final List<String> args = new ArrayList<>();
+		final List<String> args=new ArrayList<>();
 		args.add("choice");
 		return args;
 	}
@@ -56,14 +59,14 @@ public class MenuCommand extends Command {
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
-		final List<Argument> args = new ArrayList<>();
-		args.add(new MenuArgument(this, definition));
+		final List<Argument> args=new ArrayList<>();
+		args.add(new MenuArgument(this,definition));
 		return args;
 	}
 
 	@Nonnull
 	@Override
-	public String getFullName() { return "Menus." + getName(); }
+	public String getFullName() { return "Menus."+getName(); }
 
 	@Nonnull
 	public String getName() { return name; }
@@ -85,7 +88,7 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public String getFullMethodName() { return getClass() + ".run()"; }
+	public String getFullMethodName() { return getClass()+".run()"; }
 
 	@Nonnull
 	@Override
@@ -93,19 +96,21 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public Response run(@Nonnull final State st, @Nonnull final SafeMap parametermap) {
-		final String selected = parametermap.get("choice");
-		int choice = 0;
-		for (int i = 1; i <= 12; i++) { if (definition.optString("button" + i, "").equals(selected)) { choice = i; } }
-		return Modules.getJSONTemplateResponse(st, definition.getString("command" + choice));
+	public Response run(@Nonnull final State st,
+	                    @Nonnull final SafeMap parametermap)
+	{
+		final String selected=parametermap.get("choice");
+		int choice=0;
+		for (int i=1;i<=12;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
+		return Modules.getJSONTemplateResponse(st,definition.getString("command"+choice));
 	}
 
 	@Nonnull
 	@Override
 	public Method getMethod() {
 		try {
-			return getClass().getDeclaredMethod("run", State.class, SafeMap.class);
-		} catch (@Nonnull final NoSuchMethodException | SecurityException ex) {
+			return getClass().getDeclaredMethod("run",State.class,SafeMap.class);
+		} catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
 			throw new SystemImplementationException("Issue locating RUN command for MenuCommand, this makes no sense :)");
 		}
 	}

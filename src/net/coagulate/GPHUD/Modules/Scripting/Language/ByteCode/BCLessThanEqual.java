@@ -17,21 +17,28 @@ public class BCLessThanEqual extends ByteCode {
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "LessThan (Pop two, compare, push 1 if less than, else 0)"; }
+
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.LessThanEqual.get());
 	}
 
 	@Override
-	public void execute(final State st, @Nonnull final GSVM vm, final boolean simulation) {
-		final ByteCodeDataType var1 = vm.pop();
-		final ByteCodeDataType var2 = vm.pop();
+	public void execute(final State st,
+	                    @Nonnull final GSVM vm,
+	                    final boolean simulation)
+	{
+		final ByteCodeDataType var1=vm.pop();
+		final ByteCodeDataType var2=vm.pop();
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 		if (!var1.getClass().equals(var2.getClass())) // no match then
-		{ vm.push(new BCInteger(null,0)); return; }
+		{
+			vm.push(new BCInteger(null,0));
+			return;
+		}
 		final Class<? extends ByteCodeDataType> type=var1.getClass();
 		if (type.equals(BCString.class)) {
-			final String s1 = var1.toString();
-			final String s2 = var2.toString();
+			final String s1=var1.toString();
+			final String s2=var2.toString();
 			if (s1.compareTo(s2)<=0) {
 				vm.push(new BCInteger(null,1));
 				return;
@@ -47,7 +54,9 @@ public class BCLessThanEqual extends ByteCode {
 		}
 		if (type.equals(BCList.class)) { throw new GSInvalidExpressionException("Can not compare lists.  Yet."); }
 
-		throw new GSInternalError("Unable to calculate less than between types "+var1.getClass().getSimpleName()+" and "+var2.getClass().getSimpleName());
+		throw new GSInternalError("Unable to calculate less than between types "+var1.getClass()
+		                                                                             .getSimpleName()+" and "+var2.getClass()
+		                                                                                                          .getSimpleName());
 
 	}
 }

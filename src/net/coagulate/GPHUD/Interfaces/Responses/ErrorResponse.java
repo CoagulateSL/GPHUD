@@ -20,8 +20,8 @@ public class ErrorResponse extends TextError implements Response {
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
-		final JSONObject j = new JSONObject();
-		j.put("error", asText(st));
+		final JSONObject j=new JSONObject();
+		j.put("error",asText(st));
 		return j;
 	}
 

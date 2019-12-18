@@ -24,7 +24,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	public abstract Module getModule();
 
 	@Nonnull
-	public String getFullName() { return getModule().getName() + "." + getName(); }
+	public String getFullName() { return getModule().getName()+"."+getName(); }
 
 	/**
 	 * Name of the quotaed pool
@@ -33,7 +33,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	public String poolName(final State st) { return getName(); }
 
 	@Nonnull
-	public Pool getPool(final State st) { return Modules.getPool(st, poolName(st)); }
+	public Pool getPool(final State st) { return Modules.getPool(st,poolName(st)); }
 
 	/**
 	 * Name of the KV that controls the quota per period
@@ -57,8 +57,8 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Return the period, in seconds
 	 */
 	public int periodSeconds(@Nonnull final State st) {
-		final float days = period(st);
-		final float seconds = days * 24 * 60 * 60;
+		final float days=period(st);
+		final float seconds=days*24*60*60;
 		return (int) seconds;
 	}
 
@@ -67,46 +67,51 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 */
 	@Nonnull
 	public String nextFree(@Nonnull final State st) {
-		return st.getCharacter().poolNextFree(getPool(st), quota(st), period(st));
+		return st.getCharacter().poolNextFree(getPool(st),quota(st),period(st));
 	}
 
 	/**
 	 * Calculate the starting unix time to covered by the period
 	 */
-	public int periodStart(@Nonnull final State st) { return getUnixTime() - (periodSeconds(st)); }
+	public int periodStart(@Nonnull final State st) { return getUnixTime()-(periodSeconds(st)); }
 
 	/**
 	 * Calculate the ammount awarded in the period
 	 */
 	public int periodAwarded(@Nonnull final State st) {
-		return st.getCharacter().sumPoolSince(getPool(st), periodStart(st));
+		return st.getCharacter().sumPoolSince(getPool(st),periodStart(st));
 	}
 
 	/**
 	 * Cap an award based on ammount already earned
 	 */
-	public int capAward(@Nonnull final State st, final int award) {
-		final int awarded = periodAwarded(st);
-		final int cap = quota(st);
-		if ((awarded + award) < cap) { return award; } // still under the cap
-		final int capped = cap - awarded;
-		if (capped <= 0) { return 0; } // hmm
-		return Math.min(capped, award);
+	public int capAward(@Nonnull final State st,
+	                    final int award)
+	{
+		final int awarded=periodAwarded(st);
+		final int cap=quota(st);
+		if ((awarded+award)<cap) { return award; } // still under the cap
+		final int capped=cap-awarded;
+		if (capped<=0) { return 0; } // hmm
+		return Math.min(capped,award);
 	}
 
-	public int cappedSystemAward(@Nonnull final State st, final int award, final String description) {
-		final int cappedaward = capAward(st, award);
-		st.getCharacter().addPoolSystem(st, getPool(st), cappedaward, description);
+	public int cappedSystemAward(@Nonnull final State st,
+	                             final int award,
+	                             final String description)
+	{
+		final int cappedaward=capAward(st,award);
+		st.getCharacter().addPoolSystem(st,getPool(st),cappedaward,description);
 		return cappedaward;
 	}
 
 
 	@Nonnull
 	public String periodRoughly(@Nonnull final State st) {
-		final int seconds = periodSeconds(st);
-		float days = (float) seconds;
-		days = days / (60 * 60 * 24);
-		return Math.round(days) + " days";
+		final int seconds=periodSeconds(st);
+		float days=(float) seconds;
+		days=days/(60*60*24);
+		return Math.round(days)+" days";
 	}
 
 

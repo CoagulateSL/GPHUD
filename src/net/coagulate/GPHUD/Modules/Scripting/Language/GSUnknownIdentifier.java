@@ -4,12 +4,15 @@ import javax.annotation.Nonnull;
 
 public class GSUnknownIdentifier extends GSException {
 	private static final long serialVersionUID=1L;
+
 	public GSUnknownIdentifier(final String reason) {
 		super(reason);
 	}
 
-	public GSUnknownIdentifier(final String reason, final Throwable cause) {
-		super(reason, cause);
+	public GSUnknownIdentifier(final String reason,
+	                           final Throwable cause)
+	{
+		super(reason,cause);
 	}
 
 	@Nonnull

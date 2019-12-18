@@ -18,17 +18,19 @@ import java.util.Set;
  */
 public class FactionsModule extends ModuleAnnotation {
 
-	public FactionsModule(final String name, final ModuleDefinition def) {
-		super(name, def);
+	public FactionsModule(final String name,
+	                      final ModuleDefinition def)
+	{
+		super(name,def);
 	}
 
 	@Nonnull
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(@Nonnull final State st) {
-		final Set<CharacterGroup> factions = st.getInstance().getGroupsForKeyword("Faction");
-		final Set<SideSubMenu> ret = new HashSet<>();
-		for (final CharacterGroup faction : factions) {
-			ret.add(new StaticSideSubMenu(faction.getName(), faction.getId(), "/factions/view/" + faction.getId(), ""));
+		final Set<CharacterGroup> factions=st.getInstance().getGroupsForKeyword("Faction");
+		final Set<SideSubMenu> ret=new HashSet<>();
+		for (final CharacterGroup faction: factions) {
+			ret.add(new StaticSideSubMenu(faction.getName(),faction.getId(),"/factions/view/"+faction.getId(),""));
 		}
 		return ret;
 	}
@@ -36,7 +38,7 @@ public class FactionsModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Set<CharacterAttribute> getAttributes(final State st) {
-		final Set<CharacterAttribute> ret = new HashSet<>();
+		final Set<CharacterAttribute> ret=new HashSet<>();
 		ret.add(new FactionAttribute(-1));
 		return ret;
 	}

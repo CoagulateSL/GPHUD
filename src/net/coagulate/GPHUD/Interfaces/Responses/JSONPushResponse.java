@@ -24,11 +24,16 @@ public class JSONPushResponse implements Response {
 	String url;
 	Response nonjson;
 
-	public JSONPushResponse(final JSONObject j, @Nullable final String url, final Response nonjson) {
-		if (url == null || url.isEmpty() || "?".equals(url)) { throw new SystemBadValueException("Can not use the null URL"); }
-		json = j;
-		this.url = url;
-		this.nonjson = nonjson;
+	public JSONPushResponse(final JSONObject j,
+	                        @Nullable final String url,
+	                        final Response nonjson)
+	{
+		if (url==null || url.isEmpty() || "?".equals(url)) {
+			throw new SystemBadValueException("Can not use the null URL");
+		}
+		json=j;
+		this.url=url;
+		this.nonjson=nonjson;
 	}
 
 	@Override
@@ -39,23 +44,25 @@ public class JSONPushResponse implements Response {
 	@Nonnull
 	@Override
 	public String scriptResponse() {
-		return"<A JSON Push Response>";
+		return "<A JSON Push Response>";
 	}
 
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		final Transmission t = new Transmission((Char) null, json, url);
+		final Transmission t=new Transmission((Char) null,json,url);
 		t.start();
 		return nonjson.asText(st);
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		final Transmission t = new Transmission((Char) null, json, url);
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		final Transmission t=new Transmission((Char) null,json,url);
 		t.start();
-		return nonjson.asHtml(st, rich);
+		return nonjson.asHtml(st,rich);
 	}
 
 	@Nullable

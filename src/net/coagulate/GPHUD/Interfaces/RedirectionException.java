@@ -18,8 +18,8 @@ public class RedirectionException extends RuntimeException {
 	}
 
 	public RedirectionException(final String url) {
-		super("Redirecting to " + url);
-		this.url = url;
+		super("Redirecting to "+url);
+		this.url=url;
 	}
 
 	public String getURL() { return url; }

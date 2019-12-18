@@ -45,7 +45,9 @@ public class NullResponse implements Response {
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
 		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
 

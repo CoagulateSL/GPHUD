@@ -11,26 +11,54 @@ import javax.annotation.Nonnull;
  */
 public class Damage {
 
-	public static void apply(@Nonnull final State st, @Nonnull final Char targetchar, final int damage, final String reason) {
+	public static void apply(@Nonnull final State st,
+	                         @Nonnull final Char targetchar,
+	                         final int damage,
+	                         final String reason)
+	{
 		st.setTarget(targetchar);
-		final int oldhealth = st.getTarget().getKV("Health.Health").intValue();
-		final boolean allownegative = st.getTarget().getKV("Health.allowNegative").boolValue();
-		int newvalue = oldhealth - damage;
+		final int oldhealth=st.getTarget().getKV("Health.Health").intValue();
+		final boolean allownegative=st.getTarget().getKV("Health.allowNegative").boolValue();
+		int newvalue=oldhealth-damage;
 		if (!allownegative) {
-			if (newvalue < 0) { newvalue = 0; }
+			if (newvalue<0) { newvalue=0; }
 		}
-		st.setKV(targetchar, "health.health", newvalue + "");
-		Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, targetchar, "SUBTRACT", "Health.Health", oldhealth + "", newvalue + "", "Damaged by " + damage + " for " + reason);
+		st.setKV(targetchar,"health.health",newvalue+"");
+		Audit.audit(true,
+		            st,
+		            Audit.OPERATOR.CHARACTER,
+		            null,
+		            targetchar,
+		            "SUBTRACT",
+		            "Health.Health",
+		            oldhealth+"",
+		            newvalue+"",
+		            "Damaged by "+damage+" for "+reason
+		           );
 	}
 
-	public static void heal(@Nonnull final State st, @Nonnull final Char targetchar, final int healing, final String reason) {
+	public static void heal(@Nonnull final State st,
+	                        @Nonnull final Char targetchar,
+	                        final int healing,
+	                        final String reason)
+	{
 		st.setTarget(targetchar);
-		final int oldhealth = st.getTarget().getKV("Health.Health").intValue();
-		int newvalue = oldhealth + healing;
-		final State targetstate = st.simulate(targetchar);
-		final int maxhealth = targetstate.getKV("health.initialhealth").intValue();
-		if (newvalue > maxhealth) { newvalue = maxhealth; }
-		st.setKV(targetchar, "health.health", newvalue + "");
-		Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, targetchar, "ADD", "Health.Health", oldhealth + "", newvalue + "", "Healed by " + healing + " for " + reason);
+		final int oldhealth=st.getTarget().getKV("Health.Health").intValue();
+		int newvalue=oldhealth+healing;
+		final State targetstate=st.simulate(targetchar);
+		final int maxhealth=targetstate.getKV("health.initialhealth").intValue();
+		if (newvalue>maxhealth) { newvalue=maxhealth; }
+		st.setKV(targetchar,"health.health",newvalue+"");
+		Audit.audit(true,
+		            st,
+		            Audit.OPERATOR.CHARACTER,
+		            null,
+		            targetchar,
+		            "ADD",
+		            "Health.Health",
+		            oldhealth+"",
+		            newvalue+"",
+		            "Healed by "+healing+" for "+reason
+		           );
 	}
 }

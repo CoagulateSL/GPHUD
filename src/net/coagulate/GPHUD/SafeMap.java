@@ -9,12 +9,12 @@ import java.util.TreeMap;
  *
  * @author iain
  */
-public class SafeMap extends TreeMap<String, String> {
+public class SafeMap extends TreeMap<String,String> {
 	private static final long serialVersionUID=1L;
 
 	@Nonnull
 	private static String nonull(@Nullable final String s) {
-		if (s == null) { return ""; }
+		if (s==null) { return ""; }
 		return s;
 	}
 
@@ -24,8 +24,8 @@ public class SafeMap extends TreeMap<String, String> {
 	public String get(final String key) { return nonull(super.get(key)); }
 
 	public void debugDump() {
-		for (final String k : keySet()) {
-			System.out.println("DEBUG DUMP SAFEMAP: " + k + "=" + get(k));
+		for (final String k: keySet()) {
+			System.out.println("DEBUG DUMP SAFEMAP: "+k+"="+get(k));
 		}
 	}
 }

@@ -15,11 +15,13 @@ import java.util.Set;
 public class CheckBox extends Input {
 	final String name;
 
-	public CheckBox(final String name) {this.name = name;}
+	public CheckBox(final String name) {this.name=name;}
 
-	public CheckBox(final String name, final String value) {
-		this.name = name;
-		this.value = value;
+	public CheckBox(final String name,
+	                final String value)
+	{
+		this.name=name;
+		this.value=value;
 	}
 
 	@Override
@@ -29,10 +31,12 @@ public class CheckBox extends Input {
 
 	@Nonnull
 	@Override
-	public String asHtml(final State st, final boolean rich) {
-		String r = "<input type=\"checkbox\" name=\"" + name + "\" ";
-		if (value != null && !value.isEmpty()) { r += "checked"; }
-		r += " />";
+	public String asHtml(final State st,
+	                     final boolean rich)
+	{
+		String r="<input type=\"checkbox\" name=\""+name+"\" ";
+		if (value!=null && !value.isEmpty()) { r+="checked"; }
+		r+=" />";
 		return r;
 	}
 

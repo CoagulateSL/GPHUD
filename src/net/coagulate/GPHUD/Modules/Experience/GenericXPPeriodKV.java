@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
 public class GenericXPPeriodKV extends KV {
 	private final String myname;
 
-	public GenericXPPeriodKV(final String name) { myname = name; }
+	public GenericXPPeriodKV(final String name) { myname=name; }
 
 	public boolean isGenerated() { return true; }
 
 	@Nonnull
-	public String fullname() { return "Experience." + myname; }
+	public String fullname() { return "Experience."+myname; }
 
 	@Nonnull
 	public KVSCOPE scope() { return KVSCOPE.NONSPATIAL; }
@@ -24,7 +24,7 @@ public class GenericXPPeriodKV extends KV {
 	public KVTYPE type() { return KVTYPE.FLOAT; }
 
 	@Nonnull
-	public String description() { return "Cycle length, in days, for " + myname + " limit"; }
+	public String description() { return "Cycle length, in days, for "+myname+" limit"; }
 
 	@Nonnull
 	public String editpermission() { return "Experience.ConfigureXP"; }
