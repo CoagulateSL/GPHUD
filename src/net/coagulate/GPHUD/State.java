@@ -690,7 +690,7 @@ public class State extends DumpableState {
 			throw new UserConfigurationException("Failed loading KV "+kvname+" for "+target.getTableName()+" "+target.getNameSafe()+" : "+e
 					.getLocalizedMessage(),e);
 		}
-		if (kv.type()==COLOR) {
+		if (kv.type()==COLOR && out!=null) {
 			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }
 			while (out.endsWith(">>")) { out=out.replaceFirst(">>",">"); }
 		}

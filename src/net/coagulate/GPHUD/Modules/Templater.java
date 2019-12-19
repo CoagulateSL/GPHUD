@@ -72,7 +72,7 @@ public abstract class Templater {
 	                              final boolean integer)
 	{
 		string=template(st,string);
-		if (string==null) { return string; }
+		if (string==null) { return null; }
 		if ("".equals(string)) { return ""; }
 		try {
 			if (evaluate && !integer) { return eval(string)+""; }

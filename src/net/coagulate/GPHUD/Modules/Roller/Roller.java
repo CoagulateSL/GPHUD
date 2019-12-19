@@ -270,6 +270,7 @@ public class Roller {
 		if (st.roll>st.getTarget().roll) {
 			damage=damage.replaceAll("==","--");
 			final String output=Templater.template(st,damage,true,true);
+			if (output==null) { throw new NullPointerException("output from damage template was null?"); }
 			Damage.apply(st,target,Integer.parseInt(output),reason);
 			final SayResponse say=(SayResponse) response;
 			say.setText(say.getText()+" - Health now "+st.getRawKV(target,"Health.Health"));
