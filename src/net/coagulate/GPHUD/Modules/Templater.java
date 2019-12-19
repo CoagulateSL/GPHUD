@@ -65,14 +65,14 @@ public abstract class Templater {
 	                               final String name)
 	{ return getMethods(st).get(name); }
 
-	@Nonnull
+	@Nullable
 	public static String template(@Nonnull final State st,
 	                              @Nullable String string,
 	                              final boolean evaluate,
 	                              final boolean integer)
 	{
-		if (string==null) { string=""; }
 		string=template(st,string);
+		if (string==null) { return string; }
 		if ("".equals(string)) { return ""; }
 		try {
 			if (evaluate && !integer) { return eval(string)+""; }
@@ -90,10 +90,11 @@ public abstract class Templater {
 		return string;
 	}
 
-	@Nonnull
+	@Nullable
 	private static String template(@Nonnull final State st,
-	                               @Nonnull String string)
+	                               @Nullable String string)
 	{
+		if (string==null) { return null; }
 		final boolean debug=false;
 		for (final String subst: getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
