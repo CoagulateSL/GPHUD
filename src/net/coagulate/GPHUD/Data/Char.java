@@ -901,6 +901,7 @@ public class Char extends TableRow {
 	public void appendConveyance(@Nonnull final State st,
 	                             @Nonnull final JSONObject payload)
 	{
+		// SANITY NOTE TO SELF - there is also initialConveyance which does almost exactly the same, which is bad
 		final boolean debug=false;
 		validate(st);
 		final Map<KV,String> oldconveyances=loadConveyances(st);
