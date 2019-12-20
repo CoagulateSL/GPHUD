@@ -20,8 +20,7 @@ public class ConfigurationURL extends URL {
 	final String url;
 
 	public ConfigurationURL(final String name,
-	                        final String url)
-	{
+	                        final String url) {
 		this.name=name;
 		this.url=url;
 	}
@@ -60,8 +59,7 @@ public class ConfigurationURL extends URL {
 
 	@Override
 	public void run(final State st,
-	                final SafeMap values)
-	{
+	                final SafeMap values) {
 		throw new SystemImplementationException("Stub url can not be run");
 	}
 

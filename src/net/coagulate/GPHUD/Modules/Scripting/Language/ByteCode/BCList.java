@@ -17,15 +17,13 @@ public class BCList extends ByteCodeDataType {
 	public BCList(final ParseNode n) {super(n);}
 
 	public BCList(final ParseNode n,
-	              final int elements)
-	{
+	              final int elements) {
 		super(n);
 		this.elements=elements;
 	}
 
 	public BCList(final ParseNode n,
-	              final ByteCodeDataType e)
-	{
+	              final ByteCodeDataType e) {
 		super(n);
 		content.add(e);
 		elements++;
@@ -50,8 +48,7 @@ public class BCList extends ByteCodeDataType {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		// pull the list from the stack!
 		for (int i=0;i<elements;i++) {
 			final ByteCodeDataType data=vm.pop();

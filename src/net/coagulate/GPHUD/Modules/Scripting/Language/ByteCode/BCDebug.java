@@ -13,8 +13,7 @@ public class BCDebug extends ByteCode {
 
 	public BCDebug(final ParseNode n,
 	               final int line,
-	               final int column)
-	{
+	               final int column) {
 		super(n);
 		this.line=line;
 		this.column=column;
@@ -40,8 +39,7 @@ public class BCDebug extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		vm.column=column;
 		vm.row=line;
 	}

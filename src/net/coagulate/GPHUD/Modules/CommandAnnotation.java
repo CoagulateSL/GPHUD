@@ -27,8 +27,7 @@ public class CommandAnnotation extends Command {
 	protected CommandAnnotation() {}
 
 	public CommandAnnotation(final Module owner,
-	                         @Nonnull final Method c)
-	{
+	                         @Nonnull final Method c) {
 		//System.out.println(owner);
 		//System.out.println(c);
 		this.owner=owner;
@@ -41,12 +40,10 @@ public class CommandAnnotation extends Command {
 
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be static");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be public");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
 		}
 	}
 
@@ -63,10 +60,7 @@ public class CommandAnnotation extends Command {
 		if (method.getParameterCount()==0) {
 			throw new SystemImplementationException("Method "+getFullName()+"() takes zero arguments but must take 'State' as its first argument");
 		}
-		if ((method.getParameters()[0]).getClass()
-		                               .getCanonicalName()
-		                               .equalsIgnoreCase(State.class.getCanonicalName()))
-		{
+		if ((method.getParameters()[0]).getClass().getCanonicalName().equalsIgnoreCase(State.class.getCanonicalName())) {
 			throw new SystemImplementationException("Method "+getFullName()+" must take State as its first argument");
 		}
 		for (int i=1;i<method.getParameters().length;i++) {
@@ -80,7 +74,8 @@ public class CommandAnnotation extends Command {
 				final String choicemethod=arg.choiceMethod();
 				try {
 					method.getDeclaringClass().getMethod(choicemethod,State.class);
-				} catch (@Nonnull final Exception e) {
+				}
+				catch (@Nonnull final Exception e) {
 					throw new SystemImplementationException("Failed to instansiate choice method "+getFullName()+" / "+choicemethod);
 				}
 			}
@@ -122,7 +117,8 @@ public class CommandAnnotation extends Command {
 		arguments=new ArrayList<>();
 		boolean skipfirst=true; // first should be STATE
 		for (final Parameter p: method.getParameters()) {
-			if (skipfirst) { skipfirst=false; } else { arguments.add(new ArgumentAnnotation(this,p)); }
+			if (skipfirst) { skipfirst=false; }
+			else { arguments.add(new ArgumentAnnotation(this,p)); }
 		}
 	}
 

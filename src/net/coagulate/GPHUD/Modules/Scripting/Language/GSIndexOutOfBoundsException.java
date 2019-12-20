@@ -8,8 +8,7 @@ public class GSIndexOutOfBoundsException extends GSInvalidExpressionException {
 	}
 
 	public GSIndexOutOfBoundsException(final String reason,
-	                                   final Throwable cause)
-	{
+	                                   final Throwable cause) {
 		super(reason,cause);
 	}
 }

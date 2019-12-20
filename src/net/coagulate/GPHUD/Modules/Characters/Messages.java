@@ -24,15 +24,13 @@ import javax.annotation.Nonnull;
 public abstract class Messages {
 	@URLs(url="/hud/listmessages")
 	public static void messagesListHUD(@Nonnull final State st,
-	                                   @Nonnull final SafeMap values)
-	{
+	                                   @Nonnull final SafeMap values) {
 		messagesList(st,values);
 	}
 
 	@URLs(url="/messages/list")
 	public static void messagesList(@Nonnull final State st,
-	                                @Nonnull final SafeMap values)
-	{
+	                                @Nonnull final SafeMap values) {
 		final Message m=st.getCharacter().getMessage();
 		final Form f=st.form();
 		if (m==null) {
@@ -52,8 +50,7 @@ public abstract class Messages {
 
 	public static void displayFactionInvite(@Nonnull final State st,
 	                                        @Nonnull final SafeMap values,
-	                                        @Nonnull final JSONObject j)
-	{
+	                                        @Nonnull final JSONObject j) {
 		final Form f=st.form();
 		final Char from=Char.get(j.getInt("from"));
 		final CharacterGroup to=CharacterGroup.get(j.getInt("to"));

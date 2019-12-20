@@ -14,10 +14,10 @@ import javax.annotation.Nonnull;
 
 public class Interactions {
 	@Nonnull
-	@Command.Commands(description="Clicked Objects generate this command", context=Command.Context.AVATAR, permitJSON=false, permitUserWeb=false, permitConsole=false, permitScripting=false)
+	@Command.Commands(description="Clicked Objects generate this command", context=Command.Context.AVATAR, permitJSON=false, permitUserWeb=false, permitConsole=false,
+	                  permitScripting=false)
 	public static Response clicked(@Nonnull final State st,
-	                               @Argument.Arguments(description="Character clicking the object", type=Argument.ArgumentType.CHARACTER) final Char clicker)
-	{
+	                               @Argument.Arguments(description="Character clicking the object", type=Argument.ArgumentType.CHARACTER) final Char clicker) {
 
 		final Objects object=Objects.findOrNull(st,st.objectkey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
@@ -30,10 +30,10 @@ public class Interactions {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Collided/VolumeDetect Objects generate this command", context=Command.Context.AVATAR, permitJSON=false, permitUserWeb=false, permitConsole=false, permitScripting=false)
+	@Command.Commands(description="Collided/VolumeDetect Objects generate this command", context=Command.Context.AVATAR, permitJSON=false, permitUserWeb=false, permitConsole
+			=false, permitScripting=false)
 	public static Response collided(@Nonnull final State st,
-	                                @Argument.Arguments(description="Character colliding with the object", type=Argument.ArgumentType.CHARACTER) final Char collider)
-	{
+	                                @Argument.Arguments(description="Character colliding with the object", type=Argument.ArgumentType.CHARACTER) final Char collider) {
 
 		final Objects object=Objects.findOrNull(st,st.objectkey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }

@@ -25,20 +25,19 @@ public class Scripts extends TableRow {
 
 	@Nonnull
 	public static Table getTable(final Instance instance) {
-		final Results rows=GPHUD.getDB()
-		                        .dq("select id,name,sourceversion,bytecodeversion from scripts order by id asc");
+		final Results rows=GPHUD.getDB().dq("select id,name,sourceversion,bytecodeversion from scripts order by id asc");
 		final Table o=new Table();
 		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
 		for (final ResultsRow row: rows) {
 			o.openRow();
-			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getIntNullable("id")+"\">"+row.getStringNullable(
-					"name")+"</a>");
+			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getIntNullable("id")+"\">"+row.getStringNullable("name")+"</a>");
 			final Integer sourceversion=row.getIntNullable("sourceversion");
 			final Integer bytecodeversion=row.getIntNullable("bytecodeversion");
 			if (Objects.equals(sourceversion,bytecodeversion)) {
 				o.add((sourceversion==null?"None":""+sourceversion));
 				o.add((bytecodeversion==null?"None":""+bytecodeversion));
-			} else {
+			}
+			else {
 				o.add("<font color=red>"+(sourceversion==null?"None":""+sourceversion)+"</font>");
 				o.add("<font color=red>"+(bytecodeversion==null?"None":""+bytecodeversion)+"</font>");
 			}
@@ -47,13 +46,8 @@ public class Scripts extends TableRow {
 	}
 
 	public static void create(@Nonnull final State st,
-	                          final String scriptname)
-	{
-		final int existing=GPHUD.getDB()
-		                        .dqinn("select count(*) from scripts where name like ? and instanceid=?",
-		                               scriptname,
-		                               st.getInstance().getId()
-		                              );
+	                          final String scriptname) {
+		final int existing=GPHUD.getDB().dqinn("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
 		if (existing>0) { throw new UserInputDuplicateValueException("script with that name already exists"); }
 		GPHUD.getDB().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
 	}
@@ -74,32 +68,22 @@ public class Scripts extends TableRow {
 
 	@Nonnull
 	public static Scripts find(@Nonnull final State st,
-	                           final String commandname)
-	{
-		final int id=GPHUD.getDB()
-		                  .dqinn("select id from scripts where instanceid=? and name like ?",
-		                         st.getInstance().getId(),
-		                         commandname
-		                        );
+	                           final String commandname) {
+		final int id=GPHUD.getDB().dqinn("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),commandname);
 		return new Scripts(id);
 	}
 
 	@Nullable
 	public static Scripts findOrNull(@Nonnull final State st,
-	                                 final String commandname)
-	{
+	                                 final String commandname) {
 		try { return find(st,commandname); } catch (@Nonnull final NoDataException e) {return null; }
 	}
 
 	@Nonnull
 	public static DropDownList getList(@Nonnull final State st,
-	                                   final String listname)
-	{
+	                                   final String listname) {
 		final DropDownList list=new DropDownList(listname);
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select id,name from scripts where instanceid=?",
-		                                    st.getInstance().getId()
-		                                   )) {
+		for (final ResultsRow row: GPHUD.getDB().dq("select id,name from scripts where instanceid=?",st.getInstance().getId())) {
 			list.add(""+row.getIntNullable("id"),row.getStringNullable("name"));
 		}
 		return list;
@@ -181,8 +165,7 @@ public class Scripts extends TableRow {
 	}
 
 	public void setBytecode(@Nonnull final Byte[] toByteCode,
-	                        final int version)
-	{
+	                        final int version) {
 		validate();
 		d("update scripts set bytecode=?, bytecodeversion=? where id=?",toByteCode,version,getId());
 		if (GPHUD.DEV) {

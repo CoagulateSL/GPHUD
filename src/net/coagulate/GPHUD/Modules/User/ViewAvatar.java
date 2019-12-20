@@ -33,8 +33,7 @@ public abstract class ViewAvatar {
 
 	@URLs(url="/avatars/view/*")
 	public static void viewAvatar(@Nonnull final State st,
-	                              final SafeMap values)
-	{
+	                              final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final User a=User.get(Integer.parseInt(id));
@@ -44,8 +43,7 @@ public abstract class ViewAvatar {
 
 	public static void viewAvatar(@Nonnull final State st,
 	                              final SafeMap values,
-	                              @Nonnull final User a)
-	{
+	                              @Nonnull final User a) {
 		boolean fullinstance=false;
 		boolean full=false;
 		final String tz=st.getAvatar().getTimeZone();
@@ -91,7 +89,9 @@ public abstract class ViewAvatar {
 			//    kvtable.openRow().add(key).add(value);
 			//}
 			if ("SYSTEM".equals(a.getName())) {
-				f.add("<p><i>SYSTEM is a fake avatar used internally as an 'Invoking Avatar' for commands that usually require an active Avatar/Character, but there is no appropriate caller, e.g. Visitation XP is awarded by the SYSTEM avatar to prevent confusion and clutter in some other character/avatar's audit log</i></p>");
+				f.add("<p><i>SYSTEM is a fake avatar used internally as an 'Invoking Avatar' for commands that usually require an active Avatar/Character, but there is no "+
+						      "appropriate caller, e.g. Visitation XP is awarded by the SYSTEM avatar to prevent confusion and clutter in some other character/avatar's "+
+						      "audit"+" log</i></p>");
 			}
 			f.add(new TextSubHeader("Audit Trail"));
 			f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(),a,null),st.getAvatarNullable().getTimeZone()));
@@ -100,16 +100,14 @@ public abstract class ViewAvatar {
 
 	@URLs(url="/avatars/settimezone")
 	public static void setTimeZone(@Nonnull final State st,
-	                               @Nonnull final SafeMap value)
-	{
+	                               @Nonnull final SafeMap value) {
 		Modules.simpleHtml(st,"User.SetTZ",value);
 	}
 
 	@Nonnull
 	@Commands(context=Command.Context.AVATAR, permitScripting=false, description="Set displayed timezone for date/time events", permitObject=false)
 	public static Response setTZ(@Nonnull final State st,
-	                             @Arguments(type=Argument.ArgumentType.CHOICE, description="Prefered Time Zone", choiceMethod="getTimeZones") final String timezone)
-	{
+	                             @Arguments(type=Argument.ArgumentType.CHOICE, description="Prefered Time Zone", choiceMethod="getTimeZones") final String timezone) {
 		st.getAvatar().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");
 	}

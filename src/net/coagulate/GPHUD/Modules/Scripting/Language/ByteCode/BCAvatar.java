@@ -18,8 +18,7 @@ public class BCAvatar extends ByteCodeDataType {
 	public BCAvatar(final ParseNode n) { super(n); }
 
 	public BCAvatar(final ParseNode node,
-	                @Nullable final User content)
-	{
+	                @Nullable final User content) {
 		super(node);
 		this.content=content;
 	}
@@ -55,8 +54,7 @@ public class BCAvatar extends ByteCodeDataType {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		// easy
 		vm.push(this);
 	}

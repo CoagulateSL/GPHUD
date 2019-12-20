@@ -23,11 +23,12 @@ public class Permissions {
 	 */
 	@Nonnull
 	public static Set<String> getPermissions(@Nonnull final Instance i,
-	                                         @Nonnull final User u)
-	{
+	                                         @Nonnull final User u) {
 		final Set<String> permissions=new TreeSet<>();
 		final Results results=GPHUD.getDB()
-		                           .dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups.permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroupmembers.avatarid=?",
+		                           .dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups"+
+				                               ".permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and "
+				                               +"permissionsgroupmembers.avatarid=?",
 		                               i.getId(),
 		                               u.getId()
 		                              );

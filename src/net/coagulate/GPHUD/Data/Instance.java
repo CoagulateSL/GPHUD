@@ -42,7 +42,8 @@ public class Instance extends TableRow {
 	public static Set<Instance> getOurInstances() {
 		final Set<Instance> instances=new TreeSet<>();
 		final Results instancerows=GPHUD.getDB()
-		                                .dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and retired=0",
+		                                .dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and "+
+				                                    "retired=0",
 		                                    Interface.getNode()
 		                                   );
 		for (final ResultsRow r: instancerows) { instances.add(Instance.get(r.getInt())); }
@@ -90,8 +91,7 @@ public class Instance extends TableRow {
 	 * @throws UserException If the instance already exists (by name)
 	 */
 	public static void create(@Nullable final String name,
-	                          @Nullable final User caller)
-	{
+	                          @Nullable final User caller) {
 		if (name==null || "".equals(name)) { throw new SystemBadValueException("Can't create null or empty instance"); }
 		if (caller==null) { throw new SystemBadValueException("Owner can't be null"); }
 		final int exists=GPHUD.getDB().dqinn("select count(*) from instances where name like ?",name);
@@ -114,7 +114,8 @@ public class Instance extends TableRow {
 		try {
 			final int id=GPHUD.getDB().dqinn("select instanceid from instances where name=?",name);
 			return get(id);
-		} catch (@Nonnull final NoDataException e) {
+		}
+		catch (@Nonnull final NoDataException e) {
 			throw new UserInputLookupFailureException("Unable to find instance named '"+name+"'",e);
 		}
 	}
@@ -187,10 +188,7 @@ public class Instance extends TableRow {
 		if (name==null) { throw new UserInputEmptyException("Can not create permissions group with null name"); }
 		name=name.trim();
 		if (name.isEmpty()) { throw new UserInputEmptyException("Can not create permissions group with blank name"); }
-		final int exists=dqinn("select count(*) from permissionsgroups where name like ? and instanceid=?",
-		                       name,
-		                       getId()
-		                      );
+		final int exists=dqinn("select count(*) from permissionsgroups where name like ? and instanceid=?",name,getId());
 		if (exists!=0) { throw new UserInputDuplicateValueException("Group already exists? ("+exists+" results)"); }
 		d("insert into permissionsgroups(name,instanceid) values(?,?)",name,getId());
 	}
@@ -219,11 +217,7 @@ public class Instance extends TableRow {
 	 */
 	@Nonnull
 	public Set<Region> getOurRegions(final boolean allowretired) {
-		final Results results=dq("select regionid from regions where instanceid=? and authnode=? and retired<?",
-		                         getId(),
-		                         Interface.getNode(),
-		                         allowretired?2:1
-		                        );
+		final Results results=dq("select regionid from regions where instanceid=? and authnode=? and retired<?",getId(),Interface.getNode(),allowretired?2:1);
 		final Set<Region> regions=new TreeSet<>();
 		for (final ResultsRow row: results) {
 			regions.add(Region.get(row.getInt("regionid"),allowretired));
@@ -238,10 +232,7 @@ public class Instance extends TableRow {
 	 */
 	@Nonnull
 	public Set<Region> getRegions(final boolean allowretired) {
-		final Results results=dq("select regionid from regions where instanceid=? and retired<?",
-		                         getId(),
-		                         allowretired?2:1
-		                        );
+		final Results results=dq("select regionid from regions where instanceid=? and retired<?",getId(),allowretired?2:1);
 		final Set<Region> regions=new TreeSet<>();
 		for (final ResultsRow row: results) {
 			regions.add(Region.get(row.getInt("regionid"),allowretired));
@@ -268,21 +259,18 @@ public class Instance extends TableRow {
 			if (url==null || url.isEmpty()) {
 				newstatus.append("ERROR:DISCONNECTED]");
 				if (canStatus("admins")) {
-					broadcastAdmins(null,
-					                "SYSTEM : Alert, region server for '"+r.getName()+"' is not connected to GPHUD Server."
-					               );
+					broadcastAdmins(null,"SYSTEM : Alert, region server for '"+r.getName()+"' is not connected to GPHUD Server.");
 				}
 				if (level<2) {
 					statuscolor="<1.0,0.5,0.5>";
 					level=2;
 				}
-			} else {
+			}
+			else {
 				if ((getUnixTime()-urllast)>(15*60)) {
 					newstatus.append("*STALLED*");
 					if (canStatus("admins")) {
-						broadcastAdmins(null,
-						                "SYSTEM : Alert, region server for '"+r.getName()+"' is not communicating (STALLED / CRASHED)??."
-						               );
+						broadcastAdmins(null,"SYSTEM : Alert, region server for '"+r.getName()+"' is not communicating (STALLED / CRASHED)??.");
 					}
 					if (level<2) {
 						statuscolor="<1.0,0.5,0.5>";
@@ -364,7 +352,8 @@ public class Instance extends TableRow {
 
 	/**
 	 * Push a message to all admins of this instance.
-	 * Sends message individually to the admins - note this could probably be refitted with the bulk delivery mechanism, on the other hand the number of people getting these alerts is probably small.
+	 * Sends message individually to the admins - note this could probably be refitted with the bulk delivery mechanism, on the other hand the number of people getting these
+	 * alerts is probably small.
 	 *
 	 * @param st      Session state
 	 * @param message Message to send to admins
@@ -372,26 +361,22 @@ public class Instance extends TableRow {
 	 * @return count of the number of users the message is sent to.
 	 */
 	public int broadcastAdmins(@Nullable final State st,
-	                           final String message)
-	{
+	                           final String message) {
 		final JSONObject j=new JSONObject();
 		j.put("message","ADMIN : "+message);
 		final Set<User> targets=new HashSet<>();
 		targets.add(getOwner());
 		//System.out.println("Pre broadcast!");
 		final Results results=dq(
-				"select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like 'instance.receiveadminmessages'",
+				"select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups"+
+						".permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like "+"'instance.receiveadminmessages'",
 				getId()
 		                        );
 		for (final ResultsRow r: results) { targets.add(User.get(r.getInt())); }
 		//System.out.println("Avatars:"+targets.size());
 		final Set<Char> chars=new TreeSet<>();
 		for (final User a: targets) {
-			final Results charlist=dq(
-					"select characterid from characters where instanceid=? and playedby=? and url is not null",
-					getId(),
-					a.getId()
-			                         );
+			final Results charlist=dq("select characterid from characters where instanceid=? and playedby=? and url is not null",getId(),a.getId());
 			for (final ResultsRow rr: charlist) { chars.add(Char.get(rr.getInt())); }
 		}
 		//System.out.println("Characters:"+chars.size());
@@ -401,7 +386,8 @@ public class Instance extends TableRow {
 		}
 		if (st!=null) {
 			st.logger().info("Sent to "+chars.size()+" admins : "+message);
-		} else {
+		}
+		else {
 			GPHUD.getLogger().info("Sent to "+chars.size()+" admins : "+message);
 		}
 		return chars.size();
@@ -433,10 +419,7 @@ public class Instance extends TableRow {
 		if (st.hasModule("Faction")) {
 			groupheaders.add("Faction");
 		}
-		for (final ResultsRow r: dq(
-				"select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'",
-				getId()
-		                           )) {
+		for (final ResultsRow r: dq("select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'",getId())) {
 			groupheaders.add(r.getStringNullable());
 		}
 		for (final ResultsRow r: dq("select * from characters where instanceid=?",getId())) {
@@ -448,13 +431,15 @@ public class Instance extends TableRow {
 			cr.name=r.getString("name");
 			cr.ownerid=r.getInt("owner");
 			cr.groupheaders=groupheaders;
-			if (retired!=1) { cr.retired=false; } else { cr.retired=true; }
+			if (retired!=1) { cr.retired=false; }
+			else { cr.retired=true; }
 			cr.online=false;
 			if (r.getStringNullable("url")!=null && !r.getStringNullable("url").isEmpty()) { cr.online=true; }
 			idmap.put(charid,cr);
 		}
 		for (final ResultsRow r: dq(
-				"select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers.charactergroupid=charactergroups.charactergroupid and instanceid=?",
+				"select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers"+
+						".charactergroupid=charactergroups.charactergroupid and instanceid=?",
 				getId()
 		                           )) {
 			final int charid=r.getInt("characterid");
@@ -465,21 +450,17 @@ public class Instance extends TableRow {
 				cr.setGroup(grouptype,groupname);
 			}
 		}
-		for (final ResultsRow r: dq(
-				"select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null group by characterid")) {
+		for (final ResultsRow r: dq("select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null group by characterid")) {
 			final int id=r.getInt("characterid");
 			if (idmap.containsKey(id)) { idmap.get(id).totalvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: dq(
-				"select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null and starttime>? group by characterid",
-				UnixTime.getUnixTime()-(Experience.getCycle(st))
+		for (final ResultsRow r: dq("select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null and starttime>? group by characterid",
+		                            UnixTime.getUnixTime()-(Experience.getCycle(st))
 		                           )) {
 			final int id=r.getInt("characterid");
 			if (idmap.containsKey(id)) { idmap.get(id).recentvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: dq("select characterid,starttime from visits where endtime is null and starttime>?",
-		                            UnixTime.getUnixTime()-(Experience.getCycle(st))
-		                           )) {
+		for (final ResultsRow r: dq("select characterid,starttime from visits where endtime is null and starttime>?",UnixTime.getUnixTime()-(Experience.getCycle(st)))) {
 			final int id=r.getInt("characterid");
 			final int add=UnixTime.getUnixTime()-r.getInt("starttime");
 			if (idmap.containsKey(id)) {
@@ -488,7 +469,8 @@ public class Instance extends TableRow {
 			}
 		}
 		for (final ResultsRow r: dq(
-				"select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' group by characterid")) {
+				"select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' group by "+
+						"characterid")) {
 			final int id=r.getInt("characterid");
 			if (idmap.containsKey(id)) { idmap.get(id).totalxp=r.getInt("total"); }
 		}
@@ -514,14 +496,16 @@ public class Instance extends TableRow {
 				sorted.put(value,records);
 			}
 			final List<String> sortedkeys=new ArrayList<>(sorted.keySet());
-			if (reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
+			if (reverse) { sortedkeys.sort(Collections.reverseOrder()); }
+			else {
 				Collections.sort(sortedkeys);
 			}
 			for (final String key: sortedkeys) {
 				final Set<CharacterSummary> set=sorted.get(key);
 				sortedlist.addAll(set);
 			}
-		} else {
+		}
+		else {
 			final Map<Integer,Set<CharacterSummary>> sorted=new TreeMap<>();
 			for (final CharacterSummary cs: idmap.values()) {
 				int value=cs.lastactive;
@@ -538,7 +522,8 @@ public class Instance extends TableRow {
 				sorted.put(value,records);
 			}
 			final List<Integer> sortedkeys=new ArrayList<>(sorted.keySet());
-			if (!reverse) { sortedkeys.sort(Collections.reverseOrder()); } else {
+			if (!reverse) { sortedkeys.sort(Collections.reverseOrder()); }
+			else {
 				Collections.sort(sortedkeys);
 			} // note reverse is reversed for numbers
 			// default is biggest at top, smallest at bottom, which is reverse order as the NORMAL order.   alphabetic is a-z so forward order for the NORMAL order....
@@ -563,10 +548,7 @@ public class Instance extends TableRow {
 	@Nonnull
 	public Set<CharacterGroup> getGroupsForKeyword(final String keyword) {
 		final Set<CharacterGroup> groups=new TreeSet<>();
-		for (final ResultsRow r: dq("select charactergroupid from charactergroups where instanceid=? and type=?",
-		                            getId(),
-		                            keyword
-		                           )) {
+		for (final ResultsRow r: dq("select charactergroupid from charactergroups where instanceid=? and type=?",getId(),keyword)) {
 			groups.add(CharacterGroup.get(r.getInt()));
 		}
 		return groups;
@@ -583,8 +565,7 @@ public class Instance extends TableRow {
 	 */
 	public void createCharacterGroup(final String name,
 	                                 final boolean open,
-	                                 final String keyword)
-	{
+	                                 final String keyword) {
 		final int count=dqinn("select count(*) from charactergroups where instanceid=? and name like ?",getId(),name);
 		if (count>0) { throw new UserInputDuplicateValueException("Failed to create group, already exists."); }
 		d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)",getId(),name,open,keyword);
@@ -629,7 +610,8 @@ public class Instance extends TableRow {
 		try {
 			final int id=dqinn("select zoneid from zones where instanceid=? and name like ?",getId(),name);
 			return Zone.get(id);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -711,7 +693,8 @@ public class Instance extends TableRow {
 					if (playedby==null) { // maybe its an object
 						try {
 							playedby=dqs("select uuid from objects where url like ?",c.getURL());
-						} catch (@Nonnull final NoDataException e) {}
+						}
+						catch (@Nonnull final NoDataException e) {}
 					}
 					if (playedby!=null) {
 						final String payloadstring=payload.toString();
@@ -743,8 +726,7 @@ public class Instance extends TableRow {
 	                            final String grouptype,
 	                            final Boolean usesabilitypoints,
 	                            final Boolean required,
-	                            final String defaultvalue)
-	{
+	                            final String defaultvalue) {
 		Attribute.create(this,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
 	}
 

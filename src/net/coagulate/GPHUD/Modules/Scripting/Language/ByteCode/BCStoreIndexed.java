@@ -25,8 +25,7 @@ public class BCStoreIndexed extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		final BCString variablename=vm.popString();
 		final BCInteger index=vm.popInteger();
 		final ByteCodeDataType newvalue=vm.pop();
@@ -35,8 +34,7 @@ public class BCStoreIndexed extends ByteCode {
 		// check length
 		if (index.getContent() >= oldvalue.getContent().size()) {
 			throw new GSArrayIndexOutOfBoundsException("List "+variablename.getContent()+" is of size "+oldvalue.getContent()
-			                                                                                                    .size()+" which is <= requested index "+index
-					.getContent());
+			                                                                                                    .size()+" which is <= requested index "+index.getContent());
 		}
 		oldvalue.getContent().set(index.getContent(),newvalue);
 		// done

@@ -14,15 +14,13 @@ public class BCInteger extends ByteCodeDataType {
 	public BCInteger(final ParseNode n) { super(n); }
 
 	public BCInteger(final ParseNode n,
-	                 final Integer content)
-	{
+	                 final Integer content) {
 		super(n);
 		this.content=content;
 	}
 
 	public BCInteger(final ParseNode n,
-	                 @Nonnull final String tokens)
-	{
+	                 @Nonnull final String tokens) {
 		super(n);
 		content=Integer.parseInt(tokens);
 	}
@@ -49,8 +47,7 @@ public class BCInteger extends ByteCodeDataType {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		vm.push(this);
 	}
 

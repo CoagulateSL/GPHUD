@@ -28,8 +28,7 @@ import java.util.Map;
 public abstract class Configuration {
 	@URLs(url="/configuration/alias", requiresPermission="Alias.Config")
 	public static void aliasesList(@Nonnull final State st,
-	                               @Nonnull final SafeMap values)
-	{
+	                               @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextSubHeader("Alias Configuration"));
@@ -38,7 +37,8 @@ public abstract class Configuration {
 			final Alias alias=Alias.getAlias(st,values.get("deletealias"));
 			if (alias==null) {
 				f.add("<p color=red>Alias '"+values.get("deletealias")+"' was not fount</p>");
-			} else {
+			}
+			else {
 				alias.delete();
 				f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been deleted</p>");
 			}
@@ -72,27 +72,16 @@ public abstract class Configuration {
 
 	@URLs(url="/configuration/alias/create", requiresPermission="Alias.Config")
 	public static void createAlias(@Nonnull final State st,
-	                               @Nonnull final SafeMap values)
-	{
-		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command")
-		                                                                                     .isEmpty())
-		{
+	                               @Nonnull final SafeMap values) {
+		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {
 			final JSONObject template=new JSONObject();
 			template.put("invoke",values.get("command"));
 			try {
 				final Alias newalias=Alias.create(st,values.get("name"),template);
-				Audit.audit(st,
-				            Audit.OPERATOR.AVATAR,
-				            null,
-				            null,
-				            "Create",
-				            "Alias",
-				            null,
-				            values.get("command"),
-				            "Avatar created new alias"
-				           );
+				Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Alias",null,values.get("command"),"Avatar created new alias");
 				throw new RedirectionException("./view/"+newalias.getId());
-			} catch (@Nonnull final UserException e) {
+			}
+			catch (@Nonnull final UserException e) {
 				st.form().add(new Paragraph(new TextError("Creation failed : "+e.getMessage())));
 			}
 		}
@@ -106,8 +95,7 @@ public abstract class Configuration {
 
 	@URLs(url="/configuration/alias/view/*")
 	public static void viewAlias(@Nonnull final State st,
-	                             @Nonnull final SafeMap values)
-	{
+	                             @Nonnull final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final Alias a=Alias.get(Integer.parseInt(id));
@@ -116,8 +104,7 @@ public abstract class Configuration {
 
 	public static void viewAlias(@Nonnull final State st,
 	                             @Nonnull final SafeMap values,
-	                             @Nonnull final Alias a)
-	{
+	                             @Nonnull final Alias a) {
 		a.validate(st);
 		final Form f=st.form();
 		if ("Update".equals(values.get("Update"))) {
@@ -129,16 +116,7 @@ public abstract class Configuration {
 				}
 				template.put("invoke",old.get("invoke"));
 				a.setTemplate(template);
-				Audit.audit(st,
-				            Audit.OPERATOR.AVATAR,
-				            null,
-				            null,
-				            "Updated",
-				            a.getName(),
-				            old.toString(),
-				            template.toString(),
-				            "Avatar updated command alias"
-				           );
+				Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Updated",a.getName(),old.toString(),template.toString(),"Avatar updated command alias");
 				f.add(new TextOK("Template Updated"));
 			}
 		}
@@ -148,11 +126,7 @@ public abstract class Configuration {
 		f.add(new Paragraph("Invokes command "+template.getString("invoke")));
 		f.add(new Paragraph(new TextSubHeader("Template")));
 		f.add(t);
-		t.add(new HeaderRow().add("Argument Name")
-		                     .add("Templated Value")
-		                     .add("Originating Type")
-		                     .add("Originating Description")
-		                     .add("Replaced Description"));
+		t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description").add("Replaced Description"));
 		final Command c=Modules.getCommand(st,template.getString("invoke"));
 		for (final Argument arg: c.getArguments()) {
 			if (!template.has(arg.getName())) { template.put(arg.getName(),""); }

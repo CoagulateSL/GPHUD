@@ -18,15 +18,13 @@ public class Link implements Renderable {
 	final String target;
 
 	public Link(final String label,
-	            final String target)
-	{
+	            final String target) {
 		content=new Text(label);
 		this.target=target;
 	}
 
 	public Link(final Renderable label,
-	            final String target)
-	{
+	            final String target) {
 		content=label;
 		this.target=target;
 	}
@@ -40,8 +38,7 @@ public class Link implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<a href=\""+target+"\">"+content.asHtml(st,rich)+"</a>";
 	}
 

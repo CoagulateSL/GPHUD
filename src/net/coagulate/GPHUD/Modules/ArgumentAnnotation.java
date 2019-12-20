@@ -26,8 +26,7 @@ public class ArgumentAnnotation extends Argument {
 	protected ArgumentAnnotation() {}
 
 	public ArgumentAnnotation(final Command c,
-	                          @Nonnull final Parameter p)
-	{
+	                          @Nonnull final Parameter p) {
 		parameter=p;
 		command=c;
 		meta=p.getAnnotation(Arguments.class);
@@ -66,26 +65,21 @@ public class ArgumentAnnotation extends Argument {
 		try {
 			final Method m=command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
 			return (List<String>) m.invoke(null,new Object[]{st});
-		} catch (@Nonnull final IllegalAccessException ex) {
-			throw new SystemImplementationException("Access modifier problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",
-			                                        ex
-			);
-		} catch (@Nonnull final IllegalArgumentException ex) {
-			throw new SystemImplementationException("Argument problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",
-			                                        ex
-			);
-		} catch (@Nonnull final InvocationTargetException ex) {
-			throw new SystemImplementationException("Target method problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",
-			                                        ex
-			);
-		} catch (@Nonnull final NoSuchMethodException ex) {
-			throw new SystemImplementationException("No such method problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",
-			                                        ex
-			);
-		} catch (@Nonnull final SecurityException ex) {
-			throw new SystemImplementationException("Security problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",
-			                                        ex
-			);
+		}
+		catch (@Nonnull final IllegalAccessException ex) {
+			throw new SystemImplementationException("Access modifier problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
+		}
+		catch (@Nonnull final IllegalArgumentException ex) {
+			throw new SystemImplementationException("Argument problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
+		}
+		catch (@Nonnull final InvocationTargetException ex) {
+			throw new SystemImplementationException("Target method problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
+		}
+		catch (@Nonnull final NoSuchMethodException ex) {
+			throw new SystemImplementationException("No such method problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
+		}
+		catch (@Nonnull final SecurityException ex) {
+			throw new SystemImplementationException("Security problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
 		}
 	}
 

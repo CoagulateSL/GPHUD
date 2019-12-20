@@ -27,8 +27,7 @@ public class TextError implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<font color=red><b> *** ERROR : "+s+" ***</b></font>";
 	}
 

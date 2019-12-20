@@ -17,8 +17,7 @@ public class BCResponse extends ByteCodeDataType {
 	public BCResponse(final ParseNode n) {super(n);}
 
 	public BCResponse(final ParseNode n,
-	                  @Nonnull final Response content)
-	{
+	                  @Nonnull final Response content) {
 		super(n);
 		message=content.scriptResponse();
 		if (content instanceof ErrorResponse) { error=true; }
@@ -35,8 +34,7 @@ public class BCResponse extends ByteCodeDataType {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		vm.push(this);
 	}
 

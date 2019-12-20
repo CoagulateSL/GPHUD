@@ -15,25 +15,13 @@ public class ScriptRuns extends TableRow {
 	@Nonnull
 	public static ScriptRuns create(final byte[] code,
 	                                final Byte[] initialiser,
-	                                @Nonnull final Char respondant)
-	{
+	                                @Nonnull final Char respondant) {
 		// user can only have one respondant open, this helps us get the ID but also is down to the stupidity of the HUD,
 		// and/or how painful/impractical it is to write complex IO in SL
 		GPHUD.getDB().d("delete from scriptruns where respondant=?",respondant.getId());
 		final int expires=UnixTime.getUnixTime()+900;
-		GPHUD.getDB()
-		     .d("insert into scriptruns(bytecode,initialiser,respondant,expires) values(?,?,?,?)",
-		        code,
-		        initialiser,
-		        respondant.getId(),
-		        expires
-		       );
-		return get(GPHUD.getDB()
-		                .dqinn("select id from scriptruns where initialiser=? and respondant=? and expires=?",
-		                       initialiser,
-		                       respondant.getId(),
-		                       expires
-		                      ));
+		GPHUD.getDB().d("insert into scriptruns(bytecode,initialiser,respondant,expires) values(?,?,?,?)",code,initialiser,respondant.getId(),expires);
+		return get(GPHUD.getDB().dqinn("select id from scriptruns where initialiser=? and respondant=? and expires=?",initialiser,respondant.getId(),expires));
 	}
 
 	@Nonnull

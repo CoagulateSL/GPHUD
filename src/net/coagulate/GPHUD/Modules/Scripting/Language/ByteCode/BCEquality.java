@@ -25,8 +25,7 @@ public class BCEquality extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		final ByteCodeDataType var1=vm.pop();
 		final ByteCodeDataType var2=vm.pop();
 		//<STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
@@ -49,25 +48,29 @@ public class BCEquality extends ByteCode {
 		if (type.equals(BCInteger.class)) {
 			final int s1=var1.toInteger();
 			final int s2=var2.toInteger();
-			if (s1==s2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
+			if (s1==s2) { vm.push(new BCInteger(null,1)); }
+			else { vm.push(new BCInteger(null,0)); }
 			return;
 		}
 		if (type.equals(BCCharacter.class)) {
 			final int id1=((BCCharacter) var1).getContent().getId();
 			final int id2=((BCCharacter) var2).getContent().getId();
-			if (id1==id2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
+			if (id1==id2) { vm.push(new BCInteger(null,1)); }
+			else { vm.push(new BCInteger(null,0)); }
 			return;
 		}
 		if (type.equals(BCAvatar.class)) {
 			final int id1=((BCAvatar) var1).getContent().getId();
 			final int id2=((BCAvatar) var2).getContent().getId();
-			if (id1==id2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
+			if (id1==id2) { vm.push(new BCInteger(null,1)); }
+			else { vm.push(new BCInteger(null,0)); }
 			return;
 		}
 		if (type.equals(BCGroup.class)) {
 			final int id1=((BCGroup) var1).getContent().getId();
 			final int id2=((BCGroup) var2).getContent().getId();
-			if (id1==id2) { vm.push(new BCInteger(null,1)); } else { vm.push(new BCInteger(null,0)); }
+			if (id1==id2) { vm.push(new BCInteger(null,1)); }
+			else { vm.push(new BCInteger(null,0)); }
 			return;
 		}
 		if (type.equals(BCList.class)) { throw new GSInvalidExpressionException("Can not compare lists.  Yet."); }

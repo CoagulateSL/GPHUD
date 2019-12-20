@@ -30,8 +30,7 @@ public abstract class EventsMaintenance {
 		for (final EventSchedule schedule: events) {
 			final Event e=schedule.getEvent();
 			final Set<Char> inzone=new HashSet<>();
-			GPHUD.getLogger()
-			     .log(INFO,"Starting event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
+			GPHUD.getLogger().log(INFO,"Starting event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
 			final Map<String,String> config=e.loadKVs();
 			String message=config.get("events.zonestartmessage");
 			if (message!=null && !message.isEmpty()) {
@@ -53,8 +52,7 @@ public abstract class EventsMaintenance {
 		events=Event.getStoppingEvents();
 		for (final EventSchedule schedule: events) {
 			final Event e=schedule.getEvent();
-			GPHUD.getLogger()
-			     .log(INFO,"Stopping event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
+			GPHUD.getLogger().log(INFO,"Stopping event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
 			final Map<String,String> config=e.loadKVs();
 			String message=config.get("events.zonestopmessage");
 			if (message!=null && !message.isEmpty()) {
@@ -80,12 +78,12 @@ public abstract class EventsMaintenance {
 			}
 			schedule.awardFinalXP(Integer.parseInt(minutes),Integer.parseInt(limit));
 			schedule.ended();
-			e.getInstance()
-			 .pushConveyances(); // TODO also something that pushes XP update messages.  probably another generated conveyance or something :P
+			e.getInstance().pushConveyances(); // TODO also something that pushes XP update messages.  probably another generated conveyance or something :P
 			final int repeat=schedule.getRepeat();
 			if (repeat==0) {
 				schedule.delete();
-			} else {
+			}
+			else {
 				schedule.offsetSchedule(repeat);
 			}
 		}
@@ -94,8 +92,7 @@ public abstract class EventsMaintenance {
 	public static void zoneTransition(@Nonnull final State st,
 	                                  @Nonnull final JSONObject response,
 	                                  @Nullable final Zone oldzone,
-	                                  @Nullable final Zone zone)
-	{
+	                                  @Nullable final Zone zone) {
 		final boolean debug=false;
 		if (oldzone!=null) { oldzone.validate(st); }
 		if (zone!=null) { zone.validate(st); }

@@ -29,14 +29,12 @@ public class DropDownList extends Input {
 
 	@Nonnull
 	public static DropDownList getCommandsList(final State st,
-	                                           final String name)
-	{ return getCommandsList(st,name,true); }
+	                                           final String name) { return getCommandsList(st,name,true); }
 
 	@Nonnull
 	public static DropDownList getCommandsList(final State st,
 	                                           final String name,
-	                                           final boolean allowgenerated)
-	{
+	                                           final boolean allowgenerated) {
 		final DropDownList commands=new DropDownList(name);
 		for (final Module mod: Modules.getModules()) {
 			for (final Command c: mod.getCommands(st).values()) {
@@ -51,14 +49,12 @@ public class DropDownList extends Input {
 	public void add(final String choice) { choices.put(choice,choice); }
 
 	public void add(final String choice,
-	                final String label)
-	{ choices.put(choice,label); }
+	                final String label) { choices.put(choice,label); }
 
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		final StringBuilder r=new StringBuilder();
 		r.append("<select name=\"").append(name).append("\"");
 		if (submitonchange) { r.append("onchange=\"this.form.submit()\""); }

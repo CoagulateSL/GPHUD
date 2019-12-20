@@ -18,8 +18,7 @@ import java.util.TreeMap;
  */
 public class AliasModule extends ModuleAnnotation {
 	public AliasModule(final String name,
-	                   final ModuleDefinition definition)
-	{
+	                   final ModuleDefinition definition) {
 		super(name,definition);
 	}
 
@@ -45,8 +44,7 @@ public class AliasModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Command getCommandNullable(@Nonnull final State st,
-	                                  @Nonnull final String commandname)
-	{
+	                                  @Nonnull final String commandname) {
 		final Alias alias=Alias.getAlias(st,commandname);
 		if (alias==null) { throw new UserInputLookupFailureException("Unknown command alias."+commandname); }
 		final JSONObject template=alias.getTemplate();

@@ -26,8 +26,7 @@ public class TextOK implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<font color=green>OK : "+s+"</font>";
 	}
 

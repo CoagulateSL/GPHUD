@@ -50,13 +50,13 @@ public class MenuResponse implements Response {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		final StringBuilder s=new StringBuilder();
 		if (header!=null && !header.isEmpty()) { s.append(new TextHeader(header).asHtml(st,rich)); }
 		for (final Renderable r: menu) {
 			if (s.length()>0) {
-				if (rich) { s.append("<br>"); } else { s.append(" | "); }
+				if (rich) { s.append("<br>"); }
+				else { s.append(" | "); }
 			}
 			s.append(r.asHtml(st,rich));
 		}

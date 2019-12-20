@@ -46,15 +46,13 @@ public class CharactersModule extends ModuleAnnotation {
 
 
 	public CharactersModule(final String name,
-	                        final ModuleDefinition def)
-	{
+	                        final ModuleDefinition def) {
 		super(name,def);
 	}
 
 	@Nullable
 	public static String templateAttribute(State st,
-	                                       @Nonnull String template)
-	{
+	                                       @Nonnull String template) {
 		template=template.substring(2,template.length()-2);
 		if (template.startsWith("TARGET:")) {
 			template=template.substring(7);
@@ -65,8 +63,7 @@ public class CharactersModule extends ModuleAnnotation {
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getName().equalsIgnoreCase(template)) {
 				if (attr!=null) {
-					throw new SystemConsistencyException("Unexpected duplicate resolution for attribute "+attr.getName()+" and "+a
-							.getName());
+					throw new SystemConsistencyException("Unexpected duplicate resolution for attribute "+attr.getName()+" and "+a.getName());
 				}
 				attr=a;
 			}
@@ -85,7 +82,8 @@ public class CharactersModule extends ModuleAnnotation {
 			if (attr instanceof QuotaedXP) {
 				final QuotaedXP xp=(QuotaedXP) attr;
 				return st.getCharacter().sumPool(xp.getPool(st))+"";
-			} else { return "POOL"; }
+			}
+			else { return "POOL"; }
 		}
 		throw new SystemConsistencyException("Failed to resolve templateAttribute for "+attr+" of type "+attr.getType());
 	}
@@ -99,7 +97,8 @@ public class CharactersModule extends ModuleAnnotation {
 					final String spent=st.getKV(st.getCharacter(),"Characters."+attribute.getName());
 					if (spent!=null && !spent.isEmpty()) { total=total+Integer.parseInt(spent); }
 				}
-			} catch (@Nonnull final NoDataException e) {} // attribute deleted race condition
+			}
+			catch (@Nonnull final NoDataException e) {} // attribute deleted race condition
 		}
 		return total;
 	}
@@ -115,8 +114,7 @@ public class CharactersModule extends ModuleAnnotation {
 	@Nonnull
 	@Template(name="ABILITYPOINTS", description="Number of ability points the character has")
 	public static String abilityPoints(@Nonnull final State st,
-	                                   final String key)
-	{
+	                                   final String key) {
 		if (st.getCharacterNullable()==null) { return ""; }
 		return abilityPointsRemaining(st)+"";
 	}
@@ -145,8 +143,9 @@ public class CharactersModule extends ModuleAnnotation {
 	@Nonnull
 	@Commands(context=Command.Context.CHARACTER, description="Spend an ability point to raise an attribute", permitUserWeb=false)
 	public static Response spendAbilityPoint(@Nonnull final State st,
-	                                         @Arguments(choiceMethod="getRaisableAttributesList", description="Attribute to spend an ability point on", type=Argument.ArgumentType.CHOICE) final String attribute)
-	{
+	                                         @Arguments(choiceMethod="getRaisableAttributesList", description="Attribute to spend an ability point on", type=
+			                                         Argument.ArgumentType.CHOICE)
+	                                         final String attribute) {
 		int remain=abilityPointsRemaining(st);
 		if (remain<=0) { return new ErrorResponse("You have no remaining ability points to spend."); }
 		final Attribute attr=Attribute.find(st.getInstance(),attribute);
@@ -193,13 +192,11 @@ public class CharactersModule extends ModuleAnnotation {
 	@Commands(context=Command.Context.CHARACTER, description="Change a value about your own character")
 	public static Response set(@Nonnull final State st,
 	                           @Nullable @Arguments(type=Argument.ArgumentType.ATTRIBUTE_WRITABLE, description="Attribute to set") final Attribute attribute,
-	                           @Arguments(type=Argument.ArgumentType.TEXT_ONELINE, description="Value to use", mandatory=false, max=4096) final String value)
-	{
+	                           @Arguments(type=Argument.ArgumentType.TEXT_ONELINE, description="Value to use", mandatory=false, max=4096) final String value) {
 		if (attribute==null) { return new ErrorResponse("You must supply an attribute to set"); }
 		attribute.validate(st);
 		if (!attribute.getSelfModify()) {
-			return new ErrorResponse(
-					"This attribute is not self modifiable, it can only be changed directly by an admin");
+			return new ErrorResponse("This attribute is not self modifiable, it can only be changed directly by an admin");
 		}
 		final KV kv=st.getKVDefinition("Characters."+attribute.getName());
 		final String oldvalue=st.getRawKV(st.getCharacter(),kv.fullname());
@@ -222,8 +219,7 @@ public class CharactersModule extends ModuleAnnotation {
 	@Override
 	@Deprecated
 	public void registerKV(@Nonnull final KV a) {
-		throw new SystemImplementationException(
-				"It is no longer permitted to have manual registrations inside Characters module");
+		throw new SystemImplementationException("It is no longer permitted to have manual registrations inside Characters module");
 	}
 
 	@Nonnull
@@ -242,16 +238,14 @@ public class CharactersModule extends ModuleAnnotation {
 
 	@Override
 	public KV getKVDefinition(@Nonnull final State st,
-	                          @Nonnull final String qualifiedname)
-	{
+	                          @Nonnull final String qualifiedname) {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}
 
 	@Override
 	public void addTemplateDescriptions(@Nonnull final State st,
-	                                    @Nonnull final Map<String,String> addto)
-	{
+	                                    @Nonnull final Map<String,String> addto) {
 		final Map<String,KV> ourmap=getKVDefinitions(st);
 		for (final Attribute attr: st.getAttributes()) {
 			addto.put("--"+attr.getName().toUpperCase()+"--","Character attribute "+attr.getName());
@@ -261,18 +255,14 @@ public class CharactersModule extends ModuleAnnotation {
 
 	@Override
 	public void addTemplateMethods(@Nonnull final State st,
-	                               @Nonnull final Map<String,Method> addto)
-	{
+	                               @Nonnull final Map<String,Method> addto) {
 		final Map<String,KV> ourmap=getKVDefinitions(st);
 		for (final Attribute attr: st.getAttributes()) {
 			try {
-				addto.put("--"+attr.getName().toUpperCase()+"--",
-				          getClass().getMethod("templateAttribute",State.class,String.class)
-				         );
-				addto.put("--TARGET:"+attr.getName().toUpperCase()+"--",
-				          getClass().getMethod("templateAttribute",State.class,String.class)
-				         );
-			} catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
+				addto.put("--"+attr.getName().toUpperCase()+"--",getClass().getMethod("templateAttribute",State.class,String.class));
+				addto.put("--TARGET:"+attr.getName().toUpperCase()+"--",getClass().getMethod("templateAttribute",State.class,String.class));
+			}
+			catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
 				SL.report("Templating referencing exception??",ex,st);
 				st.logger().log(SEVERE,"Exception referencing own templating method??",ex);
 			}

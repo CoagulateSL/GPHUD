@@ -39,14 +39,14 @@ public class AliasCommand extends Command {
 
 	public AliasCommand(@Nonnull final State st,
 	                    final String name,
-	                    final JSONObject newdef)
-	{
+	                    final JSONObject newdef) {
 		super();
 		definition=newdef;
 		this.name=name;
 		if (st.hasModule(definition.getString("invoke"))) {
 			targetcommand=Modules.getCommandNullable(st,definition.getString("invoke"));
-		} else {
+		}
+		else {
 			targetcommand=null;
 			fail="Module "+Modules.extractModule(definition.getString("invoke"))+" is not enabled.";
 		}
@@ -155,8 +155,7 @@ public class AliasCommand extends Command {
 
 	@Override
 	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap)
-	{
+	                    @Nonnull final SafeMap parametermap) {
 		if (targetcommand==null) {
 			throw new UserConfigurationException("Error: Alias targets command "+name+", "+fail);
 		}
@@ -169,10 +168,12 @@ public class AliasCommand extends Command {
 				try {
 					final User a=User.findMandatory(v);
 					targchar=Char.getActive(a,st.getInstance());
-				} catch (@Nonnull final NoDataException e) {
+				}
+				catch (@Nonnull final NoDataException e) {
 					throw new UserInputLookupFailureException("Unable to find character or avatar named '"+v+"'");
 				}
-			} else {
+			}
+			else {
 				targchar=Char.resolve(st,v);
 			}
 			if (targchar!=null) { st.setTarget(targchar); }
@@ -202,10 +203,9 @@ public class AliasCommand extends Command {
 					if (ac.getDefinition().has(key)) {
 						//System.out.println("Definition is "+ac.getDefinition().getString(key));
 						if (!delaytemplating) {
-							parametermap.put(key,
-							                 Templater.template(st,ac.getDefinition().getString(key),numeric,integer)
-							                );
-						} else {
+							parametermap.put(key,Templater.template(st,ac.getDefinition().getString(key),numeric,integer));
+						}
+						else {
 							parametermap.put(key,ac.getDefinition().getString(key));
 						}
 					}

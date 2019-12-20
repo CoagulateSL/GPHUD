@@ -18,8 +18,7 @@ import java.util.TreeMap;
 public class MenuModule extends ModuleAnnotation {
 
 	public MenuModule(final String name,
-	                  final ModuleDefinition annotation)
-	{
+	                  final ModuleDefinition annotation) {
 		super(name,annotation);
 	}
 
@@ -38,8 +37,7 @@ public class MenuModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Command getCommandNullable(@Nonnull final State st,
-	                                  @Nonnull final String commandname)
-	{
+	                                  @Nonnull final String commandname) {
 		return new MenuCommand(st,commandname,Menus.getMenu(st,commandname).getJSON());
 	}
 

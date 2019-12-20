@@ -14,8 +14,7 @@ import javax.annotation.Nonnull;
 public class Management {
 	@URL.URLs(url="/configuration/Teleportation")
 	public static void configuration(@Nonnull final State st,
-	                                 final SafeMap map)
-	{
+	                                 final SafeMap map) {
 		final Form f=st.form();
 		f.add(new TextHeader("Teleportation Landmarks"));
 		final Table t=new Table();

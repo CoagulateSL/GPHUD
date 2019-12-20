@@ -18,8 +18,7 @@ public class GSFunctions {
 	}
 
 	public static void register(final String string,
-	                            final Method method)
-	{
+	                            final Method method) {
 		if (gsfunctions.containsKey(string)) {
 			throw new SystemImplementationException("Duplicate definition for gsFunction "+string);
 		}

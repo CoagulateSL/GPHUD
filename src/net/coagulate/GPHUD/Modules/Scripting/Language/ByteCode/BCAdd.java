@@ -26,8 +26,7 @@ public class BCAdd extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		// add the next two stack elements and push the result.
 		final ByteCodeDataType var1=vm.pop();
 		final ByteCodeDataType var2=vm.pop();

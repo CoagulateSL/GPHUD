@@ -22,16 +22,14 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	final Map<String,KV> base=new TreeMap<>();
 
 	public GPHUDClientModule(final String name,
-	                         final ModuleDefinition def)
-	{
+	                         final ModuleDefinition def) {
 		super(name,def);
 	}
 
 	@Nonnull
 	@Commands(context=Command.Context.CHARACTER, description="Set your Titler's Altitude (height above avatar)")
 	public static Response setAltitude(@Nonnull final State st,
-	                                   @Arguments(description="Offset, in meters", max=3, type=Argument.ArgumentType.FLOAT) final Float offset)
-	{
+	                                   @Arguments(description="Offset, in meters", max=3, type=Argument.ArgumentType.FLOAT) final Float offset) {
 		st.setKV(st.getCharacter(),"GPHUDClient.TitlerAltitude",offset+"");
 		return new OKResponse("Updated your Titler altitude to "+offset);
 	}
@@ -60,16 +58,14 @@ public class GPHUDClientModule extends ModuleAnnotation {
 
 	@Override
 	public KV getKVDefinition(final State st,
-	                          @Nonnull final String qualifiedname)
-	{
+	                          @Nonnull final String qualifiedname) {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
 		if (base.containsKey(qualifiedname.toLowerCase())) { return base.get(qualifiedname.toLowerCase()); }
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}
 
 	private void keyConveyances(@Nonnull final Map<String,KV> filterinto,
-	                            @Nonnull final Map<String,KV> filterfrom)
-	{
+	                            @Nonnull final Map<String,KV> filterfrom) {
 		for (final KV kv: filterfrom.values()) {
 			final String conveyas=kv.conveyas();
 			if (!conveyas.isEmpty()) {

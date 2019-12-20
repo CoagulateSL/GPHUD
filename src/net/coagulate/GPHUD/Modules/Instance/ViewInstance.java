@@ -19,8 +19,7 @@ public abstract class ViewInstance {
 
 	@URLs(url="/instances/view/*")
 	public static void viewInstance(@Nonnull final State st,
-	                                final SafeMap values)
-	{
+	                                final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -31,8 +30,7 @@ public abstract class ViewInstance {
 
 	public static void viewInstance(@Nonnull final State st,
 	                                final SafeMap values,
-	                                @Nonnull final Instance i)
-	{
+	                                @Nonnull final Instance i) {
 		final String tz=st.getAvatar().getTimeZone();
 		final boolean full=false;
 		final Table map=new Table();

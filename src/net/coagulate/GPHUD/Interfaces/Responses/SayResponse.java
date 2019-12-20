@@ -24,8 +24,7 @@ public class SayResponse implements Response {
 	public SayResponse(final String r) { reason=r; }
 
 	public SayResponse(final String r,
-	                   @Nullable final String sayas)
-	{
+	                   @Nullable final String sayas) {
 		reason=r;
 		this.sayas=sayas;
 	}
@@ -41,7 +40,8 @@ public class SayResponse implements Response {
 		if (sayas!=null) {
 			json.put("sayas",sayas);
 			json.put("say","/me "+reason);
-		} else { json.put("say",reason); }
+		}
+		else { json.put("say",reason); }
 		return json;
 	}
 
@@ -59,15 +59,15 @@ public class SayResponse implements Response {
 			t.start();
 		}
 		final String message;
-		if (sayas!=null) { message="\""+sayas+" "+reason+"\""; } else { message="\""+reason+"\""; }
+		if (sayas!=null) { message="\""+sayas+" "+reason+"\""; }
+		else { message="\""+reason+"\""; }
 		return message;
 	}
 
 	@Nonnull
 	@Override
 	public String asHtml(@Nonnull final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return new Paragraph(asText(st)).asHtml(st,rich);
 	}
 

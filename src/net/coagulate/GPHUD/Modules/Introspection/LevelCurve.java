@@ -19,8 +19,7 @@ public abstract class LevelCurve {
 	@URLs(url="/introspection/levelcurve")
 	@SideSubMenus(name="Level Curve", priority=1)
 	public static void createForm(@Nonnull final State st,
-	                              final SafeMap values)
-	{
+	                              final SafeMap values) {
 		final Form f=st.form();
 		final Table t=new Table();
 		f.add(t);

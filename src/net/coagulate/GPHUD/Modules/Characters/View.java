@@ -75,8 +75,7 @@ public abstract class View {
 
 	@URLs(url="/characters/view/*")
 	public static void viewCharacter(@Nonnull final State st,
-	                                 @Nonnull final SafeMap values)
-	{
+	                                 @Nonnull final SafeMap values) {
 		st.form().noForm();
 		//System.out.println(st.uri);
 		final String[] split=st.getDebasedURL().split("/");
@@ -100,8 +99,7 @@ public abstract class View {
 	public static void viewCharacter(@Nonnull final State st,
 	                                 @Nonnull final SafeMap values,
 	                                 @Nonnull final Char c,
-	                                 final boolean brief)
-	{
+	                                 final boolean brief) {
 		//boolean full = false;
 		final State simulated=st.simulate(c);
 		final String tz=st.getAvatar().getTimeZone();
@@ -117,7 +115,8 @@ public abstract class View {
 		if (lastplayedstored!=null) { lastplayed=fromUnixTime(lastplayedstored,tz); }
 		kvtable.openRow().add("Last Played").add(lastplayed).add(tz);
 		kvtable.openRow().add("Connected");
-		if (c.getURL()==null || c.getURL().isEmpty()) { kvtable.add("No"); } else { kvtable.add("Yes"); }
+		if (c.getURL()==null || c.getURL().isEmpty()) { kvtable.add("No"); }
+		else { kvtable.add("Yes"); }
 		if (st.hasModule("Experience")) {
 			kvtable.openRow().add("Experience");
 			final int xp=Experience.getExperience(st,c);
@@ -134,8 +133,9 @@ public abstract class View {
 			boolean isxp=false;
 			for (final String s: experiences) { if (s.equalsIgnoreCase(a.getName())) { isxp=true; }}
 			if (isxp && st.hasPermission("experience.award"+a.getName())) {
-				content="<button id=\"award-"+a.getName()+"\" "+"style=\"margin: 0\" "+"type=submit onClick=\""+"document.getElementById('award-"+a
-						.getName()+"').style.display='none';"+"document.getElementById('editor-award-"+a.getName()+"').style.display='block';"+"\">Award</button>";
+				content="<button id=\"award-"+a.getName()+"\" "+"style=\"margin: 0\" "+"type=submit onClick=\""+"document.getElementById('award-"+a.getName()+"').style"+
+						".display='none';"+"document.getElementById('editor-award-"+a
+						.getName()+"').style.display='block';"+"\">Award</button>";
 				final String target=values.get("target");
 				final String ammountstring=values.get("xp-ammount");
 				final String reason=values.getOrDefault("xp-reason","");
@@ -143,18 +143,17 @@ public abstract class View {
 				if (!ammountstring.isEmpty()) {
 					try { ammount=Integer.parseInt(ammountstring); } catch (@Nonnull final NumberFormatException e) {}
 				}
-				content+="<div id=\"editor-award-"+a.getName()+"\" style=\"display: none;\">"+"<form method=post>"+"<input type=hidden name=target value="+a
-						.getName()+">"+"Award <input type=text name=xp-ammount size=4 value="+ammount+"> XP for <input type=text name=xp-reason size=60 value=\""+reason+"\"> <button type=submit name=Award value=Award>Award</button>"+"</form>"+"</div>";
-				if (values.containsKey("Award") && values.getOrDefault("target","")
-				                                         .equalsIgnoreCase(a.getName()) && !reason.isEmpty())
-				{
+				content+="<div id=\"editor-award-"+a.getName()+"\" style=\"display: none;\">"+"<form method=post>"+"<input type=hidden name=target value="+a.getName()+">"+
+						"Award <input type=text name=xp-ammount size=4 value="+ammount+"> XP for <input type=text name=xp-reason size=60 value=\""+reason+"\"> <button "+
+						"type=submit name=Award value=Award>Award</button>"+"</form>"+"</div>";
+				if (values.containsKey("Award") && values.getOrDefault("target","").equalsIgnoreCase(a.getName()) && !reason.isEmpty()) {
 					final Pool p=Modules.getPool(st,"Experience."+a.getName());
 					final GenericXPPool gen=(GenericXPPool) p;
 					try {
 						gen.awardXP(st,c,reason,ammount,false);
-						content="<font color=green><b>&nbsp;&nbsp;&nbsp;OK: </b>Awarded "+ammount+" "+a.getName()+" to "+c
-								.getName()+"</font>";
-					} catch (@Nonnull final UserException e) {
+						content="<font color=green><b>&nbsp;&nbsp;&nbsp;OK: </b>Awarded "+ammount+" "+a.getName()+" to "+c.getName()+"</font>";
+					}
+					catch (@Nonnull final UserException e) {
 						content="<font color=red><b>&nbsp;&nbsp;&nbsp;Error: </b>"+e.getLocalizedMessage()+"</font>";
 					}
 				}
@@ -194,8 +193,7 @@ public abstract class View {
 	@Nonnull
 	@Commands(context=Context.CHARACTER, description="Look at another's character sheet", permitObject=false)
 	public static Response look(@Nonnull final State st,
-	                            @Nonnull @Arguments(type=Argument.ArgumentType.CHARACTER_NEAR, description="Character to inspect") final Char character)
-	{
+	                            @Nonnull @Arguments(type=Argument.ArgumentType.CHARACTER_NEAR, description="Character to inspect") final Char character) {
 		character.validate(st);
 		final State target=new State();
 		target.setInstance(st.getInstance());

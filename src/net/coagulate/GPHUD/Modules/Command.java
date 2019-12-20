@@ -45,8 +45,7 @@ public abstract class Command {
 	@Nonnull
 	static Object assertNotNull(@Nullable final Object o,
 	                            final String value,
-	                            final String type)
-	{
+	                            final String type) {
 		if (o==null) {
 			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type);
 		}
@@ -55,12 +54,10 @@ public abstract class Command {
 
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be static");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be public");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
 		}
 	}
 
@@ -99,8 +96,7 @@ public abstract class Command {
 	@Nonnull
 	@SuppressWarnings("fallthrough")
 	public Response run(@Nonnull final State st,
-	                    @Nonnull final String[] args)
-	{
+	                    @Nonnull final String[] args) {
 		final boolean debug=false;
 		final List<Object> typedargs=new ArrayList<>();
 		int arg=0;
@@ -111,11 +107,13 @@ public abstract class Command {
 			}
 			final ArgumentType type=argument.type();
 			String v;
-			if (args.length>arg) { v=args[arg]; } else { v=""; }
+			if (args.length>arg) { v=args[arg]; }
+			else { v=""; }
 			arg++;
 			if ((v==null || "".equals(v)) && type!=ArgumentType.BOOLEAN) {
 				typedargs.add(null);
-			} else {
+			}
+			else {
 				final int maxlen;
 				switch (type) {
 					case TEXT_CLEAN:
@@ -161,11 +159,11 @@ public abstract class Command {
 
 				}
 				if (maxlen<1) {
-					st.logger()
-					  .warning("Command "+getClass().getSimpleName()+" argument "+argument.getName()+" does not specify a max, assuming 65k...");
-				} else {
+					st.logger().warning("Command "+getClass().getSimpleName()+" argument "+argument.getName()+" does not specify a max, assuming 65k...");
+				}
+				else {
 					if (v!=null && v.length()>maxlen) {
-						throw new UserInputTooLongException(argument.getName()+" is "+v.length()+" characters long and must be no more than "+maxlen+".  Input has not been processed, please try again");
+						throw new UserInputTooLongException(argument.getName()+" is "+v.length()+" characters long and must be no more than "+maxlen+".  Input has not been "+"processed, please try again");
 					}
 				}
 				switch (type) {
@@ -190,25 +188,26 @@ public abstract class Command {
 						typedargs.add(v);
 						break;
 					case BOOLEAN:
-						if (("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(
-								v)))
-						{
+						if (("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
 							typedargs.add(Boolean.TRUE);
-						} else {
+						}
+						else {
 							typedargs.add(Boolean.FALSE);
 						}
 						break;
 					case INTEGER:
 						try {
 							typedargs.add(Integer.valueOf(v));
-						} catch (@Nonnull final NumberFormatException e) {
+						}
+						catch (@Nonnull final NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
 						}
 						break;
 					case FLOAT:
 						try {
 							typedargs.add(Float.valueOf(v));
-						} catch (@Nonnull final NumberFormatException e) {
+						}
+						catch (@Nonnull final NumberFormatException e) {
 							return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
 						}
 						break;
@@ -254,13 +253,16 @@ public abstract class Command {
 							try {
 								final User a=User.findMandatory(v);
 								targchar=Char.getActive(a,st.getInstance());
-							} catch (@Nonnull final NoDataException e) {
+							}
+							catch (@Nonnull final NoDataException e) {
 								return new ErrorResponse("Unable to find character of avatar named '"+v+"'");
 							}
-						} else {
+						}
+						else {
 							targchar=Char.resolve(st,v);
 						}
-						if (targchar!=null) { typedargs.add(targchar); } else {
+						if (targchar!=null) { typedargs.add(targchar); }
+						else {
 							return new ErrorResponse("Unable to find character named '"+v+"'");
 						}
 						break;
@@ -297,8 +299,7 @@ public abstract class Command {
 	 */
 	@Nonnull
 	Response run(@Nonnull final State st,
-	             @Nonnull final Object[] args)
-	{
+	             @Nonnull final Object[] args) {
 		final boolean debug=false;
 		try {
 			// check permission
@@ -330,7 +331,7 @@ public abstract class Command {
 			//check arguments
 			int i=0;
 			if (args.length!=getInvokingArgumentCount()+1) {
-				return new ErrorResponse("Incorrect number of arguments, "+getFullName()+" aka "+getMethod().getName()+" requires "+(getInvokingArgumentCount()+1)+" and we got "+args.length);
+				return new ErrorResponse("Incorrect number of arguments, "+getFullName()+" aka "+getMethod().getName()+" requires "+(getInvokingArgumentCount()+1)+" and we "+"got "+args.length);
 			}
 			String suspiciousname="";
 			for (final Argument a: getInvokingArguments()) {
@@ -370,8 +371,7 @@ public abstract class Command {
 						return new ErrorResponse("Character context required and you are not connected to an instance.");
 					}
 					if (st.getCharacterNullable()==null) {
-						return new ErrorResponse(
-								"Character context required, your request is lacking a character registration");
+						return new ErrorResponse("Character context required, your request is lacking a character registration");
 					}
 					break;
 				case AVATAR:
@@ -379,24 +379,23 @@ public abstract class Command {
 						return new ErrorResponse("Avatar context required and you are not connected to an instance.");
 					}
 					if (st.getAvatarNullable()==null) {
-						return new ErrorResponse(
-								"Avatar context required, your request is lacking an avatar registration");
+						return new ErrorResponse("Avatar context required, your request is lacking an avatar registration");
 					}
 					break;
 				default:
-					throw new SystemImplementationException(
-							"Unhandled CONTEXT enum during pre-flight check in execute()");
+					throw new SystemImplementationException("Unhandled CONTEXT enum during pre-flight check in execute()");
 			}
 			return (Response) (getMethod().invoke(this,args));
-		} catch (@Nonnull final IllegalAccessException ex) {
-			throw new SystemImplementationException("Command programming error in "+getName()+" - run() access modifier is incorrect",
-			                                        ex
-			);
-		} catch (@Nonnull final IllegalArgumentException ex) {
+		}
+		catch (@Nonnull final IllegalAccessException ex) {
+			throw new SystemImplementationException("Command programming error in "+getName()+" - run() access modifier is incorrect",ex);
+		}
+		catch (@Nonnull final IllegalArgumentException ex) {
 			SL.report("Command "+getName()+" failed",ex,st);
 			st.logger().log(WARNING,"Execute command "+getName()+" failed",ex);
 			return new ErrorResponse("Illegal argument in "+getName());
-		} catch (@Nonnull final InvocationTargetException ex) {
+		}
+		catch (@Nonnull final InvocationTargetException ex) {
 			if (ex.getCause()!=null && UserException.class.isAssignableFrom(ex.getCause().getClass())) {
 				return new ErrorResponse(getName()+" errored: \n--- "+ex.getCause().getLocalizedMessage());
 			}
@@ -425,15 +424,15 @@ public abstract class Command {
 	public List<Argument> getInvokingArguments() { return getArguments(); }
 
 	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap)
-	{
+	                    @Nonnull final SafeMap parametermap) {
 		//System.out.println("Run in method "+this.getClass().getCanonicalName());
 		final List<String> arguments=new ArrayList<>();
 		for (final Argument arg: getInvokingArguments()) {
 			if (parametermap.containsKey(arg.getName())) {
 				//System.out.println("Added argument "+arg.getName());
 				arguments.add(parametermap.get(arg.getName()));
-			} else {
+			}
+			else {
 				//System.out.println("Skipped argument "+arg.getName());
 				arguments.add(null);
 			}
@@ -442,8 +441,7 @@ public abstract class Command {
 	}
 
 	public void simpleHtml(@Nonnull final State st,
-	                       @Nonnull final SafeMap values)
-	{
+	                       @Nonnull final SafeMap values) {
 		//System.out.println("HERE:"+getArgumentCount());
 		if (getArgumentCount()==0 || values.submit()) {
 			final Response response=run(st,values);
@@ -514,7 +512,8 @@ public abstract class Command {
 					final Set<Char> options=Char.getCharacters(st.getInstance(),st.getAvatar());
 					if (options.size()>12) {
 						json.put("arg"+arg+"type","TEXTBOX");
-					} else {
+					}
+					else {
 						json.put("arg"+arg+"type","SELECT");
 						button=0;
 						for (final Char c: options) {
@@ -527,7 +526,8 @@ public abstract class Command {
 					final Set<CharacterGroup> groups=st.getInstance().getCharacterGroups();
 					if (groups.size()>12) {
 						json.put("arg"+arg+"type","TEXTBOX");
-					} else {
+					}
+					else {
 						json.put("arg"+arg+"type","SELECT");
 						button=0;
 						for (final CharacterGroup g: groups) {

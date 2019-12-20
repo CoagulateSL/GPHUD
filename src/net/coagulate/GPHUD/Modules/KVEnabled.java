@@ -13,8 +13,7 @@ public class KVEnabled extends KV {
 	final String def;
 
 	public KVEnabled(final Module m,
-	                 final String def)
-	{
+	                 final String def) {
 		module=m;
 		this.def=def;
 	} // technically is generated, but generated really means "instance specific", and these KVs aren't, they're just a convenience for writing the static declaration.

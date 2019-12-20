@@ -18,8 +18,7 @@ public class CheckBox extends Input {
 	public CheckBox(final String name) {this.name=name;}
 
 	public CheckBox(final String name,
-	                final String value)
-	{
+	                final String value) {
 		this.name=name;
 		this.value=value;
 	}
@@ -32,8 +31,7 @@ public class CheckBox extends Input {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		String r="<input type=\"checkbox\" name=\""+name+"\" ";
 		if (value!=null && !value.isEmpty()) { r+="checked"; }
 		r+=" />";

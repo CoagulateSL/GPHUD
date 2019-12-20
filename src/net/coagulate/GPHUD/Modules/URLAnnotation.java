@@ -28,8 +28,7 @@ public class URLAnnotation extends URL {
 	private final boolean generated;
 
 	public URLAnnotation(final Module module,
-	                     @Nonnull final Method method)
-	{
+	                     @Nonnull final Method method) {
 		this.module=module;
 		this.method=method;
 		meta=method.getAnnotation(URLs.class);
@@ -79,18 +78,17 @@ public class URLAnnotation extends URL {
 	}
 
 	public void run(@Nonnull final State st,
-	                final SafeMap values)
-	{
+	                final SafeMap values) {
 		try {
 			method.invoke(null,st,values);
-		} catch (@Nonnull final IllegalAccessException ex) {
+		}
+		catch (@Nonnull final IllegalAccessException ex) {
 			throw new SystemImplementationException("Illegal method access to content at "+st.getDebasedURL(),ex);
-		} catch (@Nonnull final IllegalArgumentException ex) {
-			throw new SystemImplementationException(
-					"Illegal arguments on content, should be (State,Map<String,String>), at "+st.getDebasedURL(),
-					ex
-			);
-		} catch (@Nonnull final InvocationTargetException ex) {
+		}
+		catch (@Nonnull final IllegalArgumentException ex) {
+			throw new SystemImplementationException("Illegal arguments on content, should be (State,Map<String,String>), at "+st.getDebasedURL(),ex);
+		}
+		catch (@Nonnull final InvocationTargetException ex) {
 			final Throwable contained=ex.getCause();
 			if (contained instanceof RedirectionException) { throw (RedirectionException) contained; }
 			if (SystemException.class.isAssignableFrom(contained.getClass())) { throw (SystemException) contained; }

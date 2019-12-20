@@ -16,15 +16,13 @@ public class ToolTip implements Renderable {
 	private final Renderable tooltip;
 
 	public ToolTip(final String element,
-	               final String tooltip)
-	{
+	               final String tooltip) {
 		this.element=element;
 		this.tooltip=new Text(tooltip);
 	}
 
 	public ToolTip(final String element,
-	               final Renderable tooltip)
-	{
+	               final Renderable tooltip) {
 		this.element=element;
 		this.tooltip=tooltip;
 	}
@@ -38,8 +36,7 @@ public class ToolTip implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<div class=\"tooltip\">"+element+"<span class=\"tooltiptext\">"+tooltip.asHtml(st,rich)+"</span></div>";
 	}
 

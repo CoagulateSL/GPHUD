@@ -47,13 +47,16 @@ public class ZoneArea extends TableRow {
 			throw new UserInputValidationParseException("Could not decompose co-ordinates properly");
 		}
 		final int[] pos=new int[3];
-		try { pos[0]=(int) Float.parseFloat(parts[0]); } catch (@Nonnull final NumberFormatException e) {
+		try { pos[0]=(int) Float.parseFloat(parts[0]); }
+		catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Error processing X number "+parts[0]+" - "+e.getMessage());
 		}
-		try { pos[1]=(int) Float.parseFloat(parts[1]); } catch (@Nonnull final NumberFormatException e) {
+		try { pos[1]=(int) Float.parseFloat(parts[1]); }
+		catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Error processing Y number "+parts[1]+" - "+e.getMessage());
 		}
-		try { pos[2]=(int) Float.parseFloat(parts[2]); } catch (@Nonnull final NumberFormatException e) {
+		try { pos[2]=(int) Float.parseFloat(parts[2]); }
+		catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Error processing Z number "+parts[2]+" - "+e.getMessage());
 		}
 		return pos;
@@ -92,19 +95,10 @@ public class ZoneArea extends TableRow {
 	 * @param loc2 Corner 2 as vector string
 	 */
 	public void setPos(final String loc1,
-	                   final String loc2)
-	{
+	                   final String loc2) {
 		final int[] one=parseVector(loc1);
 		final int[] two=parseVector(loc2);
-		d("update zoneareas set x1=?,y1=?,z1=?,x2=?,y2=?,z2=? where zoneareaid=?",
-		  one[0],
-		  one[1],
-		  one[2],
-		  two[0],
-		  two[1],
-		  two[2],
-		  getId()
-		 );
+		d("update zoneareas set x1=?,y1=?,z1=?,x2=?,y2=?,z2=? where zoneareaid=?",one[0],one[1],one[2],two[0],two[1],two[2],getId());
 	}
 
 	/**
@@ -128,7 +122,8 @@ public class ZoneArea extends TableRow {
 		if (x1<=x2) {
 			vec1+=x1;
 			vec2+=x2;
-		} else {
+		}
+		else {
 			vec1+=x2;
 			vec2+=x1;
 		}
@@ -137,7 +132,8 @@ public class ZoneArea extends TableRow {
 		if (y1<=y2) {
 			vec1+=y1;
 			vec2+=y2;
-		} else {
+		}
+		else {
 			vec1+=y2;
 			vec2+=y1;
 		}
@@ -146,7 +142,8 @@ public class ZoneArea extends TableRow {
 		if (z1<=z2) {
 			vec1+=z1;
 			vec2+=z2;
-		} else {
+		}
+		else {
 			vec1+=z2;
 			vec2+=z1;
 		}

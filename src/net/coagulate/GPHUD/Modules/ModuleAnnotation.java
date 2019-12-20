@@ -32,8 +32,7 @@ public class ModuleAnnotation extends Module {
 	SideMenu sidemenu;
 
 	public ModuleAnnotation(final String name,
-	                        final ModuleDefinition def)
-	{
+	                        final ModuleDefinition def) {
 		super(name,def);
 		if (canDisable()) {
 			registerKV(new KVEnabled(this,defaultDisable()?"false":"true"));
@@ -45,8 +44,7 @@ public class ModuleAnnotation extends Module {
 	@Nonnull
 	static Object assertNotNull(@Nullable final Object o,
 	                            final String value,
-	                            final String type)
-	{
+	                            final String type) {
 		if (o==null) {
 			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type);
 		}
@@ -55,12 +53,10 @@ public class ModuleAnnotation extends Module {
 
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be static");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be public");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
 		}
 	}
 
@@ -69,8 +65,7 @@ public class ModuleAnnotation extends Module {
 	@Nonnull
 	Response run(@Nonnull final State st,
 	             @Nonnull final String commandname,
-	             @Nonnull final String[] args)
-	{
+	             @Nonnull final String[] args) {
 		final Command command=getCommandNullable(st,commandname);
 		return command.run(st,args);
 	}
@@ -82,8 +77,7 @@ public class ModuleAnnotation extends Module {
 
 	@Nullable
 	public URL getURL(final State st,
-	                  @Nonnull final String url)
-	{
+	                  @Nonnull final String url) {
 		final boolean debug=false;
 		URL liberalmatch=null;
 		for (final URL m: contents) {
@@ -96,11 +90,11 @@ public class ModuleAnnotation extends Module {
 				if (url.toLowerCase().startsWith(compareto)) {
 					if (liberalmatch!=null) {
 						if (liberalmatch.url().length()==m.url().length()) {
-							throw new SystemImplementationException("Multiple liberal matches for "+url+" - "+m.getFullName()+" conflicts with "+liberalmatch
-									.getFullName());
+							throw new SystemImplementationException("Multiple liberal matches for "+url+" - "+m.getFullName()+" conflicts with "+liberalmatch.getFullName());
 						}
 						if (m.url().length()>liberalmatch.url().length()) { liberalmatch=m; }
-					} else {
+					}
+					else {
 						liberalmatch=m;
 					}
 				}
@@ -115,8 +109,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public KV getKVDefinition(final State st,
-	                          @Nonnull final String qualifiedname)
-	{
+	                          @Nonnull final String qualifiedname) {
 		//for (String s:kvmap.keySet()) { System.out.println(s); }
 		if (!kvmap.containsKey(qualifiedname.toLowerCase())) {
 			throw new SystemImplementationException("Invalid KV "+qualifiedname+" in module "+getName());
@@ -126,8 +119,7 @@ public class ModuleAnnotation extends Module {
 
 	@Nonnull
 	public Command getCommandNullable(final State st,
-	                                  @Nonnull final String commandname)
-	{
+	                                  @Nonnull final String commandname) {
 		final Command c=commands.get(commandname.toLowerCase());
 		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name); }
 		return c;
@@ -142,8 +134,7 @@ public class ModuleAnnotation extends Module {
 
 	@Nonnull
 	public Pool getPool(final State st,
-	                    @Nonnull final String itemname)
-	{
+	                    @Nonnull final String itemname) {
 		final Pool p=poolmap.get(itemname.toLowerCase());
 		if (p==null) {
 			throw new UserInputLookupFailureException("There is no pool named "+itemname+" in module "+getName());
@@ -152,8 +143,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public Permission getPermission(final State st,
-	                                @Nonnull final String itemname)
-	{
+	                                @Nonnull final String itemname) {
 		return permissions.get(itemname.toLowerCase());
 	}
 
@@ -178,8 +168,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public void setSideMenu(final State st,
-	                        @Nonnull final SideMenu a)
-	{
+	                        @Nonnull final SideMenu a) {
 		if (!a.requiresPermission().isEmpty()) {
 			Modules.validatePermission(st,a.requiresPermission());
 		}
@@ -187,15 +176,13 @@ public class ModuleAnnotation extends Module {
 			throw new SystemImplementationException("Side menu definition "+a.name()+" references url "+a.url()+" which can not be found");
 		}
 		if (sidemenu!=null) {
-			throw new SystemImplementationException("Attempt to replace side menu detected - is "+sidemenu.name()+" but replacing with "+a
-					.name());
+			throw new SystemImplementationException("Attempt to replace side menu detected - is "+sidemenu.name()+" but replacing with "+a.name());
 		}
 		sidemenu=a;
 	}
 
 	public void registerSideSubMenu(final State st,
-	                                @Nonnull final SideSubMenu m)
-	{
+	                                @Nonnull final SideSubMenu m) {
 		if (!m.requiresPermission().isEmpty()) {
 			Modules.validatePermission(st,m.requiresPermission());
 		}
@@ -237,16 +224,14 @@ public class ModuleAnnotation extends Module {
 	}
 
 	public void validateKV(@Nonnull final State st,
-	                       @Nonnull final String key)
-	{
+	                       @Nonnull final String key) {
 		if (Modules.getKVDefinitionNullable(st,key)==null) {
 			throw new UserInputLookupFailureException("KV key "+key+" in module "+getName()+" does not exist");
 		}
 	}
 
 	public void validateCommand(final State st,
-	                            @Nonnull final String command)
-	{
+	                            @Nonnull final String command) {
 		if (!commands.containsKey(command.toLowerCase())) {
 			throw new SystemImplementationException("Command "+command+" does not exist in module "+getName());
 		}

@@ -30,8 +30,7 @@ public class TextSubHeader implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<h3>"+content.asHtml(st,rich)+"</h3>";
 	}
 

@@ -29,8 +29,7 @@ public class EventsPages {
 
 	@URLs(url="/events")
 	public static void listEvents(@Nonnull final State st,
-	                              final SafeMap values)
-	{
+	                              final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextHeader("Events Listing"));
@@ -48,8 +47,7 @@ public class EventsPages {
 
 	@URLs(url="/events/create", requiresPermission="events.create")
 	public static void createEvent(@Nonnull final State st,
-	                               @Nonnull final SafeMap values)
-	{
+	                               @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		Modules.simpleHtml(st,"events.create",values);
 		final Command c=Modules.getCommandNullable(st,"events.create");
@@ -58,8 +56,7 @@ public class EventsPages {
 
 	@URLs(url="/event/*")
 	public static void viewEvent(@Nonnull final State st,
-	                             final SafeMap values)
-	{
+	                             final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -71,8 +68,7 @@ public class EventsPages {
 	public static void viewEvent(@Nonnull final State st,
 	                             final SafeMap values,
 	                             @Nonnull final Event e,
-	                             final boolean brief)
-	{
+	                             final boolean brief) {
 		e.validate(st);
 		final Form f=st.form();
 		f.noForm();
@@ -115,22 +111,19 @@ public class EventsPages {
 
 	@URLs(url="/event/addlocation", requiresPermission="events.locations")
 	public static void addLocation(@Nonnull final State st,
-	                               @Nonnull final SafeMap values)
-	{
+	                               @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"events.addlocation",values);
 	}
 
 	@URLs(url="/event/deletelocation", requiresPermission="events.locations")
 	public static void deleteLocation(@Nonnull final State st,
-	                                  @Nonnull final SafeMap values)
-	{
+	                                  @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"events.deletelocation",values);
 	}
 
 	@URLs(url="/event/deleteschedule", requiresPermission="events.schedule")
 	public static void deleteSchedule(@Nonnull final State st,
-	                                  @Nonnull final SafeMap values)
-	{
+	                                  @Nonnull final SafeMap values) {
 		final String id=values.get("eventscheduleid");
 		final EventSchedule es=EventSchedule.get(Integer.parseInt(id));
 		es.validate(st);
@@ -150,8 +143,7 @@ public class EventsPages {
 
 	@URLs(url="/event/addschedule", requiresPermission="events.schedule")
 	public static void addSchedule(@Nonnull final State st,
-	                               @Nonnull final SafeMap values)
-	{
+	                               @Nonnull final SafeMap values) {
 		final String eventname=values.get("event");
 		final String defaulttz=st.getAvatar().getTimeZone();
 		final Event event=Event.find(st.getInstance(),eventname);
@@ -173,12 +165,12 @@ public class EventsPages {
 				            "AddSchedule",
 				            event.getName(),
 				            null,
-				            DateTime.fromUnixTime(startdate,"America/Los_Angeles")+" SLT repeat "+UnixTime.duration(
-						            repeat),
+				            DateTime.fromUnixTime(startdate,"America/Los_Angeles")+" SLT repeat "+UnixTime.duration(repeat),
 				            "Schedule added to event"
 				           );
 				throw new RedirectionException(values);
-			} catch (@Nonnull final UserException e) {
+			}
+			catch (@Nonnull final UserException e) {
 				st.form().add(new TextError(e.getMessage()));
 			}
 		}

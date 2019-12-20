@@ -51,19 +51,13 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute find(@Nonnull final Instance instance,
-	                             final String name)
-	{
+	                             final String name) {
 		try {
-			final int id=GPHUD.getDB()
-			                  .dqinn("select attributeid from attributes where name like ? and instanceid=?",
-			                         name,
-			                         instance.getId()
-			                        );
+			final int id=GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?",name,instance.getId());
 			return get(id);
-		} catch (@Nonnull final NoDataException e) {
-			throw new UserInputLookupFailureException("Unable to find attribute '"+name+"' in instance '"+instance+"'",
-			                                          e
-			);
+		}
+		catch (@Nonnull final NoDataException e) {
+			throw new UserInputLookupFailureException("Unable to find attribute '"+name+"' in instance '"+instance+"'",e);
 		}
 	}
 
@@ -72,19 +66,13 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute findGroup(final @NotNull Instance instance,
-	                                  final String grouptype)
-	{
+	                                  final String grouptype) {
 		try {
-			final int id=GPHUD.getDB()
-			                  .dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",
-			                         instance.getId(),
-			                         grouptype
-			                        );
+			final int id=GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
 			return get(id);
-		} catch (@Nonnull final NoDataException e) {
-			throw new UserInputLookupFailureException("Unable to find an attribute representing a group of type "+grouptype,
-			                                          e
-			);
+		}
+		catch (@Nonnull final NoDataException e) {
+			throw new UserInputLookupFailureException("Unable to find an attribute representing a group of type "+grouptype,e);
 		}
 	}
 
@@ -108,8 +96,7 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public static Set<Attribute> getAttributes(@Nonnull final Instance instance) {
 		final Set<Attribute> set=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select attributeid from attributes where instanceid=?",instance.getId())) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select attributeid from attributes where instanceid=?",instance.getId())) {
 			set.add(Attribute.get(r.getInt()));
 		}
 		return set;
@@ -122,8 +109,7 @@ public class Attribute extends TableRow {
 	                   final String grouptype,
 	                   final Boolean usesabilitypoints,
 	                   final Boolean required,
-	                   String defaultvalue)
-	{
+	                   String defaultvalue) {
 		// =)
 		if ("".equals(defaultvalue)) { defaultvalue=null; }
 		GPHUD.getDB()
@@ -149,8 +135,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nullable
 	public static Attribute resolve(@Nonnull final State st,
-	                                final String name)
-	{
+	                                final String name) {
 		final int id=new Attribute(-1).resolveToID(st,name,true);
 		if (id==0) { return null; }
 		return get(id);
@@ -210,7 +195,8 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public ATTRIBUTETYPE getType() {
 		String type;
-		try { type=(String) cacheGet("type"); } catch (@Nonnull final CacheMiss ex) {
+		try { type=(String) cacheGet("type"); }
+		catch (@Nonnull final CacheMiss ex) {
 			type=getStringNullable("attributetype");
 			cachePut("type",type,getNameCacheTime());
 		}
@@ -281,7 +267,8 @@ public class Attribute extends TableRow {
 			if (this instanceof QuotaedXP) {
 				final QuotaedXP xp=(QuotaedXP) this;
 				return st.getCharacter().sumPool(xp.getPool(st))+"";
-			} else { return "POOL"; }
+			}
+			else { return "POOL"; }
 		}
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
@@ -292,9 +279,9 @@ public class Attribute extends TableRow {
 		if (getType()==POOL || getType()==EXPERIENCE) {
 			if (this instanceof QuotaedXP) {
 				final QuotaedXP xp=(QuotaedXP) this;
-				return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp
-						.nextFree(st)+"</i>");
-			} else { return "POOL"; }
+				return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
+			}
+			else { return "POOL"; }
 		}
 		if (getType()==GROUP) { return ""; }
 		throw new SystemImplementationException("Unhandled type "+getType());

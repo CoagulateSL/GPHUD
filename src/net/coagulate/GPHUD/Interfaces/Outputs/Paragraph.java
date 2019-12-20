@@ -33,8 +33,7 @@ public class Paragraph implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<p>"+content.asHtml(st,rich)+"</p>";
 	}
 

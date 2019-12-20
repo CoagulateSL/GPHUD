@@ -30,8 +30,7 @@ public class BCInvoke extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		final String functionname=vm.popString().getContent();
 		final Method function=GSFunctions.get(functionname);
 		final int argcount=vm.popInteger().getContent();
@@ -67,8 +66,10 @@ public class BCInvoke extends ByteCode {
 			pass[1]=vm;
 			for (int i=0;i<argcount;i++) {
 				if (!parameters[i+2].equals(args[i].getClass())) {
-					throw new GSInvalidFunctionCall("Call to "+functionname+", parameter "+i+" is expected to be of type "+parameters[i+2]
-							.getSimpleName()+" but was supplied "+args[i].getClass().getSimpleName());
+					throw new GSInvalidFunctionCall("Call to "+functionname+", parameter "+i+" is expected to be of type "+parameters[i+2].getSimpleName()+" but was "+
+							                                "supplied"+" "+args[i]
+							.getClass()
+							.getSimpleName());
 				}
 				pass[i+2]=args[i];
 			}
@@ -82,14 +83,15 @@ public class BCInvoke extends ByteCode {
 	private void invoke(final State st,
 	                    @Nonnull final GSVM vm,
 	                    @Nonnull final Method function,
-	                    final Object[] parameters)
-	{
+	                    final Object[] parameters) {
 		final Object rawret;
 		try {
 			rawret=function.invoke(null,parameters);
-		} catch (@Nonnull final IllegalAccessException e) {
+		}
+		catch (@Nonnull final IllegalAccessException e) {
 			throw new GSInternalError("Method access to "+function.getName()+" in "+function.getDeclaringClass()+" is not permitted.  Check access qualifier is public.");
-		} catch (@Nonnull final InvocationTargetException e) {
+		}
+		catch (@Nonnull final InvocationTargetException e) {
 			final Throwable t=e.getCause();
 			if (t!=null) {
 				if (UserException.class.isAssignableFrom(t.getClass())) { throw ((UserException) t); }
@@ -97,13 +99,11 @@ public class BCInvoke extends ByteCode {
 				if (RuntimeException.class.isAssignableFrom(t.getClass())) {
 					throw new GSInvalidFunctionCall("Function "+function.getName()+" errored: "+t,t);
 				}
-				throw new GSInternalError("Unhandled exception in GPHUDScript invoke bytecode calling "+function.getName()+" in "+function
-						.getDeclaringClass()
-						.getSimpleName(),t);
+				throw new GSInternalError("Unhandled exception in GPHUDScript invoke bytecode calling "+function.getName()+" in "+function.getDeclaringClass().getSimpleName(),
+				                          t
+				);
 			}
-			throw new GSInternalError("No cause to invocation target exception from "+function.getDeclaringClass()
-			                                                                                  .getSimpleName()+"/"+function
-					.getName(),e);
+			throw new GSInternalError("No cause to invocation target exception from "+function.getDeclaringClass().getSimpleName()+"/"+function.getName(),e);
 		}
 		final ByteCodeDataType ret=(ByteCodeDataType) rawret;
 		ret.stack(vm);

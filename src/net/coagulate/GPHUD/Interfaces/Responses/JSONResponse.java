@@ -41,8 +41,7 @@ public class JSONResponse implements Response {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		throw new SystemImplementationException("JSONResponse can not be converted to HTML");
 	}
 

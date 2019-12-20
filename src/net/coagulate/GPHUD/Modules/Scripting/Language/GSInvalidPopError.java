@@ -10,8 +10,7 @@ public class GSInvalidPopError extends GSInternalError {
 	}
 
 	public GSInvalidPopError(final String reason,
-	                         final Throwable cause)
-	{
+	                         final Throwable cause) {
 		super(reason,cause);
 	}
 

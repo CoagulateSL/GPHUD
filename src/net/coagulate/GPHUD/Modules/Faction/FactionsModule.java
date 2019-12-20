@@ -19,8 +19,7 @@ import java.util.Set;
 public class FactionsModule extends ModuleAnnotation {
 
 	public FactionsModule(final String name,
-	                      final ModuleDefinition def)
-	{
+	                      final ModuleDefinition def) {
 		super(name,def);
 	}
 

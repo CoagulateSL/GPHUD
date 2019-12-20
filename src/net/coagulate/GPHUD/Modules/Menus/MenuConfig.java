@@ -26,8 +26,7 @@ public abstract class MenuConfig {
 
 	@URLs(url="/configuration/menus")
 	public static void configure(@Nonnull final State st,
-	                             final SafeMap values)
-	{
+	                             final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextSubHeader("Dialog menu configuration"));
 		final Map<String,Integer> menus=Menus.getMenusMap(st);
@@ -41,8 +40,7 @@ public abstract class MenuConfig {
 
 	@URLs(url="/configuration/menus/view/*")
 	public static void viewMenus(@Nonnull final State st,
-	                             @Nonnull final SafeMap values)
-	{
+	                             @Nonnull final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final Menus m=Menus.get(Integer.parseInt(id));
@@ -51,8 +49,7 @@ public abstract class MenuConfig {
 
 	public static void viewMenus(@Nonnull final State st,
 	                             @Nonnull final SafeMap values,
-	                             @Nonnull final Menus m)
-	{
+	                             @Nonnull final Menus m) {
 		if (m.getInstance()!=st.getInstance()) {
 			throw new UserInputStateException("That menu belongs to a different instance");
 		}
@@ -78,9 +75,9 @@ public abstract class MenuConfig {
 		final Form f=st.form();
 		f.add(new TextHeader("Menu '"+m.getName()+"'"));
 		f.add(new Paragraph(
-				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will be omitted from the menu.  Layout of buttons is as follows:"));
-		f.add(new Paragraph(
-				"Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen."));
+				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will "
+						+"be omitted from the menu.  Layout of buttons is as follows:"));
+		f.add(new Paragraph("Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen."));
 		final Table example=new Table();
 		f.add(example);
 		example.openRow().add("10").add("11").add("12");
@@ -106,8 +103,7 @@ public abstract class MenuConfig {
 
 	@URLs(url="/configuration/menus/create", requiresPermission="Menus.Config")
 	public static void createMenu(@Nonnull final State st,
-	                              @Nonnull final SafeMap values)
-	{
+	                              @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty()) {
 			final Menus menu=Menus.create(st,values.get("name"),values.get("description"),new JSONObject());
 			throw new RedirectionException("./view/"+menu.getId());

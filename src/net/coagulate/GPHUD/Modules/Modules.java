@@ -68,8 +68,7 @@ public abstract class Modules {
 	 * @throws UserException if the module doesn't exist, or isn't enabled.
 	 */
 	public static Module get(@Nullable final State st,
-	                         @Nonnull final String nameorreference)
-	{
+	                         @Nonnull final String nameorreference) {
 		final Module m=modules.get(extractModule(nameorreference).toLowerCase());
 		if (st!=null && !m.isEnabled(st)) {
 			throw new UserConfigurationException("Module "+m.getName()+" is not enabled in this instance");
@@ -81,8 +80,7 @@ public abstract class Modules {
 		for (final String dependancy: dependancies) {
 			final Module m2=get(null,dependancy);
 			if (!m2.isEnabled(st)) {
-				throw new UserConfigurationException("Module "+m.getName()+" is not enabled in this instance because it depends on "+m2
-						.getName()+" which is disabled");
+				throw new UserConfigurationException("Module "+m.getName()+" is not enabled in this instance because it depends on "+m2.getName()+" which is disabled");
 			}
 		}
 		return m;
@@ -101,8 +99,7 @@ public abstract class Modules {
 		//System.out.println("QUALIFIED:"+qualified);
 		final String[] parts=qualified.split("\\.");
 		if (parts.length<1 || parts.length>2) {
-			throw new UserInputValidationParseException(
-					"Invalid format, must be module or module.reference but we received "+qualified);
+			throw new UserInputValidationParseException("Invalid format, must be module or module.reference but we received "+qualified);
 		}
 		final String name=parts[0];
 		//System.out.println("NAME:"+name);
@@ -132,15 +129,13 @@ public abstract class Modules {
 
 	// validate a KV mapping exists
 	public static void validateKV(final State st,
-	                              @Nonnull final String key)
-	{
+	                              @Nonnull final String key) {
 		get(null,key).validateKV(st,key);
 	}
 
 	@Nonnull
 	public static URL getURL(final State st,
-	                         @Nonnull final String url)
-	{
+	                         @Nonnull final String url) {
 		final URL ret=getURLNullable(st,url);
 		if (ret==null) { throw new UserInputLookupFailureException("404 - URL mapping was not found"); }
 		return ret;
@@ -159,8 +154,7 @@ public abstract class Modules {
 	 */
 	@Nullable
 	public static URL getURLNullable(final State st,
-	                                 @Nonnull String url)
-	{
+	                                 @Nonnull String url) {
 		final boolean debug=false;
 		if (url.toLowerCase().startsWith("/gphud/")) { url=url.substring(6); }
 		URL literal=null;
@@ -172,17 +166,17 @@ public abstract class Modules {
 					if (relaxed!=null) {
 						// break if matching prefix length, otherwise...
 						if (relaxed.url().length()==proposed.url().length()) {
-							throw new SystemImplementationException("Multiple relaxed matches between "+proposed.url()+" and "+relaxed
-									.url());
+							throw new SystemImplementationException("Multiple relaxed matches between "+proposed.url()+" and "+relaxed.url());
 						}
 						if (relaxed.url().length()<proposed.url().length()) {
 							relaxed=proposed;
 						}  // pick longer prefix
-					} else { relaxed=proposed; }
-				} else {
+					}
+					else { relaxed=proposed; }
+				}
+				else {
 					if (literal!=null) {
-						throw new SystemImplementationException("Multiple literal matches between "+proposed.url()+" and "+literal
-								.url());
+						throw new SystemImplementationException("Multiple literal matches between "+proposed.url()+" and "+literal.url());
 					}
 					literal=proposed;
 				}
@@ -197,37 +191,32 @@ public abstract class Modules {
 	}
 
 	public static void validatePermission(final State st,
-	                                      @Nonnull final String requirespermission)
-	{
+	                                      @Nonnull final String requirespermission) {
 		get(null,requirespermission).validatePermission(st,extractReference(requirespermission));
 	}
 
 	@Nullable
 	public static Command getCommandNullable(final State st,
-	                                         @Nonnull final String proposedcommand)
-	{
+	                                         @Nonnull final String proposedcommand) {
 		return get(st,proposedcommand).getCommandNullable(st,extractReference(proposedcommand));
 	}
 
 	@Nonnull
 	public static Command getCommand(final State st,
-	                                 @Nonnull final String proposedcommand)
-	{
+	                                 @Nonnull final String proposedcommand) {
 		final Command c=getCommandNullable(st,proposedcommand);
 		if (c==null) { throw new UserInputLookupFailureException("Unable to locate command "+proposedcommand); }
 		return c;
 	}
 
 	public static void getHtmlTemplate(@Nonnull final State st,
-	                                   @Nonnull final String qualifiedcommandname)
-	{
+	                                   @Nonnull final String qualifiedcommandname) {
 		get(st,qualifiedcommandname).getCommand(st,extractReference(qualifiedcommandname)).getHtmlTemplate(st);
 	}
 
 	@Nonnull
 	public static JSONObject getJSONTemplate(@Nonnull final State st,
-	                                         @Nonnull final String qualifiedcommandname)
-	{
+	                                         @Nonnull final String qualifiedcommandname) {
 		final Module module=get(st,qualifiedcommandname);
 		if (module==null) {
 			throw new UserInputLookupFailureException("Unable to resolve module in "+qualifiedcommandname);
@@ -241,20 +230,19 @@ public abstract class Modules {
 
 	@Nonnull
 	public static Response getJSONTemplateResponse(@Nonnull final State st,
-	                                               @Nonnull final String command)
-	{ return new JSONResponse(getJSONTemplate(st,command)); }
+	                                               @Nonnull final String command) { return new JSONResponse(getJSONTemplate(st,command)); }
 
 	@SuppressWarnings("fallthrough")
 	public static Response run(@Nonnull final State st,
-	                           @Nullable final String console)
-	{
+	                           @Nullable final String console) {
 		if (console==null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
 		final String[] words=console.split(" ");
 		int i=0;
 		String command=words[0].toLowerCase();
 		if (command.startsWith("*")) { command=command.substring(1); }
 		final Command c;
-		try { c=getCommandNullable(st,command); } catch (@Nonnull final UserException e) {
+		try { c=getCommandNullable(st,command); }
+		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Unable to find command '"+command+"' - "+e.getLocalizedMessage());
 		}
 		if (c==null) { return new ErrorResponse("Failed to find command "+command); }
@@ -268,7 +256,8 @@ public abstract class Modules {
 			final String argname=arg.getName();
 			if (words[i]==null || words[i].isEmpty() || "-".equals(words[i])) {
 				parameters.put(argname,null);
-			} else {
+			}
+			else {
 				boolean respectnewlines=false;
 				switch (arg.type()) {
 					case TEXT_MULTILINE:
@@ -277,7 +266,8 @@ public abstract class Modules {
 						if (words[i].startsWith("\"")) {
 							if (words[i].endsWith("\"")) { // weird but sure
 								parameters.put(argname,words[i]);
-							} else {
+							}
+							else {
 								// is a multi word thing
 								StringBuilder string=new StringBuilder();
 								while (!words[i].endsWith("\"")) {
@@ -295,7 +285,8 @@ public abstract class Modules {
 								//System.out.println(string);
 								parameters.put(argname,string.toString());
 							}
-						} else {
+						}
+						else {
 							// is a single word thing
 							parameters.put(argname,words[i]);
 						}
@@ -309,8 +300,7 @@ public abstract class Modules {
 
 	public static Response run(@Nonnull final State st,
 	                           @Nonnull final String qualifiedcommandname,
-	                           @Nonnull final SafeMap parametermap)
-	{
+	                           @Nonnull final SafeMap parametermap) {
 		if ("console".equalsIgnoreCase(qualifiedcommandname)) {
 			st.source=State.Sources.CONSOLE;
 			return run(st,parametermap.get("console"));
@@ -325,29 +315,25 @@ public abstract class Modules {
 	@Nonnull
 	public static Response run(@Nonnull final State st,
 	                           @Nonnull final String qualifiedcommandname,
-	                           @Nonnull final List<String> args)
-	{
+	                           @Nonnull final List<String> args) {
 		return run(st,qualifiedcommandname,args.toArray(new String[]{}));
 	}
 
 	@Nonnull
 	public static Response run(@Nonnull final State st,
 	                           @Nonnull final String qualifiedcommandname,
-	                           @Nonnull final String[] args)
-	{
+	                           @Nonnull final String[] args) {
 		return get(st,qualifiedcommandname).getCommand(st,extractReference(qualifiedcommandname)).run(st,args);
 	}
 
 	public static Permission getPermission(final State st,
-	                                       @Nonnull final String qualifiedname)
-	{
+	                                       @Nonnull final String qualifiedname) {
 		return get(st,qualifiedname).getPermission(st,extractReference(qualifiedname));
 	}
 
 	@Nonnull
 	public static KV getKVDefinition(@Nonnull final State st,
-	                                 @Nonnull final String qualifiedname)
-	{
+	                                 @Nonnull final String qualifiedname) {
 		final KV kv=getKVDefinitionNullable(st,qualifiedname);
 		if (kv==null) { throw new UserInputLookupFailureException("Failed to resolve KV definition "+qualifiedname); }
 		return kv;
@@ -355,13 +341,13 @@ public abstract class Modules {
 
 	@Nullable
 	public static KV getKVDefinitionNullable(@Nonnull final State st,
-	                                         @Nonnull final String qualifiedname)
-	{
+	                                         @Nonnull final String qualifiedname) {
 		final KV kv;
 		//if (qualifiedname == null) { throw new SystemException("Null qualified name for KV definition?"); }
 		if (qualifiedname.toLowerCase().endsWith(".enabled")) {
 			kv=get(null,qualifiedname).getKVDefinition(st,extractReference(qualifiedname));
-		} else {
+		}
+		else {
 			kv=get(st,qualifiedname).getKVDefinition(st,extractReference(qualifiedname));
 		}
 		return kv;
@@ -406,7 +392,8 @@ public abstract class Modules {
 						if (!kv.conveyas().isEmpty()) { convey.put(kv.conveyas(),value); }
 					}
 				}
-			} catch (@Nonnull final Exception e) {
+			}
+			catch (@Nonnull final Exception e) {
 				SL.report("Conveyance error",e,st);
 				st.logger().log(SEVERE,"Exception compiling conveyance",e);
 			}
@@ -417,22 +404,19 @@ public abstract class Modules {
 
 	@Nonnull // sad but true
 	public static Pool getPoolNullable(final State st,
-	                                   @Nonnull final String qualifiedname)
-	{
+	                                   @Nonnull final String qualifiedname) {
 		return get(st,qualifiedname).getPool(st,extractReference(qualifiedname));
 	}
 
 	@Nonnull
 	public static Pool getPool(final State st,
-	                           @Nonnull final String qualifiedname)
-	{
+	                           @Nonnull final String qualifiedname) {
 		return getPoolNullable(st,qualifiedname);
 	}
 
 	public static void simpleHtml(@Nonnull final State st,
 	                              @Nonnull final String command,
-	                              @Nonnull final SafeMap values)
-	{
+	                              @Nonnull final SafeMap values) {
 		final Module m=get(st,command);
 		if (m==null) { throw new UserInputLookupFailureException("No such module in "+command); }
 		final Command c=m.getCommandNullable(st,extractReference(command));
@@ -448,8 +432,7 @@ public abstract class Modules {
 
 	@Nonnull
 	public static Map<String,KV> getKVAppliesTo(final State st,
-	                                            final TableRow dbo)
-	{
+	                                            final TableRow dbo) {
 		final Map<String,KV> filtered=new TreeMap<>();
 		for (final Module m: getModules()) {
 			final Map<String,KV> fullset=m.getKVAppliesTo(st,dbo);

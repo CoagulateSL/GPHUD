@@ -24,14 +24,12 @@ public class BCLoadIndexed extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		final String name=vm.popString().getContent();
 		final int index=vm.popInteger().getContent();
 		final BCList list=vm.getList(name);
 		if (index >= list.getContent().size()) {
-			throw new GSArrayIndexOutOfBoundsException("List "+name+" is "+list.getContent()
-			                                                                   .size()+" long but requested access to element "+index);
+			throw new GSArrayIndexOutOfBoundsException("List "+name+" is "+list.getContent().size()+" long but requested access to element "+index);
 		}
 		vm.push(list.getContent().get(index));
 	}

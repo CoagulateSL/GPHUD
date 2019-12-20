@@ -9,8 +9,7 @@ import javax.annotation.Nonnull;
 
 public class ClickTeleporter extends Teleporter {
 	ClickTeleporter(final State st,
-	                @Nonnull final ObjectTypes object)
-	{
+	                @Nonnull final ObjectTypes object) {
 		super(st,object);
 	}
 
@@ -30,8 +29,7 @@ public class ClickTeleporter extends Teleporter {
 	@Nonnull
 	@Override
 	public Response click(@Nonnull final State st,
-	                      @Nonnull final Char clicker)
-	{
+	                      @Nonnull final Char clicker) {
 		return execute(st,clicker);
 	}
 

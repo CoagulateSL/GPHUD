@@ -86,8 +86,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Cap an award based on ammount already earned
 	 */
 	public int capAward(@Nonnull final State st,
-	                    final int award)
-	{
+	                    final int award) {
 		final int awarded=periodAwarded(st);
 		final int cap=quota(st);
 		if ((awarded+award)<cap) { return award; } // still under the cap
@@ -98,8 +97,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 
 	public int cappedSystemAward(@Nonnull final State st,
 	                             final int award,
-	                             final String description)
-	{
+	                             final String description) {
 		final int cappedaward=capAward(st,award);
 		st.getCharacter().addPoolSystem(st,getPool(st),cappedaward,description);
 		return cappedaward;

@@ -38,8 +38,7 @@ public class SimpleResponse implements Response {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return message;
 	}
 

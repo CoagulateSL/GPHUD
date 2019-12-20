@@ -17,7 +17,8 @@ import javax.annotation.Nonnull;
 public class Connect {
 
 	@Nonnull
-	@Command.Commands(description="Connects to the system as an object", context=Command.Context.AVATAR, permitConsole=false, permitUserWeb=false, permitScripting=false, permitJSON=false)
+	@Command.Commands(description="Connects to the system as an object", context=Command.Context.AVATAR, permitConsole=false, permitUserWeb=false, permitScripting=false,
+	                  permitJSON=false)
 	public static Response connect(@Nonnull final State st) {
 		if (!st.hasPermission("Objects.Connect")) {
 			Audit.audit(true,
@@ -36,27 +37,9 @@ public class Connect {
 		final int version=Interface.convertVersion(st.json().getString("version"));
 		final int maxversion=Objects.getMaxVersion();
 		final Objects oldobject=Objects.findOrNull(st,st.objectkey);
-		final Objects obj=Objects.connect(st,
-		                                  st.objectkey,
-		                                  st.getSourcename(),
-		                                  st.getRegion(),
-		                                  st.getSourceowner(),
-		                                  st.sourcelocation,
-		                                  st.callbackurl(),
-		                                  version
-		                                 );
+		final Objects obj=Objects.connect(st,st.objectkey,st.getSourcename(),st.getRegion(),st.getSourceowner(),st.sourcelocation,st.callbackurl(),version);
 		if (oldobject==null) {
-			Audit.audit(true,
-			            st,
-			            Audit.OPERATOR.AVATAR,
-			            null,
-			            null,
-			            "New",
-			            "Connection",
-			            "",
-			            st.getSourcename(),
-			            "Conected new object at "+st.sourceregion+"/"+st.sourcelocation
-			           );
+			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"New","Connection","",st.getSourcename(),"Conected new object at "+st.sourceregion+"/"+st.sourcelocation);
 		}
 		String versionsuffix="";
 		if (maxversion>version) { versionsuffix=" (An updated version of this script is available)"; }
@@ -73,8 +56,7 @@ public class Connect {
 		}
 		if (!st.json().has("silent")) {
 			response.put("message",
-			             "Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatarNullable()+"\nCharacter: "+st
-					             .getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour
+			             "Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatarNullable()+"\nCharacter: "+st.getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour
 			            );
 		}
 		return new JSONResponse(response);

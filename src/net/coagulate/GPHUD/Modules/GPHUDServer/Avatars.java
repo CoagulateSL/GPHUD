@@ -25,10 +25,11 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Avatars {
 	@Nonnull
-	@Commands(context=Context.AVATAR, permitScripting=false, description="Synchronise the avatars status with the regions contents, server use only.", permitConsole=false, permitUserWeb=false, permitObject=false)
+	@Commands(context=Context.AVATAR, permitScripting=false, description="Synchronise the avatars status with the regions contents, server use only.", permitConsole=false,
+	          permitUserWeb=false, permitObject=false)
 	public static Response setRegionAvatars(@Nonnull final State st,
-	                                        @Nullable @Arguments(description="Comma separated list of avatar key=names on the sim", type=ArgumentType.TEXT_ONELINE, max=65536) String userlist)
-	{
+	                                        @Nullable @Arguments(description="Comma separated list of avatar key=names on the sim", type=ArgumentType.TEXT_ONELINE, max=65536)
+			                                        String userlist) {
 
 		// check authorisation, servers can only be deployed by the instance owner...
 		if (st.getSourcedeveloper().getId()!=1) {
@@ -49,7 +50,8 @@ public abstract class Avatars {
 					final User thisavi=User.findOrCreateAvatar(p[1],p[0]);
 					// we DONT init visits this way =)  character registration does
 					openvisits.remove(thisavi);
-				} catch (@Nonnull final Exception e) {
+				}
+				catch (@Nonnull final Exception e) {
 					st.logger().log(WARNING,"Avatar joiner registration failed, ",e);
 				}
 			}

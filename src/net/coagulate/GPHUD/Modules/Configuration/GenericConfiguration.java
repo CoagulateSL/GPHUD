@@ -29,8 +29,7 @@ public class GenericConfiguration {
 	public static void page(@Nonnull final State st,
 	                        final SafeMap values,
 	                        @Nonnull final TableRow dbo,
-	                        @Nonnull final State simulated)
-	{ page(st,values,dbo,simulated,null); }
+	                        @Nonnull final State simulated) { page(st,values,dbo,simulated,null); }
 
 	/**
 	 * Shows a generic configuration page for a module, within a given state, in the context of a particular object (always an Instance presently I think).
@@ -43,8 +42,7 @@ public class GenericConfiguration {
 	                        final SafeMap values,
 	                        @Nonnull final TableRow dbo,
 	                        @Nonnull final State simulated,
-	                        @Nullable final Module m)
-	{
+	                        @Nullable final Module m) {
 		final Form f=st.form();
 		f.noForm();
 		final Table kvtable=new Table();
@@ -62,13 +60,10 @@ public class GenericConfiguration {
 					if (!kv.hidden()) {
 						kvtable.openRow();
 						if (dbo instanceof Char) {
-							kvtable.add(new Link(module.getName()+"."+kv.name(),
-							                     st.getFullURL()+"/"+kv.fullname().replace('.','/')
-							));
-						} else {
-							kvtable.add(new Link(module.getName()+"."+kv.name(),
-							                     "/GPHUD/configuration/view/"+kv.fullname().replace('.','/')
-							));
+							kvtable.add(new Link(module.getName()+"."+kv.name(),st.getFullURL()+"/"+kv.fullname().replace('.','/')));
+						}
+						else {
+							kvtable.add(new Link(module.getName()+"."+kv.name(),"/GPHUD/configuration/view/"+kv.fullname().replace('.','/')));
 						}
 						kvtable.add(kv.description());
 						String raw=simulated.getRawKV(dbo,kv.fullname());
@@ -78,7 +73,8 @@ public class GenericConfiguration {
 							final KVValue kvval=simulated.getKV(kv.fullname());
 							kvtable.add(kvval.value());
 							kvtable.add(kvval.path());
-						} catch (@Nonnull final UserException e) {
+						}
+						catch (@Nonnull final UserException e) {
 							kvtable.add("<b>ERROR</b>");
 							kvtable.add(e.getLocalizedMessage());
 						}

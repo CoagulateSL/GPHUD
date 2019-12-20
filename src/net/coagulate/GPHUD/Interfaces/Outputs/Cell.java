@@ -33,15 +33,13 @@ public class Cell implements Renderable {
 	}
 
 	public Cell(final String s,
-	            final int colspan)
-	{
+	            final int colspan) {
 		e=new Text(s);
 		this.colspan=colspan;
 	}
 
 	public Cell(@Nullable final Renderable e,
-	            final int colspan)
-	{
+	            final int colspan) {
 		if (e==null) {
 			throw new SystemImplementationException("Abstract Cell is not renderable");
 		}
@@ -65,16 +63,17 @@ public class Cell implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		String s="";
-		if (header) { s+="<th"; } else { s+="<td"; }
+		if (header) { s+="<th"; }
+		else { s+="<td"; }
 		if (colspan>1) { s+=" colspan="+colspan; }
 		if (!align.isEmpty()) { s+=" align="+align; }
 		s+=">";
 		s+=e().asHtml(st,rich);
 		s+="</";
-		if (header) { s+="th>"; } else { s+="td>"; }
+		if (header) { s+="th>"; }
+		else { s+="td>"; }
 		return s;
 	}
 

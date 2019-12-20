@@ -63,7 +63,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// DEBUGGING ONLY log entire JSON input
 				// JSONify it
 				final JSONObject obj;
-				try { obj=new JSONObject(message); } catch (@Nonnull final JSONException e) {
+				try { obj=new JSONObject(message); }
+				catch (@Nonnull final JSONException e) {
 					throw new SystemBadValueException("Parse error in '"+message+"'",e);
 				}
 				// stash it in the state
@@ -102,31 +103,26 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			// if we get here, there was no POST content, but LSL only ever POSTS (the way we use it).
 			// probably some user snooping around with a browser :P
 			resp.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-			resp.setEntity(new StringEntity(
-					"<html><body><pre>Hello there :) What are you doing here?</pre></body></html>",
-					ContentType.TEXT_HTML
-			));
-		} catch (@Nonnull final UserException e) {
+			resp.setEntity(new StringEntity("<html><body><pre>Hello there :) What are you doing here?</pre></body></html>",ContentType.TEXT_HTML));
+		}
+		catch (@Nonnull final UserException e) {
 			SL.report("GPHUD system interface user error",e,st);
 			GPHUD.getLogger().log(WARNING,"User generated error : "+e.getLocalizedMessage(),e);
 			final HttpResponse resp=st.resp();
 			resp.setStatusCode(HttpStatus.SC_OK);
-			resp.setEntity(new StringEntity("{\"error\":\""+e.getLocalizedMessage()+"\"}",
-			                                ContentType.APPLICATION_JSON
-			));
+			resp.setEntity(new StringEntity("{\"error\":\""+e.getLocalizedMessage()+"\"}",ContentType.APPLICATION_JSON));
 			resp.setStatusCode(HttpStatus.SC_OK);
-		} catch (@Nonnull final Exception e) {
+		}
+		catch (@Nonnull final Exception e) {
 			try {
 				SL.report("GPHUD system interface error",e,st);
-				GPHUD.getLogger()
-				     .log(SEVERE,"System Interface caught unhandled Exception : "+e.getLocalizedMessage(),e);
+				GPHUD.getLogger().log(SEVERE,"System Interface caught unhandled Exception : "+e.getLocalizedMessage(),e);
 				final HttpResponse resp=st.resp();
 				resp.setStatusCode(HttpStatus.SC_OK);
-				resp.setEntity(new StringEntity("{\"error\":\"Internal error occured, sorry.\"}",
-				                                ContentType.APPLICATION_JSON
-				));
+				resp.setEntity(new StringEntity("{\"error\":\"Internal error occured, sorry.\"}",ContentType.APPLICATION_JSON));
 				resp.setStatusCode(HttpStatus.SC_OK);
-			} catch (@Nonnull final Exception ex) {
+			}
+			catch (@Nonnull final Exception ex) {
 				SL.report("Error in system interface error handler",ex,st);
 				GPHUD.getLogger().log(SEVERE,"Exception in exception handler - "+ex.getLocalizedMessage(),ex);
 			}
@@ -207,7 +203,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		final Region region=Region.findNullable(regionname,false);
 		if (region==null) {
 			return processUnregistered(st);
-		} else {
+		}
+		else {
 			// we are a known region, connected to an instance
 
 			// are they authorised to run stuff?
@@ -218,21 +215,20 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (!authorised) {
 				st.logger().warning("Developer "+developer+" is not authorised at this location:"+st.getRegionName());
 				return new TerminateResponse("Developer key is not authorised at this instance");
-			} else {
+			}
+			else {
 				// OK.  object has dev key, is authorised, resolves.  Process the actual contents oO
 				final Instance instance=region.getInstance();
 				st.setInstance(instance);
 				st.setRegion(region);
 				if (st.getCharacterNullable()==null) {
-					st.setCharacter(PrimaryCharacters.getPrimaryCharacter(st,
-					                                                      st.getKV("Instance.AutoNameCharacter")
-					                                                        .boolValue()
-					                                                     ));
+					st.setCharacter(PrimaryCharacters.getPrimaryCharacter(st,st.getKV("Instance.AutoNameCharacter").boolValue()));
 				}
 				try {
 					obj.getString("runasnocharacter");
 					st.setCharacter(null);
-				} catch (@Nonnull final JSONException e) {}
+				}
+				catch (@Nonnull final JSONException e) {}
 				if (st.getCharacterNullable()!=null) { st.zone=st.getCharacter().getZone(); }
 				final SafeMap parametermap=new SafeMap();
 				for (final String key: st.json().keySet()) {
@@ -258,15 +254,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (st.getSourcedeveloper().getId()!=1 || !st.getSourcename().startsWith("GPHUD Region Server")) {
 			GPHUD.getLogger()
 			     .log(WARNING,
-			          "Region '"+regionname+"' not registered but connecting with "+st.getSourcename()+" from developer "+st
-					          .getSourcedeveloper()+" owner by "+st.getSourceowner()
+			          "Region '"+regionname+"' not registered but connecting with "+st.getSourcename()+" from developer "+st.getSourcedeveloper()+" owner by "+st.getSourceowner()
 			         );
 			return new TerminateResponse("Region not registered.");
 		}
-		GPHUD.getLogger()
-		     .log(WARNING,
-		          "Region '"+regionname+"' not registered but connecting, recognised as GPHUD server owned by "+st.getSourceowner()
-		         );
+		GPHUD.getLogger().log(WARNING,"Region '"+regionname+"' not registered but connecting, recognised as GPHUD server owned by "+st.getSourceowner());
 		if (!"console".equals(st.json().getString("command"))) {
 			return new ErrorResponse("Region not registered, only pre-registration commands may be run");
 		}
@@ -290,7 +282,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");
 			}
 			console=console.replaceFirst("createinstance ","");
-			try { Instance.create(console,st.getAvatarNullable()); } catch (@Nonnull final UserException e) {
+			try { Instance.create(console,st.getAvatarNullable()); }
+			catch (@Nonnull final UserException e) {
 				return new ErrorResponse("Instance registration failed: "+e.getMessage());
 			}
 			final Instance instance=Instance.find(console);
@@ -332,8 +325,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			for (final Instance i: instances) { response.append(i.getName()).append("\n"); }
 			return new OKResponse(response.toString());
 		}
-		return new ErrorResponse(
-				"Pre-Registration command not recognised.  Use *listinstances, *createinstance <name>, or *joininstance <name>");
+		return new ErrorResponse("Pre-Registration command not recognised.  Use *listinstances, *createinstance <name>, or *joininstance <name>");
 	}
 
 }

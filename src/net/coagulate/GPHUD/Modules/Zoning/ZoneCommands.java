@@ -29,8 +29,7 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.AVATAR, description="Create a new zone", requiresPermission="Zoning.Config")
 	public static Response create(@Nonnull final State st,
-	                              @Arguments(description="Name of the zone", type=ArgumentType.TEXT_ONELINE, max=64) final String name)
-	{
+	                              @Arguments(description="Name of the zone", type=ArgumentType.TEXT_ONELINE, max=64) final String name) {
 		Zone.create(st.getInstance(),name);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Zone","",name,"New zone created");
 		return new OKResponse("Zone '"+name+"' created.");
@@ -43,20 +42,11 @@ public abstract class ZoneCommands {
 	                                 @Nonnull @Arguments(type=ArgumentType.ZONE, description="Zone we are adding the volume to") final Zone zone,
 	                                 @Nonnull @Arguments(type=ArgumentType.REGION, description="Region for the volume") final Region region,
 	                                 @Arguments(type=ArgumentType.COORDINATES, description="Co-ordinates for one corner of the volume cube") final String cornerOne,
-	                                 @Arguments(type=ArgumentType.COORDINATES, description="Co-ordinates for the opposing corner of the volume cube.") final String cornerTwo)
-	{
+	                                 @Arguments(type=ArgumentType.COORDINATES, description="Co-ordinates for the opposing corner of the volume cube.")
+	                                 final String cornerTwo) {
 		zone.addArea(region,cornerOne,cornerTwo);
 		region.pushZoning();
-		Audit.audit(st,
-		            Audit.OPERATOR.AVATAR,
-		            null,
-		            null,
-		            "Add Volume",
-		            zone.getName(),
-		            null,
-		            cornerOne+" - "+cornerTwo,
-		            "Added new volume to zone"
-		           );
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Add Volume",zone.getName(),null,cornerOne+" - "+cornerTwo,"Added new volume to zone");
 		return new OKResponse("Added new volume to zone "+zone.getName());
 
 	}
@@ -64,8 +54,7 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.CHARACTER, permitScripting=false, description="Trigger a zone change event", permitConsole=false, permitUserWeb=false)
 	public static Response zoneTransition(@Nonnull final State st,
-	                                      @Nullable @Arguments(description="Name of zone we transitioned into", type=ArgumentType.ZONE) final Zone zone)
-	{
+	                                      @Nullable @Arguments(description="Name of zone we transitioned into", type=ArgumentType.ZONE) final Zone zone) {
 		// check some things make sense
 		// note zone may be null, legally, and fairly often probably.
 		if (zone!=null) { zone.validate(st); }
@@ -82,8 +71,7 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Template(name="ZONE", description="Current zone")
 	public static String getZone(@Nonnull final State st,
-	                             final String key)
-	{
+	                             final String key) {
 		if (st.zone==null) { return ""; }
 		return st.zone.getName();
 	}
@@ -91,8 +79,7 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.AVATAR, description="Delete a zone area", requiresPermission="Zoning.Config")
 	public static Response deleteVolume(@Nonnull final State st,
-	                                    @Arguments(type=ArgumentType.INTEGER, description="Internal ID for the zone volume") final Integer zoneareaid)
-	{
+	                                    @Arguments(type=ArgumentType.INTEGER, description="Internal ID for the zone volume") final Integer zoneareaid) {
 		final ZoneArea za=ZoneArea.get(zoneareaid);
 		final Zone zone=za.getZone();
 		zone.validate(st);
@@ -101,16 +88,7 @@ public abstract class ZoneCommands {
 		za.delete();
 		String position="NoPosition";
 		if (vectors!=null) { position=vectors[0]+" - "+vectors[1]; }
-		Audit.audit(st,
-		            Audit.OPERATOR.AVATAR,
-		            null,
-		            null,
-		            "Delete Area",
-		            zone.getName(),
-		            position,
-		            null,
-		            "Area removed from zone"
-		           );
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Delete Area",zone.getName(),position,null,"Area removed from zone");
 		region.pushZoning();
 		return new OKResponse("Zone area removed from zone "+zone.getName());
 	}

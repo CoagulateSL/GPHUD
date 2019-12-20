@@ -45,8 +45,7 @@ public abstract class GetMessages {
 
 	@Nonnull
 	private static Response processFactionInvite(@Nonnull final State st,
-	                                             @Nonnull final JSONObject j)
-	{
+	                                             @Nonnull final JSONObject j) {
 		final Char from=Char.get(j.getInt("from"));
 		final CharacterGroup faction=CharacterGroup.get(j.getInt("to"));
 		final JSONObject template=Modules.getJSONTemplate(st,"gphudclient.acceptrejectmessage");
@@ -65,27 +64,27 @@ public abstract class GetMessages {
 	@Nonnull
 	@Commands(context=Context.CHARACTER, description="Accept/Reject a message", permitScripting=false, permitConsole=false, permitUserWeb=false)
 	public static Response acceptRejectMessage(@Nonnull final State st,
-	                                           @Arguments(type=ArgumentType.CHOICE, description="Accept or Reject the message", choiceMethod="getAcceptReject") final String response)
-	{
+	                                           @Arguments(type=ArgumentType.CHOICE, description="Accept or Reject the message", choiceMethod="getAcceptReject")
+	                                           final String response) {
 		final Message m=st.getCharacter().getActiveMessage();
 		if (m==null) { return new ErrorResponse("You have no active message."); }
 
 		final JSONObject j=new JSONObject(m.getJSON());
 		final String message=j.optString("message","");
 		if ("factioninvite".equalsIgnoreCase(message)) { return processFactionInviteResponse(st,m,j,response); }
-		throw new SystemImplementationException(
-				"Unable to find a message RESPONSE parser in GPHUDClient for message type '"+message+"'");
+		throw new SystemImplementationException("Unable to find a message RESPONSE parser in GPHUDClient for message type '"+message+"'");
 	}
 
 	@Nonnull
 	private static Response processFactionInviteResponse(@Nonnull final State st,
 	                                                     @Nonnull final Message m,
 	                                                     @Nonnull final JSONObject j,
-	                                                     final String response)
-	{
+	                                                     final String response) {
 		final boolean accepted;
-		if ("Accept".equalsIgnoreCase(response)) { accepted=true; } else {
-			if ("Reject".equalsIgnoreCase(response)) { accepted=false; } else {
+		if ("Accept".equalsIgnoreCase(response)) { accepted=true; }
+		else {
+			if ("Reject".equalsIgnoreCase(response)) { accepted=false; }
+			else {
 				throw new UserInputValidationParseException("Expected Accept or Reject response");
 			}
 		}
@@ -134,7 +133,8 @@ public abstract class GetMessages {
 				return new OKResponse("Invitation invalid, you are leader of "+currentgroup.getName());
 			}
 			if (currentgroup!=null) {
-				try { currentgroup.removeMember(st.getCharacter()); } catch (@Nonnull final UserException e) {
+				try { currentgroup.removeMember(st.getCharacter()); }
+				catch (@Nonnull final UserException e) {
 					Audit.audit(st,
 					            Audit.OPERATOR.CHARACTER,
 					            null,
@@ -143,14 +143,14 @@ public abstract class GetMessages {
 					            targetgroup.getName(),
 					            null,
 					            null,
-					            "Invite to group "+targetgroup.getName()+" failed, leaving old group "+currentgroup.getName()+" errored - "+e
-							            .getMessage()
+					            "Invite to group "+targetgroup.getName()+" failed, leaving old group "+currentgroup.getName()+" errored - "+e.getMessage()
 					           );
 					return new ErrorResponse("Unable to leave existing group - "+e.getMessage());
 				}
 			}
 		}
-		try { targetgroup.addMember(st.getCharacter()); } catch (@Nonnull final UserException e) {
+		try { targetgroup.addMember(st.getCharacter()); }
+		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Unable to join - "+e.getMessage());
 		}
 		Audit.audit(st,

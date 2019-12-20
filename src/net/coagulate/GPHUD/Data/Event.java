@@ -46,16 +46,12 @@ public class Event extends TableRow {
 	 */
 	@Nullable
 	public static Event find(@Nonnull final Instance instance,
-	                         final String name)
-	{
+	                         final String name) {
 		try {
-			final int eventid=GPHUD.getDB()
-			                       .dqinn("select eventid from events where name like ? and instanceid=?",
-			                              name,
-			                              instance.getId()
-			                             );
+			final int eventid=GPHUD.getDB().dqinn("select eventid from events where name like ? and instanceid=?",name,instance.getId());
 			return get(eventid);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -70,8 +66,7 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public static Event create(@Nonnull final Instance instance,
-	                           final String eventName)
-	{
+	                           final String eventName) {
 		Event event=find(instance,eventName);
 		if (event!=null) { throw new UserInputDuplicateValueException("Event "+eventName+" already exists."); }
 		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)",instance.getId(),eventName);
@@ -110,7 +105,7 @@ public class Event extends TableRow {
 		final Set<Event> events=new TreeSet<>();
 		final int now=getUnixTime();
 		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+		                              .dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
 		                                  instance.getId(),
 		                                  now,
 		                                  now
@@ -122,13 +117,13 @@ public class Event extends TableRow {
 	}
 
 	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key)
-	{
+	                   final String key) {
 		final String kvtable="eventskvstore";
 		final String maintable="events";
 		final String idcolumn="eventid";
 		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
 		        key,
 		        instance.getId()
 		       );
@@ -145,11 +140,7 @@ public class Event extends TableRow {
 		// find events where start time is in the past but "started"=0
 		final int now=getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?",
-		                                  now,
-		                                  now
-		                                 )) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?",now,now)) {
 			//System.out.println(r.getInt());
 			start.add(EventSchedule.get(r.getInt()));
 		}
@@ -167,10 +158,7 @@ public class Event extends TableRow {
 		// find events where start time is in the past but "started"=0
 		final int now=getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?",
-		                                  now
-		                                 )) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?",now)) {
 			//System.out.println(r.getInt());
 			stop.add(EventSchedule.get(r.getInt()));
 		}
@@ -272,11 +260,8 @@ public class Event extends TableRow {
 	 */
 	public void addSchedule(final int startdate,
 	                        final int enddate,
-	                        final int interval)
-	{
-		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)",getId(),
-		  startdate,enddate,interval
-		 );
+	                        final int interval) {
+		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)",getId(),startdate,enddate,interval);
 	}
 
 	public void validate(@Nonnull final State st) {

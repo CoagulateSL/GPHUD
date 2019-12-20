@@ -49,7 +49,8 @@ public abstract class ByteCode {
 			case String:
 				final int length=vm.getShort();
 				final byte[] string=new byte[length];
-				try { System.arraycopy(vm.bytecode,vm.PC,string,0,length); } catch (@Nonnull final RuntimeException e) {
+				try { System.arraycopy(vm.bytecode,vm.PC,string,0,length); }
+				catch (@Nonnull final RuntimeException e) {
 					throw new GSInternalError("Failed to arraycopy "+length+" from pos "+vm.PC,e);
 				}
 				vm.PC+=length;
@@ -115,8 +116,7 @@ public abstract class ByteCode {
 	}
 
 	void addInt(@Nonnull final List<Byte> bytes,
-	            final int a)
-	{
+	            final int a) {
 		/*System.out.println("Writing "+
 				((byte)((a>>24) & 0xff))+" "+
 				((byte)((a>>16) & 0xff))+" "+
@@ -129,8 +129,7 @@ public abstract class ByteCode {
 	}
 
 	void addShort(@Nonnull final List<Byte> bytes,
-	              final int a)
-	{
+	              final int a) {
 		bytes.add((byte) ((a >> 8)&0xff));
 		bytes.add((byte) (a&0xff));
 	}

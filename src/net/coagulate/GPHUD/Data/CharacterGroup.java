@@ -27,13 +27,13 @@ public class CharacterGroup extends TableRow {
 	protected CharacterGroup(final int id) { super(id); }
 
 	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key)
-	{
+	                   final String key) {
 		final String kvtable="charactergroupkvstore";
 		final String maintable="charactergroups";
 		final String idcolumn="charactergroupid";
 		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
 		        key,
 		        instance.getId()
 		       );
@@ -41,8 +41,7 @@ public class CharacterGroup extends TableRow {
 
 	@Nonnull
 	public static JSONObject createChoice(final State st,
-	                                      final Attribute a)
-	{
+	                                      final Attribute a) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
@@ -50,8 +49,7 @@ public class CharacterGroup extends TableRow {
 	public static void createChoice(@Nonnull final State st,
 	                                @Nonnull final JSONObject json,
 	                                final String prefix,
-	                                @Nonnull final Attribute a)
-	{
+	                                @Nonnull final Attribute a) {
 		final boolean debug=false;
 		json.put(prefix+"type","SELECT");
 		json.put(prefix+"name","value");
@@ -75,8 +73,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public static CharacterGroup resolve(@Nonnull final State st,
-	                                     final String name)
-	{
+	                                     final String name) {
 		final int id=new CharacterGroup(-1).resolveToID(st,name,true);
 		if (id==0) { return null; }
 		return get(id);
@@ -103,17 +100,13 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public static CharacterGroup find(final String name,
-	                                  @Nonnull final Instance i)
-	{
+	                                  @Nonnull final Instance i) {
 		try {
-			final Integer id=GPHUD.getDB()
-			                      .dqi("select charactergroupid from charactergroups where name like ? and instanceid=?",
-			                           name,
-			                           i.getId()
-			                          );
+			final Integer id=GPHUD.getDB().dqi("select charactergroupid from charactergroups where name like ? and instanceid=?",name,i.getId());
 			if (id==null) { return null; }
 			return get(id);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -191,16 +184,12 @@ public class CharacterGroup extends TableRow {
 		if (character.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
-		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
-		                       getId(),
-		                       character.getId()
-		                      );
+		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		if (exists>0) { throw new UserInputDuplicateValueException("Character is already a member of group?"); }
 		// in competing group?
 		final CharacterGroup competition=character.getGroup(getType());
 		if (competition!=null) {
-			throw new UserInputDuplicateValueException("Unable to join new group, already in a group of type "+getType()+" - "+competition
-					.getName());
+			throw new UserInputDuplicateValueException("Unable to join new group, already in a group of type "+getType()+" - "+competition.getName());
 		}
 		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
 	}
@@ -214,10 +203,7 @@ public class CharacterGroup extends TableRow {
 		if (character.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
-		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
-		                       getId(),
-		                       character.getId()
-		                      );
+		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		if (exists==0) { throw new UserInputStateException("Character not in group."); }
 	}
@@ -242,7 +228,8 @@ public class CharacterGroup extends TableRow {
 	public void setOwner(@Nullable final Char newowner) {
 		if (newowner==null) {
 			d("update charactergroups set owner=null where charactergroupid=?",getId());
-		} else {
+		}
+		else {
 			d("update charactergroups set owner=? where charactergroupid=?",newowner.getId(),getId());
 		}
 	}
@@ -261,15 +248,12 @@ public class CharacterGroup extends TableRow {
 		}
 		if (getOwner()==character) { return true; }
 		try {
-			final Integer adminflag=dqi(
-					"select isadmin from charactergroupmembers where charactergroupid=? and characterid=?",
-					getId(),
-					character.getId()
-			                           );
+			final Integer adminflag=dqi("select isadmin from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 			if (adminflag==null) { return false; }
 			if (adminflag==1) { return true; }
 			return false;
-		} catch (@Nonnull final NoDataException e) { return false; }
+		}
+		catch (@Nonnull final NoDataException e) { return false; }
 	}
 
 	/**
@@ -286,12 +270,8 @@ public class CharacterGroup extends TableRow {
 	 * @param admin     true/false admin status
 	 */
 	public void setAdmin(@Nonnull final Char character,
-	                     final boolean admin)
-	{
-		d("update charactergroupmembers set isadmin=? where charactergroupid=? and characterid=?",admin,
-		  getId(),
-		  character.getId()
-		 );
+	                     final boolean admin) {
+		d("update charactergroupmembers set isadmin=? where charactergroupid=? and characterid=?",admin,getId(),character.getId());
 	}
 
 	/**
@@ -302,10 +282,7 @@ public class CharacterGroup extends TableRow {
 	 * @return true/false
 	 */
 	public boolean hasMember(@Nonnull final Char character) {
-		final int count=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
-		                      getId(),
-		                      character.getId()
-		                     );
+		final int count=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		if (count>1) {
 			throw new TooMuchDataException("Matched too many members ("+count+") for "+character+" in CG "+getId()+" - "+getName());
 		}

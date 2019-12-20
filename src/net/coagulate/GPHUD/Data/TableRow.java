@@ -32,8 +32,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nonnull
 	public static String getLink(final String name,
 	                             final String target,
-	                             final int id)
-	{
+	                             final int id) {
 		return new Link(name,"/GPHUD/"+target+"/view/"+id).asHtml(null,true);
 	}
 
@@ -97,7 +96,8 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	public String getNameSafe() {
 		try {
 			return getName();
-		} catch (@Nonnull final DBException ex) {
+		}
+		catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE,"SAFE MODE SQLEXCEPTION",ex);
 			return "SQLEXCEPTION";
 		}
@@ -116,8 +116,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		if (!rich) { return getNameSafe(); }
 		return getLink(getNameSafe(),getLinkTarget(),getId());
 	}
@@ -128,8 +127,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	public int resolveToID(@Nonnull final State st,
 	                       @Nullable final String s,
-	                       final boolean instancelocal)
-	{
+	                       final boolean instancelocal) {
 		final boolean debug=false;
 		if (s==null) { return 0; }
 		if (s.isEmpty()) { return 0; }
@@ -137,19 +135,20 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			// is it an ID
 			final int id=Integer.parseInt(s);
 			if (id>0) { return id; }
-		} catch (@Nonnull final NumberFormatException e) {} // not a number then :P
+		}
+		catch (@Nonnull final NumberFormatException e) {} // not a number then :P
 		try {
 			final int id;
 			if (instancelocal) {
-				id=dqinn("select "+getIdField()+" from "+getTableName()+" where "+getNameField()+" like ? and instanceid=?",
-				         s,
-				         st.getInstance().getId()
-				        );
-			} else {
+				id=dqinn("select "+getIdField()+" from "+getTableName()+" where "+getNameField()+" like ? and instanceid=?",s,st.getInstance().getId());
+			}
+			else {
 				id=dqinn("select "+getIdField()+" from "+getTableName()+" where "+getNameField()+" like ?",s);
 			}
 			if (id>0) { return id; }
-		} catch (@Nonnull final NoDataException e) { } catch (@Nonnull final TooMuchDataException e) {
+		}
+		catch (@Nonnull final NoDataException e) { }
+		catch (@Nonnull final TooMuchDataException e) {
 			GPHUD.getLogger().warning("Multiple matches searching for "+s+" in "+getClass());
 		}
 		return 0;
@@ -169,19 +168,20 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	public void setKV(final State st,
 	                  @Nonnull final String key,
-	                  @Nullable final String value)
-	{
+	                  @Nullable final String value) {
 		kvcheck();
 		String oldvalue=null;
 		try {
 			oldvalue=dqs("select v from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
-		} catch (@Nonnull final NoDataException e) {}
+		}
+		catch (@Nonnull final NoDataException e) {}
 		if (value==null && oldvalue==null) { return; }
 		if (value!=null && value.equals(oldvalue)) { return; }
 		Modules.validateKV(st,key);
 		if (value==null || value.isEmpty()) {
 			d("delete from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
-		} else {
+		}
+		else {
 			d("replace into "+getKVTable()+"("+getKVIdField()+",k,v) values(?,?,?)",getId(),key,value);
 		}
 	}
@@ -224,8 +224,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	Object cachePut(final String key,
 	                final Object object,
-	                final int lifetimeseconds)
-	{
+	                final int lifetimeseconds) {
 		final CacheElement ele=new CacheElement(object,getUnixTime()+lifetimeseconds);
 		cache.put(key,ele);
 		return object;
@@ -236,8 +235,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		public final int expires;
 
 		public CacheElement(final Object element,
-		                    final int expires)
-		{
+		                    final int expires) {
 			this.element=element;
 			this.expires=expires;
 		}

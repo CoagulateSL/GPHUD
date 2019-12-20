@@ -43,10 +43,7 @@ public class Alias extends TableRow {
 	@Nonnull
 	public static Map<String,Alias> getAliasMap(@Nonnull final State st) {
 		final Map<String,Alias> aliases=new TreeMap<>();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select name,aliasid from aliases where instanceid=?",
-		                                  st.getInstance().getId()
-		                                 )) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select name,aliasid from aliases where instanceid=?",st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"),get(r.getInt("aliasid")));
 		}
 		return aliases;
@@ -62,10 +59,7 @@ public class Alias extends TableRow {
 	@Nonnull
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
 		final Map<String,JSONObject> aliases=new TreeMap<>();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select name,template from aliases where instanceid=?",
-		                                  st.getInstance().getId()
-		                                 )) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select name,template from aliases where instanceid=?",st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"),new JSONObject(r.getStringNullable("template")));
 		}
 		return aliases;
@@ -73,38 +67,26 @@ public class Alias extends TableRow {
 
 	@Nullable
 	public static Alias getAlias(@Nonnull final State st,
-	                             final String name)
-	{
+	                             final String name) {
 		try {
-			final int id=GPHUD.getDB()
-			                  .dqinn("select aliasid from aliases where instanceid=? and name like ?",
-			                         st.getInstance().getId(),
-			                         name
-			                        );
+			final int id=GPHUD.getDB().dqinn("select aliasid from aliases where instanceid=? and name like ?",st.getInstance().getId(),name);
 			return get(id);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull
 	public static Alias create(@Nonnull final State st,
 	                           @Nonnull final String name,
-	                           @Nonnull final JSONObject template)
-	{
+	                           @Nonnull final JSONObject template) {
 		if (getAlias(st,name)!=null) { throw new UserInputDuplicateValueException("Alias "+name+" already exists"); }
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
-			throw new UserInputValidationParseException(
-					"Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
+			throw new UserInputValidationParseException("Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
-		GPHUD.getDB()
-		     .d("insert into aliases(instanceid,name,template) values(?,?,?)",
-		        st.getInstance().getId(),
-		        name,
-		        template.toString()
-		       );
+		GPHUD.getDB().d("insert into aliases(instanceid,name,template) values(?,?,?)",st.getInstance().getId(),name,template.toString());
 		final Alias newalias=getAlias(st,name);
 		if (newalias==null) {
-			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance()
-			                                                                                         .getId()+", created but not found?");
+			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance().getId()+", created but not found?");
 		}
 		return newalias;
 	}

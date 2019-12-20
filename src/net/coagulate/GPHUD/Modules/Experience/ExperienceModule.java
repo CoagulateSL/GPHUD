@@ -30,8 +30,7 @@ import static net.coagulate.GPHUD.Modules.Command.Context.AVATAR;
 public class ExperienceModule extends ModuleAnnotation {
 
 	public ExperienceModule(final String name,
-	                        final ModuleDefinition def)
-	{
+	                        final ModuleDefinition def) {
 		super(name,def);
 	}
 
@@ -43,16 +42,14 @@ public class ExperienceModule extends ModuleAnnotation {
 	                             @Nullable @Arguments(description="Ammount to award", type=INTEGER, max=999999) Integer ammount,
 	                             @Arguments(description="Reason for award", type=TEXT_ONELINE, max=128) final String reason
 
-	                            )
-	{
+	                            ) {
 		boolean incontext=false;
 		boolean permitted=false;
 		if (ammount==null) { ammount=1; }
 		final Attribute attr=st.getAttribute(type);
 		if (attr==null) { return new ErrorResponse("Unable to find experience type "+type); }
 		if (attr.getType()!=EXPERIENCE) {
-			return new ErrorResponse(
-					"This attributes is not of type EXPERIENCE, (try omitting XP off the end, if present)");
+			return new ErrorResponse("This attributes is not of type EXPERIENCE, (try omitting XP off the end, if present)");
 		}
 		if (st.hasPermission("Experience.award"+attr.getName()+"XP")) { permitted=true; }
 		if (!permitted) {
@@ -69,7 +66,8 @@ public class ExperienceModule extends ModuleAnnotation {
 				if (group.getId()!=theirgroup.getId()) {
 					return new ErrorResponse("You lack admin permissions, or you are in a different group of type "+subtype);
 				}
-				if (group.isAdmin(st.getCharacter())) { permitted=true; } else {
+				if (group.isAdmin(st.getCharacter())) { permitted=true; }
+				else {
 					return new ErrorResponse("You lack admin permissions, and are not a group admin/owner for "+group.getName());
 				}
 				incontext=true;
@@ -86,8 +84,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public void validatePermission(final State st,
-	                               @Nonnull final String permission)
-	{
+	                               @Nonnull final String permission) {
 		// really can't validate these as they can be dynamic
 	}
 
@@ -104,8 +101,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public Permission getPermission(@Nonnull final State st,
-	                                @Nonnull final String itemname)
-	{
+	                                @Nonnull final String itemname) {
 		final Map<String,Permission> perms=getPermissions(st);
 		for (final Map.Entry<String,Permission> entry: perms.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) {
@@ -133,8 +129,7 @@ public class ExperienceModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Pool getPool(final State st,
-	                    @Nonnull final String itemname)
-	{
+	                    @Nonnull final String itemname) {
 		final Map<String,Pool> pmap=getPoolMap(st);
 		for (final Map.Entry<String,Pool> entry: pmap.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
@@ -144,8 +139,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public KV getKVDefinition(@Nonnull final State st,
-	                          @Nonnull final String qualifiedname)
-	{
+	                          @Nonnull final String qualifiedname) {
 		if (kvmap.containsKey(qualifiedname.toLowerCase())) {
 			return kvmap.get(qualifiedname.toLowerCase());
 		}

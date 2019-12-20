@@ -76,8 +76,7 @@ public abstract class KV extends NameComparable {
 				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event || o instanceof CharacterGroup || o instanceof Char) {
 					return true;
 				}
-				throw new SystemImplementationException("KV of COMPLETE scope was passed unknown DBObject "+o.getClass()
-				                                                                                             .getName()+".  Ammend whitelist or debug caller.");
+				throw new SystemImplementationException("KV of COMPLETE scope was passed unknown DBObject "+o.getClass().getName()+".  Ammend whitelist or debug caller.");
 			case ZONE:
 				if (o instanceof Zone) { return true; }
 				return false;
@@ -94,16 +93,14 @@ public abstract class KV extends NameComparable {
 
 	public void setKV(@Nonnull final State st,
 	                  @Nonnull final TableRow o,
-	                  final String value)
-	{
+	                  final String value) {
 		assertAppliesTo(o);
 		st.setKV(o,name(),value);
 		convey(st,value);
 	}
 
 	public void convey(@Nonnull final State st,
-	                   final String value)
-	{
+	                   final String value) {
 		if (!conveyas().isEmpty()) {
 			final Set<Region> regions=st.getInstance().getRegions(false);
 			final JSONObject message=new JSONObject();

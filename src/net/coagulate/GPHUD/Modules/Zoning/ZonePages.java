@@ -25,8 +25,7 @@ public abstract class ZonePages {
 
 	@URLs(url="/configuration/zoning")
 	public static void listZones(@Nonnull final State st,
-	                             final SafeMap values)
-	{
+	                             final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
@@ -42,15 +41,13 @@ public abstract class ZonePages {
 
 	@URLs(url="/configuration/zoning/create")
 	public static void createZone(@Nonnull final State st,
-	                              @Nonnull final SafeMap values)
-	{
+	                              @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.create",values);
 	}
 
 	@URLs(url="/configuration/zoning/view/*")
 	public static void viewZone(@Nonnull final State st,
-	                            final SafeMap values)
-	{
+	                            final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final Zone z=Zone.get(Integer.parseInt(id));
@@ -60,8 +57,7 @@ public abstract class ZonePages {
 	public static void viewZone(@Nonnull final State st,
 	                            final SafeMap values,
 	                            @Nonnull final Zone z,
-	                            final boolean brief)
-	{
+	                            final boolean brief) {
 		final boolean full=false;
 		boolean admin=false;
 		if (st.hasPermission("zoning.config")) { admin=true; }
@@ -85,29 +81,25 @@ public abstract class ZonePages {
 
 	@URLs(url="/configuration/zoning/setcorner1", requiresPermission="zoning.config")
 	public static void setCornerOne(@Nonnull final State st,
-	                                @Nonnull final SafeMap values)
-	{
+	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.setcornerone",values);
 	}
 
 	@URLs(url="/configuration/zoning/setcorner2", requiresPermission="zoning.config")
 	public static void setCornerTwo(@Nonnull final State st,
-	                                @Nonnull final SafeMap values)
-	{
+	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.setcornertwo",values);
 	}
 
 	@URLs(url="/configuration/zoning/addarea", requiresPermission="zoning.config")
 	public static void addVolume(@Nonnull final State st,
-	                             @Nonnull final SafeMap values)
-	{
+	                             @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.addvolume",values);
 	}
 
 	@URLs(url="/configuration/zoning/deletearea", requiresPermission="zoning.config")
 	public static void delVolume(@Nonnull final State st,
-	                             @Nonnull final SafeMap values)
-	{
+	                             @Nonnull final SafeMap values) {
 		Modules.run(st,"zoning.deletevolume",values);
 		throw new RedirectionException(values.get("okreturnurl"));
 	}

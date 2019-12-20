@@ -46,8 +46,7 @@ public class TabularResponse extends Table implements Response {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		String s="";
 		if (title!=null && !title.isEmpty()) { s+=new TextHeader(title).asHtml(st,rich); }
 		s+=super.asHtml(st,rich);

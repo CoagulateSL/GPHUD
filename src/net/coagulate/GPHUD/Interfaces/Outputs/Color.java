@@ -15,15 +15,13 @@ public class Color implements Renderable {
 	final String color;
 
 	public Color(final String color,
-	             final Renderable content)
-	{
+	             final Renderable content) {
 		this.content=content;
 		this.color=color;
 	}
 
 	public Color(final String color,
-	             final String content)
-	{
+	             final String content) {
 		this.content=new Text(content);
 		this.color=color;
 	}
@@ -37,8 +35,7 @@ public class Color implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<font color=\""+color+"\">"+content.asHtml(st,rich)+"</font>";
 	}
 

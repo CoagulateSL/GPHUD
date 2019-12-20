@@ -15,16 +15,14 @@ public class BCLabel extends ByteCode {
 	Integer address;
 
 	public BCLabel(final ParseNode n,
-	               final int id)
-	{
+	               final int id) {
 		super(n);
 		this.id=id;
 	}
 
 	public BCLabel(final ParseNode n,
 	               final int id,
-	               final int address)
-	{
+	               final int address) {
 		super(n);
 		this.id=id;
 		this.address=address;
@@ -45,9 +43,7 @@ public class BCLabel extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    final GSVM vm,
-	                    final boolean simulation)
-	{
-		throw new GSInternalError(
-				"Can not execute the LABEL instruction, it is a pseudocode marker for compilation only");
+	                    final boolean simulation) {
+		throw new GSInternalError("Can not execute the LABEL instruction, it is a pseudocode marker for compilation only");
 	}
 }

@@ -22,8 +22,7 @@ public abstract class KVMap {
 	@URLs(url="/introspection/kvmap")
 	@SideSubMenus(name="KeyValue Map", priority=10)
 	public static void kvmap(@Nonnull final State st,
-	                         final SafeMap values)
-	{
+	                         final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("KV Mappings"));
 		final Table t=new Table();
@@ -55,7 +54,8 @@ public abstract class KVMap {
 					r.add(kv.description());
 					r.add(kv.conveyas());
 					r.add(kv.template()+"");
-					if (kv.isGenerated()) { r.add(new Color("blue","Generated")); } else { r.add(""); }
+					if (kv.isGenerated()) { r.add(new Color("blue","Generated")); }
+					else { r.add(""); }
 				}
 			}
 		}

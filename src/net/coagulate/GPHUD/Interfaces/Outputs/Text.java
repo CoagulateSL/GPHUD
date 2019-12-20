@@ -25,8 +25,7 @@ public class Text implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return content;
 	}
 

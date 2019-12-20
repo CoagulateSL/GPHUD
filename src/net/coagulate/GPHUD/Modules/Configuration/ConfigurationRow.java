@@ -20,8 +20,7 @@ public class ConfigurationRow extends Row {
 	public ConfigurationRow(@Nonnull final State st,
 	                        @Nonnull final TableRow dbo,
 	                        @Nonnull final KV kv,
-	                        @Nonnull final State simulated)
-	{
+	                        @Nonnull final State simulated) {
 		final String kvname=kv.fullname();
 		//kv=st.getKVDefinition(kvname);
 		add(kv.name());
@@ -29,11 +28,11 @@ public class ConfigurationRow extends Row {
 		add(kv.editpermission());
 		if (kv.type()==KVTYPE.UUID) {
 			add(kv.defaultvalue()+"<br><img height=48 width=48 src=\"http://texture-service.agni.lindenlab.com/"+kv.defaultvalue()+"/256x192.jpg/\">");
-			add(simulated.getRawKV(dbo,
-			                       kvname
-			                      )+"<br><img height=48 width=48 src=\"http://texture-service.agni.lindenlab.com/"+simulated
-					.getRawKV(dbo,kvname)+"/256x192.jpg/\">");
-		} else {
+			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\"http://texture-service.agni.lindenlab.com/"+simulated.getRawKV(dbo,
+			                                                                                                                                     kvname
+			                                                                                                                                    )+"/256x192.jpg/\">");
+		}
+		else {
 			add(kv.defaultvalue());
 			add(simulated.getRawKV(dbo,kv.fullname()));
 		}

@@ -13,8 +13,7 @@ public class BCString extends ByteCodeDataType {
 	public BCString(final ParseNode n) {super(n);}
 
 	public BCString(final ParseNode n,
-	                @Nonnull final String content)
-	{
+	                @Nonnull final String content) {
 		super(n);
 		if (content.length()>65535) {
 			throw new GSResourceLimitExceededException("Attempt to make string longer than 65535 characters");
@@ -43,8 +42,7 @@ public class BCString extends ByteCodeDataType {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		vm.push(this);
 	}
 
@@ -100,7 +98,8 @@ public class BCString extends ByteCodeDataType {
 	public BCInteger toBCInteger() {
 		try {
 			return new BCInteger(null,Integer.parseInt(getContent()));
-		} catch (@Nonnull final NumberFormatException e) {
+		}
+		catch (@Nonnull final NumberFormatException e) {
 			throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer");
 		}
 	}

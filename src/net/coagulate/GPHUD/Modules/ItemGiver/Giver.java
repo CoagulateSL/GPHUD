@@ -16,7 +16,8 @@ import javax.annotation.Nonnull;
 public class Giver {
 
 	@Nonnull
-	@Commands(context=Command.Context.AVATAR, description="Get an Item Giver", permitScripting=false, requiresPermission="Instance.ServerOperator", permitUserWeb=false, permitObject=false)
+	@Commands(context=Command.Context.AVATAR, description="Get an Item Giver", permitScripting=false, requiresPermission="Instance.ServerOperator", permitUserWeb=false,
+	          permitObject=false)
 	public static Response getGiver(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","servergive");
@@ -29,8 +30,7 @@ public class Giver {
 	@Nonnull
 	@Commands(context=Command.Context.AVATAR, description="Get an Item from a giver", permitUserWeb=false, permitObject=false)
 	public static Response get(@Nonnull final State st,
-	                           @Argument.Arguments(description="Name of object to give to avatar", type=Argument.ArgumentType.TEXT_ONELINE, max=63) final String item)
-	{
+	                           @Argument.Arguments(description="Name of object to give to avatar", type=Argument.ArgumentType.TEXT_ONELINE, max=63) final String item) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","broadcast");
 		json.put("subcommand","giveitem");

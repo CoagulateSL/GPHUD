@@ -41,8 +41,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 
 	@Nonnull
 	static String sortLink(final String current,
-	                       @Nonnull final String link)
-	{
+	                       @Nonnull final String link) {
 		if (link.equals(current)) { return "<a href=\"?sort=-"+link+"\">"+link+"</a> &darr;"; }
 		if (("-"+link).equals(current)) { return "<a href=\"?sort="+link+"\">"+link+"</a> &uarr;"; }
 		return "<a href=\"?sort="+link+"\">"+link+"</a>";
@@ -93,8 +92,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	}
 
 	void setGroup(final String grouptype,
-	              final String groupname)
-	{
+	              final String groupname) {
 		groups.put(grouptype,groupname);
 	}
 

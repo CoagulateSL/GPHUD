@@ -32,8 +32,7 @@ public abstract class Module {
 
 
 	public Module(final String name,
-	              final ModuleDefinition annotation)
-	{
+	              final ModuleDefinition annotation) {
 		this.name=name;
 		this.annotation=annotation;
 		Modules.register(this);
@@ -42,12 +41,10 @@ public abstract class Module {
 
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be static");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass()
-			                                                   .getName()+"/"+m.getName()+" must be public");
+			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
 		}
 	}
 
@@ -63,8 +60,7 @@ public abstract class Module {
 	@Nonnull
 	Response run(@Nonnull final State st,
 	             final String commandname,
-	             @Nonnull final String[] args)
-	{
+	             @Nonnull final String[] args) {
 		final Command command=getCommand(st,commandname);
 		return command.run(st,args);
 	}
@@ -91,8 +87,7 @@ public abstract class Module {
 
 	@Nonnull
 	public Command getCommand(final State st,
-	                          final String commandname)
-	{
+	                          final String commandname) {
 		final Command ret=getCommandNullable(st,commandname);
 		if (ret==null) {
 			throw new UserInputLookupFailureException("Unable to find command "+commandname+" in module "+getName());
@@ -163,8 +158,7 @@ public abstract class Module {
 
 	@Nonnull
 	public Map<String,KV> getKVAppliesTo(final State st,
-	                                     final TableRow dbo)
-	{
+	                                     final TableRow dbo) {
 		final Map<String,KV> fullset=getKVDefinitions(st);
 		final Map<String,KV> filtered=new TreeMap<>();
 		for (final Map.Entry<String,KV> entry: fullset.entrySet()) {
@@ -194,16 +188,14 @@ dead code?
     */
 
 	public void validateKV(final State st,
-	                       @Nonnull final String key)
-	{
+	                       @Nonnull final String key) {
 		if (getKVDefinitions(st).containsKey(key.toLowerCase())) {
 			throw new SystemImplementationException("KV does not exist ["+key+"] in ["+getName()+"]");
 		}
 	}
 
 	public void validatePermission(final State st,
-	                               @Nonnull final String permission)
-	{
+	                               @Nonnull final String permission) {
 		final Map<String,Permission> perms=getPermissions(st);
 		if (!perms.containsKey(permission.toLowerCase())) {
 			throw new SystemImplementationException("Permission does not exist ["+permission+"] in ["+getName()+"]");
@@ -211,8 +203,7 @@ dead code?
 	}
 
 	public void validateCommand(final State st,
-	                            @Nonnull final String command)
-	{
+	                            @Nonnull final String command) {
 		if (!getCommands(st).containsKey(command.toLowerCase())) {
 			throw new SystemImplementationException("Command does not exist ["+command+"] in ["+getName()+"]");
 		}
@@ -223,12 +214,10 @@ dead code?
 	}
 
 	public void addTemplateDescriptions(final State st,
-	                                    final Map<String,String> templates)
-	{}
+	                                    final Map<String,String> templates) {}
 
 	public void addTemplateMethods(final State st,
-	                               final Map<String,Method> ret)
-	{ }
+	                               final Map<String,Method> ret) { }
 
 	@Nonnull
 	public Set<CharacterAttribute> getAttributes(final State st) {

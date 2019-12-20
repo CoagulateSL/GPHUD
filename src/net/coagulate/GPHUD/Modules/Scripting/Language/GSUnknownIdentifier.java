@@ -10,8 +10,7 @@ public class GSUnknownIdentifier extends GSException {
 	}
 
 	public GSUnknownIdentifier(final String reason,
-	                           final Throwable cause)
-	{
+	                           final Throwable cause) {
 		super(reason,cause);
 	}
 

@@ -16,8 +16,7 @@ public class IntrospectionMenu {
 
 	@URLs(url="/introspection/")
 	public static void menu(@Nonnull final State st,
-	                        final SafeMap values)
-	{
+	                        final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("GPHUD Introspection"));
 		f.add(new TextSubHeader("Global definitions"));

@@ -57,8 +57,7 @@ public class Form implements Renderable {
 	            final boolean setreturnurl,
 	            final String targeturl,
 	            final String buttonname,
-	            @Nonnull final String... inputs)
-	{
+	            @Nonnull final String... inputs) {
 		setAction(targeturl);
 		if (setreturnurl) { add(new Hidden("okreturnurl",st.getDebasedURL())); }
 		add(new Button(buttonname,true));
@@ -101,14 +100,14 @@ public class Form implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		final StringBuilder response=new StringBuilder();
 		if (form) {
 			response.append("<form method=post");
 			if (action!=null && !action.isEmpty()) { response.append(" action=\"").append(action).append("\""); }
 			response.append(
-					" style=\"border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n");
+					" style=\"border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; "+
+							"padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n");
 		}
 		for (final Renderable r: list) {
 			if (!(r instanceof NullResponse)) {
@@ -130,8 +129,7 @@ public class Form implements Renderable {
 	}
 
 	public void readValue(final String key,
-	                      final String value)
-	{
+	                      final String value) {
 		//System.out.println(key+"="+value);
 		final Input i=findInput(key);
 		if (i==null) { return; }
@@ -154,8 +152,7 @@ public class Form implements Renderable {
 
 	@Nullable
 	private Input scourRenderables(@Nonnull final Set<Renderable> subrenderables,
-	                               final String name)
-	{
+	                               final String name) {
 		for (final Renderable r: subrenderables) {
 			if (r instanceof Input) {
 				final Input i=(Input) r;

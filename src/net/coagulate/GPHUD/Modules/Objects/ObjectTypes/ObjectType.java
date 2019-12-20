@@ -22,8 +22,7 @@ public abstract class ObjectType {
 	final JSONObject json;
 
 	protected ObjectType(final State st,
-	                     @Nonnull final ObjectTypes object)
-	{
+	                     @Nonnull final ObjectTypes object) {
 		state=st;
 		this.object=object;
 		json=object.getBehaviour();
@@ -31,8 +30,7 @@ public abstract class ObjectType {
 
 	@Nonnull
 	public static ObjectType materialise(final State st,
-	                                     @Nonnull final ObjectTypes object)
-	{
+	                                     @Nonnull final ObjectTypes object) {
 		final JSONObject json=object.getBehaviour();
 		final String behaviour=json.optString("behaviour","");
 		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
@@ -73,8 +71,7 @@ public abstract class ObjectType {
 	public abstract String explainText();
 
 	public void payload(final State st,
-	                    @Nonnull final JSONObject response)
-	{
+	                    @Nonnull final JSONObject response) {
 		response.put("mode",mode());
 	}
 
@@ -83,13 +80,11 @@ public abstract class ObjectType {
 
 	@Nonnull
 	public Response click(final State st,
-	                      final Char clicker)
-	{ return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
+	                      final Char clicker) { return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
 
 	@Nonnull
 	public Response collide(final State st,
-	                        final Char collider)
-	{ return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
+	                        final Char collider) { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
 	enum MODE {
 		NONE,

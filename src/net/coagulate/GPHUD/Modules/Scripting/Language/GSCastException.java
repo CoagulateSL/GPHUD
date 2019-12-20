@@ -10,8 +10,7 @@ public class GSCastException extends GSInvalidExpressionException {
 	}
 
 	public GSCastException(final String reason,
-	                       final Throwable cause)
-	{
+	                       final Throwable cause) {
 		super(reason,cause);
 	}
 

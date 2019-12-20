@@ -26,8 +26,7 @@ public class JSONPushResponse implements Response {
 
 	public JSONPushResponse(final JSONObject j,
 	                        @Nullable final String url,
-	                        final Response nonjson)
-	{
+	                        final Response nonjson) {
 		if (url==null || url.isEmpty() || "?".equals(url)) {
 			throw new SystemBadValueException("Can not use the null URL");
 		}
@@ -58,8 +57,7 @@ public class JSONPushResponse implements Response {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		final Transmission t=new Transmission((Char) null,json,url);
 		t.start();
 		return nonjson.asHtml(st,rich);

@@ -59,8 +59,7 @@ public class Row implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		final StringBuilder s=new StringBuilder("<tr");
 		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
 		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }

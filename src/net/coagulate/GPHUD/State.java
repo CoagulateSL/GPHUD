@@ -41,14 +41,6 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  */
 public class State extends DumpableState {
 
-	public enum Sources {
-		NONE,
-		SYSTEM,
-		USER,
-		CONSOLE,
-		SCRIPTING,
-		OBJECT
-	}
 	private final Map<TableRow,Map<String,String>> kvmaps=new HashMap<>();
 	@Nonnull
 	public Sources source=Sources.NONE;
@@ -146,13 +138,11 @@ public class State extends DumpableState {
 
 	public State(@Nullable final HttpRequest req,
 	             @Nullable final HttpResponse resp,
-	             @Nullable final HttpContext context)
-	{
+	             @Nullable final HttpContext context) {
 		req(req);
 		resp(resp);
 		this.context=context;
 	}
-
 
 	public State(@Nonnull final Char c) {
 		character=c;
@@ -162,11 +152,11 @@ public class State extends DumpableState {
 		zone=c.getZone();
 	}
 
+
 	public State(@Nullable final Instance i,
 	             @Nullable final Region r,
 	             @Nullable final Zone z,
-	             @Nonnull final Char c)
-	{
+	             @Nonnull final Char c) {
 		instance=i;
 		region=r;
 		zone=z;
@@ -185,14 +175,14 @@ public class State extends DumpableState {
 
 	public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
 
-	// system interface sets to "runas" - defaults to object owner but can be overridden.  THIS IS "WHO WE ARE RUNNING AS"
-	// web interface sets this to the "logged in CHARACTER" object
-	// system interface sets to instance
-
 	public boolean hasModule(@Nonnull final String module) {
 		if (Modules.get(null,module).isEnabled(this)) { return true; }
 		return false;
 	}
+
+	// system interface sets to "runas" - defaults to object owner but can be overridden.  THIS IS "WHO WE ARE RUNNING AS"
+	// web interface sets this to the "logged in CHARACTER" object
+	// system interface sets to instance
 
 	@Nonnull
 	public Set<String> getCharacterGroupTypes() {
@@ -512,8 +502,7 @@ public class State extends DumpableState {
 	}
 
 	private boolean kvDefined(@Nonnull final TableRow o,
-	                          @Nonnull final KV kv)
-	{
+	                          @Nonnull final KV kv) {
 		final Map<String,String> kvmap=getKVMap(o);
 		if (kvmap.containsKey(kv.fullname().toLowerCase())) { return true; }
 		return false;
@@ -595,8 +584,8 @@ public class State extends DumpableState {
 				}
 				break;
 			case CUMULATIVE:
-				throw new SystemImplementationException(
-						"Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV()");
+				throw new SystemImplementationException("Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV"+
+						                                        "()");
 			default:
 				throw new SystemImplementationException("Unknown hierarchy type "+kv.hierarchy());
 		}
@@ -620,17 +609,10 @@ public class State extends DumpableState {
 							sum=sum+Float.parseFloat(raw);
 							triggered=true;
 							if (kv.type()==KV.KVTYPE.INTEGER) {
-								path.append(" +")
-								    .append(Integer.parseInt(raw))
-								    .append(" (")
-								    .append(dbo.getNameSafe())
-								    .append(")");
-							} else {
-								path.append(" +")
-								    .append(Float.parseFloat(raw))
-								    .append(" (")
-								    .append(dbo.getNameSafe())
-								    .append(")");
+								path.append(" +").append(Integer.parseInt(raw)).append(" (").append(dbo.getNameSafe()).append(")");
+							}
+							else {
+								path.append(" +").append(Float.parseFloat(raw)).append(" (").append(dbo.getNameSafe()).append(")");
 							}
 						}
 					}
@@ -640,7 +622,8 @@ public class State extends DumpableState {
 					}
 				}
 				return new KVValue(templateDefault(kv),"Template Default");
-			} else {
+			}
+			else {
 				final TableRow target=determineTarget(kv);
 				if (target==null) {
 					return new KVValue(templateDefault(kv),"No Target Template Default");
@@ -649,11 +632,10 @@ public class State extends DumpableState {
 				if (value==null) {
 					return new KVValue(templateDefault(kv),"Null Value Template Default");
 				}
-				return new KVValue(getKV(target,kvname),
-				                   "Direct value from "+target.getClass().getSimpleName()+" "+target.getNameSafe()
-				);
+				return new KVValue(getKV(target,kvname),"Direct value from "+target.getClass().getSimpleName()+" "+target.getNameSafe());
 			}
-		} catch (@Nonnull final RuntimeException re) {
+		}
+		catch (@Nonnull final RuntimeException re) {
 			throw new UserConfigurationException("Failed to evaluate KV "+kvname+": "+re.getLocalizedMessage(),re);
 		}
 	}
@@ -672,16 +654,14 @@ public class State extends DumpableState {
 	}
 
 	public String getRawKV(@Nonnull final TableRow target,
-	                       @Nonnull final String kvname)
-	{
+	                       @Nonnull final String kvname) {
 		final KV kv=getKVDefinition(kvname);
 		//if (kv == null) { throw new UserInputLookupFailureException("Failed to resolve " + kvname + " to a valid KV entity"); }
 		return getKVMap(target).get(kvname.toLowerCase());
 	}
 
 	public String getKV(@Nonnull final TableRow target,
-	                    @Nonnull final String kvname)
-	{
+	                    @Nonnull final String kvname) {
 		final boolean debug=false;
 		final String s=getRawKV(target,kvname);
 		final KV kv=getKVDefinition(kvname);
@@ -694,9 +674,9 @@ public class State extends DumpableState {
 			isint=true;
 		}
 		String out;
-		try { out=Templater.template(this,s,evaluate,isint); } catch (@Nonnull final Exception e) {
-			throw new UserConfigurationException("Failed loading KV "+kvname+" for "+target.getTableName()+" "+target.getNameSafe()+" : "+e
-					.getLocalizedMessage(),e);
+		try { out=Templater.template(this,s,evaluate,isint); }
+		catch (@Nonnull final Exception e) {
+			throw new UserConfigurationException("Failed loading KV "+kvname+" for "+target.getTableName()+" "+target.getNameSafe()+" : "+e.getLocalizedMessage(),e);
 		}
 		if (kv.type()==COLOR && out!=null) {
 			while (out.startsWith("<<")) { out=out.replaceFirst("<<","<"); }
@@ -709,8 +689,7 @@ public class State extends DumpableState {
 
 	public void setKV(@Nonnull final TableRow dbo,
 	                  @Nonnull final String key,
-	                  @Nullable String value)
-	{
+	                  @Nullable String value) {
 		if (value!=null && !value.isEmpty()) {
 			final KV definition=getKVDefinition(key);
 			if (!definition.template()) { // these are hard to verify :P
@@ -718,15 +697,15 @@ public class State extends DumpableState {
 					case TEXT: // no checking here :P
 						break;
 					case INTEGER: // check it parses into an int
-						try { Integer.parseInt(value); } catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a whole number, you entered '"+value+"' ("+e
-									.getLocalizedMessage()+")");
+						try { Integer.parseInt(value); }
+						catch (@Nonnull final NumberFormatException e) {
+							throw new UserInputValidationParseException(key+" must be a whole number, you entered '"+value+"' ("+e.getLocalizedMessage()+")");
 						}
 						break;
 					case FLOAT:
-						try { Float.parseFloat(value); } catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a number, you entered '"+value+"' ("+e
-									.getLocalizedMessage()+")");
+						try { Float.parseFloat(value); }
+						catch (@Nonnull final NumberFormatException e) {
+							throw new UserInputValidationParseException(key+" must be a number, you entered '"+value+"' ("+e.getLocalizedMessage()+")");
 						}
 						break;
 					case UUID:
@@ -741,16 +720,18 @@ public class State extends DumpableState {
 						}
 						break;
 					case COMMAND:
-						try { Modules.getCommandNullable(this,value); } catch (@Nonnull final SystemException e) {
+						try { Modules.getCommandNullable(this,value); }
+						catch (@Nonnull final SystemException e) {
 							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' and it gave a weird error");
-						} catch (@Nonnull final UserException f) {
-							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' ("+f
-									.getLocalizedMessage()+")");
+						}
+						catch (@Nonnull final UserException f) {
+							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' ("+f.getLocalizedMessage()+")");
 						}
 						break;
 					case COLOR:
 						if (!Validators.color(value)) {
-							throw new UserInputValidationParseException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you entered '"+value+"')");
+							throw new UserInputValidationParseException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you "+
+									                                            "entered '"+value+"')");
 						}
 						// does it have lsl surrounds?
 						break;
@@ -776,8 +757,7 @@ public class State extends DumpableState {
 		if (c==null) { c=getCharacterNullable(); }
 		simulated.setCharacter(c);
 		final Set<Region> possibleregions=getInstance().getRegions(false);
-		final Region simulatedregion=new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random()*possibleregions
-				.size())));
+		final Region simulatedregion=new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random()*possibleregions.size())));
 		simulated.setRegion(simulatedregion);
 		final Set<Zone> possiblezones=simulatedregion.getZones();
 		if (!possiblezones.isEmpty()) {
@@ -841,7 +821,8 @@ public class State extends DumpableState {
 		if (vm!=null) {
 			try {
 				return vm.dumpStateToHtml();
-			} catch (@Nonnull final Throwable e) { return "Exceptioned: "+e; }
+			}
+			catch (@Nonnull final Throwable e) { return "Exceptioned: "+e; }
 		}
 		return "";
 	}
@@ -857,39 +838,46 @@ public class State extends DumpableState {
 				if (instance==null) {
 					// NO avatar, NO character, NO instance
 					// pointless
-				} else {
+				}
+				else {
 					// NO avatar, NO character, YES instance
 					// unworkable combo
 				}
-			} else {
+			}
+			else {
 				if (instance==null) {
 					// NO avatar, YES character, NO instance
 					instance=character.getInstance();
-				} else {
+				}
+				else {
 					// NO avatar, YES character, YES instance
 					character.validate(this);
 				}
 				avatar=character.getOwner();
 				updateCookie();
 			}
-		} else {
+		}
+		else {
 			if (character==null) {
 				if (instance==null) {
 					// YES avatar, NO character, NO instance
 					character=Char.getMostRecent(avatar);
 					instance=getCharacter().getInstance();
-				} else {
+				}
+				else {
 					// YES avatar, NO character, YES instance
 					character=Char.getMostRecent(avatar,instance);
 				}
 				updateCookie();
-			} else {
+			}
+			else {
 				//noinspection ConstantConditions,StatementWithEmptyBody
 				if (instance==null) {
 					// YES avatar, YES character, NO instance
 					instance=character.getInstance();
 					updateCookie();
-				} else {
+				}
+				else {
 					// YES avatar, YES character, YES instance
 				}
 			}
@@ -1041,6 +1029,15 @@ public class State extends DumpableState {
 
 	public void postmap(@Nullable final SafeMap postmap) {
 		this.postmap=postmap;
+	}
+
+	public enum Sources {
+		NONE,
+		SYSTEM,
+		USER,
+		CONSOLE,
+		SCRIPTING,
+		OBJECT
 	}
 
 

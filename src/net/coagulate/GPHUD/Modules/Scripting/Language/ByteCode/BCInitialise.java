@@ -24,8 +24,7 @@ public class BCInitialise extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		final String variablename=vm.popString().toString();
 		final ByteCodeDataType value=vm.pop();
 		vm.set(variablename,value);

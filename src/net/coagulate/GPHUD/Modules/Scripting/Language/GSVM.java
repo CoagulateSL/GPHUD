@@ -46,8 +46,7 @@ public class GSVM {
 	public GSVM(@Nonnull final byte[] code) { bytecode=code; }
 
 	public GSVM(@Nonnull final ScriptRuns run,
-	            @Nonnull final State st)
-	{
+	            @Nonnull final State st) {
 		st.vm=this;
 		// run the initialiser as prep
 		initialiseVM(st);
@@ -86,8 +85,7 @@ public class GSVM {
 	public ByteCodeDataType get(final String k) { return variables.get(k); }
 
 	public void set(final String k,
-	                @Nonnull final ByteCodeDataType v)
-	{
+	                @Nonnull final ByteCodeDataType v) {
 		// does it already exist?
 		final ByteCodeDataType existing=get(k);
 		if (existing==null) {
@@ -107,16 +105,13 @@ public class GSVM {
 			variables.put(k,v.toBCInteger());
 			return;
 		}
-		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass()
-		                                                                        .getSimpleName()+" to "+k+" which is of type "+existing
-				.getClass()
-				.getSimpleName());
+		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+existing.getClass().getSimpleName());
 	}
 
 	@Nonnull
 	public String at() {
-		return "at row "+row+", column "+column+", PC="+startPC+(startPC >= 0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode
-				.get(bytecode[startPC])+")":"");
+		return "at row "+row+", column "+column+", PC="+startPC+(startPC >= 0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode.get(bytecode[startPC])+")":
+				"");
 	}
 
 	@Nonnull
@@ -128,7 +123,8 @@ public class GSVM {
 			try {
 				final ByteCode instruction=ByteCode.load(this);
 				line.append(instruction.htmlDecode());
-			} catch (@Nonnull final Exception e) {
+			}
+			catch (@Nonnull final Exception e) {
 				line.append("</td></tr><tr><td colspan=5>").append(e).append("</tD></tr></table>");
 				return line.toString();
 			}
@@ -188,7 +184,8 @@ public class GSVM {
 				startPC=PC;
 				ByteCode.load(this).execute(st,this,false);
 			}
-		} catch (@Nonnull final Throwable t) {
+		}
+		catch (@Nonnull final Throwable t) {
 			if (SystemException.class.isAssignableFrom(t.getClass())) {
 				throw new GSInternalError("VM exception: "+t+" "+at(),t);
 			}
@@ -224,11 +221,7 @@ public class GSVM {
 		for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
 			ret.append("<tr><th>").append(entry.getKey()).append("</th>");
 			final ByteCodeDataType value=entry.getValue();
-			ret.append("<td>")
-			   .append(value.getClass().getSimpleName())
-			   .append("</td><td>")
-			   .append(value.explain())
-			   .append("</td></tr>");
+			ret.append("<td>").append(value.getClass().getSimpleName()).append("</td><td>").append(value.explain()).append("</td></tr>");
 		}
 		ret.append("</table>");
 		ret.append("<h3>Byte code</h3><br>");
@@ -251,8 +244,7 @@ public class GSVM {
 
 	@Nonnull
 	public Response dequeue(final State st,
-	                        final Char target)
-	{
+	                        final Char target) {
 		final boolean debug=false;
 		final JSONObject totarget=getQueue(target);
 		if (pid!=0) { totarget.put("processid",""+pid); }
@@ -266,8 +258,7 @@ public class GSVM {
 	}
 
 	public void queueSayAs(@Nonnull final Char ch,
-	                       final String message)
-	{
+	                       final String message) {
 		final JSONObject out=getQueue(ch);
 		String m="";
 		if (out.has("say")) { m=out.getString("say")+"\n"; }
@@ -277,15 +268,13 @@ public class GSVM {
 	}
 
 	public void queueTeleport(final Char content,
-	                          final String hudRepresentation)
-	{
+	                          final String hudRepresentation) {
 		final JSONObject queue=getQueue(content);
 		queue.put("teleport",hudRepresentation);
 	}
 
 	public void queueOwnerSay(final Char ch,
-	                          final String message)
-	{
+	                          final String message) {
 		final JSONObject out=getQueue(ch);
 		String m="";
 		if (out.has("message")) { m=out.getString("message")+"\n"; }
@@ -294,8 +283,7 @@ public class GSVM {
 	}
 
 	public void queueSelectCharacter(final Char ch,
-	                                 final String description)
-	{
+	                                 final String description) {
 		final JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
@@ -307,8 +295,7 @@ public class GSVM {
 	}
 
 	public void queueGetText(final Char ch,
-	                         final String description)
-	{
+	                         final String description) {
 		final JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
@@ -320,8 +307,7 @@ public class GSVM {
 
 	public void queueGetChoice(final Char ch,
 	                           final String description,
-	                           @Nonnull final List<String> options)
-	{
+	                           @Nonnull final List<String> options) {
 		final JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
@@ -335,16 +321,14 @@ public class GSVM {
 	}
 
 	public void suspend(final State st,
-	                    @Nonnull final Char respondant)
-	{
+	                    @Nonnull final Char respondant) {
 		variables.put(" PC",new BCInteger(null,PC));
 		variables.put(" IC",new BCInteger(null,IC));
 		variables.put(" SUSP",new BCInteger(null,suspensions));
 		if (invokeonexit!=null) { variables.put(" ONEXIT",new BCString(null,invokeonexit)); }
 		suspensions++;
 		if (suspensions>10) {
-			throw new GSResourceLimitExceededException(
-					"Maximum number of VM suspensions reached - too many user input requests?");
+			throw new GSResourceLimitExceededException("Maximum number of VM suspensions reached - too many user input requests?");
 		}
 		// simulations dont suspend.  but do update the variables and fake a suspension count.  for completeness :P
 		if (simulation) { return; }
@@ -354,7 +338,8 @@ public class GSVM {
 			final ByteCodeDataType bcd=entry.getValue();
 			if (!bcd.getClass().equals(BCList.class)) {
 				initlist.add(bcd);
-			} else {
+			}
+			else {
 				final BCList list=(BCList) bcd;
 				initlist.addAll(list.getContent());
 				initlist.add(list);
@@ -379,8 +364,7 @@ public class GSVM {
 	public Response resume(@Nonnull final State st) { return executeloop(st); }
 
 	public void introduce(final String target,
-	                      final ByteCodeDataType data)
-	{
+	                      final ByteCodeDataType data) {
 		introductions.put(target,data);
 	}
 
@@ -407,7 +391,8 @@ public class GSVM {
 				frame.IC=IC;
 				simulationsteps.add(frame);
 			}
-		} catch (@Nonnull final Throwable e) {
+		}
+		catch (@Nonnull final Throwable e) {
 			final ExecutionStep step=new ExecutionStep();
 			step.t=e;
 			step.decode=at();

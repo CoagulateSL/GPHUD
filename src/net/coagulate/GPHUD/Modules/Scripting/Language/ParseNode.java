@@ -13,8 +13,7 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 	}
 
 	public ParseNode(final GSParser p,
-	                 final int i)
-	{
+	                 final int i) {
 		super(p,i);
 	}
 
@@ -32,7 +31,8 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 			while (!last) {
 				if (s.length()>0) { s.append(" "); }
 				s.append(t.image);
-				if (t==jjtGetLastToken()) { last=true; } else { t=t.next; }
+				if (t==jjtGetLastToken()) { last=true; }
+				else { t=t.next; }
 			}
 		}
 		return s.toString();
@@ -46,16 +46,15 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 			for (final Node nnode: children) {
 				final SimpleNode node=(SimpleNode) nnode;
 				s.append("<li><b>");
-				s.append(node.getClass()
-				             .getName()
-				             .replaceFirst("net.coagulate.GPHUD.Modules.Scripting.Language.Generated.",""));
+				s.append(node.getClass().getName().replaceFirst("net.coagulate.GPHUD.Modules.Scripting.Language.Generated.",""));
 				s.append(" : </b><i>");
 				Token t=node.jjtGetFirstToken();
 				if (t!=null) {
 					boolean last=false;
 					while (!last) {
 						s.append(" ").append(t.image);
-						if (t==node.jjtGetLastToken()) { last=true; } else { t=t.next; }
+						if (t==node.jjtGetLastToken()) { last=true; }
+						else { t=t.next; }
 					}
 				}
 				s.append("</i>");

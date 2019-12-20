@@ -17,8 +17,7 @@ public class KVAnnotation extends KV {
 	KVAnnotation() {}
 
 	public KVAnnotation(final Module m,
-	                    final KVS meta)
-	{
+	                    final KVS meta) {
 		module=m;
 		this.meta=meta;
 		validate(null);

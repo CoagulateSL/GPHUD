@@ -22,8 +22,7 @@ public class MenuArgument extends Argument {
 	String override;
 
 	public MenuArgument(final Command command,
-	                    final JSONObject definition)
-	{
+	                    final JSONObject definition) {
 		super();
 		this.command=command;
 		meta=definition;

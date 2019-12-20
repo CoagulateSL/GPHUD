@@ -48,7 +48,8 @@ public class HTTPListener {
 			if (server==null) { throw new SystemInitialisationException("Server bootstrap is null?"); }
 			GPHUD.getLogger().config("HTTP Services starting up on port "+port);
 			server.start();
-		} catch (@Nonnull final IOException e) {
+		}
+		catch (@Nonnull final IOException e) {
 			// "whoops"
 			GPHUD.getLogger().log(SEVERE,"Listener crashed",e);
 			System.exit(3);

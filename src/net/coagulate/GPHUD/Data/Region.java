@@ -47,25 +47,23 @@ public class Region extends TableRow {
 	public static void refreshURL(final String url) {
 		final String t="regions";
 		final int refreshifolderthan=UnixTime.getUnixTime()-TableRow.REFRESH_INTERVAL;
-		final int toupdate=GPHUD.getDB()
-		                        .dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
+		final int toupdate=GPHUD.getDB().dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Region","Refreshing REGION url "+url);
-		GPHUD.getDB()
-		     .d("update "+t+" set urllast=?,authnode=? where url=?",UnixTime.getUnixTime(),Interface.getNode(),url);
+		GPHUD.getDB().d("update "+t+" set urllast=?,authnode=? where url=?",UnixTime.getUnixTime(),Interface.getNode(),url);
 	}
 
 	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key)
-	{
+	                   final String key) {
 		final String kvtable="regionkvstore";
 		final String maintable="regions";
 		final String idcolumn="regionid";
 		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
 		        key,
 		        instance.getId()
 		       );
@@ -80,8 +78,7 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public static Region get(final int id,
-	                         final boolean allowretired)
-	{
+	                         final boolean allowretired) {
 		final Region r=(Region) factoryPut("Region",id,new Region(id));
 		if (r.isRetired() && (!allowretired)) {
 			final UserException exception=new UserInputStateException("Attempt to access retired region");
@@ -100,18 +97,17 @@ public class Region extends TableRow {
 	 */
 	@Nullable
 	public static Region findNullable(final String name,
-	                                  final boolean allowretired)
-	{
+	                                  final boolean allowretired) {
 		try {
 			final int regionid=GPHUD.getDB().dqinn("select regionid from regions where name=?",name);
 			return get(regionid,allowretired);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull
 	public static Region find(final String name,
-	                          final boolean allowretired)
-	{
+	                          final boolean allowretired) {
 		final Region r=findNullable(name,allowretired);
 		if (r==null) { throw new UserInputLookupFailureException("No active region named '"+name+"' found"); }
 		return r;
@@ -127,8 +123,7 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public static String joinInstance(final String region,
-	                                  @Nonnull final Instance i)
-	{
+	                                  @Nonnull final Instance i) {
 		// TO DO - lacks validation
 		final int exists=GPHUD.getDB().dqinn("select count(*) from regions where name=?",region);
 		if (exists==0) {
@@ -201,7 +196,8 @@ public class Region extends TableRow {
 
 	/**
 	 * Sets the region's URL to callback to the server - CALL THIS FREQUENTLY.
-	 * This does not /just/ set the region's url, it checks if it needs to be set firstly, it also updates it if and only if necessary, along with shutting down the URL it replaced.
+	 * This does not /just/ set the region's url, it checks if it needs to be set firstly, it also updates it if and only if necessary, along with shutting down the URL it
+	 * replaced.
 	 * It also updates the "urllast used" timer if it's more than 60 seconds old.  (used for 'is alive' and 'ping' checking etc etc).
 	 *
 	 * @param url Targets URL
@@ -210,7 +206,8 @@ public class Region extends TableRow {
 		String oldurl=null;
 		try {
 			oldurl=getURL();
-		} catch (@Nonnull final UserException ignored) {} // should only mean there was a null URL
+		}
+		catch (@Nonnull final UserException ignored) {} // should only mean there was a null URL
 		final int now=getUnixTime();
 
 		if (oldurl!=null && oldurl.equals(url)) {
@@ -222,8 +219,7 @@ public class Region extends TableRow {
 
 		if (oldurl!=null && !("".equals(oldurl))) {
 			GPHUD.getLogger().info("Sending shutdown to old URL : "+oldurl);
-			final JSONObject tx=new JSONObject().put("incommand","shutdown")
-			                                    .put("shutdown","Connection replaced by new region server");
+			final JSONObject tx=new JSONObject().put("incommand","shutdown").put("shutdown","Connection replaced by new region server");
 			final Transmission t=new Transmission(this,tx,oldurl);
 			t.start();
 		}
@@ -260,20 +256,16 @@ public class Region extends TableRow {
 			// make sure those visits are in the list of avatars
 			if (avatars.contains(name)) {
 				avatars.remove(name); // matches an avatar on the sim.
-			} else {
+			}
+			else {
 				// doesn't match an avatar on the sim
 				GPHUD.getLogger().warning("Avatar "+name+" not on sim but visiting in GPHUD.getDB().  Marking as left");
-				d("update visits set endtime=? where regionid=? and avatarid=? and endtime is null",
-				  UnixTime.getUnixTime(),
-				  getId(),
-				  avatarid
-				 );
+				d("update visits set endtime=? where regionid=? and avatarid=? and endtime is null",UnixTime.getUnixTime(),getId(),avatarid);
 			}
 		}
 		// whatever is left in the set isn't logged in the db yet.  we dont care but...
 		for (final String s: avatars) {
-			GPHUD.getLogger()
-			     .info("Avatar "+s+" is present on sim but not in visits DB, hopefully they'll register soon.");
+			GPHUD.getLogger().info("Avatar "+s+" is present on sim but not in visits DB, hopefully they'll register soon.");
 		}
 	}
 
@@ -284,27 +276,18 @@ public class Region extends TableRow {
 	 * @param avatars List of Avatar UUIDs or Names that have left the sim.
 	 */
 	public void departingAvatars(@Nonnull final State st,
-	                             @Nonnull final Set<User> avatars)
-	{
+	                             @Nonnull final Set<User> avatars) {
 		final boolean debug=false;
 		for (final User avatar: avatars) {
 			// for all the departing avatars
 			try {
 				final int avatarid=avatar.getId();
 				// if the avatar exists, see if there's a visit
-				final Results rows=dq(
-						"select characterid from visits where avatarid=? and regionid=? and endtime is null",
-						avatarid,
-						getId()
-				                     );
+				final Results rows=dq("select characterid from visits where avatarid=? and regionid=? and endtime is null",avatarid,getId());
 				final int count=rows.size();
 				if (count>0) {
 					st.logger().info("Disconnected avatar "+avatar.getName());
-					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",
-					  UnixTime.getUnixTime(),
-					  getId(),
-					  avatarid
-					 );
+					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",UnixTime.getUnixTime(),getId(),avatarid);
 				}
 				// computer visit XP ((TODO REFACTOR ME?))
 				for (final ResultsRow r: rows) {
@@ -314,10 +297,7 @@ public class Region extends TableRow {
 					new VisitXP(-1).runAwards(st,temp.getCharacter());
 				}
 				final int instanceid=getInstance().getId();
-				final Results urls=dq("select url from characters where instanceid=? and playedby=? and url is not null",
-				                      instanceid,
-				                      avatarid
-				                     );
+				final Results urls=dq("select url from characters where instanceid=? and playedby=? and url is not null",instanceid,avatarid);
 				// if the visitor (character) has URLs send them a ping, which will probably 404 and remove its self
 				for (final ResultsRow row: urls) {
 					final String url=row.getStringNullable("url");
@@ -325,7 +305,8 @@ public class Region extends TableRow {
 					final Transmission t=new Transmission(null,ping,url,5);
 					t.start();
 				}
-			} catch (@Nonnull final Exception e) {
+			}
+			catch (@Nonnull final Exception e) {
 				st.logger().log(SEVERE,"Exception in departingAvatars",e);
 			}
 		}
@@ -344,8 +325,7 @@ public class Region extends TableRow {
 	                          final String type,
 	                          @Nonnull final String version,
 	                          final String versiondate,
-	                          final String versiontime)
-	{
+	                          final String versiontime) {
 		final Date d;
 		try {
 			final SimpleDateFormat df=new SimpleDateFormat("MMM d yyyy HH:mm:ss");
@@ -353,22 +333,17 @@ public class Region extends TableRow {
 			String datetime=versiondate+" "+versiontime;
 			datetime=datetime.replaceAll(" {2}"," ");
 			d=df.parse(datetime);
-		} catch (@Nonnull final ParseException ex) {
+		}
+		catch (@Nonnull final ParseException ex) {
 			throw new SystemImplementationException("Failed to parse date time from "+versiondate+" "+versiontime,ex);
 		}
-		final ResultsRow regiondata=dqone("select region"+type+"version,region"+type+"datetime from regions where regionid=?",
-		                                  getId()
-		                                 );
+		final ResultsRow regiondata=dqone("select region"+type+"version,region"+type+"datetime from regions where regionid=?",getId());
 		final Integer oldversion=regiondata.getIntNullable("region"+type+"version");
 		final Integer olddatetime=regiondata.getIntNullable("region"+type+"datetime");
 		final int newversion=Interface.convertVersion(version);
 		final int newdatetime=(int) (d.getTime()/1000.0);
 		if (oldversion==null || olddatetime==null || olddatetime<newdatetime || oldversion<newversion) {
-			d("update regions set region"+type+"version=?,region"+type+"datetime=? where regionid=?",
-			  newversion,
-			  newdatetime,
-			  getId()
-			 );
+			d("update regions set region"+type+"version=?,region"+type+"datetime=? where regionid=?",newversion,newdatetime,getId());
 			final String olddesc=formatVersion(oldversion,olddatetime,false);
 			final String newdesc=formatVersion(newversion,newdatetime,false);
 			st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc);
@@ -391,15 +366,16 @@ public class Region extends TableRow {
 	@Nonnull
 	private String formatVersion(@Nullable final Integer version,
 	                             @Nullable final Integer datetime,
-	                             final boolean html)
-	{
+	                             final boolean html) {
 		String v="";
 		final DateFormat df=DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
 		df.setTimeZone(TimeZone.getTimeZone("GMT"));
-		if (version==null) { v+="v??? "; } else {
+		if (version==null) { v+="v??? "; }
+		else {
 			v=v+"v"+(version/10000)+"."+((version/100)%100)+"."+(version%100)+" ";
 		}
-		if (datetime==null) { v+="???"; } else {
+		if (datetime==null) { v+="???"; }
+		else {
 			if (html) { v+="<i>( "; }
 			v+=df.format(new Date((long) (1000.0*datetime)));
 			if (html) { v+=" )</i>"; }
@@ -418,8 +394,7 @@ public class Region extends TableRow {
 	public void recordHUDVersion(@Nonnull final State st,
 	                             @Nonnull final String version,
 	                             final String versiondate,
-	                             final String versiontime)
-	{
+	                             final String versiontime) {
 		recordVersion(st,"hud",version,versiondate,versiontime);
 	}
 
@@ -434,8 +409,7 @@ public class Region extends TableRow {
 	public void recordServerVersion(@Nonnull final State st,
 	                                @Nonnull final String version,
 	                                final String versiondate,
-	                                final String versiontime)
-	{
+	                                final String versiontime) {
 		recordVersion(st,"server",version,versiondate,versiontime);
 	}
 
@@ -503,8 +477,7 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public String getServerVersion(final boolean html) {
-		final ResultsRow r=dqone("select regionserverversion,regionserverdatetime from regions where regionid=?",
-		                         getId());
+		final ResultsRow r=dqone("select regionserverversion,regionserverdatetime from regions where regionid=?",getId());
 		return formatVersion(r.getIntNullable("regionserverversion"),r.getIntNullable("regionserverdatetime"),html);
 	}
 
@@ -609,8 +582,7 @@ public class Region extends TableRow {
 	}
 
 	public void setGlobalCoordinates(final int x,
-	                                 final int y)
-	{
+	                                 final int y) {
 		d("update regions set regionx=?,regiony=? where regionid=?",x,y,getId());
 	}
 

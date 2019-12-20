@@ -14,17 +14,13 @@ import javax.annotation.Nonnull;
 public class MultiChar extends CookBook {
 	@URL.URLs(url="/configuration/cookbooks/multi-char")
 	public static void createForm(@Nonnull final State st,
-	                              @Nonnull final SafeMap values)
-	{
+	                              @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Multiple Character Cookbook"));
 		final boolean act=false;
-		f.add(new Paragraph(
-				"This cookbook will enable the user to create multiple characters and not assume avatar naming."));
-		f.add(new Paragraph(
-				"Note that further options are available, such as only allowing creation/switch in the OOC zone, if one exists."));
-		f.add(new Paragraph(
-				"The default setup here will enable chracter creation/switching anywhere, by making the following changes:"));
+		f.add(new Paragraph("This cookbook will enable the user to create multiple characters and not assume avatar naming."));
+		f.add(new Paragraph("Note that further options are available, such as only allowing creation/switch in the OOC zone, if one exists."));
+		f.add(new Paragraph("The default setup here will enable chracter creation/switching anywhere, by making the following changes:"));
 		final Table t=new Table();
 		f.add(t);
 		run(st,t,false);
@@ -34,15 +30,15 @@ public class MultiChar extends CookBook {
 			final Table runt=new Table();
 			f.add(runt);
 			run(st,runt,true);
-		} else {
+		}
+		else {
 			confirmButton(st,f);
 		}
 	}
 
 	private static void run(@Nonnull final State st,
 	                        @Nonnull final Table t,
-	                        final boolean act)
-	{
+	                        final boolean act) {
 		t.add(new HeaderRow().add("Action").add("Verification").add("Description"));
 		setKV(st,act,t,st.getInstance(),"Instance.AutoNameCharacter","false");
 		setKV(st,act,t,st.getInstance(),"Instance.CharacterSwitchEnabled","true");

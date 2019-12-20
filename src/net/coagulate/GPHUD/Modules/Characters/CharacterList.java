@@ -18,8 +18,7 @@ public class CharacterList {
 
 	@URLs(url="/characters/list*", requiresPermission="Characters.ViewAll")
 	public static void list(@Nonnull final State st,
-	                        final SafeMap values)
-	{
+	                        final SafeMap values) {
 		final List<CharacterSummary> list=st.getInstance().getCharacterSummary(st);
 		if (list.isEmpty()) {
 			st.form().add("No characters found");

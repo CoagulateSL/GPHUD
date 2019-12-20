@@ -47,8 +47,7 @@ public class Transmission extends Thread {
 
 	public Transmission(@Nullable final Char character,
 	                    @Nonnull final JSONObject json,
-	                    @Nullable final String oldurl)
-	{
+	                    @Nullable final String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to character "+character+" on url "+oldurl+" with json "+json);
 			Thread.dumpStack();
@@ -60,8 +59,7 @@ public class Transmission extends Thread {
 	}
 
 	public Transmission(@Nonnull final Objects obj,
-	                    @Nonnull final JSONObject json)
-	{
+	                    @Nonnull final JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to object "+obj+" with json "+json);
 			Thread.dumpStack();
@@ -73,8 +71,7 @@ public class Transmission extends Thread {
 	}
 
 	public Transmission(@Nonnull final Char character,
-	                    @Nonnull final JSONObject json)
-	{
+	                    @Nonnull final JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to character "+character+" with json "+json);
 			Thread.dumpStack();
@@ -87,8 +84,7 @@ public class Transmission extends Thread {
 
 	public Transmission(@Nonnull final Char character,
 	                    @Nonnull final JSONObject json,
-	                    final int i)
-	{
+	                    final int i) {
 		if (debugspawn) {
 			System.out.println("Transmission to character "+character+" with json "+json);
 			Thread.dumpStack();
@@ -101,8 +97,7 @@ public class Transmission extends Thread {
 	}
 
 	public Transmission(@Nonnull final Region region,
-	                    @Nonnull final JSONObject message)
-	{
+	                    @Nonnull final JSONObject message) {
 		if (debugspawn) {
 			System.out.println("Transmission to region "+region+" with json "+json);
 			Thread.dumpStack();
@@ -115,8 +110,7 @@ public class Transmission extends Thread {
 
 	public Transmission(@Nonnull final Region region,
 	                    @Nonnull final JSONObject message,
-	                    final int i)
-	{
+	                    final int i) {
 		if (debugspawn) {
 			System.out.println("Transmission to region "+region+" with json "+json);
 			Thread.dumpStack();
@@ -130,8 +124,7 @@ public class Transmission extends Thread {
 
 	public Transmission(final Region r,
 	                    @Nonnull final JSONObject message,
-	                    @Nullable final String oldurl)
-	{
+	                    @Nullable final String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to region "+region+" on url "+oldurl+" with json "+json);
 			Thread.dumpStack();
@@ -144,8 +137,7 @@ public class Transmission extends Thread {
 	public Transmission(final Char aChar,
 	                    @Nonnull final JSONObject ping,
 	                    @Nullable final String url,
-	                    final int i)
-	{
+	                    final int i) {
 		if (debugspawn) {
 			System.out.println("DELAYED Transmission to character "+aChar+" on url "+url+" with delay "+i+" and json "+json);
 			Thread.dumpStack();
@@ -164,15 +156,15 @@ public class Transmission extends Thread {
 	// can call .start() to background run this, or .run() to async run inline/inthread
 	@Override
 	public void run() {
-		try { runUnwrapped(); } catch (@Nonnull final Exception e) {
+		try { runUnwrapped(); }
+		catch (@Nonnull final Exception e) {
 			Throwable step=e;
 			int sanity=100;
 			while (step.getCause()!=null && sanity >= 0) {
 				step=step.getCause();
 				sanity--;
 				if (sanity==0) {
-					GPHUD.getLogger("Transmission")
-					     .log(SEVERE,"Excess exception stepping in Transmission exception reporter");
+					GPHUD.getLogger("Transmission").log(SEVERE,"Excess exception stepping in Transmission exception reporter");
 				}
 			}
 			if (step.getCause()==null) {
@@ -197,15 +189,18 @@ public class Transmission extends Thread {
 		while (response==null && retries>0) {
 			try {
 				response=sendAttempt();
-			} catch (@Nonnull final FileNotFoundException e) {
+			}
+			catch (@Nonnull final FileNotFoundException e) {
 				GPHUD.getLogger().log(FINE,"404 on url, revoked connection while sending "+json);
 				GPHUD.purgeURL(url);
 				return;
-			} catch (@Nonnull final MalformedURLException ex) {
+			}
+			catch (@Nonnull final MalformedURLException ex) {
 				GPHUD.getLogger().log(WARNING,"MALFORMED URL: "+url+", revoked connection while sending "+json);
 				GPHUD.purgeURL(url);
 				return;
-			} catch (@Nonnull final IOException e) {
+			}
+			catch (@Nonnull final IOException e) {
 				retries--;
 				GPHUD.getLogger().log(INFO,"IOException "+e.getMessage()+" retries="+retries+" left");
 				try { Thread.sleep(5*1000); } catch (@Nonnull final InterruptedException ee) {}
@@ -224,25 +219,21 @@ public class Transmission extends Thread {
 					if (j.has("callback")) { Region.refreshURL(j.getString("callback")); }
 					if (j.has("cookie")) { Cookies.refreshCookie(j.getString("cookie")); }
 				}
-			} catch (@Nonnull final Exception e) {
+			}
+			catch (@Nonnull final Exception e) {
 				GPHUD.getLogger().log(WARNING,"Exception in response parser",e);
 				final StringBuilder body=new StringBuilder(url+"\n<br>\n");
 				body.append("Character:").append(character==null?"null":character.getNameSafe()).append("\n<br>\n");
 				if (caller!=null) {
 					for (final StackTraceElement ele: caller) {
-						body.append("Caller: ")
-						    .append(ele.getClassName())
-						    .append("/")
-						    .append(ele.getMethodName())
-						    .append(":")
-						    .append(ele.getLineNumber())
-						    .append("\n<br>\n");
+						body.append("Caller: ").append(ele.getClassName()).append("/").append(ele.getMethodName()).append(":").append(ele.getLineNumber()).append("\n<br>\n");
 					}
 				}
 				body.append(response);
 				try {
 					MailTools.mail("Failed response",body.toString());
-				} catch (@Nonnull final MessagingException ee) {
+				}
+				catch (@Nonnull final MessagingException ee) {
 					GPHUD.getLogger().log(SEVERE,"Mail exception in response parser exception handler",ee);
 				}
 			}

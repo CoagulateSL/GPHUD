@@ -22,13 +22,11 @@ public abstract class DateTime {
 
 	@Nonnull
 	private static String fromUnixTime(final int date,
-	                                   @Nonnull final DateFormat df)
-	{ return df.format(new Date(((long) (date))*((long) 1000))); }
+	                                   @Nonnull final DateFormat df) { return df.format(new Date(((long) (date))*((long) 1000))); }
 
 	@Nonnull
 	public static String fromUnixTime(final int date,
-	                                  final String timezone)
-	{
+	                                  final String timezone) {
 		final DateFormat df=DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
 		df.setTimeZone(TimeZone.getTimeZone(timezone));
 		return fromUnixTime(date,df);
@@ -50,8 +48,7 @@ public abstract class DateTime {
 	@Nonnull
 	public static Row inputDateTimeRow(final String prefix,
 	                                   @Nonnull final SafeMap values,
-	                                   final String defaulttimezone)
-	{
+	                                   final String defaulttimezone) {
 		final Row t=new Row();
 		String tz=values.get(prefix+"timezone");
 		if (tz.isEmpty()) { tz=defaulttimezone; }
@@ -69,8 +66,7 @@ public abstract class DateTime {
 	private static TextInput ti(final String prefix,
 	                            final String component,
 	                            final int size,
-	                            @Nonnull final SafeMap values)
-	{
+	                            @Nonnull final SafeMap values) {
 		final String name=prefix+component;
 		return new TextInput(name,values.get(name),size);
 	}
@@ -88,8 +84,7 @@ public abstract class DateTime {
 	@Nonnull
 	public static Row inputIntervalRow(final String prefix,
 	                                   @Nonnull final SafeMap values,
-	                                   final boolean spacers)
-	{
+	                                   final boolean spacers) {
 		final Row t=new Row();
 		t.add(prefix);
 		t.add(ti(prefix,"day",2,values));
@@ -112,8 +107,7 @@ public abstract class DateTime {
 	 */
 	@Nonnull
 	public static Row inputIntervalRow(final String prefix,
-	                                   @Nonnull final SafeMap values)
-	{
+	                                   @Nonnull final SafeMap values) {
 		return inputIntervalRow(prefix,values,false);
 	}
 
@@ -129,8 +123,7 @@ public abstract class DateTime {
 	 */
 	public static int outputDateTime(final String prefix,
 	                                 @Nonnull final SafeMap values,
-	                                 final String defaulttimezone)
-	{
+	                                 final String defaulttimezone) {
 		try {
 			String timezone=values.get(prefix+"timezone");
 			if (timezone.isEmpty()) {
@@ -142,7 +135,8 @@ public abstract class DateTime {
 			final int hour=Integer.parseInt(values.get(prefix+"hour"));
 			final int minute=Integer.parseInt(values.get(prefix+"minute"));
 			return UnixTime.create(timezone,day,month,year,hour,minute);
-		} catch (@Nonnull final NumberFormatException e) {
+		}
+		catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Failed to parse number : "+e.getMessage(),e);
 		}
 	}
@@ -158,8 +152,7 @@ public abstract class DateTime {
 	 * @throws UserException If the numbers fail to parse
 	 */
 	public static int outputInterval(final String prefix,
-	                                 @Nonnull final SafeMap values)
-	{
+	                                 @Nonnull final SafeMap values) {
 		try {
 			int day=Integer.parseInt(values.get(prefix+"day"));
 			int hour=Integer.parseInt(values.get(prefix+"hour"));
@@ -169,7 +162,8 @@ public abstract class DateTime {
 			hour=hour*60*60;
 			minute=minute*60;
 			return day+hour+minute;
-		} catch (@Nonnull final NumberFormatException e) {
+		}
+		catch (@Nonnull final NumberFormatException e) {
 			throw new UserInputValidationParseException("Failed to parse number : "+e.getMessage(),e);
 		}
 	}
@@ -185,8 +179,7 @@ public abstract class DateTime {
 
 	@Nonnull
 	public static DropDownList getTimeZoneList(final String name,
-	                                           final String value)
-	{
+	                                           final String value) {
 		final DropDownList dropdown=new DropDownList(name);
 		for (final String tz: getTimeZones()) { dropdown.add(tz); }
 		dropdown.setValue(value);

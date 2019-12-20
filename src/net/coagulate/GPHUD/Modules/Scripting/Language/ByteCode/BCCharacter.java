@@ -18,8 +18,7 @@ public class BCCharacter extends ByteCodeDataType {
 	public BCCharacter(final ParseNode n) { super(n); }
 
 	public BCCharacter(final ParseNode n,
-	                   @Nonnull final Char content)
-	{
+	                   @Nonnull final Char content) {
 		super(n);
 		this.content=content;
 	}
@@ -52,8 +51,7 @@ public class BCCharacter extends ByteCodeDataType {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		vm.push(this);
 	}
 

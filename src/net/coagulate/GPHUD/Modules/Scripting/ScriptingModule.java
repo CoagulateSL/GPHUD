@@ -13,16 +13,14 @@ import java.util.Set;
 
 public class ScriptingModule extends ModuleAnnotation {
 	public ScriptingModule(final String name,
-	                       final ModuleDefinition annotation)
-	{
+	                       final ModuleDefinition annotation) {
 		super(name,annotation);
 	}
 
 	@Nonnull
 	@Override
 	public Command getCommandNullable(@Nonnull final State st,
-	                                  @Nonnull final String commandname)
-	{
+	                                  @Nonnull final String commandname) {
 		if (commandname.equalsIgnoreCase("characterresponse") || commandname.equalsIgnoreCase("stringresponse")) {
 			return super.getCommandNullable(st,commandname);
 		}

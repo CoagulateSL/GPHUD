@@ -29,8 +29,7 @@ public class FactionCommands {
 	@Nonnull
 	@Template(name="FACTION", description="Current faction name")
 	public static String getFactionName(@Nonnull final State st,
-	                                    final String key)
-	{
+	                                    final String key) {
 		final CharacterGroup faction=st.getCharacter().getGroup("Faction");
 		if (faction==null) { return ""; }
 		return faction.getName();
@@ -40,8 +39,7 @@ public class FactionCommands {
 	@Commands(description="Award a point of faction XP to the target character", context=Context.CHARACTER)
 	public static Response awardXP(@Nonnull final State st,
 	                               @Nonnull @Arguments(description="Character to award a point of XP to", type=ArgumentType.CHARACTER_FACTION) final Char target,
-	                               @Arguments(description="Reason for the award", type=ArgumentType.TEXT_ONELINE, max=512) final String reason)
-	{
+	                               @Arguments(description="Reason for the award", type=ArgumentType.TEXT_ONELINE, max=512) final String reason) {
 		// things to check...
 		// players are in the same faction
 		final CharacterGroup ourfaction=st.getCharacter().getGroup("Faction");
@@ -59,9 +57,10 @@ public class FactionCommands {
 		final Pool factionxp=Modules.getPool(st,"Faction.FactionXP");
 		final int awarded=target.sumPoolDays(factionxp,period);
 		if (awarded >= maxxp) {
-			return new ErrorResponse(
-					"This character has already reached their Faction XP Limit.  They will next be eligable for a point in "+target
-							.poolNextFree(factionxp,maxxp,period));
+			return new ErrorResponse("This character has already reached their Faction XP Limit.  They will next be eligable for a point in "+target.poolNextFree(factionxp,
+			                                                                                                                                                      maxxp,
+			                                                                                                                                                      period
+			                                                                                                                                                     ));
 		}
 		// else award xp :P
 		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add","FactionXP",null,"1",reason);
@@ -75,8 +74,7 @@ public class FactionCommands {
 	@Nonnull
 	@Commands(description="Invite a player to your faction", context=Context.CHARACTER)
 	public static Response invite(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Character to invite", type=ArgumentType.CHARACTER) final Char target)
-	{
+	                              @Nonnull @Arguments(description="Character to invite", type=ArgumentType.CHARACTER) final Char target) {
 		final CharacterGroup ourfaction=st.getCharacter().getGroup("Faction");
 		if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
 		return GroupCommands.invite(st,ourfaction,target);
@@ -85,8 +83,7 @@ public class FactionCommands {
 	@Nonnull
 	@Commands(context=Context.CHARACTER, description="Eject a member from your faction")
 	public static Response eject(final @NotNull State st,
-	                             @Arguments(description="Character to remove from the faction", type=ArgumentType.CHARACTER_FACTION) final @NotNull Char member)
-	{
+	                             @Arguments(description="Character to remove from the faction", type=ArgumentType.CHARACTER_FACTION) final @NotNull Char member) {
 		final CharacterGroup faction=st.getCharacter().getGroup("Faction");
 		if (faction==null) { return new ErrorResponse("You are not in a faction!"); }
 		return GroupCommands.eject(st,faction,member);

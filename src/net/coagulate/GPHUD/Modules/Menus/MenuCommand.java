@@ -29,8 +29,7 @@ public class MenuCommand extends Command {
 
 	public MenuCommand(final State st,
 	                   final String name,
-	                   final JSONObject newdef)
-	{
+	                   final JSONObject newdef) {
 		super();
 		definition=newdef;
 		this.name=name;
@@ -97,8 +96,7 @@ public class MenuCommand extends Command {
 	@Nonnull
 	@Override
 	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap)
-	{
+	                    @Nonnull final SafeMap parametermap) {
 		final String selected=parametermap.get("choice");
 		int choice=0;
 		for (int i=1;i<=12;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
@@ -110,7 +108,8 @@ public class MenuCommand extends Command {
 	public Method getMethod() {
 		try {
 			return getClass().getDeclaredMethod("run",State.class,SafeMap.class);
-		} catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
+		}
+		catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
 			throw new SystemImplementationException("Issue locating RUN command for MenuCommand, this makes no sense :)");
 		}
 	}

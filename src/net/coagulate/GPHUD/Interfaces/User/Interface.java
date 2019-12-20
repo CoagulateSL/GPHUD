@@ -52,9 +52,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	// leave this here for now
 	@Nonnull
 	public static String styleSheet() {
-		return ""+"<style>\n"+".tooltip {\n"+"    position: relative;\n"+"    display: inline-block;\n"+"    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */\n"+"}\n"+"\n"+".tooltip .tooltiptext {\n"+"    visibility: hidden;\n"+
+		return ""+"<style>\n"+".tooltip {\n"+"    position: relative;\n"+"    display: inline-block;\n"+"    border-bottom: 1px dotted black; /* If you want dots under the "+"hoverable text */\n"+"}\n"+"\n"+".tooltip .tooltiptext {\n"+"    visibility: hidden;\n"+
 				//"    width: 120px;\n" +
-				"    background-color: #e0e0e0;\n"+"    color: black;\n"+"    text-align: center;\n"+"    padding: 5px 0;\n"+"    border-radius: 6px;\n"+" \n"+"     top: -5px;\n"+"    left: 105%; "+"    position: absolute;\n"+"    z-index: 1;\n"+"white-space: nowrap;\n"+"}\n"+"\n"+"/* Show the tooltip text when you mouse over the tooltip container */\n"+".tooltip:hover .tooltiptext {\n"+"    visibility: visible;\n"+"}\n"+"</style>";
+				"    background-color: #e0e0e0;\n"+"    color: black;\n"+"    text-align: center;\n"+"    padding: 5px 0;\n"+"    border-radius: 6px;\n"+" \n"+"     top: "+
+				"-5px;\n"+"    left: 105%; "+"    position: absolute;\n"+"    z-index: 1;\n"+"white-space: nowrap;\n"+"}\n"+"\n"+"/* Show the tooltip text when you mouse "+
+				"over the tooltip container */\n"+".tooltip:hover .tooltiptext {\n"+"    visibility: visible;\n"+"}\n"+"</style>";
 	}
 
 	/**
@@ -83,14 +85,16 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		try {
 			st.resp().setStatusCode(HttpStatus.SC_OK);
 			st.resp().setEntity(new StringEntity(renderHTML(st),ContentType.TEXT_HTML));
-		} catch (@Nonnull final RedirectionException redir) {
+		}
+		catch (@Nonnull final RedirectionException redir) {
 			st.resp().setStatusCode(303);
 			String targeturl=redir.getURL();
 			//System.out.println("PRE:"+targeturl);
 			if (targeturl.startsWith("/") && !targeturl.startsWith("/GPHUD")) { targeturl="/GPHUD"+targeturl; }
 			//System.out.println("POST:"+targeturl);
 			st.resp().addHeader("Location",targeturl);
-		} catch (@Nonnull final Exception e) {
+		}
+		catch (@Nonnull final Exception e) {
 			try {
 				SL.report("GPHUD UserInterface exception",e,st);
 				GPHUD.getLogger().log(SEVERE,"UserInterface exception : "+e.getLocalizedMessage(),e);
@@ -99,7 +103,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				st.resp().setStatusCode(HttpStatus.SC_OK);
 				// an unmapped page, "ErrorPage"
 				st.resp().setEntity(new StringEntity("Error.",ContentType.TEXT_HTML));
-			} catch (@Nonnull final Exception ex) {
+			}
+			catch (@Nonnull final Exception ex) {
 				SL.report("GPHUD UserInterface exception in exception handler",ex,st);
 				GPHUD.getLogger().log(SEVERE,"Exception in exception handler - "+ex.getLocalizedMessage(),ex);
 			}
@@ -111,9 +116,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (st.getCharacterNullable()==null) { return ""; }
 		final int messages=st.getCharacter().messages();
 		if (messages>0) {
-			return "<p>"+new Link("<b>You have "+messages+" unread message"+(messages>1?"s":"")+", click here to read</b>",
-			                      "/GPHUD/messages/list"
-			).asHtml(st,true)+"</p>";
+			return "<p>"+new Link("<b>You have "+messages+" unread message"+(messages>1?"s":"")+", click here to read</b>","/GPHUD/messages/list").asHtml(st,true)+"</p>";
 		}
 		return "";
 	}
@@ -157,7 +160,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 			try {
 				p+=renderSideMenu(st);
-			} catch (@Nonnull final Exception e) {
+			}
+			catch (@Nonnull final Exception e) {
 				// Exception in side menu code
 				p+="<b><i>Crashed</i></b>";
 				SL.report("GPHUD Side Menu crashed",e,st);
@@ -183,7 +187,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		try {
 			// literally, just a wrapper
 			return renderBody(st);
-		} catch (@Nonnull final Exception t) {
+		}
+		catch (@Nonnull final Exception t) {
 			// Exception in processing the command
 			if (t instanceof RedirectionException) {
 				throw (RedirectionException) t;
@@ -194,8 +199,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					String r="<h1>ERROR</h1><p>Sorry, your request could not be completed<br><pre>"+t.getLocalizedMessage()+"</pre></p>";
 					GPHUD.getLogger().log(INFO,"UserInterface/UserException "+t);
 					if (GPHUD.DEV) {
-						r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>User Mode Exception</h1>"+ExceptionTools.dumpException(
-								t)+"<Br><br>"+st.toHTML();
+						r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>User Mode Exception</h1>"+ExceptionTools.dumpException(t)+"<Br><br>"+st.toHTML();
 						SL.report("GPHUD Web User Exception",t,st);
 						GPHUD.getLogger().log(WARNING,"UserInterface/UserException",t);
 					}
@@ -205,11 +209,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				GPHUD.getLogger().log(WARNING,"UserInterface/NonUserException",t);
 				String r="<h1>INTERNAL ERROR</h1><p>Sorry, your request could not be completed due to an internal error.</p>";
 				if (GPHUD.DEV) {
-					r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>NonUser Exception</h1>"+ExceptionTools.dumpException(t)+"<Br><br>"+st
-							.toHTML();
+					r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>NonUser Exception</h1>"+ExceptionTools.dumpException(t)+"<Br><br>"+st.toHTML();
 				}
 				return r;
-			} catch (@Nonnull final Exception f) {
+			}
+			catch (@Nonnull final Exception f) {
 				GPHUD.getLogger().log(SEVERE,"Exception in exception handler",f);
 				return "EXCEPTION IN EXCEPTION HANDLER, PANIC!"; // nice
 			}
@@ -218,8 +222,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 	@Nonnull
 	String dynamicSubMenus(final State st,
-	                       final SideMenu menu)
-	{
+	                       final SideMenu menu) {
 		// dereference the menu into a module
 		Module owner=null;
 		for (final Module m: Modules.getModules()) { if (m.getSideMenu(st)==menu) { owner=m; } }
@@ -244,11 +247,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			// enumerate the SideMenus
 			for (final SideSubMenu s: sideSubMenus) {
 				final String u=s.getURL();
-				ret.append("&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;<a href=\"/GPHUD")
-				   .append(u)
-				   .append("\">")
-				   .append(s.name())
-				   .append("</a><br>");
+				ret.append("&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;<a href=\"/GPHUD").append(u).append("\">").append(s.name()).append("</a><br>");
 			}
 		}
 		return ret.toString();
@@ -307,19 +306,23 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			s.append("<br>");
 			if (st.getAvatarNullable()!=null) {
 				s.append(st.getAvatarNullable().getGPHUDLink()).append("<br>");
-			} else { s.append("<i>none</i><br>"); }
+			}
+			else { s.append("<i>none</i><br>"); }
 
 
 			s.append("<b>Instance:</b> [<a href=\"/GPHUD/switch/instance\">Switch</a>]<br>");
 			if (st.getInstanceNullable()!=null) {
 				s.append(st.getInstance().asHtml(st,true)).append("<br>");
-			} else { s.append("<i>none</i><br>"); }
+			}
+			else { s.append("<i>none</i><br>"); }
 
 			s.append("<b>Character:</b> [<a href=\"/GPHUD/switch/character\">Switch</a>]<br>");
 			if (st.getCharacterNullable()!=null) {
 				s.append(st.getCharacter().asHtml(st,true)).append("<br>");
-			} else { s.append("<i>none</i><br>"); }
-		} else {
+			}
+			else { s.append("<i>none</i><br>"); }
+		}
+		else {
 			s.append("<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>");
 			s.append("<a href=\"/GPHUD/Help\">Documentation</a><br>");
 			s.append("<hr width=150px>");
@@ -381,24 +384,22 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// some kinda login information exists
 		st.fleshOut();
 		content=Modules.getURL(st,st.getDebasedNoQueryURL());
-		//System.out.println("Post auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
+		//System.out.println("Post auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st
+		// .getDebasedNoQueryURL()));
 		if (st.getInstanceNullable()==null && interceptable(st.getDebasedNoQueryURL())) {
 			content=Modules.getURL(st,"/GPHUD/switch/instance");
 		} //f=new Form(); f.add(new TextHeader("Module "+content.getModule().getName()+" is inaccessible as no instance is currently selected")); }
 		if (st.getInstanceNullable()!=null && !content.getModule().isEnabled(st)) {
 			f=new Form();
-			f.add(new TextHeader("Module "+content.getModule()
-			                                      .getName()+" is not enabled in instance "+st.getInstanceString()));
+			f.add(new TextHeader("Module "+content.getModule().getName()+" is not enabled in instance "+st.getInstanceString()));
 		}
-		//System.out.println("Post post-auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st.getDebasedNoQueryURL()));
+		//System.out.println("Post post-auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st
+		// .getDebasedNoQueryURL()));
 		f=new Form();
 		st.setForm(f);
 		if (!content.requiresPermission().isEmpty()) {
 			if (!st.hasPermission(content.requiresPermission())) {
-				st.logger()
-				  .log(WARNING,
-				       "Attempted access to "+st.getDebasedURL()+" which requires missing permission "+content.requiresPermission()
-				      );
+				st.logger().log(WARNING,"Attempted access to "+st.getDebasedURL()+" which requires missing permission "+content.requiresPermission());
 				throw new UserAccessDeniedException("Access to this page is denied, you require permission "+content.requiresPermission());
 			}
 		}
@@ -446,14 +447,18 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					if (value!=null && !value.isEmpty()) { values.put(key,value); }
 					//System.out.println("HTTP POST ["+key+"]=["+value+"]");
 				}
-			} catch (@Nonnull final IOException ex) {
+			}
+			catch (@Nonnull final IOException ex) {
 				st.logger().log(SEVERE,"Unexpected IOException reading form post data?",ex);
-			} catch (@Nonnull final UnsupportedOperationException ex) {
+			}
+			catch (@Nonnull final UnsupportedOperationException ex) {
 				st.logger().log(WARNING,"Unsupported Operation Exception reading form post data?",ex);
-			} finally {
+			}
+			finally {
 				try {
 					if (contentstream!=null) { contentstream.close(); }
-				} catch (@Nonnull final IOException ex) {
+				}
+				catch (@Nonnull final IOException ex) {
 					st.logger().log(WARNING,"Unexpected IOException closing stream after primary exception?",ex);
 				}
 			}
@@ -499,8 +504,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	// generally our job is to set up the avatar/instance/character stuff
 	@Nullable
 	public Form authenticationHook(@Nonnull final State st,
-	                               @Nonnull final SafeMap values)
-	{
+	                               @Nonnull final SafeMap values) {
 		final boolean debug=false;
 		// FIRSTLY, pick up any existing session data
 		String cookie=extractGPHUDCookie(st);
@@ -517,7 +521,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			final Form failed=new Form();
 			if (cookie!=null && !"".equals(cookie)) {
 				failed.add("Sorry, your session has expired, please start a new session somehow");
-			} else {
+			}
+			else {
 				failed.add("Sorry, login failed, cookie not received at this time.");
 			}
 			return failed;
@@ -541,7 +546,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (target==null) {
 				failed="Incorrect credentials.";
 				st.logger().log(WARNING,"Attempt to login as '"+username+"' failed, no such user.");
-			} else {
+			}
+			else {
 				if (target.checkPassword(password)) {
 					cookie=Cookies.generate(target,null,null,true);
 					st.username=username;
@@ -549,13 +555,15 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					st.cookiestring=cookie;
 					try {
 						st.cookie(new Cookies(cookie));
-					} catch (@Nonnull final UserException ex) {
+					}
+					catch (@Nonnull final UserException ex) {
 						st.logger().log(SEVERE,"Cookie load gave exception, right after it was generated?",ex);
 					}
 					st.resp().addHeader("Set-Cookie","gphud="+cookie+"; Path=/");
 					st.logger().log(INFO,"Logged in from "+st.address().getHostAddress());
 					return null; //return characterSelectionHook(st, values);
-				} else {
+				}
+				else {
 					st.logger().log(WARNING,"Attempt to login as '"+username+"' failed, wrong password.");
 					failed="Incorrect credentials.";
 				}
@@ -566,8 +574,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 	private void setupStateFromCluster(@Nonnull final State st,
-	                                   final String coagulateslcookie)
-	{
+	                                   final String coagulateslcookie) {
 		final Session slsession=Session.get(coagulateslcookie);
 		if (slsession!=null) {
 			final User av=slsession.user();
@@ -575,7 +582,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				st.setAvatar(av);
 				final String cookie=Cookies.generate(av,null,null,true);
 				st.cookiestring=cookie;
-				try { st.cookie(new Cookies(cookie)); } catch (@Nonnull final UserException ex) {
+				try { st.cookie(new Cookies(cookie)); }
+				catch (@Nonnull final UserException ex) {
 					st.logger().log(SEVERE,"Cookie load gave exception, right after it was generated?",ex);
 				}
 				st.resp().addHeader("Set-Cookie","gphud="+cookie+"; Path=/");
@@ -599,8 +607,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	// A login must select an avatar from its list of avatars, if it has more than one...
 	@Nullable
 	private Form characterSelectionHook(@Nonnull final State st,
-	                                    @Nonnull final Map<String,String> values)
-	{
+	                                    @Nonnull final Map<String,String> values) {
 		//if (1 == 1) { return null; }
 		final Set<Char> characters=Char.getCharacters(st.getInstance(),st.getAvatar());
 		//if (characters.isEmpty()) { Form f=new Form(); f.add("You have no active characters at any instances, please visit an instance to commence."); return f; }

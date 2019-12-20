@@ -29,8 +29,7 @@ public abstract class Audit {
 	@Nonnull
 	public static Results getAudit(@Nullable final Instance instance,
 	                               @Nullable final User avatar,
-	                               @Nullable final Char character)
-	{
+	                               @Nullable final Char character) {
 		final List<Object> parameters=new ArrayList<>();
 		String sql="select * from audit where 1=1 ";
 		if (instance!=null) {
@@ -60,8 +59,7 @@ public abstract class Audit {
 	                         final String changeditem,
 	                         final String oldvalue,
 	                         final String newvalue,
-	                         final String note)
-	{
+	                         final String note) {
 		audit(true,st,op,targetavatar,targetcharacter,changetype,changeditem,oldvalue,newvalue,note);
 	}
 
@@ -74,8 +72,7 @@ public abstract class Audit {
 	                         @Nullable final String changeditem,
 	                         @Nullable final String oldvalue,
 	                         @Nullable final String newvalue,
-	                         final String note)
-	{
+	                         final String note) {
 		final User avatar=st.getAvatarNullable();
 		Char character=st.getCharacterNullable();
 		if (op==OPERATOR.AVATAR) { character=null; }
@@ -103,15 +100,19 @@ public abstract class Audit {
 				target+="C:"+targetcharacter.getName()+"#"+targetcharacter.getId();
 			}
 			String message="Change from '";
-			if (oldvalue==null) { message+="<null>"; } else { message+=oldvalue; }
+			if (oldvalue==null) { message+="<null>"; }
+			else { message+=oldvalue; }
 			message+="' to '";
-			if (newvalue==null) { message+="<null>"; } else { message+=newvalue; }
+			if (newvalue==null) { message+="<null>"; }
+			else { message+=newvalue; }
 			message+="' on "+target+" : "+note;
 			st.logger().info("<"+actor+"> in "+facility+" - "+message);
 		}
 		try {
 			GPHUD.getDB()
-			     .d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+"destcharacterid,"+"changetype,"+"changeditem,"+"oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+"sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+			     .d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+"destcharacterid,"+"changetype,"+"changeditem,"+
+					        "oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+"sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,"
+					        +"?,?,?,?)",
 			        getUnixTime(),
 			        getId(stinstance),
 			        getId(avatar),
@@ -129,7 +130,8 @@ public abstract class Audit {
 			        getId(st.sourceregion),
 			        st.sourcelocation
 			       );
-		} catch (@Nonnull final DBException ex) {
+		}
+		catch (@Nonnull final DBException ex) {
 			st.logger().log(WARNING,"Audit logging failure",ex);
 		}
 	}
@@ -146,8 +148,7 @@ public abstract class Audit {
 
 	@Nonnull
 	public static Table formatAudit(@Nonnull final Results rows,
-	                                final String timezone)
-	{
+	                                final String timezone) {
 		Table table=new Table();
 		table.nowrap();
 		table.border(false);
@@ -156,16 +157,7 @@ public abstract class Audit {
 		String tzheader=timezone;
 		final String[] tzparts=tzheader.split("/");
 		if (tzparts.length==2) { tzheader=tzparts[1]; }
-		headers.add(tzheader)
-		       .add("")
-		       .add("Source")
-		       .add("")
-		       .add("Target")
-		       .add("Change")
-		       .add("Old Value")
-		       .add("")
-		       .add("New Value")
-		       .add("Notes");
+		headers.add(tzheader).add("").add("Source").add("").add("Target").add("Change").add("Old Value").add("").add("New Value").add("Notes");
 		table.add(headers);
 		String olddate="";
 		for (final ResultsRow r: rows) {
@@ -174,9 +166,9 @@ public abstract class Audit {
 				final net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 				t.align("center");
 				table.add(t);
-				t.add(new Cell(
-						"<table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\">"+datetime[0]+"</span></td><td width=50%><hr></td></tr></table>",
-						99999
+				t.add(new Cell("<table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\">"+datetime[0]+"</span"
+						               +"></td><td width=50%><hr></td></tr></table>",
+				               99999
 				));
 				olddate=datetime[0];
 			}
@@ -190,9 +182,7 @@ public abstract class Audit {
 			final String sourceregion=formatregion(cache,r.getIntNullable("sourceregion"));
 			final String sourceloc=trimlocation(cleanse(r.getStringNullable("sourcelocation")));
 
-			if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc
-					.isEmpty()))
-			{
+			if (!(sourcename.isEmpty() && sourceowner.isEmpty() && sourcedev.isEmpty() && sourceregion.isEmpty() && sourceloc.isEmpty())) {
 				final Table internal=new Table();
 				internal.nowrap();
 				internal.add(new Cell("Source name:").th()).add(sourcename).closeRow();
@@ -201,7 +191,8 @@ public abstract class Audit {
 				internal.add(new Cell("Source region:").th()).add(sourceregion).closeRow();
 				internal.add(new Cell("Source location:").th()).add(sourceloc).closeRow();
 				t.add(new ToolTip("[Via]",internal));
-			} else { t.add(""); }
+			}
+			else { t.add(""); }
 
 			final String srcav=formatavatar(cache,r.getIntNullable("sourceavatarid"));
 			final String srcch=formatchar(cache,r.getIntNullable("sourcecharacterid"));
@@ -211,7 +202,8 @@ public abstract class Audit {
 			// if we have nothing on one side
 			if ((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty())) {
 				t.add("");
-			} else {
+			}
+			else {
 				t.add("&rarr;");
 			}
 			t.add(dstav+(dstav.isEmpty() || dstch.isEmpty()?"":"/")+dstch);
@@ -225,7 +217,8 @@ public abstract class Audit {
 			final Renderable newvalue=notate(newvaluestr,10);
 			final Renderable notes=new Text(cleanse(r.getStringNullable("notes")));
 			t.add(new Cell(oldvalue).align("right"));
-			if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); } else { t.add("&rarr;"); }
+			if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) { t.add(""); }
+			else { t.add("&rarr;"); }
 			t.add(newvalue);
 			t.add(notes);
             /*
@@ -246,8 +239,7 @@ public abstract class Audit {
 
 	@Nonnull
 	private static Renderable notate(@Nonnull final String s,
-	                                 final int size)
-	{
+	                                 final int size) {
 		if (s.length()>size) {
 			return new ToolTip(s.substring(0,size),s);
 		}
@@ -261,22 +253,19 @@ public abstract class Audit {
 	}
 
 	private static String formatavatar(@Nonnull final NameCache cache,
-	                                   @Nullable final Integer avatarid)
-	{
+	                                   @Nullable final Integer avatarid) {
 		if (avatarid!=null) { return cache.lookup(User.get(avatarid)); }
 		return "";
 	}
 
 	private static String formatchar(@Nonnull final NameCache cache,
-	                                 @Nullable final Integer charid)
-	{
+	                                 @Nullable final Integer charid) {
 		if (charid!=null) { return cache.lookup(Char.get(charid)); }
 		return "";
 	}
 
 	private static String formatregion(@Nonnull final NameCache cache,
-	                                   @Nullable final Integer charid)
-	{
+	                                   @Nullable final Integer charid) {
 		if (charid!=null) { return cache.lookup(Region.get(charid,true)); }
 		return "";
 	}
@@ -293,7 +282,8 @@ public abstract class Audit {
 			final float y=Float.parseFloat(xyz[1]);
 			final float z=Float.parseFloat(xyz[2]);
 			return ((int) x)+","+((int) y)+","+((int) z);
-		} catch (@Nonnull final NumberFormatException e) { return olds; }
+		}
+		catch (@Nonnull final NumberFormatException e) { return olds; }
 	}
 
 	public enum OPERATOR {

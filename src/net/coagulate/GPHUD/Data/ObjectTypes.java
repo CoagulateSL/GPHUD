@@ -27,27 +27,13 @@ public class ObjectTypes extends TableRow {
 	@Nonnull
 	public static ObjectTypes create(@Nonnull final State st,
 	                                 final String name,
-	                                 @Nonnull final JSONObject behaviour)
-	{
-		final int existing=GPHUD.getDB()
-		                        .dqinn("select count(*) from objecttypes where instanceid=? and name like ?",
-		                               st.getInstance().getId(),
-		                               name
-		                              );
+	                                 @Nonnull final JSONObject behaviour) {
+		final int existing=GPHUD.getDB().dqinn("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) {
 			throw new UserInputDuplicateValueException("ObjectType "+name+" already exists in instance "+st.getInstance());
 		}
-		GPHUD.getDB()
-		     .d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",
-		        st.getInstance().getId(),
-		        name,
-		        behaviour.toString()
-		       );
-		final int newid=GPHUD.getDB()
-		                     .dqinn("select id from objecttypes where instanceid=? and name like ?",
-		                            st.getInstance().getId(),
-		                            name
-		                           );
+		GPHUD.getDB().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
+		final int newid=GPHUD.getDB().dqinn("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		return get(newid);
 	}
 
@@ -55,8 +41,7 @@ public class ObjectTypes extends TableRow {
 	public static String dumpTypes(@Nonnull final State st) {
 		final StringBuilder r=new StringBuilder("<table>");
 		r.append("<tr><th>Name</th><th>Behaviour</th></tr>");
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select * from objecttypes where instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow row: GPHUD.getDB().dq("select * from objecttypes where instanceid=?",st.getInstance().getId())) {
 			r.append("<tr>");
 			final ObjectTypes ot=get(row.getInt("id"));
 			r.append("<td><a href=\"/GPHUD/configuration/objects/objecttypes/")
@@ -74,10 +59,7 @@ public class ObjectTypes extends TableRow {
 	@Nonnull
 	public static Set<String> getObjectTypes(@Nonnull final State st) {
 		final Set<String> set=new TreeSet<>();
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select name from objecttypes where instanceid=?",
-		                                    st.getInstance().getId()
-		                                   )) {
+		for (final ResultsRow row: GPHUD.getDB().dq("select name from objecttypes where instanceid=?",st.getInstance().getId())) {
 			set.add(row.getStringNullable("name"));
 		}
 		return set;
@@ -85,13 +67,9 @@ public class ObjectTypes extends TableRow {
 
 	@Nonnull
 	public static DropDownList getDropDownList(@Nonnull final State st,
-	                                           final String name)
-	{
+	                                           final String name) {
 		final DropDownList list=new DropDownList(name);
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select name,id from objecttypes where instanceid=?",
-		                                    st.getInstance().getId()
-		                                   )) {
+		for (final ResultsRow row: GPHUD.getDB().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
 			list.add(row.getInt("id")+"",row.getStringNullable("name"));
 		}
 		return list;

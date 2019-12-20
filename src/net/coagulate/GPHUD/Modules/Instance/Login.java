@@ -13,7 +13,8 @@ import javax.annotation.Nonnull;
 public class Login {
 
 	@Nonnull
-	@Command.Commands(context=Command.Context.AVATAR, description="Causes the GPHUD server to IM the character a URL to the Main Website", permitScripting=false,permitUserWeb=false, permitObject=false,permitJSON=false)
+	@Command.Commands(context=Command.Context.AVATAR, description="Causes the GPHUD server to IM the character a URL to the Main Website", permitScripting=false,
+	                  permitUserWeb=false, permitObject=false, permitJSON=false)
 	public static Response login(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","messageto");

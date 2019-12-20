@@ -41,16 +41,18 @@ public class GenericXPPool extends Pool {
 	                    @Nonnull final Char target,
 	                    @Nullable final String reason,
 	                    final int ammount,
-	                    final boolean incontext)
-	{
+	                    final boolean incontext) {
 		final State targetstate=State.getNonSpatial(target);
 		final float period=targetstate.getKV(fullName()+"XPPeriod").floatValue();
 		final int maxxp=targetstate.getKV(fullName()+"XPLimit").intValue();
 		final Pool pool=Modules.getPool(targetstate,"Experience."+myname+"XP");
 		final int awarded=target.sumPoolDays(pool,period);
 		if (awarded >= maxxp) {
-			throw new UserInputStateException("This character has already reached their "+pool.name()+" XP limit.  They will next be eligable for a point in "+target
-					.poolNextFree(pool,maxxp,period));
+			throw new UserInputStateException("This character has already reached their "+pool.name()+" XP limit.  They will next be eligable for a point in "+target.poolNextFree(
+					pool,
+					maxxp,
+					period
+			                                                                                                                                                                      ));
 		}
 		if ((awarded+ammount)>maxxp) {
 			throw new UserInputStateException("This will push the character beyond their "+pool.name()+" XP limit, they can be awarded "+(maxxp-awarded)+" XP right now");
@@ -61,13 +63,10 @@ public class GenericXPPool extends Pool {
 		target.addPool(st,pool,ammount,reason);
 		if (target!=st.getCharacter()) {
 			if (incontext) {
-				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by "+st
-						.getCharacter()
-						.getName()+" for "+reason);
-			} else {
-				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by (("+st
-						.getAvatar()
-						.getName()+")) for "+reason);
+				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by "+st.getCharacter().getName()+" for "+reason);
+			}
+			else {
+				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by (("+st.getAvatar().getName()+")) for "+reason);
 			}
 		}
 	}

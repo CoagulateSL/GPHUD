@@ -17,8 +17,7 @@ public class BCGroup extends ByteCodeDataType {
 	public BCGroup(final ParseNode node) { super(node); }
 
 	public BCGroup(final ParseNode node,
-	               @Nullable final CharacterGroup content)
-	{
+	               @Nullable final CharacterGroup content) {
 		super(node);
 		this.content=content;
 	}
@@ -45,8 +44,7 @@ public class BCGroup extends ByteCodeDataType {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		vm.push(this);
 	}
 

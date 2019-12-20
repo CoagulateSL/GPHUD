@@ -60,11 +60,7 @@ public class Cookies {
 	 */
 	public static void refreshCookie(final String cookie) {
 		final int refreshifexpiresbefore=getUnixTime()+COOKIE_REFRESH;
-		final int toupdate=GPHUD.getDB()
-		                        .dqinn("select count(*) from cookies where cookie=? and expires<? and renewable=1",
-		                               cookie,
-		                               refreshifexpiresbefore
-		                              );
+		final int toupdate=GPHUD.getDB().dqinn("select count(*) from cookies where cookie=? and expires<? and renewable=1",cookie,refreshifexpiresbefore);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on cookie "+cookie);
@@ -87,8 +83,7 @@ public class Cookies {
 	public static String generate(@Nullable final User avatar,
 	                              @Nullable final Char character,
 	                              final Instance instance,
-	                              final boolean renewable)
-	{
+	                              final boolean renewable) {
 		final String cookie=Tokens.generateToken();
 		int expire=getUnixTime();
 		expire=expire+COOKIE_LIFESPAN;
@@ -126,7 +121,8 @@ public class Cookies {
 		if (cookie!=null) {
 			try {
 				return new Cookies(cookie);
-			} catch (@Nonnull final UserException ignored) {} // logged out possibly, or expired and cleaned up
+			}
+			catch (@Nonnull final UserException ignored) {} // logged out possibly, or expired and cleaned up
 		}
 		return null;
 	}
@@ -144,7 +140,8 @@ public class Cookies {
 	 * @throws UserException if the cookie fails validation in any way.
 	 */
 	private void validateCookie() {
-		try { load(); } catch (@Nonnull final NoDataException e) {
+		try { load(); }
+		catch (@Nonnull final NoDataException e) {
 			throw new UserInputStateException("Cookie Expired!",e);
 		}
 		final int expires=r().getInt("expires");
@@ -216,7 +213,8 @@ public class Cookies {
 				if (character.getInstance()!=i) {
 					throw new SystemConsistencyException("Character is not from the selected instance");
 				}
-			} else {
+			}
+			else {
 				// if instance /is/ null, then set it :P
 				setInstance(null);
 			}

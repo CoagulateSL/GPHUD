@@ -28,8 +28,7 @@ public class ConfigurationHierarchy extends Form {
 	public ConfigurationHierarchy(@Nonnull final State st,
 	                              @Nonnull final KV kv,
 	                              @Nullable State simulated,
-	                              @Nonnull final SafeMap parameters)
-	{
+	                              @Nonnull final SafeMap parameters) {
 		if (simulated==null) { simulated=st; }
 		noForm();
 		add(new TextHeader(kv.fullname()));
@@ -83,23 +82,15 @@ public class ConfigurationHierarchy extends Form {
 				final String oldvalue=st.getRawKV(dbo,kv.fullname());
 				try {
 					st.setKV(dbo,kv.fullname(),value);
-					Audit.audit(true,
-					            st,
-					            Audit.OPERATOR.AVATAR,
-					            null,
-					            null,
-					            "Set"+type+"KV",
-					            kv.fullname(),
-					            oldvalue,
-					            value,
-					            "Changed "+type+"/"+dbo.getNameSafe()+" configuration"
-					           );
+					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Set"+type+"KV",kv.fullname(),oldvalue,value,"Changed "+type+"/"+dbo.getNameSafe()+" configuration");
 					add("<font color=green>OK: Value updated</font>");
 					st.purgeCache(dbo);
-				} catch (@Nonnull final UserException e) {
+				}
+				catch (@Nonnull final UserException e) {
 					add("<font color=red>ERROR: "+e.getLocalizedMessage()+"</font>");
 				}
-			} else {
+			}
+			else {
 				add("<font color=red>ERROR: You do not have edit permission "+kv.editpermission()+"</font>");
 			}
 			br();
@@ -132,7 +123,8 @@ public class ConfigurationHierarchy extends Form {
 			final KVValue kvexample=simulated.getKV(kv.fullname());
 			h.openRow();
 			h.add("<i>Example</i>").add("<i>"+kvexample.path()+"</i>").add("<i>"+kvexample.value()+"</i>");
-		} catch (@Nonnull final UserException ue) {
+		}
+		catch (@Nonnull final UserException ue) {
 			h.openRow();
 			h.add("<b>ERROR</b>").add(ue.getLocalizedMessage()).add("<b>ERROR</b>");
 		}
@@ -150,12 +142,12 @@ public class ConfigurationHierarchy extends Form {
 	              @Nonnull final KV kv,
 	              @Nonnull final TableRow dbo,
 	              @Nonnull final State simulated,
-	              @Nonnull final Set<String> alledits)
-	{
+	              @Nonnull final Set<String> alledits) {
 		t.openRow();
 		if (dbo instanceof CharacterGroup) {
 			t.add(dbo.getClass().getSimpleName()+" : "+((CharacterGroup) dbo).getTypeNotNull());
-		} else { t.add(dbo.getClass().getSimpleName()); }
+		}
+		else { t.add(dbo.getClass().getSimpleName()); }
 		t.add(dbo);
 		String value=simulated.getRawKV(dbo,kv.fullname());
 		if (value==null) { value=""; }
@@ -226,14 +218,15 @@ public class ConfigurationHierarchy extends Form {
 					editor="<input size=30 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
 					break;
 				default:
-					throw new SystemImplementationException("No editor for type "+kv.type()+" for object "+dbo.getKVTable()+"."+dbo
-							.getNameSafe());
+					throw new SystemImplementationException("No editor for type "+kv.type()+" for object "+dbo.getKVTable()+"."+dbo.getNameSafe());
 			}
 			editor+="<input type=hidden name=dbobject value=\""+dbo.getKVTable()+"\">";
 			editor+="<input type=hidden name=id value=\""+dbo.getId()+"\">";
-			t.add("<button "+"onclick=\""+"hideAllEdits();"+"getElementById('editor-"+codename+"').style.display='block';"+"\" "+"id=\"edit-"+codename+"\">"+"Edit"+"</button>"+
+			t.add("<button "+"onclick=\""+"hideAllEdits();"+"getElementById('editor-"+codename+"').style.display='block';"+"\" "+"id=\"edit-"+codename+"\">"+"Edit"+
+					      "</button>"+
 
-					      "<div style=\"display: none;\" id=\"editor-"+codename+"\">"+"<form style=\"margin: 0px;\" method=post>"+editor+"&nbsp;&nbsp;&nbsp;<button type=submit>Set</button>"+"</form>"+"</div>");
+					      "<div style=\"display: none;\" id=\"editor-"+codename+"\">"+"<form style=\"margin: 0px;\" method=post>"+editor+"&nbsp;&nbsp;&nbsp;<button "+"type"+
+					      "=submit>Set</button>"+"</form>"+"</div>");
 			if (dbo instanceof Char && dbo==st.getCharacterNullable()) {
 				Attribute selfeditable=null;
 				// vet against attributes
@@ -245,15 +238,7 @@ public class ConfigurationHierarchy extends Form {
 					}
 				}
 				if (selfeditable!=null) {
-					t.add(new Form(st,
-					               true,
-					               "/"+Interface.base()+"/configuration/setself",
-					               "Self-Edit",
-					               "attribute",
-					               selfeditable.getName(),
-					               "value",
-					               kvvalue
-					));
+					t.add(new Form(st,true,"/"+Interface.base()+"/configuration/setself","Self-Edit","attribute",selfeditable.getName(),"value",kvvalue));
 				}
 			}
 		}

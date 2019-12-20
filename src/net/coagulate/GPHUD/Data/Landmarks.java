@@ -33,8 +33,7 @@ public class Landmarks extends TableRow {
 	}
 
 	public static void obliterate(@Nonnull final Instance instance,
-	                              final String name)
-	{
+	                              final String name) {
 		GPHUD.getDB()
 		     .d("delete landmarks from landmarks inner join regions on landmarks.regionid=regions.regionid where regions.instanceid=? and landmarks.name like ?",
 		        instance.getId(),
@@ -44,16 +43,17 @@ public class Landmarks extends TableRow {
 
 	@Nullable
 	public static Landmarks find(@Nonnull final Instance instance,
-	                             final String name)
-	{
+	                             final String name) {
 		try {
 			final int id=GPHUD.getDB()
-			                  .dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like ?",
+			                  .dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+
+					                         " ?",
 			                         instance.getId(),
 			                         name
 			                        );
 			return new Landmarks(id);
-		} catch (@Nonnull final NoDataException e) {return null;}
+		}
+		catch (@Nonnull final NoDataException e) {return null;}
 	}
 
 	public static void create(@Nonnull final Region region,
@@ -63,20 +63,9 @@ public class Landmarks extends TableRow {
 	                          final float z,
 	                          final float lax,
 	                          final float lay,
-	                          final float laz)
-	{
+	                          final float laz) {
 		obliterate(region.getInstance(),name);
-		GPHUD.getDB()
-		     .d("insert into landmarks(regionid,name,x,y,z,lookatx,lookaty,lookatz) values(?,?,?,?,?,?,?,?)",
-		        region.getId(),
-		        name,
-		        x,
-		        y,
-		        z,
-		        lax,
-		        lay,
-		        laz
-		       );
+		GPHUD.getDB().d("insert into landmarks(regionid,name,x,y,z,lookatx,lookaty,lookatz) values(?,?,?,?,?,?,?,?)",region.getId(),name,x,y,z,lax,lay,laz);
 	}
 
 	@Nonnull

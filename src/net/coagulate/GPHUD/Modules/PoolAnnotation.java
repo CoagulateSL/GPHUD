@@ -14,8 +14,7 @@ public class PoolAnnotation extends Pool {
 	private final boolean generated;
 
 	public PoolAnnotation(final Module mod,
-	                      final Pools meta)
-	{
+	                      final Pools meta) {
 		module=mod;
 		this.meta=meta;
 		generated=false;

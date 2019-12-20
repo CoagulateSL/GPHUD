@@ -16,8 +16,7 @@ public class UnauthenticatedShutdown implements HttpRequestHandler {
 	@URLs(url="/shutdown")
 	public void handle(final HttpRequest hr,
 	                   final HttpResponse hr1,
-	                   final HttpContext hc)
-	{
+	                   final HttpContext hc) {
 		if (GPHUD.DEV) {
 			GPHUD.getLogger().log(SEVERE,"UNAUTHENTICATED SHUTDOWN HANDLER IS ACTIVE AND HAS BEEN CALLED");
 			HTTPListener.shutdown();

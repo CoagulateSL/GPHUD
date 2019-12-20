@@ -23,8 +23,7 @@ public abstract class URLHandlers {
 	@URLs(url="/introspection/urlhandlers")
 	@SideSubMenus(name="URL Handlers", priority=99)
 	public static void createForm(@Nonnull final State st,
-	                              final SafeMap values)
-	{
+	                              final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("URL Handler registrations"));
 		if (!st.isSuperUser()) {

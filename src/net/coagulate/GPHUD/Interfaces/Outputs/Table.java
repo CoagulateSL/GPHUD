@@ -80,8 +80,7 @@ public class Table implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		final StringBuilder s=new StringBuilder();
 		s.append("<table");
 		if (border) { s.append(" border=1"); }
@@ -99,11 +98,13 @@ public class Table implements Renderable {
 	}
 
 	public void addNoNull(@Nullable final Renderable addable) {
-		if (addable==null) { add(""); } else { add(addable); }
+		if (addable==null) { add(""); }
+		else { add(addable); }
 	}
 
 	public void addNoNull(@Nullable final String addable) {
-		if (addable==null) { add(""); } else { add(addable); }
+		if (addable==null) { add(""); }
+		else { add(addable); }
 	}
 
 	public int rowCount() {

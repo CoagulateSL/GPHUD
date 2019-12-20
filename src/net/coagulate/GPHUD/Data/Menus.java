@@ -48,10 +48,7 @@ public class Menus extends TableRow {
 	@Nonnull
 	public static Map<String,Integer> getMenusMap(@Nonnull final State st) {
 		final Map<String,Integer> aliases=new TreeMap<>();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select name,menuid from menus where instanceid=?",
-		                                  st.getInstance().getId()
-		                                 )) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select name,menuid from menus where instanceid=?",st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"),r.getIntNullable("menuid"));
 		}
 		return aliases;
@@ -67,22 +64,17 @@ public class Menus extends TableRow {
 	 */
 	@Nullable
 	public static Menus getMenuNullable(@Nonnull final State st,
-	                                    @Nonnull final String name)
-	{
+	                                    @Nonnull final String name) {
 		try {
-			final int id=GPHUD.getDB()
-			                  .dqinn("select menuid from menus where instanceid=? and name like ?",
-			                         st.getInstance().getId(),
-			                         name
-			                        );
+			final int id=GPHUD.getDB().dqinn("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
 			return get(id);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull
 	public static Menus getMenu(@Nonnull final State st,
-	                            @Nonnull final String name)
-	{
+	                            @Nonnull final String name) {
 		final Menus ret=getMenuNullable(st,name);
 		if (ret==null) { throw new UserInputLookupFailureException("No menu called "+name+" is found"); }
 		return ret;
@@ -104,26 +96,17 @@ public class Menus extends TableRow {
 	public static Menus create(@Nonnull final State st,
 	                           @Nonnull final String name,
 	                           final String description,
-	                           @Nonnull final JSONObject template)
-	{
+	                           @Nonnull final JSONObject template) {
 		if (getMenuNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("Menu "+name+" already exists");
 		}
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
-			throw new UserInputValidationParseException(
-					"Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
+			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
-		GPHUD.getDB()
-		     .d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",
-		        st.getInstance().getId(),
-		        name,
-		        description,
-		        template.toString()
-		       );
+		GPHUD.getDB().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",st.getInstance().getId(),name,description,template.toString());
 		final Menus newalias=getMenuNullable(st,name);
 		if (newalias==null) {
-			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance()
-			                                                                                         .getId()+", created but not found?");
+			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance().getId()+", created but not found?");
 		}
 		return newalias;
 	}
@@ -138,10 +121,7 @@ public class Menus extends TableRow {
 	@Nonnull
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
 		final Map<String,JSONObject> aliases=new TreeMap<>();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select name,description,json from menus where instanceid=?",
-		                                  st.getInstance().getId()
-		                                 )) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select name,description,json from menus where instanceid=?",st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"),new JSONObject(r.getStringNullable("json")));
 		}
 		return aliases;

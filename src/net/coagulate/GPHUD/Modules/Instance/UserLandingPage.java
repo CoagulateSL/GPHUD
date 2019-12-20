@@ -20,8 +20,7 @@ import java.util.Set;
 public abstract class UserLandingPage {
 	@URLs(url="/")
 	public static void index(@Nonnull final State st,
-	                         @Nonnull final SafeMap values)
-	{
+	                         @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Welcome to GPHUD"));
 		if (st.getInstanceNullable()==null) {
@@ -33,7 +32,8 @@ public abstract class UserLandingPage {
 			if (chars.size()==1) {
 				st.setCharacter(chars.iterator().next());
 				st.cookie().setCharacter(st.getCharacter());
-			} else {
+			}
+			else {
 				SessionSwitch.switchCharacter(st,values);
 				return;
 			}

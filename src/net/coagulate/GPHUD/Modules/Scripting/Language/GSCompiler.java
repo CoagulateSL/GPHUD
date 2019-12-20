@@ -44,8 +44,7 @@ public class GSCompiler {
 		if (node instanceof GSListIndex) { return 2; }
 		if (node instanceof GSWhileLoop) { return 2; }
 		throw new SystemImplementationException("Expected Children not defined for node "+node.getClass()
-		                                                                                      .getName()+" at line "+node
-				.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
+		                                                                                      .getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
 
 	@Nonnull
@@ -70,8 +69,7 @@ public class GSCompiler {
 	}
 
 	private void addDebug(@Nonnull final List<ByteCode> compiled,
-	                      @Nonnull final ParseNode node)
-	{
+	                      @Nonnull final ParseNode node) {
 		final Token firsttoken=node.jjtGetFirstToken();
 		if (firsttoken!=null) {
 			final int lineno=firsttoken.beginLine;
@@ -89,12 +87,13 @@ public class GSCompiler {
 		final List<ByteCode> compiled=new ArrayList<>();
 		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) {
 			throw new SystemImplementationException(node.getClass()
-			                                            .getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(
-					node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
+			                                            .getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node
+					.jjtGetFirstToken().beginColumn);
 		}
 
 
-		if (node instanceof GSStart || node instanceof GSExpression || node instanceof GSParameter || node instanceof GSTerm || node instanceof GSStatement) { // expression just breaks down into 1 of X executable subtypes
+		if (node instanceof GSStart || node instanceof GSExpression || node instanceof GSParameter || node instanceof GSTerm || node instanceof GSStatement) { // expression
+			// just breaks down into 1 of X executable subtypes
 			// Start expands to a list of Statement (types)
 			for (int i=0;i<node.jjtGetNumChildren();i++) {
 				compiled.addAll(compile(node.child(i)));
@@ -174,8 +173,7 @@ public class GSCompiler {
 				compiled.add(new BCStoreIndexed(node));
 				return compiled;
 			}
-			throw new SystemImplementationException("Compiler error: Unknown type of Assignment: "+target.getClass()
-			                                                                                             .getName());
+			throw new SystemImplementationException("Compiler error: Unknown type of Assignment: "+target.getClass().getName());
 		}
 
 		if (node instanceof GSStringConstant) {
@@ -337,23 +335,18 @@ public class GSCompiler {
 			return compiled;
 		}
 
-		throw new SystemImplementationException("Compilation not implemented for node type '"+node.getClass()
-		                                                                                          .getSimpleName()+"'");
+		throw new SystemImplementationException("Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
 	}
 
 	private void checkType(@Nonnull final ParseNode node,
 	                       final int pos,
-	                       @Nonnull final Class<? extends ParseNode> clazz)
-	{
+	                       @Nonnull final Class<? extends ParseNode> clazz) {
 		if (node.jjtGetNumChildren()<pos) {
-			throw new GSInternalError("Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+clazz
-					.getName());
+			throw new GSInternalError("Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+clazz.getName());
 		}
 		final Node child=node.jjtGetChild(pos);
 		if (!child.getClass().equals(clazz)) {
-			throw new GSInternalError("Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass()
-			                                                                                              .getName()+" not the expected "+clazz
-					.getName());
+			throw new GSInternalError("Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+" not the expected "+clazz.getName());
 		}
 	}
 

@@ -15,8 +15,7 @@ public class StaticSideSubMenu extends SideSubMenu {
 	public StaticSideSubMenu(final String name,
 	                         final int priority,
 	                         final String url,
-	                         final String permission)
-	{
+	                         final String permission) {
 		this.name=name;
 		this.priority=priority;
 		this.url=url;

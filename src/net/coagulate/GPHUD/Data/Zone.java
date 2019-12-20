@@ -44,11 +44,8 @@ public class Zone extends TableRow {
 	 * @throws UserException If the zone name is in use
 	 */
 	public static void create(@Nonnull final Instance instance,
-	                          final String name)
-	{
-		if (GPHUD.getDB()
-		         .dqinn("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0)
-		{
+	                          final String name) {
+		if (GPHUD.getDB().dqinn("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0) {
 			throw new UserInputDuplicateValueException("Zone name already in use");
 		}
 		GPHUD.getDB().d("insert into zones(instanceid,name) values(?,?)",instance.getId(),name);
@@ -64,26 +61,22 @@ public class Zone extends TableRow {
 	 */
 	@Nullable
 	public static Zone find(@Nonnull final Instance instance,
-	                        @Nonnull final String name)
-	{
+	                        @Nonnull final String name) {
 		try {
-			final int zoneid=GPHUD.getDB()
-			                      .dqinn("select zoneid from zones where name like ? and instanceid=?",
-			                             name,
-			                             instance.getId()
-			                            );
+			final int zoneid=GPHUD.getDB().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
 			return get(zoneid);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key)
-	{
+	                   final String key) {
 		final String kvtable="zonekvstore";
 		final String maintable="zones";
 		final String idcolumn="zoneid";
 		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
 		        key,
 		        instance.getId()
 		       );
@@ -170,20 +163,10 @@ public class Zone extends TableRow {
 	 */
 	public void addArea(@Nonnull final Region region,
 	                    final String cornerOne,
-	                    final String cornerTwo)
-	{
+	                    final String cornerTwo) {
 		final int[] c1=ZoneArea.parseVector(cornerOne);
 		final int[] c2=ZoneArea.parseVector(cornerTwo);
-		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)",
-		  getId(),
-		  region.getId(),
-		  c1[0],
-		  c1[1],
-		  c1[2],
-		  c2[0],
-		  c2[1],
-		  c2[2]
-		 );
+		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)",getId(),region.getId(),c1[0],c1[1],c1[2],c2[0],c2[1],c2[2]);
 	}
 
 	@Nonnull

@@ -10,8 +10,7 @@ public abstract class GSException extends UserException {
 	}
 
 	public GSException(final String reason,
-	                   final Throwable cause)
-	{
+	                   final Throwable cause) {
 		super(reason,cause);
 	}
 

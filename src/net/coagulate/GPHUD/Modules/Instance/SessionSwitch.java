@@ -25,8 +25,7 @@ public class SessionSwitch {
 
 	@URLs(url="/switch/instance")
 	public static void switchInstance(@Nonnull final State st,
-	                                  @Nonnull final SafeMap values)
-	{
+	                                  @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
@@ -50,8 +49,7 @@ public class SessionSwitch {
 
 	@URLs(url="/switch/character")
 	public static void switchCharacter(@Nonnull final State st,
-	                                   @Nonnull final SafeMap values)
-	{
+	                                   @Nonnull final SafeMap values) {
 		if (st.getInstanceNullable()==null) { throw new RedirectionException("/switch/instance"); }
 		final Form f=st.form();
 		if (!values.get("charid").isEmpty()) {

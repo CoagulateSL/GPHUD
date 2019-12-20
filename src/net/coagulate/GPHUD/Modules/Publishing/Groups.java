@@ -17,16 +17,14 @@ import java.util.TreeSet;
 public class Groups extends Publishing {
 	@URL.URLs(url="/publishing/allgroups")
 	public static void allGroupsSample(@Nonnull final State st,
-	                                   final SafeMap values)
-	{
+	                                   final SafeMap values) {
 		st.form().add(new TextHeader("All Groups And Members"));
 		published(st,"allgroups/"+st.getInstance().getId());
 	}
 
 	@URL.URLs(url="/publishing/group/*")
 	public static void oneGroupSample(@Nonnull final State st,
-	                                  final SafeMap values)
-	{
+	                                  final SafeMap values) {
 		final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
 		st.form().add(new TextHeader("Group: "+group.getName()));
 		published(st,"group/"+group.getId());
@@ -34,8 +32,7 @@ public class Groups extends Publishing {
 
 	@URL.URLs(url="/publishing/grouptype/*")
 	public static void groupTypeSample(@Nonnull final State st,
-	                                   final SafeMap values)
-	{
+	                                   final SafeMap values) {
 		final Instance instance=Instance.get(getPartInt(st,1));
 		final String type=getPart(st,2);
 		st.form().add(new TextHeader("GroupType: "+type));
@@ -44,8 +41,7 @@ public class Groups extends Publishing {
 
 	@URL.URLs(url="/published/grouptype/*", requiresAuthentication=false)
 	public static void groupType(@Nonnull final State st,
-	                             final SafeMap values)
-	{
+	                             final SafeMap values) {
 		final Instance instance=Instance.get(getPartInt(st,1));
 		final String type=getPart(st,2);
 		final Set<String> output=new TreeSet<>();
@@ -57,15 +53,14 @@ public class Groups extends Publishing {
 			output.add(formatGroup(group));
 		}
 		st.form().add("<table border=0>");
-		for (final String s: output) st.form().add(s);
+		for (final String s: output) { st.form().add(s); }
 		st.form().add("</table>");
 		contentResizer(st);
 	}
 
 	@URL.URLs(url="/published/group/*", requiresAuthentication=false)
 	public static void oneGroup(@Nonnull final State st,
-	                            final SafeMap values)
-	{
+	                            final SafeMap values) {
 		final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
 		final Instance instance=group.getInstance();
 		st.setInstance(instance);
@@ -80,8 +75,7 @@ public class Groups extends Publishing {
 
 	@URL.URLs(url="/published/allgroups/*", requiresAuthentication=false)
 	public static void allGroups(@Nonnull final State st,
-	                             final SafeMap values)
-	{
+	                             final SafeMap values) {
 		final Instance instance=Instance.get(getPartInt(st,1));
 		st.setInstance(instance);
 		final TreeMap<String,String> grouprows=new TreeMap<>();
@@ -103,8 +97,7 @@ public class Groups extends Publishing {
 
 	@Nonnull
 	private static String formatGroup(@Nonnull final CharacterGroup group) {
-		final StringBuilder line=new StringBuilder("<tr><th colspan=2 align=left>"+group.getName()+(group.getType()!=null?" (<i>"+group
-				.getType()+"</i>)":"")+"</th></tr>");
+		final StringBuilder line=new StringBuilder("<tr><th colspan=2 align=left>"+group.getName()+(group.getType()!=null?" (<i>"+group.getType()+"</i>)":"")+"</th></tr>");
 		final TreeMap<String,String> charrows=new TreeMap<>();
 		for (final Char ch: group.getMembers()) {
 			String userline="<tr><td>"+ch.getName()+"</td><td><i>"+ch.getOwner().getName()+"</i></td>";
@@ -112,7 +105,8 @@ public class Groups extends Publishing {
 			if (group.getOwner()==ch) {
 				sortby="  "+sortby;
 				userline+="<td><b>Owner</b></td>";
-			} else {
+			}
+			else {
 				if (group.isAdmin(ch)) {
 					sortby=" "+sortby;
 					userline+="<td>Admin</td>";

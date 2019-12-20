@@ -28,8 +28,7 @@ public class VisitXP extends QuotaedXP {
 	public VisitXP(final int id) { super(id); }
 
 	public void runAwards(@Nonnull final State st,
-	                      @Nonnull final Char ch)
-	{
+	                      @Nonnull final Char ch) {
 		try {
 			final Module m=Modules.get(null,"Experience");
 			if (m.isEnabled(st)) {
@@ -55,20 +54,11 @@ public class VisitXP extends QuotaedXP {
 				final State fakestate=new State();
 				fakestate.setInstance(st.getInstance());
 				fakestate.setAvatar(User.getSystem());
-				ch.hudMessage("You were awared 1 point of Visit XP, you will be eligable for your next point "+nextFree(
-						st));
-				Audit.audit(fakestate,
-				            Audit.OPERATOR.AVATAR,
-				            null,
-				            ch,
-				            "Pool Add",
-				            "VisitXP",
-				            null,
-				            ""+wanttogive,
-				            "Awarded XP for time on sim"
-				           );
+				ch.hudMessage("You were awared 1 point of Visit XP, you will be eligable for your next point "+nextFree(st));
+				Audit.audit(fakestate,Audit.OPERATOR.AVATAR,null,ch,"Pool Add","VisitXP",null,""+wanttogive,"Awarded XP for time on sim");
 			}
-		} catch (@Nonnull final Exception e) {
+		}
+		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Exception running awards for character "+ch.getNameSafe()+" #"+ch.getId(),e);
 		}
 	}
@@ -84,20 +74,21 @@ public class VisitXP extends QuotaedXP {
 					runAwards(st,visitor);
 				}
 			}
-		} catch (@Nonnull final Exception e) {
+		}
+		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Exception running awards for instance "+i.getNameSafe()+" #"+i.getId(),e);
 		}
 	}
 
 	public void runAwards() {
 		try {
-			final Results results=GPHUD.getDB()
-			                           .dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
+			final Results results=GPHUD.getDB().dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
 			for (final ResultsRow r: results) {
 				final Instance i=Instance.get(r.getInt());
 				runAwards(i);
 			}
-		} catch (@Nonnull final Exception e) {
+		}
+		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Exception running awards outer task",e);
 		}
 	}

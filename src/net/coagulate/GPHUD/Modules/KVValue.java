@@ -15,8 +15,7 @@ public class KVValue {
 	private final String path;
 
 	public KVValue(final String value,
-	               final String path)
-	{
+	               final String path) {
 		this.value=value;
 		this.path=path;
 	}
@@ -38,9 +37,8 @@ public class KVValue {
 	}
 
 	public boolean boolValue() {
-		if ("1".equals(value) || "true".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value) || "t".equalsIgnoreCase(
-				value) || "y".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value))
-		{
+		if ("1".equals(value) || "true".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value) || "t".equalsIgnoreCase(value) || "y".equalsIgnoreCase(value) || "on".equalsIgnoreCase(
+				value)) {
 			return true;
 		}
 		return false;

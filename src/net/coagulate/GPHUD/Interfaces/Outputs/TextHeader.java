@@ -29,8 +29,7 @@ public class TextHeader implements Renderable {
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich)
-	{
+	                     final boolean rich) {
 		return "<h1>"+content.asHtml(st,rich)+"</h1>";
 	}
 

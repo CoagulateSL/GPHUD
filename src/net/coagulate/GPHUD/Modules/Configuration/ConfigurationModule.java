@@ -23,8 +23,7 @@ public class ConfigurationModule extends ModuleAnnotation {
 	Set<SideSubMenu> submenus;
 
 	public ConfigurationModule(final String name,
-	                           final ModuleDefinition def)
-	{
+	                           final ModuleDefinition def) {
 		super(name,def);
 		submenus=null;
 	}

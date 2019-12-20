@@ -23,34 +23,27 @@ public class TeleportCommands {
 	@Nonnull
 	@Command.Commands(description="Teleport the player to a given X, Y and Z", permitUserWeb=false, context=Command.Context.CHARACTER, permitConsole=false)
 	public static Response teleportTo(@Nonnull final State st,
-	                                  @Nonnull @Argument.Arguments(description="Region to teleport to (must be part of the instance", type=Argument.ArgumentType.REGION) final Region region,
+	                                  @Nonnull @Argument.Arguments(description="Region to teleport to (must be part of the instance", type=Argument.ArgumentType.REGION)
+	                                  final Region region,
 	                                  @Argument.Arguments(description="X co-ordinate", type=Argument.ArgumentType.FLOAT, max=256) final Float x,
 	                                  @Argument.Arguments(description="Y co-ordinate", type=Argument.ArgumentType.FLOAT, max=256) final Float y,
-	                                  @Argument.Arguments(description="Z co-ordinate", type=Argument.ArgumentType.FLOAT, max=4096) final Float z)
-	{
+	                                  @Argument.Arguments(description="Z co-ordinate", type=Argument.ArgumentType.FLOAT, max=4096) final Float z) {
 		final JSONObject response=new JSONObject();
 		String teleportto=region.getGlobalCoordinates()+"|";
 		teleportto+="<"+x+","+y+","+z+">|";
 		teleportto+="<128,256,0>";
 		response.put("teleport",teleportto);
-		Audit.audit(st,
-		            Audit.OPERATOR.CHARACTER,
-		            null,
-		            null,
-		            "Move",
-		            "Avatar",
-		            "",
-		            x+","+y+","+z,
-		            "Player teleported to "+x+","+y+","+z
-		           );
+		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,null,"Move","Avatar","",x+","+y+","+z,"Player teleported to "+x+","+y+","+z);
 		return new JSONResponse(response);
 	}
 
 	@Nonnull
-	@Command.Commands(description="Creates a landmark at the current location", context=Command.Context.CHARACTER, permitUserWeb=false, permitScripting=false, requiresPermission="Teleportation.CreateLandmark")
+	@Command.Commands(description="Creates a landmark at the current location", context=Command.Context.CHARACTER, permitUserWeb=false, permitScripting=false,
+	                  requiresPermission="Teleportation.CreateLandmark")
 	public static Response createLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(description="Name for the landmark, replaces it if it already exists", max=64, type=Argument.ArgumentType.TEXT_ONELINE) final String name)
-	{
+	                                      @Argument.Arguments(description="Name for the landmark, replaces it if it already exists", max=64, type=
+			                                      Argument.ArgumentType.TEXT_ONELINE)
+	                                      final String name) {
 		String position=null;
 		String rotation=null;
 		for (final Header h: st.headers()) {
@@ -73,27 +66,16 @@ public class TeleportCommands {
 		final float projectx=(float) Math.cos(angle);
 		final float projecty=-(float) Math.sin(angle);
 
-		Audit.audit(st,
-		            Audit.OPERATOR.AVATAR,
-		            null,
-		            null,
-		            "Set",
-		            name,
-		            "",
-		            x+","+y+","+z,
-		            "Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty
-		           );
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
 
 		Landmarks.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+((float) 1));
-		return new OKResponse("Landmark created in "+st.getRegion()
-		                                               .getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
+		return new OKResponse("Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
 	}
 
 	@Nonnull
 	@Command.Commands(description="Remove a landmark by name", context=Command.Context.AVATAR, requiresPermission="Teleportation.DeleteLandmark")
 	public static Response deleteLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(description="Landmark name to remove", type=Argument.ArgumentType.TEXT_ONELINE, max=64) final String name)
-	{
+	                                      @Argument.Arguments(description="Landmark name to remove", type=Argument.ArgumentType.TEXT_ONELINE, max=64) final String name) {
 		final Landmarks landmark=Landmarks.find(st.getInstance(),name);
 		if (landmark==null) { return new ErrorResponse("Can not delete landmark "+name+" - it does not exist"); }
 		Landmarks.obliterate(st.getInstance(),name);
@@ -104,8 +86,7 @@ public class TeleportCommands {
 	@Nonnull
 	@Command.Commands(description="Teleport to a landmark", context=Command.Context.CHARACTER, permitUserWeb=false, permitConsole=false)
 	public static Response go(@Nonnull final State st,
-	                          @Argument.Arguments(description="Landmark name to teleport to", type=Argument.ArgumentType.TEXT_ONELINE, max=64) final String landmark)
-	{
+	                          @Argument.Arguments(description="Landmark name to teleport to", type=Argument.ArgumentType.TEXT_ONELINE, max=64) final String landmark) {
 		final Landmarks lm=st.getInstance().getLandmark(landmark);
 		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
 		final JSONObject tp=new JSONObject();
@@ -119,8 +100,7 @@ public class TeleportCommands {
 		            st.getCharacter().getName(),
 		            "",
 		            landmark,
-		            "Player teleported to "+landmark+" at "+lm.getRegion(true)
-		                                                      .getName()+":"+lm.getCoordinates()+" lookat "+lm.getLookAt()
+		            "Player teleported to "+landmark+" at "+lm.getRegion(true).getName()+":"+lm.getCoordinates()+" lookat "+lm.getLookAt()
 		           );
 		return new JSONResponse(tp);
 	}
@@ -128,8 +108,7 @@ public class TeleportCommands {
 	@Nonnull
 	public static DropDownList getDropDownList(@Nonnull final State st,
 	                                           final String name,
-	                                           final String selected)
-	{
+	                                           final String selected) {
 		final DropDownList list=new DropDownList(name);
 		final Set<Landmarks> landmarks=Landmarks.getAll(st.getInstance());
 		for (final Landmarks landmark: landmarks) {

@@ -31,12 +31,13 @@ import static java.util.logging.Level.WARNING;
 public abstract class Register {
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, permitScripting=false, permitConsole=false, permitUserWeb=false, description="Registers this connection as the region server connection", requiresPermission="Instance.ServerOperator", permitObject=false)
+	@Commands(context=Context.AVATAR, permitScripting=false, permitConsole=false, permitUserWeb=false, description="Registers this connection as the region server "+
+			"connection", requiresPermission="Instance.ServerOperator", permitObject=false)
 	public static Response register(@Nonnull final State st,
-	                                @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version number of the Server that is connecting", max=64) final String version,
+	                                @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version number of the Server that is connecting", max=64)
+	                                final String version,
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version date of the Server that is connecting", max=64) final String versiondate,
-	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version time of the Server that is connecting", max=64) final String versiontime)
-	{
+	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version time of the Server that is connecting", max=64) final String versiontime) {
 		// check authorisation, servers can only be deployed by the instance owner...
 		final String regionname=st.getRegionName();
 		final Instance instance=st.getInstance();
@@ -53,7 +54,8 @@ public abstract class Register {
 				final Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
 				if (match.matches()) {
 					region.setGlobalCoordinates(Integer.parseInt(match.group(1)),Integer.parseInt(match.group(2)));
-				} else {
+				}
+				else {
 					st.logger().log(WARNING,"Failed to parse region format: "+header.getValue());
 				}
 			}
@@ -70,7 +72,8 @@ public abstract class Register {
 		String regmessage;
 		regmessage=GPHUD.serverVersion()+" [https://coagulate.sl/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 		if (st.getRegion().needsUpdate()) {
-			regmessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version.\n=====";
+			regmessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+
+					".\n=====";
 		}
 		registered.put("message",regmessage);
 		final Transmission t=new Transmission(region,registered);

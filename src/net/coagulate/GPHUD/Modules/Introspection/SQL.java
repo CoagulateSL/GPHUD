@@ -22,8 +22,7 @@ public class SQL {
 	@URLs(url="/introspection/sql")
 	@SideSubMenu.SideSubMenus(name="SQL", priority=9999)
 	public static void sqlIndex(@Nonnull final State st,
-	                            final SafeMap values)
-	{
+	                            final SafeMap values) {
 		if (!DBConnection.sqlLogging()) {
 			st.form().add(new TextError("SQL auditing is disabled in this installation."));
 			return;

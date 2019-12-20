@@ -15,15 +15,13 @@ public class BCBranchIfZero extends ByteCode {
 	private final BCLabel target;
 
 	public BCBranchIfZero(final ParseNode n,
-	                      @Nullable final BCLabel target)
-	{
+	                      @Nullable final BCLabel target) {
 		super(n);
 		this.target=target;
 	}
 
 	public BCBranchIfZero(final ParseNode n,
-	                      final int pc)
-	{
+	                      final int pc) {
 		super(n);
 		target=new BCLabel(node(),-1,pc);
 	}
@@ -44,7 +42,8 @@ public class BCBranchIfZero extends ByteCode {
 			bytes.add((byte) 0xff);
 			bytes.add((byte) 0xff);
 			bytes.add((byte) 0xff);
-		} else { addInt(bytes,target().address()); }
+		}
+		else { addInt(bytes,target().address()); }
 	}
 
 	@Nullable
@@ -54,8 +53,7 @@ public class BCBranchIfZero extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		// pop an int
 		final BCInteger conditional=vm.popInteger();
 		// set PC if zero

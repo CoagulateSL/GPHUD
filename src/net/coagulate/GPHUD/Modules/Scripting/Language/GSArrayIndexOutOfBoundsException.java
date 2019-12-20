@@ -10,8 +10,7 @@ public class GSArrayIndexOutOfBoundsException extends GSInvalidExpressionExcepti
 	}
 
 	public GSArrayIndexOutOfBoundsException(final String reason,
-	                                        final Throwable cause)
-	{
+	                                        final Throwable cause) {
 		super(reason,cause);
 	}
 

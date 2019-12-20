@@ -19,18 +19,15 @@ import javax.annotation.Nonnull;
 
 public abstract class Teleporter extends ObjectType {
 	protected Teleporter(final State st,
-	                     @Nonnull final ObjectTypes object)
-	{
+	                     @Nonnull final ObjectTypes object) {
 		super(st,object);
 	}
 
 	@Nonnull
 	Response execute(@Nonnull final State st,
-	                 @Nonnull final Char clicker)
-	{
+	                 @Nonnull final Char clicker) {
 		if (!st.hasModule("Teleportation")) {
-			throw new UserConfigurationException(
-					"Teleporter can not function ; teleportation module is disabled at this instance.");
+			throw new UserConfigurationException("Teleporter can not function ; teleportation module is disabled at this instance.");
 		}
 		final JSONObject doteleport=new JSONObject();
 		doteleport.put("teleport",getTeleportTarget(st));
@@ -57,10 +54,7 @@ public abstract class Teleporter extends ObjectType {
 	}
 
 	public void update(@Nonnull final State st) {
-		if (!st.postmap().get("target").isEmpty() || !st.postmap().get("teleportersays").isEmpty() || !st.postmap()
-		                                                                                                 .get("hudsays")
-		                                                                                                 .isEmpty())
-		{
+		if (!st.postmap().get("target").isEmpty() || !st.postmap().get("teleportersays").isEmpty() || !st.postmap().get("hudsays").isEmpty()) {
 			boolean update=false;
 			final String target=st.postmap().get("target");
 			if (!target.equals(json.optString("teleporttarget",""))) {

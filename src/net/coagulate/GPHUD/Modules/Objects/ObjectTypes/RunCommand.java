@@ -18,8 +18,7 @@ import javax.annotation.Nonnull;
 
 public class RunCommand extends ObjectType {
 	protected RunCommand(final State st,
-	                     @Nonnull final ObjectTypes object)
-	{
+	                     @Nonnull final ObjectTypes object) {
 		super(st,object);
 	}
 
@@ -62,8 +61,7 @@ public class RunCommand extends ObjectType {
 	@Nonnull
 	@Override
 	public Response click(@Nonnull final State st,
-	                      @Nonnull final Char clicker)
-	{
+	                      @Nonnull final Char clicker) {
 		if (json.optString("command","").isEmpty()) {
 			return new ErrorResponse("Command to invoke is not configured in this object type");
 		}

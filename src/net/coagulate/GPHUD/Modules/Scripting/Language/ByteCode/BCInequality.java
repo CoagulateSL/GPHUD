@@ -23,12 +23,12 @@ public class BCInequality extends ByteCode {
 	@Override
 	public void execute(final State st,
 	                    @Nonnull final GSVM vm,
-	                    final boolean simulation)
-	{
+	                    final boolean simulation) {
 		// cheat
 		new BCEquality(node()).execute(st,vm,true);
 		int result=vm.popInteger().toInteger();
-		if (result==0) { result=1; } else { result=0; }
+		if (result==0) { result=1; }
+		else { result=0; }
 		vm.push(new BCInteger(node(),result));
 	}
 }

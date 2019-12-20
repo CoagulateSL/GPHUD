@@ -26,23 +26,22 @@ public class Objects extends TableRow {
 
 	@Nonnull
 	public static Objects find(final State st,
-	                           final String uuid)
-	{
+	                           final String uuid) {
 		final int id=GPHUD.getDB().dqinn("select id from objects where uuid=?",uuid);
 		return new Objects(id);
 	}
 
 	@Nullable
 	public static Objects findOrNull(final State st,
-	                                 final String uuid)
-	{
+	                                 final String uuid) {
 		try { return find(st,uuid); } catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	public static int getMaxVersion() {
 		try {
 			return GPHUD.getDB().dqinn("select max(version) as maxver from objects");
-		} catch (@Nonnull final NoDataException e) { return 0; }
+		}
+		catch (@Nonnull final NoDataException e) { return 0; }
 	}
 
 	@Nonnull
@@ -51,7 +50,8 @@ public class Objects extends TableRow {
 		final StringBuilder r=new StringBuilder(
 				"<table border=0><tr><th>UUID</th><th>name</th><th>Owner</th><th>Region</th><th>Location</th><th>Version</th><th>Last RX</th><Th>Object Type</th></tr>");
 		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions.instanceid=?",
+		                                .dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions"+
+				                                    ".instanceid=?",
 		                                    instance.getId()
 		                                   )) {
 			final int since=row.getInt("since");
@@ -71,8 +71,7 @@ public class Objects extends TableRow {
 				if (!objecttype.isEmpty()) {
 					final Integer oldobjecttype=row.getIntNullable("objecttype");
 					if (oldobjecttype==null || oldobjecttype!=Integer.parseInt(objecttype)) {
-						GPHUD.getDB()
-						     .d("update objects set objecttype=? where id=?",objecttype,row.getIntNullable("id"));
+						GPHUD.getDB().d("update objects set objecttype=? where id=?",objecttype,row.getIntNullable("id"));
 						Audit.audit(st,
 						            Audit.OPERATOR.AVATAR,
 						            null,
@@ -81,44 +80,39 @@ public class Objects extends TableRow {
 						            "ObjectType",
 						            "",
 						            objecttype,
-						            "Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable(
-								            "uuid")
+						            "Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
 						           );
 						final ObjectType ot=ObjectType.materialise(st,ObjectTypes.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload=new JSONObject();
 						ot.payload(st,reconfigurepayload);
 						new Transmission(Objects.get(row.getInt("id")),reconfigurepayload).start();
 					}
-				} else { objecttype=row.getStringNullable("objecttype"); }
+				}
+				else { objecttype=row.getStringNullable("objecttype"); }
 				r.append("<td>")
-				 .append(ObjectTypes.getDropDownList(st,row.getStringNullable("uuid"))
-				                    .submitOnChange()
-				                    .setValue(objecttype)
-				                    .asHtml(st,true))
+				 .append(ObjectTypes.getDropDownList(st,row.getStringNullable("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true))
 				 .append("</td>"); // editing too, have fun with that.
-			} else {
+			}
+			else {
 				r.append("<td>").append(row.getStringNullable("objecttype")).append("</td>");
 			}
 			if (st.hasPermission("Objects.RebootObjects")) {
-				r.append("<td><button type=Submit name=reboot value=\"")
-				 .append(row.getStringNullable("uuid"))
-				 .append("\">Reboot</button></td>");
+				r.append("<td><button type=Submit name=reboot value=\"").append(row.getStringNullable("uuid")).append("\">Reboot</button></td>");
 			}
 			if (st.hasPermission("Objects.ShutdownObjects")) {
 				if (row.getStringNullable("uuid").equals(st.postmap().get("shutdown"))) {
 					r.append("<td><button type=Submit name=reallyshutdown value=\"")
 					 .append(row.getStringNullable("uuid"))
 					 .append("\">CONFIRM SHUTDOWN - THE OBJECT OWNER MUST REBOOT IT TO RESUME SERVICE</button></td>");
-				} else {
-					r.append("<td><button type=Submit name=shutdown value=\"")
-					 .append(row.getStringNullable("uuid"))
-					 .append("\">Shutdown</button></td>");
+				}
+				else {
+					r.append("<td><button type=Submit name=shutdown value=\"").append(row.getStringNullable("uuid")).append("\">Shutdown</button></td>");
 				}
 			}
 			r.append("</tr>");
 		}
-		r.append(
-				"</table><br><i>(Objects are expected to check in once every 15 minutes, though if a region is down this may not happen.  Connections are purged after 24 hours inactivity, the object type configuration is not, and can be relinked to a new connection.)</i>");
+		r.append("</table><br><i>(Objects are expected to check in once every 15 minutes, though if a region is down this may not happen.  Connections are purged after 24 "+
+				         "hours inactivity, the object type configuration is not, and can be relinked to a new connection.)</i>");
 		return r.toString();
 	}
 
@@ -130,8 +124,7 @@ public class Objects extends TableRow {
 	                              @Nonnull final User owner,
 	                              final String location,
 	                              final String url,
-	                              final int version)
-	{
+	                              final int version) {
 		Objects object=findOrNull(st,uuid);
 		if (object==null) {
 			GPHUD.getDB()
@@ -149,7 +142,8 @@ public class Objects extends TableRow {
 			if (object==null) {
 				throw new SystemConsistencyException("Object not found for uuid "+uuid+" after creating it");
 			}
-		} else {
+		}
+		else {
 			GPHUD.getDB()
 			     .d("update objects set name=?,regionid=?,owner=?,location=?,lastrx=?,url=?,version=? where id=?",
 			        name,

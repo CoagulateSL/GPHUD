@@ -33,7 +33,8 @@ public abstract class Interface implements HttpRequestHandler {
 	@Nonnull
 	public static String base() {
 		if (base==null) {
-			if ("luna".equalsIgnoreCase(Interface.getNode())) { base="app-iain"; } else { base="app"; }
+			if ("luna".equalsIgnoreCase(Interface.getNode())) { base="app-iain"; }
+			else { base="app"; }
 		}
 		return base;
 	}
@@ -42,8 +43,7 @@ public abstract class Interface implements HttpRequestHandler {
 	// it doesn't any more :)
 	@Nonnull
 	public static String generateURL(final State st,
-	                                 final String ending)
-	{
+	                                 final String ending) {
 		return "https://"+(GPHUD.DEV?"dev.":"")+"coagulate.sl/"+base()+"/"+ending;
 	}
 
@@ -61,15 +61,14 @@ public abstract class Interface implements HttpRequestHandler {
 	@Override
 	public void handle(@Nonnull final HttpRequest req,
 	                   final HttpResponse resp,
-	                   @Nonnull final HttpContext httpcontext)
-	{
+	                   @Nonnull final HttpContext httpcontext) {
 		final State st=new State(req,resp,httpcontext);
 		try {
 			// create our state object
 
 			// get remote address.  Probably always localhost :P
-			@SuppressWarnings("deprecation") final HttpInetConnection connection=(HttpInetConnection) httpcontext.getAttribute(
-					org.apache.http.protocol.ExecutionContext.HTTP_CONNECTION);
+			@SuppressWarnings("deprecation")
+			final HttpInetConnection connection=(HttpInetConnection) httpcontext.getAttribute(org.apache.http.protocol.ExecutionContext.HTTP_CONNECTION);
 			final InetAddress ia=connection.getRemoteAddress();
 
 			// the requested URI
@@ -93,7 +92,8 @@ public abstract class Interface implements HttpRequestHandler {
 			st.host=host;
 			// process the page request
 			process(st);
-		} catch (@Nonnull final Exception e) {
+		}
+		catch (@Nonnull final Exception e) {
 			// there is no INTENDED use case for this catch, each interface should have its own 'catchall' somewhere, but just in case
 			SL.report("Generic Interface caught exception",e,st);
 			GPHUD.getLogger().log(SEVERE,"Exception propagated to generic interface handler!",e);

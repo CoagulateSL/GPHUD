@@ -36,8 +36,7 @@ import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULA
 public class ScriptingConfig {
 	@URL.URLs(url="/configuration/scripting")
 	public static void configPage(@Nonnull final State st,
-	                              final SafeMap values)
-	{
+	                              final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Scripting Module"));
 		f.add(new Paragraph("List of scripts"));
@@ -48,22 +47,11 @@ public class ScriptingConfig {
 
 	@URL.URLs(url="/configuration/scripting/create", requiresPermission="Scripting.Create")
 	public static void createScript(@Nonnull final State st,
-	                                @Nonnull final SafeMap values)
-	{
+	                                @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		if (!values.get("scriptname").isEmpty()) {
 			Scripts.create(st,values.get("scriptname"));
-			Audit.audit(true,
-			            st,
-			            Audit.OPERATOR.AVATAR,
-			            null,
-			            null,
-			            "Create",
-			            values.get("scriptname"),
-			            "",
-			            "",
-			            "Created script"
-			           );
+			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Create",values.get("scriptname"),"","","Created script");
 			throw new RedirectionException("/GPHUD/configuration/scripting");
 		}
 		f.add(new TextHeader("Create new script"));
@@ -73,8 +61,7 @@ public class ScriptingConfig {
 
 	@URL.URLs(url="/configuration/scripting/edit/*", requiresPermission="Scripting.Create")
 	public static void editScript(@Nonnull final State st,
-	                              @Nonnull final SafeMap values)
-	{
+	                              @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -94,59 +81,33 @@ public class ScriptingConfig {
 				GSStart gsscript=null;
 				try {
 					gsscript=parser.Start();
-				} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+				}
+				catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 					if (e instanceof ParseException) {
 						final ParseException pe=(ParseException) e;
 						final String tokenimage;
 						tokenimage="Last token: "+pe.currentToken.image+"<br>";
 						f.p("<b>Parse failed:</b> "+e+"<br>"+tokenimage);
-					} else {
+					}
+					else {
 						f.p("<b>Parse failed:</b> "+e);
 					}
-					Audit.audit(true,
-					            st,
-					            Audit.OPERATOR.AVATAR,
-					            null,
-					            null,
-					            "Save",
-					            script.getName(),
-					            "",
-					            "ParseFail",
-					            "Saved script, with parse failures"
-					           );
+					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","ParseFail","Saved script, with parse failures");
 				}
 				if (gsscript!=null) {
 					final GSCompiler compiler=new GSCompiler(gsscript);
 					compiler.compile();
 					script.setBytecode(compiler.toByteCode(),version);
 					f.p("Script compiled and saved OK!");
-					Audit.audit(true,
-					            st,
-					            Audit.OPERATOR.AVATAR,
-					            null,
-					            null,
-					            "Save",
-					            script.getName(),
-					            "",
-					            "OK!",
-					            "Saved script and compiled OK!"
-					           );
+					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
 				}
-			} catch (@Nonnull final NullPointerException ex) {
+			}
+			catch (@Nonnull final NullPointerException ex) {
 				throw new GSInternalError("Null pointer exception in compiler",ex);
-			} catch (@Nonnull final Throwable t) {
+			}
+			catch (@Nonnull final Throwable t) {
 				f.p("Compilation failed; "+t);
-				Audit.audit(true,
-				            st,
-				            Audit.OPERATOR.AVATAR,
-				            null,
-				            null,
-				            "Save",
-				            script.getName(),
-				            "",
-				            "CompileFail",
-				            "Saved script, with compilation failures"
-				           );
+				Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
 			}
 		}
 		f.add(new TextHeader("Edit script "+script.getName()));
@@ -157,7 +118,8 @@ public class ScriptingConfig {
 			versions.add("<font color=red>Byte code version</font>")
 			        .add("<font color=red>"+script.getByteCodeVersion()+"</font>")
 			        .add("<font color=red>Compiled version is behind source version, please attempt to SAVE SOURCE</font>");
-		} else {
+		}
+		else {
 			versions.add("Byte code version").add(script.getByteCodeVersion()+"");
 		}
 		f.add(versions);
@@ -180,9 +142,7 @@ public class ScriptingConfig {
 			f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
 			f.add(debug(st,script.getSource(),STAGE.PARSER));
 		}
-		if (values.get("View Compiler Output").equals("View Compiler Output") || values.get("View ALL")
-		                                                                               .equals("View ALL"))
-		{
+		if (values.get("View Compiler Output").equals("View Compiler Output") || values.get("View ALL").equals("View ALL")) {
 			f.add("<hr>").br().add(new TextSubHeader("Compiler Output"));
 			f.add(debug(st,script.getSource(),STAGE.COMPILER));
 		}
@@ -208,8 +168,7 @@ public class ScriptingConfig {
 	@Nonnull
 	private static String debug(@Nonnull final State st,
 	                            @Nonnull final String script,
-	                            final STAGE stage)
-	{
+	                            final STAGE stage) {
 		final ByteArrayInputStream bais=new ByteArrayInputStream(script.getBytes());
 		final GSParser parser=new GSParser(bais);
 		parser.enable_tracing();
@@ -217,7 +176,8 @@ public class ScriptingConfig {
 		try {
 			gsscript=parser.Start();
 			if (stage==STAGE.PARSER) { return gsscript.toHtml(); }
-		} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+		}
+		catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 			if (e instanceof ParseException) {
 				final ParseException pe=(ParseException) e;
 				final String tokenimage;
@@ -250,9 +210,11 @@ public class ScriptingConfig {
 				code.append("</table></pre>");
 				return code.toString();
 			}
-		} catch (@Nonnull final NullPointerException ex) {
+		}
+		catch (@Nonnull final NullPointerException ex) {
 			throw new GSInternalError("Null pointer exception in compiler",ex);
-		} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+		}
+		catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 			return "<b>Compilation failed:</b> "+e;
 		}
 
@@ -277,7 +239,8 @@ public class ScriptingConfig {
 				final long start=System.currentTimeMillis();
 				final List<GSVM.ExecutionStep> steps=gsvm.simulate(st);
 				final long end=System.currentTimeMillis();
-				final StringBuilder output=new StringBuilder("<p><i>Run time: "+(end-start)+" ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th><th>Stack</th><th>Variables</th></tr>");
+				final StringBuilder output=new StringBuilder("<p><i>Run time: "+(end-start)+" ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th"+
+						                                             "><th>Stack</th><th>Variables</th></tr>");
 				if (stage==SIMULATION) {
 					// no more than 100 steps now
 					int index=steps.size()-100;
@@ -285,7 +248,8 @@ public class ScriptingConfig {
 					for (;index<steps.size();index++) {
 						output.append(formatStep(steps.get(index)));
 					}
-				} else {
+				}
+				else {
 					if (steps.size()>1) { output.append(formatStep(steps.get(steps.size()-2))); }
 					if (steps.size()>0) { output.append(formatStep(steps.get(steps.size()-1))); }
 				}
@@ -293,9 +257,11 @@ public class ScriptingConfig {
 				return output.toString();
 			}
 
-		} catch (@Nonnull final ArrayIndexOutOfBoundsException ex) {
+		}
+		catch (@Nonnull final ArrayIndexOutOfBoundsException ex) {
 			throw new GSInternalError("Array index out of bounds in compiler/simulator",ex);
-		} catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+		}
+		catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
 			return "<b>Simulation failed:</b> "+e;
 		}
 		return "Did nothing (?)";
@@ -304,19 +270,9 @@ public class ScriptingConfig {
 	@Nonnull
 	private static String formatStep(@Nonnull final GSVM.ExecutionStep step) {
 		final StringBuilder output=new StringBuilder();
-		output.append("<tr><td>")
-		      .append(step.IC)
-		      .append("</td><th>")
-		      .append(step.programcounter)
-		      .append("</th><td>")
-		      .append(step.decode)
-		      .append("</td><td><table>");
+		output.append("<tr><td>").append(step.IC).append("</td><th>").append(step.programcounter).append("</th><td>").append(step.decode).append("</td><td><table>");
 		for (int i=0;i<step.resultingstack.size();i++) {
-			output.append("<tr><th>")
-			      .append(i)
-			      .append("</th><td>")
-			      .append(step.resultingstack.get(i).htmlDecode())
-			      .append("</td></tr>");
+			output.append("<tr><th>").append(i).append("</th><td>").append(step.resultingstack.get(i).htmlDecode()).append("</td></tr>");
 		}
 		output.append("</table></td><td><table>");
 		for (final Map.Entry<String,ByteCodeDataType> entry: step.resultingvariables.entrySet()) {

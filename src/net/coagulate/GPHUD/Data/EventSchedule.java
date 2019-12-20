@@ -50,7 +50,8 @@ public class EventSchedule extends TableRow {
 		final Set<EventSchedule> events=new TreeSet<>();
 		final int now=UnixTime.getUnixTime();
 		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+		                              .dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+
+				                                  "eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
 		                                  instance.getId(),
 		                                  now,
 		                                  now
@@ -70,8 +71,7 @@ public class EventSchedule extends TableRow {
 	@Nonnull
 	public static Set<EventSchedule> get(@Nonnull final Event e) {
 		final Set<EventSchedule> schedule=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsscheduleid from eventsschedule where eventid=?",e.getId())) {
+		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where eventid=?",e.getId())) {
 			schedule.add(get(r.getInt()));
 		}
 		return schedule;
@@ -171,11 +171,7 @@ public class EventSchedule extends TableRow {
 	 * @param repeat Number of seconds to offset the event by
 	 */
 	public void offsetSchedule(final int repeat) {
-		d("update eventsschedule set starttime=starttime+?,endtime=endtime+? where eventsscheduleid=?",
-		  repeat,
-		  repeat,
-		  getId()
-		 );
+		d("update eventsschedule set starttime=starttime+?,endtime=endtime+? where eventsscheduleid=?",repeat,repeat,getId());
 	}
 
 	/**
@@ -191,11 +187,7 @@ public class EventSchedule extends TableRow {
 	 * @param c Character that is part of the event.
 	 */
 	public void startVisit(@Nonnull final Char c) {
-		d("insert into eventvisits(characterid,eventscheduleid,starttime) values(?,?,?)",
-		  c.getId(),
-		  getId(),
-		  UnixTime.getUnixTime()
-		 );
+		d("insert into eventvisits(characterid,eventscheduleid,starttime) values(?,?,?)",c.getId(),getId(),UnixTime.getUnixTime());
 	}
 
 	/**
@@ -204,21 +196,14 @@ public class EventSchedule extends TableRow {
 	 * @param character Character that is leaving the event.
 	 */
 	public void endVisit(@Nonnull final Char character) {
-		d("update eventvisits set endtime=? where characterid=? and eventscheduleid=? and endtime is null",
-		  UnixTime.getUnixTime(),
-		  character.getId(),
-		  getId()
-		 );
+		d("update eventvisits set endtime=? where characterid=? and eventscheduleid=? and endtime is null",UnixTime.getUnixTime(),character.getId(),getId());
 	}
 
 	/**
 	 * End all visits for this event + schedule.
 	 */
 	public void endAllVisits() {
-		d("update eventvisits set endtime=? where eventscheduleid=? and endtime is null",
-		  UnixTime.getUnixTime(),
-		  getId()
-		 );
+		d("update eventvisits set endtime=? where eventscheduleid=? and endtime is null",UnixTime.getUnixTime(),getId());
 	}
 
 	/**
@@ -229,8 +214,7 @@ public class EventSchedule extends TableRow {
 	 * @param limit   Maximum number of XP to allocate
 	 */
 	public void awardFinalXP(final int minutes,
-	                         final int limit)
-	{
+	                         final int limit) {
 		endAllVisits();
 		for (final ResultsRow r: dq(
 				"select characterid,sum(endtime-starttime) as totaltime,sum(awarded) as awarded from eventvisits where eventscheduleid=? group by characterid",
@@ -294,8 +278,7 @@ public class EventSchedule extends TableRow {
 
 	@Nonnull
 	private String pad(final Integer padmeint,
-	                   final int howmuch)
-	{
+	                   final int howmuch) {
 		final StringBuilder padme=new StringBuilder(padmeint+"");
 		while (padme.length()<howmuch) { padme.append(" "); }
 		return padme.toString();

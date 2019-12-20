@@ -40,14 +40,8 @@ public class Message extends TableRow {
 	 */
 	static void add(@Nonnull final Char targetchar,
 	                final int expires,
-	                @Nonnull final JSONObject message)
-	{
-		GPHUD.getDB()
-		     .d("insert into messages(characterid,expires,json) values(?,?,?)",
-		        targetchar.getId(),
-		        expires,
-		        message.toString()
-		       );
+	                @Nonnull final JSONObject message) {
+		GPHUD.getDB().d("insert into messages(characterid,expires,json) values(?,?,?)",targetchar.getId(),expires,message.toString());
 	}
 
 	/**
@@ -59,8 +53,7 @@ public class Message extends TableRow {
 	 */
 	public static void queueHours(@Nonnull final Char c,
 	                              final int lifespanhours,
-	                              @Nonnull final JSONObject json)
-	{ queue(c,lifespanhours*60*60,json); }
+	                              @Nonnull final JSONObject json) { queue(c,lifespanhours*60*60,json); }
 
 	/**
 	 * Convenience method to queue a message for days
@@ -71,8 +64,7 @@ public class Message extends TableRow {
 	 */
 	public static void queueDays(@Nonnull final Char c,
 	                             final int lifespandays,
-	                             @Nonnull final JSONObject json)
-	{ queueHours(c,lifespandays*24,json); }
+	                             @Nonnull final JSONObject json) { queueHours(c,lifespandays*24,json); }
 
 	/**
 	 * Convenience method to queue a message for a given ammount of time
@@ -83,8 +75,7 @@ public class Message extends TableRow {
 	 */
 	public static void queue(@Nonnull final Char c,
 	                         final int lifespanseconds,
-	                         @Nonnull final JSONObject json)
-	{
+	                         @Nonnull final JSONObject json) {
 		add(c,UnixTime.getUnixTime()+lifespanseconds,json);
 	}
 
@@ -98,11 +89,10 @@ public class Message extends TableRow {
 	@Nullable
 	public static Message getNextMessage(@Nonnull final Char c) {
 		try {
-			final int id=GPHUD.getDB()
-			                  .dqinn("select messageid from messages where characterid=? order by expires  limit 0,1",c.getId()
-			                        );
+			final int id=GPHUD.getDB().dqinn("select messageid from messages where characterid=? order by expires  limit 0,1",c.getId());
 			return Message.get(id);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -128,7 +118,8 @@ public class Message extends TableRow {
 		try {
 			final int id=GPHUD.getDB().dqinn("select messageid from messages where characterid=? and expires=0",c.getId());
 			return Message.get(id);
-		} catch (@Nonnull final NoDataException e) { return null; }
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	@Nonnull

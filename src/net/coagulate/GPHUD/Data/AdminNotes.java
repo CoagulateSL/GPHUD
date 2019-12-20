@@ -49,8 +49,7 @@ public class AdminNotes extends TableRow {
 	                       final @NotNull User target,
 	                       final @Nullable Char targetchar,
 	                       final @NotNull String note,
-	                       final boolean adminonly)
-	{
+	                       final boolean adminonly) {
 		GPHUD.getDB()
 		     .d("insert into adminnotes(tds,instanceid,adminid,targetuser,targetchar,note,adminonly) values(?,?,?,?,?,?,?)",
 		        UnixTime.getUnixTime(),
@@ -68,8 +67,7 @@ public class AdminNotes extends TableRow {
 	                                  @Nonnull final User user,
 	                                  @Nonnull final Char character,
 	                                  final boolean showall,
-	                                  final boolean toponly)
-	{
+	                                  final boolean toponly) {
 		final List<AdminNote> results=new ArrayList<>();
 		for (final ResultsRow row: GPHUD.getDB()
 		                                .dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" limit 0,3":""),
@@ -87,11 +85,11 @@ public class AdminNotes extends TableRow {
 	public static List<AdminNote> get(@Nonnull final Instance instance,
 	                                  @Nonnull final User user,
 	                                  final boolean showall,
-	                                  final boolean toponly)
-	{
+	                                  final boolean toponly) {
 		final List<AdminNote> results=new ArrayList<>();
 		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" limit 0,3":""),
+		                                .dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" "+
+				                                    "limit 0,3":""),
 		                                    instance.getId(),
 		                                    user.getId()
 		                                   )) {
@@ -103,11 +101,7 @@ public class AdminNotes extends TableRow {
 	@Nonnull
 	public static List<AdminNote> get(@Nonnull final Instance instance) {
 		final List<AdminNote> results=new ArrayList<>();
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select * from adminnotes where instanceid=? order by tds desc",
-		                                    instance.getId()
-		                                   ))
-			results.add(resultify(row));
+		for (final ResultsRow row: GPHUD.getDB().dq("select * from adminnotes where instanceid=? order by tds desc",instance.getId())) { results.add(resultify(row)); }
 		return results;
 	}
 
@@ -177,8 +171,7 @@ public class AdminNotes extends TableRow {
 		                 final User targetuser,
 		                 final Char targetchar,
 		                 final String note,
-		                 final boolean adminonly)
-		{
+		                 final boolean adminonly) {
 			this.tds=tds;
 			this.instance=instance;
 			this.admin=admin;

@@ -21,10 +21,9 @@ public class ScriptingCommand extends Command {
 	@Nonnull
 	@Override
 	public Method getMethod() {
-		try { return getClass().getMethod("execute",State.class); } catch (@Nonnull final NoSuchMethodException e) {
-			throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",
-			                                        e
-			);
+		try { return getClass().getMethod("execute",State.class); }
+		catch (@Nonnull final NoSuchMethodException e) {
+			throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",e);
 		}
 	}
 

@@ -29,8 +29,7 @@ public class ObjectManagement {
 
 	@URL.URLs(url="/configuration/objects", requiresPermission="Objects.View")
 	public static void index(@Nonnull final State st,
-	                         @Nonnull final SafeMap map)
-	{
+	                         @Nonnull final SafeMap map) {
 		final Form f=st.form();
 		f.add(new TextHeader("Object Management"));
 		f.add(new TextSubHeader("Connected Objects"));
@@ -43,17 +42,7 @@ public class ObjectManagement {
 				reboot.put("reboot","Rebooted via web site by "+st.getAvatarNullable());
 				new Transmission(obj,reboot).start();
 				f.add("<p><i>Rebooted object "+obj.getName()+" "+uuid+"</i></p>");
-				Audit.audit(true,
-				            st,
-				            Audit.OPERATOR.AVATAR,
-				            null,
-				            null,
-				            "Reboot",
-				            obj.getName(),
-				            "",
-				            "",
-				            "Rebooted object "+uuid
-				           );
+				Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Reboot",obj.getName(),"","","Rebooted object "+uuid);
 			}
 		}
 		if (map.containsKey("reallyshutdown") && st.hasPermission("Objects.ShutdownObjects")) {
@@ -65,17 +54,7 @@ public class ObjectManagement {
 				shutdown.put("shutdown","Shutdown via web site by "+st.getAvatarNullable());
 				new Transmission(obj,shutdown).start();
 				f.add("<p><i>Shutdown object "+obj.getName()+" "+uuid+"</i></p>");
-				Audit.audit(true,
-				            st,
-				            Audit.OPERATOR.AVATAR,
-				            null,
-				            null,
-				            "Shutdown",
-				            obj.getName(),
-				            "",
-				            "",
-				            "Shutdown object "+uuid
-				           );
+				Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Shutdown",obj.getName(),"","","Shutdown object "+uuid);
 			}
 		}
 		f.add(Objects.dumpObjects(st));
@@ -86,22 +65,12 @@ public class ObjectManagement {
 
 	@URL.URLs(url="/configuration/objects/createtype", requiresPermission="Objects.ObjectTypes")
 	public static void createObjectType(@Nonnull final State st,
-	                                    @Nonnull final SafeMap map)
-	{
+	                                    @Nonnull final SafeMap map) {
 		if (map.get("Create").equalsIgnoreCase("Create")) {
 			final JSONObject jsonbase=new JSONObject();
 			jsonbase.put("behaviour",map.get("behaviour"));
 			final ObjectTypes ot=ObjectTypes.create(st,map.get("name"),jsonbase);
-			Audit.audit(st,
-			            Audit.OPERATOR.AVATAR,
-			            null,
-			            null,
-			            "Create",
-			            "ObjectType",
-			            null,
-			            map.get("name"),
-			            "Created new object type of behaviour "+map.get("behaviour")
-			           );
+			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","ObjectType",null,map.get("name"),"Created new object type of behaviour "+map.get("behaviour"));
 			throw new RedirectionException("/GPHUD/configuration/objects/objecttypes/"+ot.getId());
 		}
 		final Form f=st.form();
@@ -115,8 +84,7 @@ public class ObjectManagement {
 
 	@URL.URLs(url="/configuration/objects/objecttypes/*", requiresPermission="Objects.ObjectTypes")
 	public static void editObjectType(@Nonnull final State st,
-	                                  final SafeMap map)
-	{
+	                                  final SafeMap map) {
 		st.postmap(map);
 		final String[] parts=st.getDebasedNoQueryURL().split("/");
 		if (parts.length<5) { throw new UserInputValidationParseException("URI misformed, no ID found"); }
@@ -131,7 +99,8 @@ public class ObjectManagement {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Gets the Object Driver Script", permitScripting=false, permitUserWeb=false, context=Command.Context.AVATAR, requiresPermission="Objects.GetDriver")
+	@Command.Commands(description="Gets the Object Driver Script", permitScripting=false, permitUserWeb=false, context=Command.Context.AVATAR, requiresPermission="Objects"+
+			".GetDriver")
 	public static Response getDriver(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","servergive");

@@ -77,14 +77,14 @@ public class GPHUD {
 			hostname=java.net.InetAddress.getLocalHost().getHostName().replaceAll(".coagulate.net","");
 			log().config("Server operating on node "+Interface.getNode());
 			validateNode(hostname);
-		} catch (@Nonnull final UnknownHostException e) {
+		}
+		catch (@Nonnull final UnknownHostException e) {
 			throw new SystemInitialisationException("Unable to resolve local host name",e);
 		}
 
 		log().config("Loading configuration file...");
 		if (args.length!=1) {
-			log().severe(
-					"Incorrect number of command line parameters, should be exactly 1, the location of a configuration file.");
+			log().severe("Incorrect number of command line parameters, should be exactly 1, the location of a configuration file.");
 			System.exit(1);
 		}
 
@@ -138,7 +138,8 @@ public class GPHUD {
 					System.exit(4);
 				}
 
-			} catch (@Nonnull final Exception e) {
+			}
+			catch (@Nonnull final Exception e) {
 				log().log(SEVERE,"Maintenance thread threw unchecked exception?",e);
 			}
 		}
@@ -157,9 +158,11 @@ public class GPHUD {
 					// if its not blank or comment, then process as a "KEY=VALUE" line
 					final int splitat=line.indexOf('=');
 					if (splitat==-1 || splitat==(line.length()-1)) {
-						// = not found, or the split (=) is the last character, so finding the 'value' would probably array out of bounds.  Setting blank values is not supported :P
+						// = not found, or the split (=) is the last character, so finding the 'value' would probably array out of bounds.  Setting blank values is not
+						// supported :P
 						log().warning("Invalid configuration line: "+line);
-					} else {
+					}
+					else {
 						String key=line.substring(0,splitat);
 						final String value=line.substring(splitat+1);
 						key=key.toUpperCase();
@@ -171,10 +174,12 @@ public class GPHUD {
 				}
 				line=file.readLine();
 			}
-		} catch (@Nonnull final FileNotFoundException e) {
+		}
+		catch (@Nonnull final FileNotFoundException e) {
 			log().log(SEVERE,"File not found accessing "+filename,e);
 			System.exit(1);
-		} catch (@Nonnull final IOException e) {
+		}
+		catch (@Nonnull final IOException e) {
 			log().log(SEVERE,"IOException reading configuration file "+filename,e);
 			System.exit(1);
 		}
@@ -204,8 +209,7 @@ public class GPHUD {
 	}
 
 	private static void defaultConfig(String keyword,
-	                                  final String value)
-	{
+	                                  final String value) {
 		keyword=keyword.toUpperCase();
 		if (CONFIG.containsKey(keyword)) { return; }
 		CONFIG.put(keyword,value);
@@ -214,16 +218,16 @@ public class GPHUD {
 	public static String get(@Nonnull final String keyword) { return CONFIG.get(keyword.toUpperCase()); }
 
 	private static void validateNode(final String node) {
-		if ("luna".equalsIgnoreCase(node) || "sol".equalsIgnoreCase(node) || "saturn".equalsIgnoreCase(node) || "mars".equalsIgnoreCase(
-				node) || "neptune".equalsIgnoreCase(node) || "pluto".equalsIgnoreCase(node))
-		{
+		if ("luna".equalsIgnoreCase(node) || "sol".equalsIgnoreCase(node) || "saturn".equalsIgnoreCase(node) || "mars".equalsIgnoreCase(node) || "neptune".equalsIgnoreCase(
+				node) || "pluto".equalsIgnoreCase(node)) {
 			return;
 		}
 		throw new SystemInitialisationException("Unrecognised node name, this would break the scheduler");
 	}
 
 	// spread the servers over a cycle (which is modulo 4), which is just a reduced timestamp anyway (timesync IMPORTANT!)
-	// note zones 1 and 3 are left blank, to allow a little time desync safety (a few minutes worth, which is more than my system monitoring allows, but avoiding running them back to back is good).
+	// note zones 1 and 3 are left blank, to allow a little time desync safety (a few minutes worth, which is more than my system monitoring allows, but avoiding running
+	// them back to back is good).
 	// luna being a stand alone dev system runs both 1 and 3.  as does sol if DEV
 	public static boolean ourCycle(int cyclenumber) {
 		cyclenumber=cyclenumber%2;
@@ -267,35 +271,26 @@ public class GPHUD {
 					final int regionid=row.getInt("regionid");
 					final Char ch=Char.get(charid);
 					final State st=State.getNonSpatial(ch);
-					final int howmany=getDB().dqinn(
-							"select count(*) from visits visits where endtime is null and characterid=? and regionid=?",
-							charid,
-							regionid
-					                               );
+					final int howmany=getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
 					if (howmany>0) {
 						st.logger()
-						  .info("HUD disconnected (404) from avatar "+st.getAvatar()
-						                                                .getName()+" as character "+st.getCharacter()
-						                                                                              .getName()+", not reported as region leaver.");
+						  .info("HUD disconnected (404) from avatar "+st.getAvatar().getName()+" as character "+st.getCharacter()
+						                                                                                          .getName()+", not reported as region leaver.");
 					}
-					getDB().d(
-							"update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",
-							charid,
-							regionid
-					         );
+					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
 					getDB().d("update objects set url=null where url=?",url);
-				} catch (@Nonnull final Exception ignored) {}
+				}
+				catch (@Nonnull final Exception ignored) {}
 			}
-			getDB().d(
-					"update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?",
-					url
-			         );
-		} catch (@Nonnull final DBException ex) {
+			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?",url);
+		}
+		catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from characters",ex);
 		}
 		try {
 			getDB().d("update regions set url=null,authnode=null where url=?",url);
-		} catch (@Nonnull final DBException ex) {
+		}
+		catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from regions",ex);
 		}
 	}
@@ -303,8 +298,7 @@ public class GPHUD {
 	public static void initialiseAsModule(final boolean isdev,
 	                                      final String jdbc,
 	                                      final String hostname,
-	                                      final int nodeid)
-	{
+	                                      final int nodeid) {
 		GPHUD.hostname=hostname;
 		GPHUD.nodeid=nodeid;
 		log=Logger.getLogger("net.coagulate.GPHUD");

@@ -41,12 +41,15 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
  */
 public abstract class Login {
 	@Nonnull
-	@Commands(context=Context.AVATAR, permitConsole=false, permitUserWeb=false, permitScripting=false, description="Register this session as a character connection", permitObject=false)
+	@Commands(context=Context.AVATAR, permitConsole=false, permitUserWeb=false, permitScripting=false, description="Register this session as a character connection",
+	          permitObject=false)
 	public static Response login(@Nonnull final State st,
-	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version number of the HUD that is connecting", max=128, mandatory=false) final String version,
-	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version date of the HUD that is connecting", max=128, mandatory=false) final String versiondate,
-	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version time of the HUD that is connecting", max=128, mandatory=false) final String versiontime)
-	{
+	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version number of the HUD that is connecting", max=128, mandatory=false)
+	                             final String version,
+	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version date of the HUD that is connecting", max=128, mandatory=false)
+	                             final String versiondate,
+	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version time of the HUD that is connecting", max=128, mandatory=false)
+	                             final String versiontime) {
 		final boolean debug=false;
 		////// CHANGE ALL THIS, HAVE A
 		////// "USINGCHARACTER" COLUMN FOR <AVATAR> TYPES
@@ -87,7 +90,8 @@ public abstract class Login {
 		if (initscript!=null && (!initscript.isEmpty())) {
 			// let the init script have a "run"
 			final Scripts init=Scripts.findOrNull(simulate,initscript);
-			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; } else {
+			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; }
+			else {
 				final GSVM initialisecharacter=new GSVM(init.getByteCode());
 				initialisecharacter.invokeOnExit("characters.login");
 				final Response response=initialisecharacter.execute(simulate);
@@ -115,17 +119,13 @@ public abstract class Login {
 							    .put("hudcolor","<1.0,0.75,0.75>")
 							    .put("titlertext","Initialising character...")
 							    .put("titlercolor","<1.0,0.75,0.75>")
-							    .put("message",
-							         "Character creation requires you to input attribute "+a.getName()+maxstring
-							        );
+							    .put("message","Character creation requires you to input attribute "+a.getName()+maxstring);
 							json.put("incommand","runtemplate");
 							json.put("invoke","characters.initialise");
 							json.put("args","1");
 							json.put("attribute",a.getName());
 							json.put("arg0name","value");
-							json.put("arg0description",
-							         "You must select a "+a.getName()+" for your Character before you can use it"+maxstring
-							        );
+							json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it"+maxstring);
 							json.put("arg0type","TEXTBOX");
 							return new JSONResponse(json);
 						}
@@ -137,17 +137,13 @@ public abstract class Login {
 							    .put("hudcolor","<1.0,0.75,0.75>")
 							    .put("titlertext","Initialising character...")
 							    .put("titlercolor","<1.0,0.75,0.75>")
-							    .put("message",
-							         "Character creation requires you to select a choice for attribute "+a.getName()
-							        );
+							    .put("message","Character creation requires you to select a choice for attribute "+a.getName());
 							CharacterGroup.createChoice(st,json,"arg0",a);
 							json.put("incommand","runtemplate");
 							json.put("invoke","characters.initialise");
 							json.put("args","1");
 							json.put("attribute",a.getName());
-							json.put("arg0description",
-							         "You must select a "+a.getName()+" for your Character before you can use it"
-							        );
+							json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it");
 							return new JSONResponse(json);
 						}
 						break;
@@ -170,8 +166,7 @@ public abstract class Login {
         */
 		final String oldavatarurl=st.getCharacter().getURL();
 		if (oldavatarurl!=null && !oldavatarurl.equals(url)) {
-			final JSONObject shutdownjson=new JSONObject().put("incommand","shutdown")
-			                                              .put("shutdown","Replaced by new registration");
+			final JSONObject shutdownjson=new JSONObject().put("incommand","shutdown").put("shutdown","Replaced by new registration");
 			final Transmission shutdown=new Transmission((Char) null,shutdownjson,oldavatarurl);
 			shutdown.start();
 		}
@@ -181,10 +176,12 @@ public abstract class Login {
 			// is instance owner
 			regmessage=GPHUD.serverVersion()+" [https://coagulate.sl/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 			if (st.getRegion().needsUpdate()) {
-				regmessage+="\n=====\nUpdate required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old one will then disable its self and can be deleted.\n=====";
+				regmessage+="\n=====\nUpdate required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old "
+						+"one will then disable its self and can be deleted.\n=====";
 				Distribution.getServer(st);
 			}
-		} else {
+		}
+		else {
 			//regmessage="O:"+st.getInstance().getOwner().getId()+" U:"+st.getCharacter().getId()+" "+GPHUD.serverVersion();
 			regmessage=GPHUD.serverVersion();
 		}
@@ -193,9 +190,7 @@ public abstract class Login {
 		//noinspection CallToThreadRun
 		registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
 		Visits.initVisit(st,st.getCharacter(),region);
-		if (version!=null && versiondate!=null && versiontime!=null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime
-				.isEmpty())
-		{
+		if (version!=null && versiondate!=null && versiontime!=null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
 			region.recordHUDVersion(st,version,versiondate,versiontime);
 		}
 		final Instance instance=st.getInstance();
@@ -205,10 +200,7 @@ public abstract class Login {
 		if (st.hasModule("Experience")) {
 			final int apremain=abilityPointsRemaining(st);
 			if (apremain>0) {
-				new Transmission(st.getCharacter(),
-				                 Modules.getJSONTemplate(st,"characters.spendabilitypoint"),
-				                 1
-				).start();
+				new Transmission(st.getCharacter(),Modules.getJSONTemplate(st,"characters.spendabilitypoint"),1).start();
 			}
 		}
 		if (!loginmessage.isEmpty()) { rawresponse.put("message",loginmessage); }
@@ -234,8 +226,11 @@ public abstract class Login {
 	@Nonnull
 	@Commands(context=Context.AVATAR, description="Create a new character", permitObject=false, permitScripting=false)
 	public static Response create(@Nonnull final State st,
-	                              @Nullable @Arguments(type=ArgumentType.TEXT_CLEAN, description="Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max=40) final String charactername)
-	{
+	                              @Nullable
+	                              @Arguments(type=ArgumentType.TEXT_CLEAN, description="Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. "+
+			                              "SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. "+
+			                              "people"+" trying to give you XP will need this FULL NAME.  It should JUST be a NAME.", max=40)
+	                              final String charactername) {
 		if (Char.resolve(st,charactername)!=null) {
 			final JSONObject json=Modules.getJSONTemplate(st,"characters.create");
 			json.put("message","Character name already taken - please retry");
@@ -252,15 +247,14 @@ public abstract class Login {
 					return new ErrorResponse("You may not name a character after an avatar, other than yourself");
 				}
 			}
-		} catch (@Nonnull final NoDataException e) {}
+		}
+		catch (@Nonnull final NoDataException e) {}
 		final boolean autoname=st.getKV("Instance.AutoNameCharacter").boolValue();
 		if (autoname && !st.getAvatar().getName().equalsIgnoreCase(charactername)) {
 			return new ErrorResponse("You must name your one and only character after your avatar");
 		}
 		final int maxchars=st.getKV("Instance.MaxCharacters").intValue();
-		if (maxchars<=Char.getCharacters(st.getInstance(),st.getAvatar()).size() && !st.hasPermission(
-				"Characters.ExceedCharLimits"))
-		{
+		if (maxchars<=Char.getCharacters(st.getInstance(),st.getAvatar()).size() && !st.hasPermission("Characters.ExceedCharLimits")) {
 			return new ErrorResponse("You are not allowed more than "+maxchars+" active characters");
 		}
 		final boolean charswitchallowed=st.getKV("Instance.CharacterSwitchEnabled").boolValue();
@@ -269,25 +263,14 @@ public abstract class Login {
 		}
 		Char.create(st,charactername);
 		final Char c=Char.resolve(st,charactername);
-		Audit.audit(true,
-		            st,
-		            Audit.OPERATOR.AVATAR,
-		            null,
-		            c,
-		            "Create",
-		            "Character",
-		            "",
-		            charactername,
-		            "Avatar attempted to create character, result: "+c
-		           );
+		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
 		return login(st,null,null,null);
 	}
 
 	@Nonnull
 	@Commands(context=Context.AVATAR, description="Switch to a character", permitObject=false, permitScripting=false)
 	public static Response select(@Nonnull final State st,
-	                              @Nullable @Arguments(type=ArgumentType.CHARACTER_PLAYABLE, description="Character to load") final Char character)
-	{
+	                              @Nullable @Arguments(type=ArgumentType.CHARACTER_PLAYABLE, description="Character to load") final Char character) {
 		if (character==null) { return new ErrorResponse("No such character"); }
 		if (character.getOwner()!=st.getAvatarNullable()) {
 			return new ErrorResponse("That character does not belong to you");
@@ -310,8 +293,7 @@ public abstract class Login {
 	@Commands(context=Context.AVATAR, description="Initialise a character attribute", permitObject=false)
 	public static Response initialise(@Nonnull final State st,
 	                                  @Nonnull @Arguments(type=ArgumentType.ATTRIBUTE, description="Attribute to initialise") final Attribute attribute,
-	                                  @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE, description="Value to initialise to", max=4096) final String value)
-	{
+	                                  @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE, description="Value to initialise to", max=4096) final String value) {
 		//System.out.println("Initialise "+attribute+" to "+value);
 		final boolean debug=true;
 		switch (attribute.getType()) {
@@ -338,17 +320,13 @@ public abstract class Login {
 							    .put("hudcolor","<1.0,0.75,0.75>")
 							    .put("titlertext","Initialising character...")
 							    .put("titlercolor","<1.0,0.75,0.75>")
-							    .put("message",
-							         "Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max
-							        );
+							    .put("message","Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max);
 							json.put("incommand","runtemplate");
 							json.put("invoke","characters.initialise");
 							json.put("args","1");
 							json.put("attribute",attribute.getName());
 							json.put("arg0name","value");
-							json.put("arg0description",
-							         "You must select a "+attribute.getName()+" for your Character before you can use it (no greater than "+max+")"
-							        );
+							json.put("arg0description","You must select a "+attribute.getName()+" for your Character before you can use it (no greater than "+max+")");
 							json.put("arg0type","TEXTBOX");
 							return new JSONResponse(json);
 						}
@@ -360,8 +338,7 @@ public abstract class Login {
 				// its a group... check user has no group already
 				final CharacterGroup group=st.getCharacter().getGroup(attribute.getSubType());
 				if (group!=null) {
-					return new ErrorResponse("You already have membership of '"+group.getNameSafe()+"' which is of type "+attribute
-							.getSubType());
+					return new ErrorResponse("You already have membership of '"+group.getNameSafe()+"' which is of type "+attribute.getSubType());
 				}
 				// check the target group is of the right type
 				final CharacterGroup target=CharacterGroup.resolve(st,value);
@@ -371,25 +348,16 @@ public abstract class Login {
 					return new ErrorResponse("Group "+target.getNameSafe()+" is not a typed group");
 				}
 				if (!targettype.equals(attribute.getSubType())) {
-					return new ErrorResponse("Group "+target.getNameSafe()+" is of type "+target.getType()+" rather than the required "+attribute
-							.getSubType()+" required by attribute "+attribute.getName());
+					return new ErrorResponse("Group "+target.getNameSafe()+" is of type "+target.getType()+" rather than the required "+attribute.getSubType()+" required by "
+							                         +"attribute "+attribute
+							.getName());
 				}
 				target.addMember(st.getCharacter());
 				break;
 			case POOL:
 				throw new UserInputStateException("Attempt to initialise pool attribute is invalid.");
 		}
-		Audit.audit(true,
-		            st,
-		            Audit.OPERATOR.AVATAR,
-		            null,
-		            st.getCharacter(),
-		            "Initialise",
-		            attribute.getName(),
-		            null,
-		            value,
-		            "Character creation initialised attribute"
-		           );
+		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,st.getCharacter(),"Initialise",attribute.getName(),null,value,"Character creation initialised attribute");
 		return login(st,null,null,null);
 	}
 }
