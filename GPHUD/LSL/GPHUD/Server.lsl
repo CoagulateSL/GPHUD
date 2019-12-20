@@ -55,6 +55,7 @@ integer process(key id) {
 			}
 		}
 	}
+	if (command=="messageto") { llRegionSayTo((key)jsonget("target"),0,jsonget("sendthismessage")); }
 	if (command=="servergive") { llGiveInventory((key)(jsonget("giveto")),jsonget("itemname")); }
 	if (jsonget("instancestatus")!="") { llSetText(jsonget("instancestatus")+" V"+VERSION+"\n \n \n \n \n",(vector)jsonget("statuscolor"),1); }
 	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Region Server"); }
