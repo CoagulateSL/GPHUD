@@ -99,7 +99,7 @@ public abstract class Templater {
 		final boolean debug=false;
 		for (final String subst: getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
-				String value;
+				final String value;
 				//try {
 					value=getValue(st,subst);
 				//} catch (@Nonnull final UserException e) {
