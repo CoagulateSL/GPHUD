@@ -93,8 +93,8 @@ public class URLAnnotation extends URL {
 		} catch (@Nonnull final InvocationTargetException ex) {
 			final Throwable contained=ex.getCause();
 			if (contained instanceof RedirectionException) { throw (RedirectionException) contained; }
-			if (contained instanceof SystemException) { throw (SystemException) contained; }
-			if (contained instanceof UserException) { throw (UserException) contained; }
+			if (SystemException.class.isAssignableFrom(contained.getClass())) { throw (SystemException) contained; }
+			if (UserException.class.isAssignableFrom(contained.getClass())) { throw (UserException) contained; }
 			if (contained instanceof NumberFormatException) {
 				throw new UserInputValidationParseException("Number Format Exception",contained);
 			}

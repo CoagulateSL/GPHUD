@@ -397,10 +397,10 @@ public abstract class Command {
 			st.logger().log(WARNING,"Execute command "+getName()+" failed",ex);
 			return new ErrorResponse("Illegal argument in "+getName());
 		} catch (@Nonnull final InvocationTargetException ex) {
-			if (ex.getCause()!=null && ex.getCause() instanceof UserException) {
+			if (ex.getCause()!=null && UserException.class.isAssignableFrom(ex.getCause().getClass())) {
 				return new ErrorResponse(getName()+" errored: \n--- "+ex.getCause().getLocalizedMessage());
 			}
-			if (ex.getCause()!=null && ex.getCause() instanceof SystemException) {
+			if (ex.getCause()!=null && SystemException.class.isAssignableFrom(ex.getCause().getClass())) {
 				throw ((SystemException) ex.getCause());
 			}
 			throw new SystemImplementationException("Exception "+ex+" from call to "+getName(),ex);

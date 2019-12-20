@@ -190,7 +190,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			} // propagate to the top where it's handled
 			try {
 				t.printStackTrace();
-				if (t instanceof UserException) {
+				if (UserException.class.isAssignableFrom(t.getClass())) {
 					String r="<h1>ERROR</h1><p>Sorry, your request could not be completed<br><pre>"+t.getLocalizedMessage()+"</pre></p>";
 					GPHUD.getLogger().log(INFO,"UserInterface/UserException "+t);
 					if (GPHUD.DEV) {
