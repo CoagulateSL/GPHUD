@@ -41,6 +41,14 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  */
 public class State extends DumpableState {
 
+	public enum Sources {
+		NONE,
+		SYSTEM,
+		USER,
+		CONSOLE,
+		SCRIPTING,
+		OBJECT
+	}
 	private final Map<TableRow,Map<String,String>> kvmaps=new HashMap<>();
 	@Nonnull
 	public Sources source=Sources.NONE;
@@ -1036,12 +1044,4 @@ public class State extends DumpableState {
 	}
 
 
-	public enum Sources {
-		NONE,
-		SYSTEM,
-		USER,
-		CONSOLE,
-		SCRIPTING,
-		OBJECT
-	}
 }
