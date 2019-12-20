@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.State;
@@ -99,9 +100,11 @@ public abstract class Templater {
 		for (final String subst: getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
 				String value;
-				try { value=getValue(st,subst); } catch (@Nonnull final UserException e) {
-					value="Error: "+e.getMessage();
-				}
+				//try {
+					value=getValue(st,subst);
+				//} catch (@Nonnull final UserException e) {
+				//	value="Error: "+e.getMessage();
+				//}
 				string=string.replaceAll(subst,Matcher.quoteReplacement(value));
 			}
 		}
@@ -123,6 +126,7 @@ public abstract class Templater {
 	private static String getValue(@Nonnull final State st,
 	                               final String keyword)
 	{
+		if (Thread.currentThread().getStackTrace().length>75) { throw new UserConfigurationException("Recursion detected loading template "+keyword+" for "+st); }
 		final Method m=getMethods(st).get(keyword);
 		if (m!=null) {
 			try {
@@ -132,8 +136,8 @@ public abstract class Templater {
 				st.logger().log(SEVERE,"Exception running templater method",ex);
 				throw new SystemImplementationException("Templater exceptioned",ex);
 			} catch (@Nonnull final InvocationTargetException e) {
-				if (e.getCause() instanceof UserException) { throw (UserException) e.getCause(); }
-				if (e.getCause() instanceof SystemException) { throw (SystemException) e.getCause(); }
+				if (UserException.class.isAssignableFrom(e.getCause().getClass())) { throw (UserException) e.getCause(); }
+				if (SystemException.class.isAssignableFrom(e.getCause().getClass())) { throw (SystemException) e.getCause(); }
 				throw new SystemImplementationException("Unable to invoke target",e);
 			}
 		}
