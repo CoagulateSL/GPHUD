@@ -12,7 +12,7 @@
 #define LINK_LEGACY_PACKAGE -365746003 // not really legacy :P
 #define LINK_STOP -365746003
 #define LINK_SET_STAGE -365746004
-string VERSION="3.9.0";
+string VERSION="3.11.2";
 string COMPILEDATE=__DATE__;
 string COMPILETIME=__TIME__;
 string IAIN_MALTZ="8dc52677-bea8-4fc3-b69b-21c5e2224306";
