@@ -244,7 +244,7 @@ public class EventSchedule extends TableRow {
 					            "EventXP",
 					            null,
 					            finallyawarded+"",
-					            description+" ("+finallyawarded+" of up to "+wanttoaward+")"
+					            description+" ("+finallyawarded+" of up to "+wanttoaward+" for time spent)"
 					           );
 				}
 			}
@@ -282,6 +282,13 @@ public class EventSchedule extends TableRow {
 		final StringBuilder padme=new StringBuilder(padmeint+"");
 		while (padme.length()<howmuch) { padme.append(" "); }
 		return padme.toString();
+	}
+
+	@Nonnull
+	@Override
+	public String toString()
+	{
+		return "[Schedule#"+getId()+"="+getName()+"]";
 	}
 
 }
