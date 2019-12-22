@@ -39,8 +39,8 @@ integer process(key id) {
 	}
 	if (incommand=="registered") { cookie=jsonget("cookie"); BOOTSTAGE=BOOT_COMPLETE; llMessageLinked(LINK_THIS,LINK_SET_STAGE,(string)BOOTSTAGE,NULL_KEY); }
 	if (incommand=="ping") { retjson=llJsonSetValue(retjson,["cookie"],cookie); }
-	if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
-	if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
+	//if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
+	//if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
 	if (jsonget("mode")!="") { MODE=jsonget("mode"); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
