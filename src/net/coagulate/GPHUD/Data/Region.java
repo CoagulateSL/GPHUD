@@ -290,7 +290,8 @@ public class Region extends TableRow {
 					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters"+
 							  ".owner=? and characters.instanceid=?",
 					  avatarid,
-					  st.getInstance().getId());
+					  st.getInstance().getId()
+					 );
 					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",UnixTime.getUnixTime(),getId(),avatarid);
 				}
 				// computer visit XP ((TODO REFACTOR ME?))
