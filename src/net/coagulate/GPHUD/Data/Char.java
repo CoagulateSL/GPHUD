@@ -927,7 +927,8 @@ public class Char extends TableRow {
 
 	public void closeVisits(@Nonnull final State st) {
 		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
-		d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",st.getCharacter().getId(),st.getRegion().getId());
+		d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",getId(),getRegion().getId());
+		d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",getId());
 	}
 
 	public void closeURL(@Nonnull final State st) {
