@@ -21,7 +21,8 @@ public class IntrospectionMenu {
 		f.add(new TextHeader("GPHUD Introspection"));
 		f.add(new TextSubHeader("Global definitions"));
 		f.p("This is a developer feature that allows you to look around the internals of GPHUD.");
-		f.p("Please see the documentation site at <a href=\"/Docs/GPHUD/index.php/Main_Page.html\">https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html</a> for more.");
+		f.p("Please see the documentation site at <a href=\"/Docs/GPHUD/index.php/Main_Page.html\">https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html</a> for more" +
+				    ".");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/api/\">API</a>"));
 		f.p("The API documentation provides an overview of callable functions provided by GPHUD and further details about individual commands.");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/kvmap\">Keyvalue Mappings</a>"));
