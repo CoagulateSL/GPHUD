@@ -287,6 +287,10 @@ public class Region extends TableRow {
 				final int count=rows.size();
 				if (count>0) {
 					st.logger().info("Disconnected avatar "+avatar.getName());
+					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters"+
+							  ".owner=? and characters.instanceid=?",
+					  avatarid,
+					  st.getInstance().getId());
 					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",UnixTime.getUnixTime(),getId(),avatarid);
 				}
 				// computer visit XP ((TODO REFACTOR ME?))
