@@ -33,11 +33,11 @@ public abstract class EventsMaintenance {
 			GPHUD.getLogger().log(INFO,"Starting event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
 			final Map<String,String> config=e.loadKVs();
 			String message=config.get("events.zonestartmessage");
-			if (message!=null && !message.isEmpty()) {
-				for (final Zone loc: e.getZones()) {
+			for (final Zone loc: e.getZones()) {
+				if (message!=null && !message.isEmpty()) {
 					loc.broadcastMessage("[Event:"+e.getName()+"] "+message);
-					inzone.addAll(Char.getInZone(loc));
 				}
+				inzone.addAll(Char.getInZone(loc));
 			}
 			message=config.get("events.broadcaststartmessage");
 			if (message!=null && !message.isEmpty()) {
@@ -121,8 +121,8 @@ public abstract class EventsMaintenance {
 				final String entrymessage=st.getKV(nowin.getEvent(),"events.evententrymessage");
 				if (entrymessage!=null && !entrymessage.isEmpty()) {
 					response.put("eventmessage2","[Event:"+nowin.getEvent().getName()+"] "+entrymessage);
-					nowin.startVisit(st.getCharacter());
 				}
+				nowin.startVisit(st.getCharacter());
 			}
 		}
 	}
