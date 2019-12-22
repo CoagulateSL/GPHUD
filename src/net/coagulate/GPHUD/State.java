@@ -862,7 +862,7 @@ public class State extends DumpableState {
 				if (instance==null) {
 					// YES avatar, NO character, NO instance
 					character=Char.getMostRecent(avatar);
-					instance=getCharacter().getInstance();
+					if (character!=null) { instance=character.getInstance(); }
 				}
 				else {
 					// YES avatar, NO character, YES instance
