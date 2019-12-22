@@ -44,7 +44,7 @@ public abstract class Interface implements HttpRequestHandler {
 	@Nonnull
 	public static String generateURL(final State st,
 	                                 final String ending) {
-		return "https://"+(GPHUD.DEV?"dev.":"")+"coagulate.sl/"+base()+"/"+ending;
+		return "https://"+(GPHUD.DEV?"dev.":"")+"sl.coagulate.net/"+base()+"/"+ending;
 	}
 
 	public static int convertVersion(@Nonnull final String version) {

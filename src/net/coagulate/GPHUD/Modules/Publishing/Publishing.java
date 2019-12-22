@@ -24,7 +24,7 @@ public class Publishing {
 	}
 
 	static void contentResizer(@Nonnull final State st) {
-		st.form().add("<script type=\"text/javascript\" src=\"https://coagulate.sl/resources/iframeResizer.contentWindow.min.js\"></script>");
+		st.form().add("<script type=\"text/javascript\" src=\"https://sl.coagulate.net/resources/iframeResizer.contentWindow.min.js\"></script>");
 	}
 
 	static void published(@Nonnull final State st,
@@ -33,15 +33,14 @@ public class Publishing {
 		final Form f=st.form();
 		example(f,
 		        "<style>\n"+"  iframe {\n"+"    width: 1px;\n"+"    height: 1px;\n"+"    min-width: 100%;\n"+"  }\n"+"</style>\n"+"<iframe frameBorder=0 "+"src=\"https"+
-				        "://coagulate.sl/GPHUD/published/"+inline+"\" id=\""+id+"\"></iframe>"+"<script type=\"text/javascript\" src=\"https://coagulate"+".sl/resources"+
+				        "://sl.coagulate.net/GPHUD/published/"+inline+"\" id=\""+id+"\"></iframe>"+"<script type=\"text/javascript\" src=\"https://sl.coagulate"+".net/resources"+
 				        "/iframeResizer.min.js\"></script>"+"<script>\n"+"  iFrameResize({ log: false }, '#"+id+"')\n"+"</script>"
 		       );
 	}
 
 	private static void example(@Nonnull final Form f,
 	                            String s) {
-		if (GPHUD.DEV) { s=s.replaceAll("sl\\.coagulate\\.net","sldev.coagulate.net"); }
-		if (GPHUD.DEV) { s=s.replaceAll("coagulate\\.sl","dev.coagulate.sl"); }
+		if (GPHUD.DEV) { s=s.replaceAll("sl\\.coagulate\\.net","dev.sl.coagulate.net"); }
 		f.add("<p><b>Copy paste the following HTML into your page:</b><br><pre style=\"border: 1;\">"+s.replaceAll("<","&lt;")
 		                                                                                               .replaceAll(">","&gt;")
 		                                                                                               .replaceAll("\n","<br>")+"</pre></p>");
