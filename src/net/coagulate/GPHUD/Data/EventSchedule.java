@@ -286,8 +286,7 @@ public class EventSchedule extends TableRow {
 
 	@Nonnull
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "[Schedule#"+getId()+"="+getName()+"]";
 	}
 
