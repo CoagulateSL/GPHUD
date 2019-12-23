@@ -208,8 +208,9 @@ public class Transmission extends Thread {
 		}
 		if (response==null) {
 			GPHUD.getLogger().log(WARNING,"Failed all retransmission attempts for "+json);
+			return;
 		}
-		if (response!=null && !response.isEmpty()) {
+		if (!response.isEmpty()) {
 			try {
 				final JSONObject j=new JSONObject(response);
 				jsonresponse=j;
