@@ -261,6 +261,7 @@ public class Transmission extends Thread {
 		final BufferedReader rd=new BufferedReader(new InputStreamReader(transmission.getInputStream()));
 		String line;
 		final StringBuilder response=new StringBuilder();
+		//noinspection NestedAssignment
 		while ((line=rd.readLine())!=null) {
 			response.append(line).append("\n");
 		}
