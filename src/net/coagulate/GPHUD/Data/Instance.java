@@ -699,7 +699,7 @@ public class Instance extends TableRow {
 					if (playedby!=null) {
 						final String payloadstring=payload.toString();
 						buffer.get(reg).put(playedby,payloadstring);
-						if (buffer.get(reg).toString().length()>(3*1024)) {
+						if (buffer.get(reg).toString().length()>(1024+512+256+128+64)) {
 							reg.sendServer(buffer.get(reg));
 							buffer.put(reg,new JSONObject().put("incommand","disseminate"));
 						}
