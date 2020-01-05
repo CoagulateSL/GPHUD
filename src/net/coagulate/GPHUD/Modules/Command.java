@@ -344,11 +344,10 @@ public abstract class Command {
 					args[i+1]=((String) o).trim();
 					o=args[i+1];
 				}
-				System.out.println(a.getName()+" mandatory is "+a.mandatory());
 				if (a.mandatory()) {
 					if (o==null) {
 						return new ErrorResponse("Argument "+a.getName()+" is mandatory and null was passed"+suspiciousname);
-					} else { System.out.println(a.getName()+" o is of class "+o.getClass()); }
+					}
 					if (o instanceof String) {
 						final String s=(String) o;
 						if (s.isEmpty()) {
