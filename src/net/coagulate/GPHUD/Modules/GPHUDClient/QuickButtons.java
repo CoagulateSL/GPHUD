@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Command.Commands;
@@ -23,37 +24,45 @@ public class QuickButtons {
 	@Commands(description="Triggered when quick button 1 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
 	          permitScripting=false)
 	public static Response quickButton1(@Nonnull final State st) {
-		return templateOrRun(st,st.getKV("GPHUDClient.QuickButton1").value());
+		return quickButton(st,1);
 	}
 
 	@Commands(description="Triggered when quick button 2 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton2(@Nonnull final State st) {
-		return templateOrRun(st,st.getKV("GPHUDClient.QuickButton2").value());
+	public static Response quickButton2(@Nonnull final State st){
+		return quickButton(st,2);
 	}
 
 	@Commands(description="Triggered when quick button 3 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton3(@Nonnull final State st) {
-		return templateOrRun(st,st.getKV("GPHUDClient.QuickButton3").value());
+	public static Response quickButton3(@Nonnull final State st){
+		return quickButton(st,3);
 	}
 
 	@Commands(description="Triggered when quick button 4 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton4(@Nonnull final State st) {
-		return templateOrRun(st,st.getKV("GPHUDClient.QuickButton4").value());
+	public static Response quickButton4(@Nonnull final State st){
+		return quickButton(st,4);
 	}
 
 	@Commands(description="Triggered when quick button 5 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton5(@Nonnull final State st) {
-		return templateOrRun(st,st.getKV("GPHUDClient.QuickButton5").value());
+	public static Response quickButton5(@Nonnull final State st){
+		return quickButton(st,5);
 	}
 
 	@Commands(description="Triggered when quick button 6 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
 	          permitScripting=false)
 	public static Response quickButton6(@Nonnull final State st) {
-		return templateOrRun(st,st.getKV("GPHUDClient.QuickButton6").value());
+		return quickButton(st,6);
+	}
+
+	static Response quickButton(@Nonnull final State st,
+	                            int button) {
+		String commandname=st.getKV("GPHUDClient.QuickButton"+button).value();
+		if (commandname==null || commandname.isEmpty()) { return new JSONResponse(new JSONObject()); }
+		if (commandname.toLowerCase().startsWith("gphudclient.quickbutton")) { throw new UserConfigurationException("Quick button "+button+" is not permitted to call another quick button ("+commandname+")"); }
+		return templateOrRun(st,commandname);
 	}
 
 	static Response templateOrRun(@Nonnull final State st,
