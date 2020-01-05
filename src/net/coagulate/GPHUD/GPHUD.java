@@ -32,8 +32,8 @@ import static java.util.logging.Level.SEVERE;
  * @author Iain Price <gphud@predestined.net>
  */
 public class GPHUD {
-	public static final String VERSION="v3.11.2";
-	public static final String VERSION_DATE="Dec 20th 2019";
+	public static final String VERSION="v3.11.3";
+	public static final String VERSION_DATE="Jan 5th 2020";
 	// config KV store
 	private static final Map<String,String> CONFIG=new TreeMap<>();
 	public static String hostname="UNSET";
