@@ -159,6 +159,9 @@ public class AliasCommand extends Command {
 		if (targetcommand==null) {
 			throw new UserConfigurationException("Error: Alias targets command "+name+", "+fail);
 		}
+		if (targetcommand.getFullName().toLowerCase().startsWith("gphudclient.quickbutton")) {
+			throw new UserConfigurationException("It is not permitted to call quickbuttons from aliases (in alias "+getName()+")");
+		}
 		// assume target.  this sucks :P
 		if (parametermap.containsKey("target")) {
 			String v=parametermap.get("target");
