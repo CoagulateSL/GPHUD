@@ -338,25 +338,24 @@ public abstract class Command {
 				if (a.getName().startsWith("arg") && a.getName().length()==4) {
 					suspiciousname=".  ***WARNING*** this argument name starts with 'arg' and may indicate javac was NOT invoked with the -parameter!!!";
 				}
-				if (i>0) {
-					Object o=args[i];
-					// I don't really like this, but...
+				Object o=args[i+1]; // cos invoking arguments skips the "state" parameter, but we have it in the args list by now
+				// I don't really like this, but...
+				if (o instanceof String) {
+					args[i+1]=((String) o).trim();
+					o=args[i+1];
+				}
+				System.out.println(a.getName()+" mandatory is "+a.mandatory());
+				if (a.mandatory()) {
+					if (o==null) {
+						return new ErrorResponse("Argument "+a.getName()+" is mandatory and null was passed"+suspiciousname);
+					} else { System.out.println(a.getName()+" o is of class "+o.getClass()); }
 					if (o instanceof String) {
-						args[i]=((String) o).trim();
-						o=args[i];
-					}
-					if (a.mandatory()) {
-						if (o==null) {
-							return new ErrorResponse("Argument "+a.getName()+" is mandatory and null was passed"+suspiciousname);
+						final String s=(String) o;
+						if (s.isEmpty()) {
+							return new ErrorResponse("Argument "+a.getName()+" is mandatory and a blank string was passed"+suspiciousname);
 						}
-						if (o instanceof String) {
-							final String s=(String) o;
-							if (s.isEmpty()) {
-								return new ErrorResponse("Argument "+a.getName()+" is mandatory and a blank string was passed"+suspiciousname);
-							}
-							if ("-".equals(s)) {
-								return new ErrorResponse("Argument "+a.getName()+" is mandatory and a dash '-' was passed"+suspiciousname);
-							}
+						if ("-".equals(s)) {
+							return new ErrorResponse("Argument "+a.getName()+" is mandatory and a dash '-' was passed"+suspiciousname);
 						}
 					}
 				}
