@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
@@ -98,9 +100,12 @@ public class MenuCommand extends Command {
 	public Response run(@Nonnull final State st,
 	                    @Nonnull final SafeMap parametermap) {
 		final String selected=parametermap.get("choice");
-		int choice=0;
+		int choice=-1;
 		for (int i=1;i<=12;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
-		return Modules.getJSONTemplateResponse(st,definition.getString("command"+choice));
+		if (choice==-1) { throw new UserInputLookupFailureException("Menu "+getName()+" has no element "+selected); }
+		String commandtoinvoke=definition.optString("command"+choice,"");
+		if (commandtoinvoke.isEmpty()) { throw new UserConfigurationException("Menu "+getName()+" command "+selected+" is choice "+choice+" and does not have a command to invoke"); }
+		return Modules.getJSONTemplateResponse(st,commandtoinvoke);
 	}
 
 	@Nonnull
