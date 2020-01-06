@@ -28,7 +28,7 @@ public class Alias extends TableRow {
 	 *
 	 * @param id the ID number we want to get
 	 *
-	 * @return An Avatar representation
+	 * @return An Alias representation
 	 */
 	@Nonnull
 	public static Alias get(final int id) { return (Alias) factoryPut("Alias",id,new Alias(id)); }
@@ -65,6 +65,14 @@ public class Alias extends TableRow {
 		return aliases;
 	}
 
+	/**
+	 * Get a particular alias from an instance.
+	 *
+	 * @param st   State
+	 * @param name Short Name of alias
+	 *
+	 * @return The Alias object, or null if not found.
+	 */
 	@Nullable
 	public static Alias getAlias(@Nonnull final State st,
 	                             final String name) {
@@ -75,6 +83,16 @@ public class Alias extends TableRow {
 		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
+	/**
+	 * Create a new alias.
+	 * Protects against weird name inputs and duplicate aliases.
+	 *
+	 * @param st       State
+	 * @param name     Short name for new alias
+	 * @param template JSON Template of alias (See Alias Module)
+	 *
+	 * @return
+	 */
 	@Nonnull
 	public static Alias create(@Nonnull final State st,
 	                           @Nonnull final String name,
