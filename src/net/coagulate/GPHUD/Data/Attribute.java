@@ -34,7 +34,7 @@ public class Attribute extends TableRow {
 	 *
 	 * @param id the ID number we want to get
 	 *
-	 * @return A Region representation
+	 * @return An Attribute representation
 	 */
 	@Nonnull
 	public static Attribute get(final int id) {
@@ -79,7 +79,7 @@ public class Attribute extends TableRow {
 	/**
 	 * Get the attributes for the instance in this state.
 	 *
-	 * @param st Infers state
+	 * @param st State, Infers instance
 	 *
 	 * @return Set of attribute for this instance
 	 */
@@ -102,13 +102,25 @@ public class Attribute extends TableRow {
 		return set;
 	}
 
+	/**
+	 * Create a new attribute
+	 *
+	 * @param instance          Instance to create in
+	 * @param name              Name of attribute
+	 * @param selfmodify        unpriviledged user self-modify
+	 * @param attributetype     "type" of attribute (defined at module level)
+	 * @param grouptype         subtype of attribute (see module)
+	 * @param usesabilitypoints can be increased by ability points (costs against ability points)
+	 * @param required          value must be supplied
+	 * @param defaultvalue      default value (where not required attribute)
+	 */
 	static void create(@Nonnull final Instance instance,
 	                   final String name,
-	                   final Boolean selfmodify,
+	                   final boolean selfmodify,
 	                   final String attributetype,
 	                   final String grouptype,
-	                   final Boolean usesabilitypoints,
-	                   final Boolean required,
+	                   final boolean usesabilitypoints,
+	                   final boolean required,
 	                   String defaultvalue) {
 		// =)
 		if ("".equals(defaultvalue)) { defaultvalue=null; }
