@@ -62,6 +62,18 @@ public class AdminNotes extends TableRow {
 		       );
 	}
 
+	/**
+	 * Get a list of admin notes for a specific user or character.
+	 * This returns admin notes against the user (i.e. no character) or against the specific character.
+	 *
+	 * @param instance  Instance
+	 * @param user      User
+	 * @param character Character
+	 * @param showall   False will omit admin-only notes, true returns all notes
+	 * @param toponly   If true, returns only top 3 elements
+	 *
+	 * @return List (possibly empty) of AdminNote elements
+	 */
 	@Nonnull
 	public static List<AdminNote> get(@Nonnull final Instance instance,
 	                                  @Nonnull final User user,
@@ -81,6 +93,16 @@ public class AdminNotes extends TableRow {
 		return results;
 	}
 
+	/**
+	 * Get a list of admin notes for a specific user or any of their characters.
+	 *
+	 * @param instance Instance
+	 * @param user     User
+	 * @param showall  False will omit admin-only notes, true returns all notes
+	 * @param toponly  If true, returns only top 3 elements
+	 *
+	 * @return List (possibly empty) of AdminNote elements
+	 */
 	@Nonnull
 	public static List<AdminNote> get(@Nonnull final Instance instance,
 	                                  @Nonnull final User user,
@@ -98,6 +120,13 @@ public class AdminNotes extends TableRow {
 		return results;
 	}
 
+	/**
+	 * Return all admin notes for an instance
+	 *
+	 * @param instance Instance ID to get notes for
+	 *
+	 * @return List of AdminNote elements
+	 */
 	@Nonnull
 	public static List<AdminNote> get(@Nonnull final Instance instance) {
 		final List<AdminNote> results=new ArrayList<>();
@@ -105,6 +134,9 @@ public class AdminNotes extends TableRow {
 		return results;
 	}
 
+	/**
+	 * Convert a ResultsRow to an AdminNote element
+	 */
 	@Nonnull
 	private static AdminNote resultify(@Nonnull final ResultsRow row) {
 		return new AdminNote(row.getInt("tds"),
