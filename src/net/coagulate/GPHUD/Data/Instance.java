@@ -722,7 +722,7 @@ public class Instance extends TableRow {
 
 	public void createAttribute(final String name,
 	                            final Boolean selfmodify,
-	                            final String attributetype,
+	                            final Attribute.ATTRIBUTETYPE attributetype,
 	                            final String grouptype,
 	                            final Boolean usesabilitypoints,
 	                            final Boolean required,

@@ -117,7 +117,7 @@ public class Attribute extends TableRow {
 	static void create(@Nonnull final Instance instance,
 	                   final String name,
 	                   final boolean selfmodify,
-	                   final String attributetype,
+	                   final ATTRIBUTETYPE attributetype,
 	                   final String grouptype,
 	                   final boolean usesabilitypoints,
 	                   final boolean required,
@@ -129,7 +129,7 @@ public class Attribute extends TableRow {
 		        instance.getId(),
 		        name,
 		        selfmodify,
-		        attributetype,
+		        toString(attributetype),
 		        grouptype,
 		        usesabilitypoints,
 		        required,
@@ -212,7 +212,12 @@ public class Attribute extends TableRow {
 			type=getStringNullable("attributetype");
 			cachePut("type",type,getNameCacheTime());
 		}
-		if (type==null) { throw new SystemBadValueException("Null type for attribute "+getId()+" "+getNameSafe()); }
+		if (type==null) { throw new SystemBadValueException("Null type passed for attribute "+getId()+" "+getNameSafe()); }
+		return fromString(type);
+	}
+
+	@Nonnull
+	public static ATTRIBUTETYPE fromString(@Nonnull String type) {
 		if ("text".equalsIgnoreCase(type)) { return TEXT; }
 		if ("integer".equalsIgnoreCase(type)) { return INTEGER; }
 		if ("group".equalsIgnoreCase(type)) { return GROUP; }
@@ -220,7 +225,20 @@ public class Attribute extends TableRow {
 		if ("float".equalsIgnoreCase(type)) { return FLOAT; }
 		if ("color".equalsIgnoreCase(type)) { return COLOR; }
 		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
-		throw new SystemImplementationException("Unhandled type "+type+" for attribute "+getId()+" "+getNameSafe());
+		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
+	}
+
+	private static String toString(ATTRIBUTETYPE type) {
+		switch (type) {
+			case TEXT: return "text";
+			case FLOAT: return "float";
+			case INTEGER: return "integer";
+			case GROUP: return "group";
+			case POOL: return "pool";
+			case COLOR: return "color";
+			case EXPERIENCE: return "experience";
+		}
+		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}
 
 	@Nullable
