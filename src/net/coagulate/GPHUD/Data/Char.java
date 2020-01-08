@@ -57,6 +57,7 @@ public class Char extends TableRow {
 	/**
 	 * Update the last-used timestamp on a URL.
 	 * Provided it is more than REFRESH_INTERVAL seconds ago (i.e. dont spam the DB with write-updates)
+	 * Ignores the request if the URL doesn't exist.
 	 *
 	 * @param url the URL to refresh the last used timer for.
 	 */
@@ -108,6 +109,12 @@ public class Char extends TableRow {
 		return chars;
 	}
 
+	/**
+	 * Purges a character level KV from the entire instance, for all users.
+	 *
+	 * @param instance Instance to eliminate the KV from
+	 * @param key      K to eliminate
+	 */
 	static void wipeKV(@Nonnull final Instance instance,
 	                   final String key) {
 		final String kvtable="characterkvstore";
@@ -155,11 +162,12 @@ public class Char extends TableRow {
 	}
 
 	/**
-	 * Get list of users characters at a given instance.
+	 * Get list of a users non-retired characters at a given instance.
 	 *
 	 * @param instance The instance
+	 * @param avatar   The user to get a list of characters for
 	 *
-	 * @return List of Char (characters)
+	 * @return List of unretired Char (characters)
 	 */
 	@Nonnull
 	public static Set<Char> getCharacters(@Nonnull final Instance instance,
@@ -193,6 +201,13 @@ public class Char extends TableRow {
 		return results;
 	}
 
+	/**
+	 * Get most recent character an avatar used, from any instance
+	 *
+	 * @param avatar User to look up
+	 *
+	 * @return Most recent character used, possibly null.
+	 */
 	@Nullable
 	public static Char getMostRecent(@Nonnull final User avatar) {
 		final Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 order by lastactive desc limit 0,1",avatar.getId());
@@ -206,6 +221,14 @@ public class Char extends TableRow {
 		}
 	}
 
+	/**
+	 * Get most recent character used at an instance
+	 *
+	 * @param avatar           User to look up most recent character for
+	 * @param optionalinstance Specific instance to search in, or null for find in all instances
+	 *
+	 * @return Most recently used character matching parameters, or null
+	 */
 	@Nullable
 	public static Char getMostRecent(@Nonnull final User avatar,
 	                                 @Nullable final Instance optionalinstance) {
@@ -225,6 +248,14 @@ public class Char extends TableRow {
 		}
 	}
 
+	/**
+	 * Return a HTML list of userid/username of NPCs at this instance
+	 *
+	 * @param st       Inters instance
+	 * @param listname name attribute of the HTML list
+	 *
+	 * @return A DropDownList
+	 */
 	@Nonnull
 	public static DropDownList getNPCList(@Nonnull final State st,
 	                                      final String listname) {
@@ -301,6 +332,7 @@ public class Char extends TableRow {
 	 *
 	 * @return Avatar owner of this character
 	 */
+	@Nonnull
 	public User getOwner() {
 		return User.get(getInt("owner"));
 	}
@@ -628,13 +660,13 @@ public class Char extends TableRow {
 	}
 
 	/**
-	 * Push a JSON K:V pair to the characters hud.
+	 * Transmits a JSON K:V pair to the characters hud.
 	 *
 	 * @param key   Key
 	 * @param value Value
 	 */
 	public void push(@Nonnull final String key,
-	                 final String value) {
+	                 @Nonnull final String value) {
 		final String url=getURL();
 		if (url==null) { return; }
 		final JSONObject j=new JSONObject();
@@ -660,9 +692,9 @@ public class Char extends TableRow {
 	public int messages() { return Message.count(this); }
 
 	/**
-	 * Push the hudMessage count to the client's HUD.
+	 * Push the message count to the client's HUD.
 	 */
-	public void pushMessageCount() { push("messagecount",messages()+""); }
+	public void pushMessageCount() { push("messagecount",Integer.toString(messages())); }
 
 	/**
 	 * Log a queued/offline queueMessage
@@ -679,7 +711,7 @@ public class Char extends TableRow {
 	/**
 	 * get the next queued message and marks it as active
 	 *
-	 * @return Message object
+	 * @return Message object or null if none
 	 */
 	@Nullable
 	public Message getMessage() {
@@ -689,7 +721,7 @@ public class Char extends TableRow {
 	/**
 	 * gets the currently active message
 	 *
-	 * @return Message object
+	 * @return Message object, or null if no currently active message;
 	 */
 	@Nullable
 	public Message getActiveMessage() { return Message.getActiveMessage(this); }
@@ -945,12 +977,18 @@ public class Char extends TableRow {
 		d("update characters set urllast=? where characterid=?",UnixTime.getUnixTime(),getId());
 	}
 
+	/**
+	 * Checks they have an active URL
+	 */
 	public boolean isOnline() {
 		final String s=getURL();
 		if (s==null || s.isEmpty()) { return false; }
 		return true;
 	}
 
+	/**
+	 * Appends conveyances and pushes if any have changed
+	 */
 	public void considerPushingConveyances() {
 		final JSONObject json=new JSONObject();
 		appendConveyance(new State(this),json);
