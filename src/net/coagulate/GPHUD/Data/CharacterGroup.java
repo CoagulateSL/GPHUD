@@ -26,6 +26,12 @@ public class CharacterGroup extends TableRow {
 
 	protected CharacterGroup(final int id) { super(id); }
 
+	/**
+	 * Purges a particular K from the charactergroup KV store for all groups.
+	 *
+	 * @param instance Instance to purge from
+	 * @param key      Key
+	 */
 	static void wipeKV(@Nonnull final Instance instance,
 	                   final String key) {
 		final String kvtable="charactergroupkvstore";
@@ -39,13 +45,15 @@ public class CharacterGroup extends TableRow {
 		       );
 	}
 
-	@Nonnull
-	public static JSONObject createChoice(final State st,
-	                                      final Attribute a) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	// open groups only
+	/**
+	 * Populate a JSON object with options regarding a group.
+	 * Sets a SELECT type up.
+	 *
+	 * @param st     State
+	 * @param json   JSON to populate
+	 * @param prefix Prefix for the type/name (probably argN)
+	 * @param a      Attribute to model the group subtypes off
+	 */
 	public static void createChoice(@Nonnull final State st,
 	                                @Nonnull final JSONObject json,
 	                                final String prefix,
@@ -69,7 +77,7 @@ public class CharacterGroup extends TableRow {
 	 * @param st   State
 	 * @param name Name of group
 	 *
-	 * @return CharacterGroup
+	 * @return CharacterGroup or null if not found
 	 */
 	@Nullable
 	public static CharacterGroup resolve(@Nonnull final State st,
@@ -84,30 +92,13 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @param id the ID number we want to get
 	 *
-	 * @return A Region representation
+	 * @return A CharacterGroup representation
 	 */
 	@Nonnull
 	public static CharacterGroup get(final int id) {
 		return (CharacterGroup) factoryPut("CharacterGroup",id,new CharacterGroup(id));
 	}
 
-	/**
-	 * Find a character group by name.
-	 *
-	 * @param name Name of character group to locate
-	 *
-	 * @return Character group, or null if not found
-	 */
-	@Nullable
-	public static CharacterGroup find(final String name,
-	                                  @Nonnull final Instance i) {
-		try {
-			final Integer id=GPHUD.getDB().dqi("select charactergroupid from charactergroups where name like ? and instanceid=?",name,i.getId());
-			if (id==null) { return null; }
-			return get(id);
-		}
-		catch (@Nonnull final NoDataException e) { return null; }
-	}
 
 	@Nonnull
 	@Override
@@ -142,7 +133,7 @@ public class CharacterGroup extends TableRow {
 	}
 
 	/**
-	 * Get the members of the group
+	 * Get the character members of the group
 	 *
 	 * @return Set of Characters
 	 */
@@ -167,7 +158,7 @@ public class CharacterGroup extends TableRow {
 	/**
 	 * Returns the type of group for this group.
 	 *
-	 * @return Group type
+	 * @return Group type, or null if not typed
 	 */
 	@Nullable
 	public String getType() { return dqs("select type from charactergroups where charactergroupid=?",getId()); }
@@ -306,13 +297,18 @@ public class CharacterGroup extends TableRow {
 
 	protected int getNameCacheTime() { return 60; } // character groups are likely to end up renamable
 
-	public Boolean isOpen() {
+	public boolean isOpen() {
 		return getBool("open");
 	}
 
-	public void setOpen(final Boolean b) { set("open",b); }
+	public void setOpen(final boolean b) { set("open",b); }
 
-	@Nullable
+	/**
+	 * Gets groups type, or "" if not a typed group
+	 *
+	 * @return Group types or "", never null.
+	 */
+	@Nonnull
 	public String getTypeNotNull() {
 		final String ret=getType();
 		if (ret==null) { return ""; }

@@ -58,8 +58,8 @@ public class QuickButtons {
 	}
 
 	static Response quickButton(@Nonnull final State st,
-	                            int button) {
-		String commandname=st.getKV("GPHUDClient.QuickButton"+button).value();
+	                            final int button) {
+		final String commandname=st.getKV("GPHUDClient.QuickButton"+button).value();
 		if (commandname==null || commandname.isEmpty()) { return new JSONResponse(new JSONObject()); }
 		if (commandname.toLowerCase().startsWith("gphudclient.quickbutton")) { throw new UserConfigurationException("Quick button "+button+" is not permitted to call another quick button ("+commandname+")"); }
 		return templateOrRun(st,commandname);

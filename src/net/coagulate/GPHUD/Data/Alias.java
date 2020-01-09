@@ -91,7 +91,7 @@ public class Alias extends TableRow {
 	 * @param name     Short name for new alias
 	 * @param template JSON Template of alias (See Alias Module)
 	 *
-	 * @return
+	 * @return A reference to the newly created alias
 	 */
 	@Nonnull
 	public static Alias create(@Nonnull final State st,

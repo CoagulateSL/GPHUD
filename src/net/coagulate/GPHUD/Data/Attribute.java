@@ -217,7 +217,7 @@ public class Attribute extends TableRow {
 	}
 
 	@Nonnull
-	public static ATTRIBUTETYPE fromString(@Nonnull String type) {
+	public static ATTRIBUTETYPE fromString(@Nonnull final String type) {
 		if ("text".equalsIgnoreCase(type)) { return TEXT; }
 		if ("integer".equalsIgnoreCase(type)) { return INTEGER; }
 		if ("group".equalsIgnoreCase(type)) { return GROUP; }
@@ -228,7 +228,7 @@ public class Attribute extends TableRow {
 		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
 	}
 
-	private static String toString(ATTRIBUTETYPE type) {
+	private static String toString(final ATTRIBUTETYPE type) {
 		switch (type) {
 			case TEXT: return "text";
 			case FLOAT: return "float";
