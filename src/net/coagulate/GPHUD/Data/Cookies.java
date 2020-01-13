@@ -116,6 +116,11 @@ public class Cookies {
 		return r.getId();
 	}
 
+	/** Load cookie, or return null if not available (expired)
+	 *
+	 * @param cookie Cookie to resolve
+	 * @return Cookies object, or null if doesn't exist / expired.
+	 */
 	@Nullable
 	public static Cookies loadOrNull(@Nullable final String cookie) {
 		if (cookie!=null) {
@@ -226,7 +231,7 @@ public class Cookies {
 	/**
 	 * Get the instance for this cookie
 	 *
-	 * @return The instance
+	 * @return The instance, or null if not set
 	 */
 	@Nullable
 	public Instance getInstance() {
@@ -250,6 +255,12 @@ public class Cookies {
 	@Nullable
 	public String toString() { return "Avatar:"+getAvatar()+", Instance: "+getInstance()+", Character:"+getCharacter(); }
 
+	/** Load GPHUD state from the cookie.
+	 * Load the instance user and character from the cookie if they exist.
+	 * Inherits the avatar from the character if not set.
+	 *
+	 * @param st State to update
+	 */
 	public void setStateFromCookies(@Nonnull final State st) {
 		final Instance instance=getInstance();
 		if (instance!=null) { st.setInstance(instance); }
