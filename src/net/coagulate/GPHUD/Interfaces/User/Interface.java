@@ -149,7 +149,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				middletarget=st.getInstance().getLogoURL(st);
 				width=st.getInstance().getLogoWidth(st,100);
 			}
-			p+="<h1 style=\"margin: 0px;\"><img src=\""+middletarget+"\" height=100px></h1>";
+			p+="<h1 style=\"margin: 0px;\"><img src=\""+middletarget+"\" height=100px width="+width+"px></h1>";
 			p+="</td><td width=33% align=right>";
 			p+="<h1 style=\"margin: 0px;\"><a href=\"/\">"+SL.getBannerHREF()+"</a></h1>";
 			p+="</td></tr></table>";
