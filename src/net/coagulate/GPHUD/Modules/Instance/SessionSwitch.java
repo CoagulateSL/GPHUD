@@ -31,7 +31,7 @@ public class SessionSwitch {
 		f.add(new Separator());
 		for (final Instance i: Instance.getInstances()) {
 			final String id=i.getId()+"";
-			f.add("<table><tr><td align=right width=250px><img src=\""+i.getLogoURL(st)+"\" height=150px></td><td>");
+			f.add("<table><tr><td align=right width=300px><img src=\""+i.getLogoURL(st)+"\" height=150px width="+i.getLogoWidth(st,150)+"px></td><td>");
 			f.add(new Button("Select Instance - "+id,"Select Instance - "+i.getName()));
 			if (!values.get("Select Instance - "+id).isEmpty()) {
 				st.setInstance(i);

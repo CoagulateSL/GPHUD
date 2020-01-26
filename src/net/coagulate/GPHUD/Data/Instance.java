@@ -746,6 +746,12 @@ public class Instance extends TableRow {
 		return SL.textureURL(logouuid);
 	}
 
+	public int getLogoWidth(@Nonnull final State st,
+	                        final float height) {
+		float multiplier=st.getKV("GPHUDClient.widthmultiplier").floatValue();
+		return (int) (height*multiplier);
+	}
+
 	@Nonnull
 	public String getLogoHREF(@Nonnull final State st) {
 		return "<a href=\""+getLogoURL(st)+"\">";
