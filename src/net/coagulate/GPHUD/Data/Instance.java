@@ -743,7 +743,7 @@ public class Instance extends TableRow {
 	public String getLogoURL(@Nonnull final State st) {
 		final String logouuid=st.getKV(this,"GPHUDClient.logo");
 		if (logouuid==null || logouuid.isEmpty()) { return "/resources/banner-gphud.png"; }
-		return "http://texture-service.agni.lindenlab.com/"+logouuid+"/320x240.jpg/";
+		return SL.textureURL(logouuid);
 	}
 
 	@Nonnull

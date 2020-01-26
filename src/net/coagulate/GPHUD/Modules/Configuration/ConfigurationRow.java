@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.SL;
 
 import javax.annotation.Nonnull;
 
@@ -27,16 +28,13 @@ public class ConfigurationRow extends Row {
 		add(kv.description());
 		add(kv.editpermission());
 		if (kv.type()==KVTYPE.UUID) {
-			add(kv.defaultvalue()+"<br><img height=48 width=48 src=\"http://texture-service.agni.lindenlab.com/"+kv.defaultvalue()+"/256x192.jpg/\">");
-			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\"http://texture-service.agni.lindenlab.com/"+simulated.getRawKV(dbo,
-			                                                                                                                                     kvname
-			                                                                                                                                    )+"/256x192.jpg/\">");
+			add(kv.defaultvalue()+"<br><img height=48 width=48 src=\""+SL.textureURL(kv.defaultvalue())+"\">");
+			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\""+SL.textureURL(simulated.getRawKV(dbo,kvname)+"\">");
 		}
 		else {
 			add(kv.defaultvalue());
 			add(simulated.getRawKV(dbo,kv.fullname()));
-		}
-		if (st.hasPermission(kv.editpermission())) {
+		} if (st.hasPermission(kv.editpermission())) {
 			final Form ev=new Form();
 			ev.setAction("./setinstancevalue");
 			ev.add(new Hidden("key",kvname));
