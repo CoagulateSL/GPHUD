@@ -29,7 +29,7 @@ public class ConfigurationRow extends Row {
 		add(kv.editpermission());
 		if (kv.type()==KVTYPE.UUID) {
 			add(kv.defaultvalue()+"<br><img height=48 width=48 src=\""+SL.textureURL(kv.defaultvalue())+"\">");
-			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\""+SL.textureURL(simulated.getRawKV(dbo,kvname)+"\">");
+			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\""+SL.textureURL(simulated.getRawKV(dbo,kvname)+"\">"));
 		}
 		else {
 			add(kv.defaultvalue());
