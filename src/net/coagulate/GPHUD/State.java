@@ -153,6 +153,8 @@ public class State extends DumpableState {
 	}
 
 
+	public State (@Nonnull final Instance i) { instance=i; }
+
 	public State(@Nullable final Instance i,
 	             @Nullable final Region r,
 	             @Nullable final Zone z,
