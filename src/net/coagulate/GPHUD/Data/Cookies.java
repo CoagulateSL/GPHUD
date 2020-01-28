@@ -25,7 +25,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Cookies {
 
-	public static final int COOKIE_LIFESPAN=30*60;
+	public static final int COOKIE_LIFESPAN=60*60*6;
 	public static final int COOKIE_REFRESH=((int) (2.0/3.0*COOKIE_LIFESPAN)); // if cookie expires sooner than this many minutes from now
 	private final String cookie;
 	// i.e. 1/3rd of time gone (10 minutes), 20 minutes left, then refresh cookie.
