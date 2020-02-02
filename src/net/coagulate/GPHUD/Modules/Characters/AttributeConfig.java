@@ -129,7 +129,7 @@ public class AttributeConfig {
 			                                       Argument.ArgumentType.BOOLEAN)
 	                                       final Boolean usesabilitypoints,
 	                                       @Arguments(description="Attribute must be completed", type=Argument.ArgumentType.BOOLEAN) final Boolean required,
-	                                       @Arguments(description="Default value (can be blank)", type=Argument.ArgumentType.TEXT_ONELINE, max=4096)
+	                                       @Arguments(description="Default value (can be blank)", type=Argument.ArgumentType.TEXT_ONELINE, max=4096,mandatory=false)
 	                                       final String defaultvalue) {
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getName().equalsIgnoreCase(name)) { return new ErrorResponse("This name is already claimed"); }
