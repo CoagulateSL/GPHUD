@@ -27,8 +27,8 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	final Map<String,CacheElement> cache=new HashMap<>();
 	boolean validated;
 
-	public TableRow(final int id) { super(id); }
-
+	public TableRow(final int id) { super(id); validate(); }
+	
 	@Nonnull
 	public static String getLink(final String name,
 	                             final String target,
@@ -51,8 +51,11 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * Specifically checks the ID matches one and only one row, as it should.
 	 * Only checks once, after which it shorts and returns ASAP. (sets a flag).
 	 */
-	public void validate() {
+	protected void validate() {
 		if (validated) { return; }
+		try {
+			if (getTableName()==null) { validated=true; return; } // has no table
+		} catch (SystemImplementationException e) { validated=true; return; }  // also has no table, but gets angry about it
 		final int count=dqinn("select count(*) from "+getTableName()+" where "+getIdField()+"=?",getId());
 		if (count>1) {
 			throw new TooMuchDataException("Too many rows - got "+count+" instead of 1 while validating "+getTableName()+" - "+getId());
