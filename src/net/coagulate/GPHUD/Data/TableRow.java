@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -55,7 +54,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	protected void validate() {
 		if (validated) { return; }
 		try {
-			getTableName();
+			if (getTableName()==null) { validated=true; return; } // has no table
 		} catch (SystemImplementationException e) { validated=true; return; }  // also has no table, but gets angry about it
 		final int count=dqinn("select count(*) from "+getTableName()+" where "+getIdField()+"=?",getId());
 		if (count>1) {
@@ -85,7 +84,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	@Nonnull
 	public String getName() {
-		try { return (String) cacheGet("name"); } catch (@Nonnull final CacheMiss ignore) {/**/}
+		try { return (String) cacheGet("name"); } catch (@Nonnull final CacheMiss ex) {}
 		final String name=getStringNullable(getNameField());
 		if (name==null) { return "<null>"; }
 		if ("".equals(name)) { return "<blank>"; }
@@ -132,6 +131,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	public int resolveToID(@Nonnull final State st,
 	                       @Nullable final String s,
 	                       final boolean instancelocal) {
+		final boolean debug=false;
 		if (s==null) { return 0; }
 		if (s.isEmpty()) { return 0; }
 		try {
@@ -139,7 +139,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			final int id=Integer.parseInt(s);
 			if (id>0) { return id; }
 		}
-		catch (@Nonnull final NumberFormatException ignored) {/**/} // not a number then :P
+		catch (@Nonnull final NumberFormatException e) {} // not a number then :P
 		try {
 			final int id;
 			if (instancelocal) {
@@ -150,7 +150,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			}
 			if (id>0) { return id; }
 		}
-		catch (@Nonnull final NoDataException e) {/**/}
+		catch (@Nonnull final NoDataException e) { }
 		catch (@Nonnull final TooMuchDataException e) {
 			GPHUD.getLogger().warning("Multiple matches searching for "+s+" in "+getClass());
 		}
@@ -177,7 +177,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		try {
 			oldvalue=dqs("select v from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
 		}
-		catch (@Nonnull final NoDataException e) {/**/}
+		catch (@Nonnull final NoDataException e) {}
 		if (value==null && oldvalue==null) { return; }
 		if (value!=null && value.equals(oldvalue)) { return; }
 		Modules.validateKV(st,key);
@@ -206,22 +206,12 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	@Override
 	public int compareTo(@Nonnull final TableRow t) {
+		/*if (!TableRow.class.isAssignableFrom(t.getClass())) {
+			throw new SystemImplementationException(t.getClass().getName() + " is not assignable from DBObject");
+		}*/
 		final String ours=getNameSafe();
 		final String theirs=t.getNameSafe();
 		return ours.compareTo(theirs);
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this==o) { return true; }
-		if (o==null || getClass()!=o.getClass()) { return false; }
-		TableRow tableRow=(TableRow) o;
-		return tableRow.getId()==(getId());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(cache,validated);
 	}
 
 	Object cacheGet(final String key) throws CacheMiss {
