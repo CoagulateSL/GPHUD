@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Publishing;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -61,15 +62,19 @@ public class Groups extends Publishing {
 	@URL.URLs(url="/published/group/*", requiresAuthentication=false)
 	public static void oneGroup(@Nonnull final State st,
 	                            final SafeMap values) {
-		final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
-		final Instance instance=group.getInstance();
-		st.setInstance(instance);
-		if (!st.getKV("Publishing.PublishGroups").boolValue()) {
-			throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE");
+		try {
+			final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
+			final Instance instance=group.getInstance();
+			st.setInstance(instance);
+			if (!st.getKV("Publishing.PublishGroups").boolValue()) {
+				throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE");
+			}
+			st.form().add("<table border=0>");
+			st.form().add(formatGroup(group));
+			st.form().add("</table>");
+		} catch (NoDataException e) {
+			st.form().add("<i>The group being referenced does not exist</i>");
 		}
-		st.form().add("<table border=0>");
-		st.form().add(formatGroup(group));
-		st.form().add("</table>");
 		contentResizer(st);
 	}
 
