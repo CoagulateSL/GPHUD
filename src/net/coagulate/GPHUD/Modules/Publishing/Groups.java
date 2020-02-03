@@ -16,7 +16,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Groups extends Publishing {
-	public static final String PERMISSION_GROUPS="Publishing.PublishGroups";
+	public static String PERMISSION_GROUPS="Publishing.PublishGroups";
 	@URL.URLs(url="/publishing/allgroups")
 	public static void allGroupsSample(@Nonnull final State st,
 	                                   final SafeMap values) {
