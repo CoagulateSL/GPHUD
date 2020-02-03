@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
  * Some generally useful methods for publishing
  */
 public class Publishing {
+
 	static int getPartInt(@Nonnull final State st,
 	                      final int part) {
 		return Integer.parseInt(getPart(st,part));

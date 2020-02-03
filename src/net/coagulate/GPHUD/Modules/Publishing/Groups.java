@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Groups extends Publishing {
+	public static String PERMISSION_GROUPS="Publishing.PublishGroups";
 	@URL.URLs(url="/publishing/allgroups")
 	public static void allGroupsSample(@Nonnull final State st,
 	                                   final SafeMap values) {
@@ -47,7 +48,7 @@ public class Groups extends Publishing {
 		final String type=getPart(st,2);
 		final Set<String> output=new TreeSet<>();
 		st.setInstance(instance);
-		if (!st.getKV("Publishing.PublishGroups").boolValue()) {
+		if (!st.getKV(PERMISSION_GROUPS).boolValue()) {
 			throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE");
 		}
 		for (final CharacterGroup group: instance.getGroupsForKeyword(type)) {
@@ -66,7 +67,7 @@ public class Groups extends Publishing {
 			final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
 			final Instance instance=group.getInstance();
 			st.setInstance(instance);
-			if (!st.getKV("Publishing.PublishGroups").boolValue()) {
+			if (!st.getKV(PERMISSION_GROUPS).boolValue()) {
 				throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE");
 			}
 			st.form().add("<table border=0>");
@@ -84,7 +85,7 @@ public class Groups extends Publishing {
 		final Instance instance=Instance.get(getPartInt(st,1));
 		st.setInstance(instance);
 		final TreeMap<String,String> grouprows=new TreeMap<>();
-		if (!st.getKV("Publishing.PublishGroups").boolValue()) {
+		if (!st.getKV(PERMISSION_GROUPS).boolValue()) {
 			throw new UserConfigurationException("Groups publishing is not enabled in "+instance+", please set Publishing.PublishGroups to TRUE");
 		}
 		st.form().add("<table border=0>");
