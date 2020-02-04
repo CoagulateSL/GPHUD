@@ -64,6 +64,8 @@ public class Groups extends Publishing {
 	                            final SafeMap values) {
 		try {
 			final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
+			if (group==null) { throw new NoDataException("Can not find group "+getPartInt(st,1)); }
+			group.validate(st);
 			final Instance instance=group.getInstance();
 			st.setInstance(instance);
 			if (!st.getKV("Publishing.PublishGroups").boolValue()) {
