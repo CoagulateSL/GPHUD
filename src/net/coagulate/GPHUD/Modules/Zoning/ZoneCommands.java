@@ -1,9 +1,11 @@
 package net.coagulate.GPHUD.Modules.Zoning;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.Data.ZoneArea;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -24,7 +26,8 @@ import javax.annotation.Nullable;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public abstract class ZoneCommands {
+public class ZoneCommands {
+	private ZoneCommands() {}
 
 	@Nonnull
 	@Commands(context=Context.AVATAR, description="Create a new zone", requiresPermission="Zoning.Config")
@@ -81,6 +84,8 @@ public abstract class ZoneCommands {
 	public static Response deleteVolume(@Nonnull final State st,
 	                                    @Arguments(type=ArgumentType.INTEGER, description="Internal ID for the zone volume") final Integer zoneareaid) {
 		final ZoneArea za=ZoneArea.get(zoneareaid);
+		try { za.validate(st); }
+		catch (final NoDataException e) { return new ErrorResponse("There is no zone containing a volume with ID "+zoneareaid); }
 		final Zone zone=za.getZone();
 		zone.validate(st);
 		final String[] vectors=za.getVectors();
