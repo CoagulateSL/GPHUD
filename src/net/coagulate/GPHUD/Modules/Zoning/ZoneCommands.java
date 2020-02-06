@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class ZoneCommands {
+public abstract class ZoneCommands {
 	private ZoneCommands() {}
 
 	@Nonnull
