@@ -1019,6 +1019,11 @@ public class State extends DumpableState {
 		return callbackurl;
 	}
 
+	@Nullable
+	public String callbackurlNullable() {
+		return callbackurl;
+	}
+
 	public void callbackurl(@Nullable final String callbackurl) {
 		this.callbackurl=callbackurl;
 	}

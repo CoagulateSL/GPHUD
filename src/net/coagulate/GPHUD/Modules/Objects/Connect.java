@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Objects;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.ObjectTypes;
 import net.coagulate.GPHUD.Data.Objects;
@@ -13,6 +15,7 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.mail.MessagingException;
 
 public class Connect {
 
@@ -33,6 +36,18 @@ public class Connect {
 			            "Rejected GPHUD Object connection from "+st.getSourcename()+" at "+st.sourceregion+"/"+st.sourcelocation
 			           );
 			return new TerminateResponse("You do not have permissions to connect objects at this instance!");
+		}
+		// require a callback url
+		if (st.callbackurlNullable()==null || st.callbackurlNullable().isEmpty()) {
+			try {
+				MailTools.mail("Callback URL is null or blank, sending reboot",st.toHTML());
+			}
+			catch (MessagingException e) {
+				throw new SystemImplementationException("Mailout exception",e);
+			}
+			JSONObject json=new JSONObject();
+			json.put("reboot","No callback URL was presented, server requests us to restart");
+			return new JSONResponse(json);
 		}
 		final int version=Interface.convertVersion(st.json().getString("version"));
 		final int maxversion=Objects.getMaxVersion();
