@@ -186,18 +186,4 @@ public class Scripts extends TableRow {
 		validate();
 		return getBytes("bytecode");
 	}
-
-	/*
-	public static void test() {
-		final byte[] b=new byte[255];
-		for (int i=0;i<256;i++) { b[i]=((byte)(0xff & i)); }
-		GPHUD.getDB().d("insert into scripts(instanceid,name,bytecode) values(?,?,?)",-1," ENCODING TEST ",b);
-		final byte[] out=GPHUD.getDB().dqbyte("select bytecode from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
-		GPHUD.getDB().d("delete from scripts where instanceid=? and name=?",-1," ENCODING TEST ");
-		for (int i=0;i<256;i++) {
-			if (b[i] != out[i]) {
-				throw new SystemImplementationException("Comparison error on " + i + " - " + b[i] + " gave " + out[i]);
-			}
-		}
-	}*/
 }
