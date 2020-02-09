@@ -25,7 +25,7 @@ public class Scripts extends TableRow {
 
 	@Nonnull
 	public static Table getTable(final Instance instance) {
-		final Results rows=GPHUD.getDB().dq("select id,name,sourceversion,bytecodeversion from scripts order by id asc");
+		final Results rows=GPHUD.getDB().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by id asc",instance.getId());
 		final Table o=new Table();
 		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
 		for (final ResultsRow row: rows) {
