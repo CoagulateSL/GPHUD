@@ -38,14 +38,14 @@ public class Connect {
 			return new TerminateResponse("You do not have permissions to connect objects at this instance!");
 		}
 		// require a callback url
-		if (st.callbackurlNullable()==null || st.callbackurlNullable().isEmpty()) {
+		if (st.callbackurlNullable()==null || st.callbackurl().isEmpty()) {
 			try {
 				MailTools.mail("Callback URL is null or blank, sending reboot",st.toHTML());
 			}
-			catch (MessagingException e) {
+			catch (final MessagingException e) {
 				throw new SystemImplementationException("Mailout exception",e);
 			}
-			JSONObject json=new JSONObject();
+			final JSONObject json=new JSONObject();
 			json.put("reboot","No callback URL was presented, server requests us to restart");
 			return new JSONResponse(json);
 		}

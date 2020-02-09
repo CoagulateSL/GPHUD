@@ -442,6 +442,7 @@ public class State extends DumpableState {
 		//        Modules.validatePermission(permission);
 		if (isSuperUser()) { return true; }
 		if (isInstanceOwner()) { return true; }
+		if (elevated()) { return true; }
 		preparePermissionsCache();
 		if (permissionscache==null) { return false; }
 		for (final String check: permissionscache) { if (check.equalsIgnoreCase(permission)) { return true; } }
@@ -1037,6 +1038,11 @@ public class State extends DumpableState {
 	public void postmap(@Nullable final SafeMap postmap) {
 		this.postmap=postmap;
 	}
+
+	private boolean elevated;
+
+	public void elevate(final boolean elevate) { elevated=elevate; }
+	public boolean elevated() { return elevated; }
 
 	public enum Sources {
 		NONE,

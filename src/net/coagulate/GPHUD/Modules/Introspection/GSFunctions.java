@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 
 public class GSFunctions {
+	private GSFunctions(){}
 	@URL.URLs(url="/introspection/gsfunctions/*")
 	public static void renderCommand(@Nonnull final State st,
 	                                 final SafeMap values) {
@@ -46,6 +47,7 @@ public class GSFunctions {
 		f.add(new TextSubHeader("Description"));
 		f.add(meta.description());
 		f.add(new TextSubHeader("Notes"));
+		if (meta.privileged()) { f.add("<p><i>This is a privileged function call</i></p>"); }
 		f.add(meta.notes());
 	}
 
@@ -55,7 +57,6 @@ public class GSFunctions {
 	                            final SafeMap values) {
 		final Form f=st.form();
 		final Table t=new Table();
-		//t.border(true);
 		f.add(t);
 		for (final String functionname: net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.getAll().keySet()) {
 			t.openRow();
@@ -65,6 +66,11 @@ public class GSFunctions {
 				final net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction meta=
 						function.getAnnotation(net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction.class);
 				t.add("<a href=\"/GPHUD/introspection/gsfunctions/"+functionname+"\">"+functionname+"</a>");
+				if (meta.privileged()) {
+					t.add("<i>Privileged</i>&nbsp;&nbsp;&nbsp;");
+				} else {
+					t.add("");
+				}
 				t.add(meta.description());
 
 			}

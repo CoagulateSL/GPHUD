@@ -748,8 +748,8 @@ public class Instance extends TableRow {
 
 	public int getLogoWidth(@Nonnull final State st,
 	                        final float height) {
-		State fakestate=new State(this);
-		float multiplier=fakestate.getKV("GPHUDClient.widthmultiplier").floatValue();
+		final State fakestate=new State(this);
+		final float multiplier=fakestate.getKV("GPHUDClient.widthmultiplier").floatValue();
 		return (int) (height*multiplier);
 	}
 

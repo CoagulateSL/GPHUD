@@ -10,23 +10,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GSFunctions {
-	private static final Map<String,Method> gsfunctions=new HashMap<>();
+	private static final Map<String,Method> functionmap=new HashMap<>();
 
 	public static Method get(final String functionname) {
-		if (gsfunctions.containsKey(functionname)) { return gsfunctions.get(functionname); }
+		if (functionmap.containsKey(functionname)) { return functionmap.get(functionname); }
 		throw new GSUnknownIdentifier("Function call "+functionname+" is not defined.");
 	}
 
 	public static void register(final String string,
 	                            final Method method) {
-		if (gsfunctions.containsKey(string)) {
+		if (functionmap.containsKey(string)) {
 			throw new SystemImplementationException("Duplicate definition for gsFunction "+string);
 		}
-		gsfunctions.put(string,method);
+		functionmap.put(string,method);
 	}
 
 	@Nonnull
-	public static Map<String,Method> getAll() { return gsfunctions; }
+	public static Map<String,Method> getAll() { return functionmap; }
 
 	/**
 	 * Defines an exposed command.
@@ -43,5 +43,7 @@ public class GSFunctions {
 		@Nonnull String returns();
 
 		@Nonnull String notes();
+
+		boolean privileged();
 	}
 }

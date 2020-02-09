@@ -64,7 +64,6 @@ public class Groups extends Publishing {
 	                            final SafeMap values) {
 		try {
 			final CharacterGroup group=CharacterGroup.get(getPartInt(st,1));
-			if (group==null) { throw new NoDataException("Can not find group "+getPartInt(st,1)); }
 			group.validate(st);
 			final Instance instance=group.getInstance();
 			st.setInstance(instance);
@@ -74,7 +73,7 @@ public class Groups extends Publishing {
 			st.form().add("<table border=0>");
 			st.form().add(formatGroup(group));
 			st.form().add("</table>");
-		} catch (NoDataException e) {
+		} catch (final NoDataException e) {
 			st.form().add("<i>The group being referenced does not exist</i>");
 		}
 		contentResizer(st);

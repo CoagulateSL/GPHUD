@@ -64,7 +64,6 @@ public class ScriptingConfig {
 	                              @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		final String[] split=st.getDebasedURL().split("/");
-		//System.out.println(split.length);
 		final String id=split[split.length-1];
 		final Scripts script=Scripts.get(Integer.parseInt(id));
 		script.validate(st);
@@ -96,8 +95,8 @@ public class ScriptingConfig {
 				}
 				if (gsscript!=null) {
 					final GSCompiler compiler=new GSCompiler(gsscript);
-					compiler.compile();
-					script.setBytecode(compiler.toByteCode(),version);
+					compiler.compile(st);
+					script.setBytecode(compiler.toByteCode(st),version);
 					f.p("Script compiled and saved OK!");
 					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
 				}
@@ -191,7 +190,7 @@ public class ScriptingConfig {
 		try {
 			compiler=new GSCompiler(gsscript);
 			if (stage==STAGE.COMPILER) {
-				final List<ByteCode> bytecode=compiler.compile();
+				final List<ByteCode> bytecode=compiler.compile(st);
 				final StringBuilder code=new StringBuilder("<pre><table border=0>");
 				for (final ByteCode bc: bytecode) {
 					final ParseNode bcnode=bc.node();
@@ -218,7 +217,7 @@ public class ScriptingConfig {
 			return "<b>Compilation failed:</b> "+e;
 		}
 
-		final Byte[] rawcode=compiler.toByteCode();
+		final Byte[] rawcode=compiler.toByteCode(st);
 		if (stage==STAGE.BYTECODE) {
 			final StringBuilder bcstring=new StringBuilder("<pre><table border=0><tr>");
 			for (int i=0;i<rawcode.length;i++) {
@@ -251,7 +250,7 @@ public class ScriptingConfig {
 				}
 				else {
 					if (steps.size()>1) { output.append(formatStep(steps.get(steps.size()-2))); }
-					if (steps.size()>0) { output.append(formatStep(steps.get(steps.size()-1))); }
+					if (!steps.isEmpty()) { output.append(formatStep(steps.get(steps.size()-1))); }
 				}
 				output.append("</table>");
 				return output.toString();
