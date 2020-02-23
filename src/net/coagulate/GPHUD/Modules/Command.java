@@ -252,7 +252,8 @@ public abstract class Command {
 							v=v.substring(1);
 							try {
 								final User a=User.findMandatory(v);
-								targchar=Char.getActive(a,st.getInstance());
+								try { targchar=Char.getActive(a,st.getInstance()); }
+								catch (NoDataException e) { return new ErrorResponse(e.toString()); }
 							}
 							catch (@Nonnull final NoDataException e) {
 								return new ErrorResponse("Unable to find character of avatar named '"+v+"'");
