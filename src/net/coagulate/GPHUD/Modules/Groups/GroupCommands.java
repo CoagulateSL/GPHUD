@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Groups;
 
+import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
@@ -32,7 +33,12 @@ public class GroupCommands {
 		// does the group have a type
 		if (group.getType()!=null && !group.getType().isEmpty()) {
 			// it's a typed group, find the attribute it maps to
-			final Attribute attribute=Attribute.findGroup(st.getInstance(),group.getType());
+			final Attribute attribute;
+			try { attribute=Attribute.findGroup(st.getInstance(),group.getType()); }
+			catch (TooMuchDataException e) {
+				return new ErrorResponse("There is more than one attribute of type GROUP/"+group.getType()+" which will not work as group subtypes enforce unique membership." +
+						                         "  The administrator should remove one of the attributes.");
+			}
 			if (!attribute.getSelfModify()) {
 				return new ErrorResponse("You can not change your "+attribute.getNameSafe()+" after character creation.");
 			}
