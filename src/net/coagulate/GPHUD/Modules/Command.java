@@ -47,7 +47,7 @@ public abstract class Command {
 	                            final String value,
 	                            final String type) {
 		if (o==null) {
-			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type);
+			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type,true);
 		}
 		return o;
 	}
@@ -252,8 +252,7 @@ public abstract class Command {
 							v=v.substring(1);
 							try {
 								final User a=User.findMandatory(v);
-								try { targchar=Char.getActive(a,st.getInstance()); }
-								catch (NoDataException e) { return new ErrorResponse(e.toString()); }
+								targchar=Char.getActive(a,st.getInstance());
 							}
 							catch (@Nonnull final NoDataException e) {
 								return new ErrorResponse("Unable to find character of avatar named '"+v+"'");
