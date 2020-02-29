@@ -89,7 +89,7 @@ public class Char extends TableRow {
 			return get(i);
 		}
 		catch (@Nonnull final NoDataException e) {
-			throw new UserInputStateException("Avatar "+avatar.getName()+" is not wearing the HUD or is not logged in as a character presently.",e);
+			throw new UserInputStateException("Avatar "+avatar.getName()+" is not wearing the HUD or is not logged in as a character presently.",e,true);
 		}
 	}
 
