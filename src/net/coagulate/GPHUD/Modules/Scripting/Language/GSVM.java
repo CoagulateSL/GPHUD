@@ -77,6 +77,7 @@ public class GSVM {
 		simulation=false;
 		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
 		variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
+		invokerstate=st;
 		for (final Map.Entry<String,ByteCodeDataType> entry: introductions.entrySet()) {
 			variables.put(entry.getKey(),entry.getValue());
 		}
@@ -360,8 +361,13 @@ public class GSVM {
 		//return dequeue(st,st.getCharacter(),run.getId());
 	}
 
+	@Nullable
+	private State invokerstate=null;
+	@Nullable
+	public State getInvokerState() { return invokerstate; }
+
 	@Nonnull
-	public Response resume(@Nonnull final State st) { return executeloop(st); }
+	public Response resume(@Nonnull final State st) { invokerstate=st; return executeloop(st); }
 
 	public void introduce(final String target,
 	                      final ByteCodeDataType data) {
@@ -370,6 +376,7 @@ public class GSVM {
 
 	@Nonnull
 	public List<ExecutionStep> simulate(@Nonnull final State st) {
+		invokerstate=st;
 		final List<ExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM(st);
 		simulation=true;

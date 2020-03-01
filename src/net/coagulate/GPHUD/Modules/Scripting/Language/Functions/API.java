@@ -52,6 +52,10 @@ public class API {
 			callingstate.fleshOut();
 			callingstate.source=State.Sources.SCRIPTING;
 			if (elevated) { callingstate.elevate(true); }
+			// some things care about this.  like initialise and logon
+			if (vm.getInvokerState()!=null && vm.getInvokerState().getCharacterNullable()==caller.getContent()) {
+				callingstate.setJson(vm.getInvokerState().jsonNullable());
+			}
 			final Response value=Modules.run(callingstate,apicall.getContent(),args);
 			return new BCResponse(null,value);
 		}
