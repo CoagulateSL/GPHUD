@@ -38,7 +38,7 @@ public abstract class CookBook {
 			st.getKVDefinition("Characters."+attribute);
 			t.add("Already Exists?");
 		}
-		catch (@Nonnull final SystemException e) { t.add("OK"); }
+		catch (@Nonnull final SystemException|UserException e) { t.add("OK"); }
 		if (!act) {
 			t.add("Create a character attribute "+attribute);
 			return;
