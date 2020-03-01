@@ -68,6 +68,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					throw new SystemBadValueException("Parse error in '"+message+"'",e);
 				}
 				// stash it in the state
+				if (obj==null) { GPHUD.getLogger().warning("About to set a JSON in state to null ; input was "+message); }
 				st.setJson(obj);
 				// refresh tokens if necessary
 				if (obj.has("callback")) { st.callbackurl(obj.getString("callback")); }
