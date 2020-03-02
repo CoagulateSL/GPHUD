@@ -933,7 +933,7 @@ public class State extends DumpableState {
 	}
 
 	public void setJson(@Nullable final JSONObject json) {
-		logger().warning("Explicitly settings STATE JSON to null, even though it defaults to it");
+		// logger().warning("Explicitly settings STATE JSON to null, even though it defaults to it");
 		this.json=json;
 	}
 
