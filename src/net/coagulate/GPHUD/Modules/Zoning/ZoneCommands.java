@@ -57,7 +57,7 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.CHARACTER, permitScripting=false, description="Trigger a zone change event", permitConsole=false, permitUserWeb=false)
 	public static Response zoneTransition(@Nonnull final State st,
-	                                      @Nullable @Arguments(description="Name of zone we transitioned into", type=ArgumentType.ZONE) final Zone zone) {
+	                                      @Nullable @Arguments(description="Name of zone we transitioned into", type=ArgumentType.ZONE,mandatory=false) final Zone zone) {
 		// check some things make sense
 		// note zone may be null, legally, and fairly often probably.
 		if (zone!=null) { zone.validate(st); }
