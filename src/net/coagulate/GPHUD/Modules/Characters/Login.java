@@ -285,7 +285,8 @@ public abstract class Login {
 		GPHUD.purgeURL(st.callbackurl());
 		if (st.getCharacterNullable()!=null) { st.purgeCache(st.getCharacter()); }
 		PrimaryCharacters.setPrimaryCharacter(st,character);
-		character.setURL(st.callbackurl());
+		//character.setURL(st.callbackurl());
+		//GPHUD.purgeURL(st.callbackurl());
 		return login(st,null,null,null);
 	}
 
@@ -295,7 +296,7 @@ public abstract class Login {
 	                                  @Nonnull @Arguments(type=ArgumentType.ATTRIBUTE, description="Attribute to initialise") final Attribute attribute,
 	                                  @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE, description="Value to initialise to", max=4096) final String value) {
 		//System.out.println("Initialise "+attribute+" to "+value);
-		final boolean debug=true;
+		final boolean debug=false;
 		switch (attribute.getType()) {
 			case FLOAT:
 			case INTEGER:

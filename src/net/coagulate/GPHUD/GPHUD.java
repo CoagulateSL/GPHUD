@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 
 /**
  * Bootstrap class for GPHUD.  Run me.
@@ -263,27 +264,37 @@ public class GPHUD {
 	}
 
 	public static void purgeURL(final String url) {
-		//System.out.println("Purge URL "+url);
+		final boolean debug=false;
+		if (debug) { System.out.println("Purge URL "+url); }
 		try {
 			for (final ResultsRow row: getDB().dq("select characterid,regionid from characters where url=?",url)) {
 				try {
 					final int charid=row.getInt("characterid");
-					final int regionid=row.getInt("regionid");
 					final Char ch=Char.get(charid);
+					if (debug) { System.out.println("Hit Character "+ch.getNameSafe()); }
 					final State st=State.getNonSpatial(ch);
-					final int howmany=getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
-					if (howmany>0) {
-						st.logger()
-						  .info("HUD disconnected (404) from avatar "+st.getAvatar().getName()+" as character "+st.getCharacter()
-						                                                                                          .getName()+", not reported as region leaver.");
-					}
 					getDB().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",charid);
-					getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
-					getDB().d("update objects set url=null where url=?",url);
+					final Integer regionid=row.getIntNullable("regionid");
+					if (regionid!=null) {
+						final int howmany=getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
+						if (howmany>0) {
+							st.logger()
+							  .info("HUD disconnected (404) from avatar "+st.getAvatar().getName()+" as character "+st.getCharacter()
+							                                                                                          .getName()+", not reported as region leaver.");
+						}
+						getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
+					}
 				}
-				catch (@Nonnull final Exception ignored) {}
+				catch (@Nonnull final Exception e) {
+					GPHUD.getLogger("Character").log(WARNING,"Exception during per character purgeURL",e);
+				}
 			}
 			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?",url);
+			getDB().d("update objects set url=null where url=?",url);
+			if (debug) {
+				int count=getDB().dqinn("select count(*) from characters where url=?",url);
+				System.out.println("Final url usage count in characters is "+count);
+			}
 		}
 		catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from characters",ex);
