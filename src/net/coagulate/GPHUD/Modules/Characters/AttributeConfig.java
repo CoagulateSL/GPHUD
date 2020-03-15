@@ -91,7 +91,6 @@ public class AttributeConfig {
 		}
 		f.add(new Separator());
 		Modules.get(st,"Characters").kvConfigPage(st);
-		//GenericConfiguration.page(st, values, st.getInstance(),simulated);
 	}
 
 
@@ -129,10 +128,17 @@ public class AttributeConfig {
 			                                       Argument.ArgumentType.BOOLEAN)
 	                                       final Boolean usesabilitypoints,
 	                                       @Arguments(description="Attribute must be completed", type=Argument.ArgumentType.BOOLEAN) final Boolean required,
-	                                       @Arguments(description="Default value (can be blank)", type=Argument.ArgumentType.TEXT_ONELINE, max=4096,mandatory=false)
+	                                       @Arguments(description="Default value (can be blank)", type=Argument.ArgumentType.TEXT_ONELINE, max=4096, mandatory=false)
 	                                       final String defaultvalue) {
+		// already exists as an attribute
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getName().equalsIgnoreCase(name)) { return new ErrorResponse("This name is already claimed"); }
+		}
+		// already exists as a template
+		for (String templatename: st.getTemplates().keySet()) {
+			if (templatename.equalsIgnoreCase("--"+name+"--")) {
+				return new ErrorResponse("There is already a template with that name, it can not also be used as an attribute name");
+			}
 		}
 		if (name.length()<2) { return new ErrorResponse("Please enter a longer name"); }
 		final String cleansed=name.replaceAll("[^A-Za-z]","");

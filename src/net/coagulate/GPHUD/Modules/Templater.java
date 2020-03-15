@@ -15,10 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
-
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
 
 /**
  * Does the templating and mathematical operations on templated values.
@@ -38,7 +36,11 @@ public abstract class Templater {
 	}
 
 	@Nonnull
-	public static Map<String,String> getTemplates(final State st) {
+	/** Returns a list of templates and their descriptions.
+	 *
+	 * @Param st The calling state
+	 * @Return A map of String to String, template name mapping to template description
+	 */ public static Map<String,String> getTemplates(final State st) {
 		final Map<String,String> ret=new TreeMap<>(templates);
 		for (final Module m: Modules.getModules()) {
 			m.addTemplateDescriptions(st,ret);
@@ -78,7 +80,7 @@ public abstract class Templater {
 		}
 		catch (@Nonnull final Exception e) {
 			SL.report("Expression failed for "+string,e,st);
-			st.logger().log(WARNING,"Failed to complete expression evaluation for '"+string+"' - we got error "+e.getMessage(),e);
+			st.logger().log(Level.WARNING,"Failed to complete expression evaluation for '"+string+"' - we got error "+e.getMessage(),e);
 			throw e;
 		}
 		return string;
@@ -88,15 +90,10 @@ public abstract class Templater {
 	private static String template(@Nonnull final State st,
 	                               @Nullable String string) {
 		if (string==null) { return null; }
-		final boolean debug=false;
 		for (final String subst: getTemplates(st).keySet()) {
 			if (string.contains(subst)) {
 				final String value;
-				//try {
 				value=getValue(st,subst);
-				//} catch (@Nonnull final UserException e) {
-				//	value="Error: "+e.getMessage();
-				//}
 				string=string.replaceAll(subst,Matcher.quoteReplacement(value));
 			}
 		}
@@ -124,7 +121,7 @@ public abstract class Templater {
 			}
 			catch (@Nonnull final IllegalAccessException|IllegalArgumentException ex) {
 				SL.report("Templating exception",ex,st);
-				st.logger().log(SEVERE,"Exception running templater method",ex);
+				st.logger().log(Level.SEVERE,"Exception running templater method",ex);
 				throw new SystemImplementationException("Templater exceptioned",ex);
 			}
 			catch (@Nonnull final InvocationTargetException e) {
@@ -162,7 +159,8 @@ public abstract class Templater {
 	// boann@stackoverflow.com
 	public static double eval(@Nonnull final String str) {
 		return new Object() {
-			int pos=-1, ch;
+			int pos=-1;
+			int ch;
 
 			void nextChar() {
 				ch=(++pos<str.length())?str.charAt(pos):-1;
