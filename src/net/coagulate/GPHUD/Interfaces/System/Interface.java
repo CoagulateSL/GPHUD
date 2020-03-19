@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
+import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
@@ -172,6 +173,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		if (ownername==null || objectname==null || regionname==null || ownerkey==null) {
 			GPHUD.getLogger().severe("Failed to decode headers expected from SL");
+			SL.report("Parsae failure",new SystemRemoteFailureException("An ownername, objectname, regionname or ownerkey is blank."), st);
 			return new TerminateResponse("Parse failure");
 		}
 		regionname=regionname.replaceFirst(" \\([0-9]+, [0-9]+\\)","");
