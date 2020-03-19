@@ -19,6 +19,7 @@ integer sensormanual=MANUAL_NONE;
 list zoning=[];
 string ourzone="";
 integer curpage=0;
+string sensordescription="";
 rollchannel() {
 	if (channel!=0) { llListenRemove(handle); }
 	channel=(integer)(llFrand(-999999999)-1000000000);
@@ -96,6 +97,7 @@ trigger() {
 				}
 				if ((type=="SENSORCHAR" || type=="SENSOR") && sensormanual!=MANUAL_SELECTED) { parsed=TRUE; 
 					llSensor("",NULL_KEY,AGENT,20,PI);
+					sensordescription=description;
 					if (jsonget("arg"+(string)i+"manual")!="") { sensormanual=MANUAL_AVAILABLE; } else { sensormanual=MANUAL_NONE; }
 					//llOwnerSay((string)sensormanual);
 				}
@@ -281,7 +283,8 @@ default {
 			dialog+=llList2String(stride,i+1);
 			truncated+=llGetSubString(llList2String(stride,i+1),0,23);
 		}
-		llDialog(llGetOwner(),"Pick a character's avatar",truncated,channel);
+		string description=jsonget("arg"+(string)i+"description");
+		llDialog(llGetOwner(),sensordescription,truncated,channel);
 	}
 	touch_start(integer n)
 	{
