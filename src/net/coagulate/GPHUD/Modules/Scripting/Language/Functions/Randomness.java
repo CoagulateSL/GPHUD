@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidFunctionCall;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -18,6 +19,7 @@ public class Randomness {
 	                               final GSVM vm,
 	                               @Nonnull final BCInteger minimum,
 	                               @Nonnull final BCInteger maximum) {
+		if ((maximum.toInteger())<(minimum.toInteger())) { throw new GSInvalidFunctionCall("Maximum must be greater than or equal to minuimum ("+minimum+" should be <= "+maximum+")"); }
 		return new BCInteger(null,ThreadLocalRandom.current().nextInt(minimum.toInteger(),maximum.toInteger()+1));
 	}
 }

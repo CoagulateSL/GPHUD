@@ -44,6 +44,7 @@ public class Roller {
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
 		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
+		if (sides<1) { throw new UserConfigurationException("Number of sides must be at least 1"); }
 		for (int i=0;i<dice;i++) {
 			final int num=ThreadLocalRandom.current().nextInt(1,sides+1);
 			rolls.add(num);
