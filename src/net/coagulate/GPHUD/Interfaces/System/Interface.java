@@ -171,10 +171,30 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			GPHUD.getLogger().severe("Unknown shard ["+shard+"]");
 			return new TerminateResponse("Only accessible from Second Life Production systems.");
 		}
-		if (ownername==null || objectname==null || regionname==null || ownerkey==null) {
-			GPHUD.getLogger().severe("Failed to decode headers expected from SL");
-			SL.report("Parsae failure",new SystemRemoteFailureException("An ownername, objectname, regionname or ownerkey is blank."), st);
+		if (objectname==null || objectname.isEmpty()) {
+			GPHUD.getLogger().severe("Failed to decode objectname header expected from SL");
+			SL.report("Parse failure",new SystemRemoteFailureException("An objectname is blank."), st);
 			return new TerminateResponse("Parse failure");
+		}
+		if (regionname==null || regionname.isEmpty()) {
+			GPHUD.getLogger().severe("Failed to decode regionname header expected from SL");
+			SL.report("Parse failure",new SystemRemoteFailureException("A regionname is blank."), st);
+			return new TerminateResponse("Parse failure");
+		}
+		if (ownerkey==null || ownerkey.isEmpty()) {
+			GPHUD.getLogger().severe("Failed to decode ownerkey header expected from SL");
+			SL.report("Parse failure",new SystemRemoteFailureException("An ownerkey is blank."), st);
+			return new TerminateResponse("Parse failure");
+		}
+		if (ownername==null || ownername.isEmpty()) {
+			ownername=User.findOptional(ownerkey).getName();
+			if (ownername==null || ownername.isEmpty()) {
+				GPHUD.getLogger().severe("Failed to extract ownername header from SL or ownerkeylookup via DB");
+				SL.report("Parse failure",new SystemRemoteFailureException("Ownername is blank, even from DB cache."), st);
+				return new TerminateResponse("Parse failure");
+			} else {
+				GPHUD.getLogger().info("Failed to get ownername from headers for key "+ownerkey+", looked up in DB as "+ownername+".");
+			}
 		}
 		regionname=regionname.replaceFirst(" \\([0-9]+, [0-9]+\\)","");
 
