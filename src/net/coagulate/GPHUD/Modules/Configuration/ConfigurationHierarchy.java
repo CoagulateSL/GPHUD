@@ -144,6 +144,7 @@ public class ConfigurationHierarchy extends Form {
 	              @Nonnull final State simulated,
 	              @Nonnull final Set<String> alledits) {
 		t.openRow();
+		if (dbo instanceof Region) { t.setBGColor("#ffe0e0"); }
 		if (dbo instanceof CharacterGroup) {
 			t.add(dbo.getClass().getSimpleName()+" : "+((CharacterGroup) dbo).getTypeNotNull());
 		}
@@ -241,6 +242,7 @@ public class ConfigurationHierarchy extends Form {
 					t.add(new Form(st,true,"/"+Interface.base()+"/configuration/setself","Self-Edit","attribute",selfeditable.getName(),"value",kvvalue));
 				}
 			}
+			if (dbo instanceof Region) { t.add("<i>Normally settings should be made at the Instance level not Region level.</i>"); }
 		}
 	}
 }
