@@ -18,7 +18,7 @@
 @KVS(name="AllowedNamingSymbols", description="What characters may be used in a character's name, A-Z, a-z and space are assumed OK",defaultvalue="'-,.",editpermission="Instance.ConfigureCharacters",type=KVTYPE.TEXT,template=false,scope=KVSCOPE.INSTANCE)
 @KVS(name="FilteredNamingList",description="Comma separated list of words user may not include in their characters name",scope=KVSCOPE.INSTANCE,template=false,type=KVTYPE.TEXT,editpermission="Instance.ConfigureCharacters",defaultvalue="")
 @Permissions(name="EditCharacterSheets", description="Allows the editing of the character sheet display formats", power=Permission.POWER.LOW)
-@Permissions(name="ModuleEnablement", description="Enable or disable modules at this instance", power=Permission.POWER.MEDIUM) 
+@Permissions(name="ModuleEnablement", description="Enable or disable modules at this instance", power=Permission.POWER.MEDIUM)
 @Permissions(name="ServerOperator", description="The ability to get+deploy GPHUD Region Servers", power=Permission.POWER.MEDIUM) 
 @Permissions(name="ConfigureCharacters", description="Alter settings related to character limits (number of, etc)", power=Permission.POWER.LOW) 
 @Permissions(name="ManagePermissions", description="Can create and alter permissions groups (including giving themselves permissions, essentially)", power=Permission.POWER.HIGH) 
