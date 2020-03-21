@@ -48,7 +48,7 @@ public class PrimaryCharacters {
 				if (!autocreate) { return null; }
 				// make them a character
 				st.logger().info("Created default character for "+avatar);
-				Char.create(st,avatar.getName());
+				Char.create(st,avatar.getName(),false); // don't filter avatar based names
 				characterset=Char.getCharacters(instance,avatar);
 				if (characterset.isEmpty()) {
 					st.logger().severe("Created character for avatar but avatar has no characters still");
