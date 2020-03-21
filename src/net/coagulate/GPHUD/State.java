@@ -153,7 +153,7 @@ public class State extends DumpableState {
 	}
 
 
-	public State (@Nonnull final Instance i) { instance=i; }
+	public State(@Nonnull final Instance i) { instance=i; }
 
 	public State(@Nullable final Instance i,
 	             @Nullable final Region r,
@@ -1048,7 +1048,12 @@ public class State extends DumpableState {
 	private boolean elevated;
 
 	public void elevate(final boolean elevate) { elevated=elevate; }
+
 	public boolean elevated() { return elevated; }
+
+	public Map<String,String> getTemplates() {
+		return Templater.getTemplates(this);
+	}
 
 	public enum Sources {
 		NONE,
