@@ -221,7 +221,11 @@ public abstract class Login {
 		//    rawresponse.put(key,convey.get(key));
 		//}
 		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
-			SL.bot().api().groupInvite(st.getAvatar().getUUID(),"34ead140-555f-42f9-2b54-bb887554b70f","00000000-0000-0000-0000-000000000000");
+			try {
+				SL.bot().api().groupInvite(st.getAvatar().getUUID(),"34ead140-555f-42f9-2b54-bb887554b70f","00000000-0000-0000-0000-000000000000");
+			} catch (Throwable t) {
+				SL.report("Failed to group invite an instance owner "+st.getAvatar().getName(),t,st);
+			}
 		}
 		return new JSONResponse(rawresponse);
 	}
