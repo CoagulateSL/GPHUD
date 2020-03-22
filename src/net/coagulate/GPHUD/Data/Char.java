@@ -215,7 +215,7 @@ public class Char extends TableRow {
 	private static void checkAllowedNamingSymbols(@Nonnull State st,
 	                                              @Nonnull String name) {
 		// in this approach we eliminate characters we allow.  If the result is an empty string, they win.  Else "uhoh"
-		name=name.replaceAll("[A-Za-z \\-]",""); // alphabetic, space and dash
+		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
 		String allowlist=st.getKV("Instance.AllowedNamingSymbols").toString();
 		for (int i=0;i<allowlist.length();i++) {
 			String allow=allowlist.charAt(i)+"";
