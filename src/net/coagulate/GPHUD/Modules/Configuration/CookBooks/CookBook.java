@@ -95,8 +95,8 @@ public abstract class CookBook {
 			t.add("Created alias");
 		}
 		catch (@Nonnull final Exception e) {
-			SL.report("Cookbook createAlias "+aliasname+"->"+target+"="+template,e,st);
-			GPHUD.getLogger("CookBook").log(Level.INFO,"Exception in alias "+aliasname+"->"+target+"="+template,e);
+			//SL.report("Cookbook createAlias "+aliasname+"->"+target+"="+template,e,st);
+			//GPHUD.getLogger("CookBook").log(Level.INFO,"Exception in alias "+aliasname+"->"+target+"="+template,e);
 			t.add("Error: "+e.getLocalizedMessage());
 		}
 	}
