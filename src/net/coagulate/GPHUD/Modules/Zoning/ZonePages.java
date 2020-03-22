@@ -29,9 +29,17 @@ public abstract class ZonePages {
 		final Form f=st.form();
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
+		f.add("<table border=0>");
 		for (final Zone zone: st.getInstance().getZones()) {
-			f.add(new Link(zone.getName(),"./zoning/view/"+zone.getId())).add("<br>");
+			f.add("<tr><td>");
+			f.add(new Link(zone.getName(),"./zoning/view/"+zone.getId()));
+			if (st.hasPermission("Zoning.config")) {
+				f.add("</td><td>");
+				f.add(new Form(st,true,"./Zoning/Delete","Delete Zone","zone",zone.getName()+""));
+			}
+			f.add("</td></tr>");
 		}
+		f.add("</table>");
 		f.add("<br>");
 		if (st.hasPermission("Zoning.config")) {
 			f.add(new Form(st,true,"./zoning/create","Create Zone"));
@@ -43,6 +51,12 @@ public abstract class ZonePages {
 	public static void createZone(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.create",values);
+	}
+
+	@URLs(url="/configuration/zoning/delete")
+	public static void deleteZone(@Nonnull final State st,
+	                              @Nonnull final SafeMap values) {
+		Modules.simpleHtml(st,"zoning.delete",values);
 	}
 
 	@URLs(url="/configuration/zoning/view/*")
