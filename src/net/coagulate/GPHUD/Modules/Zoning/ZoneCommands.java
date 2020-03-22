@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Modules.Zoning;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Zone;
@@ -20,6 +22,8 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Command units for zone control.
@@ -37,6 +41,22 @@ public abstract class ZoneCommands {
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Zone","",name,"New zone created");
 		return new OKResponse("Zone '"+name+"' created.");
 
+	}
+
+	@Nonnull
+	@Commands(context=Context.AVATAR,description="Delete a zone",requiresPermission="Zoning.Config")
+	public static Response delete(@Nonnull final State st,
+	                              @Arguments(description="Name of the zone to delete",type=ArgumentType.ZONE) final Zone zone) {
+		zone.validate(st);
+		String zonename=zone.getName();
+		Set<Region> toupdate=new HashSet<>();
+		for (ZoneArea area:zone.getZoneAreas()) {
+			try { toupdate.add(area.getRegion(false)); }
+			catch (UserException|SystemException ignore) {}
+		}
+		zone.delete(st);
+		for (Region region:toupdate) { region.pushZoning(); }
+		return new OKResponse("Deleted zone "+zonename);
 	}
 
 	@Nonnull
