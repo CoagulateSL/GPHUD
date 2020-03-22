@@ -353,6 +353,10 @@ public abstract class Login {
 							                         +"attribute "+attribute
 							.getName());
 				}
+				// check the group is open
+				if (!target.isOpen()) {
+					return new ErrorResponse("You can not join group "+target.getNameSafe()+" of type "+target.getType()+", it is not open for joining");
+				}
 				target.addMember(st.getCharacter());
 				break;
 			case POOL:
