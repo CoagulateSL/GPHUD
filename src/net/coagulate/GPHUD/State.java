@@ -1051,8 +1051,8 @@ public class State extends DumpableState {
 
 	public boolean elevated() { return elevated; }
 
-	public Map<String,String> getTemplates(boolean enabledonly) {
-		return Templater.getTemplates(this,enabledonly);
+	public Map<String,String> getTemplates() {
+		return Templater.getTemplates(this);
 	}
 
 	public enum Sources {
