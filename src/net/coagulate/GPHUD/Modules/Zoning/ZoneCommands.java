@@ -95,6 +95,7 @@ public abstract class ZoneCommands {
 	@Template(name="ZONE", description="Current zone")
 	public static String getZone(@Nonnull final State st,
 	                             final String key) {
+		if (!st.hasModule("Zoning")) { return ""; }
 		if (st.zone==null) { return ""; }
 		return st.zone.getName();
 	}

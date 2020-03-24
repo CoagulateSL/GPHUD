@@ -30,6 +30,7 @@ public class FactionCommands {
 	@Template(name="FACTION", description="Current faction name")
 	public static String getFactionName(@Nonnull final State st,
 	                                    final String key) {
+		if (!st.hasModule("Faction")) { return ""; }
 		final CharacterGroup faction=st.getCharacter().getGroup("Faction");
 		if (faction==null) { return ""; }
 		return faction.getName();

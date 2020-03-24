@@ -110,12 +110,21 @@ public class ModuleAnnotation extends Module {
 
 	public KV getKVDefinition(final State st,
 	                          @Nonnull final String qualifiedname) {
+		KV ret=getKVDefinitionNullable(st,qualifiedname);
+		if (ret==null) { throw new SystemImplementationException("Invalid KV "+qualifiedname+" in module "+getName()); }
+		return ret;
+	}
+
+	@Nullable
+	public KV getKVDefinitionNullable(final State st,
+	                          @Nonnull final String qualifiedname) {
 		//for (String s:kvmap.keySet()) { System.out.println(s); }
 		if (!kvmap.containsKey(qualifiedname.toLowerCase())) {
-			throw new SystemImplementationException("Invalid KV "+qualifiedname+" in module "+getName());
+			return null;
 		}
 		return kvmap.get(qualifiedname.toLowerCase());
 	}
+
 
 	@Nonnull
 	public Command getCommandNullable(final State st,

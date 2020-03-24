@@ -46,7 +46,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
-		final Map<String,KV> kv=new TreeMap<>();
+		final Map<String,KV> kv=super.getKVDefinitions(st);
 		for (final String template:getExternalTemplates(st).keySet()) {
 			kv.put(template.toLowerCase()+"prefix",new TemplatePrefix(template));
 			kv.put(template.toLowerCase()+"postfix",new TemplatePostfix(template));
@@ -70,6 +70,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	@Override
 	public void addTemplateDescriptions(@Nonnull final State st,
 	                                    @Nonnull final Map<String,String> addto) {
+		if (!st.hasModule("TemplateWrapper")) { return; }
 		for (final String template:getExternalTemplates(st).keySet()) {
 			addto.put("--WRAPPED:"+template.toUpperCase()+"--","Wrapped form of template "+template);
 		}
@@ -78,6 +79,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	@Override
 	public void addTemplateMethods(@Nonnull final State st,
 	                               @Nonnull final Map<String,Method> addto) {
+		if (!st.hasModule("TemplateWrapper")) { return; }
 		for (final String template:getExternalTemplates(st).keySet()) {
 			try {
 				addto.put("--WRAPPED:"+template.toUpperCase()+"--",getClass().getMethod("templateWrapper",State.class,String.class));
@@ -92,6 +94,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	@Nullable
 	public static String templateWrapper(State st,
 	                                       @Nonnull final String wrappedtemplate) {
+		if (!st.hasModule("TemplateWrapper")) { return ""; }
 		final boolean debug=false;
 		String template=trim(wrappedtemplate);
 		if (template.startsWith("WRAPPED:")) {
