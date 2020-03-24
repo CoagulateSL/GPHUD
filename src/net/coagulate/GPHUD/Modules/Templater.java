@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
  */
 public abstract class Templater {
 
-	private static final Map<String,String> templates=new TreeMap<>();
+	public static final Map<String,String> templates=new TreeMap<>();
 	private static final Map<String,Method> methods=new TreeMap<>();
 
 	private static void add(final String key,
