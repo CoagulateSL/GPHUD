@@ -33,7 +33,7 @@ public abstract class Templates {
 		final Table t=new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Template Keyword").add("Description").add("Provider").add("Current value"));
-		final Map<String,String> templates=Templater.getTemplates(st,true);
+		final Map<String,String> templates=Templater.getTemplates(st);
 		for (final Map.Entry<String,String> entry: templates.entrySet()) {
 			final String template=entry.getKey();
 			//System.out.println(template);
