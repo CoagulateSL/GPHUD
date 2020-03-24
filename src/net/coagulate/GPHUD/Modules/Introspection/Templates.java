@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Modules.Templater;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
@@ -50,6 +51,7 @@ public abstract class Templates {
 				value="ERROR:"+e.getMessage();
 				st.logger().log(FINE,"Template gave user exception (not unexpected)",e);
 			}
+			value=StringEscapeUtils.escapeHtml4(value);
 			t.add(value);
 		}
 	}

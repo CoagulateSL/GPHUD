@@ -150,6 +150,7 @@ public class Roller {
 	@Templater.Template(name="TARGET:ROLL", description="Any TARGET made roll")
 	public static String getTargetRoll(@Nonnull final State st,
 	                                   final String key) {
+		if (!st.hasModule("Roller")) { return ""; }
 		if (st.getTargetNullable()==null) { throw new UserInputStateException("No target!"); }
 		final State target=st.getTargetNullable();
 		if (target.roll==null) { throw new UserInputStateException("Target not rolled!"); }

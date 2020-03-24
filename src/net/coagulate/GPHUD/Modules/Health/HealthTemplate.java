@@ -13,6 +13,7 @@ public class HealthTemplate {
 	@Templater.Template(name="HEALTH", description="Character's health")
 	public static String abilityPoints(@Nonnull final State st,
 	                                   final String key) {
+		if (!st.hasModule("Health")) { return ""; }
 		if (st.getCharacterNullable()==null) { return ""; }
 		return st.getKV("Health.Health").intValue().toString();
 	}
