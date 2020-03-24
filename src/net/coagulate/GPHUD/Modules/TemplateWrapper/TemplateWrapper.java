@@ -29,12 +29,8 @@ public class TemplateWrapper extends ModuleAnnotation {
 		Map<String,String> listtrimmed=new TreeMap<>();
 		for (Module m: Modules.getModules()) {
 			if (!m.getName().equals("TemplateWrapper")) {
-				if (m.isEnabled(st)) {
-					m.addTemplateDescriptions(st,list);
-					if (debug) { System.out.println("Probed module "+m+" size now "+list.size()); }
-				} else {
-					if (debug) { System.out.println("Probe avoided for disabled module "+m); }
-				}
+				m.addTemplateDescriptions(st,list);
+				if (debug) { System.out.println("Probed module "+m+" size now "+list.size()); }
 			}
 		}
 		for (String element:list.keySet()) {
