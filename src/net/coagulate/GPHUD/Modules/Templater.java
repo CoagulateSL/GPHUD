@@ -40,10 +40,12 @@ public abstract class Templater {
 	 *
 	 * @Param st The calling state
 	 * @Return A map of String to String, template name mapping to template description
-	 */ public static Map<String,String> getTemplates(final State st) {
+	 */ public static Map<String,String> getTemplates(final State st,boolean enabledonly) {
 		final Map<String,String> ret=new TreeMap<>(templates);
 		for (final Module m: Modules.getModules()) {
-			m.addTemplateDescriptions(st,ret);
+			if (m.isEnabled(st) || enabledonly==false) {
+				m.addTemplateDescriptions(st,ret);
+			}
 		}
 		return ret;
 	}
@@ -90,7 +92,7 @@ public abstract class Templater {
 	private static String template(@Nonnull final State st,
 	                               @Nullable String string) {
 		if (string==null) { return null; }
-		for (final String subst: getTemplates(st).keySet()) {
+		for (final String subst: getTemplates(st,true).keySet()) {
 			if (string.contains(subst)) {
 				final String value;
 				value=getValue(st,subst);
