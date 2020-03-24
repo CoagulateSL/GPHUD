@@ -24,15 +24,18 @@ public class TemplateWrapper extends ModuleAnnotation {
 	private Map<String,String> externals=null;
 	@Nonnull public Map<String,String> getExternalTemplates(@Nonnull final State st) {
 		if (externals!=null) { return externals; }
+		final boolean debug=false;
 		Map<String,String> list=new TreeMap<>(Templater.templates);
 		Map<String,String> listtrimmed=new TreeMap<>();
 		for (Module m: Modules.getModules()) {
 			if (!m.getName().equals("TemplateWrapper")) {
 				m.addTemplateDescriptions(st,list);
+				if (debug) { System.out.println("Probed module "+m+" size now "+list.size()); }
 			}
 		}
 		for (String element:list.keySet()) {
 			listtrimmed.put(trim(element),list.get(element));
+			if (debug) { System.out.println("Transferred "+element+" as "+trim(element)); }
 		}
 		externals=listtrimmed;
 		return listtrimmed;
