@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.MailTools;
@@ -193,47 +194,6 @@ public class Char extends TableRow {
 		}
 		GPHUD.getDB()
 		     .d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)",name,st.getInstance().getId(),st.getAvatar().getId(),getUnixTime(),0);
-	}
-
-	private static void checkFilteredNamingList(@Nonnull final State st,
-	                                            @Nonnull final String name) {
-		// break the users name into components based on certain characters
-		String nameparts[]=name.split("[ ,\\.\\-]");  // space comma dot dash
-		String filterlist[]=st.getKV("Instance.FilteredNamingList").toString().split(",");
-		for (String filter:filterlist) {
-			filter=filter.trim();
-			if (!filter.isEmpty()) {
-				// compare filter to all name parts
-				for (String namepart:nameparts) {
-					namepart=namepart.trim();
-					if (filter.equalsIgnoreCase(namepart)) {
-						throw new UserInputInvalidChoiceException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply work around this filter as sim staff will not be as easily fooled.");
-					}
-				}
-			}
-		}
-	}
-
-	private static void checkAllowedNamingSymbols(@Nonnull State st,
-	                                              @Nonnull String name) {
-		// in this approach we eliminate characters we allow.  If the result is an empty string, they win.  Else "uhoh"
-		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
-		String allowlist=st.getKV("Instance.AllowedNamingSymbols").toString();
-		for (int i=0;i<allowlist.length();i++) {
-			String allow=allowlist.charAt(i)+"";
-			name=name.replaceAll(Pattern.quote(allow),"");
-		}
-		// unique the characters in the string.  There's a better way of doing this surely.
-		if (!name.trim().isEmpty()) {
-			String blockedchars="";
-			// bad de-duping code
-			Set<String> characters=new HashSet<String>(); // just dont like the java type 'character' in this project
-			// stick all the symbols in a set :P
-			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
-			// and reconstitute it
-			for (String character:characters) { blockedchars+=character; }
-			throw new UserInputInvalidChoiceException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are entering JUST A NAME at this point, not descriptive details.");
-		}
 	}
 
 	private static void checkFilteredNamingList(@Nonnull final State st,
