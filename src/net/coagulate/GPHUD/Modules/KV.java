@@ -64,7 +64,7 @@ public abstract class KV extends NameComparable {
 				if (o instanceof Instance || o instanceof Region) { return true; }
 				return false;
 			case NONSPATIAL:
-				if (o instanceof Instance || o instanceof CharacterGroup || o instanceof Char) { return true; }
+				if (o instanceof Instance || o instanceof CharacterGroup || o instanceof Char || o instanceof Effect) { return true; }
 				return false;
 			case SPATIAL:
 				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event) {
@@ -73,12 +73,15 @@ public abstract class KV extends NameComparable {
 				return false;
 			case COMPLETE:
 				// probably should just return true but...
-				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event || o instanceof CharacterGroup || o instanceof Char) {
+				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event || o instanceof CharacterGroup || o instanceof Char || o instanceof Effect) {
 					return true;
 				}
 				throw new SystemImplementationException("KV of COMPLETE scope was passed unknown DBObject "+o.getClass().getName()+".  Ammend whitelist or debug caller.");
 			case ZONE:
 				if (o instanceof Zone) { return true; }
+				return false;
+			case EFFECT:
+				if (o instanceof Effect) { return true; }
 				return false;
 			default:
 				throw new SystemImplementationException("Unhandled scope "+scope());
@@ -122,6 +125,7 @@ public abstract class KV extends NameComparable {
 		CHARACTER,
 		ZONE,
 		EVENT,
+		EFFECT,
 		COMPLETE
 	}
 

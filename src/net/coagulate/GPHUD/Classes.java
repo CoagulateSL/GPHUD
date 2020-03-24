@@ -177,6 +177,7 @@ public abstract class Classes {
 						case ZONE:
 						case COORDINATES:
 						case EVENT:
+						case EFFECT:
 						case ATTRIBUTE:
 						case ATTRIBUTE_WRITABLE:
 							requiresmax=false;

@@ -77,6 +77,10 @@ public class ConfigurationHierarchy extends Form {
 				dbo=Zone.get(id);
 				type="Zone";
 			}
+			if ("effectskvstore".equals(dboname)) {
+				dbo=Effect.get(id);
+				type="Effect";
+			}
 			if (dbo==null) { throw new SystemImplementationException("Did not get a DBO from "+dboname); }
 			if (st.hasPermission(kv.editpermission())) {
 				final String oldvalue=st.getRawKV(dbo,kv.fullname());
@@ -118,6 +122,9 @@ public class ConfigurationHierarchy extends Form {
 			if (kv.appliesTo(simulated.getCharacter())) {
 				addKVRow(st,h,kv,simulated.getCharacter(),simulated,alledits);
 			}
+		}
+		for (final Effect e:Effect.getAll(st.getInstance())) {
+			if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits); }
 		}
 		try {
 			final KVValue kvexample=simulated.getKV(kv.fullname());

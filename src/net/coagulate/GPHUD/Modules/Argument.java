@@ -62,6 +62,7 @@ public abstract class Argument {
 		ZONE,
 		COORDINATES,
 		EVENT,
+		EFFECT,
 		ATTRIBUTE,
 		ATTRIBUTE_WRITABLE
 	}
