@@ -20,7 +20,6 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
-import net.coagulate.SL.SL;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -221,11 +220,7 @@ public abstract class Login {
 		//    rawresponse.put(key,convey.get(key));
 		//}
 		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
-			try {
-				SL.bot().api().groupInvite(st.getAvatar().getUUID(),"34ead140-555f-42f9-2b54-bb887554b70f","00000000-0000-0000-0000-000000000000");
-			} catch (Throwable t) {
-				SL.report("Failed to group invite an instance owner "+st.getAvatar().getName(),t,st);
-			}
+			new BackgroundGroupInviter(st).start();
 		}
 		return new JSONResponse(rawresponse);
 	}
