@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 public class EffectsCommands {
 
@@ -38,5 +39,19 @@ public class EffectsCommands {
 		} else {
 			return new OKResponse("Effect didn't exist on character to remove");
 		}
+	}
+
+	@Command.Commands(description="Show effects applied to your character",context=Command.Context.CHARACTER)
+	public static Response show(@Nonnull final State st) {
+		Effect.expirationCheck(st,st.getCharacter());
+		Set<Effect> effects=Effect.get(st,st.getCharacter());
+		if (effects.isEmpty()) { return new OKResponse("You have no effects applied"); }
+		String response="Current Effects:";
+		for (Effect effect:effects) {
+			response+="\n"+effect.getName()+" (";
+			response+=effect.humanRemains(st.getCharacter());
+			response+=")";
+		}
+		return new OKResponse(response);
 	}
 }
