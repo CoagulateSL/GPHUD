@@ -105,7 +105,7 @@ public class Effect extends TableRow {
 			int effectid=row.getInt();
 			Effect effect=get(effectid);
 			effect.validate(st);
-			effect.expire(st,character);
+			effect.expire(st,character,true);
 		}
 		Set<Effect> set=new HashSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
@@ -114,11 +114,13 @@ public class Effect extends TableRow {
 		return set;
 	}
 
-	public void expire(State st,Char character) {
-		if (dqinn("select count(*) from effectsapplications where characterid=? and effectid=?",character.getId(),getId())==0) { return; }
+	public boolean expire(State st,Char character,boolean audit) {
+		if (dqinn("select count(*) from effectsapplications where characterid=? and effectid=?",character.getId(),getId())==0) { return false; }
 		validate(st);
 		character.validate(st);
-		Audit.audit(true,st,User.getSystem(),null,character.getOwner(),character,"Effect","Expire",getName(),"","Effect "+getName()+" expired from character");
+		if (audit) {
+			Audit.audit(true,st,User.getSystem(),null,character.getOwner(),character,"Effect","Expire",getName(),"","Effect "+getName()+" expired from character");
+		}
 		d("delete from effectsapplications where characterid=? and effectid=?",character.getId(),getId());
 		String applykv=st.getKV(this,"Effects.RemoveMessage");
 		if (applykv!=null && (!applykv.isEmpty())) {
@@ -126,6 +128,7 @@ public class Effect extends TableRow {
 			message.put("message",applykv);
 			new Transmission(character,message).start();
 		}
+		return true;
 	}
 
 	@Nonnull
@@ -220,6 +223,15 @@ public class Effect extends TableRow {
 			message.put("message",applykv);
 			new Transmission(target,message).start();
 		}
+		return true;
+	}
+
+	public boolean remove(State st,
+	                      Char target,
+	                      boolean administrative) {
+		boolean didanything=expire(st,target,false);
+		if (!didanything) { return false; }
+		Audit.audit(true,st,Audit.OPERATOR.AVATAR,target.getOwner(),target,"Removed","Effect",getName(),"","Administratively removed effect "+getName());
 		return true;
 	}
 }
