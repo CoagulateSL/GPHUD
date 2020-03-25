@@ -5,12 +5,18 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -94,6 +100,34 @@ public class Effect extends TableRow {
 		return Effect.get(matches.iterator().next().getInt());
 	}
 
+	public static Set<Effect> get(State st,Char character) {
+		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
+			int effectid=row.getInt();
+			Effect effect=get(effectid);
+			effect.validate(st);
+			effect.expire(st,character);
+		}
+		Set<Effect> set=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
+			set.add(get(row.getInt()));
+		}
+		return set;
+	}
+
+	public void expire(State st,Char character) {
+		if (dqinn("select count(*) from effectsapplications where characterid=? and effectid=?",character.getId(),getId())==0) { return; }
+		validate(st);
+		character.validate(st);
+		Audit.audit(true,st,User.getSystem(),null,character.getOwner(),character,"Effect","Expire",getName(),"","Effect "+getName()+" expired from character");
+		d("delete from effectsapplications where characterid=? and effectid=?",character.getId(),getId());
+		String applykv=st.getKV(this,"Effects.RemoveMessage");
+		if (applykv!=null && (!applykv.isEmpty())) {
+			JSONObject message=new JSONObject();
+			message.put("message",applykv);
+			new Transmission(character,message).start();
+		}
+	}
+
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -146,12 +180,47 @@ public class Effect extends TableRow {
 
 	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
 
+	// perhaps flush the caches (to do) when this happens...
 	public void delete(State st) {
 		validate(st);
 		String name=getName();
 		d("delete from effects where id=?",getId());
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Delete","Effect",name,null,"Deleted Effect "+name);
 	}
-	// perhaps flush the caches (to do) when this happens...
+
+	/** Apply an effect to a character
+	 *  @param st State
+	 * @param administrative Applied as admin (AVATAR) or st.CHAR?
+	 * @param target Target character
+	 * @param seconds Number of seconds to apply
+	 * @return True if the effect was applied, false if it was skipped due to an existing buff being of longer duration.  Exceptions on input errors.
+	 */
+	public boolean apply(State st,
+	                     boolean administrative,
+	                     Char target,
+	                     int seconds) {
+		// validate everything
+		target.validate(st);
+		validate(st);
+		if (seconds<=0) { throw new UserInputInvalidChoiceException("Number of seconds to apply effect must be greater than zero"); }
+		int expires=UnixTime.getUnixTime()+seconds;
+		// any existing?
+		if (dqinn("select count(*) from effectsapplications where effectid=? and characterid=? and expires>=?",getId(),target.getId(),expires)>0) {
+			// already has a same or longer lasting buff
+			return false;
+		}
+		d("delete from effectsapplications where effectid=? and characterid=?",getId(),target.getId());
+		d("insert into effectsapplications(effectid,characterid,expires) values(?,?,?)",getId(),target.getId(),expires);
+		Audit.OPERATOR operator=Audit.OPERATOR.CHARACTER;
+		if (administrative) { operator=Audit.OPERATOR.AVATAR; }
+		Audit.audit(true,st,operator,target.getOwner(),target,"Add","Effect","",getName(),"Applied effect "+getName()+" for "+UnixTime.duration(seconds));
+		String applykv=st.getKV(this,"Effects.ApplyMessage");
+		if (applykv!=null && (!applykv.isEmpty())) {
+			JSONObject message=new JSONObject();
+			message.put("message",applykv);
+			new Transmission(target,message).start();
+		}
+		return true;
+	}
 }
 
