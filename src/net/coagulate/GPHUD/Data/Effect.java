@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
@@ -100,13 +101,18 @@ public class Effect extends TableRow {
 		return Effect.get(matches.iterator().next().getInt());
 	}
 
-	public static Set<Effect> get(State st,Char character) {
+	public static void expirationCheck(@Nonnull final State st,@Nonnull final Char character) {
 		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
 			int effectid=row.getInt();
 			Effect effect=get(effectid);
 			effect.validate(st);
 			effect.expire(st,character,true);
 		}
+	}
+
+	@Nonnull
+	public static Set<Effect> get(State st,Char character) {
+		expirationCheck(st,character);
 		Set<Effect> set=new HashSet<>();
 		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
 			set.add(get(row.getInt()));
@@ -233,6 +239,19 @@ public class Effect extends TableRow {
 		if (!didanything) { return false; }
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,target.getOwner(),target,"Removed","Effect",getName(),"","Administratively removed effect "+getName());
 		return true;
+	}
+
+	public int remains(Char character) {
+		Results set=dq("select expires from effectsapplications where effectid=? and characterid=?",getId(),character.getId());
+		if (set.size()==0) { throw new UserInputStateException(getName()+" is not applied to "+character.getName()); }
+		if (set.size()>1) { throw new SystemConsistencyException(getName()+" has "+set.size()+" applications to "+character); }
+		int expires=set.iterator().next().getInt();
+		int remaining=expires-UnixTime.getUnixTime();
+		return remaining;
+	}
+
+	public String humanRemains(Char character) {
+		return UnixTime.duration(remains(character),true).trim();
 	}
 }
 
