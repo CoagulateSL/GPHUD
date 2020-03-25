@@ -554,6 +554,16 @@ public class State extends DumpableState {
 		if (scope==KV.KVSCOPE.CHARACTER || scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
 			if (character!=null) { check.add(character); }
 		}
+		//effects
+		if (scope==KV.KVSCOPE.EFFECT || scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
+			if (character!=null) {
+				final Map<Integer,Effect> map=new TreeMap<>();
+				for (final Effect e: Effect.get(this,character)) {
+					map.put(e.getId(),e);
+				}
+				check.addAll(map.values());
+			}
+		}
 		return check;
 	}
 

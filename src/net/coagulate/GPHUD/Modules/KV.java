@@ -209,4 +209,9 @@ public abstract class KV extends NameComparable {
 	public @interface KVSS {
 		@Nonnull KVS[] value();
 	}
+
+	@Override
+	public String toString() {
+		return fullname();
+	}
 }
