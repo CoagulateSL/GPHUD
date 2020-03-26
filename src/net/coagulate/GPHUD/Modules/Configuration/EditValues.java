@@ -200,7 +200,7 @@ public class EditValues {
 	}
 
 	@URLs(url="/configuration/seteffectvalue")
-	public static void setGroupForm(@Nonnull final State st,
+	public static void setEffectForm(@Nonnull final State st,
 	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"configuration.seteffect",values);
 	}
