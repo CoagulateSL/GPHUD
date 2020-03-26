@@ -7,7 +7,6 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
@@ -241,9 +240,15 @@ public class Effect extends TableRow {
 		return true;
 	}
 
-	public int remains(Char character) {
+
+	/** Gets the duration remaining on this effect on a character.
+	 * @param character Character to query
+	 *
+	 * @return Number of seconds left on the Effect, or -1 if not in effect
+	 */
+	public int remains(@Nonnull Char character) {
 		Results set=dq("select expires from effectsapplications where effectid=? and characterid=?",getId(),character.getId());
-		if (set.size()==0) { throw new UserInputStateException(getName()+" is not applied to "+character.getName()); }
+		if (set.size()==0) { return -1; }
 		if (set.size()>1) { throw new SystemConsistencyException(getName()+" has "+set.size()+" applications to "+character); }
 		int expires=set.iterator().next().getInt();
 		int remaining=expires-UnixTime.getUnixTime();
@@ -251,7 +256,9 @@ public class Effect extends TableRow {
 	}
 
 	public String humanRemains(Char character) {
-		return UnixTime.duration(remains(character),true).trim();
+		int remains=remains(character);
+		if (remains==-1) { return "--"; }
+		return UnixTime.duration(remains,true).trim();
 	}
 }
 
