@@ -101,12 +101,14 @@ public class Effect extends TableRow {
 	}
 
 	public static void expirationCheck(@Nonnull final State st,@Nonnull final Char character) {
+		if (st.expirationchecked) { return; }
 		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
 			int effectid=row.getInt();
 			Effect effect=get(effectid);
 			effect.validate(st);
 			effect.expire(st,character,true);
 		}
+		st.expirationchecked=true; // run this basically once per request
 	}
 
 	@Nonnull
