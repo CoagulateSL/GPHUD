@@ -15,6 +15,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Allows get/set of configuration values.
@@ -170,6 +171,40 @@ public class EditValues {
 	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"configuration.setgroup",values);
 	}
+
+	@Commands(context=Context.AVATAR, description="Set an effect level configuration value")
+	public static Response setEffect(@Nonnull final State st,
+	                                 @Nonnull @Arguments(type=ArgumentType.EFFECT,description="Effect to edit the key for") final Effect effect,
+	                                 @Nonnull @Arguments(type=ArgumentType.KVLIST,description="Key to set the value of") final String key,
+	                                 @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,description="New value for the key", max=4096) final String value) {
+		effect.validate(st);
+		Modules.validateKV(st,key);
+		final KV kv=Modules.getKVDefinition(st,key);
+		if (!st.hasPermission(kv.editpermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		}
+		if (!kv.appliesTo(effect)) {
+			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to effects");
+		}
+		final String oldvalue=st.getRawKV(effect,key);
+		st.setKV(effect,key,value);
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetGroupKV",effect.getName()+"/"+key,oldvalue,value,"Changed effect level configuration");
+		// bit cludgy but...
+		// to be done TODO
+		if ("GPHUDServer.AutoAttach".equalsIgnoreCase(key) || "GPHUDServer.ParcelONLY".equalsIgnoreCase(key)) {
+			net.coagulate.GPHUD.Modules.GPHUDServer.Register.sendAttachConfig(st);
+		}
+
+		return new OKResponse("Effect KV store has been updated for "+effect.getName());
+
+	}
+
+	@URLs(url="/configuration/seteffectvalue")
+	public static void setGroupForm(@Nonnull final State st,
+	                                @Nonnull final SafeMap values) {
+		Modules.simpleHtml(st,"configuration.seteffect",values);
+	}
+
 
 	@Nonnull
 	@Commands(context=Context.AVATAR, description="Set a character level configuration value")
