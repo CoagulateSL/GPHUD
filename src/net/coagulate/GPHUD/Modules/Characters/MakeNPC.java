@@ -35,6 +35,7 @@ public class MakeNPC {
 		st.getCharacter().setOwner(User.getSystem());
 		final JSONObject response=new JSONObject();
 		response.put("reboot","Your character has become an NPC and you have been disconnected from it.  Rebooting to restore GPHUD services with a different character.");
+		st.getCharacter().setPlayedBy(null);
 		return new JSONResponse(response);
 	}
 }
