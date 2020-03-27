@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Database.NullInteger;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
@@ -926,8 +927,12 @@ public class Char extends TableRow {
 	 *
 	 * @param avatar Avatar who is playing this character.
 	 */
-	public void setPlayedBy(@Nonnull final User avatar) {
-		set("playedby",avatar.getId());
+	public void setPlayedBy(@Nullable final User avatar) {
+		if (avatar==null) {
+			set("playedby",(Integer)null);
+		} else {
+			set("playedby",avatar.getId());
+		}
 	}
 
 	public void validate(@Nonnull final State st) {
