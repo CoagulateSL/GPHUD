@@ -41,4 +41,34 @@ public class GSFunctions {
 	                                            @Nonnull final BCString effectname) {
 		return new BCInteger(null,Effect.get(st,effectname.getContent()).remains(target.getContent()));
 	}
+
+	@GSFunction(description="Applies an effect to another character",
+	            parameters="Character - Target to apply effect to<br>String - Name of the effect<br>Integer - Number of seconds to apply effect for",
+	            privileged=false,
+	            returns="Integer - the number zero if buff was not applied, 1 if it was",
+	            notes="")
+	public static BCInteger gsApplyEffect(final State st,
+	                                      @Nonnull final GSVM vm,
+	                                      @Nonnull final BCCharacter target,
+	                                      @Nonnull final BCString effectname,
+	                                      @Nonnull final BCInteger duration) {
+		if (Effect.get(st,effectname.getContent()).apply(st,false,target.getContent(),duration.getContent())) {
+			return new BCInteger(null,1);
+		} else { return new BCInteger(null,0); }
+	}
+
+	@GSFunction(description="Removes an effect from another character",
+	            parameters="Character - Target to remove effect from<br>String - name of effect to remove",
+	            privileged=false,
+	            returns="Integer - 1 if an effect was removed, otherwise zero",
+	            notes="")
+	public static BCInteger gsRemoveEffect(final State st,
+                                           @Nonnull final GSVM vm,
+                                           @Nonnull final BCCharacter target,
+                                           @Nonnull final BCString effect) {
+		if (Effect.get(st,effect.getContent()).remove(st,target.getContent(),false)) {
+			return new BCInteger(null,1);
+		} else { return new BCInteger(null,0); }
+	}
+
 }
