@@ -18,6 +18,7 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
+import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -317,6 +318,15 @@ public class Char extends TableRow {
 			list.add(row.getIntNullable("characterid")+"",row.getStringNullable("name"));
 		}
 		return list;
+	}
+
+	public static Results getPingable() {
+		return GPHUD.getDB()
+		     .dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+
+				         "limit 0,30",
+		         Interface.getNode(),
+		         UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
+		        );
 	}
 
 	/**

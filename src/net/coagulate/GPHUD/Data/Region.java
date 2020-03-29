@@ -13,6 +13,7 @@ import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
+import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
@@ -132,6 +133,15 @@ public class Region extends TableRow {
 			return "";
 		}
 		return "Region is already registered!";
+	}
+
+	public static Results getPingable() {
+		return GPHUD.getDB()
+		     .dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+
+				         "asc limit 0,30",
+		         Interface.getNode(),
+		         UnixTime.getUnixTime()-(Maintenance.PINGSERVERINTERVAL*60)
+		        );
 	}
 
 	public boolean isRetired() {

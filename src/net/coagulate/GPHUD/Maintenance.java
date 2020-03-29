@@ -3,10 +3,7 @@ package net.coagulate.GPHUD;
 import net.coagulate.Core.Database.LockException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Events.EventsMaintenance;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
@@ -36,10 +33,10 @@ public class Maintenance extends Thread {
 
 	public static void purgeConnections() {
 		try {
-			final int purgecount=GPHUD.getDB().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+			final int purgecount=Objects.getPurgeInactiveCount();
 			if (purgecount>0) {
 				GPHUD.getLogger().log(FINE,"Purging "+purgecount+" disconnected objects");
-				GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+				Objects.purgeInactive();
 			}
 		}
 		catch (@Nonnull final Exception e) {
@@ -49,10 +46,9 @@ public class Maintenance extends Thread {
 
 	public static void purgeOldCookies() {
 		try {
-			final int now=UnixTime.getUnixTime();
-			final int before=GPHUD.getDB().dqinn("select count(*) from cookies");
-			GPHUD.getDB().d("delete from cookies where expires<?",now);
-			final int after=GPHUD.getDB().dqinn("select count(*) from cookies");
+			final int before=Cookies.countAll();
+			Cookies.expire();
+			final int after=Cookies.countAll();
 			if (before!=after) {
 				GPHUD.getLogger().log(FINE,"Cookies cleaned from "+before+" to "+after+" ("+(after-before)+")");
 			}
@@ -65,12 +61,7 @@ public class Maintenance extends Thread {
 	public static void refreshCharacterURLs() {
 		// note limit 0,30, we do no more than 30 of these per minute
 
-		final Results results=GPHUD.getDB()
-		                           .dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+
-				                               "limit 0,30",
-		                               Interface.getNode(),
-		                               UnixTime.getUnixTime()-(PINGHUDINTERVAL*60)
-		                              );
+		final Results results=Char.getPingable();
 		if (results.notEmpty()) {
 			//GPHUD.getLogger().log(FINE,"Pinging out to "+results.size()+" character URLs");
 			for (final ResultsRow r: results) {
@@ -86,12 +77,7 @@ public class Maintenance extends Thread {
 	public static void refreshRegionURLs() {
 		// note limit 0,30, we do no more than 30 of these per minute
 
-		final Results results=GPHUD.getDB()
-		                           .dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+
-				                               "asc limit 0,30",
-		                               Interface.getNode(),
-		                               UnixTime.getUnixTime()-(PINGSERVERINTERVAL*60)
-		                              );
+		final Results results=Region.getPingable();
 		if (results.notEmpty()) {
 			//GPHUD.getLogger().log(FINE,"Pinging out to "+results.size()+" region URLs");
 			for (final ResultsRow r: results) {

@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Tokens;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -130,6 +131,14 @@ public class Cookies {
 			catch (@Nonnull final UserException ignored) {} // logged out possibly, or expired and cleaned up
 		}
 		return null;
+	}
+
+	public static int countAll() {
+		return GPHUD.getDB().dqinn("select count(*) from cookies");
+	}
+
+	public static void expire() {
+		GPHUD.getDB().d("delete from cookies where expires<?",UnixTime.getUnixTime());
 	}
 
 	@Nonnull

@@ -263,6 +263,7 @@ public class GPHUD {
 		db=new MariaDBConnection("GPHUD",get("DBHOST"),get("DBUSER"),get("DBPASS"),get("DBNAME"));
 	}
 
+	// TODO THIS FUCKS WITH URLS
 	public static void purgeURL(final String url) {
 		final boolean debug=false;
 		if (debug) { System.out.println("Purge URL "+url); }

@@ -43,7 +43,7 @@ public class HTTPListener {
 
 			bootstrap.registerHandler("/system",new net.coagulate.GPHUD.Interfaces.System.Interface());
 			bootstrap.registerHandler("/*",new net.coagulate.GPHUD.Interfaces.User.Interface());
-			bootstrap.registerHandler("/shutdown",new net.coagulate.GPHUD.UnauthenticatedShutdown());
+			//bootstrap.registerHandler("/shutdown",new net.coagulate.GPHUD.UnauthenticatedShutdown());
 			server=bootstrap.create();
 			if (server==null) { throw new SystemInitialisationException("Server bootstrap is null?"); }
 			GPHUD.getLogger().config("HTTP Services starting up on port "+port);

@@ -159,6 +159,15 @@ public class Objects extends TableRow {
 		return object;
 	}
 
+	/** Returns number of object connections to be purged */
+	public static int getPurgeInactiveCount() {
+		return GPHUD.getDB().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+	}
+
+	public static void purgeInactive() {
+		GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+	}
+
 	@Nullable
 	public ObjectTypes getObjectType() {
 		final Integer otid=getIntNullable("objecttype");
