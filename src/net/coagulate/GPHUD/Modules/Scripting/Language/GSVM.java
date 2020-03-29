@@ -268,6 +268,15 @@ public class GSVM {
 		out.put("sayas",ch.getName());
 	}
 
+	public void queueSay(@Nonnull final Char ch,
+	                       final String message) {
+		final JSONObject out=getQueue(ch);
+		String m="";
+		if (out.has("sayashud")) { m=out.getString("sayashud")+"\n"; }
+		m=m+message;
+		out.put("sayashud",m);
+	}
+
 	public void queueTeleport(final Char content,
 	                          final String hudRepresentation) {
 		final JSONObject queue=getQueue(content);

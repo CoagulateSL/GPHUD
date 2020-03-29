@@ -29,6 +29,20 @@ public class Output {
 	}
 
 	@Nonnull
+	@GSFunctions.GSFunction(description="Causes the HUD to speak in local chat, as the HUD", parameters="Character - character whose HUD will emit the "+"message<br"+
+			">String - message to speak", returns="Integer - The number 0", notes="Messages are stacked up, per user, until the script completes or is suspended",
+	                        privileged=false)
+	public static BCInteger gsSayAsHUD(final State st,
+	                                    @Nonnull final GSVM vm,
+	                                    @Nonnull final BCCharacter target,
+	                                    @Nonnull final BCString message) {
+		if (vm.simulation) { return new BCInteger(null,0); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		vm.queueSay(target.getContent(),message.getContent());
+		return new BCInteger(null,0);
+	}
+
+	@Nonnull
 	@GSFunctions.GSFunction(description="Causes the HUD to send a message to its wearer", parameters="Character - character whose HUD will message the wearer (the character "
 			+"themselves)<br>String - message to pass", returns="Integer - The number 0", notes="Messages are stacked up, per user, until the script completes or is "+
 			"suspended", privileged=false)
