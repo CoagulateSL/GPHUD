@@ -263,7 +263,7 @@ public abstract class Login {
 		if (!charswitchallowed) {
 			return new ErrorResponse("You are not allowed to create or switch characters in this location");
 		}
-		Char.create(st,charactername);
+		Char.create(st,charactername,true);
 		final Char c=Char.resolve(st,charactername);
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
 		return login(st,null,null,null);
