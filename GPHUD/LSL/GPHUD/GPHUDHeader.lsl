@@ -38,6 +38,9 @@ integer gphud_process() {
 		llSay(0,jsonget("say"));
 		if (newname!="") { llSetObjectName(oldname); }
 	}
+	if (jsonget("sayashud")!="") { 
+		llSay(0,jsonget("sayashud"));
+	}
 	if (jsonget("error")!="") {
 		typedSay(jsonget("error"));
 	}
