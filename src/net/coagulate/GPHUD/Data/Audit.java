@@ -73,20 +73,35 @@ public abstract class Audit {
 	                         @Nullable final String oldvalue,
 	                         @Nullable final String newvalue,
 	                         final String note) {
-		final User avatar=st.getAvatarNullable();
-		Char character=st.getCharacterNullable();
-		if (op==OPERATOR.AVATAR) { character=null; }
+		final User sourceavatar=st.getAvatarNullable();
+		Char sourcecharacter=st.getCharacterNullable();
+		if (op==OPERATOR.AVATAR) { sourcecharacter=null; }
+		audit(log,st,sourceavatar,sourcecharacter,targetavatar,targetcharacter,changetype,changeditem,oldvalue,newvalue,note);
+	}
+
+	public static void audit(final boolean log,
+	                         @Nonnull final State st,
+	                         @Nullable final User sourceavatar,
+	                         @Nullable final Char sourcecharacter,
+	                         @Nullable final User targetavatar,
+	                         @Nullable final Char targetcharacter,
+	                         @Nullable final String changetype,
+	                         @Nullable final String changeditem,
+	                         @Nullable final String oldvalue,
+	                         @Nullable final String newvalue,
+	                         final String note) {
+
 		final Instance stinstance=st.getInstanceNullable();
 		if (log) {
 			//String instance = "NoInstance";
 			//if (stinstance != null) { instance = stinstance.getName(); }
 			String actor="";
-			if (avatar!=null) {
-				actor+="A:"+avatar.getName();
+			if (sourceavatar!=null) {
+				actor+="A:"+sourceavatar.getName();
 			}
-			if (character!=null) {
+			if (sourcecharacter!=null) {
 				if (!actor.isEmpty()) { actor+=" "; }
-				actor+="C:"+character.getName()+"#"+character.getId();
+				actor+="C:"+sourcecharacter.getName()+"#"+sourcecharacter.getId();
 			}
 			String facility="";
 			if (changetype!=null) { facility+=changetype; }
@@ -115,8 +130,8 @@ public abstract class Audit {
 					        +"?,?,?,?)",
 			        getUnixTime(),
 			        getId(stinstance),
-			        getId(avatar),
-			        getId(character),
+			        getId(sourceavatar),
+			        getId(sourcecharacter),
 			        getId(targetavatar),
 			        getId(targetcharacter),
 			        changetype,

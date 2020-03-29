@@ -147,6 +147,7 @@ public abstract class Command {
 					case CHARACTER_FACTION:
 					case CHARACTER_NEAR:
 					case CHARACTER_PLAYABLE:
+					case EFFECT:
 						maxlen=64;
 						break;
 					case CHARACTERGROUP:
@@ -271,6 +272,9 @@ public abstract class Command {
 						break;
 					case EVENT:
 						typedargs.add(assertNotNull(Event.find(st.getInstance(),v),v,"event name"));
+						break;
+					case EFFECT:
+						typedargs.add(assertNotNull(Effect.find(st.getInstance(),v),v,"effect name"));
 						break;
 					case ZONE:
 						typedargs.add(assertNotNull(Zone.find(st.getInstance(),v),v,"zone name"));
@@ -520,6 +524,20 @@ public abstract class Command {
 						}
 					}
 					break;
+				case EFFECT:
+					final Set<Effect> effects=Effect.getAll(st.getInstance());
+					if (effects.size()>12) {
+						json.put("arg"+arg+"type","TEXTBOX");
+					}
+					else {
+						json.put("arg"+arg+"type","SELECT");
+						button=0;
+						for (final Effect e: effects) {
+							json.put("arg"+arg+"button"+button,e.getName());
+							button++;
+						}
+					}
+					break;
 				case CHARACTERGROUP:
 					final Set<CharacterGroup> groups=st.getInstance().getCharacterGroups();
 					if (groups.size()>12) {
@@ -607,6 +625,13 @@ public abstract class Command {
 						characters.add(c.getName());
 					}
 					t.add(characters);
+					break;
+				case EFFECT:
+					final DropDownList effectlist=new DropDownList(arg.getName());
+					for (final Effect effect: Effect.getAll(st.getInstance())) {
+						effectlist.add(effect.getName());
+					}
+					t.add(effectlist);
 					break;
 				case EVENT:
 					final DropDownList eventlist=new DropDownList(arg.getName());

@@ -29,6 +29,10 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	public TableRow(final int id) { super(id); }
 
+	protected TableRow() {
+		super();
+	}
+
 	@Nonnull
 	public static String getLink(final String name,
 	                             final String target,

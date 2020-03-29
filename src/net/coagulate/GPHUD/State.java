@@ -83,6 +83,8 @@ public class State extends DumpableState {
 	public String objectkey;
 	@Nullable
 	public Objects object;
+	// used by Effect to only run the expiration checker once per player request as any effects intensive stuff will spam calls to the checker
+	public boolean expirationchecked=false;
 	@Nullable
 	Set<String> permissionscache;
 	@Nullable
@@ -553,6 +555,16 @@ public class State extends DumpableState {
 		//character
 		if (scope==KV.KVSCOPE.CHARACTER || scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
 			if (character!=null) { check.add(character); }
+		}
+		//effects
+		if (scope==KV.KVSCOPE.EFFECT || scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
+			if (character!=null) {
+				final Map<Integer,Effect> map=new TreeMap<>();
+				for (final Effect e: Effect.get(this,character)) {
+					map.put(e.getId(),e);
+				}
+				check.addAll(map.values());
+			}
 		}
 		return check;
 	}

@@ -83,4 +83,9 @@ public class BCList extends ByteCodeDataType {
 		elements++;
 		return this;
 	}
+
+	@Nonnull
+	public BCInteger toBCInteger() {
+		return new BCInteger(null,elements);
+	}
 }

@@ -736,6 +736,7 @@ public class Instance extends TableRow {
 		Char.wipeKV(this,key);
 		Zone.wipeKV(this,key);
 		Region.wipeKV(this,key);
+		Effect.wipeKV(this,key);
 		d("delete from instancekvstore where instanceid=? and k like ?",getId(),key);
 	}
 
