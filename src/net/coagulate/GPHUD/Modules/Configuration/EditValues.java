@@ -27,7 +27,7 @@ public class EditValues {
 	@Commands(context=Context.AVATAR, description="Set an instance level configuration value")
 	public static Response setInstance(@Nonnull final State st,
 	                                   @Nonnull @Arguments(type=ArgumentType.KVLIST, description="Key to set the value of") final String key,
-	                                   @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096) final String value) {
+	                                   @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096, mandatory=false) final String value) {
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
 		if (!st.hasPermission(kv.editpermission())) {
@@ -57,7 +57,7 @@ public class EditValues {
 	public static Response setRegion(@Nonnull final State st,
 	                                 @Nonnull @Arguments(type=ArgumentType.REGION, description="Region to edit the key for") final Region region,
 	                                 @Nonnull @Arguments(type=ArgumentType.KVLIST, description="Key to set the value of") final String key,
-	                                 @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096) final String value) {
+	                                 @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096, mandatory=false) final String value) {
 		region.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
@@ -89,7 +89,7 @@ public class EditValues {
 	public static Response setZone(@Nonnull final State st,
 	                               @Nonnull @Arguments(type=ArgumentType.ZONE, description="Name of the zone") final Zone zone,
 	                               @Nonnull @Arguments(type=ArgumentType.KVLIST, description="Key to set") final String key,
-	                               @Arguments(type=ArgumentType.TEXT_ONELINE, description="Value to set to", max=4096) final String value) {
+	                               @Arguments(type=ArgumentType.TEXT_ONELINE, description="Value to set to", max=4096, mandatory=false) final String value) {
 		zone.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
@@ -116,7 +116,7 @@ public class EditValues {
 	public static Response setEvent(@Nonnull final State st,
 	                                @Nonnull @Arguments(type=ArgumentType.EVENT, description="Character group to edit the key for") final Event event,
 	                                @Nonnull @Arguments(type=ArgumentType.KVLIST, description="Key to set the value of") final String key,
-	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096) final String value) {
+	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096, mandatory=false) final String value) {
 		event.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
@@ -144,7 +144,7 @@ public class EditValues {
 	public static Response setGroup(@Nonnull final State st,
 	                                @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP, description="Character group to edit the key for") final CharacterGroup group,
 	                                @Nonnull @Arguments(type=ArgumentType.KVLIST, description="Key to set the value of") final String key,
-	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096) final String value) {
+	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096, mandatory=false) final String value) {
 		group.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
@@ -176,7 +176,7 @@ public class EditValues {
 	public static Response setEffect(@Nonnull final State st,
 	                                 @Nonnull @Arguments(type=ArgumentType.EFFECT,description="Effect to edit the key for") final Effect effect,
 	                                 @Nonnull @Arguments(type=ArgumentType.KVLIST,description="Key to set the value of") final String key,
-	                                 @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,description="New value for the key", max=4096) final String value) {
+	                                 @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,description="New value for the key", max=4096, mandatory=false) final String value) {
 		effect.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
@@ -211,7 +211,7 @@ public class EditValues {
 	public static Response setChar(@Nonnull final State st,
 	                               @Nonnull @Arguments(type=ArgumentType.CHARACTER, description="Character to edit the key for") final Char character,
 	                               @Nonnull @Arguments(type=ArgumentType.KVLIST, description="Key to set the value of") final String key,
-	                               @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096) final String value) {
+	                               @Arguments(type=ArgumentType.TEXT_ONELINE, description="New value for the key", max=4096, mandatory=false) final String value) {
 		character.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
