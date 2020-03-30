@@ -80,9 +80,12 @@ public class VisitXP extends QuotaedXP {
 		}
 	}
 
+	// TODO consider purging this SQL.  maybe just instansiate all instances and then check their KV.  all but one instance has this enabled or default enabled
 	public void runAwards() {
 		try {
-			final Results results=GPHUD.getDB().dq("select instanceid from instancekvstore where k like 'experience.enabled' and (v is null or v like 'true')");
+			final Results results=GPHUD.getDB().dq(
+				"select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k like 'experience.enabled' where v is null or v like 'true'"
+	        );
 			for (final ResultsRow r: results) {
 				final Instance i=Instance.get(r.getInt());
 				runAwards(i);
