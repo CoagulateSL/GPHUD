@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
+import net.coagulate.GPHUD.Utils;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -164,8 +165,8 @@ public class Zone extends TableRow {
 	public void addArea(@Nonnull final Region region,
 	                    final String cornerOne,
 	                    final String cornerTwo) {
-		final int[] c1=ZoneArea.parseVector(cornerOne);
-		final int[] c2=ZoneArea.parseVector(cornerTwo);
+		final int[] c1=Utils.parseVector(cornerOne);
+		final int[] c2=Utils.parseVector(cornerTwo);
 		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)",getId(),region.getId(),c1[0],c1[1],c1[2],c2[0],c2[1],c2[2]);
 	}
 

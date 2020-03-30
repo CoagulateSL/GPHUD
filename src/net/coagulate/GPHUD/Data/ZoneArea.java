@@ -2,8 +2,8 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.GPHUD.State;
+import net.coagulate.GPHUD.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,39 +27,6 @@ public class ZoneArea extends TableRow {
 	@Nonnull
 	public static ZoneArea get(final int id) {
 		return (ZoneArea) factoryPut("ZoneArea",id,new ZoneArea(id));
-	}
-
-	/**
-	 * Convert a string vector into an int array.
-	 *
-	 * @param s String vector, x,y,z format with optional angle brackets (SL format)
-	 *
-	 * @return 3 part int array [x,y,z]
-	 */
-	@Nonnull
-	public static int[] parseVector(String s) {
-		s=s.replaceAll("<","");
-		s=s.replaceAll(">","");
-		s=s.replaceAll("\\(","");
-		s=s.replaceAll("\\)","");
-		final String[] parts=s.split(",");
-		if (parts.length!=3) {
-			throw new UserInputValidationParseException("Could not decompose co-ordinates properly");
-		}
-		final int[] pos=new int[3];
-		try { pos[0]=(int) Float.parseFloat(parts[0]); }
-		catch (@Nonnull final NumberFormatException e) {
-			throw new UserInputValidationParseException("Error processing X number "+parts[0]+" - "+e.getMessage());
-		}
-		try { pos[1]=(int) Float.parseFloat(parts[1]); }
-		catch (@Nonnull final NumberFormatException e) {
-			throw new UserInputValidationParseException("Error processing Y number "+parts[1]+" - "+e.getMessage());
-		}
-		try { pos[2]=(int) Float.parseFloat(parts[2]); }
-		catch (@Nonnull final NumberFormatException e) {
-			throw new UserInputValidationParseException("Error processing Z number "+parts[2]+" - "+e.getMessage());
-		}
-		return pos;
 	}
 
 	@Nonnull
@@ -94,10 +61,10 @@ public class ZoneArea extends TableRow {
 	 * @param loc1 Corner 1 as vector string
 	 * @param loc2 Corner 2 as vector string
 	 */
-	public void setPos(final String loc1,
-	                   final String loc2) {
-		final int[] one=parseVector(loc1);
-		final int[] two=parseVector(loc2);
+	public void setPos(@Nonnull final String loc1,
+	                   @Nonnull final String loc2) {
+		final int[] one=Utils.parseVector(loc1);
+		final int[] two=Utils.parseVector(loc2);
 		d("update zoneareas set x1=?,y1=?,z1=?,x2=?,y2=?,z2=? where zoneareaid=?",one[0],one[1],one[2],two[0],two[1],two[2],getId());
 	}
 
@@ -105,7 +72,7 @@ public class ZoneArea extends TableRow {
 	 * Return the two corners.
 	 * The corners are sorted so v1.x is less than or equal to v2.x, and similarly for y and z, simplifying the code logic at the HUD end.
 	 *
-	 * @return Array pair of vectors as strings representing the corners of the bounding box.
+	 * @return Array pair of vectors as strings representing the corners of the bounding box, or null if one of the components is null (?!)
 	 */
 	@Nullable
 	public String[] getVectors() {
