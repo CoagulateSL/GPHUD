@@ -96,7 +96,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	}
 
 	@Override
-	public int compareTo(final @Nonnull CharacterSummary o) {
+	public int compareTo(@Nonnull final CharacterSummary o) {
 		return Integer.compare(id,o.id);
 	}
 }

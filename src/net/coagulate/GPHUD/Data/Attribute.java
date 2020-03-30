@@ -64,7 +64,7 @@ public class Attribute extends TableRow {
 	 * Find an attribute that is a group by 'type'.
 	 */
 	@Nonnull
-	public static Attribute findGroup(final @Nonnull Instance instance,
+	public static Attribute findGroup(@Nonnull final Instance instance,
 	                                  final String grouptype) {
 		try {
 			final int id=GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
