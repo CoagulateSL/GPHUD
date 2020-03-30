@@ -31,8 +31,8 @@ public class Groups {
 	public static BCList gsGetGroupsByType(final State st,
 	                                       final GSVM vm,
 	                                       @Nonnull final BCString grouptype) {
-		BCList list=new BCList(null);
-		for (CharacterGroup cg: st.getInstance().getGroupsForKeyword(grouptype.toString())) {
+		final BCList list=new BCList(null);
+		for (final CharacterGroup cg: st.getInstance().getGroupsForKeyword(grouptype.toString())) {
 			list.append(new BCString(null,cg.getName()));
 		}
 		return list;
@@ -44,8 +44,8 @@ public class Groups {
 	public static BCList gsGetOpenGroupsByType(final State st,
 	                                           final GSVM vm,
 	                                           @Nonnull final BCString grouptype) {
-		BCList list=new BCList(null);
-		for (CharacterGroup cg: st.getInstance().getGroupsForKeyword(grouptype.toString())) {
+		final BCList list=new BCList(null);
+		for (final CharacterGroup cg: st.getInstance().getGroupsForKeyword(grouptype.toString())) {
 			if (cg.isOpen()) { list.append(new BCString(null,cg.getName())); }
 		}
 		return list;

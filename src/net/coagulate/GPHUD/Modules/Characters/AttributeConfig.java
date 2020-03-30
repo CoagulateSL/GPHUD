@@ -135,7 +135,7 @@ public class AttributeConfig {
 			if (a.getName().equalsIgnoreCase(name)) { return new ErrorResponse("This name is already claimed"); }
 		}
 		// already exists as a template
-		for (String templatename: st.getTemplates().keySet()) {
+		for (final String templatename: st.getTemplates().keySet()) {
 			if (templatename.equalsIgnoreCase("--"+name+"--")) {
 				return new ErrorResponse("There is already a template with that name, it can not also be used as an attribute name");
 			}

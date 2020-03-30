@@ -78,7 +78,7 @@ public class BCList extends ByteCodeDataType {
 	}
 
 	@Nonnull
-	public BCList append(ByteCodeDataType value) {
+	public BCList append(final ByteCodeDataType value) {
 		content.add(value);
 		elements++;
 		return this;

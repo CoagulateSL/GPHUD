@@ -22,8 +22,8 @@ public class GSFunctions {
 	public static BCList gsGetEffects(final State st,
 	                                  @Nonnull final GSVM vm,
 	                                  @Nonnull final BCCharacter target) {
-		BCList ret=new BCList(null);
-		for (Effect e: Effect.get(st,target.getContent())) {
+		final BCList ret=new BCList(null);
+		for (final Effect e: Effect.get(st,target.getContent())) {
 			ret.append(new BCString(null,e.getName()));
 		}
 		return ret;

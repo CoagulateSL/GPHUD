@@ -34,7 +34,7 @@ public class GroupCommands {
 			// it's a typed group, find the attribute it maps to
 			final Attribute attribute;
 			try { attribute=Attribute.findGroup(st.getInstance(),group.getType()); }
-			catch (TooMuchDataException e) {
+			catch (final TooMuchDataException e) {
 				return new ErrorResponse("There is more than one attribute of type GROUP/"+group.getType()+" which will not work as group subtypes enforce unique membership." +
 						                         "  The administrator should remove one of the attributes.");
 			}

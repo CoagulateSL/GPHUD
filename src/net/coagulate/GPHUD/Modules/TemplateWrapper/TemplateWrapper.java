@@ -16,8 +16,8 @@ import static java.util.logging.Level.SEVERE;
 
 public class TemplateWrapper extends ModuleAnnotation {
 
-	public TemplateWrapper(String name,
-	                       ModuleDefinition def) {
+	public TemplateWrapper(final String name,
+	                       final ModuleDefinition def) {
 		super(name,def);
 	}
 
@@ -25,9 +25,9 @@ public class TemplateWrapper extends ModuleAnnotation {
 	@Nonnull public Map<String,String> getExternalTemplates(@Nonnull final State st) {
 		if (externals!=null) { return externals; }
 		final boolean debug=false;
-		Map<String,String> list=new TreeMap<>(Templater.templates);
-		Map<String,String> listtrimmed=new TreeMap<>();
-		for (Module m: Modules.getModules()) {
+		final Map<String,String> list=new TreeMap<>(Templater.templates);
+		final Map<String,String> listtrimmed=new TreeMap<>();
+		for (final Module m: Modules.getModules()) {
 			if (!m.getName().equals("TemplateWrapper")) {
 				m.addTemplateDescriptions(st,list);
 				if (debug) { System.out.println("Probed module "+m+" size now "+list.size()); }
@@ -42,7 +42,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 		return listtrimmed;
 	}
 
-	private static String trim(String s) { return s.substring(2,s.length()-2); }
+	private static String trim(final String s) { return s.substring(2,s.length()-2); }
 
 	@Nonnull
 	@Override
@@ -93,21 +93,21 @@ public class TemplateWrapper extends ModuleAnnotation {
 	}
 
 	@Nullable
-	public static String templateWrapper(State st,
-	                                       @Nonnull final String wrappedtemplate) {
+	public static String templateWrapper(final State st,
+	                                     @Nonnull final String wrappedtemplate) {
 		if (!st.hasModule("TemplateWrapper")) { return ""; }
 		final boolean debug=false;
 		String template=trim(wrappedtemplate);
 		if (template.startsWith("WRAPPED:")) {
 			template=template.substring(8);
 			if (debug) { System.out.println(wrappedtemplate+" > "+template); }
-			String ret=Templater.template(st,"--"+template+"--",false,false);
+			final String ret=Templater.template(st,"--"+template+"--",false,false);
 			if (debug) { System.out.println(wrappedtemplate+" > "+template+" > "+ret); }
 			if (ret==null || ret.isEmpty()) {
 				if (debug) { System.out.println("Returning empty ret"); }
 				return ret;
 			}
-			String postret=st.getKV("TemplateWrapper."+template+"Prefix")+ret+st.getKV("TemplateWrapper."+template+"Postfix");
+			final String postret=st.getKV("TemplateWrapper."+template+"Prefix")+ret+st.getKV("TemplateWrapper."+template+"Postfix");
 			if (debug) { System.out.println("Returning:"+postret); }
 			return postret;
 		}

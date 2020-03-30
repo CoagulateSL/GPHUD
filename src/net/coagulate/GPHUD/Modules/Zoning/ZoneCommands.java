@@ -48,14 +48,14 @@ public abstract class ZoneCommands {
 	public static Response delete(@Nonnull final State st,
 	                              @Arguments(description="Name of the zone to delete",type=ArgumentType.ZONE) final Zone zone) {
 		zone.validate(st);
-		String zonename=zone.getName();
-		Set<Region> toupdate=new HashSet<>();
-		for (ZoneArea area:zone.getZoneAreas()) {
+		final String zonename=zone.getName();
+		final Set<Region> toupdate=new HashSet<>();
+		for (final ZoneArea area:zone.getZoneAreas()) {
 			try { toupdate.add(area.getRegion(false)); }
-			catch (UserException|SystemException ignore) {}
+			catch (final UserException|SystemException ignore) {}
 		}
 		zone.delete(st);
-		for (Region region:toupdate) { region.pushZoning(); }
+		for (final Region region:toupdate) { region.pushZoning(); }
 		return new OKResponse("Deleted zone "+zonename);
 	}
 

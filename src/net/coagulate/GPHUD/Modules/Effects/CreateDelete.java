@@ -22,8 +22,8 @@ public class CreateDelete {
 	}
 
 	@URL.URLs(url="/configuration/Effects/Create")
-	public static void createPage(State st,
-	                              SafeMap parameters) {
+	public static void createPage(final State st,
+	                              final SafeMap parameters) {
 		Modules.simpleHtml(st,"Effects.Create",parameters);
 	}
 
@@ -36,8 +36,8 @@ public class CreateDelete {
 	}
 
 	@URL.URLs(url="/configuration/Effects/Delete")
-	public static void deletePage(State st,
-	                              SafeMap parameters) {
+	public static void deletePage(final State st,
+	                              final SafeMap parameters) {
 		Modules.simpleHtml(st,"Effects.Delete",parameters);
 	}
 

@@ -44,7 +44,7 @@ public class Effect extends TableRow {
 
 	@Nonnull
 	public static Effect get(@Nonnull final State st,@Nonnull final String name) {
-		Effect effect=getNullable(st,name);
+		final Effect effect=getNullable(st,name);
 		if (effect==null) { throw new UserInputLookupFailureException("There is no effect named "+name); }
 		return effect;
 	}
@@ -54,9 +54,9 @@ public class Effect extends TableRow {
 		return find(st.getInstance(),name);
 	}
 
-	public static Set<Effect> getAll(Instance instance) {
-		Set<Effect> effects=new TreeSet<>();
-		for (ResultsRow effect: GPHUD.getDB().dq("select id from effects where instanceid=?",instance.getId())) {
+	public static Set<Effect> getAll(final Instance instance) {
+		final Set<Effect> effects=new TreeSet<>();
+		for (final ResultsRow effect: GPHUD.getDB().dq("select id from effects where instanceid=?",instance.getId())) {
 			effects.add(Effect.get(effect.getInt()));
 		}
 		return effects;
@@ -94,7 +94,7 @@ public class Effect extends TableRow {
 	@Nullable
 	public static Effect find(@Nonnull final Instance instance,
 	                         final String name) {
-		Results matches=GPHUD.getDB().dq("select id from effects where instanceid=? and name like ?",instance.getId(),name);
+		final Results matches=GPHUD.getDB().dq("select id from effects where instanceid=? and name like ?",instance.getId(),name);
 		if (matches.empty()) { return null; }
 		if (matches.size()>1) { throw new TooMuchDataException("Name "+name+" in instance "+instance.getId()+" matched "+matches.size()+" results"); }
 		return Effect.get(matches.iterator().next().getInt());
@@ -102,9 +102,9 @@ public class Effect extends TableRow {
 
 	public static void expirationCheck(@Nonnull final State st,@Nonnull final Char character) {
 		if (st.expirationchecked) { return; }
-		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
-			int effectid=row.getInt();
-			Effect effect=get(effectid);
+		for (final ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
+			final int effectid=row.getInt();
+			final Effect effect=get(effectid);
 			effect.validate(st);
 			effect.expire(st,character,true);
 		}
@@ -112,16 +112,19 @@ public class Effect extends TableRow {
 	}
 
 	@Nonnull
-	public static Set<Effect> get(State st,Char character) {
+	public static Set<Effect> get(final State st,
+	                              final Char character) {
 		expirationCheck(st,character);
-		Set<Effect> set=new HashSet<>();
-		for (ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
+		final Set<Effect> set=new HashSet<>();
+		for (final ResultsRow row:GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
 			set.add(get(row.getInt()));
 		}
 		return set;
 	}
 
-	public boolean expire(State st,Char character,boolean audit) {
+	public boolean expire(final State st,
+	                      final Char character,
+	                      final boolean audit) {
 		if (dqinn("select count(*) from effectsapplications where characterid=? and effectid=?",character.getId(),getId())==0) { return false; }
 		validate(st);
 		character.validate(st);
@@ -129,9 +132,9 @@ public class Effect extends TableRow {
 			Audit.audit(true,st,User.getSystem(),null,character.getOwner(),character,"Effect","Expire",getName(),"","Effect "+getName()+" expired from character");
 		}
 		d("delete from effectsapplications where characterid=? and effectid=?",character.getId(),getId());
-		String applykv=st.getKV(this,"Effects.RemoveMessage");
+		final String applykv=st.getKV(this,"Effects.RemoveMessage");
 		if (applykv!=null && (!applykv.isEmpty())) {
-			JSONObject message=new JSONObject();
+			final JSONObject message=new JSONObject();
 			message.put("message",applykv);
 			new Transmission(character,message).start();
 		}
@@ -191,9 +194,9 @@ public class Effect extends TableRow {
 	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
 
 	// perhaps flush the caches (to do) when this happens...
-	public void delete(State st) {
+	public void delete(final State st) {
 		validate(st);
-		String name=getName();
+		final String name=getName();
 		d("delete from effects where id=?",getId());
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Delete","Effect",name,null,"Deleted Effect "+name);
 	}
@@ -205,15 +208,15 @@ public class Effect extends TableRow {
 	 * @param seconds Number of seconds to apply
 	 * @return True if the effect was applied, false if it was skipped due to an existing buff being of longer duration.  Exceptions on input errors.
 	 */
-	public boolean apply(State st,
-	                     boolean administrative,
-	                     Char target,
-	                     int seconds) {
+	public boolean apply(final State st,
+	                     final boolean administrative,
+	                     final Char target,
+	                     final int seconds) {
 		// validate everything
 		target.validate(st);
 		validate(st);
 		if (seconds<=0) { throw new UserInputInvalidChoiceException("Number of seconds to apply effect must be greater than zero"); }
-		int expires=UnixTime.getUnixTime()+seconds;
+		final int expires=UnixTime.getUnixTime()+seconds;
 		// any existing?
 		if (dqinn("select count(*) from effectsapplications where effectid=? and characterid=? and expires>=?",getId(),target.getId(),expires)>0) {
 			// already has a same or longer lasting buff
@@ -224,19 +227,19 @@ public class Effect extends TableRow {
 		Audit.OPERATOR operator=Audit.OPERATOR.CHARACTER;
 		if (administrative) { operator=Audit.OPERATOR.AVATAR; }
 		Audit.audit(true,st,operator,target.getOwner(),target,"Add","Effect","",getName(),"Applied effect "+getName()+" for "+UnixTime.duration(seconds));
-		String applykv=st.getKV(this,"Effects.ApplyMessage");
+		final String applykv=st.getKV(this,"Effects.ApplyMessage");
 		if (applykv!=null && (!applykv.isEmpty())) {
-			JSONObject message=new JSONObject();
+			final JSONObject message=new JSONObject();
 			message.put("message",applykv);
 			new Transmission(target,message).start();
 		}
 		return true;
 	}
 
-	public boolean remove(State st,
-	                      Char target,
-	                      boolean administrative) {
-		boolean didanything=expire(st,target,false);
+	public boolean remove(final State st,
+	                      final Char target,
+	                      final boolean administrative) {
+		final boolean didanything=expire(st,target,false);
 		if (!didanything) { return false; }
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,target.getOwner(),target,"Removed","Effect",getName(),"","Administratively removed effect "+getName());
 		return true;
@@ -248,16 +251,16 @@ public class Effect extends TableRow {
 	 *
 	 * @return Number of seconds left on the Effect, or -1 if not in effect
 	 */
-	public int remains(@Nonnull Char character) {
-		Results set=dq("select expires from effectsapplications where effectid=? and characterid=?",getId(),character.getId());
+	public int remains(@Nonnull final Char character) {
+		final Results set=dq("select expires from effectsapplications where effectid=? and characterid=?",getId(),character.getId());
 		if (set.size()==0) { return -1; }
 		if (set.size()>1) { throw new SystemConsistencyException(getName()+" has "+set.size()+" applications to "+character); }
-		int expires=set.iterator().next().getInt();
+		final int expires=set.iterator().next().getInt();
 		return expires-UnixTime.getUnixTime();
 	}
 
-	public String humanRemains(Char character) {
-		int remains=remains(character);
+	public String humanRemains(final Char character) {
+		final int remains=remains(character);
 		if (remains==-1) { return "--"; }
 		return UnixTime.duration(remains,true).trim();
 	}

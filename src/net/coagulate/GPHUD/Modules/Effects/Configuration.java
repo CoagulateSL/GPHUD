@@ -22,7 +22,7 @@ public class Configuration {
 		final Table at=new Table();
 		f.add(at);
 		at.add(new HeaderRow().add("Name"));
-		for (Effect effect:Effect.getAll(st.getInstance())) {
+		for (final Effect effect:Effect.getAll(st.getInstance())) {
 			at.openRow();
 			at.add(effect);
 			if (st.hasPermission("Effects.Delete")) {

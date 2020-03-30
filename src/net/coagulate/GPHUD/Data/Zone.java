@@ -204,7 +204,7 @@ public class Zone extends TableRow {
 	@Override
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
-	public void delete(State st) {
+	public void delete(final State st) {
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR, null,null, "Delete", "Zone", getName(), "", "Deleted zone "+getName());
 		d("delete from zones where zoneid="+getId());
 	}

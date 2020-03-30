@@ -200,8 +200,8 @@ public class Char extends TableRow {
 	private static void checkFilteredNamingList(@Nonnull final State st,
 	                                            @Nonnull final String name) {
 		// break the users name into components based on certain characters
-		String nameparts[]=name.split("[ ,\\.\\-]");  // space comma dot dash
-		String filterlist[]=st.getKV("Instance.FilteredNamingList").toString().split(",");
+		final String[] nameparts=name.split("[ ,\\.\\-]");  // space comma dot dash
+		final String[] filterlist=st.getKV("Instance.FilteredNamingList").toString().split(",");
 		for (String filter:filterlist) {
 			filter=filter.trim();
 			if (!filter.isEmpty()) {
@@ -216,24 +216,24 @@ public class Char extends TableRow {
 		}
 	}
 
-	private static void checkAllowedNamingSymbols(@Nonnull State st,
+	private static void checkAllowedNamingSymbols(@Nonnull final State st,
 	                                              @Nonnull String name) {
 		// in this approach we eliminate characters we allow.  If the result is an empty string, they win.  Else "uhoh"
 		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
-		String allowlist=st.getKV("Instance.AllowedNamingSymbols").toString();
+		final String allowlist=st.getKV("Instance.AllowedNamingSymbols").toString();
 		for (int i=0;i<allowlist.length();i++) {
-			String allow=allowlist.charAt(i)+"";
+			final String allow=allowlist.charAt(i)+"";
 			name=name.replaceAll(Pattern.quote(allow),"");
 		}
 		// unique the characters in the string.  There's a better way of doing this surely.
 		if (!name.trim().isEmpty()) {
 			String blockedchars="";
 			// bad de-duping code
-			Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
+			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
 			// stick all the symbols in a set :P
 			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
 			// and reconstitute it
-			for (String character:characters) { blockedchars+=character; }
+			for (final String character:characters) { blockedchars+=character; }
 			throw new UserInputInvalidChoiceException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are entering JUST A NAME at this point, not descriptive details.");
 		}
 	}

@@ -110,7 +110,7 @@ public class ModuleAnnotation extends Module {
 
 	public KV getKVDefinition(final State st,
 	                          @Nonnull final String qualifiedname) {
-		KV ret=getKVDefinitionNullable(st,qualifiedname);
+		final KV ret=getKVDefinitionNullable(st,qualifiedname);
 		if (ret==null) { throw new SystemImplementationException("Invalid KV "+qualifiedname+" in module "+getName()); }
 		return ret;
 	}

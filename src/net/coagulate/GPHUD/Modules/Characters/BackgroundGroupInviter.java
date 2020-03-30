@@ -7,12 +7,12 @@ public class BackgroundGroupInviter extends Thread {
 
 	private final net.coagulate.GPHUD.State st;
 
-	public BackgroundGroupInviter(net.coagulate.GPHUD.State st) {this.st=st;}
+	public BackgroundGroupInviter(final net.coagulate.GPHUD.State st) {this.st=st;}
 
 	public void run() {
 		try {
 			SL.bot().api().groupInvite(st.getAvatar().getUUID() ,"34ead140-555f-42f9-2b54-bb887554b70f","00000000-0000-0000-0000-000000000000");
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			SL.report("Failed to group invite an instance owner "+st.getAvatar().getName(),t,st);
 		}
 	}

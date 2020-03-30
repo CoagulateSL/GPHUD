@@ -293,7 +293,7 @@ public class GPHUD {
 			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?",url);
 			getDB().d("update objects set url=null where url=?",url);
 			if (debug) {
-				int count=getDB().dqinn("select count(*) from characters where url=?",url);
+				final int count=getDB().dqinn("select count(*) from characters where url=?",url);
 				System.out.println("Final url usage count in characters is "+count);
 			}
 		}

@@ -44,10 +44,10 @@ public class EffectsCommands {
 	@Command.Commands(description="Show effects applied to your character",context=Command.Context.CHARACTER)
 	public static Response show(@Nonnull final State st) {
 		Effect.expirationCheck(st,st.getCharacter());
-		Set<Effect> effects=Effect.get(st,st.getCharacter());
+		final Set<Effect> effects=Effect.get(st,st.getCharacter());
 		if (effects.isEmpty()) { return new OKResponse("You have no effects applied"); }
 		String response="Current Effects:";
-		for (Effect effect:effects) {
+		for (final Effect effect:effects) {
 			response+="\n"+effect.getName()+" (";
 			response+=effect.humanRemains(st.getCharacter());
 			response+=")";
