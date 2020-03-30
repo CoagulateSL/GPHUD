@@ -84,7 +84,7 @@ public class State extends DumpableState {
 	@Nullable
 	public Objects object;
 	// used by Effect to only run the expiration checker once per player request as any effects intensive stuff will spam calls to the checker
-	public boolean expirationchecked=false;
+	public boolean expirationchecked;
 	@Nullable
 	Set<String> permissionscache;
 	@Nullable

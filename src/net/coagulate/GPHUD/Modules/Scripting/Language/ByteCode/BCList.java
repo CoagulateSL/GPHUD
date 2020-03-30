@@ -12,7 +12,7 @@ import java.util.List;
 public class BCList extends ByteCodeDataType {
 
 	final List<ByteCodeDataType> content=new ArrayList<>(); // used by the VM
-	int elements=0; // used by the compiler
+	int elements; // used by the compiler
 
 	public BCList(final ParseNode n) {super(n);}
 

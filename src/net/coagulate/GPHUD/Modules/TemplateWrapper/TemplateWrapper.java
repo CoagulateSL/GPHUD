@@ -21,7 +21,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 		super(name,def);
 	}
 
-	private Map<String,String> externals=null;
+	private Map<String,String> externals;
 	@Nonnull public Map<String,String> getExternalTemplates(@Nonnull final State st) {
 		if (externals!=null) { return externals; }
 		final boolean debug=false;

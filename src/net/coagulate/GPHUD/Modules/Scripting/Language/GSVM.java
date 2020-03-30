@@ -371,7 +371,7 @@ public class GSVM {
 	}
 
 	@Nullable
-	private State invokerstate=null;
+	private State invokerstate;
 	@Nullable
 	public State getInvokerState() { return invokerstate; }
 
