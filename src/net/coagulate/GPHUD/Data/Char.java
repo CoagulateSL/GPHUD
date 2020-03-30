@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
-import net.coagulate.Core.Database.NullInteger;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
@@ -230,7 +229,7 @@ public class Char extends TableRow {
 		if (!name.trim().isEmpty()) {
 			String blockedchars="";
 			// bad de-duping code
-			Set<String> characters=new HashSet<String>(); // just dont like the java type 'character' in this project
+			Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
 			// stick all the symbols in a set :P
 			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
 			// and reconstitute it
