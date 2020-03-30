@@ -16,5 +16,7 @@ public abstract class Table extends net.coagulate.Core.Database.Table {
 	@Override
 	public DBConnection getDatabase() { return GPHUD.getDB(); }
 
+	public static DBConnection getDb() { return GPHUD.getDB(); }
+
 	public Logger logger() { return SL.getLogger(getClass().getSimpleName()); }
 }
