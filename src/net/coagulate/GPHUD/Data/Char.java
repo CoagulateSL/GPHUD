@@ -227,13 +227,13 @@ public class Char extends TableRow {
 		}
 		// unique the characters in the string.  There's a better way of doing this surely.
 		if (!name.trim().isEmpty()) {
-			String blockedchars="";
+			StringBuilder blockedchars=new StringBuilder();
 			// bad de-duping code
 			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
 			// stick all the symbols in a set :P
 			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
 			// and reconstitute it
-			for (final String character:characters) { blockedchars+=character; }
+			for (final String character:characters) { blockedchars.append(character); }
 			throw new UserInputInvalidChoiceException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are entering JUST A NAME at this point, not descriptive details.");
 		}
 	}
