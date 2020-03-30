@@ -227,7 +227,7 @@ public class Char extends TableRow {
 		}
 		// unique the characters in the string.  There's a better way of doing this surely.
 		if (!name.trim().isEmpty()) {
-			StringBuilder blockedchars=new StringBuilder();
+			final StringBuilder blockedchars=new StringBuilder();
 			// bad de-duping code
 			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
 			// stick all the symbols in a set :P

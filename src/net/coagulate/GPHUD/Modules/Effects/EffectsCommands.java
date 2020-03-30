@@ -46,7 +46,7 @@ public class EffectsCommands {
 		Effect.expirationCheck(st,st.getCharacter());
 		final Set<Effect> effects=Effect.get(st,st.getCharacter());
 		if (effects.isEmpty()) { return new OKResponse("You have no effects applied"); }
-		StringBuilder response=new StringBuilder("Current Effects:");
+		final StringBuilder response=new StringBuilder("Current Effects:");
 		for (final Effect effect:effects) {
 			response.append("\n").append(effect.getName()).append(" (");
 			response.append(effect.humanRemains(st.getCharacter()));

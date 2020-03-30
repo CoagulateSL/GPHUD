@@ -33,8 +33,8 @@ public class TemplateWrapper extends ModuleAnnotation {
 				if (debug) { System.out.println("Probed module "+m+" size now "+list.size()); }
 			}
 		}
-		for (Map.Entry<String,String> entry: list.entrySet()) {
-			String element=entry.getKey();
+		for (final Map.Entry<String,String> entry: list.entrySet()) {
+			final String element=entry.getKey();
 			listtrimmed.put(trim(element),entry.getValue());
 			if (debug) { System.out.println("Transferred "+element+" as "+trim(element)); }
 		}
