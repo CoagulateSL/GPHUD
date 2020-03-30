@@ -253,8 +253,7 @@ public class Effect extends TableRow {
 		if (set.size()==0) { return -1; }
 		if (set.size()>1) { throw new SystemConsistencyException(getName()+" has "+set.size()+" applications to "+character); }
 		int expires=set.iterator().next().getInt();
-		int remaining=expires-UnixTime.getUnixTime();
-		return remaining;
+		return expires-UnixTime.getUnixTime();
 	}
 
 	public String humanRemains(Char character) {
