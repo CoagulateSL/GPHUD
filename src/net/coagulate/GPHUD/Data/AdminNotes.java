@@ -144,7 +144,7 @@ public class AdminNotes extends TableRow {
 		                     User.get(row.getInt("targetuser")),
 		                     (row.getIntNullable("targetchar")==null?null:Char.get(row.getInt("targetchar"))),
 		                     row.getStringNullable("note"),
-		                     row.getBoolNoNull("adminonly")
+		                     row.getBool("adminonly")
 		);
 	}
 
