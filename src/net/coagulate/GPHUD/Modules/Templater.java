@@ -35,12 +35,13 @@ public abstract class Templater {
 		methods.put("--"+key+"--",method);
 	}
 
-	@Nonnull
 	/** Returns a list of templates and their descriptions.
 	 *
 	 * @Param st The calling state
 	 * @Return A map of String to String, template name mapping to template description
-	 */ public static Map<String,String> getTemplates(final State st) {
+	 */
+	@Nonnull
+	public static Map<String,String> getTemplates(final State st) {
 		final Map<String,String> ret=new TreeMap<>(templates);
 		for (final Module m: Modules.getModules()) {
 			m.addTemplateDescriptions(st,ret);
