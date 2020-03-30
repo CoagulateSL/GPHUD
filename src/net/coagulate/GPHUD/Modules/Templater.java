@@ -37,8 +37,8 @@ public abstract class Templater {
 
 	/** Returns a list of templates and their descriptions.
 	 *
-	 * @Param st The calling state
-	 * @Return A map of String to String, template name mapping to template description
+	 * @param st The calling state
+	 * @return A map of String to String, template name mapping to template description
 	 */
 	@Nonnull
 	public static Map<String,String> getTemplates(final State st) {
