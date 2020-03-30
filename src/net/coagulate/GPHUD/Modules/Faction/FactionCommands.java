@@ -15,7 +15,6 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -83,8 +82,8 @@ public class FactionCommands {
 
 	@Nonnull
 	@Commands(context=Context.CHARACTER, description="Eject a member from your faction")
-	public static Response eject(final @NotNull State st,
-	                             @Arguments(description="Character to remove from the faction", type=ArgumentType.CHARACTER_FACTION) final @NotNull Char member) {
+	public static Response eject(final @Nonnull State st,
+	                             @Arguments(description="Character to remove from the faction", type=ArgumentType.CHARACTER_FACTION) final @Nonnull Char member) {
 		final CharacterGroup faction=st.getCharacter().getGroup("Faction");
 		if (faction==null) { return new ErrorResponse("You are not in a faction!"); }
 		return GroupCommands.eject(st,faction,member);

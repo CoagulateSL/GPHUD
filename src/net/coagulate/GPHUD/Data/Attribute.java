@@ -11,7 +11,6 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,7 +64,7 @@ public class Attribute extends TableRow {
 	 * Find an attribute that is a group by 'type'.
 	 */
 	@Nonnull
-	public static Attribute findGroup(final @NotNull Instance instance,
+	public static Attribute findGroup(final @Nonnull Instance instance,
 	                                  final String grouptype) {
 		try {
 			final int id=GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);

@@ -6,10 +6,9 @@ import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +43,11 @@ public class AdminNotes extends TableRow {
 	 * @param note       The note to record
 	 * @param adminonly  Is this note only visible to admins (else also to the player)
 	 */
-	public static void add(final @NotNull Instance instance,
-	                       final @NotNull User admin,
-	                       final @NotNull User target,
+	public static void add(final @Nonnull Instance instance,
+	                       final @Nonnull User admin,
+	                       final @Nonnull User target,
 	                       final @Nullable Char targetchar,
-	                       final @NotNull String note,
+	                       final @Nonnull String note,
 	                       final boolean adminonly) {
 		GPHUD.getDB()
 		     .d("insert into adminnotes(tds,instanceid,adminid,targetuser,targetchar,note,adminonly) values(?,?,?,?,?,?,?)",

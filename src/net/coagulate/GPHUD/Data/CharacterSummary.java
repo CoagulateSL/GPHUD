@@ -6,7 +6,6 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	}
 
 	@Override
-	public int compareTo(final @NotNull CharacterSummary o) {
+	public int compareTo(final @Nonnull CharacterSummary o) {
 		return Integer.compare(id,o.id);
 	}
 }

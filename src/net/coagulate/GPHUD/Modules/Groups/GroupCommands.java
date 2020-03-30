@@ -14,7 +14,6 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -23,8 +22,8 @@ public class GroupCommands {
 
 	@Nonnull
 	@Commands(context=Context.CHARACTER, description="Join an open group")
-	public static Response join(final @NotNull State st,
-	                            @Arguments(description="Name of group to join", type=ArgumentType.CHARACTERGROUP) final @NotNull CharacterGroup group) {
+	public static Response join(final @Nonnull State st,
+	                            @Arguments(description="Name of group to join", type=ArgumentType.CHARACTERGROUP) final @Nonnull CharacterGroup group) {
 
 		// is group open?
 		if (!group.isOpen()) {
@@ -66,7 +65,7 @@ public class GroupCommands {
 	@Commands(description="Invite a character to a group", context=Context.CHARACTER)
 	public static Response invite(@Nonnull final State st,
 	                              @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP, description="Group to invite to") final CharacterGroup group,
-	                              @Arguments(description="Character to invite", type=ArgumentType.CHARACTER) final @NotNull Char target) {
+	                              @Arguments(description="Character to invite", type=ArgumentType.CHARACTER) final @Nonnull Char target) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not an owner/admin for "+group.getName());
 		}
@@ -81,9 +80,9 @@ public class GroupCommands {
 
 	@Nonnull
 	@Commands(context=Context.CHARACTER, description="Eject a member from a group")
-	public static Response eject(final @NotNull State st,
-	                             @Arguments(type=ArgumentType.CHARACTERGROUP, description="Group to eject from") final @NotNull CharacterGroup group,
-	                             @Arguments(description="Character to eject from the group", type=ArgumentType.CHARACTER_FACTION) final @NotNull Char member) {
+	public static Response eject(final @Nonnull State st,
+	                             @Arguments(type=ArgumentType.CHARACTERGROUP, description="Group to eject from") final @Nonnull CharacterGroup group,
+	                             @Arguments(description="Character to eject from the group", type=ArgumentType.CHARACTER_FACTION) final @Nonnull Char member) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not a lead/admin for "+group.getName());
 		}
