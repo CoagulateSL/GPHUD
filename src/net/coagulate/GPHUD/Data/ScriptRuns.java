@@ -12,9 +12,19 @@ public class ScriptRuns extends TableRow {
 		super(id);
 	}
 
+	/**
+	 * Create a script run.
+	 * Invalidates any previous scripts waiting for the same user.
+	 *
+	 * @param code        Bytecode to preserve
+	 * @param initialiser Initialiser to preserve
+	 * @param respondant  Character that this execution is suspended for
+	 *
+	 * @return ScriptRuns object
+	 */
 	@Nonnull
 	public static ScriptRuns create(final byte[] code,
-	                                final Byte[] initialiser,
+	                                final byte[] initialiser,
 	                                @Nonnull final Char respondant) {
 		// user can only have one respondant open, this helps us get the ID but also is down to the stupidity of the HUD,
 		// and/or how painful/impractical it is to write complex IO in SL
@@ -69,16 +79,31 @@ public class ScriptRuns extends TableRow {
 		return "scriptruns";
 	}
 
+	/**
+	 * Get the respondant for this script run.
+	 *
+	 * @return The character this script was waiting for
+	 */
 	@Nonnull
 	public Char getRespondant() {
 		return Char.get(getInt("respondant"));
 	}
 
+	/**
+	 * Gets the initialiser for this script run.
+	 *
+	 * @return The initialiser bytecode
+	 */
 	@Nonnull
 	public byte[] getInitialiser() {
 		return getBytes("initialiser");
 	}
 
+	/**
+	 * Gets the bytecode for this script run
+	 *
+	 * @return The script's bytecode
+	 */
 	@Nonnull
 	public byte[] getByteCode() {
 		return getBytes("bytecode");
