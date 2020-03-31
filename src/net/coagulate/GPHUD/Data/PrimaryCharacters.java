@@ -11,6 +11,7 @@ import java.util.Set;
 
 /**
  * I feel like this class is pointless, and the whole idea of primary characters is pointless.  The primary is the most recently used, globally or for an instance, surely?
+ *
  * @author Iain Price
  * @deprecated
  */
