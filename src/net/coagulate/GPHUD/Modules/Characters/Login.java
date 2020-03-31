@@ -89,7 +89,7 @@ public abstract class Login {
 		String loginmessage="";
 		if (initscript!=null && (!initscript.isEmpty())) {
 			// let the init script have a "run"
-			final Scripts init=Scripts.findOrNull(simulate,initscript);
+			final Scripts init=Scripts.findNullable(simulate,initscript);
 			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; }
 			else {
 				final GSVM initialisecharacter=new GSVM(init.getByteCode());

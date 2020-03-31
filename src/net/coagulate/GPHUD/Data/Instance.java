@@ -761,7 +761,7 @@ public class Instance extends TableRow {
 
 	@Nonnull
 	public Set<Scripts> getScripts() {
-		return Scripts.getScript(this);
+		return Scripts.getScripts(this);
 	}
 
 	@Nullable

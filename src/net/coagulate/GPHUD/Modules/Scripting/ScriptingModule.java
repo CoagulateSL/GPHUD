@@ -24,7 +24,7 @@ public class ScriptingModule extends ModuleAnnotation {
 		if (commandname.equalsIgnoreCase("characterresponse") || commandname.equalsIgnoreCase("stringresponse")) {
 			return super.getCommandNullable(st,commandname);
 		}
-		final Scripts script=Scripts.findOrNull(st,commandname.replaceFirst("gs",""));
+		final Scripts script=Scripts.findNullable(st,commandname.replaceFirst("gs",""));
 		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists"); }
 		return new ScriptingCommand(script);
 	}
