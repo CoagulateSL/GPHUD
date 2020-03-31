@@ -122,7 +122,7 @@ public class Menus extends TableRow {
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
 		final Map<String,JSONObject> aliases=new TreeMap<>();
 		for (final ResultsRow r: GPHUD.getDB().dq("select name,description,json from menus where instanceid=?",st.getInstance().getId())) {
-			aliases.put(r.getStringNullable("name"),new JSONObject(r.getStringNullable("json")));
+			aliases.put(r.getString("name"),new JSONObject(r.getString("json")));
 		}
 		return aliases;
 	}

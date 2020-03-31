@@ -178,7 +178,5 @@ public class ZoneArea extends TableRow {
 
 	@Override
 	protected int getNameCacheTime() { return 0; }
-
-
 }
 

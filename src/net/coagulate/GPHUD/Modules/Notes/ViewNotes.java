@@ -39,7 +39,7 @@ public class ViewNotes {
 		final Form f=st.form();
 		f.add(new TextSubHeader("Administrator Notes (Last three only)"));
 		if (!notes.isEmpty()) {
-			f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
+			f.add(formatNotes(st,notes,st.getAvatar().getTimeZone()));
 			final Table buttons=new Table();
 			if (st.hasPermission("Notes.Add")) {
 				f.noForm();
@@ -96,7 +96,7 @@ public class ViewNotes {
 		}
 		final Form f=st.form();
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatar().getTimeZone()));
+		f.add(formatNotes(st,AdminNotes.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatar().getTimeZone()));
 	}
 
 	@URLs(url="/Notes/ViewUser/*")
@@ -119,7 +119,7 @@ public class ViewNotes {
 		}
 		final Form f=st.form();
 		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
+		f.add(formatNotes(st,AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
 	}
 
 	@URLs(url="/Notes/ViewAll", requiresPermission="Notes.View")
@@ -128,11 +128,12 @@ public class ViewNotes {
 		final Form f=st.form();
 		final List<AdminNotes.AdminNote> notes=AdminNotes.get(st.getInstance());
 		f.add(new TextHeader("Admin Notes Log"));
-		f.add(formatNotes(notes,st.getAvatar().getTimeZone()));
+		f.add(formatNotes(st,notes,st.getAvatar().getTimeZone()));
 	}
 
 	@Nonnull
-	static Table formatNotes(@Nonnull final List<AdminNotes.AdminNote> notes,
+	static Table formatNotes(@Nonnull final State st,
+	                         @Nonnull final List<AdminNotes.AdminNote> notes,
 	                         final String timezone) {
 		final Table nt=new Table();
 		nt.add(new HeaderRow().add("Time Date ("+timezone+")").add("Note Publicity Level").add("Admin").add("").add("Target").add("Note"));
@@ -142,7 +143,7 @@ public class ViewNotes {
 			nt.add(new Cell(note.adminonly?"Admin Only":"Shared").align("center"));
 			nt.add(note.admin.getGPHUDLink());
 			nt.add("&rarr;");
-			nt.add(note.targetuser.getGPHUDLink()+(note.targetchar==null?"":" / "+note.targetchar.asHtml(null,true)));
+			nt.add(note.targetuser.getGPHUDLink()+(note.targetchar==null?"":" / "+note.targetchar.asHtml(st,true)));
 			nt.add(note.note);
 		}
 		return nt;

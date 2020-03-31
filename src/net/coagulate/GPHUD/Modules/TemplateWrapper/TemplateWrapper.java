@@ -24,19 +24,16 @@ public class TemplateWrapper extends ModuleAnnotation {
 	private Map<String,String> externals;
 	@Nonnull public Map<String,String> getExternalTemplates(@Nonnull final State st) {
 		if (externals!=null) { return externals; }
-		final boolean debug=false;
 		final Map<String,String> list=new TreeMap<>(Templater.templates);
 		final Map<String,String> listtrimmed=new TreeMap<>();
 		for (final Module m: Modules.getModules()) {
 			if (!m.getName().equals("TemplateWrapper")) {
 				m.addTemplateDescriptions(st,list);
-				if (debug) { System.out.println("Probed module "+m+" size now "+list.size()); }
 			}
 		}
 		for (final Map.Entry<String,String> entry: list.entrySet()) {
 			final String element=entry.getKey();
 			listtrimmed.put(trim(element),entry.getValue());
-			if (debug) { System.out.println("Transferred "+element+" as "+trim(element)); }
 		}
 		externals=listtrimmed;
 		return listtrimmed;
@@ -96,20 +93,14 @@ public class TemplateWrapper extends ModuleAnnotation {
 	public static String templateWrapper(final State st,
 	                                     @Nonnull final String wrappedtemplate) {
 		if (!st.hasModule("TemplateWrapper")) { return ""; }
-		final boolean debug=false;
 		String template=trim(wrappedtemplate);
 		if (template.startsWith("WRAPPED:")) {
 			template=template.substring(8);
-			if (debug) { System.out.println(wrappedtemplate+" > "+template); }
 			final String ret=Templater.template(st,"--"+template+"--",false,false);
-			if (debug) { System.out.println(wrappedtemplate+" > "+template+" > "+ret); }
 			if (ret==null || ret.isEmpty()) {
-				if (debug) { System.out.println("Returning empty ret"); }
 				return ret;
 			}
-			final String postret=st.getKV("TemplateWrapper."+template+"Prefix")+ret+st.getKV("TemplateWrapper."+template+"Postfix");
-			if (debug) { System.out.println("Returning:"+postret); }
-			return postret;
+			return st.getKV("TemplateWrapper."+template+"Prefix")+ret+st.getKV("TemplateWrapper."+template+"Postfix");
 		}
 		throw new SystemConsistencyException("Failed to resolve templateWrapper "+wrappedtemplate);
 	}

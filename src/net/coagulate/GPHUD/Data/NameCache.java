@@ -38,7 +38,7 @@ public class NameCache {
 		final Map<Integer,String> results=new TreeMap<>();
 		final Results rows=GPHUD.getDB().dq("select "+idcolumn+","+namecolumn+" from "+tablename);
 		for (final ResultsRow r: rows) {
-			results.put(r.getIntNullable(idcolumn),TableRow.getLink(r.getStringNullable(namecolumn),tablename,r.getInt(idcolumn)));
+			results.put(r.getInt(idcolumn),TableRow.getLink(r.getString(namecolumn),tablename,r.getInt(idcolumn)));
 		}
 		return results;
 	}

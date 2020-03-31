@@ -69,7 +69,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					throw new SystemBadValueException("Parse error in '"+message+"'",e);
 				}
 				// stash it in the state
-				if (obj==null) { GPHUD.getLogger().warning("About to set a JSON in state to null ; input was "+message); }
+				// if (obj==null) { GPHUD.getLogger().warning("About to set a JSON in state to null ; input was "+message); }
 				st.setJson(obj);
 				// refresh tokens if necessary
 				if (obj.has("callback")) { st.callbackurl(obj.getString("callback")); }
@@ -187,7 +187,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			return new TerminateResponse("Parse failure");
 		}
 		if (ownername==null || ownername.isEmpty()) {
-			ownername=User.findOptional(ownerkey).getName();
+			final User userlookup=User.findOptional(ownerkey);
+			if (userlookup!=null) { ownername=userlookup.getName(); }
 			if (ownername==null || ownername.isEmpty()) {
 				GPHUD.getLogger().severe("Failed to extract ownername header from SL or ownerkeylookup via DB");
 				SL.report("Parse failure",new SystemRemoteFailureException("Ownername is blank, even from DB cache."), st);

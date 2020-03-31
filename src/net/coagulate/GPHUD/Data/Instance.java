@@ -434,7 +434,7 @@ public class Instance extends TableRow {
 			if (retired!=1) { cr.retired=false; }
 			else { cr.retired=true; }
 			cr.online=false;
-			if (r.getStringNullable("url")!=null && !r.getStringNullable("url").isEmpty()) { cr.online=true; }
+			if (r.getStringNullable("url")!=null && !r.getString("url").isEmpty()) { cr.online=true; }
 			idmap.put(charid,cr);
 		}
 		for (final ResultsRow r: dq(

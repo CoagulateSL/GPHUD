@@ -97,6 +97,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	@Nonnull
 	public String getName() {
+		if (getNameField()==null) { throw new SystemConsistencyException("Getting name of something with a null getNameField()"); }
 		try { return (String) cacheGet("name"); } catch (@Nonnull final CacheMiss ex) {}
 		final String name=getStringNullable(getNameField());
 		if (name==null) { return "<null>"; }
@@ -158,7 +159,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Override
 	public String asHtml(@Nonnull final State st,
 	                     final boolean rich) {
-		if (!rich) { return getNameSafe(); }
+		if (!rich || getLinkTarget()==null) { return getNameSafe(); }
 		return getLink(getNameSafe(),getLinkTarget(),getId());
 	}
 
@@ -256,7 +257,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		kvcheck();
 		final Map<String,String> result=new TreeMap<>();
 		for (final ResultsRow row: dq("select k,v from "+getKVTable()+" where "+getKVIdField()+"=?",getId())) {
-			result.put(row.getStringNullable("k").toLowerCase(),row.getStringNullable("v"));
+			result.put(row.getString("k").toLowerCase(),row.getString("v"));
 		}
 		return result;
 	}

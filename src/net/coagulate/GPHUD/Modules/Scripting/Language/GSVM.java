@@ -363,7 +363,9 @@ public class GSVM {
 		// redo. now that forward references are completed
 		initbc=new ArrayList<>();
 		for (final ByteCode bc: initlist) { bc.toByteCode(initbc); }
-		final Byte[] initialiser=initbc.toArray(new Byte[]{});
+		final Byte[] initialisertyped=initbc.toArray(new Byte[]{});
+		final byte[] initialiser=new byte[initialisertyped.length];
+		for (int i=0;i<initialisertyped.length;i++) { initialiser[i]=initialisertyped[i]; }
 
 		final ScriptRuns run=ScriptRuns.create(bytecode,initialiser,respondant);
 		pid=run.getId();

@@ -37,6 +37,4 @@ public class Visits {
 		st.logger().fine("Starting visit for "+character.getNameSafe()+" at "+region.getNameSafe()+" on avatar "+avatar.getName());
 		GPHUD.getDB().d("insert into visits(avatarid,characterid,regionid,starttime) values(?,?,?,?)",avatar.getId(),character.getId(),region.getId(),getUnixTime());
 	}
-
-
 }

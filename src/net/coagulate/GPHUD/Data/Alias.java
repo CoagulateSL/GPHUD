@@ -60,7 +60,7 @@ public class Alias extends TableRow {
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
 		final Map<String,JSONObject> aliases=new TreeMap<>();
 		for (final ResultsRow r: GPHUD.getDB().dq("select name,template from aliases where instanceid=?",st.getInstance().getId())) {
-			aliases.put(r.getStringNullable("name"),new JSONObject(r.getStringNullable("template")));
+			aliases.put(r.getString("name"),new JSONObject(r.getString("template")));
 		}
 		return aliases;
 	}

@@ -175,7 +175,7 @@ public abstract class Audit {
 		table.add(headers);
 		String olddate="";
 		for (final ResultsRow r: rows) {
-			final String[] datetime=fromUnixTime(r.getStringNullable("timedate"),timezone).split(" ");
+			final String[] datetime=fromUnixTime(r.getString("timedate"),timezone).split(" ");
 			if (!olddate.equals(datetime[0])) {
 				final net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 				t.align("center");

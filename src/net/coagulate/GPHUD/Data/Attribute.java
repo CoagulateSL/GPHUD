@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
@@ -208,10 +207,9 @@ public class Attribute extends TableRow {
 		String type;
 		try { type=(String) cacheGet("type"); }
 		catch (@Nonnull final CacheMiss ex) {
-			type=getStringNullable("attributetype");
+			type=getString("attributetype");
 			cachePut("type",type,getNameCacheTime());
 		}
-		if (type==null) { throw new SystemBadValueException("Null type passed for attribute "+getId()+" "+getNameSafe()); }
 		return fromString(type);
 	}
 

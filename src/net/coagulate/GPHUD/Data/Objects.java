@@ -100,7 +100,7 @@ public class Objects extends TableRow {
 				r.append("<td><button type=Submit name=reboot value=\"").append(row.getStringNullable("uuid")).append("\">Reboot</button></td>");
 			}
 			if (st.hasPermission("Objects.ShutdownObjects")) {
-				if (row.getStringNullable("uuid").equals(st.postmap().get("shutdown"))) {
+				if (row.getString("uuid").equals(st.postmap().get("shutdown"))) {
 					r.append("<td><button type=Submit name=reallyshutdown value=\"")
 					 .append(row.getStringNullable("uuid"))
 					 .append("\">CONFIRM SHUTDOWN - THE OBJECT OWNER MUST REBOOT IT TO RESUME SERVICE</button></td>");

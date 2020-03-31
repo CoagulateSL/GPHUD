@@ -265,14 +265,11 @@ public class GPHUD {
 
 	// TODO THIS FUCKS WITH URLS
 	public static void purgeURL(final String url) {
-		final boolean debug=false;
-		if (debug) { System.out.println("Purge URL "+url); }
 		try {
 			for (final ResultsRow row: getDB().dq("select characterid,regionid from characters where url=?",url)) {
 				try {
 					final int charid=row.getInt("characterid");
 					final Char ch=Char.get(charid);
-					if (debug) { System.out.println("Hit Character "+ch.getNameSafe()); }
 					final State st=State.getNonSpatial(ch);
 					getDB().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",charid);
 					final Integer regionid=row.getIntNullable("regionid");
@@ -292,10 +289,6 @@ public class GPHUD {
 			}
 			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?",url);
 			getDB().d("update objects set url=null where url=?",url);
-			if (debug) {
-				final int count=getDB().dqinn("select count(*) from characters where url=?",url);
-				System.out.println("Final url usage count in characters is "+count);
-			}
 		}
 		catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from characters",ex);
