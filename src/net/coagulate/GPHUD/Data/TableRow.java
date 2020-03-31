@@ -82,7 +82,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 *
 	 * @throws SystemConsistencyException If there is a mismatch between state and this object
 	 */
-	public abstract void validate(@Nonnull State st) throws SystemConsistencyException;
+	public abstract void validate(@Nonnull State st);
 
 	@Nullable
 	public abstract String getNameField();
