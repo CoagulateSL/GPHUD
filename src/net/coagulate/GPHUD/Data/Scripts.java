@@ -107,7 +107,7 @@ public class Scripts extends TableRow {
 			final int id=GPHUD.getDB().dqinn("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),scriptname);
 			return new Scripts(id);
 		}
-		catch (NoDataException e) {
+		catch (final NoDataException e) {
 			throw new UserInputLookupFailureException("Script by name "+scriptname+" does not exist",e);
 		}
 	}
