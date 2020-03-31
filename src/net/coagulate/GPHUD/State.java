@@ -426,7 +426,7 @@ public class State extends DumpableState {
 	private void preparePermissionsCache() {
 		if (permissionscache==null && avatar!=null && instance!=null) {
 			permissionscache=new HashSet<>();
-			permissionscache.addAll(Permissions.getPermissions(instance,avatar));
+			permissionscache.addAll(PermissionsGroup.getPermissions(instance,avatar));
 		}
 	}
 

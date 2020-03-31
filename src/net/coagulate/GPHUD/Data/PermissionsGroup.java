@@ -73,6 +73,31 @@ public class PermissionsGroup extends TableRow {
 		return (PermissionsGroup) factoryPut("PermissionsGroup",id,new PermissionsGroup(id));
 	}
 
+	/**
+	 * Gets all the permissions a user has at an instance.
+	 *
+	 * @param instance Instance to look up user/avatar
+	 * @param user     User(avatar)
+	 *
+	 * @return Set of permissions.
+	 */
+	@Nonnull
+	public static Set<String> getPermissions(@Nonnull final Instance instance,
+	                                         @Nonnull final User user) {
+		final Set<String> permissions=new TreeSet<>();
+		final Results results=GPHUD.getDB()
+		                           .dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups"+
+				                               ".permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and "
+				                               +"permissionsgroupmembers.avatarid=?",
+		                               instance.getId(),
+		                               user.getId()
+		                              );
+		for (final ResultsRow r: results) {
+			permissions.add(r.getStringNullable());
+		}
+		return permissions;
+	}
+
 
 	@Nonnull
 	@Override
