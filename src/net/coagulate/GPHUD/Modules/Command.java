@@ -277,7 +277,7 @@ public abstract class Command {
 						typedargs.add(assertNotNull(Effect.find(st.getInstance(),v),v,"effect name"));
 						break;
 					case ZONE:
-						typedargs.add(assertNotNull(Zone.find(st.getInstance(),v),v,"zone name"));
+						typedargs.add(assertNotNull(Zone.findNullable(st.getInstance(),v),v,"zone name"));
 						break;
 					case AVATAR:
 					case AVATAR_NEAR:

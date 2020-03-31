@@ -4,6 +4,7 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
@@ -45,7 +46,7 @@ public class Zone extends TableRow {
 	 * @throws UserException If the zone name is in use
 	 */
 	public static void create(@Nonnull final Instance instance,
-	                          final String name) {
+	                          @Nonnull final String name) {
 		if (GPHUD.getDB().dqinn("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0) {
 			throw new UserInputDuplicateValueException("Zone name already in use");
 		}
@@ -61,8 +62,8 @@ public class Zone extends TableRow {
 	 * @return Zone object, or null
 	 */
 	@Nullable
-	public static Zone find(@Nonnull final Instance instance,
-	                        @Nonnull final String name) {
+	public static Zone findNullable(@Nonnull final Instance instance,
+	                                @Nonnull final String name) {
 		try {
 			final int zoneid=GPHUD.getDB().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
 			return get(zoneid);
@@ -70,6 +71,34 @@ public class Zone extends TableRow {
 		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
+	/**
+	 * Find a zone by name.
+	 *
+	 * @param instance Instance to search
+	 * @param name     Name of the zone
+	 *
+	 * @return Zone object
+	 *
+	 * @throws UserInputLookupFailureException If the name doesn't match anything
+	 */
+	@Nonnull
+	public static Zone find(@Nonnull final Instance instance,
+	                        @Nonnull final String name) {
+		try {
+			final int zoneid=GPHUD.getDB().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
+			return get(zoneid);
+		}
+		catch (@Nonnull final NoDataException e) {
+			throw new UserInputLookupFailureException("There is no zone named '"+name+"'",e);
+		}
+	}
+
+	/**
+	 * Wipe zone a related K (KV) from a given instance
+	 *
+	 * @param instance Instance to remove the zoneKV from
+	 * @param key      K to remove from the zoneKVs
+	 */
 	static void wipeKV(@Nonnull final Instance instance,
 	                   final String key) {
 		final String kvtable="zonekvstore";
@@ -187,7 +216,7 @@ public class Zone extends TableRow {
 	 *
 	 * @param message Zonemessage to send to the zone (?)
 	 */
-	public void broadcastMessage(final String message) {
+	public void broadcastMessage(@Nonnull final String message) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","broadcast");
 		json.put("zonemessage",message);
@@ -205,8 +234,14 @@ public class Zone extends TableRow {
 	@Override
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
-	public void delete(final State st) {
-		Audit.audit(true,st,Audit.OPERATOR.AVATAR, null,null, "Delete", "Zone", getName(), "", "Deleted zone "+getName());
+	/**
+	 * Delete this zone
+	 *
+	 * @param st State for audit logging
+	 */
+	public void delete(@Nonnull final State st) {
+		validate(st);
+		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Delete","Zone",getName(),"","Deleted zone "+getName());
 		d("delete from zones where zoneid="+getId());
 	}
 }
