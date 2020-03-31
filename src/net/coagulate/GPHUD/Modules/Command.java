@@ -239,7 +239,7 @@ public abstract class Command {
                         if (argument.getName().equalsIgnoreCase("target")) { st.setTarget(targetchar); }
                         break;*/
 					case PERMISSIONSGROUP:
-						typedargs.add(assertNotNull(PermissionsGroup.resolve(st,v),v,"permissions group"));
+						typedargs.add(assertNotNull(PermissionsGroup.resolveNullable(st,v),v,"permissions group"));
 						break;
 					case CHARACTERGROUP:
 						typedargs.add(assertNotNull(CharacterGroup.resolve(st,v),v,"character group"));

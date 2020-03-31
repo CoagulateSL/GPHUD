@@ -28,12 +28,37 @@ public class PermissionsGroup extends TableRow {
 
 	protected PermissionsGroup(final int id) { super(id); }
 
+	/**
+	 * Looks up a permissions group
+	 *
+	 * @param st   State
+	 * @param name Name to lookup
+	 *
+	 * @return Permissions group, or null if not found
+	 */
 	@Nullable
-	public static PermissionsGroup resolve(@Nonnull final State st,
-	                                       final String v) {
-		final int id=new PermissionsGroup(-1).resolveToID(st,v,true);
+	public static PermissionsGroup resolveNullable(@Nonnull final State st,
+	                                               @Nonnull final String name) {
+		final int id=new PermissionsGroup(-1).resolveToID(st,name,true);
 		if (id==0) { return null; }
 		return get(id);
+	}
+
+	/**
+	 * Find a region by name.
+	 *
+	 * @param name Name of region to locate
+	 *
+	 * @return Region object for that region, or null if none is found.
+	 */
+	@Nullable
+	public static PermissionsGroup find(@Nonnull final String name,
+	                                    @Nonnull final Instance i) {
+		try {
+			final int id=GPHUD.getDB().dqinn("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",name,i.getId());
+			return get(id);
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
 	/**
@@ -48,22 +73,6 @@ public class PermissionsGroup extends TableRow {
 		return (PermissionsGroup) factoryPut("PermissionsGroup",id,new PermissionsGroup(id));
 	}
 
-	/**
-	 * Find a region by name.
-	 *
-	 * @param name Name of region to locate
-	 *
-	 * @return Region object for that region, or null if none is found.
-	 */
-	@Nullable
-	public static PermissionsGroup find(final String name,
-	                                    @Nonnull final Instance i) {
-		try {
-			final int id=GPHUD.getDB().dqinn("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",name,i.getId());
-			return get(id);
-		}
-		catch (@Nonnull final NoDataException e) { return null; }
-	}
 
 	@Nonnull
 	@Override
@@ -105,6 +114,7 @@ public class PermissionsGroup extends TableRow {
 	 *
 	 * @return Set of String permissions
 	 */
+	@Nonnull
 	public Set<String> getPermissions(@Nonnull final State st) {
 		if (!st.permissionsGroupCache.containsKey(getId())) {
 
@@ -215,22 +225,22 @@ public class PermissionsGroup extends TableRow {
 	/**
 	 * Set an avatar's permissions over this group
 	 *
-	 * @param a         Avatar permissions to set
+	 * @param user      Avatar permissions to set
 	 * @param caninvite Set the avatar's ability to join other avatars to this group
 	 * @param cankick   Set the avatar's ability to remove other avatars from this group
 	 *
 	 * @throws UserException If the user's permissions can not be updated, i.e. not in the group
 	 */
-	public void setUserPermissions(@Nonnull final User a,
-	                               final Boolean caninvite,
-	                               final Boolean cankick) {
-		final int exists=dqinn("select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),a.getId());
+	public void setUserPermissions(@Nonnull final User user,
+	                               final boolean caninvite,
+	                               final boolean cankick) {
+		final int exists=dqinn("select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),user.getId());
 		if (exists==0) { throw new UserInputStateException("Avatar not in group."); }
 		int inviteval=0;
 		if (caninvite) { inviteval=1; }
 		int kickval=0;
 		if (cankick) { kickval=1; }
-		d("update permissionsgroupmembers set caninvite=?,cankick=? where permissionsgroupid=? and avatarid=?",inviteval,kickval,getId(),a.getId());
+		d("update permissionsgroupmembers set caninvite=?,cankick=? where permissionsgroupid=? and avatarid=?",inviteval,kickval,getId(),user.getId());
 
 	}
 
@@ -241,7 +251,7 @@ public class PermissionsGroup extends TableRow {
 	 *
 	 * @throws UserException If the permissions is invalid, already added, etc.
 	 */
-	public void addPermission(final State st,
+	public void addPermission(@Nonnull final State st,
 	                          @Nonnull final String permission) {
 		Modules.validatePermission(st,permission);
 		final int exists=dqinn("select count(*) from permissions where permissionsgroupid=? and permission like ?",getId(),permission);
@@ -256,7 +266,7 @@ public class PermissionsGroup extends TableRow {
 	 *
 	 * @throws UserException If the permission can not be removed, e.g. is not part of the group.
 	 */
-	public void removePermission(final String permission) {
+	public void removePermission(@Nonnull final String permission) {
 		final int exists=dqinn("select count(*) from permissions where permissionsgroupid=? and permission=?",getId(),permission);
 		if (exists==0) { throw new UserInputStateException("Permission does not exist in group."); }
 		d("delete from permissions where permissionsgroupid=? and permission=?",getId(),permission);
@@ -281,8 +291,16 @@ public class PermissionsGroup extends TableRow {
 
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
+	/**
+	 * Checks if this group contains a particular permission
+	 *
+	 * @param st       State
+	 * @param fullname Fully qualified permission name
+	 *
+	 * @return True if present, false if not
+	 */
 	public boolean hasPermission(@Nonnull final State st,
-	                             final String fullname) {
+	                             @Nonnull final String fullname) {
 		for (final String permission: getPermissions(st)) {
 			if (permission.equalsIgnoreCase(fullname)) { return true; }
 		}
@@ -291,8 +309,6 @@ public class PermissionsGroup extends TableRow {
 
 	/**
 	 * Group membership triplet.
-	 *
-	 * @author Iain Price <gphud@predestined.net>
 	 */
 	public static class PermissionsGroupMembership {
 		public User avatar;
