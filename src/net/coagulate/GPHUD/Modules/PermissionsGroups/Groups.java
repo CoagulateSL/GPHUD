@@ -4,7 +4,6 @@ import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
-import net.coagulate.GPHUD.Data.PermissionsGroupMembership;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
@@ -82,12 +81,12 @@ public abstract class Groups {
 			f.add("<a href=\"/GPHUD/permissionsgroups/edit/"+pg.getId()+"\">Edit Permissions</a>");
 		}
 		f.add(new TextSubHeader("Members"));
-		final Set<PermissionsGroupMembership> members=pg.getMembers();
+		final Set<PermissionsGroup.PermissionsGroupMembership> members=pg.getMembers();
 		final Table membertable=new Table();
 		membertable.add(new HeaderRow().add("Member").add("Can Invite").add("Can Kick"));
 		if (!members.isEmpty()) { f.add(membertable); }
 		final boolean caneject=pg.canEject(st);
-		for (final PermissionsGroupMembership member: members) {
+		for (final PermissionsGroup.PermissionsGroupMembership member: members) {
 			membertable.openRow();
 			membertable.add(member.avatar.getGPHUDLink());
 			if (member.caninvite) { membertable.add(new Color("green","Yes")); }

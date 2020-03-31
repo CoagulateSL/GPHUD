@@ -288,4 +288,15 @@ public class PermissionsGroup extends TableRow {
 		}
 		return false;
 	}
+
+	/**
+	 * Group membership triplet.
+	 *
+	 * @author Iain Price <gphud@predestined.net>
+	 */
+	public static class PermissionsGroupMembership {
+		public User avatar;
+		public boolean caninvite;
+		public boolean cankick;
+	}
 }
