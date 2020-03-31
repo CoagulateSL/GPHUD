@@ -178,7 +178,7 @@ public class Message extends TableRow {
 
 	public void flushKVCache(final State st) {}
 
-	public void validate(final State st) {
+	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
 	}

@@ -44,7 +44,7 @@ public class ScriptRuns extends TableRow {
 	public String getIdColumn() { return "id"; }
 
 	@Override
-	public void validate(final State st) {
+	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
 	}

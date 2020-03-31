@@ -157,7 +157,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nonnull
 	@Override
 	public String asHtml(@Nonnull final State st,
-	                     @Nonnull final boolean rich) {
+	                     final boolean rich) {
 		if (!rich) { return getNameSafe(); }
 		return getLink(getNameSafe(),getLinkTarget(),getId());
 	}

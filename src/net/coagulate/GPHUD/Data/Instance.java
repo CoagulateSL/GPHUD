@@ -713,7 +713,7 @@ public class Instance extends TableRow {
 		}
 	}
 
-	public void validate(final State st) {
+	public void validate(@Nonnull final State st) {
 		if (validated) { return; }
 		validate();
 	}
