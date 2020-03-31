@@ -14,6 +14,7 @@ public class BCLessThan extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "LessThan (Pop two, compare, push 1 if less than, else 0)"; }

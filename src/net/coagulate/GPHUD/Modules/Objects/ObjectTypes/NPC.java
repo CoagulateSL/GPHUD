@@ -24,37 +24,7 @@ public class NPC extends ObjectType {
 		super(st,object);
 	}
 
-	@Nonnull
-	@Override
-	public Response click(@Nonnull final State st,
-	                      @Nonnull final Char clicker) {
-		// do we have a character set
-		if (!json.has("character")) { return new ErrorResponse("No character is associated with this NPC object"); }
-		final int charid=json.getInt("character");
-		final Char ch=Char.get(charid);
-		ch.validate(st);
-		st.setCharacter(ch);
-		if (!json.has("script")) { return new ErrorResponse("No script is associated with this NPC object"); }
-		final int scriptid=json.getInt("script");
-		final Scripts script=Scripts.get(scriptid);
-		script.validate(st);
-		final GSVM vm=new GSVM(script.getByteCode());
-		vm.introduce("TARGET",new BCCharacter(null,clicker));
-		final JSONObject jsonresponse=vm.execute(st).asJSON(st);
-		//System.out.println(response.asJSON(st));
-		ch.appendConveyance(st,jsonresponse);
-		clicker.considerPushingConveyances();
-		return new JSONResponse(jsonresponse);
-	}
-
-	@Nullable
-	Char getChar() {
-		final String chid=json.optString("character","");
-		final String chname="";
-		if (chid==null || chid.isEmpty()) { return null; }
-		return Char.get(Integer.parseInt(chid));
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explainHtml() {
@@ -120,12 +90,6 @@ public class NPC extends ObjectType {
 		return explainHtml();
 	}
 
-	@Nonnull
-	@Override
-	public MODE mode() {
-		return MODE.CLICKABLE;
-	}
-
 	@Override
 	public void payload(@Nonnull final State st,
 	                    @Nonnull final JSONObject response) {
@@ -138,5 +102,43 @@ public class NPC extends ObjectType {
 		st.setCharacter(ch);
 		ch.setURL(st.callbackurl());
 		ch.initialConveyances(st,response);
+	}
+
+	@Nonnull
+	@Override
+	public MODE mode() {
+		return MODE.CLICKABLE;
+	}
+
+	@Nonnull
+	@Override
+	public Response click(@Nonnull final State st,
+	                      @Nonnull final Char clicker) {
+		// do we have a character set
+		if (!json.has("character")) { return new ErrorResponse("No character is associated with this NPC object"); }
+		final int charid=json.getInt("character");
+		final Char ch=Char.get(charid);
+		ch.validate(st);
+		st.setCharacter(ch);
+		if (!json.has("script")) { return new ErrorResponse("No script is associated with this NPC object"); }
+		final int scriptid=json.getInt("script");
+		final Scripts script=Scripts.get(scriptid);
+		script.validate(st);
+		final GSVM vm=new GSVM(script.getByteCode());
+		vm.introduce("TARGET",new BCCharacter(null,clicker));
+		final JSONObject jsonresponse=vm.execute(st).asJSON(st);
+		//System.out.println(response.asJSON(st));
+		ch.appendConveyance(st,jsonresponse);
+		clicker.considerPushingConveyances();
+		return new JSONResponse(jsonresponse);
+	}
+
+	// ----- Internal Instance -----
+	@Nullable
+	Char getChar() {
+		final String chid=json.optString("character","");
+		final String chname="";
+		if (chid==null || chid.isEmpty()) { return null; }
+		return Char.get(Integer.parseInt(chid));
 	}
 }

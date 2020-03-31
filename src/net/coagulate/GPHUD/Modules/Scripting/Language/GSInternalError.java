@@ -16,6 +16,7 @@ public class GSInternalError extends SystemException {
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Internal Error}: "+getLocalizedMessage(); }
 }

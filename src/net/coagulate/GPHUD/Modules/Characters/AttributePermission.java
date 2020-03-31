@@ -24,6 +24,7 @@ public class AttributePermission extends Permission {
 		this.a=a;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public Module getModule(final State st) {
 		return Modules.get(st,"Characters");

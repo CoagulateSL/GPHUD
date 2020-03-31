@@ -29,6 +29,29 @@ public class GSCompiler {
 		startnode=(ParseNode) passednode;
 	}
 
+	// ---------- INSTANCE ----------
+	@Nonnull
+	public Byte[] toByteCode(final State st) {
+		final List<ByteCode> bytecodelist=compile(st);
+		// twopass
+		List<Byte> bytecode=new ArrayList<>();
+		for (final ByteCode bc: bytecodelist) { bc.toByteCode(bytecode); }
+		// redo. now that forward references are completed
+		bytecode=new ArrayList<>();
+		for (final ByteCode bc: bytecodelist) { bc.toByteCode(bytecode); }
+		return bytecode.toArray(new Byte[]{});
+	}
+
+	// The compiler has a stack (Last In First Out) which it uses to store 'things'
+	// we also have a 'script' which is just a list of things, this time including instructions
+	@Nonnull
+	public List<ByteCode> compile(final State st) {
+		lastdebuglineno=-1;
+		lastdebugcolno=-1;
+		return compile(st,startnode);
+	}
+
+	// ----- Internal Instance -----
 	private int expectedChildren(final ParseNode node) {
 		if (node instanceof GSStart) { return -1; }
 		if (node instanceof GSInitialiser) { return 3; }
@@ -51,27 +74,6 @@ public class GSCompiler {
 		                                                                                      .getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
 
-	@Nonnull
-	public Byte[] toByteCode(final State st) {
-		final List<ByteCode> bytecodelist=compile(st);
-		// twopass
-		List<Byte> bytecode=new ArrayList<>();
-		for (final ByteCode bc: bytecodelist) { bc.toByteCode(bytecode); }
-		// redo. now that forward references are completed
-		bytecode=new ArrayList<>();
-		for (final ByteCode bc: bytecodelist) { bc.toByteCode(bytecode); }
-		return bytecode.toArray(new Byte[]{});
-	}
-
-	// The compiler has a stack (Last In First Out) which it uses to store 'things'
-	// we also have a 'script' which is just a list of things, this time including instructions
-	@Nonnull
-	public List<ByteCode> compile(final State st) {
-		lastdebuglineno=-1;
-		lastdebugcolno=-1;
-		return compile(st,startnode);
-	}
-
 	private void addDebug(@Nonnull final List<ByteCode> compiled,
 	                      @Nonnull final ParseNode node) {
 		final Token firsttoken=node.jjtGetFirstToken();
@@ -87,7 +89,8 @@ public class GSCompiler {
 	}
 
 	@Nonnull
-	private List<ByteCode> compile(@Nonnull final State st,@Nonnull final ParseNode node) {
+	private List<ByteCode> compile(@Nonnull final State st,
+	                               @Nonnull final ParseNode node) {
 		final List<ByteCode> compiled=new ArrayList<>();
 		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) {
 			throw new SystemImplementationException(node.getClass()

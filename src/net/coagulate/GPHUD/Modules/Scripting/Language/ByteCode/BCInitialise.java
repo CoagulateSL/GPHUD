@@ -12,6 +12,7 @@ public class BCInitialise extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Initialise a variable.  Pop the name and then the (null) content from the
 	// POP the NAME.  POP the (null) content which infers the type.
 	@Nonnull

@@ -22,11 +22,18 @@ import javax.annotation.Nullable;
  */
 public abstract class SetOwner {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.AVATAR, permitScripting=false, description="Transfer ownership of the instance (SUPERADMIN ONLY)", requiresPermission="instance.owner",
-	          permitJSON=false, permitUserWeb=false)
+	@Commands(context=Context.AVATAR,
+	          permitScripting=false,
+	          description="Transfer ownership of the instance (SUPERADMIN ONLY)",
+	          requiresPermission="instance.owner",
+	          permitJSON=false,
+	          permitUserWeb=false)
 	public static Response setOwner(@Nonnull final State st,
-	                                @Nullable @Arguments(description="New owner for this instance", type=ArgumentType.AVATAR) final User avatar) {
+	                                @Nullable
+	                                @Arguments(description="New owner for this instance",
+	                                           type=ArgumentType.AVATAR) final User avatar) {
 		if (!st.isSuperUser()) {
 			throw new UserAccessDeniedException("Instance transfer may only be performed by a SUPERADMIN");
 		}

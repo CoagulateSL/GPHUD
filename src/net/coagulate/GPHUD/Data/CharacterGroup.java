@@ -26,24 +26,7 @@ public class CharacterGroup extends TableRow {
 
 	protected CharacterGroup(final int id) { super(id); }
 
-	/**
-	 * Purges a particular K from the charactergroup KV store for all groups.
-	 *
-	 * @param instance Instance to purge from
-	 * @param key      Key
-	 */
-	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key) {
-		final String kvtable="charactergroupkvstore";
-		final String maintable="charactergroups";
-		final String idcolumn="charactergroupid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
-				        ".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
-	}
+	// ---------- STATICS ----------
 
 	/**
 	 * Populate a JSON object with options regarding a group.
@@ -99,10 +82,28 @@ public class CharacterGroup extends TableRow {
 		return (CharacterGroup) factoryPut("CharacterGroup",id,new CharacterGroup(id));
 	}
 
+	// ----- Internal Statics -----
 
-	@Nonnull
-	@Override
-	public String getLinkTarget() { return "charactergroup"; }
+	/**
+	 * Purges a particular K from the charactergroup KV store for all groups.
+	 *
+	 * @param instance Instance to purge from
+	 * @param key      Key
+	 */
+	static void wipeKV(@Nonnull final Instance instance,
+	                   final String key) {
+		final String kvtable="charactergroupkvstore";
+		final String maintable="charactergroups";
+		final String idcolumn="charactergroupid";
+		GPHUD.getDB()
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
+		        key,
+		        instance.getId()
+		       );
+	}
+
+	// ---------- INSTANCE ----------
 
 	/**
 	 * Gets the instance associated with this region
@@ -126,11 +127,31 @@ public class CharacterGroup extends TableRow {
 		return "charactergroupid";
 	}
 
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("CharacterGroup / State Instance mismatch");
+		}
+	}
+
 	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
+
+	@Nonnull
+	@Override
+	public String getLinkTarget() { return "charactergroup"; }
+
+	@Nonnull
+	public String getKVTable() { return "charactergroupkvstore"; }
+
+	@Nonnull
+	public String getKVIdField() { return "charactergroupid"; }
+
+	protected int getNameCacheTime() { return 60; } // character groups are likely to end up renamable
 
 	/**
 	 * Get the character members of the group
@@ -162,7 +183,6 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public String getType() { return dqs("select type from charactergroups where charactergroupid=?",getId()); }
-
 
 	/**
 	 * Joins a character to this group.
@@ -280,22 +300,6 @@ public class CharacterGroup extends TableRow {
 		if (count==1) { return true; }
 		return false;
 	}
-
-	@Nonnull
-	public String getKVTable() { return "charactergroupkvstore"; }
-
-	@Nonnull
-	public String getKVIdField() { return "charactergroupid"; }
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("CharacterGroup / State Instance mismatch");
-		}
-	}
-
-	protected int getNameCacheTime() { return 60; } // character groups are likely to end up renamable
 
 	public boolean isOpen() {
 		return getBool("open");

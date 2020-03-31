@@ -26,19 +26,19 @@ public class GPHUDClientModule extends ModuleAnnotation {
 		super(name,def);
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Command.Context.CHARACTER, description="Set your Titler's Altitude (height above avatar)")
+	@Commands(context=Command.Context.CHARACTER,
+	          description="Set your Titler's Altitude (height above avatar)")
 	public static Response setAltitude(@Nonnull final State st,
-	                                   @Arguments(description="Offset, in meters", max=3, type=Argument.ArgumentType.FLOAT) final Float offset) {
+	                                   @Arguments(description="Offset, in meters",
+	                                              max=3,
+	                                              type=Argument.ArgumentType.FLOAT) final Float offset) {
 		st.setKV(st.getCharacter(),"GPHUDClient.TitlerAltitude",offset+"");
 		return new OKResponse("Updated your Titler altitude to "+offset);
 	}
 
-	@Override
-	public void registerKV(@Nonnull final KV a) {
-		base.put(a.name().toLowerCase(),a);
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(final State st) {
@@ -64,6 +64,12 @@ public class GPHUDClientModule extends ModuleAnnotation {
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}
 
+	@Override
+	public void registerKV(@Nonnull final KV a) {
+		base.put(a.name().toLowerCase(),a);
+	}
+
+	// ----- Internal Instance -----
 	private void keyConveyances(@Nonnull final Map<String,KV> filterinto,
 	                            @Nonnull final Map<String,KV> filterfrom) {
 		for (final KV kv: filterfrom.values()) {

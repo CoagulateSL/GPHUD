@@ -13,6 +13,7 @@ import org.json.JSONObject;
  * @author Iain Price <gphud@predestined.net>
  */
 public interface Response extends Renderable {
+	// ---------- INSTANCE ----------
 	JSONObject asJSON(State st);
 
 	String scriptResponse();

@@ -28,6 +28,7 @@ public abstract class ObjectType {
 		json=object.getBehaviour();
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static ObjectType materialise(final State st,
 	                                     @Nonnull final ObjectTypes object) {
@@ -60,6 +61,7 @@ public abstract class ObjectType {
 		return behaviours;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public abstract String explainHtml();
 

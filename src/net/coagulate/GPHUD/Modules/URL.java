@@ -14,6 +14,7 @@ import java.lang.annotation.*;
 public abstract class URL {
 
 
+	// ---------- INSTANCE ----------
 	public abstract boolean isGenerated();
 
 	public abstract String url();
@@ -43,6 +44,7 @@ public abstract class URL {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface URLs {
+		// ---------- INSTANCE ----------
 		@Nonnull String url();
 
 		@Nonnull String requiresPermission() default "";

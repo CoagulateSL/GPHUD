@@ -12,6 +12,7 @@ import java.util.Map;
 public class GSFunctions {
 	private static final Map<String,Method> functionmap=new HashMap<>();
 
+	// ---------- STATICS ----------
 	public static Method get(final String functionname) {
 		if (functionmap.containsKey(functionname)) { return functionmap.get(functionname); }
 		throw new GSUnknownIdentifier("Function call "+functionname+" is not defined.");
@@ -36,6 +37,7 @@ public class GSFunctions {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface GSFunction {
+		// ---------- INSTANCE ----------
 		@Nonnull String description();
 
 		@Nonnull String parameters();

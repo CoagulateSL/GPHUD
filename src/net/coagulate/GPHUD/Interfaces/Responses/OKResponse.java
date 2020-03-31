@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 public class OKResponse extends TextOK implements Response {
 	public OKResponse(final String message) { super(message); }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {

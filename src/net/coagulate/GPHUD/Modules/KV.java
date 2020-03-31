@@ -20,6 +20,7 @@ import static java.util.logging.Level.FINE;
  */
 public abstract class KV extends NameComparable {
 
+	// ---------- INSTANCE ----------
 	public abstract boolean isGenerated();
 
 	@Nonnull
@@ -117,6 +118,11 @@ public abstract class KV extends NameComparable {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return fullname();
+	}
+
 	public enum KVSCOPE {
 		INSTANCE,
 		SERVER,
@@ -127,16 +133,6 @@ public abstract class KV extends NameComparable {
 		EVENT,
 		EFFECT,
 		COMPLETE
-	}
-
-	public enum KVTYPE {
-		TEXT,
-		INTEGER,
-		FLOAT,
-		UUID,
-		BOOLEAN,
-		COMMAND,
-		COLOR
 	}
     /* DEAD CODE?
     public  boolean exclusiveTo(DBObject o) {
@@ -165,6 +161,16 @@ public abstract class KV extends NameComparable {
     */
 
 
+	public enum KVTYPE {
+		TEXT,
+		INTEGER,
+		FLOAT,
+		UUID,
+		BOOLEAN,
+		COMMAND,
+		COLOR
+	}
+
 	// Configurable THINGS
 	// Characters, Events, Zones, Regions, Instances, Avatars (To be removed?), CharacterGroups (to be added)
 	public enum KVHIERARCHY {
@@ -182,6 +188,7 @@ public abstract class KV extends NameComparable {
 	@Target(ElementType.PACKAGE)
 	@Repeatable(KVSS.class)
 	public @interface KVS {
+		// ---------- INSTANCE ----------
 		@Nonnull String name();
 
 		@Nonnull KVSCOPE scope();
@@ -207,11 +214,7 @@ public abstract class KV extends NameComparable {
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface KVSS {
+		// ---------- INSTANCE ----------
 		@Nonnull KVS[] value();
-	}
-
-	@Override
-	public String toString() {
-		return fullname();
 	}
 }

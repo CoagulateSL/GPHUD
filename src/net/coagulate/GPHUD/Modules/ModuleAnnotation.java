@@ -41,6 +41,7 @@ public class ModuleAnnotation extends Module {
 		generated=false;
 	}
 
+	// ----- Internal Statics -----
 	@Nonnull
 	static Object assertNotNull(@Nullable final Object o,
 	                            final String value,
@@ -60,15 +61,8 @@ public class ModuleAnnotation extends Module {
 		}
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return generated; }
-
-	@Nonnull
-	Response run(@Nonnull final State st,
-	             @Nonnull final String commandname,
-	             @Nonnull final String[] args) {
-		final Command command=getCommandNullable(st,commandname);
-		return command.run(st,args);
-	}
 
 	@Nullable
 	public Set<SideSubMenu> getSideSubMenus(final State st) {
@@ -115,30 +109,12 @@ public class ModuleAnnotation extends Module {
 		return ret;
 	}
 
-	@Nullable
-	public KV getKVDefinitionNullable(final State st,
-	                          @Nonnull final String qualifiedname) {
-		//for (String s:kvmap.keySet()) { System.out.println(s); }
-		if (!kvmap.containsKey(qualifiedname.toLowerCase())) {
-			return null;
-		}
-		return kvmap.get(qualifiedname.toLowerCase());
-	}
-
-
 	@Nonnull
 	public Command getCommandNullable(final State st,
 	                                  @Nonnull final String commandname) {
 		final Command c=commands.get(commandname.toLowerCase());
 		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name); }
 		return c;
-	}
-
-	public void registerPool(@Nonnull final Pool element) {
-		if (poolmap.containsKey(element.name().toLowerCase())) {
-			throw new SystemImplementationException("Attempt to register duplicate pool map "+element.name()+" in module "+getName());
-		}
-		poolmap.put(element.name().toLowerCase(),element);
 	}
 
 	@Nonnull
@@ -156,14 +132,28 @@ public class ModuleAnnotation extends Module {
 		return permissions.get(itemname.toLowerCase());
 	}
 
-	public void registerCommand(@Nonnull final Command m) {
-		commands.put(m.getName().toLowerCase(),m);
-	}
-
-
 	@Nonnull
 	public Map<String,Pool> getPoolMap(final State st) {
 		return poolmap;
+	}
+
+	@Nonnull
+	public Map<String,Command> getCommands(final State st) {
+		return commands;
+	}
+
+	public Map<String,Permission> getPermissions(final State st) {
+		return permissions;
+	}
+
+	@Nullable
+	public SideMenu getSideMenu(final State st) {
+		return sidemenu;
+	}
+
+	@Nonnull
+	public Set<URL> getAllContents(final State st) {
+		return contents;
 	}
 
 	/* this function is garbage and unused, poolmap doesn't map to "Pools" but "Pool"...
@@ -171,9 +161,51 @@ public class ModuleAnnotation extends Module {
 		return poolmap.containsValue(p);
 	}*/
 
+	public void validateKV(@Nonnull final State st,
+	                       @Nonnull final String key) {
+		if (Modules.getKVDefinitionNullable(st,key)==null) {
+			throw new UserInputLookupFailureException("KV key "+key+" in module "+getName()+" does not exist");
+		}
+	}
+
+	public void validateCommand(final State st,
+	                            @Nonnull final String command) {
+		if (!commands.containsKey(command.toLowerCase())) {
+			throw new SystemImplementationException("Command "+command+" does not exist in module "+getName());
+		}
+	}
+
 	@Nonnull
-	public Map<String,Command> getCommands(final State st) {
-		return commands;
+	Response run(@Nonnull final State st,
+	             @Nonnull final String commandname,
+	             @Nonnull final String[] args) {
+		final Command command=getCommandNullable(st,commandname);
+		return command.run(st,args);
+	}
+
+	protected void initialiseInstance(final State st) {
+		//no-op by default
+	}
+
+	@Nullable
+	public KV getKVDefinitionNullable(final State st,
+	                                  @Nonnull final String qualifiedname) {
+		//for (String s:kvmap.keySet()) { System.out.println(s); }
+		if (!kvmap.containsKey(qualifiedname.toLowerCase())) {
+			return null;
+		}
+		return kvmap.get(qualifiedname.toLowerCase());
+	}
+
+	public void registerPool(@Nonnull final Pool element) {
+		if (poolmap.containsKey(element.name().toLowerCase())) {
+			throw new SystemImplementationException("Attempt to register duplicate pool map "+element.name()+" in module "+getName());
+		}
+		poolmap.put(element.name().toLowerCase(),element);
+	}
+
+	public void registerCommand(@Nonnull final Command m) {
+		commands.put(m.getName().toLowerCase(),m);
 	}
 
 	public void setSideMenu(final State st,
@@ -199,15 +231,6 @@ public class ModuleAnnotation extends Module {
 		sidemenus.add(m);
 	}
 
-	public Map<String,Permission> getPermissions(final State st) {
-		return permissions;
-	}
-
-	@Nullable
-	public SideMenu getSideMenu(final State st) {
-		return sidemenu;
-	}
-
 	public void registerPermission(@Nonnull final Permission a) {
 		if (permissions.containsKey(a.name().toLowerCase())) {
 			throw new SystemImplementationException("Attempt to redefine permission "+a.name()+" in module "+name);
@@ -220,35 +243,11 @@ public class ModuleAnnotation extends Module {
 		contents.add(m);
 	}
 
-	@Nonnull
-	public Set<URL> getAllContents(final State st) {
-		return contents;
-	}
-
 	public void registerKV(@Nonnull final KV a) {
 		if (kvmap.containsKey(a.name().toLowerCase())) {
 			throw new SystemImplementationException("Attempt to redefine KV entry "+a.name()+" in module "+name);
 		}
 		kvmap.put(a.name().toLowerCase(),a);
-	}
-
-	public void validateKV(@Nonnull final State st,
-	                       @Nonnull final String key) {
-		if (Modules.getKVDefinitionNullable(st,key)==null) {
-			throw new UserInputLookupFailureException("KV key "+key+" in module "+getName()+" does not exist");
-		}
-	}
-
-	public void validateCommand(final State st,
-	                            @Nonnull final String command) {
-		if (!commands.containsKey(command.toLowerCase())) {
-			throw new SystemImplementationException("Command "+command+" does not exist in module "+getName());
-		}
-	}
-
-
-	protected void initialiseInstance(final State st) {
-		//no-op by default
 	}
 
 }

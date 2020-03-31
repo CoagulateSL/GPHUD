@@ -16,6 +16,7 @@ public class TextError implements Renderable {
 
 	public TextError(final String s) { this.s=s; }
 
+	// ---------- INSTANCE ----------
 	public String getMessage(final State st) { return s; }
 
 	@Nonnull

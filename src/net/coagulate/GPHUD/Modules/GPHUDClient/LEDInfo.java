@@ -13,9 +13,15 @@ import javax.annotation.Nonnull;
  */
 public class LEDInfo {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Command.Context.ANY, description="Gives information about the RED / TRANSMIT light", permitScripting=false, permitObject=false, permitConsole=false,
-	          permitUserWeb=false, permitJSON=false)
+	@Commands(context=Command.Context.ANY,
+	          description="Gives information about the RED / TRANSMIT light",
+	          permitScripting=false,
+	          permitObject=false,
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          permitJSON=false)
 	public static Response tx(final State st) {
 		return new OKResponse(
 				"The red light is the TRANSMIT light.\nDARK RED - transmission circuit has been successfully used, and is currently idle.\nBRIGHT RED - transmission in "+
@@ -23,8 +29,13 @@ public class LEDInfo {
 	}
 
 	@Nonnull
-	@Commands(context=Command.Context.ANY, description="Gives information about the GREEN / RECEIVE light", permitScripting=false, permitObject=false, permitConsole=false,
-	          permitUserWeb=false, permitJSON=false)
+	@Commands(context=Command.Context.ANY,
+	          description="Gives information about the GREEN / RECEIVE light",
+	          permitScripting=false,
+	          permitObject=false,
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          permitJSON=false)
 	public static Response rx(final State st) {
 		return new OKResponse("The green light is the RECEIVE light.\nDARK GREEN - Receiver has been set up and registered, and is idle.\nBRIGHT GREEN - A message is being "+"received\nBLACK"+" - No receiving circuit has been created, or it failed.");
 	}

@@ -16,8 +16,12 @@ import javax.annotation.Nonnull;
  */
 public abstract class NOOP {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.CHARACTER, description="No-operation, used by HUD to poll server", permitConsole=false, permitUserWeb=false)
+	@Commands(context=Context.CHARACTER,
+	          description="No-operation, used by HUD to poll server",
+	          permitConsole=false,
+	          permitUserWeb=false)
 	public static Response noop(final State st) {
 		return new JSONResponse(new JSONObject());
 	}

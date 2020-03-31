@@ -30,14 +30,26 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Register {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.AVATAR, permitScripting=false, permitConsole=false, permitUserWeb=false, description="Registers this connection as the region server "+
-			"connection", requiresPermission="Instance.ServerOperator", permitObject=false)
+	@Commands(context=Context.AVATAR,
+	          permitScripting=false,
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          description="Registers this connection as the region server "+"connection",
+	          requiresPermission="Instance.ServerOperator",
+	          permitObject=false)
 	public static Response register(@Nonnull final State st,
-	                                @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version number of the Server that is connecting", max=64)
-	                                final String version,
-	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version date of the Server that is connecting", max=64) final String versiondate,
-	                                @Arguments(type=ArgumentType.TEXT_ONELINE, description="Version time of the Server that is connecting", max=64) final String versiontime) {
+	                                @Nonnull
+	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                           description="Version number of the Server that is connecting",
+	                                           max=64) final String version,
+	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                           description="Version date of the Server that is connecting",
+	                                           max=64) final String versiondate,
+	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                           description="Version time of the Server that is connecting",
+	                                           max=64) final String versiontime) {
 		// check authorisation, servers can only be deployed by the instance owner...
 		final String regionname=st.getRegionName();
 		final Instance instance=st.getInstance();

@@ -22,6 +22,7 @@ public class TerminateResponse implements Response {
 		reason=r;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {

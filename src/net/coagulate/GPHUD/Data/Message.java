@@ -19,6 +19,8 @@ public class Message extends TableRow {
 
 	protected Message(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -29,19 +31,6 @@ public class Message extends TableRow {
 	@Nonnull
 	public static Message get(final int id) {
 		return (Message) factoryPut("Message",id,new Message(id));
-	}
-
-	/**
-	 * Add a new message to the queue.
-	 *
-	 * @param targetchar Character to enqueue the message for
-	 * @param expires    UnixTime after which the message will not be activatable (and will be discarded)
-	 * @param message    The JSONObject message to enqueue
-	 */
-	static void add(@Nonnull final Char targetchar,
-	                final int expires,
-	                @Nonnull final JSONObject message) {
-		GPHUD.getDB().d("insert into messages(characterid,expires,json) values(?,?,?)",targetchar.getId(),expires,message.toString());
 	}
 
 	/**
@@ -122,6 +111,22 @@ public class Message extends TableRow {
 		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
+	// ----- Internal Statics -----
+
+	/**
+	 * Add a new message to the queue.
+	 *
+	 * @param targetchar Character to enqueue the message for
+	 * @param expires    UnixTime after which the message will not be activatable (and will be discarded)
+	 * @param message    The JSONObject message to enqueue
+	 */
+	static void add(@Nonnull final Char targetchar,
+	                final int expires,
+	                @Nonnull final JSONObject message) {
+		GPHUD.getDB().d("insert into messages(characterid,expires,json) values(?,?,?)",targetchar.getId(),expires,message.toString());
+	}
+
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -132,6 +137,11 @@ public class Message extends TableRow {
 	@Override
 	public String getIdColumn() {
 		return "messageid";
+	}
+
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
 	}
 
 	@Nonnull
@@ -145,6 +155,14 @@ public class Message extends TableRow {
 	public String getLinkTarget() {
 		return "/messages/view/"+getId();
 	}
+
+	@Nullable
+	public String getKVTable() { return null; }
+
+	@Nullable
+	public String getKVIdField() { return null; }
+
+	protected int getNameCacheTime() { return 0; } // name doesn't exist yet alone get cached
 
 	/**
 	 * Get the JSON payload for this message
@@ -170,18 +188,5 @@ public class Message extends TableRow {
 		d("delete from messages where messageid=?",getId());
 	}
 
-	@Nullable
-	public String getKVTable() { return null; }
-
-	@Nullable
-	public String getKVIdField() { return null; }
-
 	public void flushKVCache(final State st) {}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-	}
-
-	protected int getNameCacheTime() { return 0; } // name doesn't exist yet alone get cached
 }

@@ -9,8 +9,10 @@ import javax.annotation.Nonnull;
  * @author Iain Price
  */
 public class HealthTemplate {
+	// ---------- STATICS ----------
 	@Nonnull
-	@Templater.Template(name="HEALTH", description="Character's health")
+	@Templater.Template(name="HEALTH",
+	                    description="Character's health")
 	public static String abilityPoints(@Nonnull final State st,
 	                                   final String key) {
 		if (!st.hasModule("Health")) { return ""; }

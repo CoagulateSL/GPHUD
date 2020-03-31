@@ -36,6 +36,8 @@ import static java.util.logging.Level.WARNING;
  */
 public class Interface extends net.coagulate.GPHUD.Interface {
 
+	// ---------- INSTANCE ----------
+
 	/**
 	 * this is where the request comes in after generic processing.
 	 * We basically just encapsulate all requests in an Exception handler that will spew errors as HTML errors (rather than JSON errors).
@@ -133,6 +135,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	}
 
 
+	// ----- Internal Instance -----
 	protected Response execute(@Nonnull final State st) {
 		final JSONObject obj=st.json();
 		// get developer key
@@ -174,17 +177,17 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 		if (objectname==null || objectname.isEmpty()) {
 			GPHUD.getLogger().severe("Failed to decode objectname header expected from SL");
-			SL.report("Parse failure",new SystemRemoteFailureException("An objectname is blank."), st);
+			SL.report("Parse failure",new SystemRemoteFailureException("An objectname is blank."),st);
 			return new TerminateResponse("Parse failure");
 		}
 		if (regionname==null || regionname.isEmpty()) {
 			GPHUD.getLogger().severe("Failed to decode regionname header expected from SL");
-			SL.report("Parse failure",new SystemRemoteFailureException("A regionname is blank."), st);
+			SL.report("Parse failure",new SystemRemoteFailureException("A regionname is blank."),st);
 			return new TerminateResponse("Parse failure");
 		}
 		if (ownerkey==null || ownerkey.isEmpty()) {
 			GPHUD.getLogger().severe("Failed to decode ownerkey header expected from SL");
-			SL.report("Parse failure",new SystemRemoteFailureException("An ownerkey is blank."), st);
+			SL.report("Parse failure",new SystemRemoteFailureException("An ownerkey is blank."),st);
 			return new TerminateResponse("Parse failure");
 		}
 		if (ownername==null || ownername.isEmpty()) {
@@ -192,9 +195,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (userlookup!=null) { ownername=userlookup.getName(); }
 			if (ownername==null || ownername.isEmpty()) {
 				GPHUD.getLogger().severe("Failed to extract ownername header from SL or ownerkeylookup via DB");
-				SL.report("Parse failure",new SystemRemoteFailureException("Ownername is blank, even from DB cache."), st);
+				SL.report("Parse failure",new SystemRemoteFailureException("Ownername is blank, even from DB cache."),st);
 				return new TerminateResponse("Parse failure");
-			} else {
+			}
+			else {
 				GPHUD.getLogger().info("Failed to get ownername from headers for key "+ownerkey+", looked up in DB as "+ownername+".");
 			}
 		}

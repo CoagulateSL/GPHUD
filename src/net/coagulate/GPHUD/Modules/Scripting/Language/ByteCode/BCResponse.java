@@ -23,6 +23,7 @@ public class BCResponse extends ByteCodeDataType {
 		if (content instanceof ErrorResponse) { error=true; }
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String explain() { return "Response ("+(error?"ERROR:":"")+message+")"; }
 
@@ -38,15 +39,6 @@ public class BCResponse extends ByteCodeDataType {
 		vm.push(this);
 	}
 
-	@Nullable
-	@Override
-	public ByteCodeDataType clone() {
-		final BCResponse copy=new BCResponse(null);
-		copy.message=message;
-		copy.error=error;
-		return copy;
-	}
-
 	@Nonnull
 	@Override
 	public BCString toBCString() {
@@ -55,5 +47,14 @@ public class BCResponse extends ByteCodeDataType {
 
 	@Nonnull
 	public BCInteger toBCInteger() { return new BCInteger(null,(error?1:0)); }
+
+	@Nullable
+	@Override
+	public ByteCodeDataType clone() {
+		final BCResponse copy=new BCResponse(null);
+		copy.message=message;
+		copy.error=error;
+		return copy;
+	}
 
 }

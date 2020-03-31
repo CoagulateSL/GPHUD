@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class Management {
+	// ---------- STATICS ----------
 	@URL.URLs(url="/configuration/Teleportation")
 	public static void configuration(@Nonnull final State st,
 	                                 final SafeMap map) {

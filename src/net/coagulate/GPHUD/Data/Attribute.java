@@ -27,6 +27,8 @@ public class Attribute extends TableRow {
 
 	protected Attribute(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -101,6 +103,36 @@ public class Attribute extends TableRow {
 	}
 
 	/**
+	 * Find attribute by name
+	 *
+	 * @param st   State
+	 * @param name Attribute name
+	 *
+	 * @return Attribute
+	 */
+	@Nullable
+	public static Attribute resolve(@Nonnull final State st,
+	                                final String name) {
+		final int id=new Attribute(-1).resolveToID(st,name,true);
+		if (id==0) { return null; }
+		return get(id);
+	}
+
+	@Nonnull
+	public static ATTRIBUTETYPE fromString(@Nonnull final String type) {
+		if ("text".equalsIgnoreCase(type)) { return TEXT; }
+		if ("integer".equalsIgnoreCase(type)) { return INTEGER; }
+		if ("group".equalsIgnoreCase(type)) { return GROUP; }
+		if ("pool".equalsIgnoreCase(type)) { return POOL; }
+		if ("float".equalsIgnoreCase(type)) { return FLOAT; }
+		if ("color".equalsIgnoreCase(type)) { return COLOR; }
+		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
+		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
+	}
+
+	// ----- Internal Statics -----
+
+	/**
 	 * Create a new attribute
 	 *
 	 * @param instance          Instance to create in
@@ -135,25 +167,20 @@ public class Attribute extends TableRow {
 		       );
 	}
 
-	/**
-	 * Find attribute by name
-	 *
-	 * @param st   State
-	 * @param name Attribute name
-	 *
-	 * @return Attribute
-	 */
-	@Nullable
-	public static Attribute resolve(@Nonnull final State st,
-	                                final String name) {
-		final int id=new Attribute(-1).resolveToID(st,name,true);
-		if (id==0) { return null; }
-		return get(id);
+	private static String toString(final ATTRIBUTETYPE type) {
+		switch (type) {
+			case TEXT: return "text";
+			case FLOAT: return "float";
+			case INTEGER: return "integer";
+			case GROUP: return "group";
+			case POOL: return "pool";
+			case COLOR: return "color";
+			case EXPERIENCE: return "experience";
+		}
+		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}
 
-	@Nonnull
-	@Override
-	public String getLinkTarget() { return "attributes"; }
+	// ---------- INSTANCE ----------
 
 	/**
 	 * Gets the instance associated with this attribute.
@@ -177,11 +204,23 @@ public class Attribute extends TableRow {
 		return "attributeid";
 	}
 
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("Attribute / State Instance mismatch");
+		}
+	}
+
 	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
+
+	@Nonnull
+	@Override
+	public String getLinkTarget() { return "attributes"; }
 
 	@Nullable
 	@Override
@@ -190,14 +229,6 @@ public class Attribute extends TableRow {
 	@Nullable
 	@Override
 	public String getKVIdField() { return null; }
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("Attribute / State Instance mismatch");
-		}
-	}
 
 	@Override
 	protected int getNameCacheTime() { return 60*60; } // 1 hour, attributes can NOT be renamed because they create a KV based on the name :P
@@ -211,31 +242,6 @@ public class Attribute extends TableRow {
 			cachePut("type",type,getNameCacheTime());
 		}
 		return fromString(type);
-	}
-
-	@Nonnull
-	public static ATTRIBUTETYPE fromString(@Nonnull final String type) {
-		if ("text".equalsIgnoreCase(type)) { return TEXT; }
-		if ("integer".equalsIgnoreCase(type)) { return INTEGER; }
-		if ("group".equalsIgnoreCase(type)) { return GROUP; }
-		if ("pool".equalsIgnoreCase(type)) { return POOL; }
-		if ("float".equalsIgnoreCase(type)) { return FLOAT; }
-		if ("color".equalsIgnoreCase(type)) { return COLOR; }
-		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
-		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
-	}
-
-	private static String toString(final ATTRIBUTETYPE type) {
-		switch (type) {
-			case TEXT: return "text";
-			case FLOAT: return "float";
-			case INTEGER: return "integer";
-			case GROUP: return "group";
-			case POOL: return "pool";
-			case COLOR: return "color";
-			case EXPERIENCE: return "experience";
-		}
-		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}
 
 	@Nullable

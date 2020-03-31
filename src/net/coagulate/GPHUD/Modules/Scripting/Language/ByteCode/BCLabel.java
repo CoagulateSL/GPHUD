@@ -28,13 +28,9 @@ public class BCLabel extends ByteCode {
 		this.address=address;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String explain() { return "Label (:"+id+")"; }
-
-	public int address() {
-		if (address==null) { throw new GSInternalError("Jump address is null"); }
-		return address;
-	}
 
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		address=bytes.size();
@@ -45,5 +41,10 @@ public class BCLabel extends ByteCode {
 	                    final GSVM vm,
 	                    final boolean simulation) {
 		throw new GSInternalError("Can not execute the LABEL instruction, it is a pseudocode marker for compilation only");
+	}
+
+	public int address() {
+		if (address==null) { throw new GSInternalError("Jump address is null"); }
+		return address;
 	}
 }

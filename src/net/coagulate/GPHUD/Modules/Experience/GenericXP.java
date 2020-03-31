@@ -19,8 +19,8 @@ public class GenericXP extends QuotaedXP {
 		myname=name;
 	}
 
-	@Nonnull
-	public String getName() { return myname; }
+	// ---------- INSTANCE ----------
+	public Module getModule() { return Modules.get(null,"Experience"); }
 
 	@Nonnull
 	public String poolName(final State st) {return "Experience."+myname;}
@@ -31,6 +31,7 @@ public class GenericXP extends QuotaedXP {
 	@Nonnull
 	public String periodKV(final State st) { return "Experience."+myname+"Period"; }
 
-	public Module getModule() { return Modules.get(null,"Experience"); }
+	@Nonnull
+	public String getName() { return myname; }
 
 }

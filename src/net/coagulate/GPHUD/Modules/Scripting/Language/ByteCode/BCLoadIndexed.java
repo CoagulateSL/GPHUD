@@ -14,6 +14,7 @@ public class BCLoadIndexed extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String explain() { return "LoadElement (Pop name, pop index, push variable value)"; }
 

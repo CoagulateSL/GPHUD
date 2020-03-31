@@ -20,18 +20,19 @@ public class PoolAnnotation extends Pool {
 		generated=false;
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return generated; }
-
-	@Nonnull
-	public String name() { return meta.name(); }
 
 	@Nonnull
 	public String description() { return meta.description(); }
 
 	@Nonnull
-	public String getName() { return name(); }
+	public String fullName() { return module.getName()+"."+getName(); }
 
 	@Nonnull
-	public String fullName() { return module.getName()+"."+getName(); }
+	public String name() { return meta.name(); }
+
+	@Nonnull
+	public String getName() { return name(); }
 
 }

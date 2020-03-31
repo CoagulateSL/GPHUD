@@ -50,6 +50,7 @@ public class CharactersModule extends ModuleAnnotation {
 		super(name,def);
 	}
 
+	// ---------- STATICS ----------
 	@Nullable
 	public static String templateAttribute(State st,
 	                                       @Nonnull String template) {
@@ -112,7 +113,8 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Nonnull
-	@Template(name="ABILITYPOINTS", description="Number of ability points the character has")
+	@Template(name="ABILITYPOINTS",
+	          description="Number of ability points the character has")
 	public static String abilityPoints(@Nonnull final State st,
 	                                   final String key) {
 		if (st.getCharacterNullable()==null) { return ""; }
@@ -141,11 +143,13 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Nonnull
-	@Commands(context=Command.Context.CHARACTER, description="Spend an ability point to raise an attribute", permitUserWeb=false)
+	@Commands(context=Command.Context.CHARACTER,
+	          description="Spend an ability point to raise an attribute",
+	          permitUserWeb=false)
 	public static Response spendAbilityPoint(@Nonnull final State st,
-	                                         @Arguments(choiceMethod="getRaisableAttributesList", description="Attribute to spend an ability point on", type=
-			                                         Argument.ArgumentType.CHOICE)
-	                                         final String attribute) {
+	                                         @Arguments(choiceMethod="getRaisableAttributesList",
+	                                                    description="Attribute to spend an ability point on",
+	                                                    type=Argument.ArgumentType.CHOICE) final String attribute) {
 		int remain=abilityPointsRemaining(st);
 		if (remain<=0) { return new ErrorResponse("You have no remaining ability points to spend."); }
 		final Attribute attr=Attribute.find(st.getInstance(),attribute);
@@ -189,10 +193,16 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	@Nonnull
-	@Commands(context=Command.Context.CHARACTER, description="Change a value about your own character")
+	@Commands(context=Command.Context.CHARACTER,
+	          description="Change a value about your own character")
 	public static Response set(@Nonnull final State st,
-	                           @Nullable @Arguments(type=Argument.ArgumentType.ATTRIBUTE_WRITABLE, description="Attribute to set") final Attribute attribute,
-	                           @Arguments(type=Argument.ArgumentType.TEXT_ONELINE, description="Value to use", mandatory=false, max=4096) final String value) {
+	                           @Nullable
+	                           @Arguments(type=Argument.ArgumentType.ATTRIBUTE_WRITABLE,
+	                                      description="Attribute to set") final Attribute attribute,
+	                           @Arguments(type=Argument.ArgumentType.TEXT_ONELINE,
+	                                      description="Value to use",
+	                                      mandatory=false,
+	                                      max=4096) final String value) {
 		if (attribute==null) { return new ErrorResponse("You must supply an attribute to set"); }
 		attribute.validate(st);
 		if (!attribute.getSelfModify()) {
@@ -201,27 +211,14 @@ public class CharactersModule extends ModuleAnnotation {
 		final KV kv=st.getKVDefinition("Characters."+attribute.getName());
 		final String oldvalue=st.getRawKV(st.getCharacter(),kv.fullname());
 		st.setKV(st.getCharacter(),kv.fullname(),value);
-		Audit.audit(true,
-		            st,
+		Audit.audit(true,st,
 		            Audit.OPERATOR.CHARACTER,
-		            null,
-		            null,
-		            "AttributeSet",
-		            attribute.getNameSafe(),
-		            oldvalue,
-		            value,
-		            "Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullname()
+		            null,null,"AttributeSet",attribute.getNameSafe(),oldvalue,value,"Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullname()
 		           );
 		return new OKResponse("Your character updated for Attribute "+attribute.getName());
 	}
 
-	//Map<String,KV> base=new TreeMap<>();
-	@Override
-	@Deprecated
-	public void registerKV(@Nonnull final KV a) {
-		throw new SystemImplementationException("It is no longer permitted to have manual registrations inside Characters module");
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
@@ -241,6 +238,23 @@ public class CharactersModule extends ModuleAnnotation {
 	                          @Nonnull final String qualifiedname) {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
+	}
+
+	@Override
+	public Map<String,Permission> getPermissions(@Nullable final State st) {
+		final Map<String,Permission> map=super.getPermissions(st);
+		if (st==null) { return map; }
+		for (final Attribute a: st.getAttributes()) {
+			map.put("set"+a.getName().toLowerCase(),new AttributePermission(a));
+		}
+		return map;
+	}
+
+	//Map<String,KV> base=new TreeMap<>();
+	@Override
+	@Deprecated
+	public void registerKV(@Nonnull final KV a) {
+		throw new SystemImplementationException("It is no longer permitted to have manual registrations inside Characters module");
 	}
 
 	@Override
@@ -267,15 +281,5 @@ public class CharactersModule extends ModuleAnnotation {
 				st.logger().log(SEVERE,"Exception referencing own templating method??",ex);
 			}
 		}
-	}
-
-	@Override
-	public Map<String,Permission> getPermissions(@Nullable final State st) {
-		final Map<String,Permission> map=super.getPermissions(st);
-		if (st==null) { return map; }
-		for (final Attribute a: st.getAttributes()) {
-			map.put("set"+a.getName().toLowerCase(),new AttributePermission(a));
-		}
-		return map;
 	}
 }

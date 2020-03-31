@@ -19,6 +19,7 @@ public class BCDebug extends ByteCode {
 		this.column=column;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explain() {

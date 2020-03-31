@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Groups extends Publishing {
+	// ---------- STATICS ----------
 	@URL.URLs(url="/publishing/allgroups")
 	public static void allGroupsSample(@Nonnull final State st,
 	                                   final SafeMap values) {
@@ -40,7 +41,8 @@ public class Groups extends Publishing {
 		published(st,"grouptype/"+instance.getId()+"/"+type);
 	}
 
-	@URL.URLs(url="/published/grouptype/*", requiresAuthentication=false)
+	@URL.URLs(url="/published/grouptype/*",
+	          requiresAuthentication=false)
 	public static void groupType(@Nonnull final State st,
 	                             final SafeMap values) {
 		final Instance instance=Instance.get(getPartInt(st,1));
@@ -59,7 +61,8 @@ public class Groups extends Publishing {
 		contentResizer(st);
 	}
 
-	@URL.URLs(url="/published/group/*", requiresAuthentication=false)
+	@URL.URLs(url="/published/group/*",
+	          requiresAuthentication=false)
 	public static void oneGroup(@Nonnull final State st,
 	                            final SafeMap values) {
 		try {
@@ -73,13 +76,15 @@ public class Groups extends Publishing {
 			st.form().add("<table border=0>");
 			st.form().add(formatGroup(group));
 			st.form().add("</table>");
-		} catch (final NoDataException e) {
+		}
+		catch (final NoDataException e) {
 			st.form().add("<i>The group being referenced does not exist</i>");
 		}
 		contentResizer(st);
 	}
 
-	@URL.URLs(url="/published/allgroups/*", requiresAuthentication=false)
+	@URL.URLs(url="/published/allgroups/*",
+	          requiresAuthentication=false)
 	public static void allGroups(@Nonnull final State st,
 	                             final SafeMap values) {
 		final Instance instance=Instance.get(getPartInt(st,1));
@@ -101,6 +106,7 @@ public class Groups extends Publishing {
 		contentResizer(st);
 	}
 
+	// ----- Internal Statics -----
 	@Nonnull
 	private static String formatGroup(@Nonnull final CharacterGroup group) {
 		final StringBuilder line=new StringBuilder("<tr><th colspan=2 align=left>"+group.getName()+(group.getType()!=null?" (<i>"+group.getType()+"</i>)":"")+"</th></tr>");

@@ -34,7 +34,8 @@ public class ConfigurationRow extends Row {
 		else {
 			add(kv.defaultvalue());
 			add(simulated.getRawKV(dbo,kv.fullname()));
-		} if (st.hasPermission(kv.editpermission())) {
+		}
+		if (st.hasPermission(kv.editpermission())) {
 			final Form ev=new Form();
 			ev.setAction("./setinstancevalue");
 			ev.add(new Hidden("key",kvname));

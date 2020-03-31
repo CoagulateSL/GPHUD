@@ -26,6 +26,7 @@ import java.util.Set;
 public class EventsPages {
 
 
+	// ---------- STATICS ----------
 	@URLs(url="/events")
 	public static void listEvents(@Nonnull final State st,
 	                              final SafeMap values) {
@@ -44,7 +45,8 @@ public class EventsPages {
 
 	}
 
-	@URLs(url="/events/create", requiresPermission="events.create")
+	@URLs(url="/events/create",
+	      requiresPermission="events.create")
 	public static void createEvent(@Nonnull final State st,
 	                               @Nonnull final SafeMap values) {
 		final Form f=st.form();
@@ -108,19 +110,22 @@ public class EventsPages {
 		GenericConfiguration.page(st,values,e,st);
 	}
 
-	@URLs(url="/event/addlocation", requiresPermission="events.locations")
+	@URLs(url="/event/addlocation",
+	      requiresPermission="events.locations")
 	public static void addLocation(@Nonnull final State st,
 	                               @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"events.addlocation",values);
 	}
 
-	@URLs(url="/event/deletelocation", requiresPermission="events.locations")
+	@URLs(url="/event/deletelocation",
+	      requiresPermission="events.locations")
 	public static void deleteLocation(@Nonnull final State st,
 	                                  @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"events.deletelocation",values);
 	}
 
-	@URLs(url="/event/deleteschedule", requiresPermission="events.schedule")
+	@URLs(url="/event/deleteschedule",
+	      requiresPermission="events.schedule")
 	public static void deleteSchedule(@Nonnull final State st,
 	                                  @Nonnull final SafeMap values) {
 		final String id=values.get("eventscheduleid");
@@ -140,7 +145,8 @@ public class EventsPages {
 		throw new RedirectionException(values);
 	}
 
-	@URLs(url="/event/addschedule", requiresPermission="events.schedule")
+	@URLs(url="/event/addschedule",
+	      requiresPermission="events.schedule")
 	public static void addSchedule(@Nonnull final State st,
 	                               @Nonnull final SafeMap values) {
 		final String eventname=values.get("event");

@@ -24,12 +24,20 @@ import static java.util.logging.Level.WARNING;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Avatars {
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.AVATAR, permitScripting=false, description="Synchronise the avatars status with the regions contents, server use only.", permitConsole=false,
-	          permitUserWeb=false, permitObject=false)
+	@Commands(context=Context.AVATAR,
+	          permitScripting=false,
+	          description="Synchronise the avatars status with the regions contents, server use only.",
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          permitObject=false)
 	public static Response setRegionAvatars(@Nonnull final State st,
-	                                        @Nullable @Arguments(description="Comma separated list of avatar key=names on the sim", type=ArgumentType.TEXT_ONELINE, max=65536,mandatory=false)
-			                                        String userlist) {
+	                                        @Nullable
+	                                        @Arguments(description="Comma separated list of avatar key=names on the sim",
+	                                                   type=ArgumentType.TEXT_ONELINE,
+	                                                   max=65536,
+	                                                   mandatory=false) String userlist) {
 
 		// check authorisation, servers can only be deployed by the instance owner...
 		if (st.getSourcedeveloper().getId()!=1) {

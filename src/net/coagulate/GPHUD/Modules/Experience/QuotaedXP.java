@@ -21,6 +21,7 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.POOL;
 public abstract class QuotaedXP extends CharacterAttribute {
 	protected QuotaedXP(final int id) { super(id); }
 
+	// ---------- INSTANCE ----------
 	public abstract Module getModule();
 
 	@Nonnull

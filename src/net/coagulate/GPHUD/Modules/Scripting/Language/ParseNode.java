@@ -17,6 +17,7 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 		super(p,i);
 	}
 
+	// ---------- INSTANCE ----------
 	public int children() { return jjtGetNumChildren(); }
 
 	@Nonnull

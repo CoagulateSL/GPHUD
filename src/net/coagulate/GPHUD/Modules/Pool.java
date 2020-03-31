@@ -11,6 +11,7 @@ import java.lang.annotation.*;
 public abstract class Pool extends NameComparable {
 
 
+	// ---------- INSTANCE ----------
 	public abstract boolean isGenerated();
 
 	@Nonnull
@@ -27,6 +28,7 @@ public abstract class Pool extends NameComparable {
 	@Target(ElementType.PACKAGE)
 	@Repeatable(Poolss.class)
 	public @interface Pools {
+		// ---------- INSTANCE ----------
 		@Nonnull String name();
 
 		@Nonnull String description();
@@ -36,6 +38,7 @@ public abstract class Pool extends NameComparable {
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface Poolss {
+		// ---------- INSTANCE ----------
 		@Nonnull Pools[] value();
 	}
 

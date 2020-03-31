@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import java.util.TreeMap;
 
 public class Status extends Publishing {
+	// ---------- STATICS ----------
 	@URL.URLs(url="/publishing/status")
 	public static void statusSample(@Nonnull final State st,
 	                                final SafeMap values) {
@@ -19,7 +20,8 @@ public class Status extends Publishing {
 		published(st,"status/"+st.getInstance().getId());
 	}
 
-	@URL.URLs(url="/published/status/*", requiresAuthentication=false)
+	@URL.URLs(url="/published/status/*",
+	          requiresAuthentication=false)
 	public static void status(@Nonnull final State st,
 	                          final SafeMap values) {
 		status(st,values,false);
@@ -32,12 +34,14 @@ public class Status extends Publishing {
 		published(st,"statusfull/"+st.getInstance().getId());
 	}
 
-	@URL.URLs(url="/published/statusfull/*", requiresAuthentication=false)
+	@URL.URLs(url="/published/statusfull/*",
+	          requiresAuthentication=false)
 	public static void statusFull(@Nonnull final State st,
 	                              final SafeMap values) {
 		status(st,values,true);
 	}
 
+	// ----- Internal Statics -----
 	private static void status(@Nonnull final State st,
 	                           final SafeMap values,
 	                           final boolean listusers) {

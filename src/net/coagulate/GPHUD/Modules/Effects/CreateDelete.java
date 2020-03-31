@@ -13,10 +13,14 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class CreateDelete {
-	@Command.Commands(description="Creates a new effect", context=Command.Context.AVATAR, requiresPermission="Effects.Create")
+	// ---------- STATICS ----------
+	@Command.Commands(description="Creates a new effect",
+	                  context=Command.Context.AVATAR,
+	                  requiresPermission="Effects.Create")
 	public static final Response create(final State st,
-	                                    @Argument.Arguments(description="Name of the new effect", type=Argument.ArgumentType.TEXT_CLEAN, max=64)
-	                                    @Nonnull final String name) {
+	                                    @Argument.Arguments(description="Name of the new effect",
+	                                                        type=Argument.ArgumentType.TEXT_CLEAN,
+	                                                        max=64) @Nonnull final String name) {
 		Effect.create(st,name);
 		return new OKResponse("Created new effect "+name);
 	}
@@ -27,10 +31,13 @@ public class CreateDelete {
 		Modules.simpleHtml(st,"Effects.Create",parameters);
 	}
 
-	@Command.Commands(description="Deletes an effect", context=Command.Context.AVATAR, requiresPermission="Effects.Delete")
+	@Command.Commands(description="Deletes an effect",
+	                  context=Command.Context.AVATAR,
+	                  requiresPermission="Effects.Delete")
 	public static final Response delete(final State st,
-	                                    @Argument.Arguments(description="Name of the effect to delete", type=Argument.ArgumentType.EFFECT, max=64)
-	                                    @Nonnull final Effect name) {
+	                                    @Argument.Arguments(description="Name of the effect to delete",
+	                                                        type=Argument.ArgumentType.EFFECT,
+	                                                        max=64) @Nonnull final Effect name) {
 		name.delete(st);
 		return new OKResponse("Deleted effect "+name);
 	}

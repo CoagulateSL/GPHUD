@@ -46,6 +46,7 @@ public class GPHUD {
 	@Nullable
 	private static DBConnection db;
 
+	// ---------- STATICS ----------
 	public static Logger getLogger(final String subspace) { return Logger.getLogger(log().getName()+"."+subspace); }
 
 	@Nonnull
@@ -186,45 +187,7 @@ public class GPHUD {
 		}
 	}
 
-	private static void validateConfig() {
-		// basically a list of musthaves
-		boolean ok=requireConfig("DBHOST");
-		ok=requireConfig("DBNAME") && ok;
-		ok=requireConfig("DBUSER") && ok;
-		ok=requireConfig("DBPASS") && ok;
-		if (!ok) {
-			log().severe("Failed configuration validation.  Exiting.");
-			System.exit(1);
-		}
-		// support some default settings too
-		defaultConfig("PORT","13579");
-		defaultConfig("UNAUTHENTICATEDSHUTDOWN","0");
-		defaultConfig("DEV","0");
-	}
-
-	private static boolean requireConfig(String keyword) {
-		keyword=keyword.toUpperCase();
-		if (CONFIG.containsKey(keyword)) { return true; }
-		log().severe("Missing mandatory configuration element '"+keyword+"'");
-		return false;
-	}
-
-	private static void defaultConfig(String keyword,
-	                                  final String value) {
-		keyword=keyword.toUpperCase();
-		if (CONFIG.containsKey(keyword)) { return; }
-		CONFIG.put(keyword,value);
-	}
-
 	public static String get(@Nonnull final String keyword) { return CONFIG.get(keyword.toUpperCase()); }
-
-	private static void validateNode(final String node) {
-		if ("luna".equalsIgnoreCase(node) || "sol".equalsIgnoreCase(node) || "saturn".equalsIgnoreCase(node) || "mars".equalsIgnoreCase(node) || "neptune".equalsIgnoreCase(
-				node) || "pluto".equalsIgnoreCase(node)) {
-			return;
-		}
-		throw new SystemInitialisationException("Unrecognised node name, this would break the scheduler");
-	}
 
 	// spread the servers over a cycle (which is modulo 4), which is just a reduced timestamp anyway (timesync IMPORTANT!)
 	// note zones 1 and 3 are left blank, to allow a little time desync safety (a few minutes worth, which is more than my system monitoring allows, but avoiding running
@@ -251,12 +214,6 @@ public class GPHUD {
 	@Nonnull
 	public static String menuPanelEnvironment() {
 		return "&gt; "+(DEV?"DEVELOPMENT":"Production")+"<br>&gt; "+hostname+"<br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
-	}
-
-	private static void syncToMinute() {
-		int seconds=Calendar.getInstance().get(Calendar.SECOND);
-		seconds=60-seconds;
-		try {Thread.sleep((long) (seconds*1000.0)); } catch (@Nonnull final InterruptedException ignored) {}
 	}
 
 	public static void dbInit() {
@@ -329,10 +286,54 @@ public class GPHUD {
 		return "GPHUD Cluster "+VERSION+" "+VERSION_DATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
 	}
 
-
 	@Nonnull
 	public static Logger log() {
 		if (log==null) { throw new SystemInitialisationException("Log not yet initialised"); }
 		return log;
+	}
+
+	// ----- Internal Statics -----
+	private static void validateConfig() {
+		// basically a list of musthaves
+		boolean ok=requireConfig("DBHOST");
+		ok=requireConfig("DBNAME") && ok;
+		ok=requireConfig("DBUSER") && ok;
+		ok=requireConfig("DBPASS") && ok;
+		if (!ok) {
+			log().severe("Failed configuration validation.  Exiting.");
+			System.exit(1);
+		}
+		// support some default settings too
+		defaultConfig("PORT","13579");
+		defaultConfig("UNAUTHENTICATEDSHUTDOWN","0");
+		defaultConfig("DEV","0");
+	}
+
+	private static boolean requireConfig(String keyword) {
+		keyword=keyword.toUpperCase();
+		if (CONFIG.containsKey(keyword)) { return true; }
+		log().severe("Missing mandatory configuration element '"+keyword+"'");
+		return false;
+	}
+
+	private static void defaultConfig(String keyword,
+	                                  final String value) {
+		keyword=keyword.toUpperCase();
+		if (CONFIG.containsKey(keyword)) { return; }
+		CONFIG.put(keyword,value);
+	}
+
+	private static void validateNode(final String node) {
+		if ("luna".equalsIgnoreCase(node) || "sol".equalsIgnoreCase(node) || "saturn".equalsIgnoreCase(node) || "mars".equalsIgnoreCase(node) || "neptune".equalsIgnoreCase(
+				node) || "pluto".equalsIgnoreCase(node)) {
+			return;
+		}
+		throw new SystemInitialisationException("Unrecognised node name, this would break the scheduler");
+	}
+
+	private static void syncToMinute() {
+		int seconds=Calendar.getInstance().get(Calendar.SECOND);
+		seconds=60-seconds;
+		try {Thread.sleep((long) (seconds*1000.0)); } catch (@Nonnull final InterruptedException ignored) {}
 	}
 }

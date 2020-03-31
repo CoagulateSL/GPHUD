@@ -35,6 +35,8 @@ public class Instance extends TableRow {
 
 	protected Instance(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Return instances connected to this node
 	 */
@@ -137,9 +139,7 @@ public class Instance extends TableRow {
 		return instances;
 	}
 
-	@Nonnull
-	@Override
-	public String getLinkTarget() { return "instances"; }
+	// ---------- INSTANCE ----------
 
 	/**
 	 * Get instance owner
@@ -171,11 +171,36 @@ public class Instance extends TableRow {
 		return "instanceid";
 	}
 
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+	}
+
 	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
+
+	@Nonnull
+	@Override
+	public String getLinkTarget() { return "instances"; }
+
+	@Nonnull
+	@Override
+	public String getKVTable() {
+		return "instancekvstore";
+	}
+
+	//TODO - turn this into a templated call of some kind?
+
+	@Nonnull
+	@Override
+	public String getKVIdField() {
+		return "instanceid";
+	}
+
+	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Create a permissions group in this instance.
@@ -207,8 +232,6 @@ public class Instance extends TableRow {
 		}
 		return set;
 	}
-
-	//TODO - turn this into a templated call of some kind?
 
 	/**
 	 * Get all the regions associated with this instance bound to this server
@@ -304,36 +327,6 @@ public class Instance extends TableRow {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Determine if a message should be sent to the given URL
-	 * We rate limit status updates to 1 every 30 seconds for servers.
-	 * We use a fake url of "admins" to limit broadcast updates to admins (for server faults).
-	 *
-	 * @param url The URL of the region server, or "admins" for checking admin updates
-	 *
-	 * @return true if it is permitted to send an update to this target at this time
-	 */
-	private boolean canStatus(final String url) {
-		final int now=UnixTime.getUnixTime();
-		if (laststatused.containsKey(url)) {
-			final int last=laststatused.get(url);
-			if ("admins".equals(url)) {  // bodge, admins get 5 minute pesterings :P
-				if ((now-last)>300) {
-					laststatused.put(url,now);
-					return true;
-				}
-				return false;
-			}
-			if ((now-last)>30) {
-				laststatused.put(url,now);
-				return true;
-			}
-			return false;
-		}
-		laststatused.put(url,now);
-		return true;
 	}
 
 	/**
@@ -628,18 +621,6 @@ public class Instance extends TableRow {
 		return zones;
 	}
 
-	@Nonnull
-	@Override
-	public String getKVTable() {
-		return "instancekvstore";
-	}
-
-	@Nonnull
-	@Override
-	public String getKVIdField() {
-		return "instanceid";
-	}
-
 	/**
 	 * Get all events for this instance
 	 *
@@ -713,13 +694,6 @@ public class Instance extends TableRow {
 		}
 	}
 
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-	}
-
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
-
 	public void createAttribute(final String name,
 	                            final Boolean selfmodify,
 	                            final Attribute.ATTRIBUTETYPE attributetype,
@@ -728,16 +702,6 @@ public class Instance extends TableRow {
 	                            final Boolean required,
 	                            final String defaultvalue) {
 		Attribute.create(this,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
-	}
-
-	void wipeKV(final String key) {
-		CharacterGroup.wipeKV(this,key);
-		Event.wipeKV(this,key);
-		Char.wipeKV(this,key);
-		Zone.wipeKV(this,key);
-		Region.wipeKV(this,key);
-		Effect.wipeKV(this,key);
-		d("delete from instancekvstore where instanceid=? and k like ?",getId(),key);
 	}
 
 	@Nonnull
@@ -770,6 +734,47 @@ public class Instance extends TableRow {
 	@Nonnull
 	public Set<Landmarks> getLandmarks() {
 		return Landmarks.getAll(this);
+	}
+
+	// ----- Internal Instance -----
+	void wipeKV(final String key) {
+		CharacterGroup.wipeKV(this,key);
+		Event.wipeKV(this,key);
+		Char.wipeKV(this,key);
+		Zone.wipeKV(this,key);
+		Region.wipeKV(this,key);
+		Effect.wipeKV(this,key);
+		d("delete from instancekvstore where instanceid=? and k like ?",getId(),key);
+	}
+
+	/**
+	 * Determine if a message should be sent to the given URL
+	 * We rate limit status updates to 1 every 30 seconds for servers.
+	 * We use a fake url of "admins" to limit broadcast updates to admins (for server faults).
+	 *
+	 * @param url The URL of the region server, or "admins" for checking admin updates
+	 *
+	 * @return true if it is permitted to send an update to this target at this time
+	 */
+	private boolean canStatus(final String url) {
+		final int now=UnixTime.getUnixTime();
+		if (laststatused.containsKey(url)) {
+			final int last=laststatused.get(url);
+			if ("admins".equals(url)) {  // bodge, admins get 5 minute pesterings :P
+				if ((now-last)>300) {
+					laststatused.put(url,now);
+					return true;
+				}
+				return false;
+			}
+			if ((now-last)>30) {
+				laststatused.put(url,now);
+				return true;
+			}
+			return false;
+		}
+		laststatused.put(url,now);
+		return true;
 	}
 
 }

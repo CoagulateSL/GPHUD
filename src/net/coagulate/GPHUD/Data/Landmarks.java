@@ -15,6 +15,7 @@ public class Landmarks extends TableRow {
 		super(id);
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static Landmarks get(final int id) {
 		return (Landmarks) factoryPut("Landmarks",id,new Landmarks(id));
@@ -23,8 +24,7 @@ public class Landmarks extends TableRow {
 	@Nonnull
 	public static Set<Landmarks> getAll(@Nonnull final Instance instance) {
 		final Set<Landmarks> results=new HashSet<>();
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",
+		for (final ResultsRow row: GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",
 		                                    instance.getId()
 		                                   )) {
 			results.add(get(row.getInt("id")));
@@ -68,6 +68,7 @@ public class Landmarks extends TableRow {
 		GPHUD.getDB().d("insert into landmarks(regionid,name,x,y,z,lookatx,lookaty,lookatz) values(?,?,?,?,?,?,?,?)",region.getId(),name,x,y,z,lax,lay,laz);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getIdColumn() { return "id"; }
@@ -77,6 +78,29 @@ public class Landmarks extends TableRow {
 		if (validated) { return; }
 		validate();
 	}
+
+	@Nonnull
+	@Override
+	public String getNameField() { return "name"; }
+
+	@Nullable
+	@Override
+	public String getLinkTarget() { return null; }
+
+	@Nullable
+	@Override
+	public String getKVTable() {
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public String getKVIdField() {
+		return null;
+	}
+
+	@Override
+	protected int getNameCacheTime() { return 0; }
 
 	@Nonnull
 	public String getHUDRepresentation(final boolean allowretired) {
@@ -102,29 +126,6 @@ public class Landmarks extends TableRow {
 	@Nonnull
 	public Region getRegion(final boolean allowretired) {
 		return Region.get(getInt("regionid"),allowretired);
-	}
-
-	@Nonnull
-	@Override
-	public String getNameField() { return "name"; }
-
-	@Nullable
-	@Override
-	public String getLinkTarget() { return null; }
-
-	@Override
-	protected int getNameCacheTime() { return 0; }
-
-	@Nullable
-	@Override
-	public String getKVTable() {
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public String getKVIdField() {
-		return null;
 	}
 
 	@Nonnull

@@ -25,6 +25,7 @@ public class ConfigurationURL extends URL {
 		this.url=url;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
 		return true;
@@ -39,6 +40,11 @@ public class ConfigurationURL extends URL {
 	@Override
 	public String requiresPermission() {
 		return "";
+	}
+
+	@Override
+	public boolean requiresAuthentication() {
+		return true;
 	}
 
 	@Override
@@ -66,11 +72,6 @@ public class ConfigurationURL extends URL {
 	@Override
 	public Module getModule() {
 		return Modules.get(null,"Configuration");
-	}
-
-	@Override
-	public boolean requiresAuthentication() {
-		return true;
 	}
 
 }

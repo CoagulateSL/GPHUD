@@ -24,6 +24,8 @@ public class Event extends TableRow {
 
 	protected Event(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -94,42 +96,6 @@ public class Event extends TableRow {
 	}
 
 	/**
-	 * Get all currently active events for an instance.
-	 *
-	 * @param instance Instance to get active events for
-	 *
-	 * @return Set of Events that are currently active and started
-	 */
-	@Nonnull
-	static Set<Event> getActive(@Nonnull final Instance instance) {
-		final Set<Event> events=new TreeSet<>();
-		final int now=getUnixTime();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
-		                                  instance.getId(),
-		                                  now,
-		                                  now
-		                                 )) {
-			events.add(get(r.getInt()));
-		}
-		return events;
-
-	}
-
-	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key) {
-		final String kvtable="eventskvstore";
-		final String maintable="events";
-		final String idcolumn="eventid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
-				        ".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
-	}
-
-	/**
 	 * Get a list of events that have not started but should.
 	 *
 	 * @return Set of event schedules that need to be started.
@@ -165,6 +131,45 @@ public class Event extends TableRow {
 		return stop;
 	}
 
+	// ----- Internal Statics -----
+
+	/**
+	 * Get all currently active events for an instance.
+	 *
+	 * @param instance Instance to get active events for
+	 *
+	 * @return Set of Events that are currently active and started
+	 */
+	@Nonnull
+	static Set<Event> getActive(@Nonnull final Instance instance) {
+		final Set<Event> events=new TreeSet<>();
+		final int now=getUnixTime();
+		for (final ResultsRow r: GPHUD.getDB()
+		                              .dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+		                                  instance.getId(),
+		                                  now,
+		                                  now
+		                                 )) {
+			events.add(get(r.getInt()));
+		}
+		return events;
+
+	}
+
+	static void wipeKV(@Nonnull final Instance instance,
+	                   final String key) {
+		final String kvtable="eventskvstore";
+		final String maintable="events";
+		final String idcolumn="eventid";
+		GPHUD.getDB()
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
+		        key,
+		        instance.getId()
+		       );
+	}
+
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -175,6 +180,14 @@ public class Event extends TableRow {
 	@Override
 	public String getIdColumn() {
 		return "eventid";
+	}
+
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("Event / State Instance mismatch");
+		}
 	}
 
 	@Nonnull
@@ -190,11 +203,6 @@ public class Event extends TableRow {
 	}
 
 	@Nonnull
-	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
-	}
-
-	@Nonnull
 	@Override
 	public String getKVTable() {
 		return "eventskvstore";
@@ -204,6 +212,13 @@ public class Event extends TableRow {
 	@Override
 	public String getKVIdField() {
 		return "eventid";
+	}
+
+	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
+
+	@Nonnull
+	public Instance getInstance() {
+		return Instance.get(getInt("instanceid"));
 	}
 
 	/**
@@ -263,16 +278,6 @@ public class Event extends TableRow {
 	                        final int interval) {
 		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)",getId(),startdate,enddate,interval);
 	}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("Event / State Instance mismatch");
-		}
-	}
-
-	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
 	// perhaps flush the caches (to do) when this happens...
 }
 

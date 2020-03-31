@@ -34,6 +34,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Management {
+	// ---------- STATICS ----------
 	@URLs(url="/groups")
 	public static void manage(@Nonnull final State st,
 	                          final SafeMap values) {
@@ -98,17 +99,25 @@ public abstract class Management {
 		return ret;
 	}
 
-	@URLs(url="/groups/create", requiresPermission="Groups.Create")
+	@URLs(url="/groups/create",
+	      requiresPermission="Groups.Create")
 	public static void createForm(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Groups.create",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Create a group", requiresPermission="Groups.Create")
+	@Commands(context=Context.AVATAR,
+	          description="Create a group",
+	          requiresPermission="Groups.Create")
 	public static Response create(@Nonnull final State st,
-	                              @Arguments(type=ArgumentType.TEXT_ONELINE, description="Name of the group", max=128) final String name,
-	                              @Arguments(type=ArgumentType.CHOICE, description="Type of the group", mandatory=false, choiceMethod="groupTypes") final String type) {
+	                              @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                         description="Name of the group",
+	                                         max=128) final String name,
+	                              @Arguments(type=ArgumentType.CHOICE,
+	                                         description="Type of the group",
+	                                         mandatory=false,
+	                                         choiceMethod="groupTypes") final String type) {
 		try { st.getInstance().createCharacterGroup(name,false,type); }
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create group: "+e.getMessage());
@@ -186,17 +195,25 @@ public abstract class Management {
 		GenericConfiguration.page(st,values,group,st);
 	}
 
-	@URLs(url="/groups/setowner", requiresPermission="Groups.SetOwner")
+	@URLs(url="/groups/setowner",
+	      requiresPermission="Groups.SetOwner")
 	public static void setOwnerForm(@Nonnull final State st,
 	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Groups.SetOwner",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Set the leader of a group", requiresPermission="Groups.SetOwner")
+	@Commands(context=Context.AVATAR,
+	          description="Set the leader of a group",
+	          requiresPermission="Groups.SetOwner")
 	public static Response setOwner(@Nonnull final State st,
-	                                @Nonnull @Arguments(description="Group to change the leader of", type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
-	                                @Nullable @Arguments(description="New leader, optionally", type=ArgumentType.CHARACTER, mandatory=false) final Char newowner) {
+	                                @Nonnull
+	                                @Arguments(description="Group to change the leader of",
+	                                           type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
+	                                @Nullable
+	                                @Arguments(description="New leader, optionally",
+	                                           type=ArgumentType.CHARACTER,
+	                                           mandatory=false) final Char newowner) {
 		final Char oldowner=group.getOwner();
 		String oldownername=null;
 		if (oldowner!=null) { oldownername=oldowner.getName(); }
@@ -227,17 +244,24 @@ public abstract class Management {
 		return new OKResponse("Group leader updated");
 	}
 
-	@URLs(url="/groups/add", requiresPermission="Groups.SetGroup")
+	@URLs(url="/groups/add",
+	      requiresPermission="Groups.SetGroup")
 	public static void addForm(@Nonnull final State st,
 	                           @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Groups.Add",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Add a member to this group", requiresPermission="Groups.SetGroup")
+	@Commands(context=Context.AVATAR,
+	          description="Add a member to this group",
+	          requiresPermission="Groups.SetGroup")
 	public static Response add(@Nonnull final State st,
-	                           @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP, description="Group to add character to") final CharacterGroup group,
-	                           @Nonnull @Arguments(description="Character to add to the group", type=ArgumentType.CHARACTER) final Char newmember) {
+	                           @Nonnull
+	                           @Arguments(type=ArgumentType.CHARACTERGROUP,
+	                                      description="Group to add character to") final CharacterGroup group,
+	                           @Nonnull
+	                           @Arguments(description="Character to add to the group",
+	                                      type=ArgumentType.CHARACTER) final Char newmember) {
 		final boolean debug=false;
 		final Attribute attr=st.getAttribute(group);
 		String grouptype=null;
@@ -265,17 +289,24 @@ public abstract class Management {
 		return new OKResponse(result);
 	}
 
-	@URLs(url="/groups/remove", requiresPermission="Groups.SetGroup")
+	@URLs(url="/groups/remove",
+	      requiresPermission="Groups.SetGroup")
 	public static void removeForm(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Groups.Remove",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Remove a member from this group", requiresPermission="Groups.SetGroup")
+	@Commands(context=Context.AVATAR,
+	          description="Remove a member from this group",
+	          requiresPermission="Groups.SetGroup")
 	public static Response remove(@Nonnull final State st,
-	                              @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP, description="Group to remove character from") final CharacterGroup group,
-	                              @Nonnull @Arguments(description="Character to remove from the group", type=ArgumentType.CHARACTER) final Char member) {
+	                              @Nonnull
+	                              @Arguments(type=ArgumentType.CHARACTERGROUP,
+	                                         description="Group to remove character from") final CharacterGroup group,
+	                              @Nonnull
+	                              @Arguments(description="Character to remove from the group",
+	                                         type=ArgumentType.CHARACTER) final Char member) {
 		if (group.getOwner()==member) {
 			return new ErrorResponse("Will not remove "+member.getName()+" from "+group.getName()+", they are the group leader, you must demote them by replacing them or "+
 					                         "leaving the group leaderless.");
@@ -289,16 +320,21 @@ public abstract class Management {
 		return new OKResponse(member.getName()+" was removed from group "+group.getName());
 	}
 
-	@URLs(url="/groups/delete", requiresPermission="Groups.Delete")
+	@URLs(url="/groups/delete",
+	      requiresPermission="Groups.Delete")
 	public static void deleteForm(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Groups.Delete",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Delete a group", requiresPermission="Groups.Delete")
+	@Commands(context=Context.AVATAR,
+	          description="Delete a group",
+	          requiresPermission="Groups.Delete")
 	public static Response delete(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Group to delete", type=ArgumentType.CHARACTERGROUP) final CharacterGroup group) {
+	                              @Nonnull
+	                              @Arguments(description="Group to delete",
+	                                         type=ArgumentType.CHARACTERGROUP) final CharacterGroup group) {
 		final String groupname=group.getName();
 		group.delete();
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"DeleteGroup",groupname,groupname,null,"Group was deleted");
@@ -312,11 +348,17 @@ public abstract class Management {
 	}
 
 	@Nonnull
-	@Commands(context=Context.ANY, description="Set the groups admin flag on a user")
+	@Commands(context=Context.ANY,
+	          description="Set the groups admin flag on a user")
 	public static Response setAdmin(@Nonnull final State st,
-	                                @Nonnull @Arguments(description="Group to set the character's admin flag on", type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
-	                                @Nonnull @Arguments(description="Character to set the admin flag on", type=ArgumentType.CHARACTER) final Char character,
-	                                @Arguments(description="Admin flag to set on the character in this group", type=ArgumentType.BOOLEAN) final boolean admin) {
+	                                @Nonnull
+	                                @Arguments(description="Group to set the character's admin flag on",
+	                                           type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
+	                                @Nonnull
+	                                @Arguments(description="Character to set the admin flag on",
+	                                           type=ArgumentType.CHARACTER) final Char character,
+	                                @Arguments(description="Admin flag to set on the character in this group",
+	                                           type=ArgumentType.BOOLEAN) final boolean admin) {
 		if (!group.hasMember(character)) {
 			return new ErrorResponse(character.getName()+" is not a member of group "+group.getName());
 		}
@@ -346,10 +388,15 @@ public abstract class Management {
 	}
 
 	@Nonnull
-	@Commands(context=Context.ANY, description="Set the groups open flag", requiresPermission="Groups.SetOpen")
+	@Commands(context=Context.ANY,
+	          description="Set the groups open flag",
+	          requiresPermission="Groups.SetOpen")
 	public static Response setOpen(@Nonnull final State st,
-	                               @Nonnull @Arguments(description="Group to modify", type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
-	                               @Arguments(description="Group open?", type=ArgumentType.BOOLEAN) final boolean open) {
+	                               @Nonnull
+	                               @Arguments(description="Group to modify",
+	                                          type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
+	                               @Arguments(description="Group open?",
+	                                          type=ArgumentType.BOOLEAN) final boolean open) {
 		group.validate(st);
 		// must be instance admin or group owner
 		final boolean oldflag=group.isOpen();

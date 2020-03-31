@@ -45,6 +45,8 @@ public class Cookies {
 		validateCookie();
 	}
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Delete a cookie
 	 *
@@ -107,19 +109,11 @@ public class Cookies {
 		return cookie;
 	}
 
-	private static Object getId(@Nullable final TableRow r) {
-		if (r==null) { return new NullInteger(); }
-		return r.getId();
-	}
-
-	private static Object getId(@Nullable final User r) {
-		if (r==null) { return new NullInteger(); }
-		return r.getId();
-	}
-
-	/** Load cookie, or return null if not available (expired)
+	/**
+	 * Load cookie, or return null if not available (expired)
 	 *
 	 * @param cookie Cookie to resolve
+	 *
 	 * @return Cookies object, or null if doesn't exist / expired.
 	 */
 	@Nullable
@@ -141,40 +135,18 @@ public class Cookies {
 		GPHUD.getDB().d("delete from cookies where expires<?",UnixTime.getUnixTime());
 	}
 
-	@Nonnull
-	private ResultsRow r() {
-		if (r==null) { throw new SystemConsistencyException("No cookie loaded?"); }
-		return r;
+	// ----- Internal Statics -----
+	private static Object getId(@Nullable final TableRow r) {
+		if (r==null) { return new NullInteger(); }
+		return r.getId();
 	}
 
-	/**
-	 * Check cookie is valid.
-	 * Checks cookie hasn't expired, exists, and if necessary refreshes it.
-	 *
-	 * @throws UserException if the cookie fails validation in any way.
-	 */
-	private void validateCookie() {
-		try { load(); }
-		catch (@Nonnull final NoDataException e) {
-			throw new UserInputStateException("Cookie Expired!",e);
-		}
-		final int expires=r().getInt("expires");
-		if (expires<getUnixTime()) {
-			GPHUD.getDB().d("delete from cookies where cookie=?",cookie);
-			throw new UserInputStateException("Cookie Expired!");
-		}
-		// if expires within 20 minutes, set expires to 30 minutes :P
-		if (r().getInt("renewable")==0) { return; }
-		final int now=getUnixTime();
-		if (expires<(now+COOKIE_REFRESH)) {
-			GPHUD.getDB().d("update cookies set expires=? where cookie=?",now+COOKIE_LIFESPAN,cookie);
-		}
-
+	private static Object getId(@Nullable final User r) {
+		if (r==null) { return new NullInteger(); }
+		return r.getId();
 	}
 
-	private void load() {
-		r=GPHUD.getDB().dqone("select * from cookies where cookie=?",cookie);
-	}
+	// ---------- INSTANCE ----------
 
 	/**
 	 * Return the avatar associated with this cookie
@@ -264,7 +236,8 @@ public class Cookies {
 	@Nullable
 	public String toString() { return "Avatar:"+getAvatar()+", Instance: "+getInstance()+", Character:"+getCharacter(); }
 
-	/** Load GPHUD state from the cookie.
+	/**
+	 * Load GPHUD state from the cookie.
 	 * Load the instance user and character from the cookie if they exist.
 	 * Inherits the avatar from the character if not set.
 	 *
@@ -282,5 +255,41 @@ public class Cookies {
 			st.cookiestring=cookie;
 			st.cookie(this);
 		}
+	}
+
+	// ----- Internal Instance -----
+	@Nonnull
+	private ResultsRow r() {
+		if (r==null) { throw new SystemConsistencyException("No cookie loaded?"); }
+		return r;
+	}
+
+	/**
+	 * Check cookie is valid.
+	 * Checks cookie hasn't expired, exists, and if necessary refreshes it.
+	 *
+	 * @throws UserException if the cookie fails validation in any way.
+	 */
+	private void validateCookie() {
+		try { load(); }
+		catch (@Nonnull final NoDataException e) {
+			throw new UserInputStateException("Cookie Expired!",e);
+		}
+		final int expires=r().getInt("expires");
+		if (expires<getUnixTime()) {
+			GPHUD.getDB().d("delete from cookies where cookie=?",cookie);
+			throw new UserInputStateException("Cookie Expired!");
+		}
+		// if expires within 20 minutes, set expires to 30 minutes :P
+		if (r().getInt("renewable")==0) { return; }
+		final int now=getUnixTime();
+		if (expires<(now+COOKIE_REFRESH)) {
+			GPHUD.getDB().d("update cookies set expires=? where cookie=?",now+COOKIE_LIFESPAN,cookie);
+		}
+
+	}
+
+	private void load() {
+		r=GPHUD.getDB().dqone("select * from cookies where cookie=?",cookie);
 	}
 }

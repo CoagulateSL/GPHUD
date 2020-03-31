@@ -17,18 +17,7 @@ import java.util.Set;
  */
 public class PrimaryCharacters {
 
-	@Nonnull
-	@Deprecated
-	private static Char getPrimaryCharacter_internal(@Nonnull final Instance instance,
-	                                                 @Nonnull final User avatar) {
-		final int primary=GPHUD.getDB().dqinn("select entityid from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
-		final Char c=Char.get(primary);
-		if (c.retired()) {
-			GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
-			throw new NoDataException("Primary character is retired");
-		}
-		return c;
-	}
+	// ---------- STATICS ----------
 
 	/**
 	 * Get a primary character for this avatar in a particular instance, or create one.
@@ -87,5 +76,19 @@ public class PrimaryCharacters {
 	@Deprecated
 	public static void purge(@Nonnull final Char ch) {
 		GPHUD.getDB().d("delete from primarycharacters where entityid=?",ch.getId());
+	}
+
+	// ----- Internal Statics -----
+	@Nonnull
+	@Deprecated
+	private static Char getPrimaryCharacter_internal(@Nonnull final Instance instance,
+	                                                 @Nonnull final User avatar) {
+		final int primary=GPHUD.getDB().dqinn("select entityid from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
+		final Char c=Char.get(primary);
+		if (c.retired()) {
+			GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
+			throw new NoDataException("Primary character is retired");
+		}
+		return c;
 	}
 }

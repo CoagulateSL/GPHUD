@@ -39,9 +39,7 @@ public class TextInput extends Input {
 		this.width=width;
 	}
 
-	@Nonnull
-	String getType() { return "text"; }
-
+	// ---------- INSTANCE ----------
 	@Override
 	public String getName() {
 		return name;
@@ -65,4 +63,8 @@ public class TextInput extends Input {
 	public Set<Renderable> getSubRenderables() {
 		return null;
 	}
+
+	// ----- Internal Instance -----
+	@Nonnull
+	String getType() { return "text"; }
 }

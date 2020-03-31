@@ -29,6 +29,7 @@ public class Link implements Renderable {
 		this.target=target;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

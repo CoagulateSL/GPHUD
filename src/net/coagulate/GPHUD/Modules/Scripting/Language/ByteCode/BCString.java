@@ -21,6 +21,7 @@ public class BCString extends ByteCodeDataType {
 		this.content=content;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String getContent() { return content; }
 
@@ -89,12 +90,6 @@ public class BCString extends ByteCodeDataType {
 
 	@Nonnull
 	@Override
-	public ByteCodeDataType clone() {
-		return new BCString(node(),content);
-	}
-
-	@Nonnull
-	@Override
 	public BCInteger toBCInteger() {
 		try {
 			return new BCInteger(null,Integer.parseInt(getContent()));
@@ -102,5 +97,11 @@ public class BCString extends ByteCodeDataType {
 		catch (@Nonnull final NumberFormatException e) {
 			throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer");
 		}
+	}
+
+	@Nonnull
+	@Override
+	public ByteCodeDataType clone() {
+		return new BCString(node(),content);
 	}
 }

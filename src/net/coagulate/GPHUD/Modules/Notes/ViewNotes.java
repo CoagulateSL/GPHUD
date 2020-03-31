@@ -21,6 +21,7 @@ import java.util.List;
 
 public class ViewNotes {
 
+	// ---------- STATICS ----------
 	public static void viewNotes(@Nonnull final State st,
 	                             @Nonnull final User targetuser,
 	                             @Nonnull final Char targetchar,
@@ -62,13 +63,15 @@ public class ViewNotes {
 		}
 	}
 
-	@URLs(url="/Notes/AddCharacterNote", requiresPermission="Notes.Add")
+	@URLs(url="/Notes/AddCharacterNote",
+	      requiresPermission="Notes.Add")
 	public static void addCharacterNote(@Nonnull final State st,
 	                                    @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Notes.Character",values);
 	}
 
-	@URLs(url="/Notes/AddAvatarNote", requiresPermission="Notes.Add")
+	@URLs(url="/Notes/AddAvatarNote",
+	      requiresPermission="Notes.Add")
 	public static void addAvatarNote(@Nonnull final State st,
 	                                 @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Notes.Avatar",values);
@@ -122,7 +125,8 @@ public class ViewNotes {
 		f.add(formatNotes(st,AdminNotes.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
 	}
 
-	@URLs(url="/Notes/ViewAll", requiresPermission="Notes.View")
+	@URLs(url="/Notes/ViewAll",
+	      requiresPermission="Notes.View")
 	public static void viewAll(@Nonnull final State st,
 	                           final SafeMap values) {
 		final Form f=st.form();
@@ -131,6 +135,7 @@ public class ViewNotes {
 		f.add(formatNotes(st,notes,st.getAvatar().getTimeZone()));
 	}
 
+	// ----- Internal Statics -----
 	@Nonnull
 	static Table formatNotes(@Nonnull final State st,
 	                         @Nonnull final List<AdminNotes.AdminNote> notes,

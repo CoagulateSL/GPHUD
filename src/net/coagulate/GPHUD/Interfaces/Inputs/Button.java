@@ -45,6 +45,7 @@ public class Button extends Input {
 		this.borderless=borderless;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public String getName() {
 		return name;

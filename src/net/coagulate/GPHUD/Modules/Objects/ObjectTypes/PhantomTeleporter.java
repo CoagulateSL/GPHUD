@@ -13,6 +13,7 @@ public class PhantomTeleporter extends Teleporter {
 		super(st,object);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explainHtml() {

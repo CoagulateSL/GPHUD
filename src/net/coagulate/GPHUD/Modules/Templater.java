@@ -28,16 +28,13 @@ public abstract class Templater {
 	public static final Map<String,String> templates=new TreeMap<>();
 	private static final Map<String,Method> methods=new TreeMap<>();
 
-	private static void add(final String key,
-	                        final String description,
-	                        final Method method) {
-		templates.put("--"+key+"--",description);
-		methods.put("--"+key+"--",method);
-	}
+	// ---------- STATICS ----------
 
-	/** Returns a list of templates and their descriptions.
+	/**
+	 * Returns a list of templates and their descriptions.
 	 *
 	 * @param st The calling state
+	 *
 	 * @return A map of String to String, template name mapping to template description
 	 */
 	@Nonnull
@@ -87,20 +84,6 @@ public abstract class Templater {
 		return string;
 	}
 
-	@Nullable
-	private static String template(@Nonnull final State st,
-	                               @Nullable String string) {
-		if (string==null) { return null; }
-		for (final String subst: getTemplates(st).keySet()) {
-			if (string.contains(subst)) {
-				final String value;
-				value=getValue(st,subst);
-				string=string.replaceAll(subst,Matcher.quoteReplacement(value));
-			}
-		}
-		return string;
-	}
-
 	@Nonnull
 	public static String getValue(@Nonnull final State st,
 	                              final String keyword,
@@ -112,39 +95,16 @@ public abstract class Templater {
 	}
 
 	@Nonnull
-	private static String getValue(@Nonnull final State st,
-	                               final String keyword) {
-		if (Thread.currentThread().getStackTrace().length>75) { throw new UserConfigurationException("Recursion detected loading template "+keyword+" for "+st); }
-		final Method m=getMethods(st).get(keyword);
-		if (m!=null) {
-			try {
-				return (String) m.invoke(null,st,keyword);
-			}
-			catch (@Nonnull final IllegalAccessException|IllegalArgumentException ex) {
-				SL.report("Templating exception",ex,st);
-				st.logger().log(Level.SEVERE,"Exception running templater method",ex);
-				throw new SystemImplementationException("Templater exceptioned",ex);
-			}
-			catch (@Nonnull final InvocationTargetException e) {
-				if (UserException.class.isAssignableFrom(e.getCause().getClass())) { throw (UserException) e.getCause(); }
-				if (SystemException.class.isAssignableFrom(e.getCause().getClass())) { throw (SystemException) e.getCause(); }
-				throw new SystemImplementationException("Unable to invoke target",e);
-			}
-		}
-		throw new SystemImplementationException("No template implementation for "+keyword);
-	}
-
-	@Nonnull
-	@Template(name="NAME", description="Character Name")
+	@Template(name="NAME",
+	          description="Character Name")
 	public static String getCharacterName(@Nonnull final State st,
 	                                      final String key) {
 		if (st.getCharacterNullable()==null) { return ""; }
 		return st.getCharacter().getName();
 	}
 
-	// some standard templates
-
-	@Template(name="AVATAR", description="Avatar Name")
+	@Template(name="AVATAR",
+	          description="Avatar Name")
 	public static String getAvatarName(@Nonnull final State st,
 	                                   final String key) {
 		if (st.getAvatarNullable()==null) { return ""; }
@@ -152,7 +112,8 @@ public abstract class Templater {
 	}
 
 	@Nonnull
-	@Template(name="NEWLINE", description="Newline character")
+	@Template(name="NEWLINE",
+	          description="Newline character")
 	public static String newline(final State st,
 	                             final String key) { return "\n"; }
 
@@ -163,6 +124,7 @@ public abstract class Templater {
 			int pos=-1;
 			int ch;
 
+			// ----- Internal Instance -----
 			void nextChar() {
 				ch=(++pos<str.length())?str.charAt(pos):-1;
 			}
@@ -275,6 +237,53 @@ public abstract class Templater {
 		}.parse();
 	}
 
+	// some standard templates
+
+	// ----- Internal Statics -----
+	private static void add(final String key,
+	                        final String description,
+	                        final Method method) {
+		templates.put("--"+key+"--",description);
+		methods.put("--"+key+"--",method);
+	}
+
+	@Nullable
+	private static String template(@Nonnull final State st,
+	                               @Nullable String string) {
+		if (string==null) { return null; }
+		for (final String subst: getTemplates(st).keySet()) {
+			if (string.contains(subst)) {
+				final String value;
+				value=getValue(st,subst);
+				string=string.replaceAll(subst,Matcher.quoteReplacement(value));
+			}
+		}
+		return string;
+	}
+
+	@Nonnull
+	private static String getValue(@Nonnull final State st,
+	                               final String keyword) {
+		if (Thread.currentThread().getStackTrace().length>75) { throw new UserConfigurationException("Recursion detected loading template "+keyword+" for "+st); }
+		final Method m=getMethods(st).get(keyword);
+		if (m!=null) {
+			try {
+				return (String) m.invoke(null,st,keyword);
+			}
+			catch (@Nonnull final IllegalAccessException|IllegalArgumentException ex) {
+				SL.report("Templating exception",ex,st);
+				st.logger().log(Level.SEVERE,"Exception running templater method",ex);
+				throw new SystemImplementationException("Templater exceptioned",ex);
+			}
+			catch (@Nonnull final InvocationTargetException e) {
+				if (UserException.class.isAssignableFrom(e.getCause().getClass())) { throw (UserException) e.getCause(); }
+				if (SystemException.class.isAssignableFrom(e.getCause().getClass())) { throw (SystemException) e.getCause(); }
+				throw new SystemImplementationException("Unable to invoke target",e);
+			}
+		}
+		throw new SystemImplementationException("No template implementation for "+keyword);
+	}
+
 
 	/**
 	 * Defined a method that returns a templateable element.
@@ -284,6 +293,7 @@ public abstract class Templater {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface Template {
+		// ---------- INSTANCE ----------
 		@Nonnull String name();
 
 		@Nonnull String description();

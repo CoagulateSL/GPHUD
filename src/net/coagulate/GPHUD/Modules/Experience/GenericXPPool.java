@@ -22,6 +22,7 @@ public class GenericXPPool extends Pool {
 		myname=name;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() { return true; }
 

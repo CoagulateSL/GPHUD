@@ -48,8 +48,10 @@ public abstract class View {
 
 	//TODO - FIX THE "boolean full=" section of all these functions, and decide what data is private as a result of this
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.ANY, description="Get status of this connection")
+	@Commands(context=Context.ANY,
+	          description="Get status of this connection")
 	public static Response status(@Nonnull final State st) {
 		final TabularResponse t=new TabularResponse();
 		t.openRow();
@@ -179,21 +181,28 @@ public abstract class View {
 	}
 
 	@Nonnull
-	@Commands(context=Context.CHARACTER, description="Show yourself privately your own character sheet", permitObject=false)
+	@Commands(context=Context.CHARACTER,
+	          description="Show yourself privately your own character sheet",
+	          permitObject=false)
 	public static Response view(@Nonnull final State st) {
 		return new OKResponse(st.getKV("instance.ViewSelfTemplate").value());
 	}
 
 	@Nonnull
-	@Commands(context=Context.CHARACTER, description="Publicly display your own character sheet")
+	@Commands(context=Context.CHARACTER,
+	          description="Publicly display your own character sheet")
 	public static Response show(@Nonnull final State st) {
 		return new SayResponse(st.getKV("instance.ShowSelfTemplate").value());
 	}
 
 	@Nonnull
-	@Commands(context=Context.CHARACTER, description="Look at another's character sheet", permitObject=false)
+	@Commands(context=Context.CHARACTER,
+	          description="Look at another's character sheet",
+	          permitObject=false)
 	public static Response look(@Nonnull final State st,
-	                            @Nonnull @Arguments(type=Argument.ArgumentType.CHARACTER_NEAR, description="Character to inspect") final Char character) {
+	                            @Nonnull
+	                            @Arguments(type=Argument.ArgumentType.CHARACTER_NEAR,
+	                                       description="Character to inspect") final Char character) {
 		character.validate(st);
 		final State target=new State();
 		target.setInstance(st.getInstance());

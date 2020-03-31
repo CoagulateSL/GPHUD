@@ -14,6 +14,7 @@ public class BCLoad extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String explain() { return "LoadVariable (Pop name, push variable value)"; }
 

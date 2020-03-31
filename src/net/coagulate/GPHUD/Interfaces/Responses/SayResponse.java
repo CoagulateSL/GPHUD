@@ -29,6 +29,7 @@ public class SayResponse implements Response {
 		this.sayas=sayas;
 	}
 
+	// ---------- INSTANCE ----------
 	public String getText() { return reason; }
 
 	public void setText(final String text) { reason=text; }

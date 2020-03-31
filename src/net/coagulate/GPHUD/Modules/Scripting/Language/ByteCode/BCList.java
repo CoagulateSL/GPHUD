@@ -29,6 +29,7 @@ public class BCList extends ByteCodeDataType {
 		elements++;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explain() {
@@ -67,17 +68,6 @@ public class BCList extends ByteCodeDataType {
 	}
 
 	@Nonnull
-	@Override
-	public ByteCodeDataType clone() {
-		final BCList clone=new BCList(node());
-		clone.elements=elements;
-		for (final ByteCodeDataType element: content) {
-			clone.content.add(element.clone());
-		}
-		return clone;
-	}
-
-	@Nonnull
 	public BCList append(final ByteCodeDataType value) {
 		content.add(value);
 		elements++;
@@ -87,5 +77,16 @@ public class BCList extends ByteCodeDataType {
 	@Nonnull
 	public BCInteger toBCInteger() {
 		return new BCInteger(null,elements);
+	}
+
+	@Nonnull
+	@Override
+	public ByteCodeDataType clone() {
+		final BCList clone=new BCList(node());
+		clone.elements=elements;
+		for (final ByteCodeDataType element: content) {
+			clone.content.add(element.clone());
+		}
+		return clone;
 	}
 }

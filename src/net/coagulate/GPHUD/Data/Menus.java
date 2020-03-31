@@ -26,6 +26,8 @@ public class Menus extends TableRow {
 
 	protected Menus(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -127,6 +129,7 @@ public class Menus extends TableRow {
 		return aliases;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -137,6 +140,14 @@ public class Menus extends TableRow {
 	@Override
 	public String getIdColumn() {
 		return "menuid";
+	}
+
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("Menus / State Instance mismatch");
+		}
 	}
 
 	@Nonnull
@@ -150,6 +161,14 @@ public class Menus extends TableRow {
 	public String getLinkTarget() {
 		return "/configuration/menus/"+getId();
 	}
+
+	@Nullable
+	public String getKVTable() { return null; }
+
+	@Nullable
+	public String getKVIdField() { return null; }
+
+	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Load the JSON payload for this menu.
@@ -183,21 +202,5 @@ public class Menus extends TableRow {
 		return Instance.get(id);
 	}
 
-	@Nullable
-	public String getKVTable() { return null; }
-
-	@Nullable
-	public String getKVIdField() { return null; }
-
 	public void flushKVCache(final State st) {}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("Menus / State Instance mismatch");
-		}
-	}
-
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 }

@@ -25,6 +25,7 @@ public class HTTPListener {
 	private static HttpServer server;
 	private static boolean hasshutdown;
 
+	// ---------- STATICS ----------
 	public static void initialise(final int port) {
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 		try {
@@ -75,6 +76,7 @@ public class HTTPListener {
 	}
 
 	private static class ShutdownHook extends Thread {
+		// ---------- INSTANCE ----------
 		public void run() {
 			HTTPListener.shutdown();
 		}

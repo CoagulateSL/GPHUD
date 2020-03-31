@@ -22,6 +22,7 @@ public class EventsModule extends ModuleAnnotation {
 		super(name,def);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(@Nonnull final State st) {

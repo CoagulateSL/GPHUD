@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price
  */
 public class UserTitlerColor extends CookBook {
+	// ---------- STATICS ----------
 	@URL.URLs(url="/configuration/cookbooks/user-titler-color")
 	public static void createForm(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
@@ -35,6 +36,7 @@ public class UserTitlerColor extends CookBook {
 		}
 	}
 
+	// ----- Internal Statics -----
 	private static void run(@Nonnull final State st,
 	                        @Nonnull final Table t,
 	                        final boolean act) {

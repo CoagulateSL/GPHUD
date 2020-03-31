@@ -31,6 +31,7 @@ public class NameCache {
 	@Nullable
 	Map<Integer,String> regionnames;
 
+	// ----- Internal Statics -----
 	@Nonnull
 	private static Map<Integer,String> loadMap(final String tablename,
 	                                           final String idcolumn,
@@ -43,6 +44,7 @@ public class NameCache {
 		return results;
 	}
 
+	// ---------- INSTANCE ----------
 	public String lookup(@Nonnull final User u) {
 		if (avatarnames==null) { avatarnames=User.loadMap(); }
 		return avatarnames.get(u.getId());

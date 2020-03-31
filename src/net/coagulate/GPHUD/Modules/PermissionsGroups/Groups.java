@@ -35,6 +35,7 @@ public abstract class Groups {
 	public static final String YELLOW="#ffffdf";
 	public static final String GREEN="#dfffdf";
 
+	// ---------- STATICS ----------
 	@URLs(url="/permissionsgroups/view/*")
 	public static void view(@Nonnull final State st,
 	                        final SafeMap values) {
@@ -137,8 +138,10 @@ public abstract class Groups {
 	}
 
 
-	@URLs(url="/permissionsgroups/create", requiresPermission="Instance.ManagePermissions")
-	@SideSubMenus(name="Create", priority=10)
+	@URLs(url="/permissionsgroups/create",
+	      requiresPermission="Instance.ManagePermissions")
+	@SideSubMenus(name="Create",
+	              priority=10)
 	public static void createGroupPage(@Nonnull final State st,
 	                                   @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st,"permissionsgroups.create",values)); }
@@ -146,9 +149,13 @@ public abstract class Groups {
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Creates a new permissions group", requiresPermission="Instance.ManagePermissions")
+	@Commands(context=Context.AVATAR,
+	          description="Creates a new permissions group",
+	          requiresPermission="Instance.ManagePermissions")
 	public static Response create(@Nonnull final State st,
-	                              @Arguments(description="Name of group to create", type=ArgumentType.TEXT_CLEAN, max=64) final String name) {
+	                              @Arguments(description="Name of group to create",
+	                                         type=ArgumentType.TEXT_CLEAN,
+	                                         max=64) final String name) {
 		try { st.getInstance().createPermissionsGroup(name); }
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create permissions group - "+e.getLocalizedMessage());
@@ -158,7 +165,8 @@ public abstract class Groups {
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="List permissions groups present at this instance")
+	@Commands(context=Context.AVATAR,
+	          description="List permissions groups present at this instance")
 	public static Response list(@Nonnull final State st) {
 		final TabularResponse r=new TabularResponse("Permissions groups");
 		final Set<PermissionsGroup> groups=st.getInstance().getPermissionsGroups();
@@ -175,8 +183,11 @@ public abstract class Groups {
 		st.form().add(Modules.run(st,"permissionsgroups.list",values));
 	}
 
-	@URLs(url="/permissionsgroups/delete", requiresPermission="Instance.ManagePermissions")
-	@SideSubMenus(name="Delete", priority=11, requiresPermission="Instance.ManagePermissions")
+	@URLs(url="/permissionsgroups/delete",
+	      requiresPermission="Instance.ManagePermissions")
+	@SideSubMenus(name="Delete",
+	              priority=11,
+	              requiresPermission="Instance.ManagePermissions")
 	public static void deleteForm(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st,"permissionsgroups.delete",values)); }
@@ -184,9 +195,13 @@ public abstract class Groups {
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, requiresPermission="Instance.ManagePermissions", description="Deletes a permissions group")
+	@Commands(context=Context.AVATAR,
+	          requiresPermission="Instance.ManagePermissions",
+	          description="Deletes a permissions group")
 	public static Response delete(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Permissions group to delete", type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup) {
+	                              @Nonnull
+	                              @Arguments(description="Permissions group to delete",
+	                                         type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup) {
 		final String success="NOP";
 		permissionsgroup.validate(st);
 		final String name=permissionsgroup.getNameSafe();
@@ -195,7 +210,8 @@ public abstract class Groups {
 		return new OKResponse("Deleted permissions group "+name);
 	}
 
-	@URLs(url="/permissionsgroups/edit/*", requiresPermission="Instance.ManagePermissions")
+	@URLs(url="/permissionsgroups/edit/*",
+	      requiresPermission="Instance.ManagePermissions")
 	public static void editPermissions(@Nonnull final State st,
 	                                   @Nonnull final SafeMap values) {
 		final String[] split=st.getDebasedNoQueryURL().split("/");
@@ -239,6 +255,7 @@ public abstract class Groups {
 		f.add(table);
 	}
 
+	// ----- Internal Statics -----
 	private static void stampPermission(@Nonnull final State st,
 	                                    @Nonnull final PermissionsGroup pg,
 	                                    final Module module,

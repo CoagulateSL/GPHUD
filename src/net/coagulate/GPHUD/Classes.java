@@ -40,6 +40,7 @@ public abstract class Classes {
 	@Nullable
 	private static Logger log;
 
+	// ----- Internal Statics -----
 	// Start recursing through the elements in the classpath.  So many exceptions returned!
 	static void initialise() {
 		ClassTools.initialise();

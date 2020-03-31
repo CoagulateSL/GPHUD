@@ -40,6 +40,8 @@ public class Region extends TableRow {
 
 	protected Region(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Update the last used time of a URL.
 	 *
@@ -55,25 +57,6 @@ public class Region extends TableRow {
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Region","Refreshing REGION url "+url);
 		GPHUD.getDB().d("update "+t+" set urllast=?,authnode=? where url=?",UnixTime.getUnixTime(),Interface.getNode(),url);
-	}
-
-	/**
-	 * Wipe the region KV store of a particular K
-	 *
-	 * @param instance Instance to wipe KV store for
-	 * @param key      K to wipe
-	 */
-	static void wipeKV(@Nonnull final Instance instance,
-	                   @Nonnull final String key) {
-		final String kvtable="regionkvstore";
-		final String maintable="regions";
-		final String idcolumn="regionid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
-				        ".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
 	}
 
 	/**
@@ -157,6 +140,29 @@ public class Region extends TableRow {
 		               );
 	}
 
+	// ----- Internal Statics -----
+
+	/**
+	 * Wipe the region KV store of a particular K
+	 *
+	 * @param instance Instance to wipe KV store for
+	 * @param key      K to wipe
+	 */
+	static void wipeKV(@Nonnull final Instance instance,
+	                   @Nonnull final String key) {
+		final String kvtable="regionkvstore";
+		final String maintable="regions";
+		final String idcolumn="regionid";
+		GPHUD.getDB()
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
+		        key,
+		        instance.getId()
+		       );
+	}
+
+	// ---------- INSTANCE ----------
+
 	/**
 	 * Is this region retired
 	 *
@@ -165,10 +171,6 @@ public class Region extends TableRow {
 	public boolean isRetired() {
 		return getBool("retired");
 	}
-
-	@Nonnull
-	@Override
-	public String getLinkTarget() { return "regions"; }
 
 	/**
 	 * Gets the instance associated with this region
@@ -192,11 +194,37 @@ public class Region extends TableRow {
 		return "regionid";
 	}
 
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("Region / State Instance mismatch");
+		}
+	}
+
 	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
+
+	@Nonnull
+	@Override
+	public String getLinkTarget() { return "regions"; }
+
+	@Nonnull
+	@Override
+	public String getKVTable() {
+		return "regionkvstore";
+	}
+
+	@Nonnull
+	@Override
+	public String getKVIdField() {
+		return "regionid";
+	}
+
+	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Gets the URL associated with this region's server
@@ -308,77 +336,6 @@ public class Region extends TableRow {
 				st.logger().log(SEVERE,"Exception in departingAvatars",e);
 			}
 		}
-	}
-
-	/**
-	 * Log a product's version information.
-	 *
-	 * @param st          State
-	 * @param type        Type of product (hud, server)
-	 * @param version     Version string (XX.YY.ZZ format) NOTE XX/YY/ZZ should not exceeed 2 digits (as it's stored literally as XXYYZZ integer)
-	 * @param versiondate Parsable date (see FireStorm preprocessor macro __DATE__)
-	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
-	 */
-	private void recordVersion(@Nonnull final State st,
-	                           @Nonnull final String type,
-	                           @Nonnull final String version,
-	                           @Nonnull final String versiondate,
-	                           @Nonnull final String versiontime) {
-		final Date d;
-		try {
-			final SimpleDateFormat df=new SimpleDateFormat("MMM d yyyy HH:mm:ss");
-			df.setLenient(true);
-			String datetime=versiondate+" "+versiontime;
-			datetime=datetime.replaceAll(" {2}"," ");
-			d=df.parse(datetime);
-		}
-		catch (@Nonnull final ParseException ex) {
-			throw new SystemImplementationException("Failed to parse date time from "+versiondate+" "+versiontime,ex);
-		}
-		final ResultsRow regiondata=dqone("select region"+type+"version,region"+type+"datetime from regions where regionid=?",getId());
-		final Integer oldversion=regiondata.getIntNullable("region"+type+"version");
-		final Integer olddatetime=regiondata.getIntNullable("region"+type+"datetime");
-		final int newversion=Interface.convertVersion(version);
-		final int newdatetime=(int) (d.getTime()/1000.0);
-		if (oldversion==null || olddatetime==null || olddatetime<newdatetime || oldversion<newversion) {
-			d("update regions set region"+type+"version=?,region"+type+"datetime=? where regionid=?",newversion,newdatetime,getId());
-			final String olddesc=formatVersion(oldversion,olddatetime,false);
-			final String newdesc=formatVersion(newversion,newdatetime,false);
-			st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc);
-			final State fake=new State();
-			fake.setInstance(st.getInstance());
-			fake.setAvatar(User.getSystem());
-			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,"Upgrade",type,olddesc,newdesc,"Product version upgraded");
-		}
-	}
-
-	/**
-	 * Internal method to reconstruct a human readable version/datetime string for this region's versions.
-	 *
-	 * @param version  Version number, XXYYZZ (XX.YY.ZZ where XX*10000+YY*100+ZZ)
-	 * @param datetime Unix DateTime stamp of the version
-	 * @param html     To HTML or not
-	 *
-	 * @return String form of the version information passed
-	 */
-	@Nonnull
-	private String formatVersion(@Nullable final Integer version,
-	                             @Nullable final Integer datetime,
-	                             final boolean html) {
-		String v="";
-		final DateFormat df=DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
-		df.setTimeZone(TimeZone.getTimeZone("GMT"));
-		if (version==null) { v+="v??? "; }
-		else {
-			v=v+"v"+(version/10000)+"."+((version/100)%100)+"."+(version%100)+" ";
-		}
-		if (datetime==null) { v+="???"; }
-		else {
-			if (html) { v+="<i>( "; }
-			v+=df.format(new Date((long) (1000.0*datetime)));
-			if (html) { v+=" )</i>"; }
-		}
-		return v;
 	}
 
 	/**
@@ -557,28 +514,6 @@ public class Region extends TableRow {
 		t.start();
 	}
 
-	@Nonnull
-	@Override
-	public String getKVTable() {
-		return "regionkvstore";
-	}
-
-	@Nonnull
-	@Override
-	public String getKVIdField() {
-		return "regionid";
-	}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("Region / State Instance mismatch");
-		}
-	}
-
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
-
 	/**
 	 * Count the number of open visits for this region
 	 *
@@ -613,5 +548,78 @@ public class Region extends TableRow {
 			throw new UserRemoteFailureException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server");
 		}
 		return "<"+x+","+y+",0>";
+	}
+
+	// ----- Internal Instance -----
+
+	/**
+	 * Log a product's version information.
+	 *
+	 * @param st          State
+	 * @param type        Type of product (hud, server)
+	 * @param version     Version string (XX.YY.ZZ format) NOTE XX/YY/ZZ should not exceeed 2 digits (as it's stored literally as XXYYZZ integer)
+	 * @param versiondate Parsable date (see FireStorm preprocessor macro __DATE__)
+	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
+	 */
+	private void recordVersion(@Nonnull final State st,
+	                           @Nonnull final String type,
+	                           @Nonnull final String version,
+	                           @Nonnull final String versiondate,
+	                           @Nonnull final String versiontime) {
+		final Date d;
+		try {
+			final SimpleDateFormat df=new SimpleDateFormat("MMM d yyyy HH:mm:ss");
+			df.setLenient(true);
+			String datetime=versiondate+" "+versiontime;
+			datetime=datetime.replaceAll(" {2}"," ");
+			d=df.parse(datetime);
+		}
+		catch (@Nonnull final ParseException ex) {
+			throw new SystemImplementationException("Failed to parse date time from "+versiondate+" "+versiontime,ex);
+		}
+		final ResultsRow regiondata=dqone("select region"+type+"version,region"+type+"datetime from regions where regionid=?",getId());
+		final Integer oldversion=regiondata.getIntNullable("region"+type+"version");
+		final Integer olddatetime=regiondata.getIntNullable("region"+type+"datetime");
+		final int newversion=Interface.convertVersion(version);
+		final int newdatetime=(int) (d.getTime()/1000.0);
+		if (oldversion==null || olddatetime==null || olddatetime<newdatetime || oldversion<newversion) {
+			d("update regions set region"+type+"version=?,region"+type+"datetime=? where regionid=?",newversion,newdatetime,getId());
+			final String olddesc=formatVersion(oldversion,olddatetime,false);
+			final String newdesc=formatVersion(newversion,newdatetime,false);
+			st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc);
+			final State fake=new State();
+			fake.setInstance(st.getInstance());
+			fake.setAvatar(User.getSystem());
+			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,"Upgrade",type,olddesc,newdesc,"Product version upgraded");
+		}
+	}
+
+	/**
+	 * Internal method to reconstruct a human readable version/datetime string for this region's versions.
+	 *
+	 * @param version  Version number, XXYYZZ (XX.YY.ZZ where XX*10000+YY*100+ZZ)
+	 * @param datetime Unix DateTime stamp of the version
+	 * @param html     To HTML or not
+	 *
+	 * @return String form of the version information passed
+	 */
+	@Nonnull
+	private String formatVersion(@Nullable final Integer version,
+	                             @Nullable final Integer datetime,
+	                             final boolean html) {
+		String v="";
+		final DateFormat df=DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
+		df.setTimeZone(TimeZone.getTimeZone("GMT"));
+		if (version==null) { v+="v??? "; }
+		else {
+			v=v+"v"+(version/10000)+"."+((version/100)%100)+"."+(version%100)+" ";
+		}
+		if (datetime==null) { v+="???"; }
+		else {
+			if (html) { v+="<i>( "; }
+			v+=df.format(new Date((long) (1000.0*datetime)));
+			if (html) { v+=" )</i>"; }
+		}
+		return v;
 	}
 }

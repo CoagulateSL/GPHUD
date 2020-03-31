@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class API {
+	// ---------- STATICS ----------
 	@URLs(url="/introspection/api/*")
 	public static void renderCommand(@Nonnull final State st,
 	                                 final SafeMap values) {
@@ -100,7 +101,8 @@ public abstract class API {
 	}
 
 	@URLs(url="/introspection/api/")
-	@SideSubMenus(name="API", priority=1)
+	@SideSubMenus(name="API",
+	              priority=1)
 	public static void APIIndex(@Nonnull final State st,
 	                            final SafeMap values) {
 		final Form f=st.form();

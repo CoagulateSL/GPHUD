@@ -14,6 +14,7 @@ public abstract class ByteCodeDataType extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nullable
 	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) { return new BCString(node(),toString()+var); }
 
@@ -50,13 +51,13 @@ public abstract class ByteCodeDataType extends ByteCode {
 		return new BCList(node(),this);
 	}
 
-	@Nonnull
-	public String toString() { return toBCString().getContent(); }
-
 	public int toInteger() { return toBCInteger().getContent(); }
 
 	@Nullable
 	public abstract ByteCodeDataType clone();
+
+	@Nonnull
+	public String toString() { return toBCString().getContent(); }
 
 	public void stack(@Nonnull final GSVM vm) {
 		vm.push(this);

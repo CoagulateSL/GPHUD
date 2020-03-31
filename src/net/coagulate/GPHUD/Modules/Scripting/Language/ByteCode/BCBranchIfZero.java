@@ -26,12 +26,7 @@ public class BCBranchIfZero extends ByteCode {
 		target=new BCLabel(node(),-1,pc);
 	}
 
-	@Nonnull
-	private BCLabel target() {
-		if (target==null) { throw new GSInternalError("Target is null"); }
-		return target;
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String explain() { return "BranchIfZero#"+target().id+" (Pop one, branch if zero)"; }
 
@@ -58,5 +53,12 @@ public class BCBranchIfZero extends ByteCode {
 		final BCInteger conditional=vm.popInteger();
 		// set PC if zero
 		if (conditional.getContent()==0) { vm.PC=target().address(); }
+	}
+
+	// ----- Internal Instance -----
+	@Nonnull
+	private BCLabel target() {
+		if (target==null) { throw new GSInternalError("Target is null"); }
+		return target;
 	}
 }

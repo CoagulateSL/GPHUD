@@ -21,6 +21,7 @@ public class JSONResponse implements Response {
 		json=j;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public JSONObject asJSON(final State st) {
 		return json;

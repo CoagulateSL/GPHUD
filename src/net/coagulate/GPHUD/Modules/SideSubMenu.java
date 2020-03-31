@@ -10,6 +10,7 @@ import java.lang.annotation.*;
  */
 public abstract class SideSubMenu {
 
+	// ---------- INSTANCE ----------
 	public abstract String name();
 
 	public abstract int priority();
@@ -28,6 +29,7 @@ public abstract class SideSubMenu {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface SideSubMenus {
+		// ---------- INSTANCE ----------
 		@Nonnull String name();
 
 		int priority();

@@ -18,6 +18,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class UserLandingPage {
+	// ---------- STATICS ----------
 	@URLs(url="/")
 	public static void index(@Nonnull final State st,
 	                         @Nonnull final SafeMap values) {

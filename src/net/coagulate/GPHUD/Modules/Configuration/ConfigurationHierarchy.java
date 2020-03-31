@@ -123,7 +123,7 @@ public class ConfigurationHierarchy extends Form {
 				addKVRow(st,h,kv,simulated.getCharacter(),simulated,alledits);
 			}
 		}
-		for (final Effect e:Effect.getAll(st.getInstance())) {
+		for (final Effect e: Effect.getAll(st.getInstance())) {
 			if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits); }
 		}
 		try {
@@ -144,6 +144,7 @@ public class ConfigurationHierarchy extends Form {
 		add("</script>");
 	}
 
+	// ----- Internal Instance -----
 	void addKVRow(@Nonnull final State st,
 	              @Nonnull final Table t,
 	              @Nonnull final KV kv,

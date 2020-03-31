@@ -14,6 +14,7 @@ public class GSUnknownIdentifier extends GSException {
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Unknown Identifier Exception}: "+getLocalizedMessage(); }
 }

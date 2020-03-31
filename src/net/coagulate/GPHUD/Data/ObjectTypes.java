@@ -19,6 +19,7 @@ public class ObjectTypes extends TableRow {
 		super(id);
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static ObjectTypes get(final int id) {
 		return (ObjectTypes) factoryPut("ObjectTypes",id,new ObjectTypes(id));
@@ -75,6 +76,7 @@ public class ObjectTypes extends TableRow {
 		return list;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getIdColumn() { return "id"; }
@@ -86,6 +88,26 @@ public class ObjectTypes extends TableRow {
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("ObjectTypes / State Instance mismatch");
 		}
+	}
+
+	@Nonnull
+	@Override
+	public String getNameField() { return "name"; }
+
+	@Nonnull
+	@Override
+	public String getLinkTarget() { return "/GPHUD/configuration/objects/objecttypes/"+getId(); }
+
+	@Nullable
+	@Override
+	public String getKVTable() {
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public String getKVIdField() {
+		return null;
 	}
 
 	@Nullable
@@ -104,34 +126,16 @@ public class ObjectTypes extends TableRow {
 		set("behaviour",json.toString());
 	}
 
-	@Nonnull
-	@Override
-	public String getNameField() { return "name"; }
-
-	@Nonnull
-	@Override
-	public String getLinkTarget() { return "/GPHUD/configuration/objects/objecttypes/"+getId(); }
-
-	@Override
-	protected int getNameCacheTime() { return 600; }
-
-	@Nullable
-	@Override
-	public String getKVTable() {
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public String getKVIdField() {
-		return null;
-	}
+	// ----- Internal Instance -----
 
 	@Nonnull
 	@Override
 	public String getTableName() {
 		return "objecttypes";
 	}
+
+	@Override
+	protected int getNameCacheTime() { return 600; }
 
 }
 

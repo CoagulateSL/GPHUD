@@ -5,6 +5,8 @@ import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import javax.annotation.Nonnull;
 
 public class Utils {
+	// ---------- STATICS ----------
+
 	/**
 	 * Convert a string vector into an int array.
 	 *

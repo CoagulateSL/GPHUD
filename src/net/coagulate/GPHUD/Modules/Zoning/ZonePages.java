@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class ZonePages {
 
+	// ---------- STATICS ----------
 	@URLs(url="/configuration/zoning")
 	public static void listZones(@Nonnull final State st,
 	                             final SafeMap values) {
@@ -93,25 +94,29 @@ public abstract class ZonePages {
 		GenericConfiguration.page(st,values,z,st.simulate(st.getCharacter()));
 	}
 
-	@URLs(url="/configuration/zoning/setcorner1", requiresPermission="zoning.config")
+	@URLs(url="/configuration/zoning/setcorner1",
+	      requiresPermission="zoning.config")
 	public static void setCornerOne(@Nonnull final State st,
 	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.setcornerone",values);
 	}
 
-	@URLs(url="/configuration/zoning/setcorner2", requiresPermission="zoning.config")
+	@URLs(url="/configuration/zoning/setcorner2",
+	      requiresPermission="zoning.config")
 	public static void setCornerTwo(@Nonnull final State st,
 	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.setcornertwo",values);
 	}
 
-	@URLs(url="/configuration/zoning/addarea", requiresPermission="zoning.config")
+	@URLs(url="/configuration/zoning/addarea",
+	      requiresPermission="zoning.config")
 	public static void addVolume(@Nonnull final State st,
 	                             @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.addvolume",values);
 	}
 
-	@URLs(url="/configuration/zoning/deletearea", requiresPermission="zoning.config")
+	@URLs(url="/configuration/zoning/deletearea",
+	      requiresPermission="zoning.config")
 	public static void delVolume(@Nonnull final State st,
 	                             @Nonnull final SafeMap values) {
 		Modules.run(st,"zoning.deletevolume",values);

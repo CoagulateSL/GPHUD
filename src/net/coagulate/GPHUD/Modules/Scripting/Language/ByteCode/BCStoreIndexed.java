@@ -13,6 +13,7 @@ public class BCStoreIndexed extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Assign a value to an array index
 	// POP the NAME.  POP the index.  POP the content.
 	@Nonnull

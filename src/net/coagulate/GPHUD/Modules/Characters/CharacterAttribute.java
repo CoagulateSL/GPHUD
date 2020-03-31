@@ -19,8 +19,40 @@ public abstract class CharacterAttribute extends Attribute {
 
 	protected CharacterAttribute(final int id) {super(id); } //throw new SystemException("Not valid on auto generated attribute");}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public abstract String getName();
+
+	@Nonnull
+	public Instance getInstance() {throw new SystemImplementationException("Not valid on auto generated attribute");}
+
+	@Nonnull
+	@Override
+	public String getTableName() {throw new SystemImplementationException("Not valid on auto generated attribute");}
+
+	@Nonnull
+	@Override
+	public String getIdColumn() {throw new SystemImplementationException("Not valid on auto generated attribute");}
+
+	public void validate(@Nonnull final State st) {
+		validate();
+	}
+
+	@Nonnull
+	@Override
+	public String getNameField() {throw new SystemImplementationException("Not valid on auto generated attribute");}
+
+	@Nonnull
+	@Override
+	public String getLinkTarget() {throw new SystemImplementationException("Not valid on auto generated attribute");}
+
+	@Nullable
+	@Override
+	public String getKVTable() { return null; }
+
+	@Nullable
+	@Override
+	public String getKVIdField() { return null; }
 
 	@Nonnull
 	public abstract ATTRIBUTETYPE getType();
@@ -74,37 +106,6 @@ public abstract class CharacterAttribute extends Attribute {
 
 	@Nonnull
 	public abstract KV.KVHIERARCHY getKVHierarchy();
-
-	@Nonnull
-	@Override
-	public String getLinkTarget() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
-	@Nonnull
-	public Instance getInstance() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
-	@Nonnull
-	@Override
-	public String getTableName() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
-	@Nonnull
-	@Override
-	public String getIdColumn() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
-	@Nonnull
-	@Override
-	public String getNameField() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
-	@Nullable
-	@Override
-	public String getKVTable() { return null; }
-
-	@Nullable
-	@Override
-	public String getKVIdField() { return null; }
-
-	public void validate(@Nonnull final State st) {
-		validate();
-	}
 
 	/**
 	 * Set the uses abilitypoints flag.

@@ -19,8 +19,13 @@ import javax.mail.MessagingException;
 
 public class Connect {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Command.Commands(description="Connects to the system as an object", context=Command.Context.AVATAR, permitConsole=false, permitUserWeb=false, permitScripting=false,
+	@Command.Commands(description="Connects to the system as an object",
+	                  context=Command.Context.AVATAR,
+	                  permitConsole=false,
+	                  permitUserWeb=false,
+	                  permitScripting=false,
 	                  permitJSON=false)
 	public static Response connect(@Nonnull final State st) {
 		if (!st.hasPermission("Objects.Connect")) {

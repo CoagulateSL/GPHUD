@@ -14,6 +14,7 @@ public class GSInvalidFunctionCall extends GSException {
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Invalid Function Call Exception}: "+getLocalizedMessage(); }
 }

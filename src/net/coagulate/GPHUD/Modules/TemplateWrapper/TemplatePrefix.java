@@ -17,6 +17,7 @@ public class TemplatePrefix extends KV {
 		this.template=template;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
 		return true;
@@ -24,8 +25,8 @@ public class TemplatePrefix extends KV {
 
 	@Nonnull
 	@Override
-	public String name() {
-		return template+"Prefix";
+	public String fullname() {
+		return "TemplateWrapper."+name();
 	}
 
 	@Nonnull
@@ -70,15 +71,15 @@ public class TemplatePrefix extends KV {
 		return KVHIERARCHY.DELEGATING;
 	}
 
-	@Nonnull
-	@Override
-	public String fullname() {
-		return "TemplateWrapper."+name();
-	}
-
 	@Override
 	public boolean template() {
 		return false; // template what we wrap, not us
+	}
+
+	@Nonnull
+	@Override
+	public String name() {
+		return template+"Prefix";
 	}
 
 }

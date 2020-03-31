@@ -20,8 +20,10 @@ import java.util.List;
  */
 public class ResetHealth {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Command.Commands(context=Command.Context.CHARACTER, description="Reset the character's health to the initial value")
+	@Command.Commands(context=Command.Context.CHARACTER,
+	                  description="Reset the character's health to the initial value")
 	public static Response resetHealth(@Nonnull final State st) {
 		if (!st.getKV("health.allowreset").boolValue()) {
 			throw new UserAccessDeniedException("Resetting of your health is not permitted.");
@@ -34,25 +36,33 @@ public class ResetHealth {
 	}
 
 	@Nonnull
-	@Command.Commands(context=Command.Context.CHARACTER, description="Have a chance to heal a target player")
+	@Command.Commands(context=Command.Context.CHARACTER,
+	                  description="Have a chance to heal a target player")
 	public static Response healRollChance(@Nonnull final State st,
-	                                      @Nonnull @Argument.Arguments(description="Target to heal", type=Argument.ArgumentType.CHARACTER_NEAR) final Char target,
-	                                      @Argument.Arguments(description="Number of dice to roll for chance to heal", type=Argument.ArgumentType.INTEGER)
-	                                      final Integer chancedice,
-	                                      @Argument.Arguments(description="Sides on dice to roll for change to heal", type=Argument.ArgumentType.INTEGER)
-	                                      final Integer chancesides,
-	                                      @Argument.Arguments(description="Bias to add to ammount to chance to heal", type=Argument.ArgumentType.INTEGER)
-	                                      final Integer chancebias,
-	                                      @Argument.Arguments(description="Score to beat to succeed at healing", type=Argument.ArgumentType.INTEGER)
-	                                      final Integer chancethreshold,
-	                                      @Argument.Arguments(description="Number of dice to roll for ammount healed", mandatory=false, type=Argument.ArgumentType.INTEGER)
-	                                      final Integer healdice,
-	                                      @Argument.Arguments(description="Sides on dice to roll for ammount healed", mandatory=false, type=Argument.ArgumentType.INTEGER)
-	                                      final Integer healsides,
-	                                      @Argument.Arguments(description="Bias to add to ammount to heal roll", mandatory=false, type=Argument.ArgumentType.INTEGER)
-	                                      final Integer healbias,
-	                                      @Argument.Arguments(description="Reason for heal", type=Argument.ArgumentType.TEXT_ONELINE, mandatory=false, max=512)
-	                                      final String reason) {
+	                                      @Nonnull
+	                                      @Argument.Arguments(description="Target to heal",
+	                                                          type=Argument.ArgumentType.CHARACTER_NEAR) final Char target,
+	                                      @Argument.Arguments(description="Number of dice to roll for chance to heal",
+	                                                          type=Argument.ArgumentType.INTEGER) final Integer chancedice,
+	                                      @Argument.Arguments(description="Sides on dice to roll for change to heal",
+	                                                          type=Argument.ArgumentType.INTEGER) final Integer chancesides,
+	                                      @Argument.Arguments(description="Bias to add to ammount to chance to heal",
+	                                                          type=Argument.ArgumentType.INTEGER) final Integer chancebias,
+	                                      @Argument.Arguments(description="Score to beat to succeed at healing",
+	                                                          type=Argument.ArgumentType.INTEGER) final Integer chancethreshold,
+	                                      @Argument.Arguments(description="Number of dice to roll for ammount healed",
+	                                                          mandatory=false,
+	                                                          type=Argument.ArgumentType.INTEGER) final Integer healdice,
+	                                      @Argument.Arguments(description="Sides on dice to roll for ammount healed",
+	                                                          mandatory=false,
+	                                                          type=Argument.ArgumentType.INTEGER) final Integer healsides,
+	                                      @Argument.Arguments(description="Bias to add to ammount to heal roll",
+	                                                          mandatory=false,
+	                                                          type=Argument.ArgumentType.INTEGER) final Integer healbias,
+	                                      @Argument.Arguments(description="Reason for heal",
+	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                          mandatory=false,
+	                                                          max=512) final String reason) {
 		final List<Integer> chancerolls=Roller.roll(st,st.getCharacter(),chancedice,chancesides);
 		int rollssum=chancebias;
 		for (final int roll: chancerolls) { rollssum+=roll; }
@@ -80,14 +90,29 @@ public class ResetHealth {
 	}
 
 	@Nonnull
-	@Command.Commands(context=Command.Context.CHARACTER, description="Heal a target player")
+	@Command.Commands(context=Command.Context.CHARACTER,
+	                  description="Heal a target player")
 	public static Response healRoll(@Nonnull final State st,
-	                                @Nullable @Argument.Arguments(description="Target to heal", type=Argument.ArgumentType.CHARACTER_NEAR) final Char target,
-	                                @Nullable @Argument.Arguments(description="Number of dice to roll", mandatory=false, type=Argument.ArgumentType.INTEGER) Integer dice,
-	                                @Nullable @Argument.Arguments(description="Sides on dice", mandatory=false, type=Argument.ArgumentType.INTEGER) Integer sides,
-	                                @Nullable @Argument.Arguments(description="Bias to roll", mandatory=false, type=Argument.ArgumentType.INTEGER) Integer bias,
-	                                @Nullable @Argument.Arguments(description="Reason for heal", type=Argument.ArgumentType.TEXT_ONELINE, mandatory=false, max=512)
-			                                String reason) {
+	                                @Nullable
+	                                @Argument.Arguments(description="Target to heal",
+	                                                    type=Argument.ArgumentType.CHARACTER_NEAR) final Char target,
+	                                @Nullable
+	                                @Argument.Arguments(description="Number of dice to roll",
+	                                                    mandatory=false,
+	                                                    type=Argument.ArgumentType.INTEGER) Integer dice,
+	                                @Nullable
+	                                @Argument.Arguments(description="Sides on dice",
+	                                                    mandatory=false,
+	                                                    type=Argument.ArgumentType.INTEGER) Integer sides,
+	                                @Nullable
+	                                @Argument.Arguments(description="Bias to roll",
+	                                                    mandatory=false,
+	                                                    type=Argument.ArgumentType.INTEGER) Integer bias,
+	                                @Nullable
+	                                @Argument.Arguments(description="Reason for heal",
+	                                                    type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                    mandatory=false,
+	                                                    max=512) String reason) {
 		if (target==null) { throw new UserInputEmptyException("No target selected"); }
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }

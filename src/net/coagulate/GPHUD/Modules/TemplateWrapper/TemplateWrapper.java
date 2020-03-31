@@ -16,13 +16,36 @@ import static java.util.logging.Level.SEVERE;
 
 public class TemplateWrapper extends ModuleAnnotation {
 
+	private Map<String,String> externals;
+
 	public TemplateWrapper(final String name,
 	                       final ModuleDefinition def) {
 		super(name,def);
 	}
 
-	private Map<String,String> externals;
-	@Nonnull public Map<String,String> getExternalTemplates(@Nonnull final State st) {
+	// ---------- STATICS ----------
+	@Nullable
+	public static String templateWrapper(final State st,
+	                                     @Nonnull final String wrappedtemplate) {
+		if (!st.hasModule("TemplateWrapper")) { return ""; }
+		String template=trim(wrappedtemplate);
+		if (template.startsWith("WRAPPED:")) {
+			template=template.substring(8);
+			final String ret=Templater.template(st,"--"+template+"--",false,false);
+			if (ret==null || ret.isEmpty()) {
+				return ret;
+			}
+			return st.getKV("TemplateWrapper."+template+"Prefix")+ret+st.getKV("TemplateWrapper."+template+"Postfix");
+		}
+		throw new SystemConsistencyException("Failed to resolve templateWrapper "+wrappedtemplate);
+	}
+
+	// ----- Internal Statics -----
+	private static String trim(final String s) { return s.substring(2,s.length()-2); }
+
+	// ---------- INSTANCE ----------
+	@Nonnull
+	public Map<String,String> getExternalTemplates(@Nonnull final State st) {
 		if (externals!=null) { return externals; }
 		final Map<String,String> list=new TreeMap<>(Templater.templates);
 		final Map<String,String> listtrimmed=new TreeMap<>();
@@ -39,13 +62,11 @@ public class TemplateWrapper extends ModuleAnnotation {
 		return listtrimmed;
 	}
 
-	private static String trim(final String s) { return s.substring(2,s.length()-2); }
-
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
 		final Map<String,KV> kv=super.getKVDefinitions(st);
-		for (final String template:getExternalTemplates(st).keySet()) {
+		for (final String template: getExternalTemplates(st).keySet()) {
 			kv.put(template.toLowerCase()+"prefix",new TemplatePrefix(template));
 			kv.put(template.toLowerCase()+"postfix",new TemplatePostfix(template));
 		}
@@ -69,7 +90,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	public void addTemplateDescriptions(@Nonnull final State st,
 	                                    @Nonnull final Map<String,String> addto) {
 		if (!st.hasModule("TemplateWrapper")) { return; }
-		for (final String template:getExternalTemplates(st).keySet()) {
+		for (final String template: getExternalTemplates(st).keySet()) {
 			addto.put("--WRAPPED:"+template.toUpperCase()+"--","Wrapped form of template "+template);
 		}
 	}
@@ -78,7 +99,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	public void addTemplateMethods(@Nonnull final State st,
 	                               @Nonnull final Map<String,Method> addto) {
 		if (!st.hasModule("TemplateWrapper")) { return; }
-		for (final String template:getExternalTemplates(st).keySet()) {
+		for (final String template: getExternalTemplates(st).keySet()) {
 			try {
 				addto.put("--WRAPPED:"+template.toUpperCase()+"--",getClass().getMethod("templateWrapper",State.class,String.class));
 			}
@@ -87,21 +108,5 @@ public class TemplateWrapper extends ModuleAnnotation {
 				st.logger().log(SEVERE,"Exception referencing own templating method??",ex);
 			}
 		}
-	}
-
-	@Nullable
-	public static String templateWrapper(final State st,
-	                                     @Nonnull final String wrappedtemplate) {
-		if (!st.hasModule("TemplateWrapper")) { return ""; }
-		String template=trim(wrappedtemplate);
-		if (template.startsWith("WRAPPED:")) {
-			template=template.substring(8);
-			final String ret=Templater.template(st,"--"+template+"--",false,false);
-			if (ret==null || ret.isEmpty()) {
-				return ret;
-			}
-			return st.getKV("TemplateWrapper."+template+"Prefix")+ret+st.getKV("TemplateWrapper."+template+"Postfix");
-		}
-		throw new SystemConsistencyException("Failed to resolve templateWrapper "+wrappedtemplate);
 	}
 }

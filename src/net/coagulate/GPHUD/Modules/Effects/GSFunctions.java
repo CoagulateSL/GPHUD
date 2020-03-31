@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 
 public class GSFunctions {
 
+	// ---------- STATICS ----------
 	@GSFunction(description="Gets a List of Strings, naming all the Effects applied to the character",
 	            parameters="Character - Who to list the effects of",
 	            returns="List of "+"Strings - names of all the applied effects",
@@ -54,7 +55,8 @@ public class GSFunctions {
 	                                      @Nonnull final BCInteger duration) {
 		if (Effect.get(st,effectname.getContent()).apply(st,false,target.getContent(),duration.getContent())) {
 			return new BCInteger(null,1);
-		} else { return new BCInteger(null,0); }
+		}
+		else { return new BCInteger(null,0); }
 	}
 
 	@GSFunction(description="Removes an effect from another character",
@@ -63,12 +65,13 @@ public class GSFunctions {
 	            returns="Integer - 1 if an effect was removed, otherwise zero",
 	            notes="")
 	public static BCInteger gsRemoveEffect(final State st,
-                                           @Nonnull final GSVM vm,
-                                           @Nonnull final BCCharacter target,
-                                           @Nonnull final BCString effect) {
+	                                       @Nonnull final GSVM vm,
+	                                       @Nonnull final BCCharacter target,
+	                                       @Nonnull final BCString effect) {
 		if (Effect.get(st,effect.getContent()).remove(st,target.getContent(),false)) {
 			return new BCInteger(null,1);
-		} else { return new BCInteger(null,0); }
+		}
+		else { return new BCInteger(null,0); }
 	}
 
 }

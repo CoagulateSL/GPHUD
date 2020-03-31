@@ -27,6 +27,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 public class VisitXP extends QuotaedXP {
 	public VisitXP(final int id) { super(id); }
 
+	// ---------- INSTANCE ----------
 	public void runAwards(@Nonnull final State st,
 	                      @Nonnull final Char ch) {
 		try {
@@ -83,9 +84,9 @@ public class VisitXP extends QuotaedXP {
 	// TODO consider purging this SQL.  maybe just instansiate all instances and then check their KV.  all but one instance has this enabled or default enabled
 	public void runAwards() {
 		try {
-			final Results results=GPHUD.getDB().dq(
-				"select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k like 'experience.enabled' where v is null or v like 'true'"
-	        );
+			final Results results=GPHUD.getDB()
+			                           .dq("select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k "+
+					                               "like 'experience.enabled' where v is null or v like 'true'");
 			for (final ResultsRow r: results) {
 				final Instance i=Instance.get(r.getInt());
 				runAwards(i);
@@ -96,8 +97,7 @@ public class VisitXP extends QuotaedXP {
 		}
 	}
 
-	@Nonnull
-	public String getName() { return "VisitXP"; }
+	public Module getModule() { return Modules.get(null,"Experience"); }
 
 	@Nonnull
 	public String poolName(final State st) {return "experience.visitxp";}
@@ -108,7 +108,8 @@ public class VisitXP extends QuotaedXP {
 	@Nonnull
 	public String periodKV(final State st) { return "Experience.XPCycleDays"; }
 
-	public Module getModule() { return Modules.get(null,"Experience"); }
+	@Nonnull
+	public String getName() { return "VisitXP"; }
 
 
 }

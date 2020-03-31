@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price
  */
 public class Validators {
+	// ---------- STATICS ----------
 	public static boolean uuid(@Nonnull final String value) {
 		// something like 8dc52677-bea8-4fc3-b69b-21c5e2224306
 		if (value.length()!="8dc52677-bea8-4fc3-b69b-21c5e2224306".length()) {

@@ -42,6 +42,7 @@ import static java.util.logging.Level.WARNING;
  */
 public abstract class Command {
 
+	// ----- Internal Statics -----
 	@Nonnull
 	static Object assertNotNull(@Nullable final Object o,
 	                            final String value,
@@ -61,6 +62,7 @@ public abstract class Command {
 		}
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public abstract Method getMethod();
 
@@ -294,6 +296,69 @@ public abstract class Command {
 	}
 
 	/**
+	 * Get the name of the arguments.
+	 *
+	 * @param st state
+	 *
+	 * @return list of argument names
+	 */
+	public List<String> getArgumentNames(final State st) {
+		final List<String> arguments=new ArrayList<>();
+		for (final Argument a: getArguments()) {
+			arguments.add(a.getName());
+		}
+		return arguments;
+	}
+
+	public List<Argument> getInvokingArguments() { return getArguments(); }
+
+	public Response run(@Nonnull final State st,
+	                    @Nonnull final SafeMap parametermap) {
+		//System.out.println("Run in method "+this.getClass().getCanonicalName());
+		final List<String> arguments=new ArrayList<>();
+		for (final Argument arg: getInvokingArguments()) {
+			if (parametermap.containsKey(arg.getName())) {
+				//System.out.println("Added argument "+arg.getName());
+				arguments.add(parametermap.get(arg.getName()));
+			}
+			else {
+				//System.out.println("Skipped argument "+arg.getName());
+				arguments.add(null);
+			}
+		}
+		return run(st,arguments.toArray(new String[]{}));
+	}
+
+	public void simpleHtml(@Nonnull final State st,
+	                       @Nonnull final SafeMap values) {
+		//System.out.println("HERE:"+getArgumentCount());
+		if (getArgumentCount()==0 || values.submit()) {
+			final Response response=run(st,values);
+			// IF this is an OK response
+			if (response instanceof OKResponse) {
+				// and we have cached a 'return url'
+				if (!values.get("okreturnurl").isEmpty()) {
+					// go there
+					throw new RedirectionException(values.get("okreturnurl"));
+				}
+			}
+			st.form().add(response);
+		}
+		getHtmlTemplate(st);
+	}
+
+	@Nonnull
+	public String getFullMethodName() {
+		return getMethod().getDeclaringClass().getName()+"."+getMethod().getName()+"()";
+	}
+
+	public int getInvokingArgumentCount() {
+		return getArgumentCount();
+	}
+
+	// ----- Internal Instance -----
+
+	/**
 	 * Run a command based on properly cast arguments.
 	 *
 	 * @param st   Session state
@@ -406,58 +471,6 @@ public abstract class Command {
 			}
 			throw new SystemImplementationException("Exception "+ex+" from call to "+getName(),ex);
 		}
-	}
-
-	/**
-	 * Get the name of the arguments.
-	 *
-	 * @param st state
-	 *
-	 * @return list of argument names
-	 */
-	public List<String> getArgumentNames(final State st) {
-		final List<String> arguments=new ArrayList<>();
-		for (final Argument a: getArguments()) {
-			arguments.add(a.getName());
-		}
-		return arguments;
-	}
-
-	public List<Argument> getInvokingArguments() { return getArguments(); }
-
-	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap) {
-		//System.out.println("Run in method "+this.getClass().getCanonicalName());
-		final List<String> arguments=new ArrayList<>();
-		for (final Argument arg: getInvokingArguments()) {
-			if (parametermap.containsKey(arg.getName())) {
-				//System.out.println("Added argument "+arg.getName());
-				arguments.add(parametermap.get(arg.getName()));
-			}
-			else {
-				//System.out.println("Skipped argument "+arg.getName());
-				arguments.add(null);
-			}
-		}
-		return run(st,arguments.toArray(new String[]{}));
-	}
-
-	public void simpleHtml(@Nonnull final State st,
-	                       @Nonnull final SafeMap values) {
-		//System.out.println("HERE:"+getArgumentCount());
-		if (getArgumentCount()==0 || values.submit()) {
-			final Response response=run(st,values);
-			// IF this is an OK response
-			if (response instanceof OKResponse) {
-				// and we have cached a 'return url'
-				if (!values.get("okreturnurl").isEmpty()) {
-					// go there
-					throw new RedirectionException(values.get("okreturnurl"));
-				}
-			}
-			st.form().add(response);
-		}
-		getHtmlTemplate(st);
 	}
 
 	@Nonnull
@@ -709,15 +722,6 @@ public abstract class Command {
 		}
 	}
 
-	@Nonnull
-	public String getFullMethodName() {
-		return getMethod().getDeclaringClass().getName()+"."+getMethod().getName()+"()";
-	}
-
-	public int getInvokingArgumentCount() {
-		return getArgumentCount();
-	}
-
 
 	public enum Context {
 		ANY,
@@ -733,6 +737,7 @@ public abstract class Command {
 	@Documented
 	@Target(ElementType.METHOD)
 	public @interface Commands {
+		// ---------- INSTANCE ----------
 		@Nonnull String description();
 
 		@Nonnull String requiresPermission() default "";

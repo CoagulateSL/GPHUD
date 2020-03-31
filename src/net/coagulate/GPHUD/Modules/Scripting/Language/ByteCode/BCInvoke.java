@@ -19,6 +19,7 @@ public class BCInvoke extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Invoke a function.  Pop name, arg count, N*arguments
 	@Nonnull
 	public String explain() { return "Invoke (pop function name, pop arg count, pop arguments, push result)"; }
@@ -80,6 +81,7 @@ public class BCInvoke extends ByteCode {
 		invoke(st,vm,function,new Object[]{st,vm});
 	}
 
+	// ----- Internal Instance -----
 	private void invoke(final State st,
 	                    @Nonnull final GSVM vm,
 	                    @Nonnull final Method function,

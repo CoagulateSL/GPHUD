@@ -28,6 +28,8 @@ public class PermissionsGroup extends TableRow {
 
 	protected PermissionsGroup(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Looks up a permissions group
 	 *
@@ -98,10 +100,7 @@ public class PermissionsGroup extends TableRow {
 		return permissions;
 	}
 
-
-	@Nonnull
-	@Override
-	public String getLinkTarget() { return "permissionsgroups"; }
+	// ---------- INSTANCE ----------
 
 	/**
 	 * Gets the instance associated with this region
@@ -125,12 +124,31 @@ public class PermissionsGroup extends TableRow {
 		return "permissionsgroupid";
 	}
 
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("PermissionsGroup / State Instance mismatch");
+		}
+	}
+
 	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
+	@Nonnull
+	@Override
+	public String getLinkTarget() { return "permissionsgroups"; }
+
+	@Nullable
+	public String getKVTable() { return null; }
+
+	@Nullable
+	public String getKVIdField() { return null; }
+
+	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Get all permissions assigned to this permissions group.
@@ -297,24 +315,7 @@ public class PermissionsGroup extends TableRow {
 		d("delete from permissions where permissionsgroupid=? and permission=?",getId(),permission);
 	}
 
-	@Nullable
-	public String getKVTable() { return null; }
-
-	@Nullable
-	public String getKVIdField() { return null; }
-
 	public void flushKVCache(final State st) {}
-
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("PermissionsGroup / State Instance mismatch");
-		}
-	}
-
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Checks if this group contains a particular permission

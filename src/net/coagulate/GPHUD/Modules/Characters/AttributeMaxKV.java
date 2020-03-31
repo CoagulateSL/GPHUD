@@ -18,6 +18,7 @@ public class AttributeMaxKV extends KV {
 		this.attribute=attribute;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
 		return true;
@@ -25,8 +26,8 @@ public class AttributeMaxKV extends KV {
 
 	@Nonnull
 	@Override
-	public String name() {
-		return attribute.getName()+"MAX";
+	public String fullname() {
+		return "Characters."+name();
 	}
 
 	@Nonnull
@@ -71,15 +72,15 @@ public class AttributeMaxKV extends KV {
 		return attribute.getKVHierarchy();
 	}
 
-	@Nonnull
-	@Override
-	public String fullname() {
-		return "Characters."+name();
-	}
-
 	@Override
 	public boolean template() {
 		return true;
+	}
+
+	@Nonnull
+	@Override
+	public String name() {
+		return attribute.getName()+"MAX";
 	}
 
 }

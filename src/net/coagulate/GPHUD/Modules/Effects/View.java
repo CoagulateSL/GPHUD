@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class View {
+	// ---------- STATICS ----------
 	@URL.URLs(url="/configuration/Effects/View/*")
 	public static void viewEffect(@Nonnull final State st,
 	                              final SafeMap values) {

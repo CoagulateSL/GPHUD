@@ -18,6 +18,7 @@ public class ConfigurationSideSubMenu extends SideSubMenu {
 		this.m=m;
 	}
 
+	// ---------- INSTANCE ----------
 	public void setPriority(final int priority) {
 		this.priority=priority;
 	}

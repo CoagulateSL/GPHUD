@@ -18,17 +18,26 @@ public class KVEnabled extends KV {
 		this.def=def;
 	} // technically is generated, but generated really means "instance specific", and these KVs aren't, they're just a convenience for writing the static declaration.
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String name() { return "Enabled"; }
+
+	@Override
+	public boolean isGenerated() {
+		return false;
+	}
+
+	@Nonnull
+	@Override
+	public String fullname() {
+		return module.getName()+"."+name();
+	}
 
 	@Nonnull
 	public KVSCOPE scope() { return KVSCOPE.INSTANCE; }
 
 	@Nonnull
 	public KVTYPE type() { return KVTYPE.BOOLEAN; }
-
-	@Nonnull
-	public KVHIERARCHY hierarchy() { return KVHIERARCHY.NONE; }
 
 	@Nonnull
 	public String description() { return "Enabled flag for this module"; }
@@ -41,16 +50,8 @@ public class KVEnabled extends KV {
 	@Nonnull
 	public String conveyas() { return ""; }
 
-	@Override
-	public boolean isGenerated() {
-		return false;
-	}
-
 	@Nonnull
-	@Override
-	public String fullname() {
-		return module.getName()+"."+name();
-	}
+	public KVHIERARCHY hierarchy() { return KVHIERARCHY.NONE; }
 
 	@Override
 	public boolean template() {

@@ -23,6 +23,8 @@ public class Alias extends TableRow {
 
 	protected Alias(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -109,6 +111,7 @@ public class Alias extends TableRow {
 		return newalias;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -121,21 +124,37 @@ public class Alias extends TableRow {
 		return "aliasid";
 	}
 
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("Alias / State Instance mismatch");
+		}
+	}
+
 	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
 
-	@Nullable
-	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
-	}
-
 	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/configuration/aliases/view/"+getId();
+	}
+
+	@Nullable
+	public String getKVTable() { return null; }
+
+	@Nullable
+	public String getKVIdField() { return null; }
+
+	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
+
+	@Nullable
+	public Instance getInstance() {
+		return Instance.get(getInt("instanceid"));
 	}
 
 	@Nonnull
@@ -148,23 +167,7 @@ public class Alias extends TableRow {
 		d("update aliases set template=? where aliasid=?",template.toString(),getId());
 	}
 
-	@Nullable
-	public String getKVTable() { return null; }
-
-	@Nullable
-	public String getKVIdField() { return null; }
-
 	public void flushKVCache(final State st) {}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("Alias / State Instance mismatch");
-		}
-	}
-
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 	// for integrity reasons, renames should be doen through recreates (sadface)
 
 	public void delete() {

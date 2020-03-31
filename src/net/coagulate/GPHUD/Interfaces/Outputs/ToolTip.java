@@ -27,6 +27,7 @@ public class ToolTip implements Renderable {
 		this.tooltip=tooltip;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

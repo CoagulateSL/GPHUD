@@ -22,6 +22,17 @@ public class AliasModule extends ModuleAnnotation {
 		super(name,definition);
 	}
 
+	// ---------- INSTANCE ----------
+	@Nonnull
+	@Override
+	public Command getCommandNullable(@Nonnull final State st,
+	                                  @Nonnull final String commandname) {
+		final Alias alias=Alias.getAlias(st,commandname);
+		if (alias==null) { throw new UserInputLookupFailureException("Unknown command alias."+commandname); }
+		final JSONObject template=alias.getTemplate();
+		return new AliasCommand(st,commandname,template);
+	}
+
 	/**
 	 * Constructs a command map based on the known aliases.
 	 *
@@ -39,16 +50,6 @@ public class AliasModule extends ModuleAnnotation {
 			commands.put(name,new AliasCommand(st,name,entry.getValue()));
 		}
 		return commands;
-	}
-
-	@Nonnull
-	@Override
-	public Command getCommandNullable(@Nonnull final State st,
-	                                  @Nonnull final String commandname) {
-		final Alias alias=Alias.getAlias(st,commandname);
-		if (alias==null) { throw new UserInputLookupFailureException("Unknown command alias."+commandname); }
-		final JSONObject template=alias.getTemplate();
-		return new AliasCommand(st,commandname,template);
 	}
 
 	@Override

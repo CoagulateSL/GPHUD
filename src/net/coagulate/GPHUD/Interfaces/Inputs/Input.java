@@ -14,20 +14,22 @@ import javax.annotation.Nonnull;
 public abstract class Input implements Renderable {
 	String value="";
 
+	// ---------- INSTANCE ----------
 	public abstract String getName();
 
+	@Nonnull
+	@Override
+	public String asText(final State st) {
+		throw new SystemImplementationException("Textual output does not support Input elements");
+	}
+
+	// ----- Internal Instance -----
 	private String getValue() { return value; }
 
 	@Nonnull
 	public Input setValue(final String value) {
 		this.value=value;
 		return this;
-	}
-
-	@Nonnull
-	@Override
-	public String asText(final State st) {
-		throw new SystemImplementationException("Textual output does not support Input elements");
 	}
 
 }

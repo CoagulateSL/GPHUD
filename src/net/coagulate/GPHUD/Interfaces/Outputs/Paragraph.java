@@ -24,6 +24,7 @@ public class Paragraph implements Renderable {
 		content=new Text("");
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

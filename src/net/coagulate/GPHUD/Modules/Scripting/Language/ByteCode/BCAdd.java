@@ -12,6 +12,7 @@ public class BCAdd extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explain() {

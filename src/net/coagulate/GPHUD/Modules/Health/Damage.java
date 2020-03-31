@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
  */
 public class Damage {
 
+	// ---------- STATICS ----------
 	public static void apply(@Nonnull final State st,
 	                         @Nonnull final Char targetchar,
 	                         final int damage,

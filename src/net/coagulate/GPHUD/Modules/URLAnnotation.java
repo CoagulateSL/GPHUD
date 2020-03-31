@@ -37,10 +37,8 @@ public class URLAnnotation extends URL {
 		generated=false;
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return generated; }
-
-	@Nonnull
-	public Method getMethod() { return method; }
 
 	@Nonnull
 	public String url() { return meta.url(); }
@@ -48,33 +46,19 @@ public class URLAnnotation extends URL {
 	@Nonnull
 	public String requiresPermission() { return meta.requiresPermission(); }
 
+	@Override
+	public boolean requiresAuthentication() {
+		return meta.requiresAuthentication();
+	}
+
 	@Nonnull
 	public String getFullName() { return module.getName()+"."+getName(); }
 
 	public String getName() { return method.getName(); }
 
-	public void checkUnique() {
-		if (inuse.contains(url())) { throw new SystemImplementationException("URL "+url()+" is already claimed"); }
-		inuse.add(url());
-	}
-
-	private void validate(final State st) {
-		if (!requiresPermission().isEmpty()) {
-			Modules.validatePermission(st,requiresPermission());
-		}
-		Module.checkPublicStatic(method);
-		final Class<?>[] params=method.getParameterTypes();
-		final String fullname=method.getDeclaringClass().getName()+"."+method.getName();
-		if (params.length!=2) {
-			throw new SystemImplementationException("Method "+fullname+" must have 2 arguments (State,SafeMap) but has "+params.length);
-		}
-		if (params[0]!=State.class) {
-			throw new SystemImplementationException("Method "+fullname+" must have State as its first argument");
-		}
-		if (params[1]!=SafeMap.class) {
-			throw new SystemImplementationException("Method "+fullname+" must have SafeMap as its second argument");
-		}
-
+	@Nonnull
+	public String getMethodName() {
+		return method.getDeclaringClass().getName()+"."+method.getName()+"()";
 	}
 
 	public void run(@Nonnull final State st,
@@ -109,12 +93,30 @@ public class URLAnnotation extends URL {
 	}
 
 	@Nonnull
-	public String getMethodName() {
-		return method.getDeclaringClass().getName()+"."+method.getName()+"()";
+	public Method getMethod() { return method; }
+
+	public void checkUnique() {
+		if (inuse.contains(url())) { throw new SystemImplementationException("URL "+url()+" is already claimed"); }
+		inuse.add(url());
 	}
 
-	@Override
-	public boolean requiresAuthentication() {
-		return meta.requiresAuthentication();
+	// ----- Internal Instance -----
+	private void validate(final State st) {
+		if (!requiresPermission().isEmpty()) {
+			Modules.validatePermission(st,requiresPermission());
+		}
+		Module.checkPublicStatic(method);
+		final Class<?>[] params=method.getParameterTypes();
+		final String fullname=method.getDeclaringClass().getName()+"."+method.getName();
+		if (params.length!=2) {
+			throw new SystemImplementationException("Method "+fullname+" must have 2 arguments (State,SafeMap) but has "+params.length);
+		}
+		if (params[0]!=State.class) {
+			throw new SystemImplementationException("Method "+fullname+" must have State as its first argument");
+		}
+		if (params[1]!=SafeMap.class) {
+			throw new SystemImplementationException("Method "+fullname+" must have SafeMap as its second argument");
+		}
+
 	}
 }

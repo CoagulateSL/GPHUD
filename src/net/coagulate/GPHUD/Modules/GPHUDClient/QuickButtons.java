@@ -21,47 +21,75 @@ import javax.annotation.Nonnull;
  */
 public class QuickButtons {
 
-	@Commands(description="Triggered when quick button 1 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
+	// ---------- STATICS ----------
+	@Commands(description="Triggered when quick button 1 is pressed",
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          context=Context.CHARACTER,
+	          permitObject=false,
 	          permitScripting=false)
 	public static Response quickButton1(@Nonnull final State st) {
 		return quickButton(st,1);
 	}
 
-	@Commands(description="Triggered when quick button 2 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
+	@Commands(description="Triggered when quick button 2 is pressed",
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          context=Context.CHARACTER,
+	          permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton2(@Nonnull final State st){
+	public static Response quickButton2(@Nonnull final State st) {
 		return quickButton(st,2);
 	}
 
-	@Commands(description="Triggered when quick button 3 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
+	@Commands(description="Triggered when quick button 3 is pressed",
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          context=Context.CHARACTER,
+	          permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton3(@Nonnull final State st){
+	public static Response quickButton3(@Nonnull final State st) {
 		return quickButton(st,3);
 	}
 
-	@Commands(description="Triggered when quick button 4 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
+	@Commands(description="Triggered when quick button 4 is pressed",
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          context=Context.CHARACTER,
+	          permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton4(@Nonnull final State st){
+	public static Response quickButton4(@Nonnull final State st) {
 		return quickButton(st,4);
 	}
 
-	@Commands(description="Triggered when quick button 5 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
+	@Commands(description="Triggered when quick button 5 is pressed",
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          context=Context.CHARACTER,
+	          permitObject=false,
 	          permitScripting=false)
-	public static Response quickButton5(@Nonnull final State st){
+	public static Response quickButton5(@Nonnull final State st) {
 		return quickButton(st,5);
 	}
 
-	@Commands(description="Triggered when quick button 6 is pressed", permitConsole=false, permitUserWeb=false, context=Context.CHARACTER, permitObject=false,
+	@Commands(description="Triggered when quick button 6 is pressed",
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          context=Context.CHARACTER,
+	          permitObject=false,
 	          permitScripting=false)
 	public static Response quickButton6(@Nonnull final State st) {
 		return quickButton(st,6);
 	}
 
+	// ----- Internal Statics -----
 	static Response quickButton(@Nonnull final State st,
 	                            final int button) {
 		final String commandname=st.getKV("GPHUDClient.QuickButton"+button).value();
 		if (commandname==null || commandname.isEmpty()) { return new JSONResponse(new JSONObject()); }
-		if (commandname.toLowerCase().startsWith("gphudclient.quickbutton")) { throw new UserConfigurationException("Quick button "+button+" is not permitted to call another quick button ("+commandname+")"); }
+		if (commandname.toLowerCase().startsWith("gphudclient.quickbutton")) {
+			throw new UserConfigurationException("Quick button "+button+" is not permitted to call another quick button ("+commandname+")");
+		}
 		return templateOrRun(st,commandname);
 	}
 

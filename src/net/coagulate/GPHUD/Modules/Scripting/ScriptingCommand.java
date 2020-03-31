@@ -18,6 +18,7 @@ public class ScriptingCommand extends Command {
 
 	public ScriptingCommand(final Scripts script) { this.script=script; }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Method getMethod() {
@@ -25,13 +26,6 @@ public class ScriptingCommand extends Command {
 		catch (@Nonnull final NoSuchMethodException e) {
 			throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",e);
 		}
-	}
-
-	@Nonnull
-	public Response execute(@Nonnull final State st) {
-		final GSVM vm=new GSVM(script.getByteCode());
-		//System.out.println("Script about to execute "+script.getNameSafe());
-		return vm.execute(st);
 	}
 
 	@Override
@@ -63,20 +57,20 @@ public class ScriptingCommand extends Command {
 	}
 
 	@Override
+	public boolean permitObject() { return true; }
+
+	@Override
 	public boolean permitConsole() {
 		return true;
 	}
 
 	@Override
-	public boolean permitScripting() {
+	public boolean permitUserWeb() {
 		return false;
 	}
 
 	@Override
-	public boolean permitObject() { return true; }
-
-	@Override
-	public boolean permitUserWeb() {
+	public boolean permitScripting() {
 		return false;
 	}
 
@@ -101,5 +95,12 @@ public class ScriptingCommand extends Command {
 	@Override
 	public String getName() {
 		return script.getName();
+	}
+
+	@Nonnull
+	public Response execute(@Nonnull final State st) {
+		final GSVM vm=new GSVM(script.getByteCode());
+		//System.out.println("Script about to execute "+script.getNameSafe());
+		return vm.execute(st);
 	}
 }

@@ -28,37 +28,9 @@ public class MenuArgument extends Argument {
 		meta=definition;
 	}
 
-	@Nonnull
-	public List<String> getChoices(final State st) {
-		final List<String> options=new ArrayList<>();
-		for (int i=1;i<=12;i++) {
-			if (meta.has("button"+i)) {
-				options.add(meta.getString("button"+i));
-			}
-		}
-		return options;
-	}
-
-	@Nonnull
-	@Override
-	public String description() {
-		if (override!=null) { return override; }
-		return "Choice of menu item";
-	}
-
-	@Nonnull
-	@Override
-	public String getName() {
-		return "choice";
-	}
-
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
-		return true;
-	}
-
-	@Override
-	public boolean mandatory() {
 		return true;
 	}
 
@@ -70,8 +42,26 @@ public class MenuArgument extends Argument {
 
 	@Nonnull
 	@Override
+	public String description() {
+		if (override!=null) { return override; }
+		return "Choice of menu item";
+	}
+
+	@Override
+	public boolean mandatory() {
+		return true;
+	}
+
+	@Nonnull
+	@Override
 	public Class<String> objectType() {
 		return String.class;
+	}
+
+	@Nonnull
+	@Override
+	public String getName() {
+		return "choice";
 	}
 
 	@Override
@@ -80,13 +70,24 @@ public class MenuArgument extends Argument {
 	}
 
 	@Override
+	public int max() {
+		return 24; // i think
+	}
+
+	@Override
 	public void overrideDescription(final String n) {
 		override=n;
 	}
 
-	@Override
-	public int max() {
-		return 24; // i think
+	@Nonnull
+	public List<String> getChoices(final State st) {
+		final List<String> options=new ArrayList<>();
+		for (int i=1;i<=12;i++) {
+			if (meta.has("button"+i)) {
+				options.add(meta.getString("button"+i));
+			}
+		}
+		return options;
 	}
 
 

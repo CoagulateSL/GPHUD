@@ -22,6 +22,7 @@ import java.util.logging.Level;
  * @author Iain Price
  */
 public abstract class CookBook {
+	// ----- Internal Statics -----
 	protected static void charAttribute(@Nonnull final State st,
 	                                    final boolean act,
 	                                    @Nonnull final Table t,

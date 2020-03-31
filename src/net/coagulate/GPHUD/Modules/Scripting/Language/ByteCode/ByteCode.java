@@ -23,6 +23,7 @@ public abstract class ByteCode {
 
 	public ByteCode(@Nullable final ParseNode n) { sourcenode=n; }
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static ByteCode load(@Nonnull final GSVM vm) {
 		final byte instruction=vm.bytecode[vm.PC];
@@ -96,6 +97,7 @@ public abstract class ByteCode {
 
 	public static InstructionSet get(final byte b) { return map.get(b); }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public ByteCode node(final ParseNode n) {
 		sourcenode=n;
@@ -115,6 +117,11 @@ public abstract class ByteCode {
 		return getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
 	}
 
+	public abstract void execute(State st,
+	                             GSVM vm,
+	                             boolean simulation);
+
+	// ----- Internal Instance -----
 	void addInt(@Nonnull final List<Byte> bytes,
 	            final int a) {
 		/*System.out.println("Writing "+
@@ -133,10 +140,6 @@ public abstract class ByteCode {
 		bytes.add((byte) ((a >> 8)&0xff));
 		bytes.add((byte) (a&0xff));
 	}
-
-	public abstract void execute(State st,
-	                             GSVM vm,
-	                             boolean simulation);
 
 	public enum InstructionSet { // max 255 instructions (haha)
 		Debug((byte) 0),
@@ -172,6 +175,7 @@ public abstract class ByteCode {
 			map.put(value,this);
 		}
 
+		// ---------- INSTANCE ----------
 		public byte get() { return value; }
 	}
 }

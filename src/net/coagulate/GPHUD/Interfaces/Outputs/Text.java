@@ -16,6 +16,7 @@ public class Text implements Renderable {
 
 	public Text(@Nonnull final String s) { content=s; }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

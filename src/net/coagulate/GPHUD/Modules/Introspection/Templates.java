@@ -24,8 +24,10 @@ import static java.util.logging.Level.FINE;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Templates {
+	// ---------- STATICS ----------
 	@URLs(url="/introspection/templates")
-	@SideSubMenus(name="Templates", priority=25)
+	@SideSubMenus(name="Templates",
+	              priority=25)
 	public static void listTemplates(@Nonnull final State st,
 	                                 final SafeMap values) {
 		final Form f=st.form();

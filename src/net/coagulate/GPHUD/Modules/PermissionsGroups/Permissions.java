@@ -24,18 +24,25 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Permissions {
-	@URLs(url="/permissionsgroups/addpermission", requiresPermission="Instance.ManagePermissions")
+	// ---------- STATICS ----------
+	@URLs(url="/permissionsgroups/addpermission",
+	      requiresPermission="Instance.ManagePermissions")
 	public static void addPermissionForm(@Nonnull final State st,
 	                                     @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"permissionsgroups.addpermission",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Add a permission to a permission group", requiresPermission="Instance.ManagePermissions")
+	@Commands(context=Context.AVATAR,
+	          description="Add a permission to a permission group",
+	          requiresPermission="Instance.ManagePermissions")
 	public static Response addPermission(@Nonnull final State st,
-	                                     @Nonnull @Arguments(description="Permissions group to add permission to", type=ArgumentType.PERMISSIONSGROUP)
-	                                     final PermissionsGroup permissionsgroup,
-	                                     @Nonnull @Arguments(description="Permission to add to group", type=ArgumentType.PERMISSION) final String permission) {
+	                                     @Nonnull
+	                                     @Arguments(description="Permissions group to add permission to",
+	                                                type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup,
+	                                     @Nonnull
+	                                     @Arguments(description="Permission to add to group",
+	                                                type=ArgumentType.PERMISSION) final String permission) {
 		Modules.validatePermission(st,permission);
 		final Permission permissionref=Modules.getPermission(st,permission);
 		if (permissionref==null) {
@@ -52,18 +59,24 @@ public abstract class Permissions {
 		return new OKResponse("Added "+permission+" to permissions group "+permissionsgroup.getNameSafe());
 	}
 
-	@URLs(url="/permissionsgroups/delpermission", requiresPermission="Instance.ManagePermissions")
+	@URLs(url="/permissionsgroups/delpermission",
+	      requiresPermission="Instance.ManagePermissions")
 	public static void delPermissionForm(@Nonnull final State st,
 	                                     @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"permissionsgroups.delpermission",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Remove a permission from a permissions group", requiresPermission="Instance.ManagePermissions")
+	@Commands(context=Context.AVATAR,
+	          description="Remove a permission from a permissions group",
+	          requiresPermission="Instance.ManagePermissions")
 	public static Response delPermission(@Nonnull final State st,
-	                                     @Nonnull @Arguments(description="Permissions group to remove permission from", type=ArgumentType.PERMISSIONSGROUP)
-	                                     final PermissionsGroup permissionsgroup,
-	                                     @Arguments(description="Permission to remove from group", type=ArgumentType.TEXT_CLEAN, max=256) final String permission) {
+	                                     @Nonnull
+	                                     @Arguments(description="Permissions group to remove permission from",
+	                                                type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup,
+	                                     @Arguments(description="Permission to remove from group",
+	                                                type=ArgumentType.TEXT_CLEAN,
+	                                                max=256) final String permission) {
 		try { permissionsgroup.removePermission(permission); }
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove permission from permissions group - "+e.getMessage());

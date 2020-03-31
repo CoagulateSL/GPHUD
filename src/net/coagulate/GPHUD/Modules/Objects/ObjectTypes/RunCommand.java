@@ -22,6 +22,7 @@ public class RunCommand extends ObjectType {
 		super(st,object);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explainHtml() {

@@ -13,11 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class API {
-	private API(){}
+	private API() {}
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command", parameters="Character caller - User invoking the API<br>String apicall - name of API command "+
-			"to"+" call<br>BCList parameters - list of STRING parameters to the target API", returns="A Response", notes="", privileged=false)
+	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command",
+	                        parameters="Character caller - User invoking the API<br>String apicall - name of API command "+"to"+" call<br>BCList parameters - list of STRING "
+			                        +"parameters to the target API",
+	                        returns="A Response",
+	                        notes="",
+	                        privileged=false)
 	public static BCResponse gsAPI(final State st,
 	                               @Nonnull final GSVM vm,
 	                               @Nonnull final BCCharacter caller,
@@ -27,8 +32,12 @@ public class API {
 	}
 
 	@Nonnull
-	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command with full permissions", parameters="Character caller - User invoking the API<br>String apicall - "
-			+"name of API command "+"to"+" call<br>BCList parameters - list of STRING parameters to the target API", returns="A Response", notes="", privileged=true)
+	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command with full permissions",
+	                        parameters="Character caller - User invoking the API<br>String apicall - "+"name of API command "+"to"+" call<br>BCList parameters - list of "+
+			                        "STRING parameters to the target API",
+	                        returns="A Response",
+	                        notes="",
+	                        privileged=true)
 	public static BCResponse gsElevatedAPI(final State st,
 	                                       @Nonnull final GSVM vm,
 	                                       @Nonnull final BCCharacter caller,
@@ -37,6 +46,7 @@ public class API {
 		return gsAPI(vm,caller,apicall,parameters,true);
 	}
 
+	// ----- Internal Statics -----
 	private static BCResponse gsAPI(@Nonnull final GSVM vm,
 	                                @Nonnull final BCCharacter caller,
 	                                @Nonnull final BCString apicall,

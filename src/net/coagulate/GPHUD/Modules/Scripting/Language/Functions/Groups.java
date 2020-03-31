@@ -12,9 +12,13 @@ import javax.annotation.Nonnull;
 public class Groups {
 	private Groups() {}
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@GSFunctions.GSFunction(description="Gets the group name for a given attribute", returns="String - name of group of appropriate subtype, or the empty string if none",
-	                        notes="", parameters="Character - character to interrogate<br>String - type of group to get", privileged=false)
+	@GSFunctions.GSFunction(description="Gets the group name for a given attribute",
+	                        returns="String - name of group of appropriate subtype, or the empty string if none",
+	                        notes="",
+	                        parameters="Character - character to interrogate<br>String - type of group to get",
+	                        privileged=false)
 	public static BCString gsGetGroupByType(final State st,
 	                                        final GSVM vm,
 	                                        @Nonnull final BCCharacter target,
@@ -26,8 +30,11 @@ public class Groups {
 	}
 
 	@Nonnull
-	@GSFunctions.GSFunction(description="Gets a List of group names for a given group type", returns="A List of Strings containing all groups of that type", parameters=
-			"String - type of group to list", notes="", privileged=false)
+	@GSFunctions.GSFunction(description="Gets a List of group names for a given group type",
+	                        returns="A List of Strings containing all groups of that type",
+	                        parameters="String - type of group to list",
+	                        notes="",
+	                        privileged=false)
 	public static BCList gsGetGroupsByType(final State st,
 	                                       final GSVM vm,
 	                                       @Nonnull final BCString grouptype) {
@@ -39,8 +46,11 @@ public class Groups {
 	}
 
 	@Nonnull
-	@GSFunctions.GSFunction(description="Gets a List of open group names for a given group type", returns="A List of Strings containing all open groups of that type",
-	                        parameters="String - type of group to list", notes="", privileged=false)
+	@GSFunctions.GSFunction(description="Gets a List of open group names for a given group type",
+	                        returns="A List of Strings containing all open groups of that type",
+	                        parameters="String - type of group to list",
+	                        notes="",
+	                        privileged=false)
 	public static BCList gsGetOpenGroupsByType(final State st,
 	                                           final GSVM vm,
 	                                           @Nonnull final BCString grouptype) {

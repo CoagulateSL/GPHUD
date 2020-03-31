@@ -27,6 +27,7 @@ public class MenuResponse implements Response {
 
 	public MenuResponse(@Nullable final String title) { header=title; }
 
+	// ---------- INSTANCE ----------
 	public void add(final Renderable r) { menu.add(r); }
 
 	@Nonnull

@@ -12,6 +12,7 @@ public class BCSubtract extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Subtract (Pop two, push one-two)"; }

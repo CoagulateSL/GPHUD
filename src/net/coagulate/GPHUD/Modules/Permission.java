@@ -16,6 +16,7 @@ public abstract class Permission {
 	public static final String YELLOW="#ffffdf";
 	public static final String GREEN="#dfffdf";
 
+	// ---------- INSTANCE ----------
 	public abstract Module getModule(State st);
 
 	@Nonnull
@@ -59,6 +60,7 @@ public abstract class Permission {
 	@Target(ElementType.PACKAGE)
 	@Repeatable(Permissionss.class)
 	public @interface Permissions {
+		// ---------- INSTANCE ----------
 		@Nonnull String name();
 
 		@Nonnull String description();
@@ -72,6 +74,7 @@ public abstract class Permission {
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface Permissionss {
+		// ---------- INSTANCE ----------
 		@Nonnull Permissions[] value();
 	}
 }

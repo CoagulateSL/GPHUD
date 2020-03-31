@@ -30,8 +30,13 @@ import java.util.List;
  */
 public abstract class GetMessages {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.CHARACTER, permitScripting=false, description="Get a message", permitConsole=false, permitUserWeb=false)
+	@Commands(context=Context.CHARACTER,
+	          permitScripting=false,
+	          description="Get a message",
+	          permitConsole=false,
+	          permitUserWeb=false)
 	public static Response getMessage(@Nonnull final State st) {
 		final Message m=st.getCharacter().getMessage();
 		if (m==null) { return new ErrorResponse("You have no outstanding messages."); }
@@ -44,16 +49,6 @@ public abstract class GetMessages {
 	}
 
 	@Nonnull
-	private static Response processFactionInvite(@Nonnull final State st,
-	                                             @Nonnull final JSONObject j) {
-		final Char from=Char.get(j.getInt("from"));
-		final CharacterGroup faction=CharacterGroup.get(j.getInt("to"));
-		final JSONObject template=Modules.getJSONTemplate(st,"gphudclient.acceptrejectmessage");
-		template.put("arg0description","You have been invited to join "+faction.getName()+" by "+from.getName());
-		return new JSONResponse(template);
-	}
-
-	@Nonnull
 	public static List<String> getAcceptReject(final State st) {
 		final List<String> options=new ArrayList<>();
 		options.add("Accept");
@@ -62,10 +57,15 @@ public abstract class GetMessages {
 	}
 
 	@Nonnull
-	@Commands(context=Context.CHARACTER, description="Accept/Reject a message", permitScripting=false, permitConsole=false, permitUserWeb=false)
+	@Commands(context=Context.CHARACTER,
+	          description="Accept/Reject a message",
+	          permitScripting=false,
+	          permitConsole=false,
+	          permitUserWeb=false)
 	public static Response acceptRejectMessage(@Nonnull final State st,
-	                                           @Arguments(type=ArgumentType.CHOICE, description="Accept or Reject the message", choiceMethod="getAcceptReject")
-	                                           final String response) {
+	                                           @Arguments(type=ArgumentType.CHOICE,
+	                                                      description="Accept or Reject the message",
+	                                                      choiceMethod="getAcceptReject") final String response) {
 		final Message m=st.getCharacter().getActiveMessage();
 		if (m==null) { return new ErrorResponse("You have no active message."); }
 
@@ -73,6 +73,17 @@ public abstract class GetMessages {
 		final String message=j.optString("message","");
 		if ("factioninvite".equalsIgnoreCase(message)) { return processFactionInviteResponse(st,m,j,response); }
 		throw new SystemImplementationException("Unable to find a message RESPONSE parser in GPHUDClient for message type '"+message+"'");
+	}
+
+	// ----- Internal Statics -----
+	@Nonnull
+	private static Response processFactionInvite(@Nonnull final State st,
+	                                             @Nonnull final JSONObject j) {
+		final Char from=Char.get(j.getInt("from"));
+		final CharacterGroup faction=CharacterGroup.get(j.getInt("to"));
+		final JSONObject template=Modules.getJSONTemplate(st,"gphudclient.acceptrejectmessage");
+		template.put("arg0description","You have been invited to join "+faction.getName()+" by "+from.getName());
+		return new JSONResponse(template);
 	}
 
 	@Nonnull

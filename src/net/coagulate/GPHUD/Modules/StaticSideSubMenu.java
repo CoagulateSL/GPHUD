@@ -23,6 +23,7 @@ public class StaticSideSubMenu extends SideSubMenu {
 	}
 
 
+	// ---------- INSTANCE ----------
 	@Override
 	public String name() {
 		return name;

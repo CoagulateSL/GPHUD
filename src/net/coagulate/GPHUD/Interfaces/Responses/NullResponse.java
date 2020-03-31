@@ -25,6 +25,7 @@ public class NullResponse implements Response {
 
 	public NullResponse() {}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {

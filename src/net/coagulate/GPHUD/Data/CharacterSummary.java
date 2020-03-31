@@ -38,6 +38,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 	@Nonnull
 	List<String> groupheaders=new ArrayList<>();
 
+	// ----- Internal Statics -----
 	@Nonnull
 	static String sortLink(final String current,
 	                       @Nonnull final String link) {
@@ -46,6 +47,7 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		return "<a href=\"?sort="+link+"\">"+link+"</a>";
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public Row headers(@Nonnull final State st) {
 		String uri=st.getDebasedURL().replaceAll("%20"," ");
@@ -90,13 +92,14 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		return r;
 	}
 
-	void setGroup(final String grouptype,
-	              final String groupname) {
-		groups.put(grouptype,groupname);
-	}
-
 	@Override
 	public int compareTo(@Nonnull final CharacterSummary o) {
 		return Integer.compare(id,o.id);
+	}
+
+	// ----- Internal Instance -----
+	void setGroup(final String grouptype,
+	              final String groupname) {
+		groups.put(grouptype,groupname);
 	}
 }

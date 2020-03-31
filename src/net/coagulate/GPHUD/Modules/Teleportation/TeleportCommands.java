@@ -20,14 +20,25 @@ import java.util.Set;
 
 public class TeleportCommands {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Command.Commands(description="Teleport the player to a given X, Y and Z", permitUserWeb=false, context=Command.Context.CHARACTER, permitConsole=false)
+	@Command.Commands(description="Teleport the player to a given X, Y and Z",
+	                  permitUserWeb=false,
+	                  context=Command.Context.CHARACTER,
+	                  permitConsole=false)
 	public static Response teleportTo(@Nonnull final State st,
-	                                  @Nonnull @Argument.Arguments(description="Region to teleport to (must be part of the instance", type=Argument.ArgumentType.REGION)
-	                                  final Region region,
-	                                  @Argument.Arguments(description="X co-ordinate", type=Argument.ArgumentType.FLOAT, max=256) final Float x,
-	                                  @Argument.Arguments(description="Y co-ordinate", type=Argument.ArgumentType.FLOAT, max=256) final Float y,
-	                                  @Argument.Arguments(description="Z co-ordinate", type=Argument.ArgumentType.FLOAT, max=4096) final Float z) {
+	                                  @Nonnull
+	                                  @Argument.Arguments(description="Region to teleport to (must be part of the instance",
+	                                                      type=Argument.ArgumentType.REGION) final Region region,
+	                                  @Argument.Arguments(description="X co-ordinate",
+	                                                      type=Argument.ArgumentType.FLOAT,
+	                                                      max=256) final Float x,
+	                                  @Argument.Arguments(description="Y co-ordinate",
+	                                                      type=Argument.ArgumentType.FLOAT,
+	                                                      max=256) final Float y,
+	                                  @Argument.Arguments(description="Z co-ordinate",
+	                                                      type=Argument.ArgumentType.FLOAT,
+	                                                      max=4096) final Float z) {
 		final JSONObject response=new JSONObject();
 		String teleportto=region.getGlobalCoordinates()+"|";
 		teleportto+="<"+x+","+y+","+z+">|";
@@ -38,12 +49,15 @@ public class TeleportCommands {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Creates a landmark at the current location", context=Command.Context.CHARACTER, permitUserWeb=false, permitScripting=false,
+	@Command.Commands(description="Creates a landmark at the current location",
+	                  context=Command.Context.CHARACTER,
+	                  permitUserWeb=false,
+	                  permitScripting=false,
 	                  requiresPermission="Teleportation.CreateLandmark")
 	public static Response createLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(description="Name for the landmark, replaces it if it already exists", max=64, type=
-			                                      Argument.ArgumentType.TEXT_ONELINE)
-	                                      final String name) {
+	                                      @Argument.Arguments(description="Name for the landmark, replaces it if it already exists",
+	                                                          max=64,
+	                                                          type=Argument.ArgumentType.TEXT_ONELINE) final String name) {
 		String position=null;
 		String rotation=null;
 		for (final Header h: st.headers()) {
@@ -73,9 +87,13 @@ public class TeleportCommands {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Remove a landmark by name", context=Command.Context.AVATAR, requiresPermission="Teleportation.DeleteLandmark")
+	@Command.Commands(description="Remove a landmark by name",
+	                  context=Command.Context.AVATAR,
+	                  requiresPermission="Teleportation.DeleteLandmark")
 	public static Response deleteLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(description="Landmark name to remove", type=Argument.ArgumentType.TEXT_ONELINE, max=64) final String name) {
+	                                      @Argument.Arguments(description="Landmark name to remove",
+	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                          max=64) final String name) {
 		final Landmarks landmark=Landmarks.find(st.getInstance(),name);
 		if (landmark==null) { return new ErrorResponse("Can not delete landmark "+name+" - it does not exist"); }
 		Landmarks.obliterate(st.getInstance(),name);
@@ -84,19 +102,19 @@ public class TeleportCommands {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Teleport to a landmark", context=Command.Context.CHARACTER, permitUserWeb=false, permitConsole=false)
+	@Command.Commands(description="Teleport to a landmark",
+	                  context=Command.Context.CHARACTER,
+	                  permitUserWeb=false,
+	                  permitConsole=false)
 	public static Response go(@Nonnull final State st,
-	                          @Argument.Arguments(description="Landmark name to teleport to", type=Argument.ArgumentType.TEXT_ONELINE, max=64) final String landmark) {
+	                          @Argument.Arguments(description="Landmark name to teleport to",
+	                                              type=Argument.ArgumentType.TEXT_ONELINE,
+	                                              max=64) final String landmark) {
 		final Landmarks lm=st.getInstance().getLandmark(landmark);
 		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
 		final JSONObject tp=new JSONObject();
 		tp.put("teleport",lm.getHUDRepresentation(false));
-		Audit.audit(true,
-		            st,
-		            Audit.OPERATOR.CHARACTER,
-		            null,
-		            null,
-		            "Move",
+		Audit.audit(true,st,Audit.OPERATOR.CHARACTER,null,null,"Move",
 		            st.getCharacter().getName(),
 		            "",
 		            landmark,

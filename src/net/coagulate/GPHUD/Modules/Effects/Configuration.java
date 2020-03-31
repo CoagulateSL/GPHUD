@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 
 public class Configuration {
 
+	// ---------- STATICS ----------
 	@URL.URLs(url="/configuration/Effects")
 	public static void configPage(@Nonnull final State st,
 	                              final SafeMap values) {
@@ -22,15 +23,15 @@ public class Configuration {
 		final Table at=new Table();
 		f.add(at);
 		at.add(new HeaderRow().add("Name"));
-		for (final Effect effect:Effect.getAll(st.getInstance())) {
+		for (final Effect effect: Effect.getAll(st.getInstance())) {
 			at.openRow();
 			at.add(effect);
 			if (st.hasPermission("Effects.Delete")) {
-				at.add(new Form(st, true, "./Effects/Delete", "Delete", "name", effect.getName()));
+				at.add(new Form(st,true,"./Effects/Delete","Delete","name",effect.getName()));
 			}
 		}
 		if (st.hasPermission("Effects.Create")) {
-			f.add(new Form(st, true, "./Effects/Create", "Create Effect"));
+			f.add(new Form(st,true,"./Effects/Create","Create Effect"));
 		}
 	}
 

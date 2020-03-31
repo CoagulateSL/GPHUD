@@ -14,6 +14,7 @@ public class BCGreaterThanEqual extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "GreaterThan (Pop two, compare, push 1 if greater than, else 0)"; }

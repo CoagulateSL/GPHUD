@@ -148,6 +148,7 @@ public class Transmission extends Thread {
 		delay=i;
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean failed() { return !succeeded; }
 
 	@Nullable
@@ -242,6 +243,7 @@ public class Transmission extends Thread {
 		succeeded=true;
 	}
 
+	// ----- Internal Instance -----
 	@Nonnull
 	private String sendAttempt() throws IOException {
 		final boolean debug=false;

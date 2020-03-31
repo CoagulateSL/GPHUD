@@ -22,6 +22,7 @@ public class BCGroup extends ByteCodeDataType {
 		this.content=content;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String explain() { return "Group ("+content+")"; }
 

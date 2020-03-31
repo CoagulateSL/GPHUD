@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Messages {
+	// ---------- STATICS ----------
 	@URLs(url="/hud/listmessages")
 	public static void messagesListHUD(@Nonnull final State st,
 	                                   @Nonnull final SafeMap values) {

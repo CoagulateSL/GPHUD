@@ -24,6 +24,7 @@ import java.util.Map;
  */
 public abstract class MenuConfig {
 
+	// ---------- STATICS ----------
 	@URLs(url="/configuration/menus")
 	public static void configure(@Nonnull final State st,
 	                             final SafeMap values) {
@@ -101,7 +102,8 @@ public abstract class MenuConfig {
 
 	}
 
-	@URLs(url="/configuration/menus/create", requiresPermission="Menus.Config")
+	@URLs(url="/configuration/menus/create",
+	      requiresPermission="Menus.Config")
 	public static void createMenu(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty()) {

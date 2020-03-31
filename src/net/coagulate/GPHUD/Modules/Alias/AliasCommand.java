@@ -52,6 +52,7 @@ public class AliasCommand extends Command {
 		}
 	}
 
+	// ---------- INSTANCE ----------
 	public JSONObject getDefinition() { return definition; }
 
 	@Nonnull
@@ -62,10 +63,18 @@ public class AliasCommand extends Command {
 		return targetcommand;
 	}
 
+	@Nonnull
 	@Override
-	public Context context() {
-		if (targetcommand==null) { return Context.ANY; }
-		return targetcommand.context();
+	public Method getMethod() {
+		if (targetcommand==null) {
+			throw new SystemImplementationException("Unable to getMethod on null targetcommand");
+		}
+		return targetcommand.getMethod();
+	}
+
+	@Override
+	public boolean isGenerated() {
+		return true;
 	}
 
 	@Override
@@ -74,19 +83,47 @@ public class AliasCommand extends Command {
 		return targetcommand.description();
 	}
 
-
 	@Override
-	public List<String> getArgumentNames(final State st) {
-		if (targetcommand==null) { return new ArrayList<>(); }
-		final List<String> args=targetcommand.getArgumentNames(st);
-		for (final String key: definition.keySet()) {
-			args.remove(key);
-		}
-		return args;
+	public String requiresPermission() {
+		if (targetcommand==null) { return ""; }
+		return targetcommand.requiresPermission();
 	}
 
 	@Override
-	public int getArgumentCount() { return getArguments().size(); }
+	public Context context() {
+		if (targetcommand==null) { return Context.ANY; }
+		return targetcommand.context();
+	}
+
+	@Override
+	public boolean permitJSON() {
+		if (targetcommand==null) { return false; }
+		return targetcommand.permitJSON();
+	}
+
+	@Override
+	public boolean permitObject() {
+		if (targetcommand==null) { return false; }
+		return targetcommand.permitObject();
+	}
+
+	@Override
+	public boolean permitConsole() {
+		if (targetcommand==null) { return false; }
+		return targetcommand.permitConsole();
+	}
+
+	@Override
+	public boolean permitUserWeb() {
+		if (targetcommand==null) { return false; }
+		return targetcommand.permitUserWeb();
+	}
+
+	@Override
+	public boolean permitScripting() {
+		if (targetcommand==null) { return false; }
+		return targetcommand.permitScripting();
+	}
 
 	@Nonnull
 	@Override
@@ -103,6 +140,9 @@ public class AliasCommand extends Command {
 		return remainingargs;
 	}
 
+	@Override
+	public int getArgumentCount() { return getArguments().size(); }
+
 	@Nonnull
 	@Override
 	public String getFullName() { return "Alias."+getName(); }
@@ -111,46 +151,19 @@ public class AliasCommand extends Command {
 	public String getName() { return name; }
 
 	@Override
-	public boolean permitConsole() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitConsole();
+	public List<String> getArgumentNames(final State st) {
+		if (targetcommand==null) { return new ArrayList<>(); }
+		final List<String> args=targetcommand.getArgumentNames(st);
+		for (final String key: definition.keySet()) {
+			args.remove(key);
+		}
+		return args;
 	}
 
 	@Override
-	public boolean permitJSON() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitJSON();
-	}
-
-	@Override
-	public boolean permitScripting() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitScripting();
-	}
-
-	@Override
-	public boolean permitObject() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitObject();
-	}
-
-	@Override
-	public boolean permitUserWeb() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitUserWeb();
-	}
-
-	@Nonnull
-	@Override
-	public String getFullMethodName() {
-		if (targetcommand==null) { return "Can not invoke - "+fail; }
-		return getClass().getCanonicalName()+"("+getName()+"), will invoke "+targetcommand.getFullMethodName();
-	}
-
-	@Override
-	public String requiresPermission() {
-		if (targetcommand==null) { return ""; }
-		return targetcommand.requiresPermission();
+	public List<Argument> getInvokingArguments() {
+		if (targetcommand==null) { return new ArrayList<>(); }
+		return targetcommand.getInvokingArguments();
 	}
 
 	@Override
@@ -223,28 +236,15 @@ public class AliasCommand extends Command {
 
 	@Nonnull
 	@Override
-	public Method getMethod() {
-		if (targetcommand==null) {
-			throw new SystemImplementationException("Unable to getMethod on null targetcommand");
-		}
-		return targetcommand.getMethod();
-	}
-
-	@Override
-	public List<Argument> getInvokingArguments() {
-		if (targetcommand==null) { return new ArrayList<>(); }
-		return targetcommand.getInvokingArguments();
+	public String getFullMethodName() {
+		if (targetcommand==null) { return "Can not invoke - "+fail; }
+		return getClass().getCanonicalName()+"("+getName()+"), will invoke "+targetcommand.getFullMethodName();
 	}
 
 	@Override
 	public int getInvokingArgumentCount() {
 		if (targetcommand==null) { return 0; }
 		return targetcommand.getInvokingArgumentCount();
-	}
-
-	@Override
-	public boolean isGenerated() {
-		return true;
 	}
 
 

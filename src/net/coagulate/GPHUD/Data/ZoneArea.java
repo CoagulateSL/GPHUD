@@ -17,6 +17,8 @@ public class ZoneArea extends TableRow {
 
 	protected ZoneArea(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -29,6 +31,7 @@ public class ZoneArea extends TableRow {
 		return (ZoneArea) factoryPut("ZoneArea",id,new ZoneArea(id));
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -39,6 +42,15 @@ public class ZoneArea extends TableRow {
 	@Override
 	public String getIdColumn() {
 		return "zoneareaid";
+	}
+
+	@Override
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getZone().getInstance()) {
+			throw new SystemConsistencyException("ZoneArea / State Instance mismatch");
+		}
 	}
 
 	@Nonnull
@@ -54,6 +66,23 @@ public class ZoneArea extends TableRow {
 	public String getLinkTarget() {
 		return "/configuration/zone/"+getId();
 	}
+
+	@Nonnull
+	@Override
+	public String getName() {
+		final String[] vectors=getVectors();
+		if (vectors==null) { return getRegion(true).getName()+"@NoPosition"; }
+		return getRegion(true).getName()+"@"+vectors[0]+"-"+vectors[1];
+	}
+
+	@Nullable
+	public String getKVTable() { return null; }
+
+	@Nullable
+	public String getKVIdField() { return null; }
+
+	@Override
+	protected int getNameCacheTime() { return 0; }
 
 	/**
 	 * Set the position for this zone area.
@@ -151,32 +180,6 @@ public class ZoneArea extends TableRow {
 		d("delete from zoneareas where zoneareaid=?",getId());
 	}
 
-	@Nullable
-	public String getKVTable() { return null; }
-
-	@Nullable
-	public String getKVIdField() { return null; }
-
 	public void flushKVCache(final State st) {}
-
-	@Override
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getZone().getInstance()) {
-			throw new SystemConsistencyException("ZoneArea / State Instance mismatch");
-		}
-	}
-
-	@Nonnull
-	@Override
-	public String getName() {
-		final String[] vectors=getVectors();
-		if (vectors==null) { return getRegion(true).getName()+"@NoPosition"; }
-		return getRegion(true).getName()+"@"+vectors[0]+"-"+vectors[1];
-	}
-
-	@Override
-	protected int getNameCacheTime() { return 0; }
 }
 

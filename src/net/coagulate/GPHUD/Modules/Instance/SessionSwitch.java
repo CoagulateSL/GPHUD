@@ -23,6 +23,7 @@ import java.util.Set;
  */
 public class SessionSwitch {
 
+	// ---------- STATICS ----------
 	@URLs(url="/switch/instance")
 	public static void switchInstance(@Nonnull final State st,
 	                                  @Nonnull final SafeMap values) {

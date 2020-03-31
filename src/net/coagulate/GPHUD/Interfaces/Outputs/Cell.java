@@ -47,12 +47,7 @@ public class Cell implements Renderable {
 		this.colspan=colspan;
 	}
 
-	@Nonnull
-	Renderable e() {
-		if (e==null) { throw new SystemBadValueException("Cell content was null"); }
-		return e;
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {
@@ -95,6 +90,13 @@ public class Cell implements Renderable {
 	public Cell align(final String align) {
 		this.align=align;
 		return this;
+	}
+
+	// ----- Internal Instance -----
+	@Nonnull
+	Renderable e() {
+		if (e==null) { throw new SystemBadValueException("Cell content was null"); }
+		return e;
 	}
 
 }

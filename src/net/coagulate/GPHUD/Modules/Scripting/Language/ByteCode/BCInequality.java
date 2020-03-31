@@ -12,6 +12,7 @@ public class BCInequality extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Inequality (Pop two, push 1 if unequal, 0 if equal)"; }

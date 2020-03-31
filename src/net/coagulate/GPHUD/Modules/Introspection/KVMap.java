@@ -19,8 +19,10 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class KVMap {
+	// ---------- STATICS ----------
 	@URLs(url="/introspection/kvmap")
-	@SideSubMenus(name="KeyValue Map", priority=10)
+	@SideSubMenus(name="KeyValue Map",
+	              priority=10)
 	public static void kvmap(@Nonnull final State st,
 	                         final SafeMap values) {
 		final Form f=st.form();

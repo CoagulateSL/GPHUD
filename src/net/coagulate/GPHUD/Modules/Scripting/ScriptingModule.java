@@ -17,6 +17,7 @@ public class ScriptingModule extends ModuleAnnotation {
 		super(name,annotation);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Command getCommandNullable(@Nonnull final State st,

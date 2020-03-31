@@ -12,6 +12,7 @@ public class BCMultiply extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Multiply (Pop two, multiply, push result)"; }

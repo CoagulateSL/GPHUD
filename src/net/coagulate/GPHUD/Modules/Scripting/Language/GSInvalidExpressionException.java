@@ -14,6 +14,7 @@ public class GSInvalidExpressionException extends GSException {
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Invalid Expression Exception}: "+getLocalizedMessage(); }
 }

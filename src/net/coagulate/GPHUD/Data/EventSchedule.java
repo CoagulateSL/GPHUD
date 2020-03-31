@@ -26,6 +26,8 @@ public class EventSchedule extends TableRow {
 
 	protected EventSchedule(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -37,6 +39,24 @@ public class EventSchedule extends TableRow {
 	public static EventSchedule get(final int id) {
 		return (EventSchedule) factoryPut("EventSchedule",id,new EventSchedule(id));
 	}
+
+	/**
+	 * Get the set of event schedules for a given event.
+	 *
+	 * @param e Event to load schedules for
+	 *
+	 * @return Set of EventSchedules for this event
+	 */
+	@Nonnull
+	public static Set<EventSchedule> get(@Nonnull final Event e) {
+		final Set<EventSchedule> schedule=new TreeSet<>();
+		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where eventid=?",e.getId())) {
+			schedule.add(get(r.getInt()));
+		}
+		return schedule;
+	}
+
+	// ----- Internal Statics -----
 
 	/**
 	 * Get a set of active events schedules that are in schedule and have started.
@@ -61,22 +81,7 @@ public class EventSchedule extends TableRow {
 		return events;
 	}
 
-	/**
-	 * Get the set of event schedules for a given event.
-	 *
-	 * @param e Event to load schedules for
-	 *
-	 * @return Set of EventSchedules for this event
-	 */
-	@Nonnull
-	public static Set<EventSchedule> get(@Nonnull final Event e) {
-		final Set<EventSchedule> schedule=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where eventid=?",e.getId())) {
-			schedule.add(get(r.getInt()));
-		}
-		return schedule;
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -87,6 +92,14 @@ public class EventSchedule extends TableRow {
 	@Override
 	public String getIdColumn() {
 		return "eventsscheduleid";
+	}
+
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getEvent().getInstance()) {
+			throw new SystemConsistencyException("EventSchedule / State Instance mismatch");
+		}
 	}
 
 	@Nonnull
@@ -102,9 +115,16 @@ public class EventSchedule extends TableRow {
 	}
 
 	@Nonnull
-	public Event getEvent() {
-		final int id=getInt("eventid");
-		return Event.get(id);
+	@Override
+	public String getName() {
+		// doesn't really have a name, so we'll make one up...
+		return pad(getIntNullable("starttime"),20)+"-"+pad(getIntNullable("endtime"),20)+"-"+getId();
+	}
+
+	@Nonnull
+	@Override
+	public String toString() {
+		return "[Schedule#"+getId()+"="+getName()+"]";
 	}
 
 	@Nullable
@@ -117,6 +137,14 @@ public class EventSchedule extends TableRow {
 	@Override
 	public String getKVIdField() {
 		return null;
+	}
+
+	protected int getNameCacheTime() { return 0; } // doesn't support name, dont cache (will crash before even calling this)
+
+	@Nonnull
+	public Event getEvent() {
+		final int id=getInt("eventid");
+		return Event.get(id);
 	}
 
 	/**
@@ -259,35 +287,13 @@ public class EventSchedule extends TableRow {
 		return ret;
 	}
 
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getEvent().getInstance()) {
-			throw new SystemConsistencyException("EventSchedule / State Instance mismatch");
-		}
-	}
-
-	protected int getNameCacheTime() { return 0; } // doesn't support name, dont cache (will crash before even calling this)
-
-	@Nonnull
-	@Override
-	public String getName() {
-		// doesn't really have a name, so we'll make one up...
-		return pad(getIntNullable("starttime"),20)+"-"+pad(getIntNullable("endtime"),20)+"-"+getId();
-	}
-
+	// ----- Internal Instance -----
 	@Nonnull
 	private String pad(final Integer padmeint,
 	                   final int howmuch) {
 		final StringBuilder padme=new StringBuilder(padmeint+"");
 		while (padme.length()<howmuch) { padme.append(" "); }
 		return padme.toString();
-	}
-
-	@Nonnull
-	@Override
-	public String toString() {
-		return "[Schedule#"+getId()+"="+getName()+"]";
 	}
 
 }

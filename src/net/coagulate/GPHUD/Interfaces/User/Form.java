@@ -69,6 +69,7 @@ public class Form implements Renderable {
 		}
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public Form add(final String s) { return add(new Text(s)); }
 
@@ -91,11 +92,6 @@ public class Form implements Renderable {
 		for (final Renderable r: list) { response.append(r.asText(st)); }
 		return response.toString();
 	}
-
-	@Nullable
-	public String getAction() { return action; }
-
-	public void setAction(@Nullable final String a) { action=a; }
 
 	@Nonnull
 	@Override
@@ -128,6 +124,11 @@ public class Form implements Renderable {
 		return new HashSet<>(list);
 	}
 
+	@Nullable
+	public String getAction() { return action; }
+
+	public void setAction(@Nullable final String a) { action=a; }
+
 	public void readValue(final String key,
 	                      final String value) {
 		//System.out.println(key+"="+value);
@@ -150,6 +151,16 @@ public class Form implements Renderable {
 		return scourRenderables(getSubRenderables(),name);
 	}
 
+	public void noForm() {
+		form=false;
+	}
+
+	@Nonnull
+	public Form br() {
+		return add("<br>");
+	}
+
+	// ----- Internal Instance -----
 	@Nullable
 	private Input scourRenderables(@Nonnull final Set<Renderable> subrenderables,
 	                               final String name) {
@@ -168,14 +179,5 @@ public class Form implements Renderable {
 			}
 		}
 		return null;
-	}
-
-	public void noForm() {
-		form=false;
-	}
-
-	@Nonnull
-	public Form br() {
-		return add("<br>");
 	}
 }

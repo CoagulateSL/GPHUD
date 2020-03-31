@@ -24,13 +24,11 @@ public class KVAnnotation extends KV {
 		generated=false;
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return generated; }
 
 	@Nonnull
 	public String fullname() { return module.getName()+"."+meta.name(); }
-
-	@Nonnull
-	public String name() { return meta.name(); }
 
 	@Nonnull
 	public KVSCOPE scope() { return meta.scope(); }
@@ -57,7 +55,10 @@ public class KVAnnotation extends KV {
 
 	public boolean hidden() { return meta.hidden(); }
 
+	@Nonnull
+	public String name() { return meta.name(); }
 
+	// ----- Internal Instance -----
 	private void validate(final State st) {
 		if (!editpermission().isEmpty()) {
 			Modules.validatePermission(st,editpermission());

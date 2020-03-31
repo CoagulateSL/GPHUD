@@ -13,6 +13,7 @@ import java.util.Set;
  */
 public class Separator implements Renderable {
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

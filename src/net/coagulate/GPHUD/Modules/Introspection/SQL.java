@@ -19,8 +19,10 @@ import java.util.*;
  * @author Iain Price <gphud@predestined.net>
  */
 public class SQL {
+	// ---------- STATICS ----------
 	@URLs(url="/introspection/sql")
-	@SideSubMenu.SideSubMenus(name="SQL", priority=9999)
+	@SideSubMenu.SideSubMenus(name="SQL",
+	                          priority=9999)
 	public static void sqlIndex(@Nonnull final State st,
 	                            final SafeMap values) {
 		if (!DBConnection.sqlLogging()) {

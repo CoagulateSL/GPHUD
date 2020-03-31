@@ -25,6 +25,7 @@ public class BCInteger extends ByteCodeDataType {
 		content=Integer.parseInt(tokens);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String explain() { return "Integer ("+content+")"; }
 
@@ -83,15 +84,15 @@ public class BCInteger extends ByteCodeDataType {
 		return new BCInteger(node(),toInteger()/var.toInteger());
 	}
 
-	@Nullable
-	@Override
-	public ByteCodeDataType clone() {
-		return new BCInteger(node(),content);
-	}
-
 	@Nonnull
 	@Override
 	public BCString toBCString() {
 		return new BCString(node(),content.toString());
+	}
+
+	@Nullable
+	@Override
+	public ByteCodeDataType clone() {
+		return new BCInteger(node(),content);
 	}
 }

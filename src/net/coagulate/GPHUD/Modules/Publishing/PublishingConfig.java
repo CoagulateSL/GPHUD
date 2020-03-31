@@ -16,6 +16,7 @@ import java.util.List;
 
 
 public class PublishingConfig {
+	// ---------- STATICS ----------
 	@URL.URLs(url="/configuration/publishing")
 	public static void configPage(@Nonnull final State st,
 	                              final SafeMap values) {

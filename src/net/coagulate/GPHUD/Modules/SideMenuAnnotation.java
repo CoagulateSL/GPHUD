@@ -17,6 +17,7 @@ public class SideMenuAnnotation extends SideMenu {
 		this.meta=meta;
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return generated; }
 
 	@Nonnull

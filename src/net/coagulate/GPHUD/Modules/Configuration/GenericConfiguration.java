@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public class GenericConfiguration {
 
+	// ---------- STATICS ----------
 	public static void page(@Nonnull final State st,
 	                        final SafeMap values,
 	                        @Nonnull final TableRow dbo,

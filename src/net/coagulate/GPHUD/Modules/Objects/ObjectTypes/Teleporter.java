@@ -23,27 +23,7 @@ public abstract class Teleporter extends ObjectType {
 		super(st,object);
 	}
 
-	@Nonnull
-	Response execute(@Nonnull final State st,
-	                 @Nonnull final Char clicker) {
-		if (!st.hasModule("Teleportation")) {
-			throw new UserConfigurationException("Teleporter can not function ; teleportation module is disabled at this instance.");
-		}
-		final JSONObject doteleport=new JSONObject();
-		doteleport.put("teleport",getTeleportTarget(st));
-		final String hudsays=json.optString("hudsays","");
-		if (!hudsays.isEmpty()) {
-			doteleport.put("message",hudsays);
-		}
-		new Transmission(clicker,doteleport).start();
-		final String teleportersays=json.optString("teleportersays","");
-		final JSONObject resp=new JSONObject();
-		if (!teleportersays.isEmpty()) {
-			resp.put("say",teleportersays);
-		}
-		return new JSONResponse(resp);
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String getTeleportTarget(@Nonnull final State st) {
 		final Landmarks landmark=Landmarks.find(st.getInstance(),json.optString("teleporttarget","unset"));
@@ -51,6 +31,18 @@ public abstract class Teleporter extends ObjectType {
 			throw new UserConfigurationException("Teleport target is not set on clickTeleporter "+object.getName());
 		}
 		return landmark.getHUDRepresentation(false);
+	}
+
+	public void editForm(@Nonnull final State st) {
+		final Table t=new Table();
+		t.add("Target Landmark").add(TeleportCommands.getDropDownList(st,"target",json.optString("teleporttarget","")));
+		t.openRow();
+		t.add("Teleporter says").add(new TextInput("teleportersays",json.optString("teleportersays","")));
+		t.openRow();
+		t.add("HUD says to wearer").add(new TextInput("hudsays",json.optString("hudsays","")));
+		t.openRow();
+		t.add(new Cell(new Button("Update"),2));
+		st.form().add(t);
 	}
 
 	public void update(@Nonnull final State st) {
@@ -77,15 +69,25 @@ public abstract class Teleporter extends ObjectType {
 		}
 	}
 
-	public void editForm(@Nonnull final State st) {
-		final Table t=new Table();
-		t.add("Target Landmark").add(TeleportCommands.getDropDownList(st,"target",json.optString("teleporttarget","")));
-		t.openRow();
-		t.add("Teleporter says").add(new TextInput("teleportersays",json.optString("teleportersays","")));
-		t.openRow();
-		t.add("HUD says to wearer").add(new TextInput("hudsays",json.optString("hudsays","")));
-		t.openRow();
-		t.add(new Cell(new Button("Update"),2));
-		st.form().add(t);
+	// ----- Internal Instance -----
+	@Nonnull
+	Response execute(@Nonnull final State st,
+	                 @Nonnull final Char clicker) {
+		if (!st.hasModule("Teleportation")) {
+			throw new UserConfigurationException("Teleporter can not function ; teleportation module is disabled at this instance.");
+		}
+		final JSONObject doteleport=new JSONObject();
+		doteleport.put("teleport",getTeleportTarget(st));
+		final String hudsays=json.optString("hudsays","");
+		if (!hudsays.isEmpty()) {
+			doteleport.put("message",hudsays);
+		}
+		new Transmission(clicker,doteleport).start();
+		final String teleportersays=json.optString("teleportersays","");
+		final JSONObject resp=new JSONObject();
+		if (!teleportersays.isEmpty()) {
+			resp.put("say",teleportersays);
+		}
+		return new JSONResponse(resp);
 	}
 }

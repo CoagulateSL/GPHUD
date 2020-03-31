@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class ViewRegion {
+	// ---------- STATICS ----------
 	@URLs(url="/regions/view/*")
 	public static void viewRegion(@Nonnull final State st,
 	                              final SafeMap values) {

@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
  */
 public class IntrospectionMenu {
 
+	// ---------- STATICS ----------
 	@URLs(url="/introspection/")
 	public static void menu(@Nonnull final State st,
 	                        final SafeMap values) {

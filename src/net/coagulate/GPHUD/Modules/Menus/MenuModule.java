@@ -22,6 +22,19 @@ public class MenuModule extends ModuleAnnotation {
 		super(name,annotation);
 	}
 
+	// ---------- INSTANCE ----------
+	@Override
+	public boolean isGenerated() {
+		return false;
+	}
+
+	@Nonnull
+	@Override
+	public Command getCommandNullable(@Nonnull final State st,
+	                                  @Nonnull final String commandname) {
+		return new MenuCommand(st,commandname,Menus.getMenu(st,commandname).getJSON());
+	}
+
 	@Nonnull
 	@Override
 	public Map<String,Command> getCommands(@Nonnull final State st) {
@@ -32,13 +45,6 @@ public class MenuModule extends ModuleAnnotation {
 			commands.put(name,new MenuCommand(st,name,entry.getValue()));
 		}
 		return commands;
-	}
-
-	@Nonnull
-	@Override
-	public Command getCommandNullable(@Nonnull final State st,
-	                                  @Nonnull final String commandname) {
-		return new MenuCommand(st,commandname,Menus.getMenu(st,commandname).getJSON());
 	}
 
 	@Override
@@ -64,11 +70,6 @@ public class MenuModule extends ModuleAnnotation {
 		j.put("button2","Invite");
 		j.put("command2","Faction.Invite");
 		Menus.create(st,"Faction","Faction Menu",j);
-	}
-
-	@Override
-	public boolean isGenerated() {
-		return false;
 	}
 
 }

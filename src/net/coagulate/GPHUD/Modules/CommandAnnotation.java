@@ -38,6 +38,7 @@ public class CommandAnnotation extends Command {
 		generated=false;
 	}
 
+	// ----- Internal Statics -----
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
@@ -47,11 +48,71 @@ public class CommandAnnotation extends Command {
 		}
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public Method getMethod() { return method; }
 
 	public boolean isGenerated() { return generated; }
 
+	@Nonnull
+	public String description() { return meta.description(); }
+
+	@Nonnull
+	public String requiresPermission() { return meta.requiresPermission(); }
+
+	@Nonnull
+	public Context context() { return meta.context(); }
+
+	public boolean permitJSON() { return meta.permitJSON(); }
+
+	public boolean permitObject() { return meta.permitObject(); }
+
+	public boolean permitConsole() { return meta.permitConsole(); }
+
+	public boolean permitUserWeb() { return meta.permitUserWeb(); }
+
+	public boolean permitScripting() { return meta.permitScripting(); }
+
+	@Nonnull
+	public List<Argument> getArguments() { return arguments; }
+
+	public int getArgumentCount() { return getArguments().size(); }
+
+	@Nonnull
+	public String getFullName() { return owner.getName()+"."+getName(); }
+
+	@Nonnull
+	public String getName() { return method.getName(); }
+
+	/**
+	 * Get the name of the arguments.
+	 *
+	 * @param st state
+	 *
+	 * @return list of argument names
+	 */
+	@Nonnull
+	public List<String> getArgumentNames(final State st) {
+		final List<String> arguments=new ArrayList<>();
+		for (final Argument a: getArguments()) {
+			arguments.add(a.getName());
+		}
+		return arguments;
+	}
+
+	@Nonnull
+	public List<Argument> getInvokingArguments() { return getArguments(); }
+
+	@Nonnull
+	public String getFullMethodName() {
+		return method.getDeclaringClass().getName()+"."+method.getName()+"()";
+	}
+
+	public int getInvokingArgumentCount() {
+		return getArgumentCount();
+	}
+
+	// ----- Internal Instance -----
 	void validate(final State st) {
 		if (!requiresPermission().isEmpty()) {
 			Modules.validatePermission(st,requiresPermission());
@@ -83,36 +144,6 @@ public class CommandAnnotation extends Command {
 
 	}
 
-	@Nonnull
-	public String description() { return meta.description(); }
-
-	@Nonnull
-	public String requiresPermission() { return meta.requiresPermission(); }
-
-	@Nonnull
-	public Context context() { return meta.context(); }
-
-	public boolean permitJSON() { return meta.permitJSON(); }
-
-	public boolean permitConsole() { return meta.permitConsole(); }
-
-	public boolean permitUserWeb() { return meta.permitUserWeb(); }
-
-	public boolean permitObject() { return meta.permitObject(); }
-
-	public boolean permitScripting() { return meta.permitScripting(); }
-
-	@Nonnull
-	public List<Argument> getArguments() { return arguments; }
-
-	public int getArgumentCount() { return getArguments().size(); }
-
-	@Nonnull
-	public String getFullName() { return owner.getName()+"."+getName(); }
-
-	@Nonnull
-	public String getName() { return method.getName(); }
-
 	private void populateArguments() {
 		arguments=new ArrayList<>();
 		boolean skipfirst=true; // first should be STATE
@@ -120,34 +151,6 @@ public class CommandAnnotation extends Command {
 			if (skipfirst) { skipfirst=false; }
 			else { arguments.add(new ArgumentAnnotation(this,p)); }
 		}
-	}
-
-	/**
-	 * Get the name of the arguments.
-	 *
-	 * @param st state
-	 *
-	 * @return list of argument names
-	 */
-	@Nonnull
-	public List<String> getArgumentNames(final State st) {
-		final List<String> arguments=new ArrayList<>();
-		for (final Argument a: getArguments()) {
-			arguments.add(a.getName());
-		}
-		return arguments;
-	}
-
-	@Nonnull
-	public List<Argument> getInvokingArguments() { return getArguments(); }
-
-	@Nonnull
-	public String getFullMethodName() {
-		return method.getDeclaringClass().getName()+"."+method.getName()+"()";
-	}
-
-	public int getInvokingArgumentCount() {
-		return getArgumentCount();
 	}
 
 

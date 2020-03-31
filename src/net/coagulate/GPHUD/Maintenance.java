@@ -31,6 +31,7 @@ public class Maintenance extends Thread {
 	public static final int PURGECONNECTIONS=60;
 	public static int cycle;
 
+	// ---------- STATICS ----------
 	public static void purgeConnections() {
 		try {
 			final int purgecount=Objects.getPurgeInactiveCount();
@@ -160,6 +161,7 @@ public class Maintenance extends Thread {
 		lock.unlock(lockserial);
 	}
 
+	// ---------- INSTANCE ----------
 	public void runAlways() {
 		try { refreshCharacterURLs(); }
 		catch (@Nonnull final Exception e) {
@@ -209,6 +211,7 @@ public class Maintenance extends Thread {
 			super(c,json,url);
 		}
 
+		// ---------- INSTANCE ----------
 		public void run() {
 			super.run();
 			if (!failed()) {

@@ -16,8 +16,10 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
  * @author iain
  */
 public abstract class Experience {
+	// ---------- STATICS ----------
 	@Nonnull
-	@Template(name="TOTALXP", description="Total experience")
+	@Template(name="TOTALXP",
+	          description="Total experience")
 	public static String getTotalXP(@Nonnull final State st,
 	                                final String key) {
 		if (!st.hasModule("Experience")) { return ""; }
@@ -26,7 +28,8 @@ public abstract class Experience {
 	}
 
 	@Nonnull
-	@Template(name="LEVEL", description="Current Level")
+	@Template(name="LEVEL",
+	          description="Current Level")
 	public static String getLevel(@Nonnull final State st,
 	                              final String key) {
 		if (!st.hasModule("Experience")) { return ""; }

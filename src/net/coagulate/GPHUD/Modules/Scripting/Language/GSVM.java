@@ -35,6 +35,8 @@ public class GSVM {
 	private int startPC;
 	private int pid;
 	private int suspensions;
+	@Nullable
+	private State invokerstate;
 
 	public GSVM(@Nonnull final Byte[] code) {
 		bytecode=new byte[code.length];
@@ -61,27 +63,11 @@ public class GSVM {
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
 	}
 
+	// ---------- INSTANCE ----------
 	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
 	public boolean suspended() { return suspended; }
 
 	public void invokeOnExit(final String commandname) {invokeonexit=commandname;}
-
-	private void initialiseVM(@Nonnull final State st) {
-		stack.clear();
-		PC=0;
-		IC=0;
-		startPC=0;
-		row=0;
-		column=0;
-		variables.clear();
-		simulation=false;
-		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
-		variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
-		invokerstate=st;
-		for (final Map.Entry<String,ByteCodeDataType> entry: introductions.entrySet()) {
-			variables.put(entry.getKey(),entry.getValue());
-		}
-	}
 
 	public ByteCodeDataType get(final String k) { return variables.get(k); }
 
@@ -175,36 +161,6 @@ public class GSVM {
 	}
 
 	@Nonnull
-	private Response executeloop(@Nonnull final State st) {
-		ExecutionStep currentstep=new ExecutionStep();
-		try {
-			while (PC<bytecode.length && !suspended) {
-				increaseIC();
-				//noinspection UnusedAssignment
-				currentstep=new ExecutionStep();
-				startPC=PC;
-				ByteCode.load(this).execute(st,this,false);
-			}
-		}
-		catch (@Nonnull final Throwable t) {
-			if (SystemException.class.isAssignableFrom(t.getClass())) {
-				throw new GSInternalError("VM exception: "+t+" "+at(),t);
-			}
-			if (UserException.class.isAssignableFrom(t.getClass())) { throw new GSExecutionException("Script error: "+t+" "+at(),t); }
-			if (t instanceof RuntimeException) { throw new GSInternalError("VM Runtime: "+t+" "+at(),t); }
-			throw new GSInternalError("VM Uncaught: "+t+" "+at(),t);
-		}
-		st.vm=null;
-		final JSONObject json=dequeue(st,st.getCharacter()).asJSON(st);
-		if (invokeonexit!=null && !suspended) {
-			json.put("incommand","runtemplate");
-			json.put("args","0");
-			json.put("invoke",invokeonexit);
-		}
-		return new JSONResponse(json);
-	}
-
-	@Nonnull
 	public String dumpStateToHtml() {
 		final StringBuilder ret=new StringBuilder();
 		ret.append("<h3>Stack</h3><br><table>");
@@ -238,11 +194,6 @@ public class GSVM {
 		return ret.toString();
 	}
 
-	private JSONObject getQueue(final Char c) {
-		if (!queue.containsKey(c)) { queue.put(c,new JSONObject()); }
-		return queue.get(c);
-	}
-
 	@Nonnull
 	public Response dequeue(final State st,
 	                        final Char target) {
@@ -269,7 +220,7 @@ public class GSVM {
 	}
 
 	public void queueSay(@Nonnull final Char ch,
-	                       final String message) {
+	                     final String message) {
 		final JSONObject out=getQueue(ch);
 		String m="";
 		if (out.has("sayashud")) { m=out.getString("sayashud")+"\n"; }
@@ -373,12 +324,13 @@ public class GSVM {
 	}
 
 	@Nullable
-	private State invokerstate;
-	@Nullable
 	public State getInvokerState() { return invokerstate; }
 
 	@Nonnull
-	public Response resume(@Nonnull final State st) { invokerstate=st; return executeloop(st); }
+	public Response resume(@Nonnull final State st) {
+		invokerstate=st;
+		return executeloop(st);
+	}
 
 	public void introduce(final String target,
 	                      final ByteCodeDataType data) {
@@ -434,6 +386,59 @@ public class GSVM {
 		final int ret=((((int) bytecode[PC]&0xff)<<8)+(((int) bytecode[PC+1]&0xff)));
 		PC+=2;
 		return ret;
+	}
+
+	// ----- Internal Instance -----
+	private void initialiseVM(@Nonnull final State st) {
+		stack.clear();
+		PC=0;
+		IC=0;
+		startPC=0;
+		row=0;
+		column=0;
+		variables.clear();
+		simulation=false;
+		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
+		variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
+		invokerstate=st;
+		for (final Map.Entry<String,ByteCodeDataType> entry: introductions.entrySet()) {
+			variables.put(entry.getKey(),entry.getValue());
+		}
+	}
+
+	@Nonnull
+	private Response executeloop(@Nonnull final State st) {
+		ExecutionStep currentstep=new ExecutionStep();
+		try {
+			while (PC<bytecode.length && !suspended) {
+				increaseIC();
+				//noinspection UnusedAssignment
+				currentstep=new ExecutionStep();
+				startPC=PC;
+				ByteCode.load(this).execute(st,this,false);
+			}
+		}
+		catch (@Nonnull final Throwable t) {
+			if (SystemException.class.isAssignableFrom(t.getClass())) {
+				throw new GSInternalError("VM exception: "+t+" "+at(),t);
+			}
+			if (UserException.class.isAssignableFrom(t.getClass())) { throw new GSExecutionException("Script error: "+t+" "+at(),t); }
+			if (t instanceof RuntimeException) { throw new GSInternalError("VM Runtime: "+t+" "+at(),t); }
+			throw new GSInternalError("VM Uncaught: "+t+" "+at(),t);
+		}
+		st.vm=null;
+		final JSONObject json=dequeue(st,st.getCharacter()).asJSON(st);
+		if (invokeonexit!=null && !suspended) {
+			json.put("incommand","runtemplate");
+			json.put("args","0");
+			json.put("invoke",invokeonexit);
+		}
+		return new JSONResponse(json);
+	}
+
+	private JSONObject getQueue(final Char c) {
+		if (!queue.containsKey(c)) { queue.put(c,new JSONObject()); }
+		return queue.get(c);
 	}
 
 	private void increaseIC() {

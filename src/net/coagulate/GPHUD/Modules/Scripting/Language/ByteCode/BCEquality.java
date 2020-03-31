@@ -14,6 +14,7 @@ public class BCEquality extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Equality (Pop two, compare, push 1 for match, 0 for no match)"; }

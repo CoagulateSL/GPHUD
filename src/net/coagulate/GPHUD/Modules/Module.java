@@ -39,6 +39,7 @@ public abstract class Module {
 
 	}
 
+	// ----- Internal Statics -----
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
 			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
@@ -48,6 +49,7 @@ public abstract class Module {
 		}
 	}
 
+	// ---------- INSTANCE ----------
 	public void kvConfigPage(@Nonnull final State st) {
 		st.form().add(new TextHeader("KV Configuration for module "+getName()));
 		GenericConfiguration.page(st,new SafeMap(),st.getInstance(),st.simulate(st.getCharacterNullable()),this);
@@ -56,14 +58,6 @@ public abstract class Module {
 	public abstract boolean isGenerated();
 
 	public String getName() { return name; }
-
-	@Nonnull
-	Response run(@Nonnull final State st,
-	             final String commandname,
-	             @Nonnull final String[] args) {
-		final Command command=getCommand(st,commandname);
-		return command.run(st,args);
-	}
 
 	@Nullable
 	public abstract Set<SideSubMenu> getSideSubMenus(State st);
@@ -105,10 +99,10 @@ public abstract class Module {
 	@Nonnull
 	public abstract Map<String,Pool> getPoolMap(State st);
 
-	//public abstract boolean hasPool(State st, Pools p);
-
 	@Nonnull
 	public abstract Map<String,Command> getCommands(State st);
+
+	//public abstract boolean hasPool(State st, Pools p);
 
 	public boolean hasConfig(final State st) { return alwaysHasConfig(); }
 
@@ -154,8 +148,6 @@ public abstract class Module {
 
 	public boolean defaultDisable() { return annotation.defaultDisable(); }
 
-	protected abstract void initialiseInstance(State st);
-
 	@Nonnull
 	public Map<String,KV> getKVAppliesTo(final State st,
 	                                     final TableRow dbo) {
@@ -168,6 +160,21 @@ public abstract class Module {
 			}
 		}
 		return filtered;
+	}
+
+	public void validateKV(final State st,
+	                       @Nonnull final String key) {
+		if (getKVDefinitions(st).containsKey(key.toLowerCase())) {
+			throw new SystemImplementationException("KV does not exist ["+key+"] in ["+getName()+"]");
+		}
+	}
+
+	public void validatePermission(final State st,
+	                               @Nonnull final String permission) {
+		final Map<String,Permission> perms=getPermissions(st);
+		if (!perms.containsKey(permission.toLowerCase())) {
+			throw new SystemImplementationException("Permission does not exist ["+permission+"] in ["+getName()+"]");
+		}
 	}
     
     /*
@@ -186,21 +193,6 @@ dead code?
         return filtered;
     }
     */
-
-	public void validateKV(final State st,
-	                       @Nonnull final String key) {
-		if (getKVDefinitions(st).containsKey(key.toLowerCase())) {
-			throw new SystemImplementationException("KV does not exist ["+key+"] in ["+getName()+"]");
-		}
-	}
-
-	public void validatePermission(final State st,
-	                               @Nonnull final String permission) {
-		final Map<String,Permission> perms=getPermissions(st);
-		if (!perms.containsKey(permission.toLowerCase())) {
-			throw new SystemImplementationException("Permission does not exist ["+permission+"] in ["+getName()+"]");
-		}
-	}
 
 	public void validateCommand(final State st,
 	                            @Nonnull final String command) {
@@ -224,10 +216,22 @@ dead code?
 		return new TreeSet<>();
 	}
 
+	// ----- Internal Instance -----
+	@Nonnull
+	Response run(@Nonnull final State st,
+	             final String commandname,
+	             @Nonnull final String[] args) {
+		final Command command=getCommand(st,commandname);
+		return command.run(st,args);
+	}
+
+	protected abstract void initialiseInstance(State st);
+
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface ModuleDefinition {
+		// ---------- INSTANCE ----------
 		@Nonnull String description();
 
 		boolean canDisable() default true;

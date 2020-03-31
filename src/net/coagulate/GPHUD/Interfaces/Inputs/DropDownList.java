@@ -27,6 +27,7 @@ public class DropDownList extends Input {
 		add("");
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static DropDownList getCommandsList(final State st,
 	                                           final String name) { return getCommandsList(st,name,true); }
@@ -46,6 +47,7 @@ public class DropDownList extends Input {
 		return commands;
 	}
 
+	// ---------- INSTANCE ----------
 	public void add(final String choice) { choices.put(choice,choice); }
 
 	public void add(final String choice,

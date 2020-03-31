@@ -12,6 +12,7 @@ public class BCStore extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Assign a value to a variable
 	// POP the NAME.  POP the content.
 	@Nonnull

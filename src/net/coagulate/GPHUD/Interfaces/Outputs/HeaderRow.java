@@ -17,6 +17,7 @@ public class HeaderRow extends Row {
 		super(c);
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isHeader() { return true; }
 

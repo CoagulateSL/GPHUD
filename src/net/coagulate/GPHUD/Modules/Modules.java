@@ -30,13 +30,7 @@ import static java.util.logging.Level.SEVERE;
 public abstract class Modules {
 	static final Map<String,Module> modules=new TreeMap<>();
 
-	static void register(@Nonnull final Module mod) {
-		final String name=mod.getName();
-		if (modules.containsKey(name.toLowerCase())) {
-			throw new SystemImplementationException("Duplicate Module definition for "+name);
-		}
-		modules.put(name.toLowerCase(),mod);
-	}
+	// ---------- STATICS ----------
 
 	/**
 	 * Get a list of all modules registered.
@@ -297,7 +291,6 @@ public abstract class Modules {
 		return c.run(st,parameters);
 	}
 
-
 	public static Response run(@Nonnull final State st,
 	                           @Nonnull final String qualifiedcommandname,
 	                           @Nonnull final SafeMap parametermap) {
@@ -352,7 +345,6 @@ public abstract class Modules {
 		}
 		return kv;
 	}
-
 
 	@Nonnull
 	public static Set<String> getKVList(final State st) {
@@ -439,6 +431,15 @@ public abstract class Modules {
 			filtered.putAll(fullset);
 		}
 		return filtered;
+	}
+
+	// ----- Internal Statics -----
+	static void register(@Nonnull final Module mod) {
+		final String name=mod.getName();
+		if (modules.containsKey(name.toLowerCase())) {
+			throw new SystemImplementationException("Duplicate Module definition for "+name);
+		}
+		modules.put(name.toLowerCase(),mod);
 	}
 
 

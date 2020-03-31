@@ -45,6 +45,8 @@ public class Char extends TableRow {
 
 	protected Char(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -113,25 +115,6 @@ public class Char extends TableRow {
 	}
 
 	/**
-	 * Purges a character level KV from the entire instance, for all users.
-	 *
-	 * @param instance Instance to eliminate the KV from
-	 * @param key      K to eliminate
-	 */
-	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key) {
-		final String kvtable="characterkvstore";
-		final String maintable="characters";
-		final String idcolumn="characterid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
-				        ".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
-	}
-
-	/**
 	 * Find character by name
 	 *
 	 * @param st   State
@@ -195,47 +178,6 @@ public class Char extends TableRow {
 		}
 		GPHUD.getDB()
 		     .d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)",name,st.getInstance().getId(),st.getAvatar().getId(),getUnixTime(),0);
-	}
-
-	private static void checkFilteredNamingList(@Nonnull final State st,
-	                                            @Nonnull final String name) {
-		// break the users name into components based on certain characters
-		final String[] nameparts=name.split("[ ,\\.\\-]");  // space comma dot dash
-		final String[] filterlist=st.getKV("Instance.FilteredNamingList").toString().split(",");
-		for (String filter:filterlist) {
-			filter=filter.trim();
-			if (!filter.isEmpty()) {
-				// compare filter to all name parts
-				for (String namepart:nameparts) {
-					namepart=namepart.trim();
-					if (filter.equalsIgnoreCase(namepart)) {
-						throw new UserInputInvalidChoiceException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply work around this filter as sim staff will not be as easily fooled.");
-					}
-				}
-			}
-		}
-	}
-
-	private static void checkAllowedNamingSymbols(@Nonnull final State st,
-	                                              @Nonnull String name) {
-		// in this approach we eliminate characters we allow.  If the result is an empty string, they win.  Else "uhoh"
-		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
-		final String allowlist=st.getKV("Instance.AllowedNamingSymbols").toString();
-		for (int i=0;i<allowlist.length();i++) {
-			final String allow=allowlist.charAt(i)+"";
-			name=name.replaceAll(Pattern.quote(allow),"");
-		}
-		// unique the characters in the string.  There's a better way of doing this surely.
-		if (!name.trim().isEmpty()) {
-			final StringBuilder blockedchars=new StringBuilder();
-			// bad de-duping code
-			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
-			// stick all the symbols in a set :P
-			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
-			// and reconstitute it
-			for (final String character:characters) { blockedchars.append(character); }
-			throw new UserInputInvalidChoiceException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are entering JUST A NAME at this point, not descriptive details.");
-		}
 	}
 
 	/**
@@ -321,12 +263,75 @@ public class Char extends TableRow {
 
 	public static Results getPingable() {
 		return GPHUD.getDB()
-		     .dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+
-				         "limit 0,30",
-		         Interface.getNode(),
-		         UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
-		        );
+		            .dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+"limit 0,30",
+		                Interface.getNode(),
+		                UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
+		               );
 	}
+
+	// ----- Internal Statics -----
+
+	/**
+	 * Purges a character level KV from the entire instance, for all users.
+	 *
+	 * @param instance Instance to eliminate the KV from
+	 * @param key      K to eliminate
+	 */
+	static void wipeKV(@Nonnull final Instance instance,
+	                   final String key) {
+		final String kvtable="characterkvstore";
+		final String maintable="characters";
+		final String idcolumn="characterid";
+		GPHUD.getDB()
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
+				        ".instanceid=?",
+		        key,
+		        instance.getId()
+		       );
+	}
+
+	private static void checkFilteredNamingList(@Nonnull final State st,
+	                                            @Nonnull final String name) {
+		// break the users name into components based on certain characters
+		final String[] nameparts=name.split("[ ,\\.\\-]");  // space comma dot dash
+		final String[] filterlist=st.getKV("Instance.FilteredNamingList").toString().split(",");
+		for (String filter: filterlist) {
+			filter=filter.trim();
+			if (!filter.isEmpty()) {
+				// compare filter to all name parts
+				for (String namepart: nameparts) {
+					namepart=namepart.trim();
+					if (filter.equalsIgnoreCase(namepart)) {
+						throw new UserInputInvalidChoiceException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.");
+					}
+				}
+			}
+		}
+	}
+
+	private static void checkAllowedNamingSymbols(@Nonnull final State st,
+	                                              @Nonnull String name) {
+		// in this approach we eliminate characters we allow.  If the result is an empty string, they win.  Else "uhoh"
+		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
+		final String allowlist=st.getKV("Instance.AllowedNamingSymbols").toString();
+		for (int i=0;i<allowlist.length();i++) {
+			final String allow=allowlist.charAt(i)+"";
+			name=name.replaceAll(Pattern.quote(allow),"");
+		}
+		// unique the characters in the string.  There's a better way of doing this surely.
+		if (!name.trim().isEmpty()) {
+			final StringBuilder blockedchars=new StringBuilder();
+			// bad de-duping code
+			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
+			// stick all the symbols in a set :P
+			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
+			// and reconstitute it
+			for (final String character: characters) { blockedchars.append(character); }
+			throw new UserInputInvalidChoiceException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.");
+		}
+	}
+
+	// ---------- INSTANCE ----------
 
 	/**
 	 * Gets the characters personal URL
@@ -416,6 +421,12 @@ public class Char extends TableRow {
 		return "characterid";
 	}
 
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Char / State Instance mismatch"); }
+	}
+
 	@Nonnull
 	@Override
 	public String getNameField() {
@@ -425,6 +436,20 @@ public class Char extends TableRow {
 	@Nonnull
 	@Override
 	public String getLinkTarget() { return "characters"; }
+
+	@Nonnull
+	@Override
+	public String getKVTable() {
+		return "characterkvstore";
+	}
+
+	@Nonnull
+	@Override
+	public String getKVIdField() {
+		return "characterid";
+	}
+
+	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
 	/**
 	 * Sum all the entries in a Pool
@@ -817,18 +842,6 @@ public class Char extends TableRow {
 		d("update characters set zoneid=? where characterid=?",id,getId());
 	}
 
-	@Nonnull
-	@Override
-	public String getKVTable() {
-		return "characterkvstore";
-	}
-
-	@Nonnull
-	@Override
-	public String getKVIdField() {
-		return "characterid";
-	}
-
 	/**
 	 * Get all the groups this character is in
 	 *
@@ -841,52 +854,6 @@ public class Char extends TableRow {
 			ret.add(CharacterGroup.get(r.getInt()));
 		}
 		return ret;
-	}
-
-	/**
-	 * Used to load a list of conveyances
-	 *
-	 * @param st State
-	 *
-	 * @return Set of conveyanced KVs
-	 */
-	@Nonnull
-	private Set<KV> getConveyances(@Nonnull final State st) {
-		// load the previously sent conveyances from the DB.  Note that the 'state' caches these queries so its not quite as garbage as it sounds.
-		validate(st);
-		final Set<KV> conveyances=new TreeSet<>();
-		for (final KV kv: Modules.getKVSet(st)) {
-			if (kv!=null) {
-				final String conveyas=kv.conveyas();
-				if (!conveyas.isEmpty()) {
-					conveyances.add(kv);
-				}
-			}
-		}
-		return conveyances;
-	}
-
-	/**
-	 * Copy the existing conveyance values from their cached KVs into a map.
-	 *
-	 * @param st State
-	 *
-	 * @return Map of KV=Values for all conveyanced data.
-	 */
-	@Nonnull
-	private Map<KV,String> loadConveyances(@Nonnull final State st) {
-		// load the previously sent conveyances from the DB.  Note that the 'state' caches these queries so its not quite as garbage as it sounds.
-		validate(st);
-		final Map<KV,String> conveyances=new TreeMap<>();
-		for (final KV kv: getConveyances(st)) {
-			try {
-				conveyances.put(kv,st.getKV("gphudclient.conveyance-"+kv.conveyas()).value());
-			}
-			catch (@Nonnull final SystemException e) {
-				st.logger().log(SEVERE,"Exceptioned loading conveyance "+kv.conveyas()+" in instance "+st.getInstanceString()+" - "+e.getLocalizedMessage());
-			}
-		}
-		return conveyances;
 	}
 
 	/**
@@ -989,19 +956,12 @@ public class Char extends TableRow {
 	 */
 	public void setPlayedBy(@Nullable final User avatar) {
 		if (avatar==null) {
-			set("playedby",(Integer)null);
-		} else {
+			set("playedby",(Integer) null);
+		}
+		else {
 			set("playedby",avatar.getId());
 		}
 	}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Char / State Instance mismatch"); }
-	}
-
-	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
 	public void retire() {
 		if (retired()) { return; }
@@ -1061,5 +1021,53 @@ public class Char extends TableRow {
 		if (json.keySet().size()>0) {
 			new Transmission(this,json).start();
 		}
+	}
+
+	// ----- Internal Instance -----
+
+	/**
+	 * Used to load a list of conveyances
+	 *
+	 * @param st State
+	 *
+	 * @return Set of conveyanced KVs
+	 */
+	@Nonnull
+	private Set<KV> getConveyances(@Nonnull final State st) {
+		// load the previously sent conveyances from the DB.  Note that the 'state' caches these queries so its not quite as garbage as it sounds.
+		validate(st);
+		final Set<KV> conveyances=new TreeSet<>();
+		for (final KV kv: Modules.getKVSet(st)) {
+			if (kv!=null) {
+				final String conveyas=kv.conveyas();
+				if (!conveyas.isEmpty()) {
+					conveyances.add(kv);
+				}
+			}
+		}
+		return conveyances;
+	}
+
+	/**
+	 * Copy the existing conveyance values from their cached KVs into a map.
+	 *
+	 * @param st State
+	 *
+	 * @return Map of KV=Values for all conveyanced data.
+	 */
+	@Nonnull
+	private Map<KV,String> loadConveyances(@Nonnull final State st) {
+		// load the previously sent conveyances from the DB.  Note that the 'state' caches these queries so its not quite as garbage as it sounds.
+		validate(st);
+		final Map<KV,String> conveyances=new TreeMap<>();
+		for (final KV kv: getConveyances(st)) {
+			try {
+				conveyances.put(kv,st.getKV("gphudclient.conveyance-"+kv.conveyas()).value());
+			}
+			catch (@Nonnull final SystemException e) {
+				st.logger().log(SEVERE,"Exceptioned loading conveyance "+kv.conveyas()+" in instance "+st.getInstanceString()+" - "+e.getLocalizedMessage());
+			}
+		}
+		return conveyances;
 	}
 }

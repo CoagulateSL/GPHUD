@@ -135,6 +135,7 @@ public class State extends DumpableState {
 	private Boolean superuser;
 	@Nullable
 	private Boolean instanceowner;
+	private boolean elevated;
 
 	public State() {}
 
@@ -146,6 +147,7 @@ public class State extends DumpableState {
 		this.context=context;
 	}
 
+
 	public State(@Nonnull final Char c) {
 		character=c;
 		avatar=c.getPlayedBy();
@@ -153,7 +155,6 @@ public class State extends DumpableState {
 		region=c.getRegion();
 		zone=c.getZone();
 	}
-
 
 	public State(@Nonnull final Instance i) { instance=i; }
 
@@ -168,6 +169,7 @@ public class State extends DumpableState {
 		avatar=c.getPlayedBy();
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static State getNonSpatial(@Nonnull final Char c) {
 		final State ret=new State();
@@ -177,16 +179,17 @@ public class State extends DumpableState {
 		return ret;
 	}
 
+	// ---------- INSTANCE ----------
 	public void flushPermissionsGroupCache() { permissionsGroupCache=new HashMap<>(); }
+
+	// system interface sets to "runas" - defaults to object owner but can be overridden.  THIS IS "WHO WE ARE RUNNING AS"
+	// web interface sets this to the "logged in CHARACTER" object
+	// system interface sets to instance
 
 	public boolean hasModule(@Nonnull final String module) {
 		if (Modules.get(null,module).isEnabled(this)) { return true; }
 		return false;
 	}
-
-	// system interface sets to "runas" - defaults to object owner but can be overridden.  THIS IS "WHO WE ARE RUNNING AS"
-	// web interface sets this to the "logged in CHARACTER" object
-	// system interface sets to instance
 
 	@Nonnull
 	public Set<String> getCharacterGroupTypes() {
@@ -413,8 +416,6 @@ public class State extends DumpableState {
 
 	public void flushSuperUser() { superuser=null; }
 
-	private void populateSuperUser() { if (superuser==null && avatar!=null) { superuser=avatar.isSuperAdmin(); } }
-
 	public boolean isSuperUser() {
 		populateSuperUser();
 		if (superuser==null) { return false; }
@@ -422,13 +423,6 @@ public class State extends DumpableState {
 	}
 
 	public void flushPermissionsCache() { permissionscache=null; }
-
-	private void preparePermissionsCache() {
-		if (permissionscache==null && avatar!=null && instance!=null) {
-			permissionscache=new HashSet<>();
-			permissionscache.addAll(PermissionsGroup.getPermissions(instance,avatar));
-		}
-	}
 
 	/**
 	 * Checks, and caches, if a user has a permission.
@@ -474,12 +468,6 @@ public class State extends DumpableState {
 
 	public void flushInstanceOwner() { instanceowner=null; }
 
-	private void prepareInstanceOwner() {
-		if (instanceowner==null && instance!=null && avatar!=null) {
-			instanceowner=instance.getOwner()==avatar;
-		}
-	}
-
 	public boolean isInstanceOwner() {
 		prepareInstanceOwner();
 		if (instanceowner==null) { return false; }
@@ -497,20 +485,6 @@ public class State extends DumpableState {
 		if (permission==null || permission.isEmpty()) { return; }
 		if (hasPermission(permission)) { return; }
 		throw new SystemConsistencyException("ALERT! Permission assertion failed on permission "+permission);
-	}
-
-	private Map<String,String> getKVMap(@Nonnull final TableRow dbo) {
-		if (!kvmaps.containsKey(dbo)) {
-			kvmaps.put(dbo,dbo.loadKVs());
-		}
-		return kvmaps.get(dbo);
-	}
-
-	private boolean kvDefined(@Nonnull final TableRow o,
-	                          @Nonnull final KV kv) {
-		final Map<String,String> kvmap=getKVMap(o);
-		if (kvmap.containsKey(kv.fullname().toLowerCase())) { return true; }
-		return false;
 	}
 
 	@Nonnull
@@ -830,18 +804,6 @@ public class State extends DumpableState {
 		return ret.toString();
 	}
 
-	@Nonnull
-	@Override
-	protected String dumpAdditionalStateToHtml() {
-		if (vm!=null) {
-			try {
-				return vm.dumpStateToHtml();
-			}
-			catch (@Nonnull final Throwable e) { return "Exceptioned: "+e; }
-		}
-		return "";
-	}
-
 	public void fleshOut() {
 		// attempt to figure out some kinda completion for avatar/instance/char
 		if (avatar==null && instance==null && character==null) { return; } //meh, nothing to work with
@@ -898,14 +860,6 @@ public class State extends DumpableState {
 			}
 		}
 
-	}
-
-	private void updateCookie() {
-		if (hasCookie()) {
-			if (cookie().getCharacter()!=character) { cookie().setCharacter(character); }
-			if (cookie().getAvatar()!=avatar) { cookie().setAvatar(getAvatar()); }
-			if (cookie().getInstance()!=instance) { cookie().setInstance(instance); }
-		}
 	}
 
 	@Nonnull
@@ -1057,14 +1011,62 @@ public class State extends DumpableState {
 		this.postmap=postmap;
 	}
 
-	private boolean elevated;
-
 	public void elevate(final boolean elevate) { elevated=elevate; }
 
 	public boolean elevated() { return elevated; }
 
 	public Map<String,String> getTemplates() {
 		return Templater.getTemplates(this);
+	}
+
+	// ----- Internal Instance -----
+	@Nonnull
+	@Override
+	protected String dumpAdditionalStateToHtml() {
+		if (vm!=null) {
+			try {
+				return vm.dumpStateToHtml();
+			}
+			catch (@Nonnull final Throwable e) { return "Exceptioned: "+e; }
+		}
+		return "";
+	}
+
+	private void populateSuperUser() { if (superuser==null && avatar!=null) { superuser=avatar.isSuperAdmin(); } }
+
+	private void preparePermissionsCache() {
+		if (permissionscache==null && avatar!=null && instance!=null) {
+			permissionscache=new HashSet<>();
+			permissionscache.addAll(PermissionsGroup.getPermissions(instance,avatar));
+		}
+	}
+
+	private void prepareInstanceOwner() {
+		if (instanceowner==null && instance!=null && avatar!=null) {
+			instanceowner=instance.getOwner()==avatar;
+		}
+	}
+
+	private Map<String,String> getKVMap(@Nonnull final TableRow dbo) {
+		if (!kvmaps.containsKey(dbo)) {
+			kvmaps.put(dbo,dbo.loadKVs());
+		}
+		return kvmaps.get(dbo);
+	}
+
+	private boolean kvDefined(@Nonnull final TableRow o,
+	                          @Nonnull final KV kv) {
+		final Map<String,String> kvmap=getKVMap(o);
+		if (kvmap.containsKey(kv.fullname().toLowerCase())) { return true; }
+		return false;
+	}
+
+	private void updateCookie() {
+		if (hasCookie()) {
+			if (cookie().getCharacter()!=character) { cookie().setCharacter(character); }
+			if (cookie().getAvatar()!=avatar) { cookie().setAvatar(getAvatar()); }
+			if (cookie().getInstance()!=instance) { cookie().setInstance(instance); }
+		}
 	}
 
 	public enum Sources {

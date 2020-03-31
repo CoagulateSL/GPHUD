@@ -14,8 +14,8 @@ import javax.annotation.Nonnull;
 public class EventXP extends QuotaedXP {
 	public EventXP(final int id) { super(id); }
 
-	@Nonnull
-	public String getName() { return "EventXP"; }
+	// ---------- INSTANCE ----------
+	public Module getModule() { return Modules.get(null,"Events"); }
 
 	@Nonnull
 	public String poolName(final State st) {return "Events.EventXP";}
@@ -26,6 +26,7 @@ public class EventXP extends QuotaedXP {
 	@Nonnull
 	public String periodKV(final State st) { return "Events.EventXPPeriod"; }
 
-	public Module getModule() { return Modules.get(null,"Events"); }
+	@Nonnull
+	public String getName() { return "EventXP"; }
 
 }

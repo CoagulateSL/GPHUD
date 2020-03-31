@@ -13,6 +13,8 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public interface Renderable {
+	// ---------- INSTANCE ----------
+
 	/**
 	 * Render this element as plain text.
 	 * Used for textual output into Second Life (llSay() etc)

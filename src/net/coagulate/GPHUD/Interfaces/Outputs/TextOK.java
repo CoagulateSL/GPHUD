@@ -17,6 +17,7 @@ public class TextOK implements Renderable {
 	public TextOK(final String s) { this.s=s; }
 
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

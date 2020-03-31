@@ -14,6 +14,7 @@ public class GSArrayIndexOutOfBoundsException extends GSInvalidExpressionExcepti
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Array Index Out Of Bounds Exception}: "+getLocalizedMessage(); }
 

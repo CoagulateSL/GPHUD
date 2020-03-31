@@ -23,10 +23,15 @@ import javax.annotation.Nonnull;
  */
 public abstract class ModuleControl {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Disable the specified module", requiresPermission="instance.ModuleEnablement")
+	@Commands(context=Context.AVATAR,
+	          description="Disable the specified module",
+	          requiresPermission="instance.ModuleEnablement")
 	public static Response disableModule(@Nonnull final State st,
-	                                     @Nonnull @Arguments(type=ArgumentType.MODULE, description="Module to disable") final Module module) {
+	                                     @Nonnull
+	                                     @Arguments(type=ArgumentType.MODULE,
+	                                                description="Module to disable") final Module module) {
 		if (!module.canDisable()) {
 			return new ErrorResponse("The module "+module.getName()+" does not allow its self to be disabled, it is probably critical to system functionality");
 		}
@@ -36,22 +41,28 @@ public abstract class ModuleControl {
 		return new OKResponse("Module "+module.getName()+" has been disabled");
 	}
 
-	@URLs(url="/configuration/disablemodule", requiresPermission="instance.ModuleEnablement")
+	@URLs(url="/configuration/disablemodule",
+	      requiresPermission="instance.ModuleEnablement")
 	public static void disableModuleForm(@Nonnull final State st,
 	                                     @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Configuration.DisableModule",values);
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR, description="Enabled the specified module", requiresPermission="instance.ModuleEnablement")
+	@Commands(context=Context.AVATAR,
+	          description="Enabled the specified module",
+	          requiresPermission="instance.ModuleEnablement")
 	public static Response enableModule(@Nonnull final State st,
-	                                    @Nonnull @Arguments(type=ArgumentType.MODULE, description="Module to enable") final Module module) {
+	                                    @Nonnull
+	                                    @Arguments(type=ArgumentType.MODULE,
+	                                               description="Module to enable") final Module module) {
 		st.setKV(st.getInstance(),module.getName()+".Enabled","true");
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Enable Module",module.getName(),"","","Module enabled");
 		return new OKResponse("Module "+module.getName()+" has been enabled");
 	}
 
-	@URLs(url="/configuration/enablemodule", requiresPermission="instance.ModuleEnablement")
+	@URLs(url="/configuration/enablemodule",
+	      requiresPermission="instance.ModuleEnablement")
 	public static void enableModuleForm(@Nonnull final State st,
 	                                    @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Configuration.EnableModule",values);

@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Logout {
+	// ---------- STATICS ----------
 	@URLs(url="/logout")
 	public static void logout(@Nonnull final State st,
 	                          final SafeMap values) {
@@ -29,7 +30,11 @@ public class Logout {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Log out or disconnect this character", context=Command.Context.CHARACTER, permitScripting=false, permitUserWeb=false, permitConsole=false,
+	@Command.Commands(description="Log out or disconnect this character",
+	                  context=Command.Context.CHARACTER,
+	                  permitScripting=false,
+	                  permitUserWeb=false,
+	                  permitConsole=false,
 	                  permitObject=false)
 	public static Response logout(@Nonnull final State st) {
 		if (st.getCharacterNullable()!=null) {

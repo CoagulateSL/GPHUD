@@ -15,7 +15,9 @@ import javax.annotation.Nullable;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class HelpPage {
-	@URLs(url="/help", requiresAuthentication=false)
+	// ---------- STATICS ----------
+	@URLs(url="/help",
+	      requiresAuthentication=false)
 	public static void index(@Nonnull final State st,
 	                         final SafeMap values) {
 		final Form f=st.form();
@@ -24,6 +26,7 @@ public abstract class HelpPage {
 				      "://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\"></iframe></td></tr></table>");
 	}
 
+	// ---------- INSTANCE ----------
 	@Nullable
 	public Form authenticationHook(final State st,
 	                               final SafeMap values) { return null; }

@@ -19,6 +19,7 @@ public class Objects extends TableRow {
 		super(id);
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static Objects get(final int id) {
 		return (Objects) factoryPut("Objects",id,new Objects(id));
@@ -148,18 +149,15 @@ public class Objects extends TableRow {
 			     .d("update objects set name=?,regionid=?,owner=?,location=?,lastrx=?,url=?,version=? where id=?",
 			        name,
 			        region.getId(),
-			        owner.getId(),
-			        location,
-			        UnixTime.getUnixTime(),
-			        url,
-			        version,
-			        object.getId()
+			        owner.getId(),location,UnixTime.getUnixTime(),url,version,object.getId()
 			       );
 		}
 		return object;
 	}
 
-	/** Returns number of object connections to be purged */
+	/**
+	 * Returns number of object connections to be purged
+	 */
 	public static int getPurgeInactiveCount() {
 		return GPHUD.getDB().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
@@ -168,6 +166,7 @@ public class Objects extends TableRow {
 		GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
+	// ---------- INSTANCE ----------
 	@Nullable
 	public ObjectTypes getObjectType() {
 		final Integer otid=getIntNullable("objecttype");
@@ -189,17 +188,6 @@ public class Objects extends TableRow {
 	}
 
 	@Nonnull
-	public Region getRegion() { return Region.get(getInt("regionid"),true); }
-
-	@Nullable
-	public String getLocation() { return getStringNullable("location"); }
-
-	@Nullable
-	public Instance getInstance() {
-		return getRegion().getInstance();
-	}
-
-	@Nonnull
 	@Override
 	public String getNameField() { return "name"; }
 
@@ -207,8 +195,8 @@ public class Objects extends TableRow {
 	@Override
 	public String getLinkTarget() { return "/GPHUD/configuration/objects/object/"+getId(); }
 
-	@Override
-	protected int getNameCacheTime() { return 600; }
+	@Nonnull
+	public String toString() { return "Object#"+getId()+"='"+getName()+"'@"+getRegion()+"/"+getLocation();}
 
 	@Nullable
 	@Override
@@ -222,14 +210,25 @@ public class Objects extends TableRow {
 		return null;
 	}
 
+	@Override
+	protected int getNameCacheTime() { return 600; }
+
+	@Nonnull
+	public Region getRegion() { return Region.get(getInt("regionid"),true); }
+
+	@Nullable
+	public String getLocation() { return getStringNullable("location"); }
+
+	@Nullable
+	public Instance getInstance() {
+		return getRegion().getInstance();
+	}
+
 	@Nonnull
 	@Override
 	public String getTableName() {
 		return "objects";
 	}
-
-	@Nonnull
-	public String toString() { return "Object#"+getId()+"='"+getName()+"'@"+getRegion()+"/"+getLocation();}
 
 	@Nullable
 	public String getURL() {

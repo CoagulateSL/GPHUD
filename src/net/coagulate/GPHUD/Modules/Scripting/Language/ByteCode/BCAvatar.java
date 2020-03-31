@@ -23,6 +23,7 @@ public class BCAvatar extends ByteCodeDataType {
 		this.content=content;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nullable
 	public User getContentNullable() { return content; }
 

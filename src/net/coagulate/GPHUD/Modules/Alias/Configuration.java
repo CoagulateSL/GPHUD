@@ -26,7 +26,9 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Configuration {
-	@URLs(url="/configuration/alias", requiresPermission="Alias.Config")
+	// ---------- STATICS ----------
+	@URLs(url="/configuration/alias",
+	      requiresPermission="Alias.Config")
 	public static void aliasesList(@Nonnull final State st,
 	                               @Nonnull final SafeMap values) {
 		final Form f=st.form();
@@ -70,7 +72,8 @@ public abstract class Configuration {
 		f.add(new Form(st,false,"./alias/create","Create"));
 	}
 
-	@URLs(url="/configuration/alias/create", requiresPermission="Alias.Config")
+	@URLs(url="/configuration/alias/create",
+	      requiresPermission="Alias.Config")
 	public static void createAlias(@Nonnull final State st,
 	                               @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {

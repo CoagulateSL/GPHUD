@@ -14,6 +14,8 @@ import javax.annotation.Nonnull;
  */
 public abstract class NameComparable implements Comparable<NameComparable> {
 
+	// ---------- INSTANCE ----------
+
 	/**
 	 * Provide a name.
 	 *

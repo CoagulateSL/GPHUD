@@ -28,6 +28,7 @@ public class ConfigurationModule extends ModuleAnnotation {
 		submenus=null;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nullable
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(final State st) {

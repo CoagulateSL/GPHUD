@@ -10,6 +10,7 @@ import java.lang.annotation.*;
  */
 public abstract class SideMenu {
 
+	// ---------- INSTANCE ----------
 	public abstract boolean isGenerated();
 
 	@Nonnull
@@ -30,6 +31,7 @@ public abstract class SideMenu {
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface SideMenus {
+		// ---------- INSTANCE ----------
 		@Nonnull String name();
 
 		int priority();

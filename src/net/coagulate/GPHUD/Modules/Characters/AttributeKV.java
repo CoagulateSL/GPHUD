@@ -18,6 +18,7 @@ public class AttributeKV extends KV {
 		this.attribute=attribute;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
 		return true;
@@ -25,8 +26,8 @@ public class AttributeKV extends KV {
 
 	@Nonnull
 	@Override
-	public String name() {
-		return attribute.getName();
+	public String fullname() {
+		return "Characters."+name();
 	}
 
 	@Nonnull
@@ -71,15 +72,15 @@ public class AttributeKV extends KV {
 		return attribute.getKVHierarchy();
 	}
 
-	@Nonnull
-	@Override
-	public String fullname() {
-		return "Characters."+name();
-	}
-
 	@Override
 	public boolean template() {
 		return false; // it's usually not the character KV that is templated, but that it its self templates into other templated KVs ...
+	}
+
+	@Nonnull
+	@Override
+	public String name() {
+		return attribute.getName();
 	}
 
 }

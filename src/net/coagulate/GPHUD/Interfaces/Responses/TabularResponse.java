@@ -21,6 +21,7 @@ public class TabularResponse extends Table implements Response {
 
 	public TabularResponse(@Nullable final String message) { title=message; }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {

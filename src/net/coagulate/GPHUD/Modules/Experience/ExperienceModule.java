@@ -34,13 +34,25 @@ public class ExperienceModule extends ModuleAnnotation {
 		super(name,def);
 	}
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=AVATAR, description="Award XP")
+	@Commands(context=AVATAR,
+	          description="Award XP")
 	public static Response award(@Nonnull final State st,
-	                             @Nonnull @Arguments(description="Character to award to", type=CHARACTER) final Char target,
-	                             @Nonnull @Arguments(description="XP type to award", type=TEXT_INTERNAL_NAME, max=32) final String type,
-	                             @Nullable @Arguments(description="Ammount to award", type=INTEGER, max=999999) Integer ammount,
-	                             @Arguments(description="Reason for award", type=TEXT_ONELINE, max=128) final String reason
+	                             @Nonnull
+	                             @Arguments(description="Character to award to",
+	                                        type=CHARACTER) final Char target,
+	                             @Nonnull
+	                             @Arguments(description="XP type to award",
+	                                        type=TEXT_INTERNAL_NAME,
+	                                        max=32) final String type,
+	                             @Nullable
+	                             @Arguments(description="Ammount to award",
+	                                        type=INTEGER,
+	                                        max=999999) Integer ammount,
+	                             @Arguments(description="Reason for award",
+	                                        type=TEXT_ONELINE,
+	                                        max=128) final String reason
 
 	                            ) {
 		boolean incontext=false;
@@ -82,21 +94,64 @@ public class ExperienceModule extends ModuleAnnotation {
 		return new OKResponse("Awarded "+ammount+" "+p.name()+" to "+target.getName());
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public void validatePermission(final State st,
 	                               @Nonnull final String permission) {
 		// really can't validate these as they can be dynamic
 	}
 
+	@Nonnull
 	@Override
-	public Map<String,Permission> getPermissions(@Nonnull final State st) {
-		final Map<String,Permission> perms=super.getPermissions(st);
-		for (final Attribute a: st.getAttributes()) {
-			if (a.getType()==EXPERIENCE) {
-				perms.put("award"+a.getName()+"XP",new GenericXPAwardPermission(a.getName()));
+	public Set<CharacterAttribute> getAttributes(@Nonnull final State st) {
+		final Set<CharacterAttribute> ret=new HashSet<>();
+		if (st.hasModule("Events")) { ret.add(new EventXP(-1)); }
+		ret.add(new VisitXP(-1));
+		if (st.hasModule("Faction")) { ret.add(new FactionXP(-1)); }
+		for (final Attribute attr: st.getAttributes()) {
+			if (attr.getType()==EXPERIENCE) {
+				ret.add(new GenericXP(attr.getName()+"XP"));
 			}
 		}
-		return perms;
+		return ret;
+	}
+
+	@Nonnull
+	@Override
+	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
+		final Map<String,KV> map=new TreeMap<>(kvmap);
+		if (st.getInstanceNullable()==null) { return map; }
+		for (final Attribute attr: st.getAttributes()) {
+			if (attr.getType()==EXPERIENCE) {
+				map.put(attr.getName()+"XPPeriod",new GenericXPPeriodKV(attr.getName()+"XPPeriod"));
+				map.put(attr.getName()+"XPLimit",new GenericXPLimitKV(attr.getName()+"XPLimit"));
+			}
+		}
+		return map;
+	}
+
+	@Override
+	public KV getKVDefinition(@Nonnull final State st,
+	                          @Nonnull final String qualifiedname) {
+		if (kvmap.containsKey(qualifiedname.toLowerCase())) {
+			return kvmap.get(qualifiedname.toLowerCase());
+		}
+		final Map<String,KV> map=getKVDefinitions(st);
+		for (final Map.Entry<String,KV> entry: map.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase(qualifiedname)) { return entry.getValue(); }
+		}
+		throw new SystemImplementationException("Invalid KV "+qualifiedname+" in module "+getName());
+	}
+
+	@Nonnull
+	@Override
+	public Pool getPool(final State st,
+	                    @Nonnull final String itemname) {
+		final Map<String,Pool> pmap=getPoolMap(st);
+		for (final Map.Entry<String,Pool> entry: pmap.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
+		}
+		throw new UserInputLookupFailureException("Unable to retrieve pool "+itemname+" in Experience module");
 	}
 
 	@Override
@@ -126,57 +181,15 @@ public class ExperienceModule extends ModuleAnnotation {
 		return pools;
 	}
 
-	@Nonnull
 	@Override
-	public Pool getPool(final State st,
-	                    @Nonnull final String itemname) {
-		final Map<String,Pool> pmap=getPoolMap(st);
-		for (final Map.Entry<String,Pool> entry: pmap.entrySet()) {
-			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }
-		}
-		throw new UserInputLookupFailureException("Unable to retrieve pool "+itemname+" in Experience module");
-	}
-
-	@Override
-	public KV getKVDefinition(@Nonnull final State st,
-	                          @Nonnull final String qualifiedname) {
-		if (kvmap.containsKey(qualifiedname.toLowerCase())) {
-			return kvmap.get(qualifiedname.toLowerCase());
-		}
-		final Map<String,KV> map=getKVDefinitions(st);
-		for (final Map.Entry<String,KV> entry: map.entrySet()) {
-			if (entry.getKey().equalsIgnoreCase(qualifiedname)) { return entry.getValue(); }
-		}
-		throw new SystemImplementationException("Invalid KV "+qualifiedname+" in module "+getName());
-	}
-
-	@Nonnull
-	@Override
-	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
-		final Map<String,KV> map=new TreeMap<>(kvmap);
-		if (st.getInstanceNullable()==null) { return map; }
-		for (final Attribute attr: st.getAttributes()) {
-			if (attr.getType()==EXPERIENCE) {
-				map.put(attr.getName()+"XPPeriod",new GenericXPPeriodKV(attr.getName()+"XPPeriod"));
-				map.put(attr.getName()+"XPLimit",new GenericXPLimitKV(attr.getName()+"XPLimit"));
+	public Map<String,Permission> getPermissions(@Nonnull final State st) {
+		final Map<String,Permission> perms=super.getPermissions(st);
+		for (final Attribute a: st.getAttributes()) {
+			if (a.getType()==EXPERIENCE) {
+				perms.put("award"+a.getName()+"XP",new GenericXPAwardPermission(a.getName()));
 			}
 		}
-		return map;
-	}
-
-	@Nonnull
-	@Override
-	public Set<CharacterAttribute> getAttributes(@Nonnull final State st) {
-		final Set<CharacterAttribute> ret=new HashSet<>();
-		if (st.hasModule("Events")) { ret.add(new EventXP(-1)); }
-		ret.add(new VisitXP(-1));
-		if (st.hasModule("Faction")) { ret.add(new FactionXP(-1)); }
-		for (final Attribute attr: st.getAttributes()) {
-			if (attr.getType()==EXPERIENCE) {
-				ret.add(new GenericXP(attr.getName()+"XP"));
-			}
-		}
-		return ret;
+		return perms;
 	}
 
 }

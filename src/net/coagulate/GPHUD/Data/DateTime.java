@@ -20,10 +20,7 @@ import java.util.*;
  */
 public abstract class DateTime {
 
-	@Nonnull
-	private static String fromUnixTime(final int date,
-	                                   @Nonnull final DateFormat df) { return df.format(new Date(((long) (date))*((long) 1000))); }
-
+	// ---------- STATICS ----------
 	@Nonnull
 	public static String fromUnixTime(final int date,
 	                                  final String timezone) {
@@ -61,16 +58,6 @@ public abstract class DateTime {
 		t.add(DateTime.getTimeZoneList(prefix+"timezone",tz));
 		return t;
 	}
-
-	@Nonnull
-	private static TextInput ti(final String prefix,
-	                            final String component,
-	                            final int size,
-	                            @Nonnull final SafeMap values) {
-		final String name=prefix+component;
-		return new TextInput(name,values.get(name),size);
-	}
-
 
 	/**
 	 * Set up a duration input form.
@@ -184,6 +171,20 @@ public abstract class DateTime {
 		for (final String tz: getTimeZones()) { dropdown.add(tz); }
 		dropdown.setValue(value);
 		return dropdown;
+	}
+
+	// ----- Internal Statics -----
+	@Nonnull
+	private static String fromUnixTime(final int date,
+	                                   @Nonnull final DateFormat df) { return df.format(new Date(((long) (date))*((long) 1000))); }
+
+	@Nonnull
+	private static TextInput ti(final String prefix,
+	                            final String component,
+	                            final int size,
+	                            @Nonnull final SafeMap values) {
+		final String name=prefix+component;
+		return new TextInput(name,values.get(name),size);
 	}
 }
 

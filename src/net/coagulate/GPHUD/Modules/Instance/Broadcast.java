@@ -17,10 +17,15 @@ import javax.annotation.Nonnull;
  */
 public class Broadcast {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.ANY, description="Send admin message", requiresPermission="instance.SendAdminMessages")
+	@Commands(context=Context.ANY,
+	          description="Send admin message",
+	          requiresPermission="instance.SendAdminMessages")
 	public static Response admin(@Nonnull final State st,
-	                             @Arguments(description="Message to broadcast", type=ArgumentType.TEXT_ONELINE, max=200) final String sendmessage) {
+	                             @Arguments(description="Message to broadcast",
+	                                        type=ArgumentType.TEXT_ONELINE,
+	                                        max=200) final String sendmessage) {
 		String message="(From ";
 		String avfrom="";
 		if (st.getAvatarNullable()!=null) {

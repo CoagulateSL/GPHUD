@@ -38,76 +38,7 @@ public class MenuCommand extends Command {
 		targetcommand=this;
 	}
 
-	@Nonnull
-	@Override
-	public Context context() { return Context.CHARACTER; }
-
-	@Nonnull
-	@Override
-	public String description() { return description; }
-
-	@Nonnull
-	@Override
-	public List<String> getArgumentNames(final State st) {
-		final List<String> args=new ArrayList<>();
-		args.add("choice");
-		return args;
-	}
-
-	@Override
-	public int getArgumentCount() { return 1; }
-
-	@Nonnull
-	@Override
-	public List<Argument> getArguments() {
-		final List<Argument> args=new ArrayList<>();
-		args.add(new MenuArgument(this,definition));
-		return args;
-	}
-
-	@Nonnull
-	@Override
-	public String getFullName() { return "Menus."+getName(); }
-
-	@Nonnull
-	public String getName() { return name; }
-
-	@Override
-	public boolean permitConsole() { return false; }
-
-	@Override
-	public boolean permitJSON() { return true; }
-
-	@Override
-	public boolean permitUserWeb() { return false; }
-
-	@Override
-	public boolean permitScripting() { return false; }
-
-	@Override
-	public boolean permitObject() { return true; }
-
-	@Nonnull
-	@Override
-	public String getFullMethodName() { return getClass()+".run()"; }
-
-	@Nonnull
-	@Override
-	public String requiresPermission() { return ""; }
-
-	@Nonnull
-	@Override
-	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap) {
-		final String selected=parametermap.get("choice");
-		int choice=-1;
-		for (int i=1;i<=12;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
-		if (choice==-1) { throw new UserInputLookupFailureException("Menu "+getName()+" has no element "+selected); }
-		final String commandtoinvoke=definition.optString("command"+choice,"");
-		if (commandtoinvoke.isEmpty()) { throw new UserConfigurationException("Menu "+getName()+" command "+selected+" is choice "+choice+" and does not have a command to invoke"); }
-		return Modules.getJSONTemplateResponse(st,commandtoinvoke);
-	}
-
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Method getMethod() {
@@ -119,19 +50,91 @@ public class MenuCommand extends Command {
 		}
 	}
 
+	@Override
+	public boolean isGenerated() {
+		return true;
+	}
+
+	@Nonnull
+	@Override
+	public String description() { return description; }
+
+	@Nonnull
+	@Override
+	public String requiresPermission() { return ""; }
+
+	@Nonnull
+	@Override
+	public Context context() { return Context.CHARACTER; }
+
+	@Override
+	public boolean permitJSON() { return true; }
+
+	@Override
+	public boolean permitObject() { return true; }
+
+	@Override
+	public boolean permitConsole() { return false; }
+
+	@Override
+	public boolean permitUserWeb() { return false; }
+
+	@Override
+	public boolean permitScripting() { return false; }
+
+	@Nonnull
+	@Override
+	public List<Argument> getArguments() {
+		final List<Argument> args=new ArrayList<>();
+		args.add(new MenuArgument(this,definition));
+		return args;
+	}
+
+	@Override
+	public int getArgumentCount() { return 1; }
+
+	@Nonnull
+	@Override
+	public String getFullName() { return "Menus."+getName(); }
+
+	@Nonnull
+	public String getName() { return name; }
+
+	@Nonnull
+	@Override
+	public List<String> getArgumentNames(final State st) {
+		final List<String> args=new ArrayList<>();
+		args.add("choice");
+		return args;
+	}
+
 	@Nonnull
 	@Override
 	public List<Argument> getInvokingArguments() {
 		return getArguments();
 	}
 
+	@Nonnull
+	@Override
+	public Response run(@Nonnull final State st,
+	                    @Nonnull final SafeMap parametermap) {
+		final String selected=parametermap.get("choice");
+		int choice=-1;
+		for (int i=1;i<=12;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
+		if (choice==-1) { throw new UserInputLookupFailureException("Menu "+getName()+" has no element "+selected); }
+		final String commandtoinvoke=definition.optString("command"+choice,"");
+		if (commandtoinvoke.isEmpty()) {
+			throw new UserConfigurationException("Menu "+getName()+" command "+selected+" is choice "+choice+" and does not have a command to invoke");
+		}
+		return Modules.getJSONTemplateResponse(st,commandtoinvoke);
+	}
+
+	@Nonnull
+	@Override
+	public String getFullMethodName() { return getClass()+".run()"; }
+
 	@Override
 	public int getInvokingArgumentCount() {
 		return getArgumentCount();
-	}
-
-	@Override
-	public boolean isGenerated() {
-		return true;
 	}
 }

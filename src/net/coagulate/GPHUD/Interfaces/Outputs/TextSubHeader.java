@@ -21,6 +21,7 @@ public class TextSubHeader implements Renderable {
 
 	public TextSubHeader(final Renderable r) { content=r; }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

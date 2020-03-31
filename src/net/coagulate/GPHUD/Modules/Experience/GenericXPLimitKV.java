@@ -12,6 +12,7 @@ public class GenericXPLimitKV extends KV {
 
 	public GenericXPLimitKV(final String name) { myname=name; }
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return true; }
 
 	@Nonnull

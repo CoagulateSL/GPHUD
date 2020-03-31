@@ -25,6 +25,7 @@ public class Row implements Renderable {
 
 	public Row(final String c) { add(c); }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public Row add(final Cell c) {
 		row.add(c);

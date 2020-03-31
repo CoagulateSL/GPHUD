@@ -25,6 +25,7 @@ public class SideSubMenuAnnotation extends SideSubMenu {
 		url=Modules.getURL(null,m.getAnnotation(URLs.class).url());
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String name() { return meta.name(); }
 

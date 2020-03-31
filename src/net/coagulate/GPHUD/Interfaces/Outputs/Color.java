@@ -26,6 +26,7 @@ public class Color implements Renderable {
 		this.color=color;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

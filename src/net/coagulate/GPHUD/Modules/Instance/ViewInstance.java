@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class ViewInstance {
 
+	// ---------- STATICS ----------
 	@URLs(url="/instances/view/*")
 	public static void viewInstance(@Nonnull final State st,
 	                                final SafeMap values) {

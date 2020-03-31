@@ -16,6 +16,7 @@ public class GenericXPAwardPermission extends Permission {
 
 	public GenericXPAwardPermission(final String name) { myname=name; }
 
+	// ---------- INSTANCE ----------
 	@Override
 	public Module getModule(final State st) {
 		return Modules.get(st,"Experience");

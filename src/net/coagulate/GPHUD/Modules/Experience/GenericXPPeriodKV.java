@@ -12,6 +12,7 @@ public class GenericXPPeriodKV extends KV {
 
 	public GenericXPPeriodKV(final String name) { myname=name; }
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return true; }
 
 	@Nonnull

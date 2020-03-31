@@ -13,6 +13,7 @@ import java.util.List;
  */
 public abstract class Argument {
 
+	// ---------- INSTANCE ----------
 	public abstract boolean isGenerated();
 
 	@Nonnull
@@ -76,6 +77,7 @@ public abstract class Argument {
 	@Documented
 	@Target(ElementType.PARAMETER)
 	public @interface Arguments {
+		// ---------- INSTANCE ----------
 		@Nonnull ArgumentType type();
 
 		@Nonnull String description();

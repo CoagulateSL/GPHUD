@@ -20,8 +20,11 @@ import javax.annotation.Nonnull;
  */
 public class OpenWebsite {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.CHARACTER, description="Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website", permitUserWeb=false,
+	@Commands(context=Context.CHARACTER,
+	          description="Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website",
+	          permitUserWeb=false,
 	          permitObject=false)
 	public static Response openWebsite(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
@@ -35,11 +38,17 @@ public class OpenWebsite {
 	}
 
 	@Nonnull
-	@Commands(context=Context.ANY, description="Causes the GPHUD to send an llOpenURL to the user with a custom URL/description", permitUserWeb=false, permitObject=false)
+	@Commands(context=Context.ANY,
+	          description="Causes the GPHUD to send an llOpenURL to the user with a custom URL/description",
+	          permitUserWeb=false,
+	          permitObject=false)
 	public static Response offerWebsite(@Nonnull final State st,
-	                                    @Argument.Arguments(description="URL to offer to user", type=Argument.ArgumentType.TEXT_ONELINE, max=255) final String url,
-	                                    @Argument.Arguments(description="Description to offer with the URL", type=Argument.ArgumentType.TEXT_MULTILINE, max=254)
-	                                    final String description) {
+	                                    @Argument.Arguments(description="URL to offer to user",
+	                                                        type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                        max=255) final String url,
+	                                    @Argument.Arguments(description="Description to offer with the URL",
+	                                                        type=Argument.ArgumentType.TEXT_MULTILINE,
+	                                                        max=254) final String description) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","openurl");
 		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel

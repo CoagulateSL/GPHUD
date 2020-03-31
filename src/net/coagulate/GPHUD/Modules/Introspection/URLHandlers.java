@@ -20,8 +20,10 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class URLHandlers {
+	// ---------- STATICS ----------
 	@URLs(url="/introspection/urlhandlers")
-	@SideSubMenus(name="URL Handlers", priority=99)
+	@SideSubMenus(name="URL Handlers",
+	              priority=99)
 	public static void createForm(@Nonnull final State st,
 	                              final SafeMap values) {
 		final Form f=st.form();

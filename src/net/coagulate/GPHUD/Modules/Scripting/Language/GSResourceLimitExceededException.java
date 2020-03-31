@@ -14,6 +14,7 @@ public class GSResourceLimitExceededException extends GSException {
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Resource Limit Exceeded Exception}: "+getLocalizedMessage(); }
 }

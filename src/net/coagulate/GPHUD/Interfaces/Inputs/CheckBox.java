@@ -23,6 +23,7 @@ public class CheckBox extends Input {
 		this.value=value;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public String getName() {
 		return name;

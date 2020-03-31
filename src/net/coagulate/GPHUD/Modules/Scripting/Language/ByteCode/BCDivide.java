@@ -12,6 +12,7 @@ public class BCDivide extends ByteCode {
 		super(n);
 	}
 
+	// ---------- INSTANCE ----------
 	// Pop two, op, push result
 	@Nonnull
 	public String explain() { return "Divide (Pop two, divide, push result)"; }

@@ -12,6 +12,8 @@ public class ScriptRuns extends TableRow {
 		super(id);
 	}
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Create a script run.
 	 * Invalidates any previous scripts waiting for the same user.
@@ -39,6 +41,7 @@ public class ScriptRuns extends TableRow {
 		return (ScriptRuns) factoryPut("ScriptRuns",id,new ScriptRuns(id));
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getIdColumn() { return "id"; }
@@ -58,9 +61,6 @@ public class ScriptRuns extends TableRow {
 	@Override
 	public String getLinkTarget() { return null; }
 
-	@Override
-	protected int getNameCacheTime() { return 0; }
-
 	@Nullable
 	@Override
 	public String getKVTable() {
@@ -72,6 +72,7 @@ public class ScriptRuns extends TableRow {
 	public String getKVIdField() {
 		return null;
 	}
+	// ----- Internal Instance -----
 
 	@Nonnull
 	@Override
@@ -108,4 +109,7 @@ public class ScriptRuns extends TableRow {
 	public byte[] getByteCode() {
 		return getBytes("bytecode");
 	}
+
+	@Override
+	protected int getNameCacheTime() { return 0; }
 }

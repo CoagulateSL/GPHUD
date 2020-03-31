@@ -35,6 +35,7 @@ public class JSONPushResponse implements Response {
 		this.nonjson=nonjson;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public JSONObject asJSON(final State st) {
 		return json;

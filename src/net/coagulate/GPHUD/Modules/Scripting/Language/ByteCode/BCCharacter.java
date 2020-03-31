@@ -23,6 +23,7 @@ public class BCCharacter extends ByteCodeDataType {
 		this.content=content;
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public Char getContent() {
 		if (content==null) { throw new GSInternalError("Getting an uninitialised BCCharacter's contents"); }

@@ -19,8 +19,10 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class ManagePermissions {
+	// ---------- STATICS ----------
 	@URLs(url="/introspection/permissions")
-	@SideSubMenus(name="Permissions", priority=20)
+	@SideSubMenus(name="Permissions",
+	              priority=20)
 	public static void createForm(@Nonnull final State st,
 	                              final SafeMap values) {
 		final Form f=st.form();

@@ -15,7 +15,9 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 
 public class GSFunctions {
-	private GSFunctions(){}
+	private GSFunctions() {}
+
+	// ---------- STATICS ----------
 	@URL.URLs(url="/introspection/gsfunctions/*")
 	public static void renderCommand(@Nonnull final State st,
 	                                 final SafeMap values) {
@@ -52,7 +54,8 @@ public class GSFunctions {
 	}
 
 	@URL.URLs(url="/introspection/gsfunctions")
-	@SideSubMenu.SideSubMenus(name="GSFunctions", priority=15)
+	@SideSubMenu.SideSubMenus(name="GSFunctions",
+	                          priority=15)
 	public static void APIIndex(@Nonnull final State st,
 	                            final SafeMap values) {
 		final Form f=st.form();
@@ -68,7 +71,8 @@ public class GSFunctions {
 				t.add("<a href=\"/GPHUD/introspection/gsfunctions/"+functionname+"\">"+functionname+"</a>");
 				if (meta.privileged()) {
 					t.add("<i>Privileged</i>&nbsp;&nbsp;&nbsp;");
-				} else {
+				}
+				else {
 					t.add("");
 				}
 				t.add(meta.description());

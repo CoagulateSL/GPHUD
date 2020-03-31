@@ -22,5 +22,6 @@ public class RedirectionException extends RuntimeException {
 		this.url=url;
 	}
 
+	// ---------- INSTANCE ----------
 	public String getURL() { return url; }
 }

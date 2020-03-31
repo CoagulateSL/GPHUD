@@ -33,6 +33,8 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		super();
 	}
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Returns a formatted view link.
 	 *
@@ -49,6 +51,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		return new Link(name,"/GPHUD/"+target+"/view/"+id).asHtml(null,true);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public abstract String getIdColumn();
@@ -108,13 +111,6 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 
 	/**
-	 * The cache time in seconds for the name of this object
-	 *
-	 * @return Cache time in seconds
-	 */
-	protected abstract int getNameCacheTime();
-
-	/**
 	 * Highly protected version of getName() that never fails.
 	 *
 	 * @return The name of the object, as per getName(), or SQLEXCEPTION (logged separately) if an error occurs
@@ -167,58 +163,11 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Override
 	public Set<Renderable> getSubRenderables() { return null; }
 
-	/**
-	 * Package access method to resolve a name to an ID number
-	 *
-	 * @param st            State
-	 * @param name          Name to look up
-	 * @param instancelocal in the state's instance or globally if false
-	 *
-	 * @return the ID number of the matching record, or zero if there is no match
-	 */
-	int resolveToID(@Nonnull final State st,
-	                @Nullable final String name,
-	                final boolean instancelocal) {
-		final boolean debug=false;
-		if (name==null) { return 0; }
-		if (name.isEmpty()) { return 0; }
-		try {
-			// is it an ID
-			final int id=Integer.parseInt(name);
-			if (id>0) { return id; }
-		}
-		catch (@Nonnull final NumberFormatException e) {} // not a number then :P
-		try {
-			final int id;
-			if (instancelocal) {
-				id=dqinn("select "+getIdColumn()+" from "+getTableName()+" where "+getNameField()+" like ? and instanceid=?",name,st.getInstance().getId());
-			}
-			else {
-				id=dqinn("select "+getIdColumn()+" from "+getTableName()+" where "+getNameField()+" like ?",name);
-			}
-			if (id>0) { return id; }
-		}
-		catch (@Nonnull final NoDataException e) { }
-		catch (@Nonnull final TooMuchDataException e) {
-			GPHUD.getLogger().warning("Multiple matches searching for "+name+" in "+getClass());
-		}
-		return 0;
-	}
-
 	@Nullable
 	public abstract String getKVTable();
 
 	@Nullable
 	public abstract String getKVIdField();
-
-	/**
-	 * Exception if any of the KV configuration is nulled
-	 */
-	void kvcheck() {
-		if (getKVTable()==null || getKVIdField()==null) {
-			throw new SystemImplementationException("DBObject "+getClass().getName()+" does not support KV mappings");
-		}
-	}
 
 	/**
 	 * Set a KV value for this object
@@ -277,6 +226,55 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		return ours.compareTo(theirs);
 	}
 
+	// ----- Internal Instance -----
+
+	/**
+	 * Package access method to resolve a name to an ID number
+	 *
+	 * @param st            State
+	 * @param name          Name to look up
+	 * @param instancelocal in the state's instance or globally if false
+	 *
+	 * @return the ID number of the matching record, or zero if there is no match
+	 */
+	int resolveToID(@Nonnull final State st,
+	                @Nullable final String name,
+	                final boolean instancelocal) {
+		final boolean debug=false;
+		if (name==null) { return 0; }
+		if (name.isEmpty()) { return 0; }
+		try {
+			// is it an ID
+			final int id=Integer.parseInt(name);
+			if (id>0) { return id; }
+		}
+		catch (@Nonnull final NumberFormatException e) {} // not a number then :P
+		try {
+			final int id;
+			if (instancelocal) {
+				id=dqinn("select "+getIdColumn()+" from "+getTableName()+" where "+getNameField()+" like ? and instanceid=?",name,st.getInstance().getId());
+			}
+			else {
+				id=dqinn("select "+getIdColumn()+" from "+getTableName()+" where "+getNameField()+" like ?",name);
+			}
+			if (id>0) { return id; }
+		}
+		catch (@Nonnull final NoDataException e) { }
+		catch (@Nonnull final TooMuchDataException e) {
+			GPHUD.getLogger().warning("Multiple matches searching for "+name+" in "+getClass());
+		}
+		return 0;
+	}
+
+	/**
+	 * Exception if any of the KV configuration is nulled
+	 */
+	void kvcheck() {
+		if (getKVTable()==null || getKVIdField()==null) {
+			throw new SystemImplementationException("DBObject "+getClass().getName()+" does not support KV mappings");
+		}
+	}
+
 	/**
 	 * Get an object from the cache
 	 *
@@ -315,6 +313,13 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		cache.put(key,ele);
 		return object;
 	}
+
+	/**
+	 * The cache time in seconds for the name of this object
+	 *
+	 * @return Cache time in seconds
+	 */
+	protected abstract int getNameCacheTime();
 
 	private static class CacheElement {
 		@Nonnull

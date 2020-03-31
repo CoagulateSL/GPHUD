@@ -23,6 +23,7 @@ public class PermissionAnnotation extends Permission {
 		this.modulename=modulename;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public Module getModule(final State st) {
 		return Modules.get(st,modulename);

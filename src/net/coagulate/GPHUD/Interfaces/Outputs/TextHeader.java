@@ -20,6 +20,7 @@ public class TextHeader implements Renderable {
 
 	public TextHeader(final Renderable r) { content=r; }
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {

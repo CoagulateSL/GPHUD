@@ -21,6 +21,7 @@ public class Table implements Renderable {
 	Row openrow;
 	private boolean nowrap;
 
+	// ---------- INSTANCE ----------
 	public void border(final boolean border) { this.border=border; }
 
 	@Nonnull

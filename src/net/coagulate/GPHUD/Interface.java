@@ -28,6 +28,7 @@ public abstract class Interface implements HttpRequestHandler {
 	@Nullable
 	public static String base;
 
+	// ---------- STATICS ----------
 	public static String getNode() { return GPHUD.hostname; }
 
 	@Nonnull
@@ -58,6 +59,7 @@ public abstract class Interface implements HttpRequestHandler {
 		return 10000*major+100*minor+bugfix;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public void handle(@Nonnull final HttpRequest req,
 	                   final HttpResponse resp,

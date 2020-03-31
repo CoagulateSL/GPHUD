@@ -31,6 +31,7 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
  */
 public abstract class ViewAvatar {
 
+	// ---------- STATICS ----------
 	@URLs(url="/avatars/view/*")
 	public static void viewAvatar(@Nonnull final State st,
 	                              final SafeMap values) {
@@ -105,9 +106,14 @@ public abstract class ViewAvatar {
 	}
 
 	@Nonnull
-	@Commands(context=Command.Context.AVATAR, permitScripting=false, description="Set displayed timezone for date/time events", permitObject=false)
+	@Commands(context=Command.Context.AVATAR,
+	          permitScripting=false,
+	          description="Set displayed timezone for date/time events",
+	          permitObject=false)
 	public static Response setTZ(@Nonnull final State st,
-	                             @Arguments(type=Argument.ArgumentType.CHOICE, description="Prefered Time Zone", choiceMethod="getTimeZones") final String timezone) {
+	                             @Arguments(type=Argument.ArgumentType.CHOICE,
+	                                        description="Prefered Time Zone",
+	                                        choiceMethod="getTimeZones") final String timezone) {
 		st.getAvatar().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");
 	}

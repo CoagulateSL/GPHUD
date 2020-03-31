@@ -21,9 +21,17 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
 public class FactionAttribute extends CharacterAttribute {
 	public FactionAttribute(final int id) { super(id); }
 
+	// ---------- INSTANCE ----------
+	@Nonnull
 	@Override
-	public boolean readOnly() {
-		return true;
+	public String getName() {
+		return "Faction";
+	}
+
+	@Nonnull
+	@Override
+	public ATTRIBUTETYPE getType() {
+		return GROUP;
 	}
 
 	@Nonnull
@@ -76,16 +84,9 @@ public class FactionAttribute extends CharacterAttribute {
 		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
 
-	@Nonnull
 	@Override
-	public String getName() {
-		return "Faction";
-	}
-
-	@Nonnull
-	@Override
-	public ATTRIBUTETYPE getType() {
-		return GROUP;
+	public boolean readOnly() {
+		return true;
 	}
 
 }

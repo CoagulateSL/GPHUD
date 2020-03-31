@@ -25,8 +25,10 @@ import javax.annotation.Nonnull;
  */
 public class FactionCommands {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Template(name="FACTION", description="Current faction name")
+	@Template(name="FACTION",
+	          description="Current faction name")
 	public static String getFactionName(@Nonnull final State st,
 	                                    final String key) {
 		if (!st.hasModule("Faction")) { return ""; }
@@ -36,10 +38,15 @@ public class FactionCommands {
 	}
 
 	@Nonnull
-	@Commands(description="Award a point of faction XP to the target character", context=Context.CHARACTER)
+	@Commands(description="Award a point of faction XP to the target character",
+	          context=Context.CHARACTER)
 	public static Response awardXP(@Nonnull final State st,
-	                               @Nonnull @Arguments(description="Character to award a point of XP to", type=ArgumentType.CHARACTER_FACTION) final Char target,
-	                               @Arguments(description="Reason for the award", type=ArgumentType.TEXT_ONELINE, max=512) final String reason) {
+	                               @Nonnull
+	                               @Arguments(description="Character to award a point of XP to",
+	                                          type=ArgumentType.CHARACTER_FACTION) final Char target,
+	                               @Arguments(description="Reason for the award",
+	                                          type=ArgumentType.TEXT_ONELINE,
+	                                          max=512) final String reason) {
 		// things to check...
 		// players are in the same faction
 		final CharacterGroup ourfaction=st.getCharacter().getGroup("Faction");
@@ -72,16 +79,20 @@ public class FactionCommands {
 	}
 
 	@Nonnull
-	@Commands(description="Invite a player to your faction", context=Context.CHARACTER)
+	@Commands(description="Invite a player to your faction",
+	          context=Context.CHARACTER)
 	public static Response invite(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Character to invite", type=ArgumentType.CHARACTER) final Char target) {
+	                              @Nonnull
+	                              @Arguments(description="Character to invite",
+	                                         type=ArgumentType.CHARACTER) final Char target) {
 		final CharacterGroup ourfaction=st.getCharacter().getGroup("Faction");
 		if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
 		return GroupCommands.invite(st,ourfaction,target);
 	}
 
 	@Nonnull
-	@Commands(context=Context.CHARACTER, description="Eject a member from your faction")
+	@Commands(context=Context.CHARACTER,
+	          description="Eject a member from your faction")
 	public static Response eject(@Nonnull final State st,
 	                             @Arguments(description="Character to remove from the faction",
 	                                        type=ArgumentType.CHARACTER_FACTION) @Nonnull final Char member) {

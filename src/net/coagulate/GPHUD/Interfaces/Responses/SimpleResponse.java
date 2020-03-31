@@ -19,6 +19,7 @@ public class SimpleResponse implements Response {
 
 	public SimpleResponse(final String message) { this.message=message; }
 
+	// ---------- INSTANCE ----------
 	@Override
 	public JSONObject asJSON(final State st) {
 		return new JSONObject().put("message",message);

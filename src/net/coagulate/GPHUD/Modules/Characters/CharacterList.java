@@ -16,7 +16,9 @@ import java.util.List;
  */
 public class CharacterList {
 
-	@URLs(url="/characters/list*", requiresPermission="Characters.ViewAll")
+	// ---------- STATICS ----------
+	@URLs(url="/characters/list*",
+	      requiresPermission="Characters.ViewAll")
 	public static void list(@Nonnull final State st,
 	                        final SafeMap values) {
 		final List<CharacterSummary> list=st.getInstance().getCharacterSummary(st);

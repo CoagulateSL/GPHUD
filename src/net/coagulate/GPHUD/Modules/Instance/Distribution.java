@@ -13,8 +13,12 @@ import javax.annotation.Nonnull;
 
 public class Distribution {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Command.Commands(description="Get a new Region Server", requiresPermission="Instance.ServerOperator", permitScripting=false, context=Command.Context.AVATAR,
+	@Command.Commands(description="Get a new Region Server",
+	                  requiresPermission="Instance.ServerOperator",
+	                  permitScripting=false,
+	                  context=Command.Context.AVATAR,
 	                  permitObject=false)
 	public static Response getServer(@Nonnull final State st) {
 		try {
@@ -34,7 +38,10 @@ public class Distribution {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Get a new Remote Dispenser", requiresPermission="Instance.ServerOperator", permitScripting=false, context=Command.Context.AVATAR,
+	@Command.Commands(description="Get a new Remote Dispenser",
+	                  requiresPermission="Instance.ServerOperator",
+	                  permitScripting=false,
+	                  context=Command.Context.AVATAR,
 	                  permitObject=false)
 	public static Response getDispenser(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();

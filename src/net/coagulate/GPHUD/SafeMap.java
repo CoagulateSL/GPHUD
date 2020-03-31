@@ -12,12 +12,14 @@ import java.util.TreeMap;
 public class SafeMap extends TreeMap<String,String> {
 	private static final long serialVersionUID=1L;
 
+	// ----- Internal Statics -----
 	@Nonnull
 	private static String nonull(@Nullable final String s) {
 		if (s==null) { return ""; }
 		return s;
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean submit() { return ("Submit".equals(get("Submit"))); }
 
 	@Nonnull

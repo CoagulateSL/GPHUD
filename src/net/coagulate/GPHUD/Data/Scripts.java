@@ -24,6 +24,8 @@ public class Scripts extends TableRow {
 		super(id);
 	}
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Creates a list of all scripts at an instance.
 	 * TODO break this function down.
@@ -144,6 +146,8 @@ public class Scripts extends TableRow {
 		return list;
 	}
 
+	// ---------- INSTANCE ----------
+
 	/**
 	 * Get the source for this script
 	 *
@@ -205,11 +209,6 @@ public class Scripts extends TableRow {
 		}
 	}
 
-	@Nullable
-	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
-	}
-
 	@Nonnull
 	@Override
 	public String getNameField() { return "name"; }
@@ -217,9 +216,6 @@ public class Scripts extends TableRow {
 	@Nonnull
 	@Override
 	public String getLinkTarget() { return "/GPHUD/configuration/scripting/edit/"+getId(); }
-
-	@Override
-	protected int getNameCacheTime() { return 600; }
 
 	@Nullable
 	@Override
@@ -232,6 +228,13 @@ public class Scripts extends TableRow {
 	public String getKVIdField() {
 		return null;
 	}
+
+	@Nullable
+	public Instance getInstance() {
+		return Instance.get(getInt("instanceid"));
+	}
+
+	// ----- Internal Instance -----
 
 	@Nonnull
 	@Override
@@ -272,4 +275,7 @@ public class Scripts extends TableRow {
 		validate();
 		return getBytes("bytecode");
 	}
+
+	@Override
+	protected int getNameCacheTime() { return 600; }
 }

@@ -23,6 +23,7 @@ import static java.util.logging.Level.INFO;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class EventsMaintenance {
+	// ---------- STATICS ----------
 	//TODO check if events is actually enabled in the instance
 	public static void maintenance() {
 		Set<EventSchedule> events=Event.getStartingEvents();

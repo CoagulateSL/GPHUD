@@ -33,12 +33,11 @@ public class ArgumentAnnotation extends Argument {
 		generated=false;
 	}
 
+	// ---------- INSTANCE ----------
 	public boolean isGenerated() { return generated; }
 
 	@Nonnull
 	public ArgumentType type() { return meta.type(); }
-
-	public void overrideDescription(final String n) { overridedescription=n; }
 
 	@Nonnull
 	public String description() {
@@ -48,9 +47,6 @@ public class ArgumentAnnotation extends Argument {
 
 	public boolean mandatory() { return meta.mandatory(); }
 
-	@Nonnull
-	public String choiceMethod() { return meta.choiceMethod(); }
-
 	public Class<? extends Object> objectType() { return parameter.getType(); }
 
 	public String getName() { return parameter.getName(); }
@@ -58,6 +54,8 @@ public class ArgumentAnnotation extends Argument {
 	public boolean delayTemplating() { return meta.delayTemplating(); }
 
 	public int max() { return meta.max(); }
+
+	public void overrideDescription(final String n) { overridedescription=n; }
 
 	@Nonnull
 	@SuppressWarnings("unchecked")
@@ -82,5 +80,8 @@ public class ArgumentAnnotation extends Argument {
 			throw new SystemImplementationException("Security problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
 		}
 	}
+
+	@Nonnull
+	public String choiceMethod() { return meta.choiceMethod(); }
 
 }

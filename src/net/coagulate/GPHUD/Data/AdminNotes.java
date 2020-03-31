@@ -21,6 +21,8 @@ public class AdminNotes extends TableRow {
 
 	protected AdminNotes(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -133,6 +135,8 @@ public class AdminNotes extends TableRow {
 		return results;
 	}
 
+	// ----- Internal Statics -----
+
 	/**
 	 * Convert a ResultsRow to an AdminNote element
 	 */
@@ -148,6 +152,7 @@ public class AdminNotes extends TableRow {
 		);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -158,6 +163,11 @@ public class AdminNotes extends TableRow {
 	@Override
 	public String getIdColumn() {
 		return "id";
+	}
+
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
 	}
 
 	@Nonnull
@@ -178,14 +188,9 @@ public class AdminNotes extends TableRow {
 	@javax.annotation.Nullable
 	public String getKVIdField() { return null; }
 
-	public void flushKVCache(final State st) {}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-	}
-
 	protected int getNameCacheTime() { return 0; } // name doesn't exist yet alone get cached
+
+	public void flushKVCache(final State st) {}
 
 	public static class AdminNote {
 		public final int tds;

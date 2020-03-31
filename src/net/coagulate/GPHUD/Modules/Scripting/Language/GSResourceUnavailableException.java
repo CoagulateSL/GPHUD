@@ -14,6 +14,7 @@ public class GSResourceUnavailableException extends GSException {
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Resource Unavailable Exception}: "+getLocalizedMessage(); }
 }

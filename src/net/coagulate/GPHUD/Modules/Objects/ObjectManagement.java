@@ -27,7 +27,9 @@ import javax.annotation.Nonnull;
 
 public class ObjectManagement {
 
-	@URL.URLs(url="/configuration/objects", requiresPermission="Objects.View")
+	// ---------- STATICS ----------
+	@URL.URLs(url="/configuration/objects",
+	          requiresPermission="Objects.View")
 	public static void index(@Nonnull final State st,
 	                         @Nonnull final SafeMap map) {
 		final Form f=st.form();
@@ -63,7 +65,8 @@ public class ObjectManagement {
 		f.add("<br/><a href=\"/GPHUD/configuration/objects/createtype\">Create new object type</a>");
 	}
 
-	@URL.URLs(url="/configuration/objects/createtype", requiresPermission="Objects.ObjectTypes")
+	@URL.URLs(url="/configuration/objects/createtype",
+	          requiresPermission="Objects.ObjectTypes")
 	public static void createObjectType(@Nonnull final State st,
 	                                    @Nonnull final SafeMap map) {
 		if (map.get("Create").equalsIgnoreCase("Create")) {
@@ -82,7 +85,8 @@ public class ObjectManagement {
 		input.openRow().add(new Cell(new Button("Create"),2));
 	}
 
-	@URL.URLs(url="/configuration/objects/objecttypes/*", requiresPermission="Objects.ObjectTypes")
+	@URL.URLs(url="/configuration/objects/objecttypes/*",
+	          requiresPermission="Objects.ObjectTypes")
 	public static void editObjectType(@Nonnull final State st,
 	                                  final SafeMap map) {
 		st.postmap(map);
@@ -99,8 +103,11 @@ public class ObjectManagement {
 	}
 
 	@Nonnull
-	@Command.Commands(description="Gets the Object Driver Script", permitScripting=false, permitUserWeb=false, context=Command.Context.AVATAR, requiresPermission="Objects"+
-			".GetDriver")
+	@Command.Commands(description="Gets the Object Driver Script",
+	                  permitScripting=false,
+	                  permitUserWeb=false,
+	                  context=Command.Context.AVATAR,
+	                  requiresPermission="Objects"+".GetDriver")
 	public static Response getDriver(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","servergive");

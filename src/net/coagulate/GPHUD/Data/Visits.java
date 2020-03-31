@@ -14,6 +14,8 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  * @author Iain Price
  */
 public class Visits {
+	// ---------- STATICS ----------
+
 	/**
 	 * Start a visit record.
 	 * Ends any existing visit records for this avatar.

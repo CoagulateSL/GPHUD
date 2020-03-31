@@ -20,6 +20,7 @@ public class KVValue {
 		this.path=path;
 	}
 
+	// ---------- INSTANCE ----------
 	public String value() { return value; }
 
 	public String path() { return path; }

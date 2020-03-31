@@ -14,6 +14,7 @@ public class GSCastException extends GSInvalidExpressionException {
 		super(reason,cause);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Cast Exception}: "+getLocalizedMessage(); }
 }

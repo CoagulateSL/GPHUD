@@ -25,6 +25,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public abstract class Audit {
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static Results getAudit(@Nullable final Instance instance,
 	                               @Nullable final User avatar,
@@ -150,16 +151,6 @@ public abstract class Audit {
 		}
 	}
 
-	private static Object getId(@Nullable final TableRow r) {
-		if (r==null) { return new NullInteger(); }
-		return r.getId();
-	}
-
-	private static Object getId(@Nullable final User r) {
-		if (r==null) { return new NullInteger(); }
-		return r.getId();
-	}
-
 	@Nonnull
 	public static Table formatAudit(@Nonnull final Results rows,
 	                                final String timezone) {
@@ -249,6 +240,17 @@ public abstract class Audit {
 			table.add("No audit events");
 		}
 		return table;
+	}
+
+	// ----- Internal Statics -----
+	private static Object getId(@Nullable final TableRow r) {
+		if (r==null) { return new NullInteger(); }
+		return r.getId();
+	}
+
+	private static Object getId(@Nullable final User r) {
+		if (r==null) { return new NullInteger(); }
+		return r.getId();
 	}
 
 	@Nonnull

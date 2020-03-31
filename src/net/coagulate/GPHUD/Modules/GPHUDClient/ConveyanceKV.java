@@ -17,6 +17,7 @@ public class ConveyanceKV extends KV {
 		name=attribute;
 	}
 
+	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
 		return true;
@@ -24,8 +25,8 @@ public class ConveyanceKV extends KV {
 
 	@Nonnull
 	@Override
-	public String name() {
-		return name;
+	public String fullname() {
+		return "GPHUDClient."+name();
 	}
 
 	@Nonnull
@@ -70,12 +71,6 @@ public class ConveyanceKV extends KV {
 		return KVHIERARCHY.NONE;
 	}
 
-	@Nonnull
-	@Override
-	public String fullname() {
-		return "GPHUDClient."+name();
-	}
-
 	@Override
 	public boolean template() {
 		return false;
@@ -84,6 +79,12 @@ public class ConveyanceKV extends KV {
 	@Override
 	public boolean hidden() {
 		return true;
+	}
+
+	@Nonnull
+	@Override
+	public String name() {
+		return name;
 	}
 
 }

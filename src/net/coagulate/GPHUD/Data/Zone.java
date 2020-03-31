@@ -25,6 +25,8 @@ public class Zone extends TableRow {
 
 	protected Zone(final int id) { super(id); }
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Factory style constructor
 	 *
@@ -93,6 +95,8 @@ public class Zone extends TableRow {
 		}
 	}
 
+	// ----- Internal Statics -----
+
 	/**
 	 * Wipe zone a related K (KV) from a given instance
 	 *
@@ -112,6 +116,7 @@ public class Zone extends TableRow {
 		       );
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
@@ -122,6 +127,12 @@ public class Zone extends TableRow {
 	@Override
 	public String getIdColumn() {
 		return "zoneid";
+	}
+
+	public void validate(@Nonnull final State st) {
+		if (validated) { return; }
+		validate();
+		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Zone / State Instance mismatch"); }
 	}
 
 	@Nonnull
@@ -135,6 +146,21 @@ public class Zone extends TableRow {
 	public String getLinkTarget() {
 		return "/configuration/zoning";
 	}
+
+	@Nonnull
+	@Override
+	public String getKVTable() {
+		return "zonekvstore";
+	}
+
+	@Nonnull
+	@Override
+	public String getKVIdField() {
+		return "zoneid";
+	}
+
+	@Override
+	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Get the defined areas for this zone.
@@ -199,18 +225,6 @@ public class Zone extends TableRow {
 		d("insert into zoneareas(zoneid,regionid,x1,y1,z1,x2,y2,z2) values(?,?,?,?,?,?,?,?)",getId(),region.getId(),c1[0],c1[1],c1[2],c2[0],c2[1],c2[2]);
 	}
 
-	@Nonnull
-	@Override
-	public String getKVTable() {
-		return "zonekvstore";
-	}
-
-	@Nonnull
-	@Override
-	public String getKVIdField() {
-		return "zoneid";
-	}
-
 	/**
 	 * Broadcast a message to all users in this zone.
 	 *
@@ -224,15 +238,6 @@ public class Zone extends TableRow {
 		GPHUD.getLogger().info("Sending broadcast to zone "+getName()+" in instance "+getInstance().getName()+" - "+message);
 		getInstance().sendServers(json);
 	}
-
-	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
-		validate();
-		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Zone / State Instance mismatch"); }
-	}
-
-	@Override
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Delete this zone

@@ -17,6 +17,7 @@ public class ErrorResponse extends TextError implements Response {
 		super(r);
 	}
 
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {

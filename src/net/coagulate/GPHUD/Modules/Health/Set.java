@@ -14,10 +14,13 @@ import static net.coagulate.GPHUD.Data.Audit.audit;
 
 public class Set {
 
+	// ---------- STATICS ----------
 	@Nonnull
-	@Command.Commands(description="Set own health", context=Command.Context.CHARACTER)
+	@Command.Commands(description="Set own health",
+	                  context=Command.Context.CHARACTER)
 	public static Response set(@Nonnull final State st,
-	                           @Argument.Arguments(description="Ammount of health to set to", type=Argument.ArgumentType.INTEGER) final Integer target) {
+	                           @Argument.Arguments(description="Ammount of health to set to",
+	                                               type=Argument.ArgumentType.INTEGER) final Integer target) {
 		// is this command enabled?
 		if (!st.getKV("Health.allowSelfSet").boolValue()) {
 			return new ErrorResponse("Administration has not enabled this command at this instance.");

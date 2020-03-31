@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class Index {
 
+	// ---------- STATICS ----------
 	@URLs(url="/configuration/")
 	public static void createForm(@Nonnull final State st,
 	                              final SafeMap values) {
@@ -99,12 +100,8 @@ public abstract class Index {
 		final Table books=new Table();
 		f.add(books);
 		books.add(new HeaderRow().add("Name").add("Description"));
-		books.openRow()
-		     .add(new Link("User Changable Titler","/GPHUD/configuration/cookbooks/user-titler"))
-		     .add("Allows the character to modify a text string that is appended to their titler");
-		books.openRow()
-		     .add(new Link("User Changable Titler Color","/GPHUD/configuration/cookbooks/user-titler-color"))
-		     .add("Allows the character to modify a text string that changes their titler color (should be an LSL color, e.g. <0,1,0> for green");
+		books.openRow().add(new Link("User Changable Titler","/GPHUD/configuration/cookbooks/user-titler")).add("Allows the character to modify a text string that is appended to their titler");
+		books.openRow().add(new Link("User Changable Titler Color","/GPHUD/configuration/cookbooks/user-titler-color")).add("Allows the character to modify a text string that changes their titler color (should be an LSL color, e.g. <0,1,0> for green");
 		books.openRow().add(new Link("Allow Multiple Characters","/GPHUD/configuration/cookbooks/multi-char")).add("Allows the user to create and name multiple characters");
 		books.openRow().add(new Link("Allow Self Retirement","/GPHUD/configuration/cookbooks/self-retire")).add("Allows a character to elect to 'retire' themselves");
 	}

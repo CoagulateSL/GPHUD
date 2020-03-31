@@ -34,6 +34,7 @@ import java.util.List;
  */
 public class AttributeConfig {
 
+	// ---------- STATICS ----------
 	@Nonnull
 	public static String blankNulls(@Nullable final String s) {
 		if (s==null) { return ""; }
@@ -94,7 +95,8 @@ public class AttributeConfig {
 	}
 
 
-	@URLs(url="/configuration/characters/addattribute", requiresPermission="Characters.CreateAttribute")
+	@URLs(url="/configuration/characters/addattribute",
+	      requiresPermission="Characters.CreateAttribute")
 	public static void addAttribute(@Nonnull final State st,
 	                                @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Characters.CreateAttribute",values);
@@ -113,23 +115,35 @@ public class AttributeConfig {
 	}
 
 	@Nonnull
-	@Commands(description="Create a new attribute", context=Command.Context.AVATAR, requiresPermission="Characters.CreateAttribute", permitObject=false)
+	@Commands(description="Create a new attribute",
+	          context=Command.Context.AVATAR,
+	          requiresPermission="Characters.CreateAttribute",
+	          permitObject=false)
 	public static Response createAttribute(@Nonnull final State st,
-	                                       @Nonnull @Arguments(description="Name of new attribute", type=Argument.ArgumentType.TEXT_INTERNAL_NAME, max=64) final String name,
-	                                       @Arguments(description="Allow users to edit their own value without needing permissions", type=Argument.ArgumentType.BOOLEAN)
-	                                       final Boolean selfmodify,
-	                                       @Nullable @Arguments(description="Type of this attribute", type=Argument.ArgumentType.CHOICE, choiceMethod="getAttributeTypes")
-	                                       final String attributetype,
+	                                       @Nonnull
+	                                       @Arguments(description="Name of new attribute",
+	                                                  type=Argument.ArgumentType.TEXT_INTERNAL_NAME,
+	                                                  max=64) final String name,
+	                                       @Arguments(description="Allow users to edit their own value without needing permissions",
+	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean selfmodify,
 	                                       @Nullable
-	                                       @Arguments(description="Type of group, if GROUP, or awarding group TYPE if EXPERIENCE", mandatory=false, type=
-			                                       Argument.ArgumentType.TEXT_INTERNAL_NAME, max=128)
-	                                       final String grouptype,
-	                                       @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)", mandatory=false, type=
-			                                       Argument.ArgumentType.BOOLEAN)
-	                                       final Boolean usesabilitypoints,
-	                                       @Arguments(description="Attribute must be completed", type=Argument.ArgumentType.BOOLEAN) final Boolean required,
-	                                       @Arguments(description="Default value (can be blank)", type=Argument.ArgumentType.TEXT_ONELINE, max=4096, mandatory=false)
-	                                       final String defaultvalue) {
+	                                       @Arguments(description="Type of this attribute",
+	                                                  type=Argument.ArgumentType.CHOICE,
+	                                                  choiceMethod="getAttributeTypes") final String attributetype,
+	                                       @Nullable
+	                                       @Arguments(description="Type of group, if GROUP, or awarding group TYPE if EXPERIENCE",
+	                                                  mandatory=false,
+	                                                  type=Argument.ArgumentType.TEXT_INTERNAL_NAME,
+	                                                  max=128) final String grouptype,
+	                                       @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",
+	                                                  mandatory=false,
+	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean usesabilitypoints,
+	                                       @Arguments(description="Attribute must be completed",
+	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean required,
+	                                       @Arguments(description="Default value (can be blank)",
+	                                                  type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                  max=4096,
+	                                                  mandatory=false) final String defaultvalue) {
 		// already exists as an attribute
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getName().equalsIgnoreCase(name)) { return new ErrorResponse("This name is already claimed"); }
@@ -174,19 +188,24 @@ public class AttributeConfig {
 		return new OKResponse("Okay, attribute created");
 	}
 
-	@URLs(url="/configuration/characters/toggleap", requiresPermission="Characters.CreateAttribute")
+	@URLs(url="/configuration/characters/toggleap",
+	      requiresPermission="Characters.CreateAttribute")
 	public static void toggleAP(@Nonnull final State st,
 	                            @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Characters.SetAP",values);
 	}
 
 	@Nonnull
-	@Commands(description="Set wether an existing attribute uses Ability Points", context=Command.Context.AVATAR, requiresPermission="Characters.CreateAttribute")
+	@Commands(description="Set wether an existing attribute uses Ability Points",
+	          context=Command.Context.AVATAR,
+	          requiresPermission="Characters.CreateAttribute")
 	public static Response setAP(@Nonnull final State st,
-	                             @Nonnull @Arguments(description="Attribute", type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                             @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)", mandatory=false, type=
-			                             Argument.ArgumentType.BOOLEAN)
-	                             final Boolean usesabilitypoints) {
+	                             @Nonnull
+	                             @Arguments(description="Attribute",
+	                                        type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
+	                             @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",
+	                                        mandatory=false,
+	                                        type=Argument.ArgumentType.BOOLEAN) final Boolean usesabilitypoints) {
 		attribute.validate(st);
 		final boolean oldvalue=attribute.usesAbilityPoints();
 		attribute.setUsesAbilityPoints(usesabilitypoints);
@@ -195,19 +214,24 @@ public class AttributeConfig {
 	}
 
 
-	@URLs(url="/configuration/characters/toggleselfmodify", requiresPermission="Characters.CreateAttribute")
+	@URLs(url="/configuration/characters/toggleselfmodify",
+	      requiresPermission="Characters.CreateAttribute")
 	public static void toggleSelfModify(@Nonnull final State st,
 	                                    @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Characters.SetSelfModify",values);
 	}
 
 	@Nonnull
-	@Commands(description="Set wether an existing attribute can be directly updated by the character", context=Command.Context.AVATAR, requiresPermission="Characters"+
-			".CreateAttribute")
+	@Commands(description="Set wether an existing attribute can be directly updated by the character",
+	          context=Command.Context.AVATAR,
+	          requiresPermission="Characters"+".CreateAttribute")
 	public static Response setSelfModify(@Nonnull final State st,
-	                                     @Nonnull @Arguments(description="Attribute", type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                     @Arguments(description="Free self modification allowed?", mandatory=false, type=Argument.ArgumentType.BOOLEAN)
-	                                     final Boolean selfmodify) {
+	                                     @Nonnull
+	                                     @Arguments(description="Attribute",
+	                                                type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
+	                                     @Arguments(description="Free self modification allowed?",
+	                                                mandatory=false,
+	                                                type=Argument.ArgumentType.BOOLEAN) final Boolean selfmodify) {
 		attribute.validate(st);
 		final boolean oldvalue=attribute.getSelfModify();
 		attribute.setSelfModify(selfmodify);
@@ -215,17 +239,24 @@ public class AttributeConfig {
 		return new OKResponse("Attribute self modification flag updated");
 	}
 
-	@URLs(url="/configuration/characters/togglerequired", requiresPermission="Characters.CreateAttribute")
+	@URLs(url="/configuration/characters/togglerequired",
+	      requiresPermission="Characters.CreateAttribute")
 	public static void toggleRequired(@Nonnull final State st,
 	                                  @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Characters.SetRequired",values);
 	}
 
 	@Nonnull
-	@Commands(description="Set wether an existing attribute must have a value", context=Command.Context.AVATAR, requiresPermission="Characters.CreateAttribute")
+	@Commands(description="Set wether an existing attribute must have a value",
+	          context=Command.Context.AVATAR,
+	          requiresPermission="Characters.CreateAttribute")
 	public static Response setRequired(@Nonnull final State st,
-	                                   @Nonnull @Arguments(description="Attribute", type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                   @Arguments(description="Value required?", mandatory=false, type=Argument.ArgumentType.BOOLEAN) final Boolean required) {
+	                                   @Nonnull
+	                                   @Arguments(description="Attribute",
+	                                              type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
+	                                   @Arguments(description="Value required?",
+	                                              mandatory=false,
+	                                              type=Argument.ArgumentType.BOOLEAN) final Boolean required) {
 		attribute.validate(st);
 		final boolean oldvalue=attribute.getRequired();
 		attribute.setRequired(required);
@@ -233,17 +264,25 @@ public class AttributeConfig {
 		return new OKResponse("Attribute requried flag updated");
 	}
 
-	@URLs(url="/configuration/characters/setdefaultvalue", requiresPermission="Characters.CreateAttribute")
+	@URLs(url="/configuration/characters/setdefaultvalue",
+	      requiresPermission="Characters.CreateAttribute")
 	public static void setDefaultValue(@Nonnull final State st,
 	                                   @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Characters.SetDefault",values);
 	}
 
 	@Nonnull
-	@Commands(description="Set the default value for an attribute", context=Command.Context.AVATAR, requiresPermission="Characters.CreateAttribute")
+	@Commands(description="Set the default value for an attribute",
+	          context=Command.Context.AVATAR,
+	          requiresPermission="Characters.CreateAttribute")
 	public static Response setDefault(@Nonnull final State st,
-	                                  @Nonnull @Arguments(description="Attribute", type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                  @Arguments(description="Default value", mandatory=false, type=Argument.ArgumentType.TEXT_ONELINE, max=4096) final String defaultvalue) {
+	                                  @Nonnull
+	                                  @Arguments(description="Attribute",
+	                                             type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
+	                                  @Arguments(description="Default value",
+	                                             mandatory=false,
+	                                             type=Argument.ArgumentType.TEXT_ONELINE,
+	                                             max=4096) final String defaultvalue) {
 		attribute.validate(st);
 		String oldvalue=attribute.getDefaultValue();
 		if (oldvalue==null) { oldvalue="null"; }
@@ -252,20 +291,25 @@ public class AttributeConfig {
 		return new OKResponse("Attribute self modification flag  updated");
 	}
 
-	@URLs(url="/configuration/characters/deleteattribute", requiresPermission="Characters.DeleteAttribute")
+	@URLs(url="/configuration/characters/deleteattribute",
+	      requiresPermission="Characters.DeleteAttribute")
 	public static void deleteAttributeForm(@Nonnull final State st,
 	                                       @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Characters.deleteAttribute",values);
 	}
 
 	@Nonnull
-	@Commands(description="Delete an attribute", context=Command.Context.AVATAR, requiresPermission="Characters.DeleteAttribute", permitObject=false)
+	@Commands(description="Delete an attribute",
+	          context=Command.Context.AVATAR,
+	          requiresPermission="Characters.DeleteAttribute",
+	          permitObject=false)
 	public static Response deleteAttribute(@Nonnull final State st,
-	                                       @Nonnull @Arguments(description="Attribute **AND ALL ITS DATA** to delete", type=Argument.ArgumentType.ATTRIBUTE)
-	                                       final Attribute attribute,
-	                                       @Arguments(description="CONFIRM AS THIS WILL IRREVERSIBLY DELETE DATA ATTACHED TO THIS ATTRIBUTE", mandatory=false, type=
-			                                       Argument.ArgumentType.BOOLEAN)
-	                                       final Boolean confirm) {
+	                                       @Nonnull
+	                                       @Arguments(description="Attribute **AND ALL ITS DATA** to delete",
+	                                                  type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
+	                                       @Arguments(description="CONFIRM AS THIS WILL IRREVERSIBLY DELETE DATA ATTACHED TO THIS ATTRIBUTE",
+	                                                  mandatory=false,
+	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean confirm) {
 		attribute.validate(st);
 		if (!confirm) { return new ErrorResponse("You did not confirm the operation"); }
 		attribute.delete();
