@@ -5,7 +5,6 @@ import net.coagulate.Core.Database.NullInteger;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
