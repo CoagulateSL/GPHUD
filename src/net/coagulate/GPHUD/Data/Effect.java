@@ -74,7 +74,7 @@ public class Effect extends TableRow {
 		final String kvtable=i.getKVTable();
 		final String maintable=i.getTableName();
 		final String kvidcolumn=i.getKVIdField();
-		final String maintableidcolumn=i.getIdField();
+		final String maintableidcolumn=i.getIdColumn();
 		GPHUD.getDB()
 		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+kvidcolumn+"="+maintable+"."+maintableidcolumn+" and "+maintable+
 				        ".instanceid=?",
@@ -149,7 +149,7 @@ public class Effect extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "id";
 	}
 

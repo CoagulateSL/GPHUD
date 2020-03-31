@@ -70,7 +70,7 @@ public class Landmarks extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() { return "id"; }
+	public String getIdColumn() { return "id"; }
 
 	@Override
 	public void validate(final State st) {

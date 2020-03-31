@@ -122,7 +122,7 @@ public class CharacterGroup extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "charactergroupid";
 	}
 

@@ -130,7 +130,7 @@ public class Message extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "messageid";
 	}
 

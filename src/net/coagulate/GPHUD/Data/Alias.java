@@ -117,7 +117,7 @@ public class Alias extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "aliasid";
 	}
 

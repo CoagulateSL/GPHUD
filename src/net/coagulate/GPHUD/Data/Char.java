@@ -412,7 +412,7 @@ public class Char extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "characterid";
 	}
 

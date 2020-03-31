@@ -119,7 +119,7 @@ public class Scripts extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() { return "id"; }
+	public String getIdColumn() { return "id"; }
 
 	@Override
 	public void validate(@Nonnull final State st) {

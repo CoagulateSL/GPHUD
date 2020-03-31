@@ -37,7 +37,7 @@ public class ZoneArea extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "zoneareaid";
 	}
 

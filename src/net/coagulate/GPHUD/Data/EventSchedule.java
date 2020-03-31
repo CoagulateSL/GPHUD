@@ -85,7 +85,7 @@ public class EventSchedule extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "eventsscheduleid";
 	}
 

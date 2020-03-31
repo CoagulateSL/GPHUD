@@ -135,7 +135,7 @@ public class Menus extends TableRow {
 
 	@Nonnull
 	@Override
-	public String getIdField() {
+	public String getIdColumn() {
 		return "menuid";
 	}
 

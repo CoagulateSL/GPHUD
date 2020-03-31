@@ -88,7 +88,7 @@ public abstract class CharacterAttribute extends Attribute {
 
 	@Nonnull
 	@Override
-	public String getIdField() {throw new SystemImplementationException("Not valid on auto generated attribute");}
+	public String getIdColumn() {throw new SystemImplementationException("Not valid on auto generated attribute");}
 
 	@Nonnull
 	@Override
