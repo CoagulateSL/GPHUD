@@ -10,11 +10,14 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
+ * I feel like this class is pointless, and the whole idea of primary characters is pointless.  The primary is the most recently used, globally or for an instance, surely?
  * @author Iain Price
+ * @deprecated
  */
 public class PrimaryCharacters {
 
 	@Nonnull
+	@Deprecated
 	private static Char getPrimaryCharacter_internal(@Nonnull final Instance instance,
 	                                                 @Nonnull final User avatar) {
 		final int primary=GPHUD.getDB().dqinn("select entityid from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
@@ -34,6 +37,7 @@ public class PrimaryCharacters {
 	 * @return the primary character, or null (?)
 	 */
 	@Nullable
+	@Deprecated
 	public static Char getPrimaryCharacter(@Nonnull final State st,
 	                                       final boolean autocreate) {
 		final Instance instance=st.getInstance();
@@ -71,6 +75,7 @@ public class PrimaryCharacters {
 		}
 	}
 
+	@Deprecated
 	public static void setPrimaryCharacter(@Nonnull final State st,
 	                                       @Nonnull final Char c) {
 		c.validate(st);
@@ -78,6 +83,7 @@ public class PrimaryCharacters {
 		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)",st.getAvatar().getId(),st.getInstance().getId(),c.getId());
 	}
 
+	@Deprecated
 	public static void purge(@Nonnull final Char ch) {
 		GPHUD.getDB().d("delete from primarycharacters where entityid=?",ch.getId());
 	}
