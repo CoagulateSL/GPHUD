@@ -271,7 +271,6 @@ public class Region extends TableRow {
 	 */
 	public void departingAvatars(@Nonnull final State st,
 	                             @Nonnull final Set<User> avatars) {
-		final boolean debug=false;
 		for (final User avatar: avatars) {
 			// for all the departing avatars
 			try {
