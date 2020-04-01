@@ -25,9 +25,20 @@ public class ObjectTypes extends TableRow {
 		return (ObjectTypes) factoryPut("ObjectTypes",id,new ObjectTypes(id));
 	}
 
+	/**
+	 * Create a new object type
+	 *
+	 * @param st        State
+	 * @param name      Name of object type
+	 * @param behaviour The JSON object describing the object's behaviour (See Objects module)
+	 *
+	 * @return a new ObjectTypes
+	 *
+	 * @throws UserInputDuplicateValueException if the object type already exists
+	 */
 	@Nonnull
 	public static ObjectTypes create(@Nonnull final State st,
-	                                 final String name,
+	                                 @Nonnull final String name,
 	                                 @Nonnull final JSONObject behaviour) {
 		final int existing=GPHUD.getDB().dqinn("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) {
@@ -38,6 +49,14 @@ public class ObjectTypes extends TableRow {
 		return get(newid);
 	}
 
+	/**
+	 * A horrible bodge that creates a web page of object types.
+	 * FIXME
+	 *
+	 * @param st The state
+	 *
+	 * @return A HTML string...
+	 */
 	@Nonnull
 	public static String dumpTypes(@Nonnull final State st) {
 		final StringBuilder r=new StringBuilder("<table>");
@@ -57,6 +76,13 @@ public class ObjectTypes extends TableRow {
 		return r.toString();
 	}
 
+	/**
+	 * Gets a set of all the object type names at this instance.
+	 *
+	 * @param st State
+	 *
+	 * @return A Set of Strings of objecttype names
+	 */
 	@Nonnull
 	public static Set<String> getObjectTypes(@Nonnull final State st) {
 		final Set<String> set=new TreeSet<>();
@@ -66,9 +92,17 @@ public class ObjectTypes extends TableRow {
 		return set;
 	}
 
+	/**
+	 * Creates a DropDownList of all the object types available at this instance.
+	 *
+	 * @param st   State
+	 * @param name Name of the HTML DropDownList component
+	 *
+	 * @return a DropDownList containing all the object types that will put the ID number in the HTML form
+	 */
 	@Nonnull
 	public static DropDownList getDropDownList(@Nonnull final State st,
-	                                           final String name) {
+	                                           @Nonnull final String name) {
 		final DropDownList list=new DropDownList(name);
 		for (final ResultsRow row: GPHUD.getDB().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
 			list.add(row.getInt("id")+"",row.getStringNullable("name"));
@@ -110,11 +144,21 @@ public class ObjectTypes extends TableRow {
 		return null;
 	}
 
-	@Nullable
+	/**
+	 * Returns the instance associated with this objecttype.
+	 *
+	 * @return The Instance
+	 */
+	@Nonnull
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	/**
+	 * Gets the behaviour JSON for this objecttype.
+	 *
+	 * @return The ObjectType's behaviour JSON (out of scope, see Objects module)
+	 */
 	@Nonnull
 	public JSONObject getBehaviour() {
 		final String s=getStringNullable("behaviour");
@@ -122,6 +166,11 @@ public class ObjectTypes extends TableRow {
 		return new JSONObject(s);
 	}
 
+	/**
+	 * Set this objecttype's behaviour JSON
+	 *
+	 * @param json The new ObjectType's behaviour JSON (out of scope, see Objects module)
+	 */
 	public void setBehaviour(@Nonnull final JSONObject json) {
 		set("behaviour",json.toString());
 	}
