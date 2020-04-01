@@ -149,6 +149,11 @@ public class EventSchedule extends TableRow {
 
 	protected int getNameCacheTime() { return 0; } // doesn't support name, dont cache (will crash before even calling this)
 
+	/**
+	 * Get the event this schedule drives
+	 *
+	 * @return The connected Event
+	 */
 	@Nonnull
 	public Event getEvent() {
 		final int id=getInt("eventid");
@@ -161,7 +166,7 @@ public class EventSchedule extends TableRow {
 	 * @return (table) Row representing the event
 	 */
 	@Nonnull
-	public net.coagulate.GPHUD.Interfaces.Outputs.Row asRow(final String timezone) {
+	public net.coagulate.GPHUD.Interfaces.Outputs.Row asRow(@Nonnull final String timezone) {
 		final ResultsRow r=dqone("select * from eventsschedule where eventsscheduleid=?",getId());
 		final net.coagulate.GPHUD.Interfaces.Outputs.Row ret=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 		ret.add(fromUnixTime(r.getInt("starttime"),timezone));
@@ -288,7 +293,7 @@ public class EventSchedule extends TableRow {
 	}
 
 	@Nonnull
-	public String describe(final String timezone) {
+	public String describe(@Nonnull final String timezone) {
 		final ResultsRow r=dqone("select * from eventsschedule where eventsscheduleid=?",getId());
 		String ret=fromUnixTime(r.getInt("starttime"),timezone);
 		ret+=" - "+fromUnixTime(r.getInt("endtime"),timezone);
@@ -297,11 +302,11 @@ public class EventSchedule extends TableRow {
 
 	// ----- Internal Instance -----
 	@Nonnull
-	private String pad(final Integer padmeint,
+	private String pad(final Integer padme,
 	                   final int howmuch) {
-		final StringBuilder padme=new StringBuilder(padmeint+"");
-		while (padme.length()<howmuch) { padme.append(" "); }
-		return padme.toString();
+		final StringBuilder padder=new StringBuilder(padme+"");
+		while (padder.length()<howmuch) { padder.append(" "); }
+		return padder.toString();
 	}
 
 }
