@@ -34,8 +34,6 @@ public class Cookies {
 	@Nullable
 	private ResultsRow r;
 
-	// ---------- STATICS ----------
-
 	/**
 	 * Load existing cookie store.
 	 *
@@ -43,16 +41,19 @@ public class Cookies {
 	 *
 	 * @throws UserException if the cookie does not exist or has expired.
 	 */
-	public Cookies(final String cookie) {
+	public Cookies(@Nonnull final String cookie) {
 		this.cookie=cookie;
 		validateCookie();
 	}
+
+	// ---------- STATICS ----------
+
 	/**
 	 * Delete a cookie
 	 *
 	 * @param cookie Cookie to delete
 	 */
-	public static void delete(final String cookie) {
+	public static void delete(@Nonnull final String cookie) {
 		db().d("delete from cookies where cookie=?",cookie);
 	}
 
@@ -61,14 +62,13 @@ public class Cookies {
 	 *
 	 * @param cookie Cookie to refresh.
 	 */
-	public static void refreshCookie(final String cookie) {
+	public static void refreshCookie(@Nonnull final String cookie) {
 		final int refreshifexpiresbefore=getUnixTime()+COOKIE_REFRESH;
 		final int toupdate=db().dqinn("select count(*) from cookies where cookie=? and expires<? and renewable=1",cookie,refreshifexpiresbefore);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on cookie "+cookie);
 		}
-		//Log.log(Log.DEBUG,"SYSTEM","Cookies","Refreshing cookie "+cookie);
 		db().d("update cookies set expires=? where cookie=?",getUnixTime()+COOKIE_LIFESPAN,cookie);
 	}
 
@@ -85,18 +85,13 @@ public class Cookies {
 	@Nonnull
 	public static String generate(@Nullable final User avatar,
 	                              @Nullable final Char character,
-	                              final Instance instance,
+	                              @Nullable final Instance instance,
 	                              final boolean renewable) {
 		final String cookie=Tokens.generateToken();
 		int expire=getUnixTime();
 		expire=expire+COOKIE_LIFESPAN;
 		int renewableint=0;
 		if (renewable) { renewableint=1; }
-		/*
-		String id = "";
-		if (avatar != null) { id += " Avatar:" + avatar; }
-		if (character != null) { id += " Character:" + character; }
-		 */
 		db().d("insert into cookies(cookie,expires,renewable,avatarid,characterid,instanceid) values(?,?,?,?,?,?)",
 		       cookie,
 		       expire,
@@ -108,6 +103,11 @@ public class Cookies {
 		return cookie;
 	}
 
+	/**
+	 * Counts the total number of valid cookies.
+	 *
+	 * @return Cookie count
+	 */
 	public static int countAll() {
 		return db().dqinn("select count(*) from cookies");
 	}
@@ -125,11 +125,15 @@ public class Cookies {
 			try {
 				return new Cookies(cookie);
 			}
-			catch (@Nonnull final UserException ignored) {} // logged out possibly, or expired and cleaned up
+			catch (@Nonnull final UserException ignored) {  // logged out possibly, or expired and cleaned up
+			}
 		}
 		return null;
 	}
 
+	/**
+	 * Trigger expired cookie cleaning
+	 */
 	public static void expire() {
 		db().d("delete from cookies where expires<?",UnixTime.getUnixTime());
 	}
@@ -167,9 +171,6 @@ public class Cookies {
 	 * @param avatar Avatar to set to
 	 */
 	public void setAvatar(@Nonnull final User avatar) {
-        /*if (avatar==null) {
-            getDB().d("update cookies set avatarid=null where cookie=?",cookie); load(); return;
-        }*/
 		db().d("update cookies set avatarid=? where cookie=?",avatar.getId(),cookie);
 		load();
 	}
@@ -234,7 +235,7 @@ public class Cookies {
 		load();
 	}
 
-	@Nullable
+	@Nonnull
 	public String toString() { return "Avatar:"+getAvatar()+", Instance: "+getInstance()+", Character:"+getCharacter(); }
 
 	/**
@@ -290,6 +291,9 @@ public class Cookies {
 
 	}
 
+	/**
+	 * Load the cookie row.
+	 */
 	private void load() {
 		r=db().dqone("select * from cookies where cookie=?",cookie);
 	}

@@ -96,10 +96,10 @@ public class EventSchedule extends TableRow {
 	 * @param enddate   EndTime start of the event
 	 * @param interval  How often to repeat the event, for repeating events
 	 */
-	public static void create(final @Nonnull Event event,
-	                          int startdate,
-	                          int enddate,
-	                          int interval) {
+	public static void create(@Nonnull final Event event,
+	                          final int startdate,
+	                          final int enddate,
+	                          final int interval) {
 		db().d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)",event.getId(),startdate,enddate,interval);
 	}
 

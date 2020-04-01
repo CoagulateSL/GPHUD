@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Tools.UnixTime;
+import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -44,6 +45,16 @@ public class Effect extends TableRow {
 		return (Effect) factoryPut("Effect",id,new Effect(id));
 	}
 
+	/**
+	 * Search for an effect by name
+	 *
+	 * @param st   State
+	 * @param name Name of effect
+	 *
+	 * @return The effect
+	 *
+	 * @throws UserInputLookupFailureException if the effect does not exist
+	 */
 	@Nonnull
 	public static Effect get(@Nonnull final State st,
 	                         @Nonnull final String name) {
@@ -52,12 +63,27 @@ public class Effect extends TableRow {
 		return effect;
 	}
 
+	/**
+	 * Search for an effect by name
+	 *
+	 * @param st   State
+	 * @param name Name of effect
+	 *
+	 * @return The effect or null if not found
+	 */
 	@Nullable
 	public static Effect getNullable(@Nonnull final State st,
 	                                 @Nonnull final String name) {
 		return find(st.getInstance(),name);
 	}
 
+	/**
+	 * Get all effects for this instance
+	 *
+	 * @param instance Instance
+	 *
+	 * @return a Set of Effect objects
+	 */
 	public static Set<Effect> getAll(final Instance instance) {
 		final Set<Effect> effects=new TreeSet<>();
 		for (final ResultsRow effect: db().dq("select id from effects where instanceid=?",instance.getId())) {
@@ -66,6 +92,14 @@ public class Effect extends TableRow {
 		return effects;
 	}
 
+	/**
+	 * Create an effect.
+	 *
+	 * @param st   State
+	 * @param name Name of effect
+	 *
+	 * @throws UserInputDuplicateValueException If the effect already exists
+	 */
 	public static void create(@Nonnull final State st,
 	                          @Nonnull final String name) {
 		if (Effect.getNullable(st,name)!=null) { throw new UserInputDuplicateValueException("There is already an effect named "+name); }
@@ -89,6 +123,12 @@ public class Effect extends TableRow {
 		return Effect.get(matches.iterator().next().getInt());
 	}
 
+	/**
+	 * Purge expired effects.
+	 *
+	 * @param st        State
+	 * @param character Character to review
+	 */
 	public static void expirationCheck(@Nonnull final State st,
 	                                   @Nonnull final Char character) {
 		if (st.expirationchecked) { return; }
@@ -96,14 +136,24 @@ public class Effect extends TableRow {
 			final int effectid=row.getInt();
 			final Effect effect=get(effectid);
 			effect.validate(st);
-			effect.expire(st,character,true);
+			effect.unapply(st,character,true);
 		}
 		st.expirationchecked=true; // run this basically once per request
 	}
 
+	/**
+	 * Get effects for a character
+	 *
+	 * Procs expiration
+	 *
+	 * @param st        State
+	 * @param character Character to get effects for
+	 *
+	 * @return A Set of Effect objects describing the characters active effects
+	 */
 	@Nonnull
-	public static Set<Effect> get(final State st,
-	                              final Char character) {
+	public static Set<Effect> get(@Nonnull final State st,
+	                              @Nonnull final Char character) {
 		expirationCheck(st,character);
 		final Set<Effect> set=new HashSet<>();
 		for (final ResultsRow row: db().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
@@ -127,9 +177,19 @@ public class Effect extends TableRow {
 	}
 
 	// ---------- INSTANCE ----------
-	public boolean expire(final State st,
-	                      final Char character,
-	                      final boolean audit) {
+
+	/**
+	 * Unapply an effect from a character.
+	 *
+	 * @param st        The state
+	 * @param character The character to remove the effect from
+	 * @param audit     If true, audit this as an expiration, otherwise don't audit
+	 *
+	 * @return true if an effect was removed, otherwise false.
+	 */
+	public boolean unapply(@Nonnull final State st,
+	                       @Nonnull final Char character,
+	                       final boolean audit) {
 		if (dqinn("select count(*) from effectsapplications where characterid=? and effectid=?",character.getId(),getId())==0) { return false; }
 		validate(st);
 		character.validate(st);
@@ -192,13 +252,22 @@ public class Effect extends TableRow {
 
 	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
 
+	/**
+	 * Get the instnce for this Effect.
+	 *
+	 * @return The instance
+	 */
 	@Nonnull
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
 
-	// perhaps flush the caches (to do) when this happens...
-	public void delete(final State st) {
+	/**
+	 * Deletes the effect
+	 *
+	 * @param st State
+	 */
+	public void delete(@Nonnull final State st) {
 		validate(st);
 		final String name=getName();
 		d("delete from effects where id=?",getId());
@@ -213,11 +282,11 @@ public class Effect extends TableRow {
 	 * @param target         Target character
 	 * @param seconds        Number of seconds to apply
 	 *
-	 * @return True if the effect was applied, false if it was skipped due to an existing buff being of longer duration.  Exceptions on input errors.
+	 * @return True if the effect was applied, false if it was skipped due to an existing effect being of longer duration.  Exceptions on input errors.
 	 */
-	public boolean apply(final State st,
+	public boolean apply(@Nonnull final State st,
 	                     final boolean administrative,
-	                     final Char target,
+	                     @Nonnull final Char target,
 	                     final int seconds) {
 		// validate everything
 		target.validate(st);
@@ -226,7 +295,7 @@ public class Effect extends TableRow {
 		final int expires=UnixTime.getUnixTime()+seconds;
 		// any existing?
 		if (dqinn("select count(*) from effectsapplications where effectid=? and characterid=? and expires>=?",getId(),target.getId(),expires)>0) {
-			// already has a same or longer lasting buff
+			// already has a same or longer lasting effect
 			return false;
 		}
 		d("delete from effectsapplications where effectid=? and characterid=?",getId(),target.getId());
@@ -243,12 +312,26 @@ public class Effect extends TableRow {
 		return true;
 	}
 
-	public boolean remove(final State st,
-	                      final Char target,
+	/**
+	 * Have an entity act to remove an Effect.
+	 *
+	 * @param st             State
+	 * @param target         Target character
+	 * @param administrative Wether the action is by the Avatar (admin operation) or Character (effect dispell)
+	 *
+	 * @return true if an effect was removed, otherwise false.
+	 */
+	public boolean remove(@Nonnull final State st,
+	                      @Nonnull final Char target,
 	                      final boolean administrative) {
-		final boolean didanything=expire(st,target,false);
+		final boolean didanything=unapply(st,target,false);
 		if (!didanything) { return false; }
-		Audit.audit(true,st,Audit.OPERATOR.AVATAR,target.getOwner(),target,"Removed","Effect",getName(),"","Administratively removed effect "+getName());
+		if (administrative) {
+			Audit.audit(true,st,Audit.OPERATOR.AVATAR,target.getOwner(),target,"Removed","Effect",getName(),"","Administratively removed effect "+getName());
+		}
+		else {
+			Audit.audit(true,st,OPERATOR.CHARACTER,target.getOwner(),target,"Removed","Effect",getName(),"","Removed effect "+getName());
+		}
 		return true;
 	}
 
@@ -268,7 +351,14 @@ public class Effect extends TableRow {
 		return expires-UnixTime.getUnixTime();
 	}
 
-	public String humanRemains(final Char character) {
+	/**
+	 * Get a human readable duration for the effect's time remaining.
+	 *
+	 * @param character Character to get duration for
+	 *
+	 * @return the duration left on the effect, as a String, or "--" if the effect isn't applied
+	 */
+	public String humanRemains(@Nonnull final Char character) {
 		final int remains=remains(character);
 		if (remains==-1) { return "--"; }
 		return UnixTime.duration(remains,true).trim();
