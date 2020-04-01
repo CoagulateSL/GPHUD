@@ -231,11 +231,9 @@ public class ConfigurationHierarchy extends Form {
 			}
 			editor+="<input type=hidden name=dbobject value=\""+dbo.getKVTable()+"\">";
 			editor+="<input type=hidden name=id value=\""+dbo.getId()+"\">";
-			t.add("<button "+"onclick=\""+"hideAllEdits();"+"getElementById('editor-"+codename+"').style.display='block';"+"\" "+"id=\"edit-"+codename+"\">"+"Edit"+
-					      "</button>"+
+			t.add("<button "+"onclick=\""+"hideAllEdits();"+"getElementById('editor-"+codename+"').style.display='block';"+"\" "+"id=\"edit-"+codename+"\">"+"Edit"+"</button>"+
 
-					      "<div style=\"display: none;\" id=\"editor-"+codename+"\">"+"<form style=\"margin: 0px;\" method=post>"+editor+"&nbsp;&nbsp;&nbsp;<button "+"type"+
-					      "=submit>Set</button>"+"</form>"+"</div>");
+					      "<div style=\"display: none;\" id=\"editor-"+codename+"\">"+"<form style=\"margin: 0px;\" method=post>"+editor+"&nbsp;&nbsp;&nbsp;<button "+"type"+"=submit>Set</button>"+"</form>"+"</div>");
 			if (dbo instanceof Char && dbo==st.getCharacterNullable()) {
 				Attribute selfeditable=null;
 				// vet against attributes

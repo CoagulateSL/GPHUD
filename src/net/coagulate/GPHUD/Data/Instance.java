@@ -44,8 +44,7 @@ public class Instance extends TableRow {
 	public static Set<Instance> getOurInstances() {
 		final Set<Instance> instances=new TreeSet<>();
 		final Results instancerows=GPHUD.getDB()
-		                                .dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and "+
-				                                    "retired=0",
+		                                .dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and "+"retired=0",
 		                                    Interface.getNode()
 		                                   );
 		for (final ResultsRow r: instancerows) { instances.add(Instance.get(r.getInt())); }
@@ -361,8 +360,7 @@ public class Instance extends TableRow {
 		targets.add(getOwner());
 		//System.out.println("Pre broadcast!");
 		final Results results=dq(
-				"select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups"+
-						".permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like "+"'instance.receiveadminmessages'",
+				"select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups"+".permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like "+"'instance.receiveadminmessages'",
 				getId()
 		                        );
 		for (final ResultsRow r: results) { targets.add(User.get(r.getInt())); }
@@ -431,8 +429,7 @@ public class Instance extends TableRow {
 			idmap.put(charid,cr);
 		}
 		for (final ResultsRow r: dq(
-				"select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers"+
-						".charactergroupid=charactergroups.charactergroupid and instanceid=?",
+				"select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers"+".charactergroupid=charactergroups.charactergroupid and instanceid=?",
 				getId()
 		                           )) {
 			final int charid=r.getInt("characterid");
@@ -462,8 +459,7 @@ public class Instance extends TableRow {
 			}
 		}
 		for (final ResultsRow r: dq(
-				"select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' group by "+
-						"characterid")) {
+				"select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' group by "+"characterid")) {
 			final int id=r.getInt("characterid");
 			if (idmap.containsKey(id)) { idmap.get(id).totalxp=r.getInt("total"); }
 		}

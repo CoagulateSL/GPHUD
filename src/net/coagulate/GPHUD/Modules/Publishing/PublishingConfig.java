@@ -22,8 +22,7 @@ public class PublishingConfig {
 	                              final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Links to published pages"));
-		f.add(new Text("<p><i><b>Note:</b> This feature is in early release, please feel free to submit ideas for published pages, layouts, options, formatting "+"etc</i></p"
-				               +">"));
+		f.add(new Text("<p><i><b>Note:</b> This feature is in early release, please feel free to submit ideas for published pages, layouts, options, formatting "+"etc</i></p"+">"));
 		f.noForm();
 		boolean publishedany=false;
 		if (st.getKV("Publishing.PublishGroups").boolValue()) {

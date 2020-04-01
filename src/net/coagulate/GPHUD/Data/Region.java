@@ -133,8 +133,7 @@ public class Region extends TableRow {
 	@Nonnull
 	public static Results getPingable() {
 		return GPHUD.getDB()
-		            .dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+"asc limit 0,"+
-				                "30",
+		            .dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+"asc limit 0,"+"30",
 		                Interface.getNode(),
 		                UnixTime.getUnixTime()-(Maintenance.PINGSERVERINTERVAL*60)
 		               );
@@ -154,8 +153,7 @@ public class Region extends TableRow {
 		final String maintable="regions";
 		final String idcolumn="regionid";
 		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+
-				        ".instanceid=?",
+		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
 		        key,
 		        instance.getId()
 		       );
@@ -308,8 +306,7 @@ public class Region extends TableRow {
 				final int count=rows.size();
 				if (count>0) {
 					st.logger().info("Disconnected avatar "+avatar.getName());
-					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters"+
-							  ".owner=? and characters.instanceid=?",
+					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters"+".owner=? and characters.instanceid=?",
 					  avatarid,
 					  st.getInstance().getId()
 					 );

@@ -114,7 +114,12 @@ public class TeleportCommands {
 		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
 		final JSONObject tp=new JSONObject();
 		tp.put("teleport",lm.getHUDRepresentation(false));
-		Audit.audit(true,st,Audit.OPERATOR.CHARACTER,null,null,"Move",
+		Audit.audit(true,
+		            st,
+		            Audit.OPERATOR.CHARACTER,
+		            null,
+		            null,
+		            "Move",
 		            st.getCharacter().getName(),
 		            "",
 		            landmark,

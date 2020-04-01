@@ -22,8 +22,7 @@ public abstract class HelpPage {
 	                         final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
-		f.add("<table width=100% height=100%><tr width=100% height=100%><td width=100% height=100% valign=top><iframe width=100% height=100% frameborder=0 "+"src=\"https"+
-				      "://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\"></iframe></td></tr></table>");
+		f.add("<table width=100% height=100%><tr width=100% height=100%><td width=100% height=100% valign=top><iframe width=100% height=100% frameborder=0 "+"src=\"https"+"://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html\"></iframe></td></tr></table>");
 	}
 
 	// ---------- INSTANCE ----------

@@ -308,8 +308,7 @@ public abstract class Management {
 	                              @Arguments(description="Character to remove from the group",
 	                                         type=ArgumentType.CHARACTER) final Char member) {
 		if (group.getOwner()==member) {
-			return new ErrorResponse("Will not remove "+member.getName()+" from "+group.getName()+", they are the group leader, you must demote them by replacing them or "+
-					                         "leaving the group leaderless.");
+			return new ErrorResponse("Will not remove "+member.getName()+" from "+group.getName()+", they are the group leader, you must demote them by replacing them or "+"leaving the group leaderless.");
 		}
 		try { group.removeMember(member); }
 		catch (@Nonnull final UserException e) {

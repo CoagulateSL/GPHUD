@@ -24,7 +24,8 @@ public class Landmarks extends TableRow {
 	@Nonnull
 	public static Set<Landmarks> getAll(@Nonnull final Instance instance) {
 		final Set<Landmarks> results=new HashSet<>();
-		for (final ResultsRow row: GPHUD.getDB().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",
+		for (final ResultsRow row: GPHUD.getDB()
+		                                .dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",
 		                                    instance.getId()
 		                                   )) {
 			results.add(get(row.getInt("id")));
@@ -46,8 +47,7 @@ public class Landmarks extends TableRow {
 	                             final String name) {
 		try {
 			final int id=GPHUD.getDB()
-			                  .dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+
-					                         " ?",
+			                  .dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+" ?",
 			                         instance.getId(),
 			                         name
 			                        );

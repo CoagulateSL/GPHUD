@@ -48,14 +48,12 @@ public class NPC extends ObjectType {
 		t.add(new Cell(new Button("Submit"),2));
 		t.openRow();
 		t.add(new Cell(
-				"<b>WARNING:</b> you can only assign a character to ONE object, setting multiple objects to use the same character will cause all but one of them to be "+
-						"shutdown by the server</b>",
+				"<b>WARNING:</b> you can only assign a character to ONE object, setting multiple objects to use the same character will cause all but one of them to be "+"shutdown by the server</b>",
 				2
 		));
 		t.openRow();
 		t.add(new Cell(
-				"Your script will have a new variable, TARGET, which is the character interacting with the script.  CALLER will be the NPC character, and AVATAR will be the "
-						+"objects owner and should be ignored",
+				"Your script will have a new variable, TARGET, which is the character interacting with the script.  CALLER will be the NPC character, and AVATAR will be the "+"objects owner and should be ignored",
 				2
 		));
 		st.form().add(t);

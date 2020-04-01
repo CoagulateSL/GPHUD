@@ -55,9 +55,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	public static String styleSheet() {
 		return ""+"<style>\n"+".tooltip {\n"+"    position: relative;\n"+"    display: inline-block;\n"+"    border-bottom: 1px dotted black; /* If you want dots under the "+"hoverable text */\n"+"}\n"+"\n"+".tooltip .tooltiptext {\n"+"    visibility: hidden;\n"+
 				//"    width: 120px;\n" +
-				"    background-color: #e0e0e0;\n"+"    color: black;\n"+"    text-align: center;\n"+"    padding: 5px 0;\n"+"    border-radius: 6px;\n"+" \n"+"     top: "+
-				"-5px;\n"+"    left: 105%; "+"    position: absolute;\n"+"    z-index: 1;\n"+"white-space: nowrap;\n"+"}\n"+"\n"+"/* Show the tooltip text when you mouse "+
-				"over the tooltip container */\n"+".tooltip:hover .tooltiptext {\n"+"    visibility: visible;\n"+"}\n"+"</style>";
+				"    background-color: #e0e0e0;\n"+"    color: black;\n"+"    text-align: center;\n"+"    padding: 5px 0;\n"+"    border-radius: 6px;\n"+" \n"+"     top: "+"-5px;\n"+"    left: 105%; "+"    position: absolute;\n"+"    z-index: 1;\n"+"white-space: nowrap;\n"+"}\n"+"\n"+"/* Show the tooltip text when you mouse "+"over the tooltip container */\n"+".tooltip:hover .tooltiptext {\n"+"    visibility: visible;\n"+"}\n"+"</style>";
 	}
 
 	// ---------- INSTANCE ----------

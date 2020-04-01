@@ -57,8 +57,7 @@ public class Input {
 
 	@Nonnull
 	@GSFunctions.GSFunction(description="Triggers the character's HUD to offer a choice (menu box)",
-	                        parameters="Character - target - The character to ask<br>String - "+"message - Description for the dialog box<br>List - A list of strings the "+
-			                        "user may choose from",
+	                        parameters="Character - target - The character to ask<br>String - "+"message - Description for the dialog box<br>List - A list of strings the "+"user may choose from",
 	                        notes="",
 	                        returns="String - The user's selection",
 	                        privileged=false)

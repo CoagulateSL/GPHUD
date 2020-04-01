@@ -67,8 +67,7 @@ public class BCInvoke extends ByteCode {
 			pass[1]=vm;
 			for (int i=0;i<argcount;i++) {
 				if (!parameters[i+2].equals(args[i].getClass())) {
-					throw new GSInvalidFunctionCall("Call to "+functionname+", parameter "+i+" is expected to be of type "+parameters[i+2].getSimpleName()+" but was "+
-							                                "supplied"+" "+args[i]
+					throw new GSInvalidFunctionCall("Call to "+functionname+", parameter "+i+" is expected to be of type "+parameters[i+2].getSimpleName()+" but was "+"supplied"+" "+args[i]
 							.getClass()
 							.getSimpleName());
 				}

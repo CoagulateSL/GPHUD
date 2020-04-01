@@ -198,7 +198,11 @@ public class ScriptingConfig {
 				final StringBuilder code=new StringBuilder("<pre><table border=0>");
 				for (final ByteCode bc: bytecode) {
 					final ParseNode bcnode=bc.node();
-					code.append("<tr><td>").append(bcnode!=null?bcnode.tokens():"").append("</td><td>").append(bc.explain().replaceFirst(" \\(","</td><td><i>(")).append("</i></td><td>");
+					code.append("<tr><td>")
+					    .append(bcnode!=null?bcnode.tokens():"")
+					    .append("</td><td>")
+					    .append(bc.explain().replaceFirst(" \\(","</td><td><i>("))
+					    .append("</i></td><td>");
 					final ArrayList<Byte> bcl=new ArrayList<>();
 					bc.toByteCode(bcl);
 					for (final Byte b: bcl) {

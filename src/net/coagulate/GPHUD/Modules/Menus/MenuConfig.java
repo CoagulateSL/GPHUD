@@ -76,8 +76,7 @@ public abstract class MenuConfig {
 		final Form f=st.form();
 		f.add(new TextHeader("Menu '"+m.getName()+"'"));
 		f.add(new Paragraph(
-				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will "
-						+"be omitted from the menu.  Layout of buttons is as follows:"));
+				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will "+"be omitted from the menu.  Layout of buttons is as follows:"));
 		f.add(new Paragraph("Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen."));
 		final Table example=new Table();
 		f.add(example);

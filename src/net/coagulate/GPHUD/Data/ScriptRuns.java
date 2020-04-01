@@ -109,7 +109,6 @@ public class ScriptRuns extends TableRow {
 	public byte[] getByteCode() {
 		return getBytes("bytecode");
 	}
-
 	@Override
 	protected int getNameCacheTime() { return 0; }
 }

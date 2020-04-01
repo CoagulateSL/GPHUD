@@ -18,8 +18,7 @@ public class API {
 	// ---------- STATICS ----------
 	@Nonnull
 	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command",
-	                        parameters="Character caller - User invoking the API<br>String apicall - name of API command "+"to"+" call<br>BCList parameters - list of STRING "
-			                        +"parameters to the target API",
+	                        parameters="Character caller - User invoking the API<br>String apicall - name of API command "+"to"+" call<br>BCList parameters - list of STRING "+"parameters to the target API",
 	                        returns="A Response",
 	                        notes="",
 	                        privileged=false)
@@ -33,8 +32,7 @@ public class API {
 
 	@Nonnull
 	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command with full permissions",
-	                        parameters="Character caller - User invoking the API<br>String apicall - "+"name of API command "+"to"+" call<br>BCList parameters - list of "+
-			                        "STRING parameters to the target API",
+	                        parameters="Character caller - User invoking the API<br>String apicall - "+"name of API command "+"to"+" call<br>BCList parameters - list of "+"STRING parameters to the target API",
 	                        returns="A Response",
 	                        notes="",
 	                        privileged=true)

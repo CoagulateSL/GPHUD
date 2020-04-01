@@ -224,8 +224,7 @@ public abstract class Management {
 		// refuse if they're the faction leader
 		//System.out.println("EXISTINGFACTION "+existingfaction.getId());
 		if (existingfaction!=null && existingfaction.getOwner()==newmember) {
-			return new ErrorResponse("Refusing to move character "+newmember.getName()+", they are currently faction leader of "+existingfaction.getName()+", you must "+
-					                         "manually eject them from that position");
+			return new ErrorResponse("Refusing to move character "+newmember.getName()+", they are currently faction leader of "+existingfaction.getName()+", you must "+"manually eject them from that position");
 		}
 		final String success="";
 		if (existingfaction!=null) { existingfaction.removeMember(newmember); }
@@ -273,8 +272,7 @@ public abstract class Management {
 		}
 		// refuse if they're the faction leader
 		if (faction.getOwner()==member) {
-			return new ErrorResponse("Will not remove "+member.getName()+" from "+faction.getName()+", they are the faction leader, you must demote them by replacing them "+
-					                         "or"+" leaving the faction leaderless.");
+			return new ErrorResponse("Will not remove "+member.getName()+" from "+faction.getName()+", they are the faction leader, you must demote them by replacing them "+"or"+" leaving the faction leaderless.");
 		}
 		try { existingfaction.removeMember(member); }
 		catch (@Nonnull final UserException e) {

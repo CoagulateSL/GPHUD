@@ -33,9 +33,7 @@ public class Publishing {
 		final String id="GPHudFrame"+((int) ((Math.random()*1000000.0)));
 		final Form f=st.form();
 		example(f,
-		        "<style>\n"+"  iframe {\n"+"    width: 1px;\n"+"    height: 1px;\n"+"    min-width: 100%;\n"+"  }\n"+"</style>\n"+"<iframe frameBorder=0 "+"src=\"https"+
-				        "://sl.coagulate.net/GPHUD/published/"+inline+"\" id=\""+id+"\"></iframe>"+"<script type=\"text/javascript\" src=\"https://sl.coagulate"+".net"+
-				        "/resources"+"/iframeResizer.min.js\"></script>"+"<script>\n"+"  iFrameResize({ log: false }, '#"+id+"')\n"+"</script>"
+		        "<style>\n"+"  iframe {\n"+"    width: 1px;\n"+"    height: 1px;\n"+"    min-width: 100%;\n"+"  }\n"+"</style>\n"+"<iframe frameBorder=0 "+"src=\"https"+"://sl.coagulate.net/GPHUD/published/"+inline+"\" id=\""+id+"\"></iframe>"+"<script type=\"text/javascript\" src=\"https://sl.coagulate"+".net"+"/resources"+"/iframeResizer.min.js\"></script>"+"<script>\n"+"  iFrameResize({ log: false }, '#"+id+"')\n"+"</script>"
 		       );
 	}
 

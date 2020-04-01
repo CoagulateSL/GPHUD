@@ -573,8 +573,7 @@ public class State extends DumpableState {
 				}
 				break;
 			case CUMULATIVE:
-				throw new SystemImplementationException("Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV"+
-						                                        "()");
+				throw new SystemImplementationException("Can not determineTarget() a CUMULATIVE set, you should getTargetList(KV) it instead and sum it.  or just use getKV"+"()");
 			default:
 				throw new SystemImplementationException("Unknown hierarchy type "+kv.hierarchy());
 		}
@@ -719,8 +718,7 @@ public class State extends DumpableState {
 						break;
 					case COLOR:
 						if (!Validators.color(value)) {
-							throw new UserInputValidationParseException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you "+
-									                                            "entered '"+value+"')");
+							throw new UserInputValidationParseException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you "+"entered '"+value+"')");
 						}
 						// does it have lsl surrounds?
 						break;

@@ -15,8 +15,7 @@ public class Randomness {
 	@Nonnull
 	@GSFunctions.GSFunction(description="Produces a random whole number in the range provided",
 	                        notes="",
-	                        parameters="Integer minimum - smallest number that can be returned "+"by this function.<br>"+"Integer maximum - largest number that can be "+
-			                        "returned by this function.",
+	                        parameters="Integer minimum - smallest number that can be returned "+"by this function.<br>"+"Integer maximum - largest number that can be "+"returned by this function.",
 	                        returns="Integer - random number in the range (inclusive) "+"minimum-maximum",
 	                        privileged=false)
 	public static BCInteger gsRand(final State st,

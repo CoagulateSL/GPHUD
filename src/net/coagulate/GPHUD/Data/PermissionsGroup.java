@@ -88,9 +88,7 @@ public class PermissionsGroup extends TableRow {
 	                                         @Nonnull final User user) {
 		final Set<String> permissions=new TreeSet<>();
 		final Results results=GPHUD.getDB()
-		                           .dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups"+
-				                               ".permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and "
-				                               +"permissionsgroupmembers.avatarid=?",
+		                           .dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups"+".permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and "+"permissionsgroupmembers.avatarid=?",
 		                               instance.getId(),
 		                               user.getId()
 		                              );

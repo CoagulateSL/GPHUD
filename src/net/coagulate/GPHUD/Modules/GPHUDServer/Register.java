@@ -84,8 +84,7 @@ public abstract class Register {
 		String regmessage;
 		regmessage=GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
 		if (st.getRegion().needsUpdate()) {
-			regmessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+
-					".\n=====";
+			regmessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
 		}
 		registered.put("message",regmessage);
 		final Transmission t=new Transmission(region,registered);

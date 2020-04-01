@@ -64,8 +64,7 @@ public class Objects extends TableRow {
 		final StringBuilder r=new StringBuilder(
 				"<table border=0><tr><th>UUID</th><th>name</th><th>Owner</th><th>Region</th><th>Location</th><th>Version</th><th>Last RX</th><Th>Object Type</th></tr>");
 		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions"+
-				                                    ".instanceid=?",
+		                                .dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions"+".instanceid=?",
 		                                    instance.getId()
 		                                   )) {
 			final int since=row.getInt("since");
@@ -92,9 +91,7 @@ public class Objects extends TableRow {
 						            null,
 						            "Set",
 						            "ObjectType",
-						            "",
-						            objecttype,
-						            "Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
+						            "",objecttype,"Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
 						           );
 						final ObjectType ot=ObjectType.materialise(st,ObjectTypes.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload=new JSONObject();
@@ -103,7 +100,9 @@ public class Objects extends TableRow {
 					}
 				}
 				else { objecttype=row.getStringNullable("objecttype"); }
-				r.append("<td>").append(ObjectTypes.getDropDownList(st,row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true)).append("</td>"); // editing too, have fun with that.
+				r.append("<td>")
+				 .append(ObjectTypes.getDropDownList(st,row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true))
+				 .append("</td>"); // editing too, have fun with that.
 			}
 			else {
 				r.append("<td>").append(row.getStringNullable("objecttype")).append("</td>");
@@ -123,8 +122,7 @@ public class Objects extends TableRow {
 			}
 			r.append("</tr>");
 		}
-		r.append("</table><br><i>(Objects are expected to check in once every 15 minutes, though if a region is down this may not happen.  Connections are purged after 24 "+
-				         "hours inactivity, the object type configuration is not, and can be relinked to a new connection.)</i>");
+		r.append("</table><br><i>(Objects are expected to check in once every 15 minutes, though if a region is down this may not happen.  Connections are purged after 24 "+"hours inactivity, the object type configuration is not, and can be relinked to a new connection.)</i>");
 		return r.toString();
 	}
 

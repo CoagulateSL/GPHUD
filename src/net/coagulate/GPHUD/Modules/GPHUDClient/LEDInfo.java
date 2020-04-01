@@ -24,8 +24,7 @@ public class LEDInfo {
 	          permitJSON=false)
 	public static Response tx(final State st) {
 		return new OKResponse(
-				"The red light is the TRANSMIT light.\nDARK RED - transmission circuit has been successfully used, and is currently idle.\nBRIGHT RED - transmission in "+
-						"progress, this should complete shortly, if not, wait for it to time out, it will automatically retry.\nBLACK - No transmission made or all servers "+"failed and HUD will reboot.");
+				"The red light is the TRANSMIT light.\nDARK RED - transmission circuit has been successfully used, and is currently idle.\nBRIGHT RED - transmission in "+"progress, this should complete shortly, if not, wait for it to time out, it will automatically retry.\nBLACK - No transmission made or all servers "+"failed and HUD will reboot.");
 	}
 
 	@Nonnull

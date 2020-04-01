@@ -228,13 +228,12 @@ public class Scripts extends TableRow {
 	public String getKVIdField() {
 		return null;
 	}
+	// ----- Internal Instance -----
 
 	@Nullable
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
-
-	// ----- Internal Instance -----
 
 	@Nonnull
 	@Override
@@ -275,7 +274,6 @@ public class Scripts extends TableRow {
 		validate();
 		return getBytes("bytecode");
 	}
-
 	@Override
 	protected int getNameCacheTime() { return 600; }
 }

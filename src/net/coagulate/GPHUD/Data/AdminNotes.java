@@ -111,8 +111,7 @@ public class AdminNotes extends TableRow {
 	                                  final boolean toponly) {
 		final List<AdminNote> results=new ArrayList<>();
 		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" "+
-				                                    "limit 0,3":""),
+		                                .dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" "+"limit 0,3":""),
 		                                    instance.getId(),
 		                                    user.getId()
 		                                   )) {

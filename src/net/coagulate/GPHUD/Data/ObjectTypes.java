@@ -143,6 +143,7 @@ public class ObjectTypes extends TableRow {
 	public String getKVIdField() {
 		return null;
 	}
+	// ----- Internal Instance -----
 
 	/**
 	 * Returns the instance associated with this objecttype.
@@ -175,14 +176,11 @@ public class ObjectTypes extends TableRow {
 		set("behaviour",json.toString());
 	}
 
-	// ----- Internal Instance -----
-
 	@Nonnull
 	@Override
 	public String getTableName() {
 		return "objecttypes";
 	}
-
 	@Override
 	protected int getNameCacheTime() { return 600; }
 

@@ -70,8 +70,7 @@ public class EventSchedule extends TableRow {
 		final Set<EventSchedule> events=new TreeSet<>();
 		final int now=UnixTime.getUnixTime();
 		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+
-				                                  "eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+		                              .dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
 		                                  instance.getId(),
 		                                  now,
 		                                  now

@@ -125,9 +125,7 @@ public abstract class Audit {
 		}
 		try {
 			GPHUD.getDB()
-			     .d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+"destcharacterid,"+"changetype,"+"changeditem,"+
-					        "oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+"sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,"
-					        +"?,?,?,?)",
+			     .d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+"destcharacterid,"+"changetype,"+"changeditem,"+"oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+"sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,"+"?,?,?,?)",
 			        getUnixTime(),
 			        getId(stinstance),
 			        getId(sourceavatar),
@@ -171,8 +169,7 @@ public abstract class Audit {
 				final net.coagulate.GPHUD.Interfaces.Outputs.Row t=new net.coagulate.GPHUD.Interfaces.Outputs.Row();
 				t.align("center");
 				table.add(t);
-				t.add(new Cell("<table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\">"+datetime[0]+"</span"
-						               +"></td><td width=50%><hr></td></tr></table>",
+				t.add(new Cell("<table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\">"+datetime[0]+"</span"+"></td><td width=50%><hr></td></tr></table>",
 				               99999
 				));
 				olddate=datetime[0];

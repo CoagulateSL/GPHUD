@@ -38,8 +38,7 @@ public class GSFunctions {
 			f.add(new TextError("FUNCTION NOT FOUND!"));
 			return;
 		}
-		final net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction meta=
-				method.getAnnotation(net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction.class);
+		final net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction meta=method.getAnnotation(net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction.class);
 		f.add(new TextHeader(method.getName()));
 		// ooh...
 		f.add(new TextSubHeader("Return Type"));
@@ -66,8 +65,7 @@ public class GSFunctions {
 			try {
 				final Method function=net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.get(functionname);
 				t.openRow();
-				final net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction meta=
-						function.getAnnotation(net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction.class);
+				final net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction meta=function.getAnnotation(net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction.class);
 				t.add("<a href=\"/GPHUD/introspection/gsfunctions/"+functionname+"\">"+functionname+"</a>");
 				if (meta.privileged()) {
 					t.add("<i>Privileged</i>&nbsp;&nbsp;&nbsp;");

@@ -182,8 +182,7 @@ public class AttributeConfig {
 		            name,
 		            null,
 		            null,
-		            "Avatar created new attribute "+name+" selfmod:"+selfmodify+" type:"+attributetype+" group:"+grouptype+" AP:"+usesabilitypoints+" REQ:"+required+" "+
-				            "Default:"+defaultvalue
+		            "Avatar created new attribute "+name+" selfmod:"+selfmodify+" type:"+attributetype+" group:"+grouptype+" AP:"+usesabilitypoints+" REQ:"+required+" "+"Default:"+defaultvalue
 		           );
 		return new OKResponse("Okay, attribute created");
 	}

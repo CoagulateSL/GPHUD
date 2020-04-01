@@ -211,9 +211,16 @@ public class CharactersModule extends ModuleAnnotation {
 		final KV kv=st.getKVDefinition("Characters."+attribute.getName());
 		final String oldvalue=st.getRawKV(st.getCharacter(),kv.fullname());
 		st.setKV(st.getCharacter(),kv.fullname(),value);
-		Audit.audit(true,st,
+		Audit.audit(true,
+		            st,
 		            Audit.OPERATOR.CHARACTER,
-		            null,null,"AttributeSet",attribute.getNameSafe(),oldvalue,value,"Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullname()
+		            null,
+		            null,
+		            "AttributeSet",
+		            attribute.getNameSafe(),
+		            oldvalue,
+		            value,
+		            "Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullname()
 		           );
 		return new OKResponse("Your character updated for Attribute "+attribute.getName());
 	}

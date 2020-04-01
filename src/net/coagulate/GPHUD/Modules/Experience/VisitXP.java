@@ -85,8 +85,7 @@ public class VisitXP extends QuotaedXP {
 	public void runAwards() {
 		try {
 			final Results results=GPHUD.getDB()
-			                           .dq("select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k "+
-					                               "like 'experience.enabled' where v is null or v like 'true'");
+			                           .dq("select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k "+"like 'experience.enabled' where v is null or v like 'true'");
 			for (final ResultsRow r: results) {
 				final Instance i=Instance.get(r.getInt());
 				runAwards(i);

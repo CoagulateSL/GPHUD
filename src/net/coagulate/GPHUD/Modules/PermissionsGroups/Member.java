@@ -106,7 +106,12 @@ public abstract class Member {
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to set user permissions on group  - "+e.getMessage());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,avatar,null,"SetUserPermissions",permissionsgroup.getName(),
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            avatar,
+		            null,
+		            "SetUserPermissions",
+		            permissionsgroup.getName(),
 		            null,
 		            "CanInvite:"+caninvite+" CanKick:"+cankick,
 		            "Avatar updated avatars permissions to invite/kick from permissions group"

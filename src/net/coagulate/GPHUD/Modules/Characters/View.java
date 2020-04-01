@@ -135,8 +135,7 @@ public abstract class View {
 			boolean isxp=false;
 			for (final String s: experiences) { if (s.equalsIgnoreCase(a.getName())) { isxp=true; }}
 			if (isxp && st.hasPermission("experience.award"+a.getName())) {
-				content="<button id=\"award-"+a.getName()+"\" "+"style=\"margin: 0\" "+"type=submit onClick=\""+"document.getElementById('award-"+a.getName()+"').style"+
-						".display='none';"+"document.getElementById('editor-award-"+a
+				content="<button id=\"award-"+a.getName()+"\" "+"style=\"margin: 0\" "+"type=submit onClick=\""+"document.getElementById('award-"+a.getName()+"').style"+".display='none';"+"document.getElementById('editor-award-"+a
 						.getName()+"').style.display='block';"+"\">Award</button>";
 				final String target=values.get("target");
 				final String ammountstring=values.get("xp-ammount");
@@ -145,9 +144,7 @@ public abstract class View {
 				if (!ammountstring.isEmpty()) {
 					try { ammount=Integer.parseInt(ammountstring); } catch (@Nonnull final NumberFormatException e) {}
 				}
-				content+="<div id=\"editor-award-"+a.getName()+"\" style=\"display: none;\">"+"<form method=post>"+"<input type=hidden name=target value="+a.getName()+">"+
-						"Award <input type=text name=xp-ammount size=4 value="+ammount+"> XP for <input type=text name=xp-reason size=60 value=\""+reason+"\"> <button "+
-						"type=submit name=Award value=Award>Award</button>"+"</form>"+"</div>";
+				content+="<div id=\"editor-award-"+a.getName()+"\" style=\"display: none;\">"+"<form method=post>"+"<input type=hidden name=target value="+a.getName()+">"+"Award <input type=text name=xp-ammount size=4 value="+ammount+"> XP for <input type=text name=xp-reason size=60 value=\""+reason+"\"> <button "+"type=submit name=Award value=Award>Award</button>"+"</form>"+"</div>";
 				if (values.containsKey("Award") && values.getOrDefault("target","").equalsIgnoreCase(a.getName()) && !reason.isEmpty()) {
 					final Pool p=Modules.getPool(st,"Experience."+a.getName());
 					final GenericXPPool gen=(GenericXPPool) p;
