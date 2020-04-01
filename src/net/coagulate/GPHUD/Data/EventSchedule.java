@@ -88,6 +88,21 @@ public class EventSchedule extends TableRow {
 		return getActive(st.getInstance());
 	}
 
+	/**
+	 * Create a schedule
+	 *
+	 * @param event     The event this schedule initiates
+	 * @param startdate UnixTime start of the event
+	 * @param enddate   EndTime start of the event
+	 * @param interval  How often to repeat the event, for repeating events
+	 */
+	public static void create(final @Nonnull Event event,
+	                          int startdate,
+	                          int enddate,
+	                          int interval) {
+		db().d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)",event.getId(),startdate,enddate,interval);
+	}
+
 	// ----- Internal Statics -----
 	// ---------- INSTANCE ----------
 	@Nonnull

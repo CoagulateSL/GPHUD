@@ -235,6 +235,11 @@ public class Event extends TableRow {
 
 	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
 
+	/**
+	 * Get the instance this event relates to
+	 *
+	 * @return The instance
+	 */
 	@Nonnull
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
@@ -295,8 +300,7 @@ public class Event extends TableRow {
 	public void addSchedule(final int startdate,
 	                        final int enddate,
 	                        final int interval) {
-		d("insert into eventsschedule(eventid,starttime,endtime,repeatinterval) values(?,?,?,?)",getId(),startdate,enddate,interval);
+		EventSchedule.create(this,startdate,enddate,interval);
 	}
-	// perhaps flush the caches (to do) when this happens...
 }
 
