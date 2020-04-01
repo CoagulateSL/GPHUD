@@ -54,6 +54,8 @@ public class Connect {
 			json.put("reboot","No callback URL was presented, server requests us to restart");
 			return new JSONResponse(json);
 		}
+		if (st.objectkey==null) { return new TerminateResponse("No Object Key is present"); }
+		if (st.sourcelocation==null) { return new TerminateResponse("No Source Location is present"); }
 		final int version=Interface.convertVersion(st.json().getString("version"));
 		final int maxversion=Objects.getMaxVersion();
 		final Objects oldobject=Objects.findOrNull(st,st.objectkey);

@@ -38,6 +38,11 @@ public class Objects extends TableRow {
 		try { return find(st,uuid); } catch (@Nonnull final NoDataException e) { return null; }
 	}
 
+	/**
+	 * Find the highest registered version of the object driver script
+	 *
+	 * @return The highest version number of the driver script that objects have connected with
+	 */
 	public static int getMaxVersion() {
 		try {
 			return GPHUD.getDB().dqinn("select max(version) as maxver from objects");
@@ -45,6 +50,14 @@ public class Objects extends TableRow {
 		catch (@Nonnull final NoDataException e) { return 0; }
 	}
 
+	/**
+	 * Creates a HTML page of objects at this instance...
+	 * //TODO
+	 *
+	 * @param st State
+	 *
+	 * @return HTML String page thing
+	 */
 	@Nonnull
 	public static String dumpObjects(@Nonnull final State st) {
 		final Instance instance=st.getInstance();
@@ -90,9 +103,7 @@ public class Objects extends TableRow {
 					}
 				}
 				else { objecttype=row.getStringNullable("objecttype"); }
-				r.append("<td>")
-				 .append(ObjectTypes.getDropDownList(st,row.getStringNullable("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true))
-				 .append("</td>"); // editing too, have fun with that.
+				r.append("<td>").append(ObjectTypes.getDropDownList(st,row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true)).append("</td>"); // editing too, have fun with that.
 			}
 			else {
 				r.append("<td>").append(row.getStringNullable("objecttype")).append("</td>");
@@ -117,14 +128,28 @@ public class Objects extends TableRow {
 		return r.toString();
 	}
 
+	/**
+	 * Connect an object
+	 *
+	 * @param st       State
+	 * @param uuid     The Object's UUID
+	 * @param name     The Object's Name
+	 * @param region   The Object's Region
+	 * @param owner    The Object's Owner
+	 * @param location The Object's Location
+	 * @param url      The Object's callback URL
+	 * @param version  The Object's driver script version
+	 *
+	 * @return The Objects connector for this Object
+	 */
 	@Nonnull
-	public static Objects connect(final State st,
-	                              final String uuid,
-	                              final String name,
+	public static Objects connect(@Nonnull final State st,
+	                              @Nonnull final String uuid,
+	                              @Nonnull final String name,
 	                              @Nonnull final Region region,
 	                              @Nonnull final User owner,
-	                              final String location,
-	                              final String url,
+	                              @Nonnull final String location,
+	                              @Nonnull final String url,
 	                              final int version) {
 		Objects object=findOrNull(st,uuid);
 		if (object==null) {
@@ -149,7 +174,12 @@ public class Objects extends TableRow {
 			     .d("update objects set name=?,regionid=?,owner=?,location=?,lastrx=?,url=?,version=? where id=?",
 			        name,
 			        region.getId(),
-			        owner.getId(),location,UnixTime.getUnixTime(),url,version,object.getId()
+			        owner.getId(),
+			        location,
+			        UnixTime.getUnixTime(),
+			        url,
+			        version,
+			        object.getId()
 			       );
 		}
 		return object;
@@ -162,11 +192,20 @@ public class Objects extends TableRow {
 		return GPHUD.getDB().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
+	/**
+	 * Purges connections that have been idle over 24 hours
+	 */
 	public static void purgeInactive() {
 		GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
 	// ---------- INSTANCE ----------
+
+	/**
+	 * Get the Object Type for this object
+	 *
+	 * @return The ObjectType, or null if the object is not yet bound to a type
+	 */
 	@Nullable
 	public ObjectTypes getObjectType() {
 		final Integer otid=getIntNullable("objecttype");
@@ -213,13 +252,28 @@ public class Objects extends TableRow {
 	@Override
 	protected int getNameCacheTime() { return 600; }
 
+	/**
+	 * Get the region associated with this object
+	 *
+	 * @return The region
+	 */
 	@Nonnull
 	public Region getRegion() { return Region.get(getInt("regionid"),true); }
 
-	@Nullable
-	public String getLocation() { return getStringNullable("location"); }
+	/**
+	 * Get the location associated with this object
+	 *
+	 * @return The string location of this object
+	 */
+	@Nonnull
+	public String getLocation() { return getString("location"); }
 
-	@Nullable
+	/**
+	 * Get this object's instance
+	 *
+	 * @return The Instance
+	 */
+	@Nonnull
 	public Instance getInstance() {
 		return getRegion().getInstance();
 	}
@@ -230,11 +284,19 @@ public class Objects extends TableRow {
 		return "objects";
 	}
 
+	/**
+	 * Gets the URL associated with this Object
+	 *
+	 * @return The URL, which may be null if not connected.
+	 */
 	@Nullable
 	public String getURL() {
 		return getStringNullable("url");
 	}
 
+	/**
+	 * Update the lastrx timer for this object
+	 */
 	public void updateRX() {
 		Integer lastrx=getIntNullable("lastrx");
 		if (lastrx==null) { lastrx=0; }
