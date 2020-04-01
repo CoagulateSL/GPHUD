@@ -38,7 +38,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	public static void createChoice(@Nonnull final State st,
 	                                @Nonnull final JSONObject json,
-	                                final String prefix,
+	                                @Nonnull final String prefix,
 	                                @Nonnull final Attribute a) {
 		final boolean debug=false;
 		json.put(prefix+"type","SELECT");
@@ -63,7 +63,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public static CharacterGroup resolve(@Nonnull final State st,
-	                                     final String name) {
+	                                     @Nonnull final String name) {
 		final int id=new CharacterGroup(-1).resolveToID(st,name,true);
 		if (id==0) { return null; }
 		return get(id);
@@ -90,7 +90,7 @@ public class CharacterGroup extends TableRow {
 	 * @param key      Key
 	 */
 	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key) {
+	                   @Nonnull final String key) {
 		final String kvtable="charactergroupkvstore";
 		final String maintable="charactergroups";
 		final String idcolumn="charactergroupid";
@@ -186,6 +186,8 @@ public class CharacterGroup extends TableRow {
 	 * Character must not already be in this group, and must not be in a competing group.
 	 *
 	 * @param character Character to add
+	 *
+	 * @throws UserInputDuplicateValueException if the character is already in this group, or in a group of a conflicting type
 	 */
 	public void addMember(@Nonnull final Char character) {
 		// in group?
