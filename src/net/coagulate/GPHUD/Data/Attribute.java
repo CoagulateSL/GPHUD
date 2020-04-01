@@ -182,7 +182,7 @@ public class Attribute extends TableRow {
 	                          final String grouptype,
 	                          final boolean usesabilitypoints,
 	                          final boolean required,
-	                          String defaultvalue) {
+	                          final String defaultvalue) {
 		create(st.getInstance(),name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
 	}
 

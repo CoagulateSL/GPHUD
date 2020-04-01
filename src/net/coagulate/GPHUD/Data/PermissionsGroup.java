@@ -106,7 +106,7 @@ public class PermissionsGroup extends TableRow {
 	 * @throws UserInputEmptyException          if no name is supplied
 	 * @throws UserInputDuplicateValueException if the name is already taken
 	 */
-	public static void create(@Nonnull State st,
+	public static void create(@Nonnull final State st,
 	                          @Nonnull String name) {
 		name=name.trim();
 		if (name.isEmpty()) { throw new UserInputEmptyException("Can not create permissions group with blank name"); }
@@ -122,7 +122,7 @@ public class PermissionsGroup extends TableRow {
 	 * @return Set of PermissionsGroups
 	 */
 	@Nonnull
-	public static Set<PermissionsGroup> getPermissionsGroups(@Nonnull State st) {
+	public static Set<PermissionsGroup> getPermissionsGroups(@Nonnull final State st) {
 		final Results results=db().dq("select permissionsgroupid from permissionsgroups where instanceid=?",st.getInstance().getId());
 		final Set<PermissionsGroup> set=new TreeSet<>();
 		for (final ResultsRow r: results) {
