@@ -2,8 +2,8 @@ package net.coagulate.GPHUD.Modules.Objects;
 
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.ObjectTypes;
-import net.coagulate.GPHUD.Data.Objects;
+import net.coagulate.GPHUD.Data.Obj;
+import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
@@ -37,7 +37,7 @@ public class ObjectManagement {
 		f.add(new TextSubHeader("Connected Objects"));
 		if (map.containsKey("reboot") && st.hasPermission("Objects.RebootObjects")) {
 			final String uuid=map.get("reboot");
-			final Objects obj=Objects.findOrNull(st,uuid);
+			final Obj obj=Obj.findOrNull(st,uuid);
 			if (obj!=null) {
 				obj.validate(st);
 				final JSONObject reboot=new JSONObject();
@@ -49,7 +49,7 @@ public class ObjectManagement {
 		}
 		if (map.containsKey("reallyshutdown") && st.hasPermission("Objects.ShutdownObjects")) {
 			final String uuid=map.get("reallyshutdown");
-			final Objects obj=Objects.findOrNull(st,uuid);
+			final Obj obj=Obj.findOrNull(st,uuid);
 			if (obj!=null) {
 				obj.validate(st);
 				final JSONObject shutdown=new JSONObject();
@@ -59,9 +59,9 @@ public class ObjectManagement {
 				Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Shutdown",obj.getName(),"","","Shutdown object "+uuid);
 			}
 		}
-		f.add(Objects.dumpObjects(st));
+		f.add(Obj.dumpObjects(st));
 		f.add(new TextSubHeader("Assignable Behaviours"));
-		f.add(ObjectTypes.dumpTypes(st));
+		f.add(ObjType.dumpTypes(st));
 		f.add("<br/><a href=\"/GPHUD/configuration/objects/createtype\">Create new object type</a>");
 	}
 
@@ -72,7 +72,7 @@ public class ObjectManagement {
 		if (map.get("Create").equalsIgnoreCase("Create")) {
 			final JSONObject jsonbase=new JSONObject();
 			jsonbase.put("behaviour",map.get("behaviour"));
-			final ObjectTypes ot=ObjectTypes.create(st,map.get("name"),jsonbase);
+			final ObjType ot=ObjType.create(st,map.get("name"),jsonbase);
 			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","ObjectType",null,map.get("name"),"Created new object type of behaviour "+map.get("behaviour"));
 			throw new RedirectionException("/GPHUD/configuration/objects/objecttypes/"+ot.getId());
 		}
@@ -92,7 +92,7 @@ public class ObjectManagement {
 		st.postmap(map);
 		final String[] parts=st.getDebasedNoQueryURL().split("/");
 		if (parts.length<5) { throw new UserInputValidationParseException("URI misformed, no ID found"); }
-		final ObjectTypes t=ObjectTypes.get(Integer.parseInt(parts[4]));
+		final ObjType t=ObjType.get(Integer.parseInt(parts[4]));
 		t.validate(st);
 		final Form f=st.form();
 		f.add(new TextHeader("Object Type: "+t.getName()));

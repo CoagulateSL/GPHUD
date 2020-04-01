@@ -3,7 +3,7 @@ package net.coagulate.GPHUD.Modules.Configuration.CookBooks;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Alias;
-import net.coagulate.GPHUD.Data.Menus;
+import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
@@ -109,7 +109,7 @@ public abstract class CookBook {
 	                                 final String description) {
 		t.openRow();
 		t.add("Create menu '"+name+"'");
-		final Menus existing=Menus.getMenuNullable(st,name);
+		final Menu existing=Menu.getMenuNullable(st,name);
 		if (existing!=null) { t.add("AlreadyExists"); }
 		else { t.add("OK"); }
 		if (!act) {
@@ -120,7 +120,7 @@ public abstract class CookBook {
 			t.add("Can't complete");
 			return;
 		}
-		Menus.create(st,name,description,new JSONObject());
+		Menu.create(st,name,description,new JSONObject());
 		t.add("OK");
 	}
 
@@ -140,7 +140,7 @@ public abstract class CookBook {
 	                           final String command) {
 		t.openRow();
 		t.add("Add menu item '"+label+"'");
-		final Menus mainmenu=Menus.getMenuNullable(st,menuname);
+		final Menu mainmenu=Menu.getMenuNullable(st,menuname);
 		JSONObject menu=null;
 		if (mainmenu!=null) { menu=mainmenu.getJSON(); }
 		int empty=-1;

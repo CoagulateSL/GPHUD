@@ -6,7 +6,7 @@ import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Cookies;
+import net.coagulate.GPHUD.Data.Cookie;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.PasswordInput;
@@ -313,7 +313,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		String cookie=extractGPHUDCookie(st);
 		final String coagulateslcookie=extractClusterCookie(st);
 		extractURLCookieAndRedirect(st);
-		final Cookies cookies=Cookies.loadOrNull(cookie); // can i have cookie?
+		final Cookie cookies=Cookie.loadOrNull(cookie); // can i have cookie?
 		if (cookies!=null) { cookies.setStateFromCookies(st); } // already native logged in, load state from cookie
 		if (cookies==null && coagulateslcookie!=null && !coagulateslcookie.isEmpty()) {
 			setupStateFromCluster(st,coagulateslcookie);
@@ -352,12 +352,12 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			}
 			else {
 				if (target.checkPassword(password)) {
-					cookie=Cookies.generate(target,null,null,true);
+					cookie=Cookie.generate(target,null,null,true);
 					st.username=username;
 					st.avatar=target;
 					st.cookiestring=cookie;
 					try {
-						st.cookie(new Cookies(cookie));
+						st.cookie(new Cookie(cookie));
 					}
 					catch (@Nonnull final UserException ex) {
 						st.logger().log(SEVERE,"Cookie load gave exception, right after it was generated?",ex);
@@ -582,9 +582,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			final User av=slsession.user();
 			if (av!=null) {
 				st.setAvatar(av);
-				final String cookie=Cookies.generate(av,null,null,true);
+				final String cookie=Cookie.generate(av,null,null,true);
 				st.cookiestring=cookie;
-				try { st.cookie(new Cookies(cookie)); }
+				try { st.cookie(new Cookie(cookie)); }
 				catch (@Nonnull final UserException ex) {
 					st.logger().log(SEVERE,"Cookie load gave exception, right after it was generated?",ex);
 				}

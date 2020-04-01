@@ -9,15 +9,15 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Landmarks extends TableRow {
-	public Landmarks(final int id) {
+public class Landmark extends TableRow {
+	public Landmark(final int id) {
 		super(id);
 	}
 
 	// ---------- STATICS ----------
 	@Nonnull
-	public static Landmarks get(final int id) {
-		return (Landmarks) factoryPut("Landmarks",id,new Landmarks(id));
+	public static Landmark get(final int id) {
+		return (Landmark) factoryPut("Landmarks",id,new Landmark(id));
 	}
 
 	/**
@@ -28,8 +28,8 @@ public class Landmarks extends TableRow {
 	 * @return Set of Landmarks
 	 */
 	@Nonnull
-	public static Set<Landmarks> getAll(@Nonnull final Instance instance) {
-		final Set<Landmarks> results=new HashSet<>();
+	public static Set<Landmark> getAll(@Nonnull final Instance instance) {
+		final Set<Landmark> results=new HashSet<>();
 		for (final ResultsRow row: db().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",
 		                                   instance.getId()
 		                                  )) {
@@ -46,7 +46,7 @@ public class Landmarks extends TableRow {
 	 * @return Set of Landmarks
 	 */
 	@Nonnull
-	public static Set<Landmarks> getAll(@Nonnull final State st) {
+	public static Set<Landmark> getAll(@Nonnull final State st) {
 		return getAll(st.getInstance());
 	}
 
@@ -59,8 +59,7 @@ public class Landmarks extends TableRow {
 	public static void obliterate(@Nonnull final Instance instance,
 	                              @Nonnull final String name) {
 		db().d("delete landmarks from landmarks inner join regions on landmarks.regionid=regions.regionid where regions.instanceid=? and landmarks.name like ?",
-		       instance.getId(),
-		       name
+		       instance.getId(),name
 		      );
 	}
 
@@ -73,14 +72,14 @@ public class Landmarks extends TableRow {
 	 * @return Landmark object, or null
 	 */
 	@Nullable
-	public static Landmarks find(@Nonnull final Instance instance,
-	                             @Nonnull final String name) {
+	public static Landmark find(@Nonnull final Instance instance,
+	                            @Nonnull final String name) {
 		try {
 			final int id=db().dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+" ?",
 			                        instance.getId(),
 			                        name
 			                       );
-			return new Landmarks(id);
+			return new Landmark(id);
 		}
 		catch (@Nonnull final NoDataException e) {return null;}
 	}
@@ -94,8 +93,8 @@ public class Landmarks extends TableRow {
 	 * @return Landmark object, or null
 	 */
 	@Nullable
-	public static Landmarks find(@Nonnull final State st,
-	                             @Nonnull final String name) {
+	public static Landmark find(@Nonnull final State st,
+	                            @Nonnull final String name) {
 		return find(st.getInstance(),name);
 	}
 

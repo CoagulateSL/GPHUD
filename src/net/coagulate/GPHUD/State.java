@@ -9,7 +9,6 @@ import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.DumpableState;
-import net.coagulate.GPHUD.Data.Objects;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
 import net.coagulate.GPHUD.Interfaces.User.Form;
@@ -82,7 +81,7 @@ public class State extends DumpableState {
 	@Nullable
 	public String objectkey;
 	@Nullable
-	public Objects object;
+	public Obj object;
 	// used by Effect to only run the expiration checker once per player request as any effects intensive stuff will spam calls to the checker
 	public boolean expirationchecked;
 	@Nullable
@@ -108,7 +107,7 @@ public class State extends DumpableState {
 	private Header[] headers;
 	// web interface cookie, used to logout things
 	@Nullable
-	private Cookies cookie;
+	private Cookie cookie;
 	@Nullable
 	private Form form;
 	// system interface puts the object originating the request here
@@ -970,12 +969,12 @@ public class State extends DumpableState {
 	}
 
 	@Nonnull
-	public Cookies cookie() {
+	public Cookie cookie() {
 		if (cookie==null) { throw new SystemImplementationException("Cookies are null"); }
 		return cookie;
 	}
 
-	public void cookie(@Nullable final Cookies cookie) {
+	public void cookie(@Nullable final Cookie cookie) {
 		this.cookie=cookie;
 	}
 

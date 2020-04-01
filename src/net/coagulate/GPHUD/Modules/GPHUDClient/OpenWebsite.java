@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
-import net.coagulate.GPHUD.Data.Cookies;
+import net.coagulate.GPHUD.Data.Cookie;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -30,7 +30,7 @@ public class OpenWebsite {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","openurl");
 		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel
-		final String cookie=Cookies.generate(st.getAvatarNullable(),st.getCharacter(),st.getInstance(),true);
+		final String cookie=Cookie.generate(st.getAvatarNullable(),st.getCharacter(),st.getInstance(),true);
 		json.put("openurl",Interface.generateURL(st,"?gphud="+cookie));
 		json.put("description","Open GPHUD Administrative Application");
 		//System.out.println("OPENURL:"+json.toString());
@@ -52,7 +52,7 @@ public class OpenWebsite {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","openurl");
 		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel
-		final String cookie=Cookies.generate(st.getAvatarNullable(),st.getCharacter(),st.getInstance(),true);
+		final String cookie=Cookie.generate(st.getAvatarNullable(),st.getCharacter(),st.getInstance(),true);
 		json.put("openurl",url);
 		json.put("description",description);
 		//System.out.println("OPENURL:"+json.toString());

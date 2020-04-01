@@ -3,7 +3,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.ScriptRuns;
+import net.coagulate.GPHUD.Data.ScriptRun;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
@@ -47,7 +47,7 @@ public class GSVM {
 
 	public GSVM(@Nonnull final byte[] code) { bytecode=code; }
 
-	public GSVM(@Nonnull final ScriptRuns run,
+	public GSVM(@Nonnull final ScriptRun run,
 	            @Nonnull final State st) {
 		st.vm=this;
 		// run the initialiser as prep
@@ -317,7 +317,7 @@ public class GSVM {
 		final byte[] initialiser=new byte[initialisertyped.length];
 		for (int i=0;i<initialisertyped.length;i++) { initialiser[i]=initialisertyped[i]; }
 
-		final ScriptRuns run=ScriptRuns.create(bytecode,initialiser,respondant);
+		final ScriptRun run=ScriptRun.create(bytecode,initialiser,respondant);
 		pid=run.getId();
 		//return dequeue(st,st.getCharacter(),run.getId());
 	}

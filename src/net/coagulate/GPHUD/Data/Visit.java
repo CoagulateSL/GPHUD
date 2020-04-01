@@ -14,7 +14,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 /**
  * @author Iain Price
  */
-public class Visits {
+public class Visit {
 	// ---------- STATICS ----------
 
 	/**

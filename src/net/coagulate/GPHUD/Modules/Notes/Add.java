@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Notes;
 
-import net.coagulate.GPHUD.Data.AdminNotes;
+import net.coagulate.GPHUD.Data.AdminNote;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -28,7 +28,7 @@ public class Add {
 	                                 @Argument.Arguments(description="Note to record",
 	                                                     type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                     max=4096) final String note) {
-		AdminNotes.add(st.getInstance(),st.getAvatar(),character.getOwner(),character,note,!shared);
+		AdminNote.add(st.getInstance(),st.getAvatar(),character.getOwner(),character,note,!shared);
 		return new OKResponse((shared?"Shared":"Admin only")+" character note added.");
 	}
 
@@ -46,7 +46,7 @@ public class Add {
 	                              @Argument.Arguments(description="Note to record",
 	                                                  type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                  max=4096) final String note) {
-		AdminNotes.add(st.getInstance(),st.getAvatar(),target,null,note,!shared);
+		AdminNote.add(st.getInstance(),st.getAvatar(),target,null,note,!shared);
 		return new OKResponse((shared?"Shared":"Admin only")+" avatar note added.");
 	}
 

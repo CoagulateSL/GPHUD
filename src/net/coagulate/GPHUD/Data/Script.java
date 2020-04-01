@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Scripts extends TableRow {
-	public Scripts(final int id) {
+public class Script extends TableRow {
+	public Script(final int id) {
 		super(id);
 	}
 
@@ -72,8 +72,8 @@ public class Scripts extends TableRow {
 	}
 
 	@Nonnull
-	public static Scripts get(final int id) {
-		return (Scripts) factoryPut("Scripts",id,new Scripts(id));
+	public static Script get(final int id) {
+		return (Script) factoryPut("Scripts",id,new Script(id));
 	}
 
 	/**
@@ -84,10 +84,10 @@ public class Scripts extends TableRow {
 	 * @return Set of Scripts
 	 */
 	@Nonnull
-	public static Set<Scripts> getScripts(@Nonnull final Instance instance) {
-		final Set<Scripts> scripts=new HashSet<>();
+	public static Set<Script> getScripts(@Nonnull final Instance instance) {
+		final Set<Script> scripts=new HashSet<>();
 		for (final ResultsRow row: db().dq("select id from scripts where instanceid=?",instance.getId())) {
-			scripts.add(new Scripts(row.getInt("id")));
+			scripts.add(new Script(row.getInt("id")));
 		}
 		return scripts;
 	}
@@ -100,7 +100,7 @@ public class Scripts extends TableRow {
 	 * @return Set of Scripts
 	 */
 	@Nonnull
-	public static Set<Scripts> getScripts(@Nonnull final State st) {
+	public static Set<Script> getScripts(@Nonnull final State st) {
 		return getScripts(st.getInstance());
 	}
 
@@ -115,11 +115,11 @@ public class Scripts extends TableRow {
 	 * @throws UserInputLookupFailureException If the script does not exist
 	 */
 	@Nonnull
-	public static Scripts find(@Nonnull final State st,
-	                           @Nonnull final String scriptname) {
+	public static Script find(@Nonnull final State st,
+	                          @Nonnull final String scriptname) {
 		try {
 			final int id=db().dqinn("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),scriptname);
-			return new Scripts(id);
+			return new Script(id);
 		}
 		catch (final NoDataException e) {
 			throw new UserInputLookupFailureException("Script by name "+scriptname+" does not exist",e);
@@ -135,8 +135,8 @@ public class Scripts extends TableRow {
 	 * @return The script object or null if it does not exist
 	 */
 	@Nullable
-	public static Scripts findNullable(@Nonnull final State st,
-	                                   @Nonnull final String scriptname) {
+	public static Script findNullable(@Nonnull final State st,
+	                                  @Nonnull final String scriptname) {
 		try { return find(st,scriptname); } catch (@Nonnull final UserInputLookupFailureException e) {return null; }
 	}
 

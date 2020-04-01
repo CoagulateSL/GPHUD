@@ -13,27 +13,27 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Objects extends TableRow {
-	public Objects(final int id) {
+public class Obj extends TableRow {
+	public Obj(final int id) {
 		super(id);
 	}
 
 	// ---------- STATICS ----------
 	@Nonnull
-	public static Objects get(final int id) {
-		return (Objects) factoryPut("Objects",id,new Objects(id));
+	public static Obj get(final int id) {
+		return (Obj) factoryPut("Objects",id,new Obj(id));
 	}
 
 	@Nonnull
-	public static Objects find(final State st,
-	                           final String uuid) {
+	public static Obj find(final State st,
+	                       final String uuid) {
 		final int id=db().dqinn("select id from objects where uuid=?",uuid);
-		return new Objects(id);
+		return new Obj(id);
 	}
 
 	@Nullable
-	public static Objects findOrNull(final State st,
-	                                 final String uuid) {
+	public static Obj findOrNull(final State st,
+	                             final String uuid) {
 		try { return find(st,uuid); } catch (@Nonnull final NoDataException e) { return null; }
 	}
 
@@ -93,15 +93,14 @@ public class Objects extends TableRow {
 						            objecttype,
 						            "Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
 						           );
-						final ObjectType ot=ObjectType.materialise(st,ObjectTypes.get(Integer.parseInt(objecttype)));
+						final ObjectType ot=ObjectType.materialise(st,ObjType.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload=new JSONObject();
 						ot.payload(st,reconfigurepayload);
-						new Transmission(Objects.get(row.getInt("id")),reconfigurepayload).start();
+						new Transmission(Obj.get(row.getInt("id")),reconfigurepayload).start();
 					}
 				}
 				else { objecttype=row.getStringNullable("objecttype"); }
-				r.append("<td>")
-				 .append(ObjectTypes.getDropDownList(st,row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true))
+				r.append("<td>").append(ObjType.getDropDownList(st,row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true))
 				 .append("</td>"); // editing too, have fun with that.
 			}
 			else {
@@ -141,15 +140,15 @@ public class Objects extends TableRow {
 	 * @return The Objects connector for this Object
 	 */
 	@Nonnull
-	public static Objects connect(@Nonnull final State st,
-	                              @Nonnull final String uuid,
-	                              @Nonnull final String name,
-	                              @Nonnull final Region region,
-	                              @Nonnull final User owner,
-	                              @Nonnull final String location,
-	                              @Nonnull final String url,
-	                              final int version) {
-		Objects object=findOrNull(st,uuid);
+	public static Obj connect(@Nonnull final State st,
+	                          @Nonnull final String uuid,
+	                          @Nonnull final String name,
+	                          @Nonnull final Region region,
+	                          @Nonnull final User owner,
+	                          @Nonnull final String location,
+	                          @Nonnull final String url,
+	                          final int version) {
+		Obj object=findOrNull(st,uuid);
 		if (object==null) {
 			db().d("insert into objects(uuid,name,regionid,owner,location,lastrx,url,version) values(?,?,?,?,?,?,?,?)",
 			       uuid,
@@ -203,10 +202,10 @@ public class Objects extends TableRow {
 	 * @return The ObjectType, or null if the object is not yet bound to a type
 	 */
 	@Nullable
-	public ObjectTypes getObjectType() {
+	public ObjType getObjectType() {
 		final Integer otid=getIntNullable("objecttype");
 		if (otid==null) { return null; }
-		return ObjectTypes.get(otid);
+		return ObjType.get(otid);
 	}
 
 	@Nonnull

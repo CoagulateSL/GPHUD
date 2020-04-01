@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
-import net.coagulate.GPHUD.Data.Cookies;
+import net.coagulate.GPHUD.Data.Cookie;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
 import net.coagulate.GPHUD.Modules.Command;
@@ -21,7 +21,7 @@ public class Logout {
 	public static void logout(@Nonnull final State st,
 	                          final SafeMap values) {
 		st.form().add("Good Bye!");
-		if (st.cookiestring!=null) { Cookies.delete(st.cookiestring); }
+		if (st.cookiestring!=null) { Cookie.delete(st.cookiestring); }
 		st.cookie(null);
 		st.cookiestring=null;
 		st.setAvatar(null);

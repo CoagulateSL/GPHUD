@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.GPHUD.Data.Menus;
+import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
@@ -30,7 +30,7 @@ public abstract class MenuConfig {
 	                             final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextSubHeader("Dialog menu configuration"));
-		final Map<String,Integer> menus=Menus.getMenusMap(st);
+		final Map<String,Integer> menus=Menu.getMenusMap(st);
 		for (final Map.Entry<String,Integer> entry: menus.entrySet()) {
 			f.add("<a href=\"./menus/view/"+entry.getValue()+"\">"+entry.getKey()+"</a><br>");
 		}
@@ -44,13 +44,13 @@ public abstract class MenuConfig {
 	                             @Nonnull final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
-		final Menus m=Menus.get(Integer.parseInt(id));
+		final Menu m=Menu.get(Integer.parseInt(id));
 		viewMenus(st,values,m);
 	}
 
 	public static void viewMenus(@Nonnull final State st,
 	                             @Nonnull final SafeMap values,
-	                             @Nonnull final Menus m) {
+	                             @Nonnull final Menu m) {
 		if (m.getInstance()!=st.getInstance()) {
 			throw new UserInputStateException("That menu belongs to a different instance");
 		}
@@ -106,7 +106,7 @@ public abstract class MenuConfig {
 	public static void createMenu(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty()) {
-			final Menus menu=Menus.create(st,values.get("name"),values.get("description"),new JSONObject());
+			final Menu menu=Menu.create(st,values.get("name"),values.get("description"),new JSONObject());
 			throw new RedirectionException("./view/"+menu.getId());
 		}
 		final Form f=st.form();

@@ -16,9 +16,9 @@ import java.util.List;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class AdminNotes extends TableRow {
+public class AdminNote extends TableRow {
 
-	protected AdminNotes(final int id) { super(id); }
+	protected AdminNote(final int id) { super(id); }
 
 	// ---------- STATICS ----------
 
@@ -30,8 +30,8 @@ public class AdminNotes extends TableRow {
 	 * @return An AdminNotes representation
 	 */
 	@Nonnull
-	public static AdminNotes get(final int id) {
-		return (AdminNotes) factoryPut("AdminNotes",id,new AdminNotes(id));
+	public static AdminNote get(final int id) {
+		return (AdminNote) factoryPut("AdminNotes",id,new AdminNote(id));
 	}
 
 	/**
@@ -74,12 +74,12 @@ public class AdminNotes extends TableRow {
 	 * @return List (possibly empty) of AdminNote elements
 	 */
 	@Nonnull
-	public static List<AdminNote> get(@Nonnull final Instance instance,
-	                                  @Nonnull final User user,
-	                                  @Nonnull final Char character,
-	                                  final boolean showall,
-	                                  final boolean toponly) {
-		final List<AdminNote> results=new ArrayList<>();
+	public static List<Note> get(@Nonnull final Instance instance,
+	                             @Nonnull final User user,
+	                             @Nonnull final Char character,
+	                             final boolean showall,
+	                             final boolean toponly) {
+		final List<Note> results=new ArrayList<>();
 		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" limit 0,3":""),
 		                                   instance.getId(),
 		                                   user.getId(),
@@ -102,11 +102,11 @@ public class AdminNotes extends TableRow {
 	 * @return List (possibly empty) of AdminNote elements
 	 */
 	@Nonnull
-	public static List<AdminNote> get(@Nonnull final Instance instance,
-	                                  @Nonnull final User user,
-	                                  final boolean showall,
-	                                  final boolean toponly) {
-		final List<AdminNote> results=new ArrayList<>();
+	public static List<Note> get(@Nonnull final Instance instance,
+	                             @Nonnull final User user,
+	                             final boolean showall,
+	                             final boolean toponly) {
+		final List<Note> results=new ArrayList<>();
 		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" "+"limit 0,3":""),
 		                                   instance.getId(),
 		                                   user.getId()
@@ -124,8 +124,8 @@ public class AdminNotes extends TableRow {
 	 * @return List of AdminNote elements
 	 */
 	@Nonnull
-	public static List<AdminNote> get(@Nonnull final Instance instance) {
-		final List<AdminNote> results=new ArrayList<>();
+	public static List<Note> get(@Nonnull final Instance instance) {
+		final List<Note> results=new ArrayList<>();
 		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? order by tds desc",instance.getId())) { results.add(resultify(row)); }
 		return results;
 	}
@@ -136,14 +136,14 @@ public class AdminNotes extends TableRow {
 	 * Convert a ResultsRow to an AdminNote element
 	 */
 	@Nonnull
-	private static AdminNote resultify(@Nonnull final ResultsRow row) {
-		return new AdminNote(row.getInt("tds"),
-		                     Instance.get(row.getInt("instanceid")),
-		                     User.get(row.getInt("adminid")),
-		                     User.get(row.getInt("targetuser")),
-		                     (row.getIntNullable("targetchar")==null?null:Char.get(row.getInt("targetchar"))),
-		                     row.getStringNullable("note"),
-		                     row.getBool("adminonly")
+	private static Note resultify(@Nonnull final ResultsRow row) {
+		return new Note(row.getInt("tds"),
+		                Instance.get(row.getInt("instanceid")),
+		                User.get(row.getInt("adminid")),
+		                User.get(row.getInt("targetuser")),
+		                (row.getIntNullable("targetchar")==null?null:Char.get(row.getInt("targetchar"))),
+		                row.getStringNullable("note"),
+		                row.getBool("adminonly")
 		);
 	}
 
@@ -187,7 +187,7 @@ public class AdminNotes extends TableRow {
 
 	public void flushKVCache(final State st) {}
 
-	public static class AdminNote {
+	public static class Note {
 		public final int tds;
 		public final Instance instance;
 		public final User admin;
@@ -196,13 +196,13 @@ public class AdminNotes extends TableRow {
 		public final String note;
 		public final boolean adminonly;
 
-		public AdminNote(final int tds,
-		                 final Instance instance,
-		                 final User admin,
-		                 final User targetuser,
-		                 final Char targetchar,
-		                 final String note,
-		                 final boolean adminonly) {
+		public Note(final int tds,
+		            final Instance instance,
+		            final User admin,
+		            final User targetuser,
+		            final Char targetchar,
+		            final String note,
+		            final boolean adminonly) {
 			this.tds=tds;
 			this.instance=instance;
 			this.admin=admin;

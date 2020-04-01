@@ -400,7 +400,7 @@ public class Char extends TableRow {
 	public void setOwner(@Nonnull final User newowner) {
 		set("owner",newowner.getId());
 		// purge any primary characters referring to this
-		PrimaryCharacters.purge(this);
+		PrimaryCharacter.purge(this);
 	}
 
 	@Nonnull

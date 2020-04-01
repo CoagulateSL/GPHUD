@@ -34,10 +34,10 @@ public class Maintenance extends Thread {
 	// ---------- STATICS ----------
 	public static void purgeConnections() {
 		try {
-			final int purgecount=Objects.getPurgeInactiveCount();
+			final int purgecount=Obj.getPurgeInactiveCount();
 			if (purgecount>0) {
 				GPHUD.getLogger().log(FINE,"Purging "+purgecount+" disconnected objects");
-				Objects.purgeInactive();
+				Obj.purgeInactive();
 			}
 		}
 		catch (@Nonnull final Exception e) {
@@ -47,9 +47,9 @@ public class Maintenance extends Thread {
 
 	public static void purgeOldCookies() {
 		try {
-			final int before=Cookies.countAll();
-			Cookies.expire();
-			final int after=Cookies.countAll();
+			final int before=Cookie.countAll();
+			Cookie.expire();
+			final int after=Cookie.countAll();
 			if (before!=after) {
 				GPHUD.getLogger().log(FINE,"Cookies cleaned from "+before+" to "+after+" ("+(after-before)+")");
 			}

@@ -1,8 +1,8 @@
 package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.ObjectTypes;
-import net.coagulate.GPHUD.Data.Scripts;
+import net.coagulate.GPHUD.Data.ObjType;
+import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 public class NPC extends ObjectType {
 	protected NPC(final State st,
-	              @Nonnull final ObjectTypes object) {
+	              @Nonnull final ObjType object) {
 		super(st,object);
 	}
 
@@ -41,7 +41,7 @@ public class NPC extends ObjectType {
 		t.add(charlist);
 		t.openRow();
 		t.add("OnClick Script");
-		final DropDownList scriptlist=Scripts.getList(st,"script");
+		final DropDownList scriptlist=Script.getList(st,"script");
 		if (json.has("script")) { scriptlist.setValue(""+json.getInt("script")); }
 		t.add(scriptlist);
 		t.openRow();
@@ -72,7 +72,7 @@ public class NPC extends ObjectType {
 		}
 		if (st.postmap().containsKey("script")) {
 			final int scriptid=Integer.parseInt(st.postmap().get("script"));
-			final Scripts script=Scripts.get(scriptid);
+			final Script script=Script.get(scriptid);
 			script.validate(st);
 			if ((!json.has("script")) || scriptid!=json.getInt("script")) {
 				json.put("script",scriptid);
@@ -120,7 +120,7 @@ public class NPC extends ObjectType {
 		st.setCharacter(ch);
 		if (!json.has("script")) { return new ErrorResponse("No script is associated with this NPC object"); }
 		final int scriptid=json.getInt("script");
-		final Scripts script=Scripts.get(scriptid);
+		final Script script=Script.get(scriptid);
 		script.validate(st);
 		final GSVM vm=new GSVM(script.getByteCode());
 		vm.introduce("TARGET",new BCCharacter(null,clicker));

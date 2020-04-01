@@ -2,8 +2,8 @@ package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Landmarks;
-import net.coagulate.GPHUD.Data.ObjectTypes;
+import net.coagulate.GPHUD.Data.Landmark;
+import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
@@ -19,14 +19,14 @@ import javax.annotation.Nonnull;
 
 public abstract class Teleporter extends ObjectType {
 	protected Teleporter(final State st,
-	                     @Nonnull final ObjectTypes object) {
+	                     @Nonnull final ObjType object) {
 		super(st,object);
 	}
 
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public String getTeleportTarget(@Nonnull final State st) {
-		final Landmarks landmark=Landmarks.find(st.getInstance(),json.optString("teleporttarget","unset"));
+		final Landmark landmark=Landmark.find(st.getInstance(),json.optString("teleporttarget","unset"));
 		if (landmark==null) {
 			throw new UserConfigurationException("Teleport target is not set on clickTeleporter "+object.getName());
 		}

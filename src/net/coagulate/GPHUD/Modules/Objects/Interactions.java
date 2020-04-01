@@ -1,8 +1,8 @@
 package net.coagulate.GPHUD.Modules.Objects;
 
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.ObjectTypes;
-import net.coagulate.GPHUD.Data.Objects;
+import net.coagulate.GPHUD.Data.Obj;
+import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
@@ -25,9 +25,9 @@ public class Interactions {
 	                               @Argument.Arguments(description="Character clicking the object",
 	                                                   type=Argument.ArgumentType.CHARACTER) final Char clicker) {
 
-		final Objects object=Objects.findOrNull(st,st.objectkey);
+		final Obj object=Obj.findOrNull(st,st.objectkey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
-		final ObjectTypes objecttype=object.getObjectType();
+		final ObjType objecttype=object.getObjectType();
 		if (objecttype==null) {
 			return new ErrorResponse("This object is not configured with an object type in GPHUD");
 		}
@@ -46,9 +46,9 @@ public class Interactions {
 	                                @Argument.Arguments(description="Character colliding with the object",
 	                                                    type=Argument.ArgumentType.CHARACTER) final Char collider) {
 
-		final Objects object=Objects.findOrNull(st,st.objectkey);
+		final Obj object=Obj.findOrNull(st,st.objectkey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
-		final ObjectTypes objecttype=object.getObjectType();
+		final ObjType objecttype=object.getObjectType();
 		if (objecttype==null) {
 			return new ErrorResponse("This object is not configured with an object type in GPHUD");
 		}

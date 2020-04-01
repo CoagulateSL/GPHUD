@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.GPHUD.Data.Scripts;
+import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptingCommand extends Command {
-	final Scripts script;
+	final Script script;
 
-	public ScriptingCommand(final Scripts script) { this.script=script; }
+	public ScriptingCommand(final Script script) { this.script=script; }
 
 	// ---------- INSTANCE ----------
 	@Nonnull

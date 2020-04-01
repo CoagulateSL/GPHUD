@@ -77,17 +77,14 @@ public abstract class Login {
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
 		final boolean autocreate=st.getKV("Instance.AutoNameCharacter").boolValue();
-		final Char character=PrimaryCharacters.getPrimaryCharacter(st,autocreate);
+		final Char character=PrimaryCharacter.getPrimaryCharacter(st,autocreate);
 		if (character==null) {
 			if (autocreate) {
 				throw new UserInputStateException("Failed to get/create a character for user "+st.getAvatarNullable());
 			} // autocreate or die :P
 			// if not auto create, offer "characters.create" i guess
 			final JSONResponse response=new JSONResponse(Modules.getJSONTemplate(st,"characters.create"));
-			response.asJSON(st)
-			        .put("hudtext","Creating character...")
-			        .put("hudcolor","<1.0,0.75,0.75>")
-			        .put("titlertext","Creating character...")
+			response.asJSON(st).put("hudtext","Creating character...").put("hudcolor","<1.0,0.75,0.75>").put("titlertext","Creating character...")
 			        .put("titlercolor","<1.0,0.75,0.75>")
 			        .put("message","Welcome.  You do not have any characters, please create a new one.");
 			return response;
@@ -103,7 +100,7 @@ public abstract class Login {
 		String loginmessage="";
 		if (initscript!=null && (!initscript.isEmpty())) {
 			// let the init script have a "run"
-			final Scripts init=Scripts.findNullable(simulate,initscript);
+			final Script init=Script.findNullable(simulate,initscript);
 			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; }
 			else {
 				final GSVM initialisecharacter=new GSVM(init.getByteCode());
@@ -202,12 +199,12 @@ public abstract class Login {
 		final Transmission registering=new Transmission((Char) null,registeringjson,url);
 		//noinspection CallToThreadRun
 		registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
-		Visits.initVisit(st,st.getCharacter(),region);
+		Visit.initVisit(st,st.getCharacter(),region);
 		if (version!=null && versiondate!=null && versiontime!=null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
 			region.recordHUDVersion(st,version,versiondate,versiontime);
 		}
 		final Instance instance=st.getInstance();
-		final String cookie=Cookies.generate(st.getAvatarNullable(),st.getCharacter(),instance,true);
+		final String cookie=Cookie.generate(st.getAvatarNullable(),st.getCharacter(),instance,true);
 		final JSONObject legacymenu=Modules.getJSONTemplate(st,"menus.main");
 		final JSONObject rawresponse=new JSONObject();
 		if (st.hasModule("Experience")) {
@@ -306,7 +303,7 @@ public abstract class Login {
 		}
 		GPHUD.purgeURL(st.callbackurl());
 		if (st.getCharacterNullable()!=null) { st.purgeCache(st.getCharacter()); }
-		PrimaryCharacters.setPrimaryCharacter(st,character);
+		PrimaryCharacter.setPrimaryCharacter(st,character);
 		//character.setURL(st.callbackurl());
 		//GPHUD.purgeURL(st.callbackurl());
 		return login(st,null,null,null);

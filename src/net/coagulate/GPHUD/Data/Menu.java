@@ -21,9 +21,9 @@ import java.util.TreeMap;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class Menus extends TableRow {
+public class Menu extends TableRow {
 
-	protected Menus(final int id) { super(id); }
+	protected Menu(final int id) { super(id); }
 
 	// ---------- STATICS ----------
 
@@ -35,8 +35,8 @@ public class Menus extends TableRow {
 	 * @return An Avatar representation
 	 */
 	@Nonnull
-	public static Menus get(final int id) {
-		return (Menus) factoryPut("Menus",id,new Menus(id));
+	public static Menu get(final int id) {
+		return (Menu) factoryPut("Menus",id,new Menu(id));
 	}
 
 	/**
@@ -64,8 +64,8 @@ public class Menus extends TableRow {
 	 * @return Menus object
 	 */
 	@Nullable
-	public static Menus getMenuNullable(@Nonnull final State st,
-	                                    @Nonnull final String name) {
+	public static Menu getMenuNullable(@Nonnull final State st,
+	                                   @Nonnull final String name) {
 		try {
 			final int id=db().dqinn("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
 			return get(id);
@@ -74,9 +74,9 @@ public class Menus extends TableRow {
 	}
 
 	@Nonnull
-	public static Menus getMenu(@Nonnull final State st,
-	                            @Nonnull final String name) {
-		final Menus ret=getMenuNullable(st,name);
+	public static Menu getMenu(@Nonnull final State st,
+	                           @Nonnull final String name) {
+		final Menu ret=getMenuNullable(st,name);
 		if (ret==null) { throw new UserInputLookupFailureException("No menu called "+name+" is found"); }
 		return ret;
 	}
@@ -94,10 +94,10 @@ public class Menus extends TableRow {
 	 * @throws UserException If the name is invalid or duplicated.
 	 */
 	@Nonnull
-	public static Menus create(@Nonnull final State st,
-	                           @Nonnull final String name,
-	                           @Nonnull final String description,
-	                           @Nonnull final JSONObject template) {
+	public static Menu create(@Nonnull final State st,
+	                          @Nonnull final String name,
+	                          @Nonnull final String description,
+	                          @Nonnull final JSONObject template) {
 		if (getMenuNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("Menu "+name+" already exists");
 		}
@@ -105,7 +105,7 @@ public class Menus extends TableRow {
 			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		db().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",st.getInstance().getId(),name,description,template.toString());
-		final Menus newalias=getMenuNullable(st,name);
+		final Menu newalias=getMenuNullable(st,name);
 		if (newalias==null) {
 			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance().getId()+", created but not found?");
 		}

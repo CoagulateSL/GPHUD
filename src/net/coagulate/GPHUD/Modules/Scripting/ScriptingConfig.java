@@ -2,7 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Scripts;
+import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.Paragraph;
@@ -41,7 +41,7 @@ public class ScriptingConfig {
 		final Form f=st.form();
 		f.add(new TextHeader("Scripting Module"));
 		f.add(new Paragraph("List of scripts"));
-		f.add(Scripts.getTable(st.getInstance()));
+		f.add(Script.getTable(st.getInstance()));
 		f.noForm();
 		f.add(new Form(st,true,"/GPHUD/configuration/scripting/create","Create new script"));
 	}
@@ -52,7 +52,7 @@ public class ScriptingConfig {
 	                                @Nonnull final SafeMap values) {
 		final Form f=st.form();
 		if (!values.get("scriptname").isEmpty()) {
-			Scripts.create(st,values.get("scriptname"));
+			Script.create(st,values.get("scriptname"));
 			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Create",values.get("scriptname"),"","","Created script");
 			throw new RedirectionException("/GPHUD/configuration/scripting");
 		}
@@ -68,7 +68,7 @@ public class ScriptingConfig {
 		final Form f=st.form();
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
-		final Scripts script=Scripts.get(Integer.parseInt(id));
+		final Script script=Script.get(Integer.parseInt(id));
 		script.validate(st);
 		if (!values.get("scriptsource").isEmpty()) {
 			script.setSource(values.get("scriptsource"));

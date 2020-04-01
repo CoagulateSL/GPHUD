@@ -25,7 +25,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class Cookies {
+public class Cookie {
 
 	public static final int COOKIE_LIFESPAN=60*60*6;
 	public static final int COOKIE_REFRESH=((int) (2.0/3.0*COOKIE_LIFESPAN)); // if cookie expires sooner than this many minutes from now
@@ -41,7 +41,7 @@ public class Cookies {
 	 *
 	 * @throws UserException if the cookie does not exist or has expired.
 	 */
-	public Cookies(@Nonnull final String cookie) {
+	public Cookie(@Nonnull final String cookie) {
 		this.cookie=cookie;
 		validateCookie();
 	}
@@ -120,10 +120,10 @@ public class Cookies {
 	 * @return Cookies object, or null if doesn't exist / expired.
 	 */
 	@Nullable
-	public static Cookies loadOrNull(@Nullable final String cookie) {
+	public static Cookie loadOrNull(@Nullable final String cookie) {
 		if (cookie!=null) {
 			try {
-				return new Cookies(cookie);
+				return new Cookie(cookie);
 			}
 			catch (@Nonnull final UserException ignored) {  // logged out possibly, or expired and cleaned up
 			}

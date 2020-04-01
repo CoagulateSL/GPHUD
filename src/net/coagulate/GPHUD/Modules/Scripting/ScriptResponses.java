@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.ScriptRuns;
+import net.coagulate.GPHUD.Data.ScriptRun;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
@@ -29,7 +29,7 @@ public class ScriptResponses {
 	                                         @Nonnull
 	                                         @Argument.Arguments(description="The selected character",
 	                                                             type=Argument.ArgumentType.CHARACTER) final Char response) {
-		final ScriptRuns run=ScriptRuns.get(processid);
+		final ScriptRun run=ScriptRun.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) {
 			return new ErrorResponse("Script was not expecting a response from you (?)");
 		}
@@ -53,7 +53,7 @@ public class ScriptResponses {
 	                                      @Argument.Arguments(description="The string response",
 	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                          max=1024) final String response) {
-		final ScriptRuns run=ScriptRuns.get(processid);
+		final ScriptRun run=ScriptRun.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) {
 			return new ErrorResponse("Script was not expecting a response from you (?)");
 		}

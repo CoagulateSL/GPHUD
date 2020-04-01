@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.ObjectTypes;
+import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 
 public class RunCommand extends ObjectType {
 	protected RunCommand(final State st,
-	                     @Nonnull final ObjectTypes object) {
+	                     @Nonnull final ObjType object) {
 		super(st,object);
 	}
 

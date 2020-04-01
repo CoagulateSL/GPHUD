@@ -78,7 +78,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				if (obj.has("callback")) { st.callbackurl(obj.getString("callback")); }
 				if (obj.has("callback")) { Char.refreshURL(obj.getString("callback")); }
 				if (obj.has("callback")) { Region.refreshURL(obj.getString("callback")); }
-				if (obj.has("cookie")) { Cookies.refreshCookie(obj.getString("cookie")); }
+				if (obj.has("cookie")) { Cookie.refreshCookie(obj.getString("cookie")); }
 				if (obj.has("interface") && obj.get("interface").equals("object")) { st.source=State.Sources.OBJECT; }
 
 				// attempt to run the command
@@ -220,7 +220,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.setAvatar(User.findMandatory(runasavatar));
 			st.issuid=true;
 		}
-		st.object=Objects.findOrNull(st,objectkey);
+		st.object=Obj.findOrNull(st,objectkey);
 		if (st.object!=null) { st.object.updateRX(); }
 		String runascharacter=null;
 		try { runascharacter=obj.getString("runascharacter"); } catch (@Nonnull final JSONException e) {}
@@ -251,7 +251,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				st.setInstance(instance);
 				st.setRegion(region);
 				if (st.getCharacterNullable()==null) {
-					st.setCharacter(PrimaryCharacters.getPrimaryCharacter(st,st.getKV("Instance.AutoNameCharacter").boolValue()));
+					st.setCharacter(PrimaryCharacter.getPrimaryCharacter(st,st.getKV("Instance.AutoNameCharacter").boolValue()));
 				}
 				try {
 					obj.getString("runasnocharacter");

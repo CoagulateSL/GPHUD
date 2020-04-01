@@ -4,8 +4,8 @@ import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Cookies;
-import net.coagulate.GPHUD.Data.Objects;
+import net.coagulate.GPHUD.Data.Cookie;
+import net.coagulate.GPHUD.Data.Obj;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.GPHUD;
 import org.json.JSONObject;
@@ -39,7 +39,7 @@ public class Transmission extends Thread {
 	@Nonnull
 	JSONObject jsonresponse=new JSONObject();
 	@Nullable
-	Objects object;
+	Obj object;
 	int delay;
 	@Nullable
 	Region region;
@@ -58,7 +58,7 @@ public class Transmission extends Thread {
 		this.json=json;
 	}
 
-	public Transmission(@Nonnull final Objects obj,
+	public Transmission(@Nonnull final Obj obj,
 	                    @Nonnull final JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to object "+obj+" with json "+json);
@@ -219,7 +219,7 @@ public class Transmission extends Thread {
 				if ("pong".equals(incommand)) {
 					if (j.has("callback")) { Char.refreshURL(j.getString("callback")); }
 					if (j.has("callback")) { Region.refreshURL(j.getString("callback")); }
-					if (j.has("cookie")) { Cookies.refreshCookie(j.getString("cookie")); }
+					if (j.has("cookie")) { Cookie.refreshCookie(j.getString("cookie")); }
 				}
 			}
 			catch (@Nonnull final Exception e) {

@@ -6,8 +6,8 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ScriptRuns extends TableRow {
-	public ScriptRuns(final int id) {
+public class ScriptRun extends TableRow {
+	public ScriptRun(final int id) {
 		super(id);
 	}
 
@@ -24,9 +24,9 @@ public class ScriptRuns extends TableRow {
 	 * @return ScriptRuns object
 	 */
 	@Nonnull
-	public static ScriptRuns create(final byte[] code,
-	                                final byte[] initialiser,
-	                                @Nonnull final Char respondant) {
+	public static ScriptRun create(final byte[] code,
+	                               final byte[] initialiser,
+	                               @Nonnull final Char respondant) {
 		// user can only have one respondant open, this helps us get the ID but also is down to the stupidity of the HUD,
 		// and/or how painful/impractical it is to write complex IO in SL
 		db().d("delete from scriptruns where respondant=?",respondant.getId());
@@ -36,8 +36,8 @@ public class ScriptRuns extends TableRow {
 	}
 
 	@Nonnull
-	public static ScriptRuns get(final int id) {
-		return (ScriptRuns) factoryPut("ScriptRuns",id,new ScriptRuns(id));
+	public static ScriptRun get(final int id) {
+		return (ScriptRun) factoryPut("ScriptRuns",id,new ScriptRun(id));
 	}
 
 	// ---------- INSTANCE ----------

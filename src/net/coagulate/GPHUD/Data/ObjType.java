@@ -13,15 +13,15 @@ import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class ObjectTypes extends TableRow {
-	public ObjectTypes(final int id) {
+public class ObjType extends TableRow {
+	public ObjType(final int id) {
 		super(id);
 	}
 
 	// ---------- STATICS ----------
 	@Nonnull
-	public static ObjectTypes get(final int id) {
-		return (ObjectTypes) factoryPut("ObjectTypes",id,new ObjectTypes(id));
+	public static ObjType get(final int id) {
+		return (ObjType) factoryPut("ObjectTypes",id,new ObjType(id));
 	}
 
 	/**
@@ -36,9 +36,9 @@ public class ObjectTypes extends TableRow {
 	 * @throws UserInputDuplicateValueException if the object type already exists
 	 */
 	@Nonnull
-	public static ObjectTypes create(@Nonnull final State st,
-	                                 @Nonnull final String name,
-	                                 @Nonnull final JSONObject behaviour) {
+	public static ObjType create(@Nonnull final State st,
+	                             @Nonnull final String name,
+	                             @Nonnull final JSONObject behaviour) {
 		final int existing=db().dqinn("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) {
 			throw new UserInputDuplicateValueException("ObjectType "+name+" already exists in instance "+st.getInstance());
@@ -62,7 +62,7 @@ public class ObjectTypes extends TableRow {
 		r.append("<tr><th>Name</th><th>Behaviour</th></tr>");
 		for (final ResultsRow row: db().dq("select * from objecttypes where instanceid=?",st.getInstance().getId())) {
 			r.append("<tr>");
-			final ObjectTypes ot=get(row.getInt("id"));
+			final ObjType ot=get(row.getInt("id"));
 			r.append("<td><a href=\"/GPHUD/configuration/objects/objecttypes/")
 			 .append(row.getIntNullable("id"))
 			 .append("\">")

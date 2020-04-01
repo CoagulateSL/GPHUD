@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.ObjectTypes;
+import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.State;
 
@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 public class ClickTeleporter extends Teleporter {
 	ClickTeleporter(final State st,
-	                @Nonnull final ObjectTypes object) {
+	                @Nonnull final ObjType object) {
 		super(st,object);
 	}
 

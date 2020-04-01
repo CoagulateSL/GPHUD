@@ -2,7 +2,7 @@ package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.ObjectTypes;
+import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -17,12 +17,12 @@ public abstract class ObjectType {
 
 	final State state;
 	@Nonnull
-	final ObjectTypes object;
+	final ObjType object;
 	@Nonnull
 	final JSONObject json;
 
 	protected ObjectType(final State st,
-	                     @Nonnull final ObjectTypes object) {
+	                     @Nonnull final ObjType object) {
 		state=st;
 		this.object=object;
 		json=object.getBehaviour();
@@ -31,7 +31,7 @@ public abstract class ObjectType {
 	// ---------- STATICS ----------
 	@Nonnull
 	public static ObjectType materialise(final State st,
-	                                     @Nonnull final ObjectTypes object) {
+	                                     @Nonnull final ObjType object) {
 		final JSONObject json=object.getBehaviour();
 		final String behaviour=json.optString("behaviour","");
 		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }

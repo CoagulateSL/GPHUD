@@ -2,7 +2,7 @@ package net.coagulate.GPHUD.Modules.Teleportation;
 
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Landmarks;
+import net.coagulate.GPHUD.Data.Landmark;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -82,7 +82,7 @@ public class TeleportCommands {
 
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
 
-		Landmarks.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+((float) 1));
+		Landmark.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+((float) 1));
 		return new OKResponse("Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
 	}
 
@@ -94,9 +94,9 @@ public class TeleportCommands {
 	                                      @Argument.Arguments(description="Landmark name to remove",
 	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                          max=64) final String name) {
-		final Landmarks landmark=Landmarks.find(st.getInstance(),name);
+		final Landmark landmark=Landmark.find(st.getInstance(),name);
 		if (landmark==null) { return new ErrorResponse("Can not delete landmark "+name+" - it does not exist"); }
-		Landmarks.obliterate(st.getInstance(),name);
+		Landmark.obliterate(st.getInstance(),name);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Delete",name,"","","Deleted landmark "+name);
 		return new OKResponse("Deleted landmark "+name);
 	}
@@ -110,11 +110,17 @@ public class TeleportCommands {
 	                          @Argument.Arguments(description="Landmark name to teleport to",
 	                                              type=Argument.ArgumentType.TEXT_ONELINE,
 	                                              max=64) final String landmark) {
-		final Landmarks lm=Landmarks.find(st,landmark);
+		final Landmark lm=Landmark.find(st,landmark);
 		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
 		final JSONObject tp=new JSONObject();
 		tp.put("teleport",lm.getHUDRepresentation(false));
-		Audit.audit(true,st,Audit.OPERATOR.CHARACTER,null,null,"Move",st.getCharacter().getName(),
+		Audit.audit(true,
+		            st,
+		            Audit.OPERATOR.CHARACTER,
+		            null,
+		            null,
+		            "Move",
+		            st.getCharacter().getName(),
 		            "",
 		            landmark,
 		            "Player teleported to "+landmark+" at "+lm.getRegion(true).getName()+":"+lm.getCoordinates()+" lookat "+lm.getLookAt()
@@ -127,8 +133,8 @@ public class TeleportCommands {
 	                                           final String name,
 	                                           final String selected) {
 		final DropDownList list=new DropDownList(name);
-		final Set<Landmarks> landmarks=Landmarks.getAll(st.getInstance());
-		for (final Landmarks landmark: landmarks) {
+		final Set<Landmark> landmarks=Landmark.getAll(st.getInstance());
+		for (final Landmark landmark: landmarks) {
 			list.add(landmark.getName());
 		}
 		list.setValue(selected);

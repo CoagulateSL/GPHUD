@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
-import net.coagulate.GPHUD.Data.Cookies;
+import net.coagulate.GPHUD.Data.Cookie;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -23,7 +23,7 @@ public class Login {
 	public static Response login(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","messageto");
-		final String cookie=Cookies.generate(st.getAvatar(),st.getCharacterNullable(),st.getInstance(),true);
+		final String cookie=Cookie.generate(st.getAvatar(),st.getCharacterNullable(),st.getInstance(),true);
 		json.put("sendthismessage","["+Interface.generateURL(st,"?gphud="+cookie)+" GPHUD Configuration Site]");
 		json.put("target",st.getAvatar().getUUID());
 		return new JSONResponse(json);

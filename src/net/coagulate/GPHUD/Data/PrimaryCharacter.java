@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Iain Price
  */
 @Deprecated
-public class PrimaryCharacters {
+public class PrimaryCharacter {
 	// ---------- STATICS ----------
 
 	/**
