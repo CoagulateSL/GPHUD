@@ -23,7 +23,7 @@ public class Groups {
 	                                        final GSVM vm,
 	                                        @Nonnull final BCCharacter target,
 	                                        @Nonnull final BCString grouptype) {
-		final CharacterGroup group=target.getContent().getGroup(grouptype.getContent());
+		final CharacterGroup group=CharacterGroup.getGroup(target.getContent(),grouptype.getContent());
 		String name="";
 		if (group!=null) { name=group.getName(); }
 		return new BCString(null,name);

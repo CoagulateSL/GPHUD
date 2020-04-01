@@ -265,7 +265,9 @@ public class Attribute extends TableRow {
 	}
 
 	@Nullable
-	public String getSubType() { return getStringNullable("grouptype"); }
+	public String getSubType() {
+		return getStringNullable("grouptype");
+	}
 
 	public boolean usesAbilityPoints() { return getBool("usesabilitypoints"); }
 
@@ -312,14 +314,15 @@ public class Attribute extends TableRow {
 	public String getCharacterValue(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters."+getName()).value(); }
 		if (getType()==GROUP) {
-			final CharacterGroup cg=st.getCharacter().getGroup(getSubType());
+			if (getSubType()==null) { return null; }
+			final CharacterGroup cg=CharacterGroup.getGroup(st,getSubType());
 			if (cg==null) { return null; }
 			return cg.getName();
 		}
 		if (getType()==POOL || getType()==EXPERIENCE) {
 			if (this instanceof QuotaedXP) {
 				final QuotaedXP xp=(QuotaedXP) this;
-				return st.getCharacter().sumPool(xp.getPool(st))+"";
+				return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 			}
 			else { return "POOL"; }
 		}

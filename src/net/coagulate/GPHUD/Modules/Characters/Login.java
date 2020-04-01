@@ -142,7 +142,7 @@ public abstract class Login {
 						}
 						break;
 					case GROUP:
-						if (character.getGroup(a.getSubType())==null) {
+						if (a.getSubType()!=null && CharacterGroup.getGroup(character,a.getSubType())==null) {
 							final JSONObject json=new JSONObject();
 							json.put("hudtext","Initialising character...")
 							    .put("hudcolor","<1.0,0.75,0.75>")
@@ -217,7 +217,7 @@ public abstract class Login {
 		rawresponse.put("incommand","registered");
 		rawresponse.put("cookie",cookie);
 		rawresponse.put("legacymenu",legacymenu.toString());
-		rawresponse.put("messagecount",st.getCharacter().messages());
+		rawresponse.put("messagecount",Message.count(st));
 		st.getCharacter().initialConveyances(st,rawresponse);
 		rawresponse.put("zoning",ZoneTransport.createZoneTransport(region));
 		final String logincommand=st.getKV("Instance.RunOnLogin").value();
@@ -363,9 +363,11 @@ public abstract class Login {
 				break;
 			case GROUP:
 				// its a group... check user has no group already
-				final CharacterGroup group=st.getCharacter().getGroup(attribute.getSubType());
-				if (group!=null) {
-					return new ErrorResponse("You already have membership of '"+group.getNameSafe()+"' which is of type "+attribute.getSubType());
+				if (attribute.getSubType()!=null) {
+					final CharacterGroup group=CharacterGroup.getGroup(st,attribute.getSubType());
+					if (group!=null) {
+						return new ErrorResponse("You already have membership of '"+group.getNameSafe()+"' which is of type "+attribute.getSubType());
+					}
 				}
 				// check the target group is of the right type
 				final CharacterGroup target=CharacterGroup.resolve(st,value);

@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Faction;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -32,7 +33,7 @@ public class FactionCommands {
 	public static String getFactionName(@Nonnull final State st,
 	                                    final String key) {
 		if (!st.hasModule("Faction")) { return ""; }
-		final CharacterGroup faction=st.getCharacter().getGroup("Faction");
+		final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
 		if (faction==null) { return ""; }
 		return faction.getName();
 	}
@@ -49,8 +50,8 @@ public class FactionCommands {
 	                                          max=512) final String reason) {
 		// things to check...
 		// players are in the same faction
-		final CharacterGroup ourfaction=st.getCharacter().getGroup("Faction");
-		final CharacterGroup theirfaction=target.getGroup("Faction");
+		final CharacterGroup ourfaction=CharacterGroup.getGroup(st,"Faction");
+		final CharacterGroup theirfaction=CharacterGroup.getGroup(target,"Faction");
 		if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
 		if (theirfaction==null) { return new ErrorResponse(target.getName()+" is not in a faction"); }
 		if (ourfaction!=theirfaction) {
@@ -62,16 +63,17 @@ public class FactionCommands {
 		final float period=st.getKV("Faction.XPCycleLength").floatValue();
 		final int maxxp=st.getKV("Faction.XPPerCycle").intValue();
 		final Pool factionxp=Modules.getPool(st,"Faction.FactionXP");
-		final int awarded=target.sumPoolDays(factionxp,period);
+		final int awarded=CharacterPool.sumPoolDays(target,factionxp,period);
 		if (awarded >= maxxp) {
-			return new ErrorResponse("This character has already reached their Faction XP Limit.  They will next be eligable for a point in "+target.poolNextFree(factionxp,
-			                                                                                                                                                      maxxp,
-			                                                                                                                                                      period
-			                                                                                                                                                     ));
+			return new ErrorResponse("This character has already reached their Faction XP Limit.  They will next be eligable for a point in "+CharacterPool.poolNextFree(target,
+			                                                                                                                                                             factionxp,
+			                                                                                                                                                             maxxp,
+			                                                                                                                                                             period
+			                                                                                                                                                            ));
 		}
 		// else award xp :P
 		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add","FactionXP",null,"1",reason);
-		target.addPool(st,factionxp,1,reason);
+		CharacterPool.addPool(st,target,factionxp,1,reason);
 		if (target!=st.getCharacter()) {
 			target.hudMessage("You were granted 1 point of Faction XP by "+st.getCharacter().getName()+" for "+reason);
 		}
@@ -85,7 +87,7 @@ public class FactionCommands {
 	                              @Nonnull
 	                              @Arguments(description="Character to invite",
 	                                         type=ArgumentType.CHARACTER) final Char target) {
-		final CharacterGroup ourfaction=st.getCharacter().getGroup("Faction");
+		final CharacterGroup ourfaction=CharacterGroup.getGroup(st,"Faction");
 		if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
 		return GroupCommands.invite(st,ourfaction,target);
 	}
@@ -96,7 +98,7 @@ public class FactionCommands {
 	public static Response eject(@Nonnull final State st,
 	                             @Arguments(description="Character to remove from the faction",
 	                                        type=ArgumentType.CHARACTER_FACTION) @Nonnull final Char member) {
-		final CharacterGroup faction=st.getCharacter().getGroup("Faction");
+		final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
 		if (faction==null) { return new ErrorResponse("You are not in a faction!"); }
 		return GroupCommands.eject(st,faction,member);
 	}

@@ -519,7 +519,7 @@ public class State extends DumpableState {
 		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
 			if (character!=null) {
 				final Map<Integer,CharacterGroup> map=new TreeMap<>();
-				for (final CharacterGroup c: character.getGroups()) {
+				for (final CharacterGroup c: CharacterGroup.getGroups(character)) {
 					map.put(c.getId(),c);
 				}
 				check.addAll(map.values());
@@ -791,7 +791,7 @@ public class State extends DumpableState {
 			ret.append("Zone:").append(zone.getName());
 		}
 		if (character!=null) {
-			for (final CharacterGroup c: character.getGroups()) {
+			for (final CharacterGroup c: CharacterGroup.getGroups(character)) {
 				if (ret.length()>0) { ret.append(", "); }
 				ret.append("Group:").append(c.getName());
 			}

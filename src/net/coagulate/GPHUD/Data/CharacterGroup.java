@@ -81,6 +81,72 @@ public class CharacterGroup extends TableRow {
 		return (CharacterGroup) factoryPut("CharacterGroup",id,new CharacterGroup(id));
 	}
 
+	/**
+	 * Get the character group of a given type.
+	 *
+	 * @param character Character to get the group of
+	 * @param grouptype Group type string
+	 *
+	 * @return The CharacterGroup or null
+	 */
+	@Nullable
+	public static CharacterGroup getGroup(@Nonnull final Char character,
+	                                      @Nonnull final String grouptype) {
+		try {
+			final Integer group=db().dqi(
+					"select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers"+".charactergroupid where characterid=? and charactergroups.type=?",
+					character.getId(),
+					grouptype
+			                            );
+			if (group==null) { return null; }
+			return CharacterGroup.get(group);
+		}
+		catch (@Nonnull final NoDataException e) { return null; }
+	}
+
+	/**
+	 * Get all the groups this character is in
+	 *
+	 * @param character The character to get groups for
+	 *
+	 * @return Set of Character Groups
+	 */
+	@Nonnull
+	public static Set<CharacterGroup> getGroups(@Nonnull final Char character) {
+		final Set<CharacterGroup> ret=new TreeSet<>();
+		for (final ResultsRow r: db().dq("select charactergroupid from charactergroupmembers where characterid=?",character.getId())) {
+			ret.add(CharacterGroup.get(r.getInt()));
+		}
+		return ret;
+	}
+
+	/**
+	 * Get all the groups this character is in
+	 *
+	 * @param state State infers The character to get groups for
+	 *
+	 * @return Set of Character Groups
+	 */
+	@Nonnull
+	public static Set<CharacterGroup> getGroups(@Nonnull final State state) {
+		return getGroups(state.getCharacter());
+	}
+
+
+	/**
+	 * Get the character group of a given type.
+	 *
+	 * @param state     infers character
+	 * @param grouptype Group type string
+	 *
+	 * @return The CharacterGroup or null
+	 */
+	@Nullable
+	public static CharacterGroup getGroup(@Nonnull final State state,
+	                                      @Nonnull final String grouptype) {
+		return getGroup(state.getCharacter(),grouptype);
+	}
+
 	// ----- Internal Statics -----
 
 	/**
@@ -197,9 +263,11 @@ public class CharacterGroup extends TableRow {
 		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		if (exists>0) { throw new UserInputDuplicateValueException("Character is already a member of group?"); }
 		// in competing group?
-		final CharacterGroup competition=character.getGroup(getType());
-		if (competition!=null) {
-			throw new UserInputDuplicateValueException("Unable to join new group, already in a group of type "+getType()+" - "+competition.getName());
+		if (getType()!=null) {
+			final CharacterGroup competition=CharacterGroup.getGroup(character,getType());
+			if (competition!=null) {
+				throw new UserInputDuplicateValueException("Unable to join new group, already in a group of type "+getType()+" - "+competition.getName());
+			}
 		}
 		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
 	}

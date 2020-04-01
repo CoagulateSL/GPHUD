@@ -69,9 +69,9 @@ public class ExperienceModule extends ModuleAnnotation {
 			if (subtype==null) { subtype=""; }
 			if (!subtype.isEmpty()) {
 				// what is our group of this type then?
-				final CharacterGroup group=st.getCharacter().getGroup(subtype);
+				final CharacterGroup group=CharacterGroup.getGroup(st,subtype);
 				// what is their blah
-				final CharacterGroup theirgroup=target.getGroup(subtype);
+				final CharacterGroup theirgroup=CharacterGroup.getGroup(target,subtype);
 				if (group==null || theirgroup==null) {
 					return new ErrorResponse("You lack admin permissions, and you/they are not in a group of type "+subtype);
 				}

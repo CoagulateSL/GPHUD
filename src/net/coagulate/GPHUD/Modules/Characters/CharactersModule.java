@@ -13,6 +13,7 @@ import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -75,14 +76,15 @@ public class CharactersModule extends ModuleAnnotation {
 			return st.getKV("characters."+template).value();
 		}
 		if (attr.getType()==GROUP) {
-			final CharacterGroup group=st.getCharacter().getGroup(attr.getSubType());
+			if (attr.getSubType()==null) { return null; }
+			final CharacterGroup group=CharacterGroup.getGroup(st,attr.getSubType());
 			if (group==null) { return ""; }
 			return group.getName();
 		}
 		if (attr.getType()==POOL || attr.getType()==EXPERIENCE) {
 			if (attr instanceof QuotaedXP) {
 				final QuotaedXP xp=(QuotaedXP) attr;
-				return st.getCharacter().sumPool(xp.getPool(st))+"";
+				return CharacterPool.sumPool(st,xp.getPool(st))+"";
 			}
 			else { return "POOL"; }
 		}

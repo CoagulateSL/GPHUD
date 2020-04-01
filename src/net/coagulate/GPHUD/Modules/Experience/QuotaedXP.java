@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Modules.Characters.CharacterAttribute;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Module;
@@ -68,7 +69,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 */
 	@Nonnull
 	public String nextFree(@Nonnull final State st) {
-		return st.getCharacter().poolNextFree(getPool(st),quota(st),period(st));
+		return CharacterPool.poolNextFree(st,getPool(st),quota(st),period(st));
 	}
 
 	/**
@@ -80,7 +81,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Calculate the ammount awarded in the period
 	 */
 	public int periodAwarded(@Nonnull final State st) {
-		return st.getCharacter().sumPoolSince(getPool(st),periodStart(st));
+		return CharacterPool.sumPoolSince(st.getCharacter(),getPool(st),periodStart(st));
 	}
 
 	/**
@@ -100,7 +101,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	                             final int award,
 	                             final String description) {
 		final int cappedaward=capAward(st,award);
-		st.getCharacter().addPoolSystem(st,getPool(st),cappedaward,description);
+		CharacterPool.addPoolSystem(st,st.getCharacter(),getPool(st),cappedaward,description);
 		return cappedaward;
 	}
 

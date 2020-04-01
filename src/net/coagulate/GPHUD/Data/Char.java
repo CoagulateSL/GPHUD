@@ -8,8 +8,8 @@ import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
-import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.Core.Tools.UnixTime;
@@ -21,7 +21,6 @@ import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
@@ -33,7 +32,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.util.logging.Level.SEVERE;
-import static net.coagulate.Core.Tools.UnixTime.duration;
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 
 /**
@@ -258,6 +256,13 @@ public class Char extends TableRow {
 		return list;
 	}
 
+	/**
+	 * Get a list of HUDs that haven't checked in in over 60 seconds
+	 *
+	 * //TODO this needs to be improved
+	 *
+	 * @return Results set of a db query (boo)
+	 */
 	public static Results getPingable() {
 		return db().dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+"limit 0,30",
 		               Interface.getNode(),
@@ -284,6 +289,14 @@ public class Char extends TableRow {
 		      );
 	}
 
+	/**
+	 * Validates a character name against the filtered naming list (forbidden words)
+	 *
+	 * @param st   State
+	 * @param name Name to check
+	 *
+	 * @throws UserInputValidationException if the name uses a prohobited name
+	 */
 	private static void checkFilteredNamingList(@Nonnull final State st,
 	                                            @Nonnull final String name) {
 		// break the users name into components based on certain characters
@@ -296,13 +309,21 @@ public class Char extends TableRow {
 				for (String namepart: nameparts) {
 					namepart=namepart.trim();
 					if (filter.equalsIgnoreCase(namepart)) {
-						throw new UserInputInvalidChoiceException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.");
+						throw new UserInputValidationException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.");
 					}
 				}
 			}
 		}
 	}
 
+	/**
+	 * Checks if the name contains permitted symbols
+	 *
+	 * @param st   State
+	 * @param name Name to check
+	 *
+	 * @throws UserInputValidationException if the name uses a prohobited symbol
+	 */
 	private static void checkAllowedNamingSymbols(@Nonnull final State st,
 	                                              @Nonnull String name) {
 		// in this approach we eliminate characters we allow.  If the result is an empty string, they win.  Else "uhoh"
@@ -321,7 +342,7 @@ public class Char extends TableRow {
 			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
 			// and reconstitute it
 			for (final String character: characters) { blockedchars.append(character); }
-			throw new UserInputInvalidChoiceException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.");
+			throw new UserInputValidationException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.");
 		}
 	}
 
@@ -397,6 +418,11 @@ public class Char extends TableRow {
 		return User.get(getInt("owner"));
 	}
 
+	/**
+	 * Set the owner of this character.
+	 *
+	 * @param newowner The new owner
+	 */
 	public void setOwner(@Nonnull final User newowner) {
 		set("owner",newowner.getId());
 		// purge any primary characters referring to this
@@ -445,136 +471,6 @@ public class Char extends TableRow {
 
 	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
-	/**
-	 * Sum all the entries in a Pool
-	 *
-	 * @param p Pool
-	 *
-	 * @return Sum of the entries
-	 */
-	public int sumPool(@Nonnull final Pool p) {
-		final Integer sum=dqi("select sum(adjustment) from characterpools where characterid=? and poolname like ?",getId(),p.fullName());
-		if (sum==null) { return 0; }
-		return sum;
-	}
-
-	/**
-	 * Add an adjustment to a pool from a character.
-	 *
-	 * @param st          State of the grantor (requires character)
-	 * @param p           Pool
-	 * @param adjustment  Ammount to grant
-	 * @param description Audit logged description
-	 */
-	public void addPool(@Nonnull final State st,
-	                    @Nonnull final Pool p,
-	                    final int adjustment,
-	                    final String description) {
-		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)",
-		  getId(),
-		  p.fullName(),
-		  adjustment,
-		  st.getCharacter().getId(),
-		  st.getAvatar().getId(),
-		  description,
-		  getUnixTime()
-		 );
-	}
-
-	/**
-	 * Add an adjustment to a pool, as an administrator (Avatar).
-	 *
-	 * @param st          State of the grantor (requires avatar)
-	 * @param p           Pool
-	 * @param adjustment  Ammount to grant
-	 * @param description Audit logged description
-	 */
-	public void addPoolAdmin(@Nonnull final State st,
-	                         @Nonnull final Pool p,
-	                         final int adjustment,
-	                         final String description) {
-		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)",
-		  getId(),
-		  p.fullName(),
-		  adjustment,
-		  null,
-		  st.getAvatar().getId(),
-		  description,
-		  getUnixTime()
-		 );
-	}
-
-	/**
-	 * Add an adjustment to a pool on behalf of SYSTEM.
-	 *
-	 * @param st          State (not used)
-	 * @param p           Pool
-	 * @param adjustment  Ammount to adjust
-	 * @param description Logged reason for the change
-	 */
-	public void addPoolSystem(final State st,
-	                          @Nonnull final Pool p,
-	                          final int adjustment,
-	                          final String description) {
-		d("insert into characterpools(characterid,poolname,adjustment,adjustedbycharacter,adjustedbyavatar,description,timedate) values(?,?,?,?,?,?,?)",
-		  getId(),
-		  p.fullName(),
-		  adjustment,
-		  null,
-		  User.getSystem().getId(),
-		  description,
-		  getUnixTime()
-		 );
-	}
-
-	/**
-	 * Sum visit time on sim.
-	 *
-	 * @param since Ignore visits that end before this time (Unix Time)
-	 *
-	 * @return Total number of seconds the character has visited the sim for since the specified time
-	 */
-	public int sumVisits(final int since) {
-		final int now=getUnixTime();
-		final Results visits=dq("select starttime,endtime from visits where characterid=? and (endtime is null or endtime>?)",getId(),since);
-		int seconds=0;
-		for (final ResultsRow r: visits) {
-			Integer end=r.getIntNullable("endtime");
-			final Integer start=r.getIntNullable("starttime");
-			if (end==null) { end=now; }
-			if (start!=null) { seconds=seconds+(end-start); }
-		}
-		return seconds;
-	}
-
-	/**
-	 * Sum a pool since a given time
-	 *
-	 * @param p     Pool
-	 * @param since Unix Time to count points since
-	 *
-	 * @return Number of points in the given period.
-	 */
-	public int sumPoolSince(@Nonnull final Pool p,
-	                        final int since) {
-		final Integer sum=dqi("select sum(adjustment) from characterpools where characterid=? and poolname like ? and timedate>=?",getId(),p.fullName(),since);
-		if (sum==null) { return 0; }
-		return sum;
-	}
-
-	/**
-	 * Sum a pool since a given number of days
-	 *
-	 * @param p    Pool
-	 * @param days Number of days ago to start counting from.
-	 *
-	 * @return Number of points in the pool in the selected time range.
-	 */
-	public int sumPoolDays(@Nonnull final Pool p,
-	                       final float days) {
-		final int seconds=(int) (days*60.0*60.0*24.0);
-		return sumPoolSince(p,getUnixTime()-seconds);
-	}
 
 	/**
 	 * Call a characters HUD to get a radar list of nearby Characters.
@@ -638,108 +534,6 @@ public class Char extends TableRow {
 	}
 
 	/**
-	 * Get all the pools this character has.
-	 *
-	 * @param st State
-	 *
-	 * @return List of Pools
-	 */
-	@Nonnull
-	public Set<Pool> getPools(@Nonnull final State st) {
-		final Set<Pool> pools=new TreeSet<>();
-		final Results results=dq("select distinct poolname from characterpools where characterid=?",getId());
-		for (final ResultsRow r: results) {
-			final String name=r.getString();
-			if (st.hasModule(name)) {
-				final Pool p=Modules.getPoolNullable(st,name);
-				pools.add(p);
-			}
-		}
-		return pools;
-	}
-
-	/**
-	 * Get the character group of a given type.
-	 *
-	 * @param grouptype Group type string
-	 *
-	 * @return The CharacterGroup or null
-	 */
-	@Nullable
-	public CharacterGroup getGroup(final String grouptype) {
-		try {
-			final Integer group=dqi(
-					"select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers"+".charactergroupid where characterid=? and charactergroups.type=?",
-					getId(),
-					grouptype
-			                       );
-			if (group==null) { return null; }
-			return CharacterGroup.get(group);
-		}
-		catch (@Nonnull final NoDataException e) { return null; }
-	}
-
-	/**
-	 * Calculate the next free point time string for a pool.
-	 *
-	 * @param pool  Pool
-	 * @param maxxp Maximum ammount of XP earnable in a period
-	 * @param days  Period (days)
-	 *
-	 * @return Explanation of when the next point is available.
-	 */
-	@Nonnull
-	public String poolNextFree(@Nonnull final Pool pool,
-	                           final int maxxp,
-	                           final float days) {
-		if (maxxp==0) { return "NEVER"; }
-		final int now=getUnixTime();
-		final int nextfree=poolNextFreeAt(pool,maxxp,days);
-		if (now >= nextfree) { return "NOW"; }
-
-		final int duration=nextfree-now;
-		return "in "+duration(duration,false);
-	}
-
-	/**
-	 * Calculate the date-time of the next free point for a pool.
-	 *
-	 * @param pool  Pool
-	 * @param maxxp Maximum ammount of XP in a period
-	 * @param days  Period in days
-	 *
-	 * @return Date-time of the point of next free (may be in the past, in which case available NOW).
-	 */
-	public int poolNextFreeAt(@Nonnull final Pool pool,
-	                          final int maxxp,
-	                          final float days) {
-		final boolean debug=false;
-		final int now=getUnixTime();
-		final int since=(int) (now-(days*60*60*24));
-		final Results res=dq("select adjustment,timedate from characterpools where characterid=? and poolname=? and timedate>?",getId(),pool.fullName(),since);
-		int awarded=0;
-		final Map<Integer,Integer> when=new TreeMap<>(); // map time stamps to award.
-		for (final ResultsRow r: res) {
-			final int ammount=r.getInt("adjustment");
-			int at=r.getInt("timedate");
-			awarded+=ammount;
-			while (when.containsKey(at)) { at++; }
-			when.put(at,ammount);
-		}
-		int overshoot=awarded-maxxp;
-		if (overshoot<0) { return now; }
-		final int datefilled=0;
-		for (final Map.Entry<Integer,Integer> entry: when.entrySet()) {
-			final int ammount=entry.getValue();
-			overshoot-=ammount;
-			if (overshoot<0) {
-				return (int) (entry.getKey()+(days*60*60*24));
-			}
-		}
-		return now;
-	}
-
-	/**
 	 * Transmits a JSON K:V pair to the characters hud.
 	 *
 	 * @param key   Key
@@ -764,47 +558,6 @@ public class Char extends TableRow {
 		push("message",message);
 	}
 
-	/**
-	 * Count the number of queued/offline messages available to this user.
-	 *
-	 * @return Message count
-	 */
-	public int messages() { return Message.count(this); }
-
-	/**
-	 * Push the message count to the client's HUD.
-	 */
-	public void pushMessageCount() { push("messagecount",Integer.toString(messages())); }
-
-	/**
-	 * Log a queued/offline queueMessage
-	 *
-	 * @param message         Message to send (JSON format)
-	 * @param lifespanseconds life span of the queueMessage in seconds
-	 */
-	public void queueMessage(@Nonnull final JSONObject message,
-	                         final int lifespanseconds) {
-		Message.add(this,getUnixTime()+lifespanseconds,message);
-		pushMessageCount();
-	}
-
-	/**
-	 * get the next queued message and marks it as active
-	 *
-	 * @return Message object or null if none
-	 */
-	@Nullable
-	public Message getMessage() {
-		return Message.getNextMessage(this);
-	}
-
-	/**
-	 * gets the currently active message
-	 *
-	 * @return Message object, or null if no currently active message;
-	 */
-	@Nullable
-	public Message getActiveMessage() { return Message.getActiveMessage(this); }
 
 	/**
 	 * Get the zone this character is in.
@@ -836,19 +589,6 @@ public class Char extends TableRow {
 		d("update characters set zoneid=? where characterid=?",id,getId());
 	}
 
-	/**
-	 * Get all the groups this character is in
-	 *
-	 * @return Set of Character Groups
-	 */
-	@Nonnull
-	public Set<CharacterGroup> getGroups() {
-		final Set<CharacterGroup> ret=new TreeSet<>();
-		for (final ResultsRow r: dq("select charactergroupid from charactergroupmembers where characterid=?",getId())) {
-			ret.add(CharacterGroup.get(r.getInt()));
-		}
-		return ret;
-	}
 
 	/**
 	 * Set up all conveyances assuming the HUD has no state.
@@ -957,6 +697,9 @@ public class Char extends TableRow {
 		}
 	}
 
+	/**
+	 * Mark this character as retired
+	 */
 	public void retire() {
 		if (retired()) { return; }
 		final String now=new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -964,10 +707,21 @@ public class Char extends TableRow {
 		set("retired",true);
 	}
 
+	/**
+	 * Is this character retired
+	 *
+	 * @return true if retired
+	 */
 	public boolean retired() {
 		return getBool("retired");
 	}
 
+	/**
+	 * Rename a character
+	 * //TODO implement filtering
+	 *
+	 * @param newname The characters new name
+	 */
 	public void rename(final String newname) {
 		final int count=dqinn("select count(*) from characters where name like ? and instanceid=?",newname,getInstance().getId());
 		if (count!=0) {
@@ -976,12 +730,11 @@ public class Char extends TableRow {
 		set("name",newname);
 	}
 
-	public void closeVisits(@Nonnull final State st) {
-		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
-		d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",getId());
-		d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",getId(),st.getRegion().getId());
-	}
-
+	/**
+	 * Close out a URL.
+	 *
+	 * @param st State.
+	 */
 	public void closeURL(@Nonnull final State st) {
 		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
 		d("update characters set url=null,urlfirst=null,urllast=null,authnode=null,zoneid=null,regionid=null,lastactive=UNIX_TIMESTAMP(),playedby=null where characterid=?",

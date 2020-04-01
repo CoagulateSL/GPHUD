@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.GPHUD.Data.Cookie;
+import net.coagulate.GPHUD.Data.Visit;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
 import net.coagulate.GPHUD.Modules.Command;
@@ -38,7 +39,7 @@ public class Logout {
 	                  permitObject=false)
 	public static Response logout(@Nonnull final State st) {
 		if (st.getCharacterNullable()!=null) {
-			st.getCharacter().closeVisits(st);
+			Visit.closeVisits(st);
 			st.getCharacter().closeURL(st);
 			st.logger().info("Logout from avatar "+st.getAvatar().getName()+" as character "+st.getCharacter().getName());
 		}

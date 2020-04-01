@@ -32,7 +32,7 @@ public abstract class Messages {
 	@URLs(url="/messages/list")
 	public static void messagesList(@Nonnull final State st,
 	                                @Nonnull final SafeMap values) {
-		final Message m=st.getCharacter().getMessage();
+		final Message m=Message.getNextMessage(st);
 		final Form f=st.form();
 		if (m==null) {
 			f.add(new TextError("You have no messages."));

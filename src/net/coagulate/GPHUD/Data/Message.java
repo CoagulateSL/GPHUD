@@ -84,14 +84,37 @@ public class Message extends TableRow {
 	}
 
 	/**
+	 * Get the next message, active or not, soonest to expire
+	 *
+	 * @param state infers Character to get a message for
+	 *
+	 * @return Next message for the character, or null
+	 */
+	@Nullable
+	public static Message getNextMessage(@Nonnull final State state) {
+		return getNextMessage(state.getCharacter());
+	}
+
+	/**
 	 * Count the number of messages queued for a character.
 	 *
-	 * @param c Character
+	 * @param character Character
 	 *
 	 * @return Number of messages
 	 */
-	public static int count(@Nonnull final Char c) {
-		return db().dqinn("select count(*) from messages where characterid=?",c.getId());
+	public static int count(@Nonnull final Char character) {
+		return db().dqinn("select count(*) from messages where characterid=?",character.getId());
+	}
+
+	/**
+	 * Count the number of messages queued for a character.
+	 *
+	 * @param state infers character
+	 *
+	 * @return Number of messages
+	 */
+	public static int count(@Nonnull final State state) {
+		return count(state.getCharacter());
 	}
 
 	/**
@@ -110,6 +133,32 @@ public class Message extends TableRow {
 		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
+	/**
+	 * Get the currently active message
+	 *
+	 * @param state State infers Character to get active message for
+	 *
+	 * @return The message, or null if there isn't one.
+	 */
+	@Nullable
+	public static Message getActiveMessage(@Nonnull final State state) {
+		return getActiveMessage(state.getCharacter());
+	}
+
+	/**
+	 * Push the message count to the client's HUD.
+	 *
+	 * @param character The character to push a message count to
+	 */
+	public static void pushMessageCount(final Char character) { character.push("messagecount",Integer.toString(count(character))); }
+
+	/**
+	 * Push the message count to the client's HUD.
+	 *
+	 * @param state The character to push a message count to
+	 */
+	public static void pushMessageCount(final State state) { state.getCharacter().push("messagecount",Integer.toString(count(state.getCharacter()))); }
+
 	// ----- Internal Statics -----
 
 	/**
@@ -123,6 +172,7 @@ public class Message extends TableRow {
 	                final int expires,
 	                @Nonnull final JSONObject message) {
 		db().d("insert into messages(characterid,expires,json) values(?,?,?)",targetchar.getId(),expires,message.toString());
+		pushMessageCount(targetchar);
 	}
 
 	// ---------- INSTANCE ----------
@@ -188,4 +238,5 @@ public class Message extends TableRow {
 	}
 
 	public void flushKVCache(final State st) {}
+
 }

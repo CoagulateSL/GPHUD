@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Experience;
 
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
@@ -54,17 +55,17 @@ public abstract class Experience {
 	                                @Nonnull final Char character) {
 		int sum=0;
 		if (Modules.get(null,"experience").isEnabled(st)) {
-			sum+=character.sumPool(Modules.getPool(st,"Experience.VisitXP"));
+			sum+=CharacterPool.sumPool(character,Modules.getPool(st,"Experience.VisitXP"));
 		}
 		if (Modules.get(null,"faction").isEnabled(st)) {
-			sum+=character.sumPool(Modules.getPool(st,"Faction.FactionXP"));
+			sum+=CharacterPool.sumPool(character,Modules.getPool(st,"Faction.FactionXP"));
 		}
 		if (Modules.get(null,"Events").isEnabled(st)) {
-			sum+=character.sumPool(Modules.getPool(st,"Events.EventXP"));
+			sum+=CharacterPool.sumPool(character,Modules.getPool(st,"Events.EventXP"));
 		}
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getType()==EXPERIENCE) {
-				sum+=character.sumPool(Modules.getPool(st,"Experience."+a.getName()+"XP"));
+				sum+=CharacterPool.sumPool(character,Modules.getPool(st,"Experience."+a.getName()+"XP"));
 			}
 		}
 		return sum;

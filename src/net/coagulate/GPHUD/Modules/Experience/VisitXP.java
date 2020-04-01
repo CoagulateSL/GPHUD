@@ -2,10 +2,7 @@ package net.coagulate.GPHUD.Modules.Experience;
 
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -38,9 +35,9 @@ public class VisitXP extends QuotaedXP {
 				final int duration=st.getKV("Experience.VisitXPDuration").intValue();
 				final int points=st.getKV("Experience.VisitXPPoints").intValue();
 				final int since=getUnixTime()-(Experience.getCycle(st));
-				int timethisweek=ch.sumVisits(since);
+				int timethisweek=Visit.sumVisits(ch,since);
 				timethisweek=timethisweek/60;
-				final int xpthisweek=ch.sumPoolSince(Modules.getPool(null,"Experience.VisitXP"),since);
+				final int xpthisweek=CharacterPool.sumPoolSince(ch,Modules.getPool(null,"Experience.VisitXP"),since);
 				//System.out.println("Sum total visit time for "+ch+" is "+timethisweek);
 				//System.out.println("Sum visit xp in that time period is "+xpthisweek);
 				//System.out.println("Config is "+points+" per "+duration+" total "+perweek);
@@ -51,7 +48,7 @@ public class VisitXP extends QuotaedXP {
 				//System.out.println("Capped wanttogive "+wanttogive);
 				if (wanttogive<=0) { return; }
 				final Pool visitxp=Modules.getPool(st,"experience.visitxp");
-				ch.addPool(st,visitxp,wanttogive,"Awarded XP for time on sim");
+				CharacterPool.addPool(st,ch,visitxp,wanttogive,"Awarded XP for time on sim");
 				final State fakestate=new State();
 				fakestate.setInstance(st.getInstance());
 				fakestate.setAvatar(User.getSystem());

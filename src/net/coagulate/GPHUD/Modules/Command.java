@@ -623,7 +623,7 @@ public abstract class Command {
 					break;
 				case CHARACTER_FACTION:
 					final DropDownList factionmembers=new DropDownList(arg.getName());
-					final CharacterGroup faction=st.getCharacter().getGroup("Faction");
+					final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
 					if (faction==null) {
 						throw new UserInputStateException("You are in no faction");
 					}

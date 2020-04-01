@@ -269,7 +269,7 @@ public abstract class Management {
 			grouptype=attr.getSubType();
 		}
 		CharacterGroup existinggroup=null;
-		if (grouptype!=null) { existinggroup=newmember.getGroup(grouptype); }
+		if (grouptype!=null) { existinggroup=CharacterGroup.getGroup(newmember,grouptype); }
 		if (existinggroup!=null && existinggroup.getOwner()==newmember) {
 			return new ErrorResponse("Refusing to move character "+newmember.getName()+", they are currently group leader of "+existinggroup.getName()+", you must manually "+"eject them from that position");
 		}

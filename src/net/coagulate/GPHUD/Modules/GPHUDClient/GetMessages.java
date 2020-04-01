@@ -38,7 +38,7 @@ public abstract class GetMessages {
 	          permitConsole=false,
 	          permitUserWeb=false)
 	public static Response getMessage(@Nonnull final State st) {
-		final Message m=st.getCharacter().getMessage();
+		final Message m=Message.getNextMessage(st);
 		if (m==null) { return new ErrorResponse("You have no outstanding messages."); }
 		m.setActive();
 
@@ -66,7 +66,7 @@ public abstract class GetMessages {
 	                                           @Arguments(type=ArgumentType.CHOICE,
 	                                                      description="Accept or Reject the message",
 	                                                      choiceMethod="getAcceptReject") final String response) {
-		final Message m=st.getCharacter().getActiveMessage();
+		final Message m=Message.getActiveMessage(st);
 		if (m==null) { return new ErrorResponse("You have no active message."); }
 
 		final JSONObject j=new JSONObject(m.getJSON());
@@ -101,7 +101,7 @@ public abstract class GetMessages {
 		}
 		final CharacterGroup targetgroup=CharacterGroup.get(j.getInt("to"));
 		m.delete();
-		st.getCharacter().pushMessageCount();
+		Message.pushMessageCount(st);
 		if (!accepted) {
 			Audit.audit(st,
 			            Audit.OPERATOR.CHARACTER,
@@ -116,7 +116,7 @@ public abstract class GetMessages {
 			return new OKResponse("Invitation rejected");
 		}
 		if (targetgroup.getType()!=null) {
-			final CharacterGroup currentgroup=st.getCharacter().getGroup(targetgroup.getType());
+			final CharacterGroup currentgroup=CharacterGroup.getGroup(st,targetgroup.getType());
 			if (currentgroup==targetgroup) {
 				Audit.audit(st,
 				            Audit.OPERATOR.CHARACTER,

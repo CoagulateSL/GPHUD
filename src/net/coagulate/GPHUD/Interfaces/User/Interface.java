@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookie;
+import net.coagulate.GPHUD.Data.Message;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.PasswordInput;
@@ -105,7 +106,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	@Nonnull
 	public String messages(@Nonnull final State st) {
 		if (st.getCharacterNullable()==null) { return ""; }
-		final int messages=st.getCharacter().messages();
+		final int messages=Message.count(st);
 		if (messages>0) {
 			return "<p>"+new Link("<b>You have "+messages+" unread message"+(messages>1?"s":"")+", click here to read</b>","/GPHUD/messages/list").asHtml(st,true)+"</p>";
 		}

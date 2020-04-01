@@ -220,7 +220,7 @@ public abstract class Management {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
 		}
-		final CharacterGroup existingfaction=newmember.getGroup("Faction");
+		final CharacterGroup existingfaction=CharacterGroup.getGroup(newmember,"Faction");
 		// refuse if they're the faction leader
 		//System.out.println("EXISTINGFACTION "+existingfaction.getId());
 		if (existingfaction!=null && existingfaction.getOwner()==newmember) {
@@ -264,7 +264,7 @@ public abstract class Management {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
 		}
-		final CharacterGroup existingfaction=member.getGroup("Faction");
+		final CharacterGroup existingfaction=CharacterGroup.getGroup(member,"Faction");
 		// refuse if they're not in this group (!)
 		if (existingfaction==null) { return new ErrorResponse("User is not presently in any faction"); }
 		if (existingfaction!=faction) {

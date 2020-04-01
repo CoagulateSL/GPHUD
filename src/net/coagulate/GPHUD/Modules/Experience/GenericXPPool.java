@@ -4,6 +4,7 @@ import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
@@ -47,13 +48,14 @@ public class GenericXPPool extends Pool {
 		final float period=targetstate.getKV(fullName()+"XPPeriod").floatValue();
 		final int maxxp=targetstate.getKV(fullName()+"XPLimit").intValue();
 		final Pool pool=Modules.getPool(targetstate,"Experience."+myname+"XP");
-		final int awarded=target.sumPoolDays(pool,period);
+		final int awarded=CharacterPool.sumPoolDays(target,pool,period);
 		if (awarded >= maxxp) {
-			throw new UserInputStateException("This character has already reached their "+pool.name()+" XP limit.  They will next be eligable for a point in "+target.poolNextFree(
+			throw new UserInputStateException("This character has already reached their "+pool.name()+" XP limit.  They will next be eligable for a point in "+CharacterPool.poolNextFree(
+					target,
 					pool,
 					maxxp,
 					period
-			                                                                                                                                                                      ));
+			                                                                                                                                                                             ));
 		}
 		if ((awarded+ammount)>maxxp) {
 			throw new UserInputStateException("This will push the character beyond their "+pool.name()+" XP limit, they can be awarded "+(maxxp-awarded)+" XP right now");
@@ -61,7 +63,7 @@ public class GenericXPPool extends Pool {
 		if (reason==null) { throw new UserInputEmptyException("You must supply a reason"); }
 		// else award xp :P
 		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add",pool.name()+"XP",null,ammount+"",reason);
-		target.addPool(st,pool,ammount,reason);
+		CharacterPool.addPool(st,target,pool,ammount,reason);
 		if (target!=st.getCharacter()) {
 			if (incontext) {
 				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by "+st.getCharacter().getName()+" for "+reason);
