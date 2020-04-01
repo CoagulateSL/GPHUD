@@ -110,17 +110,11 @@ public class TeleportCommands {
 	                          @Argument.Arguments(description="Landmark name to teleport to",
 	                                              type=Argument.ArgumentType.TEXT_ONELINE,
 	                                              max=64) final String landmark) {
-		final Landmarks lm=st.getInstance().getLandmark(landmark);
+		final Landmarks lm=Landmarks.find(st,landmark);
 		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
 		final JSONObject tp=new JSONObject();
 		tp.put("teleport",lm.getHUDRepresentation(false));
-		Audit.audit(true,
-		            st,
-		            Audit.OPERATOR.CHARACTER,
-		            null,
-		            null,
-		            "Move",
-		            st.getCharacter().getName(),
+		Audit.audit(true,st,Audit.OPERATOR.CHARACTER,null,null,"Move",st.getCharacter().getName(),
 		            "",
 		            landmark,
 		            "Player teleported to "+landmark+" at "+lm.getRegion(true).getName()+":"+lm.getCoordinates()+" lookat "+lm.getLookAt()

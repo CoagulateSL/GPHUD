@@ -26,7 +26,7 @@ public class EventsModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(@Nonnull final State st) {
-		final Set<Event> events=st.getInstance().getEvents();
+		final Set<Event> events=Event.getAll(st);
 		final Set<SideSubMenu> ret=new HashSet<>();
 		for (final Event event: events) {
 			ret.add(new StaticSideSubMenu(event.getName(),event.getId(),"/events/view/"+event.getId(),""));

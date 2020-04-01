@@ -3,7 +3,6 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
@@ -51,16 +50,15 @@ public class AdminNotes extends TableRow {
 	                       @Nullable final Char targetchar,
 	                       @Nonnull final String note,
 	                       final boolean adminonly) {
-		GPHUD.getDB()
-		     .d("insert into adminnotes(tds,instanceid,adminid,targetuser,targetchar,note,adminonly) values(?,?,?,?,?,?,?)",
-		        UnixTime.getUnixTime(),
-		        instance.getId(),
-		        admin.getId(),
-		        target.getId(),
-		        (targetchar==null?null:targetchar.getId()),
-		        note,
-		        adminonly
-		       );
+		db().d("insert into adminnotes(tds,instanceid,adminid,targetuser,targetchar,note,adminonly) values(?,?,?,?,?,?,?)",
+		       UnixTime.getUnixTime(),
+		       instance.getId(),
+		       admin.getId(),
+		       target.getId(),
+		       (targetchar==null?null:targetchar.getId()),
+		       note,
+		       adminonly
+		      );
 	}
 
 	/**
@@ -82,13 +80,12 @@ public class AdminNotes extends TableRow {
 	                                  final boolean showall,
 	                                  final boolean toponly) {
 		final List<AdminNote> results=new ArrayList<>();
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" limit 0,3":""),
-		                                    instance.getId(),
-		                                    user.getId(),
-		                                    character.getId(),
-		                                    user.getId()
-		                                   )) {
+		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" limit 0,3":""),
+		                                   instance.getId(),
+		                                   user.getId(),
+		                                   character.getId(),
+		                                   user.getId()
+		                                  )) {
 			results.add(resultify(row));
 		}
 		return results;
@@ -110,11 +107,10 @@ public class AdminNotes extends TableRow {
 	                                  final boolean showall,
 	                                  final boolean toponly) {
 		final List<AdminNote> results=new ArrayList<>();
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" "+"limit 0,3":""),
-		                                    instance.getId(),
-		                                    user.getId()
-		                                   )) {
+		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" "+"limit 0,3":""),
+		                                   instance.getId(),
+		                                   user.getId()
+		                                  )) {
 			results.add(resultify(row));
 		}
 		return results;
@@ -130,7 +126,7 @@ public class AdminNotes extends TableRow {
 	@Nonnull
 	public static List<AdminNote> get(@Nonnull final Instance instance) {
 		final List<AdminNote> results=new ArrayList<>();
-		for (final ResultsRow row: GPHUD.getDB().dq("select * from adminnotes where instanceid=? order by tds desc",instance.getId())) { results.add(resultify(row)); }
+		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? order by tds desc",instance.getId())) { results.add(resultify(row)); }
 		return results;
 	}
 

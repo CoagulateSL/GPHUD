@@ -4,7 +4,6 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.EventXP;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -50,13 +49,11 @@ public class EventSchedule extends TableRow {
 	@Nonnull
 	public static Set<EventSchedule> get(@Nonnull final Event e) {
 		final Set<EventSchedule> schedule=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where eventid=?",e.getId())) {
+		for (final ResultsRow r: db().dq("select eventsscheduleid from eventsschedule where eventid=?",e.getId())) {
 			schedule.add(get(r.getInt()));
 		}
 		return schedule;
 	}
-
-	// ----- Internal Statics -----
 
 	/**
 	 * Get a set of active events schedules that are in schedule and have started.
@@ -66,20 +63,32 @@ public class EventSchedule extends TableRow {
 	 * @return Set of EventSchedules that are within start and end times, and have been started
 	 */
 	@Nonnull
-	static Set<EventSchedule> getActive(@Nonnull final Instance instance) {
+	public static Set<EventSchedule> getActive(@Nonnull final Instance instance) {
 		final Set<EventSchedule> events=new TreeSet<>();
 		final int now=UnixTime.getUnixTime();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
-		                                  instance.getId(),
-		                                  now,
-		                                  now
-		                                 )) {
+		for (final ResultsRow r: db().dq("select eventsscheduleid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+		                                 instance.getId(),
+		                                 now,
+		                                 now
+		                                )) {
 			events.add(get(r.getInt()));
 		}
 		return events;
 	}
 
+	/**
+	 * Get a set of active events schedules that are in schedule and have started.
+	 *
+	 * @param st State Instance to get the events for
+	 *
+	 * @return Set of EventSchedules that are within start and end times, and have been started
+	 */
+	@Nonnull
+	public static Set<EventSchedule> getActive(@Nonnull final State st) {
+		return getActive(st.getInstance());
+	}
+
+	// ----- Internal Statics -----
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override

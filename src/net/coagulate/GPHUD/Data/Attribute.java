@@ -6,7 +6,6 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
@@ -53,7 +52,7 @@ public class Attribute extends TableRow {
 	public static Attribute find(@Nonnull final Instance instance,
 	                             final String name) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select attributeid from attributes where name like ? and instanceid=?",name,instance.getId());
+			final int id=db().dqinn("select attributeid from attributes where name like ? and instanceid=?",name,instance.getId());
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {
@@ -68,7 +67,7 @@ public class Attribute extends TableRow {
 	public static Attribute findGroup(@Nonnull final Instance instance,
 	                                  final String grouptype) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
+			final int id=db().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {
@@ -96,7 +95,7 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public static Set<Attribute> getAttributes(@Nonnull final Instance instance) {
 		final Set<Attribute> set=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select attributeid from attributes where instanceid=?",instance.getId())) {
+		for (final ResultsRow r: db().dq("select attributeid from attributes where instanceid=?",instance.getId())) {
 			set.add(Attribute.get(r.getInt()));
 		}
 		return set;
@@ -130,8 +129,6 @@ public class Attribute extends TableRow {
 		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
 	}
 
-	// ----- Internal Statics -----
-
 	/**
 	 * Create a new attribute
 	 *
@@ -144,29 +141,52 @@ public class Attribute extends TableRow {
 	 * @param required          value must be supplied
 	 * @param defaultvalue      default value (where not required attribute)
 	 */
-	static void create(@Nonnull final Instance instance,
-	                   final String name,
-	                   final boolean selfmodify,
-	                   final ATTRIBUTETYPE attributetype,
-	                   final String grouptype,
-	                   final boolean usesabilitypoints,
-	                   final boolean required,
-	                   String defaultvalue) {
+	public static void create(@Nonnull final Instance instance,
+	                          final String name,
+	                          final boolean selfmodify,
+	                          final ATTRIBUTETYPE attributetype,
+	                          final String grouptype,
+	                          final boolean usesabilitypoints,
+	                          final boolean required,
+	                          String defaultvalue) {
 		// =)
 		if ("".equals(defaultvalue)) { defaultvalue=null; }
-		GPHUD.getDB()
-		     .d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
-		        instance.getId(),
-		        name,
-		        selfmodify,
-		        toString(attributetype),
-		        grouptype,
-		        usesabilitypoints,
-		        required,
-		        defaultvalue
-		       );
+		db().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
+		       instance.getId(),
+		       name,
+		       selfmodify,
+		       toString(attributetype),
+		       grouptype,
+		       usesabilitypoints,
+		       required,
+		       defaultvalue
+		      );
 	}
 
+	/**
+	 * Create a new attribute
+	 *
+	 * @param st                State Instance to create in
+	 * @param name              Name of attribute
+	 * @param selfmodify        unpriviledged user self-modify
+	 * @param attributetype     "type" of attribute (defined at module level)
+	 * @param grouptype         subtype of attribute (see module)
+	 * @param usesabilitypoints can be increased by ability points (costs against ability points)
+	 * @param required          value must be supplied
+	 * @param defaultvalue      default value (where not required attribute)
+	 */
+	public static void create(@Nonnull final State st,
+	                          final String name,
+	                          final boolean selfmodify,
+	                          final ATTRIBUTETYPE attributetype,
+	                          final String grouptype,
+	                          final boolean usesabilitypoints,
+	                          final boolean required,
+	                          String defaultvalue) {
+		create(st.getInstance(),name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
+	}
+
+	// ----- Internal Statics -----
 	private static String toString(final ATTRIBUTETYPE type) {
 		switch (type) {
 			case TEXT: return "text";

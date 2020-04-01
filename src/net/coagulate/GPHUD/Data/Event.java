@@ -5,7 +5,6 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.UserException;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -50,7 +49,7 @@ public class Event extends TableRow {
 	public static Event find(@Nonnull final Instance instance,
 	                         final String name) {
 		try {
-			final int eventid=GPHUD.getDB().dqinn("select eventid from events where name like ? and instanceid=?",name,instance.getId());
+			final int eventid=db().dqinn("select eventid from events where name like ? and instanceid=?",name,instance.getId());
 			return get(eventid);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -71,7 +70,7 @@ public class Event extends TableRow {
 	                           final String eventName) {
 		Event event=find(instance,eventName);
 		if (event!=null) { throw new UserInputDuplicateValueException("Event "+eventName+" already exists."); }
-		GPHUD.getDB().d("insert into events(instanceid,name) values(?,?)",instance.getId(),eventName);
+		db().d("insert into events(instanceid,name) values(?,?)",instance.getId(),eventName);
 		event=find(instance,eventName);
 		if (event==null) {
 			throw new SystemConsistencyException("Failed to create event "+eventName+" for instance "+instance.getName()+", no error, just doesn't get found...");
@@ -89,10 +88,22 @@ public class Event extends TableRow {
 	@Nonnull
 	public static Set<Event> getAll(@Nonnull final Instance instance) {
 		final Set<Event> events=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select eventid from events where instanceid=?",instance.getId())) {
+		for (final ResultsRow r: db().dq("select eventid from events where instanceid=?",instance.getId())) {
 			events.add(get(r.getInt()));
 		}
 		return events;
+	}
+
+	/**
+	 * Get all the events for an instance.
+	 *
+	 * @param st State Instance to get events for
+	 *
+	 * @return Set of Events
+	 */
+	@Nonnull
+	public static Set<Event> getAll(@Nonnull final State st) {
+		return getAll(st.getInstance());
 	}
 
 	/**
@@ -106,7 +117,7 @@ public class Event extends TableRow {
 		// find events where start time is in the past but "started"=0
 		final int now=getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?",now,now)) {
+		for (final ResultsRow r: db().dq("select eventsscheduleid from eventsschedule where starttime<=? and started=0 and endtime>?",now,now)) {
 			//System.out.println(r.getInt());
 			start.add(EventSchedule.get(r.getInt()));
 		}
@@ -124,14 +135,12 @@ public class Event extends TableRow {
 		// find events where start time is in the past but "started"=0
 		final int now=getUnixTime();
 		//System.out.println("select eventsscheduleid from eventsschedule where starttime<="+now+" and started=0 and endtime>"+now+";");
-		for (final ResultsRow r: GPHUD.getDB().dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?",now)) {
+		for (final ResultsRow r: db().dq("select eventsscheduleid from eventsschedule where started=1 and endtime<=?",now)) {
 			//System.out.println(r.getInt());
 			stop.add(EventSchedule.get(r.getInt()));
 		}
 		return stop;
 	}
-
-	// ----- Internal Statics -----
 
 	/**
 	 * Get all currently active events for an instance.
@@ -141,31 +150,42 @@ public class Event extends TableRow {
 	 * @return Set of Events that are currently active and started
 	 */
 	@Nonnull
-	static Set<Event> getActive(@Nonnull final Instance instance) {
+	public static Set<Event> getActive(@Nonnull final Instance instance) {
 		final Set<Event> events=new TreeSet<>();
 		final int now=getUnixTime();
-		for (final ResultsRow r: GPHUD.getDB()
-		                              .dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
-		                                  instance.getId(),
-		                                  now,
-		                                  now
-		                                 )) {
+		for (final ResultsRow r: db().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+		                                 instance.getId(),
+		                                 now,
+		                                 now
+		                                )) {
 			events.add(get(r.getInt()));
 		}
 		return events;
 
 	}
 
+	/**
+	 * Get all currently active events for an instance.
+	 *
+	 * @param st State Instance to get active events for
+	 *
+	 * @return Set of Events that are currently active and started
+	 */
+	@Nonnull
+	public static Set<Event> getActive(@Nonnull final State st) {
+		return getActive(st.getInstance());
+	}
+
+	// ----- Internal Statics -----
 	static void wipeKV(@Nonnull final Instance instance,
 	                   final String key) {
 		final String kvtable="eventskvstore";
 		final String maintable="events";
 		final String idcolumn="eventid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
+		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		       key,
+		       instance.getId()
+		      );
 	}
 
 	// ---------- INSTANCE ----------

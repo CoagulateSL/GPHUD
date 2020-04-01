@@ -36,7 +36,7 @@ public class Scripts extends TableRow {
 	 */
 	@Nonnull
 	public static Table getTable(@Nonnull final Instance instance) {
-		final Results rows=GPHUD.getDB().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by id asc",instance.getId());
+		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by id asc",instance.getId());
 		final Table o=new Table();
 		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
 		for (final ResultsRow row: rows) {
@@ -66,9 +66,9 @@ public class Scripts extends TableRow {
 	 */
 	public static void create(@Nonnull final State st,
 	                          @Nonnull final String scriptname) {
-		final int existing=GPHUD.getDB().dqinn("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
+		final int existing=db().dqinn("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
 		if (existing>0) { throw new UserInputDuplicateValueException("script with that name already exists"); }
-		GPHUD.getDB().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
+		db().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
 	}
 
 	@Nonnull
@@ -86,10 +86,22 @@ public class Scripts extends TableRow {
 	@Nonnull
 	public static Set<Scripts> getScripts(@Nonnull final Instance instance) {
 		final Set<Scripts> scripts=new HashSet<>();
-		for (final ResultsRow row: GPHUD.getDB().dq("select id from scripts where instanceid=?",instance.getId())) {
+		for (final ResultsRow row: db().dq("select id from scripts where instanceid=?",instance.getId())) {
 			scripts.add(new Scripts(row.getInt("id")));
 		}
 		return scripts;
+	}
+
+	/**
+	 * Get all script objects for an instance
+	 *
+	 * @param st State Instance to get
+	 *
+	 * @return Set of Scripts
+	 */
+	@Nonnull
+	public static Set<Scripts> getScripts(@Nonnull final State st) {
+		return getScripts(st.getInstance());
 	}
 
 	/**
@@ -106,7 +118,7 @@ public class Scripts extends TableRow {
 	public static Scripts find(@Nonnull final State st,
 	                           @Nonnull final String scriptname) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),scriptname);
+			final int id=db().dqinn("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),scriptname);
 			return new Scripts(id);
 		}
 		catch (final NoDataException e) {
@@ -140,7 +152,7 @@ public class Scripts extends TableRow {
 	public static DropDownList getList(@Nonnull final State st,
 	                                   @Nonnull final String listname) {
 		final DropDownList list=new DropDownList(listname);
-		for (final ResultsRow row: GPHUD.getDB().dq("select id,name from scripts where instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow row: db().dq("select id,name from scripts where instanceid=?",st.getInstance().getId())) {
 			list.add(""+row.getIntNullable("id"),row.getStringNullable("name"));
 		}
 		return list;

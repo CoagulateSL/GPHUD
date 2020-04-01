@@ -49,10 +49,10 @@ public class Zone extends TableRow {
 	 */
 	public static void create(@Nonnull final Instance instance,
 	                          @Nonnull final String name) {
-		if (GPHUD.getDB().dqinn("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0) {
+		if (db().dqinn("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0) {
 			throw new UserInputDuplicateValueException("Zone name already in use");
 		}
-		GPHUD.getDB().d("insert into zones(instanceid,name) values(?,?)",instance.getId(),name);
+		db().d("insert into zones(instanceid,name) values(?,?)",instance.getId(),name);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class Zone extends TableRow {
 	public static Zone findNullable(@Nonnull final Instance instance,
 	                                @Nonnull final String name) {
 		try {
-			final int zoneid=GPHUD.getDB().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
+			final int zoneid=db().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
 			return get(zoneid);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -87,12 +87,39 @@ public class Zone extends TableRow {
 	public static Zone find(@Nonnull final Instance instance,
 	                        @Nonnull final String name) {
 		try {
-			final int zoneid=GPHUD.getDB().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
+			final int zoneid=db().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
 			return get(zoneid);
 		}
 		catch (@Nonnull final NoDataException e) {
 			throw new UserInputLookupFailureException("There is no zone named '"+name+"'",e);
 		}
+	}
+
+	/**
+	 * Get a list of all zones.
+	 *
+	 * instance Instance to get zones for
+	 *
+	 * @return Set (possibly empty) of Zones
+	 */
+	@Nonnull
+	public static Set<Zone> getZones(@Nonnull final Instance instance) {
+		final Set<Zone> zones=new TreeSet<>();
+		for (final ResultsRow r: db().dq("select zoneid from zones where instanceid=?",instance.getId())) {
+			zones.add(Zone.get(r.getInt()));
+		}
+		return zones;
+	}
+
+	/**
+	 * Get a list of all zones.
+	 *
+	 * state State to get zones for
+	 *
+	 * @return Set (possibly empty) of Zones
+	 */
+	public static Set<Zone> getZones(@Nonnull final State st) {
+		return getZones(st.getInstance());
 	}
 
 	// ----- Internal Statics -----
@@ -108,11 +135,10 @@ public class Zone extends TableRow {
 		final String kvtable="zonekvstore";
 		final String maintable="zones";
 		final String idcolumn="zoneid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
+		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		       key,
+		       instance.getId()
+		      );
 	}
 
 	// ---------- INSTANCE ----------

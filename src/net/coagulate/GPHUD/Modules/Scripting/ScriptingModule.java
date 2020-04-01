@@ -35,7 +35,7 @@ public class ScriptingModule extends ModuleAnnotation {
 	@Override
 	public Map<String,Command> getCommands(@Nonnull final State st) {
 		final Map<String,Command> commands=new HashMap<>();
-		final Set<Scripts> scripts=st.getInstance().getScripts();
+		final Set<Scripts> scripts=Scripts.getScripts(st);
 		for (final Scripts script: scripts) {
 			commands.put(script.getName(),new ScriptingCommand(script));
 		}

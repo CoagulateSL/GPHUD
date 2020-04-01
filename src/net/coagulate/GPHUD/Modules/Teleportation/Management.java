@@ -21,7 +21,7 @@ public class Management {
 		final Table t=new Table();
 		f.add(t);
 		t.add(new HeaderRow().add("Name").add("Region").add("Co-ordinates").add("Look at"));
-		for (final Landmarks landmark: st.getInstance().getLandmarks()) {
+		for (final Landmarks landmark: Landmarks.getAll(st)) {
 			t.openRow();
 			t.add(landmark.getName());
 			t.add(landmark.getRegion(true).getName());

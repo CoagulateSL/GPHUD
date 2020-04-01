@@ -52,7 +52,7 @@ public class Status extends Publishing {
 		boolean first=true;
 		int players=0;
 		final TreeMap<String,String> playerlist=new TreeMap<>();
-		for (final Region r: instance.getRegions(false)) {
+		for (final Region r: Region.getRegions(instance,false)) {
 			String statuscolor="#c00000";
 			if (r.getOnlineStatus("Europe/London").toLowerCase().startsWith("online")) { statuscolor="#00c000"; }
 			if (!first) { line.append(", "); }

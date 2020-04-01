@@ -3,14 +3,12 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
@@ -31,25 +29,13 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Instance extends TableRow {
 
-	private static final Map<String,Integer> laststatused=new TreeMap<>(); // naughty, static data, but thats okay really for this
+	private static final int ADMIN_PESTER_INTERVAL=900; // seconds
+	private static final int SERVER_UPDATE_INTERVAL=30;
+	private static final Map<String,Integer> laststatused=new TreeMap<>(); // naughty, static data, but thats okay really for this, ensures we dont spam admins/region servers
 
 	protected Instance(final int id) { super(id); }
 
 	// ---------- STATICS ----------
-
-	/**
-	 * Return instances connected to this node
-	 */
-	@Nonnull
-	public static Set<Instance> getOurInstances() {
-		final Set<Instance> instances=new TreeSet<>();
-		final Results instancerows=GPHUD.getDB()
-		                                .dq("select distinct instances.instanceid from instances,regions where instances.instanceid=regions.instanceid and authnode=? and "+"retired=0",
-		                                    Interface.getNode()
-		                                   );
-		for (final ResultsRow r: instancerows) { instances.add(Instance.get(r.getInt())); }
-		return instances;
-	}
 
 	/**
 	 * Get all the instances.
@@ -59,7 +45,7 @@ public class Instance extends TableRow {
 	@Nonnull
 	public static Set<Instance> getInstances() {
 		final Set<Instance> instances=new TreeSet<>();
-		final Results instancerows=GPHUD.getDB().dq("select instanceid from instances");
+		final Results instancerows=db().dq("select instanceid from instances");
 		for (final ResultsRow r: instancerows) { instances.add(Instance.get(r.getInt())); }
 		return instances;
 	}
@@ -76,11 +62,6 @@ public class Instance extends TableRow {
 		return (Instance) factoryPut("Instance",id,new Instance(id));
 	}
 
-/*    protected void delete() {
-        GPHUD.getLogger().warning(getName()+" DELETING instance "+getName());
-        d("delete from instances where instanceid=?",getId());
-    }*/
-
 	/**
 	 * Create a new instance with a name and owner
 	 *
@@ -89,18 +70,18 @@ public class Instance extends TableRow {
 	 *
 	 * @return Blank string on success, otherwise error hudMessage
 	 *
-	 * @throws UserException If the instance already exists (by name)
+	 * @throws UserInputEmptyException          if the instance name is rejected
+	 * @throws UserInputDuplicateValueException if the instance name is already taken
 	 */
-	public static void create(@Nullable final String name,
-	                          @Nullable final User caller) {
-		if (name==null || "".equals(name)) { throw new SystemBadValueException("Can't create null or empty instance"); }
-		if (caller==null) { throw new SystemBadValueException("Owner can't be null"); }
-		final int exists=GPHUD.getDB().dqinn("select count(*) from instances where name like ?",name);
+	public static void create(@Nonnull final String name,
+	                          @Nonnull final User caller) {
+		if ("".equals(name)) { throw new UserInputEmptyException("Can't create null or empty instance"); }
+		final int exists=db().dqinn("select count(*) from instances where name like ?",name);
 		if (exists!=0) {
 			throw new UserInputDuplicateValueException("Instance already exists!");
 		}
 		GPHUD.getLogger().info(caller.getName()+" created new instance '"+name+"'");
-		GPHUD.getDB().d("insert into instances(owner,name) value(?,?)",caller.getId(),name);
+		db().d("insert into instances(owner,name) value(?,?)",caller.getId(),name);
 	}
 
 	/**
@@ -113,7 +94,7 @@ public class Instance extends TableRow {
 	@Nonnull
 	public static Instance find(final String name) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select instanceid from instances where name=?",name);
+			final int id=db().dqinn("select instanceid from instances where name=?",name);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {
@@ -131,7 +112,7 @@ public class Instance extends TableRow {
 	@Nonnull
 	public static Set<Instance> getInstances(@Nonnull final User owner) {
 		final Set<Instance> instances=new TreeSet<>();
-		final Results results=GPHUD.getDB().dq("select instanceid from instances where owner=?",owner.getId());
+		final Results results=db().dq("select instanceid from instances where owner=?",owner.getId());
 		for (final ResultsRow r: results) {
 			instances.add(get(r.getInt("instanceid")));
 		}
@@ -202,67 +183,6 @@ public class Instance extends TableRow {
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
-	 * Create a permissions group in this instance.
-	 *
-	 * @param name Name of the permissions group
-	 *
-	 * @throws UserException if the group has no name or already exists.
-	 */
-	public void createPermissionsGroup(@Nullable String name) {
-		if (name==null) { throw new UserInputEmptyException("Can not create permissions group with null name"); }
-		name=name.trim();
-		if (name.isEmpty()) { throw new UserInputEmptyException("Can not create permissions group with blank name"); }
-		final int exists=dqinn("select count(*) from permissionsgroups where name like ? and instanceid=?",name,getId());
-		if (exists!=0) { throw new UserInputDuplicateValueException("Group already exists? ("+exists+" results)"); }
-		d("insert into permissionsgroups(name,instanceid) values(?,?)",name,getId());
-	}
-
-	/**
-	 * Get all the permissionsgroups for an instance.
-	 *
-	 * @return Set of PermissionsGroups
-	 */
-	@Nonnull
-	public Set<PermissionsGroup> getPermissionsGroups() {
-		final Results results=dq("select permissionsgroupid from permissionsgroups where instanceid=?",getId());
-		final Set<PermissionsGroup> set=new TreeSet<>();
-		for (final ResultsRow r: results) {
-			set.add(PermissionsGroup.get(r.getInt("permissionsgroupid")));
-		}
-		return set;
-	}
-
-	/**
-	 * Get all the regions associated with this instance bound to this server
-	 *
-	 * @return Set of Regions
-	 */
-	@Nonnull
-	public Set<Region> getOurRegions(final boolean allowretired) {
-		final Results results=dq("select regionid from regions where instanceid=? and authnode=? and retired<?",getId(),Interface.getNode(),allowretired?2:1);
-		final Set<Region> regions=new TreeSet<>();
-		for (final ResultsRow row: results) {
-			regions.add(Region.get(row.getInt("regionid"),allowretired));
-		}
-		return regions;
-	}
-
-	/**
-	 * Get all the regions associated with this instance
-	 *
-	 * @return Set of Regions
-	 */
-	@Nonnull
-	public Set<Region> getRegions(final boolean allowretired) {
-		final Results results=dq("select regionid from regions where instanceid=? and retired<?",getId(),allowretired?2:1);
-		final Set<Region> regions=new TreeSet<>();
-		for (final ResultsRow row: results) {
-			regions.add(Region.get(row.getInt("regionid"),allowretired));
-		}
-		return regions;
-	}
-
-	/**
 	 * Push updated status to all region server.
 	 */
 	public void updateStatus() {
@@ -272,7 +192,7 @@ public class Instance extends TableRow {
 		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n \n"); }
 		newstatus.append("Server: ").append(GPHUD.hostname).append(" - ").append(GPHUD.VERSION).append("\n \n");
 		//newstatus+=new Date().toString()+" ";
-		for (final Region r: getRegions(false)) {
+		for (final Region r: Region.getRegions(this,false)) {
 			newstatus.append("[").append(r.getName()).append("#");
 			final Integer visitors=r.getOpenVisitCount();
 			final String url=dqs("select url from regions where regionid=?",r.getId());
@@ -317,7 +237,7 @@ public class Instance extends TableRow {
 		final JSONObject statusupdate=new JSONObject();
 		statusupdate.put("instancestatus",newstatus.toString());
 		statusupdate.put("statuscolor",statuscolor);
-		for (final Region r: getOurRegions(false)) {
+		for (final Region r: Region.getInstanceNodeRegions(this,false)) {
 			final String url=r.getURLNullable();
 			if (url!=null) {
 				if (canStatus(url)) {
@@ -581,70 +501,10 @@ public class Instance extends TableRow {
 	 * @param j JSON message to transmit.
 	 */
 	public void sendServers(final JSONObject j) {
-		for (final Region r: getRegions(false)) {
+		for (final Region r: Region.getRegions(this,false)) {
 			r.sendServer(j);
 			//System.out.println("Send to "+r.getName()+" "+j.toString());
 		}
-	}
-
-	/**
-	 * Get a zone by name
-	 *
-	 * @param name Name of zone
-	 *
-	 * @return Zone object, or null.
-	 */
-	@Nullable
-	public Zone getZone(final String name) {
-		try {
-			final int id=dqinn("select zoneid from zones where instanceid=? and name like ?",getId(),name);
-			return Zone.get(id);
-		}
-		catch (@Nonnull final NoDataException e) { return null; }
-	}
-
-	/**
-	 * Get a list of all zones.
-	 *
-	 * @return Set (possibly empty) of Zones
-	 */
-	@Nonnull
-	public Set<Zone> getZones() {
-		final Set<Zone> zones=new TreeSet<>();
-		for (final ResultsRow r: dq("select zoneid from zones where instanceid=?",getId())) {
-			zones.add(Zone.get(r.getInt()));
-		}
-		return zones;
-	}
-
-	/**
-	 * Get all events for this instance
-	 *
-	 * @return Set of Events
-	 */
-	@Nonnull
-	public Set<Event> getEvents() {
-		return Event.getAll(this);
-	}
-
-	/**
-	 * Get all currently active events for this instance
-	 *
-	 * @return Set of events that are active and have been started for this instance
-	 */
-	@Nonnull
-	public Set<Event> getActiveEvents() {
-		return Event.getActive(this);
-	}
-
-	/**
-	 * Get all currently active event schedules.
-	 *
-	 * @return Set of EventSchedules that are currently active and have been started
-	 */
-	@Nonnull
-	public Set<EventSchedule> getActiveEventSchedules() {
-		return EventSchedule.getActive(this);
 	}
 
 	/**
@@ -690,16 +550,13 @@ public class Instance extends TableRow {
 		}
 	}
 
-	public void createAttribute(final String name,
-	                            final Boolean selfmodify,
-	                            final Attribute.ATTRIBUTETYPE attributetype,
-	                            final String grouptype,
-	                            final Boolean usesabilitypoints,
-	                            final Boolean required,
-	                            final String defaultvalue) {
-		Attribute.create(this,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
-	}
-
+	/**
+	 * Get this instance level logo
+	 *
+	 * @param st State to get instance from
+	 *
+	 * @return A String reference to the SL texture service's URL for the logo, or a reference to banner-gphud.png
+	 */
 	@Nonnull
 	public String getLogoURL(@Nonnull final State st) {
 		final String logouuid=st.getKV(this,"GPHUDClient.logo");
@@ -707,29 +564,19 @@ public class Instance extends TableRow {
 		return SL.textureURL(logouuid);
 	}
 
+	/**
+	 * Get the calculated width of this logo
+	 *
+	 * @param st     State
+	 * @param height Given height of the logo
+	 *
+	 * @return Width, calculated by scaling with GPHUDclient.widthmultiplier * height
+	 */
 	public int getLogoWidth(@Nonnull final State st,
 	                        final float height) {
 		final State fakestate=new State(this);
 		final float multiplier=fakestate.getKV("GPHUDClient.widthmultiplier").floatValue();
 		return (int) (height*multiplier);
-	}
-
-	@Nonnull
-	public String getLogoHREF(@Nonnull final State st) {
-		return "<a href=\""+getLogoURL(st)+"\">";
-	}
-
-	@Nonnull
-	public Set<Scripts> getScripts() {
-		return Scripts.getScripts(this);
-	}
-
-	@Nullable
-	public Landmarks getLandmark(final String name) { return Landmarks.find(this,name); }
-
-	@Nonnull
-	public Set<Landmarks> getLandmarks() {
-		return Landmarks.getAll(this);
 	}
 
 	// ----- Internal Instance -----
@@ -756,14 +603,14 @@ public class Instance extends TableRow {
 		final int now=UnixTime.getUnixTime();
 		if (laststatused.containsKey(url)) {
 			final int last=laststatused.get(url);
-			if ("admins".equals(url)) {  // bodge, admins get 5 minute pesterings :P
-				if ((now-last)>300) {
+			if ("admins".equals(url)) {  // bodge, admins get 15 minute pesterings :P
+				if ((now-last)>ADMIN_PESTER_INTERVAL) {
 					laststatused.put(url,now);
 					return true;
 				}
 				return false;
 			}
-			if ((now-last)>30) {
+			if ((now-last)>SERVER_UPDATE_INTERVAL) {
 				laststatused.put(url,now);
 				return true;
 			}

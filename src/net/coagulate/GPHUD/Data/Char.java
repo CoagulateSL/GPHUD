@@ -69,14 +69,14 @@ public class Char extends TableRow {
 	public static void refreshURL(@Nonnull final String url) {
 		final String t="characters";
 		final int refreshifolderthan=getUnixTime()-REFRESH_INTERVAL;
-		final int toupdate=GPHUD.getDB().dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
+		final int toupdate=db().dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Character","Refreshing CHARACTER url "+url);
 		if (url.startsWith("https")) { MailTools.logTrace("HTTPS URL violation",url); }
-		GPHUD.getDB().d("update "+t+" set lastactive=?,urllast=?,authnode=? where url=?",getUnixTime(),getUnixTime(),Interface.getNode(),url);
+		db().d("update "+t+" set lastactive=?,urllast=?,authnode=? where url=?",getUnixTime(),getUnixTime(),Interface.getNode(),url);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Char extends TableRow {
 	public static Char getActive(@Nonnull final User avatar,
 	                             @Nonnull final Instance instance) {
 		try {
-			final int i=GPHUD.getDB().dqinn("select characterid from characters where playedby=? and instanceid=?",avatar.getId(),instance.getId());
+			final int i=db().dqinn("select characterid from characters where playedby=? and instanceid=?",avatar.getId(),instance.getId());
 			return get(i);
 		}
 		catch (@Nonnull final NoDataException e) {
@@ -108,7 +108,7 @@ public class Char extends TableRow {
 	@Nonnull
 	public static Set<Char> getInZone(@Nonnull final Zone zone) {
 		final Set<Char> chars=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select characterid from characters where zoneid=? and url is not null",zone.getId())) {
+		for (final ResultsRow r: db().dq("select characterid from characters where zoneid=? and url is not null",zone.getId())) {
 			chars.add(Char.get(r.getInt()));
 		}
 		return chars;
@@ -141,7 +141,7 @@ public class Char extends TableRow {
 	@Nonnull
 	public static Set<Char> getActive(final Instance i) {
 		final Set<Char> chars=new TreeSet<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select characterid from characters where url is not null")) {
+		for (final ResultsRow r: db().dq("select characterid from characters where url is not null")) {
 			chars.add(get(r.getInt()));
 		}
 		return chars;
@@ -158,7 +158,7 @@ public class Char extends TableRow {
 	@Nonnull
 	public static Set<Char> getCharacters(@Nonnull final Instance instance,
 	                                      @Nonnull final User avatar) {
-		final Results rows=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 and instanceid=?",avatar.getId(),instance.getId());
+		final Results rows=db().dq("select characterid from characters where owner=? and retired=0 and instanceid=?",avatar.getId(),instance.getId());
 		final Set<Char> results=new TreeSet<>();
 		for (final ResultsRow r: rows) {
 			results.add(Char.get(r.getInt()));
@@ -176,8 +176,7 @@ public class Char extends TableRow {
 			//check Instance.FilteredNamingList
 			checkFilteredNamingList(st,name);
 		}
-		GPHUD.getDB()
-		     .d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)",name,st.getInstance().getId(),st.getAvatar().getId(),getUnixTime(),0);
+		db().d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)",name,st.getInstance().getId(),st.getAvatar().getId(),getUnixTime(),0);
 	}
 
 	/**
@@ -187,7 +186,7 @@ public class Char extends TableRow {
 	 */
 	@Nonnull
 	public static Set<Char> getCharacters(@Nonnull final User a) {
-		final Results rows=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0",a.getId());
+		final Results rows=db().dq("select characterid from characters where owner=? and retired=0",a.getId());
 		final Set<Char> results=new TreeSet<>();
 		for (final ResultsRow r: rows) {
 			results.add(Char.get(r.getInt()));
@@ -204,7 +203,7 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public static Char getMostRecent(@Nonnull final User avatar) {
-		final Results results=GPHUD.getDB().dq("select characterid from characters where owner=? and retired=0 order by lastactive desc limit 0,1",avatar.getId());
+		final Results results=db().dq("select characterid from characters where owner=? and retired=0 order by lastactive desc limit 0,1",avatar.getId());
 		if (results.empty()) { return null; }
 		try {
 			return Char.get(results.iterator().next().getInt("characterid"));
@@ -227,11 +226,10 @@ public class Char extends TableRow {
 	public static Char getMostRecent(@Nonnull final User avatar,
 	                                 @Nullable final Instance optionalinstance) {
 		if (optionalinstance==null) { return getMostRecent(avatar); }
-		final Results results=GPHUD.getDB()
-		                           .dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",
-		                               avatar.getId(),
-		                               optionalinstance.getId()
-		                              );
+		final Results results=db().dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",
+		                              avatar.getId(),
+		                              optionalinstance.getId()
+		                             );
 		if (results.empty()) { return null; }
 		try {
 			return Char.get(results.iterator().next().getInt("characterid"));
@@ -254,19 +252,17 @@ public class Char extends TableRow {
 	public static DropDownList getNPCList(@Nonnull final State st,
 	                                      final String listname) {
 		final DropDownList list=new DropDownList(listname);
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select characterid,name from characters where instanceid=? and owner=?",st.getInstance().getId(),User.getSystem().getId())) {
+		for (final ResultsRow row: db().dq("select characterid,name from characters where instanceid=? and owner=?",st.getInstance().getId(),User.getSystem().getId())) {
 			list.add(row.getIntNullable("characterid")+"",row.getStringNullable("name"));
 		}
 		return list;
 	}
 
 	public static Results getPingable() {
-		return GPHUD.getDB()
-		            .dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+"limit 0,30",
-		                Interface.getNode(),
-		                UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
-		               );
+		return db().dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+"limit 0,30",
+		               Interface.getNode(),
+		               UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
+		              );
 	}
 
 	// ----- Internal Statics -----
@@ -282,11 +278,10 @@ public class Char extends TableRow {
 		final String kvtable="characterkvstore";
 		final String maintable="characters";
 		final String idcolumn="characterid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
+		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		       key,
+		       instance.getId()
+		      );
 	}
 
 	private static void checkFilteredNamingList(@Nonnull final State st,

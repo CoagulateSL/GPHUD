@@ -4,7 +4,6 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
@@ -28,7 +27,7 @@ public class Objects extends TableRow {
 	@Nonnull
 	public static Objects find(final State st,
 	                           final String uuid) {
-		final int id=GPHUD.getDB().dqinn("select id from objects where uuid=?",uuid);
+		final int id=db().dqinn("select id from objects where uuid=?",uuid);
 		return new Objects(id);
 	}
 
@@ -45,7 +44,7 @@ public class Objects extends TableRow {
 	 */
 	public static int getMaxVersion() {
 		try {
-			return GPHUD.getDB().dqinn("select max(version) as maxver from objects");
+			return db().dqinn("select max(version) as maxver from objects");
 		}
 		catch (@Nonnull final NoDataException e) { return 0; }
 	}
@@ -63,10 +62,9 @@ public class Objects extends TableRow {
 		final Instance instance=st.getInstance();
 		final StringBuilder r=new StringBuilder(
 				"<table border=0><tr><th>UUID</th><th>name</th><th>Owner</th><th>Region</th><th>Location</th><th>Version</th><th>Last RX</th><Th>Object Type</th></tr>");
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions"+".instanceid=?",
-		                                    instance.getId()
-		                                   )) {
+		for (final ResultsRow row: db().dq("select objects.*,UNIX_TIMESTAMP()-lastrx as since from objects,regions where objects.regionid=regions.regionid and regions"+".instanceid=?",
+		                                   instance.getId()
+		                                  )) {
 			final int since=row.getInt("since");
 			String bgcol="#dfffdf";
 			if (since>16*60) { bgcol="#ffffdf"; }
@@ -84,14 +82,16 @@ public class Objects extends TableRow {
 				if (!objecttype.isEmpty()) {
 					final Integer oldobjecttype=row.getIntNullable("objecttype");
 					if (oldobjecttype==null || oldobjecttype!=Integer.parseInt(objecttype)) {
-						GPHUD.getDB().d("update objects set objecttype=? where id=?",objecttype,row.getIntNullable("id"));
+						db().d("update objects set objecttype=? where id=?",objecttype,row.getIntNullable("id"));
 						Audit.audit(st,
 						            Audit.OPERATOR.AVATAR,
 						            null,
 						            null,
 						            "Set",
 						            "ObjectType",
-						            "",objecttype,"Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
+						            "",
+						            objecttype,
+						            "Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
 						           );
 						final ObjectType ot=ObjectType.materialise(st,ObjectTypes.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload=new JSONObject();
@@ -151,34 +151,32 @@ public class Objects extends TableRow {
 	                              final int version) {
 		Objects object=findOrNull(st,uuid);
 		if (object==null) {
-			GPHUD.getDB()
-			     .d("insert into objects(uuid,name,regionid,owner,location,lastrx,url,version) values(?,?,?,?,?,?,?,?)",
-			        uuid,
-			        name,
-			        region.getId(),
-			        owner.getId(),
-			        location,
-			        UnixTime.getUnixTime(),
-			        url,
-			        version
-			       );
+			db().d("insert into objects(uuid,name,regionid,owner,location,lastrx,url,version) values(?,?,?,?,?,?,?,?)",
+			       uuid,
+			       name,
+			       region.getId(),
+			       owner.getId(),
+			       location,
+			       UnixTime.getUnixTime(),
+			       url,
+			       version
+			      );
 			object=findOrNull(st,uuid);
 			if (object==null) {
 				throw new SystemConsistencyException("Object not found for uuid "+uuid+" after creating it");
 			}
 		}
 		else {
-			GPHUD.getDB()
-			     .d("update objects set name=?,regionid=?,owner=?,location=?,lastrx=?,url=?,version=? where id=?",
-			        name,
-			        region.getId(),
-			        owner.getId(),
-			        location,
-			        UnixTime.getUnixTime(),
-			        url,
-			        version,
-			        object.getId()
-			       );
+			db().d("update objects set name=?,regionid=?,owner=?,location=?,lastrx=?,url=?,version=? where id=?",
+			       name,
+			       region.getId(),
+			       owner.getId(),
+			       location,
+			       UnixTime.getUnixTime(),
+			       url,
+			       version,
+			       object.getId()
+			      );
 		}
 		return object;
 	}
@@ -187,14 +185,14 @@ public class Objects extends TableRow {
 	 * Returns number of object connections to be purged
 	 */
 	public static int getPurgeInactiveCount() {
-		return GPHUD.getDB().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+		return db().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
 	/**
 	 * Purges connections that have been idle over 24 hours
 	 */
 	public static void purgeInactive() {
-		GPHUD.getDB().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+		db().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
 	// ---------- INSTANCE ----------

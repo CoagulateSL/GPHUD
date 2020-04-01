@@ -43,6 +43,25 @@ public class Region extends TableRow {
 	// ---------- STATICS ----------
 
 	/**
+	 * Get all the regions associated with this instance bound to this server
+	 *
+	 * @param instance     The instance to query
+	 * @param allowretired Allow retired regions?
+	 *
+	 * @return Set of Regions
+	 */
+	@Nonnull
+	public static Set<Region> getInstanceNodeRegions(@Nonnull final Instance instance,
+	                                                 final boolean allowretired) {
+		final Results results=db().dq("select regionid from regions where instanceid=? and authnode=? and retired<?",instance.getId(),Interface.getNode(),allowretired?2:1);
+		final Set<Region> regions=new TreeSet<>();
+		for (final ResultsRow row: results) {
+			regions.add(Region.get(row.getInt("regionid"),allowretired));
+		}
+		return regions;
+	}
+
+	/**
 	 * Update the last used time of a URL.
 	 *
 	 * @param url URL to refresh
@@ -50,13 +69,13 @@ public class Region extends TableRow {
 	public static void refreshURL(@Nonnull final String url) {
 		final String t="regions";
 		final int refreshifolderthan=UnixTime.getUnixTime()-TableRow.REFRESH_INTERVAL;
-		final int toupdate=GPHUD.getDB().dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
+		final int toupdate=db().dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Region","Refreshing REGION url "+url);
-		GPHUD.getDB().d("update "+t+" set urllast=?,authnode=? where url=?",UnixTime.getUnixTime(),Interface.getNode(),url);
+		db().d("update "+t+" set urllast=?,authnode=? where url=?",UnixTime.getUnixTime(),Interface.getNode(),url);
 	}
 
 	/**
@@ -89,7 +108,7 @@ public class Region extends TableRow {
 	public static Region findNullable(@Nonnull final String name,
 	                                  final boolean allowretired) {
 		try {
-			final int regionid=GPHUD.getDB().dqinn("select regionid from regions where name=?",name);
+			final int regionid=db().dqinn("select regionid from regions where name=?",name);
 			return get(regionid,allowretired);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -115,10 +134,10 @@ public class Region extends TableRow {
 	public static String joinInstance(@Nonnull final String region,
 	                                  @Nonnull final Instance i) {
 		// TO DO - lacks validation
-		final int exists=GPHUD.getDB().dqinn("select count(*) from regions where name=?",region);
+		final int exists=db().dqinn("select count(*) from regions where name=?",region);
 		if (exists==0) {
 			GPHUD.getLogger().info("Joined region '"+region+"' to instance "+i);
-			GPHUD.getDB().d("insert into regions(name,instanceid) values(?,?)",region,i.getId());
+			db().d("insert into regions(name,instanceid) values(?,?)",region,i.getId());
 			return "";
 		}
 		return "Region is already registered!";
@@ -132,11 +151,43 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public static Results getPingable() {
-		return GPHUD.getDB()
-		            .dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+"asc limit 0,"+"30",
-		                Interface.getNode(),
-		                UnixTime.getUnixTime()-(Maintenance.PINGSERVERINTERVAL*60)
-		               );
+		return db().dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+"asc limit 0,"+"30",
+		               Interface.getNode(),
+		               UnixTime.getUnixTime()-(Maintenance.PINGSERVERINTERVAL*60)
+		              );
+	}
+
+	/**
+	 * Get all the regions associated with this instance
+	 *
+	 * @param instance     The instance to get regions for
+	 * @param allowretired Return retired instances or not
+	 *
+	 * @return Set of Regions
+	 */
+	@Nonnull
+	public static Set<Region> getRegions(@Nonnull final Instance instance,
+	                                     final boolean allowretired) {
+		final Results results=db().dq("select regionid from regions where instanceid=? and retired<?",instance.getId(),allowretired?2:1);
+		final Set<Region> regions=new TreeSet<>();
+		for (final ResultsRow row: results) {
+			regions.add(Region.get(row.getInt("regionid"),allowretired));
+		}
+		return regions;
+	}
+
+	/**
+	 * Get all the regions associated with this instance
+	 *
+	 * @param st           the state to query
+	 * @param allowretired Return retired instances or not
+	 *
+	 * @return Set of Regions
+	 */
+	@Nonnull
+	public static Set<Region> getRegions(@Nonnull final State st,
+	                                     final boolean allowretired) {
+		return getRegions(st.getInstance(),allowretired);
 	}
 
 	// ----- Internal Statics -----
@@ -152,11 +203,10 @@ public class Region extends TableRow {
 		final String kvtable="regionkvstore";
 		final String maintable="regions";
 		final String idcolumn="regionid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
+		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		       key,
+		       instance.getId()
+		      );
 	}
 
 	// ---------- INSTANCE ----------

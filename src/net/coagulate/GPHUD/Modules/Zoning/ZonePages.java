@@ -31,7 +31,7 @@ public abstract class ZonePages {
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
 		f.add("<table border=0>");
-		for (final Zone zone: st.getInstance().getZones()) {
+		for (final Zone zone: Zone.getZones(st)) {
 			f.add("<tr><td>");
 			f.add(new Link(zone.getName(),"./zoning/view/"+zone.getId()));
 			if (st.hasPermission("Zoning.config")) {

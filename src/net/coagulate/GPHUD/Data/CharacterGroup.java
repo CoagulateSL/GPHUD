@@ -7,7 +7,6 @@ import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -95,11 +94,10 @@ public class CharacterGroup extends TableRow {
 		final String kvtable="charactergroupkvstore";
 		final String maintable="charactergroups";
 		final String idcolumn="charactergroupid";
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
+		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		       key,
+		       instance.getId()
+		      );
 	}
 
 	// ---------- INSTANCE ----------

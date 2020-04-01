@@ -3,7 +3,6 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -78,7 +77,7 @@ public class Message extends TableRow {
 	@Nullable
 	public static Message getNextMessage(@Nonnull final Char c) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select messageid from messages where characterid=? order by expires  limit 0,1",c.getId());
+			final int id=db().dqinn("select messageid from messages where characterid=? order by expires  limit 0,1",c.getId());
 			return Message.get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -92,7 +91,7 @@ public class Message extends TableRow {
 	 * @return Number of messages
 	 */
 	public static int count(@Nonnull final Char c) {
-		return GPHUD.getDB().dqinn("select count(*) from messages where characterid=?",c.getId());
+		return db().dqinn("select count(*) from messages where characterid=?",c.getId());
 	}
 
 	/**
@@ -105,7 +104,7 @@ public class Message extends TableRow {
 	@Nullable
 	public static Message getActiveMessage(@Nonnull final Char c) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select messageid from messages where characterid=? and expires=0",c.getId());
+			final int id=db().dqinn("select messageid from messages where characterid=? and expires=0",c.getId());
 			return Message.get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -123,7 +122,7 @@ public class Message extends TableRow {
 	static void add(@Nonnull final Char targetchar,
 	                final int expires,
 	                @Nonnull final JSONObject message) {
-		GPHUD.getDB().d("insert into messages(characterid,expires,json) values(?,?,?)",targetchar.getId(),expires,message.toString());
+		db().d("insert into messages(characterid,expires,json) values(?,?,?)",targetchar.getId(),expires,message.toString());
 	}
 
 	// ---------- INSTANCE ----------

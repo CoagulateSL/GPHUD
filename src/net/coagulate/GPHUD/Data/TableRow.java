@@ -34,6 +34,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 
 	// ---------- STATICS ----------
+	public static final DBConnection db() { return GPHUD.getDB(); }
 
 	/**
 	 * Returns a formatted view link.
@@ -58,10 +59,10 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	@Nonnull
 	@Override
-	public final DBConnection getDatabase() { return GPHUD.getDB(); }
+	public final DBConnection getDatabase() { return db(); }
 
 	/**
-	 * Verify this DB Object has backing in the GPHUD.getDB().
+	 * Verify this DB Object has backing in the getDB().
 	 * Specifically checks the ID matches one and only one row, as it should.
 	 * Only checks once, after which it shorts and returns ASAP. (sets a flag).
 	 */

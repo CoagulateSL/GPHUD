@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -31,13 +30,24 @@ public class Landmarks extends TableRow {
 	@Nonnull
 	public static Set<Landmarks> getAll(@Nonnull final Instance instance) {
 		final Set<Landmarks> results=new HashSet<>();
-		for (final ResultsRow row: GPHUD.getDB()
-		                                .dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",
-		                                    instance.getId()
-		                                   )) {
+		for (final ResultsRow row: db().dq("select landmarks.id as id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=?",
+		                                   instance.getId()
+		                                  )) {
 			results.add(get(row.getInt("id")));
 		}
 		return results;
+	}
+
+	/**
+	 * Get a set of all landmarks for an instance
+	 *
+	 * @param st State Instance to get landmarks for
+	 *
+	 * @return Set of Landmarks
+	 */
+	@Nonnull
+	public static Set<Landmarks> getAll(@Nonnull final State st) {
+		return getAll(st.getInstance());
 	}
 
 	/**
@@ -48,11 +58,10 @@ public class Landmarks extends TableRow {
 	 */
 	public static void obliterate(@Nonnull final Instance instance,
 	                              @Nonnull final String name) {
-		GPHUD.getDB()
-		     .d("delete landmarks from landmarks inner join regions on landmarks.regionid=regions.regionid where regions.instanceid=? and landmarks.name like ?",
-		        instance.getId(),
-		        name
-		       );
+		db().d("delete landmarks from landmarks inner join regions on landmarks.regionid=regions.regionid where regions.instanceid=? and landmarks.name like ?",
+		       instance.getId(),
+		       name
+		      );
 	}
 
 	/**
@@ -65,16 +74,29 @@ public class Landmarks extends TableRow {
 	 */
 	@Nullable
 	public static Landmarks find(@Nonnull final Instance instance,
-	                             final String name) {
+	                             @Nonnull final String name) {
 		try {
-			final int id=GPHUD.getDB()
-			                  .dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+" ?",
-			                         instance.getId(),
-			                         name
-			                        );
+			final int id=db().dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+" ?",
+			                        instance.getId(),
+			                        name
+			                       );
 			return new Landmarks(id);
 		}
 		catch (@Nonnull final NoDataException e) {return null;}
+	}
+
+	/**
+	 * Find a landmark by name
+	 *
+	 * @param st   State Instance
+	 * @param name Landmark name
+	 *
+	 * @return Landmark object, or null
+	 */
+	@Nullable
+	public static Landmarks find(@Nonnull final State st,
+	                             @Nonnull final String name) {
+		return find(st.getInstance(),name);
 	}
 
 	/**
@@ -98,7 +120,7 @@ public class Landmarks extends TableRow {
 	                          final float lay,
 	                          final float laz) {
 		obliterate(region.getInstance(),name);
-		GPHUD.getDB().d("insert into landmarks(regionid,name,x,y,z,lookatx,lookaty,lookatz) values(?,?,?,?,?,?,?,?)",region.getId(),name,x,y,z,lax,lay,laz);
+		db().d("insert into landmarks(regionid,name,x,y,z,lookatx,lookaty,lookatz) values(?,?,?,?,?,?,?,?)",region.getId(),name,x,y,z,lax,lay,laz);
 	}
 
 	// ---------- INSTANCE ----------

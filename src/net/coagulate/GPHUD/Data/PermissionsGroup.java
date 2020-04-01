@@ -5,9 +5,9 @@ import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -57,7 +57,7 @@ public class PermissionsGroup extends TableRow {
 	public static PermissionsGroup find(@Nonnull final String name,
 	                                    @Nonnull final Instance i) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",name,i.getId());
+			final int id=db().dqinn("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",name,i.getId());
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -87,16 +87,50 @@ public class PermissionsGroup extends TableRow {
 	public static Set<String> getPermissions(@Nonnull final Instance instance,
 	                                         @Nonnull final User user) {
 		final Set<String> permissions=new TreeSet<>();
-		final Results results=GPHUD.getDB()
-		                           .dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups"+".permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and "+"permissionsgroupmembers.avatarid=?",
-		                               instance.getId(),
-		                               user.getId()
-		                              );
+		final Results results=db().dq("select permission from permissions,permissionsgroups,permissionsgroupmembers where permissions.permissionsgroupid=permissionsgroups"+".permissionsgroupid and instanceid=? and permissionsgroupmembers.permissionsgroupid=permissionsgroups.permissionsgroupid and "+"permissionsgroupmembers.avatarid=?",
+		                              instance.getId(),
+		                              user.getId()
+		                             );
 		for (final ResultsRow r: results) {
 			permissions.add(r.getStringNullable());
 		}
 		return permissions;
 	}
+
+	/**
+	 * Create a new permissions group in the state's instance
+	 *
+	 * @param st   State
+	 * @param name Permissions group name
+	 *
+	 * @throws UserInputEmptyException          if no name is supplied
+	 * @throws UserInputDuplicateValueException if the name is already taken
+	 */
+	public static void create(@Nonnull State st,
+	                          @Nonnull String name) {
+		name=name.trim();
+		if (name.isEmpty()) { throw new UserInputEmptyException("Can not create permissions group with blank name"); }
+		final int exists=db().dqinn("select count(*) from permissionsgroups where name like ? and instanceid=?",name,st.getInstance().getId());
+		if (exists!=0) { throw new UserInputDuplicateValueException("Permissions group already exists? ("+exists+" results)"); }
+		db().d("insert into permissionsgroups(name,instanceid) values(?,?)",name,st.getInstance().getId());
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","PermissionsGroup",null,name,"Avatar created new permissions group");
+	}
+
+	/**
+	 * Get all the permissionsgroups for an instance.
+	 *
+	 * @return Set of PermissionsGroups
+	 */
+	@Nonnull
+	public static Set<PermissionsGroup> getPermissionsGroups(@Nonnull State st) {
+		final Results results=db().dq("select permissionsgroupid from permissionsgroups where instanceid=?",st.getInstance().getId());
+		final Set<PermissionsGroup> set=new TreeSet<>();
+		for (final ResultsRow r: results) {
+			set.add(PermissionsGroup.get(r.getInt("permissionsgroupid")));
+		}
+		return set;
+	}
+
 
 	// ---------- INSTANCE ----------
 

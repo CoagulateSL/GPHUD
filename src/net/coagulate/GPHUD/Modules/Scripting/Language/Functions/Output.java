@@ -78,7 +78,7 @@ public class Output {
 			throw new GSResourceUnavailableException("Teleportation module is disabled, thus teleport function calls are disabled.");
 		}
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
-		final Landmarks t=st.getInstance().getLandmark(landmark.getContent());
+		final Landmarks t=Landmarks.find(st,landmark.getContent());
 		if (t==null) { throw new GSResourceUnavailableException("Can not find landmark "+landmark.getContent()); }
 		vm.queueTeleport(target.getContent(),t.getHUDRepresentation(false));
 		return new BCInteger(null,0);

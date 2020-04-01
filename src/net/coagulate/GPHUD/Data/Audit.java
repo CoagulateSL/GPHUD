@@ -1,10 +1,8 @@
 package net.coagulate.GPHUD.Data;
 
-import net.coagulate.Core.Database.DBException;
-import net.coagulate.Core.Database.NullInteger;
-import net.coagulate.Core.Database.Results;
-import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Database.*;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -24,7 +22,6 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Audit {
-
 	// ---------- STATICS ----------
 	@Nonnull
 	public static Results getAudit(@Nullable final Instance instance,
@@ -48,7 +45,7 @@ public abstract class Audit {
 		}
 		sql+=" order by timedate desc limit 0,500";
 		final Object[] objectarray=new Object[0];
-		return GPHUD.getDB().dq(sql,parameters.toArray(objectarray));
+		return db().dq(sql,parameters.toArray(objectarray));
 	}
 
 	public static void audit(@Nonnull final State st,
@@ -124,25 +121,24 @@ public abstract class Audit {
 			st.logger().info("<"+actor+"> in "+facility+" - "+message);
 		}
 		try {
-			GPHUD.getDB()
-			     .d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+"destcharacterid,"+"changetype,"+"changeditem,"+"oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+"sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,"+"?,?,?,?)",
-			        getUnixTime(),
-			        getId(stinstance),
-			        getId(sourceavatar),
-			        getId(sourcecharacter),
-			        getId(targetavatar),
-			        getId(targetcharacter),
-			        changetype,
-			        changeditem,
-			        oldvalue,
-			        newvalue,
-			        note,
-			        st.getSourcenameNullable(),
-			        getId(st.getSourceownerNullable()),
-			        getId(st.getSourcedeveloperNullable()),
-			        getId(st.sourceregion),
-			        st.sourcelocation
-			       );
+			db().d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+"destcharacterid,"+"changetype,"+"changeditem,"+"oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+"sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,"+"?,?,?,?)",
+			       getUnixTime(),
+			       getId(stinstance),
+			       getId(sourceavatar),
+			       getId(sourcecharacter),
+			       getId(targetavatar),
+			       getId(targetcharacter),
+			       changetype,
+			       changeditem,
+			       oldvalue,
+			       newvalue,
+			       note,
+			       st.getSourcenameNullable(),
+			       getId(st.getSourceownerNullable()),
+			       getId(st.getSourcedeveloperNullable()),
+			       getId(st.sourceregion),
+			       st.sourcelocation
+			      );
 		}
 		catch (@Nonnull final DBException ex) {
 			st.logger().log(WARNING,"Audit logging failure",ex);
@@ -240,6 +236,8 @@ public abstract class Audit {
 	}
 
 	// ----- Internal Statics -----
+	private static DBConnection db() { return GPHUD.getDB(); }
+
 	private static Object getId(@Nullable final TableRow r) {
 		if (r==null) { return new NullInteger(); }
 		return r.getId();

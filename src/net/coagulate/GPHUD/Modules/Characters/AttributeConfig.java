@@ -173,7 +173,7 @@ public class AttributeConfig {
 			}
 		}
 
-		st.getInstance().createAttribute(name,selfmodify,Attribute.fromString(attributetype),grouptype,usesabilitypoints,required,defaultvalue);
+		Attribute.create(st,name,selfmodify,Attribute.fromString(attributetype),grouptype,usesabilitypoints,required,defaultvalue);
 		Audit.audit(st,
 		            Audit.OPERATOR.AVATAR,
 		            null,

@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.GPHUD;
@@ -24,7 +25,6 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class NameCache {
-
 	@Nullable
 	Map<Integer,String> avatarnames;
 	@Nullable
@@ -35,12 +35,14 @@ public class NameCache {
 	Map<Integer,String> regionnames;
 
 	// ----- Internal Statics -----
+	private static DBConnection db() { return GPHUD.getDB(); }
+
 	@Nonnull
 	private static Map<Integer,String> loadMap(@Nonnull final String tablename,
 	                                           @Nonnull final String idcolumn,
 	                                           @Nonnull final String namecolumn) {
 		final Map<Integer,String> results=new TreeMap<>();
-		final Results rows=GPHUD.getDB().dq("select "+idcolumn+","+namecolumn+" from "+tablename);
+		final Results rows=db().dq("select "+idcolumn+","+namecolumn+" from "+tablename);
 		for (final ResultsRow r: rows) {
 			results.put(r.getInt(idcolumn),TableRow.getLink(r.getString(namecolumn),tablename,r.getInt(idcolumn)));
 		}

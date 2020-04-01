@@ -8,7 +8,6 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -50,7 +49,7 @@ public class Menus extends TableRow {
 	@Nonnull
 	public static Map<String,Integer> getMenusMap(@Nonnull final State st) {
 		final Map<String,Integer> aliases=new TreeMap<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select name,menuid from menus where instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow r: db().dq("select name,menuid from menus where instanceid=?",st.getInstance().getId())) {
 			aliases.put(r.getStringNullable("name"),r.getIntNullable("menuid"));
 		}
 		return aliases;
@@ -68,7 +67,7 @@ public class Menus extends TableRow {
 	public static Menus getMenuNullable(@Nonnull final State st,
 	                                    @Nonnull final String name) {
 		try {
-			final int id=GPHUD.getDB().dqinn("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
+			final int id=db().dqinn("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -105,7 +104,7 @@ public class Menus extends TableRow {
 		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
 			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
-		GPHUD.getDB().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",st.getInstance().getId(),name,description,template.toString());
+		db().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",st.getInstance().getId(),name,description,template.toString());
 		final Menus newalias=getMenuNullable(st,name);
 		if (newalias==null) {
 			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance().getId()+", created but not found?");
@@ -123,7 +122,7 @@ public class Menus extends TableRow {
 	@Nonnull
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
 		final Map<String,JSONObject> aliases=new TreeMap<>();
-		for (final ResultsRow r: GPHUD.getDB().dq("select name,description,json from menus where instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow r: db().dq("select name,description,json from menus where instanceid=?",st.getInstance().getId())) {
 			aliases.put(r.getString("name"),new JSONObject(r.getString("json")));
 		}
 		return aliases;

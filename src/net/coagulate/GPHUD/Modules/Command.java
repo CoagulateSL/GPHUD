@@ -497,7 +497,7 @@ public abstract class Command {
 				case REGION:
 					json.put("arg"+arg+"type","SELECT");
 					button=0;
-					for (final Region reg: st.getInstance().getRegions(false)) {
+					for (final Region reg: Region.getRegions(st,false)) {
 						final String label=reg.getName();
 						json.put("arg"+arg+"button"+button,label);
 						button++;
@@ -662,14 +662,14 @@ public abstract class Command {
 					break;
 				case REGION:
 					final DropDownList regionlist=new DropDownList(arg.getName());
-					for (final Region aregion: st.getInstance().getRegions(false)) {
+					for (final Region aregion: Region.getRegions(st,false)) {
 						regionlist.add(aregion.getName());
 					}
 					t.add(regionlist);
 					break;
 				case ZONE:
 					final DropDownList zonelist=new DropDownList(arg.getName());
-					for (final Zone azone: st.getInstance().getZones()) {
+					for (final Zone azone: Zone.getZones(st)) {
 						zonelist.add(azone.getName());
 					}
 					t.add(zonelist);
@@ -690,7 +690,7 @@ public abstract class Command {
 					break;
 				case PERMISSIONSGROUP:
 					final DropDownList permgrouplist=new DropDownList(arg.getName());
-					for (final PermissionsGroup g: st.getInstance().getPermissionsGroups()) {
+					for (final PermissionsGroup g: PermissionsGroup.getPermissionsGroups(st)) {
 						permgrouplist.add(g.getNameSafe());
 					}
 					t.add(permgrouplist);

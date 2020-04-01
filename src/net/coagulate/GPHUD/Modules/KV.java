@@ -106,7 +106,7 @@ public abstract class KV extends NameComparable {
 	public void convey(@Nonnull final State st,
 	                   final String value) {
 		if (!conveyas().isEmpty()) {
-			final Set<Region> regions=st.getInstance().getRegions(false);
+			final Set<Region> regions=Region.getRegions(st,false);
 			final JSONObject message=new JSONObject();
 			message.put("incommand","broadcast");
 			message.put(conveyas(),value);

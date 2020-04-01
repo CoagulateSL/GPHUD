@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.NullInteger;
 import net.coagulate.Core.Database.ResultsRow;
@@ -33,6 +34,8 @@ public class Cookies {
 	@Nullable
 	private ResultsRow r;
 
+	// ---------- STATICS ----------
+
 	/**
 	 * Load existing cookie store.
 	 *
@@ -44,16 +47,13 @@ public class Cookies {
 		this.cookie=cookie;
 		validateCookie();
 	}
-
-	// ---------- STATICS ----------
-
 	/**
 	 * Delete a cookie
 	 *
 	 * @param cookie Cookie to delete
 	 */
 	public static void delete(final String cookie) {
-		GPHUD.getDB().d("delete from cookies where cookie=?",cookie);
+		db().d("delete from cookies where cookie=?",cookie);
 	}
 
 	/**
@@ -63,13 +63,13 @@ public class Cookies {
 	 */
 	public static void refreshCookie(final String cookie) {
 		final int refreshifexpiresbefore=getUnixTime()+COOKIE_REFRESH;
-		final int toupdate=GPHUD.getDB().dqinn("select count(*) from cookies where cookie=? and expires<? and renewable=1",cookie,refreshifexpiresbefore);
+		final int toupdate=db().dqinn("select count(*) from cookies where cookie=? and expires<? and renewable=1",cookie,refreshifexpiresbefore);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on cookie "+cookie);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","Cookies","Refreshing cookie "+cookie);
-		GPHUD.getDB().d("update cookies set expires=? where cookie=?",getUnixTime()+COOKIE_LIFESPAN,cookie);
+		db().d("update cookies set expires=? where cookie=?",getUnixTime()+COOKIE_LIFESPAN,cookie);
 	}
 
 	/**
@@ -97,16 +97,19 @@ public class Cookies {
 		if (avatar != null) { id += " Avatar:" + avatar; }
 		if (character != null) { id += " Character:" + character; }
 		 */
-		GPHUD.getDB()
-		     .d("insert into cookies(cookie,expires,renewable,avatarid,characterid,instanceid) values(?,?,?,?,?,?)",
-		        cookie,
-		        expire,
-		        renewableint,
-		        getId(avatar),
-		        getId(character),
-		        getId(instance)
-		       );
+		db().d("insert into cookies(cookie,expires,renewable,avatarid,characterid,instanceid) values(?,?,?,?,?,?)",
+		       cookie,
+		       expire,
+		       renewableint,
+		       getId(avatar),
+		       getId(character),
+		       getId(instance)
+		      );
 		return cookie;
+	}
+
+	public static int countAll() {
+		return db().dqinn("select count(*) from cookies");
 	}
 
 	/**
@@ -127,15 +130,13 @@ public class Cookies {
 		return null;
 	}
 
-	public static int countAll() {
-		return GPHUD.getDB().dqinn("select count(*) from cookies");
-	}
-
 	public static void expire() {
-		GPHUD.getDB().d("delete from cookies where expires<?",UnixTime.getUnixTime());
+		db().d("delete from cookies where expires<?",UnixTime.getUnixTime());
 	}
 
 	// ----- Internal Statics -----
+	private static DBConnection db() { return GPHUD.getDB(); }
+
 	private static Object getId(@Nullable final TableRow r) {
 		if (r==null) { return new NullInteger(); }
 		return r.getId();
@@ -167,9 +168,9 @@ public class Cookies {
 	 */
 	public void setAvatar(@Nonnull final User avatar) {
         /*if (avatar==null) {
-            GPHUD.getDB().d("update cookies set avatarid=null where cookie=?",cookie); load(); return;
+            getDB().d("update cookies set avatarid=null where cookie=?",cookie); load(); return;
         }*/
-		GPHUD.getDB().d("update cookies set avatarid=? where cookie=?",avatar.getId(),cookie);
+		db().d("update cookies set avatarid=? where cookie=?",avatar.getId(),cookie);
 		load();
 	}
 
@@ -205,7 +206,7 @@ public class Cookies {
 				setInstance(null);
 			}
 		}
-		GPHUD.getDB().d("update cookies set characterid=? where cookie=?",id,cookie);
+		db().d("update cookies set characterid=? where cookie=?",id,cookie);
 		load();
 	}
 
@@ -229,7 +230,7 @@ public class Cookies {
 	public void setInstance(@Nullable final Instance entity) {
 		Integer id=null;
 		if (entity!=null) { id=entity.getId(); }
-		GPHUD.getDB().d("update cookies set instanceid=? where cookie=?",id,cookie);
+		db().d("update cookies set instanceid=? where cookie=?",id,cookie);
 		load();
 	}
 
@@ -277,19 +278,19 @@ public class Cookies {
 		}
 		final int expires=r().getInt("expires");
 		if (expires<getUnixTime()) {
-			GPHUD.getDB().d("delete from cookies where cookie=?",cookie);
+			db().d("delete from cookies where cookie=?",cookie);
 			throw new UserInputStateException("Cookie Expired!");
 		}
 		// if expires within 20 minutes, set expires to 30 minutes :P
 		if (r().getInt("renewable")==0) { return; }
 		final int now=getUnixTime();
 		if (expires<(now+COOKIE_REFRESH)) {
-			GPHUD.getDB().d("update cookies set expires=? where cookie=?",now+COOKIE_LIFESPAN,cookie);
+			db().d("update cookies set expires=? where cookie=?",now+COOKIE_LIFESPAN,cookie);
 		}
 
 	}
 
 	private void load() {
-		r=GPHUD.getDB().dqone("select * from cookies where cookie=?",cookie);
+		r=db().dqone("select * from cookies where cookie=?",cookie);
 	}
 }

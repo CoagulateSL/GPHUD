@@ -97,7 +97,7 @@ public abstract class EventsMaintenance {
 		final boolean debug=false;
 		if (oldzone!=null) { oldzone.validate(st); }
 		if (zone!=null) { zone.validate(st); }
-		final Set<EventSchedule> events=st.getInstance().getActiveEventSchedules();
+		final Set<EventSchedule> events=EventSchedule.getActive(st);
 		EventSchedule wasin=null;
 		EventSchedule nowin=null;
 		for (final EventSchedule es: events) {

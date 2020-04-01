@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
@@ -13,10 +14,9 @@ import java.util.Set;
  * I feel like this class is pointless, and the whole idea of primary characters is pointless.  The primary is the most recently used, globally or for an instance, surely?
  *
  * @author Iain Price
- * @deprecated
  */
+@Deprecated
 public class PrimaryCharacters {
-
 	// ---------- STATICS ----------
 
 	/**
@@ -59,8 +59,7 @@ public class PrimaryCharacters {
 				            "Automatically generated character upon login with no characters."
 				           );
 			}
-			GPHUD.getDB()
-			     .d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)",avatar.getId(),instance.getId(),characterset.iterator().next().getId());
+			db().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)",avatar.getId(),instance.getId(),characterset.iterator().next().getId());
 			return getPrimaryCharacter_internal(instance,avatar);
 		}
 	}
@@ -69,24 +68,26 @@ public class PrimaryCharacters {
 	public static void setPrimaryCharacter(@Nonnull final State st,
 	                                       @Nonnull final Char c) {
 		c.validate(st);
-		GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?",st.getAvatar().getId(),st.getInstance().getId());
-		GPHUD.getDB().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)",st.getAvatar().getId(),st.getInstance().getId(),c.getId());
+		db().d("delete from primarycharacters where avatarid=? and instanceid=?",st.getAvatar().getId(),st.getInstance().getId());
+		db().d("insert into primarycharacters(avatarid,instanceid,entityid) values(?,?,?)",st.getAvatar().getId(),st.getInstance().getId(),c.getId());
 	}
 
 	@Deprecated
 	public static void purge(@Nonnull final Char ch) {
-		GPHUD.getDB().d("delete from primarycharacters where entityid=?",ch.getId());
+		db().d("delete from primarycharacters where entityid=?",ch.getId());
 	}
 
 	// ----- Internal Statics -----
+	private static DBConnection db() { return GPHUD.getDB(); }
+
 	@Nonnull
 	@Deprecated
 	private static Char getPrimaryCharacter_internal(@Nonnull final Instance instance,
 	                                                 @Nonnull final User avatar) {
-		final int primary=GPHUD.getDB().dqinn("select entityid from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
+		final int primary=db().dqinn("select entityid from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
 		final Char c=Char.get(primary);
 		if (c.retired()) {
-			GPHUD.getDB().d("delete from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
+			db().d("delete from primarycharacters where avatarid=? and instanceid=?",avatar.getId(),instance.getId());
 			throw new NoDataException("Primary character is retired");
 		}
 		return c;

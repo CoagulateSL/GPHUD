@@ -156,11 +156,10 @@ public abstract class Groups {
 	                              @Arguments(description="Name of group to create",
 	                                         type=ArgumentType.TEXT_CLEAN,
 	                                         max=64) final String name) {
-		try { st.getInstance().createPermissionsGroup(name); }
+		try { PermissionsGroup.create(st,name); }
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create permissions group - "+e.getLocalizedMessage());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","PermissionsGroup",null,name,"Avatar created new permissions group");
 		return new OKResponse("Permissions Group created successfully!");
 	}
 
@@ -169,7 +168,7 @@ public abstract class Groups {
 	          description="List permissions groups present at this instance")
 	public static Response list(@Nonnull final State st) {
 		final TabularResponse r=new TabularResponse("Permissions groups");
-		final Set<PermissionsGroup> groups=st.getInstance().getPermissionsGroups();
+		final Set<PermissionsGroup> groups=PermissionsGroup.getPermissionsGroups(st);
 		for (final PermissionsGroup p: groups) {
 			r.openRow();
 			r.add(p);

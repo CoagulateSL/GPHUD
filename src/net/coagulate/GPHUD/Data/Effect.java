@@ -8,7 +8,6 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -61,7 +60,7 @@ public class Effect extends TableRow {
 
 	public static Set<Effect> getAll(final Instance instance) {
 		final Set<Effect> effects=new TreeSet<>();
-		for (final ResultsRow effect: GPHUD.getDB().dq("select id from effects where instanceid=?",instance.getId())) {
+		for (final ResultsRow effect: db().dq("select id from effects where instanceid=?",instance.getId())) {
 			effects.add(Effect.get(effect.getInt()));
 		}
 		return effects;
@@ -70,7 +69,7 @@ public class Effect extends TableRow {
 	public static void create(@Nonnull final State st,
 	                          @Nonnull final String name) {
 		if (Effect.getNullable(st,name)!=null) { throw new UserInputDuplicateValueException("There is already an effect named "+name); }
-		GPHUD.getDB().d("insert into effects(instanceid,name) values(?,?)",st.getInstance().getId(),name);
+		db().d("insert into effects(instanceid,name) values(?,?)",st.getInstance().getId(),name);
 	}
 
 	/**
@@ -84,7 +83,7 @@ public class Effect extends TableRow {
 	@Nullable
 	public static Effect find(@Nonnull final Instance instance,
 	                          final String name) {
-		final Results matches=GPHUD.getDB().dq("select id from effects where instanceid=? and name like ?",instance.getId(),name);
+		final Results matches=db().dq("select id from effects where instanceid=? and name like ?",instance.getId(),name);
 		if (matches.empty()) { return null; }
 		if (matches.size()>1) { throw new TooMuchDataException("Name "+name+" in instance "+instance.getId()+" matched "+matches.size()+" results"); }
 		return Effect.get(matches.iterator().next().getInt());
@@ -93,7 +92,7 @@ public class Effect extends TableRow {
 	public static void expirationCheck(@Nonnull final State st,
 	                                   @Nonnull final Char character) {
 		if (st.expirationchecked) { return; }
-		for (final ResultsRow row: GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
+		for (final ResultsRow row: db().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
 			final int effectid=row.getInt();
 			final Effect effect=get(effectid);
 			effect.validate(st);
@@ -107,7 +106,7 @@ public class Effect extends TableRow {
 	                              final Char character) {
 		expirationCheck(st,character);
 		final Set<Effect> set=new HashSet<>();
-		for (final ResultsRow row: GPHUD.getDB().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
+		for (final ResultsRow row: db().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
 			set.add(get(row.getInt()));
 		}
 		return set;
@@ -121,11 +120,10 @@ public class Effect extends TableRow {
 		final String maintable=i.getTableName();
 		final String kvidcolumn=i.getKVIdField();
 		final String maintableidcolumn=i.getIdColumn();
-		GPHUD.getDB()
-		     .d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+kvidcolumn+"="+maintable+"."+maintableidcolumn+" and "+maintable+".instanceid=?",
-		        key,
-		        instance.getId()
-		       );
+		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+kvidcolumn+"="+maintable+"."+maintableidcolumn+" and "+maintable+".instanceid=?",
+		       key,
+		       instance.getId()
+		      );
 	}
 
 	// ---------- INSTANCE ----------

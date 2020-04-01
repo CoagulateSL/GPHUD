@@ -33,7 +33,7 @@ public class EventsPages {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextHeader("Events Listing"));
-		final Set<Event> events=st.getInstance().getEvents();
+		final Set<Event> events=Event.getAll(st);
 		for (final Event e: events) {
 			f.add(new Link(e.getName(),e.getLinkTarget()));
 			f.add("<br>");

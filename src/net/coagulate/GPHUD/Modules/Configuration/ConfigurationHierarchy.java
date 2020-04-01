@@ -110,11 +110,11 @@ public class ConfigurationHierarchy extends Form {
 		final Instance instance=simulated.getInstance();
 		final Set<String> alledits=new HashSet<>();
 		if (kv.appliesTo(instance)) { addKVRow(st,h,kv,instance,simulated,alledits); }
-		for (final Region r: instance.getRegions(false)) {
+		for (final Region r: Region.getRegions(instance,false)) {
 			if (kv.appliesTo(r)) { addKVRow(st,h,kv,r,simulated,alledits); }
 		}
-		for (final Zone z: instance.getZones()) { if (kv.appliesTo(z)) { addKVRow(st,h,kv,z,simulated,alledits); } }
-		for (final Event e: instance.getEvents()) { if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits); } }
+		for (final Zone z: Zone.getZones(instance)) { if (kv.appliesTo(z)) { addKVRow(st,h,kv,z,simulated,alledits); } }
+		for (final Event e: Event.getAll(instance)) { if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits); } }
 		for (final CharacterGroup cg: instance.getCharacterGroups()) {
 			if (kv.appliesTo(cg)) { addKVRow(st,h,kv,cg,simulated,alledits); }
 		}

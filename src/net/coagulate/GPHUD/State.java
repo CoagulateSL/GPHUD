@@ -511,7 +511,7 @@ public class State extends DumpableState {
 		// events in ID order
 		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.EVENT) {
 			final Map<Integer,Event> eventmap=new TreeMap<>();
-			for (final Event e: getInstance().getActiveEvents()) {
+			for (final Event e: Event.getActive(this)) {
 				eventmap.put(e.getId(),e);
 			}
 			check.addAll(eventmap.values());
@@ -743,7 +743,7 @@ public class State extends DumpableState {
 		simulated.setInstance(getInstance());
 		if (c==null) { c=getCharacterNullable(); }
 		simulated.setCharacter(c);
-		final Set<Region> possibleregions=getInstance().getRegions(false);
+		final Set<Region> possibleregions=Region.getRegions(this,false);
 		final Region simulatedregion=new ArrayList<>(possibleregions).get((int) (Math.floor(Math.random()*possibleregions.size())));
 		simulated.setRegion(simulatedregion);
 		final Set<Zone> possiblezones=simulatedregion.getZones();
