@@ -97,7 +97,7 @@ public class Menus extends TableRow {
 	@Nonnull
 	public static Menus create(@Nonnull final State st,
 	                           @Nonnull final String name,
-	                           final String description,
+	                           @Nonnull final String description,
 	                           @Nonnull final JSONObject template) {
 		if (getMenuNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("Menu "+name+" already exists");
