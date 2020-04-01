@@ -12,6 +12,9 @@ import java.util.TreeMap;
 
 /**
  * Implements a naming cache, please read the warnings.
+ *
+ * PRIMARY USE: Audit display
+ *
  * Warning:  GPHUD is not intended to use caching - the database can be updated by external systems (e.g. the other node).
  * As such caches may become out of date.
  * However, the Audit page contains vast numbers of numeric ID to name lookups, and rather than "miss-cache" or not cache these lookups (about a dozen per Audit record)
@@ -33,9 +36,9 @@ public class NameCache {
 
 	// ----- Internal Statics -----
 	@Nonnull
-	private static Map<Integer,String> loadMap(final String tablename,
-	                                           final String idcolumn,
-	                                           final String namecolumn) {
+	private static Map<Integer,String> loadMap(@Nonnull final String tablename,
+	                                           @Nonnull final String idcolumn,
+	                                           @Nonnull final String namecolumn) {
 		final Map<Integer,String> results=new TreeMap<>();
 		final Results rows=GPHUD.getDB().dq("select "+idcolumn+","+namecolumn+" from "+tablename);
 		for (final ResultsRow r: rows) {
@@ -45,21 +48,25 @@ public class NameCache {
 	}
 
 	// ---------- INSTANCE ----------
+	@Nullable
 	public String lookup(@Nonnull final User u) {
 		if (avatarnames==null) { avatarnames=User.loadMap(); }
 		return avatarnames.get(u.getId());
 	}
 
+	@Nullable
 	public String lookup(@Nonnull final Char u) {
 		if (characternames==null) { characternames=loadMap("characters","characterid","name"); }
 		return characternames.get(u.getId());
 	}
 
+	@Nullable
 	public String lookup(@Nonnull final Instance u) {
 		if (instancenames==null) { instancenames=loadMap("instances","instanceid","name"); }
 		return instancenames.get(u.getId());
 	}
 
+	@Nullable
 	public String lookup(@Nonnull final Region u) {
 		if (regionnames==null) { regionnames=loadMap("regions","regionid","name"); }
 		return regionnames.get(u.getId());
