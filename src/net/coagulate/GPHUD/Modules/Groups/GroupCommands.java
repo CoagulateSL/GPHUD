@@ -2,10 +2,7 @@ package net.coagulate.GPHUD.Modules.Groups;
 
 import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.UserException;
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -44,7 +41,7 @@ public class GroupCommands {
 				return new ErrorResponse("You can not change your "+attribute.getNameSafe()+" after character creation.");
 			}
 			// since its a typed group they /can/ self modify, we need to remove them from the old group first
-			final CharacterGroup existinggroup=st.getCharacter().getGroup(group.getType());
+			final CharacterGroup existinggroup=CharacterGroup.getGroup(st,group.getType());
 			if (existinggroup!=null) {
 				// try remove, in a weird way, note we bypass the permissions check on the target call here
 				final Response remove=Management.remove(st,existinggroup,st.getCharacter());
@@ -79,7 +76,7 @@ public class GroupCommands {
 		invite.put("message","factioninvite");
 		invite.put("from",st.getCharacter().getId());
 		invite.put("to",group.getId());
-		target.queueMessage(invite,60*60*48);
+		Message.queue(target,60*60*48,invite);
 		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Faction Invite",group.getName(),null,null,"Group invite sent");
 		return new OKResponse("Invite message sent to "+target.getName()+" for "+group.getName()+", they have 48 hours to accept.");
 	}

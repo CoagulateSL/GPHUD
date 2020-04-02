@@ -46,11 +46,13 @@ public class Attribute extends TableRow {
 	 * @param instance Instance to look attribute up in.
 	 * @param name     Name of attribute to locate
 	 *
-	 * @return Region object for that region, or null if none is found.
+	 * @return Region object for that region
+	 *
+	 * @throws UserInputLookupFailureException if the attribute doesn't resolve
 	 */
 	@Nonnull
 	public static Attribute find(@Nonnull final Instance instance,
-	                             final String name) {
+	                             @Nonnull final String name) {
 		try {
 			final int id=db().dqinn("select attributeid from attributes where name like ? and instanceid=?",name,instance.getId());
 			return get(id);
@@ -62,10 +64,17 @@ public class Attribute extends TableRow {
 
 	/**
 	 * Find an attribute that is a group by 'type'.
+	 *
+	 * @param instance  Instance to look in
+	 * @param grouptype Group type (subtype) to look for
+	 *
+	 * @return The matching Attribute
+	 *
+	 * @throws UserInputLookupFailureException if there is no matching attribute
 	 */
 	@Nonnull
 	public static Attribute findGroup(@Nonnull final Instance instance,
-	                                  final String grouptype) {
+	                                  @Nonnull final String grouptype) {
 		try {
 			final int id=db().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
 			return get(id);
@@ -107,16 +116,23 @@ public class Attribute extends TableRow {
 	 * @param st   State
 	 * @param name Attribute name
 	 *
-	 * @return Attribute
+	 * @return Attribute or null
 	 */
 	@Nullable
-	public static Attribute resolve(@Nonnull final State st,
-	                                final String name) {
+	public static Attribute findNullable(@Nonnull final State st,
+	                                     final String name) {
 		final int id=new Attribute(-1).resolveToID(st,name,true);
 		if (id==0) { return null; }
 		return get(id);
 	}
 
+	/**
+	 * Convert a text type to an attribute type
+	 *
+	 * @param type String form of the type
+	 *
+	 * @return The ATTRIBUTETYPE that corresponds
+	 */
 	@Nonnull
 	public static ATTRIBUTETYPE fromString(@Nonnull final String type) {
 		if ("text".equalsIgnoreCase(type)) { return TEXT; }
@@ -142,14 +158,13 @@ public class Attribute extends TableRow {
 	 * @param defaultvalue      default value (where not required attribute)
 	 */
 	public static void create(@Nonnull final Instance instance,
-	                          final String name,
+	                          @Nonnull final String name,
 	                          final boolean selfmodify,
-	                          final ATTRIBUTETYPE attributetype,
-	                          final String grouptype,
+	                          @Nonnull final ATTRIBUTETYPE attributetype,
+	                          @Nullable final String grouptype,
 	                          final boolean usesabilitypoints,
 	                          final boolean required,
-	                          String defaultvalue) {
-		// =)
+	                          @Nullable String defaultvalue) {
 		if ("".equals(defaultvalue)) { defaultvalue=null; }
 		db().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
 		       instance.getId(),
@@ -176,18 +191,25 @@ public class Attribute extends TableRow {
 	 * @param defaultvalue      default value (where not required attribute)
 	 */
 	public static void create(@Nonnull final State st,
-	                          final String name,
+	                          @Nonnull final String name,
 	                          final boolean selfmodify,
-	                          final ATTRIBUTETYPE attributetype,
-	                          final String grouptype,
+	                          @Nonnull final ATTRIBUTETYPE attributetype,
+	                          @Nullable final String grouptype,
 	                          final boolean usesabilitypoints,
 	                          final boolean required,
-	                          final String defaultvalue) {
+	                          @Nullable final String defaultvalue) {
 		create(st.getInstance(),name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
 	}
 
-	// ----- Internal Statics -----
-	private static String toString(final ATTRIBUTETYPE type) {
+	/**
+	 * Convert an ATTRIBUTETYPE back into a string
+	 *
+	 * @param type ATTRIBUTETYPE
+	 *
+	 * @return String form
+	 */
+	@Nonnull
+	public static String toString(@Nonnull final ATTRIBUTETYPE type) {
 		switch (type) {
 			case TEXT: return "text";
 			case FLOAT: return "float";
@@ -200,6 +222,7 @@ public class Attribute extends TableRow {
 		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}
 
+	// ----- Internal Statics -----
 	// ---------- INSTANCE ----------
 
 	/**
@@ -253,6 +276,11 @@ public class Attribute extends TableRow {
 	@Override
 	protected int getNameCacheTime() { return 60*60; } // 1 hour, attributes can NOT be renamed because they create a KV based on the name :P
 
+	/**
+	 * Get this attributes ATTRIBUTETYPE
+	 *
+	 * @return The ATTRIBUTETYPE
+	 */
 	@Nonnull
 	public ATTRIBUTETYPE getType() {
 		String type;
@@ -264,13 +292,28 @@ public class Attribute extends TableRow {
 		return fromString(type);
 	}
 
+	/**
+	 * Get this attribute's subtype, used by groups to define attribute mappings and exclusions.
+	 *
+	 * @return The sub type of the attribute, may be null.
+	 */
 	@Nullable
 	public String getSubType() {
 		return getStringNullable("grouptype");
 	}
 
+	/**
+	 * Returns wether this attribute uses ability points.
+	 *
+	 * @return True if it does
+	 */
 	public boolean usesAbilityPoints() { return getBool("usesabilitypoints"); }
 
+	/**
+	 * Return if this attribute is mandatory.
+	 *
+	 * @return true if this attribute is required
+	 */
 	public boolean getRequired() { return getBool("required"); }
 
 	/**
@@ -278,10 +321,15 @@ public class Attribute extends TableRow {
 	 *
 	 * @param required New required flag state.
 	 */
-	public void setRequired(final Boolean required) {
+	public void setRequired(final boolean required) {
 		set("required",required);
 	}
 
+	/**
+	 * Returns the default value
+	 *
+	 * @return the default value which may be null
+	 */
 	@Nullable
 	public String getDefaultValue() { return getStringNullable("defaultvalue"); }
 
@@ -290,7 +338,7 @@ public class Attribute extends TableRow {
 	 *
 	 * @param defaultvalue New default value
 	 */
-	public void setDefaultValue(final String defaultvalue) {
+	public void setDefaultValue(@Nullable final String defaultvalue) {
 		set("defaultvalue",defaultvalue);
 	}
 
@@ -310,6 +358,16 @@ public class Attribute extends TableRow {
 		set("selfmodify",selfmodify);
 	}
 
+	/**
+	 * Gets the character's current final value for an attribute.
+	 *
+	 * KVs are passed through the usual getKV mechanism
+	 * POOLs and EXPERIENCE are summed pools
+	 *
+	 * @param st State, infers character
+	 *
+	 * @return The current value for the character, technically nullable
+	 */
 	@Nullable
 	public String getCharacterValue(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters."+getName()).value(); }
@@ -329,6 +387,17 @@ public class Attribute extends TableRow {
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
 
+	/**
+	 * Get additional information about the value this attribute has for a given character
+	 *
+	 * KVs get the computed path
+	 * POOls and EXPERIENCE return quotaed information, if quotaed
+	 * GROUPs return nothing
+	 *
+	 * @param st State infers character
+	 *
+	 * @return A description of the value
+	 */
 	@Nonnull
 	public String getCharacterValueDescription(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters."+getName()).path(); }
@@ -345,7 +414,7 @@ public class Attribute extends TableRow {
 
 	/**
 	 * Wether this attribute is represented as a KV.
-	 * Group memberships (faction, race) are NOT a KV.
+	 * Group memberships (faction, race) and POOLs including EXPERIENCE are NOT a KV
 	 *
 	 * @return True if this attribute generates a KV.
 	 */
@@ -438,6 +507,4 @@ public class Attribute extends TableRow {
 		COLOR,
 		EXPERIENCE
 	}
-
-
 }
