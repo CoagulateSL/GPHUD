@@ -93,6 +93,9 @@ public class Alias extends TableRow {
 	 * @param template JSON Template of alias (See Alias Module)
 	 *
 	 * @return A reference to the newly created alias
+	 *
+	 * @throws UserInputValidationParseException if the name contains illegal characters
+	 * @throws UserInputDuplicateValueException  if the name is already taken
 	 */
 	@Nonnull
 	public static Alias create(@Nonnull final State st,
@@ -156,12 +159,22 @@ public class Alias extends TableRow {
 		return Instance.get(getInt("instanceid"));
 	}
 
+	/**
+	 * Gets the JSON payload for this alias.  See alias module.
+	 *
+	 * @return The JSON template for this alias.
+	 */
 	@Nonnull
 	public JSONObject getTemplate() {
 		final String json=dqsnn("select template from aliases where aliasid=?",getId());
 		return new JSONObject(json);
 	}
 
+	/**
+	 * Set the JSON template for this alias.
+	 *
+	 * @param template The new JSON template for this alias.
+	 */
 	public void setTemplate(@Nonnull final JSONObject template) {
 		d("update aliases set template=? where aliasid=?",template.toString(),getId());
 	}
