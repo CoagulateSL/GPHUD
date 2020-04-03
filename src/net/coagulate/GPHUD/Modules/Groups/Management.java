@@ -109,7 +109,10 @@ public abstract class Management {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Create a group",
-	          requiresPermission="Groups.Create")
+	          requiresPermission="Groups.Create",
+	          permitExternal=false,
+	          permitObject=false,
+	          permitScripting=false)
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(type=ArgumentType.TEXT_ONELINE,
 	                                         description="Name of the group",
@@ -329,7 +332,10 @@ public abstract class Management {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Delete a group",
-	          requiresPermission="Groups.Delete")
+	          requiresPermission="Groups.Delete",
+	          permitObject=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response delete(@Nonnull final State st,
 	                              @Nonnull
 	                              @Arguments(description="Group to delete",

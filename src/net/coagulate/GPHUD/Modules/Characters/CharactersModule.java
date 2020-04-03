@@ -147,7 +147,7 @@ public class CharactersModule extends ModuleAnnotation {
 	@Nonnull
 	@Commands(context=Command.Context.CHARACTER,
 	          description="Spend an ability point to raise an attribute",
-	          permitUserWeb=false)
+	          permitExternal=false)
 	public static Response spendAbilityPoint(@Nonnull final State st,
 	                                         @Arguments(choiceMethod="getRaisableAttributesList",
 	                                                    description="Attribute to spend an ability point on",

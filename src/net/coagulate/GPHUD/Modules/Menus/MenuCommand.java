@@ -26,7 +26,7 @@ public class MenuCommand extends Command {
 	final JSONObject definition;
 	@Nonnull
 	final Command targetcommand;
-	final String description="Pick a menu item item item. :P";
+	final String description;
 	final String name;
 
 	public MenuCommand(final State st,
@@ -35,6 +35,7 @@ public class MenuCommand extends Command {
 		super();
 		definition=newdef;
 		this.name=name;
+		description="This spawns the "+name+" menu";
 		targetcommand=this;
 	}
 
@@ -71,7 +72,7 @@ public class MenuCommand extends Command {
 	public boolean permitHUD() { return true; }
 
 	@Override
-	public boolean permitObject() { return true; }
+	public boolean permitObject() { return false; }
 
 	@Override
 	public boolean permitConsole() { return false; }

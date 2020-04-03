@@ -30,7 +30,8 @@ public abstract class SetOwner {
 	          requiresPermission="instance.owner",
 	          permitJSON=false,
 	          permitUserWeb=false,
-	          permitExternal=false)
+	          permitExternal=false,
+	          permitObject=false)
 	public static Response setOwner(@Nonnull final State st,
 	                                @Nullable
 	                                @Arguments(description="New owner for this instance",

@@ -18,7 +18,8 @@ public class CreateDelete {
 	                  context=Command.Context.AVATAR,
 	                  requiresPermission="Effects.Create",
 	                  permitScripting=false,
-	                  permitExternal=false)
+	                  permitExternal=false,
+	                  permitObject=false)
 	public static final Response create(final State st,
 	                                    @Argument.Arguments(description="Name of the new effect",
 	                                                        type=Argument.ArgumentType.TEXT_CLEAN,
@@ -37,7 +38,8 @@ public class CreateDelete {
 	                  context=Command.Context.AVATAR,
 	                  requiresPermission="Effects.Delete",
 	                  permitScripting=false,
-	                  permitExternal=false)
+	                  permitExternal=false,
+	                  permitObject=false)
 	public static final Response delete(final State st,
 	                                    @Argument.Arguments(description="Name of the effect to delete",
 	                                                        type=Argument.ArgumentType.EFFECT,

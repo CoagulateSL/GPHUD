@@ -23,7 +23,8 @@ public class ResetHealth {
 	// ---------- STATICS ----------
 	@Nonnull
 	@Command.Commands(context=Command.Context.CHARACTER,
-	                  description="Reset the character's health to the initial value")
+	                  description="Reset the character's health to the initial value",
+	                  permitExternal=false)
 	public static Response resetHealth(@Nonnull final State st) {
 		if (!st.getKV("health.allowreset").boolValue()) {
 			throw new UserAccessDeniedException("Resetting of your health is not permitted.");
@@ -37,7 +38,8 @@ public class ResetHealth {
 
 	@Nonnull
 	@Command.Commands(context=Command.Context.CHARACTER,
-	                  description="Have a chance to heal a target player")
+	                  description="Have a chance to heal a target player",
+	                  permitExternal=false)
 	public static Response healRollChance(@Nonnull final State st,
 	                                      @Nonnull
 	                                      @Argument.Arguments(description="Target to heal",
@@ -91,7 +93,8 @@ public class ResetHealth {
 
 	@Nonnull
 	@Command.Commands(context=Command.Context.CHARACTER,
-	                  description="Heal a target player")
+	                  description="Heal a target player",
+	                  permitExternal=false)
 	public static Response healRoll(@Nonnull final State st,
 	                                @Nullable
 	                                @Argument.Arguments(description="Target to heal",

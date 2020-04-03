@@ -29,7 +29,8 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Command.Context.CHARACTER,
-	          description="Set your Titler's Altitude (height above avatar)")
+	          description="Set your Titler's Altitude (height above avatar)",
+	          permitExternal=false)
 	public static Response setAltitude(@Nonnull final State st,
 	                                   @Arguments(description="Offset, in meters",
 	                                              max=3,

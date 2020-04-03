@@ -169,7 +169,8 @@ public abstract class Groups {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="List permissions groups present at this instance",
-	          permitObject=false)
+	          permitObject=false,
+	          permitScripting=false)
 	public static Response list(@Nonnull final State st) {
 		final TabularResponse r=new TabularResponse("Permissions groups");
 		final Set<PermissionsGroup> groups=PermissionsGroup.getPermissionsGroups(st);

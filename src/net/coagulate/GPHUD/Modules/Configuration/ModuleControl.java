@@ -29,7 +29,8 @@ public abstract class ModuleControl {
 	          description="Disable the specified module",
 	          requiresPermission="instance.ModuleEnablement",
 	          permitExternal=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitObject=false)
 	public static Response disableModule(@Nonnull final State st,
 	                                     @Nonnull
 	                                     @Arguments(type=ArgumentType.MODULE,
@@ -55,7 +56,8 @@ public abstract class ModuleControl {
 	          description="Enabled the specified module",
 	          requiresPermission="instance.ModuleEnablement",
 	          permitScripting=false,
-	          permitExternal=false)
+	          permitExternal=false,
+	          permitObject=false)
 	public static Response enableModule(@Nonnull final State st,
 	                                    @Nonnull
 	                                    @Arguments(type=ArgumentType.MODULE,
