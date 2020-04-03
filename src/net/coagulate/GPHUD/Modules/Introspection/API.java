@@ -75,14 +75,14 @@ public abstract class API {
 			f.add(new Color("green","Accessible via console"));
 		}
 		f.add("<br>");
-		if (!c.permitJSON()) { f.add(new Color("red","LSL script access denied")); }
+		if (!c.permitHUD()) { f.add(new Color("red","HUD access denied")); }
 		else {
-			f.add(new Color("green","Accessible via LSL/JSON"));
+			f.add(new Color("green","Accessible via HUD"));
 		}
 		f.add("<br>");
-		if (!c.permitUserWeb()) { f.add(new Color("red","Browser Web UI access denied")); }
+		if (!c.permitWeb()) { f.add(new Color("red","Web access denied")); }
 		else {
-			f.add(new Color("green","Accessible via Browser Web UI"));
+			f.add(new Color("green","Accessible via Web"));
 		}
 		f.add("<br>");
 		if (!c.permitScripting()) { f.add(new Color("red","Scripting access denied")); }
@@ -133,11 +133,11 @@ public abstract class API {
 					else {
 						t.add(new Color("red","Console"));
 					}
-					if (c.permitJSON()) { t.add(new Color("green","JSON")); }
-					else { t.add(new Color("red","JSON")); }
-					if (c.permitUserWeb()) { t.add(new Color("green","UserWeb")); }
+					if (c.permitHUD()) { t.add(new Color("green","HUD")); }
+					else { t.add(new Color("red","HUD")); }
+					if (c.permitWeb()) { t.add(new Color("green","Web")); }
 					else {
-						t.add(new Color("red","UserWeb"));
+						t.add(new Color("red","Web"));
 					}
 					if (c.permitScripting()) { t.add(new Color("green","Scripting")); }
 					else {

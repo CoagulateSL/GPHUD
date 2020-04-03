@@ -74,13 +74,13 @@ public abstract class Command {
 
 	public abstract Context context();
 
-	public abstract boolean permitJSON();
+	public abstract boolean permitHUD();
 
 	public abstract boolean permitObject();
 
 	public abstract boolean permitConsole();
 
-	public abstract boolean permitUserWeb();
+	public abstract boolean permitWeb();
 
 	public abstract boolean permitScripting();
 
@@ -379,12 +379,12 @@ public abstract class Command {
 			}
 			// check required interface
 			if (st.source==State.Sources.USER) {
-				if (!permitUserWeb()) {
+				if (!permitWeb()) {
 					return new ErrorResponse("This command can not be accessed via the Web interface");
 				}
 			}
 			if (st.source==State.Sources.SYSTEM) {
-				if (!permitJSON()) {
+				if (!permitHUD()) {
 					return new ErrorResponse("This command can not be accessed via the LSL System interface");
 				}
 			}

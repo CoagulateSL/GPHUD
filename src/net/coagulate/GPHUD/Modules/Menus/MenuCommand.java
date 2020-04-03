@@ -68,7 +68,7 @@ public class MenuCommand extends Command {
 	public Context context() { return Context.CHARACTER; }
 
 	@Override
-	public boolean permitJSON() { return true; }
+	public boolean permitHUD() { return true; }
 
 	@Override
 	public boolean permitObject() { return true; }
@@ -77,7 +77,7 @@ public class MenuCommand extends Command {
 	public boolean permitConsole() { return false; }
 
 	@Override
-	public boolean permitUserWeb() { return false; }
+	public boolean permitWeb() { return false; }
 
 	@Override
 	public boolean permitScripting() { return false; }

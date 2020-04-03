@@ -63,13 +63,13 @@ public class CommandAnnotation extends Command {
 	@Nonnull
 	public Context context() { return meta.context(); }
 
-	public boolean permitJSON() { return meta.permitJSON(); }
+	public boolean permitHUD() { return meta.permitJSON(); }
 
 	public boolean permitObject() { return meta.permitObject(); }
 
 	public boolean permitConsole() { return meta.permitConsole(); }
 
-	public boolean permitUserWeb() { return meta.permitUserWeb(); }
+	public boolean permitWeb() { return meta.permitUserWeb(); }
 
 	public boolean permitScripting() { return meta.permitScripting(); }
 

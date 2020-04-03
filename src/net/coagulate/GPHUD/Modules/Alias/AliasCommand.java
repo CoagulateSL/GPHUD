@@ -96,9 +96,9 @@ public class AliasCommand extends Command {
 	}
 
 	@Override
-	public boolean permitJSON() {
+	public boolean permitHUD() {
 		if (targetcommand==null) { return false; }
-		return targetcommand.permitJSON();
+		return targetcommand.permitHUD();
 	}
 
 	@Override
@@ -114,9 +114,9 @@ public class AliasCommand extends Command {
 	}
 
 	@Override
-	public boolean permitUserWeb() {
+	public boolean permitWeb() {
 		if (targetcommand==null) { return false; }
-		return targetcommand.permitUserWeb();
+		return targetcommand.permitWeb();
 	}
 
 	@Override

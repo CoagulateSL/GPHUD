@@ -52,7 +52,7 @@ public class ScriptingCommand extends Command {
 	}
 
 	@Override
-	public boolean permitJSON() {
+	public boolean permitHUD() {
 		return true;
 	}
 
@@ -65,7 +65,7 @@ public class ScriptingCommand extends Command {
 	}
 
 	@Override
-	public boolean permitUserWeb() {
+	public boolean permitWeb() {
 		return false;
 	}
 
