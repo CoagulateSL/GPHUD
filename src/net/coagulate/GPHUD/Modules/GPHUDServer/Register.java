@@ -38,7 +38,8 @@ public abstract class Register {
 	          permitUserWeb=false,
 	          description="Registers this connection as the region server "+"connection",
 	          requiresPermission="Instance.ServerOperator",
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response register(@Nonnull final State st,
 	                                @Nonnull
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,

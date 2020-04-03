@@ -25,7 +25,9 @@ public class TeleportCommands {
 	@Command.Commands(description="Teleport the player to a given X, Y and Z",
 	                  permitUserWeb=false,
 	                  context=Command.Context.CHARACTER,
-	                  permitConsole=false)
+	                  permitConsole=false,
+	                  permitObject=false,
+	                  permitExternal=false)
 	public static Response teleportTo(@Nonnull final State st,
 	                                  @Nonnull
 	                                  @Argument.Arguments(description="Region to teleport to (must be part of the instance",
@@ -53,7 +55,9 @@ public class TeleportCommands {
 	                  context=Command.Context.CHARACTER,
 	                  permitUserWeb=false,
 	                  permitScripting=false,
-	                  requiresPermission="Teleportation.CreateLandmark")
+	                  requiresPermission="Teleportation.CreateLandmark",
+	                  permitExternal=false,
+	                  permitObject=false)
 	public static Response createLandmark(@Nonnull final State st,
 	                                      @Argument.Arguments(description="Name for the landmark, replaces it if it already exists",
 	                                                          max=64,
@@ -89,7 +93,10 @@ public class TeleportCommands {
 	@Nonnull
 	@Command.Commands(description="Remove a landmark by name",
 	                  context=Command.Context.AVATAR,
-	                  requiresPermission="Teleportation.DeleteLandmark")
+	                  requiresPermission="Teleportation.DeleteLandmark",
+	                  permitExternal=false,
+	                  permitObject=false,
+	                  permitScripting=false)
 	public static Response deleteLandmark(@Nonnull final State st,
 	                                      @Argument.Arguments(description="Landmark name to remove",
 	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
@@ -105,7 +112,9 @@ public class TeleportCommands {
 	@Command.Commands(description="Teleport to a landmark",
 	                  context=Command.Context.CHARACTER,
 	                  permitUserWeb=false,
-	                  permitConsole=false)
+	                  permitConsole=false,
+	                  permitObject=false,
+	                  permitExternal=false)
 	public static Response go(@Nonnull final State st,
 	                          @Argument.Arguments(description="Landmark name to teleport to",
 	                                              type=Argument.ArgumentType.TEXT_ONELINE,

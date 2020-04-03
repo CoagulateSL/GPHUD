@@ -19,7 +19,8 @@ public class Distribution {
 	                  requiresPermission="Instance.ServerOperator",
 	                  permitScripting=false,
 	                  context=Command.Context.AVATAR,
-	                  permitObject=false)
+	                  permitObject=false,
+	                  permitExternal=false)
 	public static Response getServer(@Nonnull final State st) {
 		try {
 			final JSONObject json=new JSONObject();
@@ -42,7 +43,8 @@ public class Distribution {
 	                  requiresPermission="Instance.ServerOperator",
 	                  permitScripting=false,
 	                  context=Command.Context.AVATAR,
-	                  permitObject=false)
+	                  permitObject=false,
+	                  permitExternal=false)
 	public static Response getDispenser(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","servergive");

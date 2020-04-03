@@ -14,7 +14,8 @@ public class Rename {
 	@Nonnull
 	@Command.Commands(context=Command.Context.AVATAR,
 	                  description="Rename a character",
-	                  requiresPermission="Characters.ForceRename")
+	                  requiresPermission="Characters.ForceRename",
+	                  permitExternal=false)
 	public static Response rename(final State st,
 	                              @Nonnull
 	                              @Argument.Arguments(description="Character to rename",

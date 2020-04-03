@@ -27,7 +27,8 @@ public abstract class Operations {
 	          permitScripting=false,
 	          description="Set your USER password (via authorised SL login ONLY)",
 	          permitUserWeb=false,
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response setPassword(@Nonnull final State st,
 	                                   @Nonnull
 	                                   @Arguments(description="New password",

@@ -29,7 +29,8 @@ public abstract class SetOwner {
 	          description="Transfer ownership of the instance (SUPERADMIN ONLY)",
 	          requiresPermission="instance.owner",
 	          permitJSON=false,
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false)
 	public static Response setOwner(@Nonnull final State st,
 	                                @Nullable
 	                                @Arguments(description="New owner for this instance",

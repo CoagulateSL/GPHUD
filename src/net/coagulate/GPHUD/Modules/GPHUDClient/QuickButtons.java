@@ -27,7 +27,8 @@ public class QuickButtons {
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response quickButton1(@Nonnull final State st) {
 		return quickButton(st,1);
 	}
@@ -37,7 +38,8 @@ public class QuickButtons {
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response quickButton2(@Nonnull final State st) {
 		return quickButton(st,2);
 	}
@@ -47,7 +49,8 @@ public class QuickButtons {
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response quickButton3(@Nonnull final State st) {
 		return quickButton(st,3);
 	}
@@ -57,7 +60,8 @@ public class QuickButtons {
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response quickButton4(@Nonnull final State st) {
 		return quickButton(st,4);
 	}
@@ -67,7 +71,8 @@ public class QuickButtons {
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response quickButton5(@Nonnull final State st) {
 		return quickButton(st,5);
 	}
@@ -77,7 +82,8 @@ public class QuickButtons {
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response quickButton6(@Nonnull final State st) {
 		return quickButton(st,6);
 	}

@@ -31,7 +31,8 @@ public abstract class Avatars {
 	          description="Synchronise the avatars status with the regions contents, server use only.",
 	          permitConsole=false,
 	          permitUserWeb=false,
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response setRegionAvatars(@Nonnull final State st,
 	                                        @Nullable
 	                                        @Arguments(description="Comma separated list of avatar key=names on the sim",

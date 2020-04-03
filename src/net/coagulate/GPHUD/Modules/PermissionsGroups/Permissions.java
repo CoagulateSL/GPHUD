@@ -35,7 +35,10 @@ public abstract class Permissions {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Add a permission to a permission group",
-	          requiresPermission="Instance.ManagePermissions")
+	          requiresPermission="Instance.ManagePermissions",
+	          permitObject=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response addPermission(@Nonnull final State st,
 	                                     @Nonnull
 	                                     @Arguments(description="Permissions group to add permission to",
@@ -69,7 +72,10 @@ public abstract class Permissions {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Remove a permission from a permissions group",
-	          requiresPermission="Instance.ManagePermissions")
+	          requiresPermission="Instance.ManagePermissions",
+	          permitScripting=false,
+	          permitExternal=false,
+	          permitObject=false)
 	public static Response delPermission(@Nonnull final State st,
 	                                     @Nonnull
 	                                     @Arguments(description="Permissions group to remove permission from",

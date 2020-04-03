@@ -20,7 +20,8 @@ public class Interactions {
 	                  permitJSON=false,
 	                  permitUserWeb=false,
 	                  permitConsole=false,
-	                  permitScripting=false)
+	                  permitScripting=false,
+	                  permitExternal=false)
 	public static Response clicked(@Nonnull final State st,
 	                               @Argument.Arguments(description="Character clicking the object",
 	                                                   type=Argument.ArgumentType.CHARACTER) final Char clicker) {
@@ -41,7 +42,8 @@ public class Interactions {
 	                  permitJSON=false,
 	                  permitUserWeb=false,
 	                  permitConsole=false,
-	                  permitScripting=false)
+	                  permitScripting=false,
+	                  permitExternal=false)
 	public static Response collided(@Nonnull final State st,
 	                                @Argument.Arguments(description="Character colliding with the object",
 	                                                    type=Argument.ArgumentType.CHARACTER) final Char collider) {

@@ -180,14 +180,17 @@ public abstract class View {
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
 	          description="Show yourself privately your own character sheet",
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false,
+	          permitScripting=false)
 	public static Response view(@Nonnull final State st) {
 		return new OKResponse(st.getKV("instance.ViewSelfTemplate").value());
 	}
 
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
-	          description="Publicly display your own character sheet")
+	          description="Publicly display your own character sheet",
+	          permitExternal=false)
 	public static Response show(@Nonnull final State st) {
 		return new SayResponse(st.getKV("instance.ShowSelfTemplate").value());
 	}
@@ -195,7 +198,9 @@ public abstract class View {
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
 	          description="Look at another's character sheet",
-	          permitObject=false)
+	          permitObject=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response look(@Nonnull final State st,
 	                            @Nonnull
 	                            @Arguments(type=Argument.ArgumentType.CHARACTER_NEAR,

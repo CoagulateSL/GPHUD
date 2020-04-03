@@ -19,7 +19,8 @@ public class Login {
 	                  permitScripting=false,
 	                  permitUserWeb=false,
 	                  permitObject=false,
-	                  permitJSON=false)
+	                  permitJSON=false,
+	                  permitExternal=false)
 	public static Response login(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","messageto");

@@ -21,7 +21,8 @@ public class LEDInfo {
 	          permitObject=false,
 	          permitConsole=false,
 	          permitUserWeb=false,
-	          permitJSON=false)
+	          permitJSON=false,
+	          permitExternal=false)
 	public static Response tx(final State st) {
 		return new OKResponse(
 				"The red light is the TRANSMIT light.\nDARK RED - transmission circuit has been successfully used, and is currently idle.\nBRIGHT RED - transmission in "+"progress, this should complete shortly, if not, wait for it to time out, it will automatically retry.\nBLACK - No transmission made or all servers "+"failed and HUD will reboot.");
@@ -34,7 +35,8 @@ public class LEDInfo {
 	          permitObject=false,
 	          permitConsole=false,
 	          permitUserWeb=false,
-	          permitJSON=false)
+	          permitJSON=false,
+	          permitExternal=false)
 	public static Response rx(final State st) {
 		return new OKResponse("The green light is the RECEIVE light.\nDARK GREEN - Receiver has been set up and registered, and is idle.\nBRIGHT GREEN - A message is being "+"received\nBLACK"+" - No receiving circuit has been created, or it failed.");
 	}

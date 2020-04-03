@@ -36,7 +36,9 @@ public abstract class GetMessages {
 	          permitScripting=false,
 	          description="Get a message",
 	          permitConsole=false,
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false,
+	          permitObject=false)
 	public static Response getMessage(@Nonnull final State st) {
 		final Message m=Message.getNextMessage(st);
 		if (m==null) { return new ErrorResponse("You have no outstanding messages."); }
@@ -61,7 +63,9 @@ public abstract class GetMessages {
 	          description="Accept/Reject a message",
 	          permitScripting=false,
 	          permitConsole=false,
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false,
+	          permitObject=false)
 	public static Response acceptRejectMessage(@Nonnull final State st,
 	                                           @Arguments(type=ArgumentType.CHOICE,
 	                                                      description="Accept or Reject the message",

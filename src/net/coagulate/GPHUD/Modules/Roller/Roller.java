@@ -66,7 +66,8 @@ public class Roller {
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
 	          description="Roll a given number of stated sided dice with a bias and reason",
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false)
 	public static Response rollOnly(@Nonnull final State st,
 	                                @Nullable
 	                                @Arguments(description="Number of dice to roll",
@@ -112,7 +113,8 @@ public class Roller {
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
 	          description="Roll a given number of stated sided dice with a bias and reason",
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false)
 	public static Response roll(@Nonnull final State st,
 	                            @Nullable
 	                            @Arguments(description="Number of dice to roll",
@@ -160,7 +162,8 @@ public class Roller {
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
 	          description="Default roll, only requests a reason",
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false)
 	public static Response rollDefault(@Nonnull final State st,
 	                                   @Arguments(description="Logged reason for the roll",
 	                                              type=ArgumentType.TEXT_ONELINE,
@@ -193,7 +196,8 @@ public class Roller {
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
 	          description="Roll against another player",
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false)
 	public static Response rollAgainst(@Nonnull final State st,
 	                                   @Nullable
 	                                   @Arguments(description="Character to roll against",
@@ -291,7 +295,8 @@ public class Roller {
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
 	          description="Roll against another player",
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitExternal=false)
 	public static Response rollDamageAgainst(@Nonnull final State st,
 	                                         @Nonnull
 	                                         @Arguments(description="Character to roll against",

@@ -107,7 +107,9 @@ public class ObjectManagement {
 	                  permitScripting=false,
 	                  permitUserWeb=false,
 	                  context=Command.Context.AVATAR,
-	                  requiresPermission="Objects"+".GetDriver")
+	                  requiresPermission="Objects"+".GetDriver",
+	                  permitExternal=false,
+	                  permitObject=false)
 	public static Response getDriver(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","servergive");

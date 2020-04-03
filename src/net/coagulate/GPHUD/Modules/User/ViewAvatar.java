@@ -107,7 +107,8 @@ public abstract class ViewAvatar {
 	@Commands(context=Command.Context.AVATAR,
 	          permitScripting=false,
 	          description="Set displayed timezone for date/time events",
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response setTZ(@Nonnull final State st,
 	                             @Arguments(type=Argument.ArgumentType.CHOICE,
 	                                        description="Prefered Time Zone",

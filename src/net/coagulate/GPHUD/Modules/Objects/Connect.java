@@ -26,7 +26,8 @@ public class Connect {
 	                  permitConsole=false,
 	                  permitUserWeb=false,
 	                  permitScripting=false,
-	                  permitJSON=false)
+	                  permitJSON=false,
+	                  permitExternal=false)
 	public static Response connect(@Nonnull final State st) {
 		if (!st.hasPermission("Objects.Connect")) {
 			Audit.audit(true,

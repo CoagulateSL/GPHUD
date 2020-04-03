@@ -37,7 +37,10 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Create a new zone",
-	          requiresPermission="Zoning.Config")
+	          requiresPermission="Zoning.Config",
+	          permitObject=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(description="Name of the zone",
 	                                         type=ArgumentType.TEXT_ONELINE,
@@ -51,7 +54,10 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Delete a zone",
-	          requiresPermission="Zoning.Config")
+	          requiresPermission="Zoning.Config",
+	          permitExternal=false,
+	          permitScripting=false,
+	          permitObject=false)
 	public static Response delete(@Nonnull final State st,
 	                              @Arguments(description="Name of the zone to delete",
 	                                         type=ArgumentType.ZONE) final Zone zone) {
@@ -70,7 +76,10 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Add a volume to a zone",
-	          requiresPermission="Zoning.Config")
+	          requiresPermission="Zoning.Config",
+	          permitScripting=false,
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response addVolume(@Nonnull final State st,
 	                                 @Nonnull
 	                                 @Arguments(type=ArgumentType.ZONE,
@@ -94,7 +103,9 @@ public abstract class ZoneCommands {
 	          permitScripting=false,
 	          description="Trigger a zone change event",
 	          permitConsole=false,
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response zoneTransition(@Nonnull final State st,
 	                                      @Nullable
 	                                      @Arguments(description="Name of zone we transitioned into",
@@ -126,7 +137,10 @@ public abstract class ZoneCommands {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Delete a zone area",
-	          requiresPermission="Zoning.Config")
+	          requiresPermission="Zoning.Config",
+	          permitObject=false,
+	          permitExternal=false,
+	          permitScripting=false)
 	public static Response deleteVolume(@Nonnull final State st,
 	                                    @Arguments(type=ArgumentType.INTEGER,
 	                                               description="Internal ID for the zone volume") final Integer zoneareaid) {

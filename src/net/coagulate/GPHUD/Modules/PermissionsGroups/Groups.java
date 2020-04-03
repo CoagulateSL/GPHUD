@@ -151,7 +151,10 @@ public abstract class Groups {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Creates a new permissions group",
-	          requiresPermission="Instance.ManagePermissions")
+	          requiresPermission="Instance.ManagePermissions",
+	          permitScripting=false,
+	          permitExternal=false,
+	          permitObject=false)
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(description="Name of group to create",
 	                                         type=ArgumentType.TEXT_CLEAN,
@@ -165,7 +168,8 @@ public abstract class Groups {
 
 	@Nonnull
 	@Commands(context=Context.AVATAR,
-	          description="List permissions groups present at this instance")
+	          description="List permissions groups present at this instance",
+	          permitObject=false)
 	public static Response list(@Nonnull final State st) {
 		final TabularResponse r=new TabularResponse("Permissions groups");
 		final Set<PermissionsGroup> groups=PermissionsGroup.getPermissionsGroups(st);
@@ -196,7 +200,10 @@ public abstract class Groups {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          requiresPermission="Instance.ManagePermissions",
-	          description="Deletes a permissions group")
+	          description="Deletes a permissions group",
+	          permitExternal=false,
+	          permitScripting=false,
+	          permitObject=false)
 	public static Response delete(@Nonnull final State st,
 	                              @Nonnull
 	                              @Arguments(description="Permissions group to delete",

@@ -22,7 +22,8 @@ public class Giver {
 	          permitScripting=false,
 	          requiresPermission="Instance.ServerOperator",
 	          permitUserWeb=false,
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response getGiver(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","servergive");
@@ -36,7 +37,8 @@ public class Giver {
 	@Commands(context=Command.Context.AVATAR,
 	          description="Get an Item from a giver",
 	          permitUserWeb=false,
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response get(@Nonnull final State st,
 	                           @Argument.Arguments(description="Name of object to give to avatar",
 	                                               type=Argument.ArgumentType.TEXT_ONELINE,

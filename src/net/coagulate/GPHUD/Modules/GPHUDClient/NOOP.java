@@ -21,7 +21,9 @@ public abstract class NOOP {
 	@Commands(context=Context.CHARACTER,
 	          description="No-operation, used by HUD to poll server",
 	          permitConsole=false,
-	          permitUserWeb=false)
+	          permitUserWeb=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response noop(final State st) {
 		return new JSONResponse(new JSONObject());
 	}

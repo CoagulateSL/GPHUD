@@ -19,7 +19,8 @@ public class MakeNPC {
 	                  requiresPermission="Characters"+".MakeNPC",
 	                  context=Command.Context.CHARACTER,
 	                  permitObject=false,
-	                  permitScripting=false)
+	                  permitScripting=false,
+	                  permitExternal=false)
 	public static Response makeNPC(@Nonnull final State st,
 	                               @Nullable
 	                               @Argument.Arguments(description="Name of the currently active character.  Used to confirm you know what you're doing.",

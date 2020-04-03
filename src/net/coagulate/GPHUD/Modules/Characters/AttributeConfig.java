@@ -223,7 +223,7 @@ public class AttributeConfig {
 	@Nonnull
 	@Commands(description="Set wether an existing attribute can be directly updated by the character",
 	          context=Command.Context.AVATAR,
-	          requiresPermission="Characters"+".CreateAttribute")
+	          requiresPermission="Characters.CreateAttribute")
 	public static Response setSelfModify(@Nonnull final State st,
 	                                     @Nonnull
 	                                     @Arguments(description="Attribute",
@@ -301,7 +301,9 @@ public class AttributeConfig {
 	@Commands(description="Delete an attribute",
 	          context=Command.Context.AVATAR,
 	          requiresPermission="Characters.DeleteAttribute",
-	          permitObject=false)
+	          permitObject=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response deleteAttribute(@Nonnull final State st,
 	                                       @Nonnull
 	                                       @Arguments(description="Attribute **AND ALL ITS DATA** to delete",

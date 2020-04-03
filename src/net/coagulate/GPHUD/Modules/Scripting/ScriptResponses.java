@@ -21,7 +21,9 @@ public class ScriptResponses {
 	                  permitScripting=false,
 	                  context=Command.Context.CHARACTER,
 	                  permitUserWeb=false,
-	                  permitConsole=false)
+	                  permitConsole=false,
+	                  permitExternal=false,
+	                  permitObject=false)
 	public static Response characterResponse(@Nonnull final State st,
 	                                         @Nonnull
 	                                         @Argument.Arguments(description="Script PID",
@@ -44,7 +46,9 @@ public class ScriptResponses {
 	                  permitScripting=false,
 	                  context=Command.Context.CHARACTER,
 	                  permitUserWeb=false,
-	                  permitConsole=false)
+	                  permitConsole=false,
+	                  permitExternal=false,
+	                  permitObject=false)
 	public static Response stringResponse(@Nonnull final State st,
 	                                      @Nonnull
 	                                      @Argument.Arguments(description="Script PID",

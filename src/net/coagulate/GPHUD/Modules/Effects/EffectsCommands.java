@@ -49,7 +49,9 @@ public class EffectsCommands {
 	}
 
 	@Command.Commands(description="Show effects applied to your character",
-	                  context=Command.Context.CHARACTER)
+	                  context=Command.Context.CHARACTER,
+	                  permitScripting=false,
+	                  permitExternal=false)
 	public static Response show(@Nonnull final State st) {
 		Effect.expirationCheck(st,st.getCharacter());
 		final Set<Effect> effects=Effect.get(st,st.getCharacter());

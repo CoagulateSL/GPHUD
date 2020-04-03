@@ -27,7 +27,9 @@ public abstract class ModuleControl {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Disable the specified module",
-	          requiresPermission="instance.ModuleEnablement")
+	          requiresPermission="instance.ModuleEnablement",
+	          permitExternal=false,
+	          permitScripting=false)
 	public static Response disableModule(@Nonnull final State st,
 	                                     @Nonnull
 	                                     @Arguments(type=ArgumentType.MODULE,
@@ -51,7 +53,9 @@ public abstract class ModuleControl {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Enabled the specified module",
-	          requiresPermission="instance.ModuleEnablement")
+	          requiresPermission="instance.ModuleEnablement",
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response enableModule(@Nonnull final State st,
 	                                    @Nonnull
 	                                    @Arguments(type=ArgumentType.MODULE,

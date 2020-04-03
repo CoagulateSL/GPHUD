@@ -25,7 +25,9 @@ public class OpenWebsite {
 	@Commands(context=Context.CHARACTER,
 	          description="Causes the GPHUD to send an llOpenURL to the user directing them to SSO to the Main Website",
 	          permitUserWeb=false,
-	          permitObject=false)
+	          permitObject=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response openWebsite(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","openurl");
@@ -41,7 +43,8 @@ public class OpenWebsite {
 	@Commands(context=Context.ANY,
 	          description="Causes the GPHUD to send an llOpenURL to the user with a custom URL/description",
 	          permitUserWeb=false,
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response offerWebsite(@Nonnull final State st,
 	                                    @Argument.Arguments(description="URL to offer to user",
 	                                                        type=Argument.ArgumentType.TEXT_ONELINE,

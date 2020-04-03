@@ -36,7 +36,8 @@ public class Logout {
 	                  permitScripting=false,
 	                  permitUserWeb=false,
 	                  permitConsole=false,
-	                  permitObject=false)
+	                  permitObject=false,
+	                  permitExternal=false)
 	public static Response logout(@Nonnull final State st) {
 		if (st.getCharacterNullable()!=null) {
 			Visit.closeVisits(st);

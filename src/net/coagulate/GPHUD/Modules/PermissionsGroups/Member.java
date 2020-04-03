@@ -36,7 +36,10 @@ public abstract class Member {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          requiresPermission="Instance.ManagePermissions",
-	          description="Remove a member from a permissions group")
+	          description="Remove a member from a permissions group",
+	          permitObject=false,
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response eject(@Nonnull final State st,
 	                             @Nonnull
 	                             @Arguments(type=ArgumentType.PERMISSIONSGROUP,
@@ -63,7 +66,10 @@ public abstract class Member {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          requiresPermission="Instance.ManagePermissions",
-	          description="Adds a user to a permissions group")
+	          description="Adds a user to a permissions group",
+	          permitScripting=false,
+	          permitExternal=false,
+	          permitObject=false)
 	public static Response invite(@Nonnull final State st,
 	                              @Nonnull
 	                              @Arguments(description="Permissions group to join avatar to",
@@ -90,7 +96,10 @@ public abstract class Member {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          requiresPermission="Instance.ManagePermissions",
-	          description="Set a users permissions over a permissions group")
+	          description="Set a users permissions over a permissions group",
+	          permitExternal=false,
+	          permitObject=false,
+	          permitScripting=false)
 	public static Response setPermissions(@Nonnull final State st,
 	                                      @Nonnull
 	                                      @Arguments(type=ArgumentType.PERMISSIONSGROUP,

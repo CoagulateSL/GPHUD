@@ -47,7 +47,8 @@ public abstract class Login {
 	          permitUserWeb=false,
 	          permitScripting=false,
 	          description="Register this session as a character connection",
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response login(@Nonnull final State st,
 	                             @Nullable
 	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
@@ -84,7 +85,10 @@ public abstract class Login {
 			} // autocreate or die :P
 			// if not auto create, offer "characters.create" i guess
 			final JSONResponse response=new JSONResponse(Modules.getJSONTemplate(st,"characters.create"));
-			response.asJSON(st).put("hudtext","Creating character...").put("hudcolor","<1.0,0.75,0.75>").put("titlertext","Creating character...")
+			response.asJSON(st)
+			        .put("hudtext","Creating character...")
+			        .put("hudcolor","<1.0,0.75,0.75>")
+			        .put("titlertext","Creating character...")
 			        .put("titlercolor","<1.0,0.75,0.75>")
 			        .put("message","Welcome.  You do not have any characters, please create a new one.");
 			return response;
@@ -239,7 +243,8 @@ public abstract class Login {
 	@Commands(context=Context.AVATAR,
 	          description="Create a new character",
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response create(@Nonnull final State st,
 	                              @Nullable
 	                              @Arguments(type=ArgumentType.TEXT_CLEAN,
@@ -285,7 +290,8 @@ public abstract class Login {
 	@Commands(context=Context.AVATAR,
 	          description="Switch to a character",
 	          permitObject=false,
-	          permitScripting=false)
+	          permitScripting=false,
+	          permitExternal=false)
 	public static Response select(@Nonnull final State st,
 	                              @Nullable
 	                              @Arguments(type=ArgumentType.CHARACTER_PLAYABLE,
@@ -312,7 +318,8 @@ public abstract class Login {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Initialise a character attribute",
-	          permitObject=false)
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response initialise(@Nonnull final State st,
 	                                  @Nonnull
 	                                  @Arguments(type=ArgumentType.ATTRIBUTE,
