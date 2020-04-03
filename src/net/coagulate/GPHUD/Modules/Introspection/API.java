@@ -95,6 +95,11 @@ public abstract class API {
 			f.add(new Color("green","Accessible via Object API"));
 		}
 		f.add("<br>");
+		if (!c.permitExternal()) { f.add(new Color("red","External access denied")); }
+		else {
+			f.add(new Color("green","Accessible via External API"));
+		}
+		f.add("<br>");
 		f.add("<br>");
 		f.add(new TextSubHeader("Target Method"));
 		f.add(c.getFullMethodName());
@@ -142,7 +147,11 @@ public abstract class API {
 					else {
 						t.add(new Color("red","Object"));
 					}
-					if (c.isGenerated()) { t.add(new Color("blue","Instance Specific")); }
+					if (c.permitExternal()) { t.add(new Color("green","External")); }
+					else {
+						t.add(new Color("red","External"));
+					}
+					if (c.isGenerated()) { t.add(new Color("blue","Generated")); }
 					else { t.add(""); }
 				}
 				catch (@Nonnull final Exception e) { t.add("ERR:"+e); }

@@ -82,6 +82,9 @@ public class MenuCommand extends Command {
 	@Override
 	public boolean permitScripting() { return false; }
 
+	@Override
+	public boolean permitExternal() { return false; }
+
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {

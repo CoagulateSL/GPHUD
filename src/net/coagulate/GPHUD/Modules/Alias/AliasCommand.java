@@ -125,6 +125,12 @@ public class AliasCommand extends Command {
 		return targetcommand.permitScripting();
 	}
 
+	@Override
+	public boolean permitExternal() {
+		if (targetcommand==null) { return false; }
+		return targetcommand.permitExternal();
+	}
+
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {

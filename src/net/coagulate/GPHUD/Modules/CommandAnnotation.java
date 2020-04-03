@@ -73,6 +73,8 @@ public class CommandAnnotation extends Command {
 
 	public boolean permitScripting() { return meta.permitScripting(); }
 
+	public boolean permitExternal() { return meta.permitExternal(); }
+
 	@Nonnull
 	public List<Argument> getArguments() { return arguments; }
 

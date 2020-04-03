@@ -84,6 +84,8 @@ public abstract class Command {
 
 	public abstract boolean permitScripting();
 
+	public abstract boolean permitExternal();
+
 	@Nonnull
 	public abstract List<Argument> getArguments();
 
@@ -753,6 +755,8 @@ public abstract class Command {
 		boolean permitScripting() default true;
 
 		boolean permitObject() default true;
+
+		boolean permitExternal() default true;
 	}
 
 }

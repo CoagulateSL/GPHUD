@@ -74,6 +74,9 @@ public class ScriptingCommand extends Command {
 		return false;
 	}
 
+	@Override
+	public boolean permitExternal() { return false; }
+
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
