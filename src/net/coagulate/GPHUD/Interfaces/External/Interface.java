@@ -9,6 +9,7 @@ import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
+import net.coagulate.GPHUD.Data.InstanceDevelopers;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -154,6 +155,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// get developer key
 		if (!obj.has("developerkey")) { throw new UserInputEmptyException("No developer credentials were supplied in the request"); }
 		final String developerkey=obj.getString("developerkey");
+		if (developerkey.length()<16) { return new TerminateResponse("Developer key is invalid"); }
 		st.json().remove("developerkey");
 		// resolve the developer, or error
 		final User developer=User.resolveDeveloperKey(developerkey);
@@ -167,7 +169,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 		st.setInstance(decodeInstance(obj));
 
-		// TODO VERIFY this dev key is allowed at this instance
+		if (!InstanceDevelopers.isDeveloper(st.getInstance(),developer)) {
+			return new TerminateResponse("Your developer ID is not authorised at this instance");
+		}
 		st.setAvatar(decodeAvatar(obj));
 		st.setCharacter(decodeCharacter(st,obj));
 
@@ -197,7 +201,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.postmap(parametermap);
 		GPHUD.getLogger("ExternalInterface")
 		     .fine("Processing command "+command+" from "+st.sourcelocation+" identifying as '"+st.getSourcenameNullable()+"' devkey:"+st.getSourcedeveloper());
-		return Modules.run(st,obj.getString("command"),parametermap);
+		Response response=Modules.run(st,obj.getString("command"),parametermap);
+		InstanceDevelopers.accounting(st.getInstance(),developer,1,response.toString().length()+obj.toString().length());
+		return response;
 	}
 
 	private Instance decodeInstance(JSONObject obj) {
