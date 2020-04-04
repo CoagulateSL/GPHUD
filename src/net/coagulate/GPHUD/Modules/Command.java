@@ -19,6 +19,7 @@ import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.GPHUD.State.Sources;
 import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
@@ -378,27 +379,31 @@ public abstract class Command {
 				return new ErrorResponse("Permission is denied, you require '"+requiresPermission()+"'");
 			}
 			// check required interface
-			if (st.source==State.Sources.USER) {
+			if (st.source==Sources.USER) {
 				if (!permitWeb()) {
 					return new ErrorResponse("This command can not be accessed via the Web interface");
 				}
 			}
-			if (st.source==State.Sources.SYSTEM) {
+			if (st.source==Sources.SYSTEM) {
 				if (!permitHUD()) {
 					return new ErrorResponse("This command can not be accessed via the LSL System interface");
 				}
 			}
-			if (st.source==State.Sources.CONSOLE) {
+			if (st.source==Sources.CONSOLE) {
 				if (!permitConsole()) {
 					return new ErrorResponse("This command can not be accessed via the console");
 				}
 			}
-			if (st.source==State.Sources.SCRIPTING) {
+			if (st.source==Sources.SCRIPTING) {
 				if (!permitScripting()) {
 					return new ErrorResponse("This command can not be access via the Scripting module");
 				}
 			}
-
+			if (st.source==Sources.EXTERNAL) {
+				if (!permitExternal()) {
+					return new ErrorResponse("This command can not be accessed via the External API interface");
+				}
+			}
 			//check arguments
 			int i=0;
 			if (args.length!=getInvokingArgumentCount()+1) {

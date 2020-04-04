@@ -16,6 +16,7 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.SL.Data.User;
+import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -24,7 +25,6 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.net.InetAddress;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -101,8 +101,6 @@ public class State extends DumpableState {
 	@Nullable
 	private JSONObject json;
 	// system interface sets to raw json string
-	@Nullable
-	private InetAddress address;
 	@Nullable
 	private Header[] headers;
 	// web interface cookie, used to logout things
@@ -316,6 +314,8 @@ public class State extends DumpableState {
 	public void setRegion(@Nonnull final Region region) {
 		region.validate(this);
 		this.region=region;
+		if (region==null) { regionname=null; }
+		else { regionname=region.getName(); }
 	}
 
 	@Nullable
@@ -438,6 +438,7 @@ public class State extends DumpableState {
 		if (isSuperUser()) { return true; }
 		if (isInstanceOwner()) { return true; }
 		if (elevated()) { return true; }
+		if (User.getSystem().equals(getAvatarNullable())) { return true; }
 		preparePermissionsCache();
 		if (permissionscache==null) { return false; }
 		for (final String check: permissionscache) { if (check.equalsIgnoreCase(permission)) { return true; } }
@@ -959,13 +960,8 @@ public class State extends DumpableState {
 	}
 
 	@Nonnull
-	public InetAddress address() {
-		if (address==null) { throw new SystemImplementationException("Remote host address is null"); }
-		return address;
-	}
-
-	public void address(@Nullable final InetAddress address) {
-		this.address=address;
+	public String address() {
+		return getClientIP();
 	}
 
 	@Nonnull
@@ -1014,6 +1010,11 @@ public class State extends DumpableState {
 
 	public Map<String,String> getTemplates() {
 		return Templater.getTemplates(this);
+	}
+
+	@SuppressWarnings("deprecation")
+	public String getClientIP() {
+		return SL.getClientIP(req,context);
 	}
 
 	// ----- Internal Instance -----
@@ -1072,7 +1073,8 @@ public class State extends DumpableState {
 		USER,
 		CONSOLE,
 		SCRIPTING,
-		OBJECT
+		OBJECT,
+		EXTERNAL
 	}
 
 

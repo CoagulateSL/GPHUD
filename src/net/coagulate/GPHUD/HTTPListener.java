@@ -42,6 +42,7 @@ public class HTTPListener {
 			// NOTE HOW THE HANDLERS ARE A SINGLE INSTANCE.
 			// no instance level data storage.  USE HTTPCONTEXT (superceeded by "State")
 
+			bootstrap.registerHandler("/external",new net.coagulate.GPHUD.Interfaces.External.Interface());
 			bootstrap.registerHandler("/system",new net.coagulate.GPHUD.Interfaces.System.Interface());
 			bootstrap.registerHandler("/*",new net.coagulate.GPHUD.Interfaces.User.Interface());
 			//bootstrap.registerHandler("/shutdown",new net.coagulate.GPHUD.UnauthenticatedShutdown());

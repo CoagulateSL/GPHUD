@@ -60,10 +60,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final InputStream is=r.getEntity().getContent();
 				final byte[] buffer=new byte[65*1024];
 				final int ammountread=is.read(buffer);
+				buffer[ammountread]=0;
 				if (ammountread==-1) {
 					throw new SystemInitialisationException("Reading from HTTP Response gave immediate EOF?");
 				}
-				final String message=new String(buffer);
+				final String message=new String(buffer,0,ammountread);
 				// DEBUGGING ONLY log entire JSON input
 				// JSONify it
 				final JSONObject obj;

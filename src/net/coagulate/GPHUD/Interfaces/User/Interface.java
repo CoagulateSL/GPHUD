@@ -364,7 +364,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 						st.logger().log(SEVERE,"Cookie load gave exception, right after it was generated?",ex);
 					}
 					st.resp().addHeader("Set-Cookie","gphud="+cookie+"; Path=/");
-					st.logger().log(INFO,"Logged in from "+st.address().getHostAddress());
+					st.logger().log(INFO,"Logged in from "+st.getClientIP());
 					return null; //return characterSelectionHook(st, values);
 				}
 				else {

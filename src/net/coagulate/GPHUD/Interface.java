@@ -3,7 +3,6 @@ package net.coagulate.GPHUD;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.SL.SL;
 import org.apache.http.Header;
-import org.apache.http.HttpInetConnection;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
@@ -11,7 +10,6 @@ import org.apache.http.protocol.HttpRequestHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.net.InetAddress;
 
 import static java.util.logging.Level.SEVERE;
 
@@ -68,11 +66,6 @@ public abstract class Interface implements HttpRequestHandler {
 		try {
 			// create our state object
 
-			// get remote address.  Probably always localhost :P
-			@SuppressWarnings("deprecation")
-			final HttpInetConnection connection=(HttpInetConnection) httpcontext.getAttribute(org.apache.http.protocol.ExecutionContext.HTTP_CONNECTION);
-			final InetAddress ia=connection.getRemoteAddress();
-
 			// the requested URI
 			final String uri=req.getRequestLine().getUri();
 
@@ -88,7 +81,6 @@ public abstract class Interface implements HttpRequestHandler {
 
 			// stash the remote address, uri, the headers array, request and response in the context
 			//System.out.println(req.getRequestLine().toString());
-			st.address(ia);
 			st.setURL(uri);
 			st.headers(headers);
 			st.host=host;

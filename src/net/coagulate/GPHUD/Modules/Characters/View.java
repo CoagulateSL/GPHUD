@@ -51,15 +51,15 @@ public abstract class View {
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.ANY,
-	          description="Get status of this connection")
+	          description="Get textual status of this connection")
 	public static Response status(@Nonnull final State st) {
 		final TabularResponse t=new TabularResponse();
 		t.openRow();
 		t.add("Node").addNoNull((GPHUD.DEV?"DEVELOPMENT // ":"Production // ")+Interface.getNode());
 		t.openRow();
-		t.add("Avatar").addNoNull(st.getAvatar().getGPHUDLink());
+		t.add("Avatar").addNoNull(st.getAvatarNullable().getGPHUDLink());
 		t.openRow();
-		t.add("Character").addNoNull(st.getCharacter());
+		t.add("Character").addNoNull(st.getCharacterNullable());
 		t.openRow();
 		t.add("Instance").addNoNull(st.getInstanceNullable());
 		t.openRow();
@@ -67,11 +67,11 @@ public abstract class View {
 		t.openRow();
 		t.add("Zone").addNoNull(st.zone);
 		t.openRow();
-		t.add("Source").addNoNull(st.getSourcename());
+		t.add("Source").addNoNull(st.getSourcenameNullable());
 		t.openRow();
-		t.add("SourceOwner").addNoNull(st.getSourceowner().getGPHUDLink());
+		t.add("SourceOwner").addNoNull(st.getSourceownerNullable().toString());
 		t.openRow();
-		t.add("SourceDev").addNoNull(st.getSourcedeveloper().getGPHUDLink());
+		t.add("SourceDev").addNoNull(st.getSourcedeveloperNullable().toString());
 		return t;
 	}
 
