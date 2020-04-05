@@ -2,7 +2,9 @@ package net.coagulate.GPHUD.Modules.External;
 
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
@@ -35,5 +37,20 @@ public class BasicCommands {
 		json.put("sourceowner",st.getSourceownerNullable());
 		json.put("sourcedeveloper",st.getSourcedeveloperNullable());
 		return new JSONResponse(json);
+	}
+
+	@Commands(description="Gets your developer key",
+	          permitUserWeb=false,
+	          permitJSON=false,
+	          permitExternal=false,
+	          permitObject=false,
+	          permitScripting=false,
+	          context=Context.AVATAR)
+	@Nonnull
+	public static Response getDeveloperKey(@Nonnull final State st) {
+		if (!st.getAvatar().hasDeveloperKey()) {
+			return new ErrorResponse("You have no developer key, please contact Iain Maltz if you believe this to be in error");
+		}
+		return new OKResponse("Your developer key is: "+st.getAvatar().getDeveloperKey());
 	}
 }
