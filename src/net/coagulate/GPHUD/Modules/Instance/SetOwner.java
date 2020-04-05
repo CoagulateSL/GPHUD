@@ -26,8 +26,8 @@ public abstract class SetOwner {
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          permitScripting=false,
-	          description="Transfer ownership of the instance (SUPERADMIN ONLY)",
-	          requiresPermission="instance.owner",
+	          description="Transfer ownership of the instance",
+	          requiresPermission="User.SuperAdmin",
 	          permitJSON=false,
 	          permitUserWeb=false,
 	          permitExternal=false,
