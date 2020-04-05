@@ -33,8 +33,8 @@ import static java.util.logging.Level.WARNING;
  * @author Iain Price <gphud@predestined.net>
  */
 public class GPHUD {
-	public static final String VERSION="v3.13.1";
-	public static final String VERSION_DATE="April 2nd 2020";
+	public static final String VERSION="v3.14.0";
+	public static final String VERSION_DATE="April 5th 2020";
 	// config KV store
 	private static final Map<String,String> CONFIG=new TreeMap<>();
 	public static String hostname="UNSET";
