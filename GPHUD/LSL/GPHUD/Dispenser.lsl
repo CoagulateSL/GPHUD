@@ -1,10 +1,11 @@
 #include "GPHUDHeader.lsl"
 #include "../Library/JsonTools.lsl"
 
-#define COMMS_INCLUDECOOKIE
+//#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
-#define COMMS_INCLUDEDIGEST
+//#define COMMS_INCLUDEDIGEST
 #define COMMS_DEVKEY "***REMOVED***"
+#define COMMS_DONT_CHECK_CALLBACK
 #include "SL/LSL/Library/CommsV3.lsl"
 #include "SL/LSL/Library/SetDev.lsl"
 
