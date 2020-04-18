@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
@@ -42,6 +43,7 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
 public abstract class Login {
 	// ---------- STATICS ----------
 	@Nonnull
+	@Deprecated
 	@Commands(context=Context.AVATAR,
 	          permitConsole=false,
 	          permitUserWeb=false,
@@ -283,6 +285,20 @@ public abstract class Login {
 		Char.create(st,charactername,true);
 		final Char c=Char.resolve(st,charactername);
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
+		if (st.json().has("protocol")) {
+			if (st.json().getInt("protocol")==2)
+			{
+				if (st.getCharacterNullable()==null) {
+					JSONObject reconnect=new JSONObject();
+					reconnect.put("incommand","forcereconnect");
+					return new JSONResponse(reconnect);
+				}
+				else
+				{
+					return new OKResponse("New character created and available");
+				}
+			}
+		}
 		return login(st,null,null,null);
 	}
 
@@ -302,10 +318,20 @@ public abstract class Login {
 		}
 		final boolean charswitchallowed=st.getKV("Instance.CharacterSwitchEnabled").boolValue();
 		if (!charswitchallowed) {
-			return new ErrorResponse("You are not allowed to create or switch characters in this location");
+			return new ErrorResponse("You are not allowed to switch characters in this location");
 		}
 		if (character.retired()) {
 			return new ErrorResponse("Character '"+character+"' has been retired and can not be selected");
+		}
+		if (st.json().has("protocol")) {
+			if (st.json().getInt("protocol")==2) {
+				String url=st.getCharacter().getURL();
+				st.getCharacter().disconnect();
+				character.login(st.getAvatar(),st.getRegion(),url);
+				st.setCharacter(character);
+				character.wipeConveyances(st);
+				return new OKResponse("Character switched to "+character);
+			}
 		}
 		GPHUD.purgeURL(st.callbackurl());
 		if (st.getCharacterNullable()!=null) { st.purgeCache(st.getCharacter()); }
