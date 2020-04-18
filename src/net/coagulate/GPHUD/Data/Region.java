@@ -12,6 +12,7 @@ import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
@@ -188,6 +189,40 @@ public class Region extends TableRow {
 	public static Set<Region> getRegions(@Nonnull final State st,
 	                                     final boolean allowretired) {
 		return getRegions(st.getInstance(),allowretired);
+	}
+
+	public static Table statusDump(State st) {
+		Table t=new Table().border();
+		t.header("Region ID");
+		t.header("Name");
+		t.header("URL");
+		t.header("URL Last Active (approx)");
+		t.header("Servicing Server");
+		t.header("Server Version");
+		t.header("Server DateTime");
+		t.header("HUD Version");
+		t.header("HUD DateTime");
+		t.header("Region X");
+		t.header("Region Y");
+		t.header("Retired");
+		for (ResultsRow row: db().dq("select * from regions where instanceid=?",st.getInstance().getId())) {
+			t.openRow();
+			t.add(row.getIntNullable("regionid"));
+			t.add(row.getStringNullable("name"));
+			t.add(row.getStringNullable("url")!=null?"Present":"");
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("urllast"),st.getAvatar().getTimeZone()));
+			t.add(row.getStringNullable("authnode"));
+			t.add(row.getIntNullable("regionserverversion"));
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("regionserverdatetime"),st.getAvatar().getTimeZone()));
+			t.add(row.getIntNullable("regionhudversion"));
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("regionhuddatetime"),st.getAvatar().getTimeZone()));
+			t.add(row.getIntNullable("regionx"));
+			t.add(row.getIntNullable("regiony"));
+			Integer retired=row.getIntNullable("retired");
+			if (retired==null) { retired=0; }
+			t.add(retired==0?"":"Retired");
+		}
+		return t;
 	}
 
 	// ----- Internal Statics -----

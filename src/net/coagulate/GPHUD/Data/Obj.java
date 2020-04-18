@@ -4,6 +4,8 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Tools.UnixTime;
+import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
@@ -194,6 +196,35 @@ public class Obj extends TableRow {
 		db().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
+	public static Table statusDump(State st) {
+		Table t=new Table().border();
+		t.header("UUID");
+		t.header("Name");
+		t.header("Region");
+		t.header("Owner");
+		t.header("Location");
+		t.header("Last RX");
+		t.header("ObjectType");
+		t.header("URL");
+		t.header("Version");
+		t.header("Servicing Server");
+		for (ResultsRow row: db().dq("select objects.* from objects inner join regions on objects.regionid=regions.regionid where regions.instanceid=?",st.getInstance().getId())) {
+			t.openRow();
+			t.add(row.getString("uuid"));
+			t.add(row.getString("name"));
+			t.add(Region.get(row.getInt("regionid"),true).getName()+"[#"+row.getInt("regionid")+"]");
+			t.add(User.get(row.getInt("owner")).getName()+"[#"+row.getInt("regionid")+"]");
+			t.add(row.getString("location"));
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("lastrx"),st.getAvatar().getTimeZone()));
+			Integer objecttype=row.getIntNullable("objecttype");
+			t.add(objecttype==null?"":ObjType.get(objecttype).getName()+"[#"+objecttype+"]");
+			t.add(row.getStringNullable("url")==null?"":"Present");
+			t.add(row.getIntNullable("version"));
+			t.add(row.getStringNullable("authnode"));
+		}
+		return t;
+	}
+
 	// ---------- INSTANCE ----------
 
 	/**
@@ -296,6 +327,6 @@ public class Obj extends TableRow {
 		Integer lastrx=getIntNullable("lastrx");
 		if (lastrx==null) { lastrx=0; }
 		final int diff=UnixTime.getUnixTime()-lastrx;
-		if (diff>60) { set("lastrx",UnixTime.getUnixTime()); }
+		if (diff>60) { db().d("update objects set lastrx=?,authnode=? where id=?",UnixTime.getUnixTime(),Interface.getNode(),getId()); }
 	}
 }
