@@ -1,14 +1,16 @@
 //#define COMMS_DEBUG
+//#define DEBUG
 #include "SL/LSL/Constants.lsl"
 #include "SL/LSL/GPHUD/Constants.lsl"
 #include "SL/LSL/Library/JsonTools.lsl"
 #include "SL/LSL/Library/SetDev.lsl"
 #include "SL/LSL/GPHUD/GPHUDHeader.lsl"
 #include "SL/LSL/Library/ServerMesh.lsl"
-#define COMMS_INCLUDECOOKIE
+//#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
-#define COMMS_INCLUDEDIGEST
+//#define COMMS_INCLUDEDIGEST
 #define COMMS_DEVKEY "***REMOVED***"
+#define COMMS_DONT_CHECK_CALLBACK
 #include "SL/LSL/Library/CommsV3.lsl"
 
 
