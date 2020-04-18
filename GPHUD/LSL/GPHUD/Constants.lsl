@@ -12,6 +12,7 @@
 #define LINK_LEGACY_PACKAGE -365746003 // not really legacy :P
 #define LINK_STOP -365746003
 #define LINK_SET_STAGE -365746004
+#define LINK_SHUTDOWN -365746005 // stop everything
 string VERSION="3.9.1";
 string COMPILEDATE=__DATE__;
 string COMPILETIME=__TIME__;
