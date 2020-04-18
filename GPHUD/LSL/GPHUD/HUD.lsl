@@ -233,7 +233,7 @@ default {
 		setDev(FALSE);
 		if (DEV) { k=LOGO_COAGULATE_DEV; }
 		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,k,<1,1,1>,<0,0,0>,0]);
-		llResetOtherScript("UI");llResetOtherScript("UIX");
+		llResetOtherScript("UI");
 		llSetText("",<0,0,0>,0);
 		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) {
 			llResetOtherScript("Attacher"); AWAIT_GO=TRUE;
