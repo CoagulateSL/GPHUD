@@ -30,6 +30,7 @@ public class Logout {
 		st.setInstance(null);
 	}
 
+	@Deprecated
 	@Nonnull
 	@Command.Commands(description="Log out or disconnect this character",
 	                  context=Command.Context.CHARACTER,
