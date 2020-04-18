@@ -2,9 +2,11 @@
 #include "SL/LSL/Library/SetDev.lsl"
 #include "SL/LSL/Library/JsonTools.lsl"
 
-#define COMMS_INCLUDECOOKIE
+//#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
-#define COMMS_INCLUDEDIGEST
+//#define COMMS_INCLUDEDIGEST
+#define COMMS_DONT_CHECK_CALLBACK
+#define COMMS_PROTOCOL "2"
 #define COMMS_DEVKEY "***REMOVED***"
 #include "SL/LSL/Library/CommsV3.lsl"
 
@@ -20,6 +22,7 @@ list zoning=[];
 string ourzone="";
 integer curpage=0;
 string sensordescription="";
+integer SHUTDOWN=FALSE;
 rollchannel() {
 	if (channel!=0) { llListenRemove(handle); }
 	channel=(integer)(llFrand(-999999999)-1000000000);
@@ -143,7 +146,7 @@ calculateZone() {
 process() {
 	//llOwnerSay("Json2:"+jsontwo);
 	string incommand=jsontwoget("incommand");	
-	if (incommand=="registered") { cookie=jsontwoget("cookie"); }
+	if (incommand=="registered") { /*cookie=jsontwoget("cookie");*/ }
 	if (jsontwoget("zoning")!="") { zoning=llParseStringKeepNulls(jsontwoget("zoning"),["|"],[]); calculateZone();}
 	if (jsontwoget("legacymenu")!="") { mainmenu=jsontwoget("legacymenu"); }
 	if (jsontwoget("url")!="") { comms_url=jsontwoget("url"); }
@@ -172,9 +175,12 @@ default {
 		setDev(FALSE);
 	}
 	timer() {
+		if (SHUTDOWN) { llSetTimerEvent(0); return; }
 		if (llGetListLength(zoning)>0) { calculateZone(); }
 	}
     link_message(integer from,integer num,string message,key id) {
+		if (SHUTDOWN) { return; }	
+		if (num==LINK_SHUTDOWN) { SHUTDOWN=TRUE; }
 		if (num==LINK_SET_STAGE) { BOOTSTAGE=((integer)message); }
 		if (num==LINK_RECEIVE) {
 			//llOwnerSay("Json2:"+message);
@@ -184,6 +190,7 @@ default {
 		if (num==LINK_DIAGNOSTICS) { llOwnerSay("UI: "+(string)llGetFreeMemory()); }
 	}
 	http_response( key request_id, integer status, list metadata, string body ) {
+		if (SHUTDOWN) { return; }	
 		if (status==200) {
 			jsontwo=body; body="";
 			process();
@@ -191,6 +198,7 @@ default {
 		}
 	}	
 	listen(integer rxchannel,string name,key id,string text) {
+		if (SHUTDOWN) { return; }	
 		if (id==llGetOwner() && channel==rxchannel) {
 			string type="";
 			integer i=0;
@@ -258,10 +266,12 @@ default {
 		}
 	}
 	no_sensor() {
+		if (SHUTDOWN) { return; }
 		if (sensormanual==MANUAL_AVAILABLE) { sensormanual=MANUAL_SELECTED; trigger(); return; }
 		llOwnerSay("Unable to detect any nearby players!");
 	}
 	sensor(integer n) {
+		if (SHUTDOWN) { return; }
 		list stride=[];
 		integer i=0;
 		for (i=0;i<n;i++) {
@@ -288,6 +298,7 @@ default {
 	}
 	touch_start(integer n)
 	{
+		if (SHUTDOWN) { return; }
 		if (BOOTSTAGE<BOOT_COMPLETE) { return; }
 		if (llDetectedLinkNumber(0)==1) {
 			mainMenu();
@@ -298,5 +309,4 @@ default {
 			}
 		}
 	}
-	
 }
