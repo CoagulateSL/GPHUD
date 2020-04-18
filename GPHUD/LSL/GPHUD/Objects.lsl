@@ -5,13 +5,14 @@
 #include "SL/LSL/GPHUD/GPHUDHeader.lsl"
 #include "SL/LSL/Library/JsonTools.lsl"
 
-#define COMMS_INCLUDECOOKIE
+//#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
-#define COMMS_INCLUDEDIGEST
+//#define COMMS_INCLUDEDIGEST
 #define COMMS_NOCHARACTER
 #define COMMS_NOSETTEXT
 #define COMMS_DEVKEY "***REMOVED***"
 #define COMMS_INTERFACE "object"
+#define COMMS_DONT_CHECK_CALLBACK
 #include "SL/LSL/Library/CommsV3.lsl"
 
 #define CHECKIN_MINUTES 15
@@ -37,8 +38,8 @@ integer process(key id) {
 		gphud_hang("Failed to register with server:\n"+jsonget("error"));
 		return TRUE;	
 	}
-	if (incommand=="registered") { cookie=jsonget("cookie"); BOOTSTAGE=BOOT_COMPLETE; llMessageLinked(LINK_THIS,LINK_SET_STAGE,(string)BOOTSTAGE,NULL_KEY); }
-	if (incommand=="ping") { retjson=llJsonSetValue(retjson,["cookie"],cookie); }
+	if (incommand=="registered") { /*cookie=jsonget("cookie");*/ BOOTSTAGE=BOOT_COMPLETE; llMessageLinked(LINK_THIS,LINK_SET_STAGE,(string)BOOTSTAGE,NULL_KEY); }
+	if (incommand=="ping") { /*retjson=llJsonSetValue(retjson,["cookie"],cookie);*/ }
 	//if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
 	//if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
 	if (jsonget("mode")!="") { MODE=jsonget("mode"); }
