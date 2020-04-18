@@ -15,6 +15,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Table implements Renderable {
+	HeaderRow headerrow=null;
 	final List<Row> table=new ArrayList<>();
 	boolean border;
 	@Nullable
@@ -22,7 +23,8 @@ public class Table implements Renderable {
 	private boolean nowrap;
 
 	// ---------- INSTANCE ----------
-	public void border(final boolean border) { this.border=border; }
+	public Table border(final boolean border) { this.border=border; return this; }
+	public Table border() { return border(true); }
 
 	@Nonnull
 	public Table openRow() {
@@ -39,6 +41,12 @@ public class Table implements Renderable {
 	}
 
 	@Nonnull
+	public Table header(@Nonnull final String s) {
+		if (headerrow==null) { headerrow=new HeaderRow(); }
+		headerrow.add(s);
+		return this;
+	}
+	@Nonnull
 	public Table add(final Row r) {
 		table.add(r);
 		openrow=r;
@@ -46,9 +54,15 @@ public class Table implements Renderable {
 	}
 
 	@Nonnull
-	public Table add(@Nonnull final String s) {
-		add(new Text(s));
-		return this;
+	public Table add(@Nullable final String s) {
+		if (s==null) { return add(new Text("")); }
+		return add(new Text(s));
+	}
+
+	@Nonnull
+	public Table add(@Nullable final Integer i) {
+		if (i==null) { return add(new Text("")); }
+		return add(new Text(i.toString()));
 	}
 
 	@Nonnull
@@ -71,6 +85,7 @@ public class Table implements Renderable {
 	@Override
 	public String asText(final State st) {
 		final StringBuilder res=new StringBuilder();
+		if (headerrow!=null) { res.append(headerrow.asText(st)); }
 		for (final Row r: table) {
 			if (res.length()>0) { res.append("\n"); }
 			res.append(r.asText(st));
@@ -87,6 +102,7 @@ public class Table implements Renderable {
 		if (border) { s.append(" border=1"); }
 		if (nowrap) { s.append(" style=\"white-space: nowrap;\""); }
 		s.append(">");
+		if (headerrow!=null) { s.append(headerrow.asHtml(st,rich)); }
 		for (final Row r: table) { s.append(r.asHtml(st,rich)); }
 		s.append("</table>");
 		return s.toString();
