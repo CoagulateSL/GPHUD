@@ -1,5 +1,6 @@
 #include "GPHUDHeader.lsl"
 #include "SL/LSL/Constants.lsl"
+#define DUMPLINKS
 
 integer ATTACH_LOCATION=ATTACH_HUD_BOTTOM;
 integer IN_EXPERIENCE=FALSE;
@@ -19,6 +20,19 @@ string validateExperience() {
 
 key suggestedowner=NULL_KEY;
 
+#ifdef DUMPLINKS
+dumpLinks() {
+	integer i=0;
+	//llOwnerSay("public static final int HUD_MAIN=1;");
+	llOwnerSay("#define HUD_MAIN 1");
+	for (i=2;i<=llGetNumberOfPrims();i++) {
+		list data=llGetLinkPrimitiveParams(i,[PRIM_DESC]);
+		string desc=llList2String(data,0);
+		//llOwnerSay("public static final int "+desc+"="+((string)i)+";");
+		llOwnerSay("#define "+desc+" "+((string)i));
+	}
+}
+#endif
 terminate(string reason,vector color,float delay) {
 	llSetText(reason,color,1.0);
 	llSleep(delay);
@@ -62,6 +76,9 @@ state standby {
 	state_entry() {
 		suggestedowner=NULL_KEY;
 		status("Script reset manually, we do nothing, we expect to be rezzed");
+		#ifdef DUMPLINKS
+		dumpLinks();
+		#endif
 	}
 	
 	// wake up method one - we get rezzed, either by the server or by the creator
