@@ -171,6 +171,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if ("X-SecondLife-Shard".equals(name)) { shard=value; }
 			if ("X-SecondLife-Local-Position".equals(name)) { position=value; }
 		}
+		if (SL.DEV==true && regionname!=null && regionname.equalsIgnoreCase("Peaceful Den (153088, 265216)")) {
+			regionname="Cerasi";
+			System.out.println("Rewriting region name");
+		}//TODO THIS IS HORRIBLE REMOVE ME =)
 		if ((!("Production".equals(shard)))) {
 			if (shard==null) { shard="<null>"; }
 			GPHUD.getLogger().severe("Unknown shard ["+shard+"]");
