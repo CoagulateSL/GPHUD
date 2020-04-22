@@ -98,7 +98,7 @@ public abstract class Modules {
 		final String name=parts[0];
 		//System.out.println("NAME:"+name);
 		if (!modules.containsKey(name.toLowerCase())) {
-			throw new UserInputLookupFailureException("Module "+name+" does not exist.");
+			throw new UserInputLookupFailureException("Module '"+name+"' (from '"+qualified+"') does not exist.");
 		}
 		return name;
 	}
