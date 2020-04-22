@@ -40,4 +40,32 @@ public class Test {
 		json.put("uix-qb6pos","<.01,.14,-.04>");
 		return new JSONResponse(json);
 	}
+	@Commands(description="Stage the HUD in a packaged mode",
+	          permitUserWeb=false,
+	          permitScripting=false,
+	          permitObject=false,
+	          permitExternal=false,
+	          context=Context.ANY,requiresPermission="User.SuperAdmin")
+	@Nonnull
+	public static Response repackage(
+			@Nonnull
+			final State state) {
+		JSONObject json=new JSONObject();
+
+		json.put("uix","uix");
+		json.put("uix-main","uix-main");
+		json.put("uix-qb1","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		json.put("uix-qb2","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		json.put("uix-qb3","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		json.put("uix-qb4","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		json.put("uix-qb5","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		json.put("uix-qb6","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		json.put("uix-qb1pos","<.01,0,-.1>");
+		json.put("uix-qb2pos","<.01,0,-.1>");
+		json.put("uix-qb5pos","<.01,0,-.1>");
+		json.put("uix-qb3pos","<.01,0,-.1>");
+		json.put("uix-qb4pos","<.01,0,-.1>");
+		json.put("uix-qb6pos","<.01,0,-.1>");
+		return new JSONResponse(json);
+	}
 }
