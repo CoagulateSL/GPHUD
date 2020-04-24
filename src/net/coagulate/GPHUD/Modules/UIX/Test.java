@@ -24,20 +24,25 @@ public class Test {
 			final State state) {
 		JSONObject json=new JSONObject();
 
+		float sr=state.getKV("GPHUDClient.WidthMultiplier").floatValue();
 		json.put("uix","uix");
 		json.put("uix-main","uix-main");
-		json.put("uix-qb1","4250c8ec-6dba-927b-f68f-000a456bd8ba");
-		json.put("uix-qb2","eab5cd3c-ac2e-290b-df46-a53c9114f610");
-		json.put("uix-qb3","d41ccbd1-1144-3788-14cc-5fc26f3da905");
-		json.put("uix-qb4","5748decc-f629-461c-9a36-a35a221fe21f");
-		json.put("uix-qb5","ffdaa452-d5cd-0203-de84-4f814732cff0");
-		json.put("uix-qb6","b2aedfae-8401-441e-d9d1-b5b330bce411");
-		json.put("uix-qb1pos","<.01,.18,.04>");
-		json.put("uix-qb2pos","<.01,.14,.04>");
-		json.put("uix-qb3pos","<.01,.18,.00>");
-		json.put("uix-qb4pos","<.01,.14,.00>");
-		json.put("uix-qb5pos","<.01,.18,-.04>");
-		json.put("uix-qb6pos","<.01,.14,-.04>");
+		json.put("uix-hudsize","<0.01,"+(0.12*sr)+",0.12>");
+		json.put("uix-hud",state.getKV("GPHUDClient.Logo"));
+		json.put("uix-qb1",state.getKV("GPHUDClient.QuickButton1Texture"));
+		json.put("uix-qb2",state.getKV("GPHUDClient.QuickButton2Texture"));
+		json.put("uix-qb3",state.getKV("GPHUDClient.QuickButton3Texture"));
+		json.put("uix-qb4",state.getKV("GPHUDClient.QuickButton4Texture"));
+		json.put("uix-qb5",state.getKV("GPHUDClient.QuickButton5Texture"));
+		json.put("uix-qb6",state.getKV("GPHUDClient.QuickButton6Texture"));
+		json.put("uix-hudpos","<0,0, 0.08518>");
+		json.put("uix-msgpos","<.01,"+(-0.06*sr - 0.04*0.5)+",.04>");
+		json.put("uix-qb1pos","<.01,"+(0.06*sr/*hud*/ + 0.04*1.5/*button*/)+",.04>");
+		json.put("uix-qb2pos","<.01,"+(0.06*sr/*hud*/ + 0.04*0.5/*button*/)+",.04>");
+		json.put("uix-qb3pos","<.01,"+(0.06*sr/*hud*/ + 0.04*1.5/*button*/)+",.00>");
+		json.put("uix-qb4pos","<.01,"+(0.06*sr/*hud*/ + 0.04*0.5/*button*/)+",.00>");
+		json.put("uix-qb5pos","<.01,"+(0.06*sr/*hud*/ + 0.04*1.5/*button*/)+",-.04>");
+		json.put("uix-qb6pos","<.01,"+(0.06*sr/*hud*/ + 0.04*0.5/*button*/)+",-.04>");
 		return new JSONResponse(json);
 	}
 	@Commands(description="Stage the HUD in a packaged mode",
@@ -54,12 +59,16 @@ public class Test {
 
 		json.put("uix","uix");
 		json.put("uix-main","uix-main");
+		json.put("uix-hudsize","<0.01,0.24,0.12>");
+		json.put("uix-hud","c792716b-13a3-06c9-6e7c-33c4e9d5a48f");
 		json.put("uix-qb1","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
 		json.put("uix-qb2","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
 		json.put("uix-qb3","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
 		json.put("uix-qb4","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
 		json.put("uix-qb5","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
 		json.put("uix-qb6","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		json.put("uix-hudpos","<0,0, 0.08518>");
+		json.put("uix-msgpos","<.01,0,-.1>");
 		json.put("uix-qb1pos","<.01,0,-.1>");
 		json.put("uix-qb2pos","<.01,0,-.1>");
 		json.put("uix-qb5pos","<.01,0,-.1>");
