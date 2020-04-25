@@ -471,6 +471,8 @@ public abstract class Command {
 		}
 		catch (@Nonnull final InvocationTargetException ex) {
 			if (ex.getCause()!=null && UserException.class.isAssignableFrom(ex.getCause().getClass())) {
+				SL.report("Command "+getName()+" failed",ex,st);
+				st.logger().log(WARNING,"Execute command "+getName()+" failed",ex);
 				return new ErrorResponse(getName()+" errored: \n--- "+ex.getCause().getLocalizedMessage());
 			}
 			if (ex.getCause()!=null && SystemException.class.isAssignableFrom(ex.getCause().getClass())) {
