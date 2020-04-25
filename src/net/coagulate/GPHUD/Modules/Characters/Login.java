@@ -100,6 +100,7 @@ public abstract class Login {
 		st.getCharacter().setRegion(region);
 		character.setPlayedBy(st.getAvatar());
 		final State simulate=st.simulate(character);
+		if (st.jsonNullable()!=null) { simulate.setJson(st.json()); }
 		final String initscript=simulate.getKV("Instance.CharInitScript").toString();
 		String loginmessage="";
 		if (initscript!=null && (!initscript.isEmpty())) {
@@ -283,6 +284,7 @@ public abstract class Login {
 		Char.create(st,charactername,true);
 		final Char c=Char.resolve(st,charactername);
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
+		st.setCharacter(c);
 		return login(st,null,null,null);
 	}
 
