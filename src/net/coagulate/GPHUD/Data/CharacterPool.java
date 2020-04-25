@@ -69,7 +69,7 @@ public class CharacterPool {
 		       target.getId(),
 		       pool.fullName(),
 		       adjustment,
-		       st.getCharacter().getId(),
+		       st.getCharacterNullable()==null?null:st.getCharacter().getId(),
 		       st.getAvatar().getId(),
 		       description,
 		       getUnixTime()

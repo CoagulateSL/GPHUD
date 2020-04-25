@@ -64,7 +64,7 @@ public class GenericXPPool extends Pool {
 		// else award xp :P
 		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add",pool.name()+"XP",null,ammount+"",reason);
 		CharacterPool.addPool(st,target,pool,ammount,reason);
-		if (target!=st.getCharacter()) {
+		if (target!=st.getCharacterNullable()) {
 			if (incontext) {
 				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by "+st.getCharacter().getName()+" for "+reason);
 			}
