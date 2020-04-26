@@ -121,9 +121,9 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		try {
 			return getName();
 		}
-		catch (@Nonnull final DBException ex) {
+		catch (@Nonnull final Throwable ex) {
 			GPHUD.getLogger().log(SEVERE,"SAFE MODE SQLEXCEPTION",ex);
-			return "SQLEXCEPTION";
+			return "EXCEPTION";
 		}
 	}
 
