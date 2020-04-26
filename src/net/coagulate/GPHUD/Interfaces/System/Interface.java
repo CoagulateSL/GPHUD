@@ -207,7 +207,6 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				GPHUD.getLogger().info("Failed to get ownername from headers for key "+ownerkey+", looked up in DB as "+ownername+".");
 			}
 		}
-		User.findOrCreate(ownername,ownerkey);
 		regionname=regionname.replaceFirst(" \\([0-9]+, [0-9]+\\)","");
 
 		st.setRegionName(regionname);
@@ -215,7 +214,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.setSourcename(objectname);
 		st.sourceregion=Region.findNullable(regionname,false);
 		st.sourcelocation=position;
-		final User owner=User.findOrCreate(ownername,ownerkey);
+		final User owner=User.findOrCreate(ownername,ownerkey,false);
 		st.setSourceowner(owner);
 		st.objectkey=objectkey;
 		st.setAvatar(owner);

@@ -56,7 +56,7 @@ public abstract class Avatars {
 			final String[] p=element.split("=");
 			if (p.length==2) {
 				try {
-					final User thisavi=User.findOrCreate(p[1],p[0]);
+					final User thisavi=User.findOrCreate(p[1],p[0],false);
 					// we DONT init visits this way =)  character registration does
 					openvisits.remove(thisavi);
 				}
