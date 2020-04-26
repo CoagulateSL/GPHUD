@@ -6,10 +6,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
-import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.User.UserInputValidationException;
+import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.Core.Tools.UnixTime;
@@ -295,7 +292,7 @@ public class Char extends TableRow {
 	 * @param st   State
 	 * @param name Name to check
 	 *
-	 * @throws UserInputValidationException if the name uses a prohobited name
+	 * @throws UserInputValidationFilterException if the name uses a prohobited name
 	 */
 	private static void checkFilteredNamingList(@Nonnull final State st,
 	                                            @Nonnull final String name) {
@@ -309,7 +306,7 @@ public class Char extends TableRow {
 				for (String namepart: nameparts) {
 					namepart=namepart.trim();
 					if (filter.equalsIgnoreCase(namepart)) {
-						throw new UserInputValidationException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.");
+						throw new UserInputValidationFilterException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.");
 					}
 				}
 			}
@@ -322,7 +319,7 @@ public class Char extends TableRow {
 	 * @param st   State
 	 * @param name Name to check
 	 *
-	 * @throws UserInputValidationException if the name uses a prohobited symbol
+	 * @throws UserInputValidationFilterException if the name uses a prohobited symbol
 	 */
 	private static void checkAllowedNamingSymbols(@Nonnull final State st,
 	                                              @Nonnull String name) {
@@ -342,7 +339,7 @@ public class Char extends TableRow {
 			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
 			// and reconstitute it
 			for (final String character: characters) { blockedchars.append(character); }
-			throw new UserInputValidationException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.");
+			throw new UserInputValidationFilterException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.");
 		}
 	}
 

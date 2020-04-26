@@ -2,10 +2,7 @@ package net.coagulate.GPHUD.Interfaces.External;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
-import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.User.UserInputValidationException;
-import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
+import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
@@ -245,7 +242,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (newuser!=null) { user=newuser; }
 		}
 		if (user.isSuperAdmin()) {
-			throw new UserInputValidationException("Unable to set user to a SUPERADMIN");
+			throw new UserInputValidationFilterException("Unable to set user to a SUPERADMIN");
 		}
 		return user;
 	}
