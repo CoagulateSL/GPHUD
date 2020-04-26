@@ -196,7 +196,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			return new TerminateResponse("Parse failure");
 		}
 		if (ownername==null || ownername.isEmpty()) {
-			final User userlookup=User.findOptional(ownerkey);
+			final User userlookup=User.findUserKeyNullable(ownerkey);
 			if (userlookup!=null) { ownername=userlookup.getName(); }
 			if (ownername==null || ownername.isEmpty()) {
 				GPHUD.getLogger().severe("Failed to extract ownername header from SL or ownerkeylookup via DB");
@@ -207,6 +207,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				GPHUD.getLogger().info("Failed to get ownername from headers for key "+ownerkey+", looked up in DB as "+ownername+".");
 			}
 		}
+		User.findOrCreate(ownername,ownerkey);
 		regionname=regionname.replaceFirst(" \\([0-9]+, [0-9]+\\)","");
 
 		st.setRegionName(regionname);
@@ -214,7 +215,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.setSourcename(objectname);
 		st.sourceregion=Region.findNullable(regionname,false);
 		st.sourcelocation=position;
-		final User owner=User.findOrCreateAvatar(ownername,ownerkey);
+		final User owner=User.findOrCreate(ownername,ownerkey);
 		st.setSourceowner(owner);
 		st.objectkey=objectkey;
 		st.setAvatar(owner);
@@ -222,7 +223,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		String runasavatar=null;
 		try { runasavatar=obj.getString("runasavatar"); } catch (@Nonnull final JSONException e) {}
 		if (runasavatar!=null && (!("".equals(runasavatar)))) {
-			st.setAvatar(User.findMandatory(runasavatar));
+			st.setAvatar(User.findUsername(runasavatar));
 			st.issuid=true;
 		}
 		st.object=Obj.findOrNull(st,objectkey);

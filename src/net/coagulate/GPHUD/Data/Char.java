@@ -496,7 +496,7 @@ public class Char extends TableRow {
 			throw new UserInputEmptyException("Sorry, you are not near any other avatars");
 		}
 		for (final String key: avatars.split(",")) {
-			final User a=User.findOptional(key);
+			final User a=User.findUsernameNullable(key);
 			if (a!=null) {
 				Char c=null;
 				try { c=Char.getActive(a,st.getInstance()); }

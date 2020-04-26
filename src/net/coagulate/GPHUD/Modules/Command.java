@@ -257,7 +257,7 @@ public abstract class Command {
 						if (v.startsWith(">")) {
 							v=v.substring(1);
 							try {
-								final User a=User.findMandatory(v);
+								final User a=User.findUsername(v);
 								targchar=Char.getActive(a,st.getInstance());
 							}
 							catch (@Nonnull final NoDataException e) {
@@ -286,7 +286,7 @@ public abstract class Command {
 						break;
 					case AVATAR:
 					case AVATAR_NEAR:
-						final User user=User.findOptional(v);
+						final User user=User.findUsernameNullable(v);
 						if (user==null) { return new ErrorResponse("Unable to find a known avatar named '"+v+"'"); }
 						typedargs.add(assertNotNull(user,v,"avatar"));
 						break;

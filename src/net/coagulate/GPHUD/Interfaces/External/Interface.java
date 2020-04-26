@@ -234,7 +234,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	private User decodeAvatar(JSONObject obj) {
 		User user=User.getSystem();
 		if (obj.has("runasavatarname")) {
-			User newuser=User.findOptional(obj.getString("runasavatarname"));
+			User newuser=User.findUsernameNullable(obj.getString("runasavatarname"));
 			if (newuser!=null) { user=newuser; }
 		}
 		if (obj.has("runasavatarid")) {

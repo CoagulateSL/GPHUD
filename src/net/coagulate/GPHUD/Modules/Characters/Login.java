@@ -260,7 +260,7 @@ public abstract class Login {
 			return new ErrorResponse("You are not allowed to start a character name with the character >");
 		}
 		try {
-			final User user=User.findOptional(charactername);
+			final User user=User.findUsernameNullable(charactername);
 			if (user!=null) {
 				if (user!=st.getAvatarNullable()) {
 					return new ErrorResponse("You may not name a character after an avatar, other than yourself");
