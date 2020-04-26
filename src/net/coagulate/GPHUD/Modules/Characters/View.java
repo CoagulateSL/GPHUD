@@ -57,7 +57,9 @@ public abstract class View {
 		t.openRow();
 		t.add("Node").addNoNull((GPHUD.DEV?"DEVELOPMENT // ":"Production // ")+Interface.getNode());
 		t.openRow();
-		t.add("Avatar").addNoNull(st.getAvatarNullable().getGPHUDLink());
+		t.add("Avatar");
+		if (st.getAvatarNullable()==null) { t.add(""); }
+		else { t.addNoNull(st.getAvatar().getGPHUDLink()); }
 		t.openRow();
 		t.add("Character").addNoNull(st.getCharacterNullable());
 		t.openRow();
@@ -69,9 +71,13 @@ public abstract class View {
 		t.openRow();
 		t.add("Source").addNoNull(st.getSourcenameNullable());
 		t.openRow();
-		t.add("SourceOwner").addNoNull(st.getSourceownerNullable().toString());
+		t.add("SourceOwner");
+		if (st.getSourceownerNullable()==null) { t.add(""); }
+		else { t.addNoNull(st.getSourceowner().toString()); }
 		t.openRow();
-		t.add("SourceDev").addNoNull(st.getSourcedeveloperNullable().toString());
+		t.add("SourceDev");
+		if (st.getSourcedeveloperNullable()==null) { t.add(""); }
+		else { t.addNoNull(st.getSourcedeveloper().toString()); }
 		return t;
 	}
 

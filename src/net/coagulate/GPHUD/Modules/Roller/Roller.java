@@ -29,14 +29,13 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Roller {
 
 	// ---------- STATICS ----------
-	@Nonnull
 	public static int rollSummed(
 			@Nonnull
 			final State st,
 			final Integer dice,
 			final Integer sides) {
 		int total=0;
-		for (Integer i: roll(st,dice,sides)) { total=total+i; }
+		for (final Integer i: roll(st,dice,sides)) { total=total+i; }
 		return total;
 	}
 
@@ -440,13 +439,9 @@ public class Roller {
 			           mandatory=false,
 			           type=ArgumentType.INTEGER)
 			final Integer targetbias,
-			@Arguments(description="Number of damage dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=true)
+			@Arguments(description="Number of damage dice to roll", type=ArgumentType.INTEGER)
 			final Integer damagedice,
-			@Arguments(description="Number of sides on damage dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=true)
+			@Arguments(description="Number of sides on damage dice", type=ArgumentType.INTEGER)
 			final Integer damagesides,
 			@Arguments(description="Optional bias to add to damage result",
 			           mandatory=false,

@@ -31,7 +31,7 @@ public class DeveloperAccess {
 	                                                  type=ArgumentType.AVATAR) @Nonnull final User user) {
 		if (!state.getAvatar().isSuperAdmin()) { throw new UserAccessDeniedException("Caller is not a super admin!"); }
 		if (user.hasDeveloperKey()) { return new ErrorResponse("User is already a developer"); }
-		String developerkey=Tokens.generateToken();
+		final String developerkey=Tokens.generateToken();
 		user.setDeveloperKey(developerkey);
 		SL.bot()
 		  .api()

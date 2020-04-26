@@ -61,7 +61,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final byte[] buffer=new byte[65*1024];
 				final int ammountread=is.read(buffer);
 				buffer[ammountread]=0;
-				if (ammountread==-1) {
+				if (ammountread<1) {
 					throw new SystemInitialisationException("Reading from HTTP Response gave immediate EOF?");
 				}
 				final String message=new String(buffer,0,ammountread);
@@ -171,7 +171,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if ("X-SecondLife-Shard".equals(name)) { shard=value; }
 			if ("X-SecondLife-Local-Position".equals(name)) { position=value; }
 		}
-		if (SL.DEV==true && regionname!=null && regionname.equalsIgnoreCase("Peaceful Den (153088, 265216)")) {
+		if (SL.DEV && regionname!=null && regionname.equalsIgnoreCase("Peaceful Den (153088, 265216)")) {
 			regionname="Cerasi";
 			System.out.println("Rewriting region name");
 		}//TODO THIS IS HORRIBLE REMOVE ME =)

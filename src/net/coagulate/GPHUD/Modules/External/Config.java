@@ -45,7 +45,7 @@ public class Config {
 		f.add("<br><br>");
 		f.add("<p>List of active developers:");
 		f.add("<table border=0>");
-		for (User user: User.getDevelopers()) {
+		for (final User user: User.getDevelopers()) {
 			//if (!user.isSuperAdmin()) {
 			final boolean enabled=InstanceDevelopers.isDeveloper(st.getInstance(),user);
 			String col="#ffe0e0";

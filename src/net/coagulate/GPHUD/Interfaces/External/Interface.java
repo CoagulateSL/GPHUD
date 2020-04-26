@@ -2,7 +2,10 @@ package net.coagulate.GPHUD.Interfaces.External;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
-import net.coagulate.Core.Exceptions.User.*;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationFilterException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
@@ -44,10 +47,10 @@ import static java.util.logging.Level.WARNING;
 public class Interface extends net.coagulate.GPHUD.Interface {
 
 	// ----- Internal Statics -----
-	private static String jsonToString(JSONObject json) {
-		StringWriter sw=new StringWriter();
+	private static String jsonToString(final JSONObject json) {
+		final StringWriter sw=new StringWriter();
 		json.write(sw,4,0);
-		return sw.toString()+"\n";
+		return sw+"\n";
 	}
 
 	// ---------- INSTANCE ----------
@@ -83,7 +86,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final JSONObject obj;
 				try { obj=new JSONObject(message); }
 				catch (@Nonnull final JSONException e) {
-					SystemBadValueException badvalue=new SystemBadValueException("Unable to parse '"+message+"'",e);
+					final SystemBadValueException badvalue=new SystemBadValueException("Unable to parse '"+message+"'",e);
 					throw new UserInputValidationParseException("JSON Parse Error:"+e.getLocalizedMessage(),badvalue);
 				}
 				// stash it in the state
@@ -120,7 +123,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			GPHUD.getLogger().log(WARNING,"User generated error : "+e.getLocalizedMessage(),e);
 			final HttpResponse resp=st.resp();
 			resp.setStatusCode(HttpStatus.SC_OK);
-			JSONObject newresponse=new JSONObject();
+			final JSONObject newresponse=new JSONObject();
 			newresponse.put("error",e.getLocalizedMessage());
 			newresponse.put("errorclass",e.getClass().getSimpleName());
 			newresponse.put("responsetype","UserException");
@@ -133,7 +136,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				GPHUD.getLogger().log(SEVERE,"External Interface caught unhandled Exception : "+e.getLocalizedMessage(),e);
 				final HttpResponse resp=st.resp();
 				resp.setStatusCode(HttpStatus.SC_OK);
-				JSONObject newresponse=new JSONObject();
+				final JSONObject newresponse=new JSONObject();
 				newresponse.put("error","Internal error occured, sorry.");
 				newresponse.put("responsetype","SystemException");
 				resp.setEntity(new StringEntity(jsonToString(newresponse),ContentType.APPLICATION_JSON));
@@ -176,7 +179,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if (st.getCharacter().getInstance()!=st.getInstance()) {
 				throw new UserInputStateException("There is a mismatch between the specified instanceid and the character's instanceid");
 			}
-			Region region=st.getCharacter().getRegion();
+			final Region region=st.getCharacter().getRegion();
 			if (region!=null) {
 				st.setRegion(region);
 				if (st.getRegionNullable()!=null) {
@@ -198,47 +201,42 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.postmap(parametermap);
 		GPHUD.getLogger("ExternalInterface")
 		     .fine("Processing command "+command+" from "+st.sourcelocation+" identifying as '"+st.getSourcenameNullable()+"' devkey:"+st.getSourcedeveloper());
-		Response response=Modules.run(st,obj.getString("command"),parametermap);
+		final Response response=Modules.run(st,obj.getString("command"),parametermap);
 		InstanceDevelopers.accounting(st.getInstance(),developer,1,response.toString().length()+obj.toString().length());
 		return response;
 	}
 
-	private Instance decodeInstance(JSONObject obj) {
+	private Instance decodeInstance(final JSONObject obj) {
 		Instance instance=null;
 		if (obj.has("runasinstancename")) {
-			Instance newinstance=Instance.find(obj.getString("runasinstancename"));
-			if (newinstance!=null) { instance=newinstance; }
+			instance=Instance.find(obj.getString("runasinstancename"));
 		}
 		if (obj.has("runasinstanceid")) {
-			Instance newinstance=Instance.get(obj.getInt("runasinstanceid"));
-			if (newinstance!=null) { instance=newinstance; }
+			instance=Instance.get(obj.getInt("runasinstanceid"));
 		}
 		return instance;
 	}
 
-	private Char decodeCharacter(State st,
-	                             JSONObject obj) {
+	private Char decodeCharacter(final State st,final JSONObject obj) {
 		Char character=null;
 		if (obj.has("runascharactername")) {
-			Char newcharacter=Char.resolve(st,obj.getString("runascharactername"));
+			final Char newcharacter=Char.resolve(st,obj.getString("runascharactername"));
 			if (newcharacter!=null) { character=newcharacter; }
 		}
 		if (obj.has("runascharacterid")) {
-			Char newcharacter=Char.get(obj.getInt("runascharacterid"));
-			if (newcharacter!=null) { character=newcharacter; }
+			character=Char.get(obj.getInt("runascharacterid"));
 		}
 		return character;
 	}
 
-	@Nonnull
-	private User decodeAvatar(JSONObject obj) {
+	@Nonnull private User decodeAvatar(final JSONObject obj) {
 		User user=User.getSystem();
 		if (obj.has("runasavatarname")) {
-			User newuser=User.findUsernameNullable(obj.getString("runasavatarname"));
+			final User newuser=User.findUsernameNullable(obj.getString("runasavatarname"));
 			if (newuser!=null) { user=newuser; }
 		}
 		if (obj.has("runasavatarid")) {
-			User newuser=User.get(obj.getInt("runasavatarid"));
+			final User newuser=User.get(obj.getInt("runasavatarid"));
 			if (newuser!=null) { user=newuser; }
 		}
 		if (user.isSuperAdmin()) {

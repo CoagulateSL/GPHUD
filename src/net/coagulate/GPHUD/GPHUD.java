@@ -69,8 +69,7 @@ public class GPHUD {
 	/**
 	 * @param args the command line arguments
 	 */
-	@SuppressWarnings("deprecation")
-	public static void main(@Nonnull final String[] args) {
+	@SuppressWarnings({"deprecation","BusyWait"}) public static void main(@Nonnull final String[] args) {
 		LogHandler.initialise();
 		log=Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.

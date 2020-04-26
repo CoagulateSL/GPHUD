@@ -25,7 +25,7 @@ public class Zones {
 			final GSVM vm,
 			@Nonnull
 			final BCCharacter target) {
-		Zone zone=target.getContent().getZone();
+		final Zone zone=target.getContent().getZone();
 		if (zone==null) { return new BCString(null,""); }
 		return new BCString(null,zone.getName());
 	}

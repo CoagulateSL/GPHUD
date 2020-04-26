@@ -314,8 +314,7 @@ public class State extends DumpableState {
 	public void setRegion(@Nonnull final Region region) {
 		region.validate(this);
 		this.region=region;
-		if (region==null) { regionname=null; }
-		else { regionname=region.getName(); }
+		regionname=region.getName();
 	}
 
 	@Nullable
@@ -1012,8 +1011,8 @@ public class State extends DumpableState {
 		return Templater.getTemplates(this);
 	}
 
-	@SuppressWarnings("deprecation")
 	public String getClientIP() {
+		if (req==null) { throw new SystemConsistencyException("There is no request object to getClientIP()"); }
 		return SL.getClientIP(req,context);
 	}
 

@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.External;
 
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
@@ -23,14 +24,13 @@ public class BasicCommands {
 	@Commands(description="Get a JSON formatted breakdown of this connection's status",
 	          permitScripting=false,
 	          permitObject=false,
-	          permitExternal=true,
 	          permitConsole=false,
 	          context=Context.ANY,
 	          permitUserWeb=false,
 	          permitJSON=false)
 	@Nonnull
 	public static Response status(@Nonnull final State st) {
-		JSONObject json=new JSONObject();
+		final JSONObject json=new JSONObject();
 		json.put("environment",(GPHUD.DEV?"DEVELOPMENT":"Production"));
 		json.put("nodename",Interface.getNode());
 		json.put("avatar",st.getAvatarNullable());
@@ -71,18 +71,17 @@ public class BasicCommands {
 	public static Response lookupAvatar(@Nonnull final State state,
 	                                    @Arguments(description="Avatar to lookup",
 	                                               type=ArgumentType.AVATAR) @Nonnull final User user) {
-		JSONObject json=new JSONObject();
+		final JSONObject json=new JSONObject();
 		json.put("avatarid",user.getId());
 		json.put("avatarname",user.getUsername());
-		Char character=Char.getActive(user,state.getInstance());
-		if (character!=null) {
-			json.put("playingcharacterid",character.getId());
-			json.put("playingcharactername",character.getName());
-			json.put("playingcharacterregion",character.getRegion().getName());
-			Zone zone=character.getZone();
-			if (zone!=null) {
-				json.put("playingcharacterzone",zone.getName());
-			}
+		final Char character=Char.getActive(user,state.getInstance());
+		json.put("playingcharacterid",character.getId());
+		json.put("playingcharactername",character.getName());
+		final Region region=character.getRegion();
+		if (region!=null) { json.put("playingcharacterregion",region.getName()); }
+		final Zone zone=character.getZone();
+		if (zone!=null) {
+			json.put("playingcharacterzone",zone.getName());
 		}
 		return new JSONResponse(json);
 	}
