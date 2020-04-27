@@ -5,11 +5,11 @@ import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 public class ExternalInterfaceObjectAccessDeniedException extends UserAccessDeniedException {
 	private static final long serialVersionUID=1L;
 
-	public ExternalInterfaceObjectAccessDeniedException(String reason) {
+	public ExternalInterfaceObjectAccessDeniedException(final String reason) {
 		super(reason);
 	}
 
-	public ExternalInterfaceObjectAccessDeniedException(String reason,Throwable cause) {
+	public ExternalInterfaceObjectAccessDeniedException(final String reason,final Throwable cause) {
 		super(reason,cause);
 	}
 }

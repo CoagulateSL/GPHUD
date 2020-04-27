@@ -193,11 +193,10 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 
 		if (obj.has("checkavatarpermission")) {
-			String userid=obj.getString("checkavatarpermission");
+			final String userid=obj.getString("checkavatarpermission");
 			User user=User.findUserKeyNullable(userid);
 			if (user==null) { user=User.findUsername(userid); }
-			if (user==null) { throw new UserInputStateException("There is no known avatar for name or key "+userid); }
-			State testpermission=new State(st.getInstance());
+			final State testpermission=new State(st.getInstance());
 			testpermission.setAvatar(user);
 			if (!testpermission.hasPermission("External.ConnectObjects")) {
 				throw new ExternalInterfaceObjectAccessDeniedException("User "+user.getUsername()+" does not have permission External.ConnectObjects at instance "+testpermission
