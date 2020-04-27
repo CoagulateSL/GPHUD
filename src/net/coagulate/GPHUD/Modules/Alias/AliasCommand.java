@@ -188,7 +188,7 @@ public class AliasCommand extends Command {
 			if (v.startsWith(">")) {
 				v=v.substring(1);
 				try {
-					final User a=User.findUsername(v);
+					final User a=User.findUsername(v,false);
 					targchar=Char.getActive(a,st.getInstance());
 				}
 				catch (@Nonnull final NoDataException e) {

@@ -222,7 +222,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		String runasavatar=null;
 		try { runasavatar=obj.getString("runasavatar"); } catch (@Nonnull final JSONException e) {}
 		if (runasavatar!=null && (!("".equals(runasavatar)))) {
-			st.setAvatar(User.findUsername(runasavatar));
+			st.setAvatar(User.findUsername(runasavatar,false));
 			st.issuid=true;
 		}
 		st.object=Obj.findOrNull(st,objectkey);

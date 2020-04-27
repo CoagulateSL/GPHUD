@@ -195,7 +195,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		if (obj.has("checkavatarpermission")) {
 			final String userid=obj.getString("checkavatarpermission");
 			User user=User.findUserKeyNullable(userid);
-			if (user==null) { user=User.findUsername(userid); }
+			if (user==null) { user=User.findUsername(userid,false); }
 			final State testpermission=new State(st.getInstance());
 			testpermission.setAvatar(user);
 			if (!testpermission.hasPermission("External.ConnectObjects")) {
@@ -246,7 +246,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	@Nonnull private User decodeAvatar(final JSONObject obj) {
 		User user=User.getSystem();
 		if (obj.has("runasavatarname")) {
-			final User newuser=User.findUsernameNullable(obj.getString("runasavatarname"));
+			final User newuser=User.findUsernameNullable(obj.getString("runasavatarname"),false);
 			if (newuser!=null) { user=newuser; }
 		}
 		if (obj.has("runasavatarid")) {
