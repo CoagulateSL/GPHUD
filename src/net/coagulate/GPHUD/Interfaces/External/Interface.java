@@ -152,6 +152,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	// ----- Internal Instance -----
 	protected Response execute(@Nonnull final State st) {
 		final JSONObject obj=st.json();
+		st.sourcelocation=st.getClientIP();
+
 		// get developer key
 		if (!obj.has("developerkey")) { throw new UserInputEmptyException("No developer credentials were supplied in the request"); }
 		final String developerkey=obj.getString("developerkey");
@@ -189,7 +191,20 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				}
 			}
 		}
-		st.sourcelocation=st.getClientIP();
+
+		if (obj.has("checkavatarpermission")) {
+			String userid=obj.getString("checkavatarpermission");
+			User user=User.findUserKeyNullable(userid);
+			if (user==null) { user=User.findUsername(userid); }
+			if (user==null) { throw new UserInputStateException("There is no known avatar for name or key "+userid); }
+			State testpermission=new State(st.getInstance());
+			testpermission.setAvatar(user);
+			if (!testpermission.hasPermission("External.ConnectObjects")) {
+				throw new ExternalInterfaceObjectAccessDeniedException("User "+user.getUsername()+" does not have permission External.ConnectObjects at instance "+testpermission
+						.getInstance());
+			}
+		}
+
 		if (st.getCharacterNullable()!=null) { st.zone=st.getCharacter().getZone(); }
 		final SafeMap parametermap=new SafeMap();
 		for (final String key: st.json().keySet()) {
