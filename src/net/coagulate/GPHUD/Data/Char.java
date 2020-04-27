@@ -6,7 +6,10 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.User.*;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationFilterException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.Core.Tools.UnixTime;
@@ -496,7 +499,7 @@ public class Char extends TableRow {
 			throw new UserInputEmptyException("Sorry, you are not near any other avatars");
 		}
 		for (final String key: avatars.split(",")) {
-			final User a=User.findUsernameNullable(key);
+			final User a=User.findUserKeyNullable(key);
 			if (a!=null) {
 				Char c=null;
 				try { c=Char.getActive(a,st.getInstance()); }
