@@ -1,11 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.External;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
-import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
-import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.User.UserInputValidationFilterException;
-import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
+import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
@@ -78,7 +74,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final byte[] buffer=new byte[65*1024];
 				final int ammountread=is.read(buffer);
 				if (ammountread==-1) {
-					throw new SystemInitialisationException("Reading from HTTP Response gave immediate EOF?");
+					throw new UserRemoteFailureException("Reading from HTTP Response gave immediate EOF? (no data sent in POST body)");
 				}
 				final String message=new String(buffer,0,ammountread);
 				// DEBUGGING ONLY log entire JSON input
