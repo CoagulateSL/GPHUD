@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
-import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
@@ -19,7 +18,6 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
-import net.coagulate.SL.Data.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -260,6 +258,7 @@ public abstract class Login {
 		if (charactername.startsWith(">")) {
 			return new ErrorResponse("You are not allowed to start a character name with the character >");
 		}
+		/*
 		try {
 			final User user=User.findUsernameNullable(charactername,false);
 			if (user!=null) {
@@ -269,6 +268,7 @@ public abstract class Login {
 			}
 		}
 		catch (@Nonnull final NoDataException e) {}
+		*/
 		final boolean autoname=st.getKV("Instance.AutoNameCharacter").boolValue();
 		if (autoname && !st.getAvatar().getName().equalsIgnoreCase(charactername)) {
 			return new ErrorResponse("You must name your one and only character after your avatar");
