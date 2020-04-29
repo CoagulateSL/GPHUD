@@ -41,8 +41,9 @@ public abstract class KVMap {
 				                     .add("Permission")
 				                     .add("Default")
 				                     .add("Description")
-				                     .add("ConveyedAs")
-				                     .add("DoesTemplates"));
+				                     .add("Convey")
+				                     .add("Template")
+				                     .add("Hooked"));
 				for (final KV kv: kvmap.values()) {
 					final Row r=new Row();
 					if (kv.hidden()) { r.setbgcolor("#e0e0e0"); }
@@ -54,8 +55,9 @@ public abstract class KVMap {
 					r.add(kv.editpermission());
 					r.add(kv.defaultvalue());
 					r.add(kv.description());
-					r.add(kv.conveyas());
-					r.add(kv.template()+"");
+					r.add(kv.conveyas().isEmpty()?"":"Conv");
+					r.add(kv.template()?"Tmpl":"");
+					r.add(kv.onUpdate().isEmpty()?"":"Upd");
 					if (kv.isGenerated()) { r.add(new Color("blue","Generated")); }
 					else { r.add(""); }
 				}

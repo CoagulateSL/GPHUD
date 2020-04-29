@@ -677,8 +677,8 @@ public class State extends DumpableState {
 	public void setKV(@Nonnull final TableRow dbo,
 	                  @Nonnull final String key,
 	                  @Nullable String value) {
+		final KV definition=getKVDefinition(key);
 		if (value!=null && !value.isEmpty()) {
-			final KV definition=getKVDefinition(key);
 			if (!definition.template()) { // these are hard to verify :P
 				switch (definition.type()) {
 					case TEXT: // no checking here :P
@@ -732,6 +732,7 @@ public class State extends DumpableState {
 		purgeCache(dbo);
 		dbo.setKV(this,key,value);
 		purgeCache(dbo);
+		definition.callOnUpdate(this,dbo,value);
 		// push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
 		getInstance().pushConveyances();
 	}
