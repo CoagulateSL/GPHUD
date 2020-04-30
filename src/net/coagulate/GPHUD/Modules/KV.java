@@ -142,7 +142,7 @@ public abstract class KV extends NameComparable {
 		String classname=split.group(1);
 		String methodname=split.group(2);
 		try {
-			Class clas=Class.forName(classname);
+			Class<?> clas=Class.forName(classname);
 			Method method=clas.getMethod(methodname,State.class,KV.class,TableRow.class,String.class);
 			method.invoke(null,state,this,updatedobject,newvalue);
 		}
