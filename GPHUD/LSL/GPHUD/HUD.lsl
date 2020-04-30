@@ -30,8 +30,6 @@ key radarto=NULL_KEY;
 integer logincomplete=FALSE;
 string charname="Unknown";
 integer rpchannel=0;
-string hudtext="Startup...";
-vector hudcolor=<.8,1,.8>;
 integer BANNERED=FALSE;
 integer SHUTDOWN=FALSE;
 
@@ -174,11 +172,6 @@ integer process(key requestid) {
 	if (jsonget("qb6texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB6,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb6texture"),<1,1,1>,<0,0,0>,0]); }
 	*/
 	if (jsonget("motd")!="") { llOwnerSay("MOTD: "+jsonget("motd")); }
-	if (jsonget("hudcolor")!="") { hudcolor=(vector)jsonget("hudcolor"); }
-	if (jsonget("hudtext")!="") { hudtext=jsonget("hudtext"); }
-	if (jsonget("hudtext")!="" || jsonget("hudcolor")!="") { 
-		llSetText(hudtext,hudcolor,1);
-	}
 	/*
 	if (jsonget("titlerz")!="") { llRegionSayTo(llGetOwner(),broadcastchannel,llJsonSetValue("",["titlerz"],jsonget("titlerz"))); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
@@ -367,7 +360,12 @@ default {
 			string name=llGetLinkName(llDetectedLinkNumber(0));
 			if (name!="legacymenu") {
 				json="";
-				command("gphudclient."+name);
+				if (llSubStringIndex(name,".")==-1) { 
+					command("gphudclient."+name);
+				} else {
+					jsonput("commandtoinvoke",name);
+					command("GPHUDClient.call");
+				}
 			}
 		}
 	}

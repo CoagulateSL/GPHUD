@@ -34,7 +34,7 @@
 #define HUD_SPARE_2 29
 #define HUD_QUICKBUTTON_6 30
 #define HUD_QUICKBUTTON_2 31
-#define HUD_SPARE_3 32
+#define HUD_INVENTORY_CLOSE 32
 #define HUD_QUICKBUTTON_4 33
 #define HUD_QUICKBUTTON_5 34
 #define HUD_QUICKBUTTON_1 35
@@ -84,7 +84,7 @@ uixInventory() {
 			PRIM_TEXT,text,hudtextcolor,1];
 	integer i=0;
 	for (i=1;i<=14;i++) {
-		if (i<=(inventoryshown+2)) {
+		if (i<=(inventoryshown+2) && inventoryshown>0) {
 			l+=[PRIM_LINK_TARGET, llList2Integer(inventoryprims,i-1),
 			//PRIM_POS_LOCAL, <0,0,inventorybasez + inventoryoffsetz*(((float)(i-1)))>,
 			PRIM_POS_LOCAL, <0,inventorywidth/2.0 * ( ( ( i % 2) * 2.0 ) - 1.0)  ,inventorybasez + inventoryoffsetz*(((float)((i-1)/2)))>,
@@ -96,6 +96,16 @@ uixInventory() {
 			PRIM_SIZE,<0,-0.3,-0.3>,
 			PRIM_TEXT,"",<0,0,0>,1];	
 		}
+		if (i>2 && i<=(inventoryshown+2)) {
+			l+=[PRIM_NAME,llList2String(inventorycommand,i-3)];
+		} else { 
+			l+=[PRIM_NAME,""];
+		}
+	}
+	if (inventoryshown>0) {
+		l+=[PRIM_LINK_TARGET, HUD_INVENTORY_CLOSE, PRIM_POS_LOCAL, <0,0,inventoryoffsetz * ((inventoryshown/2)+2)>]; 
+	} else { 
+		l+=[PRIM_LINK_TARGET, HUD_INVENTORY_CLOSE, PRIM_POS_LOCAL, <0,0,-0.2>]; 
 	}
 	llSetLinkPrimitiveParamsFast(LINK_THIS,l);
 }
@@ -141,6 +151,13 @@ vector hudtextcolor=<0.5,0.5,1.0>;
 list inventoryprims=[HUD_INVENTORY_1, HUD_INVENTORY_2, HUD_INVENTORY_3, HUD_INVENTORY_4, HUD_INVENTORY_5, HUD_INVENTORY_6, HUD_INVENTORY_7, HUD_INVENTORY_8, HUD_INVENTORY_9, HUD_INVENTORY_10, HUD_INVENTORY_11, HUD_INVENTORY_12, HUD_INVENTORY_13, HUD_INVENTORY_14 ];
 integer inventoryshown=0;
 list inventorytext=[];
+list inventorycommand=[];
+list mainmenutext=[];
+list mainmenucommand=[];
+integer uixmenus=FALSE;
+integer mainmenusize=0;
+float mainmenuwidth=0;
+
 process() {
 	//llOwnerSay(json);
 	integer main=FALSE;
@@ -161,21 +178,50 @@ process() {
 		msgpos=<.01,(-0.06*sizeratio - 0.04*0.5),.04>;
 		hudsize=<0.01,(0.12*sizeratio),0.12>;
 	}
+	if (jsonget("hudcolor")!="") { hudtextcolor=(vector)jsonget("hudcolor"); }
+	if (jsonget("hudtext")!="") { hudtext=jsonget("hudtext"); }
+	if ((jsonget("hudtext")!="" || jsonget("hudcolor")!="") && inventoryshown>0) { 
+		llSetText(hudtext,hudtextcolor,1);
+	}	
 	if (jsonget("line1")!="") {
 		integer i=1;
 		inventorytext=[];
+		inventorycommand=[];
 		inventoryshown=0;
 		integer chars=0;
 		for (i=1;i<=12;i++) {
 			string line=jsonget("line"+(string)i);
 			if (line!="") { 
 				inventorytext+=line;
+				inventorycommand+=jsonget("command"+(string)i);
 				inventoryshown++;
 				integer length=llStringLength(line); if (length>chars) { chars=length; }
 			}
 		}
 		inventorywidth=0.5/64.0*((float)chars);
 		uixInventory();
+	}
+	if (jsonget("uixmenus")!="") { 
+		if (jsonget("uixmenus")=="true") { uixmenus=TRUE; } else { uixmenus=FALSE; }
+	}
+	// --- keep this one last as it breaks "json" variable
+	if (jsonget("legacymenu")!="") { 
+		json=jsonget("legacymenu");
+		integer i=1;
+		mainmenutext=[];
+		mainmenucommand=[];
+		mainmenusize=0;
+		mainmenuwidth=0;
+		for (i=0;i<=12;i++) {
+			if (jsonget("arg0button"+((string)i))!="") {
+				string label=jsonget("arg0button"+((string)i));
+				mainmenutext+=label;
+				mainmenusize++;
+				if (llStringLength(label)>mainmenuwidth) { mainmenuwidth=llStringLength(label); }
+				mainmenucommand+=["Menus.Main \""+label+"\""];
+			}
+		}
+		mainmenuwidth=0.5/64.0*((float)mainmenuwidth);
 	}
 	if (main) { uixMain(); }
 	
@@ -186,6 +232,7 @@ default {
 		//llSetTimerEvent(2);
 		hudtext="Coagulate GPHUD v"+VERSION+"\n"+COMPILEDATE+" "+COMPILETIME;
 		setDev(FALSE);
+		if (DEV) { logo=LOGO_COAGULATE_DEV; }		
 		uixMain();
 		uixInventory();
 	}
@@ -209,6 +256,8 @@ default {
 		}
 	}	
 	touch_start(integer n) {
-		if (llListFindList(inventoryprims,[llDetectedLinkNumber(0)])!=-1) { inventoryshown=0; uixInventory(); }
+		integer clicked=llDetectedLinkNumber(0);
+		if (clicked==HUD_MAIN && uixmenus) { inventorytext=mainmenutext; inventoryshown=mainmenusize; inventorywidth=mainmenuwidth; inventorycommand=mainmenucommand; uixInventory(); }
+		if (clicked==HUD_INVENTORY_CLOSE || llListFindList(inventoryprims,[clicked])!=-1) { inventoryshown=0; uixInventory(); }
 	}
 }
