@@ -189,6 +189,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		}
 
 		if (obj.has("checkavatarpermission")) {
+			if (obj.isNull("checkavatarpermission")) {
+				throw new UserRemoteFailureException("External API Error - checkavatarpermission key is supplied but null value attached");
+			}
 			final String userid=obj.getString("checkavatarpermission");
 			User user=User.findUserKeyNullable(userid);
 			if (user==null) { user=User.findUsername(userid,false); }
@@ -239,7 +242,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return character;
 	}
 
-	@Nonnull private User decodeAvatar(final JSONObject obj) {
+	@Nonnull
+	private User decodeAvatar(final JSONObject obj) {
 		User user=User.getSystem();
 		if (obj.has("runasavatarname")) {
 			final User newuser=User.findUsernameNullable(obj.getString("runasavatarname"),false);
