@@ -73,9 +73,10 @@ public class UIX {
 			@Nonnull
 			final String commandtoinvoke
 	                           ) {
+		if (commandtoinvoke.contains(" ")) { return Modules.run(st,commandtoinvoke,false); }
 		if (Modules.getCommand(st,commandtoinvoke).getArguments().size()==0) {
 			//argh, it's argless cap'n
-			return Modules.run(st,commandtoinvoke);
+			return Modules.run(st,commandtoinvoke,false);
 		}
 		return Modules.getJSONTemplateResponse(st,commandtoinvoke);
 	}

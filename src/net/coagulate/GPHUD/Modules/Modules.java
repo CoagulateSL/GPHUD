@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.GPHUD.State.Sources;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
@@ -226,9 +227,14 @@ public abstract class Modules {
 	public static Response getJSONTemplateResponse(@Nonnull final State st,
 	                                               @Nonnull final String command) { return new JSONResponse(getJSONTemplate(st,command)); }
 
-	@SuppressWarnings("fallthrough")
 	public static Response run(@Nonnull final State st,
 	                           @Nullable final String console) {
+		return run(st,console,true);
+	}
+	@SuppressWarnings("fallthrough")
+	public static Response run(@Nonnull final State st,
+	                           @Nullable final String console,
+	                           final boolean fromconsole) {
 		if (console==null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
 		final String[] words=console.split(" ");
 		int i=0;
@@ -240,8 +246,10 @@ public abstract class Modules {
 			return new ErrorResponse("Unable to find command '"+command+"' - "+e.getLocalizedMessage());
 		}
 		if (c==null) { return new ErrorResponse("Failed to find command "+command); }
-		if (!c.permitConsole()) {
-			return new ErrorResponse("Command '"+command+"' can not be called from the console");
+		if (fromconsole || st.source!=Sources.SYSTEM) {
+			if (!c.permitConsole()) {
+				return new ErrorResponse("Command '"+command+"' can not be called from the console");
+			}
 		}
 		final SafeMap parameters=new SafeMap();
 		for (final Argument arg: c.getArguments()) {

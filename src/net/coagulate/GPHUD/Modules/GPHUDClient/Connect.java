@@ -5,6 +5,7 @@ import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
@@ -41,22 +42,20 @@ public class Connect {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response connect(@Nonnull final State st,
-	                             @Nonnull
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version number of the HUD that is connecting",
-	                                        max=128) final String version,
-	                             @Nonnull
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version date of the HUD that is connecting",
-	                                        max=128) final String versiondate,
-	                             @Nonnull
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version time of the HUD that is connecting",
-	                                        max=128) final String versiontime,
-	                             @Nonnull
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="URL for the client",
-	                                        max=256) final String url) {
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="Version number of the HUD that is connecting",
+	                                                   max=128) final String version,
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="Version date of the HUD that is connecting",
+	                                                   max=128) final String versiondate,
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="Version time of the HUD that is connecting",
+	                                                   max=128) final String versiontime,
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="URL for the client",
+	                                                   max=256) final String url,
+	                               @Nonnull @Arguments(type=ArgumentType.INTEGER,
+	                                                   description="Resume session for character id") final Integer characterid) {
 		st.json(); // ensure we have the jsons
 		// log client version
 		if (version!=null && versiondate!=null && versiontime!=null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
@@ -91,6 +90,8 @@ public class Connect {
 		character.login(st.getAvatar(),st.getRegion(),url);
 		// set up the state so postConnect can do stuff
 		st.setCharacter(character);
+		// IS this the same as the old character?
+		if (character.getId()==characterid) { return new OKResponse("GPHUD Connection Re-established"); }
 		// and purge the conveyances so they get re-set
 		character.wipeConveyances(st);
 		// chain postConnect
@@ -122,7 +123,8 @@ public class Connect {
 		// if instance owner and region version is out of date, send update and message
 		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
 			if (st.getRegion().needsUpdate()) {
-				loginmessages.add("Update required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old one will then disable its self and can be deleted.");
+				loginmessages.add(
+						"Update required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old one will then disable its self and can be deleted.");
 				Distribution.getServer(st);
 			}
 		}
@@ -146,7 +148,7 @@ public class Connect {
 
 		// dump the messages
 		String message="";
-		for (String amessage:loginmessages) {
+		for (String amessage: loginmessages) {
 			if (!message.isEmpty()) { message+="\n"; }
 			message+=amessage;
 		}
@@ -161,10 +163,11 @@ public class Connect {
 			rawresponse.put("logincommand",logincommand);
 		}
 		// and tell the HUD we're all great
-		rawresponse.put("logincomplete",1);
+		rawresponse.put("logincomplete",st.getCharacter().getId());
 		return new JSONResponse(rawresponse);
 	}
 
+	// ----- Internal Statics -----
 	@Nullable
 	private static Response populateCharacterAttributes(@Nonnull final State st) {
 		for (final Attribute a: st.getAttributes()) {
@@ -226,8 +229,7 @@ public class Connect {
 	}
 
 	@Nullable
-	private static Response runCharacterInitScript(State st,
-	                                               List<String> loginmessages) {
+	private static Response runCharacterInitScript(State st,List<String> loginmessages) {
 		final String initscript=st.getKV("Instance.CharInitScript").toString();
 		if (initscript!=null && (!initscript.isEmpty())) {
 			// let the init script have a "run"
