@@ -23,6 +23,8 @@ string ourzone="";
 integer curpage=0;
 string sensordescription="";
 integer SHUTDOWN=FALSE;
+integer uixmenus=FALSE;
+
 rollchannel() {
 	if (channel!=0) { llListenRemove(handle); }
 	channel=(integer)(llFrand(-999999999)-1000000000);
@@ -155,6 +157,9 @@ process() {
 		if (jsontwoget("zone")==ourzone) { llOwnerSay(jsontwoget("zonemessage")); }
 	}
 	if (incommand=="runtemplate") { json=jsontwo; sensormanual=MANUAL_NONE; trigger(); }
+	if (jsontwoget("uixmenus")!="") { 
+		if (jsontwoget("uixmenus")=="true") { uixmenus=TRUE; } else { uixmenus=FALSE; }
+	}	
 	if (jsontwoget("logincommand")!="") {
 		string logincommand=jsontwoget("logincommand");
 		json="";
@@ -300,12 +305,14 @@ default {
 	{
 		if (SHUTDOWN) { return; }
 		if (BOOTSTAGE<BOOT_COMPLETE) { return; }
-		if (llDetectedLinkNumber(0)==1) {
-			mainMenu();
-		} else {
-			string name=llGetLinkName(llDetectedLinkNumber(0));
-			if (name=="legacymenu") {
+		if (!uixmenus) {
+			if (llDetectedLinkNumber(0)==1) {
 				mainMenu();
+			} else {
+				string name=llGetLinkName(llDetectedLinkNumber(0));
+				if (name=="legacymenu") {
+					mainMenu();
+				}
 			}
 		}
 	}

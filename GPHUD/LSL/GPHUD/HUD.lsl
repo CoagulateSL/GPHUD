@@ -27,7 +27,7 @@ integer rpchannelhandle=0;
 // responders
 key radarto=NULL_KEY;
 // HUD related stuff
-integer logincomplete=FALSE;
+integer logincomplete=0;
 string charname="Unknown";
 integer rpchannel=0;
 integer BANNERED=FALSE;
@@ -76,13 +76,14 @@ setup() {
 
 startLogin() {
 	#ifdef DEBUG_BOOT
-	llOwnerSay("Resources ready, logging in");
+	llOwnerSay("Resources ready, logging in with charid "+(string)logincomplete);
 	#endif
 	json="";
 	jsonput("version",VERSION);
 	jsonput("versiondate",COMPILEDATE);
 	jsonput("versiontime",COMPILETIME);	
 	jsonput("url",comms_url);
+	jsonput("characterid",(string)logincomplete);
 	command("GPHUDClient.Connect");
 	LOGIN_STAGE=-1;	
 }
@@ -120,7 +121,7 @@ shutdown() {
 integer process(key requestid) {
 	string incommand=jsonget("incommand");
 	if (jsonget("logincomplete")!="") {
-		logincomplete=TRUE;
+		logincomplete=((integer)jsonget("logincomplete"));
 		#ifdef DEBUG_BOOT
 		llOwnerSay("Login complete, "+((string)llGetFreeMemory())+" bytes inside large process()");
 		#endif
@@ -335,13 +336,14 @@ default {
 		}
 		if (channel==1 && id==llGetOwner()) {
 			if (text=="status" && id==IAIN_MALTZ) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
+			if (text=="reconnect") { shutdown(); getNewCommsURL(); return; }
 			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); gphud_hang(""); }
 			if (text=="reboot") { llResetScript(); }
-			if (logincomplete==FALSE) { return; }
+			if (logincomplete==0) { return; }
 			json=llJsonSetValue("",["console"],text);
 			command("console");
 		}
-		if (logincomplete==FALSE) { return; }
+		if (logincomplete==0) { return; }
 		if (channel==rpchannel) {
 			string name=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(name);
 		}
@@ -351,18 +353,22 @@ default {
 	{
 		if (SHUTDOWN) { if (llDetectedKey(0)==IAIN_MALTZ) { llResetScript(); } return; }	
 		if (AWAIT_GO==TRUE) { return; }
-		if (logincomplete==FALSE) {
+		if (logincomplete==0) {
 			llSetText("Retry character registration...",<1,.5,.5>,1);
 			startLogin();
 			return;
 		}
 		if (llDetectedLinkNumber(0)!=1) {
+			//llOwnerSay("Link number "+((string)llDetectedLinkNumber(0)));
 			string name=llGetLinkName(llDetectedLinkNumber(0));
-			if (name!="legacymenu") {
+			//llOwnerSay("Link name "+name);
+			if (name!="legacymenu" && name!="") {
 				json="";
 				if (llSubStringIndex(name,".")==-1) { 
+					//llOwnerSay("GPHUDDirect "+name);
 					command("gphudclient."+name);
 				} else {
+					//llOwnerSay("GPHUDClient.call "+name);
 					jsonput("commandtoinvoke",name);
 					command("GPHUDClient.call");
 				}

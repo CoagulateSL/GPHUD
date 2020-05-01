@@ -1,6 +1,6 @@
 #include "GPHUDHeader.lsl"
 #include "SL/LSL/Constants.lsl"
-#define DUMPLINKS
+//#define DUMPLINKS
 
 integer ATTACH_LOCATION=ATTACH_HUD_BOTTOM;
 integer IN_EXPERIENCE=FALSE;
