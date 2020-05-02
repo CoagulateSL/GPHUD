@@ -152,7 +152,6 @@ integer process(key requestid) {
 	if (incommand=="radar") { DONOTRESPOND=TRUE; llSensor("",NULL_KEY,AGENT,20,PI); radarto=requestid; }
 	if (incommand=="openurl") { llLoadURL(llGetOwner(),jsonget("description"),jsonget("openurl")); }
 	if (jsonget("motd")!="") { llOwnerSay("MOTD: "+jsonget("motd")); }
-	/*
 	if (jsonget("titlerz")!="") { llRegionSayTo(llGetOwner(),broadcastchannel,llJsonSetValue("",["titlerz"],jsonget("titlerz"))); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
@@ -161,7 +160,6 @@ integer process(key requestid) {
 		llRegionSayTo(llGetOwner(),broadcastchannel,totitler);
 		//llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titler\":\""+(string)titlercolor+"|"+titlertext+"\"}");
 	}
-	*/
 	if (jsonget("hudreplace")!="") { gphud_hang("Duplicate GPHUD attached, detaching one"); }
 	if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
 	if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
