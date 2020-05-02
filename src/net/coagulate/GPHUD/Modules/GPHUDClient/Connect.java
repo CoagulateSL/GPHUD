@@ -164,6 +164,7 @@ public class Connect {
 		}
 		// and tell the HUD we're all great
 		rawresponse.put("logincomplete",st.getCharacter().getId());
+		Effect.conveyEffects(st,st.getCharacter(),rawresponse);
 		return new JSONResponse(rawresponse);
 	}
 

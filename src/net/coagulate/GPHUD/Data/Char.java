@@ -757,11 +757,14 @@ public class Char extends TableRow {
 	 * @param st      State
 	 * @param payload Message to append changed conveyances to.
 	 */
-	public void appendConveyance(@Nonnull final State st,
+	public void appendConveyance(@Nonnull State st,
 	                             @Nonnull final JSONObject payload) {
 		// SANITY NOTE TO SELF - there is also initialConveyance which does almost exactly the same, which is bad
 		final boolean debug=false;
 		validate(st);
+		if (st.getCharacter()!=this) {
+			st=new State(this);
+		}
 		final Map<KV,String> oldconveyances=loadConveyances(st);
 		for (final Map.Entry<KV,String> entry: oldconveyances.entrySet()) {
 			final KV kv=entry.getKey();
