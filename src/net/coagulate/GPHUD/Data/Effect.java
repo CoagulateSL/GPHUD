@@ -170,13 +170,18 @@ public class Effect extends TableRow {
 			while (byduration.containsKey(remain)) {
 				remain++;
 			}
-			byduration.put(remain,effect);
+			String include=st.getKV(effect,"Effects.ShowEffect");
+			if (include==null || include.isEmpty()) { include="true"; }
+			if ("true".equalsIgnoreCase(include)) { byduration.put(remain,effect); }
 		}
 		int i=1;
 		for (Integer remain: byduration.keySet()) {
 			if (i<4) {
+				Effect effect=byduration.get(remain);
 				json.put("effect"+i,(remain+UnixTime.getUnixTime())+"");
-				json.put("effect"+i+"t","b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4");
+				String texture=st.getKV(effect,"Effects.EffectIcon");
+				if (texture==null || texture.isEmpty()) { texture="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4"; }
+				json.put("effect"+i+"t",texture);
 				i++;
 			}
 		}
