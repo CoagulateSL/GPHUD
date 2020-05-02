@@ -44,7 +44,8 @@ default {
 			if (line!="") { 
 				integer split=llSubStringIndex(line,"|");
 				string color=llGetSubString(line,0,split-1);
-				string message=llGetSubString(line,split+1,-1);
+				string message="";
+				if ((split+1)<llStringLength(line)) { message=llGetSubString(line,split+1,-1); }
 				//llOwnerSay("'"+color+"'");
 				//llOwnerSay("'"+message+"'");
 				llSetText(message,(vector)color,1);
