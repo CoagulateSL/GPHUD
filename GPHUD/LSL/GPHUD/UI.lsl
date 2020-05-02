@@ -95,7 +95,11 @@ trigger() {
 				if (type=="SELECT") { parsed=TRUE; 
 					dialogprefix="arg"+(string)i+"button";
 					page(curpage);
-					llDialog(llGetOwner(),description,dialog,channel);
+					if (!uixmenus) { 
+						llDialog(llGetOwner(),description,dialog,channel);
+					} else {
+						llMessageLinked(LINK_THIS,LINK_DIALOG,description,llDumpList2String(dialog,"|"));
+					}
 				}
 				if (type=="TEXTBOX" || sensormanual==MANUAL_SELECTED) { parsed=TRUE;
 					llTextBox(llGetOwner(),description,channel);
@@ -148,6 +152,9 @@ calculateZone() {
 process() {
 	//llOwnerSay("Json2:"+jsontwo);
 	string incommand=jsontwoget("incommand");	
+	if (jsontwoget("uixmenus")!="") { 
+		if (jsontwoget("uixmenus")=="true") { uixmenus=TRUE; } else { uixmenus=FALSE; }
+	}	
 	if (incommand=="registered") { /*cookie=jsontwoget("cookie");*/ }
 	if (jsontwoget("zoning")!="") { zoning=llParseStringKeepNulls(jsontwoget("zoning"),["|"],[]); calculateZone();}
 	if (jsontwoget("legacymenu")!="") { mainmenu=jsontwoget("legacymenu"); }
@@ -157,9 +164,6 @@ process() {
 		if (jsontwoget("zone")==ourzone) { llOwnerSay(jsontwoget("zonemessage")); }
 	}
 	if (incommand=="runtemplate") { json=jsontwo; sensormanual=MANUAL_NONE; trigger(); }
-	if (jsontwoget("uixmenus")!="") { 
-		if (jsontwoget("uixmenus")=="true") { uixmenus=TRUE; } else { uixmenus=FALSE; }
-	}	
 	if (jsontwoget("logincommand")!="") {
 		string logincommand=jsontwoget("logincommand");
 		json="";
@@ -168,6 +172,71 @@ process() {
 		sensormanual=MANUAL_NONE;
 		trigger();
 	}
+}
+processInput(string text) {
+	string type="";
+	integer i=0;
+	integer args=(integer) jsonget("args");
+	for (i=0;i<args;i++) {
+		string name=jsonget("arg"+(string)i+"name");
+		if (jsonget(name)=="") { 			
+			if (type=="") { 
+				string val="arg"+(string)i+"type";
+				type=jsonget(val);			
+			}
+		}
+	}
+	if (type=="SELECT") {
+		if (text==" ") { trigger(); return; }
+		if (text==">>>") { curpage++; trigger(); return; }
+		if (text=="<<<") { curpage--; trigger(); return; } 
+		// if you make the first 24 chars ambiguous, expect dumb behaviour
+		if (llStringLength(text)>=23) {
+			i=0;
+			while (jsonget(dialogprefix+(string)i)!="") {
+				if (llSubStringIndex(jsonget(dialogprefix+(string)i),text)==0) { text=jsonget(dialogprefix+(string)i); }
+				i++;
+			}
+		}
+	}
+	if (type=="SENSOR" || type=="SENSORCHAR" || type=="SELECT") {
+		if (sensormanual==MANUAL_AVAILABLE && text=="ManualEntry") { sensormanual=MANUAL_SELECTED; trigger(); return; }
+		//llOwnerSay("Qualify "+text);
+		integer i=0;
+		integer perfect=-1;
+		integer prefix=-1;
+		for (i=0;i<llGetListLength(dialog);i++) {
+			if (text==llList2String(dialog,i)) { //llOwnerSay("Perfect match '"+text+"' == '"+llList2String(dialog,i)+"'");
+				perfect=i;
+			}
+			if (llSubStringIndex(llList2String(dialog,i),text)==0) { //llOwnerSay("Prefix match '"+text+"' == '"+llList2String(dialog,i)+"'");
+				if (prefix!=-1) { //llOwnerSay("Prefix multimatch");
+					prefix=-2;
+				} else {
+					prefix=i;
+				}
+			}
+		}
+		if (prefix>=0) { text=llList2String(dialog,prefix); }
+		if (perfect>=0) { text=llList2String(dialog,perfect); }
+		//llOwnerSay("IN:"+text+":OUT:"+text);
+		if (type=="SENSORCHAR" && sensormanual!=MANUAL_SELECTED) { text=">"+text; }
+	}
+	// SL bug
+	if (
+		( llGetSubString(llStringTrim(text,STRING_TRIM),0,0)=="{" &&
+		  llGetSubString(llStringTrim(text,STRING_TRIM),-1,-1)=="}"
+		) ||
+		( llGetSubString(llStringTrim(text,STRING_TRIM),0,0)=="[" &&
+		  llGetSubString(llStringTrim(text,STRING_TRIM),-1,-1)=="]"
+		)
+	) {
+		// llJsonSetValue does not properly encode strings wrapped in { } characters.  see SEC-6308.  until resolved, we block such inputs here
+		llOwnerSay("Illegal input ; due to a bug in Second Life you can not surround a string with { and } or [ and ] characters.  Please alter your input and try again.");
+	} else { 
+		json=llJsonSetValue(json,[setname],text); curpage=0;
+	}
+	trigger();
 }
 mainMenu() {
 	json=mainmenu;
@@ -205,69 +274,7 @@ default {
 	listen(integer rxchannel,string name,key id,string text) {
 		if (SHUTDOWN) { return; }	
 		if (id==llGetOwner() && channel==rxchannel) {
-			string type="";
-			integer i=0;
-			integer args=(integer) jsonget("args");
-			for (i=0;i<args;i++) {
-				string name=jsonget("arg"+(string)i+"name");
-				if (jsonget(name)=="") { 			
-					if (type=="") { 
-						string val="arg"+(string)i+"type";
-						type=jsonget(val);			
-					}
-				}
-			}
-			if (type=="SELECT") {
-				if (text==" ") { trigger(); return; }
-				if (text==">>>") { curpage++; trigger(); return; }
-				if (text=="<<<") { curpage--; trigger(); return; } 
-				// if you make the first 24 chars ambiguous, expect dumb behaviour
-				if (llStringLength(text)>=23) {
-					i=0;
-					while (jsonget(dialogprefix+(string)i)!="") {
-						if (llSubStringIndex(jsonget(dialogprefix+(string)i),text)==0) { text=jsonget(dialogprefix+(string)i); }
-						i++;
-					}
-				}
-			}
-			if (type=="SENSOR" || type=="SENSORCHAR" || type=="SELECT") {
-				if (sensormanual==MANUAL_AVAILABLE && text=="ManualEntry") { sensormanual=MANUAL_SELECTED; trigger(); return; }
-				//llOwnerSay("Qualify "+text);
-				integer i=0;
-				integer perfect=-1;
-				integer prefix=-1;
-				for (i=0;i<llGetListLength(dialog);i++) {
-					if (text==llList2String(dialog,i)) { //llOwnerSay("Perfect match '"+text+"' == '"+llList2String(dialog,i)+"'");
-						perfect=i;
-					}
-					if (llSubStringIndex(llList2String(dialog,i),text)==0) { //llOwnerSay("Prefix match '"+text+"' == '"+llList2String(dialog,i)+"'");
-						if (prefix!=-1) { //llOwnerSay("Prefix multimatch");
-							prefix=-2;
-						} else {
-							prefix=i;
-						}
-					}
-				}
-				if (prefix>=0) { text=llList2String(dialog,prefix); }
-				if (perfect>=0) { text=llList2String(dialog,perfect); }
-				//llOwnerSay("IN:"+text+":OUT:"+text);
-				if (type=="SENSORCHAR" && sensormanual!=MANUAL_SELECTED) { text=">"+text; }
-			}
-			// SL bug
-			if (
-				( llGetSubString(llStringTrim(text,STRING_TRIM),0,0)=="{" &&
-				  llGetSubString(llStringTrim(text,STRING_TRIM),-1,-1)=="}"
-				) ||
-				( llGetSubString(llStringTrim(text,STRING_TRIM),0,0)=="[" &&
-				  llGetSubString(llStringTrim(text,STRING_TRIM),-1,-1)=="]"
-				)
-			) {
-				// llJsonSetValue does not properly encode strings wrapped in { } characters.  see SEC-6308.  until resolved, we block such inputs here
-				llOwnerSay("Illegal input ; due to a bug in Second Life you can not surround a string with { and } or [ and ] characters.  Please alter your input and try again.");
-			} else { 
-				json=llJsonSetValue(json,[setname],text); curpage=0;
-			}
-			trigger();
+			processInput(text);
 		}
 	}
 	no_sensor() {
@@ -299,21 +306,30 @@ default {
 			truncated+=llGetSubString(llList2String(stride,i+1),0,23);
 		}
 		string description=jsonget("arg"+(string)i+"description");
-		llDialog(llGetOwner(),sensordescription,truncated,channel);
+		if (!uixmenus) { 
+			llDialog(llGetOwner(),sensordescription,truncated,channel);
+		} else {
+			llMessageLinked(LINK_THIS,LINK_DIALOG,sensordescription,llDumpList2String(truncated,"|"));
+		}
 	}
 	touch_start(integer n)
 	{
 		if (SHUTDOWN) { return; }
+		string name=llGetLinkName(llDetectedLinkNumber(0));
+		if (llSubStringIndex(name,"!!")==0) {
+			name=llGetSubString(name,2,-1);
+			processInput(name);
+		}
 		if (BOOTSTAGE<BOOT_COMPLETE) { return; }
 		if (!uixmenus) {
 			if (llDetectedLinkNumber(0)==1) {
 				mainMenu();
 			} else {
-				string name=llGetLinkName(llDetectedLinkNumber(0));
 				if (name=="legacymenu") {
 					mainMenu();
 				}
 			}
 		}
+
 	}
 }

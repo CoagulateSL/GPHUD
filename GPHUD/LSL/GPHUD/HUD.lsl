@@ -353,7 +353,7 @@ default {
 	{
 		if (SHUTDOWN) { if (llDetectedKey(0)==IAIN_MALTZ) { llResetScript(); } return; }	
 		if (AWAIT_GO==TRUE) { return; }
-		if (logincomplete==0) {
+		if (llDetectedLinkNumber(0)==1 && logincomplete==0) {
 			llSetText("Retry character registration...",<1,.5,.5>,1);
 			startLogin();
 			return;
@@ -362,7 +362,7 @@ default {
 			//llOwnerSay("Link number "+((string)llDetectedLinkNumber(0)));
 			string name=llGetLinkName(llDetectedLinkNumber(0));
 			//llOwnerSay("Link name "+name);
-			if (name!="legacymenu" && name!="") {
+			if (name!="legacymenu" && name!="" && llSubStringIndex(name,"!!")!=0) {
 				json="";
 				if (llSubStringIndex(name,".")==-1) { 
 					//llOwnerSay("GPHUDDirect "+name);

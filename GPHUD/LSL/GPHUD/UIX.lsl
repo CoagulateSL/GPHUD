@@ -73,8 +73,31 @@ uixMain() {
 				PRIM_TEXTURE, ALL_SIDES, qb6texture, <1,1,1>, <0,0,0>, 0,
 				PRIM_POS_LOCAL, qb6pos,
 			PRIM_LINK_TARGET, HUD_GET_MESSAGE,
-				PRIM_POS_LOCAL, msgpos
-				
+				PRIM_POS_LOCAL, msgpos,
+			PRIM_LINK_TARGET, HUD_EFFECTS_1,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(0.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_TIMER_1,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(0.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_2,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(1.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_TIMER_2,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(1.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_3,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(2.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_TIMER_3,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(2.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_4,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(3.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_TIMER_4,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(3.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_5,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(4.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_TIMER_5,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(4.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_6,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(5.5+((float)qbbalanced))/*button*/),-.04>,
+			PRIM_LINK_TARGET, HUD_EFFECTS_TIMER_6,
+				PRIM_POS_LOCAL, <.01,(-0.06*sizeratio/*hud*/ - 0.04*(5.5+((float)qbbalanced))/*button*/),-.04>
 		]
 	);
 }
@@ -139,6 +162,78 @@ uixInventory() {
 	}
 	llSetLinkPrimitiveParamsFast(LINK_THIS,l);
 }
+integer timersize=0;
+string durate(integer seconds) {
+	if (timersize==0) { timersize=999; }
+	if (seconds<60) { timersize=1; }
+	if (seconds<120 && timersize>5) { timersize=5; }
+	if (seconds<300 && timersize>15) { timersize=15; }
+	if (seconds<600 && timersize>30) { timersize=30; }
+	if (timersize>60) { timersize=60; }
+	if (seconds<60) { return ((string)seconds)+"s"; }
+	seconds=seconds/60;
+	if (seconds<60) {
+		return ((string)seconds)+"m";
+	}
+	seconds=seconds/60;
+	return ((string)seconds)+"h";
+}
+
+list getEffectTimers() {
+	integer now=llGetUnixTime();
+	list l=[];
+	if (llGetListLength(effecttimers)>0 && llList2Integer(effecttimers,0)<now) { 
+		effecttimers=llDeleteSubList(effecttimers,0,0);
+		effecttexture=llDeleteSubList(effecttexture,0,0);
+		redrawEffects();
+	}
+	integer effectscount=llGetListLength(effecttimers);
+	if (effectscount>0) {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_1,PRIM_TEXT,durate(llList2Integer(effecttimers,0)-now),<1,1,1>,1];
+	} else {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_1,PRIM_TEXT,"",<1,1,1>,1];
+	}
+	if (effectscount>1) {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_2,PRIM_TEXT,durate(llList2Integer(effecttimers,1)-now),<1,1,1>,1];
+	} else {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_2,PRIM_TEXT,"",<1,1,1>,1];
+	}
+	if (effectscount>2) {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_3,PRIM_TEXT,durate(llList2Integer(effecttimers,2)-now),<1,1,1>,1];
+	} else {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_3,PRIM_TEXT,"",<1,1,1>,1];
+	}
+	l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_4,PRIM_TEXT,"",<1,1,1>,1];
+	l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_5,PRIM_TEXT,"",<1,1,1>,1];
+	l+=[PRIM_LINK_TARGET,HUD_EFFECTS_TIMER_6,PRIM_TEXT,"",<1,1,1>,1];
+	return l;
+}
+
+redrawEffects() {
+	timersize=0;
+	list l=getEffectTimers();
+	integer effectscount=llGetListLength(effecttimers);
+	if (effectscount>0) {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_1,PRIM_TEXTURE,ALL_SIDES,llList2String(effecttexture,0),<1,1,1>,<0,0,0>,0];
+	} else {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_1,PRIM_TEXTURE,ALL_SIDES,TEXTURE_TRANSPARENT,<1,1,1>,<0,0,0>,0];
+	}
+	if (effectscount>1) {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_2,PRIM_TEXTURE,ALL_SIDES,llList2String(effecttexture,1),<1,1,1>,<0,0,0>,0];
+	} else {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_2,PRIM_TEXTURE,ALL_SIDES,TEXTURE_TRANSPARENT,<1,1,1>,<0,0,0>,0];
+	}
+	if (effectscount>2) {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_3,PRIM_TEXTURE,ALL_SIDES,llList2String(effecttexture,2),<1,1,1>,<0,0,0>,0];
+	} else {
+		l+=[PRIM_LINK_TARGET,HUD_EFFECTS_3,PRIM_TEXTURE,ALL_SIDES,TEXTURE_TRANSPARENT,<1,1,1>,<0,0,0>,0];
+	}
+	l+=[PRIM_LINK_TARGET,HUD_EFFECTS_4,PRIM_TEXTURE,ALL_SIDES,TEXTURE_TRANSPARENT,<1,1,1>,<0,0,0>,0];
+	l+=[PRIM_LINK_TARGET,HUD_EFFECTS_5,PRIM_TEXTURE,ALL_SIDES,TEXTURE_TRANSPARENT,<1,1,1>,<0,0,0>,0];
+	l+=[PRIM_LINK_TARGET,HUD_EFFECTS_6,PRIM_TEXTURE,ALL_SIDES,TEXTURE_TRANSPARENT,<1,1,1>,<0,0,0>,0];
+	llSetTimerEvent(timersize);
+	llSetLinkPrimitiveParamsFast(LINK_THIS,l);
+}
 
 /*
 #define HUD_EFFECTS_5 2
@@ -190,6 +285,8 @@ float mainmenuwidth=0;
 integer BOOTTIME=TRUE;
 string inventorytitle="";
 integer qbbalanced=FALSE;
+list effecttimers=[];
+list effecttexture=[];
 
 process() {
 	//llOwnerSay(json);
@@ -202,6 +299,13 @@ process() {
 	if (jsonget("qb6texture")!="") { qb6texture=jsonget("qb6texture"); main=TRUE; }
 	if (jsonget("setlogo")!="") { logo=jsonget("setlogo"); main=TRUE; }
 	integer reposition=FALSE;
+	if (jsonget("effect1")!="") {
+		effecttimers=[]; effecttexture=[];
+		if (jsonget("effect1")!="") { effecttimers+=((integer)jsonget("effect1")); effecttexture+=jsonget("effect1t"); }
+		if (jsonget("effect2")!="") { effecttimers+=((integer)jsonget("effect2")); effecttexture+=jsonget("effect2t"); }
+		if (jsonget("effect3")!="") { effecttimers+=((integer)jsonget("effect3")); effecttexture+=jsonget("effect3t"); }
+		redrawEffects();
+	}
 	if (jsonget("sizeratio")!="") { main=TRUE; sizeratio=((float)jsonget("sizeratio")); reposition=TRUE; }
 	if (jsonget("qbbalance")!="") {
 		if (jsonget("qbbalance")=="true")
@@ -241,7 +345,7 @@ process() {
 	}	
 	if (jsonget("hudcolor")!="") { hudtextcolor=(vector)jsonget("hudcolor"); }
 	if (jsonget("hudtext")!="") { hudtext=jsonget("hudtext"); }
-	if ((jsonget("hudtext")!="" || jsonget("hudcolor")!="") && inventoryshown>0) { 
+	if ((jsonget("hudtext")!="" || jsonget("hudcolor")!="") && inventoryshown==0) { 
 		llSetText(hudtext,hudtextcolor,1);
 	}	
 	if (jsonget("line1")!="") {
@@ -289,6 +393,15 @@ process() {
 	
 }
 
+calculateInventoryWidth() {
+	inventorywidth=0;
+	integer i=0;
+	for (i=0;i<llGetListLength(inventorytext);i++) {
+		string element=llList2String(inventorytext,i);
+		if (llStringLength(element)>inventorywidth) { inventorywidth=llStringLength(element); }
+	}
+	inventorywidth=inventorywidth*CHARACTERWIDTH;
+}
 default {
 	state_entry() {
 		//llSetTimerEvent(2);
@@ -297,10 +410,16 @@ default {
 		if (DEV) { logo=LOGO_COAGULATE_DEV; }		
 		uixMain();
 		uixInventory();
+		redrawEffects();
 		BOOTTIME=FALSE;
 	}
 	timer() {
 		if (SHUTDOWN) { llSetTimerEvent(0); return; }
+		integer oldtimer=timersize;
+		timersize=0;
+		llSetLinkPrimitiveParamsFast(LINK_THIS,getEffectTimers());
+		//llOwnerSay("Timer triggered "+((string)oldtimer)+" -> "+((string)timersize));
+		if (timersize!=oldtimer) { llSetTimerEvent(timersize); }
 	}
     link_message(integer from,integer num,string message,key id) {
 		if (SHUTDOWN) { return; }	
@@ -309,6 +428,16 @@ default {
 			json=message; message=""; process(); json="";
 		}
 		if (num==LINK_DIAGNOSTICS) { llOwnerSay("UIX: "+(string)llGetFreeMemory()); }
+		if (num==LINK_DIALOG) {
+			inventorytext=llParseStringKeepNulls(id,["|"],[]);
+			inventorytitle=message;
+			inventoryshown=llGetListLength(inventorytext);
+			inventorycommand=[];
+			integer i=0;
+			for (i=0;i<inventoryshown;i++) { inventorycommand+=["!!"+llList2String(inventorytext,i)]; }
+			calculateInventoryWidth();
+			uixInventory();
+		}
 	}
 	http_response( key request_id, integer status, list metadata, string body ) {
 		if (SHUTDOWN) { return; }	
