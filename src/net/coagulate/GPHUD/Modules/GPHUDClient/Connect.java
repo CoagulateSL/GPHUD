@@ -202,7 +202,7 @@ public class Connect {
 						}
 						break;
 					case GROUP:
-						if (a.getSubType()!=null && CharacterGroup.getGroup(st.getCharacter(),a.getSubType())==null) {
+						if (a.getSubType()!=null && CharacterGroup.getGroup(st.getCharacter(),a.getSubType())==null && CharacterGroup.hasChoices(st,a)) {
 							final JSONObject json=new JSONObject();
 							json.put("hudtext","Initialising character...")
 							    .put("hudcolor","<1.0,0.75,0.75>")

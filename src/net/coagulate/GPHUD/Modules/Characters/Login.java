@@ -149,7 +149,7 @@ public abstract class Login {
 						}
 						break;
 					case GROUP:
-						if (a.getSubType()!=null && CharacterGroup.getGroup(character,a.getSubType())==null) {
+						if (a.getSubType()!=null && CharacterGroup.getGroup(character,a.getSubType())==null && CharacterGroup.hasChoices(st,a)) {
 							final JSONObject json=new JSONObject();
 							json.put("hudtext","Initialising character...")
 							    .put("hudcolor","<1.0,0.75,0.75>")
