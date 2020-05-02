@@ -85,8 +85,10 @@ state standby {
 	on_rez(integer n) {
 		if (n==0) {
 			//manual rez from inventory.  just go to sleep.
+			status("Manual rez detected, do nothing");
 			return;
 		}
+		status("Rez detected");
 		dodie=TRUE;
 		integer sysnum=n%3;
 		key k=LOGO_COAGULATE;

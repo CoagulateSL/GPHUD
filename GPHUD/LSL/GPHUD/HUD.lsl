@@ -32,7 +32,8 @@ string charname="Unknown";
 integer rpchannel=0;
 integer BANNERED=FALSE;
 integer SHUTDOWN=TRUE;
-
+vector titlercolor=<0,0,0>;
+string titlertext="";
 //// LOCAL INITIALISATION CODE 
 getNewCommsURL() {
 	URL_STAGE=-1;
@@ -181,10 +182,11 @@ gphud_hang(string reason) {
 	if (llGetInventoryType("Attacher")!=INVENTORY_SCRIPT) {
 		llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0,PRIM_POS_LOCAL,<-10,-10,-10>]);
 		llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); llDetachFromAvatar();
+	} else { 
+		llOwnerSay("Shutdown and not detaching");
+		llSetText("Shutdown",<1,.8,.8>,1);
+		SHUTDOWN=TRUE; llMessageLinked(LINK_THIS,LINK_SHUTDOWN,"","");
 	}
-	llOwnerSay("Shutdown and not detaching");
-	llSetText("Shutdown",<1,.8,.8>,1);
-	SHUTDOWN=TRUE; llMessageLinked(LINK_THIS,LINK_SHUTDOWN,"","");
 }
 
 //// EVENT HANDLER
@@ -264,7 +266,6 @@ default {
 		if (process(id)) { llHTTPResponse(id,200,json); }
 	}	
 	http_response( key request_id, integer status, list metadata, string body ) {
-		if (SHUTDOWN) { return; }	
 		#ifdef DEBUG_JSON 
 		llOwnerSay("REPLY:"+body);
 		#endif
@@ -313,7 +314,6 @@ default {
 			string name=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(name);
 		}
 	}
-	on_rez(integer parameter) { llResetScript(); }
 	touch_start(integer n)
 	{
 		if (SHUTDOWN) { if (llDetectedKey(0)==IAIN_MALTZ) { llResetScript(); } }	
