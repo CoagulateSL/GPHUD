@@ -116,8 +116,6 @@ shutdown() {
 
 //// PROCESSOR
 
-// ADD A MESSAGE called uixupdate or something that makes the other script call uix.update or similar to download the HUD presentation.  or see what can be done in 2k.
-
 integer process(key requestid) {
 	string incommand=jsonget("incommand");
 	if (jsonget("logincomplete")!="") {
@@ -151,27 +149,8 @@ integer process(key requestid) {
 	if (incommand=="forcereconnect") { startLogin(); }
 	integer DONOTRESPOND=FALSE;
 	string retjson="";
-	//llOwnerSay("WE ARE HERE WITH "+json);
-	/*if (jsonget("error")!="" && BOOTSTAGE==BOOT_APP) { // failed to login / create character?  so blind retry? :P
-		llOwnerSay("Error during login/registration, please click the HUD to retry...");
-		llSetText("Registration failed - click HUD to retry registration...",<1,.5,.5>,1);
-		retrylogin=TRUE;
-		return TRUE;	
-	}*/
 	if (incommand=="radar") { DONOTRESPOND=TRUE; llSensor("",NULL_KEY,AGENT,20,PI); radarto=requestid; }
-	if (incommand=="registered") { /*cookie=jsonget("cookie");*/ /*BOOTSTAGE=BOOT_COMPLETE; llMessageLinked(LINK_THIS,LINK_SET_STAGE,(string)BOOTSTAGE,NULL_KEY); */ }
-	if (incommand=="ping") { /*retjson=llJsonSetValue(retjson,["cookie"],cookie);*/ }
-	//if (jsonget("sizeratio")!="") { sizeratio=(integer)jsonget("sizeratio"); reflowHUD(); }
 	if (incommand=="openurl") { llLoadURL(llGetOwner(),jsonget("description"),jsonget("openurl")); }
-	if (jsonget("setlogo")!="") { llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,jsonget("setlogo"),<1,1,1>,<0,0,0>,0]); }
-	/*
-	if (jsonget("qb1texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB1,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb1texture"),<1,1,1>,<0,0,0>,0]); }
-	if (jsonget("qb2texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB2,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb2texture"),<1,1,1>,<0,0,0>,0]); }
-	if (jsonget("qb3texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB3,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb3texture"),<1,1,1>,<0,0,0>,0]); }
-	if (jsonget("qb4texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB4,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb4texture"),<1,1,1>,<0,0,0>,0]); }
-	if (jsonget("qb5texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB5,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb5texture"),<1,1,1>,<0,0,0>,0]); }
-	if (jsonget("qb6texture")!="") { llSetLinkPrimitiveParamsFast(LINK_QB6,[PRIM_TEXTURE,ALL_SIDES,jsonget("qb6texture"),<1,1,1>,<0,0,0>,0]); }
-	*/
 	if (jsonget("motd")!="") { llOwnerSay("MOTD: "+jsonget("motd")); }
 	/*
 	if (jsonget("titlerz")!="") { llRegionSayTo(llGetOwner(),broadcastchannel,llJsonSetValue("",["titlerz"],jsonget("titlerz"))); }
@@ -181,14 +160,6 @@ integer process(key requestid) {
 		string totitler=llJsonSetValue("",["titler"],(string)titlercolor+"|"+titlertext);
 		llRegionSayTo(llGetOwner(),broadcastchannel,totitler);
 		//llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titler\":\""+(string)titlercolor+"|"+titlertext+"\"}");
-	}
-	if (jsonget("messagecount")!="") {
-		integer messages=(integer)jsonget("messagecount");
-		if (messages==0) { llSetLinkPrimitiveParamsFast(LINK_MESSAGES,[PRIM_COLOR,ALL_SIDES,<0.627, 1.000, 1.000>,0]); } 
-		else { llSetLinkPrimitiveParamsFast(LINK_MESSAGES,[PRIM_COLOR,ALL_SIDES,<0.627, 1.000, 1.000>,1]);
-			string s=""; if (messages>1) { s="s"; }
-			llOwnerSay("You have "+(string)messages+" new message"+s+".  Click the envelope to read.");
-		} 
 	}
 	*/
 	if (jsonget("hudreplace")!="") { gphud_hang("Duplicate GPHUD attached, detaching one"); }
@@ -330,7 +301,6 @@ default {
 			}
 			json=text;
 			json=llJsonSetValue(json,["incommand"],"broadcast");
-			//llOwnerSay("broadcast:"+json);
 			llMessageLinked(LINK_THIS,LINK_RECEIVE,json,"");	
 			process(NULL_KEY);
 		}
@@ -359,16 +329,12 @@ default {
 			return;
 		}
 		if (llDetectedLinkNumber(0)!=1) {
-			//llOwnerSay("Link number "+((string)llDetectedLinkNumber(0)));
 			string name=llGetLinkName(llDetectedLinkNumber(0));
-			//llOwnerSay("Link name "+name);
 			if (name!="legacymenu" && name!="" && llSubStringIndex(name,"!!")!=0) {
 				json="";
 				if (llSubStringIndex(name,".")==-1) { 
-					//llOwnerSay("GPHUDDirect "+name);
 					command("gphudclient."+name);
 				} else {
-					//llOwnerSay("GPHUDClient.call "+name);
 					jsonput("commandtoinvoke",name);
 					command("GPHUDClient.call");
 				}
