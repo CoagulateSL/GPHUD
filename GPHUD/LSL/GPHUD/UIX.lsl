@@ -43,7 +43,7 @@
 #define HUD_INVENTORY_14 36
 #define HUD_QUICKBUTTON_3 37
 
-integer SHUTDOWN=FALSE;
+integer SHUTDOWN=TRUE;
 
 uixMain() {
 	string text=""; if (inventoryshown==0) { text=hudtext; }
@@ -422,12 +422,12 @@ default {
 		if (timersize!=oldtimer) { llSetTimerEvent(timersize); }
 	}
     link_message(integer from,integer num,string message,key id) {
-		if (SHUTDOWN) { return; }	
 		if (num==LINK_SHUTDOWN) { SHUTDOWN=TRUE; }
+		if (num==LINK_STARTUP) { SHUTDOWN=FALSE; timersize=1; llSetTimerEvent(1.0); }
+		if (num==LINK_DIAGNOSTICS) { llOwnerSay("UIX: "+(string)llGetFreeMemory()); }
 		if (num==LINK_RECEIVE) {
 			json=message; message=""; process(); json="";
 		}
-		if (num==LINK_DIAGNOSTICS) { llOwnerSay("UIX: "+(string)llGetFreeMemory()); }
 		if (num==LINK_DIALOG) {
 			inventorytext=llParseStringKeepNulls(id,["|"],[]);
 			inventorytitle=message;
@@ -440,7 +440,6 @@ default {
 		}
 	}
 	http_response( key request_id, integer status, list metadata, string body ) {
-		if (SHUTDOWN) { return; }	
 		if (status==200) {
 			json=body; body="";
 			process();
@@ -449,7 +448,8 @@ default {
 	}	
 	touch_start(integer n) {
 		integer clicked=llDetectedLinkNumber(0);
-		if (clicked==HUD_MAIN && uixmenus) { inventorytitle="Select an option from The Main Menu"; inventorytext=mainmenutext; inventoryshown=mainmenusize; inventorywidth=mainmenuwidth; inventorycommand=mainmenucommand; uixInventory(); }
 		if (clicked==HUD_INVENTORY_CLOSE || llListFindList(inventoryprims,[clicked])!=-1) { inventorytitle=""; inventoryshown=0; uixInventory(); }
+		if (SHUTDOWN) { return; }		
+		if (clicked==HUD_MAIN && uixmenus) { inventorytitle="Select an option from The Main Menu"; inventorytext=mainmenutext; inventoryshown=mainmenusize; inventorywidth=mainmenuwidth; inventorycommand=mainmenucommand; uixInventory(); }
 	}
 }

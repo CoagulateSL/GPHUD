@@ -31,7 +31,7 @@ integer logincomplete=0;
 string charname="Unknown";
 integer rpchannel=0;
 integer BANNERED=FALSE;
-integer SHUTDOWN=FALSE;
+integer SHUTDOWN=TRUE;
 
 //// LOCAL INITIALISATION CODE 
 getNewCommsURL() {
@@ -123,7 +123,7 @@ integer process(key requestid) {
 		#ifdef DEBUG_BOOT
 		llOwnerSay("Login complete, "+((string)llGetFreeMemory())+" bytes inside large process()");
 		#endif
-		llMessageLinked(LINK_THIS,LINK_SET_STAGE,"99","");
+		llMessageLinked(LINK_THIS,LINK_STARTUP,"","");
 	}
 	if (jsonget("message")!="") { llOwnerSay(jsonget("message")); }
 	if (jsonget("say")!="") {
@@ -210,8 +210,8 @@ default {
 		}
 	}
 	link_message(integer from,integer num,string message,key id) {
-		if (SHUTDOWN) { return; }	
 		if (num==LINK_GO && AWAIT_GO==TRUE) {
+			SHUTDOWN=FALSE;
 			#ifdef DEBUG
 			llOwnerSay("Attacher GO");
 			#endif
@@ -221,7 +221,6 @@ default {
 		}
 	}
 	experience_permissions(key id) {
-		if (SHUTDOWN) { return; }	
 		#ifdef DEBUG_BOOT
 		llOwnerSay("Detach set experience, calling setup");
 		#endif
@@ -229,11 +228,9 @@ default {
 		setup();
 	}
 	experience_permissions_denied(key id,integer reason) {
-		if (SHUTDOWN) { return; }	
 		llRequestPermissions(llGetOwner(),PERMISSION_ATTACH);
 	}
 	run_time_permissions(integer perms) {
-		if (SHUTDOWN) { return; }	
 		if(perms & PERMISSION_ATTACH) { 
 			#ifdef DEBUG_BOOT
 			llOwnerSay("Detach set manual");
@@ -243,7 +240,6 @@ default {
 		} else { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
 	}
 	http_request(key id,string method,string body) {
-		if (SHUTDOWN) { return; }	
 		if (method==URL_REQUEST_DENIED && id==comms_url_key) {
 			llOwnerSay("GPHUD URL Claim failed: "+body+", retry in 15s"); 
 			URL_STAGE=0; comms_url_key=NULL_KEY;
@@ -293,7 +289,6 @@ default {
 		}
 	}		
 	listen(integer channel,string name,key id,string text) {
-		if (SHUTDOWN) { return; }	
 		if (channel==broadcastchannel) {
 			if (text=="GOTHUD") {
 				llRegionSayTo(id,broadcastchannel,"GOTHUD");
@@ -307,28 +302,30 @@ default {
 		if (channel==1 && id==llGetOwner()) {
 			if (text=="status" && id==IAIN_MALTZ) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
 			if (text=="reconnect") { shutdown(); getNewCommsURL(); return; }
-			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); gphud_hang(""); }
+			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); gphud_hang("HUD shutdown requested by wearer."); }
 			if (text=="reboot") { llResetScript(); }
 			if (logincomplete==0) { return; }
-			json=llJsonSetValue("",["console"],text);
-			command("console");
+			if (!SHUTDOWN) {
+				json=llJsonSetValue("",["console"],text);
+				command("console");
+			}
 		}
 		if (logincomplete==0) { return; }
-		if (channel==rpchannel) {
+		if (channel==rpchannel && !SHUTDOWN) {
 			string name=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(name);
 		}
 	}
 	on_rez(integer parameter) { llResetScript(); }
 	touch_start(integer n)
 	{
-		if (SHUTDOWN) { if (llDetectedKey(0)==IAIN_MALTZ) { llResetScript(); } return; }	
+		if (SHUTDOWN) { if (llDetectedKey(0)==IAIN_MALTZ) { llResetScript(); } }	
 		if (AWAIT_GO==TRUE) { return; }
 		if (llDetectedLinkNumber(0)==1 && logincomplete==0) {
 			llSetText("Retry character registration...",<1,.5,.5>,1);
 			startLogin();
 			return;
 		}
-		if (llDetectedLinkNumber(0)!=1) {
+		if (llDetectedLinkNumber(0)!=1 && !SHUTDOWN) {
 			string name=llGetLinkName(llDetectedLinkNumber(0));
 			if (name!="legacymenu" && name!="" && llSubStringIndex(name,"!!")!=0) {
 				json="";
@@ -343,14 +340,12 @@ default {
 	}
 
 	no_sensor() {
-		if (SHUTDOWN) { return; }	
 		if (radarto!=NULL_KEY) {
 			llHTTPResponse(radarto,200,"{\"avatars\":\"\"}");
 			radarto=NULL_KEY;
 		}
 	}
 	sensor(integer n) {
-		if (SHUTDOWN) { return; }
 		integer i=0;
 		string keys="";
 		for (i=0;i<n;i++) {
