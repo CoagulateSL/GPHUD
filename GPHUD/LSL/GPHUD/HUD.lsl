@@ -204,7 +204,7 @@ default {
 			llResetOtherScript("Attacher"); AWAIT_GO=TRUE;
 			llSetText("Coagulate GPHUD: Waiting for GO",<0.75,0.75,1.0>,1);
 		} else {
-			AWAIT_GO=FALSE;
+			AWAIT_GO=FALSE; SHUTDOWN=FALSE;
 			brand();
 			setup();
 		}
@@ -316,10 +316,9 @@ default {
 	}
 	touch_start(integer n)
 	{
-		if (SHUTDOWN) { if (llDetectedKey(0)==IAIN_MALTZ) { llResetScript(); } }	
 		if (AWAIT_GO==TRUE) { return; }
 		if (llDetectedLinkNumber(0)==1 && logincomplete==0) {
-			llSetText("Retry character registration...",<1,.5,.5>,1);
+			llOwnerSay("Retrying character registration");
 			startLogin();
 			return;
 		}
