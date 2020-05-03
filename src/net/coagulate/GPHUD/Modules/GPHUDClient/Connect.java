@@ -77,14 +77,16 @@ public class Connect {
 				}
 			} // autocreate or die :P
 			// if not auto create, offer "characters.create" which will order the HUD to relog if there's no active character (relog=call us)
-			final JSONResponse response=new JSONResponse(Modules.getJSONTemplate(st,"characters.create"));
-			response.asJSON(st)
-			        .put("hudtext","Creating character...")
-			        .put("hudcolor","<1.0,0.75,0.75>")
-			        .put("titlertext","Creating character...")
-			        .put("titlercolor","<1.0,0.75,0.75>")
-			        .put("message","Welcome.  You do not have any characters, please create a new one.");
-			return response;
+			else {
+				final JSONResponse response=new JSONResponse(Modules.getJSONTemplate(st,"characters.create"));
+				response.asJSON(st)
+				        .put("hudtext","Creating character...")
+				        .put("hudcolor","<1.0,0.75,0.75>")
+				        .put("titlertext","Creating character...")
+				        .put("titlercolor","<1.0,0.75,0.75>")
+				        .put("message","Welcome.  You do not have any characters, please create a new one.");
+				return response;
+			}
 		}
 		// connect the character we found, which disconnects the avatar from other characters and closes old URLs if its a restart
 		character.login(st.getAvatar(),st.getRegion(),url);
