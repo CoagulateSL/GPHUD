@@ -41,7 +41,7 @@ public class ScriptRun extends TableRow {
 		try {
 			return (ScriptRun) factoryPut("ScriptRuns",id,new ScriptRun(id));
 		}
-		catch (NoDataException e) { throw new UserInputNotFoundException("Script run no longer exists",e); }
+		catch (final NoDataException e) { throw new UserInputNotFoundException("Script run no longer exists",e); }
 	}
 
 	// ---------- INSTANCE ----------

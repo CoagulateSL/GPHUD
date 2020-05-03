@@ -281,7 +281,7 @@ public class Char extends TableRow {
 	 */
 	public static Char autoCreate(@Nonnull final State st) {
 		Char.create(st,st.getAvatar().getName(),false); // don't filter avatar based names
-		Char character=getMostRecent(st.getAvatar(),st.getInstance());
+		final Char character=getMostRecent(st.getAvatar(),st.getInstance());
 		if (character==null) {
 			st.logger().severe("Created character for avatar but avatar has no characters still");
 			throw new NoDataException("Could not create a character for this avatar");
@@ -294,13 +294,12 @@ public class Char extends TableRow {
 		            "Character",
 		            null,
 		            st.getAvatar().getName(),
-		            "Automatically generated character upon login with no characters."
-		           );
+		            "Automatically generated character upon login with no characters.");
 		return character;
 	}
 
-	public static Table statusDump(State st) {
-		Table t=new Table().border();
+	public static Table statusDump(final State st) {
+		final Table t=new Table().border();
 		t.header("Character ID");
 		t.header("Name");
 		t.header("Owner");
@@ -313,13 +312,13 @@ public class Char extends TableRow {
 		t.header("Servicing Server");
 		t.header("Zone");
 		t.header("Region");
-		for (ResultsRow row: db().dq("select * from characters where instanceid=? and (url is not null or playedby is not null)",st.getInstance().getId())) {
+		for (final ResultsRow row: db().dq("select * from characters where instanceid=? and (url is not null or playedby is not null)",st.getInstance().getId())) {
 			t.openRow();
 			t.add(row.getIntNullable("characterid"));
 			t.add(row.getStringNullable("name"));
-			Integer owner=row.getIntNullable("owner");
+			final Integer owner=row.getIntNullable("owner");
 			t.add(owner==null?"Null?":User.get(owner).getName()+"[#"+owner+"]");
-			Integer playedby=row.getIntNullable("playedby");
+			final Integer playedby=row.getIntNullable("playedby");
 			t.add(playedby==null?"":User.get(playedby).getName()+"[#"+playedby+"]");
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("lastactive"),st.getAvatar().getTimeZone()));
 			Integer retired=row.getIntNullable("retired");
@@ -329,9 +328,9 @@ public class Char extends TableRow {
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("urlfirst"),st.getAvatar().getTimeZone()));
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("urllast"),st.getAvatar().getTimeZone()));
 			t.add(row.getStringNullable("authnode"));
-			Integer zoneid=row.getIntNullable("zoneid");
+			final Integer zoneid=row.getIntNullable("zoneid");
 			t.add(zoneid==null?"":Zone.get(zoneid).getName()+"#"+zoneid);
-			Integer regionid=row.getIntNullable("regionid");
+			final Integer regionid=row.getIntNullable("regionid");
 			t.add(regionid==null?"":Region.get(regionid,true).getName()+"[#"+regionid+"]");
 		}
 		return t;
@@ -345,8 +344,8 @@ public class Char extends TableRow {
 	 */
 	public static void disconnectURL(@Nonnull final String url) {
 		// is this URL in use?
-		for (ResultsRow row: db().dq("select characterid from characters where url like ?",url)) {
-			Char character=Char.get(row.getInt());
+		for (final ResultsRow row: db().dq("select characterid from characters where url like ?",url)) {
+			final Char character=Char.get(row.getInt());
 			Visit.closeVisits(character,character.getRegion());
 			character.disconnect();
 		}
@@ -360,8 +359,8 @@ public class Char extends TableRow {
 	 */
 	public static void logoutByAvatar(@Nonnull final User user,
 	                                  @Nullable final Char otherthan) {
-		for (ResultsRow row: db().dq("select characterid from characters where playedby=?",user.getId())) {
-			Char character=Char.get(row.getInt());
+		for (final ResultsRow row: db().dq("select characterid from characters where playedby=?",user.getId())) {
+			final Char character=Char.get(row.getInt());
 			if (!character.equals(otherthan)) {
 				Visit.closeVisits(character,character.getRegion());
 				character.disconnect();
@@ -587,13 +586,10 @@ public class Char extends TableRow {
 		  null, //authnode
 		  null, //zone
 		  null, //region
-		  getId()
-		 ); //character id
+		  getId()); //character id
 	}
 
-	public void login(User user,
-	                  Region region,
-	                  String url) {
+	public void login(final User user,final Region region,final String url) {
 		disconnectURL(url);
 		logoutByAvatar(user,this);
 		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",user.getId(), // played by

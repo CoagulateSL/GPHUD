@@ -26,7 +26,7 @@ public class API {
 	                        notes="",
 	                        privileged=false)
 	public static BCResponse gsAPIX(final State st,@Nonnull final GSVM vm,@Nonnull final BCCharacter caller,@Nonnull final BCString apicall,@Nonnull final BCList parameters) {
-		BCResponse response=gsAPI(vm,caller,apicall,parameters,false);
+		final BCResponse response=gsAPI(vm,caller,apicall,parameters,false);
 		if (response.isError()) { throw new GSExecutionException(response.toBCString().getContent()); }
 		return response;
 	}
@@ -42,7 +42,7 @@ public class API {
 	                                        @Nonnull final BCCharacter caller,
 	                                        @Nonnull final BCString apicall,
 	                                        @Nonnull final BCList parameters) {
-		BCResponse response=gsAPI(vm,caller,apicall,parameters,true);
+		final BCResponse response=gsAPI(vm,caller,apicall,parameters,true);
 		if (response.isError()) { throw new UserInputStateException(response.toBCString().getContent()); }
 		return response;
 	}

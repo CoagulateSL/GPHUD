@@ -186,13 +186,12 @@ public class Region extends TableRow {
 	 * @return Set of Regions
 	 */
 	@Nonnull
-	public static Set<Region> getRegions(@Nonnull final State st,
-	                                     final boolean allowretired) {
+	public static Set<Region> getRegions(@Nonnull final State st,final boolean allowretired) {
 		return getRegions(st.getInstance(),allowretired);
 	}
 
-	public static Table statusDump(State st) {
-		Table t=new Table().border();
+	public static Table statusDump(final State st) {
+		final Table t=new Table().border();
 		t.header("Region ID");
 		t.header("Name");
 		t.header("URL");
@@ -205,7 +204,7 @@ public class Region extends TableRow {
 		t.header("Region X");
 		t.header("Region Y");
 		t.header("Retired");
-		for (ResultsRow row: db().dq("select * from regions where instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow row: db().dq("select * from regions where instanceid=?",st.getInstance().getId())) {
 			t.openRow();
 			t.add(row.getIntNullable("regionid"));
 			t.add(row.getStringNullable("name"));

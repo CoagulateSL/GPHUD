@@ -196,8 +196,8 @@ public class Obj extends TableRow {
 		db().d("delete from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
-	public static Table statusDump(State st) {
-		Table t=new Table().border();
+	public static Table statusDump(final State st) {
+		final Table t=new Table().border();
 		t.header("UUID");
 		t.header("Name");
 		t.header("Region");
@@ -208,7 +208,8 @@ public class Obj extends TableRow {
 		t.header("URL");
 		t.header("Version");
 		t.header("Servicing Server");
-		for (ResultsRow row: db().dq("select objects.* from objects inner join regions on objects.regionid=regions.regionid where regions.instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow row: db().dq("select objects.* from objects inner join regions on objects.regionid=regions.regionid where regions.instanceid=?",
+		                                   st.getInstance().getId())) {
 			t.openRow();
 			t.add(row.getString("uuid"));
 			t.add(row.getString("name"));
@@ -216,7 +217,7 @@ public class Obj extends TableRow {
 			t.add(User.get(row.getInt("owner")).getName()+"[#"+row.getInt("regionid")+"]");
 			t.add(row.getString("location"));
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("lastrx"),st.getAvatar().getTimeZone()));
-			Integer objecttype=row.getIntNullable("objecttype");
+			final Integer objecttype=row.getIntNullable("objecttype");
 			t.add(objecttype==null?"":ObjType.get(objecttype).getName()+"[#"+objecttype+"]");
 			t.add(row.getStringNullable("url")==null?"":"Present");
 			t.add(row.getIntNullable("version"));

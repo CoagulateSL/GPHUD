@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -58,7 +57,7 @@ public class Connect {
 	                                                   description="Resume session for character id") final Integer characterid) {
 		st.json(); // ensure we have the jsons
 		// log client version
-		if (version!=null && versiondate!=null && versiontime!=null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
+		if (!version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
 			st.getRegion().recordHUDVersion(st,version,versiondate,versiontime);
 		}
 		// forcibly invite instance owners to group
@@ -72,9 +71,6 @@ public class Connect {
 		if (character==null) {
 			if (autocreate) {
 				character=Char.autoCreate(st);
-				if (character==null) {
-					throw new UserInputStateException("Failed to get/create a character for user "+st.getAvatarNullable());
-				}
 			} // autocreate or die :P
 			// if not auto create, offer "characters.create" which will order the HUD to relog if there's no active character (relog=call us)
 			else {
@@ -110,7 +106,7 @@ public class Connect {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response postConnect(@Nonnull final State st) {
-		List<String> loginmessages=new ArrayList<>();
+		final List<String> loginmessages=new ArrayList<>();
 
 		// Run the character initialisation script, if it exists.
 		Response interception=runCharacterInitScript(st,loginmessages);
@@ -149,12 +145,12 @@ public class Connect {
 		rawresponse.put("legacymenu",Modules.getJSONTemplate(st,"menus.main").toString());
 
 		// dump the messages
-		String message="";
-		for (String amessage: loginmessages) {
-			if (!message.isEmpty()) { message+="\n"; }
-			message+=amessage;
+		final StringBuilder message=new StringBuilder();
+		for (final String amessage: loginmessages) {
+			if (message.length()>0) { message.append("\n"); }
+			message.append(amessage);
 		}
-		if (!message.isEmpty()) { rawresponse.put("message",message); }
+		if (message.length()>0) { rawresponse.put("message",message.toString()); }
 		// update message count
 		rawresponse.put("messagecount",Message.count(st));
 		// send zoning information
@@ -232,7 +228,7 @@ public class Connect {
 	}
 
 	@Nullable
-	private static Response runCharacterInitScript(State st,List<String> loginmessages) {
+	private static Response runCharacterInitScript(final State st,final List<String> loginmessages) {
 		final String initscript=st.getKV("Instance.CharInitScript").toString();
 		if (initscript!=null && (!initscript.isEmpty())) {
 			// let the init script have a "run"

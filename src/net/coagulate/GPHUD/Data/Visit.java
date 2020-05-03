@@ -93,19 +93,21 @@ public class Visit {
 		return seconds;
 	}
 
-	public static Table statusDump(State st) {
-		Table t=new Table().border();
+	public static Table statusDump(final State st) {
+		final Table t=new Table().border();
 		t.header("Avatar");
 		t.header("Character");
 		t.header("Region");
 		t.header("Start time");
 		t.header("End Time (empty, visit is open)");
-		for (ResultsRow row: db().dq("select visits.* from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and visits.endtime is null",st.getInstance().getId())) {
+		for (final ResultsRow row: db().dq(
+				"select visits.* from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and visits.endtime is null",
+				st.getInstance().getId())) {
 			t.openRow();
-			Integer avatar=row.getIntNullable("avatarid");
+			final Integer avatar=row.getIntNullable("avatarid");
 			t.add(avatar==null?"Null?":User.get(avatar).getName()+"[#"+avatar+"]");
 			t.add(Char.get(row.getInt("characterid")).getName()+"[#"+row.getInt("characterid")+"]");
-			Integer region=row.getIntNullable("regionid");
+			final Integer region=row.getIntNullable("regionid");
 			t.add(region==null?"Null?":Region.get(region,true).getName()+"[#"+region+"]");
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("starttime"),st.getAvatar().getTimeZone()));
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("endtime"),st.getAvatar().getTimeZone()));

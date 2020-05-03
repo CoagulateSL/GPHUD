@@ -187,7 +187,7 @@ public class Transmission extends Thread {
 		if (character!=null) { character.appendConveyance(new net.coagulate.GPHUD.State(character),json); }
 		String response=null;
 		if (url==null || url.isEmpty()) { return; }
-		if (json.toString().length()>2040) { throw new SystemImplementationException("Transmission is over 2048 chars - "+json.toString()); }
+		if (json.toString().length()>2040) { throw new SystemImplementationException("Transmission is over 2048 chars - "+json); }
 		while (response==null && retries>0) {
 			try {
 				response=sendAttempt();

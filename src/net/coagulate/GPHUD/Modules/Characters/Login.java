@@ -291,7 +291,7 @@ public abstract class Login {
 			if (st.json().getInt("protocol")==2)
 			{
 				if (st.getCharacterNullable()==null) {
-					JSONObject reconnect=new JSONObject();
+					final JSONObject reconnect=new JSONObject();
 					reconnect.put("incommand","forcereconnect");
 					return new JSONResponse(reconnect);
 				}
@@ -327,7 +327,7 @@ public abstract class Login {
 		}
 		if (st.json().has("protocol")) {
 			if (st.json().getInt("protocol")==2) {
-				String url=st.getCharacter().getURL();
+				final String url=st.getCharacter().getURL();
 				st.getCharacter().disconnect();
 				character.login(st.getAvatar(),st.getRegion(),url);
 				st.setCharacter(character);

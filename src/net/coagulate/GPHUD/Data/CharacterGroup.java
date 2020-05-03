@@ -154,7 +154,7 @@ public class CharacterGroup extends TableRow {
 	 *
 	 * @return true if there are open (selectable) groups in this type
 	 */
-	public static boolean hasChoices(State st,Attribute a) {
+	public static boolean hasChoices(final State st,final Attribute a) {
 		for (final CharacterGroup cg: st.getInstance().getGroupsForKeyword(a.getSubType())) {
 			if (cg.isOpen()) {
 				return true;

@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * An effect - a sort of temporary group membership, or a "buff" if you like.
@@ -163,9 +164,9 @@ public class Effect extends TableRow {
 	 */
 	public static void conveyEffects(@Nonnull final State st,@Nonnull final Char character,@Nonnull final JSONObject json) {
 		expirationCheck(st,character);
-		Set<Effect> effects=get(st,character);
-		Map<Integer,Effect> byduration=new TreeMap<>();
-		for (Effect effect: effects) {
+		final Set<Effect> effects=get(st,character);
+		final Map<Integer,Effect> byduration=new TreeMap<>();
+		for (final Effect effect: effects) {
 			int remain=effect.remains(character);
 			while (byduration.containsKey(remain)) {
 				remain++;
@@ -175,17 +176,20 @@ public class Effect extends TableRow {
 			if ("true".equalsIgnoreCase(include)) { byduration.put(remain,effect); }
 		}
 		int i=1;
-		for (Integer remain: byduration.keySet()) {
+		for (final Entry<Integer,Effect> entry: byduration.entrySet()) {
 			if (i<4) {
-				Effect effect=byduration.get(remain);
-				json.put("effect"+i,(remain+UnixTime.getUnixTime())+"");
+				final Effect effect=entry.getValue();
+				json.put("effect"+i,(entry.getKey()+UnixTime.getUnixTime())+"");
 				String texture=st.getKV(effect,"Effects.EffectIcon");
 				if (texture==null || texture.isEmpty()) { texture="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4"; }
 				json.put("effect"+i+"t",texture);
 				i++;
 			}
 		}
-		if (i==1) { json.put("effect1","0"); json.put("effect1t","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903"); }
+		if (i==1) {
+			json.put("effect1","0");
+			json.put("effect1t","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+		}
 		character.appendConveyance(new State(character),json);
 	}
 

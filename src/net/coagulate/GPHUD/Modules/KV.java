@@ -132,30 +132,30 @@ public abstract class KV extends NameComparable {
 	 * @param updatedobject The updated TableRow object (formerly DBObject)
 	 * @param newvalue      the new value written to the KV table
 	 */
-	public void callOnUpdate(State state,TableRow updatedobject,String newvalue) {
+	public void callOnUpdate(final State state,final TableRow updatedobject,final String newvalue) {
 		System.out.println("CALL ON UPDATE:"+onUpdate());
 		// does this KV have an onUpdate method
 		if (onUpdate().isEmpty()) { return; }
-		String targetmethod=onUpdate();
-		Matcher split=Pattern.compile("(.*)\\.([^.]*)").matcher(targetmethod);
+		final String targetmethod=onUpdate();
+		final Matcher split=Pattern.compile("(.*)\\.([^.]*)").matcher(targetmethod);
 		if (!split.matches()) { throw new SystemImplementationException("String "+targetmethod+" didn't match the regexp in callOnUpdate()"); }
-		String classname=split.group(1);
-		String methodname=split.group(2);
+		final String classname=split.group(1);
+		final String methodname=split.group(2);
 		try {
-			Class<?> clas=Class.forName(classname);
-			Method method=clas.getMethod(methodname,State.class,KV.class,TableRow.class,String.class);
+			final Class<?> clas=Class.forName(classname);
+			final Method method=clas.getMethod(methodname,State.class,KV.class,TableRow.class,String.class);
 			method.invoke(null,state,this,updatedobject,newvalue);
 		}
-		catch (InvocationTargetException e) {
+		catch (final InvocationTargetException e) {
 			throw new SystemImplementationException("onUpdate target exceptioned for KV "+fullname(),e);
 		}
-		catch (NoSuchMethodException e) {
+		catch (final NoSuchMethodException e) {
 			throw new SystemImplementationException("onUpdate method "+targetmethod+" from KV "+fullname()+" does not exist or match signature",e);
 		}
-		catch (IllegalAccessException e) {
+		catch (final IllegalAccessException e) {
 			throw new SystemImplementationException("onUpdate method "+targetmethod+" from KV "+fullname()+" does not have correct access modifier",e);
 		}
-		catch (ClassNotFoundException e) {
+		catch (final ClassNotFoundException e) {
 			throw new SystemImplementationException("onUpdate class "+classname+" from KV "+fullname()+" does not exist",e);
 		}
 

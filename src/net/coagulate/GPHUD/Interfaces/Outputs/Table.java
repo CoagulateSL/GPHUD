@@ -15,7 +15,7 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Table implements Renderable {
-	HeaderRow headerrow=null;
+	HeaderRow headerrow;
 	final List<Row> table=new ArrayList<>();
 	boolean border;
 	@Nullable
@@ -23,7 +23,11 @@ public class Table implements Renderable {
 	private boolean nowrap;
 
 	// ---------- INSTANCE ----------
-	public Table border(final boolean border) { this.border=border; return this; }
+	public Table border(final boolean border) {
+		this.border=border;
+		return this;
+	}
+
 	public Table border() { return border(true); }
 
 	@Nonnull
