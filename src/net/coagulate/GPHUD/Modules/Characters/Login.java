@@ -286,7 +286,6 @@ public abstract class Login {
 		Char.create(st,charactername,true);
 		final Char c=Char.resolve(st,charactername);
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
-		st.setCharacter(c);
 		if (st.json().has("protocol")) {
 			if (st.json().getInt("protocol")==2)
 			{
@@ -295,12 +294,12 @@ public abstract class Login {
 					reconnect.put("incommand","forcereconnect");
 					return new JSONResponse(reconnect);
 				}
-				else
-				{
+				else {
 					return new OKResponse("New character created and available");
 				}
 			}
 		}
+		st.setCharacter(c);
 		return login(st,null,null,null);
 	}
 

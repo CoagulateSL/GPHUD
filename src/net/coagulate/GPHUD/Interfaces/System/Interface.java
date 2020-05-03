@@ -72,7 +72,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				catch (@Nonnull final JSONException e) {
 					throw new SystemBadValueException("Parse error in '"+message+"'",e);
 				}
-				// System.out.println("SYSTEM INTERFACE INPUT:\n"+JsonTools.jsonToString(obj));
+				//System.out.println("SYSTEM INTERFACE INPUT:\n"+JsonTools.jsonToString(obj));
 				// stash it in the state
 				// if (obj==null) { GPHUD.getLogger().warning("About to set a JSON in state to null ; input was "+message); }
 				st.setJson(obj);
@@ -102,7 +102,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 pw.flush();
                 pw.close();
                 System.out.println(out);*/
-				// System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonresponse));
+				//System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonresponse));
 				System.out.println("Response size is "+out.length()+" bytes");
 				if (out.length() >= 4096) { GPHUD.getLogger().severe("Output exceeds limit of 4096 characters"); }
 				resp.setEntity(new StringEntity(out,ContentType.APPLICATION_JSON));
