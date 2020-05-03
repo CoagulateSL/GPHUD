@@ -59,7 +59,8 @@ public class Landmark extends TableRow {
 	public static void obliterate(@Nonnull final Instance instance,
 	                              @Nonnull final String name) {
 		db().d("delete landmarks from landmarks inner join regions on landmarks.regionid=regions.regionid where regions.instanceid=? and landmarks.name like ?",
-		       instance.getId(),name
+		       instance.getId(),
+		       name
 		      );
 	}
 

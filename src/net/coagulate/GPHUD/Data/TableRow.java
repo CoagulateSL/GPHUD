@@ -1,6 +1,9 @@
 package net.coagulate.GPHUD.Data;
 
-import net.coagulate.Core.Database.*;
+import net.coagulate.Core.Database.DBConnection;
+import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.GPHUD;

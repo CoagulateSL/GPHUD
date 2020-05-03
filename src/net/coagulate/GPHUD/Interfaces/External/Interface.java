@@ -223,7 +223,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		return instance;
 	}
 
-	private Char decodeCharacter(final State st,final JSONObject obj) {
+	private Char decodeCharacter(final State st,
+	                             final JSONObject obj) {
 		Char character=null;
 		if (obj.has("runascharactername")) {
 			final Char newcharacter=Char.resolve(st,obj.getString("runascharactername"));

@@ -15,8 +15,8 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Table implements Renderable {
-	HeaderRow headerrow;
 	final List<Row> table=new ArrayList<>();
+	HeaderRow headerrow;
 	boolean border;
 	@Nullable
 	Row openrow;
@@ -50,6 +50,7 @@ public class Table implements Renderable {
 		headerrow.add(s);
 		return this;
 	}
+
 	@Nonnull
 	public Table add(final Row r) {
 		table.add(r);

@@ -198,9 +198,8 @@ public class CharactersModule extends ModuleAnnotation {
 	@Commands(context=Command.Context.CHARACTER,
 	          description="Change a value about your own character")
 	public static Response set(@Nonnull final State st,
-	                           @Nullable
-	                           @Arguments(type=Argument.ArgumentType.ATTRIBUTE_WRITABLE,
-	                                      description="Attribute to set") final Attribute attribute,
+	                           @Nullable @Arguments(type=Argument.ArgumentType.ATTRIBUTE_WRITABLE,
+	                                                description="Attribute to set") final Attribute attribute,
 	                           @Arguments(type=Argument.ArgumentType.TEXT_ONELINE,
 	                                      description="Value to use",
 	                                      mandatory=false,

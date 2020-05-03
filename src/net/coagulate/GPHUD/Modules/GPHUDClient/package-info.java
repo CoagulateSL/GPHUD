@@ -237,11 +237,11 @@
 
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
-		import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
-		import net.coagulate.GPHUD.Modules.KV.KVS;
-		import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
-		import net.coagulate.GPHUD.Modules.KV.KVTYPE;
-		import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
-		import net.coagulate.GPHUD.Modules.Permission;
-		import net.coagulate.GPHUD.Modules.Permission.Permissions;
+import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
+import net.coagulate.GPHUD.Modules.KV.KVS;
+import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
+import net.coagulate.GPHUD.Modules.KV.KVTYPE;
+import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
+import net.coagulate.GPHUD.Modules.Permission;
+import net.coagulate.GPHUD.Modules.Permission.Permissions;
 

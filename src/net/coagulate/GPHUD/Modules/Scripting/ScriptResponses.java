@@ -25,12 +25,10 @@ public class ScriptResponses {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static Response characterResponse(@Nonnull final State st,
-	                                         @Nonnull
-	                                         @Argument.Arguments(description="Script PID",
-	                                                             type=Argument.ArgumentType.INTEGER) final Integer processid,
-	                                         @Nonnull
-	                                         @Argument.Arguments(description="The selected character",
-	                                                             type=Argument.ArgumentType.CHARACTER) final Char response) {
+	                                         @Nonnull @Argument.Arguments(description="Script PID",
+	                                                                      type=Argument.ArgumentType.INTEGER) final Integer processid,
+	                                         @Nonnull @Argument.Arguments(description="The selected character",
+	                                                                      type=Argument.ArgumentType.CHARACTER) final Char response) {
 		final ScriptRun run=ScriptRun.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) {
 			return new ErrorResponse("Script was not expecting a response from you (?)");
@@ -50,13 +48,11 @@ public class ScriptResponses {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static Response stringResponse(@Nonnull final State st,
-	                                      @Nonnull
-	                                      @Argument.Arguments(description="Script PID",
-	                                                          type=Argument.ArgumentType.INTEGER) final Integer processid,
-	                                      @Nonnull
-	                                      @Argument.Arguments(description="The string response",
-	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
-	                                                          max=1024) final String response) {
+	                                      @Nonnull @Argument.Arguments(description="Script PID",
+	                                                                   type=Argument.ArgumentType.INTEGER) final Integer processid,
+	                                      @Nonnull @Argument.Arguments(description="The string response",
+	                                                                   type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                                   max=1024) final String response) {
 		final ScriptRun run=ScriptRun.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) {
 			return new ErrorResponse("Script was not expecting a response from you (?)");

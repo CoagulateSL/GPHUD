@@ -186,7 +186,8 @@ public class Region extends TableRow {
 	 * @return Set of Regions
 	 */
 	@Nonnull
-	public static Set<Region> getRegions(@Nonnull final State st,final boolean allowretired) {
+	public static Set<Region> getRegions(@Nonnull final State st,
+	                                     final boolean allowretired) {
 		return getRegions(st.getInstance(),allowretired);
 	}
 

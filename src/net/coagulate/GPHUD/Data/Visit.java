@@ -58,14 +58,18 @@ public class Visit {
 		closeVisits(state.getCharacter(),state.getRegion());
 	}
 
-	/** Close the visits for a character
+	/**
+	 * Close the visits for a character
+	 *
 	 * @param character The character
 	 */
-	public static void closeVisits(@Nonnull final Char character,@Nullable final Region region) {
+	public static void closeVisits(@Nonnull final Char character,
+	                               @Nullable final Region region) {
 		db().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",character.getId());
 		if (region!=null) {
 			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",character.getId(),region.getId());
-		} else {
+		}
+		else {
 			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and endtime is null",character.getId());
 		}
 	}
@@ -102,7 +106,8 @@ public class Visit {
 		t.header("End Time (empty, visit is open)");
 		for (final ResultsRow row: db().dq(
 				"select visits.* from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and visits.endtime is null",
-				st.getInstance().getId())) {
+				st.getInstance().getId()
+		                                  )) {
 			t.openRow();
 			final Integer avatar=row.getIntNullable("avatarid");
 			t.add(avatar==null?"Null?":User.get(avatar).getName()+"[#"+avatar+"]");

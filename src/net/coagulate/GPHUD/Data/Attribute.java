@@ -211,13 +211,20 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public static String toString(@Nonnull final ATTRIBUTETYPE type) {
 		switch (type) {
-			case TEXT: return "text";
-			case FLOAT: return "float";
-			case INTEGER: return "integer";
-			case GROUP: return "group";
-			case POOL: return "pool";
-			case COLOR: return "color";
-			case EXPERIENCE: return "experience";
+			case TEXT:
+				return "text";
+			case FLOAT:
+				return "float";
+			case INTEGER:
+				return "integer";
+			case GROUP:
+				return "group";
+			case POOL:
+				return "pool";
+			case COLOR:
+				return "color";
+			case EXPERIENCE:
+				return "experience";
 		}
 		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}

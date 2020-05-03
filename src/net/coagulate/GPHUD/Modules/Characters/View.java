@@ -208,9 +208,8 @@ public abstract class View {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response look(@Nonnull final State st,
-	                            @Nonnull
-	                            @Arguments(type=Argument.ArgumentType.CHARACTER_NEAR,
-	                                       description="Character to inspect") final Char character) {
+	                            @Nonnull @Arguments(type=Argument.ArgumentType.CHARACTER_NEAR,
+	                                                description="Character to inspect") final Char character) {
 		character.validate(st);
 		final State target=new State();
 		target.setInstance(st.getInstance());

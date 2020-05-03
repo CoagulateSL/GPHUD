@@ -64,9 +64,8 @@ public class GroupCommands {
 	@Commands(description="Invite a character to a group",
 	          context=Context.CHARACTER)
 	public static Response invite(@Nonnull final State st,
-	                              @Nonnull
-	                              @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                         description="Group to invite to") final CharacterGroup group,
+	                              @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
+	                                                  description="Group to invite to") final CharacterGroup group,
 	                              @Arguments(description="Character to invite",
 	                                         type=ArgumentType.CHARACTER) @Nonnull final Char target) {
 		if (!group.isAdmin(st.getCharacter())) {

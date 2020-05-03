@@ -23,15 +23,11 @@ public class Disconnect {
 	          permitUserWeb=false,
 	          permitConsole=false)
 	@Nonnull
-	public static Response disconnect(
-			@Nonnull
-			final State state,
-			@Arguments(description="URL to disconnect",
-			           type=ArgumentType.TEXT_ONELINE,
-			           max=255,
-			           mandatory=false)
-			@Nullable
-			final String url) {
+	public static Response disconnect(@Nonnull final State state,
+	                                  @Arguments(description="URL to disconnect",
+	                                             type=ArgumentType.TEXT_ONELINE,
+	                                             max=255,
+	                                             mandatory=false) @Nullable final String url) {
 		if (url==null || url.isEmpty()) {
 			return new NoResponse();
 		}

@@ -45,19 +45,24 @@ public class KVAnnotation extends KV {
 	@Nonnull
 	public String defaultvalue() { return meta.defaultvalue(); }
 
-	@Nonnull public String conveyas() { return meta.conveyas(); }
+	@Nonnull
+	public String conveyas() { return meta.conveyas(); }
 
-	@Nonnull public KVHIERARCHY hierarchy() { return meta.hierarchy(); }
+	@Nonnull
+	public KVHIERARCHY hierarchy() { return meta.hierarchy(); }
+
+	@Nonnull
+	@Override
+	public String onUpdate() {
+		return meta.onUpdate();
+	}
 
 	public boolean template() { return meta.template(); }
 
 	public boolean hidden() { return meta.hidden(); }
 
-	@Nonnull @Override public String onUpdate() {
-		return meta.onUpdate();
-	}
-
-	@Nonnull public String name() { return meta.name(); }
+	@Nonnull
+	public String name() { return meta.name(); }
 
 	// ----- Internal Instance -----
 	private void validate(final State st) {

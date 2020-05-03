@@ -17,10 +17,9 @@ public class Rename {
 	                  requiresPermission="Characters.ForceRename",
 	                  permitExternal=false)
 	public static Response rename(final State st,
-	                              @Nonnull
-	                              @Argument.Arguments(description="Character to rename",
-	                                                  type=Argument.ArgumentType.CHARACTER,
-	                                                  max=64) final Char oldname,
+	                              @Nonnull @Argument.Arguments(description="Character to rename",
+	                                                           type=Argument.ArgumentType.CHARACTER,
+	                                                           max=64) final Char oldname,
 	                              @Argument.Arguments(description="New name for character",
 	                                                  max=40,
 	                                                  type=Argument.ArgumentType.TEXT_ONELINE) final String newname) {

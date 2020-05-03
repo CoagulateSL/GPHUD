@@ -294,7 +294,8 @@ public class Char extends TableRow {
 		            "Character",
 		            null,
 		            st.getAvatar().getName(),
-		            "Automatically generated character upon login with no characters.");
+		            "Automatically generated character upon login with no characters."
+		           );
 		return character;
 	}
 
@@ -566,19 +567,6 @@ public class Char extends TableRow {
 	public String getKVIdField() {
 		return "characterid";
 	}
-
-	public void wipeConveyances(@Nonnull final State st) {
-		db().d("delete from characterkvstore where characterid=? and k like 'gphudclient.conveyance-%'",getId());
-		st.purgeCache(this);
-	}
-
-	@Deprecated
-	public void setActive() {
-		db().d("update characters set lastactive=? where characterid=?",UnixTime.getUnixTime()+1,getId());
-	}
-
-	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
-
 	/**
 	 * Disconnects a character.  Does not send a terminate to the URL
 	 */
@@ -591,10 +579,23 @@ public class Char extends TableRow {
 		  null, //authnode
 		  null, //zone
 		  null, //region
-		  getId()); //character id
+		  getId()
+		 ); //character id
 	}
 
-	public void login(final User user,final Region region,final String url) {
+	public void wipeConveyances(@Nonnull final State st) {
+		db().d("delete from characterkvstore where characterid=? and k like 'gphudclient.conveyance-%'",getId());
+		st.purgeCache(this);
+	}
+
+	@Deprecated
+	public void setActive() {
+		db().d("update characters set lastactive=? where characterid=?",UnixTime.getUnixTime()+1,getId());
+	}
+
+	public void login(final User user,
+	                  final Region region,
+	                  final String url) {
 		disconnectURL(url);
 		logoutByAvatar(user,this);
 		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",user.getId(), // played by
@@ -609,6 +610,8 @@ public class Char extends TableRow {
 		 ); // where char id
 
 	}
+
+	// ----- Internal Instance -----
 
 	/**
 	 * Call a characters HUD to get a radar list of nearby Characters.
@@ -911,7 +914,7 @@ public class Char extends TableRow {
 		}
 	}
 
-	// ----- Internal Instance -----
+	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
 	/**
 	 * Used to load a list of conveyances

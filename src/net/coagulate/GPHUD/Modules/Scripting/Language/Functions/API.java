@@ -25,7 +25,11 @@ public class API {
 	                        returns="A Response",
 	                        notes="",
 	                        privileged=false)
-	public static BCResponse gsAPIX(final State st,@Nonnull final GSVM vm,@Nonnull final BCCharacter caller,@Nonnull final BCString apicall,@Nonnull final BCList parameters) {
+	public static BCResponse gsAPIX(final State st,
+	                                @Nonnull final GSVM vm,
+	                                @Nonnull final BCCharacter caller,
+	                                @Nonnull final BCString apicall,
+	                                @Nonnull final BCList parameters) {
 		final BCResponse response=gsAPI(vm,caller,apicall,parameters,false);
 		if (response.isError()) { throw new GSExecutionException(response.toBCString().getContent()); }
 		return response;
@@ -53,7 +57,11 @@ public class API {
 	                        returns="A Response",
 	                        notes="NOTE: Unless you intend to check the response isn't an error, or truely don't care if it is, it's highly recommended you call gsAPIX to avoid silently discarding errors which may confuse debugging",
 	                        privileged=false)
-	public static BCResponse gsAPI(final State st,@Nonnull final GSVM vm,@Nonnull final BCCharacter caller,@Nonnull final BCString apicall,@Nonnull final BCList parameters) {
+	public static BCResponse gsAPI(final State st,
+	                               @Nonnull final GSVM vm,
+	                               @Nonnull final BCCharacter caller,
+	                               @Nonnull final BCString apicall,
+	                               @Nonnull final BCList parameters) {
 		return gsAPI(vm,caller,apicall,parameters,false);
 	}
 

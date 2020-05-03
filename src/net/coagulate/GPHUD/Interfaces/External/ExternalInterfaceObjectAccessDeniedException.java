@@ -9,7 +9,8 @@ public class ExternalInterfaceObjectAccessDeniedException extends UserAccessDeni
 		super(reason);
 	}
 
-	public ExternalInterfaceObjectAccessDeniedException(final String reason,final Throwable cause) {
+	public ExternalInterfaceObjectAccessDeniedException(final String reason,
+	                                                    final Throwable cause) {
 		super(reason,cause);
 	}
 }

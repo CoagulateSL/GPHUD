@@ -91,9 +91,7 @@ public class Obj extends TableRow {
 						            null,
 						            "Set",
 						            "ObjectType",
-						            "",
-						            objecttype,
-						            "Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
+						            "",objecttype,"Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
 						           );
 						final ObjectType ot=ObjectType.materialise(st,ObjType.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload=new JSONObject();
@@ -102,7 +100,8 @@ public class Obj extends TableRow {
 					}
 				}
 				else { objecttype=row.getStringNullable("objecttype"); }
-				r.append("<td>").append(ObjType.getDropDownList(st,row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true))
+				r.append("<td>")
+				 .append(ObjType.getDropDownList(st,row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st,true))
 				 .append("</td>"); // editing too, have fun with that.
 			}
 			else {
@@ -209,7 +208,8 @@ public class Obj extends TableRow {
 		t.header("Version");
 		t.header("Servicing Server");
 		for (final ResultsRow row: db().dq("select objects.* from objects inner join regions on objects.regionid=regions.regionid where regions.instanceid=?",
-		                                   st.getInstance().getId())) {
+		                                   st.getInstance().getId()
+		                                  )) {
 			t.openRow();
 			t.add(row.getString("uuid"));
 			t.add(row.getString("name"));

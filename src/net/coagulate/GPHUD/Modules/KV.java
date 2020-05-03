@@ -39,15 +39,19 @@ public abstract class KV extends NameComparable {
 	@Nonnull
 	public abstract String description();
 
-	@Nonnull public abstract String editpermission();
+	@Nonnull
+	public abstract String editpermission();
 
 	public abstract String defaultvalue();
 
-	@Nonnull public abstract String conveyas();
+	@Nonnull
+	public abstract String conveyas();
 
-	@Nonnull public abstract KVHIERARCHY hierarchy();
+	@Nonnull
+	public abstract KVHIERARCHY hierarchy();
 
-	@Nonnull public String onUpdate() { return ""; }
+	@Nonnull
+	public String onUpdate() { return ""; }
 
 	public abstract boolean template();
 
@@ -121,7 +125,8 @@ public abstract class KV extends NameComparable {
 		}
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return fullname();
 	}
 
@@ -132,7 +137,9 @@ public abstract class KV extends NameComparable {
 	 * @param updatedobject The updated TableRow object (formerly DBObject)
 	 * @param newvalue      the new value written to the KV table
 	 */
-	public void callOnUpdate(final State state,final TableRow updatedobject,final String newvalue) {
+	public void callOnUpdate(final State state,
+	                         final TableRow updatedobject,
+	                         final String newvalue) {
 		System.out.println("CALL ON UPDATE:"+onUpdate());
 		// does this KV have an onUpdate method
 		if (onUpdate().isEmpty()) { return; }
@@ -162,7 +169,14 @@ public abstract class KV extends NameComparable {
 	}
 
 	public enum KVSCOPE {
-		INSTANCE,SERVER,SPATIAL,NONSPATIAL,CHARACTER,ZONE,EVENT,EFFECT,
+		INSTANCE,
+		SERVER,
+		SPATIAL,
+		NONSPATIAL,
+		CHARACTER,
+		ZONE,
+		EVENT,
+		EFFECT,
 		COMPLETE
 	}
     /* DEAD CODE?

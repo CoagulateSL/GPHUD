@@ -81,12 +81,10 @@ public abstract class ZoneCommands {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response addVolume(@Nonnull final State st,
-	                                 @Nonnull
-	                                 @Arguments(type=ArgumentType.ZONE,
-	                                            description="Zone we are adding the volume to") final Zone zone,
-	                                 @Nonnull
-	                                 @Arguments(type=ArgumentType.REGION,
-	                                            description="Region for the volume") final Region region,
+	                                 @Nonnull @Arguments(type=ArgumentType.ZONE,
+	                                                     description="Zone we are adding the volume to") final Zone zone,
+	                                 @Nonnull @Arguments(type=ArgumentType.REGION,
+	                                                     description="Region for the volume") final Region region,
 	                                 @Arguments(type=ArgumentType.COORDINATES,
 	                                            description="Co-ordinates for one corner of the volume cube") final String cornerOne,
 	                                 @Arguments(type=ArgumentType.COORDINATES,
@@ -107,10 +105,9 @@ public abstract class ZoneCommands {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response zoneTransition(@Nonnull final State st,
-	                                      @Nullable
-	                                      @Arguments(description="Name of zone we transitioned into",
-	                                                 type=ArgumentType.ZONE,
-	                                                 mandatory=false) final Zone zone) {
+	                                      @Nullable @Arguments(description="Name of zone we transitioned into",
+	                                                           type=ArgumentType.ZONE,
+	                                                           mandatory=false) final Zone zone) {
 		// check some things make sense
 		// note zone may be null, legally, and fairly often probably.
 		if (zone!=null) { zone.validate(st); }

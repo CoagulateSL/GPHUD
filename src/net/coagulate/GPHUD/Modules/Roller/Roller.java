@@ -29,34 +29,26 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Roller {
 
 	// ---------- STATICS ----------
-	public static int rollSummed(
-			@Nonnull
-			final State st,
-			final Integer dice,
-			final Integer sides) {
+	public static int rollSummed(@Nonnull final State st,
+	                             final Integer dice,
+	                             final Integer sides) {
 		int total=0;
 		for (final Integer i: roll(st,dice,sides)) { total=total+i; }
 		return total;
 	}
 
 	@Nonnull
-	public static List<Integer> roll(
-			@Nonnull
-			final State st,
-			final Integer dice,
-			final Integer sides) {
+	public static List<Integer> roll(@Nonnull final State st,
+	                                 final Integer dice,
+	                                 final Integer sides) {
 		return roll(st,st.getCharacter(),dice,sides);
 	}
 
 	@Nonnull
-	public static List<Integer> roll(
-			@Nonnull
-			final State st,
-			final Char character,
-			@Nullable
-					Integer dice,
-			@Nullable
-					Integer sides) {
+	public static List<Integer> roll(@Nonnull final State st,
+	                                 final Char character,
+	                                 @Nullable Integer dice,
+	                                 @Nullable Integer sides) {
 		final List<Integer> rolls=new ArrayList<>();
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
@@ -84,24 +76,16 @@ public class Roller {
 	          description="Roll a given number of stated sided dice with a bias and reason",
 	          permitUserWeb=false,
 	          permitExternal=false)
-	public static Response rollOnly(
-			@Nonnull
-			final State st,
-			@Nullable
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer dice,
-			@Nullable
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer sides,
-			@Nullable
-			@Arguments(description="Logged reason for the roll",
-			           type=ArgumentType.TEXT_ONELINE,
-			           max=512)
-					String reason) {
+	public static Response rollOnly(@Nonnull final State st,
+	                                @Nullable @Arguments(description="Number of dice to roll",
+	                                                     type=ArgumentType.INTEGER,
+	                                                     mandatory=false) Integer dice,
+	                                @Nullable @Arguments(description="Number of sides on dice",
+	                                                     type=ArgumentType.INTEGER,
+	                                                     mandatory=false) Integer sides,
+	                                @Nullable @Arguments(description="Logged reason for the roll",
+	                                                     type=ArgumentType.TEXT_ONELINE,
+	                                                     max=512) String reason) {
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
 		if (reason==null) { reason="No Reason"; }
@@ -136,29 +120,19 @@ public class Roller {
 	          description="Roll a given number of stated sided dice with a bias and reason",
 	          permitUserWeb=false,
 	          permitExternal=false)
-	public static Response roll(
-			@Nonnull
-			final State st,
-			@Nullable
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer dice,
-			@Nullable
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer sides,
-			@Nullable
-			@Arguments(description="Optional bias to add to result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-					Integer bias,
-			@Nullable
-			@Arguments(description="Logged reason for the roll",
-			           type=ArgumentType.TEXT_ONELINE,
-			           max=512)
-					String reason) {
+	public static Response roll(@Nonnull final State st,
+	                            @Nullable @Arguments(description="Number of dice to roll",
+	                                                 type=ArgumentType.INTEGER,
+	                                                 mandatory=false) Integer dice,
+	                            @Nullable @Arguments(description="Number of sides on dice",
+	                                                 type=ArgumentType.INTEGER,
+	                                                 mandatory=false) Integer sides,
+	                            @Nullable @Arguments(description="Optional bias to add to result",
+	                                                 mandatory=false,
+	                                                 type=ArgumentType.INTEGER) Integer bias,
+	                            @Nullable @Arguments(description="Logged reason for the roll",
+	                                                 type=ArgumentType.TEXT_ONELINE,
+	                                                 max=512) String reason) {
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
 		if (bias==null) { bias=0; }
@@ -191,23 +165,18 @@ public class Roller {
 	          description="Default roll, only requests a reason",
 	          permitUserWeb=false,
 	          permitExternal=false)
-	public static Response rollDefault(
-			@Nonnull
-			final State st,
-			@Arguments(description="Logged reason for the roll",
-			           type=ArgumentType.TEXT_ONELINE,
-			           max=512)
-			final String reason) {
+	public static Response rollDefault(@Nonnull final State st,
+	                                   @Arguments(description="Logged reason for the roll",
+	                                              type=ArgumentType.TEXT_ONELINE,
+	                                              max=512) final String reason) {
 		return roll(st,null,null,0,reason);
 	}
 
 	@Nonnull
 	@Templater.Template(name="ROLL",
 	                    description="Any made roll")
-	public static String getRoll(
-			@Nonnull
-			final State st,
-			final String key) {
+	public static String getRoll(@Nonnull final State st,
+	                             final String key) {
 		if (st.roll==null) { throw new UserInputStateException("No roll made!"); }
 		return st.roll.toString();
 	}
@@ -215,10 +184,8 @@ public class Roller {
 	@Nonnull
 	@Templater.Template(name="TARGET:ROLL",
 	                    description="Any TARGET made roll")
-	public static String getTargetRoll(
-			@Nonnull
-			final State st,
-			final String key) {
+	public static String getTargetRoll(@Nonnull final State st,
+	                                   final String key) {
 		if (!st.hasModule("Roller")) { return ""; }
 		if (st.getTargetNullable()==null) { throw new UserInputStateException("No target!"); }
 		final State target=st.getTargetNullable();
@@ -232,48 +199,30 @@ public class Roller {
 	          description="Roll against another player",
 	          permitUserWeb=false,
 	          permitExternal=false)
-	public static Response rollAgainst(
-			@Nonnull
-			final State st,
-			@Nullable
-			@Arguments(description="Character to roll against",
-			           type=ArgumentType.CHARACTER_NEAR)
-			final Char target,
-			@Nullable
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer dice,
-			@Nullable
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer sides,
-			@Nullable
-			@Arguments(description="Optional bias to add to result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-					Integer bias,
-			@Nullable
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer targetdice,
-			@Nullable
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-					Integer targetsides,
-			@Nullable
-			@Arguments(description="Optional bias to add to result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-					Integer targetbias,
-			@Nullable
-			@Arguments(description="Logged reason for the roll",
-			           type=ArgumentType.TEXT_ONELINE,
-			           max=512)
-					String reason) {
+	public static Response rollAgainst(@Nonnull final State st,
+	                                   @Nullable @Arguments(description="Character to roll against",
+	                                                        type=ArgumentType.CHARACTER_NEAR) final Char target,
+	                                   @Nullable @Arguments(description="Number of dice to roll",
+	                                                        type=ArgumentType.INTEGER,
+	                                                        mandatory=false) Integer dice,
+	                                   @Nullable @Arguments(description="Number of sides on dice",
+	                                                        type=ArgumentType.INTEGER,
+	                                                        mandatory=false) Integer sides,
+	                                   @Nullable @Arguments(description="Optional bias to add to result",
+	                                                        mandatory=false,
+	                                                        type=ArgumentType.INTEGER) Integer bias,
+	                                   @Nullable @Arguments(description="Number of dice to roll",
+	                                                        type=ArgumentType.INTEGER,
+	                                                        mandatory=false) Integer targetdice,
+	                                   @Nullable @Arguments(description="Number of sides on dice",
+	                                                        type=ArgumentType.INTEGER,
+	                                                        mandatory=false) Integer targetsides,
+	                                   @Nullable @Arguments(description="Optional bias to add to result",
+	                                                        mandatory=false,
+	                                                        type=ArgumentType.INTEGER) Integer targetbias,
+	                                   @Nullable @Arguments(description="Logged reason for the roll",
+	                                                        type=ArgumentType.TEXT_ONELINE,
+	                                                        max=512) String reason) {
 		if (target==null) { throw new UserInputStateException("No target selected"); }
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
@@ -341,48 +290,35 @@ public class Roller {
 	          description="Roll against another player",
 	          permitUserWeb=false,
 	          permitExternal=false)
-	public static Response rollDamageAgainst(
-			@Nonnull
-			final State st,
-			@Nonnull
-			@Arguments(description="Character to roll against",
-			           type=ArgumentType.CHARACTER_NEAR)
-			final Char target,
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer dice,
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer sides,
-			@Arguments(description="Optional bias to add to result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-			final Integer bias,
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer targetdice,
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer targetsides,
-			@Arguments(description="Optional bias to add to result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-			final Integer targetbias,
-			@Nullable
-			@Arguments(description="Damage to apply to target if they lose",
-			           mandatory=false,
-			           type=ArgumentType.TEXT_ONELINE,
-			           delayTemplating=true,
-			           max=1024)
-					String damage,
-			@Arguments(description="Logged reason for the roll",
-			           type=ArgumentType.TEXT_ONELINE,
-			           max=512)
-			final String reason) {
+	public static Response rollDamageAgainst(@Nonnull final State st,
+	                                         @Nonnull @Arguments(description="Character to roll against",
+	                                                             type=ArgumentType.CHARACTER_NEAR) final Char target,
+	                                         @Arguments(description="Number of dice to roll",
+	                                                    type=ArgumentType.INTEGER,
+	                                                    mandatory=false) final Integer dice,
+	                                         @Arguments(description="Number of sides on dice",
+	                                                    type=ArgumentType.INTEGER,
+	                                                    mandatory=false) final Integer sides,
+	                                         @Arguments(description="Optional bias to add to result",
+	                                                    mandatory=false,
+	                                                    type=ArgumentType.INTEGER) final Integer bias,
+	                                         @Arguments(description="Number of dice to roll",
+	                                                    type=ArgumentType.INTEGER,
+	                                                    mandatory=false) final Integer targetdice,
+	                                         @Arguments(description="Number of sides on dice",
+	                                                    type=ArgumentType.INTEGER,
+	                                                    mandatory=false) final Integer targetsides,
+	                                         @Arguments(description="Optional bias to add to result",
+	                                                    mandatory=false,
+	                                                    type=ArgumentType.INTEGER) final Integer targetbias,
+	                                         @Nullable @Arguments(description="Damage to apply to target if they lose",
+	                                                              mandatory=false,
+	                                                              type=ArgumentType.TEXT_ONELINE,
+	                                                              delayTemplating=true,
+	                                                              max=1024) String damage,
+	                                         @Arguments(description="Logged reason for the roll",
+	                                                    type=ArgumentType.TEXT_ONELINE,
+	                                                    max=512) final String reason) {
 		//System.out.println("DAMAGE RECEIVED AS "+damage);
 		if (!st.hasModule("Health")) {
 			throw new UserConfigurationException("Health module is required to use rollDamageAgainst");
@@ -408,49 +344,37 @@ public class Roller {
 	          description="Roll against another player then roll for damage",
 	          permitUserWeb=false,
 	          permitExternal=false)
-	public static Response rollRolledDamageAgainst(
-			@Nonnull
-			final State st,
-			@Nonnull
-			@Arguments(description="Character to roll against",
-			           type=ArgumentType.CHARACTER_NEAR)
-			final Char target,
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer dice,
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer sides,
-			@Arguments(description="Optional bias to add to result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-			final Integer bias,
-			@Arguments(description="Number of dice to roll",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer targetdice,
-			@Arguments(description="Number of sides on dice",
-			           type=ArgumentType.INTEGER,
-			           mandatory=false)
-			final Integer targetsides,
-			@Arguments(description="Optional bias to add to result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-			final Integer targetbias,
-			@Arguments(description="Number of damage dice to roll", type=ArgumentType.INTEGER)
-			final Integer damagedice,
-			@Arguments(description="Number of sides on damage dice", type=ArgumentType.INTEGER)
-			final Integer damagesides,
-			@Arguments(description="Optional bias to add to damage result",
-			           mandatory=false,
-			           type=ArgumentType.INTEGER)
-					Integer damagebias,
-			@Arguments(description="Logged reason for the roll",
-			           type=ArgumentType.TEXT_ONELINE,
-			           max=512)
-			final String reason) {
+	public static Response rollRolledDamageAgainst(@Nonnull final State st,
+	                                               @Nonnull @Arguments(description="Character to roll against",
+	                                                                   type=ArgumentType.CHARACTER_NEAR) final Char target,
+	                                               @Arguments(description="Number of dice to roll",
+	                                                          type=ArgumentType.INTEGER,
+	                                                          mandatory=false) final Integer dice,
+	                                               @Arguments(description="Number of sides on dice",
+	                                                          type=ArgumentType.INTEGER,
+	                                                          mandatory=false) final Integer sides,
+	                                               @Arguments(description="Optional bias to add to result",
+	                                                          mandatory=false,
+	                                                          type=ArgumentType.INTEGER) final Integer bias,
+	                                               @Arguments(description="Number of dice to roll",
+	                                                          type=ArgumentType.INTEGER,
+	                                                          mandatory=false) final Integer targetdice,
+	                                               @Arguments(description="Number of sides on dice",
+	                                                          type=ArgumentType.INTEGER,
+	                                                          mandatory=false) final Integer targetsides,
+	                                               @Arguments(description="Optional bias to add to result",
+	                                                          mandatory=false,
+	                                                          type=ArgumentType.INTEGER) final Integer targetbias,
+	                                               @Arguments(description="Number of damage dice to roll",
+	                                                          type=ArgumentType.INTEGER) final Integer damagedice,
+	                                               @Arguments(description="Number of sides on damage dice",
+	                                                          type=ArgumentType.INTEGER) final Integer damagesides,
+	                                               @Arguments(description="Optional bias to add to damage result",
+	                                                          mandatory=false,
+	                                                          type=ArgumentType.INTEGER) Integer damagebias,
+	                                               @Arguments(description="Logged reason for the roll",
+	                                                          type=ArgumentType.TEXT_ONELINE,
+	                                                          max=512) final String reason) {
 		if (!st.hasModule("Health")) {
 			throw new UserConfigurationException("Health module is required to use rollDamageAgainst");
 		}

@@ -51,21 +51,18 @@ public abstract class Login {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response login(@Nonnull final State st,
-	                             @Nullable
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version number of the HUD that is connecting",
-	                                        max=128,
-	                                        mandatory=false) final String version,
-	                             @Nullable
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version date of the HUD that is connecting",
-	                                        max=128,
-	                                        mandatory=false) final String versiondate,
-	                             @Nullable
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version time of the HUD that is connecting",
-	                                        max=128,
-	                                        mandatory=false) final String versiontime) {
+	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                  description="Version number of the HUD that is connecting",
+	                                                  max=128,
+	                                                  mandatory=false) final String version,
+	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                  description="Version date of the HUD that is connecting",
+	                                                  max=128,
+	                                                  mandatory=false) final String versiondate,
+	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                  description="Version time of the HUD that is connecting",
+	                                                  max=128,
+	                                                  mandatory=false) final String versiontime) {
 		final boolean debug=false;
 		////// CHANGE ALL THIS, HAVE A
 		////// "USINGCHARACTER" COLUMN FOR <AVATAR> TYPES
@@ -248,10 +245,9 @@ public abstract class Login {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response create(@Nonnull final State st,
-	                              @Nullable
-	                              @Arguments(type=ArgumentType.TEXT_CLEAN,
-	                                         description="Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. "+"SCENT.  YOU MAY GET AN "+"OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. "+"people"+" "+"trying to give you XP will need this FULL NAME.  It should JUST be a NAME.",
-	                                         max=40) final String charactername) {
+	                              @Nullable @Arguments(type=ArgumentType.TEXT_CLEAN,
+	                                                   description="Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. "+"SCENT.  YOU MAY GET AN "+"OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. "+"people"+" "+"trying to give you XP will need this FULL NAME.  It should JUST be a NAME.",
+	                                                   max=40) final String charactername) {
 		if (Char.resolve(st,charactername)!=null) {
 			final JSONObject json=Modules.getJSONTemplate(st,"characters.create");
 			json.put("message","Character name already taken - please retry");
@@ -288,8 +284,7 @@ public abstract class Login {
 		final Char c=Char.resolve(st,charactername);
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
 		if (st.json().has("protocol")) {
-			if (st.json().getInt("protocol")==2)
-			{
+			if (st.json().getInt("protocol")==2) {
 				if (st.getCharacterNullable()==null) {
 					final JSONObject reconnect=new JSONObject();
 					reconnect.put("incommand","forcereconnect");
@@ -311,9 +306,8 @@ public abstract class Login {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response select(@Nonnull final State st,
-	                              @Nullable
-	                              @Arguments(type=ArgumentType.CHARACTER_PLAYABLE,
-	                                         description="Character to load") final Char character) {
+	                              @Nullable @Arguments(type=ArgumentType.CHARACTER_PLAYABLE,
+	                                                   description="Character to load") final Char character) {
 		if (character==null) { return new ErrorResponse("No such character"); }
 		if (character.getOwner()!=st.getAvatarNullable()) {
 			return new ErrorResponse("That character does not belong to you");
@@ -352,13 +346,11 @@ public abstract class Login {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response initialise(@Nonnull final State st,
-	                                  @Nonnull
-	                                  @Arguments(type=ArgumentType.ATTRIBUTE,
-	                                             description="Attribute to initialise") final Attribute attribute,
-	                                  @Nonnull
-	                                  @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                             description="Value to initialise to",
-	                                             max=4096) final String value) {
+	                                  @Nonnull @Arguments(type=ArgumentType.ATTRIBUTE,
+	                                                      description="Attribute to initialise") final Attribute attribute,
+	                                  @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                      description="Value to initialise to",
+	                                                      max=4096) final String value) {
 		//System.out.println("Initialise "+attribute+" to "+value);
 		final boolean debug=false;
 		switch (attribute.getType()) {

@@ -42,9 +42,8 @@ public class FactionCommands {
 	@Commands(description="Award a point of faction XP to the target character",
 	          context=Context.CHARACTER)
 	public static Response awardXP(@Nonnull final State st,
-	                               @Nonnull
-	                               @Arguments(description="Character to award a point of XP to",
-	                                          type=ArgumentType.CHARACTER_FACTION) final Char target,
+	                               @Nonnull @Arguments(description="Character to award a point of XP to",
+	                                                   type=ArgumentType.CHARACTER_FACTION) final Char target,
 	                               @Arguments(description="Reason for the award",
 	                                          type=ArgumentType.TEXT_ONELINE,
 	                                          max=512) final String reason) {
@@ -84,9 +83,8 @@ public class FactionCommands {
 	@Commands(description="Invite a player to your faction",
 	          context=Context.CHARACTER)
 	public static Response invite(@Nonnull final State st,
-	                              @Nonnull
-	                              @Arguments(description="Character to invite",
-	                                         type=ArgumentType.CHARACTER) final Char target) {
+	                              @Nonnull @Arguments(description="Character to invite",
+	                                                  type=ArgumentType.CHARACTER) final Char target) {
 		final CharacterGroup ourfaction=CharacterGroup.getGroup(st,"Faction");
 		if (ourfaction==null) { return new ErrorResponse("You are not in a faction"); }
 		return GroupCommands.invite(st,ourfaction,target);

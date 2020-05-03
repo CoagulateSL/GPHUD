@@ -34,11 +34,10 @@ public abstract class Avatars {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response setRegionAvatars(@Nonnull final State st,
-	                                        @Nullable
-	                                        @Arguments(description="Comma separated list of avatar key=names on the sim",
-	                                                   type=ArgumentType.TEXT_ONELINE,
-	                                                   max=65536,
-	                                                   mandatory=false) String userlist) {
+	                                        @Nullable @Arguments(description="Comma separated list of avatar key=names on the sim",
+	                                                             type=ArgumentType.TEXT_ONELINE,
+	                                                             max=65536,
+	                                                             mandatory=false) String userlist) {
 
 		// check authorisation, servers can only be deployed by the instance owner...
 		if (st.getSourcedeveloper().getId()!=1) {

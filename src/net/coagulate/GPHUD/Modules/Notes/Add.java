@@ -19,15 +19,13 @@ public class Add {
 	                  context=Command.Context.AVATAR,
 	                  requiresPermission="Notes.Add")
 	public static Response character(@Nonnull final State st,
-	                                 @Nonnull
-	                                 @Argument.Arguments(description="Character to log note against",
-	                                                     type=Argument.ArgumentType.CHARACTER) final Char character,
+	                                 @Nonnull @Argument.Arguments(description="Character to log note against",
+	                                                              type=Argument.ArgumentType.CHARACTER) final Char character,
 	                                 @Argument.Arguments(description="Share note with the user",
 	                                                     type=Argument.ArgumentType.BOOLEAN) final Boolean shared,
-	                                 @Nonnull
-	                                 @Argument.Arguments(description="Note to record",
-	                                                     type=Argument.ArgumentType.TEXT_ONELINE,
-	                                                     max=4096) final String note) {
+	                                 @Nonnull @Argument.Arguments(description="Note to record",
+	                                                              type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                              max=4096) final String note) {
 		AdminNote.add(st.getInstance(),st.getAvatar(),character.getOwner(),character,note,!shared);
 		return new OKResponse((shared?"Shared":"Admin only")+" character note added.");
 	}
@@ -37,15 +35,13 @@ public class Add {
 	                  context=Command.Context.AVATAR,
 	                  requiresPermission="Notes.Add")
 	public static Response avatar(@Nonnull final State st,
-	                              @Nonnull
-	                              @Argument.Arguments(description="Avatar to log note against",
-	                                                  type=Argument.ArgumentType.AVATAR) final User target,
+	                              @Nonnull @Argument.Arguments(description="Avatar to log note against",
+	                                                           type=Argument.ArgumentType.AVATAR) final User target,
 	                              @Argument.Arguments(description="Share note with the user",
 	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean shared,
-	                              @Nonnull
-	                              @Argument.Arguments(description="Note to record",
-	                                                  type=Argument.ArgumentType.TEXT_ONELINE,
-	                                                  max=4096) final String note) {
+	                              @Nonnull @Argument.Arguments(description="Note to record",
+	                                                           type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                           max=4096) final String note) {
 		AdminNote.add(st.getInstance(),st.getAvatar(),target,null,note,!shared);
 		return new OKResponse((shared?"Shared":"Admin only")+" avatar note added.");
 	}

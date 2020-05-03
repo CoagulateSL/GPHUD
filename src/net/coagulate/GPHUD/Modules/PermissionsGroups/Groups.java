@@ -206,9 +206,8 @@ public abstract class Groups {
 	          permitScripting=false,
 	          permitObject=false)
 	public static Response delete(@Nonnull final State st,
-	                              @Nonnull
-	                              @Arguments(description="Permissions group to delete",
-	                                         type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup) {
+	                              @Nonnull @Arguments(description="Permissions group to delete",
+	                                                  type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup) {
 		final String success="NOP";
 		permissionsgroup.validate(st);
 		final String name=permissionsgroup.getNameSafe();

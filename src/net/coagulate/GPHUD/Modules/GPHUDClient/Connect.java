@@ -228,7 +228,8 @@ public class Connect {
 	}
 
 	@Nullable
-	private static Response runCharacterInitScript(final State st,final List<String> loginmessages) {
+	private static Response runCharacterInitScript(final State st,
+	                                               final List<String> loginmessages) {
 		final String initscript=st.getKV("Instance.CharInitScript").toString();
 		if (initscript!=null && (!initscript.isEmpty())) {
 			// let the init script have a "run"

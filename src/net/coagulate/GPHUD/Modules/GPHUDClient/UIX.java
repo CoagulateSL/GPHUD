@@ -21,15 +21,10 @@ public class UIX {
 	          permitExternal=false,
 	          permitConsole=false,
 	          context=Context.ANY)
-	public static Response call(
-			@Nonnull
-			final State st,
-			@Arguments(description="Selected option",
-			           max=128,
-			           type=ArgumentType.TEXT_ONELINE)
-			@Nonnull
-			final String commandtoinvoke
-	                           ) {
+	public static Response call(@Nonnull final State st,
+	                            @Arguments(description="Selected option",
+	                                       max=128,
+	                                       type=ArgumentType.TEXT_ONELINE) @Nonnull final String commandtoinvoke) {
 		if (commandtoinvoke.contains(" ")) { return Modules.run(st,commandtoinvoke,false); }
 		if (Modules.getCommand(st,commandtoinvoke).getArguments().size()==0) {
 			//argh, it's argless cap'n

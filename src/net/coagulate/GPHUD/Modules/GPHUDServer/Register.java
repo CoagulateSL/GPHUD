@@ -41,10 +41,9 @@ public abstract class Register {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response register(@Nonnull final State st,
-	                                @Nonnull
-	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                           description="Version number of the Server that is connecting",
-	                                           max=64) final String version,
+	                                @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                    description="Version number of the Server that is connecting",
+	                                                    max=64) final String version,
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
 	                                           description="Version date of the Server that is connecting",
 	                                           max=64) final String versiondate,

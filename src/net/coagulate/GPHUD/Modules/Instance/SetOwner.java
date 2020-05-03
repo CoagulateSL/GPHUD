@@ -33,9 +33,8 @@ public abstract class SetOwner {
 	          permitExternal=false,
 	          permitObject=false)
 	public static Response setOwner(@Nonnull final State st,
-	                                @Nullable
-	                                @Arguments(description="New owner for this instance",
-	                                           type=ArgumentType.AVATAR) final User avatar) {
+	                                @Nullable @Arguments(description="New owner for this instance",
+	                                                     type=ArgumentType.AVATAR) final User avatar) {
 		if (!st.isSuperUser()) {
 			throw new UserAccessDeniedException("Instance transfer may only be performed by a SUPERADMIN");
 		}

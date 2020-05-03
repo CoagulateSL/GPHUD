@@ -39,17 +39,14 @@ public class ExperienceModule extends ModuleAnnotation {
 	@Commands(context=AVATAR,
 	          description="Award XP")
 	public static Response award(@Nonnull final State st,
-	                             @Nonnull
-	                             @Arguments(description="Character to award to",
-	                                        type=CHARACTER) final Char target,
-	                             @Nonnull
-	                             @Arguments(description="XP type to award",
-	                                        type=TEXT_INTERNAL_NAME,
-	                                        max=32) final String type,
-	                             @Nullable
-	                             @Arguments(description="Ammount to award",
-	                                        type=INTEGER,
-	                                        max=999999) Integer ammount,
+	                             @Nonnull @Arguments(description="Character to award to",
+	                                                 type=CHARACTER) final Char target,
+	                             @Nonnull @Arguments(description="XP type to award",
+	                                                 type=TEXT_INTERNAL_NAME,
+	                                                 max=32) final String type,
+	                             @Nullable @Arguments(description="Ammount to award",
+	                                                  type=INTEGER,
+	                                                  max=999999) Integer ammount,
 	                             @Arguments(description="Reason for award",
 	                                        type=TEXT_ONELINE,
 	                                        max=128) final String reason

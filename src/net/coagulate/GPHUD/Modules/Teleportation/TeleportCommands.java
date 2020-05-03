@@ -29,9 +29,8 @@ public class TeleportCommands {
 	                  permitObject=false,
 	                  permitExternal=false)
 	public static Response teleportTo(@Nonnull final State st,
-	                                  @Nonnull
-	                                  @Argument.Arguments(description="Region to teleport to (must be part of the instance",
-	                                                      type=Argument.ArgumentType.REGION) final Region region,
+	                                  @Nonnull @Argument.Arguments(description="Region to teleport to (must be part of the instance",
+	                                                               type=Argument.ArgumentType.REGION) final Region region,
 	                                  @Argument.Arguments(description="X co-ordinate",
 	                                                      type=Argument.ArgumentType.FLOAT,
 	                                                      max=256) final Float x,
