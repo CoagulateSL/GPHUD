@@ -12,4 +12,6 @@ public class GSExecutionException extends GSException {
 		super(reason,cause);
 	}
 
+// ---------- INSTANCE ----------
+public String toString() { return "{GS Execution Exception}: "+getLocalizedMessage(); }
 }
