@@ -572,6 +572,11 @@ public class Char extends TableRow {
 		st.purgeCache(this);
 	}
 
+	@Deprecated
+	public void setActive() {
+		db().d("update characters set lastactive=? where characterid=?",UnixTime.getUnixTime()+1,getId());
+	}
+
 	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
 	/**

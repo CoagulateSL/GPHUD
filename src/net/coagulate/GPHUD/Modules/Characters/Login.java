@@ -335,10 +335,13 @@ public abstract class Login {
 				return Connect.postConnect(st);
 			}
 		}
+		if (st.getCharacterNullable()!=null) { st.getCharacter().disconnect(); }
 		GPHUD.purgeURL(st.callbackurl());
 		if (st.getCharacterNullable()!=null) { st.purgeCache(st.getCharacter()); }
 		PrimaryCharacter.setPrimaryCharacter(st,character);
-		//character.setURL(st.callbackurl());
+		character.setActive();
+		character.setURL(st.callbackurl());
+		st.setCharacter(character);
 		//GPHUD.purgeURL(st.callbackurl());
 		return login(st,null,null,null);
 	}
