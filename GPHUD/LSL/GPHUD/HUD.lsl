@@ -121,6 +121,7 @@ integer process(key requestid) {
 	string incommand=jsonget("incommand");
 	if (jsonget("logincomplete")!="") {
 		logincomplete=((integer)jsonget("logincomplete"));
+		SHUTDOWN=FALSE;
 		#ifdef DEBUG_BOOT
 		llOwnerSay("Login complete, "+((string)llGetFreeMemory())+" bytes inside large process()");
 		#endif
