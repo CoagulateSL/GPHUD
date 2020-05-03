@@ -28,6 +28,8 @@ import java.util.List;
 
 public class Connect {
 
+	private Connect() {}
+
 	/**
 	 * Connects GPHUD
 	 */
@@ -66,7 +68,6 @@ public class Connect {
 		}
 		// try find a character, or auto create
 		final boolean autocreate=st.getKV("Instance.AutoNameCharacter").boolValue();
-		System.out.println("About to get most recent for "+st.getAvatar()+" at "+st.getInstance()+", autocreate is "+autocreate);
 		Char character=Char.getMostRecent(st.getAvatar(),st.getInstance());
 		if (character==null) {
 			if (autocreate) {
@@ -177,47 +178,14 @@ public class Connect {
 					case FLOAT:
 					case INTEGER:
 						final String value=st.getRawKV(st.getCharacter(),"characters."+a.getName());
-						if (value==null || value.isEmpty()) {
-							final KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
-							Float max=null;
-							if (!maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
-							String maxstring="";
-							if (max!=null && max>0) { maxstring=", which must be no greater than "+max; }
-							final JSONObject json=new JSONObject();
-							json.put("hudtext","Initialising character...")
-							    .put("hudcolor","<1.0,0.75,0.75>")
-							    .put("titlertext","Initialising character...")
-							    .put("titlercolor","<1.0,0.75,0.75>")
-							    .put("message","Character creation requires you to input attribute "+a.getName()+maxstring);
-							json.put("incommand","runtemplate");
-							json.put("invoke","characters.initialise");
-							json.put("args","1");
-							json.put("attribute",a.getName());
-							json.put("arg0name","value");
-							json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it"+maxstring);
-							json.put("arg0type","TEXTBOX");
-							return new JSONResponse(json);
-						}
+						if (value==null || value.isEmpty()) { return requestTextInput(st,a); }
 						break;
 					case GROUP:
 						if (a.getSubType()!=null && CharacterGroup.getGroup(st.getCharacter(),a.getSubType())==null && CharacterGroup.hasChoices(st,a)) {
-							final JSONObject json=new JSONObject();
-							json.put("hudtext","Initialising character...")
-							    .put("hudcolor","<1.0,0.75,0.75>")
-							    .put("titlertext","Initialising character...")
-							    .put("titlercolor","<1.0,0.75,0.75>")
-							    .put("message","Character creation requires you to select a choice for attribute "+a.getName());
-							CharacterGroup.createChoice(st,json,"arg0",a);
-							json.put("incommand","runtemplate");
-							json.put("invoke","characters.initialise");
-							json.put("args","1");
-							json.put("attribute",a.getName());
-							json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it");
-							return new JSONResponse(json);
+							return requestChoiceInput(st,a);
 						}
 						break;
 					case POOL:
-						//System.out.println("Character "+character+" validation check for pool "+a+" has no currently defined meaning.  NO-OP.  Passing check.");
 						break;
 					default:
 						throw new SystemConsistencyException("Unhandled attribute type "+type);
@@ -225,6 +193,48 @@ public class Connect {
 			}
 		}
 		return null;
+	}
+
+	@Nonnull
+	private static Response requestChoiceInput(@Nonnull final State st,
+	                                           @Nonnull final Attribute a) {
+		final JSONObject json=new JSONObject();
+		json.put("hudtext","Initialising character...")
+		    .put("hudcolor","<1.0,0.75,0.75>")
+		    .put("titlertext","Initialising character...")
+		    .put("titlercolor","<1.0,0.75,0.75>")
+		    .put("message","Character creation requires you to select a choice for attribute "+a.getName());
+		CharacterGroup.createChoice(st,json,"arg0",a);
+		json.put("incommand","runtemplate");
+		json.put("invoke","characters.initialise");
+		json.put("args","1");
+		json.put("attribute",a.getName());
+		json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it");
+		return new JSONResponse(json);
+	}
+
+	@Nonnull
+	private static Response requestTextInput(@Nonnull final State st,
+	                                         @Nonnull final Attribute a) {
+		final KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
+		Float max=null;
+		if (!maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
+		String maxstring="";
+		if (max!=null && max>0) { maxstring=", which must be no greater than "+max; }
+		final JSONObject json=new JSONObject();
+		json.put("hudtext","Initialising character...")
+		    .put("hudcolor","<1.0,0.75,0.75>")
+		    .put("titlertext","Initialising character...")
+		    .put("titlercolor","<1.0,0.75,0.75>")
+		    .put("message","Character creation requires you to input attribute "+a.getName()+maxstring);
+		json.put("incommand","runtemplate");
+		json.put("invoke","characters.initialise");
+		json.put("args","1");
+		json.put("attribute",a.getName());
+		json.put("arg0name","value");
+		json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it"+maxstring);
+		json.put("arg0type","TEXTBOX");
+		return new JSONResponse(json);
 	}
 
 	@Nullable
