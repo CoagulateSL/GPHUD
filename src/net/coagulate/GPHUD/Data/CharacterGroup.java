@@ -142,9 +142,25 @@ public class CharacterGroup extends TableRow {
 	 * @return The CharacterGroup or null
 	 */
 	@Nullable
-	public static CharacterGroup getGroup(@Nonnull final State state,
-	                                      @Nonnull final String grouptype) {
+	public static CharacterGroup getGroup(@Nonnull final State state,@Nonnull final String grouptype) {
 		return getGroup(state.getCharacter(),grouptype);
+	}
+
+	/**
+	 * Returns true if there are open groups of this group type, i.e. character creation can meaningfully select one.
+	 *
+	 * @param st State
+	 * @param a  Group attribute (of a subtype)
+	 *
+	 * @return true if there are open (selectable) groups in this type
+	 */
+	public static boolean hasChoices(State st,Attribute a) {
+		for (final CharacterGroup cg: st.getInstance().getGroupsForKeyword(a.getSubType())) {
+			if (cg.isOpen()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// ----- Internal Statics -----

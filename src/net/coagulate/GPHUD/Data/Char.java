@@ -16,6 +16,7 @@ import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
@@ -174,7 +175,8 @@ public class Char extends TableRow {
 			//check Instance.FilteredNamingList
 			checkFilteredNamingList(st,name);
 		}
-		db().d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)",name,st.getInstance().getId(),st.getAvatar().getId(),getUnixTime(),0);
+		GPHUD.getLogger(st.getInstance().toString()).info("About to create "+name+" in "+st.getInstance());
+		db().d("insert into characters(name,instanceid,owner,lastactive,retired) values(?,?,?,?,?)",name,st.getInstance().getId(),st.getAvatar().getId(),0,0);
 	}
 
 	/**
@@ -268,6 +270,103 @@ public class Char extends TableRow {
 		               Interface.getNode(),
 		               UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
 		              );
+	}
+
+	/**
+	 * Auto create a default character
+	 *
+	 * @param st State
+	 *
+	 * @return Freshly created character
+	 */
+	public static Char autoCreate(@Nonnull final State st) {
+		Char.create(st,st.getAvatar().getName(),false); // don't filter avatar based names
+		Char character=getMostRecent(st.getAvatar(),st.getInstance());
+		if (character==null) {
+			st.logger().severe("Created character for avatar but avatar has no characters still");
+			throw new NoDataException("Could not create a character for this avatar");
+		}
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            st.getAvatar(),
+		            Char.get(character.getId()),
+		            "Create",
+		            "Character",
+		            null,
+		            st.getAvatar().getName(),
+		            "Automatically generated character upon login with no characters."
+		           );
+		return character;
+	}
+
+	public static Table statusDump(State st) {
+		Table t=new Table().border();
+		t.header("Character ID");
+		t.header("Name");
+		t.header("Owner");
+		t.header("Player");
+		t.header("Last Active (approx)");
+		t.header("Retired");
+		t.header("URL");
+		t.header("URL First Seen");
+		t.header("URL Last Seen");
+		t.header("Servicing Server");
+		t.header("Zone");
+		t.header("Region");
+		for (ResultsRow row: db().dq("select * from characters where instanceid=? and (url is not null or playedby is not null)",st.getInstance().getId())) {
+			t.openRow();
+			t.add(row.getIntNullable("characterid"));
+			t.add(row.getStringNullable("name"));
+			Integer owner=row.getIntNullable("owner");
+			t.add(owner==null?"Null?":User.get(owner).getName()+"[#"+owner+"]");
+			Integer playedby=row.getIntNullable("playedby");
+			t.add(playedby==null?"":User.get(playedby).getName()+"[#"+playedby+"]");
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("lastactive"),st.getAvatar().getTimeZone()));
+			Integer retired=row.getIntNullable("retired");
+			if (retired==null) { retired=0; }
+			t.add(retired==0?"":"Retired");
+			t.add(row.getStringNullable("url")==null?"":"Present");
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("urlfirst"),st.getAvatar().getTimeZone()));
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("urllast"),st.getAvatar().getTimeZone()));
+			t.add(row.getStringNullable("authnode"));
+			Integer zoneid=row.getIntNullable("zoneid");
+			t.add(zoneid==null?"":Zone.get(zoneid).getName()+"#"+zoneid);
+			Integer regionid=row.getIntNullable("regionid");
+			t.add(regionid==null?"":Region.get(regionid,true).getName()+"[#"+regionid+"]");
+		}
+		return t;
+	}
+
+
+	/**
+	 * Disconnect a URL - that is, log the character out, but don't terminate the URL its self.
+	 *
+	 * @param url URL to disconnect from existing resources
+	 */
+	public static void disconnectURL(@Nonnull final String url) {
+		// is this URL in use?
+		for (ResultsRow row: db().dq("select characterid from characters where url like ?",url)) {
+			Char character=Char.get(row.getInt());
+			Visit.closeVisits(character,character.getRegion());
+			character.disconnect();
+		}
+	}
+
+	/**
+	 * Log out an avatar.
+	 *
+	 * @param user      Avatar to logout
+	 * @param otherthan Character to not log out, or null to log out all by the user
+	 */
+	public static void logoutByAvatar(@Nonnull final User user,
+	                                  @Nullable final Char otherthan) {
+		for (ResultsRow row: db().dq("select characterid from characters where playedby=?",user.getId())) {
+			Char character=Char.get(row.getInt());
+			if (!character.equals(otherthan)) {
+				Visit.closeVisits(character,character.getRegion());
+				character.disconnect();
+			}
+		}
 	}
 
 	// ----- Internal Statics -----
@@ -469,8 +568,46 @@ public class Char extends TableRow {
 		return "characterid";
 	}
 
+	public void wipeConveyances(@Nonnull final State st) {
+		db().d("delete from characterkvstore where characterid=? and k like 'gphudclient.conveyance-%'",getId());
+		st.purgeCache(this);
+	}
+
 	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
+	/**
+	 * Disconnects a character.  Does not send a terminate to the URL
+	 */
+	public void disconnect() {
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",null, //playedby
+		  UnixTime.getUnixTime()-1, //lastactive
+		  null, //url
+		  null, //urlfirst
+		  null, //urllast
+		  null, //authnode
+		  null, //zone
+		  null, //region
+		  getId()
+		 ); //character id
+	}
+
+	public void login(User user,
+	                  Region region,
+	                  String url) {
+		disconnectURL(url);
+		logoutByAvatar(user,this);
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",user.getId(), // played by
+		  UnixTime.getUnixTime(), // last active
+		  url, // url
+		  UnixTime.getUnixTime(), //urlfirst
+		  UnixTime.getUnixTime(), // urllast
+		  Interface.getNode(), //node
+		  null, //zone
+		  region.getId(), //region id
+		  getId()
+		 ); // where char id
+
+	}
 
 	/**
 	 * Call a characters HUD to get a radar list of nearby Characters.
@@ -623,11 +760,14 @@ public class Char extends TableRow {
 	 * @param st      State
 	 * @param payload Message to append changed conveyances to.
 	 */
-	public void appendConveyance(@Nonnull final State st,
+	public void appendConveyance(@Nonnull State st,
 	                             @Nonnull final JSONObject payload) {
 		// SANITY NOTE TO SELF - there is also initialConveyance which does almost exactly the same, which is bad
 		final boolean debug=false;
 		validate(st);
+		if (st.getCharacter()!=this) {
+			st=new State(this);
+		}
 		final Map<KV,String> oldconveyances=loadConveyances(st);
 		for (final Map.Entry<KV,String> entry: oldconveyances.entrySet()) {
 			final KV kv=entry.getKey();

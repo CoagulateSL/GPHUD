@@ -187,6 +187,7 @@ public class Transmission extends Thread {
 		if (character!=null) { character.appendConveyance(new net.coagulate.GPHUD.State(character),json); }
 		String response=null;
 		if (url==null || url.isEmpty()) { return; }
+		if (json.toString().length()>2040) { throw new SystemImplementationException("Transmission is over 2048 chars - "+json.toString()); }
 		while (response==null && retries>0) {
 			try {
 				response=sendAttempt();
@@ -211,6 +212,9 @@ public class Transmission extends Thread {
 			GPHUD.getLogger().log(WARNING,"Failed all retransmission attempts for "+json);
 			return;
 		}
+		if (region!=null) { Region.refreshURL(url); }
+		if (character!=null) { Char.refreshURL(url); }
+		//TODO if (object!=null) { Obj.refreshURL(url); }
 		if (!response.isEmpty()) {
 			try {
 				final JSONObject j=new JSONObject(response);

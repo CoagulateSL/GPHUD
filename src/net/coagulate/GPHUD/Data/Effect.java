@@ -16,9 +16,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * An effect - a sort of temporary group membership, or a "buff" if you like.
@@ -56,8 +54,7 @@ public class Effect extends TableRow {
 	 * @throws UserInputLookupFailureException if the effect does not exist
 	 */
 	@Nonnull
-	public static Effect get(@Nonnull final State st,
-	                         @Nonnull final String name) {
+	public static Effect get(@Nonnull final State st,@Nonnull final String name) {
 		final Effect effect=getNullable(st,name);
 		if (effect==null) { throw new UserInputLookupFailureException("There is no effect named "+name); }
 		return effect;
@@ -72,8 +69,7 @@ public class Effect extends TableRow {
 	 * @return The effect or null if not found
 	 */
 	@Nullable
-	public static Effect getNullable(@Nonnull final State st,
-	                                 @Nonnull final String name) {
+	public static Effect getNullable(@Nonnull final State st,@Nonnull final String name) {
 		return find(st.getInstance(),name);
 	}
 
@@ -100,8 +96,7 @@ public class Effect extends TableRow {
 	 *
 	 * @throws UserInputDuplicateValueException If the effect already exists
 	 */
-	public static void create(@Nonnull final State st,
-	                          @Nonnull final String name) {
+	public static void create(@Nonnull final State st,@Nonnull final String name) {
 		if (Effect.getNullable(st,name)!=null) { throw new UserInputDuplicateValueException("There is already an effect named "+name); }
 		db().d("insert into effects(instanceid,name) values(?,?)",st.getInstance().getId(),name);
 	}
@@ -115,8 +110,7 @@ public class Effect extends TableRow {
 	 * @return Effect object
 	 */
 	@Nullable
-	public static Effect find(@Nonnull final Instance instance,
-	                          final String name) {
+	public static Effect find(@Nonnull final Instance instance,final String name) {
 		final Results matches=db().dq("select id from effects where instanceid=? and name like ?",instance.getId(),name);
 		if (matches.empty()) { return null; }
 		if (matches.size()>1) { throw new TooMuchDataException("Name "+name+" in instance "+instance.getId()+" matched "+matches.size()+" results"); }
@@ -129,8 +123,7 @@ public class Effect extends TableRow {
 	 * @param st        State
 	 * @param character Character to review
 	 */
-	public static void expirationCheck(@Nonnull final State st,
-	                                   @Nonnull final Char character) {
+	public static void expirationCheck(@Nonnull final State st,@Nonnull final Char character) {
 		if (st.expirationchecked) { return; }
 		for (final ResultsRow row: db().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
 			final int effectid=row.getInt();
@@ -152,8 +145,7 @@ public class Effect extends TableRow {
 	 * @return A Set of Effect objects describing the characters active effects
 	 */
 	@Nonnull
-	public static Set<Effect> get(@Nonnull final State st,
-	                              @Nonnull final Char character) {
+	public static Set<Effect> get(@Nonnull final State st,@Nonnull final Char character) {
 		expirationCheck(st,character);
 		final Set<Effect> set=new HashSet<>();
 		for (final ResultsRow row: db().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
@@ -162,9 +154,43 @@ public class Effect extends TableRow {
 		return set;
 	}
 
+	/**
+	 * Add conveyances for effects to the JSON object.
+	 *
+	 * @param st        The state
+	 * @param character The character to convey
+	 * @param json      The json state to add to
+	 */
+	public static void conveyEffects(@Nonnull final State st,@Nonnull final Char character,@Nonnull final JSONObject json) {
+		expirationCheck(st,character);
+		Set<Effect> effects=get(st,character);
+		Map<Integer,Effect> byduration=new TreeMap<>();
+		for (Effect effect: effects) {
+			int remain=effect.remains(character);
+			while (byduration.containsKey(remain)) {
+				remain++;
+			}
+			String include=st.getKV(effect,"Effects.ShowEffect");
+			if (include==null || include.isEmpty()) { include="true"; }
+			if ("true".equalsIgnoreCase(include)) { byduration.put(remain,effect); }
+		}
+		int i=1;
+		for (Integer remain: byduration.keySet()) {
+			if (i<4) {
+				Effect effect=byduration.get(remain);
+				json.put("effect"+i,(remain+UnixTime.getUnixTime())+"");
+				String texture=st.getKV(effect,"Effects.EffectIcon");
+				if (texture==null || texture.isEmpty()) { texture="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4"; }
+				json.put("effect"+i+"t",texture);
+				i++;
+			}
+		}
+		if (i==1) { json.put("effect1","0"); json.put("effect1t","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903"); }
+		character.appendConveyance(new State(character),json);
+	}
+
 	// ----- Internal Statics -----
-	static void wipeKV(@Nonnull final Instance instance,
-	                   final String key) {
+	static void wipeKV(@Nonnull final Instance instance,final String key) {
 		final Effect i=new Effect();
 		final String kvtable=i.getKVTable();
 		final String maintable=i.getTableName();
@@ -172,8 +198,7 @@ public class Effect extends TableRow {
 		final String maintableidcolumn=i.getIdColumn();
 		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+kvidcolumn+"="+maintable+"."+maintableidcolumn+" and "+maintable+".instanceid=?",
 		       key,
-		       instance.getId()
-		      );
+		       instance.getId());
 	}
 
 	// ---------- INSTANCE ----------
@@ -187,9 +212,7 @@ public class Effect extends TableRow {
 	 *
 	 * @return true if an effect was removed, otherwise false.
 	 */
-	public boolean unapply(@Nonnull final State st,
-	                       @Nonnull final Char character,
-	                       final boolean audit) {
+	public boolean unapply(@Nonnull final State st,@Nonnull final Char character,final boolean audit) {
 		if (dqinn("select count(*) from effectsapplications where characterid=? and effectid=?",character.getId(),getId())==0) { return false; }
 		validate(st);
 		character.validate(st);
@@ -198,11 +221,12 @@ public class Effect extends TableRow {
 		}
 		d("delete from effectsapplications where characterid=? and effectid=?",character.getId(),getId());
 		final String applykv=st.getKV(this,"Effects.RemoveMessage");
+		final JSONObject message=new JSONObject();
 		if (applykv!=null && (!applykv.isEmpty())) {
-			final JSONObject message=new JSONObject();
 			message.put("message",applykv);
-			new Transmission(character,message).start();
 		}
+		conveyEffects(st,character,message);
+		new Transmission(character,message).start();
 		return true;
 	}
 
@@ -284,10 +308,7 @@ public class Effect extends TableRow {
 	 *
 	 * @return True if the effect was applied, false if it was skipped due to an existing effect being of longer duration.  Exceptions on input errors.
 	 */
-	public boolean apply(@Nonnull final State st,
-	                     final boolean administrative,
-	                     @Nonnull final Char target,
-	                     final int seconds) {
+	public boolean apply(@Nonnull final State st,final boolean administrative,@Nonnull final Char target,final int seconds) {
 		// validate everything
 		target.validate(st);
 		validate(st);
@@ -304,11 +325,12 @@ public class Effect extends TableRow {
 		if (administrative) { operator=Audit.OPERATOR.AVATAR; }
 		Audit.audit(true,st,operator,target.getOwner(),target,"Add","Effect","",getName(),"Applied effect "+getName()+" for "+UnixTime.duration(seconds));
 		final String applykv=st.getKV(this,"Effects.ApplyMessage");
+		final JSONObject message=new JSONObject();
 		if (applykv!=null && (!applykv.isEmpty())) {
-			final JSONObject message=new JSONObject();
 			message.put("message",applykv);
-			new Transmission(target,message).start();
 		}
+		conveyEffects(st,target,message);
+		new Transmission(target,message).start();
 		return true;
 	}
 
@@ -321,9 +343,7 @@ public class Effect extends TableRow {
 	 *
 	 * @return true if an effect was removed, otherwise false.
 	 */
-	public boolean remove(@Nonnull final State st,
-	                      @Nonnull final Char target,
-	                      final boolean administrative) {
+	public boolean remove(@Nonnull final State st,@Nonnull final Char target,final boolean administrative) {
 		final boolean didanything=unapply(st,target,false);
 		if (!didanything) { return false; }
 		if (administrative) {

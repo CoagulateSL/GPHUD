@@ -41,6 +41,7 @@ public class ConfigurationHierarchy extends Form {
 		add("<b>KV Type:</b> "+kv.type()).br();
 		add("<b>Hierarchy Type:</b> "+kv.hierarchy()).br();
 		add("<b>Hierarchy Scope:</b> "+kv.scope()).br();
+		if (!kv.onUpdate().isEmpty()) { add("<b>On Update:</b> "+kv.onUpdate()).br(); }
 		if (kv.isGenerated()) { add("<b>Generated</b>").br(); }
 		if (kv.template()) { add("<b>Supports Templates</b>").br(); }
 		br();

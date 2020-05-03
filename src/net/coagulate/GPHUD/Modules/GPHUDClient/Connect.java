@@ -1,130 +1,186 @@
-package net.coagulate.GPHUD.Modules.Characters;
+package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
-import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
+import net.coagulate.GPHUD.Modules.Characters.BackgroundGroupInviter;
+import net.coagulate.GPHUD.Modules.Characters.CharactersModule;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
-import net.coagulate.GPHUD.Modules.GPHUDClient.Connect;
 import net.coagulate.GPHUD.Modules.Instance.Distribution;
 import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
-import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPointsRemaining;
 
-/**
- * Logs a session in as a particular character
- * <p>
- * THIS CODE IS SUBJECT TO CHANGE (and is just a stub implementation right now)
- * REQUIRES MULTI CHAR SUPPORT and shared char support.  or maybe it doesn't and thats a post registration thing.
- * we shall see!
- *
- * @author Iain Price <gphud@predestined.net>
- */
-public abstract class Login {
+public class Connect {
+
+	/**
+	 * Connects GPHUD
+	 */
 	// ---------- STATICS ----------
 	@Nonnull
-	@Deprecated
 	@Commands(context=Context.AVATAR,
 	          permitConsole=false,
 	          permitUserWeb=false,
 	          permitScripting=false,
-	          description="Register this session as a character connection",
+	          description="Bind a running GPHUD HUD to a particular character, potentially auto creating, or prompting for naming if auto create is off",
 	          permitObject=false,
 	          permitExternal=false)
-	public static Response login(@Nonnull final State st,
-	                             @Nullable
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version number of the HUD that is connecting",
-	                                        max=128,
-	                                        mandatory=false) final String version,
-	                             @Nullable
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version date of the HUD that is connecting",
-	                                        max=128,
-	                                        mandatory=false) final String versiondate,
-	                             @Nullable
-	                             @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                        description="Version time of the HUD that is connecting",
-	                                        max=128,
-	                                        mandatory=false) final String versiontime) {
-		final boolean debug=false;
-		////// CHANGE ALL THIS, HAVE A
-		////// "USINGCHARACTER" COLUMN FOR <AVATAR> TYPES
-		////// THIS IS IMPORTANT TO RESOLVE A TARGET FROM AN AVATAR LATER WHEN TARGETTING FOR EXAMPLE
-
-		String url=null;
-		st.json();
-		try { url=st.json().getString("callback"); } catch (@Nonnull final JSONException e) {}
-		if (url==null || "".equals(url)) {
-			st.logger().log(WARNING,"No callback URL sent with character registration");
-			return new ErrorResponse("You are not set up with a callback URL");
+	public static Response connect(@Nonnull final State st,
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="Version number of the HUD that is connecting",
+	                                                   max=128) final String version,
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="Version date of the HUD that is connecting",
+	                                                   max=128) final String versiondate,
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="Version time of the HUD that is connecting",
+	                                                   max=128) final String versiontime,
+	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                                   description="URL for the client",
+	                                                   max=256) final String url,
+	                               @Nonnull @Arguments(type=ArgumentType.INTEGER,
+	                                                   description="Resume session for character id") final Integer characterid) {
+		st.json(); // ensure we have the jsons
+		// log client version
+		if (version!=null && versiondate!=null && versiontime!=null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
+			st.getRegion().recordHUDVersion(st,version,versiondate,versiontime);
 		}
+		// forcibly invite instance owners to group
+		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
+			new BackgroundGroupInviter(st).start();
+		}
+		// try find a character, or auto create
 		final boolean autocreate=st.getKV("Instance.AutoNameCharacter").boolValue();
-		final Char character=PrimaryCharacter.getPrimaryCharacter(st,autocreate);
+		System.out.println("About to get most recent for "+st.getAvatar()+" at "+st.getInstance()+", autocreate is "+autocreate);
+		Char character=Char.getMostRecent(st.getAvatar(),st.getInstance());
 		if (character==null) {
 			if (autocreate) {
-				throw new UserInputStateException("Failed to get/create a character for user "+st.getAvatarNullable());
+				character=Char.autoCreate(st);
+				if (character==null) {
+					throw new UserInputStateException("Failed to get/create a character for user "+st.getAvatarNullable());
+				}
 			} // autocreate or die :P
-			// if not auto create, offer "characters.create" i guess
-			final JSONResponse response=new JSONResponse(Modules.getJSONTemplate(st,"characters.create"));
-			response.asJSON(st)
-			        .put("hudtext","Creating character...")
-			        .put("hudcolor","<1.0,0.75,0.75>")
-			        .put("titlertext","Creating character...")
-			        .put("titlercolor","<1.0,0.75,0.75>")
-			        .put("message","Welcome.  You do not have any characters, please create a new one.");
-			return response;
-		}
-		// we have a character at least
-		// before actually logging it in, we should check that it is 'complete'
-		st.getCharacter().setURL(url);
-		final Region region=st.getRegion();
-		st.getCharacter().setRegion(region);
-		character.setPlayedBy(st.getAvatar());
-		final State simulate=st.simulate(character);
-		if (st.jsonNullable()!=null) { simulate.setJson(st.json()); }
-		final String initscript=simulate.getKV("Instance.CharInitScript").toString();
-		String loginmessage="";
-		if (initscript!=null && (!initscript.isEmpty())) {
-			// let the init script have a "run"
-			final Script init=Script.findNullable(simulate,initscript);
-			if (init==null) { loginmessage="===> Character initialisation script "+initscript+" was not found"; }
+			// if not auto create, offer "characters.create" which will order the HUD to relog if there's no active character (relog=call us)
 			else {
-				final GSVM initialisecharacter=new GSVM(init.getByteCode());
-				initialisecharacter.invokeOnExit("characters.login");
-				final Response response=initialisecharacter.execute(simulate);
-				if (initialisecharacter.suspended()) { // bail here
-					return response;
-				} // else carry on and discard the response
+				final JSONResponse response=new JSONResponse(Modules.getJSONTemplate(st,"characters.create"));
+				response.asJSON(st)
+				        .put("hudtext","Creating character...")
+				        .put("hudcolor","<1.0,0.75,0.75>")
+				        .put("titlertext","Creating character...")
+				        .put("titlercolor","<1.0,0.75,0.75>")
+				        .put("message","Welcome.  You do not have any characters, please create a new one.");
+				return response;
 			}
 		}
+		// connect the character we found, which disconnects the avatar from other characters and closes old URLs if its a restart
+		character.login(st.getAvatar(),st.getRegion(),url);
+		// set up the state so postConnect can do stuff
+		st.setCharacter(character);
+		// IS this the same as the old character?
+		if (character.getId()==characterid) { return new OKResponse("GPHUD Connection Re-established"); }
+		// and purge the conveyances so they get re-set
+		character.wipeConveyances(st);
+		// chain postConnect
+		return postConnect(st);
+	}
+
+
+	@Nonnull
+	@Commands(context=Context.AVATAR,
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          permitScripting=false,
+	          description="Performs character login checks, called repeatedly until character passes all creation time tests and is considered complete",
+	          permitObject=false,
+	          permitExternal=false)
+	public static Response postConnect(@Nonnull final State st) {
+		List<String> loginmessages=new ArrayList<>();
+
+		// Run the character initialisation script, if it exists.
+		Response interception=runCharacterInitScript(st,loginmessages);
+		if (interception!=null) { return interception; }
+		// and the default attribute populator
+		interception=populateCharacterAttributes(st);
+		if (interception!=null) { return interception; }
+
+		// server version note
+		loginmessages.add(GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]");
+
+		// if instance owner and region version is out of date, send update and message
+		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
+			if (st.getRegion().needsUpdate()) {
+				loginmessages.add(
+						"Update required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old one will then disable its self and can be deleted.");
+				Distribution.getServer(st);
+			}
+		}
+
+		// start a player visit
+		Visit.initVisit(st,st.getCharacter(),st.getRegion());
+
+		// create the post create "all ok" response, it's a blank object by default
+		JSONObject rawresponse=new JSONObject();
+
+		// but we might populate it with the spend ability point command
+		if (st.hasModule("Experience")) {
+			final int apremain=CharactersModule.abilityPointsRemaining(st);
+			if (apremain>0) {
+				rawresponse=Modules.getJSONTemplate(st,"characters.spendabilitypoint");
+			}
+		}
+
+		// we dump the main menu this way for now, seems like it could be a conveyance too.
+		rawresponse.put("legacymenu",Modules.getJSONTemplate(st,"menus.main").toString());
+
+		// dump the messages
+		String message="";
+		for (String amessage: loginmessages) {
+			if (!message.isEmpty()) { message+="\n"; }
+			message+=amessage;
+		}
+		if (!message.isEmpty()) { rawresponse.put("message",message); }
+		// update message count
+		rawresponse.put("messagecount",Message.count(st));
+		// send zoning information
+		rawresponse.put("zoning",ZoneTransport.createZoneTransport(st.getRegion()));
+		// and if there's a login command, do that too
+		final String logincommand=st.getKV("Instance.RunOnLogin").value();
+		if (logincommand!=null && (!logincommand.isEmpty())) {
+			rawresponse.put("logincommand",logincommand);
+		}
+		// and tell the HUD we're all great
+		rawresponse.put("logincomplete",st.getCharacter().getId());
+		Effect.conveyEffects(st,st.getCharacter(),rawresponse);
+		return new JSONResponse(rawresponse);
+	}
+
+	// ----- Internal Statics -----
+	@Nullable
+	private static Response populateCharacterAttributes(@Nonnull final State st) {
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getRequired()) {
 				final Attribute.ATTRIBUTETYPE type=a.getType();
 				switch (type) {
-					case TEXT: // mandatory text doesn't work at this time
+					case TEXT:
 					case FLOAT:
 					case INTEGER:
-						final String value=simulate.getRawKV(character,"characters."+a.getName());
+						final String value=st.getRawKV(st.getCharacter(),"characters."+a.getName());
 						if (value==null || value.isEmpty()) {
 							final KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
 							Float max=null;
@@ -148,7 +204,7 @@ public abstract class Login {
 						}
 						break;
 					case GROUP:
-						if (a.getSubType()!=null && CharacterGroup.getGroup(character,a.getSubType())==null && CharacterGroup.hasChoices(st,a)) {
+						if (a.getSubType()!=null && CharacterGroup.getGroup(st.getCharacter(),a.getSubType())==null && CharacterGroup.hasChoices(st,a)) {
 							final JSONObject json=new JSONObject();
 							json.put("hudtext","Initialising character...")
 							    .put("hudcolor","<1.0,0.75,0.75>")
@@ -172,75 +228,32 @@ public abstract class Login {
 				}
 			}
 		}
-		// AND LOGIN
-		st.setCharacter(character);
-		st.logger().log(INFO,"Logging in as "+character);
-        /*
-        String loginmessage="Welcome back, "+character.getName();
-        if (!character.getName().equals(st.avatar().getName())) { loginmessage+=" ["+st.avatar().getName()+"]"; }
-        loginmessage+="\n\n";
-        loginmessage+="Instance MOTD goes here";
-        */
-		final String oldavatarurl=st.getCharacter().getURL();
-		if (oldavatarurl!=null && !oldavatarurl.equals(url)) {
-			final JSONObject shutdownjson=new JSONObject().put("incommand","shutdown").put("shutdown","Replaced by new registration");
-			final Transmission shutdown=new Transmission((Char) null,shutdownjson,oldavatarurl);
-			shutdown.start();
-		}
-		final JSONObject registeringjson=new JSONObject().put("incommand","registering");
-		String regmessage;
-		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
-			// is instance owner
-			regmessage=GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
-			if (st.getRegion().needsUpdate()) {
-				regmessage+="\n=====\nUpdate required: A new GPHUD Region Server has been released and is being sent to you, please place it near the existing one.  The old "+"one will then disable its self and can be deleted.\n=====";
-				Distribution.getServer(st);
-			}
-		}
-		else {
-			//regmessage="O:"+st.getInstance().getOwner().getId()+" U:"+st.getCharacter().getId()+" "+GPHUD.serverVersion();
-			regmessage=GPHUD.serverVersion();
-		}
-		registeringjson.put("message",regmessage);
-		final Transmission registering=new Transmission((Char) null,registeringjson,url);
-		//noinspection CallToThreadRun
-		registering.run(); // note null char to prevent it sticking payloads here, it clears the titlers :P
-		Visit.initVisit(st,st.getCharacter(),region);
-		if (version!=null && versiondate!=null && versiontime!=null && !version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
-			region.recordHUDVersion(st,version,versiondate,versiontime);
-		}
-		final Instance instance=st.getInstance();
-		final String cookie=Cookie.generate(st.getAvatarNullable(),st.getCharacter(),instance,true);
-		final JSONObject legacymenu=Modules.getJSONTemplate(st,"menus.main");
-		final JSONObject rawresponse=new JSONObject();
-		if (st.hasModule("Experience")) {
-			final int apremain=abilityPointsRemaining(st);
-			if (apremain>0) {
-				new Transmission(st.getCharacter(),Modules.getJSONTemplate(st,"characters.spendabilitypoint"),1).start();
-			}
-		}
-		if (!loginmessage.isEmpty()) { rawresponse.put("message",loginmessage); }
-		rawresponse.put("incommand","registered");
-		rawresponse.put("cookie",cookie);
-		rawresponse.put("legacymenu",legacymenu.toString());
-		rawresponse.put("messagecount",Message.count(st));
-		st.getCharacter().initialConveyances(st,rawresponse);
-		rawresponse.put("zoning",ZoneTransport.createZoneTransport(region));
-		final String logincommand=st.getKV("Instance.RunOnLogin").value();
-		if (logincommand!=null && (!logincommand.isEmpty())) {
-			rawresponse.put("logincommand",logincommand);
-		}
-		// pretty sure initial conveyances does this now.
-		//SafeMap convey=Modules.getConveyances(st);
-		//for (String key:convey.keySet()) {
-		//    rawresponse.put(key,convey.get(key));
-		//}
-		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
-			new BackgroundGroupInviter(st).start();
-		}
-		return new JSONResponse(rawresponse);
+		return null;
 	}
 
+	@Nullable
+	private static Response runCharacterInitScript(State st,List<String> loginmessages) {
+		final String initscript=st.getKV("Instance.CharInitScript").toString();
+		if (initscript!=null && (!initscript.isEmpty())) {
+			// let the init script have a "run"
+			final Script init=Script.findNullable(st,initscript);
+			if (init==null) {
+				loginmessages.add("===> Character initialisation script "+initscript+" was not found");
+				return null;
+			}
+			else {
+				final GSVM initialisecharacter=new GSVM(init.getByteCode());
+				initialisecharacter.invokeOnExit("GPHUDClient.postConnect");
+				final Response response=initialisecharacter.execute(st);
+				if (initialisecharacter.suspended()) { // bail here
+					return response;
+				} // else carry on and discard the response
+			}
+		}
+		return null;
+	}
+
+	/*
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Create a new character",
@@ -261,9 +274,8 @@ public abstract class Login {
 		if (charactername.startsWith(">")) {
 			return new ErrorResponse("You are not allowed to start a character name with the character >");
 		}
-		/*
 		try {
-			final User user=User.findUsernameNullable(charactername,false);
+			final User user=User.findOptional(charactername);
 			if (user!=null) {
 				if (user!=st.getAvatarNullable()) {
 					return new ErrorResponse("You may not name a character after an avatar, other than yourself");
@@ -271,7 +283,6 @@ public abstract class Login {
 			}
 		}
 		catch (@Nonnull final NoDataException e) {}
-		*/
 		final boolean autoname=st.getKV("Instance.AutoNameCharacter").boolValue();
 		if (autoname && !st.getAvatar().getName().equalsIgnoreCase(charactername)) {
 			return new ErrorResponse("You must name your one and only character after your avatar");
@@ -287,20 +298,6 @@ public abstract class Login {
 		Char.create(st,charactername,true);
 		final Char c=Char.resolve(st,charactername);
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
-		if (st.json().has("protocol")) {
-			if (st.json().getInt("protocol")==2)
-			{
-				if (st.getCharacterNullable()==null) {
-					JSONObject reconnect=new JSONObject();
-					reconnect.put("incommand","forcereconnect");
-					return new JSONResponse(reconnect);
-				}
-				else {
-					return new OKResponse("New character created and available");
-				}
-			}
-		}
-		st.setCharacter(c);
 		return login(st,null,null,null);
 	}
 
@@ -320,20 +317,10 @@ public abstract class Login {
 		}
 		final boolean charswitchallowed=st.getKV("Instance.CharacterSwitchEnabled").boolValue();
 		if (!charswitchallowed) {
-			return new ErrorResponse("You are not allowed to switch characters in this location");
+			return new ErrorResponse("You are not allowed to create or switch characters in this location");
 		}
 		if (character.retired()) {
 			return new ErrorResponse("Character '"+character+"' has been retired and can not be selected");
-		}
-		if (st.json().has("protocol")) {
-			if (st.json().getInt("protocol")==2) {
-				String url=st.getCharacter().getURL();
-				st.getCharacter().disconnect();
-				character.login(st.getAvatar(),st.getRegion(),url);
-				st.setCharacter(character);
-				character.wipeConveyances(st);
-				return Connect.postConnect(st);
-			}
 		}
 		GPHUD.purgeURL(st.callbackurl());
 		if (st.getCharacterNullable()!=null) { st.purgeCache(st.getCharacter()); }
@@ -427,4 +414,6 @@ public abstract class Login {
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,st.getCharacter(),"Initialise",attribute.getName(),null,value,"Character creation initialised attribute");
 		return login(st,null,null,null);
 	}
+
+	 */
 }

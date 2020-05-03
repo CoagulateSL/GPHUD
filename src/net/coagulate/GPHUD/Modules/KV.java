@@ -9,7 +9,11 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.logging.Level.FINE;
 
@@ -35,16 +39,15 @@ public abstract class KV extends NameComparable {
 	@Nonnull
 	public abstract String description();
 
-	@Nonnull
-	public abstract String editpermission();
+	@Nonnull public abstract String editpermission();
 
 	public abstract String defaultvalue();
 
-	@Nonnull
-	public abstract String conveyas();
+	@Nonnull public abstract String conveyas();
 
-	@Nonnull
-	public abstract KVHIERARCHY hierarchy();
+	@Nonnull public abstract KVHIERARCHY hierarchy();
+
+	@Nonnull public String onUpdate() { return ""; }
 
 	public abstract boolean template();
 
@@ -100,7 +103,7 @@ public abstract class KV extends NameComparable {
 	                  final String value) {
 		assertAppliesTo(o);
 		st.setKV(o,name(),value);
-		convey(st,value);
+		//convey(st,value);
 	}
 
 	public void convey(@Nonnull final State st,
@@ -118,20 +121,48 @@ public abstract class KV extends NameComparable {
 		}
 	}
 
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return fullname();
 	}
 
+	/**
+	 * Called by State.setKV when a particular KV is updated
+	 *
+	 * @param state         The associated state making the KV change
+	 * @param updatedobject The updated TableRow object (formerly DBObject)
+	 * @param newvalue      the new value written to the KV table
+	 */
+	public void callOnUpdate(State state,TableRow updatedobject,String newvalue) {
+		System.out.println("CALL ON UPDATE:"+onUpdate());
+		// does this KV have an onUpdate method
+		if (onUpdate().isEmpty()) { return; }
+		String targetmethod=onUpdate();
+		Matcher split=Pattern.compile("(.*)\\.([^.]*)").matcher(targetmethod);
+		if (!split.matches()) { throw new SystemImplementationException("String "+targetmethod+" didn't match the regexp in callOnUpdate()"); }
+		String classname=split.group(1);
+		String methodname=split.group(2);
+		try {
+			Class<?> clas=Class.forName(classname);
+			Method method=clas.getMethod(methodname,State.class,KV.class,TableRow.class,String.class);
+			method.invoke(null,state,this,updatedobject,newvalue);
+		}
+		catch (InvocationTargetException e) {
+			throw new SystemImplementationException("onUpdate target exceptioned for KV "+fullname(),e);
+		}
+		catch (NoSuchMethodException e) {
+			throw new SystemImplementationException("onUpdate method "+targetmethod+" from KV "+fullname()+" does not exist or match signature",e);
+		}
+		catch (IllegalAccessException e) {
+			throw new SystemImplementationException("onUpdate method "+targetmethod+" from KV "+fullname()+" does not have correct access modifier",e);
+		}
+		catch (ClassNotFoundException e) {
+			throw new SystemImplementationException("onUpdate class "+classname+" from KV "+fullname()+" does not exist",e);
+		}
+
+	}
+
 	public enum KVSCOPE {
-		INSTANCE,
-		SERVER,
-		SPATIAL,
-		NONSPATIAL,
-		CHARACTER,
-		ZONE,
-		EVENT,
-		EFFECT,
+		INSTANCE,SERVER,SPATIAL,NONSPATIAL,CHARACTER,ZONE,EVENT,EFFECT,
 		COMPLETE
 	}
     /* DEAD CODE?
@@ -204,6 +235,8 @@ public abstract class KV extends NameComparable {
 		@Nonnull String conveyas() default "";
 
 		@Nonnull KVHIERARCHY hierarchy() default KVHIERARCHY.NONE;
+
+		@Nonnull String onUpdate() default "";
 
 		boolean template();
 

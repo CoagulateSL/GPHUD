@@ -72,6 +72,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				catch (@Nonnull final JSONException e) {
 					throw new SystemBadValueException("Parse error in '"+message+"'",e);
 				}
+				//System.out.println("SYSTEM INTERFACE INPUT:\n"+JsonTools.jsonToString(obj));
 				// stash it in the state
 				// if (obj==null) { GPHUD.getLogger().warning("About to set a JSON in state to null ; input was "+message); }
 				st.setJson(obj);
@@ -101,7 +102,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 pw.flush();
                 pw.close();
                 System.out.println(out);*/
-				if (out.length() >= 2048) { GPHUD.getLogger().severe("Output exceeds limit of 2048 characters"); }
+				//System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonresponse));
+				System.out.println("Response size is "+out.length()+" bytes");
+				if (out.length() >= 4096) { GPHUD.getLogger().severe("Output exceeds limit of 4096 characters"); }
 				resp.setEntity(new StringEntity(out,ContentType.APPLICATION_JSON));
 				return;
 			}
@@ -256,7 +259,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				st.setInstance(instance);
 				st.setRegion(region);
 				if (st.getCharacterNullable()==null) {
-					st.setCharacter(PrimaryCharacter.getPrimaryCharacter(st,st.getKV("Instance.AutoNameCharacter").boolValue()));
+					st.setCharacter(Char.getMostRecent(st.getAvatar(),st.getInstance()));
 				}
 				try {
 					obj.getString("runasnocharacter");

@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.External;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.JsonTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.InstanceDevelopers;
@@ -27,7 +28,6 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
-import java.io.StringWriter;
 
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
@@ -41,13 +41,6 @@ import static java.util.logging.Level.WARNING;
  * @author iain
  */
 public class Interface extends net.coagulate.GPHUD.Interface {
-
-	// ----- Internal Statics -----
-	private static String jsonToString(final JSONObject json) {
-		final StringWriter sw=new StringWriter();
-		json.write(sw,4,0);
-		return sw+"\n";
-	}
 
 	// ---------- INSTANCE ----------
 
@@ -99,7 +92,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				resp.setStatusCode(HttpStatus.SC_OK);
 				jsonresponse.remove("developerkey");
 				jsonresponse.put("responsetype",response.getClass().getSimpleName());
-				final String out=jsonToString(jsonresponse);
+				final String out=JsonTools.jsonToString(jsonresponse);
                 /*PrintWriter pw = new PrintWriter(System.out);
                 jsonresponse.write(pw,4,0);
                 pw.flush();
@@ -123,7 +116,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			newresponse.put("error",e.getLocalizedMessage());
 			newresponse.put("errorclass",e.getClass().getSimpleName());
 			newresponse.put("responsetype","UserException");
-			resp.setEntity(new StringEntity(jsonToString(newresponse),ContentType.APPLICATION_JSON));
+			resp.setEntity(new StringEntity(JsonTools.jsonToString(newresponse),ContentType.APPLICATION_JSON));
 			resp.setStatusCode(HttpStatus.SC_OK);
 		}
 		catch (@Nonnull final Exception e) {
@@ -135,7 +128,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final JSONObject newresponse=new JSONObject();
 				newresponse.put("error","Internal error occured, sorry.");
 				newresponse.put("responsetype","SystemException");
-				resp.setEntity(new StringEntity(jsonToString(newresponse),ContentType.APPLICATION_JSON));
+				resp.setEntity(new StringEntity(JsonTools.jsonToString(newresponse),ContentType.APPLICATION_JSON));
 				resp.setStatusCode(HttpStatus.SC_OK);
 			}
 			catch (@Nonnull final Exception ex) {

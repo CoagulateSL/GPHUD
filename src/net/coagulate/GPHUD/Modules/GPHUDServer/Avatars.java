@@ -45,9 +45,9 @@ public abstract class Avatars {
 			return new ErrorResponse("Invalid developer source for priviledged call.");
 		}
 		final Region region=st.getRegion();
-		if (!region.getURL().equals(st.callbackurl())) {
+		/*if (!region.getURL().equals(st.callbackurl())) {
 			return new ErrorResponse("Invalid callback URL, you do not match the registered region server");
-		}
+		}*/
 		if (userlist==null) { userlist=""; }
 		final Set<User> openvisits=region.getAvatarOpenVisits();
 

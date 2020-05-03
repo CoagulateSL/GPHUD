@@ -4,11 +4,14 @@ import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,8 +55,19 @@ public class Visit {
 
 	public static void closeVisits(@Nonnull final State state) {
 		if (state.getInstance()!=state.getCharacter().getInstance()) { throw new SystemConsistencyException("State character instanceid mismatch"); }
-		db().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",state.getCharacter().getId());
-		db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",state.getCharacter().getId(),state.getRegion().getId());
+		closeVisits(state.getCharacter(),state.getRegion());
+	}
+
+	/** Close the visits for a character
+	 * @param character The character
+	 */
+	public static void closeVisits(@Nonnull final Char character,@Nullable final Region region) {
+		db().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",character.getId());
+		if (region!=null) {
+			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",character.getId(),region.getId());
+		} else {
+			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and endtime is null",character.getId());
+		}
 	}
 
 
@@ -77,6 +91,26 @@ public class Visit {
 			if (start!=null) { seconds=seconds+(end-start); }
 		}
 		return seconds;
+	}
+
+	public static Table statusDump(State st) {
+		Table t=new Table().border();
+		t.header("Avatar");
+		t.header("Character");
+		t.header("Region");
+		t.header("Start time");
+		t.header("End Time (empty, visit is open)");
+		for (ResultsRow row: db().dq("select visits.* from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and visits.endtime is null",st.getInstance().getId())) {
+			t.openRow();
+			Integer avatar=row.getIntNullable("avatarid");
+			t.add(avatar==null?"Null?":User.get(avatar).getName()+"[#"+avatar+"]");
+			t.add(Char.get(row.getInt("characterid")).getName()+"[#"+row.getInt("characterid")+"]");
+			Integer region=row.getIntNullable("regionid");
+			t.add(region==null?"Null?":Region.get(region,true).getName()+"[#"+region+"]");
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("starttime"),st.getAvatar().getTimeZone()));
+			t.add(UnixTime.fromUnixTime(row.getIntNullable("endtime"),st.getAvatar().getTimeZone()));
+		}
+		return t;
 	}
 
 	// ----- Internal Statics -----
