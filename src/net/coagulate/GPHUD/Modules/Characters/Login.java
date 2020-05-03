@@ -14,6 +14,7 @@ import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
+import net.coagulate.GPHUD.Modules.GPHUDClient.Connect;
 import net.coagulate.GPHUD.Modules.Instance.Distribution;
 import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -331,7 +332,7 @@ public abstract class Login {
 				character.login(st.getAvatar(),st.getRegion(),url);
 				st.setCharacter(character);
 				character.wipeConveyances(st);
-				return new OKResponse("Character switched to "+character);
+				return Connect.postConnect(st);
 			}
 		}
 		GPHUD.purgeURL(st.callbackurl());
