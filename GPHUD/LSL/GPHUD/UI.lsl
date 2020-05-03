@@ -164,14 +164,6 @@ process() {
 		if (jsontwoget("zone")==ourzone) { llOwnerSay(jsontwoget("zonemessage")); }
 	}
 	if (incommand=="runtemplate") { json=jsontwo; sensormanual=MANUAL_NONE; trigger(); }
-	if (jsontwoget("logincommand")!="") {
-		string logincommand=jsontwoget("logincommand");
-		json="";
-		json=llJsonSetValue(json,["invoke"],logincommand);
-		json=llJsonSetValue(json,["args"],"0");
-		sensormanual=MANUAL_NONE;
-		trigger();
-	}
 }
 processInput(string text) {
 	string type="";

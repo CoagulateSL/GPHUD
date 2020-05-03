@@ -172,6 +172,14 @@ integer process(key requestid) {
 		list pieces=llParseString2List(jsonget("teleport"),["|"],[]);
 		llTeleportAgentGlobalCoords(llGetOwner(),(vector)(llList2String(pieces,0)),(vector)(llList2String(pieces,1)),(vector)(llList2String(pieces,2)));
 	}
+	if (jsonget("logincommand")!="") {
+		string logincommand=jsonget("logincommand");
+		string oldjson=json;
+		json="";
+		jsonput("commandtoinvoke",logincommand);
+		command("GPHUDClient.call");
+		json=oldjson; oldjson="";
+	}	
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;
