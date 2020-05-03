@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.User.UserInputNotFoundException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.State;
 
@@ -9,6 +11,7 @@ import javax.annotation.Nullable;
 public class ScriptRun extends TableRow {
 	public ScriptRun(final int id) {
 		super(id);
+		validate();
 	}
 
 	// ---------- STATICS ----------
@@ -24,9 +27,7 @@ public class ScriptRun extends TableRow {
 	 * @return ScriptRuns object
 	 */
 	@Nonnull
-	public static ScriptRun create(final byte[] code,
-	                               final byte[] initialiser,
-	                               @Nonnull final Char respondant) {
+	public static ScriptRun create(final byte[] code,final byte[] initialiser,@Nonnull final Char respondant) {
 		// user can only have one respondant open, this helps us get the ID but also is down to the stupidity of the HUD,
 		// and/or how painful/impractical it is to write complex IO in SL
 		db().d("delete from scriptruns where respondant=?",respondant.getId());
@@ -37,7 +38,10 @@ public class ScriptRun extends TableRow {
 
 	@Nonnull
 	public static ScriptRun get(final int id) {
-		return (ScriptRun) factoryPut("ScriptRuns",id,new ScriptRun(id));
+		try {
+			return (ScriptRun) factoryPut("ScriptRuns",id,new ScriptRun(id));
+		}
+		catch (NoDataException e) { throw new UserInputNotFoundException("Script run no longer exists",e); }
 	}
 
 	// ---------- INSTANCE ----------
