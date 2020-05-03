@@ -112,7 +112,7 @@ shutdown() {
 		jsonput("url",comms_url);
 		command("GPHUDClient.Disconnect");
 	}
-	LOGIN_STAGE=0;
+	LOGIN_STAGE=0; SHUTDOWN=TRUE; llMessageLinked(LINK_THIS,LINK_SHUTDOWN,"",""); logincomplete=0;
 }
 
 //// PROCESSOR

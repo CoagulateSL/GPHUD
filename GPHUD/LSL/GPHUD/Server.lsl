@@ -121,21 +121,23 @@ default {
 			}
 		}
 		if (channel==0) {
-			if (llSubStringIndex(text,"*")==0) {
-				if ((id==IAIN_MALTZ || id==llGetOwner()) && text=="*reboot") { llResetScript(); }
-				if ((id==IAIN_MALTZ) && text=="*repackage") { state distribution; }
-				if ((id==IAIN_MALTZ || id==llGetOwner()) && text=="*status") {
+			string commandprefix="**";
+			if (DEV) { commandprefix="--"; }
+			if (llSubStringIndex(text,commandprefix)==0) {
+				if ((id==IAIN_MALTZ || id==llGetOwner()) && text==commandprefix+"reboot") { llResetScript(); }
+				if ((id==IAIN_MALTZ) && text==commandprefix+"repackage") { state distribution; }
+				if ((id==IAIN_MALTZ || id==llGetOwner()) && text==commandprefix+"status") {
 					llSay(0,"Server module "+VERSION+" "+COMPILEDATE+" "+COMPILETIME);
 					llSay(0,"Server free memory: "+(string)llGetFreeMemory());
 					llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"","");
 					return;
 				}
 				//if (!alive) { return; }
-				llSay(0,"Sending command: "+text);
+				llSay(0,"Sending command: "+llGetSubString(text,2,-1));
 				json=llJsonSetValue("",["runasavatar"],name);
 				json=llJsonSetValue(json,["runaskey"],id);
 				json=llJsonSetValue(json,["runasnocharacter"],"set");
-				json=llJsonSetValue(json,["console"],text);
+				json=llJsonSetValue(json,["console"],llGetSubString(text,2,-1));
 				httpcommand("console","GPHUD/system");
 			}
 		}
