@@ -3,11 +3,10 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserInputTooLongException;
-import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Inputs.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -21,20 +20,12 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.GPHUD.State.Sources;
 import net.coagulate.SL.Data.User;
-import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.logging.Level.WARNING;
+import java.util.*;
 
 /**
  * A command, probably derived from Annotations.
@@ -45,28 +36,17 @@ public abstract class Command {
 
 	// ----- Internal Statics -----
 	@Nonnull
-	static Object assertNotNull(@Nullable final Object o,
-	                            final String value,
-	                            final String type) {
+	final static Object assertNotNull(@Nullable final Object o,
+	                                  final String value,
+	                                  final String type) {
 		if (o==null) {
 			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type,true);
 		}
 		return o;
 	}
 
-	protected static void checkPublicStatic(@Nonnull final Method m) {
-		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
-		}
-		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
-		}
-	}
-
 	// ---------- INSTANCE ----------
 	@Nonnull
-	public abstract Method getMethod();
-
 	public abstract boolean isGenerated();
 
 	public abstract String description();
@@ -90,7 +70,7 @@ public abstract class Command {
 	@Nonnull
 	public abstract List<Argument> getArguments();
 
-	public abstract int getArgumentCount();
+	public int getArgumentCount() { return getArguments().size(); }
 
 	@Nonnull
 	public abstract String getFullName();
@@ -99,203 +79,24 @@ public abstract class Command {
 	public abstract String getName();
 
 	@Nonnull
+	/** Run this command given an array of string arguments.
+	 * Converts them to named parameters and calls the SafeMap version
+	 */
 	@SuppressWarnings("fallthrough")
-	public Response run(@Nonnull final State st,
-	                    @Nonnull final String[] args) {
-		final boolean debug=false;
-		final List<Object> typedargs=new ArrayList<>();
+	public final Response run(@Nonnull final State state,
+	                          @Nonnull final String[] args) {
+		SafeMap map=new SafeMap();
 		int arg=0;
-		typedargs.add(st);
-		for (final Argument argument: getInvokingArguments()) {
+		for (final Argument argument: getArguments()) {
 			if (argument==null) {
 				throw new SystemImplementationException("Argument metadata null on "+getFullName()+"() arg#"+(arg+1));
 			}
-			final ArgumentType type=argument.type();
-			String v;
-			if (args.length>arg) { v=args[arg]; }
-			else { v=""; }
+			String v="";
+			if (arg >= args.length) { v=args[arg]; }
+			map.put(argument.getName(),v);
 			arg++;
-			if ((v==null || "".equals(v)) && type!=ArgumentType.BOOLEAN) {
-				typedargs.add(null);
-			}
-			else {
-				final int maxlen;
-				switch (type) {
-					case TEXT_CLEAN:
-					case TEXT_ONELINE:
-					case TEXT_INTERNAL_NAME:
-					case TEXT_MULTILINE:
-						maxlen=argument.max();
-						break;
-					case PASSWORD:
-					case CHOICE:
-						maxlen=1024;
-						break;
-					case BOOLEAN:
-						maxlen=8;
-						break;
-					case INTEGER:
-					case FLOAT:
-						maxlen=32;
-						break;
-					case CHARACTER:
-					case ATTRIBUTE_WRITABLE:
-					case ATTRIBUTE:
-					case COORDINATES:
-					case ZONE:
-					case REGION:
-					case MODULE:
-					case PERMISSION:
-					case PERMISSIONSGROUP:
-					case AVATAR_NEAR:
-					case AVATAR:
-					case CHARACTER_FACTION:
-					case CHARACTER_NEAR:
-					case CHARACTER_PLAYABLE:
-					case EFFECT:
-						maxlen=64;
-						break;
-					case CHARACTERGROUP:
-					case EVENT:
-					case KVLIST:
-						maxlen=128;
-						break;
-					default:
-						throw new AssertionError(type.name());
-
-				}
-				if (maxlen<1) {
-					st.logger().warning("Command "+getClass().getSimpleName()+" argument "+argument.getName()+" does not specify a max, assuming 65k...");
-				}
-				else {
-					if (v!=null && v.length()>maxlen) {
-						throw new UserInputTooLongException(argument.getName()+" is "+v.length()+" characters long and must be no more than "+maxlen+".  Input has not been "+"processed, please try again");
-					}
-				}
-				switch (type) {
-					case TEXT_INTERNAL_NAME:
-						if (v.matches(".*[^a-zA-Z0-9].*")) {
-							return new ErrorResponse(argument.getName()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
-						}
-						// dont put anything here, follow up into the next thing
-					case TEXT_CLEAN:
-						if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
-							return new ErrorResponse(argument.getName()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
-						}
-						// dont put anything here, follow up into the next thing
-					case TEXT_ONELINE:
-					case TEXT_MULTILINE:
-					case PASSWORD:
-					case PERMISSION:
-					case CHOICE:
-					case KVLIST:
-					case COORDINATES:
-						//System.out.println("Adding arg "+v);
-						typedargs.add(v);
-						break;
-					case BOOLEAN:
-						if (("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
-							typedargs.add(Boolean.TRUE);
-						}
-						else {
-							typedargs.add(Boolean.FALSE);
-						}
-						break;
-					case INTEGER:
-						try {
-							typedargs.add(Integer.valueOf(v));
-						}
-						catch (@Nonnull final NumberFormatException e) {
-							return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
-						}
-						break;
-					case FLOAT:
-						try {
-							typedargs.add(Float.valueOf(v));
-						}
-						catch (@Nonnull final NumberFormatException e) {
-							return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
-						}
-						break;
-					case MODULE:
-						final Module m=Modules.get(null,v);
-						if (m==null) { return new ErrorResponse("Unable to resolve module "+v); }
-						typedargs.add(m);
-						break;
-					//case FLOAT:
-					case ATTRIBUTE_WRITABLE:
-					case ATTRIBUTE:
-						Attribute attr=null;
-						for (final Attribute a: st.getAttributes()) {
-							if (a.getName().equalsIgnoreCase(v)) {
-								if (attr!=null) {
-									throw new SystemConsistencyException("Duplicate attribute definition found for "+v);
-								}
-								if (type==ArgumentType.ATTRIBUTE || a.getSelfModify()) { attr=a; }
-							}
-						}
-						if (attr==null) {
-							throw new UserInputLookupFailureException("Unable to resolve '"+v+"' to an attribute");
-						}
-						typedargs.add(attr);
-						break;
-                        /*Char targetchar=Char.resolve(st, v);
-                        typedargs.add(assertNotNull(targetchar, v, "character"));
-                        if (argument.getName().equalsIgnoreCase("target")) { st.setTarget(targetchar); }
-                        break;*/
-					case PERMISSIONSGROUP:
-						typedargs.add(assertNotNull(PermissionsGroup.resolveNullable(st,v),v,"permissions group"));
-						break;
-					case CHARACTERGROUP:
-						typedargs.add(assertNotNull(CharacterGroup.resolve(st,v),v,"character group"));
-						break;
-					case CHARACTER_FACTION:
-					case CHARACTER:
-					case CHARACTER_PLAYABLE:
-					case CHARACTER_NEAR:
-						final Char targchar;
-						if (v.startsWith(">")) {
-							v=v.substring(1);
-							try {
-								final User a=User.findUsername(v,false);
-								targchar=Char.getActive(a,st.getInstance());
-							}
-							catch (@Nonnull final NoDataException e) {
-								return new ErrorResponse("Unable to find character of avatar named '"+v+"'");
-							}
-						}
-						else {
-							targchar=Char.resolve(st,v);
-						}
-						if (targchar!=null) { typedargs.add(targchar); }
-						else {
-							return new ErrorResponse("Unable to find character named '"+v+"'");
-						}
-						break;
-					case REGION:
-						typedargs.add(assertNotNull(Region.findNullable(v,false),v,"region name"));
-						break;
-					case EVENT:
-						typedargs.add(assertNotNull(Event.find(st.getInstance(),v),v,"event name"));
-						break;
-					case EFFECT:
-						typedargs.add(assertNotNull(Effect.find(st.getInstance(),v),v,"effect name"));
-						break;
-					case ZONE:
-						typedargs.add(assertNotNull(Zone.findNullable(st.getInstance(),v),v,"zone name"));
-						break;
-					case AVATAR:
-					case AVATAR_NEAR:
-						final User user=User.findUsernameNullable(v,false);
-						if (user==null) { return new ErrorResponse("Unable to find a known avatar named '"+v+"'"); }
-						typedargs.add(assertNotNull(user,v,"avatar"));
-						break;
-					default:
-						throw new SystemImplementationException("Unhandled ENUM TYPE in executor:"+type);
-				}
-			}
 		}
-		return run(st,typedargs.toArray(new Object[]{}));
+		return run(state,map);
 	}
 
 	/**
@@ -305,7 +106,7 @@ public abstract class Command {
 	 *
 	 * @return list of argument names
 	 */
-	public List<String> getArgumentNames(final State st) {
+	public final List<String> getArgumentNames(@Nonnull final State st) {
 		final List<String> arguments=new ArrayList<>();
 		for (final Argument a: getArguments()) {
 			arguments.add(a.getName());
@@ -313,27 +114,23 @@ public abstract class Command {
 		return arguments;
 	}
 
-	public List<Argument> getInvokingArguments() { return getArguments(); }
-
-	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap) {
-		//System.out.println("Run in method "+this.getClass().getCanonicalName());
-		final List<String> arguments=new ArrayList<>();
-		for (final Argument arg: getInvokingArguments()) {
-			if (parametermap.containsKey(arg.getName())) {
-				//System.out.println("Added argument "+arg.getName());
-				arguments.add(parametermap.get(arg.getName()));
+	public final Response run(@Nonnull final State state,
+	                          @Nonnull final SafeMap parametermap) {
+		Map<String,Object> arguments=new HashMap<>();
+		for (final Argument arg: getArguments()) {
+			String v=parametermap.get(arg.getName()).trim();
+			if (v.isEmpty() || "-".equals(v)) { v=null; }
+			if (v!=null && v.length()>getMaximumLength(arg)) {
+				throw new UserInputTooLongException(arg.getName()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
 			}
-			else {
-				//System.out.println("Skipped argument "+arg.getName());
-				arguments.add(null);
-			}
+			if (v==null) { arguments.put(arg.getName(),null); }
+			else { arguments.put(arg.getName(),convertArgument(state,arg,v)); }
 		}
-		return run(st,arguments.toArray(new String[]{}));
+		return run(state,arguments);
 	}
 
-	public void simpleHtml(@Nonnull final State st,
-	                       @Nonnull final SafeMap values) {
+	public final void simpleHtml(@Nonnull final State st,
+	                             @Nonnull final SafeMap values) {
 		//System.out.println("HERE:"+getArgumentCount());
 		if (getArgumentCount()==0 || values.submit()) {
 			final Response response=run(st,values);
@@ -351,140 +148,7 @@ public abstract class Command {
 	}
 
 	@Nonnull
-	public String getFullMethodName() {
-		return getMethod().getDeclaringClass().getName()+"."+getMethod().getName()+"()";
-	}
-
-	public int getInvokingArgumentCount() {
-		return getArgumentCount();
-	}
-
-	// ----- Internal Instance -----
-
-	/**
-	 * Run a command based on properly cast arguments.
-	 *
-	 * @param st   Session state
-	 * @param args Arguments of appropriate type for receiving method (or exceptions)
-	 *
-	 * @return Command response
-	 */
-	@Nonnull
-	Response run(@Nonnull final State st,
-	             @Nonnull final Object[] args) {
-		final boolean debug=false;
-		try {
-			// check permission
-			if (!requiresPermission().isEmpty() && !st.hasPermission(requiresPermission())) {
-				return new ErrorResponse("Permission is denied, you require '"+requiresPermission()+"'");
-			}
-			// check required interface
-			if (st.source==Sources.USER) {
-				if (!permitWeb()) {
-					return new ErrorResponse("This command can not be accessed via the Web interface");
-				}
-			}
-			if (st.source==Sources.SYSTEM) {
-				if (!permitHUD()) {
-					return new ErrorResponse("This command can not be accessed via the LSL System interface");
-				}
-			}
-			if (st.source==Sources.CONSOLE) {
-				if (!permitConsole()) {
-					return new ErrorResponse("This command can not be accessed via the console");
-				}
-			}
-			if (st.source==Sources.SCRIPTING) {
-				if (!permitScripting()) {
-					return new ErrorResponse("This command can not be access via the Scripting module");
-				}
-			}
-			if (st.source==Sources.EXTERNAL) {
-				if (!permitExternal()) {
-					return new ErrorResponse("This command can not be accessed via the External API interface");
-				}
-			}
-			//check arguments
-			int i=0;
-			if (args.length!=getInvokingArgumentCount()+1) {
-				return new ErrorResponse("Incorrect number of arguments, "+getFullName()+" aka "+getMethod().getName()+" requires "+(getInvokingArgumentCount()+1)+" and we "+"got "+args.length);
-			}
-			String suspiciousname="";
-			for (final Argument a: getInvokingArguments()) {
-				if (a.getName().startsWith("arg") && a.getName().length()==4) {
-					suspiciousname=".  ***WARNING*** this argument name starts with 'arg' and may indicate javac was NOT invoked with the -parameter!!!";
-				}
-				Object o=args[i+1]; // cos invoking arguments skips the "state" parameter, but we have it in the args list by now
-				// I don't really like this, but...
-				if (o instanceof String) {
-					args[i+1]=((String) o).trim();
-					o=args[i+1];
-				}
-				if (a.mandatory()) {
-					if (o==null) {
-						return new ErrorResponse("Argument "+a.getName()+" is mandatory and null was passed"+suspiciousname);
-					}
-					if (o instanceof String) {
-						final String s=(String) o;
-						if (s.isEmpty()) {
-							return new ErrorResponse("Argument "+a.getName()+" is mandatory and a blank string was passed"+suspiciousname);
-						}
-						if ("-".equals(s)) {
-							return new ErrorResponse("Argument "+a.getName()+" is mandatory and a dash '-' was passed"+suspiciousname);
-						}
-					}
-				}
-				i++;
-			}
-			// check the "operational context" :)
-			switch (context()) {
-				case ANY:
-					break;
-				case CHARACTER:
-					if (st.getInstanceNullable()==null) {
-						return new ErrorResponse("Character context required and you are not connected to an instance.");
-					}
-					if (st.getCharacterNullable()==null) {
-						return new ErrorResponse("Character context required, your request is lacking a character registration");
-					}
-					break;
-				case AVATAR:
-					if (st.getInstanceNullable()==null) {
-						return new ErrorResponse("Avatar context required and you are not connected to an instance.");
-					}
-					if (st.getAvatarNullable()==null) {
-						return new ErrorResponse("Avatar context required, your request is lacking an avatar registration");
-					}
-					break;
-				default:
-					throw new SystemImplementationException("Unhandled CONTEXT enum during pre-flight check in execute()");
-			}
-			return (Response) (getMethod().invoke(this,args));
-		}
-		catch (@Nonnull final IllegalAccessException ex) {
-			throw new SystemImplementationException("Command programming error in "+getName()+" - run() access modifier is incorrect",ex);
-		}
-		catch (@Nonnull final IllegalArgumentException ex) {
-			SL.report("Command "+getName()+" failed",ex,st);
-			st.logger().log(WARNING,"Execute command "+getName()+" failed",ex);
-			return new ErrorResponse("Illegal argument in "+getName());
-		}
-		catch (@Nonnull final InvocationTargetException ex) {
-			if (ex.getCause()!=null && UserException.class.isAssignableFrom(ex.getCause().getClass())) {
-				//SL.report("Command "+getName()+" failed",ex,st);
-				st.logger().log(WARNING,"Execute command "+getName()+" failed");
-				ex.printStackTrace();
-				return new ErrorResponse(getName()+" errored: \n--- "+ex.getCause().getLocalizedMessage());
-			}
-			if (ex.getCause()!=null && SystemException.class.isAssignableFrom(ex.getCause().getClass())) {
-				throw ((SystemException) ex.getCause());
-			}
-			throw new SystemImplementationException("Exception "+ex+" from call to "+getName(),ex);
-		}
-	}
-
-	@Nonnull
-	JSONObject getJSONTemplate(@Nonnull final State st) {
+	public final JSONObject getJSONTemplate(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		int arg=0;
 		for (final Argument argument: getArguments()) {
@@ -596,7 +260,7 @@ public abstract class Command {
 		return json;
 	}
 
-	void getHtmlTemplate(@Nonnull final State st) {
+	public final void getHtmlTemplate(@Nonnull final State st) {
 		final Form f=st.form();
 		final Table t=new Table();
 		f.add(t);
@@ -729,6 +393,246 @@ public abstract class Command {
 			t.openRow();
 			t.add("");
 			t.add(new Button("Submit"));
+		}
+	}
+
+	/**
+	 * Run a command based on properly cast arguments.
+	 *
+	 * @param state        Session state
+	 * @param parametermap Arguments of appropriate type for receiving method (or throws exceptions).  State should be first argument!
+	 *
+	 * @return Command response
+	 */
+	@Nonnull
+	public final Response run(@Nonnull final State state,
+	                          @Nonnull final Map<String,Object> parametermap) {
+		checkCallingInterface(state);
+		// check permission
+		if (!requiresPermission().isEmpty() && !state.hasPermission(requiresPermission())) {
+			throw new UserAccessDeniedException("Permission is denied, you require '"+requiresPermission()+"'");
+		}
+		//check arguments
+		for (final Argument a: getArguments()) {
+			Object o=null;
+			if (parametermap.containsKey(a.getName())) {
+				o=parametermap.get(a.getName());
+			}
+			if (a.mandatory() && o==null) {
+				return new ErrorResponse("Argument "+a.getName()+" is mandatory on command "+getFullName()+" and nothink was passed");
+			}
+		}
+		// check the "operational context" :)
+		checkCallingContext(state);
+		return execute(state,parametermap);
+	}
+
+	// ----- Internal Instance -----
+	protected abstract Response execute(State state,
+	                                    Map<String,Object> arguments);
+
+	protected final Object convertArgument(State state,
+	                                       Argument argument,
+	                                       String v) {
+		ArgumentType type=argument.type();
+		switch (type) {
+			case TEXT_INTERNAL_NAME:
+				if (v.matches(".*[^a-zA-Z0-9].*")) {
+					return new ErrorResponse(argument.getName()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
+				}
+				// dont put anything here, follow up into the next thing
+			case TEXT_CLEAN:
+				if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
+					return new ErrorResponse(argument.getName()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
+				}
+				// dont put anything here, follow up into the next thing
+			case TEXT_ONELINE:
+			case TEXT_MULTILINE:
+			case PASSWORD:
+			case PERMISSION:
+			case CHOICE:
+			case KVLIST:
+			case COORDINATES:
+				//System.out.println("Adding arg "+v);
+				return v;
+			case BOOLEAN:
+				if (("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
+					return Boolean.TRUE;
+				}
+				else {
+					return Boolean.FALSE;
+				}
+			case INTEGER:
+				try {
+					return Integer.valueOf(v);
+				}
+				catch (@Nonnull final NumberFormatException e) {
+					return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
+				}
+			case FLOAT:
+				try {
+					return Float.valueOf(v);
+				}
+				catch (@Nonnull final NumberFormatException e) {
+					return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
+				}
+			case MODULE:
+				final Module m=Modules.get(state,v);
+				if (m==null) { return new ErrorResponse("Unable to resolve module "+v); }
+				return m;
+			//case FLOAT:
+			case ATTRIBUTE_WRITABLE:
+			case ATTRIBUTE:
+				Attribute attr=null;
+				for (final Attribute a: state.getAttributes()) {
+					if (a.getName().equalsIgnoreCase(v)) {
+						if (attr!=null) {
+							throw new SystemConsistencyException("Duplicate attribute definition found for "+v);
+						}
+						if (type==ArgumentType.ATTRIBUTE || a.getSelfModify()) { attr=a; }
+					}
+				}
+				if (attr==null) {
+					throw new UserInputLookupFailureException("Unable to resolve '"+v+"' to an attribute");
+				}
+				return attr;
+			case PERMISSIONSGROUP:
+				return assertNotNull(PermissionsGroup.resolveNullable(state,v),v,"permissions group");
+			case CHARACTERGROUP:
+				return assertNotNull(CharacterGroup.resolve(state,v),v,"character group");
+			case CHARACTER_FACTION:
+			case CHARACTER:
+			case CHARACTER_PLAYABLE:
+			case CHARACTER_NEAR:
+				final Char targchar;
+				if (v.startsWith(">")) {
+					v=v.substring(1);
+					try {
+						final User a=User.findUsername(v,false);
+						targchar=Char.getActive(a,state.getInstance());
+					}
+					catch (@Nonnull final NoDataException e) {
+						return new ErrorResponse("Unable to find character of avatar named '"+v+"'");
+					}
+				}
+				else {
+					targchar=Char.resolve(state,v);
+				}
+				if (targchar!=null) { return targchar; }
+				else {
+					return new ErrorResponse("Unable to find character named '"+v+"'");
+				}
+			case REGION:
+				return assertNotNull(Region.findNullable(v,false),v,"region name");
+			case EVENT:
+				return assertNotNull(Event.find(state.getInstance(),v),v,"event name");
+			case EFFECT:
+				return assertNotNull(Effect.find(state.getInstance(),v),v,"effect name");
+			case ZONE:
+				return assertNotNull(Zone.findNullable(state.getInstance(),v),v,"zone name");
+			case AVATAR:
+			case AVATAR_NEAR:
+				final User user=User.findUsernameNullable(v,false);
+				if (user==null) { return new ErrorResponse("Unable to find a known avatar named '"+v+"'"); }
+				return assertNotNull(user,v,"avatar");
+			default:
+				throw new SystemImplementationException("Unhandled argument type "+type+" in converter for argument "+argument.getName());
+		}
+	}
+
+	private void checkCallingContext(State state) {
+		switch (context()) {
+			case ANY:
+				break;
+			case CHARACTER:
+				if (state.getInstanceNullable()==null) {
+					throw new UserInputStateException("Character context required and you are not connected to an instance.");
+				}
+				if (state.getCharacterNullable()==null) {
+					throw new UserInputStateException("Character context required, your request is lacking a character registration");
+				}
+				break;
+			case AVATAR:
+				if (state.getInstanceNullable()==null) {
+					throw new UserInputStateException("Avatar context required and you are not connected to an instance.");
+				}
+				if (state.getAvatarNullable()==null) {
+					throw new UserInputStateException("Avatar context required, your request is lacking an avatar registration");
+				}
+				break;
+			default:
+				throw new SystemImplementationException("Unhandled CONTEXT enum during pre-flight check in execute()");
+		}
+	}
+
+	private final void checkCallingInterface(State state) {
+		// check required interface
+		if (state.source==Sources.USER) {
+			if (!permitWeb()) {
+				throw new UserAccessDeniedException("This command can not be accessed via the Web interface");
+			}
+		}
+		if (state.source==Sources.SYSTEM) {
+			if (!permitHUD()) {
+				throw new UserAccessDeniedException("This command can not be accessed via the LSL System interface");
+			}
+		}
+		if (state.source==Sources.CONSOLE) {
+			if (!permitConsole()) {
+				throw new UserAccessDeniedException("This command can not be accessed via the console");
+			}
+		}
+		if (state.source==Sources.SCRIPTING) {
+			if (!permitScripting()) {
+				throw new UserAccessDeniedException("This command can not be access via the Scripting module");
+			}
+		}
+		if (state.source==Sources.EXTERNAL) {
+			if (!permitExternal()) {
+				throw new UserAccessDeniedException("This command can not be accessed via the External API interface");
+			}
+		}
+
+	}
+
+	private final int getMaximumLength(Argument argument) {
+		ArgumentType type=argument.type();
+		switch (type) {
+			case TEXT_CLEAN:
+			case TEXT_ONELINE:
+			case TEXT_INTERNAL_NAME:
+			case TEXT_MULTILINE:
+				return argument.max();
+			case PASSWORD:
+			case CHOICE:
+				return 1024;
+			case BOOLEAN:
+				return 8;
+			case INTEGER:
+			case FLOAT:
+				return 32;
+			case CHARACTER:
+			case ATTRIBUTE_WRITABLE:
+			case ATTRIBUTE:
+			case COORDINATES:
+			case ZONE:
+			case REGION:
+			case MODULE:
+			case PERMISSION:
+			case PERMISSIONSGROUP:
+			case AVATAR_NEAR:
+			case AVATAR:
+			case CHARACTER_FACTION:
+			case CHARACTER_NEAR:
+			case CHARACTER_PLAYABLE:
+			case EFFECT:
+				return 64;
+			case CHARACTERGROUP:
+			case EVENT:
+			case KVLIST:
+				return 128;
+			default:
+				throw new SystemImplementationException("Argument "+argument.getName()+" of type "+argument.type().name()+" fell through maxlen");
 		}
 	}
 

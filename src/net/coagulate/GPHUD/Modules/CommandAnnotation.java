@@ -1,16 +1,22 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemExecutionException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserExecutionException;
+import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A command, probably derived from Annotations.
@@ -85,22 +91,7 @@ public class CommandAnnotation extends Command {
 
 	@Nonnull
 	public String getName() { return method.getName(); }
-
-	/**
-	 * Get the name of the arguments.
-	 *
-	 * @param st state
-	 *
-	 * @return list of argument names
-	 */
-	@Nonnull
-	public List<String> getArgumentNames(final State st) {
-		final List<String> arguments=new ArrayList<>();
-		for (final Argument a: getArguments()) {
-			arguments.add(a.getName());
-		}
-		return arguments;
-	}
+	// ----- Internal Instance -----
 
 	@Nonnull
 	public List<Argument> getInvokingArguments() { return getArguments(); }
@@ -114,7 +105,33 @@ public class CommandAnnotation extends Command {
 		return getArgumentCount();
 	}
 
-	// ----- Internal Instance -----
+	@Override
+	protected Response execute(State state,
+	                           Map<String,Object> arguments) {
+		try {
+			List<Object> parameters=new ArrayList<>();
+			parameters.add(state);
+			for (Argument arg: getArguments()) {
+				if (arguments.containsKey(arg.getName())) { parameters.add(arguments.get(arg.getName())); }
+				else { parameters.add(null); }
+			}
+			return (Response) getMethod().invoke(null,parameters.toArray());
+		}
+		catch (IllegalAccessException e) {
+			throw new SystemImplementationException("Access to target method "+getMethod().getName()+" in "+getMethod().getDeclaringClass().getSimpleName()+" denied by JVM",
+			                                        e);
+		}
+		catch (InvocationTargetException e) {
+			Throwable content=e.getCause();
+			if (content==null) { throw new SystemImplementationException("Null invocation target exception cause",e); }
+			if (UserException.class.isAssignableFrom(content.getClass())) {
+				throw new UserExecutionException("Command gave error: "+content.getLocalizedMessage(),e);
+			}
+			throw new SystemExecutionException("Annotated command "+getFullName()+" from "+getMethod().getName()+" in class "+getMethod().getDeclaringClass()
+			                                                                                                                             .getSimpleName()+" exceptioned: "+content
+					.getLocalizedMessage(),e);
+		}
+	}
 	void validate(final State st) {
 		if (!requiresPermission().isEmpty()) {
 			Modules.validatePermission(st,requiresPermission());

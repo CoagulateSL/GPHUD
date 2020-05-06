@@ -61,7 +61,7 @@ public class ArgumentAnnotation extends Argument {
 	@SuppressWarnings("unchecked")
 	public List<String> getChoices(final State st) {
 		try {
-			final Method m=command.getMethod().getDeclaringClass().getMethod(choiceMethod(),State.class);
+			final Method m=this.getClass().getMethod(choiceMethod(),State.class);
 			return (List<String>) m.invoke(null,new Object[]{st});
 		}
 		catch (@Nonnull final IllegalAccessException ex) {

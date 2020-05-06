@@ -1,27 +1,21 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
-import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
-import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
-import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Templater;
-import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
-import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Templated command implementation, aka an alias command.
@@ -61,15 +55,6 @@ public class AliasCommand extends Command {
 			throw new SystemBadValueException("Attempt to access null target command in Alias Command "+getName());
 		}
 		return targetcommand;
-	}
-
-	@Nonnull
-	@Override
-	public Method getMethod() {
-		if (targetcommand==null) {
-			throw new SystemImplementationException("Unable to getMethod on null targetcommand");
-		}
-		return targetcommand.getMethod();
 	}
 
 	@Override
@@ -156,32 +141,20 @@ public class AliasCommand extends Command {
 	@Nonnull
 	public String getName() { return name; }
 
-	@Override
-	public List<String> getArgumentNames(final State st) {
-		if (targetcommand==null) { return new ArrayList<>(); }
-		final List<String> args=targetcommand.getArgumentNames(st);
-		for (final String key: definition.keySet()) {
-			args.remove(key);
-		}
-		return args;
-	}
 
+	// ----- Internal Instance -----
 	@Override
-	public List<Argument> getInvokingArguments() {
-		if (targetcommand==null) { return new ArrayList<>(); }
-		return targetcommand.getInvokingArguments();
-	}
-
-	@Override
-	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap) {
+	protected Response execute(State state,
+	                           Map<String,Object> arguments) {
 		if (targetcommand==null) {
 			throw new UserConfigurationException("Error: Alias targets command "+name+", "+fail);
 		}
+		/*
 		if (targetcommand.getFullName().toLowerCase().startsWith("gphudclient.quickbutton")) {
 			throw new UserConfigurationException("It is not permitted to call quickbuttons from aliases (in alias "+getName()+")");
-		}
+		}*/
 		// assume target.  this sucks :P
+		/* what does this do?
 		if (parametermap.containsKey("target")) {
 			String v=parametermap.get("target");
 			final Char targchar;
@@ -200,58 +173,31 @@ public class AliasCommand extends Command {
 			}
 			if (targchar!=null) { st.setTarget(targchar); }
 		}
+		*/
 
-
-		Command consider=this;
-		while (consider instanceof AliasCommand) {
-			final AliasCommand ac=(AliasCommand) consider;
-			//System.out.println("Processing "+ac.getFullName());
-			for (final String key: ac.getDefinition().keySet()) {
-				if (!"invoke".equalsIgnoreCase(key)) {
-					boolean numeric=false;
-					boolean integer=false;
-					boolean delaytemplating=false;
-					for (final Argument arg: ac.getTargetCommand().getArguments()) {
-						if (arg.getName().equals(key)) {
-							if (arg.type()==ArgumentType.FLOAT || arg.type()==ArgumentType.INTEGER) {
-								numeric=true;
-								if (arg.type()==ArgumentType.INTEGER) { integer=true; }
-							}
-							if (arg.delayTemplating()) { delaytemplating=true; }
+		for (String key: getDefinition().keySet()) {
+			if (!"invoke".equalsIgnoreCase(key)) {
+				boolean numeric=false;
+				boolean integer=false;
+				boolean delaytemplating=false;
+				for (final Argument arg: getTargetCommand().getArguments()) {
+					if (arg.getName().equals(key)) {
+						if (arg.type()==ArgumentType.FLOAT || arg.type()==ArgumentType.INTEGER) {
+							numeric=true;
+							if (arg.type()==ArgumentType.INTEGER) { integer=true; }
 						}
-					}
-					//System.out.println("Here for key "+key+" with delaytemplating as "+delaytemplating);
-					//System.out.println("Existing parameter map is "+parametermap.get(key));
-					if (ac.getDefinition().has(key)) {
-						//System.out.println("Definition is "+ac.getDefinition().getString(key));
+						if (arg.delayTemplating()) { delaytemplating=true; }
 						if (!delaytemplating) {
-							parametermap.put(key,Templater.template(st,ac.getDefinition().getString(key),numeric,integer));
+							arguments.put(key,convertArgument(state,arg,Templater.template(state,getDefinition().getString(key),numeric,integer)));
 						}
 						else {
-							parametermap.put(key,ac.getDefinition().getString(key));
+							arguments.put(key,convertArgument(state,arg,getDefinition().getString(key)));
 						}
 					}
-					//else { System.out.println("No definition for key "+key); }
 				}
 			}
-			consider=ac.getTargetCommand();
 		}
-		//parametermap.debugDump();
-		return super.run(st,parametermap);
+		return getTargetCommand().run(state,arguments);
 	}
-
-	@Nonnull
-	@Override
-	public String getFullMethodName() {
-		if (targetcommand==null) { return "Can not invoke - "+fail; }
-		return getClass().getCanonicalName()+"("+getName()+"), will invoke "+targetcommand.getFullMethodName();
-	}
-
-	@Override
-	public int getInvokingArgumentCount() {
-		if (targetcommand==null) { return 0; }
-		return targetcommand.getInvokingArgumentCount();
-	}
-
 
 }

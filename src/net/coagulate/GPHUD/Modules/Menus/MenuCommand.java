@@ -1,20 +1,18 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
-import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Templated command implementation, aka a menu command.
@@ -40,17 +38,6 @@ public class MenuCommand extends Command {
 	}
 
 	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public Method getMethod() {
-		try {
-			return getClass().getDeclaredMethod("run",State.class,SafeMap.class);
-		}
-		catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
-			throw new SystemImplementationException("Issue locating RUN command for MenuCommand, this makes no sense :)");
-		}
-	}
-
 	@Override
 	public boolean isGenerated() {
 		return true;
@@ -106,23 +93,9 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
-	public List<String> getArgumentNames(final State st) {
-		final List<String> args=new ArrayList<>();
-		args.add("choice");
-		return args;
-	}
-
-	@Nonnull
-	@Override
-	public List<Argument> getInvokingArguments() {
-		return getArguments();
-	}
-
-	@Nonnull
-	@Override
-	public Response run(@Nonnull final State st,
-	                    @Nonnull final SafeMap parametermap) {
-		final String selected=parametermap.get("choice");
+	public Response execute(@Nonnull final State st,
+	                        @Nonnull final Map<String,Object> parametermap) {
+		final String selected=(String) parametermap.get("choice");
 		int choice=-1;
 		for (int i=1;i<=12;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
 		if (choice==-1) { throw new UserInputLookupFailureException("Menu "+getName()+" has no element "+selected); }
@@ -131,14 +104,5 @@ public class MenuCommand extends Command {
 			throw new UserConfigurationException("Menu "+getName()+" command "+selected+" is choice "+choice+" and does not have a command to invoke");
 		}
 		return Modules.getJSONTemplateResponse(st,commandtoinvoke);
-	}
-
-	@Nonnull
-	@Override
-	public String getFullMethodName() { return getClass()+".run()"; }
-
-	@Override
-	public int getInvokingArgumentCount() {
-		return getArgumentCount();
 	}
 }

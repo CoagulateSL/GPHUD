@@ -4,7 +4,7 @@ import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
-import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.CommandAnnotation;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -13,14 +13,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScriptingCommand extends Command {
+public class ScriptingCommand extends CommandAnnotation {
 	final Script script;
 
 	public ScriptingCommand(final Script script) { this.script=script; }
 
 	// ---------- INSTANCE ----------
 	@Nonnull
-	@Override
 	public Method getMethod() {
 		try { return getClass().getMethod("execute",State.class); }
 		catch (@Nonnull final NoSuchMethodException e) {
