@@ -319,7 +319,7 @@ default {
 			}
 		}
 		if (logincomplete==0) { return; }
-		if (channel==rpchannel && !SHUTDOWN) {
+		if (channel==rpchannel && id=llGetOwner() && !SHUTDOWN) {
 			string name=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(name);
 		}
 	}
