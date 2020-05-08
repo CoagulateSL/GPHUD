@@ -69,7 +69,7 @@ public abstract class GetMessages {
 	public static Response acceptRejectMessage(@Nonnull final State st,
 	                                           @Arguments(type=ArgumentType.CHOICE,
 	                                                      description="Accept or Reject the message",
-	                                                      choiceMethod="getAcceptReject") final String response) {
+	                                                      choiceMethod="net.coagulate.GPHUD.Modules.GPHUDClient.GetMessages.getAcceptReject") final String response) {
 		final Message m=Message.getActiveMessage(st);
 		if (m==null) { return new ErrorResponse("You have no active message."); }
 
