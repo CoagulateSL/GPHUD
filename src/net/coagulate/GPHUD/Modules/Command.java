@@ -85,6 +85,7 @@ public abstract class Command {
 	@SuppressWarnings("fallthrough")
 	public final Response run(@Nonnull final State state,
 	                          @Nonnull final String[] args) {
+		for (int i=0;i<args.length;i++) { System.out.println("Arg "+i+" : "+args[i]); }
 		SafeMap map=new SafeMap();
 		int arg=0;
 		for (final Argument argument: getArguments()) {
@@ -92,8 +93,9 @@ public abstract class Command {
 				throw new SystemImplementationException("Argument metadata null on "+getFullName()+"() arg#"+(arg+1));
 			}
 			String v="";
-			if (arg >= args.length) { v=args[arg]; }
+			if (arg < args.length) { v=args[arg]; System.out.println("In here for "+arg+" = "+v); }
 			map.put(argument.getName(),v);
+			System.out.println("Command "+getFullName()+" mapped "+argument.getName()+"-"+arg+"/"+args.length+"->"+v);
 			arg++;
 		}
 		return run(state,map);
@@ -419,7 +421,7 @@ public abstract class Command {
 				o=parametermap.get(a.getName());
 			}
 			if (a.mandatory() && o==null) {
-				return new ErrorResponse("Argument "+a.getName()+" is mandatory on command "+getFullName()+" and nothink was passed");
+				return new ErrorResponse("Argument "+a.getName()+" is mandatory on command "+getFullName()+" and nothing was passed");
 			}
 		}
 		// check the "operational context" :)
