@@ -19,7 +19,7 @@ public class Avatar {
 	public static BCInteger gsHasPermission(@Nonnull final State st,
 	                                        @Nonnull final GSVM vm,
 	                                        @Nonnull final BCString permission) {
-		String check=permission.getContent();
+		final String check=permission.getContent();
 		if (st.hasPermission(check)) { return new BCInteger(null,1); }
 		return new BCInteger(null,0);
 	}
