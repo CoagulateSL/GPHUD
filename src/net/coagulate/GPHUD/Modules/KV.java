@@ -140,7 +140,6 @@ public abstract class KV extends NameComparable {
 	public void callOnUpdate(final State state,
 	                         final TableRow updatedobject,
 	                         final String newvalue) {
-		System.out.println("CALL ON UPDATE:"+onUpdate());
 		// does this KV have an onUpdate method
 		if (onUpdate().isEmpty()) { return; }
 		final String targetmethod=onUpdate();
