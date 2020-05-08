@@ -34,8 +34,6 @@ public class CommandAnnotation extends Command {
 
 	public CommandAnnotation(final Module owner,
 	                         @Nonnull final Method c) {
-		//System.out.println(owner);
-		//System.out.println(c);
 		this.owner=owner;
 		method=c;
 		meta=c.getAnnotation(Commands.class);
@@ -112,10 +110,12 @@ public class CommandAnnotation extends Command {
 			List<Object> parameters=new ArrayList<>();
 			parameters.add(state);
 			for (Argument arg: getArguments()) {
-				if (arguments.containsKey(arg.getName())) { parameters.add(arguments.get(arg.getName())); }
+				if (arguments.containsKey(arg.getName()))
+				{ parameters.add(arguments.get(arg.getName())); }
 				else { parameters.add(null); }
 			}
-			return (Response) getMethod().invoke(null,parameters.toArray());
+			Object result=getMethod().invoke(this,parameters.toArray());
+			return (Response) (result);
 		}
 		catch (IllegalAccessException e) {
 			throw new SystemImplementationException("Access to target method "+getMethod().getName()+" in "+getMethod().getDeclaringClass().getSimpleName()+" denied by JVM",
@@ -153,10 +153,10 @@ public class CommandAnnotation extends Command {
 				// validate the choice method
 				final String choicemethod=arg.choiceMethod();
 				try {
-					method.getDeclaringClass().getMethod(choicemethod,State.class);
+					ArgumentAnnotation.getMethod(choicemethod);
 				}
 				catch (@Nonnull final Exception e) {
-					throw new SystemImplementationException("Failed to instansiate choice method "+getFullName()+" / "+choicemethod);
+					throw new SystemImplementationException("Failed to instansiate choice method "+getFullName()+" / "+choicemethod,e);
 				}
 			}
 		}
