@@ -435,6 +435,7 @@ public abstract class Command {
 	protected abstract Response execute(State state,
 	                                    Map<String,Object> arguments);
 
+	@SuppressWarnings("fallthrough")
 	protected final Object convertArgument(final State state,
 	                                       final Argument argument,
 	                                       String v) {
