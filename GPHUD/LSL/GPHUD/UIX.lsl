@@ -423,7 +423,8 @@ default {
 	}
     link_message(integer from,integer num,string message,key id) {
 		if (num==LINK_SHUTDOWN) { llResetScript(); }
-		if (num==LINK_STARTUP) { SHUTDOWN=FALSE; timersize=1; llSetTimerEvent(1.0); }
+		if (num==LINK_GO) { setDev(FALSE); }
+		if (num==LINK_STARTUP) { setDev(FALSE); SHUTDOWN=FALSE; timersize=1; llSetTimerEvent(1.0); }
 		if (num==LINK_DIAGNOSTICS) { llOwnerSay("UIX: "+(string)llGetFreeMemory()); }
 		if (num==LINK_RECEIVE) {
 			json=message; message=""; process(); json="";

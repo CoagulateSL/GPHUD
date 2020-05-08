@@ -245,7 +245,8 @@ default {
 	}
     link_message(integer from,integer num,string message,key id) {
 		if (num==LINK_SHUTDOWN) { SHUTDOWN=TRUE; }
-		if (num==LINK_STARTUP) { SHUTDOWN=FALSE; llSetTimerEvent(2); }
+		if (num==LINK_GO) { setDev(FALSE); }
+		if (num==LINK_STARTUP) { setDev(FALSE); SHUTDOWN=FALSE; llSetTimerEvent(2); }
 		if (num==LINK_RECEIVE) {
 			//llOwnerSay("Json2:"+message);
 			//llOwnerSay("False:"+((string)id));

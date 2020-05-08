@@ -220,6 +220,7 @@ default {
 	}
 	link_message(integer from,integer num,string message,key id) {
 		if (num==LINK_GO && AWAIT_GO==TRUE) {
+			setDev(FALSE);
 			SHUTDOWN=FALSE;
 			#ifdef DEBUG
 			llOwnerSay("Attacher GO");
@@ -319,7 +320,7 @@ default {
 			}
 		}
 		if (logincomplete==0) { return; }
-		if (channel==rpchannel && id=llGetOwner() && !SHUTDOWN) {
+		if (channel==rpchannel && id==llGetOwner() && !SHUTDOWN) {
 			string name=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(name);
 		}
 	}
