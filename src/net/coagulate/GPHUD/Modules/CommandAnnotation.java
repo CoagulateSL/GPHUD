@@ -104,25 +104,24 @@ public class CommandAnnotation extends Command {
 	}
 
 	@Override
-	protected Response execute(State state,
-	                           Map<String,Object> arguments) {
+	protected Response execute(final State state,
+	                           final Map<String,Object> arguments) {
 		try {
-			List<Object> parameters=new ArrayList<>();
+			final List<Object> parameters=new ArrayList<>();
 			parameters.add(state);
-			for (Argument arg: getArguments()) {
-				if (arguments.containsKey(arg.getName()))
-				{ parameters.add(arguments.get(arg.getName())); }
-				else { parameters.add(null); }
+			for (final Argument arg: getArguments()) {
+				parameters.add(arguments.getOrDefault(arg.getName(),null));
 			}
-			Object result=getMethod().invoke(this,parameters.toArray());
+			final Object result=getMethod().invoke(this,parameters.toArray());
 			return (Response) (result);
 		}
-		catch (IllegalAccessException e) {
+		catch (final IllegalAccessException e) {
 			throw new SystemImplementationException("Access to target method "+getMethod().getName()+" in "+getMethod().getDeclaringClass().getSimpleName()+" denied by JVM",
-			                                        e);
+			                                        e
+			);
 		}
-		catch (InvocationTargetException e) {
-			Throwable content=e.getCause();
+		catch (final InvocationTargetException e) {
+			final Throwable content=e.getCause();
 			if (content==null) { throw new SystemImplementationException("Null invocation target exception cause",e); }
 			if (UserException.class.isAssignableFrom(content.getClass())) {
 				throw new UserExecutionException("Command gave error: "+content.getLocalizedMessage(),e);

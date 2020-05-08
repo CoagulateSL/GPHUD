@@ -89,11 +89,12 @@ public class ScriptingCommand extends Command {
 		return script.getName();
 	}
 
-	@Override
-	protected Response execute(State state,
-	                           Map<String,Object> arguments) {
-		final GSVM vm=new GSVM(script.getByteCode());
-		//System.out.println("Script about to execute "+script.getNameSafe());
-		return vm.execute(state);
-	}
+// ----- Internal Instance -----
+@Override
+protected Response execute(final State state,
+                           final Map<String,Object> arguments) {
+	final GSVM vm=new GSVM(script.getByteCode());
+	//System.out.println("Script about to execute "+script.getNameSafe());
+	return vm.execute(state);
+}
 }

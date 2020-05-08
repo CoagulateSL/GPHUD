@@ -36,7 +36,7 @@ public abstract class Command {
 
 	// ----- Internal Statics -----
 	@Nonnull
-	final static Object assertNotNull(@Nullable final Object o,
+	static final Object assertNotNull(@Nullable final Object o,
 	                                  final String value,
 	                                  final String type) {
 		if (o==null) {
@@ -46,7 +46,6 @@ public abstract class Command {
 	}
 
 	// ---------- INSTANCE ----------
-	@Nonnull
 	public abstract boolean isGenerated();
 
 	public abstract String description();
@@ -78,22 +77,25 @@ public abstract class Command {
 	@Nonnull
 	public abstract String getName();
 
-	@Nonnull
-	/** Run this command given an array of string arguments.
+	/**
+	 * Run this command given an array of string arguments.
 	 * Converts them to named parameters and calls the SafeMap version
 	 */
-	@SuppressWarnings("fallthrough")
+	@Nonnull
 	public final Response run(@Nonnull final State state,
 	                          @Nonnull final String[] args) {
 		for (int i=0;i<args.length;i++) { System.out.println("Arg "+i+" : "+args[i]); }
-		SafeMap map=new SafeMap();
+		final SafeMap map=new SafeMap();
 		int arg=0;
 		for (final Argument argument: getArguments()) {
 			if (argument==null) {
 				throw new SystemImplementationException("Argument metadata null on "+getFullName()+"() arg#"+(arg+1));
 			}
 			String v="";
-			if (arg < args.length) { v=args[arg]; System.out.println("In here for "+arg+" = "+v); }
+			if (arg<args.length) {
+				v=args[arg];
+				System.out.println("In here for "+arg+" = "+v);
+			}
 			map.put(argument.getName(),v);
 			System.out.println("Command "+getFullName()+" mapped "+argument.getName()+"-"+arg+"/"+args.length+"->"+v);
 			arg++;
@@ -118,7 +120,7 @@ public abstract class Command {
 
 	public final Response run(@Nonnull final State state,
 	                          @Nonnull final SafeMap parametermap) {
-		Map<String,Object> arguments=new HashMap<>();
+		final Map<String,Object> arguments=new HashMap<>();
 		for (final Argument arg: getArguments()) {
 			String v=parametermap.get(arg.getName()).trim();
 			if (v.isEmpty() || "-".equals(v)) { v=null; }
@@ -433,10 +435,10 @@ public abstract class Command {
 	protected abstract Response execute(State state,
 	                                    Map<String,Object> arguments);
 
-	protected final Object convertArgument(State state,
-	                                       Argument argument,
+	protected final Object convertArgument(final State state,
+	                                       final Argument argument,
 	                                       String v) {
-		ArgumentType type=argument.type();
+		final ArgumentType type=argument.type();
 		switch (type) {
 			case TEXT_INTERNAL_NAME:
 				if (v.matches(".*[^a-zA-Z0-9].*")) {
@@ -542,7 +544,7 @@ public abstract class Command {
 		}
 	}
 
-	private void checkCallingContext(State state) {
+	private void checkCallingContext(final State state) {
 		switch (context()) {
 			case ANY:
 				break;
@@ -567,7 +569,7 @@ public abstract class Command {
 		}
 	}
 
-	private final void checkCallingInterface(State state) {
+	private final void checkCallingInterface(final State state) {
 		// check required interface
 		if (state.source==Sources.USER) {
 			if (!permitWeb()) {
@@ -597,8 +599,8 @@ public abstract class Command {
 
 	}
 
-	private final int getMaximumLength(Argument argument) {
-		ArgumentType type=argument.type();
+	private final int getMaximumLength(final Argument argument) {
+		final ArgumentType type=argument.type();
 		switch (type) {
 			case TEXT_CLEAN:
 			case TEXT_ONELINE:

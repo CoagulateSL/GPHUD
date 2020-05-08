@@ -33,28 +33,33 @@ public class ArgumentAnnotation extends Argument {
 		command=c;
 		meta=p.getAnnotation(Arguments.class);
 		generated=false;
-		if (choiceMethod()!=null && !choiceMethod().isEmpty()) { CommandAnnotation.checkPublicStatic(getMethod()); }
+		choiceMethod();
+		if (!choiceMethod().isEmpty()) { CommandAnnotation.checkPublicStatic(getMethod()); }
 	}
 
 	public Method getMethod() { return getMethod(choiceMethod()); }
-	public static Method getMethod(String fqn) {
+
+	// ---------- STATICS ----------
+	public static Method getMethod(final String fqn) {
 		if (!fqn.contains(".")) { throw new SystemImplementationException("Non fully qualified method name in "+fqn); }
-		Matcher matcher=Pattern.compile("(.*)\\.([^.]*)").matcher(fqn);
+		final Matcher matcher=Pattern.compile("(.*)\\.([^.]*)").matcher(fqn);
 		if (!matcher.matches()) { throw new SystemImplementationException("Regexp matcher failure for fq method "+fqn); }
 		if (matcher.groupCount()!=2) { throw new SystemImplementationException("Qualified method name "+fqn+" broke into more than 2 parts"); }
-		String classname=matcher.group(1);
-		String methodname=matcher.group(2);
-		Class clazz=null;
+		final String classname=matcher.group(1);
+		final String methodname=matcher.group(2);
+		//noinspection rawtypes
+		final Class clazz;
 		try {
 			clazz=Class.forName(classname);
 		}
-		catch (ClassNotFoundException e) {
+		catch (final ClassNotFoundException e) {
 			throw new SystemImplementationException("FQN for choice method '"+fqn+"' gave class not found",e);
 		}
 		try {
+			//noinspection unchecked
 			return clazz.getMethod(methodname,State.class);
 		}
-		catch (NoSuchMethodException e) {
+		catch (final NoSuchMethodException e) {
 			throw new SystemImplementationException("FQN for choice method '"+fqn+"' gave method not found",e);
 		}
 	}

@@ -144,8 +144,8 @@ public class AliasCommand extends Command {
 
 	// ----- Internal Instance -----
 	@Override
-	protected Response execute(State state,
-	                           Map<String,Object> arguments) {
+	protected Response execute(final State state,
+	                           final Map<String,Object> arguments) {
 		if (targetcommand==null) {
 			throw new UserConfigurationException("Error: Alias targets command "+name+", "+fail);
 		}
@@ -175,7 +175,7 @@ public class AliasCommand extends Command {
 		}
 		*/
 
-		for (String key: getDefinition().keySet()) {
+		for (final String key: getDefinition().keySet()) {
 			if (!"invoke".equalsIgnoreCase(key)) {
 				boolean numeric=false;
 				boolean integer=false;
