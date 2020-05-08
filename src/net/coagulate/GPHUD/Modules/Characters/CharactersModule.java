@@ -149,7 +149,7 @@ public class CharactersModule extends ModuleAnnotation {
 	          description="Spend an ability point to raise an attribute",
 	          permitExternal=false)
 	public static Response spendAbilityPoint(@Nonnull final State st,
-	                                         @Arguments(choiceMethod="getRaisableAttributesList",
+	                                         @Arguments(choiceMethod="net.coagulate.GPHUD.Modules.Characters.CharactersModule.getRaisableAttributesList",
 	                                                    description="Attribute to spend an ability point on",
 	                                                    type=Argument.ArgumentType.CHOICE) final String attribute) {
 		int remain=abilityPointsRemaining(st);

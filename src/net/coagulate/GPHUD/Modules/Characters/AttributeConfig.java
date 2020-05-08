@@ -127,7 +127,7 @@ public class AttributeConfig {
 	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean selfmodify,
 	                                       @Nullable @Arguments(description="Type of this attribute",
 	                                                            type=Argument.ArgumentType.CHOICE,
-	                                                            choiceMethod="getAttributeTypes") final String attributetype,
+	                                                            choiceMethod="net.coagulate.GPHUD.Modules.Characters.AttributeConfig.getAttributeTypes") final String attributetype,
 	                                       @Nullable @Arguments(description="Type of group, if GROUP, or awarding group TYPE if EXPERIENCE",
 	                                                            mandatory=false,
 	                                                            type=Argument.ArgumentType.TEXT_INTERNAL_NAME,

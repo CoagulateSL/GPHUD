@@ -120,7 +120,7 @@ public abstract class Management {
 	                              @Arguments(type=ArgumentType.CHOICE,
 	                                         description="Type of the group",
 	                                         mandatory=false,
-	                                         choiceMethod="groupTypes") final String type) {
+	                                         choiceMethod="net.coagulate.GPHUD.Modules.Groups.Management.groupTypes") final String type) {
 		try { st.getInstance().createCharacterGroup(name,false,type); }
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create group: "+e.getMessage());

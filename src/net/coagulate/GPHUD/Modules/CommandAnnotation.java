@@ -1,16 +1,22 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemExecutionException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserExecutionException;
+import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A command, probably derived from Annotations.
@@ -28,8 +34,6 @@ public class CommandAnnotation extends Command {
 
 	public CommandAnnotation(final Module owner,
 	                         @Nonnull final Method c) {
-		//System.out.println(owner);
-		//System.out.println(c);
 		this.owner=owner;
 		method=c;
 		meta=c.getAnnotation(Commands.class);
@@ -85,22 +89,7 @@ public class CommandAnnotation extends Command {
 
 	@Nonnull
 	public String getName() { return method.getName(); }
-
-	/**
-	 * Get the name of the arguments.
-	 *
-	 * @param st state
-	 *
-	 * @return list of argument names
-	 */
-	@Nonnull
-	public List<String> getArgumentNames(final State st) {
-		final List<String> arguments=new ArrayList<>();
-		for (final Argument a: getArguments()) {
-			arguments.add(a.getName());
-		}
-		return arguments;
-	}
+	// ----- Internal Instance -----
 
 	@Nonnull
 	public List<Argument> getInvokingArguments() { return getArguments(); }
@@ -114,7 +103,34 @@ public class CommandAnnotation extends Command {
 		return getArgumentCount();
 	}
 
-	// ----- Internal Instance -----
+	@Override
+	protected Response execute(final State state,
+	                           final Map<String,Object> arguments) {
+		try {
+			final List<Object> parameters=new ArrayList<>();
+			parameters.add(state);
+			for (final Argument arg: getArguments()) {
+				parameters.add(arguments.getOrDefault(arg.getName(),null));
+			}
+			final Object result=getMethod().invoke(this,parameters.toArray());
+			return (Response) (result);
+		}
+		catch (final IllegalAccessException e) {
+			throw new SystemImplementationException("Access to target method "+getMethod().getName()+" in "+getMethod().getDeclaringClass().getSimpleName()+" denied by JVM",
+			                                        e
+			);
+		}
+		catch (final InvocationTargetException e) {
+			final Throwable content=e.getCause();
+			if (content==null) { throw new SystemImplementationException("Null invocation target exception cause",e); }
+			if (UserException.class.isAssignableFrom(content.getClass())) {
+				throw new UserExecutionException("Command gave error: "+content.getLocalizedMessage(),e);
+			}
+			throw new SystemExecutionException("Annotated command "+getFullName()+" from "+getMethod().getName()+" in class "+getMethod().getDeclaringClass()
+			                                                                                                                             .getSimpleName()+" exceptioned: "+content
+					.getLocalizedMessage(),e);
+		}
+	}
 	void validate(final State st) {
 		if (!requiresPermission().isEmpty()) {
 			Modules.validatePermission(st,requiresPermission());
@@ -136,10 +152,10 @@ public class CommandAnnotation extends Command {
 				// validate the choice method
 				final String choicemethod=arg.choiceMethod();
 				try {
-					method.getDeclaringClass().getMethod(choicemethod,State.class);
+					ArgumentAnnotation.getMethod(choicemethod);
 				}
 				catch (@Nonnull final Exception e) {
-					throw new SystemImplementationException("Failed to instansiate choice method "+getFullName()+" / "+choicemethod);
+					throw new SystemImplementationException("Failed to instansiate choice method "+getFullName()+" / "+choicemethod,e);
 				}
 			}
 		}

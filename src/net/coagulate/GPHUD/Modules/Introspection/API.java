@@ -101,8 +101,6 @@ public abstract class API {
 		}
 		f.add("<br>");
 		f.add("<br>");
-		f.add(new TextSubHeader("Target Method"));
-		f.add(c.getFullMethodName());
 	}
 
 	@URLs(url="/introspection/api/")

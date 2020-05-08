@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
-import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
@@ -9,24 +8,14 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ScriptingCommand extends Command {
 	final Script script;
 
 	public ScriptingCommand(final Script script) { this.script=script; }
-
-	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public Method getMethod() {
-		try { return getClass().getMethod("execute",State.class); }
-		catch (@Nonnull final NoSuchMethodException e) {
-			throw new SystemImplementationException("Reflection exception finding gsScriptCommand's execute() method",e);
-		}
-	}
 
 	@Override
 	public boolean isGenerated() {
@@ -100,10 +89,12 @@ public class ScriptingCommand extends Command {
 		return script.getName();
 	}
 
-	@Nonnull
-	public Response execute(@Nonnull final State st) {
-		final GSVM vm=new GSVM(script.getByteCode());
-		//System.out.println("Script about to execute "+script.getNameSafe());
-		return vm.execute(st);
-	}
+// ----- Internal Instance -----
+@Override
+protected Response execute(final State state,
+                           final Map<String,Object> arguments) {
+	final GSVM vm=new GSVM(script.getByteCode());
+	//System.out.println("Script about to execute "+script.getNameSafe());
+	return vm.execute(state);
+}
 }

@@ -421,9 +421,9 @@ public class GSVM {
 			if (SystemException.class.isAssignableFrom(t.getClass())) {
 				throw new GSInternalError("VM exception: "+t+" "+at(),t);
 			}
-			if (UserException.class.isAssignableFrom(t.getClass())) { throw new GSExecutionException("Script error: "+t+" "+at(),t); }
-			if (t instanceof RuntimeException) { throw new GSInternalError("VM Runtime: "+t+" "+at(),t); }
-			throw new GSInternalError("VM Uncaught: "+t+" "+at(),t);
+			if (UserException.class.isAssignableFrom(t.getClass())) { throw new GSExecutionException("Script error: {"+t.getClass().getSimpleName()+"} "+t.getLocalizedMessage()+" "+at(),t); }
+			if (t instanceof RuntimeException) { throw new GSInternalError("VM Runtime: {"+t.getClass().getSimpleName()+"} "+t.getLocalizedMessage()+" "+at(),t); }
+			throw new GSInternalError("VM Uncaught: {"+t.getClass().getSimpleName()+"} "+t.getLocalizedMessage()+" "+at(),t);
 		}
 		st.vm=null;
 		final JSONObject json=dequeue(st,st.getCharacter()).asJSON(st);
