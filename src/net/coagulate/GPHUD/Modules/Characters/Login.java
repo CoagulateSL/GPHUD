@@ -73,7 +73,7 @@ public abstract class Login {
 		try { url=st.json().getString("callback"); } catch (@Nonnull final JSONException e) {}
 		if (url==null || "".equals(url)) {
 			st.logger().log(WARNING,"No callback URL sent with character registration");
-			return new ErrorResponse("You are not set up with a callback URL");
+			return new ErrorResponse("You are not set up with a callback URL in Characters.Login");
 		}
 		final boolean autocreate=st.getKV("Instance.AutoNameCharacter").boolValue();
 		final Char character=PrimaryCharacter.getPrimaryCharacter(st,autocreate);
@@ -420,6 +420,18 @@ public abstract class Login {
 				throw new UserInputStateException("Attempt to initialise pool attribute is invalid.");
 		}
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,st.getCharacter(),"Initialise",attribute.getName(),null,value,"Character creation initialised attribute");
+		if (st.json().has("protocol")) {
+			if (st.json().getInt("protocol")==2) {
+				if (st.getCharacterNullable()==null) {
+					final JSONObject reconnect=new JSONObject();
+					reconnect.put("incommand","forcereconnect");
+					return new JSONResponse(reconnect);
+				}
+				else {
+					return Connect.postConnect(st);
+				}
+			}
+		}
 		return login(st,null,null,null);
 	}
 }
