@@ -83,4 +83,54 @@ public class Output {
 		vm.queueTeleport(target.getContent(),t.getHUDRepresentation(false));
 		return new BCInteger(null,0);
 	}
+
+	@Nonnull
+	@GSFunctions.GSFunction(description="Causes the HUD to speak in local chat, as the character, if online, otherwise silently returns",
+	                        parameters="Character - character whose HUD will emit the "+"message<br"+">String - message to speak",
+	                        returns="Integer - 1 if the message was sent, 0 if not",
+	                        notes="Messages are stacked up, per user, until the script completes or is suspended",
+	                        privileged=false)
+	public static BCInteger gsSayAsCharIfOnline(final State st,
+	                                            @Nonnull final GSVM vm,
+	                                            @Nonnull final BCCharacter target,
+	                                            @Nonnull final BCString message) {
+		if (vm.simulation) { return new BCInteger(null,0); }
+		if (!target.isOnline()) { return new BCInteger(null,0); }
+		vm.queueSayAs(target.getContent(),message.getContent());
+		return new BCInteger(null,1);
+	}
+
+	@Nonnull
+	@GSFunctions.GSFunction(description="Causes the HUD to speak in local chat, as the HUD, if online, otherwise silently returns",
+	                        parameters="Character - character whose HUD will emit the "+"message<br"+">String - message to speak",
+	                        returns="Integer - 1 if the message was sent, 0 if not",
+	                        notes="Messages are stacked up, per user, until the script completes or is suspended",
+	                        privileged=false)
+	public static BCInteger gsSayAsHUDIfOnline(final State st,
+	                                           @Nonnull final GSVM vm,
+	                                           @Nonnull final BCCharacter target,
+	                                           @Nonnull final BCString message) {
+		if (vm.simulation) { return new BCInteger(null,0); }
+		if (!target.isOnline()) { return new BCInteger(null,0); }
+		vm.queueSay(target.getContent(),message.getContent());
+		return new BCInteger(null,1);
+	}
+
+	@Nonnull
+	@GSFunctions.GSFunction(description="Causes the HUD to send a message to its wearer, if online, otherwise silently returns",
+	                        parameters="Character - character whose HUD will message the wearer (the character "+"themselves)<br>String - message to pass",
+	                        returns="Integer - 1 if the message was sent, 0 if not",
+	                        notes="Messages are stacked up, per user, until the script completes or is "+"suspended",
+	                        privileged=false)
+	public static BCInteger gsSayToCharIfOnline(final State st,
+	                                            @Nonnull final GSVM vm,
+	                                            @Nonnull final BCCharacter target,
+	                                            @Nonnull final BCString message) {
+		if (vm.simulation) { return new BCInteger(null,0); }
+		if (!target.isOnline()) { return new BCInteger(null,0); }
+		vm.queueOwnerSay(target.getContent(),message.getContent());
+		return new BCInteger(null,1);
+	}
+
+
 }
