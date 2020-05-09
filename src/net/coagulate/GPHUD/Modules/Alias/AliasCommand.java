@@ -1,7 +1,10 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
@@ -9,6 +12,7 @@ import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Templater;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -141,8 +145,6 @@ public class AliasCommand extends Command {
 	@Nonnull
 	public String getName() { return name; }
 
-
-	// ----- Internal Instance -----
 	@Override
 	protected Response execute(final State state,
 	                           final Map<String,Object> arguments) {
@@ -154,26 +156,34 @@ public class AliasCommand extends Command {
 			throw new UserConfigurationException("It is not permitted to call quickbuttons from aliases (in alias "+getName()+")");
 		}*/
 		// assume target.  this sucks :P
-		/* what does this do?
-		if (parametermap.containsKey("target")) {
-			String v=parametermap.get("target");
-			final Char targchar;
-			if (v.startsWith(">")) {
-				v=v.substring(1);
-				try {
-					final User a=User.findUsername(v,false);
-					targchar=Char.getActive(a,st.getInstance());
-				}
-				catch (@Nonnull final NoDataException e) {
-					throw new UserInputLookupFailureException("Unable to find character or avatar named '"+v+"'");
-				}
-			}
-			else {
-				targchar=Char.resolve(st,v);
-			}
-			if (targchar!=null) { st.setTarget(targchar); }
+		if (getDefinition().has("target")) {
+			arguments.put("target",getDefinition().getString("target"));
 		}
-		*/
+
+		if (arguments.containsKey("target")) {
+			Object vobject=arguments.get("target");
+			if (vobject instanceof String) {
+				String v=(String) vobject;
+				final Char targchar;
+				if (v.startsWith(">")) {
+					v=v.substring(1);
+					try {
+						final User a=User.findUsername(v,false);
+						targchar=Char.getActive(a,state.getInstance());
+					}
+					catch (@Nonnull final NoDataException e) {
+						throw new UserInputLookupFailureException("Unable to find character or avatar named '"+v+"'");
+					}
+				}
+				else {
+					targchar=Char.resolve(state,v);
+				}
+				if (targchar!=null) { state.setTarget(targchar); }
+			}
+			if (vobject instanceof Char) {
+				state.setTarget((Char) vobject);
+			}
+		}
 
 		for (final String key: getDefinition().keySet()) {
 			if (!"invoke".equalsIgnoreCase(key)) {
@@ -199,5 +209,6 @@ public class AliasCommand extends Command {
 		}
 		return getTargetCommand().run(state,arguments);
 	}
+	// ----- Internal Instance -----
 
 }
