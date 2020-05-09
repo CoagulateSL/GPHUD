@@ -1,6 +1,9 @@
 #include "Constants.lsl"
 #include "SL/LSL/Library/SetDev.lsl"
 #include "SL/LSL/Library/JsonTools.lsl"
+//#define COMMS_HARDWIRENODE 0
+
+
 
 //#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK

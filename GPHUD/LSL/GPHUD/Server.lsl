@@ -170,7 +170,7 @@ default {
 		#endif
 		if (status!=200) {
 			comms_error((string)status);
-			comms_do_callback();
+			//comms_do_callback();
 		}
 		else
 		{

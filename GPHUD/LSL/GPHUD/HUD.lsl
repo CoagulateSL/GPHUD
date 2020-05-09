@@ -1,6 +1,8 @@
 // NEW HUD :P
 //#define DEBUG_BOOT
 //#define DEBUG_JSON
+//#define COMMS_HARDWIRENODE 0
+
 
 #include "SL/LSL/Constants.lsl"
 #include "SL/LSL/GPHUD/GPHUDHeader.lsl"
@@ -264,7 +266,14 @@ default {
 			comms_url_key=NULL_KEY;
 			comms_url=body;		
 			URL_STAGE=1;
-			if (comms_node==-99) { comms_node=((integer)llFrand(6.0)); }
+			if (comms_node==-99) {
+				#ifdef COMMS_HARDWIRENODE
+				llOwnerSay("Hardwired node in effect "+((string)COMMS_HARDWIRENODE));
+				comms_node=COMMS_HARDWIRENODE;
+				#else
+				comms_node=(comms_node+1)%6;
+				#endif
+			}
 			setup();
 			return;
 		}	
@@ -288,8 +297,14 @@ default {
 				llSleep(300);
 				llResetScript();
 			}
-			llOwnerSay(llGetScriptName()+" : Cluster Server "+((string)comms_node)+" failed.  Please retry your last operation.");
+			llOwnerSay(llGetScriptName()+" : Cluster Server "+((string)comms_node)+" failed (#"+((string)status)+").  Please retry your last operation.");
+			#ifdef COMMS_HARDWIRENODE
+			llOwnerSay(body);
+			llOwnerSay("Hardwired node in effect "+((string)COMMS_HARDWIRENODE));
+			comms_node=COMMS_HARDWIRENODE;
+			#else
 			comms_node=(comms_node+1)%6;
+			#endif
 		}
 		else
 		{
