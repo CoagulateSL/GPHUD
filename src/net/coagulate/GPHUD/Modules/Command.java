@@ -84,7 +84,7 @@ public abstract class Command {
 	@Nonnull
 	public final Response run(@Nonnull final State state,
 	                          @Nonnull final String[] args) {
-		for (int i=0;i<args.length;i++) { System.out.println("Arg "+i+" : "+args[i]); }
+		//for (int i=0;i<args.length;i++) { System.out.println("Arg "+i+" : "+args[i]); }
 		final SafeMap map=new SafeMap();
 		int arg=0;
 		for (final Argument argument: getArguments()) {
@@ -94,10 +94,10 @@ public abstract class Command {
 			String v="";
 			if (arg<args.length) {
 				v=args[arg];
-				System.out.println("In here for "+arg+" = "+v);
+				//System.out.println("In here for "+arg+" = "+v);
 			}
 			map.put(argument.getName(),v);
-			System.out.println("Command "+getFullName()+" mapped "+argument.getName()+"-"+arg+"/"+args.length+"->"+v);
+			//System.out.println("Command "+getFullName()+" mapped "+argument.getName()+"-"+arg+"/"+args.length+"->"+v);
 			arg++;
 		}
 		return run(state,map);

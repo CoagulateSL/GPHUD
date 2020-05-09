@@ -366,11 +366,11 @@ public abstract class Login {
 				if (attribute.getType()==Attribute.ATTRIBUTETYPE.FLOAT || attribute.getType()==Attribute.ATTRIBUTETYPE.INTEGER) {
 					final KVValue maxkv=st.getKV("characters."+attribute.getName()+"MAX");
 					Float max=null;
-					System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv);
+					//System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv);
 					if (!maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
-					System.out.println("Max is "+max);
+					//System.out.println("Max is "+max);
 					if (max!=null && max>0) {
-						System.out.println("About to check "+max+" > "+Float.parseFloat(value));
+						//System.out.println("About to check "+max+" > "+Float.parseFloat(value));
 						if (Float.parseFloat(value)>max) {
 							final JSONObject json=new JSONObject();
 							json.put("hudtext","Initialising character...")
