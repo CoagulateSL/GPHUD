@@ -127,6 +127,7 @@ public abstract class Command {
 			if (v!=null && v.length()>getMaximumLength(arg)) {
 				throw new UserInputTooLongException(arg.getName()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
 			}
+			if (arg.type()==ArgumentType.BOOLEAN && v==null) { v="false"; }
 			if (v==null) { arguments.put(arg.getName(),null); }
 			else { arguments.put(arg.getName(),convertArgument(state,arg,v)); }
 		}
