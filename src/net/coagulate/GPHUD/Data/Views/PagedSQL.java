@@ -16,8 +16,6 @@ import net.coagulate.SL.Data.User;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Set;
 
@@ -162,10 +160,10 @@ public abstract class PagedSQL implements Renderable {
 		int rowcount=getRowCount();
 		int pagecount=(int) Math.ceil(((double) rowcount)/pagesize);
 		r+="<tr><td align=center colspan=99999>";
-		String encodedsearchtext="";
-		try { encodedsearchtext=URLEncoder.encode(searchtext,"UTF-8"); }
-		catch (UnsupportedEncodingException e) { encodedsearchtext="Encoder failure"; }
-		r+="<button type=submit name="+prefix+"-submit value="+prefix+"-submit>Search:</button><input type=text name="+prefix+"-search value=\""+encodedsearchtext+"\">";
+		//String encodedsearchtext="";
+		//try { encodedsearchtext=URLEncoder.encode(searchtext,"UTF-8"); }
+		//catch (UnsupportedEncodingException e) { encodedsearchtext="Encoder failure"; }
+		r+="<button type=submit name="+prefix+"-submit value="+prefix+"-submit>Search:</button><input type=text name="+prefix+"-search value=\""+searchtext+"\">";
 		r+="&nbsp;&nbsp;&nbsp;";
 		r+="<input type=hidden name="+prefix+"-page-default value="+page+">";
 		r+="<button "+(page==0?"disabled":"")+" type=submit name="+prefix+"-page value="+(page-1)+">&lt;&lt;</button>";
