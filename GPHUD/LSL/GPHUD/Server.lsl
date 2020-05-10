@@ -78,6 +78,7 @@ report(string msg,vector col) {
 #include "SL/LSL/GPHUD/GPHUDHeader.lsl"
 
 setup() {
+	setDev(FALSE);
 	comms_setup();
 	if (BOOTSTAGE==BOOT_COMMS) { 
 		key k=LOGO_COAGULATE;

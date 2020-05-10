@@ -271,7 +271,7 @@ default {
 				llOwnerSay("Hardwired node in effect "+((string)COMMS_HARDWIRENODE));
 				comms_node=COMMS_HARDWIRENODE;
 				#else
-				comms_node=(comms_node+1)%6;
+				comms_node=((integer)llFrand(6.0));
 				#endif
 			}
 			setup();
