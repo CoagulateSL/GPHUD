@@ -129,6 +129,14 @@ public class Char extends TableRow {
 		return get(id);
 	}
 
+	public static Char findNullable(final Instance instance,
+	                                final String name) {
+		Results results=GPHUD.getDB().dq("select characterid from characters where name like ? and instanceid=?",name,instance.getId());
+		if (results.empty()) { return null; }
+		if (results.size()>1) { return null; }
+		return Char.get(results.first().getInt());
+	}
+
 	/**
 	 * Gets a list of all active characters
 	 * Specifically those with inbound URLs

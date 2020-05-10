@@ -3,8 +3,8 @@ package net.coagulate.GPHUD.Modules.Characters;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.Views.AuditTable;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
@@ -180,7 +180,7 @@ public abstract class View {
 		f.add(new TextSubHeader("KV Configuration"));
 		GenericConfiguration.page(st,values,c,simulated);
 		f.add(new TextSubHeader("Audit Trail"));
-		f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(),null,c),st.getAvatar().getTimeZone()));
+		f.add(new AuditTable(st,"audit",values,c));
 	}
 
 	@Nonnull

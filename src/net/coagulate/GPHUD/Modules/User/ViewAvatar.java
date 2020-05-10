@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.User;
 
-import net.coagulate.Core.Database.Results;
-import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.DateTime;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -74,27 +72,6 @@ public abstract class ViewAvatar {
 
 		kvtable.openRow().add("SuperUser").add(""+a.isSuperAdmin());
 		kvtable.openRow().add("DeveloperKey").add(""+a.hasDeveloperKey());
-		if (!(full || fullinstance)) {
-			kvtable.openRow().add("<b>Avatar</b>").add("<b>Character</b>").add("<b>Instance</b>");
-			for (final Char c: Char.getCharacters(a)) { kvtable.openRow().add("").add(c).add(c.getInstance()); }
-			final Results rows=net.coagulate.GPHUD.Data.Audit.getAudit(st.getInstance(),a,null);
-			final Table table=net.coagulate.GPHUD.Data.Audit.formatAudit(rows,a.getTimeZone());
-			st.form().add(table);
-
-
-			if (st.getAvatarNullable()!=null && st.getAvatarNullable()==a) {
-				kvtable.add(new Form(st,true,"../settimezone","Set TimeZone","timezone",tz));
-			}
-			//for (String key:kv.keySet()) {
-			//    String value=kv.get(key);
-			//    kvtable.openRow().add(key).add(value);
-			//}
-			if ("SYSTEM".equals(a.getName())) {
-				f.add("<p><i>SYSTEM is a fake avatar used internally as an 'Invoking Avatar' for commands that usually require an active Avatar/Character, but there is no "+"appropriate caller, e.g. Visitation XP is awarded by the SYSTEM avatar to prevent confusion and clutter in some other character/avatar's "+"audit"+" log</i></p>");
-			}
-			f.add(new TextSubHeader("Audit Trail"));
-			f.add(Audit.formatAudit(Audit.getAudit(st.getInstance(),a,null),st.getAvatarNullable().getTimeZone()));
-		}
 	}
 
 	@URLs(url="/avatars/settimezone")
