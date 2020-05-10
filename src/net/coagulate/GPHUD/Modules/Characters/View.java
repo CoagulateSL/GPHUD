@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
@@ -177,10 +178,46 @@ public abstract class View {
 			ViewNotes.viewNotes(st,c.getOwner(),c,true);
 		}
 		if (brief) { return; }
-		f.add(new TextSubHeader("KV Configuration"));
-		GenericConfiguration.page(st,values,c,simulated);
-		f.add(new TextSubHeader("Audit Trail"));
-		f.add(new AuditTable(st,"audit",values,c));
+		f.add("<a href=\"../viewkv/"+c.getId()+"\">View Character Configuration (KV Store)</a><br>");
+		f.add("<a href=\"../audit/"+c.getId()+"\">View Character Audit Trail</a><br>");
+	}
+
+	@URLs(url="/characters/audit/*")
+	public static void viewCharacterAudit(@Nonnull final State st,
+	                                      @Nonnull final SafeMap values) {
+		Form f=st.form();
+		final String[] split=st.getDebasedURL().split("/");
+		//System.out.println(split.length);
+		if (split.length==4) {
+			final String id=split[split.length-1];
+			final Char c=Char.get(Integer.parseInt(id));
+			final State simulated=st.simulate(c);
+			f.add("<a href=\"../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
+			f.add(new TextSubHeader("Audit Trail"));
+			f.add(new AuditTable(st,"audit",values,c));
+		}
+		else {
+			throw new UserInputValidationParseException("Failed to extract character id");
+		}
+	}
+
+	@URLs(url="/characters/viewkv/*")
+	public static void viewCharacterKV(@Nonnull final State st,
+	                                   @Nonnull final SafeMap values) {
+		Form f=st.form();
+		final String[] split=st.getDebasedURL().split("/");
+		//System.out.println(split.length);
+		if (split.length==4) {
+			final String id=split[split.length-1];
+			final Char c=Char.get(Integer.parseInt(id));
+			final State simulated=st.simulate(c);
+			f.add("<a href=\"../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
+			f.add(new TextSubHeader("KV Configuration"));
+			GenericConfiguration.page(st,values,c,simulated);
+		}
+		else {
+			throw new UserInputValidationParseException("Failed to extract character id");
+		}
 	}
 
 	@Nonnull
