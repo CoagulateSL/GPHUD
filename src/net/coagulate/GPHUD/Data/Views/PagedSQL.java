@@ -176,7 +176,6 @@ public abstract class PagedSQL implements Renderable {
 	}
 
 	private int getRowCount() {
-		System.out.println(getCountSQL());
 		return GPHUD.getDB().dqinn(getCountSQL());
 	}
 
