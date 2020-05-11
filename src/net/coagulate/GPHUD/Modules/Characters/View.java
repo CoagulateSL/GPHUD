@@ -179,7 +179,7 @@ public abstract class View {
 		if (st.hasModule("notes")) {
 			ViewNotes.viewNotes(st,c.getOwner(),c,true,false);
 		}
-		for (Pool pool: CharacterPool.getPools(st)) {
+		for (final Pool pool: CharacterPool.getPools(st)) {
 			f.add("<a href=\"../viewpool/"+c.getId()+"/"+pool.fullName()+"\">View "+pool.fullName()+" History</a><br>");
 		}
 		f.add("<a href=\"../viewkv/"+c.getId()+"\">View Character Configuration (KV Store)</a><br>");
@@ -189,7 +189,7 @@ public abstract class View {
 	@URLs(url="/characters/audit/*")
 	public static void viewCharacterAudit(@Nonnull final State st,
 	                                      @Nonnull final SafeMap values) {
-		Form f=st.form();
+		final Form f=st.form();
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		if (split.length==4) {
@@ -208,7 +208,7 @@ public abstract class View {
 	@URLs(url="/characters/viewpool/*")
 	public static void viewCharacterPool(@Nonnull final State st,
 	                                     @Nonnull final SafeMap values) {
-		Form f=st.form();
+		final Form f=st.form();
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		if (split.length==5) {
@@ -217,7 +217,7 @@ public abstract class View {
 			final Char c=Char.get(Integer.parseInt(id));
 			final State simulated=st.simulate(c);
 			f.add("<a href=\"../../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
-			Pool pool=Modules.getPool(st,poolname);
+			final Pool pool=Modules.getPool(st,poolname);
 			f.add(new TextSubHeader("Pool Log: "+pool.fullName()));
 			f.add("<p><i>"+pool.description()+(pool.isGenerated()?" (Instance Specific)":""));
 			//GenericConfiguration.page(st,values,c,simulated);
@@ -232,7 +232,7 @@ public abstract class View {
 	@URLs(url="/characters/viewkv/*")
 	public static void viewCharacterKV(@Nonnull final State st,
 	                                   @Nonnull final SafeMap values) {
-		Form f=st.form();
+		final Form f=st.form();
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		if (split.length==4) {

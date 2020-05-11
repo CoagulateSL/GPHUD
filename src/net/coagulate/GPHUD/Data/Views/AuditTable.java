@@ -18,32 +18,31 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 public class AuditTable extends PagedSQL {
 
 	final NameCache cache=new NameCache();
-	Char forchar=null;
-	String timezone="PST";
+	final String timezone;
+	Char forchar;
 	String olddate="";
-	String cachedwhere=null;
+	String cachedwhere;
 
 	/**
 	 * Defines an audit table view.
 	 */
-	public AuditTable(State state,
-	                  String prefix,
-	                  SafeMap parameters) {
+	public AuditTable(final State state,
+	                  final String prefix,
+	                  final SafeMap parameters) {
 		super(state,prefix,parameters);
 		timezone=state.getAvatar().getTimeZone();
 	}
 
-	public AuditTable(State state,
-	                  String prefix,
-	                  SafeMap parameters,
-	                  Char forchar) {
+	public AuditTable(final State state,
+	                  final String prefix,
+	                  final SafeMap parameters,
+	                  final Char forchar) {
 		super(state,prefix,parameters);
 		timezone=state.getAvatar().getTimeZone();
 		this.forchar=forchar;
 	}
 
 	// ----- Internal Instance -----
-	@Nonnull
 	@Override
 	protected int getRowCount() {
 		return db().dqinn("select count(*) from audit where instanceid="+instance.getId()+" "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit());
@@ -58,7 +57,7 @@ public class AuditTable extends PagedSQL {
 	@Override
 	@Nonnull
 	protected List<String> getHeaders() {
-		List<String> headers=new ArrayList<>();
+		final List<String> headers=new ArrayList<>();
 		headers.add(timezone);
 		headers.add("");
 		headers.add("Source");
@@ -73,9 +72,10 @@ public class AuditTable extends PagedSQL {
 	}
 
 	@Override
-	protected String formatRow(State state,
-	                           @Nonnull ResultsRow row) {
-		String timezone=state.getAvatar().getTimeZone();
+	@Nonnull
+	protected String formatRow(@Nonnull final State state,
+	                           @Nonnull final ResultsRow row) {
+		final String timezone=state.getAvatar().getTimeZone();
 		String ret="";
 		final String[] datetime=fromUnixTime(row.getString("timedate"),timezone).split(" ");
 		if (!olddate.equals(datetime[0])) {
@@ -113,9 +113,7 @@ public class AuditTable extends PagedSQL {
 		ret+="</td>";
 		// if we have nothing on one side
 		ret+="<td>";
-		if ((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty())) {
-		}
-		else {
+		if (!((srcav.isEmpty() && srcch.isEmpty()) || (dstav.isEmpty() && dstch.isEmpty()))) {
 			ret+="&rarr;";
 		}
 		ret+="</td>";
@@ -137,8 +135,7 @@ public class AuditTable extends PagedSQL {
 		ret+=oldvalue.asHtml(state,true);
 		ret+="</td>";
 		ret+="<td>";
-		if (oldvaluestr.isEmpty() && newvaluestr.isEmpty()) {}
-		else { ret+="&rarr;"; }
+		if (!(oldvaluestr.isEmpty() && newvaluestr.isEmpty())) { ret+="&rarr;"; }
 		ret+="</td>";
 		ret+="<td>";
 		ret+=newvalue.asHtml(state,true);
@@ -153,8 +150,8 @@ public class AuditTable extends PagedSQL {
 		if (cachedwhere!=null) { return cachedwhere; }
 		cachedwhere="";
 		if (!searchtext.isEmpty()) {
-			User avatar=User.findUsernameNullable(searchtext,false);
-			Char character=Char.findNullable(instance,searchtext);
+			final User avatar=User.findUsernameNullable(searchtext,false);
+			final Char character=Char.findNullable(instance,searchtext);
 			cachedwhere=" and ( 1=2 ";
 			if (avatar!=null) {
 				cachedwhere+=" or sourceavatarid="+avatar.getId()+" or destavatarid="+avatar.getId()+" ";

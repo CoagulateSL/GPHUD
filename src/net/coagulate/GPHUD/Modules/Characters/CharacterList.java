@@ -36,9 +36,9 @@ public class CharacterList {
 			return;
 		}
 
-		int totalrows=list.size();
+		final int totalrows=list.size();
 
-		Form f=st.form();
+		final Form f=st.form();
 		f.add("<table border=1>");
 		f.add(getPageRow(page,totalrows,searchtext));
 		f.add(list.get(0).headers(st).asHtml(st,true));
@@ -47,18 +47,18 @@ public class CharacterList {
 		int end=(page+1)*50;
 		if (end >= list.size()) { end=list.size()-1; }
 		for (int row=start;row<=end;row++) {
-			CharacterSummary s=list.get(row);
+			final CharacterSummary s=list.get(row);
 			f.add(s.asRow(st).asHtml(st,true));
 		}
 		f.add("</table>");
 	}
 
 	// ----- Internal Statics -----
-	private static String getPageRow(int page,
-	                                 int rowcount,
-	                                 String searchtext) {
+	private static String getPageRow(final int page,
+	                                 final int rowcount,
+	                                 final String searchtext) {
 		String r="";
-		int pagecount=(int) Math.ceil(((double) rowcount)/50);
+		final int pagecount=(int) Math.ceil(((double) rowcount)/50);
 		r+="<tr><td align=center colspan=99999>";
 		r+="<button type=submit name=submit value=submit>Search:</button><input type=text name=search value=\""+searchtext+"\">";
 		r+="&nbsp;&nbsp;&nbsp;";

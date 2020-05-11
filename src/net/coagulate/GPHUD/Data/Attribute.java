@@ -390,7 +390,7 @@ public class Attribute extends TableRow {
 			final GenericXP xp=new GenericXP(getName());
 			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 		}
-		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(this.getClass())) {
+		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
 			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 		}
@@ -416,7 +416,7 @@ public class Attribute extends TableRow {
 			final GenericXP xp=new GenericXP(getName());
 			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
 		}
-		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(this.getClass())) {
+		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
 			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
 		}

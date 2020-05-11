@@ -131,7 +131,7 @@ public class Char extends TableRow {
 
 	public static Char findNullable(final Instance instance,
 	                                final String name) {
-		Results results=GPHUD.getDB().dq("select characterid from characters where name like ? and instanceid=?",name,instance.getId());
+		final Results results=GPHUD.getDB().dq("select characterid from characters where name like ? and instanceid=?",name,instance.getId());
 		if (results.empty()) { return null; }
 		if (results.size()>1) { return null; }
 		return Char.get(results.first().getInt());

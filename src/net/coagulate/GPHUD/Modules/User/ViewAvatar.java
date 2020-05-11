@@ -43,18 +43,9 @@ public abstract class ViewAvatar {
 	public static void viewAvatar(@Nonnull final State st,
 	                              final SafeMap values,
 	                              @Nonnull final User a) {
-		boolean fullinstance=false;
-		boolean full=false;
+		final boolean fullinstance=false;
+		final boolean full=false;
 		final String tz=st.getAvatar().getTimeZone();
-		if (st.getAvatarNullable()==a) {
-			fullinstance=true;
-			full=true;
-		}
-		if (st.hasPermission("Characters.ViewAll")) { fullinstance=true; }
-		if (st.isSuperUser()) {
-			fullinstance=true;
-			full=true;
-		}
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextSubHeader(a.getName()));

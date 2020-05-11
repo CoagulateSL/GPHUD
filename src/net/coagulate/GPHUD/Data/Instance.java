@@ -319,8 +319,8 @@ public class Instance extends TableRow {
 	                                                  @Nonnull final String search) {
 		String sortby=st.getDebasedURL().replaceAll("%20"," ");
 		sortby=sortby.replaceFirst(".*?sort=","");
-		User searchuser=User.findUsernameNullable(search,false);
-		Char searchchar=Char.findNullable(st.getInstance(),search);
+		final User searchuser=User.findUsernameNullable(search,false);
+		final Char searchchar=Char.findNullable(st.getInstance(),search);
 		boolean reverse=false;
 		//System.out.println(sortby+" "+reverse);
 		if (sortby.startsWith("-")) {

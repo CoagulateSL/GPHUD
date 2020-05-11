@@ -27,16 +27,16 @@ import java.util.Set;
 public abstract class PagedSQL implements Renderable {
 
 	public String searchtext="";
-	protected int page=0;
-	protected int pagesize=50;
-	String prefix;
-	SafeMap parameters;
-	Instance instance;
+	protected final int pagesize=50;
+	final String prefix;
+	final SafeMap parameters;
+	final Instance instance;
+	protected int page;
 
 	public PagedSQL(@Nonnull final State state,
 	                @Nonnull final String prefix,
 	                @Nonnull final SafeMap parameters) {
-		this.instance=state.getInstance();
+		instance=state.getInstance();
 		this.prefix=prefix;
 		this.parameters=parameters;
 	}
@@ -94,33 +94,33 @@ public abstract class PagedSQL implements Renderable {
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
-	public String asText(State st) {
+	public String asText(final State st) {
 		return "Paged table not supported in text mode";
 	}
 
 	@Nonnull
 	@Override
-	public String asHtml(State st,
-	                     boolean rich) {
+	public String asHtml(final State st,
+	                     final boolean rich) {
 		if (parameters.containsKey(prefix+"-page-default")) { page=Integer.parseInt(parameters.get(prefix+"-page-default")); }
 		if (parameters.containsKey(prefix+"-page")) { page=Integer.parseInt(parameters.get(prefix+"-page")); }
 		if (parameters.containsKey(prefix+"-search")) { searchtext=parameters.get(prefix+"-search"); }
-		String r="<table "+(maxWidth()?"width=100%":"")+">";
+		final StringBuilder r=new StringBuilder("<table "+(maxWidth()?"width=100%":"")+">");
 		// header row
-		r+=getPageRow();
-		r+="<tr>";
-		for (String header: getHeaders()) {
-			r+="<th align=center>"+header+"</th>";
+		r.append(getPageRow());
+		r.append("<tr>");
+		for (final String header: getHeaders()) {
+			r.append("<th align=center>").append(header).append("</th>");
 		}
-		r+="</tr>";
-		Results results=runQuery();
-		for (ResultsRow row: results) {
-			r+="<tr>";
-			r+=formatRow(st,row);
-			r+="</tr>";
+		r.append("</tr>");
+		final Results results=runQuery();
+		for (final ResultsRow row: results) {
+			r.append("<tr>");
+			r.append(formatRow(st,row));
+			r.append("</tr>");
 		}
-		r+="</table>";
-		return r;
+		r.append("</table>");
+		return r.toString();
 	}
 
 	// ----- Internal Instance -----
@@ -137,18 +137,20 @@ public abstract class PagedSQL implements Renderable {
 	/**
 	 * Get the table headers, a map of column name (from DB) to human readable thing
 	 *
-	 * @return
+	 * @return A list of headers
 	 */
 	@Nonnull
 	protected abstract List<String> getHeaders();
 
+	@Nonnull
 	protected abstract String formatRow(@Nonnull final State state,
 	                                    @Nonnull final ResultsRow row);
 
+	@Nonnull
 	private String getPageRow() {
 		String r="";
-		int rowcount=getRowCount();
-		int pagecount=(int) Math.ceil(((double) rowcount)/pagesize);
+		final int rowcount=getRowCount();
+		final int pagecount=(int) Math.ceil(((double) rowcount)/pagesize);
 		r+="<tr><td align=center colspan=99999>";
 		//String encodedsearchtext="";
 		//try { encodedsearchtext=URLEncoder.encode(searchtext,"UTF-8"); }

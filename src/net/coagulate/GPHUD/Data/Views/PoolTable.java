@@ -20,22 +20,22 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 public class PoolTable extends PagedSQL {
 
 	final NameCache cache=new NameCache();
-	Char forchar=null;
-	String timezone="PST";
+	final Char forchar;
+	final String timezone;
 	String olddate="";
-	String cachedwhere=null;
-	String poolname=null;
+	final String poolname;
+	String cachedwhere;
 
 	/**
 	 * Defines an audit table view.
 	 */
 
 
-	public PoolTable(State state,
-	                 String prefix,
-	                 SafeMap parameters,
-	                 Char forchar,
-	                 String poolname) {
+	public PoolTable(final State state,
+	                 final String prefix,
+	                 final SafeMap parameters,
+	                 final Char forchar,
+	                 final String poolname) {
 		super(state,prefix,parameters);
 		timezone=state.getAvatar().getTimeZone();
 		this.forchar=forchar;
@@ -52,7 +52,7 @@ public class PoolTable extends PagedSQL {
 	@Override
 	@Nonnull
 	protected List<String> getHeaders() {
-		List<String> headers=new ArrayList<>();
+		final List<String> headers=new ArrayList<>();
 		headers.add(timezone);
 		headers.add("Source");
 		headers.add("Description");
@@ -61,9 +61,10 @@ public class PoolTable extends PagedSQL {
 	}
 
 	@Override
-	protected String formatRow(State state,
-	                           @Nonnull ResultsRow row) {
-		String timezone=state.getAvatar().getTimeZone();
+	@Nonnull
+	protected String formatRow(@Nonnull final State state,
+	                           @Nonnull final ResultsRow row) {
+		final String timezone=state.getAvatar().getTimeZone();
 		String ret="";
 		final String[] datetime=fromUnixTime(row.getString("timedate"),timezone).split(" ");
 		if (!olddate.equals(datetime[0])) {
@@ -88,7 +89,6 @@ public class PoolTable extends PagedSQL {
 		return ret;
 	}
 
-	@Nonnull
 	@Override
 	protected int getRowCount() {
 		return db().dqinn("select count(*) from characterpools where poolname=? and characterid="+forchar.getId()+" "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit(),
@@ -106,8 +106,8 @@ public class PoolTable extends PagedSQL {
 		if (cachedwhere!=null) { return cachedwhere; }
 		cachedwhere="";
 		if (!searchtext.isEmpty()) {
-			User avatar=User.findUsernameNullable(searchtext,false);
-			Char character=Char.findNullable(instance,searchtext);
+			final User avatar=User.findUsernameNullable(searchtext,false);
+			final Char character=Char.findNullable(instance,searchtext);
 			cachedwhere=" and ( 1=2 ";
 			if (avatar!=null) {
 				cachedwhere+=" or adjustedbyavatar="+avatar.getId()+" ";
