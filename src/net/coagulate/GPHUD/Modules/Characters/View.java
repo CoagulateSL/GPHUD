@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Data.Views.AuditTable;
+import net.coagulate.GPHUD.Data.Views.PoolTable;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
@@ -198,6 +199,30 @@ public abstract class View {
 			f.add("<a href=\"../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
 			f.add(new TextSubHeader("Audit Trail"));
 			f.add(new AuditTable(st,"audit",values,c));
+		}
+		else {
+			throw new UserInputValidationParseException("Failed to extract character id");
+		}
+	}
+
+	@URLs(url="/characters/viewpool/*")
+	public static void viewCharacterPool(@Nonnull final State st,
+	                                     @Nonnull final SafeMap values) {
+		Form f=st.form();
+		final String[] split=st.getDebasedURL().split("/");
+		//System.out.println(split.length);
+		if (split.length==5) {
+			final String id=split[split.length-2];
+			final String poolname=split[split.length-1];
+			final Char c=Char.get(Integer.parseInt(id));
+			final State simulated=st.simulate(c);
+			f.add("<a href=\"../../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
+			Pool pool=Modules.getPool(st,poolname);
+			f.add(new TextSubHeader("Pool Log: "+pool.fullName()));
+			f.add("<p><i>"+pool.description()+(pool.isGenerated()?" (Instance Specific)":""));
+			//GenericConfiguration.page(st,values,c,simulated);
+			f.add(new PoolTable(st,"pool",values,c,poolname));
+
 		}
 		else {
 			throw new UserInputValidationParseException("Failed to extract character id");
