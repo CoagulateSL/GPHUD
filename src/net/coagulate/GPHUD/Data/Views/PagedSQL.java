@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data.Views;
 
+import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.Data.Char;
@@ -104,7 +105,7 @@ public abstract class PagedSQL implements Renderable {
 		if (parameters.containsKey(prefix+"-page-default")) { page=Integer.parseInt(parameters.get(prefix+"-page-default")); }
 		if (parameters.containsKey(prefix+"-page")) { page=Integer.parseInt(parameters.get(prefix+"-page")); }
 		if (parameters.containsKey(prefix+"-search")) { searchtext=parameters.get(prefix+"-search"); }
-		String r="<table width=100%>";
+		String r="<table "+(maxWidth()?"width=100%":"")+">";
 		// header row
 		r+=getPageRow();
 		r+="<tr>";
@@ -122,27 +123,16 @@ public abstract class PagedSQL implements Renderable {
 		return r;
 	}
 
+	// ----- Internal Instance -----
+
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;
 	}
 
-	// ----- Internal Instance -----
+	protected boolean maxWidth() { return true; }
 
-	/**
-	 * Get the SQL query, the base of it, no order, limit parameters
-	 *
-	 * @return
-	 */
-	@Nonnull
-	protected abstract String getSQL();
-
-	/**
-	 * Get the SQL to get the number of rows
-	 */
-	@Nonnull
-	protected abstract String getCountSQL();
 
 	/**
 	 * Get the table headers, a map of column name (from DB) to human readable thing
@@ -175,14 +165,13 @@ public abstract class PagedSQL implements Renderable {
 		return r;
 	}
 
-	private int getRowCount() {
-		return GPHUD.getDB().dqinn(getCountSQL());
+	protected abstract int getRowCount();
+
+	protected abstract Results runQuery();
+
+	protected final String getSQLLimit() {
+		return " limit "+(page*pagesize)+","+((page+1)*pagesize);
 	}
 
-	private final Results runQuery() {
-		String sql=getSQL();
-		sql+=" limit "+(page*pagesize)+","+((page+1)*pagesize);
-		return GPHUD.getDB().dq(sql);
-	}
-
+	protected final DBConnection db() { return GPHUD.getDB(); }
 }

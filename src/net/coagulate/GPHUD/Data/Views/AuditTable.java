@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data.Views;
 
+import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.NameCache;
@@ -44,14 +45,14 @@ public class AuditTable extends PagedSQL {
 	// ----- Internal Instance -----
 	@Nonnull
 	@Override
-	protected String getSQL() {
-		return "select * from audit where instanceid="+instance.getId()+" "+getAdditionalWhere()+" order by timedate desc";
+	protected int getRowCount() {
+		return db().dqinn("select count(*) from audit where instanceid="+instance.getId()+" "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit());
 	}
 
 	@Nonnull
 	@Override
-	protected String getCountSQL() {
-		return "select count(*) from audit where instanceid="+instance.getId()+" "+getAdditionalWhere()+" order by timedate desc";
+	protected Results runQuery() {
+		return db().dq("select * from audit where instanceid="+instance.getId()+" "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit());
 	}
 
 	@Override
