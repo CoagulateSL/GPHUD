@@ -3,10 +3,8 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
-import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.User.UserInputTooLongException;
+import net.coagulate.Core.Exceptions.User.*;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Inputs.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -120,16 +118,24 @@ public abstract class Command {
 
 	public final Response run(@Nonnull final State state,
 	                          @Nonnull final SafeMap parametermap) {
+		state.parameterdebugraw=parametermap;
 		final Map<String,Object> arguments=new HashMap<>();
 		for (final Argument arg: getArguments()) {
 			String v=parametermap.get(arg.getName()).trim();
 			if (v.isEmpty() || "-".equals(v)) { v=null; }
 			if (v!=null && v.length()>getMaximumLength(arg)) {
-				throw new UserInputTooLongException(arg.getName()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
+				return new ErrorResponse(arg.getName()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
 			}
 			if (arg.type()==ArgumentType.BOOLEAN && v==null) { v="false"; }
 			if (v==null) { arguments.put(arg.getName(),null); }
-			else { arguments.put(arg.getName(),convertArgument(state,arg,v)); }
+			else {
+				try {
+					arguments.put(arg.getName(),convertArgument(state,arg,v));
+				}
+				catch (UserException conversionerror) {
+					return new ErrorResponse("Argument "+arg.getName()+" failed : "+conversionerror.getLocalizedMessage());
+				}
+			}
 		}
 		return run(state,arguments);
 	}
@@ -412,6 +418,7 @@ public abstract class Command {
 	@Nonnull
 	public final Response run(@Nonnull final State state,
 	                          @Nonnull final Map<String,Object> parametermap) {
+		state.parameterdebug=parametermap;
 		checkCallingInterface(state);
 		// check permission
 		if (!requiresPermission().isEmpty() && !state.hasPermission(requiresPermission())) {
@@ -444,12 +451,12 @@ public abstract class Command {
 		switch (type) {
 			case TEXT_INTERNAL_NAME:
 				if (v.matches(".*[^a-zA-Z0-9].*")) {
-					return new ErrorResponse(argument.getName()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
+					throw new UserInputValidationFilterException(argument.getName()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
 				}
 				// dont put anything here, follow up into the next thing
 			case TEXT_CLEAN:
 				if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
-					return new ErrorResponse(argument.getName()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
+					throw new UserInputValidationFilterException(argument.getName()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
 				}
 				// dont put anything here, follow up into the next thing
 			case TEXT_ONELINE:
@@ -473,18 +480,18 @@ public abstract class Command {
 					return Integer.valueOf(v);
 				}
 				catch (@Nonnull final NumberFormatException e) {
-					return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
+					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.getName(),e);
 				}
 			case FLOAT:
 				try {
 					return Float.valueOf(v);
 				}
 				catch (@Nonnull final NumberFormatException e) {
-					return new ErrorResponse("Unable to convert '"+v+"' to a number for argument "+argument.getName());
+					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.getName(),e);
 				}
 			case MODULE:
 				final Module m=Modules.get(state,v);
-				if (m==null) { return new ErrorResponse("Unable to resolve module "+v); }
+				if (m==null) { return new UserInputLookupFailureException("Unable to resolve module "+v); }
 				return m;
 			//case FLOAT:
 			case ATTRIBUTE_WRITABLE:
@@ -518,7 +525,7 @@ public abstract class Command {
 						targchar=Char.getActive(a,state.getInstance());
 					}
 					catch (@Nonnull final NoDataException e) {
-						return new ErrorResponse("Unable to find character of avatar named '"+v+"'");
+						throw new UserInputLookupFailureException("Unable to find character of avatar named '"+v+"'",e);
 					}
 				}
 				else {
@@ -526,7 +533,7 @@ public abstract class Command {
 				}
 				if (targchar!=null) { return targchar; }
 				else {
-					return new ErrorResponse("Unable to find character named '"+v+"'");
+					throw new UserInputLookupFailureException("Unable to find character named '"+v+"'");
 				}
 			case REGION:
 				return assertNotNull(Region.findNullable(v,false),v,"region name");
@@ -539,7 +546,7 @@ public abstract class Command {
 			case AVATAR:
 			case AVATAR_NEAR:
 				final User user=User.findUsernameNullable(v,false);
-				if (user==null) { return new ErrorResponse("Unable to find a known avatar named '"+v+"'"); }
+				if (user==null) { throw new UserInputLookupFailureException("Unable to find a known avatar named '"+v+"'"); }
 				return assertNotNull(user,v,"avatar");
 			default:
 				throw new SystemImplementationException("Unhandled argument type "+type+" in converter for argument "+argument.getName());
