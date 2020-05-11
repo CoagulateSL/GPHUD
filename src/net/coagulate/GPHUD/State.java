@@ -133,6 +133,12 @@ public class State extends DumpableState {
 	@Nullable
 	private Boolean instanceowner;
 	private boolean elevated;
+	@Nullable
+	public SafeMap parameterdebugraw;
+	@Nullable
+	public Map<String,Object> parameterdebug;
+	@Nullable
+	public List<Object> parameterdebugfinal;
 
 	public State() {}
 
