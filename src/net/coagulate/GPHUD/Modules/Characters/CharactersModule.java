@@ -165,7 +165,7 @@ public class CharactersModule extends ModuleAnnotation {
 		final int max=st.getKV("Characters."+attribute+"max").intValue();
 		if (max!=0) {
 			if (existing >= max) {
-				throw new UserInputStateException("You may not increase "+attribute+" any further, the maximum is "+max);
+				return new ErrorResponse("You may not increase "+attribute+" any further, the maximum is "+max);
 			}
 		}
 		final String localstr=st.getKV(st.getCharacter(),"Characters."+attribute);
