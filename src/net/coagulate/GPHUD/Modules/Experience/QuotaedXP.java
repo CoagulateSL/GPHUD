@@ -50,7 +50,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 	 * Name of the KV that controls the period (in days)
 	 */
 	@Nonnull
-	public String periodKV(final State st) { throw new SystemImplementationException("Override this method!"); }
+	public abstract String periodKV(final State st);// { throw new SystemImplementationException("Override this method!"); }
 
 	@Nonnull
 	public Float period(@Nonnull final State st) { return st.getKV(periodKV(st)).floatValue(); }

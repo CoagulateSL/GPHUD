@@ -47,7 +47,7 @@ public class GenericXPPool extends Pool {
 		final State targetstate=State.getNonSpatial(target);
 		final float period=targetstate.getKV(fullName()+"XPPeriod").floatValue();
 		final int maxxp=targetstate.getKV(fullName()+"XPLimit").intValue();
-		final Pool pool=Modules.getPool(targetstate,"Experience."+myname+"XP");
+		final Pool pool=Modules.getPool(targetstate,"Experience."+myname);
 		final int awarded=CharacterPool.sumPoolDays(target,pool,period);
 		if (awarded >= maxxp) {
 			throw new UserInputStateException("This character has already reached their "+pool.name()+" XP limit.  They will next be eligable for a point in "+CharacterPool.poolNextFree(
@@ -62,7 +62,7 @@ public class GenericXPPool extends Pool {
 		}
 		if (reason==null) { throw new UserInputEmptyException("You must supply a reason"); }
 		// else award xp :P
-		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add",pool.name()+"XP",null,ammount+"",reason);
+		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add",pool.name(),null,ammount+"",reason);
 		CharacterPool.addPool(st,target,pool,ammount,reason);
 		if (target!=st.getCharacterNullable()) {
 			if (incontext) {

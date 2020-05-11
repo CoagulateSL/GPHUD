@@ -5,6 +5,7 @@ import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Data.Views.AuditTable;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interface;
@@ -135,7 +136,7 @@ public abstract class View {
 		kvtable.openRow().add(new Cell(new TextSubHeader("Attributes"),5));
 		final Set<String> experiences=new HashSet<>();
 		for (final Attribute a: st.getAttributes()) {
-			if (a.getType()==EXPERIENCE) { experiences.add(a.getName()+"XP"); }
+			if (a.getType()==EXPERIENCE) { experiences.add(a.getName()); }
 		}
 		for (final Attribute a: st.getAttributes()) {
 			String content="";
@@ -175,9 +176,11 @@ public abstract class View {
 			kvtable.add(content);
 		}
 		if (st.hasModule("notes")) {
-			ViewNotes.viewNotes(st,c.getOwner(),c,true);
+			ViewNotes.viewNotes(st,c.getOwner(),c,true,false);
 		}
-		if (brief) { return; }
+		for (Pool pool: CharacterPool.getPools(st)) {
+			f.add("<a href=\"../viewpool/"+c.getId()+"/"+pool.fullName()+"\">View "+pool.fullName()+" History</a><br>");
+		}
 		f.add("<a href=\"../viewkv/"+c.getId()+"\">View Character Configuration (KV Store)</a><br>");
 		f.add("<a href=\"../audit/"+c.getId()+"\">View Character Audit Trail</a><br>");
 	}

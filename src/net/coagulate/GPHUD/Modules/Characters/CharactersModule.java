@@ -71,7 +71,6 @@ public class CharactersModule extends ModuleAnnotation {
 			}
 		}
 		if (attr==null) { throw new SystemConsistencyException("Failed to resolve attribute definition "+template); }
-		//System.out.println(attr);
 		if (attr.isKV()) {
 			return st.getKV("characters."+template).value();
 		}
