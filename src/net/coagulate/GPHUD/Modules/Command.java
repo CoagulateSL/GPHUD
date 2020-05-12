@@ -490,7 +490,7 @@ public abstract class Command {
 					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.getName(),e);
 				}
 			case MODULE:
-				final Module m=Modules.get(state,v);
+				final Module m=Modules.get(null,v); // null to disable enablement check :)
 				if (m==null) { return new UserInputLookupFailureException("Unable to resolve module "+v); }
 				return m;
 			//case FLOAT:
