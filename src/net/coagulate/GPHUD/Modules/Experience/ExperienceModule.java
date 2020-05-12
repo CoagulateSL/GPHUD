@@ -85,7 +85,7 @@ public class ExperienceModule extends ModuleAnnotation {
 		if (!permitted) {
 			return new ErrorResponse("You require permission Experience.award"+attr.getName()+"XP to execute this command");
 		}
-		final Pool p=Modules.getPool(st,"Experience."+type+"XP");
+		final Pool p=Modules.getPool(st,"Experience."+type);
 		final GenericXPPool gen=(GenericXPPool) p;
 		gen.awardXP(st,target,reason,ammount,incontext);
 		return new OKResponse("Awarded "+ammount+" "+p.name()+" to "+target.getName());
@@ -107,7 +107,7 @@ public class ExperienceModule extends ModuleAnnotation {
 		if (st.hasModule("Faction")) { ret.add(new FactionXP(-1)); }
 		for (final Attribute attr: st.getAttributes()) {
 			if (attr.getType()==EXPERIENCE) {
-				ret.add(new GenericXP(attr.getName()+"XP"));
+				ret.add(new GenericXP(attr.getName()));
 			}
 		}
 		return ret;
@@ -171,7 +171,7 @@ public class ExperienceModule extends ModuleAnnotation {
 			if (st.getInstanceNullable()==null) { return pools; }
 			for (final Attribute attr: st.getAttributes()) {
 				if (attr.getType()==EXPERIENCE) {
-					pools.put(attr.getName()+"XP",new GenericXPPool(attr.getName()));
+					pools.put(attr.getName(),new GenericXPPool(attr.getName()));
 				}
 			}
 		}
@@ -183,7 +183,7 @@ public class ExperienceModule extends ModuleAnnotation {
 		final Map<String,Permission> perms=super.getPermissions(st);
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getType()==EXPERIENCE) {
-				perms.put("award"+a.getName()+"XP",new GenericXPAwardPermission(a.getName()));
+				perms.put("award"+a.getName(),new GenericXPAwardPermission(a.getName()));
 			}
 		}
 		return perms;

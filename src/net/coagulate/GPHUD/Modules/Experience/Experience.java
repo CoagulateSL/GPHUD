@@ -65,7 +65,7 @@ public abstract class Experience {
 		}
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getType()==EXPERIENCE) {
-				sum+=CharacterPool.sumPool(character,Modules.getPool(st,"Experience."+a.getName()+"XP"));
+				sum+=CharacterPool.sumPool(character,Modules.getPool(st,"Experience."+a.getName()));
 			}
 		}
 		return sum;

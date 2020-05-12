@@ -26,7 +26,8 @@ public class ViewNotes {
 	public static void viewNotes(@Nonnull final State st,
 	                             @Nonnull final User targetuser,
 	                             @Nonnull final Char targetchar,
-	                             final boolean top3only) {
+	                             final boolean top3only,
+	                             final boolean header) {
 		final boolean isadmin=st.hasPermission("Notes.View");
 		if (!isadmin) {
 			// if not an admin, can only view our OWN public notes
@@ -39,7 +40,7 @@ public class ViewNotes {
 		// we either have notes, or the user is an admin, in which case the 'add note' button makes this section barely worth rendering :P
 		//
 		final Form f=st.form();
-		f.add(new TextSubHeader("Administrator Notes (Last three only)"));
+		if (header) { f.add(new TextSubHeader("Administrator Notes (Last three only)")); }
 		if (!notes.isEmpty()) {
 			f.add(formatNotes(st,notes,st.getAvatar().getTimeZone()));
 			final Table buttons=new Table();

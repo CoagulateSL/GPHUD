@@ -315,9 +315,12 @@ public class Instance extends TableRow {
 	 * @return A list of CharacterSummary objects
 	 */
 	@Nonnull
-	public List<CharacterSummary> getCharacterSummary(@Nonnull final State st) {
+	public List<CharacterSummary> getCharacterSummary(@Nonnull final State st,
+	                                                  @Nonnull final String search) {
 		String sortby=st.getDebasedURL().replaceAll("%20"," ");
 		sortby=sortby.replaceFirst(".*?sort=","");
+		final User searchuser=User.findUsernameNullable(search,false);
+		final Char searchchar=Char.findNullable(st.getInstance(),search);
 		boolean reverse=false;
 		//System.out.println(sortby+" "+reverse);
 		if (sortby.startsWith("-")) {
@@ -333,7 +336,21 @@ public class Instance extends TableRow {
 		for (final ResultsRow r: dq("select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'",getId())) {
 			groupheaders.add(r.getStringNullable());
 		}
-		for (final ResultsRow r: dq("select * from characters where instanceid=?",getId())) {
+		String additional="";
+		if (searchuser!=null || searchchar!=null) {
+			additional=" and (";
+			if (searchchar!=null) {
+				additional+="characterid="+searchchar.getId();
+			}
+			if (searchuser!=null && searchchar!=null) {
+				additional+=" or ";
+			}
+			if (searchuser!=null) {
+				additional+=" owner="+searchuser.getId();
+			}
+			additional+=") ";
+		}
+		for (final ResultsRow r: dq("select * from characters where instanceid=? "+additional,getId())) {
 			final int retired=r.getInt("retired");
 			final int charid=r.getInt("characterid");
 			final CharacterSummary cr=new CharacterSummary();

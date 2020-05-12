@@ -26,10 +26,10 @@ public class GenericXP extends QuotaedXP {
 	public String poolName(final State st) {return "Experience."+myname;}
 
 	@Nonnull
-	public String quotaKV(final State st) {return "Experience."+myname+"Limit"; }
+	public String quotaKV(final State st) {return "Experience."+myname+"XPLimit"; }
 
 	@Nonnull
-	public String periodKV(final State st) { return "Experience."+myname+"Period"; }
+	public String periodKV(final State st) { return "Experience."+myname+"XPPeriod"; }
 
 	@Nonnull
 	public String getName() { return myname; }

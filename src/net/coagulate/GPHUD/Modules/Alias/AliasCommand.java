@@ -145,6 +145,7 @@ public class AliasCommand extends Command {
 	@Nonnull
 	public String getName() { return name; }
 
+	// ----- Internal Instance -----
 	@Override
 	protected Response execute(final State state,
 	                           final Map<String,Object> arguments) {
@@ -161,7 +162,7 @@ public class AliasCommand extends Command {
 		}
 
 		if (arguments.containsKey("target")) {
-			Object vobject=arguments.get("target");
+			final Object vobject=arguments.get("target");
 			if (vobject instanceof String) {
 				String v=(String) vobject;
 				final Char targchar;
@@ -209,6 +210,5 @@ public class AliasCommand extends Command {
 		}
 		return getTargetCommand().run(state,arguments);
 	}
-	// ----- Internal Instance -----
 
 }

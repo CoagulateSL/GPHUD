@@ -6,6 +6,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.GPHUD.Modules.Experience.GenericXP;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
@@ -377,6 +378,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nullable
 	public String getCharacterValue(@Nonnull final State st) {
+		//System.out.println("Attr:"+getName()+" is "+getType()+" of "+getClass().getSimpleName());
 		if (isKV()) { return st.getKV("Characters."+getName()).value(); }
 		if (getType()==GROUP) {
 			if (getSubType()==null) { return null; }
@@ -384,13 +386,15 @@ public class Attribute extends TableRow {
 			if (cg==null) { return null; }
 			return cg.getName();
 		}
-		if (getType()==POOL || getType()==EXPERIENCE) {
-			if (this instanceof QuotaedXP) {
-				final QuotaedXP xp=(QuotaedXP) this;
-				return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
-			}
-			else { return "POOL"; }
+		if (getType()==EXPERIENCE) {
+			final GenericXP xp=new GenericXP(getName());
+			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 		}
+		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
+			final QuotaedXP xp=(QuotaedXP) this;
+			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
+		}
+		if (getType()==POOL) { return "POOL"; }
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
 
@@ -408,13 +412,15 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public String getCharacterValueDescription(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters."+getName()).path(); }
-		if (getType()==POOL || getType()==EXPERIENCE) {
-			if (this instanceof QuotaedXP) {
-				final QuotaedXP xp=(QuotaedXP) this;
-				return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
-			}
-			else { return "POOL"; }
+		if (getType()==EXPERIENCE) {
+			final GenericXP xp=new GenericXP(getName());
+			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
 		}
+		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
+			final QuotaedXP xp=(QuotaedXP) this;
+			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
+		}
+		if (getType()==POOL) { return "POOL"; }
 		if (getType()==GROUP) { return ""; }
 		throw new SystemImplementationException("Unhandled type "+getType());
 	}
