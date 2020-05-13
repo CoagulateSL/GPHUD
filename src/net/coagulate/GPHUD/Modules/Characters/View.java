@@ -179,7 +179,7 @@ public abstract class View {
 		if (st.hasModule("notes")) {
 			ViewNotes.viewNotes(st,c.getOwner(),c,true,false);
 		}
-		for (final Pool pool: CharacterPool.getPools(st)) {
+		for (final Pool pool: CharacterPool.getPools(st,c)) {
 			f.add("<a href=\"../viewpool/"+c.getId()+"/"+pool.fullName()+"\">View "+pool.fullName()+" History</a><br>");
 		}
 		f.add("<a href=\"../viewkv/"+c.getId()+"\">View Character Configuration (KV Store)</a><br>");

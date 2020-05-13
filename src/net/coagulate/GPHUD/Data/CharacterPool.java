@@ -253,14 +253,15 @@ public class CharacterPool {
 	 * @return List of Pools
 	 */
 	@Nonnull
-	public static Set<Pool> getPools(@Nonnull final State st) {
+	public static Set<Pool> getPools(@Nonnull final State st,
+	                                 @Nonnull final Char ch) {
 		final Set<Pool> pools=new TreeSet<>();
-		final Results results=db().dq("select distinct poolname from characterpools where characterid=?",st.getCharacter().getId());
+		final Results results=db().dq("select distinct poolname from characterpools where characterid=?",ch.getId());
 		for (final ResultsRow r: results) {
 			final String name=r.getString();
 			if (st.hasModule(name)) {
 				final Pool p=Modules.getPoolNullable(st,name);
-				pools.add(p);
+				if (p!=null) { pools.add(p); }
 			}
 		}
 		return pools;

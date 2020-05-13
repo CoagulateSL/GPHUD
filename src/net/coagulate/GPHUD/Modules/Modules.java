@@ -403,16 +403,17 @@ public abstract class Modules {
 		return convey;
 	}
 
-	@Nonnull // sad but true
+	@Nullable // sad but true
 	public static Pool getPoolNullable(final State st,
 	                                   @Nonnull final String qualifiedname) {
-		return get(st,qualifiedname).getPool(st,extractReference(qualifiedname));
+		try { return getPool(st,qualifiedname); }
+		catch (UserException e) { return null; }
 	}
 
 	@Nonnull
 	public static Pool getPool(final State st,
 	                           @Nonnull final String qualifiedname) {
-		return getPoolNullable(st,qualifiedname);
+		return get(st,qualifiedname).getPool(st,extractReference(qualifiedname));
 	}
 
 	public static void simpleHtml(@Nonnull final State st,
