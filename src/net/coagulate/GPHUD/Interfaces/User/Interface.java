@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.User;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
-import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.ExceptionTools;
@@ -33,10 +32,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static java.util.logging.Level.*;
 
@@ -230,16 +227,12 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final HttpEntity entity=entityrequest.getEntity();
 				// the content, as a stream (:/)
 				contentstream=entity.getContent();
-
 				// make a buffer, read, make a string, voila :P
-				final int available=contentstream.available();
-				if (available==0) { return values; } //not actually a post
-				final byte[] array=new byte[available];
-				final int ammountread=contentstream.read(array);
-				if (ammountread==-1) {
-					throw new SystemInitialisationException("Reading from HTTP Response gave immediate EOF?");
+				String content="";
+				int ammountread=0;
+				try (Scanner scanner=new Scanner(contentstream,StandardCharsets.UTF_8.name())) {
+					content=scanner.useDelimiter("\\A").next();
 				}
-				final String content=new String(array);
 				// parse the string into post variables
 				//System.out.println(content);
 				// this should probably be done "properly"
