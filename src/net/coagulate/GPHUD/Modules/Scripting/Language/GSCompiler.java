@@ -66,10 +66,23 @@ public class GSCompiler {
 		if (node instanceof GSConditional) { return -1; }
 		if (node instanceof GSAssignment) { return 2; }
 		if (node instanceof GSStatement) { return -1; }
-		if (node instanceof GSBinaryOperation) { return 3; }
 		if (node instanceof GSList) { return -1; }
 		if (node instanceof GSListIndex) { return 2; }
 		if (node instanceof GSWhileLoop) { return 2; }
+		if (node instanceof GSLogicalAnd) { return -1; }
+		if (node instanceof GSLogicalOr) { return -1; }
+		if (node instanceof GSInEquality) { return -1; }
+		if (node instanceof GSEquality) { return -1; }
+		if (node instanceof GSGreaterThan) { return -1; }
+		if (node instanceof GSLessThan) { return -1; }
+		if (node instanceof GSGreaterOrEqualThan) { return -1; }
+		if (node instanceof GSLessOrEqualThan) { return -1; }
+		if (node instanceof GSAdd) { return -1; }
+		if (node instanceof GSSubtract) { return -1; }
+		if (node instanceof GSMultiply) { return -1; }
+		if (node instanceof GSDivide) { return -1; }
+		if (node instanceof GSLogicalNot) { return 1; }
+
 		throw new SystemImplementationException("Expected Children not defined for node "+node.getClass()
 		                                                                                      .getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
@@ -261,7 +274,127 @@ public class GSCompiler {
 			return compiled;
 		}
 
-		if (node instanceof GSBinaryOperation) {
+		if (node instanceof GSLogicalOr) {
+			/*
+			System.out.println("Logical or with "+node.children()+" children");
+			for (int i=0;i<node.children();i++) {
+				System.out.println(node.child(i).tokens());
+			}
+			 */
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCOr(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSLogicalAnd) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCAnd(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSInEquality) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCInequality(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSEquality) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCEquality(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSLessThan) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCLessThan(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSGreaterThan) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCGreaterThan(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSLessOrEqualThan) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCLessThanEqual(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSGreaterOrEqualThan) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCGreaterThanEqual(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSAdd) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCAdd(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSSubtract) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCSubtract(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSMultiply) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCMultiply(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSDivide) {
+			compiled.addAll(compile(st,node.child(0)));
+			for (int i=1;i<node.children();i++) {
+				compiled.addAll(compile(st,node.child(i)));
+				compiled.add(new BCDivide(node));
+			}
+			return compiled;
+		}
+
+		if (node instanceof GSLogicalNot) {
+			compiled.addAll(compile(st,node.child(0)));
+			compiled.add(new BCNot(node));
+			return compiled;
+		}
+
+		/*if (node instanceof GSBinaryOperation) {
 			// term op expression
 			checkType(node,0,GSTerm.class);
 			checkType(node,1,GSBinaryOperator.class);
@@ -313,9 +446,17 @@ public class GSCompiler {
 				handledop=true;
 				compiled.add(new BCLessThanEqual(node.child(1)));
 			}
+			if (op.equals("&&")) {
+				handledop=true;
+				compiled.add(new BCAnd(node.child(1)));
+			}
+			if (op.equals("||")) {
+				handledop=true;
+				compiled.add(new BCOr(node.child(1)));
+			}
 			if (!handledop) { throw new GSInternalError("Binary operation of unknown type "+op); }
 			return compiled;
-		}
+		}*/
 
 		if (node instanceof GSIdentifier) {
 			// pull the variable onto the stack.  Kinda

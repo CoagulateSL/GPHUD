@@ -132,7 +132,7 @@ public abstract class Command {
 				try {
 					arguments.put(arg.getName(),convertArgument(state,arg,v));
 				}
-				catch (UserException conversionerror) {
+				catch (final UserException conversionerror) {
 					return new ErrorResponse("Argument "+arg.getName()+" failed : "+conversionerror.getLocalizedMessage());
 				}
 			}
