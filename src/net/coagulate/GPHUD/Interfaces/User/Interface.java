@@ -228,9 +228,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// the content, as a stream (:/)
 				contentstream=entity.getContent();
 				// make a buffer, read, make a string, voila :P
-				String content="";
-				int ammountread=0;
-				try (Scanner scanner=new Scanner(contentstream,StandardCharsets.UTF_8.name())) {
+				final String content;
+				final int ammountread=0;
+				try (final Scanner scanner=new Scanner(contentstream,StandardCharsets.UTF_8.name())) {
 					content=scanner.useDelimiter("\\A").next();
 				}
 				// parse the string into post variables

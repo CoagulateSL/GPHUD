@@ -6,6 +6,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,5 +89,39 @@ public class BCList extends ByteCodeDataType {
 			clone.content.add(element.clone());
 		}
 		return clone;
+	}
+
+	@Nullable
+	@Override
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+		final BCList newlist=new BCList(node());
+		if (var.getClass().equals(BCList.class)) {
+			final BCList varlist=(BCList) var;
+			newlist.addAll(varlist);
+		}
+		else {
+			newlist.append(var);
+		}
+		newlist.addAll(this);
+		return newlist;
+	}
+
+	@Nonnull
+	@Override
+	public String toString() {
+		final StringBuilder ret=new StringBuilder(elements+"[");
+		boolean needscomma=false;
+		for (final ByteCodeDataType byteCodeDataType: content) {
+			if (needscomma) { ret.append(","); }
+			else { needscomma=true; } // not first element only
+			ret.append(byteCodeDataType);
+		}
+		ret.append("]");
+		return ret.toString();
+	}
+
+	public void addAll(final BCList var) {
+		content.addAll(var.content);
+		elements=content.size();
 	}
 }

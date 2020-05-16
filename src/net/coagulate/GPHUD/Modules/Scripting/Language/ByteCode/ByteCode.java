@@ -91,6 +91,12 @@ public abstract class ByteCode {
 				return new BCLessThanEqual(null);
 			case GreaterThanEqual:
 				return new BCGreaterThanEqual(null);
+			case LogicalOr:
+				return new BCOr(null);
+			case LogicalAnd:
+				return new BCAnd(null);
+			case LogicalNot:
+				return new BCNot(null);
 		}
 		throw new SystemImplementationException("Failed to materialise instruction "+decode);
 	}
@@ -166,7 +172,10 @@ public abstract class ByteCode {
 		GreaterThan((byte) 21),
 		LessThan((byte) 22),
 		GreaterThanEqual((byte) 23),
-		LessThanEqual((byte) 24);
+		LessThanEqual((byte) 24),
+		LogicalAnd((byte) 25),
+		LogicalOr((byte) 26),
+		LogicalNot((byte) 27);
 		private final byte value;
 
 

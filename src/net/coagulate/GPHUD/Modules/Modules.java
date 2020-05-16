@@ -407,7 +407,7 @@ public abstract class Modules {
 	public static Pool getPoolNullable(final State st,
 	                                   @Nonnull final String qualifiedname) {
 		try { return getPool(st,qualifiedname); }
-		catch (UserException e) { return null; }
+		catch (final UserException e) { return null; }
 	}
 
 	@Nonnull

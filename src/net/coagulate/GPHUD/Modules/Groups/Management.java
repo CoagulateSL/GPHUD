@@ -114,7 +114,7 @@ public abstract class Management {
 	          permitObject=false,
 	          permitScripting=false)
 	public static Response create(@Nonnull final State st,
-	                              @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                              @Arguments(type=ArgumentType.TEXT_CLEAN,
 	                                         description="Name of the group",
 	                                         max=128) final String name,
 	                              @Arguments(type=ArgumentType.CHOICE,

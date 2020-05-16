@@ -41,26 +41,60 @@ public interface GSParserConstants {
   /** RegularExpression Id. */
   int AVATAR = 25;
   /** RegularExpression Id. */
-  int GROUP = 26;
-  /** RegularExpression Id. */
-  int RESPONSE = 27;
-  /** RegularExpression Id. */
-  int STRING = 28;
-  /** RegularExpression Id. */
-  int LIST = 29;
-  /** RegularExpression Id. */
-  int IF = 30;
-  /** RegularExpression Id. */
-  int IDENTIFIER = 31;
-  /** RegularExpression Id. */
-  int LETTER = 32;
-  /** RegularExpression Id. */
-  int DIGIT = 33;
+  int GROUP=26;
+	/**
+	 * RegularExpression Id.
+	 */
+	int RESPONSE=27;
+	/**
+	 * RegularExpression Id.
+	 */
+	int STRING=28;
+	/**
+	 * RegularExpression Id.
+	 */
+	int LIST=29;
+	/**
+	 * RegularExpression Id.
+	 */
+	int IF=30;
+	/**
+	 * RegularExpression Id.
+	 */
+	int LOGICALAND=31;
+	/**
+	 * RegularExpression Id.
+	 */
+	int LOGICALOR=32;
+	/**
+	 * RegularExpression Id.
+	 */
+	int EQUALITY=33;
+	/**
+	 * RegularExpression Id.
+	 */
+	int INEQUALITY=34;
+	/**
+	 * RegularExpression Id.
+	 */
+	int IDENTIFIER=35;
+	/**
+	 * RegularExpression Id.
+	 */
+	int LETTER=36;
+	/**
+	 * RegularExpression Id.
+	 */
+	int DIGIT=37;
 
-  /** Lexical state. */
-  int DEFAULT = 0;
-  /** Lexical state. */
-  int PREPROCESSOR_OUTPUT = 1;
+	/**
+	 * Lexical state.
+	 */
+	int DEFAULT=0;
+	/**
+	 * Lexical state.
+	 */
+	int PREPROCESSOR_OUTPUT=1;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -95,6 +129,10 @@ public interface GSParserConstants {
     "\"String\"",
     "\"List\"",
     "\"if\"",
+    "\"&&\"",
+    "\"||\"",
+    "\"==\"",
+    "\"!=\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",
@@ -104,16 +142,15 @@ public interface GSParserConstants {
     "\"=\"",
     "\"[\"",
     "\"]\"",
+    "\">\"",
+    "\"<\"",
+    "\">=\"",
+    "\"<=\"",
     "\"+\"",
     "\"-\"",
     "\"*\"",
     "\"/\"",
-    "\"==\"",
-    "\"!=\"",
-    "\">\"",
-    "\"<\"",
-    "\"<=\"",
-    "\">=\"",
+    "\"!\"",
     "\"(\"",
     "\")\"",
     "\",\"",

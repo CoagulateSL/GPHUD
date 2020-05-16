@@ -19,7 +19,7 @@ public class GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
 
 	public final Stack<ByteCodeDataType> stack=new Stack<>();
-	final Map<String,ByteCodeDataType> variables=new HashMap<>();
+	final Map<String,ByteCodeDataType> variables=new TreeMap<>();
 	final Map<Char,JSONObject> queue=new HashMap<>();
 	final Map<String,ByteCodeDataType> introductions=new HashMap<>();
 	@Nonnull
@@ -449,7 +449,7 @@ public class GSVM {
 
 	public static class ExecutionStep {
 		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
-		public final Map<String,ByteCodeDataType> resultingvariables=new HashMap<>();
+		public final Map<String,ByteCodeDataType> resultingvariables=new TreeMap<>();
 		public int programcounter;
 		@Nullable
 		public String decode="";
