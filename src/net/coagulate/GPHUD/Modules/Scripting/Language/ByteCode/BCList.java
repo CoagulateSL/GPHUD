@@ -93,10 +93,10 @@ public class BCList extends ByteCodeDataType {
 
 	@Nullable
 	@Override
-	public ByteCodeDataType add(@Nonnull ByteCodeDataType var) {
-		BCList newlist=new BCList(node());
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+		final BCList newlist=new BCList(node());
 		if (var.getClass().equals(BCList.class)) {
-			BCList varlist=(BCList) var;
+			final BCList varlist=(BCList) var;
 			newlist.addAll(varlist);
 		}
 		else {
@@ -109,18 +109,18 @@ public class BCList extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public String toString() {
-		String ret=elements+"[";
+		final StringBuilder ret=new StringBuilder(elements+"[");
 		boolean needscomma=false;
-		for (int i=0;i<content.size();i++) {
-			if (needscomma) { ret+=","; }
+		for (final ByteCodeDataType byteCodeDataType: content) {
+			if (needscomma) { ret.append(","); }
 			else { needscomma=true; } // not first element only
-			ret+=content.get(i);
+			ret.append(byteCodeDataType);
 		}
-		ret+="]";
-		return ret;
+		ret.append("]");
+		return ret.toString();
 	}
 
-	public void addAll(BCList var) {
+	public void addAll(final BCList var) {
 		content.addAll(var.content);
 		elements=content.size();
 	}
