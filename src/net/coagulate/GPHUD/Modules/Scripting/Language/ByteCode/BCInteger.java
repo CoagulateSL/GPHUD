@@ -57,6 +57,13 @@ public class BCInteger extends ByteCodeDataType {
 	@Nullable
 	@Override
 	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+		// if the other is a List, we'll just be appending ourselves to them
+		if (var.getClass().equals(BCList.class)) {
+			BCList ret=new BCList(node());
+			ret.addAll((BCList) var);
+			ret.append(this);
+			return ret;
+		}
 		// if the other is a String, we'll just be doing that
 		if (var.getClass().equals(BCString.class)) { return toBCString().add(var); }
 		// if the other is a Float, we should cast down to it.  but that's not how we do things yet.
