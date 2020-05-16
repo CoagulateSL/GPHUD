@@ -320,7 +320,6 @@ public class Instance extends TableRow {
 		String sortby=st.getDebasedURL().replaceAll("%20"," ");
 		sortby=sortby.replaceFirst(".*?sort=","");
 		final User searchuser=User.findUsernameNullable(search,false);
-		final Char searchchar=Char.findNullable(st.getInstance(),search);
 		boolean reverse=false;
 		//System.out.println(sortby+" "+reverse);
 		if (sortby.startsWith("-")) {
@@ -336,13 +335,16 @@ public class Instance extends TableRow {
 		for (final ResultsRow r: dq("select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'",getId())) {
 			groupheaders.add(r.getStringNullable());
 		}
+		List<Object> parameters=new ArrayList<>();
+		parameters.add(getId());
 		String additional="";
-		if (searchuser!=null || searchchar!=null) {
+		if (searchuser!=null || !search.isEmpty()) {
 			additional=" and (";
-			if (searchchar!=null) {
-				additional+="characterid="+searchchar.getId();
+			if (!search.isEmpty()) {
+				additional+="name like ? ";
+				parameters.add("%"+search+"%");
 			}
-			if (searchuser!=null && searchchar!=null) {
+			if (searchuser!=null && !search.isEmpty()) {
 				additional+=" or ";
 			}
 			if (searchuser!=null) {
@@ -350,7 +352,7 @@ public class Instance extends TableRow {
 			}
 			additional+=") ";
 		}
-		for (final ResultsRow r: dq("select * from characters where instanceid=? "+additional,getId())) {
+		for (final ResultsRow r: dq("select * from characters where instanceid=? "+additional,parameters.toArray())) {
 			final int retired=r.getInt("retired");
 			final int charid=r.getInt("characterid");
 			final CharacterSummary cr=new CharacterSummary();
