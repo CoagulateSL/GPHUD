@@ -67,7 +67,11 @@ TOKEN : {
 	<RESPONSE: "Response"> |
 	<STRING: "String"> |
 	<LIST: "List"> |
-	<IF: "if">
+	<IF: "if"> |
+	<LOGICALAND: "&&"> |
+	<LOGICALOR: "||"> |
+	<EQUALITY: "=="> |
+	<INEQUALITY: "!=" >
 }
 
 TOKEN : {
@@ -130,20 +134,27 @@ void Identifier() #Identifier : {}
 
 void Expression() #Expression : {}
 {
-    LOOKAHEAD(5) FunctionCall() |
-    LOOKAHEAD(5) BinaryOperation() |
-    LOOKAHEAD(5) InlineList() |
-    LOOKAHEAD(5) Term()
-    //UnaryOperator() Term()
+    LogicalOr()
 }
 
-void BinaryOperation() #BinaryOperation : {} {
-    Term() BinaryOperator() Expression()
-}
+void LogicalOr() #LogicalOr : {} { LogicalAnd() ( <LOGICALOR> LogicalAnd() )* }
+void LogicalAnd() #LogicalAnd : {} { InEquality() ( <LOGICALAND> InEquality() )* }
+void InEquality() #InEquality: {} { Equality() ( <INEQUALITY> Equality() )* }
+void Equality() #Equality : {} { GreaterThan() ( <EQUALITY> GreaterThan() )* }
+void GreaterThan() #GreaterThan : {} { LessThan() ( ">" LessThan() )* }
+void LessThan() #LessThan : {} { GreaterOrEqualThan() ( "<" GreaterOrEqualThan() )* }
+void GreaterOrEqualThan() #GreaterOrEqualThan : {} { LessOrEqualThan() ( ">=" LessOrEqualThan() )* }
+void LessOrEqualThan() #LessOrEqualThan : {} { Add() ( "<=" Add() )* }
+void Add() #Add : {} { Subtract() ( "+" Subtract() )* }
+void Subtract() #Subtract : {} { Multiply() ( "-" Multiply())* }
+void Multiply() #Multiply : {} { Divide() ( "*" Divide())* }
+void Divide() #Divide : {} { UnaryTerm() ( "/" UnaryTerm())* }
 
-void BinaryOperator() #BinaryOperator : {}
+void UnaryTerm() : {} { Term() | LogicalNot() }
+
+void LogicalNot() #LogicalNot: {}
 {
-   "+" | "-" | "*" | "/" | "==" | "!=" | ">" | "<" | "<=" | ">="
+  "!" Term()
 }
 
 void Term() #Term : {}
@@ -151,9 +162,11 @@ void Term() #Term : {}
     StringConstant() |
     IntegerConstant() |
     FloatConstant() |
+    LOOKAHEAD(5) FunctionCall() |
     LOOKAHEAD(2) ListIndex() |
     LOOKAHEAD(2) Identifier() |
-    "(" Expression() ")"
+    "(" Expression() ")" |
+    LOOKAHEAD(5) InlineList()
 }
 
 void ListIndex() #ListIndex : {} {
