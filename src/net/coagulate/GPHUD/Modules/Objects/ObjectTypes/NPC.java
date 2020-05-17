@@ -93,15 +93,15 @@ public class NPC extends ObjectType {
 	public void payload(@Nonnull final State st,
 	                    @Nonnull final JSONObject response,
 	                    @Nonnull final Region region,
-	                    @Nonnull final String url) {
+	                    @Nullable final String url) {
 		super.payload(st,response,region,url);
 		if (!json.has("character")) { return; }
 		final int charid=json.getInt("character");
 		final Char ch=Char.get(charid);
 		ch.validate(st);
 		ch.setRegion(region);
-		ch.setURL(url);
-		State newstate=new State(ch);
+		if (url!=null) { ch.setURL(url); }
+		final State newstate=new State(ch);
 		ch.initialConveyances(newstate,response);
 	}
 

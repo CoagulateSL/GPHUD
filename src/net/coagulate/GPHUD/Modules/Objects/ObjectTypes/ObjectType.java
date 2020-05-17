@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -76,7 +77,7 @@ public abstract class ObjectType {
 	public void payload(final State st,
 	                    @Nonnull final JSONObject response,
 	                    @Nonnull final Region region,
-	                    @Nonnull final String url) {
+	                    @Nullable final String url) {
 		response.put("mode",mode());
 	}
 
