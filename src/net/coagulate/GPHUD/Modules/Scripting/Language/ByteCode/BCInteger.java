@@ -60,8 +60,8 @@ public class BCInteger extends ByteCodeDataType {
 		// if the other is a List, we'll just be appending ourselves to them
 		if (var.getClass().equals(BCList.class)) {
 			final BCList ret=new BCList(node());
-			ret.addAll((BCList) var);
 			ret.append(this);
+			ret.addAll((BCList) var);
 			return ret;
 		}
 		// if the other is a String, we'll just be doing that

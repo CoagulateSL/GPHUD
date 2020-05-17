@@ -95,6 +95,7 @@ public class BCList extends ByteCodeDataType {
 	@Override
 	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
 		final BCList newlist=new BCList(node());
+		newlist.addAll(this);
 		if (var.getClass().equals(BCList.class)) {
 			final BCList varlist=(BCList) var;
 			newlist.addAll(varlist);
@@ -102,7 +103,6 @@ public class BCList extends ByteCodeDataType {
 		else {
 			newlist.append(var);
 		}
-		newlist.addAll(this);
 		return newlist;
 	}
 
