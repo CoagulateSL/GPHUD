@@ -275,12 +275,6 @@ public class GSCompiler {
 		}
 
 		if (node instanceof GSLogicalOr) {
-			/*
-			System.out.println("Logical or with "+node.children()+" children");
-			for (int i=0;i<node.children();i++) {
-				System.out.println(node.child(i).tokens());
-			}
-			 */
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
@@ -320,7 +314,7 @@ public class GSCompiler {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
-				compiled.add(new BCLessThan(node));
+				compiled.add(new BCLessThan2(node));
 			}
 			return compiled;
 		}
@@ -329,7 +323,7 @@ public class GSCompiler {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
-				compiled.add(new BCGreaterThan(node));
+				compiled.add(new BCGreaterThan2(node));
 			}
 			return compiled;
 		}
@@ -338,7 +332,7 @@ public class GSCompiler {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
-				compiled.add(new BCLessThanEqual(node));
+				compiled.add(new BCLessThanEqual2(node));
 			}
 			return compiled;
 		}
@@ -347,7 +341,7 @@ public class GSCompiler {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
-				compiled.add(new BCGreaterThanEqual(node));
+				compiled.add(new BCGreaterThanEqual2(node));
 			}
 			return compiled;
 		}
@@ -356,7 +350,7 @@ public class GSCompiler {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
-				compiled.add(new BCAdd(node));
+				compiled.add(new BCAdd2(node));
 			}
 			return compiled;
 		}
@@ -365,7 +359,7 @@ public class GSCompiler {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
-				compiled.add(new BCSubtract(node));
+				compiled.add(new BCSubtract2(node));
 			}
 			return compiled;
 		}
@@ -383,7 +377,7 @@ public class GSCompiler {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
 				compiled.addAll(compile(st,node.child(i)));
-				compiled.add(new BCDivide(node));
+				compiled.add(new BCDivide2(node));
 			}
 			return compiled;
 		}
@@ -393,70 +387,6 @@ public class GSCompiler {
 			compiled.add(new BCNot(node));
 			return compiled;
 		}
-
-		/*if (node instanceof GSBinaryOperation) {
-			// term op expression
-			checkType(node,0,GSTerm.class);
-			checkType(node,1,GSBinaryOperator.class);
-			checkType(node,2,GSExpression.class);
-			// exection is just OP pops 2 and pushes result so....
-			compiled.addAll(compile(st,node.child(2)));  // reverse polish
-			compiled.addAll(compile(st,node.child(0)));  // so first term is pushed last!
-			boolean handledop=false;
-			final String op=node.child(1).tokens();
-			//"+" | "-" | "*" | "/" | "==" | "!="
-			addDebug(compiled,node);
-			if (op.equals("+")) {
-				handledop=true;
-				compiled.add(new BCAdd(node.child(1)));
-			}
-			if (op.equals("-")) {
-				handledop=true;
-				compiled.add(new BCSubtract(node.child(1)));
-			}
-			if (op.equals("*")) {
-				handledop=true;
-				compiled.add(new BCMultiply(node.child(1)));
-			}
-			if (op.equals("/")) {
-				handledop=true;
-				compiled.add(new BCDivide(node.child(1)));
-			}
-			if (op.equals("==")) {
-				handledop=true;
-				compiled.add(new BCEquality(node.child(1)));
-			}
-			if (op.equals("!=")) {
-				handledop=true;
-				compiled.add(new BCInequality(node.child(1)));
-			}
-			if (op.equals(">")) {
-				handledop=true;
-				compiled.add(new BCGreaterThan(node.child(1)));
-			}
-			if (op.equals("<")) {
-				handledop=true;
-				compiled.add(new BCLessThan(node.child(1)));
-			}
-			if (op.equals(">=")) {
-				handledop=true;
-				compiled.add(new BCGreaterThanEqual(node.child(1)));
-			}
-			if (op.equals("<=")) {
-				handledop=true;
-				compiled.add(new BCLessThanEqual(node.child(1)));
-			}
-			if (op.equals("&&")) {
-				handledop=true;
-				compiled.add(new BCAnd(node.child(1)));
-			}
-			if (op.equals("||")) {
-				handledop=true;
-				compiled.add(new BCOr(node.child(1)));
-			}
-			if (!handledop) { throw new GSInternalError("Binary operation of unknown type "+op); }
-			return compiled;
-		}*/
 
 		if (node instanceof GSIdentifier) {
 			// pull the variable onto the stack.  Kinda

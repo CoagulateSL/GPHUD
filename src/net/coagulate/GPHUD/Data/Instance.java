@@ -335,7 +335,7 @@ public class Instance extends TableRow {
 		for (final ResultsRow r: dq("select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'",getId())) {
 			groupheaders.add(r.getStringNullable());
 		}
-		List<Object> parameters=new ArrayList<>();
+		final List<Object> parameters=new ArrayList<>();
 		parameters.add(getId());
 		String additional="";
 		if (searchuser!=null || !search.isEmpty()) {

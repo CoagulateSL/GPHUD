@@ -35,6 +35,8 @@ public abstract class ByteCode {
 		switch (decode) {
 			case Add:
 				return new BCAdd(null);
+			case Add2:
+				return new BCAdd2(null);
 			case Store:
 				return new BCStore(null);
 			case Character:
@@ -61,6 +63,8 @@ public abstract class ByteCode {
 				return new BCDebug(null,vm.getShort(),vm.getShort());
 			case Divide:
 				return new BCDivide(null);
+			case Divide2:
+				return new BCDivide2(null);
 			case Equality:
 				return new BCEquality(null);
 			case Inequality:
@@ -77,6 +81,8 @@ public abstract class ByteCode {
 				return new BCResponse(null);
 			case Subtract:
 				return new BCSubtract(null);
+			case Subtract2:
+				return new BCSubtract2(null);
 			case List:
 				return new BCList(null,vm.getShort());
 			case LoadIndexed:
@@ -91,6 +97,14 @@ public abstract class ByteCode {
 				return new BCLessThanEqual(null);
 			case GreaterThanEqual:
 				return new BCGreaterThanEqual(null);
+			case LessThan2:
+				return new BCLessThan2(null);
+			case GreaterThan2:
+				return new BCGreaterThan2(null);
+			case LessThanEqual2:
+				return new BCLessThanEqual2(null);
+			case GreaterThanEqual2:
+				return new BCGreaterThanEqual2(null);
 			case LogicalOr:
 				return new BCOr(null);
 			case LogicalAnd:
@@ -175,7 +189,14 @@ public abstract class ByteCode {
 		LessThanEqual((byte) 24),
 		LogicalAnd((byte) 25),
 		LogicalOr((byte) 26),
-		LogicalNot((byte) 27);
+		LogicalNot((byte) 27),
+		Subtract2((byte) 28),
+		Add2((byte) 29),
+		LessThan2((byte) 30),
+		LessThanEqual2((byte) 31),
+		GreaterThan2((byte) 32),
+		GreaterThanEqual2((byte) 33),
+		Divide2((byte) 34);
 		private final byte value;
 
 
