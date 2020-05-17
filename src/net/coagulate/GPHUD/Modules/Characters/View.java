@@ -180,10 +180,10 @@ public abstract class View {
 			ViewNotes.viewNotes(st,c.getOwner(),c,true,false);
 		}
 		for (final Pool pool: CharacterPool.getPools(st,c)) {
-			f.add("<a href=\"../viewpool/"+c.getId()+"/"+pool.fullName()+"\">View "+pool.fullName()+" History</a><br>");
+			f.add("<a href=\"/GPHUD/characters/viewpool/"+c.getId()+"/"+pool.fullName()+"\">View "+pool.fullName()+" History</a><br>");
 		}
-		f.add("<a href=\"../viewkv/"+c.getId()+"\">View Character Configuration (KV Store)</a><br>");
-		f.add("<a href=\"../audit/"+c.getId()+"\">View Character Audit Trail</a><br>");
+		f.add("<a href=\"/GPHUD/characters/viewkv/"+c.getId()+"\">View Character Configuration (KV Store)</a><br>");
+		f.add("<a href=\"/GPHUD/characters/audit/"+c.getId()+"\">View Character Audit Trail</a><br>");
 	}
 
 	@URLs(url="/characters/audit/*")
@@ -196,7 +196,7 @@ public abstract class View {
 			final String id=split[split.length-1];
 			final Char c=Char.get(Integer.parseInt(id));
 			final State simulated=st.simulate(c);
-			f.add("<a href=\"../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
+			f.add("<a href=\"/GPHUD/characters/view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
 			f.add(new TextSubHeader("Audit Trail"));
 			f.add(new AuditTable(st,"audit",values,c));
 		}
@@ -216,7 +216,7 @@ public abstract class View {
 			final String poolname=split[split.length-1];
 			final Char c=Char.get(Integer.parseInt(id));
 			final State simulated=st.simulate(c);
-			f.add("<a href=\"../../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
+			f.add("<a href=\"/GPHUD/characters/view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
 			final Pool pool=Modules.getPool(st,poolname);
 			f.add(new TextSubHeader("Pool Log: "+pool.fullName()));
 			f.add("<p><i>"+pool.description()+(pool.isGenerated()?" (Instance Specific)":""));
@@ -236,16 +236,25 @@ public abstract class View {
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
 		if (split.length==4) {
-			final String id=split[split.length-1];
+			final String id=split[3];
 			final Char c=Char.get(Integer.parseInt(id));
 			final State simulated=st.simulate(c);
-			f.add("<a href=\"../view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
+			f.add("<a href=\"/GPHUD/characters/view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
 			f.add(new TextSubHeader("KV Configuration"));
 			GenericConfiguration.page(st,values,c,simulated);
+			return;
 		}
-		else {
-			throw new UserInputValidationParseException("Failed to extract character id");
+		if (split.length==6) {
+			final String id=split[3];
+			final Char c=Char.get(Integer.parseInt(id));
+			final State simulated=st.simulate(c);
+			f.noForm();
+			f.add("<a href=\"/GPHUD/characters/view/"+c.getId()+"\">View Character "+c.getName()+"</a><br>");
+			f.add(new TextSubHeader("KV Configuration"));
+			f.add(new ConfigurationHierarchy(st,Modules.getKVDefinition(st,split[4]+"."+split[5]),simulated,values));
+			return;
 		}
+		throw new UserInputValidationParseException("Failed to extract character id");
 	}
 
 	@Nonnull
