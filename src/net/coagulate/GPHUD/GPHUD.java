@@ -32,9 +32,16 @@ import static java.util.logging.Level.WARNING;
  *
  * @author Iain Price <gphud@predestined.net>
  */
+
+/*
+Shortform here.
+
+[XX Release Notes] | [https://bugs.coagulate.net/ Bugs/Requests] | [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about Update Notices]
+
+ */
 public class GPHUD {
-	public static final String VERSION="v3.15.2";
-	public static final String VERSION_DATE="May 12th 2020";
+	public static final String VERSION="v3.15.3";
+	public static final String VERSION_DATE="May 17th 2020";
 	// config KV store
 	private static final Map<String,String> CONFIG=new TreeMap<>();
 	public static String hostname="UNSET";

@@ -75,7 +75,7 @@ public class Connect {
 			final ObjectType ot=ObjectType.materialise(st,objecttype);
 			behaviour=ot.explainText();
 			behaviour+="\nOperating mode: "+ot.mode();
-			ot.payload(st,response);
+			ot.payload(st,response,st.getRegion(),st.callbackurl());
 		}
 		if (!st.json().has("silent")) {
 			response.put("message",

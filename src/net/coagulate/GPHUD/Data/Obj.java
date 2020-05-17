@@ -91,11 +91,14 @@ public class Obj extends TableRow {
 						            null,
 						            "Set",
 						            "ObjectType",
-						            "",objecttype,"Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
+						            "",
+						            objecttype,
+						            "Set object type for "+row.getStringNullable("name")+" "+row.getStringNullable("uuid")
 						           );
+						final Obj obj=Obj.get(row.getInt("id"));
 						final ObjectType ot=ObjectType.materialise(st,ObjType.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload=new JSONObject();
-						ot.payload(st,reconfigurepayload);
+						ot.payload(st,reconfigurepayload,obj.getRegion(),obj.getURL());
 						new Transmission(Obj.get(row.getInt("id")),reconfigurepayload).start();
 					}
 				}
