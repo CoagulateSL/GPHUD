@@ -28,7 +28,7 @@ public class GenericXPAwardPermission extends Permission {
 	@Nonnull
 	@Override
 	public String name() {
-		return "award"+myname+"XP";
+		return "award"+myname;
 	}
 
 	@Nonnull
