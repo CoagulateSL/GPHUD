@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjType;
+import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
@@ -90,16 +91,18 @@ public class NPC extends ObjectType {
 
 	@Override
 	public void payload(@Nonnull final State st,
-	                    @Nonnull final JSONObject response) {
-		super.payload(st,response);
+	                    @Nonnull final JSONObject response,
+	                    @Nonnull final Region region,
+	                    @Nonnull final String url) {
+		super.payload(st,response,region,url);
 		if (!json.has("character")) { return; }
 		final int charid=json.getInt("character");
 		final Char ch=Char.get(charid);
 		ch.validate(st);
-		ch.setRegion(st.getRegion());
-		st.setCharacter(ch);
-		ch.setURL(st.callbackurl());
-		ch.initialConveyances(st,response);
+		ch.setRegion(region);
+		ch.setURL(url);
+		State newstate=new State(ch);
+		ch.initialConveyances(newstate,response);
 	}
 
 	@Nonnull

@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjType;
+import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -73,7 +74,9 @@ public abstract class ObjectType {
 	public abstract String explainText();
 
 	public void payload(final State st,
-	                    @Nonnull final JSONObject response) {
+	                    @Nonnull final JSONObject response,
+	                    @Nonnull final Region region,
+	                    @Nonnull final String url) {
 		response.put("mode",mode());
 	}
 
