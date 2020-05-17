@@ -24,19 +24,20 @@ public interface GSParserTreeConstants {
 	int JJTSUBTRACT=19;
 	int JJTMULTIPLY=20;
 	int JJTDIVIDE=21;
-	int JJTLOGICALNOT=22;
-	int JJTTERM=23;
-	int JJTLISTINDEX=24;
-	int JJTSTRINGCONSTANT=25;
-	int JJTINTEGERCONSTANT=26;
-	int JJTFLOATCONSTANT=27;
-	int JJTFUNCTIONCALL=28;
-	int JJTFUNCTIONNAME=29;
-	int JJTPARAMETERS=30;
-	int JJTPARAMETER=31;
-	int JJTCONDITIONAL=32;
-	int JJTLIST=33;
-	int JJTWHILELOOP=34;
+	int JJTUNARYMINUS=22;
+	int JJTLOGICALNOT=23;
+	int JJTTERM=24;
+	int JJTLISTINDEX=25;
+	int JJTSTRINGCONSTANT=26;
+	int JJTINTEGERCONSTANT=27;
+	int JJTFLOATCONSTANT=28;
+	int JJTFUNCTIONCALL=29;
+	int JJTFUNCTIONNAME=30;
+	int JJTPARAMETERS=31;
+	int JJTPARAMETER=32;
+	int JJTCONDITIONAL=33;
+	int JJTLIST=34;
+	int JJTWHILELOOP=35;
 
 
 	String[] jjtNodeName={"Start",
@@ -61,6 +62,7 @@ public interface GSParserTreeConstants {
 	                      "Subtract",
 	                      "Multiply",
 	                      "Divide",
+	                      "UnaryMinus",
 	                      "LogicalNot",
 	                      "Term",
 	                      "ListIndex",
@@ -72,8 +74,7 @@ public interface GSParserTreeConstants {
 	                      "Parameters",
 	                      "Parameter",
 	                      "Conditional",
-    "List",
-    "WhileLoop",
-  };
+	                      "List",
+	                      "WhileLoop",};
 }
-/* JavaCC - OriginalChecksum=797c0982f97d375877a3adb11633d39a (do not edit this line) */
+/* JavaCC - OriginalChecksum=f627b0e0d24131764a5d1e50903000f8 (do not edit this line) */

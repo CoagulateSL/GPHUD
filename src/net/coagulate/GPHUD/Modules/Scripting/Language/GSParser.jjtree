@@ -150,7 +150,9 @@ void Subtract() #Subtract : {} { Multiply() ( "-" Multiply())* }
 void Multiply() #Multiply : {} { Divide() ( "*" Divide())* }
 void Divide() #Divide : {} { UnaryTerm() ( "/" UnaryTerm())* }
 
-void UnaryTerm() : {} { Term() | LogicalNot() }
+void UnaryTerm() : {} { Term() | LogicalNot() | UnaryMinus() }
+
+void UnaryMinus() #UnaryMinus : {} { "-" Term() }
 
 void LogicalNot() #LogicalNot: {}
 {

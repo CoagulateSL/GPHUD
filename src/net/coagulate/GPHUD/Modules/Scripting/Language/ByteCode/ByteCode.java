@@ -111,6 +111,8 @@ public abstract class ByteCode {
 				return new BCAnd(null);
 			case LogicalNot:
 				return new BCNot(null);
+			case Negate:
+				return new BCNegate(null);
 		}
 		throw new SystemImplementationException("Failed to materialise instruction "+decode);
 	}
@@ -196,7 +198,8 @@ public abstract class ByteCode {
 		LessThanEqual2((byte) 31),
 		GreaterThan2((byte) 32),
 		GreaterThanEqual2((byte) 33),
-		Divide2((byte) 34);
+		Divide2((byte) 34),
+		Negate((byte) 35);
 		private final byte value;
 
 

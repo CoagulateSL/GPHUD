@@ -82,6 +82,7 @@ public class GSCompiler {
 		if (node instanceof GSMultiply) { return -1; }
 		if (node instanceof GSDivide) { return -1; }
 		if (node instanceof GSLogicalNot) { return 1; }
+		if (node instanceof GSUnaryMinus) { return 1; }
 
 		throw new SystemImplementationException("Expected Children not defined for node "+node.getClass()
 		                                                                                      .getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
@@ -385,6 +386,12 @@ public class GSCompiler {
 		if (node instanceof GSLogicalNot) {
 			compiled.addAll(compile(st,node.child(0)));
 			compiled.add(new BCNot(node));
+			return compiled;
+		}
+
+		if (node instanceof GSUnaryMinus) {
+			compiled.addAll(compile(st,node.child(0)));
+			compiled.add(new BCNegate(node));
 			return compiled;
 		}
 

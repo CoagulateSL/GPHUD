@@ -31,17 +31,27 @@ public interface GSParserConstants {
   /** RegularExpression Id. */
   int FLOAT = 20;
   /** RegularExpression Id. */
-  int ELSE = 21;
-  /** RegularExpression Id. */
-  int FOR = 22;
-  /** RegularExpression Id. */
-  int INT = 23;
-  /** RegularExpression Id. */
-  int CHARACTER = 24;
-  /** RegularExpression Id. */
-  int AVATAR = 25;
-  /** RegularExpression Id. */
-  int GROUP=26;
+  int ELSE=21;
+	/**
+	 * RegularExpression Id.
+	 */
+	int FOR=22;
+	/**
+	 * RegularExpression Id.
+	 */
+	int INT=23;
+	/**
+	 * RegularExpression Id.
+	 */
+	int CHARACTER=24;
+	/**
+	 * RegularExpression Id.
+	 */
+	int AVATAR=25;
+	/**
+	 * RegularExpression Id.
+	 */
+	int GROUP=26;
 	/**
 	 * RegularExpression Id.
 	 */
@@ -96,15 +106,10 @@ public interface GSParserConstants {
 	 */
 	int PREPROCESSOR_OUTPUT=1;
 
-  /** Literal token values. */
-  String[] tokenImage = {
-    "<EOF>",
-    "\" \"",
-    "\"\\t\"",
-    "\"\\n\"",
-    "\"\\r\"",
-    "<token of kind 5>",
-    "<token of kind 6>",
+	/**
+	 * Literal token values.
+	 */
+	String[] tokenImage={"<EOF>","\" \"","\"\\t\"","\"\\n\"","\"\\r\"","<token of kind 5>","<token of kind 6>",
     "\"\\n\"",
     "\"\\\\\\n\"",
     "\"\\\\\\r\\n\"",
