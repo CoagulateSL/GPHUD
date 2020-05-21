@@ -162,7 +162,6 @@ process() {
 	if (jsontwoget("zoning")!="") { zoning=llParseStringKeepNulls(jsontwoget("zoning"),["|"],[]); calculateZone();}
 	if (jsontwoget("legacymenu")!="") { mainmenu=jsontwoget("legacymenu"); }
 	if (jsontwoget("url")!="") { comms_url=jsontwoget("url"); }
-	if (jsontwoget("virtual-node")!="") { comms_node=((integer)jsontwoget("virtual-node")); }
 	if (jsontwoget("zone")!="" && jsontwoget("zonemessage")!="") {
 		if (jsontwoget("zone")==ourzone) { llOwnerSay(jsontwoget("zonemessage")); }
 	}

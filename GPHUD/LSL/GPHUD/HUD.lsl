@@ -1,7 +1,6 @@
 // NEW HUD :P
 //#define DEBUG_BOOT
 //#define DEBUG_JSON
-//#define COMMS_HARDWIRENODE 0
 
 
 #include "SL/LSL/Constants.lsl"
@@ -19,8 +18,6 @@ integer SETDEVTRUEONCE=TRUE;
 // comms
 string comms_url="";
 key comms_url_key=NULL_KEY;
-integer comms_node=-99;
-integer comms_node_cycled=0;
 #define COMMS_DEVKEY "***REMOVED***"
 //listeners
 integer channelonehandle=0;
@@ -100,8 +97,8 @@ command(string command) {
     jsonput("developerkey",COMMS_DEVKEY);
 	jsonput("protocol","2"); // used to redirect various behaviours in the Java side for login
 	
-	string devinject=""; if (DEV) { devinject="dev"; }
-	string SERVER_URL="http://Virtual"+((string)comms_node)+devinject+".SL.Coagulate.NET/GPHUD/system";
+	string devinject=""; if (DEV) { devinject="dev."; }
+	string SERVER_URL="http://"+devinject+"SL.Coagulate.NET/GPHUD/system";
 	#ifdef DEBUG_JSON
 	llOwnerSay(llGetScriptName()+": Sending to "+SERVER_URL+"\n"+json);
 	#endif
@@ -266,14 +263,6 @@ default {
 			comms_url_key=NULL_KEY;
 			comms_url=body;		
 			URL_STAGE=1;
-			if (comms_node==-99) {
-				#ifdef COMMS_HARDWIRENODE
-				llOwnerSay("Hardwired node in effect "+((string)COMMS_HARDWIRENODE));
-				comms_node=COMMS_HARDWIRENODE;
-				#else
-				comms_node=((integer)llFrand(6.0));
-				#endif
-			}
 			setup();
 			return;
 		}	
@@ -289,22 +278,7 @@ default {
 		llOwnerSay("REPLY:"+body);
 		#endif
 		if (status!=200) {
-			comms_node_cycled++;
-			if (comms_node_cycled>6) {
-				string s="All servers failed, sleeping for 5 minutes then rebooting.";
-				llOwnerSay(s);
-				llSetText(s,<1,.5,.5>,1);
-				llSleep(300);
-				llResetScript();
-			}
-			llOwnerSay(llGetScriptName()+" : Cluster Server "+((string)comms_node)+" failed (#"+((string)status)+").  Please retry your last operation.");
-			#ifdef COMMS_HARDWIRENODE
-			llOwnerSay(body);
-			llOwnerSay("Hardwired node in effect "+((string)COMMS_HARDWIRENODE));
-			comms_node=COMMS_HARDWIRENODE;
-			#else
-			comms_node=(comms_node+1)%6;
-			#endif
+			llOwnerSay(llGetScriptName()+" : Cluster Server failed (#"+((string)status)+").  Please retry your last operation.");
 		}
 		else
 		{
