@@ -44,6 +44,8 @@ public class KV {
 			throw new GSInvalidFunctionCall("Character "+character+" belongs to a different instance!");
 		}
 		final State altstate=new State(character.getContent());
-		return new BCString(null,altstate.getKV(character.getContent(),kvname.getContent()));
+		String response=altstate.getKV(character.getContent(),kvname.getContent());
+		if (response==null) { response=""; }
+		return new BCString(null,response);
 	}
 }
