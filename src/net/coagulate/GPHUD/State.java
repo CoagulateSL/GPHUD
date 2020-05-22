@@ -1027,12 +1027,12 @@ public class State extends DumpableState {
 	@Nonnull
 	@Override
 	protected String dumpAdditionalStateToHtml() {
-		if (vm!=null) {
+		/*if (vm!=null) {
 			try {
 				return vm.dumpStateToHtml();
 			}
 			catch (@Nonnull final Throwable e) { return "Exceptioned: "+e; }
-		}
+		}*/
 		return "";
 	}
 
