@@ -167,7 +167,6 @@ process(key id) {
 	string command=jsonget("incommand");
 	string othercommand=jsonget("command");
 	if (jsonget("url")!="") { comms_url=jsonget("url"); } // llOwnerSay("Dispenser: Inherited URL"); }
-	if (jsonget("virtual-node")!="") { comms_node=((integer)jsonget("virtual-node")); } // llOwnerSay("Dispenser: Inherited Comms Node"); }	
 	if (jsonget("autoattach")!="")
 	{
 		if (jsonget("autoattach")=="true") {
