@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -30,7 +31,7 @@ public class API {
 	                                @Nonnull final BCCharacter caller,
 	                                @Nonnull final BCString apicall,
 	                                @Nonnull final BCList parameters) {
-		final BCResponse response=gsAPI(vm,caller,apicall,parameters,false);
+		final BCResponse response=gsAPI(st,vm,caller,apicall,parameters,false);
 		if (response.isError()) { throw new GSExecutionException(response.toBCString().getContent()); }
 		return response;
 	}
@@ -46,7 +47,7 @@ public class API {
 	                                        @Nonnull final BCCharacter caller,
 	                                        @Nonnull final BCString apicall,
 	                                        @Nonnull final BCList parameters) {
-		final BCResponse response=gsAPI(vm,caller,apicall,parameters,true);
+		final BCResponse response=gsAPI(st,vm,caller,apicall,parameters,true);
 		if (response.isError()) { throw new UserInputStateException(response.toBCString().getContent()); }
 		return response;
 	}
@@ -62,7 +63,7 @@ public class API {
 	                               @Nonnull final BCCharacter caller,
 	                               @Nonnull final BCString apicall,
 	                               @Nonnull final BCList parameters) {
-		return gsAPI(vm,caller,apicall,parameters,false);
+		return gsAPI(st,vm,caller,apicall,parameters,false);
 	}
 
 	@Nonnull
@@ -76,11 +77,12 @@ public class API {
 	                                       @Nonnull final BCCharacter caller,
 	                                       @Nonnull final BCString apicall,
 	                                       @Nonnull final BCList parameters) {
-		return gsAPI(vm,caller,apicall,parameters,true);
+		return gsAPI(st,vm,caller,apicall,parameters,true);
 	}
 
 	// ----- Internal Statics -----
-	private static BCResponse gsAPI(@Nonnull final GSVM vm,
+	private static BCResponse gsAPI(@Nonnull final State st,
+	                                @Nonnull final GSVM vm,
 	                                @Nonnull final BCCharacter caller,
 	                                @Nonnull final BCString apicall,
 	                                @Nonnull final BCList parameters,
@@ -98,6 +100,9 @@ public class API {
 			// some things care about this.  like initialise and logon
 			if (vm.getInvokerState()!=null && vm.getInvokerState().getCharacterNullable()==caller.getContent()) {
 				callingstate.setJson(vm.getInvokerState().jsonNullable());
+			}
+			if (callingstate.getInstance()!=st.getInstance()) {
+				throw new SystemConsistencyException("State instances mismatch in gsAPI, aborting");
 			}
 			final Response value=Modules.run(callingstate,apicall.getContent(),args);
 			return new BCResponse(null,value);
