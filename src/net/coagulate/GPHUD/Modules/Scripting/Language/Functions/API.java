@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Modules;
@@ -98,12 +99,19 @@ public class API {
 			callingstate.source=State.Sources.SCRIPTING;
 			if (elevated) { callingstate.elevate(true); }
 			// some things care about this.  like initialise and logon
-			if (vm.getInvokerState()!=null && vm.getInvokerState().getCharacterNullable()==caller.getContent()) {
+			if (st!=null && st.getCharacterNullable()==caller.getContent()) {
 				callingstate.setJson(vm.getInvokerState().jsonNullable());
 			}
 			if (callingstate.getInstance()!=st.getInstance()) {
 				throw new SystemConsistencyException("State instances mismatch in gsAPI, aborting");
 			}
+			String paramlist="(";
+			for (ByteCodeDataType bcdt: parameters.getContent()) {
+				if (paramlist.length()>1) { paramlist+=", "; }
+				paramlist+=bcdt.toString();
+			}
+			paramlist+=")";
+			GPHUD.getLogger("gsAPI").fine("gsAPI calling "+apicall+", our state is "+st+" and their state is "+callingstate+", the parameters list is "+paramlist);
 			final Response value=Modules.run(callingstate,apicall.getContent(),args);
 			return new BCResponse(null,value);
 		}
