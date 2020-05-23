@@ -1,20 +1,18 @@
 package net.coagulate.GPHUD;
 
-import net.coagulate.Core.Database.LockException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Events.EventsMaintenance;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
-import net.coagulate.SL.Data.LockTest;
+import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.util.Calendar;
 
 import static java.util.logging.Level.*;
-import static net.coagulate.SL.Config.LOCK_NUMBER_GPHUD_MAINTENANCE;
 
 /**
  * Maintenance tasks, runs every 60 seconds.
@@ -111,6 +109,7 @@ public class Maintenance extends Thread {
 
 	// for calling from OTHER MAINTENANCE CODE (GPHUD from SL)
 	public static void gphudMaintenance() {
+		if (!SL.primaryNode()) { return; }
 		try { Maintenance.refreshCharacterURLs(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e);
@@ -120,45 +119,30 @@ public class Maintenance extends Thread {
 			GPHUD.getLogger().log(SEVERE,"Maintenance refresh region URLs caught an exception",e);
 		}
 
-		// this stuff all must run 'exclusively' across the cluster...
-		final LockTest lock=new LockTest(LOCK_NUMBER_GPHUD_MAINTENANCE);
-		final int lockserial;
-		try { lockserial=lock.lock(60); }
-		catch (@Nonnull final LockException e) {
-			GPHUD.getLogger().finer("Maintenance didn't aquire lock: "+e.getLocalizedMessage());
-			return;
-		} // maintenance session already locked
-
 		try { Maintenance.startEvents(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance start events caught an exception",e);
 		}
 
-		lock.extendLock(lockserial,60);
 		try { Maintenance.purgeOldCookies(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance run purge cookies caught an exception",e);
 		}
 
-		lock.extendLock(lockserial,60);
 		try { Maintenance.purgeConnections(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance run purge connections caught an exception",e);
 		}
 
-		lock.extendLock(lockserial,60);
 		try { new VisitXP(-1).runAwards(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance run awards run caught an exception",e);
 		}
 
-		lock.extendLock(lockserial,60);
 		try { if ((cycle%UPDATEINTERVAL)==0) { Maintenance.updateInstances(); } }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance update Instances caught an exception",e);
 		}
-
-		lock.unlock(lockserial);
 	}
 
 	// ---------- INSTANCE ----------
