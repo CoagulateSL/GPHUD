@@ -307,6 +307,18 @@ public class Region extends TableRow {
 		return "regionid";
 	}
 
+	public String getPrimUUID() { return getStringNullable("primuuid"); }
+
+	public void setPrimUUID(String objectkey) {
+		if (!objectkey.equalsIgnoreCase(getPrimUUID())) {
+			d("update regions set primuuid=? where regionid=?",objectkey,getId());
+		}
+		final int now=getUnixTime();
+		if ((now-getURLLast())>60) {
+			d("update regions set urllast=?,authnode=? where regionid=?",now,Interface.getNode(),getId());
+		}
+	}
+
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
