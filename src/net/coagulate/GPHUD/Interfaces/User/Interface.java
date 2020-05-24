@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.User;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.ByteTools;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookie;
@@ -32,8 +33,10 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import static java.util.logging.Level.*;
 
@@ -228,13 +231,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// the content, as a stream (:/)
 				contentstream=entity.getContent();
 				// make a buffer, read, make a string, voila :P
-				final String content;
-				final int ammountread=0;
-				try (final Scanner scanner=new Scanner(contentstream,StandardCharsets.UTF_8.name())) {
-					content=scanner.useDelimiter("\\A").next();
-				}
-				// parse the string into post variables
-				//System.out.println(content);
+				final String content=ByteTools.convertStreamToString(contentstream);
 				// this should probably be done "properly"
 				final String[] parts=content.split("&");
 				for (final String part: parts) {

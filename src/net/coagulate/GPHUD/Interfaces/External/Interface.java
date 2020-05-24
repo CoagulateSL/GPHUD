@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.External;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.ByteTools;
 import net.coagulate.Core.Tools.JsonTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Instance;
@@ -64,12 +65,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// stream it into a buffer
 				final HttpEntityEnclosingRequest r=(HttpEntityEnclosingRequest) req;
 				final InputStream is=r.getEntity().getContent();
-				final byte[] buffer=new byte[65*1024];
-				final int ammountread=is.read(buffer);
-				if (ammountread==-1) {
-					throw new UserRemoteFailureException("Reading from HTTP Response gave immediate EOF? (no data sent in POST body)");
-				}
-				final String message=new String(buffer,0,ammountread);
+				final String message=ByteTools.convertStreamToString(is);
 				// DEBUGGING ONLY log entire JSON input
 				// JSONify it
 				final JSONObject obj;

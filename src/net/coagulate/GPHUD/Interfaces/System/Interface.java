@@ -1,10 +1,10 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
-import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.ByteTools;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.*;
@@ -58,13 +58,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				// stream it into a buffer
 				final HttpEntityEnclosingRequest r=(HttpEntityEnclosingRequest) req;
 				final InputStream is=r.getEntity().getContent();
-				final byte[] buffer=new byte[65*1024];
-				final int ammountread=is.read(buffer);
-				buffer[ammountread]=0;
-				if (ammountread<1) {
-					throw new SystemInitialisationException("Reading from HTTP Response gave immediate EOF?");
-				}
-				final String message=new String(buffer,0,ammountread);
+				final String message=ByteTools.convertStreamToString(is);
 				// DEBUGGING ONLY log entire JSON input
 				// JSONify it
 				final JSONObject obj;
