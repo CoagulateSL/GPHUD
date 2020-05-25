@@ -125,6 +125,15 @@ public abstract class CharacterAttribute extends Attribute {
 		return true;
 	}
 
+	@Override
+	public boolean templatable() {
+		return false;
+	}
 
+	@Override
+	public void templatable(State st,
+	                        boolean newvalue) {
+		throw new UserInputStateException("Non user attribute can not have its templatable flag changed");
+	}
 }
 
