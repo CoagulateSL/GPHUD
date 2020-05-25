@@ -20,8 +20,7 @@ public abstract class EndOfLifing {
 		// oldest supported version is:
 		if (sortableversion >= 31000) { return null; }
 		// all versions prior to 31000 expire Sunday June 14th 2020
-		//expiration.set(2020,Calendar.JUNE,14,0,0,0);
-		expiration.set(2020,Calendar.JUNE,1,0,0,0);
+		expiration.set(2020,Calendar.JUNE,14,0,0,0);
 		return expiration.getTime();
 	}
 
