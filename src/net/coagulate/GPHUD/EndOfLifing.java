@@ -18,10 +18,11 @@ public abstract class EndOfLifing {
 		Calendar expiration=Calendar.getInstance();
 		int sortableversion=(major*10000)+(minor*100)+bugfix;
 		// oldest supported version is:
-		if (sortableversion >= 31000) { return null; }
-		// all versions prior to 31000 expire Sunday June 14th 2020
-		expiration.set(2020,Calendar.JUNE,14,0,0,0);
-		return expiration.getTime();
+		if (sortableversion<31002) {
+			expiration.set(2020,Calendar.JUNE,14,0,0,0);
+			return expiration.getTime();
+		}
+		return null;
 	}
 
 	public static boolean hasExpired(@Nullable final int version) {
