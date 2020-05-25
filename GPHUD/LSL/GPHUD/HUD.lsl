@@ -127,6 +127,11 @@ integer process(key requestid) {
 		llMessageLinked(LINK_THIS,LINK_STARTUP,"","");
 	}
 	if (jsonget("message")!="") { llOwnerSay(jsonget("message")); }
+	integer i=1;
+	while (jsonget("message"+((string)i))!="") {
+		llOwnerSay(jsonget("message"+((string)i)));
+		i++;
+	}
 	if (jsonget("say")!="") {
 		string oldname=llGetObjectName();
 		string newname=jsonget("sayas");
@@ -134,7 +139,21 @@ integer process(key requestid) {
 		llSay(0,jsonget("say"));
 		if (newname!="") { llSetObjectName(oldname); }
 	}
+	i=1;
+	while (jsonget("say"+((string)i))!="") {
+		string oldname=llGetObjectName();
+		string newname=jsonget("sayas");
+		if (newname!="") { llSetObjectName(newname); }
+		llSay(0,jsonget("say"+((string)i)));
+		if (newname!="") { llSetObjectName(oldname); }
+		i++;
+	}	
 	if (jsonget("sayashud")!="") { llSay(0,jsonget("sayashud")); }
+	i=1;
+	while (jsonget("sayashud"+((string)i))!="") {
+		llSay(0,jsonget("sayashud"+((string)i)));
+		i++;
+	}	
 	if (jsonget("error")!="") { typedSay(jsonget("error")); }
 	if (jsonget("terminate")!="") {
 		gphud_hang("=== TERMINATED ===: "+jsonget("terminate"));
