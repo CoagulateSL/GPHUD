@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
@@ -28,10 +29,35 @@ public abstract class MenuConfig {
 	@URLs(url="/configuration/menus")
 	public static void configure(@Nonnull final State st,
 	                             final SafeMap values) {
+		boolean candelete=st.hasPermission("Menus.Delete");
 		final Form f=st.form();
+		f.noForm();
 		f.add(new TextSubHeader("Dialog menu configuration"));
+		if (candelete && values.containsKey("deletemenu")) {
+			Menu menu=Menu.get(Integer.parseInt(values.get("deletemenu")));
+			if (menu.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Menu and deleter are from different instances"); }
+			String namewas=menu.getName();
+			int id=menu.getId();
+			menu.delete(st);
+			f.add(new TextOK("Menu "+namewas+"#"+id+" was deleted!"));
+			f.add("<br><br>");
+		}
 		final Map<String,Integer> menus=Menu.getMenusMap(st);
 		for (final Map.Entry<String,Integer> entry: menus.entrySet()) {
+			if (candelete) {
+				String innercontent="";
+				innercontent+="<button style=\"border: 0;\" onclick=\"document.getElementById('delete-"+entry.getValue()+"').style.display='inline';\">Delete</button>";
+				innercontent+="<div id=\"delete-"+entry.getValue()+"\" style=\"display: none;\">";
+				innercontent+="&nbsp;&nbsp;&nbsp;";
+				innercontent+="CONFIRM DELETE? ";
+				innercontent+="<form style=\"display: inline;\" method=post>";
+				innercontent+="<input type=hidden name=deletemenu value=\""+entry.getValue()+"\">";
+				innercontent+="<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>";
+				innercontent+="</form>";
+				innercontent+="</div>";
+				innercontent+="&nbsp;&nbsp;&nbsp;";
+				f.add(innercontent);
+			}
 			f.add("<a href=\"./menus/view/"+entry.getValue()+"\">"+entry.getKey()+"</a><br>");
 		}
 		if (st.hasPermission("Menus.Config")) {

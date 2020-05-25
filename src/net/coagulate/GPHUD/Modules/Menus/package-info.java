@@ -7,9 +7,14 @@
              name="Config",
              power=Permission.POWER.MEDIUM)
 
+@Permissions(description="Permission to delete a menu",
+             name="Delete",
+             power=POWER.MEDIUM)
+
 package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
 import net.coagulate.GPHUD.Modules.Permission;
+import net.coagulate.GPHUD.Modules.Permission.POWER;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
 

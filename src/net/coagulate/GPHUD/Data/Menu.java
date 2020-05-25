@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -166,6 +167,12 @@ public class Menu extends TableRow {
 
 	@Nullable
 	public String getKVIdField() { return null; }
+
+	public void delete(State st) {
+		String oldname=getName();
+		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"delete","Menus",oldname,"","Deleted menu "+oldname);
+		d("delete from menus where menuid=?",getId());
+	}
 
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
