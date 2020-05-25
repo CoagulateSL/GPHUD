@@ -3,11 +3,9 @@ package net.coagulate.GPHUD.Modules.Characters;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
-import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Interfaces.Responses.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
@@ -63,6 +61,11 @@ public abstract class Login {
 	                                                  description="Version time of the HUD that is connecting",
 	                                                  max=128,
 	                                                  mandatory=false) final String versiontime) {
+		if (EndOfLifing.hasExpired(version)) {
+			st.logger().warning("Rejected Legacy HUD connection from end-of-life product version "+version+" from "+versiondate+" "+versiontime);
+			return new TerminateResponse("Sorry, this HUD is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
+		}
+
 		final boolean debug=false;
 		////// CHANGE ALL THIS, HAVE A
 		////// "USINGCHARACTER" COLUMN FOR <AVATAR> TYPES

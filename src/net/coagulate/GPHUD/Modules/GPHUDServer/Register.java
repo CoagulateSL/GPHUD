@@ -2,10 +2,12 @@ package net.coagulate.GPHUD.Modules.GPHUDServer;
 
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
@@ -50,6 +52,10 @@ public abstract class Register {
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
 	                                           description="Version time of the Server that is connecting",
 	                                           max=64) final String versiontime) {
+		if (EndOfLifing.hasExpired(version)) {
+			st.logger().warning("Rejected region server connection from end-of-life product version "+version+" from "+versiondate+" "+versiontime);
+			return new TerminateResponse("Sorry, this Region Server is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
+		}
 		// check authorisation, servers can only be deployed by the instance owner...
 		final String regionname=st.getRegionName();
 		final Instance instance=st.getInstance();
