@@ -33,6 +33,7 @@ integer BANNERED=FALSE;
 integer SHUTDOWN=TRUE;
 vector titlercolor=<0,0,0>;
 string titlertext="";
+integer opencmd=FALSE;
 //// LOCAL INITIALISATION CODE 
 getNewCommsURL() {
 	URL_STAGE=-1;
@@ -43,7 +44,11 @@ getNewCommsURL() {
 
 setupListeners() {
 	if (channelonehandle!=0) { llListenRemove(channelonehandle); }
-	channelonehandle=llListen(1,"",llGetOwner(),"");
+	if (opencmd) { 
+		channelonehandle=llListen(1,"",NULL_KEY,"");
+	} else {
+		channelonehandle=llListen(1,"",llGetOwner(),"");
+	}
 	calculatebroadcastchannel();
 	if (broadcastchannelhandle!=0) { llListenRemove(broadcastchannelhandle); }
 	broadcastchannelhandle=llListen(broadcastchannel,"",NULL_KEY,"");
@@ -136,6 +141,7 @@ integer process(key requestid) {
 	}
 	if (jsonget("sayashud")!="") { llSay(0,jsonget("sayashud")); }
 	if (jsonget("error")!="") { typedSay(jsonget("error")); }
+	if (jsonget("opencmd")!="") { if (jsonget("opencmd")=="true") { opencmd=TRUE; setupListeners(); } else { opencmd=FALSE; setupListeners(); }}
 	if (jsonget("terminate")!="") {
 		gphud_hang("=== TERMINATED ===: "+jsonget("terminate"));
 	}			
@@ -297,7 +303,7 @@ default {
 			llMessageLinked(LINK_THIS,LINK_RECEIVE,json,"");	
 			process(NULL_KEY);
 		}
-		if (channel==1 && id==llGetOwner()) {
+		if (channel==1 && (id==llGetOwner() || (llGetOwnerKey(id)==llGetOwner() && opencmd==TRUE))) {
 			if (text=="status" && id==IAIN_MALTZ) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
 			if (text=="reconnect") { shutdown(); getNewCommsURL(); return; }
 			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); gphud_hang("HUD shutdown requested by wearer."); }
