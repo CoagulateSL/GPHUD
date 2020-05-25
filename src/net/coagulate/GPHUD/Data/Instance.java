@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.UnixTime;
+import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
@@ -29,9 +30,9 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Instance extends TableRow {
 
-	private static final int ADMIN_PESTER_INTERVAL=900; // seconds
+	private static final int ADMIN_PESTER_INTERVAL=3600; // seconds
 	private static final int SERVER_UPDATE_INTERVAL=30;
-	private static final Map<String,Integer> laststatused=new TreeMap<>(); // naughty, static data, but thats okay really for this, ensures we dont spam admins/region servers
+	private final static Map<String,Integer> laststatused=new TreeMap<>(); // naughty, static data, but thats okay really for this, ensures we dont spam admins/region servers
 
 	protected Instance(final int id) { super(id); }
 
@@ -189,7 +190,27 @@ public class Instance extends TableRow {
 		String statuscolor="<0.5,1,0.5>";
 		int level=0;
 		final StringBuilder newstatus=new StringBuilder();
-		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n \n"); }
+		int minversion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=?",getId());
+		Float expiresin=EndOfLifing.expiresIn(minversion);
+		String updatewithin="";
+		if (expiresin!=null) { updatewithin=((int) expiresin.floatValue())+" days "+((int) ((expiresin.floatValue()-((int) expiresin.floatValue()))*24f))+" hours"; }
+		String eol="";
+		if (expiresin!=null && expiresin>14) { eol+="EOL: "+updatewithin; }
+		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n"+eol+"\n \n"); }
+		if (expiresin!=null) {
+			if (expiresin<7 && canStatus("expiring-"+getId())) {
+				broadcastAdmins(null,
+				                "SYSTEM : Alert, this version will be unsupported and marked end of line in "+updatewithin+".  Please ensure the GPHUD Region Server is upgraded by then to continue your service.");
+			}
+			if (expiresin<=14) {
+				if (expiresin<3) {
+					newstatus.append("!!!ALERT!!!\nThis version is out of date\nand must be upgraded within\n"+updatewithin+"\nIt will stop working at this time\n!!!ALERT!!!\n \n");
+				}
+				else {
+					newstatus.append("Update REQUIRED within "+updatewithin+"\n \n");
+				}
+			}
+		}
 		newstatus.append("Server: ").append(GPHUD.hostname).append(" - ").append(GPHUD.VERSION).append("\n \n");
 		//newstatus+=new Date().toString()+" ";
 		for (final Region r: Region.getRegions(this,false)) {
@@ -200,7 +221,7 @@ public class Instance extends TableRow {
 			if (urllast==null) { urllast=getUnixTime(); }
 			if (url==null || url.isEmpty()) {
 				newstatus.append("ERROR:DISCONNECTED]");
-				if (canStatus("admins")) {
+				if (canStatus("admins-"+getId())) {
 					broadcastAdmins(null,"SYSTEM : Alert, region server for '"+r.getName()+"' is not connected to GPHUD Server.");
 				}
 				if (level<2) {
@@ -211,7 +232,7 @@ public class Instance extends TableRow {
 			else {
 				if ((getUnixTime()-urllast)>(15*60)) {
 					newstatus.append("*STALLED*");
-					if (canStatus("admins")) {
+					if (canStatus("admins-"+getId())) {
 						broadcastAdmins(null,"SYSTEM : Alert, region server for '"+r.getName()+"' is not communicating (STALLED / CRASHED)??.");
 					}
 					if (level<2) {
@@ -233,7 +254,16 @@ public class Instance extends TableRow {
 			}
 		}
 		newstatus.append(" \n");
-
+		if (expiresin!=null) {
+			if (expiresin<14) {
+				if (expiresin<3) {
+					statuscolor="<1.0,0.25,0.25>";
+				}
+				else {
+					statuscolor="<1,0.376,0>";
+				}
+			}
+		}
 		final JSONObject statusupdate=new JSONObject();
 		statusupdate.put("instancestatus",newstatus.toString());
 		statusupdate.put("statuscolor",statuscolor);
@@ -285,12 +315,16 @@ public class Instance extends TableRow {
 		                        );
 		for (final ResultsRow r: results) { targets.add(User.get(r.getInt())); }
 		//System.out.println("Avatars:"+targets.size());
+		//for (User target:targets) { System.out.println(target.getName()); }
 		final Set<Char> chars=new TreeSet<>();
 		for (final User a: targets) {
 			final Results charlist=dq("select characterid from characters where instanceid=? and playedby=? and url is not null",getId(),a.getId());
+			//System.out.println("select characterid from characters where instanceid="+getId()+" and playedby="+a.getId()+" and url is not null;");
+			//System.out.println("In chars:"+charlist.size());
 			for (final ResultsRow rr: charlist) { chars.add(Char.get(rr.getInt())); }
 		}
 		//System.out.println("Characters:"+chars.size());
+		//for (Char target:chars) { System.out.println(target.getName()); }
 		for (final Char c: chars) {
 			final Transmission t=new Transmission(c,j);
 			t.start();
@@ -622,7 +656,14 @@ public class Instance extends TableRow {
 		final int now=UnixTime.getUnixTime();
 		if (laststatused.containsKey(url)) {
 			final int last=laststatused.get(url);
-			if ("admins".equals(url)) {  // bodge, admins get 15 minute pesterings :P
+			if (url.startsWith("admins-") || url.startsWith("expiring-")) {  // bodge, admins get wierd INTERVAL minute pesterings :P
+				if ((now-last)>ADMIN_PESTER_INTERVAL) {
+					laststatused.put(url,now);
+					return true;
+				}
+				return false;
+			}
+			if ("expiring".equals(url)) {  // bodge, admins get 15 minute pesterings :P
 				if ((now-last)>ADMIN_PESTER_INTERVAL) {
 					laststatused.put(url,now);
 					return true;
