@@ -139,7 +139,7 @@ public class Maintenance extends Thread {
 			GPHUD.getLogger().log(SEVERE,"Maintenance run awards run caught an exception",e);
 		}
 
-		try { if ((cycle%UPDATEINTERVAL)==0) { Maintenance.updateInstances(); } }
+		try { Maintenance.updateInstances(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance update Instances caught an exception",e);
 		}

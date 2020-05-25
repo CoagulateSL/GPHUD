@@ -2,10 +2,12 @@ package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Characters.BackgroundGroupInviter;
@@ -57,6 +59,10 @@ public class Connect {
 	                                                   max=256) final String url,
 	                               @Nonnull @Arguments(type=ArgumentType.INTEGER,
 	                                                   description="Resume session for character id") final Integer characterid) {
+		if (EndOfLifing.hasExpired(version)) {
+			st.logger().warning("Rejected HUD connection from end-of-life product version "+version+" from "+versiondate+" "+versiontime);
+			return new TerminateResponse("Sorry, this HUD is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
+		}
 		st.json(); // ensure we have the jsons
 		// log client version
 		if (!version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
