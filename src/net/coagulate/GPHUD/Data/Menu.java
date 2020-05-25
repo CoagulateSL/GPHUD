@@ -5,6 +5,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
@@ -170,6 +171,9 @@ public class Menu extends TableRow {
 
 	public void delete(State st) {
 		String oldname=getName();
+		if (oldname.equalsIgnoreCase("Main")) {
+			throw new UserInputInvalidChoiceException("You can not delete the Main menu as this is hard wired to the main HUD button");
+		}
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"delete","Menus",oldname,"","Deleted menu "+oldname);
 		d("delete from menus where menuid=?",getId());
 	}

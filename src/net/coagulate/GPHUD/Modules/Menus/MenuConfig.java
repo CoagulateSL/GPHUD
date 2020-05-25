@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
@@ -34,19 +35,25 @@ public abstract class MenuConfig {
 		f.noForm();
 		f.add(new TextSubHeader("Dialog menu configuration"));
 		if (candelete && values.containsKey("deletemenu")) {
-			Menu menu=Menu.get(Integer.parseInt(values.get("deletemenu")));
-			if (menu.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Menu and deleter are from different instances"); }
-			String namewas=menu.getName();
-			int id=menu.getId();
-			menu.delete(st);
-			f.add(new TextOK("Menu "+namewas+"#"+id+" was deleted!"));
+			try {
+				Menu menu=Menu.get(Integer.parseInt(values.get("deletemenu")));
+				if (menu.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Menu and deleter are from different instances"); }
+				String namewas=menu.getName();
+				int id=menu.getId();
+				menu.delete(st);
+				f.add(new TextOK("Menu "+namewas+"#"+id+" was deleted!"));
+			}
+			catch (UserException e) {
+				f.add(new TextError("Failed to delete menu "+values.get("deletemenu")+": "+e.getLocalizedMessage()));
+			}
 			f.add("<br><br>");
 		}
 		final Map<String,Integer> menus=Menu.getMenusMap(st);
 		for (final Map.Entry<String,Integer> entry: menus.entrySet()) {
 			if (candelete) {
 				String innercontent="";
-				innercontent+="<button style=\"border: 0;\" onclick=\"document.getElementById('delete-"+entry.getValue()+"').style.display='inline';\">Delete</button>";
+				innercontent+="<button "+(entry.getKey()
+				                               .equalsIgnoreCase("Main")?"disabled":"")+" style=\"border: 0;\" onclick=\"document.getElementById('delete-"+entry.getValue()+"').style.display='inline';\">Delete</button>";
 				innercontent+="<div id=\"delete-"+entry.getValue()+"\" style=\"display: none;\">";
 				innercontent+="&nbsp;&nbsp;&nbsp;";
 				innercontent+="CONFIRM DELETE? ";
