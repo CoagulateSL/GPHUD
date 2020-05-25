@@ -73,9 +73,7 @@ public class AttributeKV extends KV {
 	}
 
 	@Override
-	public boolean template() {
-		return false; // it's usually not the character KV that is templated, but that it its self templates into other templated KVs ...
-	}
+	public boolean template() { return attribute.templatable(); }
 
 	@Nonnull
 	@Override

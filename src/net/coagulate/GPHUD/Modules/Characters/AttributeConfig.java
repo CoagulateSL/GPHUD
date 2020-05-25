@@ -53,7 +53,14 @@ public class AttributeConfig {
 		f.noForm();
 		final Table at=new Table();
 		f.add(at);
-		at.add(new HeaderRow().add("Name").add("Attribute Type").add("SubType").add("Consumes Ability Points").add("Allow Self Modify").add("Required").add("Default"));
+		at.add(new HeaderRow().add("Name")
+		                      .add("Attribute Type")
+		                      .add("SubType")
+		                      .add("Consumes Ability Points")
+		                      .add("Allow Self Modify")
+		                      .add("Required")
+		                      .add("Default")
+		                      .add("Template"));
 		for (final Attribute a: st.getAttributes()) {
 			final Row r=new Row();
 			if (a.readOnly()) { r.setbgcolor("#e0e0e0"); }
@@ -83,8 +90,14 @@ public class AttributeConfig {
 			else { at.add(blankNulls(a.getDefaultValue())); }
 
 			if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
+				at.add(new Form(st,true,"./characters/toggletemplatable",a.templatable()+"","attribute",a.getName(),a.templatable()?"templatable":"noop","set"));
+			}
+			else { at.add(a.templatable()); }
+
+			if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
 				at.add(new Form(st,true,"./characters/deleteattribute","Delete Attribute","attribute",a.getName()));
 			}
+
 		}
 
 		if (st.hasPermission("Characters.CreateAttribute")) {
@@ -308,6 +321,28 @@ public class AttributeConfig {
 		attribute.delete();
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Attribute/DELETE",attribute.getName(),null,null,"Avatar DELETED ATTRIBUTE ENTIRELY");
 		return new OKResponse("Attribute and attached data has been DELETED");
+	}
+
+	@URLs(url="/configuration/characters/toggletemplatable",
+	      requiresPermission="Characters.CreateAttribute")
+	public static void toggleTemplatable(@Nonnull final State st,
+	                                     @Nonnull final SafeMap values) {
+		Modules.simpleHtml(st,"Characters.SetTemplatable",values);
+	}
+
+	@Nonnull
+	@Commands(description="Set wether an existing attribute uses templating.  Leave this off unless needed.",
+	          context=Command.Context.AVATAR,
+	          requiresPermission="Characters.CreateAttribute")
+	public static Response setTemplatable(@Nonnull final State st,
+	                                      @Nonnull @Arguments(description="Attribute",
+	                                                          type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
+	                                      @Arguments(description="Does templating?",
+	                                                 mandatory=false,
+	                                                 type=Argument.ArgumentType.BOOLEAN) final Boolean templatable) {
+		attribute.validate(st);
+		attribute.templatable(st,templatable); // audited by data layer
+		return new OKResponse("Attribute templatable flag updated");
 	}
 
 }

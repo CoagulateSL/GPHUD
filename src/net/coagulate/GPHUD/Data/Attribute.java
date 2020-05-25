@@ -6,6 +6,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.Modules.Experience.GenericXP;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
@@ -519,5 +520,16 @@ public class Attribute extends TableRow {
 		POOL,
 		COLOR,
 		EXPERIENCE
+	}
+
+	public boolean templatable() {
+		return getBool("templatable");
+	}
+
+	public void templatable(State st,
+	                        boolean newvalue) {
+		if (newvalue==templatable()) { return; }
+		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newvalue,"Set templatable to "+newvalue);
+		set("templatable",newvalue);
 	}
 }
