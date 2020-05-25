@@ -235,13 +235,23 @@
      conveyas="qbbalance",
      template=false)
 
+@KVS(name="OpenListener",
+     type=KVTYPE.BOOLEAN,
+     description="Open's the HUD's command listener on /1 to listen to objects owned by the wearer too",
+     defaultvalue="false",
+     editpermission="GPHUDClient.Config",
+     scope=KVSCOPE.COMPLETE,
+     hierarchy=KVHIERARCHY.DELEGATING,
+     conveyas="opencmd",
+     template=false)
+
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
-import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
-import net.coagulate.GPHUD.Modules.KV.KVS;
-import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
-import net.coagulate.GPHUD.Modules.KV.KVTYPE;
-import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
-import net.coagulate.GPHUD.Modules.Permission;
-import net.coagulate.GPHUD.Modules.Permission.Permissions;
+		import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
+		import net.coagulate.GPHUD.Modules.KV.KVS;
+		import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
+		import net.coagulate.GPHUD.Modules.KV.KVTYPE;
+		import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
+		import net.coagulate.GPHUD.Modules.Permission;
+		import net.coagulate.GPHUD.Modules.Permission.Permissions;
 
