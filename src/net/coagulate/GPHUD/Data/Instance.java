@@ -196,11 +196,13 @@ public class Instance extends TableRow {
 		if (expiresin!=null) { updatewithin=((int) expiresin.floatValue())+" days "+((int) ((expiresin.floatValue()-((int) expiresin.floatValue()))*24f))+" hours"; }
 		String eol="";
 		if (expiresin!=null && expiresin>14) { eol+="EOL: "+updatewithin; }
-		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n"+eol+"\n \n"); }
+		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n \n"); }
+		newstatus.append("Server: ").append(GPHUD.hostname).append(" - ").append(GPHUD.VERSION).append("\n").append(eol).append("\n \n");
 		if (expiresin!=null) {
 			if (expiresin<7 && canStatus("expiring-"+getId())) {
 				broadcastAdmins(null,
-				                "SYSTEM : Alert, this version will be unsupported and marked end of line in "+updatewithin+".  Please ensure the GPHUD Region Server is upgraded by then to continue your service.");
+				                "SYSTEM : Alert, this version will be unsupported and marked end of line in "+updatewithin+".  Please ensure the GPHUD Region Server is upgraded by then to continue your service."
+				               );
 			}
 			if (expiresin<=14) {
 				if (expiresin<3) {
@@ -211,7 +213,6 @@ public class Instance extends TableRow {
 				}
 			}
 		}
-		newstatus.append("Server: ").append(GPHUD.hostname).append(" - ").append(GPHUD.VERSION).append("\n \n");
 		//newstatus+=new Date().toString()+" ";
 		for (final Region r: Region.getRegions(this,false)) {
 			newstatus.append("[").append(r.getName()).append("#");
