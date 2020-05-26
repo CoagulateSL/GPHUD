@@ -71,10 +71,6 @@ default {
         {
             llResetScript();
         }
-		if (change & (CHANGED_REGION))
-		{
-			detach();
-		}
     }
 	experience_permissions(key id) { permitted=TRUE; }
 	run_time_permissions(integer perm) { if (perm & PERMISSION_ATTACH) { permitted=TRUE; }}
