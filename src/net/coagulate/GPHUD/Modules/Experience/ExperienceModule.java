@@ -60,7 +60,7 @@ public class ExperienceModule extends ModuleAnnotation {
 		if (attr.getType()!=EXPERIENCE) {
 			return new ErrorResponse("This attributes is not of type EXPERIENCE, (try omitting XP off the end, if present)");
 		}
-		if (st.hasPermission("Experience.award"+attr.getName()+"XP")) { permitted=true; }
+		if (st.hasPermission("Experience.award"+attr.getName())) { permitted=true; }
 		if (!permitted) {
 			String subtype=attr.getSubType();
 			if (subtype==null) { subtype=""; }
