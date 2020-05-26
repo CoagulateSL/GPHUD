@@ -379,10 +379,10 @@ default {
 		}
 	}
 	changed (integer what) {
-		if (SHUTDOWN) { return; }
 		if (what & CHANGED_REGION) { 
 			// reset the URL stuff
 			shutdown();
+			setupListeners();
 			getNewCommsURL();		
 		}
 	}
