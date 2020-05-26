@@ -16,7 +16,7 @@ public class Disconnect {
 
 	// ---------- STATICS ----------
 	@Commands(description="Disconnects a URL from GPHUD",
-	          context=Context.CHARACTER,
+	          context=Context.ANY,
 	          permitExternal=false,
 	          permitObject=false,
 	          permitScripting=false,
