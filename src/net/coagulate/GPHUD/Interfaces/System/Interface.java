@@ -209,7 +209,11 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		st.setRegionName(regionname);
 		st.issuid=false;
 		st.setSourcename(objectname);
-		st.sourceregion=Region.findNullable(regionname,false);
+		st.sourceregion=Region.findNullable(regionname,true);
+		if (st.sourceregion!=null && st.sourceregion.isRetired()) {
+			SL.report("Retired region connecting",new UserInputStateException("Region "+regionname+" is retired!"),st);
+			return new TerminateResponse("This region has been used previously and marked as retired, please contact Iain Maltz to rectify this.");
+		}
 		st.sourcelocation=position;
 		final User owner=User.findOrCreate(ownername,ownerkey,false);
 		st.setSourceowner(owner);
