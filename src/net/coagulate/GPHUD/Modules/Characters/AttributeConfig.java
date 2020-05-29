@@ -7,6 +7,7 @@ package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
+import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -123,7 +124,8 @@ public class AttributeConfig {
 		choices.add("GROUP");
 		choices.add("TEXT");
 		choices.add("COLOR");
-		choices.add("EXPERIENCE");
+		if (st.hasModule("Experience")) { choices.add("EXPERIENCE"); }
+		if (st.hasModule("Currency")) { choices.add("CURRENCY"); }
 		return choices;
 	}
 
@@ -181,6 +183,9 @@ public class AttributeConfig {
 			if ("Faction".equalsIgnoreCase(grouptype)) {
 				return new ErrorResponse("You should not be creating a faction attribute ; use the factions module");
 			}
+		}
+		if ("CURRENCY".equals(attributetype)) {
+			Currency.create(st,name);
 		}
 
 		Attribute.create(st,name,selfmodify,Attribute.fromString(attributetype),grouptype,usesabilitypoints,required,defaultvalue);
@@ -318,7 +323,7 @@ public class AttributeConfig {
 	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean confirm) {
 		attribute.validate(st);
 		if (!confirm) { return new ErrorResponse("You did not confirm the operation"); }
-		attribute.delete();
+		attribute.delete(st);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Attribute/DELETE",attribute.getName(),null,null,"Avatar DELETED ATTRIBUTE ENTIRELY");
 		return new OKResponse("Attribute and attached data has been DELETED");
 	}

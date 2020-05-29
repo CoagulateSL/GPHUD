@@ -144,6 +144,7 @@ public class Attribute extends TableRow {
 		if ("float".equalsIgnoreCase(type)) { return FLOAT; }
 		if ("color".equalsIgnoreCase(type)) { return COLOR; }
 		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
+		if ("currency".equalsIgnoreCase(type)) { return CURRENCY; }
 		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
 	}
 
@@ -227,6 +228,8 @@ public class Attribute extends TableRow {
 				return "color";
 			case EXPERIENCE:
 				return "experience";
+			case CURRENCY:
+				return "currency";
 		}
 		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}
@@ -381,21 +384,27 @@ public class Attribute extends TableRow {
 	public String getCharacterValue(@Nonnull final State st) {
 		//System.out.println("Attr:"+getName()+" is "+getType()+" of "+getClass().getSimpleName());
 		if (isKV()) { return st.getKV("Characters."+getName()).value(); }
-		if (getType()==GROUP) {
+		ATTRIBUTETYPE attrtype=getType();
+		if (attrtype==GROUP) {
 			if (getSubType()==null) { return null; }
 			final CharacterGroup cg=CharacterGroup.getGroup(st,getSubType());
 			if (cg==null) { return null; }
 			return cg.getName();
 		}
-		if (getType()==EXPERIENCE) {
+		if (attrtype==EXPERIENCE) {
 			final GenericXP xp=new GenericXP(getName());
 			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 		}
-		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
+		if (attrtype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
 			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 		}
-		if (getType()==POOL) { return "POOL"; }
+		if (attrtype==CURRENCY) {
+			final Currency currency=Currency.findNullable(st,getName());
+			if (currency==null) { return "NotDefined?"; }
+			return currency.shortSum(st);
+		}
+		if (attrtype==POOL) { return "POOL"; }
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
 
@@ -413,16 +422,22 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public String getCharacterValueDescription(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters."+getName()).path(); }
-		if (getType()==EXPERIENCE) {
+		ATTRIBUTETYPE attrtype=getType();
+		if (attrtype==EXPERIENCE) {
 			final GenericXP xp=new GenericXP(getName());
 			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
 		}
-		if (getType()==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
+		if (attrtype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
 			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
 		}
-		if (getType()==POOL) { return "POOL"; }
-		if (getType()==GROUP) { return ""; }
+		if (attrtype==POOL) { return "POOL"; }
+		if (attrtype==CURRENCY) {
+			final Currency currency=Currency.findNullable(st,getName());
+			if (currency==null) { return "NotDefined?"; }
+			return currency.longSum(st);
+		}
+		if (attrtype==GROUP) { return ""; }
 		throw new SystemImplementationException("Unhandled type "+getType());
 	}
 
@@ -435,7 +450,7 @@ public class Attribute extends TableRow {
 	public boolean isKV() {
 		final ATTRIBUTETYPE def=getType();
 		if (def==INTEGER || def==FLOAT || def==TEXT || def==COLOR) { return true; }
-		if (def==POOL || def==GROUP || def==EXPERIENCE) { return false; }
+		if (def==POOL || def==GROUP || def==EXPERIENCE || def==CURRENCY) { return false; }
 		throw new SystemImplementationException("Unknown attribute type "+def+" in attribute "+this);
 	}
 
@@ -502,9 +517,15 @@ public class Attribute extends TableRow {
 	/**
 	 * Deletes this attribute, and its data.
 	 */
-	public void delete() {
+	public void delete(State st) {
 		// delete data
-		getInstance().wipeKV("Characters."+getName());
+		if (getInstance()!=st.getInstance()) { throw new SystemConsistencyException("State instance / attribute instance mismatch during DELETE of all things"); }
+		ATTRIBUTETYPE type=getType();
+		if (type==TEXT || type==FLOAT || type==INTEGER || type==COLOR) { getInstance().wipeKV("Characters."+getName()); }
+		if (type==CURRENCY) {
+			Currency c=Currency.findNullable(st,getName());
+			if (c!=null) { c.delete(st); }
+		}
 		d("delete from attributes where attributeid=?",getId());
 	}
 
@@ -519,7 +540,8 @@ public class Attribute extends TableRow {
 		GROUP,
 		POOL,
 		COLOR,
-		EXPERIENCE
+		EXPERIENCE,
+		CURRENCY
 	}
 
 	public boolean templatable() {

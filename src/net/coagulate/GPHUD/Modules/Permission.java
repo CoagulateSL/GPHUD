@@ -29,6 +29,7 @@ public abstract class Permission {
 
 	public abstract boolean isGenerated();
 
+	/** the non prefixed name */
 	@Nonnull
 	public abstract String name();
 

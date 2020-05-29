@@ -127,6 +127,7 @@ public class ModuleAnnotation extends Module {
 		return p;
 	}
 
+	/** short name*/
 	public Permission getPermission(final State st,
 	                                @Nonnull final String itemname) {
 		return permissions.get(itemname.toLowerCase());
@@ -142,6 +143,7 @@ public class ModuleAnnotation extends Module {
 		return commands;
 	}
 
+	/** map short names to objects */
 	public Map<String,Permission> getPermissions(final State st) {
 		return permissions;
 	}

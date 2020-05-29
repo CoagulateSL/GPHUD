@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -177,7 +178,9 @@ public class Connect {
 	@Nullable
 	private static Response populateCharacterAttributes(@Nonnull final State st) {
 		for (final Attribute a: st.getAttributes()) {
-			if (a.getRequired()) {
+			boolean required=a.getRequired();
+			if (a.getType()==ATTRIBUTETYPE.CURRENCY) { required=true; }
+			if (required) {
 				final Attribute.ATTRIBUTETYPE type=a.getType();
 				switch (type) {
 					case TEXT:
@@ -189,6 +192,13 @@ public class Connect {
 					case GROUP:
 						if (a.getSubType()!=null && CharacterGroup.getGroup(st.getCharacter(),a.getSubType())==null && CharacterGroup.hasChoices(st,a)) {
 							return requestChoiceInput(st,a);
+						}
+						break;
+					case CURRENCY:
+						Currency currency=Currency.findNullable(st,a.getName());
+						if (currency!=null && currency.entries(st,st.getCharacter())==0 && a.getDefaultValue()!=null && !a.getDefaultValue().isEmpty()) {
+							Integer ammount=Integer.parseInt(a.getDefaultValue());
+							currency.spawnInAsSystem(st,st.getCharacter(),ammount,"Starting balance issued");
 						}
 						break;
 					case POOL:

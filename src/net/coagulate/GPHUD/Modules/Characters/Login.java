@@ -164,6 +164,13 @@ public abstract class Login {
 							return new JSONResponse(json);
 						}
 						break;
+					case CURRENCY:
+						Currency currency=Currency.findNullable(st,a.getName());
+						if (currency!=null && currency.entries(st,st.getCharacter())==0 && a.getDefaultValue()!=null && !a.getDefaultValue().isEmpty()) {
+							Integer ammount=Integer.parseInt(a.getDefaultValue());
+							currency.spawnInAsSystem(st,st.getCharacter(),ammount,"Starting balance issued");
+						}
+						break;
 					case POOL:
 						//System.out.println("Character "+character+" validation check for pool "+a+" has no currently defined meaning.  NO-OP.  Passing check.");
 						break;
@@ -419,6 +426,7 @@ public abstract class Login {
 				}
 				target.addMember(st.getCharacter());
 				break;
+
 			case POOL:
 				throw new UserInputStateException("Attempt to initialise pool attribute is invalid.");
 		}

@@ -4,6 +4,7 @@ import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Data.NameCache;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Interfaces.Outputs.Text;
@@ -55,8 +56,9 @@ public class PoolTable extends PagedSQL {
 		final List<String> headers=new ArrayList<>();
 		headers.add(timezone);
 		headers.add("Source");
-		headers.add("Description");
 		headers.add("Change");
+		headers.add("Description");
+		headers.add("Total");
 		return headers;
 	}
 
@@ -80,11 +82,22 @@ public class PoolTable extends PagedSQL {
 		ret+="</td>";
 		final String newvaluestr=""+row.getInt("adjustment");
 		final Renderable notes=new Text(cleanse(row.getStringNullable("description")));
+		ret+="<td align=right>";
+		if (poolname.toLowerCase().startsWith("currency.")) {
+			ret+=Currency.find(state,poolname.substring(9)).shortTextForm(row.getInt("adjustment"));
+		} else {
+			ret+=newvaluestr;
+		}
+		ret+="</td>";
 		ret+="<td>";
 		ret+=notes.asHtml(state,true);
 		ret+="</td>";
 		ret+="<td align=right>";
-		ret+=newvaluestr;
+		if (poolname.toLowerCase().startsWith("currency.")) {
+			ret+=Currency.find(state,poolname.substring(9)).shortTextForm(row.getInt("cumsum"));
+		} else {
+			ret+=row.getInt("cumsum")+"";
+		}
 		ret+="</td>";
 		return ret;
 	}
@@ -98,8 +111,9 @@ public class PoolTable extends PagedSQL {
 	@Nonnull
 	@Override
 	protected Results runQuery() {
-		return db().dq("select * from characterpools where poolname=? and characterid="+forchar.getId()+" "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit(),
-		               poolname);
+		//return db().dq("select * from characterpools where poolname=? and characterid="+forchar.getId()+" "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit(),
+		//               poolname);
+		return db().dq("select * from (select *,@runtot:=@runtot+adjustment as cumsum from ( select * from characterpools where poolname like ? and characterid="+forchar.getId()+" order by timedate asc) t join (select @runtot:=0) r order by timedate) q where 1=1 "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit(),poolname);
 	}
 
 	private String getAdditionalWhere() {

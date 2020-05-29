@@ -1,5 +1,11 @@
 package net.coagulate.GPHUD.Modules;
 
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.CharacterPool;
+import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.State;
+
 import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 
@@ -19,6 +25,48 @@ public abstract class Pool extends NameComparable {
 
 	@Nonnull
 	public abstract String fullName();
+
+	public void delete(State st) {
+		GPHUD.getDB().d("delete from characterpools where poolname like ?",fullName());
+	}
+
+	public int entries(State st,
+	                   Char ch) {
+		if (ch.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Pool entries character instance/state instance mismatch"); }
+		return CharacterPool.poolEntries(ch,this);
+	}
+
+	/** Add money logged from a character to a target.  Source is from the state.
+	 *
+	 * @param st - State for the source of the currency (debit is NOT done)
+	 * @param target - Target character
+	 * @param ammount - Base ammount of the currency this pool represents
+	 * @param description - Description for the pool log
+	 */
+	public void addChar(State st,
+	                Char target,
+	                int ammount,
+	                    String description) {
+		CharacterPool.addPool(st,target,this,ammount,description);
+	}
+
+	public void addAdmin(State st,
+	                 Char target,
+	                 int ammount,
+	                 String description) {
+		CharacterPool.addPoolAdmin(st,target,this,ammount,description);
+	}
+
+	public void addSystem(State st,
+	                      Char target,
+	                      int ammount,
+	                      String description) {
+		CharacterPool.addPoolSystem(st,target,this,ammount,description);
+	}
+
+	public int sum(State st) {
+		return CharacterPool.sumPool(st,this);
+	}
 
 	/**
 	 * Defines a pool used by a character.

@@ -21,6 +21,33 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 public class CharacterPool {
 
 	// ---------- STATICS ----------
+	/**
+	 * Sum all the entries in a Pool
+	 *
+	 * @param character The character to sum the pool of
+	 * @param pool      Pool
+	 *
+	 * @return Sum of the entries
+	 */
+	public static int poolEntries(@Nonnull final Char character,
+	                          @Nonnull final Pool pool) {
+		final Integer count=db().dqi("select count(*) from characterpools where characterid=? and poolname like ?",character.getId(),pool.fullName());
+		if (count==null) { return 0; }
+		return count;
+	}
+
+	/**
+	 * Sum all the entries in a Pool
+	 *
+	 * @param st   State inferring character
+	 * @param pool Pool
+	 *
+	 * @return Sum of the entries
+	 */
+	public static int poolEntries(@Nonnull final State st,
+	                          @Nonnull final Pool pool) {
+		return poolEntries(st.getCharacter(),pool);
+	}
 
 	/**
 	 * Sum all the entries in a Pool
