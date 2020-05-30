@@ -181,6 +181,7 @@ public abstract class Classes {
 						case EFFECT:
 						case ATTRIBUTE:
 						case ATTRIBUTE_WRITABLE:
+						case CURRENCY:
 							requiresmax=false;
 							break;
 						default:

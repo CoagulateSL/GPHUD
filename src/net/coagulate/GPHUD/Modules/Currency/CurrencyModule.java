@@ -57,17 +57,19 @@ public class CurrencyModule extends ModuleAnnotation {
 		return super.getPermission(st,itemname);
 	}
 
-	@Override
-	public Map<String,Permission> getPermissions(State st) {
-		Map<String,Permission> permissions=super.getPermissions(st);
-		for (Attribute a:Attribute.getAttributes(st.getInstance())) {
-			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
-				permissions.put("Create"+a.getName(),getPermission(st,"Create"+a.getName()));
-				permissions.put("Destroy"+a.getName(),getPermission(st,"Destroy"+a.getName()));
-			}
+// ---------- INSTANCE ----------
+@Override
+public Map<String,Permission> getPermissions(State st) {
+	Map<String,Permission> permissions=super.getPermissions(st);
+	if (st==null) { return permissions; }
+	for (Attribute a: Attribute.getAttributes(st.getInstance())) {
+		if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
+			permissions.put("Create"+a.getName(),getPermission(st,"Create"+a.getName()));
+			permissions.put("Destroy"+a.getName(),getPermission(st,"Destroy"+a.getName()));
 		}
-		return permissions;
 	}
+	return permissions;
+}
 
 	@Nonnull
 	@Override

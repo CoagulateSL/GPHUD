@@ -5,6 +5,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Inputs.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -345,6 +346,13 @@ public abstract class Command {
 					}
 					t.add(modulelist);
 					break;
+				case CURRENCY:
+					final DropDownList currencylist=new DropDownList(arg.getName());
+					for (final Currency acurrency: Currency.getAll(st)) {
+						currencylist.add(acurrency.getName());
+					}
+					t.add(currencylist);
+					break;
 				case REGION:
 					final DropDownList regionlist=new DropDownList(arg.getName());
 					for (final Region aregion: Region.getRegions(st,false)) {
@@ -509,6 +517,8 @@ public abstract class Command {
 					throw new UserInputLookupFailureException("Unable to resolve '"+v+"' to an attribute");
 				}
 				return attr;
+			case CURRENCY:
+				return assertNotNull(Currency.find(state,v),v,"currency");
 			case PERMISSIONSGROUP:
 				return assertNotNull(PermissionsGroup.resolveNullable(state,v),v,"permissions group");
 			case CHARACTERGROUP:
@@ -639,6 +649,7 @@ public abstract class Command {
 			case CHARACTER_NEAR:
 			case CHARACTER_PLAYABLE:
 			case EFFECT:
+			case CURRENCY:
 				return 64;
 			case CHARACTERGROUP:
 			case EVENT:

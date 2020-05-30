@@ -65,7 +65,8 @@ public abstract class Argument {
 		EVENT,
 		EFFECT,
 		ATTRIBUTE,
-		ATTRIBUTE_WRITABLE
+		ATTRIBUTE_WRITABLE,
+		CURRENCY
 	}
 
 

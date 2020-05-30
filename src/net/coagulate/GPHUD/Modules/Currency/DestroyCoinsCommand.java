@@ -141,16 +141,17 @@ public class DestroyCoinsCommand extends Command {
 		return args;
 	}
 
-	@Nonnull
-	@Override
-	public String getFullName() {
-		return "Currency.Create"+name;
-	}
+// ---------- INSTANCE ----------
+@Nonnull
+@Override
+public String getFullName() {
+	return "Currency.Destroy"+name;
+}
 
 	@Nonnull
 	@Override
 	public String getName() {
-		return "Create"+name;
+		return "Destroy"+name;
 	}
 
 	@Override
