@@ -4,7 +4,9 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.GPHUD;
@@ -16,6 +18,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Currency extends TableRow {
 
@@ -97,6 +101,37 @@ public class Currency extends TableRow {
 	@Override
 	public String getKVIdField() {
 		return null;
+	}
+
+	/**
+	 * Turn a string into a base coin ammount
+	 */
+	public int decode(String ammount) {
+		// if its just a number, lets bail fast
+		if (Pattern.compile("[0-9]*").matcher(ammount).matches()) { return Integer.parseInt(ammount); }
+
+		// right, what can we do.... split it into groups of numbers and non numbers I guess
+		Pattern pattern=Pattern.compile("([0-9]+)([^0-9]*)([0-9]?.*)");  // splits into number, coin, remainder
+		int total=0;
+		while (!ammount.trim().isEmpty()) {
+			Matcher matcher=pattern.matcher(ammount);
+			if (matcher.matches()) {
+				System.out.println("Split gives us ["+matcher.group(1)+"]["+matcher.group(2)+"]["+matcher.group(3)+"]");
+				int qty=Integer.parseInt(matcher.group(1));
+				String coin=matcher.group(2);
+				// resolve coin?
+				Coin coinobject=findCoin(coin);
+				int value=coinobject.value*qty;
+				total+=value;
+				System.out.println("ACCUMULATE "+qty+" "+coin+" gave us "+value+" totalling "+total);
+				ammount=matcher.group(3);
+			}
+			else {
+				System.out.println("Not a match");
+				throw new SystemImplementationException("More complicated =)");
+			}
+		}
+		return total;
 	}
 
 	/**
@@ -191,6 +226,28 @@ public class Currency extends TableRow {
 
 	public String getBaseCoinNameShort() { return getString("basecoinshort"); }
 
+	public Coin findCoin(String coin) {
+		// trim the coin down
+		coin=coin.replaceAll(",","");
+		coin=coin.trim();
+
+		// check base coin names
+		if (coin.isEmpty() || coin.equalsIgnoreCase(getBaseCoinName()) || coin.equalsIgnoreCase(getBaseCoinNameShort())) {
+			return new Coin(1,getBaseCoinName(),getBaseCoinNameShort());
+		}
+		// check coin long names
+		Results longname=dq("select * from currencycoins where coinname like ? and currencyid=?",coin,getId());
+		if (longname.size()==1) {
+			return new Coin(longname.first().getInt("basemultiple"),longname.first().getString("coinname"),longname.first().getString("coinnameshort"));
+		}
+		// no? ok
+		Results shortname=dq("select * from currencycoins where coinnameshort like ? and currencyid=?",coin,getId());
+		if (shortname.size()==1) {
+			return new Coin(shortname.first().getInt("basemultiple"),shortname.first().getString("coinname"),shortname.first().getString("coinnameshort"));
+		}
+		throw new UserInputLookupFailureException("Unable to resolve a coin named "+coin);
+	}
+
 	// ----- Internal Instance -----
 
 	@Nonnull
@@ -266,12 +323,10 @@ public class Currency extends TableRow {
 	public Pool getPool(State st) {
 		return Modules.getPool(st,"Currency."+getName());
 	}
-
 	@Override
 	protected int getNameCacheTime() {
 		return 0;
 	}
-
 	private String textSum(State st,
 	                       boolean longform) {
 		return textForm(sum(st),longform);

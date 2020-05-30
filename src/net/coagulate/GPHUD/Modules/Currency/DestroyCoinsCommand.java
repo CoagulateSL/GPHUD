@@ -68,80 +68,109 @@ public class DestroyCoinsCommand extends Command {
 		return true;
 	}
 
-	@Nonnull
-	@Override
-	public List<Argument> getArguments() {
-		ArrayList<Argument> args=new ArrayList<>();
-		args.add(new Argument() {
-			@Override
-			public boolean isGenerated() { return true; }
-			@Nonnull @Override
-			public ArgumentType type() { return ArgumentType.CHARACTER; }
-			@Nonnull @Override
-			public String description() { return "Character to remove "+name+" from"; }
-			@Override
-			public boolean mandatory() { return true; }
-			@Override
-			public Class<? extends Object> objectType() { return Char.class; }
-			@Override
-			public String getName() { return "target"; }
-			@Override
-			public boolean delayTemplating() { return false;}
-			@Override
-			public int max() { return 0; }
-			@Override
-			public void overrideDescription(String n) {}
-			@Nonnull @Override
-			public List<String> getChoices(State st) { return null; }
-		});
-		args.add(new Argument() {
-			@Override
-			public boolean isGenerated() { return true; }
-			@Nonnull @Override
-			public ArgumentType type() { return ArgumentType.INTEGER; }
-			@Nonnull @Override
-			public String description() { return "Ammount of "+name+" to remove"; }
-			@Override
-			public boolean mandatory() { return true; }
-			@Override
-			public Class<? extends Object> objectType() { return Integer.class; }
-			@Override
-			public String getName() { return "ammount"; }
-			@Override
-			public boolean delayTemplating() { return false;}
-			@Override
-			public int max() { return 0; }
-			@Override
-			public void overrideDescription(String n) {}
-			@Nonnull @Override
-			public List<String> getChoices(State st) { return null; }
-		});
-		args.add(new Argument() {
-			@Override
-			public boolean isGenerated() { return true; }
-			@Nonnull @Override
-			public ArgumentType type() { return ArgumentType.TEXT_ONELINE; }
-			@Nonnull @Override
-			public String description() { return "Reason for currency destruction"; }
-			@Override
-			public boolean mandatory() { return true; }
-			@Override
-			public Class<? extends Object> objectType() { return String.class; }
-			@Override
-			public String getName() { return "reason"; }
-			@Override
-			public boolean delayTemplating() { return false;}
-			@Override
-			public int max() { return 255; }
-			@Override
-			public void overrideDescription(String n) {}
-			@Nonnull @Override
-			public List<String> getChoices(State st) { return null; }
-		});
-		return args;
-	}
-
 // ---------- INSTANCE ----------
+@Nonnull
+@Override
+public List<Argument> getArguments() {
+	ArrayList<Argument> args=new ArrayList<>();
+	args.add(new Argument() {
+		@Override
+		public boolean isGenerated() { return true; }
+
+		@Nonnull @Override
+		public ArgumentType type() { return ArgumentType.CHARACTER; }
+
+		@Nonnull @Override
+		public String description() { return "Character to remove "+name+" from"; }
+
+		@Override
+		public boolean mandatory() { return true; }
+
+		@Override
+		public Class<? extends Object> objectType() { return Char.class; }
+
+		@Override
+		public String getName() { return "target"; }
+
+		@Override
+		public boolean delayTemplating() { return false;}
+
+		@Override
+		public int max() { return 0; }
+
+		@Override
+		public void overrideDescription(String n) {}
+
+		@Nonnull @Override
+		public List<String> getChoices(State st) { return null; }
+	});
+	args.add(new Argument() {
+		@Override
+		public boolean isGenerated() { return true; }
+
+		// ---------- INSTANCE ----------
+		@Nonnull
+		@Override
+		public ArgumentType type() { return ArgumentType.TEXT_ONELINE; }
+
+		@Nonnull
+		@Override
+		public String description() { return "Ammount of "+name+" to remove"; }
+
+		@Override
+		public boolean mandatory() { return true; }
+
+		@Override
+		public Class<? extends Object> objectType() { return String.class; }
+
+		@Override
+		public String getName() { return "ammount"; }
+
+		@Override
+		public boolean delayTemplating() { return false;}
+
+		@Override
+		public int max() { return 128; }
+
+		@Override
+		public void overrideDescription(String n) {}
+
+		@Nonnull @Override
+		public List<String> getChoices(State st) { return null; }
+	});
+	args.add(new Argument() {
+		@Override
+		public boolean isGenerated() { return true; }
+
+		@Nonnull @Override
+		public ArgumentType type() { return ArgumentType.TEXT_ONELINE; }
+
+		@Nonnull @Override
+		public String description() { return "Reason for currency destruction"; }
+
+		@Override
+		public boolean mandatory() { return true; }
+
+		@Override
+		public Class<? extends Object> objectType() { return String.class; }
+
+		@Override
+		public String getName() { return "reason"; }
+
+		@Override
+		public boolean delayTemplating() { return false;}
+
+		@Override
+		public int max() { return 255; }
+
+		@Override
+		public void overrideDescription(String n) {}
+
+		@Nonnull @Override
+		public List<String> getChoices(State st) { return null; }
+	});
+	return args;
+}
 @Nonnull
 @Override
 public String getFullName() {
@@ -157,11 +186,12 @@ public String getFullName() {
 	@Override
 	protected Response execute(State state,
 	                           Map<String,Object> arguments) {
-		Char target=(Char)arguments.get("target");
-		Integer ammount=(Integer)arguments.get("ammount");
+		Char target=(Char) arguments.get("target");
+		Currency currency=Currency.find(state,name);
+		int ammount=currency.decode((String) arguments.get("ammount"));
 		if (ammount<1) { return new ErrorResponse("Ammount must be a positive integer"); }
-		String reason=(String)arguments.get("reason");
-		Currency.find(state,name).spawnInAsAdmin(state,target,-ammount,reason);
-		return new OKResponse("Destroyed "+ammount+" "+name+" from "+target.getName());
+		String reason=(String) arguments.get("reason");
+		currency.spawnInAsAdmin(state,target,-ammount,reason);
+		return new OKResponse("Destroyed "+currency.longTextForm(ammount)+" of "+name+" from "+target.getName());
 	}
 }
