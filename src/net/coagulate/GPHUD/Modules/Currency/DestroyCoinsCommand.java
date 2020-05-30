@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Currency;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -15,8 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 public class DestroyCoinsCommand extends Command {
-	String name;
-	public DestroyCoinsCommand(String name) {this.name=name;}
+	final String name;
+
+	public DestroyCoinsCommand(final String name) {this.name=name;}
 
 	@Override
 	public boolean isGenerated() {
@@ -72,15 +74,17 @@ public class DestroyCoinsCommand extends Command {
 @Nonnull
 @Override
 public List<Argument> getArguments() {
-	ArrayList<Argument> args=new ArrayList<>();
+	final ArrayList<Argument> args=new ArrayList<>();
 	args.add(new Argument() {
 		@Override
 		public boolean isGenerated() { return true; }
 
-		@Nonnull @Override
+		@Nonnull
+		@Override
 		public ArgumentType type() { return ArgumentType.CHARACTER; }
 
-		@Nonnull @Override
+		@Nonnull
+		@Override
 		public String description() { return "Character to remove "+name+" from"; }
 
 		@Override
@@ -98,11 +102,13 @@ public List<Argument> getArguments() {
 		@Override
 		public int max() { return 0; }
 
+		// ---------- INSTANCE ----------
 		@Override
-		public void overrideDescription(String n) {}
+		public void overrideDescription(final String n) {}
 
-		@Nonnull @Override
-		public List<String> getChoices(State st) { return null; }
+		@Nonnull
+		@Override
+		public List<String> getChoices(final State st) { throw new SystemImplementationException("This should not be being used"); }
 	});
 	args.add(new Argument() {
 		@Override
@@ -133,10 +139,11 @@ public List<Argument> getArguments() {
 		public int max() { return 128; }
 
 		@Override
-		public void overrideDescription(String n) {}
+		public void overrideDescription(final String n) {}
 
-		@Nonnull @Override
-		public List<String> getChoices(State st) { return null; }
+		@Nonnull
+		@Override
+		public List<String> getChoices(final State st) { throw new SystemImplementationException("This should not be being used"); }
 	});
 	args.add(new Argument() {
 		@Override
@@ -163,11 +170,13 @@ public List<Argument> getArguments() {
 		@Override
 		public int max() { return 255; }
 
+		// ---------- INSTANCE ----------
 		@Override
-		public void overrideDescription(String n) {}
+		public void overrideDescription(final String n) {}
 
-		@Nonnull @Override
-		public List<String> getChoices(State st) { return null; }
+		@Nonnull
+		@Override
+		public List<String> getChoices(final State st) { throw new SystemImplementationException("This should not be being used"); }
 	});
 	return args;
 }
@@ -184,13 +193,13 @@ public String getFullName() {
 	}
 
 	@Override
-	protected Response execute(State state,
-	                           Map<String,Object> arguments) {
-		Char target=(Char) arguments.get("target");
-		Currency currency=Currency.find(state,name);
-		int ammount=currency.decode((String) arguments.get("ammount"));
+	protected Response execute(final State state,
+	                           final Map<String,Object> arguments) {
+		final Char target=(Char) arguments.get("target");
+		final Currency currency=Currency.find(state,name);
+		final int ammount=currency.decode((String) arguments.get("ammount"));
 		if (ammount<1) { return new ErrorResponse("Ammount must be a positive integer"); }
-		String reason=(String) arguments.get("reason");
+		final String reason=(String) arguments.get("reason");
 		currency.spawnInAsAdmin(state,target,-ammount,reason);
 		return new OKResponse("Destroyed "+currency.longTextForm(ammount)+" of "+name+" from "+target.getName());
 	}

@@ -384,7 +384,7 @@ public class Attribute extends TableRow {
 	public String getCharacterValue(@Nonnull final State st) {
 		//System.out.println("Attr:"+getName()+" is "+getType()+" of "+getClass().getSimpleName());
 		if (isKV()) { return st.getKV("Characters."+getName()).value(); }
-		ATTRIBUTETYPE attrtype=getType();
+		final ATTRIBUTETYPE attrtype=getType();
 		if (attrtype==GROUP) {
 			if (getSubType()==null) { return null; }
 			final CharacterGroup cg=CharacterGroup.getGroup(st,getSubType());
@@ -422,7 +422,7 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public String getCharacterValueDescription(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters."+getName()).path(); }
-		ATTRIBUTETYPE attrtype=getType();
+		final ATTRIBUTETYPE attrtype=getType();
 		if (attrtype==EXPERIENCE) {
 			final GenericXP xp=new GenericXP(getName());
 			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
@@ -517,13 +517,13 @@ public class Attribute extends TableRow {
 	/**
 	 * Deletes this attribute, and its data.
 	 */
-	public void delete(State st) {
+	public void delete(final State st) {
 		// delete data
 		if (getInstance()!=st.getInstance()) { throw new SystemConsistencyException("State instance / attribute instance mismatch during DELETE of all things"); }
-		ATTRIBUTETYPE type=getType();
+		final ATTRIBUTETYPE type=getType();
 		if (type==TEXT || type==FLOAT || type==INTEGER || type==COLOR) { getInstance().wipeKV("Characters."+getName()); }
 		if (type==CURRENCY) {
-			Currency c=Currency.findNullable(st,getName());
+			final Currency c=Currency.findNullable(st,getName());
 			if (c!=null) { c.delete(st); }
 		}
 		d("delete from attributes where attributeid=?",getId());
@@ -548,8 +548,8 @@ public class Attribute extends TableRow {
 		return getBool("templatable");
 	}
 
-	public void templatable(State st,
-	                        boolean newvalue) {
+	public void templatable(final State st,
+	                        final boolean newvalue) {
 		if (newvalue==templatable()) { return; }
 		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newvalue,"Set templatable to "+newvalue);
 		set("templatable",newvalue);

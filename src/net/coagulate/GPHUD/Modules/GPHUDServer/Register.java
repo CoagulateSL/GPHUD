@@ -85,7 +85,7 @@ public abstract class Register {
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
 		region.setURL(url);
-		region.setPrimUUID(st.objectkey);
+		if (st.objectkey!=null) { region.setPrimUUID(st.objectkey); }
 		st.logger().log(INFO,"Sending post registration message to "+regionname);
 		final JSONObject registered=new JSONObject().put("incommand","registered");
 		String regmessage;

@@ -169,8 +169,8 @@ public class Menu extends TableRow {
 	@Nullable
 	public String getKVIdField() { return null; }
 
-	public void delete(State st) {
-		String oldname=getName();
+	public void delete(final State st) {
+		final String oldname=getName();
 		if (oldname.equalsIgnoreCase("Main")) {
 			throw new UserInputInvalidChoiceException("You can not delete the Main menu as this is hard wired to the main HUD button");
 		}

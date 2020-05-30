@@ -26,45 +26,46 @@ public abstract class Pool extends NameComparable {
 	@Nonnull
 	public abstract String fullName();
 
-	public void delete(State st) {
+	public void delete(final State st) {
 		GPHUD.getDB().d("delete from characterpools where poolname like ?",fullName());
 	}
 
-	public int entries(State st,
-	                   Char ch) {
+	public int entries(final State st,
+	                   final Char ch) {
 		if (ch.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Pool entries character instance/state instance mismatch"); }
 		return CharacterPool.poolEntries(ch,this);
 	}
 
-	/** Add money logged from a character to a target.  Source is from the state.
+	/**
+	 * Add money logged from a character to a target.  Source is from the state.
 	 *
-	 * @param st - State for the source of the currency (debit is NOT done)
-	 * @param target - Target character
-	 * @param ammount - Base ammount of the currency this pool represents
+	 * @param st          - State for the source of the currency (debit is NOT done)
+	 * @param target      - Target character
+	 * @param ammount     - Base ammount of the currency this pool represents
 	 * @param description - Description for the pool log
 	 */
-	public void addChar(State st,
-	                Char target,
-	                int ammount,
-	                    String description) {
+	public void addChar(final State st,
+	                    final Char target,
+	                    final int ammount,
+	                    final String description) {
 		CharacterPool.addPool(st,target,this,ammount,description);
 	}
 
-	public void addAdmin(State st,
-	                 Char target,
-	                 int ammount,
-	                 String description) {
+	public void addAdmin(final State st,
+	                     final Char target,
+	                     final int ammount,
+	                     final String description) {
 		CharacterPool.addPoolAdmin(st,target,this,ammount,description);
 	}
 
-	public void addSystem(State st,
-	                      Char target,
-	                      int ammount,
-	                      String description) {
+	public void addSystem(final State st,
+	                      final Char target,
+	                      final int ammount,
+	                      final String description) {
 		CharacterPool.addPoolSystem(st,target,this,ammount,description);
 	}
 
-	public int sum(State st) {
+	public int sum(final State st) {
 		return CharacterPool.sumPool(st,this);
 	}
 

@@ -131,8 +131,8 @@ public abstract class CharacterAttribute extends Attribute {
 	}
 
 	@Override
-	public void templatable(State st,
-	                        boolean newvalue) {
+	public void templatable(final State st,
+	                        final boolean newvalue) {
 		throw new UserInputStateException("Non user attribute can not have its templatable flag changed");
 	}
 }

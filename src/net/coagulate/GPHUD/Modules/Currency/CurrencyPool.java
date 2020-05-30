@@ -6,8 +6,10 @@ import javax.annotation.Nonnull;
 
 public class CurrencyPool extends Pool {
 
-	String name;
-	CurrencyPool(String name) { this.name=name; }
+	final String name;
+
+	CurrencyPool(final String name) { this.name=name; }
+
 	@Override
 	public boolean isGenerated() {
 		return true;

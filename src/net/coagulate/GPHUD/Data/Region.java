@@ -309,7 +309,7 @@ public class Region extends TableRow {
 
 	public String getPrimUUID() { return getStringNullable("primuuid"); }
 
-	public void setPrimUUID(String objectkey) {
+	public void setPrimUUID(final String objectkey) {
 		if (!objectkey.equalsIgnoreCase(getPrimUUID())) {
 			d("update regions set primuuid=? where regionid=?",objectkey,getId());
 		}

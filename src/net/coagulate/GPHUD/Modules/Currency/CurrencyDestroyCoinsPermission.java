@@ -8,11 +8,13 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class CurrencyDestroyCoinsPermission extends Permission {
-	String name;
-	public CurrencyDestroyCoinsPermission(String name) {this.name=name;}
+	final String name;
 
+	public CurrencyDestroyCoinsPermission(final String name) {this.name=name;}
+
+	// ---------- INSTANCE ----------
 	@Override
-	public Module getModule(State st) {
+	public Module getModule(final State st) {
 		return Modules.get(st,"Currency");
 	}
 

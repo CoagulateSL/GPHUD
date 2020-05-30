@@ -32,7 +32,7 @@ public class Instance extends TableRow {
 
 	private static final int ADMIN_PESTER_INTERVAL=3600; // seconds
 	private static final int SERVER_UPDATE_INTERVAL=30;
-	private final static Map<String,Integer> laststatused=new TreeMap<>(); // naughty, static data, but thats okay really for this, ensures we dont spam admins/region servers
+	private static final Map<String,Integer> laststatused=new TreeMap<>(); // naughty, static data, but thats okay really for this, ensures we dont spam admins/region servers
 
 	protected Instance(final int id) { super(id); }
 
@@ -190,10 +190,10 @@ public class Instance extends TableRow {
 		String statuscolor="<0.5,1,0.5>";
 		int level=0;
 		final StringBuilder newstatus=new StringBuilder();
-		int minversion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=?",getId());
-		Float expiresin=EndOfLifing.expiresIn(minversion);
+		final int minversion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=?",getId());
+		final Float expiresin=EndOfLifing.expiresIn(minversion);
 		String updatewithin="";
-		if (expiresin!=null) { updatewithin=((int) expiresin.floatValue())+" days "+((int) ((expiresin.floatValue()-((int) expiresin.floatValue()))*24f))+" hours"; }
+		if (expiresin!=null) { updatewithin=((int) expiresin.floatValue())+" days "+((int) ((expiresin-((int) expiresin.floatValue()))*24f))+" hours"; }
 		String eol="";
 		if (expiresin!=null && expiresin>14) { eol+="EOL: "+updatewithin; }
 		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n \n"); }
@@ -206,10 +206,12 @@ public class Instance extends TableRow {
 			}
 			if (expiresin<=14) {
 				if (expiresin<3) {
-					newstatus.append("!!!ALERT!!!\nThis version is out of date\nand must be upgraded within\n"+updatewithin+"\nIt will stop working at this time\n!!!ALERT!!!\n \n");
+					newstatus.append("!!!ALERT!!!\nThis version is out of date\nand must be upgraded within\n")
+					         .append(updatewithin)
+					         .append("\nIt will stop working at this time\n!!!ALERT!!!\n \n");
 				}
 				else {
-					newstatus.append("Update REQUIRED within "+updatewithin+"\n \n");
+					newstatus.append("Update REQUIRED within ").append(updatewithin).append("\n \n");
 				}
 			}
 		}

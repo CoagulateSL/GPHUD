@@ -21,6 +21,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.List;
 
 public class CurrencyConfig {
@@ -29,13 +30,13 @@ public class CurrencyConfig {
 	@URLs(url="/configuration/currency")
 	public static void configPage(@Nonnull final State st,
 	                              final SafeMap values) {
-		Form f=st.form();
+		final Form f=st.form();
 		f.noForm();
 
 		f.add(new TextHeader("Currency Configuration"));
 		f.add(new Paragraph("Currencies are created and deleted in the Characters configuration page, add or remove CURRENCY type attributes"));
 		f.add(new Paragraph("Select a currency to configure;"));
-		for (Attribute a: Attribute.getAttributes(st.getInstance())) {
+		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
 				f.add(new Link(a.getName(),"./Currency/View/"+a.getId()));
 			}
@@ -45,7 +46,7 @@ public class CurrencyConfig {
 	@URLs(url="/configuration/currency/view/*")
 	public static void configCurrency(@Nonnull final State st,
 	                                  final SafeMap values) {
-		Form f=st.form();
+		final Form f=st.form();
 		f.noForm();
 
 		st.form().noForm();
@@ -144,7 +145,7 @@ public class CurrencyConfig {
 	private static void configCurrency(@Nonnull final State st,
 	                                   @Nonnull final SafeMap values,
 	                                   @Nonnull final Currency currency) {
-		Form f=st.form();
+		final Form f=st.form();
 
 		f.add(new TextHeader("Currency configuration for "+currency.getName()));
 		f.add(new Paragraph("This currency has a base coin of "+currency.getBaseCoinName()+" ("+currency.getBaseCoinNameShort()+")"));
@@ -160,10 +161,10 @@ public class CurrencyConfig {
 		               currency.getBaseCoinName()
 		));
 		f.add(new TextSubHeader("Coinage"));
-		Table t=new Table();
-		List<Coin> coins=currency.getCoins();
-		coins.sort((o1,o2)->Integer.valueOf(o1.value).compareTo(Integer.valueOf(o2.value)));
-		for (Coin coin: coins) {
+		final Table t=new Table();
+		final List<Coin> coins=currency.getCoins();
+		coins.sort(Comparator.comparingInt(o->o.value));
+		for (final Coin coin: coins) {
 			t.openRow();
 			t.add(new Cell(coin.value+"").align("right"));
 			t.add(currency.getBaseCoinName());

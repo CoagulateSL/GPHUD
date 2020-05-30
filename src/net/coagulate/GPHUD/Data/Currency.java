@@ -24,21 +24,21 @@ import java.util.regex.Pattern;
 public class Currency extends TableRow {
 
 
-	private boolean selfvalidated=false;
+	private boolean selfvalidated;
 
-	public Currency(int id) {super(id);}
+	public Currency(final int id) {super(id);}
 
 	// ---------- STATICS ----------
 	@Nonnull
-	public static Currency find(State st,
-	                            String name) {
+	public static Currency find(final State st,
+	                            final String name) {
 		return get(GPHUD.getDB().dqinn("select id from currencies where instanceid=? and name like ?",st.getInstance().getId(),name));
 	}
 
-	public static Currency findNullable(State st,
-	                                    String name) {
+	public static Currency findNullable(final State st,
+	                                    final String name) {
 		try { return find(st,name); }
-		catch (NoDataException e) { return null; }
+		catch (final NoDataException e) { return null; }
 	}
 
 	@Nonnull
@@ -46,17 +46,17 @@ public class Currency extends TableRow {
 		return (Currency) factoryPut("Currency",id,new Currency(id));
 	}
 
-	public static void create(State st,
-	                          String name) {
+	public static void create(final State st,
+	                          final String name) {
 		if (findNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("A currency named "+name+" already exists");
 		}
 		GPHUD.getDB().d("insert into currencies(instanceid,name,basecoin,basecoinshort) values(?,?,?,?)",st.getInstance().getId(),name,name,name);
 	}
 
-	public static List<Currency> getAll(State state) {
-		List<Currency> list=new ArrayList<>();
-		for (Attribute attr: Attribute.getAttributes(state.getInstance())) {
+	public static List<Currency> getAll(final State state) {
+		final List<Currency> list=new ArrayList<>();
+		for (final Attribute attr: Attribute.getAttributes(state.getInstance())) {
 			if (attr.getType()==ATTRIBUTETYPE.CURRENCY) {
 				list.add(Currency.find(state,attr.getName()));
 			}
@@ -72,7 +72,7 @@ public class Currency extends TableRow {
 	}
 
 	@Override
-	public void validate(@Nonnull State st) {
+	public void validate(@Nonnull final State st) {
 		if (selfvalidated) { return; }
 		super.validate();
 		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Currency instance/state instance mismatch"); }
@@ -111,17 +111,17 @@ public class Currency extends TableRow {
 		if (Pattern.compile("[0-9]*").matcher(ammount).matches()) { return Integer.parseInt(ammount); }
 
 		// right, what can we do.... split it into groups of numbers and non numbers I guess
-		Pattern pattern=Pattern.compile("([0-9]+)([^0-9]*)([0-9]?.*)");  // splits into number, coin, remainder
+		final Pattern pattern=Pattern.compile("([0-9]+)([^0-9]*)([0-9]?.*)");  // splits into number, coin, remainder
 		int total=0;
 		while (!ammount.trim().isEmpty()) {
-			Matcher matcher=pattern.matcher(ammount);
+			final Matcher matcher=pattern.matcher(ammount);
 			if (matcher.matches()) {
 				//System.out.println("Split gives us ["+matcher.group(1)+"]["+matcher.group(2)+"]["+matcher.group(3)+"]");
-				int qty=Integer.parseInt(matcher.group(1));
-				String coin=matcher.group(2);
+				final int qty=Integer.parseInt(matcher.group(1));
+				final String coin=matcher.group(2);
 				// resolve coin?
-				Coin coinobject=findCoin(coin);
-				int value=coinobject.value*qty;
+				final Coin coinobject=findCoin(coin);
+				final int value=coinobject.value*qty;
 				total+=value;
 				//System.out.println("ACCUMULATE "+qty+" "+coin+" gave us "+value+" totalling "+total);
 				ammount=matcher.group(3);
@@ -139,9 +139,9 @@ public class Currency extends TableRow {
 	 *
 	 * @param st Infers character
 	 *
-	 * @return
+	 * @return the current sum using short coin notation
 	 */
-	public String shortSum(State st) {
+	public String shortSum(final State st) {
 		return textSum(st,false);
 	}
 
@@ -150,75 +150,75 @@ public class Currency extends TableRow {
 	 *
 	 * @param st Infers character
 	 *
-	 * @return
+	 * @return the current sum using long coin notation
 	 */
-	public String longSum(State st) {
+	public String longSum(final State st) {
 		return textSum(st,true);
 	}
 
-	public void removeCoin(State st,
-	                       int basevalue) {
+	public void removeCoin(final State st,
+	                       final int basevalue) {
 		d("delete from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"Delete",getName(),basevalue+"","","Removed coin of value "+basevalue);
 	}
 
-	public void setBaseCoinNames(State state,
-	                             String basecoinshortname,
-	                             String basecoinname) {
-		String old=getBaseCoinName()+" ("+getBaseCoinNameShort()+")";
+	public void setBaseCoinNames(final State state,
+	                             final String basecoinshortname,
+	                             final String basecoinname) {
+		final String old=getBaseCoinName()+" ("+getBaseCoinNameShort()+")";
 		set("basecoin",basecoinname);
 		set("basecoinshort",basecoinshortname);
 		Audit.audit(true,state,OPERATOR.AVATAR,null,null,getName(),"BaseCoins",old,basecoinname+" ("+basecoinshortname+")","Set base coin names");
 	}
 
-	public void addCoin(final @Nonnull State st,
+	public void addCoin(@Nonnull final State st,
 	                    final int basevalue,
-	                    final @Nonnull String coinshortname,
-	                    final @Nonnull String coinname) {
-		int existsbybase=dqinn("select count(*) from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
+	                    @Nonnull final String coinshortname,
+	                    @Nonnull final String coinname) {
+		final int existsbybase=dqinn("select count(*) from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
 		if (existsbybase>0) { throw new UserInputDuplicateValueException("You can not create another coin with base value "+basevalue); }
-		int existsbynames=dqinn("select count(*) from currencycoins where currencyid=? and coinname like ? or coinnameshort like ?",getId(),coinname,coinshortname);
+		final int existsbynames=dqinn("select count(*) from currencycoins where currencyid=? and coinname like ? or coinnameshort like ?",getId(),coinname,coinshortname);
 		if (existsbynames>0) { throw new UserInputDuplicateValueException("You can not create another coin with names "+coinname+" ("+coinshortname+")"); }
 		d("insert into currencycoins(currencyid,coinname,coinnameshort,basemultiple) values(?,?,?,?)",getId(),coinname,coinshortname,basevalue);
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,getName(),"Coin","",coinname,"Created coin "+coinname+" ("+coinshortname+") = "+basevalue+" "+getBaseCoinName());
 	}
 
 	public String textForm(int ammount,
-	                       boolean longform) {
+	                       final boolean longform) {
 		if (ammount<0) { return "- "+textForm(-ammount,longform); }
-		String result="";
-		for (ResultsRow row: getCurrencyCoins()) {
+		final StringBuilder result=new StringBuilder();
+		for (final ResultsRow row: getCurrencyCoins()) {
 			if (ammount >= row.getInt("basemultiple")) {
-				if (!result.isEmpty()) { result+=" "; }
-				int bycoin=ammount/row.getInt("basemultiple");
-				result=result+bycoin;
-				if (longform) { result+=" "+row.getString("coinname"); }
-				else { result+=row.getString("coinnameshort"); }
+				if (result.length()>0) { result.append(" "); }
+				final int bycoin=ammount/row.getInt("basemultiple");
+				result.append(bycoin);
+				if (longform) { result.append(" ").append(row.getString("coinname")); }
+				else { result.append(row.getString("coinnameshort")); }
 				ammount=ammount-(bycoin*row.getInt("basemultiple"));
 			}
 		}
 		if (ammount>0) {
-			if (!result.isEmpty()) { result+=" "; }
-			result+=ammount;
-			if (longform) { result+=" "+getBaseCoinName(); }
-			else { result+=getBaseCoinNameShort(); }
+			if (result.length()>0) { result.append(" "); }
+			result.append(ammount);
+			if (longform) { result.append(" ").append(getBaseCoinName()); }
+			else { result.append(getBaseCoinNameShort()); }
 		}
-		return result;
+		return result.toString();
 	}
 
-	public String shortTextForm(int ammount) { return textForm(ammount,false); }
+	public String shortTextForm(final int ammount) { return textForm(ammount,false); }
 
-	public String longTextForm(int ammount) { return textForm(ammount,true); }
+	public String longTextForm(final int ammount) { return textForm(ammount,true); }
 
 	public List<Coin> getCoins() {
-		List<Coin> list=new ArrayList<>();
-		for (ResultsRow row: getCurrencyCoins()) {
+		final List<Coin> list=new ArrayList<>();
+		for (final ResultsRow row: getCurrencyCoins()) {
 			list.add(new Coin(row.getInt("basemultiple"),row.getString("coinname"),row.getString("coinnameshort")));
 		}
 		return list;
 	}
 
-	public int sum(State st) {
+	public int sum(final State st) {
 		return getPool(st).sum(st);
 	}
 
@@ -236,19 +236,23 @@ public class Currency extends TableRow {
 			return new Coin(1,getBaseCoinName(),getBaseCoinNameShort());
 		}
 		// check coin long names
-		Results longname=dq("select * from currencycoins where coinname like ? and currencyid=?",coin,getId());
+		final Results longname=dq("select * from currencycoins where coinname like ? and currencyid=?",coin,getId());
 		if (longname.size()==1) {
 			return new Coin(longname.first().getInt("basemultiple"),longname.first().getString("coinname"),longname.first().getString("coinnameshort"));
 		}
 		// no? ok
-		Results shortname=dq("select * from currencycoins where coinnameshort like ? and currencyid=?",coin,getId());
+		final Results shortname=dq("select * from currencycoins where coinnameshort like ? and currencyid=?",coin,getId());
 		if (shortname.size()==1) {
 			return new Coin(shortname.first().getInt("basemultiple"),shortname.first().getString("coinname"),shortname.first().getString("coinnameshort"));
 		}
 		throw new UserInputLookupFailureException("Unable to resolve a coin named "+coin);
 	}
 
-	// ----- Internal Instance -----
+	public void delete(final State st) {
+		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Currency delete instance/state instance mismatch"); }
+		getPool(st).delete(st);
+		d("delete from currencies where id=?",getId());
+	}
 
 	@Nonnull
 	@Override
@@ -256,17 +260,11 @@ public class Currency extends TableRow {
 		return "currencies";
 	}
 
-	public void delete(State st) {
-		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Currency delete instance/state instance mismatch"); }
-		getPool(st).delete(st);
-		d("delete from currencies where id=?",getId());
-	}
-
 	/**
 	 * Count the number of entries a character has
 	 */
-	public int entries(State st,
-	                   Char ch) {
+	public int entries(final State st,
+	                   final Char ch) {
 		return getPool(st).entries(st,ch);
 	}
 
@@ -278,10 +276,10 @@ public class Currency extends TableRow {
 	 * @param ammount     - Ammount of base currency
 	 * @param description - Description for the transaction
 	 */
-	public void spawnInAsSystem(State st,
-	                            Char character,
-	                            int ammount,
-	                            String description) {
+	public void spawnInAsSystem(final State st,
+	                            final Char character,
+	                            final int ammount,
+	                            final String description) {
 		getPool(st).addSystem(st,character,ammount,description);
 	}
 
@@ -293,10 +291,10 @@ public class Currency extends TableRow {
 	 * @param ammount     - Ammount of base currency
 	 * @param description - Description for the transaction
 	 */
-	public void spawnInAsAdmin(State st,
-	                           Char character,
-	                           int ammount,
-	                           String description) {
+	public void spawnInAsAdmin(final State st,
+	                           final Char character,
+	                           final int ammount,
+	                           final String description) {
 		getPool(st).addAdmin(st,character,ammount,description);
 		Audit.audit(true,st,OPERATOR.AVATAR,null,character,"Create",getName(),null,ammount+"","Admin spawned in currency: "+description);
 	}
@@ -309,26 +307,29 @@ public class Currency extends TableRow {
 	 * @param ammount     - Ammount of base currency
 	 * @param description - Description for the transaction
 	 */
-	public void spawnInByChar(State st,
-	                          Char character,
-	                          int ammount,
-	                          String description) {
+	public void spawnInByChar(final State st,
+	                          final Char character,
+	                          final int ammount,
+	                          final String description) {
 		getPool(st).addChar(st,character,ammount,description);
+	}
+
+	public Pool getPool(final State st) {
+		return Modules.getPool(st,"Currency."+getName());
 	}
 
 	public Instance getInstance() {
 		return Instance.get(dqinn("select instanceid from currencies where id=?",getId()));
 	}
 
-	public Pool getPool(State st) {
-		return Modules.getPool(st,"Currency."+getName());
-	}
+	// ----- Internal Instance -----
 	@Override
 	protected int getNameCacheTime() {
 		return 0;
 	}
-	private String textSum(State st,
-	                       boolean longform) {
+
+	private String textSum(final State st,
+	                       final boolean longform) {
 		return textForm(sum(st),longform);
 	}
 
@@ -336,14 +337,14 @@ public class Currency extends TableRow {
 		return dq("select basemultiple,coinname,coinnameshort from currencycoins where currencyid=? order by basemultiple desc",getId());
 	}
 
-	public class Coin {
-		public int value;
-		public String basecoinname;
-		public String basecoinnameshort;
+	public static class Coin {
+		public final int value;
+		public final String basecoinname;
+		public final String basecoinnameshort;
 
-		public Coin(int value,
-		            String basecoinname,
-		            String basecoinnameshort) {
+		public Coin(final int value,
+		            final String basecoinname,
+		            final String basecoinnameshort) {
 			this.value=value;
 			this.basecoinname=basecoinname;
 			this.basecoinnameshort=basecoinnameshort;

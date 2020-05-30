@@ -99,18 +99,18 @@ public class API {
 			callingstate.source=State.Sources.SCRIPTING;
 			if (elevated) { callingstate.elevate(true); }
 			// some things care about this.  like initialise and logon
-			if (st!=null && st.getCharacterNullable()==caller.getContent()) {
+			if (st.getCharacterNullable()==caller.getContent() && vm.getInvokerState()!=null) {
 				callingstate.setJson(vm.getInvokerState().jsonNullable());
 			}
 			if (callingstate.getInstance()!=st.getInstance()) {
 				throw new SystemConsistencyException("State instances mismatch in gsAPI, aborting");
 			}
-			String paramlist="(";
-			for (ByteCodeDataType bcdt: parameters.getContent()) {
-				if (paramlist.length()>1) { paramlist+=", "; }
-				paramlist+=bcdt.toString();
+			final StringBuilder paramlist=new StringBuilder("(");
+			for (final ByteCodeDataType bcdt: parameters.getContent()) {
+				if (paramlist.length()>1) { paramlist.append(", "); }
+				paramlist.append(bcdt);
 			}
-			paramlist+=")";
+			paramlist.append(")");
 			GPHUD.getLogger("gsAPI").fine("gsAPI calling "+apicall+", our state is "+st+" and their state is "+callingstate+", the parameters list is "+paramlist);
 			final Response value=Modules.run(callingstate,apicall.getContent(),args);
 			return new BCResponse(null,value);

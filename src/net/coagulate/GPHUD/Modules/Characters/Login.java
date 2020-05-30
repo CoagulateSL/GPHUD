@@ -165,9 +165,9 @@ public abstract class Login {
 						}
 						break;
 					case CURRENCY:
-						Currency currency=Currency.findNullable(st,a.getName());
+						final Currency currency=Currency.findNullable(st,a.getName());
 						if (currency!=null && currency.entries(st,st.getCharacter())==0 && a.getDefaultValue()!=null && !a.getDefaultValue().isEmpty()) {
-							Integer ammount=Integer.parseInt(a.getDefaultValue());
+							final int ammount=Integer.parseInt(a.getDefaultValue());
 							currency.spawnInAsSystem(st,st.getCharacter(),ammount,"Starting balance issued");
 						}
 						break;

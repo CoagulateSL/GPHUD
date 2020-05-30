@@ -30,20 +30,20 @@ public abstract class MenuConfig {
 	@URLs(url="/configuration/menus")
 	public static void configure(@Nonnull final State st,
 	                             final SafeMap values) {
-		boolean candelete=st.hasPermission("Menus.Delete");
+		final boolean candelete=st.hasPermission("Menus.Delete");
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextSubHeader("Dialog menu configuration"));
 		if (candelete && values.containsKey("deletemenu")) {
 			try {
-				Menu menu=Menu.get(Integer.parseInt(values.get("deletemenu")));
+				final Menu menu=Menu.get(Integer.parseInt(values.get("deletemenu")));
 				if (menu.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Menu and deleter are from different instances"); }
-				String namewas=menu.getName();
-				int id=menu.getId();
+				final String namewas=menu.getName();
+				final int id=menu.getId();
 				menu.delete(st);
 				f.add(new TextOK("Menu "+namewas+"#"+id+" was deleted!"));
 			}
-			catch (UserException e) {
+			catch (final UserException e) {
 				f.add(new TextError("Failed to delete menu "+values.get("deletemenu")+": "+e.getLocalizedMessage()));
 			}
 			f.add("<br><br>");
