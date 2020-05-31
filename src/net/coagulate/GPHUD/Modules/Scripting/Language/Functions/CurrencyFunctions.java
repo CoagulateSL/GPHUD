@@ -26,7 +26,7 @@ public class CurrencyFunctions {
 	                                     @Nonnull final BCCharacter target,
 	                                     @Nonnull final BCString currencyname) {
 		GSFunctions.assertModule(st,"Currency");
-		Currency currency=Currency.find(st,currencyname.getContent());
+		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCInteger(null,currency.sum(new State(target.getContent())));
 	}
 
@@ -42,7 +42,7 @@ public class CurrencyFunctions {
 	                                     @Nonnull final BCString currencyname,
 	                                     @Nonnull final BCInteger ammount) {
 		GSFunctions.assertModule(st,"Currency");
-		Currency currency=Currency.find(st,currencyname.getContent());
+		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCString(null,currency.shortTextForm(ammount.getContent()));
 	}
 
@@ -58,7 +58,7 @@ public class CurrencyFunctions {
 	                                         @Nonnull final BCString currencyname,
 	                                         @Nonnull final BCInteger ammount) {
 		GSFunctions.assertModule(st,"Currency");
-		Currency currency=Currency.find(st,currencyname.getContent());
+		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCString(null,currency.longTextForm(ammount.getContent()));
 	}
 
@@ -74,7 +74,7 @@ public class CurrencyFunctions {
 	                                     @Nonnull final BCString currencyname,
 	                                     @Nonnull final BCString ammount) {
 		GSFunctions.assertModule(st,"Currency");
-		Currency currency=Currency.find(st,currencyname.getContent());
+		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCInteger(null,currency.decode(ammount.getContent()));
 	}
 

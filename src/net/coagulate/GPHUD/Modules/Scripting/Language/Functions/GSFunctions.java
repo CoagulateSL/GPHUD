@@ -32,8 +32,8 @@ public class GSFunctions {
 	@Nonnull
 	public static Map<String,Method> getAll() { return functionmap; }
 
-	public static void assertModule(State st,
-	                                String modulename) {
+	public static void assertModule(final State st,
+	                                final String modulename) {
 		if (!Modules.get(null,modulename).isEnabled(st)) {
 			throw new GSResourceUnavailableException(modulename+" module is disabled, thus its function calls are disabled.");
 		}

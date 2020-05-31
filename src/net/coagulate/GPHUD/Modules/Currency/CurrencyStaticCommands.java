@@ -17,15 +17,15 @@ public class CurrencyStaticCommands {
 	@Commands(description="Shows your current total balance",
 	          context=Context.CHARACTER)
 	public static Response balance(@Nonnull final State state) {
-		String report="Current balance:";
+		final StringBuilder report=new StringBuilder("Current balance:");
 		for (final Attribute a: Attribute.getAttributes(state.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
-				if (!report.isEmpty()) { report+="\n"; }
-				report+=a.getName()+" - ";
-				Currency currency=Currency.find(state,a.getName());
-				report+=currency.longSum(state);
+				if (report.length()>0) { report.append("\n"); }
+				report.append(a.getName()).append(" - ");
+				final Currency currency=Currency.find(state,a.getName());
+				report.append(currency.longSum(state));
 			}
 		}
-		return new OKResponse(report);
+		return new OKResponse(report.toString());
 	}
 }

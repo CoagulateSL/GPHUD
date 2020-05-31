@@ -205,7 +205,7 @@ public String getFullName() {
 		final String reason=(String) arguments.get("reason");
 		currency.spawnInAsAdmin(state,target,-ammount,reason);
 		if (target.isOnline()) {
-			JSONObject json=new JSONObject();
+			final JSONObject json=new JSONObject();
 			json.put("message","[Admin:"+state.getAvatar().getName()+"] You lost "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason);
 			new Transmission(target,json).start();
 		}

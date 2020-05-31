@@ -59,7 +59,7 @@ public class GSFunctions {
 	                                    final SafeMap values) {
 		final Form f=st.form();
 		final Table table=new Table();
-		Map<String,Map<String,String>> output=new TreeMap<>();
+		final Map<String,Map<String,String>> output=new TreeMap<>();
 		f.add(table);
 		for (final String functionname: net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.getAll().keySet()) {
 			String category="";
@@ -79,13 +79,13 @@ public class GSFunctions {
 
 			}
 			catch (@Nonnull final Exception e) { line+="<td>ERR:"+e+"</td>"; }
-			if (!output.containsKey(category)) { output.put(category,new TreeMap<String,String>()); }
+			if (!output.containsKey(category)) { output.put(category,new TreeMap<>()); }
 			output.get(category).put(functionname,line);
 		}
-		for (Entry<String,Map<String,String>> catset: output.entrySet()) {
+		for (final Entry<String,Map<String,String>> catset: output.entrySet()) {
 			table.add(new Row("<td colspan=9999><table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\"><b>"+catset
 					.getKey()+"</b></span"+"></td><td width=50%><hr></td></tr></table></td></tr><tr>"));
-			for (String rowoutput: catset.getValue().values()) {
+			for (final String rowoutput: catset.getValue().values()) {
 				table.add(new Row(rowoutput));
 			}
 

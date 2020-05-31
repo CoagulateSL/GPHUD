@@ -214,12 +214,12 @@ public class TransferCoinsCommand extends Command {
 		final String reason=(String) arguments.get("reason");
 		if (!currency.tradable()) { return new ErrorResponse("Sorry, you are not allowed to transfer "+currency.getName()); }
 
-		State targetstate=new State(target);
+		final State targetstate=new State(target);
 
-		float taxrate=targetstate.getKV("Currency.TransactionTax"+currency.getName()).floatValue()/100F;
+		final float taxrate=targetstate.getKV("Currency.TransactionTax"+currency.getName()).floatValue()/100F;
 
-		int taxpayable=(int) (((float) ammount)*taxrate);
-		int remainder=ammount-taxpayable;
+		final int taxpayable=(int) (((float) ammount)*taxrate);
+		final int remainder=ammount-taxpayable;
 
 		int balancecheck=ammount;
 		if (senderpaystax) { balancecheck+=taxpayable; }
@@ -227,7 +227,7 @@ public class TransferCoinsCommand extends Command {
 			return new ErrorResponse("You do not have enough currency to complete this transaction; you need "+currency.shortTextForm(balancecheck));
 		}
 		// check we can send taxes somewhere, else abort before doing anything
-		String taxrecipient=targetstate.getKV("Currency.TransactionTaxRecipient"+currency.getName()).value();
+		final String taxrecipient=targetstate.getKV("Currency.TransactionTaxRecipient"+currency.getName()).value();
 		Char taxto=null;
 		if (!taxrecipient.isEmpty()) {
 			taxto=Char.findNullable(state.getInstance(),taxrecipient);
@@ -235,8 +235,8 @@ public class TransferCoinsCommand extends Command {
 		}
 
 		// remove money from A, send money to B and to tax pot (!?)
-		int received;
-		int sent;
+		final int received;
+		final int sent;
 		if (senderpaystax) {
 			currency.spawnInByChar(targetstate,state.getCharacter(),-(ammount+taxpayable),reason+(taxpayable==0?"":" (Tax:"+currency.shortTextForm(taxpayable)+")"));
 			currency.spawnInByChar(state,target,ammount,reason);
@@ -266,7 +266,7 @@ public class TransferCoinsCommand extends Command {
 		}
 		// tell target
 		if (target.isOnline()) {
-			JSONObject json=new JSONObject();
+			final JSONObject json=new JSONObject();
 			json.put("message","You received "+currency.longTextForm(received)+" "+currency.getName()+" from "+state.getCharacter().getName()+" : "+reason);
 			new Transmission(target,json).start();
 		}

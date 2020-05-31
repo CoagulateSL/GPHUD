@@ -64,7 +64,7 @@ public class CurrencyModule extends ModuleAnnotation {
 			}
 		}
 		if (commandname.toLowerCase().startsWith("transferpaytax")) {
-			String currencyname=commandname.substring("transferpaytax".length());
+			final String currencyname=commandname.substring("transferpaytax".length());
 			if (Attribute.find(st.getInstance(),currencyname).getType()==ATTRIBUTETYPE.CURRENCY) {
 				return new TransferCoinsCommand(currencyname,true);
 			}
