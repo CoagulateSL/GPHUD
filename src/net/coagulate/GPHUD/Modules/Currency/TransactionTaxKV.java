@@ -7,14 +7,14 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class TransactionTaxKV extends KV {
-	Currency currency;
-	String name;
+	final Currency currency;
+	final String name;
 
 	public TransactionTaxKV(@Nonnull final State st,
 	                        @Nonnull final Currency currency) {
 		super();
 		this.currency=currency;
-		this.name=currency.getName();
+		name=currency.getName();
 	}
 
 	// ---------- INSTANCE ----------

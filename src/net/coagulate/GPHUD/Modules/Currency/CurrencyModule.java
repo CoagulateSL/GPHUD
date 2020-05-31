@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Currency;
 
 
-import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.Data.Currency;
@@ -21,7 +20,7 @@ public class CurrencyModule extends ModuleAnnotation {
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
-	public Map<String,KV> getKVDefinitions(State st) {
+	public Map<String,KV> getKVDefinitions(final State st) {
 		final Map<String,KV> definitions=super.getKVDefinitions(st);
 		if (st==null) { return definitions; }
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
@@ -33,13 +32,12 @@ public class CurrencyModule extends ModuleAnnotation {
 	}
 
 	@Override
-	public KV getKVDefinition(State st,
+	public KV getKVDefinition(final State st,
 	                          @Nonnull String qualifiedname) {
 		qualifiedname=qualifiedname.toLowerCase();
 		if (qualifiedname.startsWith("transactiontax")) {
-			String componentname=qualifiedname.substring("TransactionTax".length());
-			Currency c=Currency.find(st,componentname);
-			if (c==null) { throw new UserInputLookupFailureException("Can not find currency "+componentname); }
+			final String componentname=qualifiedname.substring("TransactionTax".length());
+			final Currency c=Currency.find(st,componentname);
 			return new TransactionTaxKV(st,c);
 		}
 		return super.getKVDefinition(st,qualifiedname);

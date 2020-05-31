@@ -112,7 +112,7 @@ public class CurrencyConfig {
 	                                      @Arguments(description="The currency to toggle",
 	                                                 type=ArgumentType.CURRENCY) @Nonnull final Currency currency,
 	                                      @Arguments(description="New tradable flag",
-	                                                 type=ArgumentType.BOOLEAN) @Nonnull final boolean tradable) {
+	                                                 type=ArgumentType.BOOLEAN) final boolean tradable) {
 		currency.tradable(st,tradable);
 		return new OKResponse("Tradability of "+currency.getName()+" is now set to "+tradable);
 	}

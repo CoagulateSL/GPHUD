@@ -356,7 +356,7 @@ public class Currency extends TableRow {
 
 	public void tradable(@Nonnull final State state,
 	                     final boolean tradable) {
-		boolean oldvalue=tradable();
+		final boolean oldvalue=tradable();
 		if (tradable==oldvalue) { return; }
 		set("tradable",tradable);
 		Audit.audit(true,state,OPERATOR.AVATAR,null,null,"Currency","Tradable",oldvalue+"",tradable+"","Admin set currency to tradable status "+tradable);
