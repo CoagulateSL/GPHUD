@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
 import net.coagulate.GPHUD.Data.Landmark;
-import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
@@ -74,9 +73,7 @@ public class Output {
 	                                   @Nonnull final BCCharacter target,
 	                                   @Nonnull final BCString landmark) {
 		if (vm.simulation) { return new BCInteger(null,0); }
-		if (!Modules.get(null,"Teleportation").isEnabled(st)) {
-			throw new GSResourceUnavailableException("Teleportation module is disabled, thus teleport function calls are disabled.");
-		}
+		GSFunctions.assertModule(st,"Teleportation");
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		final Landmark t=Landmark.find(st,landmark.getContent());
 		if (t==null) { throw new GSResourceUnavailableException("Can not find landmark "+landmark.getContent()); }

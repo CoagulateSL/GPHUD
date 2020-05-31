@@ -21,6 +21,7 @@ public class Zones {
 	public static BCString gsGetZone(@Nonnull final State st,
 	                                 @Nonnull final GSVM vm,
 	                                 @Nonnull final BCCharacter target) {
+		GSFunctions.assertModule(st,"Zoning");
 		final Zone zone=target.getContent().getZone();
 		if (zone==null) { return new BCString(null,""); }
 		return new BCString(null,zone.getName());
