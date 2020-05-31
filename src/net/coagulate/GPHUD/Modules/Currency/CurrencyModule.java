@@ -122,5 +122,6 @@ public class CurrencyModule extends ModuleAnnotation {
 		}
 		return permissions;
 	}
+
 }
 
