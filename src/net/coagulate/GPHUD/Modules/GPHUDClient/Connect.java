@@ -195,10 +195,12 @@ public class Connect {
 						}
 						break;
 					case CURRENCY:
-						final Currency currency=Currency.findNullable(st,a.getName());
-						if (currency!=null && currency.entries(st,st.getCharacter())==0 && a.getDefaultValue()!=null && !a.getDefaultValue().isEmpty()) {
-							final int ammount=Integer.parseInt(a.getDefaultValue());
-							currency.spawnInAsSystem(st,st.getCharacter(),ammount,"Starting balance issued");
+						if (st.hasModule("Currency")) {
+							final Currency currency=Currency.findNullable(st,a.getName());
+							if (currency!=null && currency.entries(st,st.getCharacter())==0 && a.getDefaultValue()!=null && !a.getDefaultValue().isEmpty()) {
+								final int ammount=Integer.parseInt(a.getDefaultValue());
+								currency.spawnInAsSystem(st,st.getCharacter(),ammount,"Starting balance issued");
+							}
 						}
 						break;
 					case POOL:
