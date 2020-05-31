@@ -38,9 +38,11 @@ public class CurrencyConfig {
 		f.add(new Paragraph("Select a currency to configure;"));
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
-				f.add(new Link(a.getName(),"./Currency/View/"+a.getId()));
+				f.add(new Link(a.getName(),"./Currency/View/"+a.getId())).add("<br>");
 			}
 		}
+		//f.add(new TextSubHeader("KV Configuration"));
+		Modules.get(st,"Currency").kvConfigPage(st);
 	}
 
 	@URLs(url="/configuration/currency/view/*")
@@ -92,6 +94,29 @@ public class CurrencyConfig {
 	                               @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Currency.addCoin",values);
 	}
+
+	@URLs(url="/configuration/currency/toggletradable",
+	      requiresPermission="Currency.Configure")
+	public static void toggleTradablePage(@Nonnull final State st,
+	                                      @Nonnull final SafeMap values) {
+		Modules.simpleHtml(st,"Currency.toggleTradable",values);
+	}
+
+	@Nonnull
+	@Commands(description="Toggle the tradable flag on a currency",
+	          requiresPermission="Currency.Configure",
+	          context=Context.AVATAR,
+	          permitScripting=false,
+	          permitExternal=false)
+	public static Response toggleTradable(@Nonnull final State st,
+	                                      @Arguments(description="The currency to toggle",
+	                                                 type=ArgumentType.CURRENCY) @Nonnull final Currency currency,
+	                                      @Arguments(description="New tradable flag",
+	                                                 type=ArgumentType.BOOLEAN) @Nonnull final boolean tradable) {
+		currency.tradable(st,tradable);
+		return new OKResponse("Tradability of "+currency.getName()+" is now set to "+tradable);
+	}
+
 
 	@Commands(description="Creates a coin.  This does not alter anyone's balance, just changes how balances are displayed.",
 	          requiresPermission="Currency.Denominations",
@@ -160,6 +185,8 @@ public class CurrencyConfig {
 		               "basecoinname",
 		               currency.getBaseCoinName()
 		));
+		f.add(new Paragraph(currency.tradable()?"This currency <font color=green>can be traded</font> between characters":"This currency <font color=red>can not be traded</font> between characters"));
+		f.add(new Form(st,true,"/GPHUD/Configuration/Currency/ToggleTradable","Toggle Tradable","currency",currency.getName(),"tradable",currency.tradable()?"":"1"));
 		f.add(new TextSubHeader("Coinage"));
 		final Table t=new Table();
 		final List<Coin> coins=currency.getCoins();

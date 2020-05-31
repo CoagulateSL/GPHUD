@@ -322,7 +322,10 @@ public class Currency extends TableRow {
 		return Instance.get(dqinn("select instanceid from currencies where id=?",getId()));
 	}
 
-	// ----- Internal Instance -----
+	public boolean tradable() {
+		return getBool("tradable");
+	}
+
 	@Override
 	protected int getNameCacheTime() {
 		return 0;
@@ -350,4 +353,15 @@ public class Currency extends TableRow {
 			this.basecoinnameshort=basecoinnameshort;
 		}
 	}
+
+	public void tradable(@Nonnull final State state,
+	                     final boolean tradable) {
+		boolean oldvalue=tradable();
+		if (tradable==oldvalue) { return; }
+		set("tradable",tradable);
+		Audit.audit(true,state,OPERATOR.AVATAR,null,null,"Currency","Tradable",oldvalue+"",tradable+"","Admin set currency to tradable status "+tradable);
+	}
+
+	// ----- Internal Instance -----
+
 }

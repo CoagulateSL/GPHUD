@@ -1,13 +1,11 @@
 package net.coagulate.GPHUD.Modules.Currency;
 
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.Data.Currency;
-import net.coagulate.GPHUD.Modules.Command;
-import net.coagulate.GPHUD.Modules.ModuleAnnotation;
-import net.coagulate.GPHUD.Modules.Permission;
-import net.coagulate.GPHUD.Modules.Pool;
+import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -21,6 +19,32 @@ public class CurrencyModule extends ModuleAnnotation {
 	}
 
 	// ---------- INSTANCE ----------
+	@Nonnull
+	@Override
+	public Map<String,KV> getKVDefinitions(State st) {
+		final Map<String,KV> definitions=super.getKVDefinitions(st);
+		if (st==null) { return definitions; }
+		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
+			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
+				definitions.put("TransactionTax"+a.getName(),getKVDefinition(st,"TransactionTax"+a.getName()));
+			}
+		}
+		return definitions;
+	}
+
+	@Override
+	public KV getKVDefinition(State st,
+	                          @Nonnull String qualifiedname) {
+		qualifiedname=qualifiedname.toLowerCase();
+		if (qualifiedname.startsWith("transactiontax")) {
+			String componentname=qualifiedname.substring("TransactionTax".length());
+			Currency c=Currency.find(st,componentname);
+			if (c==null) { throw new UserInputLookupFailureException("Can not find currency "+componentname); }
+			return new TransactionTaxKV(st,c);
+		}
+		return super.getKVDefinition(st,qualifiedname);
+	}
+
 	@Nonnull
 	@Override
 	public Command getCommandNullable(final State st,
