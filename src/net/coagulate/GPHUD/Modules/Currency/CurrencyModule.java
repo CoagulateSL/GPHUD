@@ -57,6 +57,18 @@ public class CurrencyModule extends ModuleAnnotation {
 				return new DestroyCoinsCommand(commandname.substring(7));
 			}
 		}
+		if (commandname.toLowerCase().startsWith("transferpaytax")) {
+			String currencyname=commandname.substring("transferpaytax".length());
+			if (Attribute.find(st.getInstance(),currencyname).getType()==ATTRIBUTETYPE.CURRENCY) {
+				return new TransferCoinsCommand(currencyname,true);
+			}
+		}
+		if (commandname.toLowerCase().startsWith("transfer")) {
+			if (Attribute.find(st.getInstance(),commandname.substring("transfer".length())).getType()==ATTRIBUTETYPE.CURRENCY) {
+				return new TransferCoinsCommand(commandname.substring("transfer".length()),false);
+			}
+		}
+
 		return super.getCommandNullable(st,commandname);
 	}
 
@@ -105,6 +117,8 @@ public class CurrencyModule extends ModuleAnnotation {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
 				commands.put("Create"+a.getName(),new CreateCoinsCommand(a.getName()));
 				commands.put("Destroy"+a.getName(),new DestroyCoinsCommand(a.getName()));
+				commands.put("Transfer"+a.getName(),new TransferCoinsCommand(a.getName(),false));
+				commands.put("TransferPayTax"+a.getName(),new TransferCoinsCommand(a.getName(),true));
 			}
 		}
 		return commands;

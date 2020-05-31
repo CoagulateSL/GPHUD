@@ -44,7 +44,7 @@ public class TransactionTaxKV extends KV {
 	@Nonnull
 	@Override
 	public String description() {
-		return "The tax applied to trasactions at the reciving end";
+		return "The tax applied to trasactions at the reciving end (as a percentage, without a % symbol)";
 	}
 
 	@Nonnull
