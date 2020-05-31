@@ -57,4 +57,21 @@ public class CurrencyFunctions {
 		Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCString(null,currency.longTextForm(ammount.getContent()));
 	}
+
+	@Nonnull
+	@GSFunction(description="Converts a formatted currency string into a number of base coins",
+	            parameters="BCString - Currency name<br>BCString - formatted currency",
+	            returns="BCInteger - number of base coins this represented",
+	            notes="",
+	            privileged=false)
+	public static BCInteger gsParseCoins(@Nonnull final State st,
+	                                     @Nonnull final GSVM vm,
+	                                     @Nonnull final BCString currencyname,
+	                                     @Nonnull final BCString ammount) {
+		GSFunctions.assertModule(st,"Currency");
+		Currency currency=Currency.find(st,currencyname.getContent());
+		return new BCInteger(null,currency.decode(ammount.getContent()));
+	}
+
+
 }
