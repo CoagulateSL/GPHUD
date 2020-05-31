@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSCastException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceUnavailableException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
@@ -19,6 +20,7 @@ public class Input {
 	@GSFunctions.GSFunction(description="Triggers the character's HUD to select a nearby character",
 	                        parameters="Character - target - The character to ask<br>String - "+"message - Description for the dialog box",
 	                        notes="",
+	                        category=SCRIPTCATEGORY.INPUT,
 	                        returns="Character - a character the user selected",
 	                        privileged=false)
 	public static BCCharacter gsSelectCharacter(@Nonnull final State st,
@@ -40,7 +42,8 @@ public class Input {
 	                        parameters="Character - target - The character to ask<br>String - message - "+"Description for the dialog box",
 	                        notes="",
 	                        returns="String - Some user input text",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.INPUT)
 	public static BCString gsGetText(@Nonnull final State st,
 	                                 @Nonnull final GSVM vm,
 	                                 @Nonnull final BCCharacter target,
@@ -60,7 +63,8 @@ public class Input {
 	                        parameters="Character - target - The character to ask<br>String - "+"message - Description for the dialog box<br>List - A list of strings the "+"user may choose from",
 	                        notes="",
 	                        returns="String - The user's selection",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.INPUT)
 	public static BCString gsGetChoice(@Nonnull final State st,
 	                                   @Nonnull final GSVM vm,
 	                                   @Nonnull final BCCharacter target,
@@ -88,7 +92,8 @@ public class Input {
 	                        parameters="String - string to test",
 	                        notes="",
 	                        returns="Integer - "+"1"+" if the string can convert to an integer, 0 if it fails to do so (and will crash your script if you try)",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.INPUT)
 	public static BCInteger gsIsANumber(final State st,
 	                                    final GSVM vm,
 	                                    @Nonnull final BCString teststring) {

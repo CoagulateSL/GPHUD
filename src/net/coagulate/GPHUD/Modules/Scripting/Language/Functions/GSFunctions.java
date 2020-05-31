@@ -39,6 +39,20 @@ public class GSFunctions {
 		}
 	}
 
+	public enum SCRIPTCATEGORY {
+		API,
+		AVATAR,
+		CURRENCY,
+		DATETIME,
+		EFFECTS,
+		GROUPS,
+		INPUT,
+		KV,
+		OUTPUT,
+		RANDOMNESS,
+		ZONES
+	}
+
 	/**
 	 * Defines an exposed command.
 	 * That is, something the user can call through web, SL or other user interfaces.
@@ -55,6 +69,8 @@ public class GSFunctions {
 		@Nonnull String returns();
 
 		@Nonnull String notes();
+
+		@Nonnull SCRIPTCATEGORY category();
 
 		boolean privileged();
 	}

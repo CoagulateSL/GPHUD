@@ -1,10 +1,7 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.GPHUD.Interfaces.Outputs.Table;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextError;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
+import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.SideSubMenu;
 import net.coagulate.GPHUD.Modules.URL;
@@ -13,14 +10,17 @@ import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class GSFunctions {
 	private GSFunctions() {}
 
 	// ---------- STATICS ----------
 	@URL.URLs(url="/introspection/gsfunctions/*")
-	public static void renderCommand(@Nonnull final State st,
-	                                 final SafeMap values) {
+	public static void renderFunction(@Nonnull final State st,
+	                                  final SafeMap values) {
 		String uri=st.getDebasedURL();
 		if (!uri.startsWith("/introspection/gsfunctions/")) {
 			throw new SystemImplementationException("URL Misconfiguratin?");
@@ -39,7 +39,7 @@ public class GSFunctions {
 			return;
 		}
 		final net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction meta=method.getAnnotation(net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction.class);
-		f.add(new TextHeader(method.getName()));
+		f.add(new TextHeader("("+meta.category()+") : "+method.getName()));
 		// ooh...
 		f.add(new TextSubHeader("Return Type"));
 		f.add(meta.returns());
@@ -55,28 +55,40 @@ public class GSFunctions {
 	@URL.URLs(url="/introspection/gsfunctions")
 	@SideSubMenu.SideSubMenus(name="GSFunctions",
 	                          priority=15)
-	public static void APIIndex(@Nonnull final State st,
-	                            final SafeMap values) {
+	public static void GSFunctionsIndex(@Nonnull final State st,
+	                                    final SafeMap values) {
 		final Form f=st.form();
-		final Table t=new Table();
-		f.add(t);
+		final Table table=new Table();
+		Map<String,Map<String,String>> output=new TreeMap<>();
+		f.add(table);
 		for (final String functionname: net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.getAll().keySet()) {
-			t.openRow();
+			String category="";
+			String line="";
 			try {
 				final Method function=net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.get(functionname);
-				t.openRow();
 				final net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction meta=function.getAnnotation(net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction.class);
-				t.add("<a href=\"/GPHUD/introspection/gsfunctions/"+functionname+"\">"+functionname+"</a>");
+				category=meta.category().toString();
+				line+="<td><a href=\"/GPHUD/introspection/gsfunctions/"+functionname+"\">"+functionname+"</a></td>";
 				if (meta.privileged()) {
-					t.add("<i>Privileged</i>&nbsp;&nbsp;&nbsp;");
+					line+="<td><i>Privileged</i>&nbsp;&nbsp;&nbsp;</td>";
 				}
 				else {
-					t.add("");
+					line+="<td></td>";
 				}
-				t.add(meta.description());
+				line+="<td>"+meta.description()+"</td>";
 
 			}
-			catch (@Nonnull final Exception e) { t.add("ERR:"+e); }
+			catch (@Nonnull final Exception e) { line+="<td>ERR:"+e+"</td>"; }
+			if (!output.containsKey(category)) { output.put(category,new TreeMap<String,String>()); }
+			output.get(category).put(functionname,line);
+		}
+		for (Entry<String,Map<String,String>> catset: output.entrySet()) {
+			table.add(new Row("<td colspan=9999><table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\"><b>"+catset
+					.getKey()+"</b></span"+"></td><td width=50%><hr></td></tr></table></td></tr><tr>"));
+			for (String rowoutput: catset.getValue().values()) {
+				table.add(new Row(rowoutput));
+			}
+
 		}
 	}
 

@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidFunctionCall;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
@@ -17,7 +18,8 @@ public class Randomness {
 	                        notes="",
 	                        parameters="Integer minimum - smallest number that can be returned "+"by this function.<br>"+"Integer maximum - largest number that can be "+"returned by this function.",
 	                        returns="Integer - random number in the range (inclusive) "+"minimum-maximum",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.RANDOMNESS)
 	public static BCInteger gsRand(final State st,
 	                               final GSVM vm,
 	                               @Nonnull final BCInteger minimum,

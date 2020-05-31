@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSExecutionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
@@ -26,7 +27,8 @@ public class API {
 	                        parameters="Character caller - User invoking the API<br>String apicall - name of API command "+"to"+" call<br>BCList parameters - list of STRING "+"parameters to the target API",
 	                        returns="A Response",
 	                        notes="",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.API)
 	public static BCResponse gsAPIX(final State st,
 	                                @Nonnull final GSVM vm,
 	                                @Nonnull final BCCharacter caller,
@@ -42,7 +44,8 @@ public class API {
 	                        parameters="Character caller - User invoking the API<br>String apicall - "+"name of API command "+"to"+" call<br>BCList parameters - list of "+"STRING parameters to the target API",
 	                        returns="A Response",
 	                        notes="",
-	                        privileged=true)
+	                        privileged=true,
+	                        category=SCRIPTCATEGORY.API)
 	public static BCResponse gsElevatedAPIX(final State st,
 	                                        @Nonnull final GSVM vm,
 	                                        @Nonnull final BCCharacter caller,
@@ -58,7 +61,8 @@ public class API {
 	                        parameters="Character caller - User invoking the API<br>String apicall - name of API command "+"to"+" call<br>BCList parameters - list of STRING "+"parameters to the target API",
 	                        returns="A Response",
 	                        notes="NOTE: Unless you intend to check the response isn't an error, or truely don't care if it is, it's highly recommended you call gsAPIX to avoid silently discarding errors which may confuse debugging",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.API)
 	public static BCResponse gsAPI(final State st,
 	                               @Nonnull final GSVM vm,
 	                               @Nonnull final BCCharacter caller,
@@ -72,7 +76,8 @@ public class API {
 	                        parameters="Character caller - User invoking the API<br>String apicall - "+"name of API command "+"to"+" call<br>BCList parameters - list of "+"STRING parameters to the target API",
 	                        returns="A Response",
 	                        notes="NOTE: Unless you intend to check the response isn't an error, or truely don't care if it is, it's highly recommended you call gsElevatedAPIX to avoid silently discarding errors which may confuse debugging",
-	                        privileged=true)
+	                        privileged=true,
+	                        category=SCRIPTCATEGORY.API)
 	public static BCResponse gsElevatedAPI(final State st,
 	                                       @Nonnull final GSVM vm,
 	                                       @Nonnull final BCCharacter caller,

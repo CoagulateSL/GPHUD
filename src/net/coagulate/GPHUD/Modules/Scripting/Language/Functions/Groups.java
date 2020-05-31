@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCList;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -18,7 +19,8 @@ public class Groups {
 	                        returns="String - name of group of appropriate subtype, or the empty string if none",
 	                        notes="",
 	                        parameters="Character - character to interrogate<br>String - type of group to get",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.GROUPS)
 	public static BCString gsGetGroupByType(final State st,
 	                                        final GSVM vm,
 	                                        @Nonnull final BCCharacter target,
@@ -34,7 +36,8 @@ public class Groups {
 	                        returns="A List of Strings containing all groups of that type",
 	                        parameters="String - type of group to list",
 	                        notes="",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.GROUPS)
 	public static BCList gsGetGroupsByType(final State st,
 	                                       final GSVM vm,
 	                                       @Nonnull final BCString grouptype) {
@@ -50,7 +53,8 @@ public class Groups {
 	                        returns="A List of Strings containing all open groups of that type",
 	                        parameters="String - type of group to list",
 	                        notes="",
-	                        privileged=false)
+	                        privileged=false,
+	                        category=SCRIPTCATEGORY.GROUPS)
 	public static BCList gsGetOpenGroupsByType(final State st,
 	                                           final GSVM vm,
 	                                           @Nonnull final BCString grouptype) {
