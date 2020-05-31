@@ -26,6 +26,7 @@ public class CurrencyModule extends ModuleAnnotation {
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
 				definitions.put("TransactionTax"+a.getName(),getKVDefinition(st,"TransactionTax"+a.getName()));
+				definitions.put("TransactionTaxRecipient"+a.getName(),getKVDefinition(st,"TransactionTaxRecipient"+a.getName()));
 			}
 		}
 		return definitions;
@@ -35,6 +36,11 @@ public class CurrencyModule extends ModuleAnnotation {
 	public KV getKVDefinition(final State st,
 	                          @Nonnull String qualifiedname) {
 		qualifiedname=qualifiedname.toLowerCase();
+		if (qualifiedname.startsWith("transactiontaxrecipient")) {
+			final String componentname=qualifiedname.substring("TransactionTaxRecipient".length());
+			final Currency c=Currency.find(st,componentname);
+			return new TransactionTaxRecipientKV(st,c);
+		}
 		if (qualifiedname.startsWith("transactiontax")) {
 			final String componentname=qualifiedname.substring("TransactionTax".length());
 			final Currency c=Currency.find(st,componentname);

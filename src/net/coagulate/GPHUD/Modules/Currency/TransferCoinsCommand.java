@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Currency;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -202,6 +203,7 @@ public class TransferCoinsCommand extends Command {
 		return "Transfer"+(senderpaystax?"PayTax":"")+name;
 	}
 
+	// ----- Internal Instance -----
 	@Override
 	protected Response execute(final State state,
 	                           final Map<String,Object> arguments) {
@@ -224,18 +226,43 @@ public class TransferCoinsCommand extends Command {
 		if (currency.sum(state)<balancecheck) {
 			return new ErrorResponse("You do not have enough currency to complete this transaction; you need "+currency.shortTextForm(balancecheck));
 		}
+		// check we can send taxes somewhere, else abort before doing anything
+		String taxrecipient=targetstate.getKV("Currency.TransactionTaxRecipient"+currency.getName()).value();
+		Char taxto=null;
+		if (!taxrecipient.isEmpty()) {
+			taxto=Char.findNullable(state.getInstance(),taxrecipient);
+			if (taxto==null) { throw new UserConfigurationException("The tax recipient ("+taxrecipient+") does not exist"); }
+		}
 
 		// remove money from A, send money to B and to tax pot (!?)
 		int received;
+		int sent;
 		if (senderpaystax) {
 			currency.spawnInByChar(targetstate,state.getCharacter(),-(ammount+taxpayable),reason+(taxpayable==0?"":" (Tax:"+currency.shortTextForm(taxpayable)+")"));
 			currency.spawnInByChar(state,target,ammount,reason);
+			sent=ammount+taxpayable;
 			received=ammount;
 		}
 		else {
 			currency.spawnInByChar(targetstate,state.getCharacter(),-ammount,reason);
 			currency.spawnInByChar(state,target,remainder,reason+(taxpayable==0?"":" (Tax:"+currency.shortTextForm(taxpayable)+")"));
 			received=remainder;
+			sent=ammount;
+		}
+		// does the tax go anywhere?
+		if (taxto!=null) {
+			if (senderpaystax) {
+				currency.spawnInByChar(state,
+				                       taxto,
+				                       taxpayable,
+				                       "Tax for transfer of "+currency.shortTextForm(ammount)+" "+currency.getName()+" to "+target.getName()+": "+reason);
+			}
+			else {
+				currency.spawnInByChar(targetstate,
+				                       taxto,
+				                       taxpayable,
+				                       "Tax for receipt of "+currency.shortTextForm(ammount)+" "+currency.getName()+" from "+state.getCharacter().getName()+": "+reason);
+			}
 		}
 		// tell target
 		if (target.isOnline()) {
@@ -243,7 +270,7 @@ public class TransferCoinsCommand extends Command {
 			json.put("message","You received "+currency.longTextForm(received)+" "+currency.getName()+" from "+state.getCharacter().getName()+" : "+reason);
 			new Transmission(target,json).start();
 		}
-		return new OKResponse("Transferred "+currency.longTextForm(ammount)+" of "+name+" to "+target.getName()+(taxpayable==0?"":" (Payed additional tax: "+currency.shortTextForm(
+		return new OKResponse("Transferred "+currency.longTextForm(sent)+" of "+name+" to "+target.getName()+(taxpayable==0?"":" (Payed to tax: "+currency.shortTextForm(
 				taxpayable)+")"));
 	}
 }
