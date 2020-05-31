@@ -138,4 +138,3 @@ public class CurrencyModule extends ModuleAnnotation {
 	}
 
 }
-

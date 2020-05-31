@@ -6,9 +6,11 @@ import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -192,6 +194,7 @@ public String getFullName() {
 		return "Destroy"+name;
 	}
 
+	// ----- Internal Instance -----
 	@Override
 	protected Response execute(final State state,
 	                           final Map<String,Object> arguments) {
@@ -201,6 +204,11 @@ public String getFullName() {
 		if (ammount<1) { return new ErrorResponse("Ammount must be a positive integer"); }
 		final String reason=(String) arguments.get("reason");
 		currency.spawnInAsAdmin(state,target,-ammount,reason);
+		if (target.isOnline()) {
+			JSONObject json=new JSONObject();
+			json.put("message","[Admin:"+state.getAvatar().getName()+"] You lost "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason);
+			new Transmission(target,json).start();
+		}
 		return new OKResponse("Destroyed "+currency.longTextForm(ammount)+" of "+name+" from "+target.getName());
 	}
 }

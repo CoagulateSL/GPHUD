@@ -10,10 +10,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.CharacterGroup;
-import net.coagulate.GPHUD.Data.CharacterPool;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -86,6 +83,9 @@ public class CharactersModule extends ModuleAnnotation {
 				return CharacterPool.sumPool(st,xp.getPool(st))+"";
 			}
 			else { return "POOL"; }
+		}
+		if (attr.getType()==CURRENCY) {
+			return Currency.find(st,attr.getName()).shortSum(st);
 		}
 		throw new SystemConsistencyException("Failed to resolve templateAttribute for "+attr+" of type "+attr.getType());
 	}
