@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class CurrencyModule extends ModuleAnnotation {
 
@@ -21,7 +22,8 @@ public class CurrencyModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(final State st) {
-		final Map<String,KV> definitions=super.getKVDefinitions(st);
+		final Map<String,KV> definitions=new TreeMap<>();
+		definitions.putAll(super.getKVDefinitions(st));
 		if (st==null) { return definitions; }
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
@@ -106,7 +108,8 @@ public class CurrencyModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Map<String,Pool> getPoolMap(final State st) {
-		final Map<String,Pool> map=super.getPoolMap(st);
+		final Map<String,Pool> map=new TreeMap<>();
+		map.putAll(super.getPoolMap(st));
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
 				map.put("Currency."+a.getName(),Currency.find(st,a.getName()).getPool(st));
@@ -118,7 +121,8 @@ public class CurrencyModule extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Map<String,Command> getCommands(final State st) {
-		final Map<String,Command> commands=super.getCommands(st);
+		final Map<String,Command> commands=new TreeMap<>();
+		commands.putAll(super.getCommands(st));
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
 				commands.put("Create"+a.getName(),new CreateCoinsCommand(a.getName()));
@@ -132,7 +136,8 @@ public class CurrencyModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String,Permission> getPermissions(final State st) {
-		final Map<String,Permission> permissions=super.getPermissions(st);
+		final Map<String,Permission> permissions=new TreeMap<>();
+		permissions.putAll(super.getPermissions(st));
 		if (st==null) { return permissions; }
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
