@@ -190,7 +190,7 @@ public class Instance extends TableRow {
 		String statuscolor="<0.5,1,0.5>";
 		int level=0;
 		final StringBuilder newstatus=new StringBuilder();
-		final int minversion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=?",getId());
+		final int minversion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=? and retired=0",getId());
 		final Float expiresin=EndOfLifing.expiresIn(minversion);
 		String updatewithin="";
 		if (expiresin!=null) { updatewithin=((int) expiresin.floatValue())+" days "+((int) ((expiresin-((int) expiresin.floatValue()))*24f))+" hours"; }
