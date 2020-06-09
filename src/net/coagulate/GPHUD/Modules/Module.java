@@ -136,9 +136,9 @@ public abstract class Module {
 	/**
 	 * Return a Map of lowercase string -> permission things
 	 *
-	 * @param st
+	 * @param st State for which to generate permissions for
 	 *
-	 * @return
+	 * @return Map of lower case string permission names (not fully qualified) mapping to the permission object
 	 */
 	public abstract Map<String,Permission> getPermissions(State st);
 
