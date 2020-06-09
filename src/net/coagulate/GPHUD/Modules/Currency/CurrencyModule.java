@@ -94,11 +94,11 @@ public class CurrencyModule extends ModuleAnnotation {
 	@Override
 	public Permission getPermission(final State st,
 	                                @Nonnull final String itemname) {
-		if (itemname.startsWith("Create")) {
+		if (itemname.toLowerCase().startsWith("create")) {
 			Attribute.find(st.getInstance(),itemname.substring(6));
 			return new CurrencyCreateCoinsPermission(itemname.substring(6));
 		}
-		if (itemname.startsWith("Destroy")) {
+		if (itemname.toLowerCase().startsWith("destroy")) {
 			Attribute.find(st.getInstance(),itemname.substring(7));
 			return new CurrencyDestroyCoinsPermission(itemname.substring(7));
 		}
@@ -141,8 +141,8 @@ public class CurrencyModule extends ModuleAnnotation {
 		if (st==null) { return permissions; }
 		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
-				permissions.put("Create"+a.getName(),getPermission(st,"Create"+a.getName()));
-				permissions.put("Destroy"+a.getName(),getPermission(st,"Destroy"+a.getName()));
+				permissions.put("create"+a.getName().toLowerCase(),getPermission(st,"Create"+a.getName()));
+				permissions.put("destroy"+a.getName().toLowerCase(),getPermission(st,"Destroy"+a.getName()));
 			}
 		}
 		return permissions;

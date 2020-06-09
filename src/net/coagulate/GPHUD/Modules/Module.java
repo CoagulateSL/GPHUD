@@ -133,6 +133,13 @@ public abstract class Module {
 		return Boolean.parseBoolean(enabled);
 	}
 
+	/**
+	 * Return a Map of lowercase string -> permission things
+	 *
+	 * @param st
+	 *
+	 * @return
+	 */
 	public abstract Map<String,Permission> getPermissions(State st);
 
 	@Nullable
