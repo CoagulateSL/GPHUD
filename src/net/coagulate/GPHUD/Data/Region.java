@@ -676,7 +676,7 @@ public class Region extends TableRow {
 		final Integer olddatetime=regiondata.getIntNullable("region"+type+"datetime");
 		final int newversion=Interface.convertVersion(version);
 		final int newdatetime=(int) (d.getTime()/1000.0);
-		if (oldversion==null || olddatetime==null || olddatetime<newdatetime || oldversion<newversion) {
+		if (oldversion==null || olddatetime==null || olddatetime!=newdatetime || oldversion!=newversion) {
 			d("update regions set region"+type+"version=?,region"+type+"datetime=? where regionid=?",newversion,newdatetime,getId());
 			final String olddesc=formatVersion(oldversion,olddatetime,false);
 			final String newdesc=formatVersion(newversion,newdatetime,false);
@@ -684,7 +684,8 @@ public class Region extends TableRow {
 			final State fake=new State();
 			fake.setInstance(st.getInstance());
 			fake.setAvatar(User.getSystem());
-			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,"Upgrade",type,olddesc,newdesc,"Product version upgraded");
+			final String updown=(olddatetime<newdatetime?"Upgrade":"Downgrade");
+			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,updown,type,olddesc,newdesc,"Product version "+updown);
 		}
 	}
 
