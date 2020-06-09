@@ -559,11 +559,6 @@ public class Region extends TableRow {
 		if (ourserver!=null && maxserver!=null) {
 			if (maxserver>ourserver) { return true; }
 		}
-		final Integer ourhud=dqi("select regionhudversion from regions where regionid=?",getId());
-		final Integer maxhud=dqi("select MAX(regionhudversion) from regions");
-		if (ourhud!=null && maxhud!=null) {
-			if (maxhud>ourhud) { return true; }
-		}
 		return false;
 	}
 
