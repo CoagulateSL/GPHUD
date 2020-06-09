@@ -679,7 +679,7 @@ public class Region extends TableRow {
 			final State fake=new State();
 			fake.setInstance(st.getInstance());
 			fake.setAvatar(User.getSystem());
-			final String updown=(olddatetime<newdatetime?"Upgrade":"Downgrade");
+			final String updown=(olddatetime==null || olddatetime<newdatetime?"Upgrade":"Downgrade");
 			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,updown,type,olddesc,newdesc,"Product version "+updown);
 		}
 	}
