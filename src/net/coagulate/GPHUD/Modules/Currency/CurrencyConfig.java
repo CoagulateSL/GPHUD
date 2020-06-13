@@ -137,7 +137,7 @@ public class CurrencyConfig {
 		}
 
 		currency.addCoin(state,basevalue,coinshortname,coinname);
-		return new OKResponse("Removed coin");
+		return new OKResponse("Added coin");
 	}
 
 	@URLs(url="/Configuration/Currency/ChangeBaseCoinNames",
