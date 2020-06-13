@@ -31,6 +31,7 @@ public class Input {
 			vm.suspend(st,st.getCharacter());
 			return target;
 		}
+		target.getContent().validate(st);
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
 		vm.queueSelectCharacter(target.getContent(),message.getContent());
 		vm.suspend(st,target.getContent());
