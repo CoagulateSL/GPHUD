@@ -97,7 +97,7 @@ public class CharacterPool {
 		       pool.fullName(),
 		       adjustment,
 		       st.getCharacterNullable()==null?null:st.getCharacter().getId(),
-		       st.getAvatar().getId(),
+		       st.getAvatarNullable()==null?null:st.getAvatar().getId(),
 		       description,
 		       getUnixTime()
 		      );
