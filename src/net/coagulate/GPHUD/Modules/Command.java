@@ -192,6 +192,7 @@ public abstract class Command {
 				case COORDINATES:
 					json.put("arg"+arg+"type","COORDINATES");
 					break;
+				case CURRENCY:
 				case EVENT:
 				case MODULE:
 				case KVLIST:
