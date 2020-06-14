@@ -47,8 +47,7 @@ public class ArgumentAnnotation extends Argument {
 		if (matcher.groupCount()!=2) { throw new SystemImplementationException("Qualified method name "+fqn+" broke into more than 2 parts"); }
 		final String classname=matcher.group(1);
 		final String methodname=matcher.group(2);
-		//noinspection rawtypes
-		final Class clazz;
+		final Class<?> clazz;
 		try {
 			clazz=Class.forName(classname);
 		}
@@ -56,7 +55,6 @@ public class ArgumentAnnotation extends Argument {
 			throw new SystemImplementationException("FQN for choice method '"+fqn+"' gave class not found",e);
 		}
 		try {
-			//noinspection unchecked
 			return clazz.getMethod(methodname,State.class);
 		}
 		catch (final NoSuchMethodException e) {
