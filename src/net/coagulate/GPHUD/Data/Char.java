@@ -619,8 +619,8 @@ public class Char extends TableRow {
 
 	}
 
-	public void wipeConveyance(State st,
-	                           String conveyance) {
+	public void wipeConveyance(final State st,
+	                           final String conveyance) {
 		db().d("delete from characterkvstore where characterid=? and k like ?",getId(),"gphudclient.conveyance-"+conveyance);
 		st.purgeCache(this);
 	}

@@ -274,14 +274,14 @@ public class Transmission extends Thread {
 	}
 
 	private String dumpCaller() {
-		String ret="";
+		final StringBuilder ret=new StringBuilder();
 		for (int i=2;i<5;i++) {
-			if (caller.length>i) {
-				StackTraceElement ele=caller[i];
-				if (!ret.isEmpty()) { ret+=" <- "; }
-				ret+=ele.getClassName().replaceFirst("net.coagulate.GPHUD.","")+"."+ele.getMethodName()+":"+ele.getLineNumber();
+			if (caller!=null && caller.length>i) {
+				final StackTraceElement ele=caller[i];
+				if (ret.length()>0) { ret.append(" <- "); }
+				ret.append(ele.getClassName().replaceFirst("net.coagulate.GPHUD.","")).append(".").append(ele.getMethodName()).append(":").append(ele.getLineNumber());
 			}
 		}
-		return ret;
+		return ret.toString();
 	}
 }
