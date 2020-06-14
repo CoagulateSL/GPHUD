@@ -211,20 +211,26 @@ public class GSVM {
 	public void queueSayAs(@Nonnull final Char ch,
 	                       final String message) {
 		final JSONObject out=getQueue(ch);
-		String m="";
-		if (out.has("say")) { m=out.getString("say")+"\n"; }
-		m=m+message;
-		out.put("say",m);
+		String use="say";
+		int index=0;
+		while (out.has(use)) {
+			index++;
+			use="say"+index;
+		}
+		out.put(use,message);
 		out.put("sayas",ch.getName());
 	}
 
 	public void queueSay(@Nonnull final Char ch,
 	                     final String message) {
 		final JSONObject out=getQueue(ch);
-		String m="";
-		if (out.has("sayashud")) { m=out.getString("sayashud")+"\n"; }
-		m=m+message;
-		out.put("sayashud",m);
+		String use="sayashud";
+		int index=0;
+		while (out.has(use)) {
+			index++;
+			use="sayashud"+index;
+		}
+		out.put(use,message);
 	}
 
 	public void queueTeleport(final Char content,
@@ -236,10 +242,13 @@ public class GSVM {
 	public void queueOwnerSay(final Char ch,
 	                          final String message) {
 		final JSONObject out=getQueue(ch);
-		String m="";
-		if (out.has("message")) { m=out.getString("message")+"\n"; }
-		m=m+message;
-		out.put("message",m);
+		String use="message";
+		int index=0;
+		while (out.has(use)) {
+			index++;
+			use="message"+index;
+		}
+		out.put(use,message);
 	}
 
 	public void queueSelectCharacter(final Char ch,
