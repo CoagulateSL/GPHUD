@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
-import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -317,7 +316,6 @@ public class EditValues {
 				// seems most likely authoritative will never be used and even NONE is more likely useful than this type, so for now
 				throw new UserInputInvalidChoiceException("KV "+key+" is of hierarchy type AUTHORITATIVE and no behaviour is coded for deltaChar in this case");
 		}
-		if (newvalue==null) { throw new SystemImplementationException("Newvalue is null after a delta operation?"); }
 		final String oldvalue=st.getRawKV(character,key);
 		st.setKV(character,key,newvalue.toString());
 		Audit.audit(st,
@@ -378,7 +376,6 @@ public class EditValues {
 				// seems most likely authoritative will never be used and even NONE is more likely useful than this type, so for now
 				throw new UserInputInvalidChoiceException("KV "+key+" is of hierarchy type AUTHORITATIVE and no behaviour is coded for deltaChar in this case");
 		}
-		if (newvalue==null) { throw new SystemImplementationException("Newvalue is null after a delta operation?"); }
 		final String oldvalue=st.getRawKV(character,key);
 		st.setKV(character,key,newvalue.toString());
 		Audit.audit(st,
