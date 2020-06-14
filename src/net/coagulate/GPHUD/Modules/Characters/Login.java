@@ -1,32 +1,26 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
-import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.GPHUD.Data.*;
-import net.coagulate.GPHUD.EndOfLifing;
-import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interfaces.Responses.*;
-import net.coagulate.GPHUD.Interfaces.System.Transmission;
+import net.coagulate.GPHUD.Data.Attribute;
+import net.coagulate.GPHUD.Data.Audit;
+import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.GPHUDClient.Connect;
-import net.coagulate.GPHUD.Modules.Instance.Distribution;
 import net.coagulate.GPHUD.Modules.KVValue;
 import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
-import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
-import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPointsRemaining;
 
 /**
  * Logs a session in as a particular character
@@ -39,6 +33,7 @@ import static net.coagulate.GPHUD.Modules.Characters.CharactersModule.abilityPoi
  */
 public abstract class Login {
 	// ---------- STATICS ----------
+	/*
 	@Nonnull
 	@Deprecated
 	@Commands(context=Context.AVATAR,
@@ -48,6 +43,7 @@ public abstract class Login {
 	          description="Register this session as a character connection",
 	          permitObject=false,
 	          permitExternal=false)
+
 	public static Response login(@Nonnull final State st,
 	                             @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,
 	                                                  description="Version number of the HUD that is connecting",
@@ -182,12 +178,6 @@ public abstract class Login {
 		// AND LOGIN
 		st.setCharacter(character);
 		st.logger().log(INFO,"Logging in as "+character);
-        /*
-        String loginmessage="Welcome back, "+character.getName();
-        if (!character.getName().equals(st.avatar().getName())) { loginmessage+=" ["+st.avatar().getName()+"]"; }
-        loginmessage+="\n\n";
-        loginmessage+="Instance MOTD goes here";
-        */
 		final String oldavatarurl=st.getCharacter().getURL();
 		if (oldavatarurl!=null && !oldavatarurl.equals(url)) {
 			final JSONObject shutdownjson=new JSONObject().put("incommand","shutdown").put("shutdown","Replaced by new registration");
@@ -246,7 +236,7 @@ public abstract class Login {
 			new BackgroundGroupInviter(st).start();
 		}
 		return new JSONResponse(rawresponse);
-	}
+	}*/
 
 	@Nonnull
 	@Commands(context=Context.AVATAR,
@@ -293,20 +283,23 @@ public abstract class Login {
 		Char.create(st,charactername,true);
 		final Char c=Char.resolve(st,charactername);
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,c,"Create","Character","",charactername,"Avatar attempted to create character, result: "+c);
+		/* deprecated protocol 1
 		if (st.json().has("protocol")) {
 			if (st.json().getInt("protocol")==2) {
-				if (st.getCharacterNullable()==null) {
-					final JSONObject reconnect=new JSONObject();
-					reconnect.put("incommand","forcereconnect");
-					return new JSONResponse(reconnect);
-				}
-				else {
-					return new OKResponse("New character created and available");
-				}
-			}
+
+		 */
+		if (st.getCharacterNullable()==null) {
+			final JSONObject reconnect=new JSONObject();
+			reconnect.put("incommand","forcereconnect");
+			return new JSONResponse(reconnect);
+		}
+		else {
+			return new OKResponse("New character created and available");
+		}
+	/*	deprecated protocol 1 behaviour	}
 		}
 		st.setCharacter(c);
-		return login(st,null,null,null);
+		return login(st,null,null,null);*/
 	}
 
 	@Nonnull
@@ -329,25 +322,27 @@ public abstract class Login {
 		if (character.retired()) {
 			return new ErrorResponse("Character '"+character+"' has been retired and can not be selected");
 		}
+		/* deprecated protocol 1
 		if (st.json().has("protocol")) {
-			if (st.json().getInt("protocol")==2) {
-				final String url=st.getCharacter().getURL();
-				st.getCharacter().disconnect();
-				character.login(st.getAvatar(),st.getRegion(),url);
-				st.setCharacter(character);
-				character.wipeConveyances(st);
-				return Connect.postConnect(st);
+			if (st.json().getInt("protocol")==2) {*/
+		final String url=st.getCharacter().getURL();
+		st.getCharacter().disconnect();
+		character.login(st.getAvatar(),st.getRegion(),url);
+		st.setCharacter(character);
+		character.wipeConveyances(st);
+		return Connect.postConnect(st);
+			/* deprecated protocol 1
 			}
 		}
 		if (st.getCharacterNullable()!=null) { st.getCharacter().disconnect(); }
 		GPHUD.purgeURL(st.callbackurl());
 		if (st.getCharacterNullable()!=null) { st.purgeCache(st.getCharacter()); }
-		PrimaryCharacter.setPrimaryCharacter(st,character);
-		character.setActive();
+		// deprecated PrimaryCharacter.setPrimaryCharacter(st,character);
+		// deprecated character.setActive();
 		character.setURL(st.callbackurl());
 		st.setCharacter(character);
 		//GPHUD.purgeURL(st.callbackurl());
-		return login(st,null,null,null);
+		return login(st,null,null,null);*/
 	}
 
 	@Nonnull
@@ -431,18 +426,23 @@ public abstract class Login {
 				throw new UserInputStateException("Attempt to initialise pool attribute is invalid.");
 		}
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,st.getCharacter(),"Initialise",attribute.getName(),null,value,"Character creation initialised attribute");
+		/* deprecated protocol 1
 		if (st.json().has("protocol")) {
 			if (st.json().getInt("protocol")==2) {
-				if (st.getCharacterNullable()==null) {
-					final JSONObject reconnect=new JSONObject();
-					reconnect.put("incommand","forcereconnect");
-					return new JSONResponse(reconnect);
-				}
-				else {
-					return Connect.postConnect(st);
-				}
+
+		 */
+		if (st.getCharacterNullable()==null) {
+			final JSONObject reconnect=new JSONObject();
+			reconnect.put("incommand","forcereconnect");
+			return new JSONResponse(reconnect);
+		}
+		else {
+			return Connect.postConnect(st);
+		}
+				/* deprecated protocol 1
 			}
 		}
 		return login(st,null,null,null);
+				 */
 	}
 }

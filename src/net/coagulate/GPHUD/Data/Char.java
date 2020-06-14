@@ -533,7 +533,7 @@ public class Char extends TableRow {
 	public void setOwner(@Nonnull final User newowner) {
 		set("owner",newowner.getId());
 		// purge any primary characters referring to this
-		PrimaryCharacter.purge(this);
+		// deprecated PrimaryCharacter.purge(this);
 	}
 
 	@Nonnull
