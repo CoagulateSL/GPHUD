@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Configuration;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -9,6 +11,7 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.Modules.KV;
+import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
@@ -266,6 +269,126 @@ public class EditValues {
 		final String oldvalue=st.getRawKV(character,key);
 		st.setKV(character,key,value);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,character,"SetCharKV",character.getName()+"/"+key,oldvalue,value,"Changed character scope KV configuration");
+
+		return new OKResponse("Character KV store has been updated for "+character.getName());
+	}
+
+	@Nonnull
+	@Commands(context=Context.AVATAR,
+	          description="Adjusts a character level configuration value.  This must be a INTEGER.  For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
+	public static Response deltaCharInt(@Nonnull final State st,
+	                                    @Nonnull @Arguments(type=ArgumentType.CHARACTER,
+	                                                        description="Character to edit the key for") final Char character,
+	                                    @Nonnull @Arguments(type=ArgumentType.KVLIST,
+	                                                        description="Key to set the value of") final String key,
+	                                    @Nonnull @Arguments(type=ArgumentType.INTEGER,
+	                                                        description="Ammount to change the total value by",
+	                                                        max=4096) final Integer delta) {
+		character.validate(st);
+		Modules.validateKV(st,key);
+		final KV kv=Modules.getKVDefinition(st,key);
+		if (!st.hasPermission(kv.editpermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		}
+		if (!kv.appliesTo(character)) {
+			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to characters");
+		}
+		if (!(kv.type()==KVTYPE.INTEGER)) {
+			return new ErrorResponse("This command will only change INTEGER KVs, the requested key "+key+" is of type "+kv.type());
+		}
+		// we have very different behaviour depending on the hierarchy type:
+		Integer newvalue=null;
+		State targetstate=new State(character);
+		switch (kv.hierarchy()) {
+			case DELEGATING: // delegating means character value takes precedence ; read current total value and straight set char KV to result
+				newvalue=targetstate.getKV(key).intValue()+delta;
+				break;
+			case CUMULATIVE: // cumulative sums the stack, so we can adjust by reading the char only value, unnulling and adjusting directly
+			case NONE: // no hierarchy, so read char only and write char only
+				String curvalue=targetstate.getKV(character,key);
+				if (curvalue==null) {
+					newvalue=delta;
+				}
+				else {
+					newvalue=Integer.parseInt(curvalue)+delta;
+				}
+				break;
+			case AUTHORITATIVE: // an unused hierarchy.  character level would be dominated by any number of other things so might be irrelevant
+				// seems most likely authoritative will never be used and even NONE is more likely useful than this type, so for now
+				throw new UserInputInvalidChoiceException("KV "+key+" is of hierarchy type AUTHORITATIVE and no behaviour is coded for deltaChar in this case");
+		}
+		if (newvalue==null) { throw new SystemImplementationException("Newvalue is null after a delta operation?"); }
+		final String oldvalue=st.getRawKV(character,key);
+		st.setKV(character,key,newvalue.toString());
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            character,
+		            "SetCharKV",
+		            character.getName()+"/"+key,
+		            oldvalue,
+		            newvalue.toString(),
+		            "Deltaed character scope KV configuration by "+delta);
+
+		return new OKResponse("Character KV store has been updated for "+character.getName());
+	}
+
+	@Nonnull
+	@Commands(context=Context.AVATAR,
+	          description="Adjusts a character level configuration value.  This must be a FLOAT.  For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
+	public static Response deltaCharFloat(@Nonnull final State st,
+	                                      @Nonnull @Arguments(type=ArgumentType.CHARACTER,
+	                                                          description="Character to edit the key for") final Char character,
+	                                      @Nonnull @Arguments(type=ArgumentType.KVLIST,
+	                                                          description="Key to set the value of") final String key,
+	                                      @Nonnull @Arguments(type=ArgumentType.INTEGER,
+	                                                          description="Ammount to change the total value by",
+	                                                          max=4096) final Float delta) {
+		character.validate(st);
+		Modules.validateKV(st,key);
+		final KV kv=Modules.getKVDefinition(st,key);
+		if (!st.hasPermission(kv.editpermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		}
+		if (!kv.appliesTo(character)) {
+			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to characters");
+		}
+		if (!(kv.type()==KVTYPE.FLOAT)) {
+			return new ErrorResponse("This command will only change FLOAT KVs, the requested key "+key+" is of type "+kv.type());
+		}
+		// we have very different behaviour depending on the hierarchy type:
+		Float newvalue=null;
+		State targetstate=new State(character);
+		switch (kv.hierarchy()) {
+			case DELEGATING: // delegating means character value takes precedence ; read current total value and straight set char KV to result
+				newvalue=targetstate.getKV(key).intValue()+delta;
+				break;
+			case CUMULATIVE: // cumulative sums the stack, so we can adjust by reading the char only value, unnulling and adjusting directly
+			case NONE: // no hierarchy, so read char only and write char only
+				String curvalue=targetstate.getKV(character,key);
+				if (curvalue==null) {
+					newvalue=delta;
+				}
+				else {
+					newvalue=Float.parseFloat(curvalue)+delta;
+				}
+				break;
+			case AUTHORITATIVE: // an unused hierarchy.  character level would be dominated by any number of other things so might be irrelevant
+				// seems most likely authoritative will never be used and even NONE is more likely useful than this type, so for now
+				throw new UserInputInvalidChoiceException("KV "+key+" is of hierarchy type AUTHORITATIVE and no behaviour is coded for deltaChar in this case");
+		}
+		if (newvalue==null) { throw new SystemImplementationException("Newvalue is null after a delta operation?"); }
+		final String oldvalue=st.getRawKV(character,key);
+		st.setKV(character,key,newvalue.toString());
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            character,
+		            "SetCharKV",
+		            character.getName()+"/"+key,
+		            oldvalue,
+		            newvalue.toString(),
+		            "Deltaed character scope KV configuration by "+delta);
 
 		return new OKResponse("Character KV store has been updated for "+character.getName());
 	}
