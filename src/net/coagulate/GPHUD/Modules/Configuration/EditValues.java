@@ -324,13 +324,14 @@ public class EditValues {
 		            Audit.OPERATOR.AVATAR,
 		            null,
 		            character,
-		            "SetCharKV",
+		            "DeltaCharKV",
 		            character.getName()+"/"+key,
 		            oldvalue,
 		            newvalue.toString(),
-		            "Deltaed character scope KV configuration by "+delta);
+		            "Deltaed character scope KV configuration by "+delta
+		           );
 
-		return new OKResponse("Character KV store has been updated for "+character.getName());
+		return new OKResponse("Character KV store has been adjusted for "+character.getName());
 	}
 
 	@Nonnull
@@ -384,13 +385,14 @@ public class EditValues {
 		            Audit.OPERATOR.AVATAR,
 		            null,
 		            character,
-		            "SetCharKV",
+		            "DeltaCharKV",
 		            character.getName()+"/"+key,
 		            oldvalue,
 		            newvalue.toString(),
-		            "Deltaed character scope KV configuration by "+delta);
+		            "Deltaed character scope KV configuration by "+delta
+		           );
 
-		return new OKResponse("Character KV store has been updated for "+character.getName());
+		return new OKResponse("Character KV store has been adjusted for "+character.getName());
 	}
 
 	@URLs(url="/configuration/setcharvalue")
