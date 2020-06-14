@@ -171,6 +171,11 @@ public class Connect {
 		// and tell the HUD we're all great
 		rawresponse.put("logincomplete",st.getCharacter().getId());
 		Effect.conveyEffects(st,st.getCharacter(),rawresponse);
+		// purge some things we forced upon the character so their conveyances might refresh
+		st.getCharacter().wipeConveyance(st,"hudtext");
+		st.getCharacter().wipeConveyance(st,"hudcolor");
+		st.getCharacter().wipeConveyance(st,"titlertext");
+		st.getCharacter().wipeConveyance(st,"titlercolor");
 		return new JSONResponse(rawresponse);
 	}
 
