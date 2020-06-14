@@ -297,14 +297,14 @@ public class EditValues {
 		}
 		// we have very different behaviour depending on the hierarchy type:
 		Integer newvalue=null;
-		State targetstate=new State(character);
+		final State targetstate=new State(character);
 		switch (kv.hierarchy()) {
 			case DELEGATING: // delegating means character value takes precedence ; read current total value and straight set char KV to result
 				newvalue=targetstate.getKV(key).intValue()+delta;
 				break;
 			case CUMULATIVE: // cumulative sums the stack, so we can adjust by reading the char only value, unnulling and adjusting directly
 			case NONE: // no hierarchy, so read char only and write char only
-				String curvalue=targetstate.getKV(character,key);
+				final String curvalue=targetstate.getKV(character,key);
 				if (curvalue==null) {
 					newvalue=delta;
 				}
@@ -357,14 +357,14 @@ public class EditValues {
 		}
 		// we have very different behaviour depending on the hierarchy type:
 		Float newvalue=null;
-		State targetstate=new State(character);
+		final State targetstate=new State(character);
 		switch (kv.hierarchy()) {
 			case DELEGATING: // delegating means character value takes precedence ; read current total value and straight set char KV to result
 				newvalue=targetstate.getKV(key).intValue()+delta;
 				break;
 			case CUMULATIVE: // cumulative sums the stack, so we can adjust by reading the char only value, unnulling and adjusting directly
 			case NONE: // no hierarchy, so read char only and write char only
-				String curvalue=targetstate.getKV(character,key);
+				final String curvalue=targetstate.getKV(character,key);
 				if (curvalue==null) {
 					newvalue=delta;
 				}
