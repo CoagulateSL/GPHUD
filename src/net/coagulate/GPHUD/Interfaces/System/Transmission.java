@@ -192,7 +192,7 @@ public class Transmission extends Thread {
 		String response=null;
 		if (url==null || url.isEmpty()) { return; }
 		if (json.toString().length()>2040) { throw new SystemImplementationException("Transmission is over 2048 chars - "+json); }
-		if (Interface.DEBUG_JSON) { System.out.println("TRANSMISSION OUTBOUND:\n"+JsonTools.jsonToString(json)); }
+		if (Interface.DEBUG_JSON) { System.out.println("TRANSMISSION OUTBOUND: (caller "+dumpCaller()+")\n"+JsonTools.jsonToString(json)); }
 		while (response==null && retries>0) {
 			try {
 				response=sendAttempt();
@@ -271,5 +271,17 @@ public class Transmission extends Thread {
 		out.flush();
 		out.close();
 		return ByteTools.convertStreamToString(transmission.getInputStream());
+	}
+
+	private String dumpCaller() {
+		String ret="";
+		for (int i=2;i<5;i++) {
+			if (caller.length>i) {
+				StackTraceElement ele=caller[i];
+				if (!ret.isEmpty()) { ret+=" <- "; }
+				ret+=ele.getClassName().replaceFirst("net.coagulate.GPHUD.","")+"."+ele.getMethodName()+":"+ele.getLineNumber();
+			}
+		}
+		return ret;
 	}
 }
