@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
+import net.coagulate.GPHUD.Interfaces.Responses.NoResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
 import net.coagulate.GPHUD.Modules.Argument.Arguments;
@@ -26,6 +27,13 @@ public class UIX {
 	                                       max=128,
 	                                       type=ArgumentType.TEXT_ONELINE) @Nonnull final String commandtoinvoke) {
 		if (commandtoinvoke.contains(" ")) { return Modules.run(st,commandtoinvoke,false); }
+		// we just ignore effects clicks that happen when effects is disabled ...  bit of a bodge really :P
+		if (commandtoinvoke.toLowerCase().startsWith("effects.")) {
+			if (Modules.get(null,"Effects").isEnabled(st)==false) {
+				// no-op then
+				return new NoResponse();
+			}
+		}
 		if (Modules.getCommand(st,commandtoinvoke).getArguments().size()==0) {
 			//argh, it's argless cap'n
 			return Modules.run(st,commandtoinvoke,false);
