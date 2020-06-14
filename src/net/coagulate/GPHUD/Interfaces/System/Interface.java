@@ -1,10 +1,12 @@
 package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.ByteTools;
+import net.coagulate.Core.Tools.JsonTools;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.*;
@@ -35,6 +37,7 @@ import static java.util.logging.Level.WARNING;
  * @author iain
  */
 public class Interface extends net.coagulate.GPHUD.Interface {
+	public static final boolean DEBUG_JSON=false;
 
 	// ---------- INSTANCE ----------
 
@@ -66,7 +69,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				catch (@Nonnull final JSONException e) {
 					throw new SystemBadValueException("Parse error in '"+message+"'",e);
 				}
-				//System.out.println("SYSTEM INTERFACE INPUT:\n"+JsonTools.jsonToString(obj));
+				if (DEBUG_JSON) { System.out.println("SYSTEM INTERFACE INPUT:\n"+JsonTools.jsonToString(obj)); }
 				// stash it in the state
 				// if (obj==null) { GPHUD.getLogger().warning("About to set a JSON in state to null ; input was "+message); }
 				st.setJson(obj);
@@ -96,9 +99,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
                 pw.flush();
                 pw.close();
                 System.out.println(out);*/
-				//System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonresponse));
+				if (DEBUG_JSON) { System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonresponse)); }
 				//System.out.println("Response size is "+out.length()+" bytes");
-				if (out.length() >= 4096) { GPHUD.getLogger().severe("Output exceeds limit of 4096 characters"); }
+				if (out.length() >= 4096) { SL.report("Output exceeds limit of 4096 characters",new SystemImplementationException("Trace"),st); }
 				resp.setEntity(new StringEntity(out,ContentType.APPLICATION_JSON));
 				return;
 			}

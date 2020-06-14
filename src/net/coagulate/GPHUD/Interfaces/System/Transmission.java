@@ -2,6 +2,8 @@ package net.coagulate.GPHUD.Interfaces.System;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Tools.ByteTools;
+import net.coagulate.Core.Tools.JsonTools;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Cookie;
@@ -13,7 +15,9 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -188,6 +192,7 @@ public class Transmission extends Thread {
 		String response=null;
 		if (url==null || url.isEmpty()) { return; }
 		if (json.toString().length()>2040) { throw new SystemImplementationException("Transmission is over 2048 chars - "+json); }
+		if (Interface.DEBUG_JSON) { System.out.println("TRANSMISSION OUTBOUND:\n"+JsonTools.jsonToString(json)); }
 		while (response==null && retries>0) {
 			try {
 				response=sendAttempt();
@@ -218,6 +223,7 @@ public class Transmission extends Thread {
 		if (!response.isEmpty()) {
 			try {
 				final JSONObject j=new JSONObject(response);
+				if (Interface.DEBUG_JSON) { System.out.println("TRANSMISSION RESPONSE:\n"+JsonTools.jsonToString(j)); }
 				jsonresponse=j;
 				final String incommand=j.optString("incommand","");
 				if ("pong".equals(incommand)) {
@@ -264,13 +270,6 @@ public class Transmission extends Thread {
 		out.write(json+"\n");
 		out.flush();
 		out.close();
-		final BufferedReader rd=new BufferedReader(new InputStreamReader(transmission.getInputStream()));
-		String line;
-		final StringBuilder response=new StringBuilder();
-		//noinspection NestedAssignment
-		while ((line=rd.readLine())!=null) {
-			response.append(line).append("\n");
-		}
-		return response.toString();
+		return ByteTools.convertStreamToString(transmission.getInputStream());
 	}
 }
