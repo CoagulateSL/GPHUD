@@ -63,6 +63,7 @@ integer process(key id) {
 	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Region Server"); }
 	if (jsonget("setlogo")!="") { setlogo((key)jsonget("setlogo")); }
 	if (jsonget("rebootserver")!="") { llResetScript(); }
+	json="{}"; // clear the response :P
 	return TRUE;
 }
 
