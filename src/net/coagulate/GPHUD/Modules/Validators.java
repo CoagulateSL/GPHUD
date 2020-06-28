@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.GPHUD.GPHUD;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Iain Price
@@ -38,7 +39,8 @@ public class Validators {
 		return true;
 	}
 
-	public static boolean color(@Nonnull final String value) {
+	public static boolean color(@Nullable final String value) {
+		if (value==null) { return false; }
 		// e.g. <1,0.5,1>
 		final String[] parts=value.split(",");
 		if (parts.length!=3) {
