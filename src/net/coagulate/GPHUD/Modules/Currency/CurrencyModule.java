@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Currency;
 
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.Data.Currency;
@@ -8,6 +9,7 @@ import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -18,7 +20,16 @@ public class CurrencyModule extends ModuleAnnotation {
 		super(name,def);
 	}
 
-	// ---------- INSTANCE ----------
+	// ---------- STATICS ----------
+	@Nonnull
+	public static String templateCurrencyLong(@Nonnull final State st,
+	                                          final String key) {
+		final String name=key.split(":")[0].substring(2);
+		final Attribute a=st.getAttribute(name);
+		final Currency currency=Currency.find(st,name);
+		return currency.longSum(st);
+	}
+
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(final State st) {
@@ -144,4 +155,31 @@ public class CurrencyModule extends ModuleAnnotation {
 		return permissions;
 	}
 
+	// ---------- INSTANCE ----------
+	@Override
+	public void addTemplateDescriptions(final State st,
+	                                    final Map<String,String> templates) {
+		super.addTemplateDescriptions(st,templates);
+		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
+			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
+				templates.put("--"+a.getName().toUpperCase()+":LONG--","Long format template for currenct "+a.getName());
+			}
+		}
+	}
+
+	@Override
+	public void addTemplateMethods(final State st,
+	                               final Map<String,Method> ret) {
+		super.addTemplateMethods(st,ret);
+		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
+			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
+				try {
+					ret.put("--"+a.getName().toUpperCase()+":LONG--",getClass().getMethod("templateCurrencyLong",State.class,String.class));
+				}
+				catch (final NoSuchMethodException failure) {
+					throw new SystemImplementationException("Reflection failed for long form currency templater");
+				}
+			}
+		}
+	}
 }
