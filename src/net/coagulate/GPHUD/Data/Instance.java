@@ -353,7 +353,8 @@ public class Instance extends TableRow {
 	 */
 	@Nonnull
 	public List<CharacterSummary> getCharacterSummary(@Nonnull final State st,
-	                                                  @Nonnull final String search) {
+	                                                  @Nonnull final String search,
+	                                                  final boolean showretired) {
 		String sortby=st.getDebasedURL().replaceAll("%20"," ");
 		sortby=sortby.replaceFirst(".*?sort=","");
 		final User searchuser=User.findUsernameNullable(search,false);
@@ -375,6 +376,9 @@ public class Instance extends TableRow {
 		final List<Object> parameters=new ArrayList<>();
 		parameters.add(getId());
 		String additional="";
+		if (!showretired) {
+			additional=" and retired=0 ";
+		}
 		if (searchuser!=null || !search.isEmpty()) {
 			additional=" and (";
 			if (!search.isEmpty()) {

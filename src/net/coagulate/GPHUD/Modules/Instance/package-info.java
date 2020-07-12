@@ -166,6 +166,12 @@
              description="Can change the 'run at login' command",
              power=Permission.POWER.MEDIUM)
 
+// a cheaty thing that belongs to Characters, really
+@SideMenus(name="(including retired)",
+           priority=251,
+           requiresPermission="Characters.ViewAll",
+           url="/characters/retiredlist?sort=Name")
+
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
@@ -175,4 +181,5 @@ import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
+import net.coagulate.GPHUD.Modules.SideMenu.SideMenus;
 

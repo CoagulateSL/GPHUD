@@ -20,7 +20,17 @@ public class CharacterList {
 	@URLs(url="/characters/list*",
 	      requiresPermission="Characters.ViewAll")
 	public static void list(@Nonnull final State st,
-	                        final SafeMap parameters) {
+	                        final SafeMap parameters) { listInternal(st,parameters,false); }
+
+	@URLs(url="/characters/retiredlist*",
+	      requiresPermission="Characters.ViewAll")
+	public static void listWithRetired(@Nonnull final State st,
+	                                   final SafeMap parameters) { listInternal(st,parameters,true); }
+
+	// ----- Internal Statics -----
+	private static void listInternal(@Nonnull final State st,
+	                                 final SafeMap parameters,
+	                                 final boolean showretired) {
 
 		int page=0;
 		String searchtext="";
@@ -30,7 +40,7 @@ public class CharacterList {
 		if (parameters.containsKey("search")) { searchtext=parameters.get("search"); }
 
 
-		final List<CharacterSummary> list=st.getInstance().getCharacterSummary(st,searchtext);
+		final List<CharacterSummary> list=st.getInstance().getCharacterSummary(st,searchtext,showretired);
 		if (list.isEmpty()) {
 			st.form().add("No characters found");
 			return;
@@ -52,8 +62,6 @@ public class CharacterList {
 		}
 		f.add("</table>");
 	}
-
-	// ----- Internal Statics -----
 	private static String getPageRow(final int page,
 	                                 final int rowcount,
 	                                 final String searchtext) {

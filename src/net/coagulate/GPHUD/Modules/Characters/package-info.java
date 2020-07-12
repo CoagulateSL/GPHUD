@@ -36,6 +36,7 @@
            requiresPermission="Characters.ViewAll",
            url="/characters/list?sort=Name")
 
+
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
