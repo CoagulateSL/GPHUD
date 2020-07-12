@@ -7,7 +7,6 @@ package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
-import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
@@ -255,13 +254,6 @@ public class CharactersModule extends ModuleAnnotation {
 			map.put("set"+a.getName().toLowerCase(),new AttributePermission(a));
 		}
 		return map;
-	}
-
-	//Map<String,KV> base=new TreeMap<>();
-	@Override
-	@Deprecated
-	public void registerKV(@Nonnull final KV a) {
-		throw new SystemImplementationException("It is no longer permitted to have manual registrations inside Characters module");
 	}
 
 	@Override
