@@ -48,12 +48,12 @@ page(integer p) {
 		}
 		return;
 	}
-	integer s=p*9; // starting element
+	integer s=p*10; // starting element
 	//llOwnerSay("Page "+(string)p+" element "+(string)s);
 	if (p>0){dialog+=["<<<"];}else{dialog+=[" "];}
-	dialog+=[" "];
+	//dialog+=[" "];
 	if (jsonget(dialogprefix+(string)(s+9))!="") { dialog+=[">>>"]; } else { dialog+=[" "]; }
-	for (j=s;j<s+9;j++) {
+	for (j=s;j<s+10;j++) {
 		if (jsonget(dialogprefix+(string)j)!="") {
 			dialog+=[llGetSubString(jsonget(dialogprefix+(string)j),0,23)];
 		}
