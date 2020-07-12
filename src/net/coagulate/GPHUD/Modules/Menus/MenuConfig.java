@@ -89,7 +89,7 @@ public abstract class MenuConfig {
 		}
 		if (st.hasPermission("Menus.Config") && "Submit".equals(values.get("Submit"))) {
 			final JSONObject json=new JSONObject();
-			for (int i=1;i<=12;i++) {
+			for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
 				final String button=values.get("button"+i);
 				final String command=values.get("command"+i);
 				if (!button.isEmpty() && !command.isEmpty()) {
@@ -110,7 +110,8 @@ public abstract class MenuConfig {
 		f.add(new TextHeader("Menu '"+m.getName()+"'"));
 		f.add(new Paragraph(
 				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will "+"be omitted from the menu.  Layout of buttons is as follows:"));
-		f.add(new Paragraph("Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen."));
+		f.add(new Paragraph(
+				"Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen (if UIX is not enabled in GPHUDClient)."));
 		final Table example=new Table();
 		f.add(example);
 		example.openRow().add("10").add("11").add("12");
@@ -119,9 +120,10 @@ public abstract class MenuConfig {
 		example.openRow().add("1").add("2").add("3");
 		final Table t=new Table();
 		f.add(new TextSubHeader("Button configuration"));
+		if (st.hasPermission("Menus.Config")) { f.add(new Button("Submit")); }
 		f.add(t);
 		final JSONObject j=m.getJSON();
-		for (int i=1;i<=12;i++) {
+		for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
 			t.openRow().add("Button "+i);
 			t.add(new TextInput("button"+i,j.optString("button"+i,"")));
 			t.openRow().add("");
@@ -130,7 +132,6 @@ public abstract class MenuConfig {
 			t.add(command);
 
 		}
-		if (st.hasPermission("Menus.Config")) { f.add(new Button("Submit")); }
 
 	}
 

@@ -82,7 +82,7 @@ public class MenuArgument extends Argument {
 	@Nonnull
 	public List<String> getChoices(final State st) {
 		final List<String> options=new ArrayList<>();
-		for (int i=1;i<=12;i++) {
+		for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
 			if (meta.has("button"+i)) {
 				options.add(meta.getString("button"+i));
 			}

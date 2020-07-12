@@ -97,7 +97,7 @@ public class MenuCommand extends Command {
 	                        @Nonnull final Map<String,Object> parametermap) {
 		final String selected=(String) parametermap.get("choice");
 		int choice=-1;
-		for (int i=1;i<=12;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
+		for (int i=1;i<=MenuModule.MAXBUTTONS;i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
 		if (choice==-1) { throw new UserInputLookupFailureException("Menu "+getName()+" has no element "+selected); }
 		final String commandtoinvoke=definition.optString("command"+choice,"");
 		if (commandtoinvoke.isEmpty()) {

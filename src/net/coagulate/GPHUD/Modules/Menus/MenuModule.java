@@ -17,6 +17,8 @@ import java.util.TreeMap;
  */
 public class MenuModule extends ModuleAnnotation {
 
+	public static final int MAXBUTTONS=40;
+
 	public MenuModule(final String name,
 	                  final ModuleDefinition annotation) {
 		super(name,annotation);
