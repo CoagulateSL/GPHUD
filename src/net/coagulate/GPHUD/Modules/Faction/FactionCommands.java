@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Faction;
 
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
@@ -99,6 +100,28 @@ public class FactionCommands {
 		final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
 		if (faction==null) { return new ErrorResponse("You are not in a faction!"); }
 		return GroupCommands.eject(st,faction,member);
+	}
+
+	@Nonnull
+	@Commands(context=Context.CHARACTER,
+	          description="Leave your current faction")
+	public static Response leave(@Nonnull final State state) {
+		final CharacterGroup faction=CharacterGroup.getGroup(state,"Faction");
+		if (faction==null) { return new ErrorResponse("You are not in a faction!"); }
+		if (faction.getOwner()==state.getCharacter()) {
+			if (faction.getMembers().size()>1) {
+				return new ErrorResponse("You need to make someone else the faction owner, or be the last person in the faction, to leave.");
+			}
+			else {
+				faction.setOwner(null);
+			}
+		}
+		try { faction.removeMember(state.getCharacter()); }
+		catch (@Nonnull final UserException e) {
+			return new ErrorResponse("Failed to remove from group - "+e.getMessage());
+		}
+		Audit.audit(state,Audit.OPERATOR.CHARACTER,null,state.getCharacter(),"LeaveFaction",faction.getName(),faction.getName(),null,"Removed self from faction group");
+		return new OKResponse("You have removed yourself from "+faction.getName());
 	}
 
 }
