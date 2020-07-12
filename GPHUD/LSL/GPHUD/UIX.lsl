@@ -277,11 +277,11 @@ list inventoryprims=[HUD_INVENTORY_1, HUD_INVENTORY_2, HUD_INVENTORY_3, HUD_INVE
 integer inventoryshown=0;
 list inventorytext=[];
 list inventorycommand=[];
-list mainmenutext=[];
-list mainmenucommand=[];
-integer uixmenus=FALSE;
-integer mainmenusize=0;
-float mainmenuwidth=0;
+//list mainmenutext=[];
+//list mainmenucommand=[];
+//integer uixmenus=FALSE;
+//integer mainmenusize=0;
+//float mainmenuwidth=0;
 integer BOOTTIME=TRUE;
 string inventorytitle="";
 integer qbbalanced=FALSE;
@@ -366,10 +366,12 @@ process() {
 		inventorywidth=CHARACTERWIDTH*((float)chars);
 		uixInventory();
 	}
-	if (jsonget("uixmenus")!="") { 
+	/*if (jsonget("uixmenus")!="") { 
 		if (jsonget("uixmenus")=="true") { uixmenus=TRUE; } else { uixmenus=FALSE; }
 	}
+	*/
 	// --- keep this one last as it breaks "json" variable
+	/*/
 	if (jsonget("legacymenu")!="") { 
 		json=jsonget("legacymenu");
 		integer i=1;
@@ -389,6 +391,7 @@ process() {
 		}
 		mainmenuwidth=CHARACTERWIDTH*((float)mainmenuwidth);
 	}
+	*/
 	if (main) { uixMain(); }
 	
 }
@@ -451,6 +454,6 @@ default {
 		integer clicked=llDetectedLinkNumber(0);
 		if (clicked==HUD_INVENTORY_CLOSE || llListFindList(inventoryprims,[clicked])!=-1) { inventorytitle=""; inventoryshown=0; uixInventory(); }
 		if (SHUTDOWN) { return; }		
-		if (clicked==HUD_MAIN && uixmenus) { inventorytitle="Select an option from The Main Menu"; inventorytext=mainmenutext; inventoryshown=mainmenusize; inventorywidth=mainmenuwidth; inventorycommand=mainmenucommand; uixInventory(); }
+		//if (clicked==HUD_MAIN && uixmenus) { inventorytitle="Select an option from The Main Menu"; inventorytext=mainmenutext; inventoryshown=mainmenusize; inventorywidth=mainmenuwidth; inventorycommand=mainmenucommand; uixInventory(); }
 	}
 }

@@ -308,7 +308,7 @@ default {
 			name=llGetSubString(name,2,-1);
 			processInput(name);
 		}
-		if (!uixmenus && !SHUTDOWN) {
+		if (!SHUTDOWN) {
 			if (llDetectedLinkNumber(0)==1) {
 				mainMenu();
 			} else {
