@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Groups;
 import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -110,4 +111,27 @@ public class GroupCommands {
 		return new OKResponse(member.getName()+" was removed from "+group.getName());
 	}
 
+	@Nonnull
+	@Commands(context=Context.CHARACTER,
+	          description="Leave a group")
+	public static Response leave(@Nonnull final State st,
+	                             @Arguments(type=ArgumentType.CHARACTERGROUP,
+	                                        description="Group to leave") @Nonnull final CharacterGroup group) {
+		// character must be in group
+		if (!group.hasMember(st.getCharacter())) { return new ErrorResponse("You are not a member of group "+group.getName()); }
+		// group must be open
+		if (!group.isOpen()) { return new ErrorResponse("You can not leave a non-open group"); }
+		// is it an attribute group
+		if (!group.getTypeNotNull().isEmpty()) {
+			Attribute attr=Attribute.findGroup(st.getInstance(),group.getTypeNotNull());
+			if (!attr.getSelfModify()) {
+				return new ErrorResponse("You may not modify the group type "+group.getTypeNotNull()+", it is not self modifiable");
+			}
+		}
+		// is open and not an attribute and is in group so leave...
+		try { group.removeMember(st.getCharacter()); }
+		catch (@Nonnull final UserException e) { return new ErrorResponse("Failed to leave group - "+e.getMessage()); }
+		Audit.audit(st,OPERATOR.CHARACTER,null,st.getCharacter(),"LeaveGroup",group.getName(),group.getName(),null,"Character left group");
+		return new OKResponse("You have left group "+group.getName());
+	}
 }
