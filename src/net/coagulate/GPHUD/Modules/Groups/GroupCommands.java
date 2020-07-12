@@ -123,7 +123,7 @@ public class GroupCommands {
 		if (!group.isOpen()) { return new ErrorResponse("You can not leave a non-open group"); }
 		// is it an attribute group
 		if (!group.getTypeNotNull().isEmpty()) {
-			Attribute attr=Attribute.findGroup(st.getInstance(),group.getTypeNotNull());
+			final Attribute attr=Attribute.findGroup(st.getInstance(),group.getTypeNotNull());
 			if (!attr.getSelfModify()) {
 				return new ErrorResponse("You may not modify the group type "+group.getTypeNotNull()+", it is not self modifiable");
 			}
