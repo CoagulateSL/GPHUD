@@ -10,7 +10,6 @@ import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
 import net.coagulate.GPHUD.Interfaces.User.Form;
-import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
@@ -99,11 +98,12 @@ public abstract class MenuConfig {
 			}
 			m.setJSON(json);
 			if ("Main".equalsIgnoreCase(m.getName())) {
-				final JSONObject broadcastupdate=new JSONObject();
+				/*final JSONObject broadcastupdate=new JSONObject();
 				broadcastupdate.put("incommand","broadcast");
 				final JSONObject legacymenu=Modules.getJSONTemplate(st,"menus.main");
 				broadcastupdate.put("legacymenu",legacymenu.toString());
-				st.getInstance().sendServers(broadcastupdate);
+				st.getInstance().sendServers(broadcastupdate);*/
+				st.getInstance().pushConveyances(); // this works now for menus as a conveyance?
 			}
 		}
 		final Form f=st.form();

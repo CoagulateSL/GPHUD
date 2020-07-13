@@ -150,7 +150,8 @@ public class Connect {
 		}
 
 		// we dump the main menu this way for now, seems like it could be a conveyance too.
-		rawresponse.put("legacymenu",Modules.getJSONTemplate(st,"menus.main").toString());
+		// rawresponse.put("legacymenu",Modules.getJSONTemplate(st,"menus.main").toString());
+		// and maybe now it is (?)
 
 		// dump the messages
 		final StringBuilder message=new StringBuilder();

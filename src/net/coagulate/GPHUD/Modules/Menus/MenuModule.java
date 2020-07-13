@@ -3,6 +3,8 @@ package net.coagulate.GPHUD.Modules.Menus;
 import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -72,6 +74,14 @@ public class MenuModule extends ModuleAnnotation {
 		j.put("button2","Invite");
 		j.put("command2","Faction.Invite");
 		Menu.create(st,"Faction","Faction Menu",j);
+	}
+
+	@Nonnull
+	@Template(name="MAINMENU",
+	          description="The packaged form of this users main menu")
+	public static String newline(final State st,
+	                             final String key) {
+		return Modules.getJSONTemplate(st,"menus.main").toString();
 	}
 
 }
