@@ -49,6 +49,10 @@ public class MenuCommand extends Command {
 
 	@Nonnull
 	@Override
+	public String notes() { return ""; }
+
+	@Nonnull
+	@Override
 	public String requiresPermission() { return ""; }
 
 	@Nonnull

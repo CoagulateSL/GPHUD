@@ -49,6 +49,8 @@ public abstract class Command {
 
 	public abstract String description();
 
+	public abstract String notes();
+
 	public abstract String requiresPermission();
 
 	public abstract Context context();
@@ -678,6 +680,8 @@ public abstract class Command {
 	public @interface Commands {
 		// ---------- INSTANCE ----------
 		@Nonnull String description();
+
+		@Nonnull String notes() default "";
 
 		@Nonnull String requiresPermission() default "";
 

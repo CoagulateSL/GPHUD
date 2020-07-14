@@ -61,6 +61,9 @@ public class CommandAnnotation extends Command {
 	@Nonnull
 	public String description() { return meta.description(); }
 
+	@Override
+	public String notes() { return meta.notes(); }
+
 	@Nonnull
 	public String requiresPermission() { return meta.requiresPermission(); }
 

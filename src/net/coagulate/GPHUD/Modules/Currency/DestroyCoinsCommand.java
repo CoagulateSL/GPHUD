@@ -32,6 +32,8 @@ public class DestroyCoinsCommand extends Command {
 		return "Destroys an ammount of "+name+" for a character";
 	}
 
+	// ---------- INSTANCE ----------
+
 	@Override
 	public String requiresPermission() {
 		return "Currency.Destroy"+name;
@@ -72,17 +74,20 @@ public class DestroyCoinsCommand extends Command {
 		return true;
 	}
 
-// ---------- INSTANCE ----------
-@Nonnull
-@Override
-public List<Argument> getArguments() {
-	final ArrayList<Argument> args=new ArrayList<>();
-	args.add(new Argument() {
-		@Override
-		public boolean isGenerated() { return true; }
+	@Nonnull
+	@Override
+	public String notes() { return ""; }
 
-		@Nonnull
-		@Override
+	@Nonnull
+	@Override
+	public List<Argument> getArguments() {
+		final ArrayList<Argument> args=new ArrayList<>();
+		args.add(new Argument() {
+			@Override
+			public boolean isGenerated() { return true; }
+
+			@Nonnull
+			@Override
 		public ArgumentType type() { return ArgumentType.CHARACTER; }
 
 		@Nonnull

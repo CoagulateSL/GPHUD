@@ -72,6 +72,10 @@ public class AliasCommand extends Command {
 		return targetcommand.description();
 	}
 
+	@Nonnull
+	@Override
+	public String notes() { return targetcommand.notes(); }
+
 	@Override
 	public String requiresPermission() {
 		if (targetcommand==null) { return ""; }

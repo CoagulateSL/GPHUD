@@ -27,6 +27,8 @@ public class CreateCoinsCommand extends Command {
 		return true;
 	}
 
+	// ---------- INSTANCE ----------
+
 	@Override
 	public String description() {
 		return "Creates an ammount of "+name+" for a character";
@@ -72,17 +74,20 @@ public class CreateCoinsCommand extends Command {
 		return true;
 	}
 
-// ---------- INSTANCE ----------
-@Nonnull
-@Override
-public List<Argument> getArguments() {
-	final ArrayList<Argument> args=new ArrayList<>();
-	args.add(new Argument() {
-		@Override
-		public boolean isGenerated() { return true; }
+	@Nonnull
+	@Override
+	public String notes() { return ""; }
 
-		@Nonnull
-		@Override
+	@Nonnull
+	@Override
+	public List<Argument> getArguments() {
+		final ArrayList<Argument> args=new ArrayList<>();
+		args.add(new Argument() {
+			@Override
+			public boolean isGenerated() { return true; }
+
+			@Nonnull
+			@Override
 		public ArgumentType type() { return ArgumentType.CHARACTER; }
 
 		@Nonnull

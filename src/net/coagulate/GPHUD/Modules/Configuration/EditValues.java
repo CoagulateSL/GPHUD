@@ -274,7 +274,8 @@ public class EditValues {
 
 	@Nonnull
 	@Commands(context=Context.AVATAR,
-	          description="Adjusts a character level configuration value.  This must be a INTEGER.  For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
+	          description="Adjusts a character level configuration value.  This must be a INTEGER.",
+	          notes="For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
 	public static Response deltaCharInt(@Nonnull final State st,
 	                                    @Nonnull @Arguments(type=ArgumentType.CHARACTER,
 	                                                        description="Character to edit the key for") final Char character,
@@ -334,7 +335,8 @@ public class EditValues {
 
 	@Nonnull
 	@Commands(context=Context.AVATAR,
-	          description="Adjusts a character level configuration value.  This must be a FLOAT.  For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
+	          description="Adjusts a character level configuration value.  This must be a FLOAT.",
+	          notes="For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
 	public static Response deltaCharFloat(@Nonnull final State st,
 	                                      @Nonnull @Arguments(type=ArgumentType.CHARACTER,
 	                                                          description="Character to edit the key for") final Char character,

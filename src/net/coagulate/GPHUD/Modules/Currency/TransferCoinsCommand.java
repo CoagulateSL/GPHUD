@@ -39,6 +39,10 @@ public class TransferCoinsCommand extends Command {
 		return "Transfer currency to another player "+(senderpaystax?"(You will pay any incurred taxes)":"(The recipient will receive the ammount less any incurred taxes)");
 	}
 
+	@Nonnull
+	@Override
+	public String notes() { return ""; }
+
 	@Override
 	public String requiresPermission() {
 		return "";

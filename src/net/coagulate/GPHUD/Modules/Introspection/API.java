@@ -44,7 +44,8 @@ public abstract class API {
 		f.add(new TextHeader(c.getFullName()));
 		// ooh...
 		f.add(new TextSubHeader("Description"));
-		f.add(c.description());
+		f.add(new Paragraph(c.description()));
+		if (!c.notes().isEmpty()) { f.add(new Paragraph(c.notes())); }
 		f.add(new TextSubHeader("Arguments"));
 		final Table args=new Table();
 		for (final Argument p: c.getArguments()) {

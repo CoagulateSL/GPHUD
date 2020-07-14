@@ -28,6 +28,11 @@ public class ScriptingCommand extends Command {
 		return "Run script "+script.getName();
 	}
 
+	// ---------- INSTANCE ----------
+	@Nonnull
+	@Override
+	public String notes() { return ""; }
+
 	@Nonnull
 	@Override
 	public String requiresPermission() {
