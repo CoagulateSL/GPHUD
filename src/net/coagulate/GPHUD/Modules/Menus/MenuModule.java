@@ -30,8 +30,8 @@ public class MenuModule extends ModuleAnnotation {
 @Nonnull
 @Template(name="MAINMENU",
           description="The packaged form of this users main menu")
-public static String newline(final State st,
-                             final String key) {
+public static String generateMainMenu(final State st,
+                                      final String key) {
 	if (st.mainmenutemplate==null) {
 		st.mainmenutemplate=Modules.getJSONTemplate(st,"menus.main").toString();
 	}
