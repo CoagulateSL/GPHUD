@@ -15,7 +15,7 @@
 #define LINK_SHUTDOWN -365746005 // stop everything
 #define LINK_DIALOG -365746006 // UIX to dialog menu this
 #define LINK_STARTUP -365746007 // stop everything
-string VERSION="3.10.2";
+string VERSION="3.10.3";
 string COMPILEDATE=__DATE__;
 string COMPILETIME=__TIME__;
 string IAIN_MALTZ="8dc52677-bea8-4fc3-b69b-21c5e2224306";
