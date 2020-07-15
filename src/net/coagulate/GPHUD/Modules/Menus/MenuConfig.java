@@ -94,6 +94,9 @@ public abstract class MenuConfig {
 				if (!button.isEmpty() && !command.isEmpty()) {
 					json.put("button"+i,button);
 					json.put("command"+i,command);
+					if (!values.get("permission"+i).isEmpty()) { json.put("permission"+i,values.get("permission"+i)); }
+					if (!values.get("permissiongroup"+i).isEmpty()) { json.put("permissiongroup"+i,values.get("permissiongroup"+i)); }
+					if (!values.get("charactergroup"+i).isEmpty()) { json.put("charactergroup"+i,values.get("charactergroup"+i)); }
 				}
 			}
 			m.setJSON(json);
@@ -125,11 +128,26 @@ public abstract class MenuConfig {
 		final JSONObject j=m.getJSON();
 		for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
 			t.openRow().add("Button "+i);
-			t.add(new TextInput("button"+i,j.optString("button"+i,"")));
+			final Table tt=new Table();
+			t.add(tt);
+			tt.add(new TextInput("button"+i,j.optString("button"+i,"")));
+			tt.add("Optionally Requires - ");
+			tt.add("Permission");
+			final DropDownList permissionslist=DropDownList.getPermissionsList(st,"permission"+i);
+			permissionslist.setValue(j.optString("permission"+i,""));
+			tt.add(permissionslist);
+			tt.add("-or- PermissionGroup");
+			final DropDownList permissionsgroups=DropDownList.getPermissionsGroups(st,"permissiongroup"+i);
+			permissionsgroups.setValue(j.optString("permissiongroup"+i,""));
+			tt.add(permissionsgroups);
+			tt.add("-or- CharacterGroup");
+			final DropDownList charactergroups=DropDownList.getCharacterGroups(st,"charactergroup"+i);
+			charactergroups.setValue(j.optString("charactergroup"+i,""));
+			tt.add(charactergroups);
 			t.openRow().add("");
 			final DropDownList command=DropDownList.getCommandsList(st,"command"+i);
 			command.setValue(j.optString("command"+i,""));
-			t.add(command);
+			t.add(new Cell(command,99));
 
 		}
 

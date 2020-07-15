@@ -1,9 +1,12 @@
 package net.coagulate.GPHUD.Interfaces.Inputs;
 
+import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -45,6 +48,39 @@ public class DropDownList extends Input {
 			}
 		}
 		return commands;
+	}
+
+	public static DropDownList getPermissionsList(final State st,
+	                                              final String name) {
+		final DropDownList permissions=new DropDownList(name);
+		for (final Module mod: Modules.getModules()) {
+			for (final Permission p: mod.getPermissions(st).values()) {
+				permissions.add(mod.getName()+"."+p.name(),mod.getName()+"."+p.name());
+			}
+		}
+		return permissions;
+	}
+
+	public static DropDownList getPermissionsGroups(final State st,
+	                                                final String name) {
+		final DropDownList permissions=new DropDownList(name);
+		for (final Module mod: Modules.getModules()) {
+			for (final PermissionsGroup p: PermissionsGroup.getPermissionsGroups(st)) {
+				permissions.add(p.getName(),p.getName());
+			}
+		}
+		return permissions;
+	}
+
+	public static DropDownList getCharacterGroups(final State st,
+	                                              final String name) {
+		final DropDownList charactergroups=new DropDownList(name);
+		for (final Module mod: Modules.getModules()) {
+			for (final CharacterGroup cg: st.getInstance().getCharacterGroups()) {
+				charactergroups.add(cg.getName(),cg.getName());
+			}
+		}
+		return charactergroups;
 	}
 
 	// ---------- INSTANCE ----------

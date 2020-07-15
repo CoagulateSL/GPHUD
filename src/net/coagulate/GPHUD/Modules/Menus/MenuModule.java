@@ -26,7 +26,18 @@ public class MenuModule extends ModuleAnnotation {
 		super(name,annotation);
 	}
 
-	// ---------- INSTANCE ----------
+// ---------- STATICS ----------
+@Nonnull
+@Template(name="MAINMENU",
+          description="The packaged form of this users main menu")
+public static String newline(final State st,
+                             final String key) {
+	if (st.mainmenutemplate==null) {
+		st.mainmenutemplate=Modules.getJSONTemplate(st,"menus.main").toString();
+	}
+	return st.mainmenutemplate;
+}
+
 	@Override
 	public boolean isGenerated() {
 		return false;
@@ -76,12 +87,6 @@ public class MenuModule extends ModuleAnnotation {
 		Menu.create(st,"Faction","Faction Menu",j);
 	}
 
-	@Nonnull
-	@Template(name="MAINMENU",
-	          description="The packaged form of this users main menu")
-	public static String newline(final State st,
-	                             final String key) {
-		return Modules.getJSONTemplate(st,"menus.main").toString();
-	}
+	// ---------- INSTANCE ----------
 
 }

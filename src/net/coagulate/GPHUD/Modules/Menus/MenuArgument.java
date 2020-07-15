@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
+import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
@@ -83,8 +85,30 @@ public class MenuArgument extends Argument {
 	public List<String> getChoices(final State st) {
 		final List<String> options=new ArrayList<>();
 		for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
+
 			if (meta.has("button"+i)) {
-				options.add(meta.getString("button"+i));
+				boolean haspermissions=false;
+				boolean passespermission=false;
+				if (meta.has("permission"+i) && st.getAvatarNullable()!=null) {
+					haspermissions=true;
+					if (st.hasPermission(meta.getString("permission"+i))) { passespermission=true; }
+				}
+				if (meta.has("permissiongroup"+i)) {
+					haspermissions=true;
+					final PermissionsGroup pg=PermissionsGroup.resolveNullable(st,meta.getString("permissiongroup"+i));
+					if (pg!=null && st.getAvatarNullable()!=null) {
+						if (pg.hasMember(st.getAvatar())) { passespermission=true; }
+					}
+				}
+
+				if (meta.has("charactergroup"+i)) {
+					haspermissions=true;
+					final CharacterGroup cg=CharacterGroup.resolve(st,meta.getString("charactergroup"+i));
+					if (cg!=null) {
+						if (cg.hasMember(st.getCharacter())) { passespermission=true; }
+					}
+				}
+				if (!haspermissions || passespermission) { options.add(meta.getString("button"+i)); }
 			}
 		}
 		return options;

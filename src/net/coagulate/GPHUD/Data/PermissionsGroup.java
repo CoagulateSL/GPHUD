@@ -180,6 +180,13 @@ public class PermissionsGroup extends TableRow {
 	@Nullable
 	public String getKVIdField() { return null; }
 
+	public boolean hasMember(@Nonnull final User avatar) {
+		if (dqinn("select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),avatar.getId())>0) {
+			return true;
+		}
+		return false;
+	}
+
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
