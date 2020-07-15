@@ -40,8 +40,8 @@ Shortform here.
 
  */
 public class GPHUD {
-	public static final String VERSION="v3.16.1";
-	public static final String VERSION_DATE="June 28th 2020";
+	public static final String VERSION="v3.16.2";
+	public static final String VERSION_DATE="July 15th 2020";
 	// config KV store
 	private static final Map<String,String> CONFIG=new TreeMap<>();
 	public static String hostname="UNSET";
