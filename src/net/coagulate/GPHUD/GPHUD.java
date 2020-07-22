@@ -45,8 +45,6 @@ public class GPHUD {
 	// config KV store
 	private static final Map<String,String> CONFIG=new TreeMap<>();
 	public static String hostname="UNSET";
-	@Nullable
-	public static Integer nodeid;
 	public static boolean DEV; // make this auto detect some day... or in the ini file :P
 	@Nullable
 	private static Logger log;
@@ -267,10 +265,8 @@ public class GPHUD {
 
 	public static void initialiseAsModule(final boolean isdev,
 	                                      final String jdbc,
-	                                      final String hostname,
-	                                      final int nodeid) {
+	                                      final String hostname) {
 		GPHUD.hostname=hostname;
-		GPHUD.nodeid=nodeid;
 		log=Logger.getLogger("net.coagulate.GPHUD");
 		// Load DB hostname, username and password, from local disk.  So we dont have credentials in Git.
 		log().config("GPHUD as module starting up... "+VERSION);

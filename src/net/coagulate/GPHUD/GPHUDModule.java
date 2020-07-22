@@ -21,7 +21,7 @@ public class GPHUDModule extends SLModule {
 
     @Override
     public void initialise() {
-
+        GPHUD.initialiseAsModule(SL.DEV, Config.getGPHUDJdbc(), Config.getHostName());
     }
 
     @Override
@@ -31,11 +31,9 @@ public class GPHUDModule extends SLModule {
 
     @Override
     public void startup() {
-        GPHUD.initialiseAsModule(SL.DEV, Config.getGPHUDJdbc(), Config.getHostName());
         PageMapper.exact("/GPHUD/external",new net.coagulate.GPHUD.Interfaces.External.Interface());
         PageMapper.exact("/GPHUD/system",new net.coagulate.GPHUD.Interfaces.System.Interface());
         PageMapper.prefix("/GPHUD/",new net.coagulate.GPHUD.Interfaces.User.Interface());
-
     }
 
     @Override
