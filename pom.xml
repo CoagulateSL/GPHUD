@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+
+    <groupId>net.coagulate.SL</groupId>
+    <artifactId>GPHUD</artifactId>
+    <version>1.00.00</version>
+
+    <build>
+        <directory>${project.basedir}/bin</directory>
+        <outputDirectory>${project.basedir}/out</outputDirectory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <testOutputDirectory>${project.basedir}/test</testOutputDirectory>
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>net.coagulate</groupId>
+            <artifactId>JavaCore</artifactId>
+            <version>1.00.00</version>
+        </dependency>
+        <dependency>
+            <groupId>net.coagulate.SL</groupId>
+            <artifactId>CoagulateSL</artifactId>
+            <version>1.00.00</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    
+</project>
