@@ -33,9 +33,7 @@ public class DeveloperAccess {
 		if (user.hasDeveloperKey()) { return new ErrorResponse("User is already a developer"); }
 		final String developerkey=Tokens.generateToken();
 		user.setDeveloperKey(developerkey);
-		SL.bot()
-		  .api()
-		  .instantMessage(user.getUUID(),
+		SL.im(user.getUUID(),
 		                  "Notice from GPHUD "+(SL.DEV?"DEVELOPMENT":"Production")+" service\n \nYou have been assigned developer access\nKey: "+developerkey+"\n[https://sl.coagulate.net/Docs/GPHUD/index.php/External_Access_API.html Please see here for a brief developer reference]"
 		                 );
 		return new OKResponse("User "+user+" now has a developer key");

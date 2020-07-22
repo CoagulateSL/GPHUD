@@ -39,7 +39,7 @@ public class SessionSwitch {
 				st.cookie().setInstance(i);
 				st.setCharacter(null);
 				st.cookie().setCharacter(st.getCharacterNullable());
-				st.getAvatar().setLastInstance(i);
+				st.getAvatar().setLastInstance(i.getId());
 				throw new RedirectionException("/switch/character");
 			}
 			ViewInstance.viewInstance(st,values,i);
