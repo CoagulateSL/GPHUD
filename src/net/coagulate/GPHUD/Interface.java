@@ -32,8 +32,7 @@ public abstract class Interface implements HttpRequestHandler {
 	@Nonnull
 	public static String base() {
 		if (base==null) {
-			if ("luna".equalsIgnoreCase(Interface.getNode())) { base="app-iain"; }
-			else { base="app"; }
+			base="GPHUD";
 		}
 		return base;
 	}
