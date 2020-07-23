@@ -1,13 +1,13 @@
 #include "GPHUDHeader.lsl"
-#include "../Library/JsonTools.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
 
 //#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
 //#define COMMS_INCLUDEDIGEST
-#define COMMS_DEVKEY "***REMOVED***"
+#include "configuration.lsl"
 #define COMMS_DONT_CHECK_CALLBACK
-#include "SL/LSL/Library/CommsV3.lsl"
-#include "SL/LSL/Library/SetDev.lsl"
+#include "SLCore/LSL/CommsV3.lsl"
+#include "SLCore/LSL/SetDev.lsl"
 
 list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :P)
 // stages are

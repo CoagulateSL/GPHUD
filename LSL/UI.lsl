@@ -1,6 +1,6 @@
 #include "Constants.lsl"
-#include "SL/LSL/Library/SetDev.lsl"
-#include "SL/LSL/Library/JsonTools.lsl"
+#include "SLCore/LSL/SetDev.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
 //#define COMMS_HARDWIRENODE 0
 
 
@@ -10,8 +10,8 @@
 //#define COMMS_INCLUDEDIGEST
 #define COMMS_DONT_CHECK_CALLBACK
 #define COMMS_PROTOCOL "2"
-#define COMMS_DEVKEY "***REMOVED***"
-#include "SL/LSL/Library/CommsV3.lsl"
+#include "configuration.lsl"
+#include "SLCore/LSL/CommsV3.lsl"
 
 string dialogprefix="";
 string mainmenu="";

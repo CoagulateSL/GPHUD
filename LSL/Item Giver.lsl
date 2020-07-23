@@ -1,5 +1,5 @@
 #include "GPHUDHeader.lsl"
-#include "../Library/JsonTools.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
 string floattext="";
 init() {
 	llSetObjectName("GPHUD Item Giver");

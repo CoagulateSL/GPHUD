@@ -1,17 +1,17 @@
 //#define COMMS_DEBUG
 //#define DEBUG
-#include "SL/LSL/Constants.lsl"
-#include "SL/LSL/GPHUD/Constants.lsl"
-#include "SL/LSL/Library/JsonTools.lsl"
-#include "SL/LSL/Library/SetDev.lsl"
-#include "SL/LSL/GPHUD/GPHUDHeader.lsl"
-#include "SL/LSL/Library/ServerMesh.lsl"
+#include "SLCore/LSL/Constants.lsl"
+#include "GPHUD/LSL/Constants.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
+#include "SLCore/LSL/SetDev.lsl"
+#include "GPHUDHeader.lsl"
+#include "SLCore/LSL/ServerMesh.lsl"
 //#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
 //#define COMMS_INCLUDEDIGEST
-#define COMMS_DEVKEY "***REMOVED***"
+#include "configuration.lsl"
 #define COMMS_DONT_CHECK_CALLBACK
-#include "SL/LSL/Library/CommsV3.lsl"
+#include "SLCore/LSL/CommsV3.lsl"
 
 
 
@@ -76,7 +76,6 @@ report(string msg,vector col) {
 	llSetText("GPHUD "+inject+"Server Startup ... "+msg+" [v"+VERSION+" "+COMPILEDATE+" "+COMPILETIME+"]\n \n \n \n \n",col,1);
 }
 
-#include "SL/LSL/GPHUD/GPHUDHeader.lsl"
 
 setup() {
 	setDev(FALSE);

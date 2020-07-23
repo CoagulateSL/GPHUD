@@ -1,6 +1,7 @@
 #ifndef _INCLUDE_GPHUD_HEADER
 #define _INCLUDE_GPHUD_HEADER
-#include "SL/LSL/GPHUD/Constants.lsl"
+#include "configuration.lsl"
+#include "GPHUD/LSL/Constants.lsl"
 
 // reason for shutdown
 integer broadcastchannel=0;
@@ -21,7 +22,7 @@ calculatebroadcastchannel() {
 	x=x&0xffff;
 	y=y&0x0fff;
 	integer output=(y*0x10000)+x;
-	output=output^***REMOVED***;
+	output=output^ CHANNEL_MUTATOR ;
 	output=-llAbs(output);
 	if (output>-1000) { output=output-99999; }
 	broadcastchannel=output;

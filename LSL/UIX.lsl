@@ -1,7 +1,7 @@
-#include "SL/LSL/Constants.lsl"
-#include "SL/LSL/GPHUD/GPHUDHeader.lsl"
-#include "SL/LSL/Library/SetDev.lsl"
-#include "SL/LSL/Library/JsonTools.lsl"
+#include "SLCore/LSL/Constants.lsl"
+#include "GPHUDHeader.lsl"
+#include "SLCore/LSL/SetDev.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
 
 #define CHARACTERWIDTH 0.5/64.0
 

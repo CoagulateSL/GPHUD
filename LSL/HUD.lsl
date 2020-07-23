@@ -3,10 +3,10 @@
 //#define DEBUG_JSON
 
 
-#include "SL/LSL/Constants.lsl"
-#include "SL/LSL/GPHUD/GPHUDHeader.lsl"
-#include "SL/LSL/Library/SetDev.lsl"
-#include "SL/LSL/Library/JsonTools.lsl"
+#include "SLCore/LSL/Constants.lsl"
+#include "GPHUDHeader.lsl"
+#include "SLCore/LSL/SetDev.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
 
 // startup related stuff
 integer AWAIT_GO=TRUE;
@@ -18,7 +18,7 @@ integer SETDEVTRUEONCE=TRUE;
 // comms
 string comms_url="";
 key comms_url_key=NULL_KEY;
-#define COMMS_DEVKEY "***REMOVED***"
+#include "configuration.lsl"
 //listeners
 integer channelonehandle=0;
 integer broadcastchannelhandle=0;

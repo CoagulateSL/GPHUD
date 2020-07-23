@@ -1,19 +1,19 @@
 //#define DEBUG
-#include "SL/LSL/Constants.lsl"
-#include "SL/LSL/Library/SetDev.lsl"
+#include "SLCore/LSL/Constants.lsl"
+#include "SLCore/LSL/SetDev.lsl"
 #define MESSAGE_IS_SAY TRUE
-#include "SL/LSL/GPHUD/GPHUDHeader.lsl"
-#include "SL/LSL/Library/JsonTools.lsl"
+#include "GPHUD/LSL/GPHUDHeader.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
 
 //#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
 //#define COMMS_INCLUDEDIGEST
 #define COMMS_NOCHARACTER
 #define COMMS_NOSETTEXT
-#define COMMS_DEVKEY "***REMOVED***"
+#include "configuration.lsl"
 #define COMMS_INTERFACE "object"
 #define COMMS_DONT_CHECK_CALLBACK
-#include "SL/LSL/Library/CommsV3.lsl"
+#include "SLCore/LSL/CommsV3.lsl"
 
 #define CHECKIN_MINUTES 15
 string MODE="NONE";

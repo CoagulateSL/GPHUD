@@ -1,5 +1,5 @@
 #include "GPHUDHeader.lsl"
-#include "SL/LSL/Constants.lsl"
+#include "SLCore/LSL/Constants.lsl"
 //#define DUMPLINKS
 
 integer ATTACH_LOCATION=ATTACH_HUD_BOTTOM;

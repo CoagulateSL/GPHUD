@@ -1,5 +1,5 @@
-#include "SL/LSL/GPHUD/GPHUDHeader.lsl"
-#include "SL/LSL/Library/JsonTools.lsl"
+#include "GPHUDHeader.lsl"
+#include "SLCore/LSL/JsonTools.lsl"
 default {
 	state_entry() {
 		calculatebroadcastchannel();
