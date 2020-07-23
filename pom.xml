@@ -16,6 +16,7 @@
         <finalName>${project.artifactId}-${project.version}</finalName>
         <testOutputDirectory>${project.basedir}/test</testOutputDirectory>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
+        <resources><resource><directory>resources</directory><filtering>true</filtering></resource></resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
