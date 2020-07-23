@@ -62,7 +62,7 @@ public abstract class View {
 		t.openRow();
 		t.add("Avatar");
 		if (st.getAvatarNullable()==null) { t.add(""); }
-		else { t.addNoNull(st.getAvatar().getGPHUDLink()); }
+		else { t.addNoNull(st.getAvatar().toString()); }
 		t.openRow();
 		t.add("Character").addNoNull(st.getCharacterNullable());
 		t.openRow();
