@@ -30,7 +30,7 @@ public abstract class Operations {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response setPassword(@Nonnull final State st,
-	                                   @Nonnull @Arguments(description="New password",
+	                                   @Nonnull @Arguments(name="password",description="New password",
 	                                                       type=ArgumentType.PASSWORD) final String password) {
 		if (st.getSourcedeveloper().getId()!=1) {
 			throw new UserAccessDeniedException("RESTRICTED COMMAND");

@@ -256,7 +256,7 @@ public abstract class Modules {
 		for (final Argument arg: c.getArguments()) {
 			i++;
 			if (i >= words.length) { return new ErrorResponse("Not enough parameters supplied"); }
-			final String argname=arg.getName();
+			final String argname=arg.name();
 			if (words[i]==null || words[i].isEmpty() || "-".equals(words[i])) {
 				parameters.put(argname,null);
 			}

@@ -18,11 +18,11 @@ public class EffectsCommands {
 	                  requiresPermission="Effects.Apply",
 	                  context=Command.Context.AVATAR)
 	public static Response apply(@Nonnull final State st,
-	                             @Argument.Arguments(description="Character to apply effect to",
+	                             @Argument.Arguments(name="target",description="Character to apply effect to",
 	                                                 type=Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-	                             @Argument.Arguments(description="Name of effect to apply",
+	                             @Argument.Arguments(name="effect",description="Name of effect to apply",
 	                                                 type=Argument.ArgumentType.EFFECT) @Nonnull final Effect effect,
-	                             @Argument.Arguments(description="Duration for effect (in seconds)",
+	                             @Argument.Arguments(name="seconds",description="Duration for effect (in seconds)",
 	                                                 type=Argument.ArgumentType.INTEGER) final int seconds) {
 		if (effect.apply(st,true,target,seconds)) {
 			return new OKResponse("Effect applied");
@@ -36,9 +36,9 @@ public class EffectsCommands {
 	                  requiresPermission="Effects.Remove",
 	                  context=Command.Context.AVATAR)
 	public static Response remove(@Nonnull final State st,
-	                              @Argument.Arguments(description="Character to remove effect from",
+	                              @Argument.Arguments(name="target",description="Character to remove effect from",
 	                                                  type=Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-	                              @Argument.Arguments(description="Effect to remove",
+	                              @Argument.Arguments(name="effect",description="Effect to remove",
 	                                                  type=Argument.ArgumentType.EFFECT) @Nonnull final Effect effect) {
 		if (effect.remove(st,target,true)) {
 			return new OKResponse("Effect removed");

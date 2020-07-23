@@ -46,10 +46,10 @@ public class OpenWebsite {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response offerWebsite(@Nonnull final State st,
-	                                    @Argument.Arguments(description="URL to offer to user",
+	                                    @Argument.Arguments(name="url",description="URL to offer to user",
 	                                                        type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                        max=255) final String url,
-	                                    @Argument.Arguments(description="Description to offer with the URL",
+	                                    @Argument.Arguments(name="description",description="Description to offer with the URL",
 	                                                        type=Argument.ArgumentType.TEXT_MULTILINE,
 	                                                        max=254) final String description) {
 		final JSONObject json=new JSONObject();

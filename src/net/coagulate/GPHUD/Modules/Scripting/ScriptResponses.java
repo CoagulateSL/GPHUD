@@ -25,9 +25,9 @@ public class ScriptResponses {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static Response characterResponse(@Nonnull final State st,
-	                                         @Nonnull @Argument.Arguments(description="Script PID",
+	                                         @Nonnull @Argument.Arguments(name="processid",description="Script PID",
 	                                                                      type=Argument.ArgumentType.INTEGER) final Integer processid,
-	                                         @Nonnull @Argument.Arguments(description="The selected character",
+	                                         @Nonnull @Argument.Arguments(name="response",description="The selected character",
 	                                                                      type=Argument.ArgumentType.CHARACTER) final Char response) {
 		final ScriptRun run=ScriptRun.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) {
@@ -48,9 +48,9 @@ public class ScriptResponses {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static Response stringResponse(@Nonnull final State st,
-	                                      @Nonnull @Argument.Arguments(description="Script PID",
+	                                      @Nonnull @Argument.Arguments(name="processid",description="Script PID",
 	                                                                   type=Argument.ArgumentType.INTEGER) final Integer processid,
-	                                      @Nonnull @Argument.Arguments(description="The string response",
+	                                      @Nonnull @Argument.Arguments(name="response",description="The string response",
 	                                                                   type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                                   max=1024) final String response) {
 		final ScriptRun run=ScriptRun.get(processid);

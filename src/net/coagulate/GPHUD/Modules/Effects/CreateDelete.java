@@ -21,7 +21,7 @@ public class CreateDelete {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static final Response create(final State st,
-	                                    @Argument.Arguments(description="Name of the new effect",
+	                                    @Argument.Arguments(name="name",description="Name of the new effect",
 	                                                        type=Argument.ArgumentType.TEXT_CLEAN,
 	                                                        max=64) @Nonnull final String name) {
 		Effect.create(st,name);
@@ -41,7 +41,7 @@ public class CreateDelete {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static final Response delete(final State st,
-	                                    @Argument.Arguments(description="Name of the effect to delete",
+	                                    @Argument.Arguments(name="name",description="Name of the effect to delete",
 	                                                        type=Argument.ArgumentType.EFFECT,
 	                                                        max=64) @Nonnull final Effect name) {
 		name.delete(st);

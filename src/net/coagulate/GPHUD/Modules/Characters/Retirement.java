@@ -58,7 +58,7 @@ public abstract class Retirement {
 	          requiresPermission="Characters.Retire",
 	          permitExternal=false)
 	public static Response retireTarget(@Nonnull final State st,
-	                                    @Nullable @Arguments(description="Character to retire",
+	                                    @Nullable @Arguments(name="target",description="Character to retire",
 	                                                         type=ArgumentType.CHARACTER) final Char target) {
 		if (target==null) { return new ErrorResponse("Target character was null"); }
 		target.validate(st);

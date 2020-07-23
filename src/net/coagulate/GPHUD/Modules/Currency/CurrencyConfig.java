@@ -77,9 +77,9 @@ public class CurrencyConfig {
 	          requiresPermission="Currency.Denominations",
 	          context=Context.AVATAR)
 	public static Response removeCoin(@Nonnull final State state,
-	                                  @Arguments(description="Currency to remove the base coin from",
+	                                  @Arguments(name="currency",description="Currency to remove the base coin from",
 	                                             type=ArgumentType.CURRENCY) @Nonnull final Currency currency,
-	                                  @Arguments(description="Base value of the coin to delete",
+	                                  @Arguments(name="basevalue",description="Base value of the coin to delete",
 	                                             type=ArgumentType.INTEGER) @Nonnull final Integer basevalue) {
 		if (currency.getInstance()!=state.getInstance()) {
 			throw new SystemConsistencyException("Currency argument instance / state instance mismatch");
@@ -109,9 +109,9 @@ public class CurrencyConfig {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response toggleTradable(@Nonnull final State st,
-	                                      @Arguments(description="The currency to toggle",
+	                                      @Arguments(name="currency",description="The currency to toggle",
 	                                                 type=ArgumentType.CURRENCY) @Nonnull final Currency currency,
-	                                      @Arguments(description="New tradable flag",
+	                                      @Arguments(name="tradable",description="New tradable flag",
 	                                                 type=ArgumentType.BOOLEAN) final boolean tradable) {
 		currency.tradable(st,tradable);
 		return new OKResponse("Tradability of "+currency.getName()+" is now set to "+tradable);
@@ -122,14 +122,14 @@ public class CurrencyConfig {
 	          requiresPermission="Currency.Denominations",
 	          context=Context.AVATAR)
 	public static Response addCoin(@Nonnull final State state,
-	                               @Arguments(description="Currency to add the coin to",
+	                               @Arguments(name="currency",description="Currency to add the coin to",
 	                                          type=ArgumentType.CURRENCY) @Nonnull final Currency currency,
-	                               @Arguments(description="Base value of the coin to add",
+	                               @Arguments(name="basevalue",description="Base value of the coin to add",
 	                                          type=ArgumentType.INTEGER) @Nonnull final Integer basevalue,
-	                               @Arguments(description="Short name (symbol) of the coin",
+	                               @Arguments(name="coinshortname",description="Short name (symbol) of the coin",
 	                                          type=ArgumentType.TEXT_ONELINE,
 	                                          max=16) @Nonnull final String coinshortname,
-	                               @Arguments(description="Long name of the coin",
+	                               @Arguments(name="coinname",description="Long name of the coin",
 	                                          type=ArgumentType.TEXT_ONELINE,
 	                                          max=32) @Nonnull final String coinname) {
 		if (currency.getInstance()!=state.getInstance()) {
@@ -146,17 +146,17 @@ public class CurrencyConfig {
 	                                       @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Currency.SetBaseCoinNames",values);
 	}
-
+	
 	@Commands(description="Set the long and short name of the currency's base coin",
 	          requiresPermission="Currency.Denominations",
 	          context=Context.AVATAR)
 	public static Response setBaseCoinNames(@Nonnull final State state,
-	                                        @Arguments(description="Currency to alter",
+	                                        @Arguments(name="currency",description="Currency to alter",
 	                                                   type=ArgumentType.CURRENCY) @Nonnull final Currency currency,
-	                                        @Arguments(description="Short name of the coin",
+	                                        @Arguments(name="basecoinshortname",description="Short name of the coin",
 	                                                   type=ArgumentType.TEXT_ONELINE,
 	                                                   max=16) @Nonnull final String basecoinshortname,
-	                                        @Arguments(description="Long name of the coin",
+	                                        @Arguments(name="basecoinname",description="Long name of the coin",
 	                                                   type=ArgumentType.TEXT_ONELINE,
 	                                                   max=32) @Nonnull final String basecoinname) {
 		if (currency.getInstance()!=state.getInstance()) {

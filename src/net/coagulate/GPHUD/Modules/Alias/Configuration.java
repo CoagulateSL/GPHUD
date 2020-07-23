@@ -132,14 +132,14 @@ public abstract class Configuration {
 		t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description").add("Replaced Description"));
 		final Command c=Modules.getCommand(st,template.getString("invoke"));
 		for (final Argument arg: c.getArguments()) {
-			if (!template.has(arg.getName())) { template.put(arg.getName(),""); }
+			if (!template.has(arg.name())) { template.put(arg.name(),""); }
 		}
 
 		for (final String name: template.keySet()) {
 			if (!"invoke".equals(name) && !name.endsWith("-desc")) {
 				t.openRow().add(name).add(new TextInput(name,template.getString(name)));
 				Argument arg=null;
-				for (final Argument anarg: c.getArguments()) { if (anarg.getName().equals(name)) { arg=anarg; }}
+				for (final Argument anarg: c.getArguments()) { if (anarg.name().equals(name)) { arg=anarg; }}
 				if (arg!=null) {
 					t.add(arg.type().toString());
 					t.add(arg.description());

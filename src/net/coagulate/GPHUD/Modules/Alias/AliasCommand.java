@@ -134,9 +134,9 @@ public class AliasCommand extends Command {
 		final List<Argument> args=targetcommand.getArguments();
 		final List<Argument> remainingargs=new ArrayList<>();
 		for (final Argument a: args) {
-			if (!definition.has(a.getName())) { remainingargs.add(a); }
-			if (definition.has(a.getName()+"-desc") && !definition.optString(a.getName()+"-desc","").isEmpty()) {
-				a.overrideDescription(definition.getString(a.getName()+"-desc"));
+			if (!definition.has(a.name())) { remainingargs.add(a); }
+			if (definition.has(a.name()+"-desc") && !definition.optString(a.name()+"-desc","").isEmpty()) {
+				a.overrideDescription(definition.getString(a.name()+"-desc"));
 			}
 		}
 		return remainingargs;
@@ -199,7 +199,7 @@ public class AliasCommand extends Command {
 				boolean integer=false;
 				boolean delaytemplating=false;
 				for (final Argument arg: getTargetCommand().getArguments()) {
-					if (arg.getName().equals(key)) {
+					if (arg.name().equals(key)) {
 						if (arg.type()==ArgumentType.FLOAT || arg.type()==ArgumentType.INTEGER) {
 							numeric=true;
 							if (arg.type()==ArgumentType.INTEGER) { integer=true; }

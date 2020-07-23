@@ -49,7 +49,7 @@ public abstract class API {
 		f.add(new TextSubHeader("Arguments"));
 		final Table args=new Table();
 		for (final Argument p: c.getArguments()) {
-			f.add("<b>"+p.getName()+"</b>");
+			f.add("<b>"+p.name()+"</b>");
 			f.add(" - Type: "+p.type());
 			if (p.type()==ArgumentType.CHOICE) {
 				final String[] split=proposedcommand.split("\\.");

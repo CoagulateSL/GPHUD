@@ -44,13 +44,13 @@ public abstract class Register {
 	          permitExternal=false)
 	public static Response register(@Nonnull final State st,
 	                                @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                                    description="Version number of the Server that is connecting",
+	                                                    name="version",description="Version number of the Server that is connecting",
 	                                                    max=64) final String version,
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                           description="Version date of the Server that is connecting",
+	                                           name="versiondate",description="Version date of the Server that is connecting",
 	                                           max=64) final String versiondate,
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                           description="Version time of the Server that is connecting",
+	                                           name="versiontime",description="Version time of the Server that is connecting",
 	                                           max=64) final String versiontime) {
 		if (EndOfLifing.hasExpired(version)) {
 			st.logger().warning("Rejected region server connection from end-of-life product version "+version+" from "+versiondate+" "+versiontime);

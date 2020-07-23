@@ -80,7 +80,7 @@ public class Config {
 	          context=Context.AVATAR)
 	@Nonnull
 	public static Response authorise(@Nonnull final State state,
-	                                 @Arguments(description="Developer to authorise",
+	                                 @Arguments(name="developer",description="Developer to authorise",
 	                                            type=ArgumentType.AVATAR) @Nonnull final User developer) {
 		if (!developer.hasDeveloperKey()) { return new ErrorResponse("That user is not a developer, please have them register with Iain Maltz"); }
 		if (InstanceDevelopers.isDeveloper(state.getInstance(),developer)) { return new ErrorResponse("That user is already a developer at this instance"); }
@@ -103,7 +103,7 @@ public class Config {
 	          context=Context.AVATAR)
 	@Nonnull
 	public static Response deAuthorise(@Nonnull final State state,
-	                                   @Arguments(description="Developer to deauthorise",
+	                                   @Arguments(name="developer",description="Developer to deauthorise",
 	                                              type=ArgumentType.AVATAR) @Nonnull final User developer) {
 		if (!InstanceDevelopers.isDeveloper(state.getInstance(),developer)) { return new ErrorResponse("That user not a developer at this instance"); }
 		InstanceDevelopers.deAuthorise(state,state.getInstance(),developer);

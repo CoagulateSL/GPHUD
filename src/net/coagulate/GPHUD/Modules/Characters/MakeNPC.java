@@ -22,7 +22,7 @@ public class MakeNPC {
 	                  permitScripting=false,
 	                  permitExternal=false)
 	public static Response makeNPC(@Nonnull final State st,
-	                               @Nullable @Argument.Arguments(description="Name of the currently active character.  Used to confirm you know what you're doing.",
+	                               @Nullable @Argument.Arguments(name="confirmname",description="Name of the currently active character.  Used to confirm you know what you're doing.",
 	                                                             type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                             max=64,
 	                                                             mandatory=false) String confirmname) {

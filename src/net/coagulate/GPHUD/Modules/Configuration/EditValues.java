@@ -31,9 +31,9 @@ public class EditValues {
 	          description="Set an instance level configuration value")
 	public static Response setInstance(@Nonnull final State st,
 	                                   @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                       description="Key to set the value of") final String key,
+	                                                       name="key",description="Key to set the value of") final String key,
 	                                   @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                              description="New value for the key",
+	                                              name="value",description="New value for the key",
 	                                              max=4096,
 	                                              mandatory=false) final String value) {
 		Modules.validateKV(st,key);
@@ -65,11 +65,11 @@ public class EditValues {
 	          description="Set a region level configuration value")
 	public static Response setRegion(@Nonnull final State st,
 	                                 @Nonnull @Arguments(type=ArgumentType.REGION,
-	                                                     description="Region to edit the key for") final Region region,
+	                                                     name="region",description="Region to edit the key for") final Region region,
 	                                 @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                     description="Key to set the value of") final String key,
+	                                                     name="key",description="Key to set the value of") final String key,
 	                                 @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                            description="New value for the key",
+	                                            name="value",description="New value for the key",
 	                                            max=4096,
 	                                            mandatory=false) final String value) {
 		region.validate(st);
@@ -103,11 +103,11 @@ public class EditValues {
 	          description="Set a key value for a zone")
 	public static Response setZone(@Nonnull final State st,
 	                               @Nonnull @Arguments(type=ArgumentType.ZONE,
-	                                                   description="Name of the zone") final Zone zone,
+	                                                   name="zone",description="Name of the zone") final Zone zone,
 	                               @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                   description="Key to set") final String key,
+	                                                   name="key",description="Key to set") final String key,
 	                               @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                          description="Value to set to",
+	                                          name="value",description="Value to set to",
 	                                          max=4096,
 	                                          mandatory=false) final String value) {
 		zone.validate(st);
@@ -136,11 +136,11 @@ public class EditValues {
 	          description="Set an event level configuration value")
 	public static Response setEvent(@Nonnull final State st,
 	                                @Nonnull @Arguments(type=ArgumentType.EVENT,
-	                                                    description="Character group to edit the key for") final Event event,
+	                                                    name="event",description="Character group to edit the key for") final Event event,
 	                                @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                    description="Key to set the value of") final String key,
+	                                                    name="key",description="Key to set the value of") final String key,
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                           description="New value for the key",
+	                                           name="value",description="New value for the key",
 	                                           max=4096,
 	                                           mandatory=false) final String value) {
 		event.validate(st);
@@ -170,11 +170,11 @@ public class EditValues {
 	          description="Set a character group level configuration value")
 	public static Response setGroup(@Nonnull final State st,
 	                                @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                                    description="Character group to edit the key for") final CharacterGroup group,
+	                                                    name="group",description="Character group to edit the key for") final CharacterGroup group,
 	                                @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                    description="Key to set the value of") final String key,
+	                                                    name="key",description="Key to set the value of") final String key,
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                           description="New value for the key",
+	                                           name="value",description="New value for the key",
 	                                           max=4096,
 	                                           mandatory=false) final String value) {
 		group.validate(st);
@@ -208,11 +208,11 @@ public class EditValues {
 	          description="Set an effect level configuration value")
 	public static Response setEffect(@Nonnull final State st,
 	                                 @Nonnull @Arguments(type=ArgumentType.EFFECT,
-	                                                     description="Effect to edit the key for") final Effect effect,
+	                                                     name="effect",description="Effect to edit the key for") final Effect effect,
 	                                 @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                     description="Key to set the value of") final String key,
+	                                                     name="key",description="Key to set the value of") final String key,
 	                                 @Nullable @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                                      description="New value for the key",
+	                                                      name="value",description="New value for the key",
 	                                                      max=4096,
 	                                                      mandatory=false) final String value) {
 		effect.validate(st);
@@ -249,11 +249,11 @@ public class EditValues {
 	          description="Set a character level configuration value")
 	public static Response setChar(@Nonnull final State st,
 	                               @Nonnull @Arguments(type=ArgumentType.CHARACTER,
-	                                                   description="Character to edit the key for") final Char character,
+	                                                   name="character",description="Character to edit the key for") final Char character,
 	                               @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                   description="Key to set the value of") final String key,
+	                                                   name="key",description="Key to set the value of") final String key,
 	                               @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                          description="New value for the key",
+	                                          name="value",description="New value for the key",
 	                                          max=4096,
 	                                          mandatory=false) final String value) {
 		character.validate(st);
@@ -278,11 +278,11 @@ public class EditValues {
 	          notes="For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
 	public static Response deltaCharInt(@Nonnull final State st,
 	                                    @Nonnull @Arguments(type=ArgumentType.CHARACTER,
-	                                                        description="Character to edit the key for") final Char character,
+	                                                        name="character",description="Character to edit the key for") final Char character,
 	                                    @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                        description="Key to set the value of") final String key,
+	                                                        name="key",description="Key to set the value of") final String key,
 	                                    @Nonnull @Arguments(type=ArgumentType.INTEGER,
-	                                                        description="Ammount to change the total value by",
+	                                                        name="delta",description="Ammount to change the total value by",
 	                                                        max=4096) final Integer delta) {
 		character.validate(st);
 		Modules.validateKV(st,key);
@@ -339,11 +339,11 @@ public class EditValues {
 	          notes="For CUMULATIVE types this will read the current char level KV and alter it by this ammount, for DELEGATING types this will read the current total value, adjust it, and write this to the character's KV")
 	public static Response deltaCharFloat(@Nonnull final State st,
 	                                      @Nonnull @Arguments(type=ArgumentType.CHARACTER,
-	                                                          description="Character to edit the key for") final Char character,
+	                                                          name="character",description="Character to edit the key for") final Char character,
 	                                      @Nonnull @Arguments(type=ArgumentType.KVLIST,
-	                                                          description="Key to set the value of") final String key,
+	                                                          name="key",description="Key to set the value of") final String key,
 	                                      @Nonnull @Arguments(type=ArgumentType.INTEGER,
-	                                                          description="Ammount to change the total value by",
+	                                                          name="delta",description="Ammount to change the total value by",
 	                                                          max=4096) final Float delta) {
 		character.validate(st);
 		Modules.validateKV(st,key);

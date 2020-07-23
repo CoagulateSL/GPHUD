@@ -62,7 +62,7 @@ public class MenuArgument extends Argument {
 
 	@Nonnull
 	@Override
-	public String getName() {
+	public String name() {
 		return "choice";
 	}
 

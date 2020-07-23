@@ -32,7 +32,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	          description="Set your Titler's Altitude (height above avatar)",
 	          permitExternal=false)
 	public static Response setAltitude(@Nonnull final State st,
-	                                   @Arguments(description="Offset, in meters",
+	                                   @Arguments(name="offset",description="Offset, in meters",
 	                                              max=3,
 	                                              type=Argument.ArgumentType.FLOAT) final Float offset) {
 		st.setKV(st.getCharacter(),"GPHUDClient.TitlerAltitude",offset+"");

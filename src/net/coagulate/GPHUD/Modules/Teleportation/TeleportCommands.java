@@ -29,15 +29,15 @@ public class TeleportCommands {
 	                  permitObject=false,
 	                  permitExternal=false)
 	public static Response teleportTo(@Nonnull final State st,
-	                                  @Nonnull @Argument.Arguments(description="Region to teleport to (must be part of the instance",
+	                                  @Nonnull @Argument.Arguments(name="region",description="Region to teleport to (must be part of the instance",
 	                                                               type=Argument.ArgumentType.REGION) final Region region,
-	                                  @Argument.Arguments(description="X co-ordinate",
+	                                  @Argument.Arguments(name="x",description="X co-ordinate",
 	                                                      type=Argument.ArgumentType.FLOAT,
 	                                                      max=256) final Float x,
-	                                  @Argument.Arguments(description="Y co-ordinate",
+	                                  @Argument.Arguments(name="y",description="Y co-ordinate",
 	                                                      type=Argument.ArgumentType.FLOAT,
 	                                                      max=256) final Float y,
-	                                  @Argument.Arguments(description="Z co-ordinate",
+	                                  @Argument.Arguments(name="z",description="Z co-ordinate",
 	                                                      type=Argument.ArgumentType.FLOAT,
 	                                                      max=4096) final Float z) {
 		final JSONObject response=new JSONObject();
@@ -58,7 +58,7 @@ public class TeleportCommands {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static Response createLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(description="Name for the landmark, replaces it if it already exists",
+	                                      @Argument.Arguments(name="name",description="Name for the landmark, replaces it if it already exists",
 	                                                          max=64,
 	                                                          type=Argument.ArgumentType.TEXT_ONELINE) final String name) {
 		String position=null;
@@ -97,7 +97,7 @@ public class TeleportCommands {
 	                  permitObject=false,
 	                  permitScripting=false)
 	public static Response deleteLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(description="Landmark name to remove",
+	                                      @Argument.Arguments(name="name",description="Landmark name to remove",
 	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                          max=64) final String name) {
 		final Landmark landmark=Landmark.find(st.getInstance(),name);
@@ -115,7 +115,7 @@ public class TeleportCommands {
 	                  permitObject=false,
 	                  permitExternal=false)
 	public static Response go(@Nonnull final State st,
-	                          @Argument.Arguments(description="Landmark name to teleport to",
+	                          @Argument.Arguments(name="landmark",description="Landmark name to teleport to",
 	                                              type=Argument.ArgumentType.TEXT_ONELINE,
 	                                              max=64) final String landmark) {
 		final Landmark lm=Landmark.find(st,landmark);

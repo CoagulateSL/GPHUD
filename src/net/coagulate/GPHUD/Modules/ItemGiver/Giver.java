@@ -40,7 +40,7 @@ public class Giver {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response get(@Nonnull final State st,
-	                           @Argument.Arguments(description="Name of object to give to avatar",
+	                           @Argument.Arguments(name="item",description="Name of object to give to avatar",
 	                                               type=Argument.ArgumentType.TEXT_ONELINE,
 	                                               max=63) final String item) {
 		final JSONObject json=new JSONObject();

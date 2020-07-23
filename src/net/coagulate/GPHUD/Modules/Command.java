@@ -97,7 +97,7 @@ public abstract class Command {
 				v=args[arg];
 				//System.out.println("In here for "+arg+" = "+v);
 			}
-			map.put(argument.getName(),v);
+			map.put(argument.name(),v);
 			//System.out.println("Command "+getFullName()+" mapped "+argument.getName()+"-"+arg+"/"+args.length+"->"+v);
 			arg++;
 		}
@@ -114,7 +114,7 @@ public abstract class Command {
 	public final List<String> getArgumentNames(@Nonnull final State st) {
 		final List<String> arguments=new ArrayList<>();
 		for (final Argument a: getArguments()) {
-			arguments.add(a.getName());
+			arguments.add(a.name());
 		}
 		return arguments;
 	}
@@ -124,19 +124,19 @@ public abstract class Command {
 		state.parameterdebugraw=parametermap;
 		final Map<String,Object> arguments=new HashMap<>();
 		for (final Argument arg: getArguments()) {
-			String v=parametermap.get(arg.getName()).trim();
+			String v=parametermap.get(arg.name()).trim();
 			if (v.isEmpty() || "-".equals(v)) { v=null; }
 			if (v!=null && v.length()>getMaximumLength(arg)) {
-				return new ErrorResponse(arg.getName()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
+				return new ErrorResponse(arg.name()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
 			}
 			if (arg.type()==ArgumentType.BOOLEAN && v==null) { v="false"; }
-			if (v==null) { arguments.put(arg.getName(),null); }
+			if (v==null) { arguments.put(arg.name(),null); }
 			else {
 				try {
-					arguments.put(arg.getName(),convertArgument(state,arg,v));
+					arguments.put(arg.name(),convertArgument(state,arg,v));
 				}
 				catch (final UserException conversionerror) {
-					return new ErrorResponse("Argument "+arg.getName()+" failed : "+conversionerror.getLocalizedMessage());
+					return new ErrorResponse("Argument "+arg.name()+" failed : "+conversionerror.getLocalizedMessage());
 				}
 			}
 		}
@@ -166,7 +166,7 @@ public abstract class Command {
 		final JSONObject json=new JSONObject();
 		int arg=0;
 		for (final Argument argument: getArguments()) {
-			json.put("arg"+arg+"name",argument.getName());
+			json.put("arg"+arg+"name",argument.name());
 			json.put("arg"+arg+"description",argument.description());
 			switch (argument.type()) {
 				case BOOLEAN:
@@ -294,24 +294,24 @@ public abstract class Command {
 				case CHARACTER_PLAYABLE: // FIXME this can be done properly
 				case FLOAT:
 				case INTEGER:
-					t.add(new TextInput(arg.getName()));
+					t.add(new TextInput(arg.name()));
 					break;
 				case PASSWORD:
-					t.add(new PasswordInput(arg.getName()));
+					t.add(new PasswordInput(arg.name()));
 					break;
 				case BOOLEAN:
-					t.add(new CheckBox(arg.getName()));
+					t.add(new CheckBox(arg.name()));
 					break;
 				case ATTRIBUTE_WRITABLE:
 				case ATTRIBUTE:
-					final DropDownList attributes=new DropDownList(arg.getName());
+					final DropDownList attributes=new DropDownList(arg.name());
 					for (final Attribute a: st.getAttributes()) {
 						if (arg.type()==ArgumentType.ATTRIBUTE || a.getSelfModify()) { attributes.add(a.getName()); }
 					}
 					t.add(attributes);
 					break;
 				case CHARACTER_FACTION:
-					final DropDownList factionmembers=new DropDownList(arg.getName());
+					final DropDownList factionmembers=new DropDownList(arg.name());
 					final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
 					if (faction==null) {
 						throw new UserInputStateException("You are in no faction");
@@ -322,77 +322,77 @@ public abstract class Command {
 					t.add(factionmembers);
 					break;
 				case CHARACTER_NEAR:
-					final DropDownList characters=new DropDownList(arg.getName());
+					final DropDownList characters=new DropDownList(arg.name());
 					for (final Char c: st.getCharacter().getNearbyCharacters(st)) {
 						characters.add(c.getName());
 					}
 					t.add(characters);
 					break;
 				case EFFECT:
-					final DropDownList effectlist=new DropDownList(arg.getName());
+					final DropDownList effectlist=new DropDownList(arg.name());
 					for (final Effect effect: Effect.getAll(st.getInstance())) {
 						effectlist.add(effect.getName());
 					}
 					t.add(effectlist);
 					break;
 				case EVENT:
-					final DropDownList eventlist=new DropDownList(arg.getName());
+					final DropDownList eventlist=new DropDownList(arg.name());
 					for (final Event event: Event.getAll(st.getInstance())) {
 						eventlist.add(event.getName());
 					}
 					t.add(eventlist);
 					break;
 				case MODULE:
-					final DropDownList modulelist=new DropDownList(arg.getName());
+					final DropDownList modulelist=new DropDownList(arg.name());
 					for (final Module amodule: Modules.getModules()) {
 						modulelist.add(amodule.getName());
 					}
 					t.add(modulelist);
 					break;
 				case CURRENCY:
-					final DropDownList currencylist=new DropDownList(arg.getName());
+					final DropDownList currencylist=new DropDownList(arg.name());
 					for (final Currency acurrency: Currency.getAll(st)) {
 						currencylist.add(acurrency.getName());
 					}
 					t.add(currencylist);
 					break;
 				case REGION:
-					final DropDownList regionlist=new DropDownList(arg.getName());
+					final DropDownList regionlist=new DropDownList(arg.name());
 					for (final Region aregion: Region.getRegions(st,false)) {
 						regionlist.add(aregion.getName());
 					}
 					t.add(regionlist);
 					break;
 				case ZONE:
-					final DropDownList zonelist=new DropDownList(arg.getName());
+					final DropDownList zonelist=new DropDownList(arg.name());
 					for (final Zone azone: Zone.getZones(st)) {
 						zonelist.add(azone.getName());
 					}
 					t.add(zonelist);
 					break;
 				case KVLIST:
-					final DropDownList list=new DropDownList(arg.getName());
+					final DropDownList list=new DropDownList(arg.name());
 					for (final String g: Modules.getKVList(st)) {
 						list.add(g,g+" - "+st.getKVDefinition(g).description());
 					}
 					t.add(list);
 					break;
 				case CHARACTERGROUP:
-					final DropDownList chargrouplist=new DropDownList(arg.getName());
+					final DropDownList chargrouplist=new DropDownList(arg.name());
 					for (final CharacterGroup g: st.getInstance().getCharacterGroups()) {
 						chargrouplist.add(g.getNameSafe());
 					}
 					t.add(chargrouplist);
 					break;
 				case PERMISSIONSGROUP:
-					final DropDownList permgrouplist=new DropDownList(arg.getName());
+					final DropDownList permgrouplist=new DropDownList(arg.name());
 					for (final PermissionsGroup g: PermissionsGroup.getPermissionsGroups(st)) {
 						permgrouplist.add(g.getNameSafe());
 					}
 					t.add(permgrouplist);
 					break;
 				case PERMISSION:
-					final DropDownList permlist=new DropDownList(arg.getName());
+					final DropDownList permlist=new DropDownList(arg.name());
 					for (final Module m: Modules.getModules()) {
 						for (final String entry: m.getPermissions(st).keySet()) {
 							permlist.add(m.getName()+"."+entry);
@@ -401,7 +401,7 @@ public abstract class Command {
 					t.add(permlist);
 					break;
 				case CHOICE:
-					final DropDownList choicelist=new DropDownList(arg.getName());
+					final DropDownList choicelist=new DropDownList(arg.name());
 					for (final String s: arg.getChoices(st)) {
 						choicelist.add(s);
 					}
@@ -438,11 +438,11 @@ public abstract class Command {
 		//check arguments
 		for (final Argument a: getArguments()) {
 			Object o=null;
-			if (parametermap.containsKey(a.getName())) {
-				o=parametermap.get(a.getName());
+			if (parametermap.containsKey(a.name())) {
+				o=parametermap.get(a.name());
 			}
 			if (a.mandatory() && o==null) {
-				return new ErrorResponse("Argument "+a.getName()+" is mandatory on command "+getFullName()+" and nothing was passed");
+				return new ErrorResponse("Argument "+a.name()+" is mandatory on command "+getFullName()+" and nothing was passed");
 			}
 		}
 		// check the "operational context" :)
@@ -462,12 +462,12 @@ public abstract class Command {
 		switch (type) {
 			case TEXT_INTERNAL_NAME:
 				if (v.matches(".*[^a-zA-Z0-9].*")) {
-					throw new UserInputValidationFilterException(argument.getName()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
+					throw new UserInputValidationFilterException(argument.name()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
 				}
 				// dont put anything here, follow up into the next thing
 			case TEXT_CLEAN:
 				if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
-					throw new UserInputValidationFilterException(argument.getName()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
+					throw new UserInputValidationFilterException(argument.name()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
 				}
 				// dont put anything here, follow up into the next thing
 			case TEXT_ONELINE:
@@ -491,14 +491,14 @@ public abstract class Command {
 					return Integer.valueOf(v);
 				}
 				catch (@Nonnull final NumberFormatException e) {
-					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.getName(),e);
+					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e);
 				}
 			case FLOAT:
 				try {
 					return Float.valueOf(v);
 				}
 				catch (@Nonnull final NumberFormatException e) {
-					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.getName(),e);
+					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e);
 				}
 			case MODULE:
 				final Module m=Modules.get(null,v); // null to disable enablement check :)
@@ -562,7 +562,7 @@ public abstract class Command {
 				if (user==null) { throw new UserInputLookupFailureException("Unable to find a known avatar named '"+v+"'"); }
 				return assertNotNull(user,v,"avatar");
 			default:
-				throw new SystemImplementationException("Unhandled argument type "+type+" in converter for argument "+argument.getName());
+				throw new SystemImplementationException("Unhandled argument type "+type+" in converter for argument "+argument.name());
 		}
 	}
 
@@ -659,7 +659,7 @@ public abstract class Command {
 			case KVLIST:
 				return 128;
 			default:
-				throw new SystemImplementationException("Argument "+argument.getName()+" of type "+argument.type().name()+" fell through maxlen");
+				throw new SystemImplementationException("Argument "+argument.name()+" of type "+argument.type().name()+" fell through maxlen");
 		}
 	}
 

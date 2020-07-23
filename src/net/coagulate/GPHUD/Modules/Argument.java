@@ -17,6 +17,9 @@ public abstract class Argument {
 	public abstract boolean isGenerated();
 
 	@Nonnull
+	public abstract String name();
+
+	@Nonnull
 	public abstract ArgumentType type();
 
 	@Nonnull
@@ -26,8 +29,6 @@ public abstract class Argument {
 
 	//public abstract String choiceMethod();
 	public abstract Class<? extends Object> objectType();
-
-	public abstract String getName();
 
 	public abstract boolean delayTemplating();
 
@@ -79,6 +80,8 @@ public abstract class Argument {
 	@Target(ElementType.PARAMETER)
 	public @interface Arguments {
 		// ---------- INSTANCE ----------
+		@Nonnull String name();
+
 		@Nonnull ArgumentType type();
 
 		@Nonnull String description();

@@ -114,7 +114,7 @@ public class CommandAnnotation extends Command {
 			final List<Object> parameters=new ArrayList<>();
 			parameters.add(state);
 			for (final Argument arg: getArguments()) {
-				parameters.add(arguments.getOrDefault(arg.getName(),null));
+				parameters.add(arguments.getOrDefault(arg.name(),null));
 			}
 			state.parameterdebugfinal=parameters;
 			final Object result=getMethod().invoke(this,parameters.toArray());

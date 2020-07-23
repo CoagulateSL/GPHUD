@@ -47,19 +47,19 @@ public class Connect {
 	          permitExternal=false)
 	public static Response connect(@Nonnull final State st,
 	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                                   description="Version number of the HUD that is connecting",
+	                                                   name="version",description="Version number of the HUD that is connecting",
 	                                                   max=128) final String version,
 	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                                   description="Version date of the HUD that is connecting",
+	                                                   name="versiondate",description="Version date of the HUD that is connecting",
 	                                                   max=128) final String versiondate,
 	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                                   description="Version time of the HUD that is connecting",
+	                                                   name="versiontime",description="Version time of the HUD that is connecting",
 	                                                   max=128) final String versiontime,
 	                               @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                                   description="URL for the client",
+	                                                   name="url",description="URL for the client",
 	                                                   max=256) final String url,
 	                               @Nonnull @Arguments(type=ArgumentType.INTEGER,
-	                                                   description="Resume session for character id") final Integer characterid) {
+	                                                   name="characterid",description="Resume session for character id") final Integer characterid) {
 		if (EndOfLifing.hasExpired(version)) {
 			st.logger().warning("Rejected HUD connection from end-of-life product version "+version+" from "+versiondate+" "+versiontime);
 			return new TerminateResponse("Sorry, this HUD is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");

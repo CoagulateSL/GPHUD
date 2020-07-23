@@ -156,7 +156,7 @@ public abstract class Groups {
 	          permitExternal=false,
 	          permitObject=false)
 	public static Response create(@Nonnull final State st,
-	                              @Arguments(description="Name of group to create",
+	                              @Arguments(name="name",description="Name of group to create",
 	                                         type=ArgumentType.TEXT_CLEAN,
 	                                         max=64) final String name) {
 		try { PermissionsGroup.create(st,name); }
@@ -206,7 +206,7 @@ public abstract class Groups {
 	          permitScripting=false,
 	          permitObject=false)
 	public static Response delete(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Permissions group to delete",
+	                              @Nonnull @Arguments(name="permissionsgroup",description="Permissions group to delete",
 	                                                  type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup) {
 		final String success="NOP";
 		permissionsgroup.validate(st);

@@ -23,7 +23,7 @@ public class Interactions {
 	                  permitScripting=false,
 	                  permitExternal=false)
 	public static Response clicked(@Nonnull final State st,
-	                               @Argument.Arguments(description="Character clicking the object",
+	                               @Argument.Arguments(name="clicker",description="Character clicking the object",
 	                                                   type=Argument.ArgumentType.CHARACTER) final Char clicker) {
 
 		final Obj object=Obj.findOrNull(st,st.objectkey);
@@ -45,7 +45,7 @@ public class Interactions {
 	                  permitScripting=false,
 	                  permitExternal=false)
 	public static Response collided(@Nonnull final State st,
-	                                @Argument.Arguments(description="Character colliding with the object",
+	                                @Argument.Arguments(name="collider",description="Character colliding with the object",
 	                                                    type=Argument.ArgumentType.CHARACTER) final Char collider) {
 
 		final Obj object=Obj.findOrNull(st,st.objectkey);

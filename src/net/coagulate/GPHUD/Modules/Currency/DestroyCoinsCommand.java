@@ -101,7 +101,7 @@ public class DestroyCoinsCommand extends Command {
 		public Class<? extends Object> objectType() { return Char.class; }
 
 		@Override
-		public String getName() { return "target"; }
+		public String name() { return "target"; }
 
 		@Override
 		public boolean delayTemplating() { return false;}
@@ -137,7 +137,7 @@ public class DestroyCoinsCommand extends Command {
 		public Class<? extends Object> objectType() { return String.class; }
 
 		@Override
-		public String getName() { return "ammount"; }
+		public String name() { return "ammount"; }
 
 		@Override
 		public boolean delayTemplating() { return false;}
@@ -169,7 +169,7 @@ public class DestroyCoinsCommand extends Command {
 		public Class<? extends Object> objectType() { return String.class; }
 
 		@Override
-		public String getName() { return "reason"; }
+		public String name() { return "reason"; }
 
 		@Override
 		public boolean delayTemplating() { return false;}

@@ -23,7 +23,7 @@ public class Broadcast {
 	          description="Send admin message",
 	          requiresPermission="instance.SendAdminMessages")
 	public static Response admin(@Nonnull final State st,
-	                             @Arguments(description="Message to broadcast",
+	                             @Arguments(name="sendmessage",description="Message to broadcast",
 	                                        type=ArgumentType.TEXT_ONELINE,
 	                                        max=200) final String sendmessage) {
 		String message="(From ";

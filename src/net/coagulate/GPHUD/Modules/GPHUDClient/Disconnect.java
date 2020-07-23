@@ -24,7 +24,7 @@ public class Disconnect {
 	          permitConsole=false)
 	@Nonnull
 	public static Response disconnect(@Nonnull final State state,
-	                                  @Arguments(description="URL to disconnect",
+	                                  @Arguments(name="url",description="URL to disconnect",
 	                                             type=ArgumentType.TEXT_ONELINE,
 	                                             max=255,
 	                                             mandatory=false) @Nullable final String url) {

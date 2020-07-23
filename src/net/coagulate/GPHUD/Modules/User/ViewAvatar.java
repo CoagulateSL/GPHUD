@@ -79,7 +79,7 @@ public abstract class ViewAvatar {
 	          permitExternal=false)
 	public static Response setTZ(@Nonnull final State st,
 	                             @Arguments(type=Argument.ArgumentType.CHOICE,
-	                                        description="Prefered Time Zone",
+	                                        name="timezone",description="Prefered Time Zone",
 	                                        choiceMethod="net.coagulate.GPHUD.Modules.User.ViewAvatar.getTimeZones") final String timezone) {
 		st.getAvatar().setTimeZone(timezone);
 		return new OKResponse("TimeZone preference updated");

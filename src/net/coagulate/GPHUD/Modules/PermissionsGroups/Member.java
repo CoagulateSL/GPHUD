@@ -42,8 +42,8 @@ public abstract class Member {
 	          permitExternal=false)
 	public static Response eject(@Nonnull final State st,
 	                             @Nonnull @Arguments(type=ArgumentType.PERMISSIONSGROUP,
-	                                                 description="Permissions group to remove member from") final PermissionsGroup permissionsgroup,
-	                             @Nonnull @Arguments(description="Avatar to remove from the group",
+	                                                 name="permissionsgroup",description="Permissions group to remove member from") final PermissionsGroup permissionsgroup,
+	                             @Nonnull @Arguments(name="avatar",description="Avatar to remove from the group",
 	                                                 type=ArgumentType.AVATAR) final User avatar) {
 		if (!permissionsgroup.canEject(st)) { return new ErrorResponse("No permission to eject from this group"); }
 		try { permissionsgroup.removeMember(avatar); }
@@ -69,9 +69,9 @@ public abstract class Member {
 	          permitExternal=false,
 	          permitObject=false)
 	public static Response invite(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Permissions group to join avatar to",
+	                              @Nonnull @Arguments(name="permissionsgroup",description="Permissions group to join avatar to",
 	                                                  type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup,
-	                              @Nonnull @Arguments(description="Avatar to join to group",
+	                              @Nonnull @Arguments(name="avatar",description="Avatar to join to group",
 	                                                  type=ArgumentType.AVATAR) final User avatar) {
 		if (!permissionsgroup.canInvite(st)) { return new ErrorResponse("No permission to invite to this group"); }
 		try { permissionsgroup.addMember(avatar); }
@@ -98,13 +98,13 @@ public abstract class Member {
 	          permitScripting=false)
 	public static Response setPermissions(@Nonnull final State st,
 	                                      @Nonnull @Arguments(type=ArgumentType.PERMISSIONSGROUP,
-	                                                          description="Permissions group to set a users permissions in") final PermissionsGroup permissionsgroup,
+	                                                          name="permissionsgroup",description="Permissions group to set a users permissions in") final PermissionsGroup permissionsgroup,
 	                                      @Nonnull @Arguments(type=ArgumentType.AVATAR,
-	                                                          description="Avatar in the group to set permissions of") final User avatar,
+	                                                          name="avatar",description="Avatar in the group to set permissions of") final User avatar,
 	                                      @Arguments(type=ArgumentType.BOOLEAN,
-	                                                 description="Can the user invite people to this group") final Boolean caninvite,
+	                                                 name="caninvite",description="Can the user invite people to this group") final Boolean caninvite,
 	                                      @Arguments(type=ArgumentType.BOOLEAN,
-	                                                 description="Can the user remove people from this group") final Boolean cankick) {
+	                                                 name="cankick",description="Can the user remove people from this group") final Boolean cankick) {
 		try { permissionsgroup.setUserPermissions(avatar,caninvite,cankick); }
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to set user permissions on group  - "+e.getMessage());

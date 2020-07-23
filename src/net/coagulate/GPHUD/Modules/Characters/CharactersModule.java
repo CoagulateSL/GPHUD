@@ -148,7 +148,7 @@ public class CharactersModule extends ModuleAnnotation {
 	          permitExternal=false)
 	public static Response spendAbilityPoint(@Nonnull final State st,
 	                                         @Arguments(choiceMethod="net.coagulate.GPHUD.Modules.Characters.CharactersModule.getRaisableAttributesList",
-	                                                    description="Attribute to spend an ability point on",
+	                                                    name="attribute",description="Attribute to spend an ability point on",
 	                                                    type=Argument.ArgumentType.CHOICE) final String attribute) {
 		int remain=abilityPointsRemaining(st);
 		if (remain<=0) { return new ErrorResponse("You have no remaining ability points to spend."); }
@@ -197,9 +197,9 @@ public class CharactersModule extends ModuleAnnotation {
 	          description="Change a value about your own character")
 	public static Response set(@Nonnull final State st,
 	                           @Nullable @Arguments(type=Argument.ArgumentType.ATTRIBUTE_WRITABLE,
-	                                                description="Attribute to set") final Attribute attribute,
+	                                                name="attribute",description="Attribute to set") final Attribute attribute,
 	                           @Arguments(type=Argument.ArgumentType.TEXT_ONELINE,
-	                                      description="Value to use",
+	                                      name="value",description="Value to use",
 	                                      mandatory=false,
 	                                      max=4096) final String value) {
 		if (attribute==null) { return new ErrorResponse("You must supply an attribute to set"); }

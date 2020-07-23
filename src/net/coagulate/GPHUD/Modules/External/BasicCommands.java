@@ -69,7 +69,7 @@ public class BasicCommands {
 
 	@Nonnull
 	public static Response lookupAvatar(@Nonnull final State state,
-	                                    @Arguments(description="Avatar to lookup",
+	                                    @Arguments(name="user",description="Avatar to lookup",
 	                                               type=ArgumentType.AVATAR) @Nonnull final User user) {
 		final JSONObject json=new JSONObject();
 		json.put("avatarid",user.getId());

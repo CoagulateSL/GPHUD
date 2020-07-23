@@ -27,8 +27,12 @@ public class ArgumentAnnotation extends Argument {
 
 	protected ArgumentAnnotation() {}
 
+	@Nonnull
+	@Override
+	public String name() { return meta.name(); }
+
 	public ArgumentAnnotation(final Command c,
-	                          @Nonnull final Parameter p) {
+							  @Nonnull final Parameter p) {
 		parameter=p;
 		command=c;
 		meta=p.getAnnotation(Arguments.class);
@@ -77,8 +81,6 @@ public class ArgumentAnnotation extends Argument {
 	public boolean mandatory() { return meta.mandatory(); }
 
 	public Class<? extends Object> objectType() { return parameter.getType(); }
-
-	public String getName() { return parameter.getName(); }
 
 	public boolean delayTemplating() { return meta.delayTemplating(); }
 

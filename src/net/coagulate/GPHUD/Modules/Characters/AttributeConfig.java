@@ -135,24 +135,24 @@ public class AttributeConfig {
 	          requiresPermission="Characters.CreateAttribute",
 	          permitObject=false)
 	public static Response createAttribute(@Nonnull final State st,
-	                                       @Nonnull @Arguments(description="Name of new attribute",
+	                                       @Nonnull @Arguments(name="name",description="Name of new attribute",
 	                                                           type=Argument.ArgumentType.TEXT_INTERNAL_NAME,
 	                                                           max=64) final String name,
-	                                       @Arguments(description="Allow users to edit their own value without needing permissions",
+	                                       @Arguments(name="selfmodify",description="Allow users to edit their own value without needing permissions",
 	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean selfmodify,
-	                                       @Nullable @Arguments(description="Type of this attribute",
+	                                       @Nullable @Arguments(name="attributetype",description="Type of this attribute",
 	                                                            type=Argument.ArgumentType.CHOICE,
 	                                                            choiceMethod="net.coagulate.GPHUD.Modules.Characters.AttributeConfig.getAttributeTypes") final String attributetype,
-	                                       @Nullable @Arguments(description="Type of group, if GROUP, or awarding group TYPE if EXPERIENCE",
+	                                       @Nullable @Arguments(name="grouptype",description="Type of group, if GROUP, or awarding group TYPE if EXPERIENCE",
 	                                                            mandatory=false,
 	                                                            type=Argument.ArgumentType.TEXT_INTERNAL_NAME,
 	                                                            max=128) final String grouptype,
-	                                       @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",
+	                                       @Arguments(name="usesabilitypoints",description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",
 	                                                  mandatory=false,
 	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean usesabilitypoints,
-	                                       @Arguments(description="Attribute must be completed",
+	                                       @Arguments(name="required",description="Attribute must be completed",
 	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean required,
-	                                       @Arguments(description="Default value (can be blank)",
+	                                       @Arguments(name="defaultvalue",description="Default value (can be blank)",
 	                                                  type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                  max=4096,
 	                                                  mandatory=false) final String defaultvalue) {
@@ -214,9 +214,9 @@ public class AttributeConfig {
 	          context=Command.Context.AVATAR,
 	          requiresPermission="Characters.CreateAttribute")
 	public static Response setAP(@Nonnull final State st,
-	                             @Nonnull @Arguments(description="Attribute",
+	                             @Nonnull @Arguments(name="attribute",description="Attribute",
 	                                                 type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                             @Arguments(description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",
+	                             @Arguments(name="usesabilitypoints",description="Increases based off allocation of ability points? (only for INTEGER/FLOAT types)",
 	                                        mandatory=false,
 	                                        type=Argument.ArgumentType.BOOLEAN) final Boolean usesabilitypoints) {
 		attribute.validate(st);
@@ -239,9 +239,9 @@ public class AttributeConfig {
 	          context=Command.Context.AVATAR,
 	          requiresPermission="Characters.CreateAttribute")
 	public static Response setSelfModify(@Nonnull final State st,
-	                                     @Nonnull @Arguments(description="Attribute",
+	                                     @Nonnull @Arguments(name="attribute",description="Attribute",
 	                                                         type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                     @Arguments(description="Free self modification allowed?",
+	                                     @Arguments(name="selfmodify",description="Free self modification allowed?",
 	                                                mandatory=false,
 	                                                type=Argument.ArgumentType.BOOLEAN) final Boolean selfmodify) {
 		attribute.validate(st);
@@ -263,9 +263,9 @@ public class AttributeConfig {
 	          context=Command.Context.AVATAR,
 	          requiresPermission="Characters.CreateAttribute")
 	public static Response setRequired(@Nonnull final State st,
-	                                   @Nonnull @Arguments(description="Attribute",
+	                                   @Nonnull @Arguments(name="attribute",description="Attribute",
 	                                                       type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                   @Arguments(description="Value required?",
+	                                   @Arguments(name="required",description="Value required?",
 	                                              mandatory=false,
 	                                              type=Argument.ArgumentType.BOOLEAN) final Boolean required) {
 		attribute.validate(st);
@@ -287,9 +287,9 @@ public class AttributeConfig {
 	          context=Command.Context.AVATAR,
 	          requiresPermission="Characters.CreateAttribute")
 	public static Response setDefault(@Nonnull final State st,
-	                                  @Nonnull @Arguments(description="Attribute",
+	                                  @Nonnull @Arguments(name="attribute",description="Attribute",
 	                                                      type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                  @Arguments(description="Default value",
+	                                  @Arguments(name="defaultvalue",description="Default value",
 	                                             mandatory=false,
 	                                             type=Argument.ArgumentType.TEXT_ONELINE,
 	                                             max=4096) final String defaultvalue) {
@@ -316,9 +316,9 @@ public class AttributeConfig {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response deleteAttribute(@Nonnull final State st,
-	                                       @Nonnull @Arguments(description="Attribute **AND ALL ITS DATA** to delete",
+	                                       @Nonnull @Arguments(name="attribute",description="Attribute **AND ALL ITS DATA** to delete",
 	                                                           type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                       @Arguments(description="CONFIRM AS THIS WILL IRREVERSIBLY DELETE DATA ATTACHED TO THIS ATTRIBUTE",
+	                                       @Arguments(name="confirm",description="CONFIRM AS THIS WILL IRREVERSIBLY DELETE DATA ATTACHED TO THIS ATTRIBUTE",
 	                                                  mandatory=false,
 	                                                  type=Argument.ArgumentType.BOOLEAN) final Boolean confirm) {
 		attribute.validate(st);
@@ -340,9 +340,9 @@ public class AttributeConfig {
 	          context=Command.Context.AVATAR,
 	          requiresPermission="Characters.CreateAttribute")
 	public static Response setTemplatable(@Nonnull final State st,
-	                                      @Nonnull @Arguments(description="Attribute",
+	                                      @Nonnull @Arguments(name="attribute",description="Attribute",
 	                                                          type=Argument.ArgumentType.ATTRIBUTE) final Attribute attribute,
-	                                      @Arguments(description="Does templating?",
+	                                      @Arguments(name="templatable",description="Does templating?",
 	                                                 mandatory=false,
 	                                                 type=Argument.ArgumentType.BOOLEAN) final Boolean templatable) {
 		attribute.validate(st);

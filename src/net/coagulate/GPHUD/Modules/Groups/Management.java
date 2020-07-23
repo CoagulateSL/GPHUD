@@ -115,10 +115,10 @@ public abstract class Management {
 	          permitScripting=false)
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(type=ArgumentType.TEXT_CLEAN,
-	                                         description="Name of the group",
+	                                         name="name",description="Name of the group",
 	                                         max=128) final String name,
 	                              @Arguments(type=ArgumentType.CHOICE,
-	                                         description="Type of the group",
+	                                         name="type",description="Type of the group",
 	                                         mandatory=false,
 	                                         choiceMethod="net.coagulate.GPHUD.Modules.Groups.Management.groupTypes") final String type) {
 		try { st.getInstance().createCharacterGroup(name,false,type); }
@@ -210,9 +210,9 @@ public abstract class Management {
 	          description="Set the leader of a group",
 	          requiresPermission="Groups.SetOwner")
 	public static Response setOwner(@Nonnull final State st,
-	                                @Nonnull @Arguments(description="Group to change the leader of",
+	                                @Nonnull @Arguments(name="group",description="Group to change the leader of",
 	                                                    type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
-	                                @Nullable @Arguments(description="New leader, optionally",
+	                                @Nullable @Arguments(name="newowner",description="New leader, optionally",
 	                                                     type=ArgumentType.CHARACTER,
 	                                                     mandatory=false) final Char newowner) {
 		final Char oldowner=group.getOwner();
@@ -258,8 +258,8 @@ public abstract class Management {
 	          requiresPermission="Groups.SetGroup")
 	public static Response add(@Nonnull final State st,
 	                           @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                               description="Group to add character to") final CharacterGroup group,
-	                           @Nonnull @Arguments(description="Character to add to the group",
+	                                               name="group",description="Group to add character to") final CharacterGroup group,
+	                           @Nonnull @Arguments(name="newmember",description="Character to add to the group",
 	                                               type=ArgumentType.CHARACTER) final Char newmember) {
 		final boolean debug=false;
 		final Attribute attr=st.getAttribute(group);
@@ -301,8 +301,8 @@ public abstract class Management {
 	          requiresPermission="Groups.SetGroup")
 	public static Response remove(@Nonnull final State st,
 	                              @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                                  description="Group to remove character from") final CharacterGroup group,
-	                              @Nonnull @Arguments(description="Character to remove from the group",
+	                                                  name="group",description="Group to remove character from") final CharacterGroup group,
+	                              @Nonnull @Arguments(name="member",description="Character to remove from the group",
 	                                                  type=ArgumentType.CHARACTER) final Char member) {
 		if (group.getOwner()==member) {
 			return new ErrorResponse("Will not remove "+member.getName()+" from "+group.getName()+", they are the group leader, you must demote them by replacing them or "+"leaving the group leaderless.");
@@ -331,7 +331,7 @@ public abstract class Management {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response delete(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Group to delete",
+	                              @Nonnull @Arguments(name="group",description="Group to delete",
 	                                                  type=ArgumentType.CHARACTERGROUP) final CharacterGroup group) {
 		final String groupname=group.getName();
 		group.delete();
@@ -349,11 +349,11 @@ public abstract class Management {
 	@Commands(context=Context.ANY,
 	          description="Set the groups admin flag on a user")
 	public static Response setAdmin(@Nonnull final State st,
-	                                @Nonnull @Arguments(description="Group to set the character's admin flag on",
+	                                @Nonnull @Arguments(name="group",description="Group to set the character's admin flag on",
 	                                                    type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
-	                                @Nonnull @Arguments(description="Character to set the admin flag on",
+	                                @Nonnull @Arguments(name="character",description="Character to set the admin flag on",
 	                                                    type=ArgumentType.CHARACTER) final Char character,
-	                                @Arguments(description="Admin flag to set on the character in this group",
+	                                @Arguments(name="admin",description="Admin flag to set on the character in this group",
 	                                           type=ArgumentType.BOOLEAN) final boolean admin) {
 		if (!group.hasMember(character)) {
 			return new ErrorResponse(character.getName()+" is not a member of group "+group.getName());
@@ -388,9 +388,9 @@ public abstract class Management {
 	          description="Set the groups open flag",
 	          requiresPermission="Groups.SetOpen")
 	public static Response setOpen(@Nonnull final State st,
-	                               @Nonnull @Arguments(description="Group to modify",
+	                               @Nonnull @Arguments(name="group",description="Group to modify",
 	                                                   type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
-	                               @Arguments(description="Group open?",
+	                               @Arguments(name="open",description="Group open?",
 	                                          type=ArgumentType.BOOLEAN) final boolean open) {
 		group.validate(st);
 		// must be instance admin or group owner

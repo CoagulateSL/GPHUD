@@ -40,9 +40,9 @@ public abstract class Permissions {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response addPermission(@Nonnull final State st,
-	                                     @Nonnull @Arguments(description="Permissions group to add permission to",
+	                                     @Nonnull @Arguments(name="permissionsgroup",description="Permissions group to add permission to",
 	                                                         type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup,
-	                                     @Nonnull @Arguments(description="Permission to add to group",
+	                                     @Nonnull @Arguments(name="permission",description="Permission to add to group",
 	                                                         type=ArgumentType.PERMISSION) final String permission) {
 		Modules.validatePermission(st,permission);
 		final Permission permissionref=Modules.getPermission(st,permission);
@@ -75,9 +75,9 @@ public abstract class Permissions {
 	          permitExternal=false,
 	          permitObject=false)
 	public static Response delPermission(@Nonnull final State st,
-	                                     @Nonnull @Arguments(description="Permissions group to remove permission from",
+	                                     @Nonnull @Arguments(name="permissionsgroup",description="Permissions group to remove permission from",
 	                                                         type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup,
-	                                     @Arguments(description="Permission to remove from group",
+	                                     @Arguments(name="permission",description="Permission to remove from group",
 	                                                type=ArgumentType.TEXT_CLEAN,
 	                                                max=256) final String permission) {
 		try { permissionsgroup.removePermission(permission); }

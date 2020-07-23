@@ -19,7 +19,7 @@ public class Set {
 	@Command.Commands(description="Set own health",
 	                  context=Command.Context.CHARACTER)
 	public static Response set(@Nonnull final State st,
-	                           @Argument.Arguments(description="Ammount of health to set to",
+	                           @Argument.Arguments(name="target",description="Ammount of health to set to",
 	                                               type=Argument.ArgumentType.INTEGER) final Integer target) {
 		// is this command enabled?
 		if (!st.getKV("Health.allowSelfSet").boolValue()) {

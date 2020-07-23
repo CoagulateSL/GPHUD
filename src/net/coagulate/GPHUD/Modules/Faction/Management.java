@@ -70,7 +70,7 @@ public abstract class Management {
 	          requiresPermission="Faction.Create")
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(type=ArgumentType.TEXT_CLEAN,
-	                                         description="Name of the faction",
+	                                         name="name",description="Name of the faction",
 	                                         max=128) final String name) {
 		try { st.getInstance().createCharacterGroup(name,false,"Faction"); }
 		catch (@Nonnull final UserException e) {
@@ -160,9 +160,9 @@ public abstract class Management {
 	          description="Set the leader of a faction",
 	          requiresPermission="Faction.SetOwner")
 	public static Response setOwner(@Nonnull final State st,
-	                                @Nonnull @Arguments(description="Faction to change the leader of",
+	                                @Nonnull @Arguments(name="faction",description="Faction to change the leader of",
 	                                                    type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction,
-	                                @Nullable @Arguments(description="New leader, optionally",
+	                                @Nullable @Arguments(name="newowner",description="New leader, optionally",
 	                                                     type=ArgumentType.CHARACTER,
 	                                                     mandatory=false) final Char newowner) {
 		// group must be a faction group
@@ -210,8 +210,8 @@ public abstract class Management {
 	          requiresPermission="Faction.SetOwner")
 	public static Response add(@Nonnull final State st,
 	                           @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                               description="Faction to add character to") final CharacterGroup faction,
-	                           @Nonnull @Arguments(description="Character to add to the faction",
+	                                               name="faction",description="Faction to add character to") final CharacterGroup faction,
+	                           @Nonnull @Arguments(name="newmember",description="Character to add to the faction",
 	                                               type=ArgumentType.CHARACTER) final Char newmember) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
@@ -252,8 +252,8 @@ public abstract class Management {
 	          requiresPermission="Faction.SetOwner")
 	public static Response remove(@Nonnull final State st,
 	                              @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                                  description="Faction to remove character from") final CharacterGroup faction,
-	                              @Nonnull @Arguments(description="Character to remove from the faction",
+	                                                  name="faction",description="Faction to remove character from") final CharacterGroup faction,
+	                              @Nonnull @Arguments(name="member",description="Character to remove from the faction",
 	                                                  type=ArgumentType.CHARACTER) final Char member) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
@@ -289,7 +289,7 @@ public abstract class Management {
 	          description="Delete a faction",
 	          requiresPermission="Faction.Delete")
 	public static Response delete(@Nonnull final State st,
-	                              @Nonnull @Arguments(description="Faction to delete",
+	                              @Nonnull @Arguments(name="faction",description="Faction to delete",
 	                                                  type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
@@ -310,11 +310,11 @@ public abstract class Management {
 	@Commands(context=Context.ANY,
 	          description="Set the faction admin flag on a user")
 	public static Response setAdmin(@Nonnull final State st,
-	                                @Nonnull @Arguments(description="Faction to set the character's admin flag on",
+	                                @Nonnull @Arguments(name="faction",description="Faction to set the character's admin flag on",
 	                                                    type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction,
-	                                @Nonnull @Arguments(description="Character to set the admin flag on",
+	                                @Nonnull @Arguments(name="character",description="Character to set the admin flag on",
 	                                                    type=ArgumentType.CHARACTER) final Char character,
-	                                @Arguments(description="Admin flag to set on the character in this faction",
+	                                @Arguments(name="admin",description="Admin flag to set on the character in this faction",
 	                                           type=ArgumentType.BOOLEAN) final boolean admin) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");

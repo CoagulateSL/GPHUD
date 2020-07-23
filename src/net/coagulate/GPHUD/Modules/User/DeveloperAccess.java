@@ -27,7 +27,7 @@ public class DeveloperAccess {
 	          permitJSON=false,
 	          permitUserWeb=false)
 	public static Response enableDeveloper(@Nonnull final State state,
-	                                       @Arguments(description="User to grant developer access to",
+	                                       @Arguments(name="user",description="User to grant developer access to",
 	                                                  type=ArgumentType.AVATAR) @Nonnull final User user) {
 		if (!state.getAvatar().isSuperAdmin()) { throw new UserAccessDeniedException("Caller is not a super admin!"); }
 		if (user.hasDeveloperKey()) { return new ErrorResponse("User is already a developer"); }
@@ -50,7 +50,7 @@ public class DeveloperAccess {
 	          permitJSON=false,
 	          permitUserWeb=false)
 	public static Response disableDeveloper(@Nonnull final State state,
-	                                        @Arguments(description="User to revoke developer access from",
+	                                        @Arguments(name="user",description="User to revoke developer access from",
 	                                                   type=ArgumentType.AVATAR) @Nonnull final User user) {
 		if (!state.getAvatar().isSuperAdmin()) { throw new UserAccessDeniedException("Caller is not a super admin!"); }
 		if (!user.hasDeveloperKey()) { return new ErrorResponse("User is not a developer"); }

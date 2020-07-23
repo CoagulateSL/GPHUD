@@ -34,7 +34,7 @@ public abstract class Avatars {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response setRegionAvatars(@Nonnull final State st,
-	                                        @Nullable @Arguments(description="Comma separated list of avatar key=names on the sim",
+	                                        @Nullable @Arguments(name="userlist",description="Comma separated list of avatar key=names on the sim",
 	                                                             type=ArgumentType.TEXT_ONELINE,
 	                                                             max=65536,
 	                                                             mandatory=false) String userlist) {

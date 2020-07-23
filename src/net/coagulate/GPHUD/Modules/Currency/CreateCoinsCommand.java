@@ -88,6 +88,10 @@ public class CreateCoinsCommand extends Command {
 
 			@Nonnull
 			@Override
+			public String name() { return "target"; }
+
+			@Nonnull
+			@Override
 		public ArgumentType type() { return ArgumentType.CHARACTER; }
 
 		@Nonnull
@@ -99,9 +103,6 @@ public class CreateCoinsCommand extends Command {
 
 		@Override
 		public Class<? extends Object> objectType() { return Char.class; }
-
-		@Override
-		public String getName() { return "target"; }
 
 		@Override
 		public boolean delayTemplating() { return false;}
@@ -122,6 +123,9 @@ public class CreateCoinsCommand extends Command {
 		public boolean isGenerated() { return true; }
 
 		// ---------- INSTANCE ----------
+		@Override
+		public String name() { return "ammount"; }
+
 		@Nonnull
 		@Override
 		public ArgumentType type() { return ArgumentType.TEXT_ONELINE; }
@@ -135,9 +139,6 @@ public class CreateCoinsCommand extends Command {
 
 		@Override
 		public Class<? extends Object> objectType() { return String.class; }
-
-		@Override
-		public String getName() { return "ammount"; }
 
 		@Override
 		public boolean delayTemplating() { return false;}
@@ -169,7 +170,7 @@ public class CreateCoinsCommand extends Command {
 		public Class<? extends Object> objectType() { return String.class; }
 
 		@Override
-		public String getName() { return "reason"; }
+		public String name() { return "reason"; }
 
 		@Override
 		public boolean delayTemplating() { return false;}

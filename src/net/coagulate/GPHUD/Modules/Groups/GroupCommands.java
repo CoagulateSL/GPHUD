@@ -23,7 +23,7 @@ public class GroupCommands {
 	@Commands(context=Context.CHARACTER,
 	          description="Join an open group")
 	public static Response join(@Nonnull final State st,
-	                            @Arguments(description="Name of group to join",
+	                            @Arguments(name="group",description="Name of group to join",
 	                                       type=ArgumentType.CHARACTERGROUP) @Nonnull final CharacterGroup group) {
 
 		// is group open?
@@ -66,8 +66,8 @@ public class GroupCommands {
 	          context=Context.CHARACTER)
 	public static Response invite(@Nonnull final State st,
 	                              @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                                  description="Group to invite to") final CharacterGroup group,
-	                              @Arguments(description="Character to invite",
+	                                                  name="group",description="Group to invite to") final CharacterGroup group,
+	                              @Arguments(name="target",description="Character to invite",
 	                                         type=ArgumentType.CHARACTER) @Nonnull final Char target) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not an owner/admin for "+group.getName());
@@ -86,8 +86,8 @@ public class GroupCommands {
 	          description="Eject a member from a group")
 	public static Response eject(@Nonnull final State st,
 	                             @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                        description="Group to eject from") @Nonnull final CharacterGroup group,
-	                             @Arguments(description="Character to eject from the group",
+	                                        name="group",description="Group to eject from") @Nonnull final CharacterGroup group,
+	                             @Arguments(name="member",description="Character to eject from the group",
 	                                        type=ArgumentType.CHARACTER_FACTION) @Nonnull final Char member) {
 		if (!group.isAdmin(st.getCharacter())) {
 			return new ErrorResponse("You are not a lead/admin for "+group.getName());
@@ -116,7 +116,7 @@ public class GroupCommands {
 	          description="Leave a group")
 	public static Response leave(@Nonnull final State st,
 	                             @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                        description="Group to leave") @Nonnull final CharacterGroup group) {
+	                                        name="group",description="Group to leave") @Nonnull final CharacterGroup group) {
 		// character must be in group
 		if (!group.hasMember(st.getCharacter())) { return new ErrorResponse("You are not a member of group "+group.getName()); }
 		// group must be open
