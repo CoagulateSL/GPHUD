@@ -77,7 +77,7 @@ public class GPHUD {
 
 	@Nonnull
 	public static String menuPanelEnvironment() {
-		return "&gt; "+(DEV?"DEVELOPMENT":"Production")+"<br>&gt; "+hostname+"<br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
+		return "&gt; "+(DEV?"DEVELOPMENT":"Production")+"<br>&gt; "+hostname+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
 	}
 
 	// TODO THIS MESSES WITH URLS
