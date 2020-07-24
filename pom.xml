@@ -12,11 +12,22 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>GitHub IPrice Apache Maven Packages</name>
+            <name>GitHub CoagulateSL/GPHUD Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/CoagulateSL/GPHUD</url>
         </repository>
     </distributionManagement>
-
+    <repositories>
+        <repository>
+            <id>javacore</id>
+            <name>GitHub CoagulateSL/JavaCore Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/CoagulateSL/JavaCore</url>
+        </repository>
+        <repository>
+            <id>slcore</id>
+            <name>GitHub CoagulateSL/SLCore Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/CoagulateSL/SLCore</url>
+        </repository>
+    </repositories>
     <build>
         <directory>${project.basedir}/bin</directory>
         <outputDirectory>${project.basedir}/out</outputDirectory>
@@ -81,7 +92,7 @@
             <version>1.8</version>
         </dependency>
         <dependency>
-            <groupId>net.coagulate</groupId>
+            <groupId>net.coagulate.SL</groupId>
             <artifactId>JavaCore</artifactId>
             <version>1.0.0</version>
         </dependency>
