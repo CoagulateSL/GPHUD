@@ -9,6 +9,13 @@
     <groupId>net.coagulate.SL</groupId>
     <artifactId>GPHUD</artifactId>
     <version>3.16.3</version>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub IPrice Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/CoagulateSL/GPHUD</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <directory>${project.basedir}/bin</directory>
