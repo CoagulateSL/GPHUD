@@ -18,14 +18,9 @@
     </distributionManagement>
     <repositories>
         <repository>
-            <id>javacore</id>
-            <name>GitHub CoagulateSL/JavaCore Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/CoagulateSL/JavaCore</url>
-        </repository>
-        <repository>
-            <id>slcore</id>
-            <name>GitHub CoagulateSL/SLCore Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/CoagulateSL/SLCore</url>
+            <id>github</id>
+            <name>GitHub CoagulateSL/GPHUD Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/CoagulateSL/GPHUD</url>
         </repository>
     </repositories>
     <build>
