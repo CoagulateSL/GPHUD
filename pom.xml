@@ -94,12 +94,12 @@
         <dependency>
             <groupId>net.coagulate.SL</groupId>
             <artifactId>JavaCore</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>net.coagulate.SL</groupId>
             <artifactId>SLCore</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
