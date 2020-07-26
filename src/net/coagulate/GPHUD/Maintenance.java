@@ -25,9 +25,6 @@ public class Maintenance extends Thread {
 
 	public static final int PINGHUDINTERVAL=5;
 	public static final int PINGSERVERINTERVAL=5;
-	public static final int UPDATEINTERVAL=5;
-	public static final int PURGECONNECTIONS=60;
-	public static int cycle;
 
 	// ---------- STATICS ----------
 	public static void purgeConnections() {
@@ -142,49 +139,6 @@ public class Maintenance extends Thread {
 		try { Maintenance.updateInstances(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance update Instances caught an exception",e);
-		}
-	}
-
-	// ---------- INSTANCE ----------
-	public void runAlways() {
-		try { refreshCharacterURLs(); }
-		catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e);
-		}
-		try { refreshRegionURLs(); }
-		catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance refresh region URLs caught an exception",e);
-		}
-	}
-
-	public void run() {
-		cycle++;
-		runAlways();
-		runExclusive();
-	}
-
-	public void runExclusive() {
-		final Calendar c=Calendar.getInstance();
-		int now=c.get(Calendar.MINUTE);
-		if (c.get(Calendar.SECOND)>30) { now++; }
-		if (now >= 60) { now-=60; }
-		if (GPHUD.ourCycle(now)) {
-			try { startEvents(); }
-			catch (@Nonnull final Exception e) {
-				GPHUD.getLogger().log(SEVERE,"Maintenance start events caught an exception",e);
-			}
-			try { purgeOldCookies(); }
-			catch (@Nonnull final Exception e) {
-				GPHUD.getLogger().log(SEVERE,"Maintenance run purge cookies caught an exception",e);
-			}
-			try { new VisitXP(-1).runAwards(); }
-			catch (@Nonnull final Exception e) {
-				GPHUD.getLogger().log(SEVERE,"Maintenance run awards run caught an exception",e);
-			}
-			try { if ((cycle%UPDATEINTERVAL)==0) { updateInstances(); } }
-			catch (@Nonnull final Exception e) {
-				GPHUD.getLogger().log(SEVERE,"Maintenance update Instances caught an exception",e);
-			}
 		}
 	}
 

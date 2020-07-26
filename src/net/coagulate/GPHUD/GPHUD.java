@@ -60,21 +60,6 @@ public class GPHUD {
 
 	public static String get(@Nonnull final String keyword) { return CONFIG.get(keyword.toUpperCase()); }
 
-	// spread the servers over a cycle (which is modulo 4), which is just a reduced timestamp anyway (timesync IMPORTANT!)
-	// note zones 1 and 3 are left blank, to allow a little time desync safety (a few minutes worth, which is more than my system monitoring allows, but avoiding running
-	// them back to back is good).
-	// luna being a stand alone dev system runs both 1 and 3.  as does sol if DEV
-	public static boolean ourCycle(int cyclenumber) {
-		cyclenumber=cyclenumber%2;
-		final String node=hostname;
-		if (DEV) { return true; }
-		if ("sol".equalsIgnoreCase(node) && cyclenumber==0) { return true; }     // sol, runs slot 0 on production
-		if ("pluto".equalsIgnoreCase(node) && cyclenumber==1) {
-			return true;
-		}  // pluto only runs prod, and runs in slot 1
-		return false;
-	}
-
 	@Nonnull
 	public static String menuPanelEnvironment() {
 		return "&gt; "+(DEV?"DEVELOPMENT":"Production")+"<br>&gt; "+hostname+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
