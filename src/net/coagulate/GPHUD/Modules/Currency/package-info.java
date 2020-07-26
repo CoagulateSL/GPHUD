@@ -1,5 +1,4 @@
 @ModuleDefinition(description="Provides support for exchangable currencies",
-                  canDisable=true,
                   defaultDisable=true,
                   implementation="net.coagulate.GPHUD.Modules.Currency.CurrencyModule",
                   forceConfig=true)

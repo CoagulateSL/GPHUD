@@ -262,6 +262,7 @@ public abstract class Modules {
 			}
 			else {
 				boolean respectnewlines=false;
+				//noinspection SwitchStatementWithTooFewBranches
 				switch (arg.type()) {
 					case TEXT_MULTILINE:
 						respectnewlines=true;

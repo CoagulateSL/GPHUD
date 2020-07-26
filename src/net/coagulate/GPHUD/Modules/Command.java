@@ -591,7 +591,7 @@ public abstract class Command {
 		}
 	}
 
-	private final void checkCallingInterface(final State state) {
+	private void checkCallingInterface(final State state) {
 		// check required interface
 		if (state.source==Sources.USER) {
 			if (!permitWeb()) {
@@ -621,7 +621,7 @@ public abstract class Command {
 
 	}
 
-	private final int getMaximumLength(final Argument argument) {
+	private int getMaximumLength(final Argument argument) {
 		final ArgumentType type=argument.type();
 		switch (type) {
 			case TEXT_CLEAN:

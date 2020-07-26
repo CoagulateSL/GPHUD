@@ -34,6 +34,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -237,9 +238,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				final String[] parts=content.split("&");
 				for (final String part: parts) {
 					final String[] keyvalue=part.split("=");
-					final String key=URLDecoder.decode(keyvalue[0],"UTF-8");
+					final String key=URLDecoder.decode(keyvalue[0], StandardCharsets.UTF_8);
 					String value="";
-					if (keyvalue.length>1) { value=URLDecoder.decode(keyvalue[1],"UTF-8"); }
+					if (keyvalue.length>1) { value=URLDecoder.decode(keyvalue[1], StandardCharsets.UTF_8); }
 					if (keyvalue.length>2) {
 						throw new SystemBadValueException("Unexpected parsing of line '"+part+"' - got "+keyvalue.length+" fields");
 					}
