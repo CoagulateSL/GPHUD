@@ -106,7 +106,6 @@ public class Maintenance extends Thread {
 
 	// for calling from OTHER MAINTENANCE CODE (GPHUD from SL)
 	public static void gphudMaintenance() {
-		if (!SL.primaryNode()) { return; }
 		try { Maintenance.refreshCharacterURLs(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e);
