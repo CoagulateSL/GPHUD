@@ -40,9 +40,9 @@ public class GPHUD {
 	public static String hostname="UNSET";
 	public static boolean DEV; // make this auto detect some day... or in the ini file :P
 	@Nullable
-	private static Logger log;
+	static Logger log;
 	@Nullable
-	private static DBConnection db;
+	static DBConnection db;
 
 	// ---------- STATICS ----------
 	public static Logger getLogger(final String subspace) { return Logger.getLogger(log().getName()+"."+subspace); }
@@ -116,19 +116,6 @@ public class GPHUD {
 		catch (@Nonnull final DBException ex) {
 			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from regions",ex);
 		}
-	}
-
-	public static void initialiseAsModule(final boolean isdev,
-	                                      final String jdbc,
-	                                      final String hostname) {
-		GPHUD.hostname=hostname;
-		log=Logger.getLogger("net.coagulate.GPHUD");
-
-		// Initialise the Database layer
-		db=new MariaDBConnection("GPHUD"+(isdev?"DEV":""),jdbc);
-
-		// Annotation parser
-		Classes.initialise();
 	}
 
 	@Nonnull

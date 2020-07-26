@@ -1,11 +1,13 @@
 package net.coagulate.GPHUD;
 
+import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.HTTPPipelines.PageMapper;
 import net.coagulate.SL.SL;
 import net.coagulate.SL.SLModule;
 
 import javax.annotation.Nonnull;
+import java.util.logging.Logger;
 
 public class GPHUDModule extends SLModule {
     @Nonnull
@@ -21,7 +23,14 @@ public class GPHUDModule extends SLModule {
 
     @Override
     public void initialise() {
-        GPHUD.initialiseAsModule(SL.DEV, Config.getGPHUDJdbc(), Config.getHostName());
+        GPHUD.hostname=Config.getHostName();
+        GPHUD.log= Logger.getLogger("net.coagulate.GPHUD");
+
+        // Initialise the Database layer
+        GPHUD.db=new MariaDBConnection("GPHUD"+(Config.getDevelopment()?"DEV":""),Config.getGPHUDJdbc());
+
+        // Annotation parser
+        Classes.initialise();
     }
 
     @Override
