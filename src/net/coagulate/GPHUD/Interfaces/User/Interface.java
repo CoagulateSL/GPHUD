@@ -21,6 +21,7 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.Session;
 import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
@@ -532,7 +533,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				if (UserException.class.isAssignableFrom(t.getClass())) {
 					String r="<h1>ERROR</h1><p>Sorry, your request could not be completed<br><pre>"+t.getLocalizedMessage()+"</pre></p>";
 					GPHUD.getLogger().log(INFO,"UserInterface/UserException "+t);
-					if (GPHUD.DEV) {
+					if (Config.getDevelopment()) {
 						r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>User Mode Exception</h1>"+ExceptionTools.dumpException(t)+"<Br><br>"+st.toHTML();
 						SL.report("GPHUD Web User Exception",t,st);
 						GPHUD.getLogger().log(WARNING,"UserInterface/UserException",t);
@@ -542,7 +543,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 				SL.report("GPHUD Web Other Exception",t,st);
 				GPHUD.getLogger().log(WARNING,"UserInterface/NonUserException",t);
 				String r="<h1>INTERNAL ERROR</h1><p>Sorry, your request could not be completed due to an internal error.</p>";
-				if (GPHUD.DEV) {
+				if (Config.getDevelopment()) {
 					r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>NonUser Exception</h1>"+ExceptionTools.dumpException(t)+"<Br><br>"+st.toHTML();
 				}
 				return r;

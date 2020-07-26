@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
+import net.coagulate.SL.Config;
 import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
@@ -27,7 +28,7 @@ public abstract class Interface implements HttpRequestHandler {
 	public static String base;
 
 	// ---------- STATICS ----------
-	public static String getNode() { return GPHUD.hostname; }
+	public static String getNode() { return Config.getHostName(); }
 
 	@Nonnull
 	public static String base() {
@@ -42,7 +43,7 @@ public abstract class Interface implements HttpRequestHandler {
 	@Nonnull
 	public static String generateURL(final State st,
 	                                 final String ending) {
-		return "https://"+(GPHUD.DEV?"dev.":"")+"sl.coagulate.net/"+base()+"/"+ending;
+		return "https://"+(Config.getDevelopment()?"dev.":"")+"sl.coagulate.net/"+base()+"/"+ending;
 	}
 
 	public static int convertVersion(@Nonnull final String version) {

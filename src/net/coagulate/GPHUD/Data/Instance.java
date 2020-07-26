@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
@@ -196,8 +197,8 @@ public class Instance extends TableRow {
 		if (expiresin!=null) { updatewithin=((int) expiresin.floatValue())+" days "+((int) ((expiresin-((int) expiresin.floatValue()))*24f))+" hours"; }
 		String eol="";
 		if (expiresin!=null && expiresin>14) { eol+="EOL: "+updatewithin; }
-		if (GPHUD.DEV) { newstatus.append("===DEVELOPMENT===\n \n"); }
-		newstatus.append("Server: ").append(GPHUD.hostname).append(" - ").append(GPHUD.VERSION).append("\n").append(eol).append("\n \n");
+		if (Config.getDevelopment()) { newstatus.append("===DEVELOPMENT===\n \n"); }
+		newstatus.append("Server: ").append(Config.getHostName()).append(" - ").append(GPHUD.VERSION).append("\n").append(eol).append("\n \n");
 		if (expiresin!=null) {
 			if (expiresin<7 && canStatus("expiring-"+getId())) {
 				broadcastAdmins(null,

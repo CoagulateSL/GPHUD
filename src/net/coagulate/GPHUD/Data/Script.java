@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -263,7 +264,7 @@ public class Script extends TableRow {
 	                        final int version) {
 		validate();
 		d("update scripts set bytecode=?, bytecodeversion=? where id=?",toByteCode,version,getId());
-		if (GPHUD.DEV) {
+		if (Config.getDevelopment()) {
 			final byte[] compareto=getByteCode();
 			if (compareto.length!=toByteCode.length) {
 				throw new SystemImplementationException("Length mismatch, wrote "+toByteCode.length+" and read "+compareto.length);

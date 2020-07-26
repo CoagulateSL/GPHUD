@@ -32,6 +32,7 @@ import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public abstract class View {
 	public static Response status(@Nonnull final State st) {
 		final TabularResponse t=new TabularResponse();
 		t.openRow();
-		t.add("Node").addNoNull((GPHUD.DEV?"DEVELOPMENT // ":"Production // ")+Interface.getNode());
+		t.add("Node").addNoNull((Config.getDevelopment()?"DEVELOPMENT // ":"Production // ")+Interface.getNode());
 		t.openRow();
 		t.add("Avatar");
 		if (st.getAvatarNullable()==null) { t.add(""); }

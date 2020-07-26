@@ -31,7 +31,7 @@ public class BasicCommands {
 	@Nonnull
 	public static Response status(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
-		json.put("environment",(GPHUD.DEV?"DEVELOPMENT":"Production"));
+		json.put("environment",(net.coagulate.SL.Config.getDevelopment()?"DEVELOPMENT":"Production"));
 		json.put("nodename",Interface.getNode());
 		json.put("avatar",st.getAvatarNullable());
 		json.put("character",st.getCharacterNullable());

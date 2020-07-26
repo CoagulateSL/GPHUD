@@ -4,6 +4,7 @@ import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 
 import javax.annotation.Nonnull;
 
@@ -39,7 +40,7 @@ public class Publishing {
 
 	private static void example(@Nonnull final Form f,
 	                            String s) {
-		if (GPHUD.DEV) { s=s.replaceAll("sl\\.coagulate\\.net","dev.sl.coagulate.net"); }
+		if (Config.getDevelopment()) { s=s.replaceAll("sl\\.coagulate\\.net","dev.sl.coagulate.net"); }
 		f.add("<p><b>Copy paste the following HTML into your page:</b><br><pre style=\"border: 1;\">"+s.replaceAll("<","&lt;")
 		                                                                                               .replaceAll(">","&gt;")
 		                                                                                               .replaceAll("\n","<br>")+"</pre></p>");

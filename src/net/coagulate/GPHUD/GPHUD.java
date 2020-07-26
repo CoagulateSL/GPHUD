@@ -6,6 +6,9 @@ import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.SL.Config;
+import net.coagulate.SL.HTTPPipelines.PageMapper;
+import net.coagulate.SL.SLModule;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,13 +35,12 @@ Shortform here.
 [XX Release Notes] | [https://bugs.coagulate.net/ Bugs/Requests] | [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about Update Notices]
 
  */
-public class GPHUD {
-	public static final String VERSION="v"+(new GPHUDModule().getVersion());
-	public static final String VERSION_DATE=(new GPHUDModule().getBuildDate());
+public class GPHUD extends SLModule {
+	public static final String VERSION="v"+(new GPHUD().getVersion());
+	public static final String VERSION_DATE=(new GPHUD().getBuildDate());
+
 	// config KV store
 	private static final Map<String,String> CONFIG=new TreeMap<>();
-	public static String hostname="UNSET";
-	public static boolean DEV; // make this auto detect some day... or in the ini file :P
 	@Nullable
 	static Logger log;
 	@Nullable
@@ -62,7 +64,7 @@ public class GPHUD {
 
 	@Nonnull
 	public static String menuPanelEnvironment() {
-		return "&gt; "+(DEV?"DEVELOPMENT":"Production")+"<br>&gt; "+hostname+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
+		return "&gt; "+(Config.getDevelopment()?"DEVELOPMENT":"Production")+"<br>&gt; "+Config.getHostName()+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
 	}
 
 	// TODO THIS MESSES WITH URLS
@@ -112,5 +114,44 @@ public class GPHUD {
 	public static Logger log() {
 		if (log==null) { throw new SystemInitialisationException("Log not yet initialised"); }
 		return log;
+	}
+
+	@Nonnull
+	@Override
+	public String getName() {
+		return "GPHUD";
+	}
+
+	@Override
+	public String getDescription() {
+		return "General Purpose Heads Up Display Toolkit";
+	}
+
+	@Override
+	public void initialise() {
+		GPHUD.log= Logger.getLogger("net.coagulate.GPHUD");
+
+		// Initialise the Database layer
+		GPHUD.db=new MariaDBConnection("GPHUD"+(Config.getDevelopment()?"DEV":""),Config.getGPHUDJdbc());
+
+		// Annotation parser
+		Classes.initialise();
+	}
+
+	@Override
+	public void maintenance() {
+		if (nextRun("GPHUD-Maintenance",60)) { Maintenance.gphudMaintenance(); }
+	}
+
+	@Override
+	public void startup() {
+		PageMapper.exact("/GPHUD/external",new net.coagulate.GPHUD.Interfaces.External.Interface());
+		PageMapper.exact("/GPHUD/system",new net.coagulate.GPHUD.Interfaces.System.Interface());
+		PageMapper.prefix("/GPHUD/",new net.coagulate.GPHUD.Interfaces.User.Interface());
+	}
+
+	@Override
+	public void shutdown() {
+
 	}
 }
