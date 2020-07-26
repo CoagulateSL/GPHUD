@@ -337,7 +337,7 @@ public class Instance extends TableRow {
 			st.logger().info("Sent to "+chars.size()+" admins : "+message);
 		}
 		else {
-			GPHUD.getLogger().info("Sent to "+chars.size()+" admins : "+message);
+			GPHUD.getLogger(getNameSafe()).info("Sent to "+chars.size()+" admins : "+message);
 		}
 		return chars.size();
 	}
