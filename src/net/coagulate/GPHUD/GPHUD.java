@@ -133,6 +133,7 @@ public class GPHUD extends SLModule {
 
 		// Initialise the Database layer
 		GPHUD.db=new MariaDBConnection("GPHUD"+(Config.getDevelopment()?"DEV":""),Config.getGPHUDJdbc());
+		schemaCheck(GPHUD.db,"gphud",1);
 
 		// Annotation parser
 		Classes.initialise();
@@ -141,6 +142,11 @@ public class GPHUD extends SLModule {
 	@Override
 	public void maintenance() {
 		if (nextRun("GPHUD-Maintenance",60)) { Maintenance.gphudMaintenance(); }
+	}
+
+	@Override
+	protected int schemaUpgrade(DBConnection db, String schemaname, int currentversion) {
+		return currentversion;
 	}
 
 	@Override
