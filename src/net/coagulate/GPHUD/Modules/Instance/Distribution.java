@@ -3,10 +3,12 @@ package net.coagulate.GPHUD.Modules.Instance;
 import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -23,13 +25,15 @@ public class Distribution {
 	                  permitExternal=false)
 	public static Response getServer(@Nonnull final State st) {
 		try {
+			String distributionregion= Config.getDistributionRegion();
+			if (distributionregion!=null && !distributionregion.isBlank()) { return new ErrorResponse("No distribution region has been set up and no new server can be sent to you"); }
 			final JSONObject json=new JSONObject();
 			json.put("incommand","broadcast");
 			json.put("subcommand","giveitemprefix");
 			json.put("itemtogive","GPHUD Region Server");
 			json.put("givetoname",st.getAvatar().getName());
 			json.put("giveto",st.getAvatar().getUUID());
-			Region.find("Cerasi",false).sendServerSync(json);
+			Region.find(distributionregion,false).sendServerSync(json);
 		}
 		catch (@Nonnull final UserException e) {
 			throw new UserRemoteFailureException(
