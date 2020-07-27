@@ -17,6 +17,9 @@
     <orderEntry type="module" module-name="JavaCore" />
     <orderEntry type="library" name="Maven: javax.mail:javax.mail-api:1.6.2" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20160810" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.mail:smtp:2.0.0-RC6" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.mail:mailapi:2.0.0-RC6" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.activation:jakarta.activation:2.0.0-RC3" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:javax.activation-api:1.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.9" level="project" />
