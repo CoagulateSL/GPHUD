@@ -8,7 +8,7 @@
 
     <groupId>net.coagulate.SL</groupId>
     <artifactId>GPHUD</artifactId>
-    <version>3.16.6</version>
+    <version>3.16.7</version>
     <distributionManagement>
         <repository>
             <id>github</id>
