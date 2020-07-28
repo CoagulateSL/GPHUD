@@ -8,10 +8,13 @@ import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.HTTPPipelines.PageMapper;
+import net.coagulate.SL.SLCore;
 import net.coagulate.SL.SLModule;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -36,9 +39,15 @@ Shortform here.
 
  */
 public class GPHUD extends SLModule {
-	public static final String VERSION="v"+(new GPHUD().getVersion());
-	public static final String VERSION_DATE=(new GPHUD().getBuildDate());
-
+	public static final int MAJORVERSION=3;
+	public static final int MINORVERSION=16;
+	public static final int BUGFIXVERSION=10;
+	public static final String COMMITID ="MANUAL";
+	public final int majorVersion() { return MAJORVERSION; }
+	public final int minorVersion() { return MINORVERSION; }
+	public final int bugFixVersion() { return BUGFIXVERSION; }
+	public final String commitId() { return COMMITID; }
+	public static final String version() { return MAJORVERSION+"."+MINORVERSION+"."+BUGFIXVERSION; }
 	// config KV store
 	private static final Map<String,String> CONFIG=new TreeMap<>();
 	@Nullable
@@ -64,7 +73,7 @@ public class GPHUD extends SLModule {
 
 	@Nonnull
 	public static String menuPanelEnvironment() {
-		return "&gt; "+(Config.getDevelopment()?"DEVELOPMENT":"Production")+"<br>&gt; "+Config.getHostName()+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+GPHUD.VERSION_DATE+"</a>";
+		return "&gt; "+(Config.getDevelopment()?"DEVELOPMENT":"Production")+"<br>&gt; "+Config.getHostName()+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+version()+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+ SLCore.getBuildDate()+"</a>";
 	}
 
 	// TODO THIS MESSES WITH URLS
@@ -107,7 +116,7 @@ public class GPHUD extends SLModule {
 
 	@Nonnull
 	public static String serverVersion() {
-		return "GPHUD Cluster "+VERSION+" "+VERSION_DATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
+		return "GPHUD Cluster "+version()+" "+SLCore.getBuildDate()+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
 	}
 
 	@Nonnull

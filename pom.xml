@@ -9,20 +9,6 @@
     <groupId>net.coagulate.SL</groupId>
     <artifactId>GPHUD</artifactId>
     <version>3.16.9</version>
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub CoagulateSL/GPHUD Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/CoagulateSL/GPHUD</url>
-        </repository>
-    </distributionManagement>
-    <repositories>
-        <repository>
-            <id>github</id>
-            <name>GitHub CoagulateSL/GPHUD Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/CoagulateSL/GPHUD</url>
-        </repository>
-    </repositories>
     <build>
         <directory>${project.basedir}/bin</directory>
         <outputDirectory>${project.basedir}/out</outputDirectory>
@@ -31,6 +17,25 @@
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <resources><resource><directory>resources</directory><filtering>true</filtering></resource></resources>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>../JavaCore/src</source>
+                                <source>../SLCore/src</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -87,9 +92,39 @@
             <version>1.8</version>
         </dependency>
         <dependency>
-            <groupId>net.coagulate.SL</groupId>
-            <artifactId>SLCore</artifactId>
-            <version>1.0.6</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>2.5.4</version>
         </dependency>
     </dependencies>
 

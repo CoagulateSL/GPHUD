@@ -198,7 +198,7 @@ public class Instance extends TableRow {
 		String eol="";
 		if (expiresin!=null && expiresin>14) { eol+="EOL: "+updatewithin; }
 		if (Config.getDevelopment()) { newstatus.append("===DEVELOPMENT===\n \n"); }
-		newstatus.append("Server: ").append(Config.getHostName()).append(" - ").append(GPHUD.VERSION).append("\n").append(eol).append("\n \n");
+		newstatus.append("Server: ").append(Config.getHostName()).append(" - ").append(GPHUD.version()).append("\n").append(eol).append("\n \n");
 		if (expiresin!=null) {
 			if (expiresin<7 && canStatus("expiring-"+getId())) {
 				broadcastAdmins(null,
