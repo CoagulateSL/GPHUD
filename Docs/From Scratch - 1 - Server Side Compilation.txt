@@ -1,0 +1,13 @@
+This details deploying the code base from scratch
+
+You can bypass this step entirely by downloading the package file attached to GPHUD.  You may also wish to "star/watch/whatever" this project to get notifications when a new release is made.
+
+You will need
+JDK version 11 or higher
+Maven
+
+Create a directory
+Check out SLCore, JavaCore and GPHUD repositories
+Go into the GPHUD directory
+Run "mvn package"
+Check the bin directory for the results
