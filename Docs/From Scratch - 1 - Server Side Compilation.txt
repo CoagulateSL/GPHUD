@@ -5,6 +5,7 @@ You can bypass this step entirely by downloading the package file attached to GP
 You will need
 JDK version 11 or higher
 Maven
+Mysql/Mariadb database, version 5.7? (untested on MySQL8)
 
 Create a directory
 Check out SLCore, JavaCore and GPHUD repositories
