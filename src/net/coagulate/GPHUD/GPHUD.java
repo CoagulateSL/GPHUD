@@ -131,7 +131,8 @@ public class GPHUD extends SLModule {
 		return "GPHUD";
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	public String getDescription() {
 		return "General Purpose Heads Up Display Toolkit";
 	}
