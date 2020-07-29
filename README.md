@@ -11,4 +11,4 @@ This contains the sources, as a module for SLCore (also open sources), which can
 
 Pull requests are gratefully received, bear in mind additions and features should be configurable, there should at least be some form of on/off switch (which may simply be module enablement).  KVs are very useful for this and one can be templated through annotations (see other package-info files)
 
-For additional information please see https://gphuddocs.coagulate.net/wiki/index.php/Open_Source
+For additional information please see https://sl.coagulate.net/Docs/GPHUD/index.php/Open_Source.html
