@@ -1,0 +1,20 @@
+Configure your Firestorm (Prefernces, Firestorm->Preprocessor build path) to point to where you checked out the 3 Git repositories (you need at least SLCore and GPHUD).
+
+Construct a single prim to be a server
+Create a one line script called "Dispenser" and insert the single line: #include "GPHUD/LSL/Dispenser.lsl"
+Create a one line script called Dispenser Slave and insert the single line: #include "GPHUD/LSL/Dispenser Slave.lsl"
+Do this for scripts "Dispenser Slave 1", "Dispenser Slave 2" and "Dispsenser Slave 3" (all the same include line)
+Create a NOTECARD called "GPHUD Non Server Functionality Inhibitor" containing some text and insert it into the Server prim (this stops the Object Driver from activating)
+Create script "GPHUD Object Driver" containing #include "GPHUD/LSL/Objects.lsl"
+Create script "Server" containing #include "GPHUD/LSL/Server.lsl"
+
+Create a prim called "GPHUD Item Giver"
+In it, create "GPHUD Item Giver" script containing just #include "GPHUD/LSL/Item Giver.lsl"
+Take this object and insert it into the server's inventory
+
+And how to make:
+
+GPHUD Remote Dispenser
+GPHUD Titler
+GPHUD
+
