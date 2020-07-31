@@ -143,7 +143,7 @@ public class GPHUD extends SLModule {
 
 		// Initialise the Database layer
 		GPHUD.db=new MariaDBConnection("GPHUD"+(Config.getDevelopment()?"DEV":""),Config.getGPHUDJdbc());
-		schemaCheck(GPHUD.db,"gphud",1);
+		schemaCheck(GPHUD.db,"gphud",2);
 
 		// Annotation parser
 		Classes.initialise();
@@ -156,6 +156,15 @@ public class GPHUD extends SLModule {
 
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaname, int currentversion) {
+		Logger log=GPHUD.getLogger("SchemaUpgrade");
+		if (currentversion==1) {
+			log.config("Schema for GPHUD is at version 1, upgrading to version 2");
+			log.config("Add URL index to characters table");
+			GPHUD.getDB().d("ALTER TABLE characters ADD INDEX characters_url_index (url)");
+			log.config("Add URL index to regions table");
+			GPHUD.getDB().d("ALTER TABLE regions ADD INDEX regionss_url_index (url)");
+			log.config("Schema upgrade of GPHUD to version 2 is complete"); currentversion=2;
+		}
 		return currentversion;
 	}
 
