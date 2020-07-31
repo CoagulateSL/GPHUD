@@ -18,7 +18,6 @@
 string VERSION="3.10.3";
 string COMPILEDATE=__DATE__;
 string COMPILETIME=__TIME__;
-string IAIN_MALTZ="8dc52677-bea8-4fc3-b69b-21c5e2224306";
 
 banner_hud() {
 	llOwnerSay("GPHUD HUD "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");

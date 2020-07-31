@@ -107,7 +107,7 @@ state standby {
 	timer() { 
 		die("Receiving attachment target timed out :(");
 	}
-	touch_start(integer n) { if (llDetectedKey(0)==IAIN_MALTZ) { status("Sending fake startup message!"); llMessageLinked(LINK_THIS,LINK_GO,"",""); state comatose; }}
+	touch_start(integer n) { if (llDetectedKey(0)==SYSTEM_OWNER_UUID) { status("Sending fake startup message!"); llMessageLinked(LINK_THIS,LINK_GO,"",""); state comatose; }}
 	listen(integer channel,string name,key id,string message) {
 		if (channel==broadcastchannel+2) {
 			suggestedowner=(key)message;

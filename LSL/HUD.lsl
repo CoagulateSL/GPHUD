@@ -323,7 +323,7 @@ default {
 			process(NULL_KEY);
 		}
 		if (channel==1 && (id==llGetOwner() || (llGetOwnerKey(id)==llGetOwner() && opencmd==TRUE))) {
-			if (text=="status" && id==IAIN_MALTZ) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
+			if (text=="status" && id==SYSTEM_OWNER_UUID) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
 			if (text=="reconnect") { shutdown(); getNewCommsURL(); return; }
 			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); gphud_hang("HUD shutdown requested by wearer."); }
 			if (text=="reboot") { llResetScript(); }

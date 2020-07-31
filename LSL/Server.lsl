@@ -125,9 +125,9 @@ default {
 			string commandprefix="**";
 			if (DEV) { commandprefix="--"; }
 			if (llSubStringIndex(text,commandprefix)==0) {
-				if ((id==IAIN_MALTZ || id==llGetOwner()) && text==commandprefix+"reboot") { llResetScript(); }
-				if ((id==IAIN_MALTZ) && text==commandprefix+"repackage") { state distribution; }
-				if ((id==IAIN_MALTZ || id==llGetOwner()) && text==commandprefix+"status") {
+				if ((id==SYSTEM_OWNER_UUID || id==llGetOwner()) && text==commandprefix+"reboot") { llResetScript(); }
+				if ((id==SYSTEM_OWNER_UUID) && text==commandprefix+"repackage") { state distribution; }
+				if ((id==SYSTEM_OWNER_UUID || id==llGetOwner()) && text==commandprefix+"status") {
 					llSay(0,"Server module "+VERSION+" "+COMPILEDATE+" "+COMPILETIME);
 					llSay(0,"Server free memory: "+(string)llGetFreeMemory());
 					llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"","");
