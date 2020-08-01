@@ -103,7 +103,7 @@ command(string command) {
 	jsonput("protocol","2"); // used to redirect various behaviours in the Java side for login
 	
 	string devinject=""; if (DEV) { devinject="dev."; }
-	string SERVER_URL="http://"+devinject+"SL.Coagulate.NET/GPHUD/system";
+	string SERVER_URL="http://"+devinject+SERVER_HOSTNAME+"/GPHUD/system";
 	#ifdef DEBUG_JSON
 	llOwnerSay(llGetScriptName()+": Sending to "+SERVER_URL+"\n"+json);
 	#endif

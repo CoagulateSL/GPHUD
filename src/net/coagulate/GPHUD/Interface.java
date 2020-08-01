@@ -43,7 +43,7 @@ public abstract class Interface implements HttpRequestHandler {
 	@Nonnull
 	public static String generateURL(final State st,
 	                                 final String ending) {
-		return "https://"+(Config.getDevelopment()?"dev.":"")+"sl.coagulate.net/"+base()+"/"+ending;
+		return "https://"+(Config.getDevelopment()?"dev.":"")+Config.getURLHost()+"/"+base()+"/"+ending;
 	}
 
 	public static int convertVersion(@Nonnull final String version) {
