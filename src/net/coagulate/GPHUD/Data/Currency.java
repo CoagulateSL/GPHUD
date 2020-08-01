@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.GPHUD;
@@ -33,7 +34,11 @@ public class Currency extends TableRow {
 	@Nonnull
 	public static Currency find(final State st,
 	                            final String name) {
-		return get(GPHUD.getDB().dqinn("select id from currencies where instanceid=? and name like ?",st.getInstance().getId(),name));
+		Cache<Currency> cache=Cache.getCache("GPHUD-currencynames-" + st.getInstance().getId());
+		try { return cache.get(name); }
+		catch (Cache.CacheMiss e) {
+			return cache.put(name,get(GPHUD.getDB().dqinn("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name)),300);
+		}
 	}
 
 	public static Currency findNullable(final State st,
@@ -331,9 +336,7 @@ public class Currency extends TableRow {
 	}
 
 	@Override
-	protected int getNameCacheTime() {
-		return 0;
-	}
+	protected int getNameCacheTime() { return 60*60; }
 
 	private String textSum(final State st,
 	                       final boolean longform) {
