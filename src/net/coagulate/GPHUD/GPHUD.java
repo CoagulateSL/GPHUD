@@ -147,6 +147,12 @@ public class GPHUD extends SLModule {
 
 		// Annotation parser
 		Classes.initialise();
+
+		// tracing, if we're tracing
+		if (Config.getDatabasePathTracing()) {
+			GPHUD.log.config("Database calling path verification is enabled for GPHUD");
+			GPHUD.db.permit("net.coagulate.GPHUD.Data");
+		}
 	}
 
 	@Override
