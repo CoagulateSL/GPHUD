@@ -1,11 +1,8 @@
 package net.coagulate.GPHUD;
 
 import net.coagulate.Core.Database.DBConnection;
-import net.coagulate.Core.Database.DBException;
 import net.coagulate.Core.Database.MariaDBConnection;
-import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
-import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.HTTPPipelines.PageMapper;
 import net.coagulate.SL.SLCore;
@@ -14,9 +11,6 @@ import net.coagulate.SL.SLModule;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.logging.Logger;
-
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
 
 /**
  * Bootstrap class for GPHUD.  Run me.
@@ -66,44 +60,6 @@ public class GPHUD extends SLModule {
 	@Nonnull
 	public static String menuPanelEnvironment() {
 		return "&gt; "+(Config.getDevelopment()?"DEVELOPMENT":"Production")+"<br>&gt; "+Config.getHostName()+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+version()+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+ SLCore.getBuildDate()+"</a>";
-	}
-
-	// TODO THIS MESSES WITH URLS
-	public static void purgeURL(final String url) {
-		try {
-			for (final ResultsRow row: getDB().dq("select characterid,regionid from characters where url=?",url)) {
-				try {
-					final int charid=row.getInt("characterid");
-					final Char ch=Char.get(charid);
-					final State st=State.getNonSpatial(ch);
-					getDB().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",charid);
-					final Integer regionid=row.getIntNullable("regionid");
-					if (regionid!=null) {
-						final int howmany=getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?",charid,regionid);
-						if (howmany>0) {
-							st.logger()
-							  .info("HUD disconnected (404) from avatar "+st.getAvatar().getName()+" as character "+st.getCharacter()
-							                                                                                          .getName()+", not reported as region leaver.");
-						}
-						getDB().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",charid,regionid);
-					}
-				}
-				catch (@Nonnull final Exception e) {
-					GPHUD.getLogger("Character").log(WARNING,"Exception during per character purgeURL",e);
-				}
-			}
-			getDB().d("update characters set playedby=null, url=null, urlfirst=null, urllast=null, authnode=null,zoneid=null,regionid=null where url=?",url);
-			getDB().d("update objects set url=null where url=?",url);
-		}
-		catch (@Nonnull final DBException ex) {
-			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from characters",ex);
-		}
-		try {
-			getDB().d("update regions set url=null,authnode=null where url=?",url);
-		}
-		catch (@Nonnull final DBException ex) {
-			GPHUD.getLogger().log(SEVERE,"Failed to purge URL from regions",ex);
-		}
 	}
 
 	@Nonnull

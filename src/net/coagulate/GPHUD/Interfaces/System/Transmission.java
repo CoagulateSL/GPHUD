@@ -5,10 +5,7 @@ import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Tools.ByteTools;
 import net.coagulate.Core.Tools.JsonTools;
 import net.coagulate.Core.Tools.MailTools;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Cookie;
-import net.coagulate.GPHUD.Data.Obj;
-import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import org.json.JSONObject;
 
@@ -199,12 +196,12 @@ public class Transmission extends Thread {
 			}
 			catch (@Nonnull final FileNotFoundException e) {
 				GPHUD.getLogger().log(FINE,"404 on url, revoked connection while sending "+json);
-				GPHUD.purgeURL(url);
+				URLs.purgeURL(url);
 				return;
 			}
 			catch (@Nonnull final MalformedURLException ex) {
 				GPHUD.getLogger().log(WARNING,"MALFORMED URL: "+url+", revoked connection while sending "+json);
-				GPHUD.purgeURL(url);
+				URLs.purgeURL(url);
 				return;
 			}
 			catch (@Nonnull final IOException e) {
