@@ -7,6 +7,7 @@ import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -40,12 +41,10 @@ public class CharacterGroup extends TableRow {
 	                                @Nonnull final JSONObject json,
 	                                @Nonnull final String prefix,
 	                                @Nonnull final Attribute a) {
-		final boolean debug=false;
 		json.put(prefix+"type","SELECT");
 		json.put(prefix+"name","value");
 		int count=0;
 		for (final CharacterGroup cg: st.getInstance().getGroupsForKeyword(a.getSubType())) {
-			//System.out.println("Scanning CG "+cg.getNameSafe());
 			if (cg.isOpen()) {
 				json.put(prefix+"button"+count,cg.getName());
 				count++;
@@ -113,11 +112,21 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nonnull
 	public static Set<CharacterGroup> getGroups(@Nonnull final Char character) {
-		final Set<CharacterGroup> ret=new TreeSet<>();
-		for (final ResultsRow r: db().dq("select charactergroupid from charactergroupmembers where characterid=?",character.getId())) {
-			ret.add(CharacterGroup.get(r.getInt()));
+		Cache<Set<CharacterGroup>> cache=getCharacterGroupCache();
+		try { return cache.get(character.getId()+""); }
+		catch (Cache.CacheMiss e) {
+			final Set<CharacterGroup> ret = new TreeSet<>();
+			for (final ResultsRow r : db().dq("select charactergroupid from charactergroupmembers where characterid=?", character.getId())) {
+				ret.add(CharacterGroup.get(r.getInt()));
+			}
+			return cache.put(character.getId()+"",ret,300);
 		}
-		return ret;
+	}
+	private static void purgeCharacterGroupCache(@Nonnull final Char character) {
+		getCharacterGroupCache().purge(character.getId()+"");
+	}
+	private static Cache<Set<CharacterGroup>> getCharacterGroupCache() {
+		return Cache.getCache("GPHUD-charactergroupmemberships");
 	}
 
 	/**
@@ -255,6 +264,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	public void delete() {
 		d("delete from charactergroups where charactergroupid=?",getId());
+		getCharacterGroupCache().purgeAll();
 	}
 
 	/**
@@ -288,6 +298,7 @@ public class CharacterGroup extends TableRow {
 			}
 		}
 		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
+		purgeCharacterGroupCache(character);
 	}
 
 	/**
@@ -301,6 +312,7 @@ public class CharacterGroup extends TableRow {
 		}
 		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
+		purgeCharacterGroupCache(character);
 		if (exists==0) { throw new UserInputStateException("Character not in group."); }
 	}
 
@@ -346,8 +358,7 @@ public class CharacterGroup extends TableRow {
 		try {
 			final Integer adminflag=dqi("select isadmin from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 			if (adminflag==null) { return false; }
-			if (adminflag==1) { return true; }
-			return false;
+			return adminflag == 1;
 		}
 		catch (@Nonnull final NoDataException e) { return false; }
 	}
@@ -382,8 +393,7 @@ public class CharacterGroup extends TableRow {
 		if (count>1) {
 			throw new TooMuchDataException("Matched too many members ("+count+") for "+character+" in CG "+getId()+" - "+getName());
 		}
-		if (count==1) { return true; }
-		return false;
+		return count == 1;
 	}
 
 	public boolean isOpen() {
