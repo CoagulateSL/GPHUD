@@ -13,10 +13,6 @@ import net.coagulate.SL.SLModule;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.SEVERE;
@@ -47,9 +43,7 @@ public class GPHUD extends SLModule {
 	public final int minorVersion() { return MINORVERSION; }
 	public final int bugFixVersion() { return BUGFIXVERSION; }
 	public final String commitId() { return COMMITID; }
-	public static final String version() { return MAJORVERSION+"."+MINORVERSION+"."+BUGFIXVERSION; }
-	// config KV store
-	private static final Map<String,String> CONFIG=new TreeMap<>();
+	public static String version() { return MAJORVERSION+"."+MINORVERSION+"."+BUGFIXVERSION; }
 	@Nullable
 	static Logger log;
 	@Nullable
@@ -68,8 +62,6 @@ public class GPHUD extends SLModule {
 		if (db==null) { throw new SystemInitialisationException("Calling DB before DB is initialised"); }
 		return db;
 	}
-
-	public static String get(@Nonnull final String keyword) { return CONFIG.get(keyword.toUpperCase()); }
 
 	@Nonnull
 	public static String menuPanelEnvironment() {
@@ -150,7 +142,7 @@ public class GPHUD extends SLModule {
 
 		// tracing, if we're tracing
 		if (Config.getDatabasePathTracing()) {
-			GPHUD.log.config("Database calling path verification is enabled for GPHUD");
+			GPHUD.log().config("Database calling path verification is enabled for GPHUD");
 			GPHUD.db.permit("net.coagulate.GPHUD.Data");
 		}
 	}
@@ -168,6 +160,7 @@ public class GPHUD extends SLModule {
 			log.config("Add URL index to characters table");
 			GPHUD.getDB().d("ALTER TABLE characters ADD INDEX characters_url_index (url)");
 			log.config("Add URL index to regions table");
+			//noinspection SpellCheckingInspection
 			GPHUD.getDB().d("ALTER TABLE regions ADD INDEX regionss_url_index (url)");
 			log.config("Schema upgrade of GPHUD to version 2 is complete"); currentversion=2;
 		}
