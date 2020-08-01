@@ -323,11 +323,19 @@ public class Attribute extends TableRow {
 	}
 
 	/**
-	 * Returns wether this attribute uses ability points.
+	 * Returns if this attribute uses ability points.
 	 *
 	 * @return True if it does
 	 */
-	public boolean usesAbilityPoints() { return getBool("usesabilitypoints"); }
+	public boolean usesAbilityPoints() {
+		try {
+			return getAbilityPointsCache().get(getId()+"");
+		} catch (Cache.CacheMiss cacheMiss) {
+			return getAbilityPointsCache().put(getId()+"",getBool("usesabilitypoints"),5*60);
+		}
+	}
+	private static Cache<Boolean> getAbilityPointsCache() { return Cache.getCache("GPHUD-attributes-usesabilitypoints"); }
+	private static void flushAbilityPointsCache(Attribute a) { getAbilityPointsCache().purge(a.getId()+"");}
 
 	/**
 	 * Return if this attribute is mandatory.
@@ -392,36 +400,36 @@ public class Attribute extends TableRow {
 	public String getCharacterValue(@Nonnull final State st) {
 		//System.out.println("Attr:"+getName()+" is "+getType()+" of "+getClass().getSimpleName());
 		if (isKV()) { return st.getKV("Characters."+getName()).value(); }
-		final ATTRIBUTETYPE attrtype=getType();
-		if (attrtype==GROUP) {
+		final ATTRIBUTETYPE attributetype=getType();
+		if (attributetype==GROUP) {
 			if (getSubType()==null) { return null; }
 			final CharacterGroup cg=CharacterGroup.getGroup(st,getSubType());
 			if (cg==null) { return null; }
 			return cg.getName();
 		}
-		if (attrtype==EXPERIENCE) {
+		if (attributetype==EXPERIENCE) {
 			final GenericXP xp=new GenericXP(getName());
 			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 		}
-		if (attrtype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
+		if (attributetype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
 			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
 		}
-		if (attrtype==CURRENCY) {
+		if (attributetype==CURRENCY) {
 			final Currency currency=Currency.findNullable(st,getName());
 			if (currency==null) { return "NotDefined?"; }
 			return currency.shortSum(st);
 		}
-		if (attrtype==POOL) { return "POOL"; }
+		if (attributetype==POOL) { return "POOL"; }
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
 
 	/**
 	 * Get additional information about the value this attribute has for a given character
 	 *
-	 * KVs get the computed path
-	 * POOls and EXPERIENCE return quotaed information, if quotaed
-	 * GROUPs return nothing
+	 * KV get the computed path
+	 * POOL and EXPERIENCE return quotaed information, if quotaed
+	 * GROUP return nothing
 	 *
 	 * @param st State infers character
 	 *
@@ -430,27 +438,27 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public String getCharacterValueDescription(@Nonnull final State st) {
 		if (isKV()) { return st.getKV("Characters."+getName()).path(); }
-		final ATTRIBUTETYPE attrtype=getType();
-		if (attrtype==EXPERIENCE) {
+		final ATTRIBUTETYPE attributetype=getType();
+		if (attributetype==EXPERIENCE) {
 			final GenericXP xp=new GenericXP(getName());
 			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
 		}
-		if (attrtype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
+		if (attributetype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
 			return ("<i>(In last "+xp.periodRoughly(st)+" : "+xp.periodAwarded(st)+")</i>")+(", <i>Next available:"+xp.nextFree(st)+"</i>");
 		}
-		if (attrtype==POOL) { return "POOL"; }
-		if (attrtype==CURRENCY) {
+		if (attributetype==POOL) { return "POOL"; }
+		if (attributetype==CURRENCY) {
 			final Currency currency=Currency.findNullable(st,getName());
 			if (currency==null) { return "NotDefined?"; }
 			return currency.longSum(st);
 		}
-		if (attrtype==GROUP) { return ""; }
+		if (attributetype==GROUP) { return ""; }
 		throw new SystemImplementationException("Unhandled type "+getType());
 	}
 
 	/**
-	 * Wether this attribute is represented as a KV.
+	 * If this attribute is represented as a KV.
 	 * Group memberships (faction, race) and POOLs including EXPERIENCE are NOT a KV
 	 *
 	 * @return True if this attribute generates a KV.
@@ -520,6 +528,7 @@ public class Attribute extends TableRow {
 	 */
 	public void setUsesAbilityPoints(final Boolean usesabilitypoints) {
 		set("usesabilitypoints",usesabilitypoints);
+		flushAbilityPointsCache(this);
 	}
 
 	/**
@@ -554,8 +563,14 @@ public class Attribute extends TableRow {
 		CURRENCY
 	}
 
+	private static Cache<Boolean> getTemplatableCache() { return Cache.getCache("GPHUD-attribute-templatable"); }
+	private static void purgeTemplatableCache(Attribute a) { getTemplatableCache().purge(a.getId()+""); }
 	public boolean templatable() {
-		return getBool("templatable");
+		try {
+			return getTemplatableCache().get(getId()+"");
+		} catch (Cache.CacheMiss cacheMiss) {
+			return getTemplatableCache().put(getId()+"",getBool("templatable"),5*60);
+		}
 	}
 
 	public void templatable(final State st,
@@ -563,5 +578,6 @@ public class Attribute extends TableRow {
 		if (newvalue==templatable()) { return; }
 		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newvalue,"Set templatable to "+newvalue);
 		set("templatable",newvalue);
+		purgeTemplatableCache(this);
 	}
 }
