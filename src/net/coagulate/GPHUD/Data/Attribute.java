@@ -6,6 +6,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.Modules.Experience.GenericXP;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
@@ -105,11 +106,17 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Set<Attribute> getAttributes(@Nonnull final Instance instance) {
-		final Set<Attribute> set=new TreeSet<>();
-		for (final ResultsRow r: db().dq("select attributeid from attributes where instanceid=?",instance.getId())) {
-			set.add(Attribute.get(r.getInt()));
+		try { return Cache.<Set<Attribute>>getCache("GPHUD-AttributeSet").get(instance.getId()+""); }
+		catch (Cache.CacheMiss e) {
+			final Set<Attribute> set = new TreeSet<>();
+			for (final ResultsRow r : db().dq("select attributeid from attributes where instanceid=?", instance.getId())) {
+				set.add(Attribute.get(r.getInt()));
+			}
+			return Cache.<Set<Attribute>>getCache("GPHUD-AttributeSet").put(instance.getId()+"",set,60);
 		}
-		return set;
+	}
+	private static void purgeAttributeSetCache(@Nonnull final Instance instance) {
+		Cache.<Set<Attribute>>getCache("GPHUD-AttributeSet").purge(instance.getId()+"");
 	}
 
 	/**
@@ -179,6 +186,7 @@ public class Attribute extends TableRow {
 		       required,
 		       defaultvalue
 		      );
+		purgeAttributeSetCache(instance);
 	}
 
 	/**
@@ -519,7 +527,8 @@ public class Attribute extends TableRow {
 	 */
 	public void delete(final State st) {
 		// delete data
-		if (getInstance()!=st.getInstance()) { throw new SystemConsistencyException("State instance / attribute instance mismatch during DELETE of all things"); }
+		Instance instance=getInstance();
+		if (instance!=st.getInstance()) { throw new SystemConsistencyException("State instance / attribute instance mismatch during DELETE of all things"); }
 		final ATTRIBUTETYPE type=getType();
 		if (type==TEXT || type==FLOAT || type==INTEGER || type==COLOR) { getInstance().wipeKV("Characters."+getName()); }
 		if (type==CURRENCY) {
@@ -527,6 +536,7 @@ public class Attribute extends TableRow {
 			if (c!=null) { c.delete(st); }
 		}
 		d("delete from attributes where attributeid=?",getId());
+		purgeAttributeSetCache(instance);
 	}
 
 	public boolean readOnly() {
