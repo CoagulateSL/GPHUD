@@ -232,7 +232,7 @@ public class CharacterGroup extends TableRow {
 	@Nonnull
 	public String getKVIdField() { return "charactergroupid"; }
 
-	protected int getNameCacheTime() { return 60; } // character groups are likely to end up renamable
+	protected int getNameCacheTime() { return 60*60; } // character groups are likely to end up renamable
 
 	/**
 	 * Get the character members of the group

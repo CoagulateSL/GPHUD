@@ -290,7 +290,7 @@ public class Effect extends TableRow {
 		return "effectid";
 	}
 
-	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
+	protected int getNameCacheTime() { return 60*60; } // events may become renamable, cache 60 seconds
 
 	/**
 	 * Get the instnce for this Effect.

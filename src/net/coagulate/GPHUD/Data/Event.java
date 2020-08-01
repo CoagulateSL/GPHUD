@@ -233,7 +233,7 @@ public class Event extends TableRow {
 		return "eventid";
 	}
 
-	protected int getNameCacheTime() { return 60; } // events may become renamable, cache 60 seconds
+	protected int getNameCacheTime() { return 60*60; } // events may become renamable, cache 60 seconds
 
 	/**
 	 * Get the instance this event relates to

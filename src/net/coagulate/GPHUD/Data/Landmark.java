@@ -155,7 +155,7 @@ public class Landmark extends TableRow {
 	}
 
 	@Override
-	protected int getNameCacheTime() { return 0; }
+	protected int getNameCacheTime() { return 60*60; }
 
 	/**
 	 * Returns this landmark in a delimited format the HUD understands

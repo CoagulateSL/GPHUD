@@ -181,7 +181,7 @@ public class ObjType extends TableRow {
 		return "objecttypes";
 	}
 	@Override
-	protected int getNameCacheTime() { return 600; }
+	protected int getNameCacheTime() { return 60*60; }
 
 }
 

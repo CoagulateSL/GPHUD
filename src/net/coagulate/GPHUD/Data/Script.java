@@ -288,5 +288,5 @@ public class Script extends TableRow {
 		return getBytes("bytecode");
 	}
 	@Override
-	protected int getNameCacheTime() { return 600; }
+	protected int getNameCacheTime() { return 60*60; }
 }
