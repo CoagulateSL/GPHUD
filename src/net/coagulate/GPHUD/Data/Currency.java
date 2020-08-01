@@ -259,6 +259,7 @@ public class Currency extends TableRow {
 
 	public void delete(final State st) {
 		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Currency delete instance/state instance mismatch"); }
+		Cache.getCache("GPHUD-currencynames-" + st.getInstance().getId()).purge(getName());
 		getPool(st).delete(st);
 		d("delete from currencies where id=?",getId());
 	}
