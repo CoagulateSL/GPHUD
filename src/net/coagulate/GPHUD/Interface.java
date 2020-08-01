@@ -17,8 +17,8 @@ import static java.util.logging.Level.SEVERE;
 /**
  * Superclass of both interfaces.  Defines how we pass things down.
  * <p>
- * Does some basic connection agnostic stuff.  Note we just stash almost everything into the State since thats the "local scope" for the request.
- * DONT USE CLASS LEVEL VARIABLES, the class is NOT instantiated per-request, but once for the whole system.  Pretend as if everything is "static"
+ * Does some basic connection agnostic stuff.  Note we just stash almost everything into the State since that's the "local scope" for the request.
+ * DON'T USE CLASS LEVEL VARIABLES, the class is NOT instantiated per-request, but once for the whole system.  Pretend as if everything is "static"
  *
  * @author Iain Price <gphud@predestined.net>
  */
@@ -38,7 +38,7 @@ public abstract class Interface implements HttpRequestHandler {
 		return base;
 	}
 
-	// we dont really know about "/app" but apache does, and then hides it from us, which is both nice, and arbitary, either way really.
+	// we don't really know about "/app" but apache does, and then hides it from us, which is both nice, and arbitrary, either way really.
 	// it doesn't any more :)
 	@Nonnull
 	public static String generateURL(final State st,

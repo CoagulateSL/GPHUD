@@ -5,12 +5,9 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Events.EventsMaintenance;
-import net.coagulate.GPHUD.Modules.Experience.VisitXP;
-import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
-import java.util.Calendar;
 
 import static java.util.logging.Level.*;
 
@@ -65,7 +62,7 @@ public class Maintenance extends Thread {
 				final JSONObject ping=new JSONObject().put("incommand","ping");
 				final Transmission t=new PingTransmission(Char.get(r.getInt("characterid")),ping,r.getStringNullable("url"));
 				t.start();
-				try { Thread.sleep(1000); } catch (@Nonnull final InterruptedException e) {}
+				try { Thread.sleep(1000); } catch (@Nonnull final InterruptedException ignored) {}
 			}
 		} //else { GPHUD.getLogger().log(FINE,"Pinging out to no character URLs"); }
 	}
@@ -81,7 +78,7 @@ public class Maintenance extends Thread {
 				final JSONObject ping=new JSONObject().put("incommand","ping");
 				final Transmission t=new Transmission((Region) null,ping,r.getStringNullable("url"));
 				t.start();
-				try { Thread.sleep(1000); } catch (@Nonnull final InterruptedException e) {}
+				try { Thread.sleep(1000); } catch (@Nonnull final InterruptedException ignored) {}
 			}
 		}
 	}
@@ -98,7 +95,7 @@ public class Maintenance extends Thread {
 		}
 	}
 
-	// remove cookies that are past expirey
+	// remove cookies that are past expiry
 
 	public static void startEvents() {
 		EventsMaintenance.maintenance();
@@ -130,7 +127,7 @@ public class Maintenance extends Thread {
 			GPHUD.getLogger().log(SEVERE,"Maintenance run purge connections caught an exception",e);
 		}
 
-		try { new VisitXP(-1).runAwards(); }
+		try { Visit.runAwards(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance run awards run caught an exception",e);
 		}

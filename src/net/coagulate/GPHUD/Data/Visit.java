@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
+import net.coagulate.GPHUD.Modules.Experience.VisitXP;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 
@@ -15,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.logging.Level.SEVERE;
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 
 /**
@@ -118,6 +120,22 @@ public class Visit {
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("endtime"),st.getAvatar().getTimeZone()));
 		}
 		return t;
+	}
+
+
+	// TODO consider purging this SQL.  maybe just instantiate all instances and then check their KV.  all but one instance has this enabled or default enabled
+	public static void runAwards() {
+		try {
+			final Results results=GPHUD.getDB()
+					.dq("select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k "+"like 'experience.enabled' where v is null or v like 'true'");
+			for (final ResultsRow r: results) {
+				final Instance i=Instance.get(r.getInt());
+				new VisitXP(-1).runAwards(i); // hmm
+			}
+		}
+		catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Exception running awards outer task",e);
+		}
 	}
 
 	// ----- Internal Statics -----

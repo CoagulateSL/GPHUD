@@ -31,7 +31,7 @@ public class OpenWebsite {
 	public static Response openWebsite(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","openurl");
-		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel
+		//String cookie=st.cookiestring; // don't use the same cookie cos the user could log out the session which would nerf the hud's web panel
 		final String cookie=Cookie.generate(st.getAvatarNullable(),st.getCharacter(),st.getInstance(),true);
 		json.put("openurl",Interface.generateURL(st,"?gphud="+cookie));
 		json.put("description","Open GPHUD Administrative Application");
@@ -54,8 +54,6 @@ public class OpenWebsite {
 	                                                        max=254) final String description) {
 		final JSONObject json=new JSONObject();
 		json.put("incommand","openurl");
-		//String cookie=st.cookiestring; // dont use the same cookie cos the user could log out the session which would nerf the hud's web panel
-		final String cookie=Cookie.generate(st.getAvatarNullable(),st.getCharacter(),st.getInstance(),true);
 		json.put("openurl",url);
 		json.put("description",description);
 		//System.out.println("OPENURL:"+json.toString());

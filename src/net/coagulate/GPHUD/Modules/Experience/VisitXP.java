@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
-import net.coagulate.Core.Database.Results;
-import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Module;
@@ -52,7 +50,7 @@ public class VisitXP extends QuotaedXP {
 				final State fakestate=new State();
 				fakestate.setInstance(st.getInstance());
 				fakestate.setAvatar(User.getSystem());
-				ch.hudMessage("You were awarded 1 point of Visit XP, you will be eligable for your next point "+nextFree(st));
+				ch.hudMessage("You were awarded 1 point of Visit XP, you will be eligible for your next point "+nextFree(st));
 				Audit.audit(fakestate,Audit.OPERATOR.AVATAR,null,ch,"Pool Add","VisitXP",null,""+wanttogive,"Awarded XP for time on sim");
 			}
 		}
@@ -75,21 +73,6 @@ public class VisitXP extends QuotaedXP {
 		}
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Exception running awards for instance "+i.getNameSafe()+" #"+i.getId(),e);
-		}
-	}
-
-	// TODO consider purging this SQL.  maybe just instansiate all instances and then check their KV.  all but one instance has this enabled or default enabled
-	public void runAwards() {
-		try {
-			final Results results=GPHUD.getDB()
-			                           .dq("select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k "+"like 'experience.enabled' where v is null or v like 'true'");
-			for (final ResultsRow r: results) {
-				final Instance i=Instance.get(r.getInt());
-				runAwards(i);
-			}
-		}
-		catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Exception running awards outer task",e);
 		}
 	}
 
