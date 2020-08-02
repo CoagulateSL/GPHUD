@@ -3,10 +3,12 @@ package net.coagulate.GPHUD;
 import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
+import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.HTTPPipelines.PageMapper;
 import net.coagulate.SL.SLCore;
 import net.coagulate.SL.SLModule;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -133,5 +135,23 @@ public class GPHUD extends SLModule {
 	@Override
 	public void shutdown() {
 
+	}
+
+	@Override
+	public Object weakInvoke(String command, Object... arguments) {
+		if (command.equalsIgnoreCase("im")) {
+			if (!Config.getDistributionRegion().isBlank()) {
+				Region r=Region.findNullable(Config.getDistributionRegion(),false);
+				if (r==null) {
+					log().warning("Instant messaging services unavailable, Distribution Region badly configured");
+					return null;
+				}
+				JSONObject json=new JSONObject();
+				json.put("instantmessage", arguments[0]);
+				json.put("instantmessagemessage", arguments[1]);
+				r.sendServerSync(json);
+			}
+		}
+		return null;
 	}
 }
