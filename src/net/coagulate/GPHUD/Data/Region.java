@@ -557,7 +557,7 @@ public class Region extends TableRow {
 		final Integer ourserver=dqi("select regionserverversion from regions where regionid=?",getId());
 		final Integer maxserver=dqi("select MAX(regionserverversion) from regions");
 		if (ourserver!=null && maxserver!=null) {
-			if (maxserver>ourserver) { return true; }
+			return maxserver > ourserver;
 		}
 		return false;
 	}
@@ -646,7 +646,7 @@ public class Region extends TableRow {
 	 *
 	 * @param st          State
 	 * @param type        Type of product (hud, server)
-	 * @param version     Version string (XX.YY.ZZ format) NOTE XX/YY/ZZ should not exceeed 2 digits (as it's stored literally as XXYYZZ integer)
+	 * @param version     Version string (XX.YY.ZZ format) NOTE XX/YY/ZZ should not exceed 2 digits (as it's stored literally as XXYYZZ integer)
 	 * @param versiondate Parsable date (see FireStorm preprocessor macro __DATE__)
 	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
 	 */
