@@ -21,6 +21,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -70,7 +71,7 @@ public class Connect {
 			st.getRegion().recordHUDVersion(st,version,versiondate,versiontime);
 		}
 		// forcibly invite instance owners to group
-		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
+		if (st.getInstance().getOwner().getId()==st.getAvatar().getId() && Config.isOfficial()) {
 			new BackgroundGroupInviter(st).start();
 		}
 		// try find a character, or auto create
