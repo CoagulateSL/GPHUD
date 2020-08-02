@@ -15,6 +15,11 @@
 #define LINK_SHUTDOWN -365746005 // stop everything
 #define LINK_DIALOG -365746006 // UIX to dialog menu this
 #define LINK_STARTUP -365746007 // stop everything
+#define LINK_INSTANT_MESSAGE_SEND -365746008
+#define LINK_IM_SLAVE_0 -365746010
+#define LINK_IM_SLAVE_1 -365746011
+#define LINK_IM_SLAVE_2 -365746012
+#define LINK_IM_SLAVE_3 -365746013
 string VERSION="3.10.3";
 string COMPILEDATE=__DATE__;
 string COMPILETIME=__TIME__;

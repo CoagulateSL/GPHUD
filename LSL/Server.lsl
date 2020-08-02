@@ -63,6 +63,9 @@ integer process(key id) {
 	if (jsonget("instancename")!="") { name=jsonget("instancename"); llSetObjectName(name+" GPHUD Region Server"); }
 	if (jsonget("setlogo")!="") { setlogo((key)jsonget("setlogo")); }
 	if (jsonget("rebootserver")!="") { llResetScript(); }
+	if (jsonget("instantmessage")!="") {
+		llMessageLinked(LINK_THIS,LINK_INSTANT_MESSAGE_SEND,jsonget("instantmessagemessage"),jsonget("instantmessage"));
+	}
 	json="{}"; // clear the response :P
 	return TRUE;
 }

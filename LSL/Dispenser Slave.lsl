@@ -2,6 +2,7 @@
 
 integer channel=0;
 integer listener=0;
+integer scriptnumber=0;
 key target=NULL_KEY;
 integer TITLER=1;
 rezSequence(key targetid) {
@@ -10,9 +11,15 @@ rezSequence(key targetid) {
 }
 
 default {
-	state_entry(){llSetMemoryLimit(llGetUsedMemory()+4096);}
+	state_entry(){llSetMemoryLimit(llGetUsedMemory()+4096);
+		scriptnumber=((integer)("0"+llGetSubString(llGetScriptName(),16,-1)));
+		//llOwnerSay("is number "+((string)scriptnumber)); 
+	}
 	link_message(integer prim,integer num,string message,key id) {
 		if (num==LINK_DIAGNOSTICS) { llSay(0,llGetScriptName()+":"+(string)llGetUsedMemory()+" -> free: "+(string)llGetFreeMemory()); return; }
+		if (num==(LINK_IM_SLAVE_0-scriptnumber)) {
+			llInstantMessage(id,message);
+		}
 		if (num==1) {
 			if (message==llGetScriptName()) {
 				rezSequence(id); 

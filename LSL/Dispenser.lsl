@@ -29,11 +29,16 @@ integer IN_EXPERIENCE=TRUE;
 integer IS_ACTIVE=FALSE;
 
 
-string getSlaveScript() {
-    string name="Dispenser Slave";
-    if (slave>0) { name+=" "+(string)slave; }
+integer getSlaveId() {
+	integer oldslave=slave;
     slave++;
     if (llGetInventoryType("Dispenser Slave "+(string)slave)!=INVENTORY_SCRIPT) { slave=0; }
+    return oldslave;
+}
+string getSlaveScript() {
+    string name="Dispenser Slave";
+	integer slave=getSlaveId();
+    if (slave>0) { name+=" "+(string)slave; }
     return name;
 }
 gphud_hang(string reason) { llResetScript(); }
@@ -214,6 +219,10 @@ default {
 					llRegionSay(broadcastchannel,"GOTHUD");
 				}
 			}
+		}
+		if (num==LINK_INSTANT_MESSAGE_SEND) {
+			integer scriptnumber=getSlaveId();
+			llMessageLinked(LINK_THIS,LINK_IM_SLAVE_0-scriptnumber,message,id);
 		}
 		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser free memory: "+(string)llGetFreeMemory()+" tracked elements "+(string)llGetListLength(keys)); }
 		if (num==LINK_DISPENSE) { forcedispense(id); }
