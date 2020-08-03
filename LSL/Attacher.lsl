@@ -6,6 +6,7 @@ integer ATTACH_LOCATION=ATTACH_HUD_BOTTOM;
 integer IN_EXPERIENCE=FALSE;
 integer stageentry=0;
 string system="???";
+#ifndef NOEXPERIENCE
 string validateExperience() {
 	list experience=llGetExperienceDetails(NULL_KEY);
 	if (llGetListLength(experience)==0) {
@@ -17,7 +18,7 @@ string validateExperience() {
 	string statemessage=llList2String(experience,4);
 	return experiencename+" - "+statemessage;
 }
-
+#endif
 key suggestedowner=NULL_KEY;
 
 #ifdef DUMPLINKS
@@ -41,10 +42,12 @@ terminate(string reason,vector color,float delay) {
 trydetach() {
 	if (llGetAttached()==0) { llDie(); }
 	if ((llGetPermissions() & PERMISSION_ATTACH) && llGetPermissionsKey()==llGetOwner()) { llDetachFromAvatar(); llDie(); }
+#ifndef NOEXPERIENCE	
 	if (IN_EXPERIENCE && llAgentInExperience(llGetOwner())) {
 		llRequestExperiencePermissions(llGetOwner(),"");
 		return;
 	}
+#endif
 	llRequestPermissions(llGetOwner(),PERMISSION_ATTACH|PERMISSION_TRACK_CAMERA);
 }
 
@@ -68,8 +71,10 @@ default {
 }
 state shutdown {
 	state_entry() { trydetach(); }
+#ifndef NOEXPERIENCE	
 	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH|PERMISSION_TRACK_CAMERA); }
 	experience_permissions(key agent) {	trydetach(); }	
+#endif	
 	run_time_permissions(integer perms) { trydetach(); }
 }
 state standby {
@@ -121,19 +126,24 @@ state comatose {
 state initiateattach {
 	// discern best attachment path for 'suggestedowner'
 	state_entry() {
+#ifndef NOEXPERIENCE	
 		validateExperience();
+#endif		
 		if (!IN_EXPERIENCE) {
 			// we, the script, are not experience enabled.  resort to conventional permissions
 			state getpermission;
 		}
+#ifndef NOEXPERIENCE		
 		// great... are THEY in our experience?
 		if (llAgentInExperience(suggestedowner)) {
 			state experiencepermission;
 		}
 	state experiencepermission;
+#endif	
 	}
 }
 
+#ifndef NOEXPERIENCE
 state experiencepermission {
 	//attempt to get permissions via experience system
 	state_entry() {
@@ -185,6 +195,7 @@ state getpermission {
 		}
 	}
 }
+#endif
 
 state doattach {
 	state_entry ()
