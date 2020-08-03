@@ -11,7 +11,11 @@ integer permitted=FALSE;
 go() {
 	llSetText("Starting Up...",<1,1,1>,1);
 	if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
+#ifndef NOEXPERIENCES
 	if (!permitted) { llRequestExperiencePermissions(llGetOwner(),""); }
+#else
+	llRequestPermissions(llGetOwner(),PERMISSION_ATTACH);
+#endif	
 	string desc=llGetObjectDesc();
 	if (desc=="DEV" || desc=="DEV-iain") {
 		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.25,.25,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,1]);
@@ -33,9 +37,11 @@ default {
 		if (llGetInventoryType("Attacher")==INVENTORY_SCRIPT) { llSetText("Waiting GO...",<1,1,1>,1); }
 		else { go(); }
 	}
-	
+
+#ifndef NOEXPERIENCES	
 	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
-	
+#endif
+
 	listen(integer channel,string name,key id,string message) {
 		//llOwnerSay(message);
 		if (llGetOwnerKey(id)==llGetOwner() && channel==broadcastchannel) {
@@ -44,11 +50,11 @@ default {
 			if (line!="") { 
 				integer split=llSubStringIndex(line,"|");
 				string color=llGetSubString(line,0,split-1);
-				string message="";
-				if ((split+1)<llStringLength(line)) { message=llGetSubString(line,split+1,-1); }
+				string message2="";
+				if ((split+1)<llStringLength(line)) { message2=llGetSubString(line,split+1,-1); }
 				//llOwnerSay("'"+color+"'");
-				//llOwnerSay("'"+message+"'");
-				llSetText(message,(vector)color,1);
+				//llOwnerSay("'"+message2+"'");
+				llSetText(message2,(vector)color,1);
 				return;
 			}
 			if (jsonget("titlerz")!="") { llSetPos(<0,0,(float)(jsonget("titlerz"))>); }
@@ -72,6 +78,8 @@ default {
             llResetScript();
         }
     }
+#ifndef NOEXPERIENCES	
 	experience_permissions(key id) { permitted=TRUE; }
+#endif
 	run_time_permissions(integer perm) { if (perm & PERMISSION_ATTACH) { permitted=TRUE; }}
 }

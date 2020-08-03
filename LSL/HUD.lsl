@@ -3,7 +3,6 @@
 //#define DEBUG_JSON
 
 
-#include "SLCore/LSL/Constants.lsl"
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/SetDev.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
@@ -67,8 +66,12 @@ setup() {
 	llOwnerSay("Setup called : "+((string)llGetFreeMemory())+" byte free");
 	#endif
 	setDev(SETDEVTRUEONCE); SETDEVTRUEONCE=FALSE;
-	
+
+#ifndef NOEXPERIENCES	
 	if (PERMISSIONS_STAGE==0) { PERMISSIONS_STAGE=-1; llRequestExperiencePermissions(llGetOwner(),""); }
+#else
+	if (PERMISSIONS_STAGE==0) { PERMISSIONS_STAGE=-1; llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
+#endif	
 	if (URL_STAGE==0) { getNewCommsURL(); }
 	if (LISTENER_STAGE==0) { setupListeners(); LISTENER_STAGE=1; }
 	
@@ -93,7 +96,7 @@ startLogin() {
 	LOGIN_STAGE=-1;	
 }
 
-brand() {llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,"36c48d34-3d84-7b9a-9979-cda80cf1d96f",<1,1,1>,<0,0,0>,0]);} // GPHUD branding
+brand() {llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,GPHUD_LOGO,<1,1,1>,<0,0,0>,0]);} // GPHUD branding
 
 //// IMPORTED + REFORGED COMMS THINGS
 
@@ -227,9 +230,9 @@ gphud_hang(string reason) {
 default {
 	state_entry() {
 		llSetObjectName("GPHUD");
-		key k=LOGO_COAGULATE;
+		key k=SLCORE_COAGULATE_LOGO;
 		setDev(FALSE);
-		if (DEV) { k=LOGO_COAGULATE_DEV; }
+		if (DEV) { k=SLCORE_COAGULATE_DEV_LOGO; }
 		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,k,<1,1,1>,<0,0,0>,0]);
 		llResetOtherScript("UI");llResetOtherScript("UIX");
 		llSetText("",<0,0,0>,0);
@@ -254,6 +257,7 @@ default {
 			AWAIT_GO=FALSE;
 		}
 	}
+#ifndef NOEXPERIENCES	
 	experience_permissions(key id) {
 		#ifdef DEBUG_BOOT
 		llOwnerSay("Detach set experience, calling setup");
@@ -264,6 +268,7 @@ default {
 	experience_permissions_denied(key id,integer reason) {
 		llRequestPermissions(llGetOwner(),PERMISSION_ATTACH);
 	}
+#endif	
 	run_time_permissions(integer perms) {
 		if(perms & PERMISSION_ATTACH) { 
 			#ifdef DEBUG_BOOT
@@ -335,7 +340,7 @@ default {
 		}
 		if (logincomplete==0) { return; }
 		if (channel==rpchannel && id==llGetOwner() && !SHUTDOWN) {
-			string name=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(name);
+			string prename=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(prename);
 		}
 	}
 	touch_start(integer n)

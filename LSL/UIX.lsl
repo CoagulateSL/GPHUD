@@ -1,4 +1,4 @@
-#include "SLCore/LSL/Constants.lsl"
+#include "configuration.lsl"
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/SetDev.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
@@ -250,7 +250,7 @@ redrawEffects() {
 #define HUD_EFFECTS_TIMER_5 13
 
 */
-key logo="c792716b-13a3-06c9-6e7c-33c4e9d5a48f";
+key logo=SLCORE_COAGULATE_LOGO;
 key qb1texture="4250c8ec-6dba-927b-f68f-000a456bd8ba";
 key qb2texture="eab5cd3c-ac2e-290b-df46-a53c9114f610";
 key qb3texture="d41ccbd1-1144-3788-14cc-5fc26f3da905";
@@ -410,7 +410,7 @@ default {
 		//llSetTimerEvent(2);
 		hudtext="Coagulate GPHUD v"+VERSION+"\n"+COMPILEDATE+" "+COMPILETIME;
 		setDev(FALSE);
-		if (DEV) { logo=LOGO_COAGULATE_DEV; }		
+		if (DEV) { logo=SLCORE_COAGULATE_DEV_LOGO; }		
 		uixMain();
 		uixInventory();
 		redrawEffects();

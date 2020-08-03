@@ -25,12 +25,12 @@ string COMPILEDATE=__DATE__;
 string COMPILETIME=__TIME__;
 
 banner_hud() {
-	llOwnerSay("GPHUD HUD "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");
+	llOwnerSay("GPHUD HUD "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/"+SLCORE_CREATOR+"/about / Iain Price, Coagulate");
 }
 banner_server() {
-	llOwnerSay("GPHUD Region Server "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");
+	llOwnerSay("GPHUD Region Server "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/"+SLCORE_CREATOR+"/about / Iain Price, Coagulate");
 }
 banner_object() {
-	llOwnerSay("GPHUD Object Driver "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate");
+	llOwnerSay("GPHUD Object Driver "+VERSION+" "+COMPILEDATE+" (C) secondlife:///app/agent/"+SLCORE_CREATOR+"/about / Iain Price, Coagulate");
 }
 #endif
