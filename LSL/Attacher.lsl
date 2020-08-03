@@ -200,7 +200,6 @@ state getpermission {
 		}
 	}
 }
-#endif
 
 state doattach {
 	state_entry ()
