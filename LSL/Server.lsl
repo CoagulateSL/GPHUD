@@ -1,6 +1,6 @@
 //#define COMMS_DEBUG
 //#define DEBUG
-#include "SLCore/LSL/Constants.lsl"
+#include "configuration.lsl"
 #include "GPHUD/LSL/Constants.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
 #include "SLCore/LSL/SetDev.lsl"
@@ -9,7 +9,6 @@
 //#define COMMS_INCLUDECOOKIE
 #define COMMS_INCLUDECALLBACK
 //#define COMMS_INCLUDEDIGEST
-#include "configuration.lsl"
 #define COMMS_DONT_CHECK_CALLBACK
 #include "SLCore/LSL/CommsV3.lsl"
 
@@ -84,9 +83,9 @@ setup() {
 	setDev(FALSE);
 	comms_setup();
 	if (BOOTSTAGE==BOOT_COMMS) { 
-		key k=LOGO_COAGULATE;
+		key k=SLCORE_COAGULATE_LOGO;
 		setDev(TRUE);
-		if (DEV) { k=LOGO_COAGULATE_DEV; }
+		if (DEV) { k=SLCORE_COAGULATE_DEV_LOGO; }
 		setlogo(k); setshard(k);
 		calculatebroadcastchannel();
 		llSetObjectName(name);
@@ -194,7 +193,7 @@ state distribution {
 		llResetOtherScript("Dispenser");
 		llSetObjectName("GPHUD Region Server "+VERSION+" "+COMPILEDATE);
 		llSetTimerEvent(2.0);
-		setlogo("c792716b-13a3-06c9-6e7c-33c4e9d5a48f");
+		setlogo(SLCORE_COAGULATE_LOGO);
 	}
 	on_rez(integer n) { llResetScript(); }
 	timer() { llSetText("Packaged mode, sleeping until next rez\n \n"+"GPHUD Region Server "+VERSION+" "+COMPILEDATE+"\n \n \n \n",<0.5,0.5,1.0>,1.0); }

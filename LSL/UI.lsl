@@ -20,7 +20,7 @@ string setname="";
 list dialog=[];
 integer handle=0;
 integer MANUAL_NONE=0; integer MANUAL_AVAILABLE=1; integer MANUAL_SELECTED=2; 
-integer sensormanual=MANUAL_NONE;
+integer sensormanual=0;
 list zoning=[];
 string ourzone="";
 integer curpage=0;
@@ -90,12 +90,12 @@ trigger() {
 				iscomplete=FALSE;
 				setname=name;
 				string val="arg"+(string)i+"type";
-				string type=jsonget(val);
-				//llOwnerSay(type);
+				string innertype=jsonget(val);
+				//llOwnerSay(innertype);
 				integer parsed=FALSE;
-				if (type=="") { llOwnerSay("INVOKE TARGET "+jsonget("invoke")+" arg "+(string)i+" name "+name+" has no type"); }
+				if (innertype=="") { llOwnerSay("INVOKE TARGET "+jsonget("invoke")+" arg "+(string)i+" name "+name+" has no type"); }
 				string description=jsonget("arg"+(string)i+"description");
-				if (type=="SELECT") { parsed=TRUE; 
+				if (innertype=="SELECT") { parsed=TRUE; 
 					dialogprefix="arg"+(string)i+"button";
 					page(curpage);
 					if (!uixmenus) { 
@@ -104,16 +104,16 @@ trigger() {
 						llMessageLinked(LINK_THIS,LINK_DIALOG,description,llDumpList2String(dialog,"|"));
 					}
 				}
-				if (type=="TEXTBOX" || sensormanual==MANUAL_SELECTED) { parsed=TRUE;
+				if (innertype=="TEXTBOX" || sensormanual==MANUAL_SELECTED) { parsed=TRUE;
 					llTextBox(llGetOwner(),description,channel);
 				}
-				if ((type=="SENSORCHAR" || type=="SENSOR") && sensormanual!=MANUAL_SELECTED) { parsed=TRUE; 
+				if ((innertype=="SENSORCHAR" || innertype=="SENSOR") && sensormanual!=MANUAL_SELECTED) { parsed=TRUE; 
 					llSensor("",NULL_KEY,AGENT,20,PI);
 					sensordescription=description;
 					if (jsonget("arg"+(string)i+"manual")!="") { sensormanual=MANUAL_AVAILABLE; } else { sensormanual=MANUAL_NONE; }
 					//llOwnerSay((string)sensormanual);
 				}
-				if (!parsed) { llOwnerSay("User interface failure, unknown type "+type); }
+				if (!parsed) { llOwnerSay("User interface failure, unknown type "+innertype); }
 			}
 		}
 	}
@@ -196,14 +196,14 @@ processInput(string text) {
 	if (type=="SENSOR" || type=="SENSORCHAR" || type=="SELECT") {
 		if (sensormanual==MANUAL_AVAILABLE && text=="ManualEntry") { sensormanual=MANUAL_SELECTED; trigger(); return; }
 		//llOwnerSay("Qualify "+text);
-		integer i=0;
+		integer ii=0;
 		integer perfect=-1;
 		integer prefix=-1;
-		for (i=0;i<llGetListLength(dialog);i++) {
-			if (text==llList2String(dialog,i)) { //llOwnerSay("Perfect match '"+text+"' == '"+llList2String(dialog,i)+"'");
-				perfect=i;
+		for (ii=0;ii<llGetListLength(dialog);ii++) {
+			if (text==llList2String(dialog,ii)) { //llOwnerSay("Perfect match '"+text+"' == '"+llList2String(dialog,ii)+"'");
+				perfect=ii;
 			}
-			if (llSubStringIndex(llList2String(dialog,i),text)==0) { //llOwnerSay("Prefix match '"+text+"' == '"+llList2String(dialog,i)+"'");
+			if (llSubStringIndex(llList2String(dialog,ii),text)==0) { //llOwnerSay("Prefix match '"+text+"' == '"+llList2String(dialog,ii)+"'");
 				if (prefix!=-1) { //llOwnerSay("Prefix multimatch");
 					prefix=-2;
 				} else {

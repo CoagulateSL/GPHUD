@@ -1,11 +1,12 @@
 #include "GPHUDHeader.lsl"
-#include "SLCore/LSL/Constants.lsl"
+#include "configuration.lsl"
 //#define DUMPLINKS
 
 integer ATTACH_LOCATION=ATTACH_HUD_BOTTOM;
 integer IN_EXPERIENCE=FALSE;
 integer stageentry=0;
 string system="???";
+#ifndef NOEXPERIENCES
 string validateExperience() {
 	list experience=llGetExperienceDetails(NULL_KEY);
 	if (llGetListLength(experience)==0) {
@@ -17,7 +18,7 @@ string validateExperience() {
 	string statemessage=llList2String(experience,4);
 	return experiencename+" - "+statemessage;
 }
-
+#endif
 key suggestedowner=NULL_KEY;
 
 #ifdef DUMPLINKS
@@ -41,10 +42,12 @@ terminate(string reason,vector color,float delay) {
 trydetach() {
 	if (llGetAttached()==0) { llDie(); }
 	if ((llGetPermissions() & PERMISSION_ATTACH) && llGetPermissionsKey()==llGetOwner()) { llDetachFromAvatar(); llDie(); }
+#ifndef NOEXPERIENCES
 	if (IN_EXPERIENCE && llAgentInExperience(llGetOwner())) {
 		llRequestExperiencePermissions(llGetOwner(),"");
 		return;
 	}
+#endif
 	llRequestPermissions(llGetOwner(),PERMISSION_ATTACH|PERMISSION_TRACK_CAMERA);
 }
 
@@ -68,8 +71,10 @@ default {
 }
 state shutdown {
 	state_entry() { trydetach(); }
+#ifndef NOEXPERIENCES
 	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH|PERMISSION_TRACK_CAMERA); }
 	experience_permissions(key agent) {	trydetach(); }	
+#endif	
 	run_time_permissions(integer perms) { trydetach(); }
 }
 state standby {
@@ -91,12 +96,12 @@ state standby {
 		status("Rez detected");
 		dodie=TRUE;
 		integer sysnum=n%3;
-		key k=LOGO_COAGULATE;
+		key k=SLCORE_COAGULATE_LOGO;
 		if (sysnum==0) { llSetObjectDesc("GPHUD Version "+VERSION+" - "+COMPILEDATE+" "+COMPILETIME); system="Production"; }
 		if (sysnum==1) { llSetObjectDesc("DEV"); system="Testing";}
 		if (sysnum==2) { llSetObjectDesc("DEV-iain"); system="Iain-Dev"; }
 		if (sysnum!=0) { 
-			k=LOGO_COAGULATE_DEV;
+			k=SLCORE_COAGULATE_DEV_LOGO;
 		}
 		if (llGetObjectName()=="GPHUD") { llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,k,<1,1,1>,<0,0,0>,0]); }
 		llSetTimerEvent(20.0);
@@ -104,7 +109,7 @@ state standby {
 		llListen(broadcastchannel+2,"",NULL_KEY,"");
 		llSay(broadcastchannel+1,(string)n);
 	}
-	timer() { 
+	timer() {
 		die("Receiving attachment target timed out :(");
 	}
 	touch_start(integer n) { if (llDetectedKey(0)==SYSTEM_OWNER_UUID) { status("Sending fake startup message!"); llMessageLinked(LINK_THIS,LINK_GO,"",""); state comatose; }}
@@ -121,19 +126,28 @@ state comatose {
 state initiateattach {
 	// discern best attachment path for 'suggestedowner'
 	state_entry() {
+#ifndef NOEXPERIENCES
 		validateExperience();
+#else
+		IN_EXPERIENCE=FALSE;
+#endif		
 		if (!IN_EXPERIENCE) {
 			// we, the script, are not experience enabled.  resort to conventional permissions
 			state getpermission;
 		}
+#ifndef NOEXPERIENCES
 		// great... are THEY in our experience?
 		if (llAgentInExperience(suggestedowner)) {
 			state experiencepermission;
 		}
 	state experiencepermission;
+#else
+	state getpermission;
+#endif	
 	}
 }
 
+#ifndef NOEXPERIENCES
 state experiencepermission {
 	//attempt to get permissions via experience system
 	state_entry() {
@@ -161,6 +175,7 @@ state experiencepermission {
 		}
 	}
 }
+#endif
 
 state getpermission {
 	//attempt to get permissions via legacy system

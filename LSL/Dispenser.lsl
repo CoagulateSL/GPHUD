@@ -49,6 +49,7 @@ listdel(integer i) {
 	secret=llDeleteSubList(secret,i,i);
 
 }
+#ifndef NOEXPERIENCES
 string validateExperience() {
 	list experience=llGetExperienceDetails(NULL_KEY);
 	if (llGetListLength(experience)==0) {
@@ -70,6 +71,7 @@ string experienceError() {
 	string statemessage=llList2String(experience,4);
 	return "Experience error : "+experiencename+" - "+statemessage;
 }
+#endif
 forcedispense(key who) {
 	adduser(who,llGetUnixTime()+10);
 	integer i=llListFindList(keys,[who]);
@@ -95,10 +97,12 @@ adduser(key check,integer when) {
 execute() {
 	integer now=llGetUnixTime();
 	cycle++;
+#ifndef NOEXPERIENCES
 	if ((cycle % 120) == 1) { 
 		string experiencestatus=experienceError();
 		if (experiencestatus!="") { llOwnerSay(experiencestatus); }
 	}
+#endif	
 	if ((cycle % 2) == 1) {
 		integer scope=AGENT_LIST_REGION;
 		if (parcelonly) { scope=AGENT_LIST_PARCEL; }
@@ -106,26 +110,26 @@ execute() {
 		if ((cycle % 30) == 1) {
 			json="";
 			json+="{\"userlist\":\"";
-			integer i=0;
-			for (i=0;i<llGetListLength(newkeys);i++) {
-				json=json+(string)llList2Key(newkeys,i)+"="+llKey2Name(llList2String(newkeys,i))+",";
+			integer ii=0;
+			for (ii=0;ii<llGetListLength(newkeys);ii++) {
+				json=json+(string)llList2Key(newkeys,ii)+"="+llKey2Name(llList2String(newkeys,ii))+",";
 			}	
 			json+="\"}";
 			httpcommand("gphudserver.setregionavatars","GPHUD/system");
 		}
 		if (autoattach) {
 			// purge leavers
-			integer i=0;
-			for (i=llGetListLength(keys)-1;i>=0;i--) {
-				key check=llList2Key(keys,i);
+			integer ii=0;
+			for (ii=llGetListLength(keys)-1;ii>=0;ii--) {
+				key check=llList2Key(keys,ii);
 				if (llListFindList(newkeys,[check])==-1) {
 					if (debug) { llOwnerSay("Dispenser:Left user "+llKey2Name(check)); }
-					listdel(i);
+					listdel(ii);
 				}
 			}
 			// add new people
-			for (i=0;i<llGetListLength(newkeys);i++) {
-				key check=llList2Key(newkeys,i);
+			for (ii=0;ii<llGetListLength(newkeys);ii++) {
+				key check=llList2Key(newkeys,ii);
 				if (llListFindList(keys,[check])==-1) {
 					adduser(check,now+5);
 				}
@@ -199,7 +203,9 @@ process(key id) {
 integer processafter=-1;
 default {
 	state_entry() {
+#ifndef NOEXPERIENCES	
 		llOwnerSay(validateExperience());
+#endif		
 		llOwnerSay("Dispenser: Awaiting Server Boot Complete");
 	}
 	link_message(integer from,integer num,string message,key id) {

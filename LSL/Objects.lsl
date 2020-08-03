@@ -1,5 +1,4 @@
 //#define DEBUG
-#include "SLCore/LSL/Constants.lsl"
 #include "SLCore/LSL/SetDev.lsl"
 #define MESSAGE_IS_SAY TRUE
 #include "GPHUD/LSL/GPHUDHeader.lsl"
@@ -128,7 +127,7 @@ all_listen(integer channel,string name,key id,string text) {
 }
 default {
 	state_entry() {
-		if (llGetInventoryType("GPHUD Non Server Functionality Inihibitor")!=INVENTORY_NONE) { state wait; }
+		if (llGetInventoryType("GPHUD Non Server Functionality Inihibitor")!=INVENTORY_NONE || llGetInventoryType("GPHUD Non Server Functionality Inhibitor")!=INVENTORY_NONE) { state wait; }
 		llSetText("",<0,0,0>,0);
 		setDev(FALSE);
 		setup(); dolisten();
