@@ -290,7 +290,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 		// note connections from non-registered regions are cause to SUSPEND operation, unless you're a GPHUD Server, cos they do 'registration'
 		// if we're a "GPHUD Server" of some kind from dev id 1 then... bob's ya uncle, dont suspend :P
 		final String regionname=st.getRegionName();
-		if (regionname==null || regionname.isEmpty()) { throw new UserInputStateException("No region information was supplied to the GPHUD Cluster"); }
+		if (regionname==null || regionname.isEmpty()) { throw new UserInputStateException("No region information was supplied to the GPHUD Stack"); }
 		if (st.getSourcedeveloper().getId()!=1 || !st.getSourcename().startsWith("GPHUD Region Server")) {
 			GPHUD.getLogger()
 			     .log(WARNING,

@@ -582,7 +582,7 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 					st.logger().log(SEVERE,"Cookie load gave exception, right after it was generated?",ex);
 				}
 				st.resp().addHeader("Set-Cookie","gphud="+cookie+"; Path=/");
-				st.logger().log(INFO,"SL Cluster Services SSO as "+av);
+				st.logger().log(INFO,"SL Stack SSO as "+av);
 			}
 		}
 	}
