@@ -319,8 +319,14 @@ public class Attribute extends TableRow {
 	 */
 	@Nullable
 	public String getSubType() {
-		return getStringNullable("grouptype");
+		try {
+			return getSubTypeCache().get(getId()+"");
+		} catch (Cache.CacheMiss cacheMiss) {
+			return getSubTypeCache().put(getId()+"",getStringNullable("grouptype"),60*60);
+		}
 	}
+	private static Cache<String> getSubTypeCache() { return Cache.getCache("GPHUD-attributes-grouptype"); }
+	private void flushSubTypeCache() { getSubTypeCache().purge(getId()+"");}
 
 	/**
 	 * Returns if this attribute uses ability points.
