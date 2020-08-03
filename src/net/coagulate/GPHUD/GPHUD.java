@@ -33,7 +33,7 @@ Shortform here.
 public class GPHUD extends SLModule {
 	public static final int MAJORVERSION=3;
 	public static final int MINORVERSION=16;
-	public static final int BUGFIXVERSION=11;
+	public static final int BUGFIXVERSION=13;
 	public static final String COMMITID ="MANUAL";
 	public final int majorVersion() { return MAJORVERSION; }
 	public final int minorVersion() { return MINORVERSION; }
