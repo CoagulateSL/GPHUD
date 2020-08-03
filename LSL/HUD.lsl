@@ -308,7 +308,7 @@ default {
 		llOwnerSay("REPLY:"+body);
 		#endif
 		if (status!=200) {
-			llOwnerSay(llGetScriptName()+" : Cluster Server failed (#"+((string)status)+").  Please retry your last operation.");
+			llOwnerSay(llGetScriptName()+" : Stack Server failed (#"+((string)status)+").  Please retry your last operation.");
 		}
 		else
 		{
