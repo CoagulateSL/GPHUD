@@ -66,7 +66,7 @@ public class GPHUD extends SLModule {
 
 	@Nonnull
 	public static String serverVersion() {
-		return "GPHUD Cluster "+version()+" "+SLCore.getBuildDate()+" (C) secondlife:///app/agent/8dc52677-bea8-4fc3-b69b-21c5e2224306/about / Iain Price, Coagulate";
+		return "GPHUD Cluster "+version()+" "+SLCore.getBuildDate()+" (C) secondlife:///app/agent/"+Config.getCreatorUUID()+"/about / Iain Price, Coagulate";
 	}
 
 	@Nonnull

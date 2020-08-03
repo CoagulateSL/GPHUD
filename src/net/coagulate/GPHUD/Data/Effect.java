@@ -11,6 +11,7 @@ import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
@@ -196,7 +197,7 @@ public class Effect extends TableRow {
 		}
 		if (i==1) {
 			json.put("effect1","0");
-			json.put("effect1t","8dcd4a48-2d37-4909-9f78-f7a9eb4ef903");
+			json.put("effect1t", Config.getCoagulateSquareLogo());
 		}
 		character.appendConveyance(new State(character),json);
 	}
