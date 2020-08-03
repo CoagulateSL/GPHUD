@@ -13,6 +13,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.*;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
 import org.apache.http.*;
@@ -171,14 +172,14 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			if ("X-SecondLife-Shard".equals(name)) { shard=value; }
 			if ("X-SecondLife-Local-Position".equals(name)) { position=value; }
 		}
-		if (SL.DEV && regionname!=null && regionname.equalsIgnoreCase("Peaceful Den (153088, 265216)")) {
-			regionname="Cerasi";
-			System.out.println("Rewriting region name");
-		}//TODO THIS IS HORRIBLE REMOVE ME =)
-		if ((!("Production".equals(shard)))) {
-			if (shard==null) { shard="<null>"; }
-			GPHUD.getLogger().severe("Unknown shard ["+shard+"]");
-			return new TerminateResponse("Only accessible from Second Life Production systems.");
+		if (!Config.skipShardCheck()) {
+			if ((!("Production".equals(shard)))) {
+				if (shard == null) {
+					shard = "<null>";
+				}
+				GPHUD.getLogger().severe("Unknown shard [" + shard + "]");
+				return new TerminateResponse("Only accessible from Second Life Production systems.");
+			}
 		}
 		if (objectname==null || objectname.isEmpty()) {
 			GPHUD.getLogger().severe("Failed to decode objectname header expected from SL");
