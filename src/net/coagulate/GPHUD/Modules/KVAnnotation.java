@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 
 import javax.annotation.Nonnull;
 
@@ -43,7 +44,14 @@ public class KVAnnotation extends KV {
 	public String editpermission() { return meta.editpermission(); }
 
 	@Nonnull
-	public String defaultvalue() { return meta.defaultvalue(); }
+	public String defaultvalue() {
+		if (Config.getGrid()== Config.GRID.OSGRID) {
+			if (!meta.defaultvalueosgrid().isEmpty()) {
+				return meta.defaultvalueosgrid();
+			}
+		}
+		return meta.defaultvalue();
+	}
 
 	@Nonnull
 	public String conveyas() { return meta.conveyas(); }

@@ -245,6 +245,8 @@ public abstract class KV extends NameComparable {
 
 		@Nonnull String defaultvalue();
 
+		@Nonnull String defaultvalueosgrid() default "";
+
 		@Nonnull String conveyas() default "";
 
 		@Nonnull KVHIERARCHY hierarchy() default KVHIERARCHY.NONE;
