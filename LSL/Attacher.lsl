@@ -48,7 +48,7 @@ trydetach() {
 		return;
 	}
 #endif
-	llRequestPermissions(llGetOwner(),PERMISSION_ATTACH|PERMISSION_TRACK_CAMERA);
+	llRequestPermissions(llGetOwner(),PERMISSION_ATTACH);
 }
 
 string name() {
@@ -72,7 +72,7 @@ default {
 state shutdown {
 	state_entry() { trydetach(); }
 #ifndef NOEXPERIENCES
-	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH|PERMISSION_TRACK_CAMERA); }
+	experience_permissions_denied(key id,integer reason) { llRequestPermissions(llGetOwner(),PERMISSION_ATTACH); }
 	experience_permissions(key agent) {	trydetach(); }	
 #endif	
 	run_time_permissions(integer perms) { trydetach(); }
@@ -183,7 +183,7 @@ state getpermission {
 		status("Request legacy attachment permissions");
 		stageentry=llGetUnixTime();
 		llSetTimerEvent(5.01);
-		llRequestPermissions(suggestedowner,PERMISSION_ATTACH|PERMISSION_TRACK_CAMERA);
+		llRequestPermissions(suggestedowner,PERMISSION_ATTACH);
 	}
 	
 	run_time_permissions(integer perm) {
