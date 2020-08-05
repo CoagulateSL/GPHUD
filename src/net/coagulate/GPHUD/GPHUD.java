@@ -35,6 +35,28 @@ public class GPHUD extends SLModule {
 	public static final int MINORVERSION=16;
 	public static final int BUGFIXVERSION=13;
 	public static final String COMMITID ="MANUAL";
+
+	/** branding as an additional note, or blank if no branding
+	 *
+	 * @return branding as an additional note, or blank if no branding
+	 */
+	public static String branding() {
+		if (!Config.getBrandingName().isBlank()) {
+			return "This server is run by "+Config.getBrandingName()+" ("+Config.getBrandingOwnerSLURL()+")";
+		}
+		if (!Config.isOfficial()) { return "This server is run by a Third Party"; }
+		return "";
+	}
+
+	/** branding if present, or empty string.  prefixed with a newline if present.
+	 *
+	 * @return  branding if present, or empty string.  prefixed with a newline if present.
+	 */
+	public static String brandingWithNewline() {
+		if (branding().isEmpty()) { return ""; }
+		return "\n"+branding();
+	}
+
 	public final int majorVersion() { return MAJORVERSION; }
 	public final int minorVersion() { return MINORVERSION; }
 	public final int bugFixVersion() { return BUGFIXVERSION; }
@@ -61,12 +83,25 @@ public class GPHUD extends SLModule {
 
 	@Nonnull
 	public static String menuPanelEnvironment() {
-		return "&gt; "+(Config.getDevelopment()?"DEVELOPMENT":"Production")+"<br>&gt; "+Config.getHostName()+"<br>&gt; <a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+version()+"</a><br>&gt; <a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">"+ SLCore.getBuildDate()+"</a>";
+		if (Config.isOfficial()) {
+			return "&gt;&nbsp;" + (Config.getDevelopment() ? "DEVELOPMENT" : "Production") + "<br>" +
+					"&gt;&nbsp;" + Config.getHostName() + "<br>" +
+					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + version() + "</a><br>" +
+					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SLCore.getBuildDate() + "</a>";
+		} else {
+			return  "&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + version() + "</a><br>" +
+					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SLCore.getBuildDate() + "</a><br>"+
+					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/landingpage\">(C) Coagulate SL</a><br>" +
+					"&gt;&nbsp;<b>Operated by:</b><br>" +
+					"&gt;&nbsp;" + Config.getBrandingName().replaceAll(" ","&nbsp;") + "<br>" +
+					"&gt;&nbsp;" + Config.getBrandingOwnerHumanReadable().replaceAll(" ","&nbsp;") + "<br>";
+
+		}
 	}
 
 	@Nonnull
 	public static String serverVersion() {
-		return "GPHUD Stack "+version()+" "+SLCore.getBuildDate()+" (C) secondlife:///app/agent/"+Config.getCreatorUUID()+"/about / Iain Price, Coagulate";
+		return "GPHUD Stack " + version() + " " + SLCore.getBuildDate() + " (C) secondlife:///app/agent/" + Config.getCreatorUUID() + "/about / Iain Price, Coagulate";
 	}
 
 	@Nonnull

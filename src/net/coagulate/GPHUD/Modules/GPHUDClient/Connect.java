@@ -125,7 +125,7 @@ public class Connect {
 		if (interception!=null) { return interception; }
 
 		// server version note
-		loginmessages.add(GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]");
+		loginmessages.add(GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]"+GPHUD.brandingWithNewline());
 
 		// if instance owner and region version is out of date, send update and message
 		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {

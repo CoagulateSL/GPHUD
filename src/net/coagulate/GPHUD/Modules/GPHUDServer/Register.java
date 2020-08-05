@@ -89,7 +89,7 @@ public abstract class Register {
 		st.logger().log(INFO,"Sending post registration message to "+regionname);
 		final JSONObject registered=new JSONObject().put("incommand","registered");
 		String regmessage;
-		regmessage=GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]";
+		regmessage=GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]"+GPHUD.brandingWithNewline();
 		if (st.getRegion().needsUpdate()) {
 			regmessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
 		}
