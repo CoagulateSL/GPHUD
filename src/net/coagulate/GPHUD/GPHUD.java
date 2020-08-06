@@ -142,7 +142,7 @@ public class GPHUD extends SLModule {
 
 	@Override
 	public void maintenance() {
-		if (nextRun("GPHUD-Maintenance",60)) { Maintenance.gphudMaintenance(); }
+		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
 	}
 
 	@Override
