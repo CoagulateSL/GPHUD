@@ -1,17 +1,19 @@
 package net.coagulate.GPHUD;
 
+import net.coagulate.Core.BuildInfo.GPHUDBuildInfo;
 import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.HTTPPipelines.PageMapper;
-import net.coagulate.SL.SLCore;
+import net.coagulate.SL.SL;
 import net.coagulate.SL.SLModule;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Date;
 import java.util.logging.Logger;
 
 /**
@@ -31,10 +33,11 @@ Shortform here.
 
  */
 public class GPHUD extends SLModule {
-	public static final int MAJORVERSION=3;
-	public static final int MINORVERSION=16;
-	public static final int BUGFIXVERSION=13;
-	public static final String COMMITID ="MANUAL";
+	public final int majorVersion() { return GPHUDBuildInfo.MAJORVERSION; }
+	public final int minorVersion() { return GPHUDBuildInfo.MINORVERSION; }
+	public final int bugFixVersion() { return GPHUDBuildInfo.BUGFIXVERSION; }
+	public final String commitId() { return GPHUDBuildInfo.COMMITID; }
+	public Date getBuildDate() { return GPHUDBuildInfo.BUILDDATE; }
 
 	/** branding as an additional note, or blank if no branding
 	 *
@@ -57,11 +60,7 @@ public class GPHUD extends SLModule {
 		return "\n"+branding();
 	}
 
-	public final int majorVersion() { return MAJORVERSION; }
-	public final int minorVersion() { return MINORVERSION; }
-	public final int bugFixVersion() { return BUGFIXVERSION; }
-	public final String commitId() { return COMMITID; }
-	public static String version() { return MAJORVERSION+"."+MINORVERSION+"."+BUGFIXVERSION; }
+	public static String version() { return GPHUDBuildInfo.MAJORVERSION+"."+GPHUDBuildInfo.MINORVERSION+"."+GPHUDBuildInfo.BUGFIXVERSION; }
 	@Nullable
 	static Logger log;
 	@Nullable
@@ -87,10 +86,10 @@ public class GPHUD extends SLModule {
 			return "&gt;&nbsp;" + (Config.getDevelopment() ? "DEVELOPMENT" : "Production") + "<br>" +
 					"&gt;&nbsp;" + Config.getHostName() + "<br>" +
 					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + version() + "</a><br>" +
-					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SLCore.getBuildDate() + "</a>";
+					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getStackBuildDate() + "</a>";
 		} else {
 			return  "&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + version() + "</a><br>" +
-					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SLCore.getBuildDate() + "</a><br>"+
+					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getStackBuildDate() + "</a><br>"+
 					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/landingpage\">(C) Coagulate SL</a><br>" +
 					"&gt;&nbsp;<b>Operated by:</b><br>" +
 					"&gt;&nbsp;" + Config.getBrandingName().replaceAll(" ","&nbsp;") + "<br>" +
@@ -101,7 +100,7 @@ public class GPHUD extends SLModule {
 
 	@Nonnull
 	public static String serverVersion() {
-		return "GPHUD Stack " + version() + " " + SLCore.getBuildDate() + " (C) secondlife:///app/agent/" + Config.getCreatorUUID() + "/about / Iain Price, Coagulate";
+		return "GPHUD Stack " + version() + " " + SL.getStackBuildDate() + " (C) secondlife:///app/agent/" + Config.getCreatorUUID() + "/about / Iain Price, Coagulate";
 	}
 
 	@Nonnull
