@@ -61,6 +61,7 @@ public abstract class Interface extends URLMapper<Method> {
 	protected State state() { return threadState.get(Thread.currentThread()); }
 	@Override
 	protected void earlyInitialiseState(HttpRequest request, HttpContext context) {
+		super.earlyInitialiseState(request,context);
 		threadState.put(Thread.currentThread(),new State(request,context));
 	}
 

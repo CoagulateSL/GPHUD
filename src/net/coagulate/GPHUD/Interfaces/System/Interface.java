@@ -49,6 +49,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 
 	@Override
 	protected void earlyInitialiseState(HttpRequest request, HttpContext context) {
+		super.earlyInitialiseState(request,context);
 		State st=state();
 		st.source=State.Sources.SYSTEM;
 	}
