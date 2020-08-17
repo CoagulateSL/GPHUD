@@ -40,9 +40,9 @@ public class RunCommand extends ObjectType {
 
 	@Override
 	public void update(@Nonnull final State st) {
-		final String command=st.postmap().get("command");
+		final String command=st.postMap().get("command");
 		if (!command.equals(json.optString("command",""))) {
-			json.put("command",st.postmap().get("command"));
+			json.put("command",st.postMap().get("command"));
 			object.setBehaviour(json);
 		}
 	}

@@ -5,7 +5,7 @@ import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Obj;
 import net.coagulate.GPHUD.Data.ObjType;
-import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
@@ -39,12 +39,12 @@ public class Connect {
 			            "Connection",
 			            "",
 			            "",
-			            "Rejected GPHUD Object connection from "+st.getSourcename()+" at "+st.sourceregion+"/"+st.sourcelocation
+			            "Rejected GPHUD Object connection from "+st.getSourceName()+" at "+st.sourceRegion +"/"+st.sourceLocation
 			           );
 			return new TerminateResponse("You do not have permissions to connect objects at this instance!");
 		}
 		// require a callback url
-		if (st.callbackurlNullable()==null || st.callbackurl().isEmpty()) {
+		if (st.callBackURLNullable()==null || st.callBackURL().isEmpty()) {
 			try {
 				MailTools.mail("Callback URL is null or blank, sending reboot",st.toHTML());
 			}
@@ -55,14 +55,14 @@ public class Connect {
 			json.put("reboot","No callback URL was presented, server requests us to restart");
 			return new JSONResponse(json);
 		}
-		if (st.objectkey==null) { return new TerminateResponse("No Object Key is present"); }
-		if (st.sourcelocation==null) { return new TerminateResponse("No Source Location is present"); }
+		if (st.objectKey ==null) { return new TerminateResponse("No Object Key is present"); }
+		if (st.sourceLocation ==null) { return new TerminateResponse("No Source Location is present"); }
 		final int version=Interface.convertVersion(st.json().getString("version"));
 		final int maxversion=Obj.getMaxVersion();
-		final Obj oldobject=Obj.findOrNull(st,st.objectkey);
-		final Obj obj=Obj.connect(st,st.objectkey,st.getSourcename(),st.getRegion(),st.getSourceowner(),st.sourcelocation,st.callbackurl(),version);
+		final Obj oldobject=Obj.findOrNull(st,st.objectKey);
+		final Obj obj=Obj.connect(st,st.objectKey,st.getSourceName(),st.getRegion(),st.getSourceOwner(),st.sourceLocation,st.callBackURL(),version);
 		if (oldobject==null) {
-			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"New","Connection","",st.getSourcename(),"Conected new object at "+st.sourceregion+"/"+st.sourcelocation);
+			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"New","Connection","",st.getSourceName(),"Conected new object at "+st.sourceRegion +"/"+st.sourceLocation);
 		}
 		String versionsuffix="";
 		if (maxversion>version) { versionsuffix=" (An updated version of this script is available)"; }
@@ -75,7 +75,7 @@ public class Connect {
 			final ObjectType ot=ObjectType.materialise(st,objecttype);
 			behaviour=ot.explainText();
 			behaviour+="\nOperating mode: "+ot.mode();
-			ot.payload(st,response,st.getRegion(),st.callbackurl());
+			ot.payload(st,response,st.getRegion(),st.callBackURL());
 		}
 		if (!st.json().has("silent")) {
 			response.put("message",

@@ -63,16 +63,16 @@ public class NPC extends ObjectType {
 	@Override
 	public void update(@Nonnull final State st) {
 		boolean update=false;
-		if (st.postmap().containsKey("character")) {
-			final int charid=Integer.parseInt(st.postmap().get("character"));
+		if (st.postMap().containsKey("character")) {
+			final int charid=Integer.parseInt(st.postMap().get("character"));
 			Char.get(charid).validate(st);
 			if ((!json.has("character")) || charid!=json.getInt("character")) {
 				update=true;
 				json.put("character",charid);
 			}
 		}
-		if (st.postmap().containsKey("script")) {
-			final int scriptid=Integer.parseInt(st.postmap().get("script"));
+		if (st.postMap().containsKey("script")) {
+			final int scriptid=Integer.parseInt(st.postMap().get("script"));
 			final Script script=Script.get(scriptid);
 			script.validate(st);
 			if ((!json.has("script")) || scriptid!=json.getInt("script")) {

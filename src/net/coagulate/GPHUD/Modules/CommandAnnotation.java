@@ -110,13 +110,13 @@ public class CommandAnnotation extends Command {
 	protected Response execute(final State state,
 	                           final Map<String,Object> arguments) {
 		try {
-			state.parameterdebug=arguments;
+			state.parameterDebug =arguments;
 			final List<Object> parameters=new ArrayList<>();
 			parameters.add(state);
 			for (final Argument arg: getArguments()) {
 				parameters.add(arguments.getOrDefault(arg.name(),null));
 			}
-			state.parameterdebugfinal=parameters;
+			state.parameterDebugFinal =parameters;
 			final Object result=getMethod().invoke(this,parameters.toArray());
 			return (Response) (result);
 		}

@@ -89,7 +89,7 @@ public class ObjectManagement {
 	          requiresPermission="Objects.ObjectTypes")
 	public static void editObjectType(@Nonnull final State st,
 	                                  final SafeMap map) {
-		st.postmap(map);
+		st.postMap(map);
 		final String[] parts=st.getDebasedNoQueryURL().split("/");
 		if (parts.length<5) { throw new UserInputValidationParseException("URI misformed, no ID found"); }
 		final ObjType t=ObjType.get(Integer.parseInt(parts[4]));

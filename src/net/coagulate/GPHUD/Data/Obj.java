@@ -4,7 +4,7 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
@@ -80,7 +80,7 @@ public class Obj extends TableRow {
 			r.append("<td>").append(row.getIntNullable("version")).append("</td>");
 			r.append("<td>").append(UnixTime.duration(since)).append(" ago</td>");
 			if (st.hasPermission("Objects.MapObjects")) {
-				String objecttype=st.postmap().get(row.getString("uuid"));
+				String objecttype=st.postMap().get(row.getString("uuid"));
 				if (!objecttype.isEmpty()) {
 					final Integer oldobjecttype=row.getIntNullable("objecttype");
 					if (oldobjecttype==null || oldobjecttype!=Integer.parseInt(objecttype)) {
@@ -114,7 +114,7 @@ public class Obj extends TableRow {
 				r.append("<td><button type=Submit name=reboot value=\"").append(row.getStringNullable("uuid")).append("\">Reboot</button></td>");
 			}
 			if (st.hasPermission("Objects.ShutdownObjects")) {
-				if (row.getString("uuid").equals(st.postmap().get("shutdown"))) {
+				if (row.getString("uuid").equals(st.postMap().get("shutdown"))) {
 					r.append("<td><button type=Submit name=reallyshutdown value=\"")
 					 .append(row.getStringNullable("uuid"))
 					 .append("\">CONFIRM SHUTDOWN - THE OBJECT OWNER MUST REBOOT IT TO RESUME SERVICE</button></td>");

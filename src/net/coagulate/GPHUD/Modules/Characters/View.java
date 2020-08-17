@@ -8,8 +8,7 @@ import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Data.Views.AuditTable;
 import net.coagulate.GPHUD.Data.Views.PoolTable;
-import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
@@ -73,15 +72,15 @@ public abstract class View {
 		t.openRow();
 		t.add("Zone").addNoNull(st.zone);
 		t.openRow();
-		t.add("Source").addNoNull(st.getSourcenameNullable());
+		t.add("Source").addNoNull(st.getSourceNameNullable());
 		t.openRow();
 		t.add("SourceOwner");
-		if (st.getSourceownerNullable()==null) { t.add(""); }
-		else { t.addNoNull(st.getSourceowner().toString()); }
+		if (st.getSourceOwnerNullable()==null) { t.add(""); }
+		else { t.addNoNull(st.getSourceOwner().toString()); }
 		t.openRow();
 		t.add("SourceDev");
-		if (st.getSourcedeveloperNullable()==null) { t.add(""); }
-		else { t.addNoNull(st.getSourcedeveloper().toString()); }
+		if (st.getSourceDeveloperNullable()==null) { t.add(""); }
+		else { t.addNoNull(st.getSourceDeveloper().toString()); }
 		return t;
 	}
 
@@ -152,7 +151,7 @@ public abstract class View {
 				final String reason=values.getOrDefault("xp-reason","");
 				int ammount=1;
 				if (!ammountstring.isEmpty()) {
-					try { ammount=Integer.parseInt(ammountstring); } catch (@Nonnull final NumberFormatException e) {}
+					try { ammount=Integer.parseInt(ammountstring); } catch (@Nonnull final NumberFormatException ignored) {}
 				}
 				content+="<div id=\"editor-award-"+a.getName()+"\" style=\"display: none;\">"+"<form method=post>"+"<input type=hidden name=target value="+a.getName()+">"+"Award <input type=text name=xp-ammount size=4 value="+ammount+"> XP for <input type=text name=xp-reason size=60 value=\""+reason+"\"> <button "+"type=submit name=Award value=Award>Award</button>"+"</form>"+"</div>";
 				if (values.containsKey("Award") && values.getOrDefault("target","").equalsIgnoreCase(a.getName()) && !reason.isEmpty()) {

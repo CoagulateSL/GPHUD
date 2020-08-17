@@ -1,14 +1,17 @@
 package net.coagulate.GPHUD.Interfaces.External;
 
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
-import net.coagulate.Core.Exceptions.User.*;
-import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationFilterException;
+import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
+import net.coagulate.Core.HTML.Elements.PlainText;
+import net.coagulate.Core.HTML.Page;
 import net.coagulate.Core.Tools.ByteTools;
 import net.coagulate.Core.Tools.JsonTools;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.Instance;
-import net.coagulate.GPHUD.Data.InstanceDevelopers;
-import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
@@ -18,20 +21,16 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.GPHUD.State.Sources;
 import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
-import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
-import java.io.InputStream;
-
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Implements the 3rd party External interface (from SL)
@@ -41,103 +40,112 @@ import static java.util.logging.Level.WARNING;
  *
  * @author iain
  */
-public class Interface extends net.coagulate.GPHUD.Interface {
+public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
+	public static final boolean DEBUG_JSON=false;
 
-	// ---------- INSTANCE ----------
-
-	/**
-	 * this is where the request comes in after generic processing.
-	 * We basically just encapsulate all requests in an Exception handler that will spew errors as HTML errors (rather than JSON errors).
-	 * These are rather useless in production, but in DEV we dump the stack traces too.
-	 *
-	 * @param st Session State
-	 */
 	@Override
-	public void process(@Nonnull final State st) {
-		final boolean debug=false;
-		st.source=Sources.EXTERNAL;
-		//for (Header h:headers) { System.out.println(h.getName()+"="+h.getValue()); }
-		try {
-			// does it contain a "body" (its a POST request, it should...)
-			final HttpRequest req=st.req();
-			final HttpResponse resp=st.resp();
-			if (req instanceof HttpEntityEnclosingRequest) {
-				// stream it into a buffer
-				final HttpEntityEnclosingRequest r=(HttpEntityEnclosingRequest) req;
-				final InputStream is=r.getEntity().getContent();
-				final String message=ByteTools.convertStreamToString(is);
-				// DEBUGGING ONLY log entire JSON input
-				// JSONify it
-				final JSONObject obj;
-				try { obj=new JSONObject(message); }
-				catch (@Nonnull final JSONException e) {
-					final SystemBadValueException badvalue=new SystemBadValueException("Unable to parse '"+message+"'",e);
-					throw new UserInputValidationParseException("JSON Parse Error:"+e.getLocalizedMessage(),badvalue);
-				}
-				// stash it in the state
-				// if (obj==null) { GPHUD.getLogger().warning("About to set a JSON in state to null ; input was "+message); }
-				st.setJson(obj);
+	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
+		State st=state();
+		st.source= Sources.EXTERNAL;
+	}
 
-				// attempt to run the command
-				// load the original conveyances
-				final Response response=execute(st);
-				if (response==null) { throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!"); }
-				// convert response to JSON
-				final JSONObject jsonresponse=response.asJSON(st);
-				// respond to request
-				resp.setStatusCode(HttpStatus.SC_OK);
-				jsonresponse.remove("developerkey");
-				jsonresponse.put("responsetype",response.getClass().getSimpleName());
-				final String out=JsonTools.jsonToString(jsonresponse);
-                /*PrintWriter pw = new PrintWriter(System.out);
-                jsonresponse.write(pw,4,0);
-                pw.flush();
-                pw.close();
-                System.out.println(out);*/
-				resp.setEntity(new StringEntity(out,ContentType.APPLICATION_JSON));
-				return;
+	@Override
+	protected void loadSession() {
+
+	}
+
+	@Override
+	protected boolean checkAuthenticationNeeded(Method content) {
+		return false;
+	}
+
+	@Override
+	protected void processPostEntity(HttpEntity entity, Map<String, String> parameters) {
+		try {
+			final State st = state();
+			final JSONObject obj;
+			final String message = ByteTools.convertStreamToString(entity.getContent());
+			try {
+				obj = new JSONObject(message);
+			} catch (@Nonnull final JSONException e) {
+				throw new SystemBadValueException("Parse error in '" + message + "'", e);
 			}
-			GPHUD.getLogger().warning("Processing command of request class "+req.getClass().getName()+" which is odd?");
-			// if we get here, there was no POST content, but LSL only ever POSTS (the way we use it).
-			// probably some user snooping around with a browser :P
-			resp.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-			resp.setEntity(new StringEntity("<html><body><pre>Hello there :) This isn't how this works.</pre></body></html>\n",ContentType.TEXT_HTML));
+			if (DEBUG_JSON) {
+				System.out.println("EXTERNAL INTERFACE INPUT:\n" + JsonTools.jsonToString(obj));
+			}
+			st.setJson(obj);
+			if (obj.has("callback")) {
+				st.callBackURL(obj.getString("callback"));
+			}
+			if (obj.has("callback")) {
+				Char.refreshURL(obj.getString("callback"));
+			}
+			if (obj.has("callback")) {
+				Region.refreshURL(obj.getString("callback"));
+			}
+			if (obj.has("cookie")) {
+				Cookie.refreshCookie(obj.getString("cookie"));
+			}
+			if (obj.has("interface") && obj.get("interface").equals("object")) {
+				st.source = State.Sources.OBJECT;
+			}
+		} catch (IOException e) {
+			throw new SystemRemoteFailureException("Failure processing System Interface input");
 		}
+	}
+
+
+	@Override
+	protected void executePage(Method content) {
+		final State st = state();
+		final Response response = execute(st);
+		if (response == null) {
+			throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
+		}
+		final JSONObject jsonResponse = response.asJSON(st);
+		// did titler change?
+		if (st.getCharacterNullable() != null) {
+			st.getCharacter().appendConveyance(st, jsonResponse);
+		}
+		jsonResponse.remove("developerkey");
+		jsonResponse.put("responsetype", response.getClass().getSimpleName());
+		final String out = jsonResponse.toString();
+		if (DEBUG_JSON) {
+			System.out.println("EXTERNAL INTERFACE OUTPUT:\n" + JsonTools.jsonToString(jsonResponse));
+		}
+		if (out.length() >= 4096) {
+			SL.report("Output exceeds limit of 4096 characters", new SystemImplementationException("Trace"), st);
+		}
+		Page.page().root().add(new PlainText(out));
+		/*}
 		catch (@Nonnull final UserException e) {
-			SL.report("GPHUD external interface user error",e,st);
+			SL.report("GPHUD system interface user error",e,st);
 			GPHUD.getLogger().log(WARNING,"User generated error : "+e.getLocalizedMessage(),e);
 			final HttpResponse resp=st.resp();
 			resp.setStatusCode(HttpStatus.SC_OK);
-			final JSONObject newresponse=new JSONObject();
-			newresponse.put("error",e.getLocalizedMessage());
-			newresponse.put("errorclass",e.getClass().getSimpleName());
-			newresponse.put("responsetype","UserException");
-			resp.setEntity(new StringEntity(JsonTools.jsonToString(newresponse),ContentType.APPLICATION_JSON));
+			resp.setEntity(new StringEntity("{\"error\":\""+e.getLocalizedMessage()+"\"}",ContentType.APPLICATION_JSON));
 			resp.setStatusCode(HttpStatus.SC_OK);
 		}
 		catch (@Nonnull final Exception e) {
 			try {
-				SL.report("GPHUD external interface error",e,st);
-				GPHUD.getLogger().log(SEVERE,"External Interface caught unhandled Exception : "+e.getLocalizedMessage(),e);
+				SL.report("GPHUD system interface error",e,st);
+				GPHUD.getLogger().log(SEVERE,"System Interface caught unhandled Exception : "+e.getLocalizedMessage(),e);
 				final HttpResponse resp=st.resp();
 				resp.setStatusCode(HttpStatus.SC_OK);
-				final JSONObject newresponse=new JSONObject();
-				newresponse.put("error","Internal error occured, sorry.");
-				newresponse.put("responsetype","SystemException");
-				resp.setEntity(new StringEntity(JsonTools.jsonToString(newresponse),ContentType.APPLICATION_JSON));
+				resp.setEntity(new StringEntity("{\"error\":\"Internal error occurred, sorry.\"}",ContentType.APPLICATION_JSON));
 				resp.setStatusCode(HttpStatus.SC_OK);
 			}
 			catch (@Nonnull final Exception ex) {
-				SL.report("Error in external interface error handler",ex,st);
+				SL.report("Error in system interface error handler",ex,st);
 				GPHUD.getLogger().log(SEVERE,"Exception in exception handler - "+ex.getLocalizedMessage(),ex);
 			}
-		}
+		}*/
 	}
 
 	// ----- Internal Instance -----
 	protected Response execute(@Nonnull final State st) {
 		final JSONObject obj=st.json();
-		st.sourcelocation=st.getClientIP();
+		st.sourceLocation =st.getClientIP();
 
 		// get developer key
 		if (!obj.has("developerkey")) { throw new UserInputEmptyException("No developer credentials were supplied in the request"); }
@@ -150,9 +158,9 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			st.logger().warning("Unable to resolve developer for request "+obj);
 			return new TerminateResponse("Developer key is not known");
 		}
-		st.setSourcedeveloper(developer);
-		if (obj.has("applicationname")) { st.setSourcename(obj.getString("applicationname")); }
-		st.setSourceowner(developer);
+		st.setSourceDeveloper(developer);
+		if (obj.has("applicationname")) { st.setSourceName(obj.getString("applicationname")); }
+		st.setSourceOwner(developer);
 
 		st.setInstance(decodeInstance(obj));
 
@@ -164,14 +172,14 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 
 		if (st.getCharacterNullable()!=null) {
 			if (st.getCharacter().getInstance()!=st.getInstance()) {
-				throw new UserInputStateException("There is a mismatch between the specified instanceid and the character's instanceid");
+				throw new UserInputStateException("There is a mismatch between the specified instance id and the character's instance id");
 			}
 			final Region region=st.getCharacter().getRegion();
 			if (region!=null) {
 				st.setRegion(region);
 				if (st.getRegionNullable()!=null) {
 					if (st.getRegion().getInstance()!=st.getInstance()) {
-						throw new UserInputStateException("There is a mismatch between the region's instanceid and the character's instanceid");
+						throw new UserInputStateException("There is a mismatch between the region's instance id and the character's instance id");
 					}
 				}
 			}
@@ -184,26 +192,26 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 			final String userid=obj.getString("checkavatarpermission");
 			User user=User.findUserKeyNullable(userid);
 			if (user==null) { user=User.findUsername(userid,false); }
-			final State testpermission=new State(st.getInstance());
-			testpermission.setAvatar(user);
-			if (!testpermission.hasPermission("External.ConnectObjects")) {
-				throw new ExternalInterfaceObjectAccessDeniedException("User "+user.getUsername()+" does not have permission External.ConnectObjects at instance "+testpermission
+			final State testPermission=new State(st.getInstance());
+			testPermission.setAvatar(user);
+			if (!testPermission.hasPermission("External.ConnectObjects")) {
+				throw new ExternalInterfaceObjectAccessDeniedException("User "+user.getUsername()+" does not have permission External.ConnectObjects at instance "+testPermission
 						.getInstance());
 			}
 		}
 
 		if (st.getCharacterNullable()!=null) { st.zone=st.getCharacter().getZone(); }
-		final SafeMap parametermap=new SafeMap();
+		final SafeMap parameterMap=new SafeMap();
 		for (final String key: st.json().keySet()) {
 			final String value=st.json().get(key).toString();
 			//System.out.println(key+"="+(value==null?"NULL":value));
-			parametermap.put(key,value);
+			parameterMap.put(key,value);
 		}
 		final String command=obj.getString("command");
-		st.postmap(parametermap);
+		st.postMap(parameterMap);
 		GPHUD.getLogger("ExternalInterface")
-		     .fine("Processing command "+command+" from "+st.sourcelocation+" identifying as '"+st.getSourcenameNullable()+"' devkey:"+st.getSourcedeveloper());
-		final Response response=Modules.run(st,obj.getString("command"),parametermap);
+		     .fine("Processing command "+command+" from "+st.sourceLocation +" identifying as '"+st.getSourceNameNullable()+"' devKey:"+st.getSourceDeveloper());
+		final Response response=Modules.run(st,obj.getString("command"),parameterMap);
 		InstanceDevelopers.accounting(st.getInstance(),developer,1,response.toString().length()+obj.toString().length());
 		return response;
 	}
@@ -223,8 +231,8 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	                             final JSONObject obj) {
 		Char character=null;
 		if (obj.has("runascharactername")) {
-			final Char newcharacter=Char.resolve(st,obj.getString("runascharactername"));
-			if (newcharacter!=null) { character=newcharacter; }
+			final Char newCharacter=Char.resolve(st,obj.getString("runascharactername"));
+			if (newCharacter!=null) { character=newCharacter; }
 		}
 		if (obj.has("runascharacterid")) {
 			character=Char.get(obj.getInt("runascharacterid"));
@@ -236,15 +244,15 @@ public class Interface extends net.coagulate.GPHUD.Interface {
 	private User decodeAvatar(final JSONObject obj) {
 		User user=User.getSystem();
 		if (obj.has("runasavatarname")) {
-			final User newuser=User.findUsernameNullable(obj.getString("runasavatarname"),false);
-			if (newuser!=null) { user=newuser; }
+			final User newUser=User.findUsernameNullable(obj.getString("runasavatarname"),false);
+			if (newUser!=null) { user=newUser; }
 		}
 		if (obj.has("runasavatarid")) {
-			final User newuser=User.get(obj.getInt("runasavatarid"));
-			if (newuser!=null) { user=newuser; }
+			final User newUser=User.get(obj.getInt("runasavatarid"));
+			if (newUser!=null) { user=newUser; }
 		}
 		if (user.isSuperAdmin()) {
-			throw new UserInputValidationFilterException("Unable to set user to a SUPERADMIN");
+			throw new UserInputValidationFilterException("Unable to set user to a SUPER-ADMIN");
 		}
 		return user;
 	}

@@ -18,9 +18,9 @@ public class Logout {
 	public static void logout(@Nonnull final State st,
 	                          final SafeMap values) {
 		st.form().add("Good Bye!");
-		if (st.cookiestring!=null) { Cookie.delete(st.cookiestring); }
+		if (st.cookieString !=null) { Cookie.delete(st.cookieString); }
 		st.cookie(null);
-		st.cookiestring=null;
+		st.cookieString =null;
 		st.setAvatar(null);
 		st.setCharacter(null);
 		st.setInstance(null);

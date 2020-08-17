@@ -40,11 +40,11 @@ public abstract class Avatars {
 	                                                             mandatory=false) String userlist) {
 
 		// check authorisation, servers can only be deployed by the instance owner...
-		if (st.getSourcedeveloper().getId()!=1) {
+		if (st.getSourceDeveloper().getId()!=1) {
 			return new ErrorResponse("Invalid developer source for priviledged call.");
 		}
 		final Region region=st.getRegion();
-		if (st.objectkey!=null) { region.setPrimUUID(st.objectkey); }
+		if (st.objectKey !=null) { region.setPrimUUID(st.objectKey); }
 		/*if (!region.getURL().equals(st.callbackurl())) {
 			return new ErrorResponse("Invalid callback URL, you do not match the registered region server");
 		}*/

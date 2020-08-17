@@ -4,9 +4,9 @@ import net.coagulate.Core.BuildInfo.GPHUDBuildInfo;
 import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.MariaDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
+import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.SL.Config;
-import net.coagulate.SL.HTTPPipelines.PageMapper;
 import net.coagulate.SL.SL;
 import net.coagulate.SL.SLModule;
 import org.json.JSONObject;
@@ -161,9 +161,9 @@ public class GPHUD extends SLModule {
 
 	@Override
 	public void startup() {
-		PageMapper.exact("/GPHUD/external",new net.coagulate.GPHUD.Interfaces.External.Interface());
-		PageMapper.exact("/GPHUD/system",new net.coagulate.GPHUD.Interfaces.System.Interface());
-		PageMapper.prefix("/GPHUD/",new net.coagulate.GPHUD.Interfaces.User.Interface());
+		URLDistribution.register("/GPHUD/external",new net.coagulate.GPHUD.Interfaces.External.Interface());
+		URLDistribution.register("/GPHUD/system",new net.coagulate.GPHUD.Interfaces.System.Interface());
+		URLDistribution.register("/GPHUD/",new net.coagulate.GPHUD.Interfaces.User.Interface());
 	}
 
 	@Override

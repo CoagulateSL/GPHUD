@@ -131,14 +131,14 @@ public class Effect extends TableRow {
 	 */
 	public static void expirationCheck(@Nonnull final State st,
 	                                   @Nonnull final Char character) {
-		if (st.expirationchecked) { return; }
+		if (st.expirationChecked) { return; }
 		for (final ResultsRow row: db().dq("select effectid from effectsapplications where characterid=? and expires<?",character.getId(),UnixTime.getUnixTime())) {
 			final int effectid=row.getInt();
 			final Effect effect=get(effectid);
 			effect.validate(st);
 			effect.unapply(st,character,true);
 		}
-		st.expirationchecked=true; // run this basically once per request
+		st.expirationChecked =true; // run this basically once per request
 	}
 
 	/**

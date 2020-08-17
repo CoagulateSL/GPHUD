@@ -63,7 +63,7 @@ public class TeleportCommands {
 	                                                          type=Argument.ArgumentType.TEXT_ONELINE) final String name) {
 		String position=null;
 		String rotation=null;
-		for (final Header h: st.headers()) {
+		for (final Header h: st.req().getAllHeaders()) {
 			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Position")) { position=h.getValue(); }
 			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Rotation")) { rotation=h.getValue(); }
 		}

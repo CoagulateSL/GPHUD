@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.GPHUD.Data.Cookie;
-import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Command;

@@ -57,7 +57,7 @@ public abstract class Register {
 			return new TerminateResponse("Sorry, this Region Server is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
 		}
 		// check authorisation, servers can only be deployed by the instance owner...
-		final String regionname=st.getRegionName();
+		final String regionName=st.getRegionName();
 		final Instance instance=st.getInstance();
 		/* -- NOW obsoleted and actually uses the permissions checking code (?)
 		if (st.avatar() != instance.getOwner() && st.avatar().isSuperAdmin()==false) {
@@ -66,7 +66,7 @@ public abstract class Register {
 		}
 		 */
 		final Region region=st.getRegion();
-		for (final Header header: st.headers()) {
+		for (final Header header: st.req().getAllHeaders()) {
 			if (header.getName().equalsIgnoreCase("X-SecondLife-Region")) {
 				//System.out.println("Element: "+header.getValue());
 				final Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
@@ -79,21 +79,21 @@ public abstract class Register {
 			}
 		}
 		String url=null;
-		try { url=st.json().getString("callback"); } catch (@Nonnull final JSONException e) {}
+		try { url=st.json().getString("callback"); } catch (@Nonnull final JSONException ignored) {}
 		if (url==null || "".equals(url)) {
 			st.logger().log(WARNING,"No callback URL sent to GPHUDClient.Register");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
 		region.setURL(url);
-		if (st.objectkey!=null) { region.setPrimUUID(st.objectkey); }
-		st.logger().log(INFO,"Sending post registration message to "+regionname);
+		if (st.objectKey !=null) { region.setPrimUUID(st.objectKey); }
+		st.logger().log(INFO,"Sending post registration message to "+regionName);
 		final JSONObject registered=new JSONObject().put("incommand","registered");
-		String regmessage;
-		regmessage=GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]"+GPHUD.brandingWithNewline();
+		String registrationMessage;
+		registrationMessage=GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]"+GPHUD.brandingWithNewline();
 		if (st.getRegion().needsUpdate()) {
-			regmessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
+			registrationMessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
 		}
-		registered.put("message",regmessage);
+		registered.put("message",registrationMessage);
 		final Transmission t=new Transmission(region,registered);
 		t.start();
 		final JSONObject j=new JSONObject();

@@ -26,7 +26,7 @@ public class Interactions {
 	                               @Argument.Arguments(name="clicker",description="Character clicking the object",
 	                                                   type=Argument.ArgumentType.CHARACTER) final Char clicker) {
 
-		final Obj object=Obj.findOrNull(st,st.objectkey);
+		final Obj object=Obj.findOrNull(st,st.objectKey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
 		final ObjType objecttype=object.getObjectType();
 		if (objecttype==null) {
@@ -48,7 +48,7 @@ public class Interactions {
 	                                @Argument.Arguments(name="collider",description="Character colliding with the object",
 	                                                    type=Argument.ArgumentType.CHARACTER) final Char collider) {
 
-		final Obj object=Obj.findOrNull(st,st.objectkey);
+		final Obj object=Obj.findOrNull(st,st.objectKey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
 		final ObjType objecttype=object.getObjectType();
 		if (objecttype==null) {

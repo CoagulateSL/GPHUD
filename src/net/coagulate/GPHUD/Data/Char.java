@@ -14,8 +14,8 @@ import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interface;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
+import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Maintenance;
@@ -407,7 +407,7 @@ public class Char extends TableRow {
 	private static void checkFilteredNamingList(@Nonnull final State st,
 	                                            @Nonnull final String name) {
 		// break the users name into components based on certain characters
-		final String[] nameparts=name.split("[ ,\\.\\-]");  // space comma dot dash
+		final String[] nameparts=name.split("[ ,.\\-]");  // space comma dot dash
 		final String[] filterlist=st.getKV("Instance.FilteredNamingList").toString().split(",");
 		for (String filter: filterlist) {
 			filter=filter.trim();
@@ -658,7 +658,7 @@ public class Char extends TableRow {
 			if (a!=null) {
 				Char c=null;
 				try { c=Char.getActive(a,st.getInstance()); }
-				catch (@Nonnull final UserException e) {
+				catch (@Nonnull final UserException ignored) {
 				}
 				if (c!=null) { chars.add(c); }
 			}

@@ -35,9 +35,9 @@ public abstract class Command {
 
 	// ----- Internal Statics -----
 	@Nonnull
-	static final Object assertNotNull(@Nullable final Object o,
-	                                  final String value,
-	                                  final String type) {
+	static Object assertNotNull(@Nullable final Object o,
+								final String value,
+								final String type) {
 		if (o==null) {
 			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type,true);
 		}
@@ -107,11 +107,9 @@ public abstract class Command {
 	/**
 	 * Get the name of the arguments.
 	 *
-	 * @param st state
-	 *
 	 * @return list of argument names
 	 */
-	public final List<String> getArgumentNames(@Nonnull final State st) {
+	public final List<String> getArgumentNames() {
 		final List<String> arguments=new ArrayList<>();
 		for (final Argument a: getArguments()) {
 			arguments.add(a.name());
@@ -120,11 +118,11 @@ public abstract class Command {
 	}
 
 	public final Response run(@Nonnull final State state,
-	                          @Nonnull final SafeMap parametermap) {
-		state.parameterdebugraw=parametermap;
+	                          @Nonnull final SafeMap parameterMap) {
+		state.parameterDebugRaw =parameterMap;
 		final Map<String,Object> arguments=new HashMap<>();
 		for (final Argument arg: getArguments()) {
-			String v=parametermap.get(arg.name()).trim();
+			String v=parameterMap.get(arg.name()).trim();
 			if (v.isEmpty() || "-".equals(v)) { v=null; }
 			if (v!=null && v.length()>getMaximumLength(arg)) {
 				return new ErrorResponse(arg.name()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
@@ -135,8 +133,8 @@ public abstract class Command {
 				try {
 					arguments.put(arg.name(),convertArgument(state,arg,v));
 				}
-				catch (final UserException conversionerror) {
-					return new ErrorResponse("Argument "+arg.name()+" failed : "+conversionerror.getLocalizedMessage());
+				catch (final UserException conversionError) {
+					return new ErrorResponse("Argument "+arg.name()+" failed : "+conversionError.getLocalizedMessage());
 				}
 			}
 		}
@@ -311,15 +309,15 @@ public abstract class Command {
 					t.add(attributes);
 					break;
 				case CHARACTER_FACTION:
-					final DropDownList factionmembers=new DropDownList(arg.name());
+					final DropDownList factionMembers=new DropDownList(arg.name());
 					final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
 					if (faction==null) {
 						throw new UserInputStateException("You are in no faction");
 					}
 					for (final Char c: faction.getMembers()) {
-						factionmembers.add(c.getName());
+						factionMembers.add(c.getName());
 					}
-					t.add(factionmembers);
+					t.add(factionMembers);
 					break;
 				case CHARACTER_NEAR:
 					final DropDownList characters=new DropDownList(arg.name());
@@ -329,46 +327,46 @@ public abstract class Command {
 					t.add(characters);
 					break;
 				case EFFECT:
-					final DropDownList effectlist=new DropDownList(arg.name());
+					final DropDownList effectList=new DropDownList(arg.name());
 					for (final Effect effect: Effect.getAll(st.getInstance())) {
-						effectlist.add(effect.getName());
+						effectList.add(effect.getName());
 					}
-					t.add(effectlist);
+					t.add(effectList);
 					break;
 				case EVENT:
-					final DropDownList eventlist=new DropDownList(arg.name());
+					final DropDownList eventList=new DropDownList(arg.name());
 					for (final Event event: Event.getAll(st.getInstance())) {
-						eventlist.add(event.getName());
+						eventList.add(event.getName());
 					}
-					t.add(eventlist);
+					t.add(eventList);
 					break;
 				case MODULE:
-					final DropDownList modulelist=new DropDownList(arg.name());
-					for (final Module amodule: Modules.getModules()) {
-						modulelist.add(amodule.getName());
+					final DropDownList moduleList=new DropDownList(arg.name());
+					for (final Module aModule: Modules.getModules()) {
+						moduleList.add(aModule.getName());
 					}
-					t.add(modulelist);
+					t.add(moduleList);
 					break;
 				case CURRENCY:
-					final DropDownList currencylist=new DropDownList(arg.name());
-					for (final Currency acurrency: Currency.getAll(st)) {
-						currencylist.add(acurrency.getName());
+					final DropDownList currencyList=new DropDownList(arg.name());
+					for (final Currency aCurrency: Currency.getAll(st)) {
+						currencyList.add(aCurrency.getName());
 					}
-					t.add(currencylist);
+					t.add(currencyList);
 					break;
 				case REGION:
-					final DropDownList regionlist=new DropDownList(arg.name());
-					for (final Region aregion: Region.getRegions(st,false)) {
-						regionlist.add(aregion.getName());
+					final DropDownList regionList=new DropDownList(arg.name());
+					for (final Region aRegion: Region.getRegions(st,false)) {
+						regionList.add(aRegion.getName());
 					}
-					t.add(regionlist);
+					t.add(regionList);
 					break;
 				case ZONE:
-					final DropDownList zonelist=new DropDownList(arg.name());
-					for (final Zone azone: Zone.getZones(st)) {
-						zonelist.add(azone.getName());
+					final DropDownList zoneList=new DropDownList(arg.name());
+					for (final Zone aZone: Zone.getZones(st)) {
+						zoneList.add(aZone.getName());
 					}
-					t.add(zonelist);
+					t.add(zoneList);
 					break;
 				case KVLIST:
 					final DropDownList list=new DropDownList(arg.name());
@@ -378,34 +376,34 @@ public abstract class Command {
 					t.add(list);
 					break;
 				case CHARACTERGROUP:
-					final DropDownList chargrouplist=new DropDownList(arg.name());
+					final DropDownList charGroupList=new DropDownList(arg.name());
 					for (final CharacterGroup g: st.getInstance().getCharacterGroups()) {
-						chargrouplist.add(g.getNameSafe());
+						charGroupList.add(g.getNameSafe());
 					}
-					t.add(chargrouplist);
+					t.add(charGroupList);
 					break;
 				case PERMISSIONSGROUP:
-					final DropDownList permgrouplist=new DropDownList(arg.name());
+					final DropDownList permGroupList=new DropDownList(arg.name());
 					for (final PermissionsGroup g: PermissionsGroup.getPermissionsGroups(st)) {
-						permgrouplist.add(g.getNameSafe());
+						permGroupList.add(g.getNameSafe());
 					}
-					t.add(permgrouplist);
+					t.add(permGroupList);
 					break;
 				case PERMISSION:
-					final DropDownList permlist=new DropDownList(arg.name());
+					final DropDownList permList=new DropDownList(arg.name());
 					for (final Module m: Modules.getModules()) {
 						for (final String entry: m.getPermissions(st).keySet()) {
-							permlist.add(m.getName()+"."+entry);
+							permList.add(m.getName()+"."+entry);
 						}
 					}
-					t.add(permlist);
+					t.add(permList);
 					break;
 				case CHOICE:
-					final DropDownList choicelist=new DropDownList(arg.name());
+					final DropDownList choiceList=new DropDownList(arg.name());
 					for (final String s: arg.getChoices(st)) {
-						choicelist.add(s);
+						choiceList.add(s);
 					}
-					t.add(choicelist);
+					t.add(choiceList);
 					break;
 				default:
 					throw new SystemImplementationException("Unhandled ENUM TYPE in populateForm():"+arg.type());
@@ -422,14 +420,14 @@ public abstract class Command {
 	 * Run a command based on properly cast arguments.
 	 *
 	 * @param state        Session state
-	 * @param parametermap Arguments of appropriate type for receiving method (or throws exceptions).  State should be first argument!
+	 * @param parameterMap Arguments of appropriate type for receiving method (or throws exceptions).  State should be first argument!
 	 *
 	 * @return Command response
 	 */
 	@Nonnull
 	public final Response run(@Nonnull final State state,
-	                          @Nonnull final Map<String,Object> parametermap) {
-		state.parameterdebug=parametermap;
+	                          @Nonnull final Map<String,Object> parameterMap) {
+		state.parameterDebug =parameterMap;
 		checkCallingInterface(state);
 		// check permission
 		if (!requiresPermission().isEmpty() && !state.hasPermission(requiresPermission())) {
@@ -438,8 +436,8 @@ public abstract class Command {
 		//check arguments
 		for (final Argument a: getArguments()) {
 			Object o=null;
-			if (parametermap.containsKey(a.name())) {
-				o=parametermap.get(a.name());
+			if (parameterMap.containsKey(a.name())) {
+				o=parameterMap.get(a.name());
 			}
 			if (a.mandatory() && o==null) {
 				return new ErrorResponse("Argument "+a.name()+" is mandatory on command "+getFullName()+" and nothing was passed");
@@ -447,7 +445,7 @@ public abstract class Command {
 		}
 		// check the "operational context" :)
 		checkCallingContext(state);
-		return execute(state,parametermap);
+		return execute(state,parameterMap);
 	}
 
 	// ----- Internal Instance -----
@@ -464,12 +462,12 @@ public abstract class Command {
 				if (v.matches(".*[^a-zA-Z0-9].*")) {
 					throw new UserInputValidationFilterException(argument.name()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
 				}
-				// dont put anything here, follow up into the next thing
+				// don't put anything here, follow up into the next thing
 			case TEXT_CLEAN:
 				if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
-					throw new UserInputValidationFilterException(argument.name()+" should only consist of typable characters (a-z 0-9 .'-,) and you entered '"+v+"'");
+					throw new UserInputValidationFilterException(argument.name()+" should only consist of simple characters (a-z 0-9 .'-,) and you entered '"+v+"'");
 				}
-				// dont put anything here, follow up into the next thing
+				// don't put anything here, follow up into the next thing
 			case TEXT_ONELINE:
 			case TEXT_MULTILINE:
 			case PASSWORD:
@@ -530,21 +528,21 @@ public abstract class Command {
 			case CHARACTER:
 			case CHARACTER_PLAYABLE:
 			case CHARACTER_NEAR:
-				final Char targchar;
+				final Char targetChar;
 				if (v.startsWith(">")) {
 					v=v.substring(1);
 					try {
 						final User a=User.findUsername(v,false);
-						targchar=Char.getActive(a,state.getInstance());
+						targetChar=Char.getActive(a,state.getInstance());
 					}
 					catch (@Nonnull final NoDataException e) {
 						throw new UserInputLookupFailureException("Unable to find character of avatar named '"+v+"'",e);
 					}
 				}
 				else {
-					targchar=Char.resolve(state,v);
+					targetChar=Char.resolve(state,v);
 				}
-				if (targchar!=null) { return targchar; }
+				if (targetChar!=null) { return targetChar; }
 				else {
 					throw new UserInputLookupFailureException("Unable to find character named '"+v+"'");
 				}
@@ -595,27 +593,27 @@ public abstract class Command {
 		// check required interface
 		if (state.source==Sources.USER) {
 			if (!permitWeb()) {
-				throw new UserAccessDeniedException("This command can not be accessed via the Web interface");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the Web interface");
 			}
 		}
 		if (state.source==Sources.SYSTEM) {
 			if (!permitHUD()) {
-				throw new UserAccessDeniedException("This command can not be accessed via the LSL System interface");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the LSL System interface");
 			}
 		}
 		if (state.source==Sources.CONSOLE) {
 			if (!permitConsole()) {
-				throw new UserAccessDeniedException("This command can not be accessed via the console");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the console");
 			}
 		}
 		if (state.source==Sources.SCRIPTING) {
 			if (!permitScripting()) {
-				throw new UserAccessDeniedException("This command can not be access via the Scripting module");
+				throw new UserAccessDeniedException(getFullName()+" command can not be access via the Scripting module");
 			}
 		}
 		if (state.source==Sources.EXTERNAL) {
 			if (!permitExternal()) {
-				throw new UserAccessDeniedException("This command can not be accessed via the External API interface");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the External API interface");
 			}
 		}
 
@@ -659,7 +657,7 @@ public abstract class Command {
 			case KVLIST:
 				return 128;
 			default:
-				throw new SystemImplementationException("Argument "+argument.name()+" of type "+argument.type().name()+" fell through maxlen");
+				throw new SystemImplementationException("Argument "+argument.name()+" of type "+argument.type().name()+" fell through maximum length");
 		}
 	}
 

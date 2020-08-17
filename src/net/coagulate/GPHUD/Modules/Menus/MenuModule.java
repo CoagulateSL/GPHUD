@@ -32,10 +32,10 @@ public class MenuModule extends ModuleAnnotation {
           description="The packaged form of this users main menu")
 public static String generateMainMenu(final State st,
                                       final String key) {
-	if (st.mainmenutemplate==null) {
-		st.mainmenutemplate=Modules.getJSONTemplate(st,"menus.main").toString();
+	if (st.mainMenuTemplate ==null) {
+		st.mainMenuTemplate =Modules.getJSONTemplate(st,"menus.main").toString();
 	}
-	return st.mainmenutemplate;
+	return st.mainMenuTemplate;
 }
 
 	@Override

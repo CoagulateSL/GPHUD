@@ -3,8 +3,7 @@ package net.coagulate.GPHUD.Modules.External;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Zone;
-import net.coagulate.GPHUD.GPHUD;
-import net.coagulate.GPHUD.Interface;
+import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -38,9 +37,9 @@ public class BasicCommands {
 		json.put("instance",st.getInstanceNullable());
 		json.put("region",st.getRegionNullable());
 		json.put("zone",st.zone);
-		json.put("sourcename",st.getSourcenameNullable());
-		json.put("sourceowner",st.getSourceownerNullable());
-		json.put("sourcedeveloper",st.getSourcedeveloperNullable());
+		json.put("sourcename",st.getSourceNameNullable());
+		json.put("sourceowner",st.getSourceOwnerNullable());
+		json.put("sourcedeveloper",st.getSourceDeveloperNullable());
 		return new JSONResponse(json);
 	}
 

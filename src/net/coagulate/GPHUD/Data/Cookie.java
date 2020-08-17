@@ -254,7 +254,7 @@ public class Cookie {
 		if (ch!=null) { st.setCharacter(ch); }
 		if (av==null && ch!=null) { st.setAvatar(ch.getOwner()); }
 		if (av!=null) {
-			st.cookiestring=cookie;
+			st.cookieString =cookie;
 			st.cookie(this);
 		}
 	}
