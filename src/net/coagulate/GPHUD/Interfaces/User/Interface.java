@@ -1,12 +1,10 @@
 package net.coagulate.GPHUD.Interfaces.User;
 
-import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.HTML.Elements.Raw;
 import net.coagulate.Core.HTML.Page;
-import net.coagulate.Core.Tools.ByteTools;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Cookie;
 import net.coagulate.GPHUD.Data.Message;
@@ -26,21 +24,16 @@ import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.Session;
 import net.coagulate.SL.Data.User;
+import net.coagulate.SL.HTTPPipelines.PlainTextMapper;
 import net.coagulate.SL.SL;
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +64,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
 		State state=state();
 		state.source= State.Sources.USER;
+		state.parameterDebugRaw=new SafeMap();
+		state.parameterDebugRaw.putAll(parameters);
 	}
 
 	@Override
@@ -98,6 +93,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			//todo
 			//noinspection deprecation
 			Page.page().add(new Raw(renderHTML(state())));
+			Page.page().template(new PlainTextMapper.PlainTextTemplate());
 		}
 		catch (@Nonnull final RedirectionException redir) {
 			Page.page().responseCode(HttpServletResponse.SC_SEE_OTHER);
@@ -227,6 +223,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 
 	@Nonnull
 	public SafeMap getPostValues(@Nonnull final State st) {
+		return st.parameterDebugRaw;
+		/*
 		final SafeMap values=new SafeMap();
 		final HttpRequest req=st.req();
 		// needs to have an entity to be a post
@@ -270,6 +268,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			}
 		}
 		return values;
+
+		 */
 	}
 
 	// this should probably be done better, i dont think we have to "split" on ; as i think the API will decompose that for us if we ask nicely
