@@ -94,6 +94,11 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 	}
 
+	@Override
+	protected Method lookupPageFromUri(String line) {
+		try { return getClass().getDeclaredMethod("execute",State.class); }
+		catch (NoSuchMethodException e) { throw new SystemImplementationException("Local method reflection failed..."); }
+	}
 
 	@Override
 	protected void executePage(Method content) {
