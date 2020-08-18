@@ -20,6 +20,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import net.coagulate.GPHUD.State.Sources;
 import net.coagulate.SL.Data.User;
+import net.coagulate.SL.HTTPPipelines.PlainTextMapper;
 import net.coagulate.SL.SL;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
@@ -103,6 +104,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	@Override
 	protected void executePage(Method content) {
 		final State st = state();
+		Page.page().template(new PlainTextMapper.PlainTextTemplate());
 		final Response response = execute(st);
 		if (response == null) {
 			throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
