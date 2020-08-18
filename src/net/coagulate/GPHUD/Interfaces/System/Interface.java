@@ -22,7 +22,6 @@ import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
-import org.apache.http.entity.ContentType;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -150,11 +149,6 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 				GPHUD.getLogger().log(SEVERE,"Exception in exception handler - "+ex.getLocalizedMessage(),ex);
 			}
 		}*/
-	}
-
-	@Override
-	protected ContentType getContentType() {
-		return ContentType.APPLICATION_JSON;
 	}
 
 	// ----- Internal Instance -----
