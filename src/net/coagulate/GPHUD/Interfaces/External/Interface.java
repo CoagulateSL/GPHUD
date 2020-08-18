@@ -24,6 +24,7 @@ import net.coagulate.SL.HTTPPipelines.PlainTextMapper;
 import net.coagulate.SL.SL;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,6 +69,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			final String message = ByteTools.convertStreamToString(entity.getContent());
 			try {
 				obj = new JSONObject(message);
+				st.setJson(obj);
 			} catch (@Nonnull final JSONException e) {
 				throw new SystemBadValueException("Parse error in '" + message + "'", e);
 			}
@@ -102,6 +104,11 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 	@Override
+	protected ContentType getContentType() {
+		return ContentType.APPLICATION_JSON;
+	}
+
+	@Override
 	protected void executePage(Method content) {
 		final State st = state();
 		Page.page().template(new PlainTextMapper.PlainTextTemplate());
@@ -116,7 +123,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		jsonResponse.remove("developerkey");
 		jsonResponse.put("responsetype", response.getClass().getSimpleName());
-		final String out = jsonResponse.toString();
+		final String out = jsonResponse.toString(2);
 		if (DEBUG_JSON) {
 			System.out.println("EXTERNAL INTERFACE OUTPUT:\n" + JsonTools.jsonToString(jsonResponse));
 		}
@@ -153,7 +160,6 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	protected Response execute(@Nonnull final State st) {
 		final JSONObject obj=st.json();
 		st.sourceLocation =st.getClientIP();
-
 		// get developer key
 		if (!obj.has("developerkey")) { throw new UserInputEmptyException("No developer credentials were supplied in the request"); }
 		final String developerkey=obj.getString("developerkey");
