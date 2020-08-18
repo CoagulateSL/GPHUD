@@ -239,7 +239,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		st.setAvatar(owner);
 		// hooks to allow things to run as "not the objects owner" (the default)
 		String runAsAvatar=null;
-		try { runAsAvatar=obj.getString("runAsAvatar".toLowerCase()); } catch (@Nonnull final JSONException ignored) {}
+		try { runAsAvatar=obj.getString("runasavatar"); } catch (@Nonnull final JSONException ignored) {}
 		if (runAsAvatar!=null && (!("".equals(runAsAvatar)))) {
 			st.setAvatar(User.findUsername(runAsAvatar,false));
 			st.isSuid =true;
@@ -247,7 +247,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		st.object=Obj.findOrNull(st,objectKey);
 		if (st.object!=null) { st.object.updateRX(); }
 		String runAsCharacter=null;
-		try { runAsCharacter=obj.getString("runAsCharacter".toLowerCase()); } catch (@Nonnull final JSONException ignored) {}
+		try { runAsCharacter=obj.getString("runascharacter"); } catch (@Nonnull final JSONException ignored) {}
 		if (runAsCharacter!=null && (!("".equals(runAsCharacter)))) {
 			st.setCharacter(Char.get(Integer.parseInt(runAsCharacter)));
 			st.isSuid =true;
@@ -278,7 +278,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 					st.setCharacter(Char.getMostRecent(st.getAvatar(),st.getInstance()));
 				}
 				try {
-					obj.getString("runAsNoCharacter".toLowerCase());
+					obj.getString("runasnocharacter");
 					st.setCharacter(null);
 				}
 				catch (@Nonnull final JSONException ignored) {}
