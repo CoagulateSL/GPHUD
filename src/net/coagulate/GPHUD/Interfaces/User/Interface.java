@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Interfaces.User;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.HTML.Elements.Raw;
@@ -28,6 +29,9 @@ import net.coagulate.SL.HTTPPipelines.PlainTextMapper;
 import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 
 import javax.annotation.Nonnull;
@@ -117,13 +121,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		return "";
 	}
 
-	// FIRST STEP of producing the page its self, this is all wrapped in a low level exception handler.
-	@Nonnull
-	public String renderHTML(@Nonnull final State st) {
-		// This is basically the page template, the supporting structure that surrounds a title/menu/body
-
-		// we compute the body first, so any changes it causes to the rest of the data (like logging out, menu changes etc) is reflected
-		final String body=renderBodyProtected(st);
+	private String headerHTML(@Nonnull final State st) {
 		String p="";
 		final boolean external=st.getDebasedNoQueryURL().toLowerCase().startsWith("/published/");
 		p+="<html><head><title>";
@@ -168,13 +166,33 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			p+="</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td width=100% valign=top height=100%>";
 			p+=messages(st);
 		}
-		p+=body;
+		return p;
+	}
+
+	@Nonnull
+	private String footerHTML(@Nonnull final State st) {
+		String p="";
+		final boolean external=st.getDebasedNoQueryURL().toLowerCase().startsWith("/published/");
 		if (!external) {
 			p+="</td>";
 			p+="</tr>";
 			p+="</table>";
 		}
 		p+="</body></html>";
+		return p;
+	}
+
+	// FIRST STEP of producing the page its self, this is all wrapped in a low level exception handler.
+	@Nonnull
+	public String renderHTML(@Nonnull final State st) {
+		// This is basically the page template, the supporting structure that surrounds a title/menu/body
+
+		// we compute the body first, so any changes it causes to the rest of the data (like logging out, menu changes etc) is reflected
+		final String body=renderBodyProtected(st);
+		String p="";
+		p+=headerHTML(st);
+		p+=body;
+		p+=footerHTML(st);
 		return p;
 	}
 
@@ -223,6 +241,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 
 	@Nonnull
 	public SafeMap getPostValues(@Nonnull final State st) {
+		if (st.parameterDebugRaw==null) { throw new SystemImplementationException("Parameter debug raw map is null (?)"); }
 		return st.parameterDebugRaw;
 		/*
 		final SafeMap values=new SafeMap();
@@ -633,5 +652,43 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		return selectavatars;
 	}*/
+	@Override
+	protected void renderUnhandledError(HttpRequest request, HttpContext context, HttpResponse response, Throwable t) {
+		SL.report("GPWeb UnkEx: "+t.getLocalizedMessage(),t,state());
+		State st=state();
+		String page=headerHTML(st);
+		page+="<p><h1>Unhandled Internal Error</h1></p>";
+		page+="<p>Sorry, an unhandled internal error has occurred.</p>";
+		page+="<p>The system administrator has been mailed about this issue.</p>";
+		page+=footerHTML(st);
+		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
+		response.setStatusCode(200);
+	}
 
+	@Override
+	protected void renderSystemError(HttpRequest request, HttpContext context, HttpResponse response, SystemException t) {
+		SL.report("GPWeb SysEx: "+t.getLocalizedMessage(),t,state());
+		State st=state();
+		String page=headerHTML(st);
+		page+="<p><h1>Internal Error</h1></p>";
+		page+="<p>Sorry, an internal error has occurred.</p>";
+		page+="<p>The system administrator has been mailed about this issue.</p>";
+		page+=footerHTML(st);
+		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
+		response.setStatusCode(200);
+	}
+
+	@Override
+	protected void renderUserError(HttpRequest request, HttpContext context, HttpResponse response, UserException t) {
+		SL.report("GPWeb User: "+t.getLocalizedMessage(),t,state());
+		State st=state();
+		String page=headerHTML(st);
+		page+="<p><h1>Error</h1></p>";
+		page+="<p>There was an error processing your request.</p>";
+		page+="<p>Please review your inputs and the error message, this type of error is likely more related to user data, configuration, or similar, rather than being a system error.</p>";
+		page+="<p><b>ERROR:</b> "+t.getLocalizedMessage();
+		page+=footerHTML(st);
+		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
+		response.setStatusCode(200);
+	}
 }

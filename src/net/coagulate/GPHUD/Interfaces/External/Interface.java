@@ -3,10 +3,12 @@ package net.coagulate.GPHUD.Interfaces.External;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
+import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationFilterException;
 import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.HTML.Elements.PlainText;
 import net.coagulate.Core.HTML.Page;
 import net.coagulate.Core.Tools.ByteTools;
@@ -24,7 +26,9 @@ import net.coagulate.SL.HTTPPipelines.PlainTextMapper;
 import net.coagulate.SL.SL;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -270,4 +274,35 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		return user;
 	}
 
+
+	@Override
+	protected void renderUnhandledError(HttpRequest request, HttpContext context, HttpResponse response, Throwable t) {
+		SL.report("ExtIF UnkEx: "+t.getLocalizedMessage(),t,state());
+		JSONObject json=new JSONObject();
+		json.put("error","Sorry, an unhandled internal error occurred.");
+		json.put("responsetype","UnhandledException");
+		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+		response.setStatusCode(200);
+	}
+
+	@Override
+	protected void renderSystemError(HttpRequest request, HttpContext context, HttpResponse response, SystemException t) {
+		SL.report("ExtIF SysEx: "+t.getLocalizedMessage(),t,state());
+		JSONObject json=new JSONObject();
+		json.put("error","Sorry, an internal error occurred.");
+		json.put("responsetype","SystemException");
+		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+		response.setStatusCode(200);
+	}
+
+	@Override
+	protected void renderUserError(HttpRequest request, HttpContext context, HttpResponse response, UserException t) {
+		SL.report("ExtIF User: "+t.getLocalizedMessage(),t,state());
+		JSONObject json=new JSONObject();
+		json.put("error",t.getLocalizedMessage());
+		json.put("responsetype","UserException");
+		json.put("errorclass",t.getClass().getName());
+		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+		response.setStatusCode(200);
+	}
 }
