@@ -411,7 +411,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		JSONObject json=new JSONObject();
 		json.put("error",t.getLocalizedMessage());
 		json.put("responsetype","UserException");
-		json.put("errorclass",t.getClass().getName());
+		json.put("errorclass",t.getClass().getSimpleName());
 		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
 		response.setStatusCode(200);
 	}
