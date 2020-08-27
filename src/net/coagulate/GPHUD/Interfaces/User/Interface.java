@@ -30,13 +30,13 @@ import net.coagulate.SL.SL;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
@@ -100,7 +100,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			Page.page().template(new PlainTextMapper.PlainTextTemplate());
 		}
 		catch (@Nonnull final RedirectionException redir) {
-			Page.page().responseCode(HttpServletResponse.SC_SEE_OTHER);
+			Page.page().responseCode(HttpStatus.SC_SEE_OTHER);
 			String targeturl=redir.getURL();
 			//System.out.println("PRE:"+targeturl);
 			if (targeturl.startsWith("/") && !targeturl.startsWith("/GPHUD")) { targeturl="/GPHUD"+targeturl; }
