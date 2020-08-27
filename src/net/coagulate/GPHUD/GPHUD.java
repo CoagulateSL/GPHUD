@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.SL.Config;
+import net.coagulate.SL.HTML.ServiceTile;
 import net.coagulate.SL.SL;
 import net.coagulate.SL.SLModule;
 import org.json.JSONObject;
@@ -14,6 +15,8 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -109,6 +112,14 @@ public class GPHUD extends SLModule {
 		return log;
 	}
 
+	@Nullable
+	@Override
+	public Map<ServiceTile, Integer> getServices() {
+		HashMap<ServiceTile,Integer> map = new HashMap<>();
+		map.put(new ServiceTile("GPHUD","Second generation role-play HUD<br>&nbsp;<br>Used to implement attribute/dice based RP environments","/GPHUD","/resources/serviceicon-gphud.png",getVersion(),getBuildDateString(),commitId()),10);
+		return map;
+	}
+
 	@Nonnull
 	@Override
 	public String getName() {
@@ -145,18 +156,18 @@ public class GPHUD extends SLModule {
 	}
 
 	@Override
-	protected int schemaUpgrade(DBConnection db, String schemaname, int currentversion) {
+	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		Logger log=GPHUD.getLogger("SchemaUpgrade");
-		if (currentversion==1) {
+		if (currentVersion ==1) {
 			log.config("Schema for GPHUD is at version 1, upgrading to version 2");
 			log.config("Add URL index to characters table");
 			GPHUD.getDB().d("ALTER TABLE characters ADD INDEX characters_url_index (url)");
 			log.config("Add URL index to regions table");
 			//noinspection SpellCheckingInspection
 			GPHUD.getDB().d("ALTER TABLE regions ADD INDEX regionss_url_index (url)");
-			log.config("Schema upgrade of GPHUD to version 2 is complete"); currentversion=2;
+			log.config("Schema upgrade of GPHUD to version 2 is complete"); currentVersion =2;
 		}
-		return currentversion;
+		return currentVersion;
 	}
 
 	@Override

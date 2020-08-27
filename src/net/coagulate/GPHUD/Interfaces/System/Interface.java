@@ -190,7 +190,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			if ("X-SecondLife-Shard".equals(name)) { shard=value; }
 			if ("X-SecondLife-Local-Position".equals(name)) { position=value; }
 		}
-		if (!Config.skipShardCheck()) {
+		if (Config.enforceShardCheck()) {
 			if ((!("Production".equals(shard)))) {
 				if (shard == null) {
 					shard = "<null>";
