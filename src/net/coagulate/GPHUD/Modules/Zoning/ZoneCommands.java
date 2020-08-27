@@ -97,7 +97,7 @@ public abstract class ZoneCommands {
 	}
 
 	@Nonnull
-	@Commands(context=Context.CHARACTER,
+	@Commands(context=Context.ANY,
 	          permitScripting=false,
 	          description="Trigger a zone change event",
 	          permitConsole=false,
@@ -108,6 +108,9 @@ public abstract class ZoneCommands {
 	                                      @Nullable @Arguments(name="zone",description="Name of zone we transitioned into",
 	                                                           type=ArgumentType.ZONE,
 	                                                           mandatory=false) final Zone zone) {
+		// note the weird context.  the HUD may call this when it notices a zone transition even before a character is created
+		// this is actually problematic as the HUD won't re-send zone awareness
+		if (st.getCharacterNullable()==null) { return new JSONResponse(new JSONObject()); }
 		// check some things make sense
 		// note zone may be null, legally, and fairly often probably.
 		if (zone!=null) { zone.validate(st); }
