@@ -26,7 +26,7 @@ public class Distribution {
 	public static Response getServer(@Nonnull final State st) {
 		try {
 			String distributionregion= Config.getDistributionRegion();
-			if (distributionregion!=null && !distributionregion.isBlank()) { return new ErrorResponse("No distribution region has been set up and no new server can be sent to you"); }
+			if (distributionregion.isBlank()) { return new ErrorResponse("No distribution region has been set up and no new server can be sent to you"); }
 			final JSONObject json=new JSONObject();
 			json.put("incommand","broadcast");
 			json.put("subcommand","giveitemprefix");
