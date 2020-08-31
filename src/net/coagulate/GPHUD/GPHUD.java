@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 
 /*
-Shortform here.
+Short form here.
 
 [XX Release Notes] | [https://bugs.coagulate.net/ Bugs/Requests] | [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about Update Notices]
 
