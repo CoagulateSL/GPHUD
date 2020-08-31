@@ -444,10 +444,7 @@ public class Instance extends TableRow {
 			final int id=r.getInt("characterid");
 			if (idmap.containsKey(id)) { idmap.get(id).totalxp=r.getInt("total"); }
 		}
-		final Map<Integer,String> avatarnames=new TreeMap<>();
-		for (final ResultsRow r: SL.getDB().dq("select id,username from users")) {
-			avatarnames.put(r.getInt("id"),r.getString("username"));
-		}
+		final Map<Integer,String> avatarnames=User.getIdToNameMap();
 		for (final CharacterSummary cs: idmap.values()) {
 			cs.ownername=avatarnames.get(cs.ownerid);
 		}
