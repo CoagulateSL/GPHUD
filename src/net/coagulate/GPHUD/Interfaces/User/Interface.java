@@ -141,7 +141,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			int width=200;
 			if (st.getInstanceNullable()!=null) {
 				middletarget=st.getInstance().getLogoURL(st);
-				width=st.getInstance().getLogoWidth(st,100);
+				width=st.getInstance().getLogoWidth(100);
 			}
 			p+="<h1 style=\"margin: 0px;\"><img src=\""+middletarget+"\" height=100px width="+width+"px></h1>";
 			p+="</td><td width=33% align=right>";
