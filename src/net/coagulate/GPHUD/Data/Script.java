@@ -7,7 +7,6 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -67,7 +66,7 @@ public class Script extends TableRow {
 	 */
 	public static void create(@Nonnull final State st,
 	                          @Nonnull final String scriptname) {
-		final int existing=db().dqinn("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
+		final int existing=db().dqiNotNull("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
 		if (existing>0) { throw new UserInputDuplicateValueException("script with that name already exists"); }
 		db().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
 	}
@@ -119,7 +118,7 @@ public class Script extends TableRow {
 	public static Script find(@Nonnull final State st,
 	                          @Nonnull final String scriptname) {
 		try {
-			final int id=db().dqinn("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),scriptname);
+			final int id=db().dqiNotNull("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),scriptname);
 			return new Script(id);
 		}
 		catch (final NoDataException e) {

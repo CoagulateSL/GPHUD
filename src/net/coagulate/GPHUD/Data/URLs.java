@@ -22,7 +22,7 @@ public class URLs {
                     GPHUD.getDB().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?", charid);
                     final Integer regionid = row.getIntNullable("regionid");
                     if (regionid != null) {
-                        final int howmany = GPHUD.getDB().dqinn("select count(*) from visits visits where endtime is null and characterid=? and regionid=?", charid, regionid);
+                        final int howmany = GPHUD.getDB().dqiNotNull("select count(*) from visits visits where endtime is null and characterid=? and regionid=?", charid, regionid);
                         if (howmany > 0) {
                             st.logger()
                                     .info("HUD disconnected (404) from avatar " + st.getAvatar().getName() + " as character " + st.getCharacter()

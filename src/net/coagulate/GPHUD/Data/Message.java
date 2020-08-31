@@ -77,7 +77,7 @@ public class Message extends TableRow {
 	@Nullable
 	public static Message getNextMessage(@Nonnull final Char c) {
 		try {
-			final int id=db().dqinn("select messageid from messages where characterid=? order by expires  limit 0,1",c.getId());
+			final int id=db().dqiNotNull("select messageid from messages where characterid=? order by expires  limit 0,1",c.getId());
 			return Message.get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -103,7 +103,7 @@ public class Message extends TableRow {
 	 * @return Number of messages
 	 */
 	public static int count(@Nonnull final Char character) {
-		return db().dqinn("select count(*) from messages where characterid=?",character.getId());
+		return db().dqiNotNull("select count(*) from messages where characterid=?",character.getId());
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class Message extends TableRow {
 	@Nullable
 	public static Message getActiveMessage(@Nonnull final Char c) {
 		try {
-			final int id=db().dqinn("select messageid from messages where characterid=? and expires=0",c.getId());
+			final int id=db().dqiNotNull("select messageid from messages where characterid=? and expires=0",c.getId());
 			return Message.get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }

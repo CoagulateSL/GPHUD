@@ -45,7 +45,7 @@ public class AuditTable extends PagedSQL {
 	// ----- Internal Instance -----
 	@Override
 	protected int getRowCount() {
-		return db().dqinn("select count(*) from audit where instanceid="+instance.getId()+" "+getAdditionalWhere()+" order by timedate desc");
+		return db().dqiNotNull("select count(*) from audit where instanceid="+instance.getId()+" "+getAdditionalWhere()+" order by timedate desc");
 	}
 
 	@Nonnull

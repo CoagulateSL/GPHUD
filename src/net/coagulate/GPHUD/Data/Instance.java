@@ -78,7 +78,7 @@ public class Instance extends TableRow {
 	public static void create(@Nonnull final String name,
 	                          @Nonnull final User caller) {
 		if ("".equals(name)) { throw new UserInputEmptyException("Can't create null or empty instance"); }
-		final int exists=db().dqinn("select count(*) from instances where name like ?",name);
+		final int exists=db().dqiNotNull("select count(*) from instances where name like ?",name);
 		if (exists!=0) {
 			throw new UserInputDuplicateValueException("Instance already exists!");
 		}
@@ -96,7 +96,7 @@ public class Instance extends TableRow {
 	@Nonnull
 	public static Instance find(final String name) {
 		try {
-			final int id=db().dqinn("select instanceid from instances where name=?",name);
+			final int id=db().dqiNotNull("select instanceid from instances where name=?",name);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {

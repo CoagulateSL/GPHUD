@@ -49,7 +49,7 @@ public class Zone extends TableRow {
 	 */
 	public static void create(@Nonnull final Instance instance,
 	                          @Nonnull final String name) {
-		if (db().dqinn("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0) {
+		if (db().dqiNotNull("select count(*) from zones where instanceid=? and name like ?",instance.getId(),name)>0) {
 			throw new UserInputDuplicateValueException("Zone name already in use");
 		}
 		db().d("insert into zones(instanceid,name) values(?,?)",instance.getId(),name);
@@ -67,7 +67,7 @@ public class Zone extends TableRow {
 	public static Zone findNullable(@Nonnull final Instance instance,
 	                                @Nonnull final String name) {
 		try {
-			final int zoneid=db().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
+			final int zoneid=db().dqiNotNull("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
 			return get(zoneid);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -87,7 +87,7 @@ public class Zone extends TableRow {
 	public static Zone find(@Nonnull final Instance instance,
 	                        @Nonnull final String name) {
 		try {
-			final int zoneid=db().dqinn("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
+			final int zoneid=db().dqiNotNull("select zoneid from zones where name like ? and instanceid=?",name,instance.getId());
 			return get(zoneid);
 		}
 		catch (@Nonnull final NoDataException e) {

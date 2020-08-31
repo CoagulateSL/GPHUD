@@ -49,7 +49,7 @@ public class Event extends TableRow {
 	public static Event find(@Nonnull final Instance instance,
 	                         final String name) {
 		try {
-			final int eventid=db().dqinn("select eventid from events where name like ? and instanceid=?",name,instance.getId());
+			final int eventid=db().dqiNotNull("select eventid from events where name like ? and instanceid=?",name,instance.getId());
 			return get(eventid);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }

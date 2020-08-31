@@ -78,7 +78,7 @@ public class Alias extends TableRow {
 	public static Alias getAlias(@Nonnull final State st,
 	                             final String name) {
 		try {
-			final int id=db().dqinn("select aliasid from aliases where instanceid=? and name like ?",st.getInstance().getId(),name);
+			final int id=db().dqiNotNull("select aliasid from aliases where instanceid=? and name like ?",st.getInstance().getId(),name);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }

@@ -70,7 +70,7 @@ public class Region extends TableRow {
 	public static void refreshURL(@Nonnull final String url) {
 		final String t="regions";
 		final int refreshifolderthan=UnixTime.getUnixTime()-TableRow.REFRESH_INTERVAL;
-		final int toupdate=db().dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
+		final int toupdate=db().dqiNotNull("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
@@ -109,7 +109,7 @@ public class Region extends TableRow {
 	public static Region findNullable(@Nonnull final String name,
 	                                  final boolean allowretired) {
 		try {
-			final int regionid=db().dqinn("select regionid from regions where name=?",name);
+			final int regionid=db().dqiNotNull("select regionid from regions where name=?",name);
 			return get(regionid,allowretired);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -135,7 +135,7 @@ public class Region extends TableRow {
 	public static String joinInstance(@Nonnull final String region,
 	                                  @Nonnull final Instance i) {
 		// TO DO - lacks validation
-		final int exists=db().dqinn("select count(*) from regions where name=?",region);
+		final int exists=db().dqiNotNull("select count(*) from regions where name=?",region);
 		if (exists==0) {
 			GPHUD.getLogger().info("Joined region '"+region+"' to instance "+i);
 			db().d("insert into regions(name,instanceid) values(?,?)",region,i.getId());

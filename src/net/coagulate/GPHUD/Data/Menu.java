@@ -69,7 +69,7 @@ public class Menu extends TableRow {
 	public static Menu getMenuNullable(@Nonnull final State st,
 	                                   @Nonnull final String name) {
 		try {
-			final int id=db().dqinn("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
+			final int id=db().dqiNotNull("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }

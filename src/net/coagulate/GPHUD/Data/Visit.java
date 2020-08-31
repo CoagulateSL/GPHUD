@@ -37,7 +37,7 @@ public class Visit {
 	                             @Nonnull final Char character,
 	                             @Nonnull final Region region) {
 		final User avatar=st.getAvatar();
-		final int updates=db().dqinn("select count(*) from visits where avatarid=? and endtime is null",avatar.getId());
+		final int updates=db().dqiNotNull("select count(*) from visits where avatarid=? and endtime is null",avatar.getId());
 		if (updates>0) {
 			st.logger().fine("Force terminating "+updates+" visits");
 			db().d("update visits set endtime=? where avatarid=? and endtime is null",getUnixTime(),avatar.getId());

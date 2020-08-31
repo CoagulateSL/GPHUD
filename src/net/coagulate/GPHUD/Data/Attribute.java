@@ -57,7 +57,7 @@ public class Attribute extends TableRow {
 	public static Attribute find(@Nonnull final Instance instance,
 	                             @Nonnull final String name) {
 		try {
-			final int id=db().dqinn("select attributeid from attributes where name like ? and instanceid=?",name,instance.getId());
+			final int id=db().dqiNotNull("select attributeid from attributes where name like ? and instanceid=?",name,instance.getId());
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {
@@ -79,7 +79,7 @@ public class Attribute extends TableRow {
 	public static Attribute findGroup(@Nonnull final Instance instance,
 	                                  @Nonnull final String grouptype) {
 		try {
-			final int id=db().dqinn("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
+			final int id=db().dqiNotNull("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {

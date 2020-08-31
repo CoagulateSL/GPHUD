@@ -76,7 +76,7 @@ public class Landmark extends TableRow {
 	public static Landmark find(@Nonnull final Instance instance,
 	                            @Nonnull final String name) {
 		try {
-			final int id=db().dqinn("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+" ?",
+			final int id=db().dqiNotNull("select landmarks.id from landmarks,regions where landmarks.regionid=regions.regionid and regions.instanceid=? and landmarks.name like"+" ?",
 			                        instance.getId(),
 			                        name
 			                       );

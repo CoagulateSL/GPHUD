@@ -26,7 +26,7 @@ public class InstanceDevelopers extends Table {
 	public static boolean isDeveloper(@Nonnull final Instance instance,
 	                                  @Nonnull final User developer) {
 		if (!developer.hasDeveloperKey()) { return false; }
-		if (db().dqinn("select count(*) from instancedevelopers where instanceid=? and developerid=?",instance.getId(),developer.getId()) >= 1) {
+		if (db().dqiNotNull("select count(*) from instancedevelopers where instanceid=? and developerid=?",instance.getId(),developer.getId()) >= 1) {
 			return true;
 		}
 		return false;

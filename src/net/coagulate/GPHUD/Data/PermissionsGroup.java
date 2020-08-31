@@ -57,7 +57,7 @@ public class PermissionsGroup extends TableRow {
 	public static PermissionsGroup find(@Nonnull final String name,
 	                                    @Nonnull final Instance i) {
 		try {
-			final int id=db().dqinn("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",name,i.getId());
+			final int id=db().dqiNotNull("select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",name,i.getId());
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
@@ -110,7 +110,7 @@ public class PermissionsGroup extends TableRow {
 	                          @Nonnull String name) {
 		name=name.trim();
 		if (name.isEmpty()) { throw new UserInputEmptyException("Can not create permissions group with blank name"); }
-		final int exists=db().dqinn("select count(*) from permissionsgroups where name like ? and instanceid=?",name,st.getInstance().getId());
+		final int exists=db().dqiNotNull("select count(*) from permissionsgroups where name like ? and instanceid=?",name,st.getInstance().getId());
 		if (exists!=0) { throw new UserInputDuplicateValueException("Permissions group already exists? ("+exists+" results)"); }
 		db().d("insert into permissionsgroups(name,instanceid) values(?,?)",name,st.getInstance().getId());
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","PermissionsGroup",null,name,"Avatar created new permissions group");

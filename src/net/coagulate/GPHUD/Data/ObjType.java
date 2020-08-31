@@ -39,12 +39,12 @@ public class ObjType extends TableRow {
 	public static ObjType create(@Nonnull final State st,
 	                             @Nonnull final String name,
 	                             @Nonnull final JSONObject behaviour) {
-		final int existing=db().dqinn("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		final int existing=db().dqiNotNull("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		if (existing>0) {
 			throw new UserInputDuplicateValueException("ObjectType "+name+" already exists in instance "+st.getInstance());
 		}
 		db().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
-		final int newid=db().dqinn("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		final int newid=db().dqiNotNull("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
 		return get(newid);
 	}
 

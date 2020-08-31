@@ -29,7 +29,7 @@ public class Obj extends TableRow {
 	@Nonnull
 	public static Obj find(final State st,
 	                       final String uuid) {
-		final int id=db().dqinn("select id from objects where uuid=?",uuid);
+		final int id=db().dqiNotNull("select id from objects where uuid=?",uuid);
 		return new Obj(id);
 	}
 
@@ -46,7 +46,7 @@ public class Obj extends TableRow {
 	 */
 	public static int getMaxVersion() {
 		try {
-			return db().dqinn("select max(version) as maxver from objects");
+			return db().dqiNotNull("select max(version) as maxver from objects");
 		}
 		catch (@Nonnull final NoDataException e) { return 0; }
 	}
@@ -188,7 +188,7 @@ public class Obj extends TableRow {
 	 * Returns number of object connections to be purged
 	 */
 	public static int getPurgeInactiveCount() {
-		return db().dqinn("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
+		return db().dqiNotNull("select count(*) from objects where lastrx<(UNIX_TIMESTAMP()-(60*60*24))");
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class Currency extends TableRow {
 		Cache<Currency> cache=Cache.getCache("GPHUD-currencynames-" + st.getInstance().getId());
 		try { return cache.get(name); }
 		catch (Cache.CacheMiss e) {
-			return cache.put(name,get(GPHUD.getDB().dqinn("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name)),300);
+			return cache.put(name,get(GPHUD.getDB().dqiNotNull("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name)),300);
 		}
 	}
 

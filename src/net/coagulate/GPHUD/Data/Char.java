@@ -68,7 +68,7 @@ public class Char extends TableRow {
 	public static void refreshURL(@Nonnull final String url) {
 		final String t="characters";
 		final int refreshifolderthan=getUnixTime()-REFRESH_INTERVAL;
-		final int toupdate=db().dqinn("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
+		final int toupdate=db().dqiNotNull("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
@@ -89,7 +89,7 @@ public class Char extends TableRow {
 	public static Char getActive(@Nonnull final User avatar,
 	                             @Nonnull final Instance instance) {
 		try {
-			final int i=db().dqinn("select characterid from characters where playedby=? and instanceid=?",avatar.getId(),instance.getId());
+			final int i=db().dqiNotNull("select characterid from characters where playedby=? and instanceid=?",avatar.getId(),instance.getId());
 			return get(i);
 		}
 		catch (@Nonnull final NoDataException e) {

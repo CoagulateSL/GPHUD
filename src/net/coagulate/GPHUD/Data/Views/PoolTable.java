@@ -104,7 +104,7 @@ public class PoolTable extends PagedSQL {
 
 	@Override
 	protected int getRowCount() {
-		return db().dqinn("select count(*) from characterpools where poolname=? and characterid="+forchar.getId()+" "+getAdditionalWhere()+" order by timedate desc ",
+		return db().dqiNotNull("select count(*) from characterpools where poolname=? and characterid="+forchar.getId()+" "+getAdditionalWhere()+" order by timedate desc ",
 		                  poolname
 		                 );
 	}
