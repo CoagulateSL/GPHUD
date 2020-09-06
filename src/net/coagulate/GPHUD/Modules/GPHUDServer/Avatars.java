@@ -71,6 +71,8 @@ public abstract class Avatars {
 		final JSONObject json=new JSONObject();
 		json.put("autoattach",st.getKV("gphudserver.autoattach"));
 		json.put("parcelonly",st.getKV("gphudserver.parcelonly"));
+		json.put("minz",st.getKV("gphudserver.dispenserminimumz"));
+		json.put("maxz",st.getKV("gphudserver.dispensermaximumz"));
 		return new JSONResponse(json);
 	}
 

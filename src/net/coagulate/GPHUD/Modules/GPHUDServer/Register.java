@@ -103,6 +103,8 @@ public abstract class Register {
 		j.put("autoattach",st.getKV("GPHUDServer.AutoAttach"));
 		j.put("parcelonly",st.getKV("GPHUDServer.ParcelONLY"));
 		j.put("setlogo",st.getKV("GPHUDClient.logo"));
+		j.put("minz",st.getKV("gphudserver.dispenserminimumz"));
+		j.put("maxz",st.getKV("gphudserver.dispensermaximumz"));
 		instance.updateStatus();
 		return new JSONResponse(j);
 	}
@@ -111,6 +113,8 @@ public abstract class Register {
 		final JSONObject j=new JSONObject();
 		j.put("autoattach",st.getKV("GPHUDServer.AutoAttach"));
 		j.put("parcelonly",st.getKV("GPHUDServer.ParcelONLY"));
+		j.put("minz",st.getKV("gphudserver.dispenserminimumz"));
+		j.put("maxz",st.getKV("gphudserver.dispensermaximumz"));
 		st.getInstance().sendServers(j);
 	}
 }
