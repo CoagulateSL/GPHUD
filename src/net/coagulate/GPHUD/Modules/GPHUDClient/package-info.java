@@ -4,7 +4,7 @@
 
 @Permissions(name="config",
              description="Ability to configure the GPHUD interface",
-             power=Permission.POWER.MEDIUM)
+             power= Permission.POWER.MEDIUM)
 
 @Permissions(name="EditHUDText",
              description="Ability to configure the HUD floating text",
@@ -200,6 +200,17 @@
      type=KVTYPE.INTEGER,
      editpermission="GPHUDClient.Config")
 
+@KVS(name="NamesLessRPPrefix",
+	defaultvalue="",
+	conveyas="namelessprefix",
+	editpermission = "GPHUDClient.Config",
+	hierarchy = KVHIERARCHY.DELEGATING,
+	scope = KVSCOPE.NONSPATIAL,
+	type = KVTYPE.TEXT,
+	template = false,
+	description="If chat on the RP channel starts with this character, the name is not emitted at the start of the output.  Blank to disable")
+
+
 @KVS(name="Name",
      defaultvalue="--NAME--",
      description="Conveys the character name to the HUD for the RP Channel's use",
@@ -233,7 +244,7 @@
 
 @KVS(name="UIXBalance",
      type=KVTYPE.BOOLEAN,
-     description="Balance the quickbuttons three either side of the main HUD",
+     description="Balance the quick buttons three either side of the main HUD",
      defaultvalue="false",
      editpermission="GPHUDClient.Config",
      scope=KVSCOPE.COMPLETE,
@@ -253,11 +264,11 @@
 
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
-		import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
-		import net.coagulate.GPHUD.Modules.KV.KVS;
-		import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
-		import net.coagulate.GPHUD.Modules.KV.KVTYPE;
-		import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
-		import net.coagulate.GPHUD.Modules.Permission;
-		import net.coagulate.GPHUD.Modules.Permission.Permissions;
+import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
+import net.coagulate.GPHUD.Modules.KV.KVS;
+import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
+import net.coagulate.GPHUD.Modules.KV.KVTYPE;
+import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
+import net.coagulate.GPHUD.Modules.Permission;
+import net.coagulate.GPHUD.Modules.Permission.Permissions;
 
