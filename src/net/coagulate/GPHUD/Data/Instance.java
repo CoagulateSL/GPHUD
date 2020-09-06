@@ -433,7 +433,7 @@ public class Instance extends TableRow {
 			}
 		}
 		for (final ResultsRow r: dq(
-				"select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' group by "+"characterid")) {
+				"select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP' group by "+"characterid")) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalxp=r.getInt("total"); }
 		}
