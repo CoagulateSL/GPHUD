@@ -208,7 +208,7 @@
 	scope = KVSCOPE.NONSPATIAL,
 	type = KVTYPE.TEXT,
 	template = false,
-	description="If chat on the RP channel starts with this character, the name is not emitted at the start of the output.  Blank to disable")
+	description="If chat on the RP channel starts with this character, the name is not emitted at the start of the output.  Space to disable")
 
 
 @KVS(name="Name",

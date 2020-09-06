@@ -33,6 +33,7 @@ integer SHUTDOWN=TRUE;
 vector titlercolor=<0,0,0>;
 string titlertext="";
 integer opencmd=FALSE;
+string namelessprefix="";
 //// LOCAL INITIALISATION CODE 
 getNewCommsURL() {
 	URL_STAGE=-1;
@@ -195,6 +196,7 @@ integer process(key requestid) {
 	if (jsonget("leveltext")!="") { llOwnerSay(jsonget("leveltext")); }
 	if (jsonget("rpchannel")!="") { rpchannel=(integer)jsonget("rpchannel"); setupRpChannel();}
 	if (jsonget("name")!="") { charname=jsonget("name"); }
+	if (jsonget("namelessprefix")!="") { namelessprefix=jsonget("namelessprefix"); }
 	if (jsonget("teleport")!="") {
 		list pieces=llParseString2List(jsonget("teleport"),["|"],[]);
 		llTeleportAgentGlobalCoords(llGetOwner(),(vector)(llList2String(pieces,0)),(vector)(llList2String(pieces,1)),(vector)(llList2String(pieces,2)));
@@ -340,7 +342,15 @@ default {
 		}
 		if (logincomplete==0) { return; }
 		if (channel==rpchannel && id==llGetOwner() && !SHUTDOWN) {
-			string prename=llGetObjectName(); llSetObjectName(charname); llSay(0,text); llSetObjectName(prename);
+			string prename=llGetObjectName();
+			string nameas=charname;
+			if (namelessprefix!="" && namelessprefix!=" " && llSubStringIndex(text,namelessprefix)==0) {
+				text=llDeleteSubString(text,0,0);
+				nameas="";
+			}
+			llSetObjectName(nameas);
+			llSay(0,text);
+			llSetObjectName(prename);
 		}
 	}
 	touch_start(integer n)
