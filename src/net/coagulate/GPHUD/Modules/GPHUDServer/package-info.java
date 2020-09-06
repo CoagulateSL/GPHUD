@@ -38,7 +38,7 @@
      type = KVTYPE.FLOAT,
      hierarchy = KVHIERARCHY.DELEGATING,
      editpermission = "GPHUDServer.Config",
-     defaultvalue = "0",
+     defaultvalue = "9999",
      description = "Maximum height for HUD attach",
      conveyas = "maxz",
      name = "DispenserMaximumZ",
