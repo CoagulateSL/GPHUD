@@ -28,6 +28,9 @@ integer slave=0;
 integer IN_EXPERIENCE=TRUE;
 integer IS_ACTIVE=FALSE;
 
+float minz=0;
+float maxz=9999;
+
 
 integer getSlaveId() {
 	integer oldslave=slave;
@@ -80,6 +83,13 @@ forcedispense(key who) {
 	time=llListReplaceList(time,[0],i,i);
 }
 adduser(key check,integer when) {
+	if (minz!=0 || maxz!=9999) { 
+		list details=llGetObjectDetails(check,[OBJECT_POS]);
+		if (llGetListLength(details)==0) { return; }
+		vector pos=llList2Vector(details,0);
+		//llSay(0,llKey2Name(check)+" at z "+((string)(pos.z))+" range "+((string)minz)+" - "+((string)maxz));
+		if ((pos.z)<minz || (pos.z)>maxz) { return; }
+	}
 	if (llListFindList(keys,[check])!=-1) { return; }
 	if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
 	keys+=[check];
@@ -186,7 +196,8 @@ process(key id) {
 			autoattach=FALSE;
 		}
 	}
-	
+	if (jsonget("minz")) { minz=((float)jsonget("minz")); }
+	if (jsonget("maxz")) { maxz=((float)jsonget("maxz")); }
 	if (jsonget("parcelonly")!="")
 	{
 		if (jsonget("parcelonly")=="true") {
