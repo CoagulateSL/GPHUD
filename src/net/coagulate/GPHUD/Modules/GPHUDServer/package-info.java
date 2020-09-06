@@ -1,48 +1,48 @@
-@ModuleDefinition(description="Provides the interface for a GPHUD Server, providing region broadcast, HUD dispensing and visitation tracking",
-                  canDisable=false)
+@ModuleDefinition(description = "Provides the interface for a GPHUD Server, providing region broadcast, HUD dispensing and visitation tracking",
+                  canDisable = false)
 
-@Permissions(name="Config",
-             description="Configure operations of the GPHUD Server",
-             power=Permission.POWER.MEDIUM)
+@Permissions(name = "Config",
+             description = "Configure operations of the GPHUD Server",
+             power = Permission.POWER.MEDIUM)
 
-@KVS(scope=KVSCOPE.SERVER,
-     type=KVTYPE.BOOLEAN,
-     defaultvalue="false",
-     editpermission="GPHUDServer.Config",
-     name="AutoAttach",
-     description="Enable Experience based auto attachment of the HUD",
-     hierarchy=KVHIERARCHY.DELEGATING,
-     template=false)
+@KVS(scope = KVSCOPE.SERVER,
+     type = KVTYPE.BOOLEAN,
+     defaultvalue = "false",
+     editpermission = "GPHUDServer.Config",
+     name = "AutoAttach",
+     description = "Enable Experience based auto attachment of the HUD",
+     hierarchy = KVHIERARCHY.DELEGATING,
+     template = false)
 
-@KVS(scope=KVSCOPE.SERVER,
-     type=KVTYPE.BOOLEAN,
-     defaultvalue="false",
-     editpermission="GPHUDServer.Config",
-     name="ParcelONLY",
-     description="Scan only the PARCEL rather than the whole REGION",
-     hierarchy=KVHIERARCHY.DELEGATING,
-     template=false)
+@KVS(scope = KVSCOPE.SERVER,
+     type = KVTYPE.BOOLEAN,
+     defaultvalue = "false",
+     editpermission = "GPHUDServer.Config",
+     name = "ParcelONLY",
+     description = "Scan only the PARCEL rather than the whole REGION",
+     hierarchy = KVHIERARCHY.DELEGATING,
+     template = false)
 
-@KVS(scope=KVSCOPE.SPATIAL,
-        type = KVTYPE.FLOAT,
-        hierarchy = KVHIERARCHY.DELEGATING,
-        editpermission = "GPHUDServer.Config",
-        defaultvalue = "0",
-        description = "Minimum height for HUD attach",
-        conveyas = "minz",
-        name = "DispenserMinimumZ",
-        template = false
-    )
+@KVS(scope = KVSCOPE.SPATIAL,
+     type = KVTYPE.FLOAT,
+     hierarchy = KVHIERARCHY.DELEGATING,
+     editpermission = "GPHUDServer.Config",
+     defaultvalue = "0",
+     description = "Minimum height for HUD attach",
+     conveyas = "minz",
+     name = "DispenserMinimumZ",
+     template = false
+)
 
-@KVS(scope=KVSCOPE.SPATIAL,
-        type = KVTYPE.FLOAT,
-        hierarchy = KVHIERARCHY.DELEGATING,
-        editpermission = "GPHUDServer.Config",
-        defaultvalue = "0",
-        description = "Maximum height for HUD attach",
-        conveyas = "maxz",
-        name = "DispenserMaximumZ",
-        template = false
+@KVS(scope = KVSCOPE.SPATIAL,
+     type = KVTYPE.FLOAT,
+     hierarchy = KVHIERARCHY.DELEGATING,
+     editpermission = "GPHUDServer.Config",
+     defaultvalue = "0",
+     description = "Maximum height for HUD attach",
+     conveyas = "maxz",
+     name = "DispenserMaximumZ",
+     template = false
 )
 
 package net.coagulate.GPHUD.Modules.GPHUDServer;
