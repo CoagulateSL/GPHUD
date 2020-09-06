@@ -23,24 +23,22 @@
      hierarchy = KVHIERARCHY.DELEGATING,
      template = false)
 
-@KVS(scope = KVSCOPE.SPATIAL,
+@KVS(scope = KVSCOPE.SERVER,
      type = KVTYPE.FLOAT,
      hierarchy = KVHIERARCHY.DELEGATING,
      editpermission = "GPHUDServer.Config",
      defaultvalue = "0",
      description = "Minimum height for HUD attach",
-     conveyas = "minz",
      name = "DispenserMinimumZ",
      template = false
 )
 
-@KVS(scope = KVSCOPE.SPATIAL,
+@KVS(scope = KVSCOPE.SERVER,
      type = KVTYPE.FLOAT,
      hierarchy = KVHIERARCHY.DELEGATING,
      editpermission = "GPHUDServer.Config",
      defaultvalue = "9999",
      description = "Maximum height for HUD attach",
-     conveyas = "maxz",
      name = "DispenserMaximumZ",
      template = false
 )
