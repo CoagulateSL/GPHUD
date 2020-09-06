@@ -6,7 +6,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCList;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction;
-import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -20,7 +20,7 @@ public class EffectsFunctions {
 	            returns="List of "+"Strings - names of all the applied effects",
 	            notes="",
 	            privileged=false,
-	            category=SCRIPTCATEGORY.EFFECTS)
+	            category= SCRIPT_CATEGORY.EFFECTS)
 	@Nonnull
 	public static BCList gsGetEffects(final State st,
 	                                  @Nonnull final GSVM vm,
@@ -38,7 +38,7 @@ public class EffectsFunctions {
 	            privileged=false,
 	            returns="Integer - number of seconds left on the effect, or -1 if the effect is not active on this character",
 	            notes="",
-	            category=SCRIPTCATEGORY.EFFECTS)
+	            category= SCRIPT_CATEGORY.EFFECTS)
 	@Nonnull
 	public static BCInteger gsGetEffectDuration(final State st,
 	                                            @Nonnull final GSVM vm,
@@ -53,7 +53,7 @@ public class EffectsFunctions {
 	            privileged=false,
 	            returns="Integer - the number zero if buff was not applied, 1 if it was",
 	            notes="",
-	            category=SCRIPTCATEGORY.EFFECTS)
+	            category= SCRIPT_CATEGORY.EFFECTS)
 	public static BCInteger gsApplyEffect(final State st,
 	                                      @Nonnull final GSVM vm,
 	                                      @Nonnull final BCCharacter target,
@@ -71,7 +71,7 @@ public class EffectsFunctions {
 	            privileged=false,
 	            returns="Integer - 1 if an effect was removed, otherwise zero",
 	            notes="",
-	            category=SCRIPTCATEGORY.EFFECTS)
+	            category= SCRIPT_CATEGORY.EFFECTS)
 	public static BCInteger gsRemoveEffect(final State st,
 	                                       @Nonnull final GSVM vm,
 	                                       @Nonnull final BCCharacter target,

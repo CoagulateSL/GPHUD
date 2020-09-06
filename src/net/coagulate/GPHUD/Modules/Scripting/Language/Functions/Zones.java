@@ -4,7 +4,7 @@ import net.coagulate.GPHUD.Data.Zone;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction;
-import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -18,7 +18,7 @@ public class Zones {
 	            returns="The String name of the zone the character is in, may be blank",
 	            notes="",
 	            privileged=false,
-	            category=SCRIPTCATEGORY.ZONES)
+	            category= SCRIPT_CATEGORY.ZONES)
 	@Nonnull
 	public static BCString gsGetZone(@Nonnull final State st,
 	                                 @Nonnull final GSVM vm,

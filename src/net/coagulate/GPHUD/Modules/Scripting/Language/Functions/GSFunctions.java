@@ -9,37 +9,37 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class GSFunctions {
-	private static final Map<String,Method> functionmap=new HashMap<>();
+	private static final Map<String,Method> functionMap =new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 	// ---------- STATICS ----------
-	public static Method get(final String functionname) {
-		if (functionmap.containsKey(functionname)) { return functionmap.get(functionname); }
-		throw new GSUnknownIdentifier("Function call "+functionname+" is not defined.");
+	public static Method get(final String functionName) {
+		if (functionMap.containsKey(functionName)) { return functionMap.get(functionName); }
+		throw new GSUnknownIdentifier("Function call "+functionName+" is not defined.");
 	}
 
 	public static void register(final String string,
 	                            final Method method) {
-		if (functionmap.containsKey(string)) {
+		if (functionMap.containsKey(string)) {
 			throw new SystemImplementationException("Duplicate definition for gsFunction "+string);
 		}
-		functionmap.put(string,method);
+		functionMap.put(string,method);
 	}
 
 	@Nonnull
-	public static Map<String,Method> getAll() { return functionmap; }
+	public static Map<String,Method> getAll() { return functionMap; }
 
 	public static void assertModule(final State st,
-	                                final String modulename) {
-		if (!Modules.get(null,modulename).isEnabled(st)) {
-			throw new GSResourceUnavailableException(modulename+" module is disabled, thus its function calls are disabled.");
+	                                final String moduleName) {
+		if (!Modules.get(null,moduleName).isEnabled(st)) {
+			throw new GSResourceUnavailableException(moduleName+" module is disabled, thus its function calls are disabled.");
 		}
 	}
 
-	public enum SCRIPTCATEGORY {
+	public enum SCRIPT_CATEGORY {
 		API,
 		AVATAR,
 		CURRENCY,
@@ -70,7 +70,7 @@ public class GSFunctions {
 
 		@Nonnull String notes();
 
-		@Nonnull SCRIPTCATEGORY category();
+		@Nonnull SCRIPT_CATEGORY category();
 
 		boolean privileged();
 	}

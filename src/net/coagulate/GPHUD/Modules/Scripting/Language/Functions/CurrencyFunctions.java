@@ -5,7 +5,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.GSFunction;
-import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -20,7 +20,7 @@ public class CurrencyFunctions {
 	                        returns="Integer - Number of basecoins the character has",
 	                        notes="",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.CURRENCY)
+	                        category= SCRIPT_CATEGORY.CURRENCY)
 	public static BCInteger gsGetBalance(@Nonnull final State st,
 	                                     @Nonnull final GSVM vm,
 	                                     @Nonnull final BCCharacter target,
@@ -36,7 +36,7 @@ public class CurrencyFunctions {
 	            returns="BCString - Formatted representation of the currency",
 	            notes="",
 	            privileged=false,
-	            category=SCRIPTCATEGORY.CURRENCY)
+	            category= SCRIPT_CATEGORY.CURRENCY)
 	public static BCString gsFormatCoins(@Nonnull final State st,
 	                                     @Nonnull final GSVM vm,
 	                                     @Nonnull final BCString currencyname,
@@ -52,7 +52,7 @@ public class CurrencyFunctions {
 	            returns="BCString - Formatted representation of the currency",
 	            notes="",
 	            privileged=false,
-	            category=SCRIPTCATEGORY.CURRENCY)
+	            category= SCRIPT_CATEGORY.CURRENCY)
 	public static BCString gsFormatCoinsLong(@Nonnull final State st,
 	                                         @Nonnull final GSVM vm,
 	                                         @Nonnull final BCString currencyname,
@@ -68,7 +68,7 @@ public class CurrencyFunctions {
 	            returns="BCInteger - number of base coins this represented",
 	            notes="",
 	            privileged=false,
-	            category=SCRIPTCATEGORY.CURRENCY)
+	            category= SCRIPT_CATEGORY.CURRENCY)
 	public static BCInteger gsParseCoins(@Nonnull final State st,
 	                                     @Nonnull final GSVM vm,
 	                                     @Nonnull final BCString currencyname,

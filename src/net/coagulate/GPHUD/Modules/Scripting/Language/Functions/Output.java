@@ -4,7 +4,7 @@ import net.coagulate.GPHUD.Data.Landmark;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
-import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceUnavailableException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
@@ -21,7 +21,7 @@ public class Output {
 	                        returns="Integer - The number 0",
 	                        notes="Messages are stacked up, per user, until the script completes or is suspended",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.OUTPUT)
+	                        category= SCRIPT_CATEGORY.OUTPUT)
 	public static BCInteger gsSayAsChar(final State st,
 	                                    @Nonnull final GSVM vm,
 	                                    @Nonnull final BCCharacter target,
@@ -38,7 +38,7 @@ public class Output {
 	                        returns="Integer - The number 0",
 	                        notes="Messages are stacked up, per user, until the script completes or is suspended",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.OUTPUT)
+	                        category= SCRIPT_CATEGORY.OUTPUT)
 	public static BCInteger gsSayAsHUD(final State st,
 	                                   @Nonnull final GSVM vm,
 	                                   @Nonnull final BCCharacter target,
@@ -55,7 +55,7 @@ public class Output {
 	                        returns="Integer - The number 0",
 	                        notes="Messages are stacked up, per user, until the script completes or is "+"suspended",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.OUTPUT)
+	                        category= SCRIPT_CATEGORY.OUTPUT)
 	public static BCInteger gsSayToChar(final State st,
 	                                    @Nonnull final GSVM vm,
 	                                    @Nonnull final BCCharacter target,
@@ -72,7 +72,7 @@ public class Output {
 	                        returns="Integer - 0",
 	                        notes="",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.OUTPUT)
+	                        category= SCRIPT_CATEGORY.OUTPUT)
 	public static BCInteger gsTeleport(@Nonnull final State st,
 	                                   @Nonnull final GSVM vm,
 	                                   @Nonnull final BCCharacter target,
@@ -92,7 +92,7 @@ public class Output {
 	                        returns="Integer - 1 if the message was sent, 0 if not",
 	                        notes="Messages are stacked up, per user, until the script completes or is suspended",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.OUTPUT)
+	                        category= SCRIPT_CATEGORY.OUTPUT)
 	public static BCInteger gsSayAsCharIfOnline(final State st,
 	                                            @Nonnull final GSVM vm,
 	                                            @Nonnull final BCCharacter target,
@@ -109,7 +109,7 @@ public class Output {
 	                        returns="Integer - 1 if the message was sent, 0 if not",
 	                        notes="Messages are stacked up, per user, until the script completes or is suspended",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.OUTPUT)
+	                        category= SCRIPT_CATEGORY.OUTPUT)
 	public static BCInteger gsSayAsHUDIfOnline(final State st,
 	                                           @Nonnull final GSVM vm,
 	                                           @Nonnull final BCCharacter target,
@@ -126,7 +126,7 @@ public class Output {
 	                        returns="Integer - 1 if the message was sent, 0 if not",
 	                        notes="Messages are stacked up, per user, until the script completes or is "+"suspended",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.OUTPUT)
+	                        category= SCRIPT_CATEGORY.OUTPUT)
 	public static BCInteger gsSayToCharIfOnline(final State st,
 	                                            @Nonnull final GSVM vm,
 	                                            @Nonnull final BCCharacter target,

@@ -2,7 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
-import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPTCATEGORY;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -18,7 +18,7 @@ public class DateTime {
 	                        parameters="",
 	                        returns="Integer - current Epoch time (number of "+"seconds since 01/01/1970)",
 	                        privileged=false,
-	                        category=SCRIPTCATEGORY.DATETIME)
+	                        category= SCRIPT_CATEGORY.DATETIME)
 	public static BCInteger gsGetUnixTime(final State st,
 	                                      final GSVM vm) {
 		return new BCInteger(null,UnixTime.getUnixTime());
