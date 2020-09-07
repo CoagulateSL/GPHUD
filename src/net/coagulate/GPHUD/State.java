@@ -520,8 +520,15 @@ public class State extends DumpableState {
 		// events in ID order
 		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.SPATIAL || scope==KV.KVSCOPE.EVENT) {
 			final Map<Integer,Event> eventMap=new TreeMap<>();
+			Zone zone=null;
+			if (character!=null) { zone=character.getZone(); }
 			for (final Event e: Event.getActive(this)) {
-				eventMap.put(e.getId(),e);
+				boolean playerInZone=false;
+				for (Zone eventZone:e.getZones()) {
+					if (eventZone==zone) {
+						eventMap.put(e.getId(), e);
+					}
+				}
 			}
 			check.addAll(eventMap.values());
 		}
