@@ -215,7 +215,7 @@ public class Zone extends TableRow {
 			final String[] vectors=a.getVectors();
 			if (vectors!=null) {
 				if (s.length()>0) { s.append("|"); }
-				s=new StringBuilder(getName()+"|"+vectors[0]+"|"+vectors[1]);
+				s.append(getName()).append("|").append(vectors[0]).append("|").append(vectors[1]);
 			}
 		}
 		return s.toString();
