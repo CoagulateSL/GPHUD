@@ -144,6 +144,7 @@ public class GPHUD extends SLModule {
 		Classes.initialise();
 
 		// tracing, if we're tracing
+		// turn on path tracing AFTER initialisation as initialisation may update the schema from the module directly
 		if (Config.getDatabasePathTracing()) {
 			GPHUD.log().config("Database calling path verification is enabled for GPHUD");
 			GPHUD.db.permit("net.coagulate.GPHUD.Data");
