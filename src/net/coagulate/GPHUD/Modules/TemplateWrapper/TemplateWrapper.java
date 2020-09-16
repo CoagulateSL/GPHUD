@@ -16,8 +16,6 @@ import static java.util.logging.Level.SEVERE;
 
 public class TemplateWrapper extends ModuleAnnotation {
 
-	private Map<String,String> externals;
-
 	public TemplateWrapper(final String name,
 	                       final ModuleDefinition def) {
 		super(name,def);
@@ -46,7 +44,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public Map<String,String> getExternalTemplates(@Nonnull final State st) {
-		if (externals!=null) { return externals; }
+		if (st.externals!=null) { return st.externals; }
 		final Map<String,String> list=new TreeMap<>(Templater.templates);
 		final Map<String,String> listtrimmed=new TreeMap<>();
 		for (final Module m: Modules.getModules()) {
@@ -58,7 +56,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 			final String element=entry.getKey();
 			listtrimmed.put(trim(element),entry.getValue());
 		}
-		externals=listtrimmed;
+		st.externals=listtrimmed;
 		return listtrimmed;
 	}
 

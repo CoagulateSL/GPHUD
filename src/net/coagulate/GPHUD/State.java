@@ -37,6 +37,8 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
  * @author Iain Price <gphud@predestined.net>
  */
 public class State extends DumpableState {
+	public Map<String,String> externals;
+
 	private static final Map<Thread, State> stateMap =new ConcurrentHashMap<>();
 	public static void maintenance() {
 		try {
