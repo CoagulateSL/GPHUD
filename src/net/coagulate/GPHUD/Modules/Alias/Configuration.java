@@ -115,7 +115,9 @@ public abstract class Configuration {
 				final JSONObject old=a.getTemplate();
 				final JSONObject template=new JSONObject();
 				for (final String k: values.keySet()) {
-					if (!"Update".equals(k)) { template.put(k,values.get(k)); }
+					if (!"Update".equals(k) && !"okreturnurl".equals(k) && !values.get(k).isEmpty()) {
+						template.put(k,values.get(k));
+					}
 				}
 				template.put("invoke",old.get("invoke"));
 				a.setTemplate(template);
