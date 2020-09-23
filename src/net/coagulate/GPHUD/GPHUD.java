@@ -116,7 +116,7 @@ public class GPHUD extends SLModule {
 	@Override
 	public Map<ServiceTile, Integer> getServices() {
 		HashMap<ServiceTile,Integer> map = new HashMap<>();
-		map.put(new ServiceTile("GPHUD","Second generation role-play HUD<br>&nbsp;<br>Used to implement attribute/dice based RP environments","/GPHUD/","/resources/serviceicon-gphud.png",getVersion(),getBuildDateString(),commitId()),10);
+		map.put(new ServiceTile("GPHUD","Second generation role-play HUD - used to implement attribute/dice based RP environments","/GPHUD/","/resources/serviceicon-gphud.png",getVersion(),getBuildDateString(),commitId()),10);
 		return map;
 	}
 
