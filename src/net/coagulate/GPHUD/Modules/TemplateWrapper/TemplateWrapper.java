@@ -63,7 +63,7 @@ public class TemplateWrapper extends ModuleAnnotation {
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
-		final Map<String,KV> kv=super.getKVDefinitions(st);
+		final Map<String, KV> kv = new TreeMap<>(super.getKVDefinitions(st));
 		for (final String template: getExternalTemplates(st).keySet()) {
 			kv.put(template.toLowerCase()+"prefix",new TemplatePrefix(template));
 			kv.put(template.toLowerCase()+"postfix",new TemplatePostfix(template));

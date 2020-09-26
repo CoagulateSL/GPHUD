@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -73,7 +74,8 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	// ----- Internal Instance -----
 	private void keyConveyances(@Nonnull final Map<String,KV> filterinto,
 	                            @Nonnull final Map<String,KV> filterfrom) {
-		for (final KV kv: filterfrom.values()) {
+		final Map<String,KV> copy= new HashMap<>(filterfrom); // lame concurrency fix?
+		for (final KV kv: copy.values()) {
 			final String conveyas=kv.conveyas();
 			if (!conveyas.isEmpty()) {
 				final String newname="conveyance-"+conveyas;
