@@ -3,11 +3,13 @@ package net.coagulate.GPHUD.Modules.Characters;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Data.Views.AuditTable;
 import net.coagulate.GPHUD.Data.Views.PoolTable;
+import net.coagulate.GPHUD.Data.Visit;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -125,6 +127,8 @@ public abstract class View {
 		final Integer lastplayedstored=c.getLastPlayed();
 		if (lastplayedstored!=null) { lastplayed=fromUnixTime(lastplayedstored,tz); }
 		kvtable.openRow().add("Last Played").add(lastplayed).add(tz);
+		kvtable.openRow().add("Online Time (last week)").add(UnixTime.duration(Visit.sumVisits(c,UnixTime.getUnixTime()-(60*60*24*7))));
+		kvtable.openRow().add("Online Time (last 4 weeks)").add(UnixTime.duration(Visit.sumVisits(c,UnixTime.getUnixTime()-(60*60*24*7*4))));
 		kvtable.openRow().add("Connected");
 		if (c.getURL()==null || c.getURL().isEmpty()) { kvtable.add("No"); }
 		else { kvtable.add("Yes"); }
