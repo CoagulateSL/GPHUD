@@ -50,7 +50,8 @@ public class GSFunctions {
 		KV,
 		OUTPUT,
 		RANDOMNESS,
-		ZONES
+		ZONES,
+		CHARACTER
 	}
 
 	/**
