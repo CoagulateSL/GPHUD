@@ -166,10 +166,10 @@ integer process(key requestid) {
 	if (jsonget("error")!="") { typedSay(jsonget("error")); }
 	if (jsonget("opencmd")!="") { if (jsonget("opencmd")=="true") { opencmd=TRUE; setupListeners(); } else { opencmd=FALSE; setupListeners(); }}
 	if (jsonget("terminate")!="") {
-		gphud_hang("=== TERMINATED ===: "+jsonget("terminate"));
+		gphud_hang("=== TERMINATED ===: "+jsonget("terminate"),TRUE);
 	}			
 	if (incommand=="shutdown" || jsonget("shutdown")!="") {
-		gphud_hang("Shutdown requested: "+jsonget("shutdown"));
+		gphud_hang("Shutdown requested: "+jsonget("shutdown"),TRUE);
 	}	
 	if (incommand=="reboot" || jsonget("reboot")!="") {
 		llOwnerSay("Rebooting at request from server: "+jsonget("reboot"));
@@ -190,7 +190,7 @@ integer process(key requestid) {
 		llRegionSayTo(llGetOwner(),broadcastchannel,totitler);
 		//llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titler\":\""+(string)titlercolor+"|"+titlertext+"\"}");
 	}
-	if (jsonget("hudreplace")!="") { gphud_hang("Duplicate GPHUD attached, detaching one"); }
+	if (jsonget("hudreplace")!="") { gphud_hang("Duplicate GPHUD attached, detaching one",FALSE); }
 	if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
 	if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
 	if (jsonget("leveltext")!="") { llOwnerSay(jsonget("leveltext")); }
@@ -214,12 +214,14 @@ integer process(key requestid) {
 	return TRUE;
 }
 
-gphud_hang(string reason) {
+gphud_hang(string reason,integer killTitler) {
 	shutdown();
 	if (reason!="") { llOwnerSay(reason); }
 	if (llGetInventoryType("Attacher")!=INVENTORY_SCRIPT) {
 		llSetLinkPrimitiveParamsFast(LINK_SET,[PRIM_TEXT,"",<0,0,0>,0,PRIM_COLOR,ALL_SIDES,<0,0,0>,0,PRIM_POS_LOCAL,<-10,-10,-10>]);
-		llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); llDetachFromAvatar();
+		if (killTitler) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); }
+		llSleep(2.0/45.0);
+		llDetachFromAvatar();
 	} else { 
 		llOwnerSay("Shutdown and not detaching");
 		llSetText("Shutdown",<1,.8,.8>,1);
@@ -332,7 +334,7 @@ default {
 		if (channel==1 && (id==llGetOwner() || (llGetOwnerKey(id)==llGetOwner() && opencmd==TRUE))) {
 			if (text=="status" && id==SYSTEM_OWNER_UUID) { llOwnerSay("HUD: "+(string)llGetFreeMemory()); llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"",""); return;}
 			if (text=="reconnect") { shutdown(); getNewCommsURL(); return; }
-			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); gphud_hang("HUD shutdown requested by wearer."); }
+			if (text=="shutdown") { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerremove\":\"titlerremove\"}"); llSleep(2.0/45.0); gphud_hang("HUD shutdown requested by wearer.",TRUE); }
 			if (text=="reboot") { llResetScript(); }
 			if (logincomplete==0) { return; }
 			if (!SHUTDOWN) {
