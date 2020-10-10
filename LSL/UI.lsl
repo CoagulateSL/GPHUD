@@ -207,7 +207,7 @@ processInput(string text) {
 				if (prefix!=-1) { //llOwnerSay("Prefix multimatch");
 					prefix=-2;
 				} else {
-					prefix=i;
+					prefix=ii;
 				}
 			}
 		}
