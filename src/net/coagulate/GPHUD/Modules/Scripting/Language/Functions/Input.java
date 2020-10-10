@@ -102,4 +102,16 @@ public class Input {
 		return new BCInteger(null,1);
 	}
 
+	@Nonnull
+	@GSFunctions.GSFunction(description = "Returns a new line character",
+							parameters="None",
+							notes="",
+							returns="String - a newline character",
+							privileged = false,
+							category = SCRIPT_CATEGORY.INPUT)
+	public static BCString gsNewLine(final State st,
+									 final GSVM vm)
+	{
+		return new BCString(null,"\n");
+	}
 }
