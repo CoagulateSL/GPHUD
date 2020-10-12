@@ -17,6 +17,8 @@
 #define CHECKIN_MINUTES 15
 string MODE="NONE";
 
+integer ODVERSION=1;
+
 startLogin() {
 	json=llJsonSetValue("",["version"],VERSION);
 	json=llJsonSetValue(json,["versiondate"],COMPILEDATE);
@@ -47,7 +49,7 @@ integer process(key id) {
 	if (jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
 		string totitler=llJsonSetValue("",["titler"],(string)titlercolor+"|"+titlertext);
 		llSetText(titlertext,titlercolor,1);
-	}	
+	}
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;
@@ -118,16 +120,37 @@ dolisten() {
 		calculatebroadcastchannel();
 		llListen(broadcastchannel,"",NULL_KEY,"");		
 }
+integer updatelock=0;
 all_listen(integer channel,string name,key id,string text) {
 	if (channel==broadcastchannel) {
 		json=text;
 		json=llJsonSetValue(json,["incommand"],"broadcast");
+		if (jsonget("objectdriverversioncheck")!="" && llGetOwnerKey(id)==llGetOwner()) {
+			integer otherversion=(integer)(jsonget("objectdriverversioncheck"));
+			if (otherversion>ODVERSION && updatelock<llGetUnixTime()) {
+				integer pin=0;
+				updatelock=llGetUnixTime()+300;
+				while (pin>-1000 && pin<1000) {
+					pin=((integer)(llFrand(1999999999)-1000000000));
+				}
+				llSetRemoteScriptAccessPin(pin);
+				string jsonrequestupdate=llJsonSetValue("",["objectdriverupdatepin"],((string)pin));
+				llRegionSayTo(id,broadcastchannel,jsonrequestupdate);
+			}
+		}
+		if(UPDATER && jsonget("objectdriverupdatepin")!="") {
+			integer pin=(integer)(jsonget("objectdriverupdatepin"));
+			llOwnerSay("Updating object driver in '"+name+"'");
+			llRemoteLoadScriptPin(id,llGetScriptName(),pin,TRUE,0);
+		}
 		process(NULL_KEY);
 	}
 }
+integer UPDATER=FALSE;
 default {
 	state_entry() {
-		if (llGetInventoryType("GPHUD Non Server Functionality Inihibitor")!=INVENTORY_NONE || llGetInventoryType("GPHUD Non Server Functionality Inhibitor")!=INVENTORY_NONE) { state wait; }
+		if (llGetScriptName()!="GPHUD Object Driver") { llOwnerSay("This script MUST be named 'GPHUD Object Driver'"); state dead; }
+		if (llGetInventoryType("GPHUD Object Driver Inhibitor")!=INVENTORY_NONE) { state wait; }
 		llSetText("",<0,0,0>,0);
 		setDev(FALSE);
 		setup(); dolisten();
@@ -150,10 +173,23 @@ default {
 	changed(integer change) { if ((change & CHANGED_REGION) || (change & CHANGED_REGION_START) || (change & CHANGED_OWNER)) { llResetScript(); }}	
 	on_rez(integer parameter) { llResetScript(); }	
 }
-
+state dead {
+	state_entry() { llSetText("Dead",<1,1,1>,1); }
+}
 state wait {
+	state_entry() {
+		dolisten();
+		llSetTimerEvent(60.0);
+	}
+	listen(integer channel,string name,key id,string text) { all_listen(channel,name,id,text); }	
 	changed(integer change) { if ((change & CHANGED_REGION) || (change & CHANGED_REGION_START) || (change & CHANGED_OWNER)) { llResetScript(); }}
 	on_rez(integer parameter) { llResetScript(); }
+	timer() {
+		json=llJsonSetValue("",["objectdriverversioncheck"],((string)ODVERSION));
+		llRegionSay(broadcastchannel,json);
+		UPDATER=TRUE;
+		llSetTimerEvent(0.0);
+	}
 }
 
 state none {
@@ -162,6 +198,7 @@ state none {
 		#ifdef DEBUG
 		llOwnerSay("Switched to NONE operational mode");
 		#endif
+		dolisten();
 	}
 	http_request(key id,string method,string body) { all_http_request(id,method,body);
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="CLICKABLE") { state clickable; }
@@ -183,6 +220,7 @@ state clickable {
 		#ifdef DEBUG
 		llOwnerSay("Switched to CLICKABLE operational mode");
 		#endif
+		dolisten();
 	}
 	http_request(key id,string method,string body) { all_http_request(id,method,body);
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="NONE") { state none; }
@@ -209,6 +247,7 @@ state phantom {
 		#ifdef DEBUG
 		llOwnerSay("Switched to PHANTOM VOLUME operational mode");
 		#endif
+		dolisten();
 	}
 	http_request(key id,string method,string body) { all_http_request(id,method,body);
 		if (BOOTSTAGE==BOOT_COMPLETE && MODE=="NONE") { state none; }
