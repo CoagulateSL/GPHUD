@@ -3,7 +3,6 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterPool;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -27,7 +26,7 @@ public abstract class Pool extends NameComparable {
 	public abstract String fullName();
 
 	public void delete(final State st) {
-		GPHUD.getDB().d("delete from characterpools where poolname like ?",fullName());
+		CharacterPool.delete(fullName());
 	}
 
 	public int entries(final State st,

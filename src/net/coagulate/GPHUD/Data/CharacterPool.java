@@ -297,7 +297,11 @@ public class CharacterPool {
 	// ----- Internal Statics -----
 	private static DBConnection db() { return GPHUD.getDB(); }
 
-	// ---------- INSTANCE ----------
+    public static void delete(String fullName) {
+		GPHUD.getDB().d("delete from characterpools where poolname like ?",fullName);
+    }
+
+    // ---------- INSTANCE ----------
 
 	/**
 	 * Calculate the date-time of the next free point for a pool.
