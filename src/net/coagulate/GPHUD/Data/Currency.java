@@ -183,7 +183,7 @@ public class Currency extends TableRow {
 	                    @Nonnull final String coinname) {
 		final int existsbybase=dqinn("select count(*) from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
 		if (existsbybase>0) { throw new UserInputDuplicateValueException("You can not create another coin with base value "+basevalue); }
-		final int existsbynames=dqinn("select count(*) from currencycoins where currencyid=? and coinname like ? or coinnameshort like ?",getId(),coinname,coinshortname);
+		final int existsbynames=dqinn("select count(*) from currencycoins where currencyid=? and ( coinname like ? or coinnameshort like ? )",getId(),coinname,coinshortname);
 		if (existsbynames>0) { throw new UserInputDuplicateValueException("You can not create another coin with names "+coinname+" ("+coinshortname+")"); }
 		if (basevalue<2) {
 			throw new UserInputInvalidChoiceException("You should not map a coin to a value less than 2, you should rename basecoins to alter the most basic currency unit");
