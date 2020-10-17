@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Interfaces.Inputs;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
@@ -55,7 +56,8 @@ public class DropDownList extends Input {
 		final DropDownList permissions=new DropDownList(name);
 		for (final Module mod: Modules.getModules()) {
 			for (final Permission p: mod.getPermissions(st).values()) {
-				permissions.add(mod.getName()+"."+p.name(),mod.getName()+"."+p.name());
+				try { permissions.add(mod.getName()+"."+p.name(),mod.getName()+"."+p.name()); }
+				catch (NoDataException ignored) {} // the attribute went away
 			}
 		}
 		return permissions;
