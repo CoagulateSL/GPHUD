@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Introspection;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Module;
@@ -34,22 +35,26 @@ public abstract class ManagePermissions {
 			if (!permissions.isEmpty()) {
 				t.add(new HeaderRow().add(new Cell(new TextSubHeader(m.getName()),999)));
 				for (final Map.Entry<String,Permission> entry: permissions.entrySet()) {
-					final Row r=new Row();
-					t.add(r);
-					r.setbgcolor(entry.getValue().getColor());
-					t.add(entry.getKey());
-					t.add(entry.getValue().description());
-					boolean bump=true;
-					if (entry.getValue().isGenerated()) {
-						t.add("<i>Generated</i>");
-						bump=false;
-					}
-					if (!entry.getValue().grantable()) {
-						if (bump) { t.add(""); }
-						t.add(new Color("red","Ungrantable"));
-					}
+					try {
+						final Row r = new Row();
+						t.add(r);
+						r.setbgcolor(entry.getValue().getColor());
+						t.add(entry.getKey());
+						t.add(entry.getValue().description());
+						boolean bump = true;
+						if (entry.getValue().isGenerated()) {
+							t.add("<i>Generated</i>");
+							bump = false;
+						}
+						if (!entry.getValue().grantable()) {
+							if (bump) {
+								t.add("");
+							}
+							t.add(new Color("red", "Ungrantable"));
+						}
+					} catch (NoDataException ignored) {}  // data went away mid run
 				}
-				t.add(new Row(new Cell(new Separator(),999)));
+				t.add(new Row(new Cell(new Separator(), 999)));
 			}
 		}
 	}
