@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.System.SystemLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
@@ -68,7 +69,10 @@ public class ObjType extends TableRow {
 			 .append("\">")
 			 .append(row.getStringNullable("name"))
 			 .append("</a></td>");
-			r.append("<td>").append(ObjectType.materialise(st,ot).explainHtml()).append("</td>");
+			r.append("<td>");
+			try { r.append(ObjectType.materialise(st,ot).explainHtml()); }
+			catch (SystemLookupFailureException e) { r.append("<i>NoType</i>"); }
+			r.append("</td>");
 			r.append("</tr>");
 		}
 		r.append("</table>");
