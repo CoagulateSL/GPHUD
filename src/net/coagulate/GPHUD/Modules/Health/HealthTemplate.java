@@ -13,11 +13,20 @@ public class HealthTemplate {
 	@Nonnull
 	@Templater.Template(name="HEALTH",
 	                    description="Character's health")
-	public static String abilityPoints(@Nonnull final State st,
+	public static String currentHealth(@Nonnull final State st,
 	                                   final String key) {
 		if (!st.hasModule("Health")) { return ""; }
 		if (st.getCharacterNullable()==null) { return ""; }
 		return st.getKV("Health.Health").intValue().toString();
+	}
+
+	@Nonnull
+	@Templater.Template(name="HEALTHMAX",description="Character's maximum health")
+	public static String maximumHealth(@Nonnull final State st,
+									   final String key) {
+		if (!st.hasModule("Health")) { return ""; }
+		if (st.getCharacterNullable()==null) { return ""; }
+		return st.getKV("health.initialhealth").intValue().toString();
 	}
 
 }
