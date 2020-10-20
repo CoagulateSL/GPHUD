@@ -185,7 +185,7 @@ void IntegerConstant() #IntegerConstant : {}
     <INTEGER_LITERAL>
 }
 
-void FloatConstant() #FLoatConstant : {}
+void FloatConstant() #FloatConstant : {}
 {
     <FLOATING_POINT_LITERAL>
 }

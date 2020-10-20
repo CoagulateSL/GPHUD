@@ -113,6 +113,8 @@ public abstract class ByteCode {
 				return new BCNot(null);
 			case Negate:
 				return new BCNegate(null);
+			case Float:
+				return new BCFloat(null,vm.getFloat());
 		}
 		throw new SystemImplementationException("Failed to materialise instruction "+decode);
 	}
@@ -157,6 +159,15 @@ public abstract class ByteCode {
 		bytes.add((byte) (a&0xff));
 	}
 
+	void addFloat(@Nonnull final List<Byte> bytes,
+				final float a) {
+		int asInt=Float.floatToIntBits(a);
+		bytes.add((byte) ((asInt >> 24)&0xff));
+		bytes.add((byte) ((asInt >> 16)&0xff));
+		bytes.add((byte) ((asInt >> 8)&0xff));
+		bytes.add((byte) (asInt&0xff));
+	}
+
 	void addShort(@Nonnull final List<Byte> bytes,
 	              final int a) {
 		bytes.add((byte) ((a >> 8)&0xff));
@@ -199,7 +210,8 @@ public abstract class ByteCode {
 		GreaterThan2((byte) 32),
 		GreaterThanEqual2((byte) 33),
 		Divide2((byte) 34),
-		Negate((byte) 35);
+		Negate((byte) 35),
+		Float((byte)36);
 		private final byte value;
 
 

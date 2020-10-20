@@ -389,6 +389,11 @@ public class GSVM {
 		PC+=4;
 		return ret;
 	}
+	public float getFloat() {
+		int getInt=getInt();
+		//System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
+		return Float.intBitsToFloat(getInt);
+	}
 
 	public int getShort() {
 		final int ret=((((int) bytecode[PC]&0xff)<<8)+(((int) bytecode[PC+1]&0xff)));

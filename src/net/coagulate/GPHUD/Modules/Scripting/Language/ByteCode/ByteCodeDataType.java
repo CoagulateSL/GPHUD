@@ -46,12 +46,20 @@ public abstract class ByteCodeDataType extends ByteCode {
 	}
 
 	@Nonnull
+	public BCFloat toBCFloat() {
+		if (getClass().equals(BCFloat.class)) { return (BCFloat) this; }
+		throw new GSCastException("Can not cast " + getClass().getSimpleName() + " to BCFloat");
+	}
+
+	@Nonnull
 	public BCList toBCList() {
 		if (getClass().equals(BCList.class)) { return (BCList) this; }
 		return new BCList(node(),this);
 	}
 
 	public int toInteger() { return toBCInteger().getContent(); }
+
+	public float toFloat() { return toBCFloat().getContent(); }
 
 	@Nullable
 	public abstract ByteCodeDataType clone();

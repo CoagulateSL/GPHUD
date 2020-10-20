@@ -2,15 +2,15 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=GS,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package net.coagulate.GPHUD.Modules.Scripting.Language.Generated;
 
-public class GSLogicalNot extends net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode {
-	public GSLogicalNot(int id) {
-		super(id);
-	}
+public
+class GSLogicalNot extends net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode {
+  public GSLogicalNot(int id) {
+    super(id);
+  }
 
-	public GSLogicalNot(GSParser p,
-	                    int id) {
-		super(p,id);
-	}
+  public GSLogicalNot(GSParser p, int id) {
+    super(p, id);
+  }
 
 }
 /* JavaCC - OriginalChecksum=33f2436baefde207b7a1aa10f42b0ee1 (do not edit this line) */

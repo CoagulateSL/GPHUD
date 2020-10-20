@@ -2,14 +2,14 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=GS,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package net.coagulate.GPHUD.Modules.Scripting.Language.Generated;
 
-public class GSUnaryMinus extends net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode {
+public
+class GSUnaryMinus extends net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode {
   public GSUnaryMinus(int id) {
     super(id);
   }
 
-  public GSUnaryMinus(GSParser p,
-                      int id) {
-    super(p,id);
+  public GSUnaryMinus(GSParser p, int id) {
+    super(p, id);
   }
 
 }

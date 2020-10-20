@@ -60,6 +60,7 @@ public class GSCompiler {
 		if (node instanceof GSTerm) { return 1; }
 		if (node instanceof GSFunctionCall) { return -1; }
 		if (node instanceof GSStringConstant) { return 0; }
+		if (node instanceof GSFloatConstant) { return 0; }
 		if (node instanceof GSIntegerConstant) { return 0; }
 		if (node instanceof GSIdentifier) { return 0; }
 		if (node instanceof GSParameters) { return -1; }
@@ -209,6 +210,10 @@ public class GSCompiler {
 			return compiled;
 		}
 
+		if (node instanceof GSFloatConstant) {
+			compiled.add(new BCFloat(node,node.tokens()));
+			return compiled;
+		}
 
 		if (node instanceof GSConditional) {
 			// conditional branch

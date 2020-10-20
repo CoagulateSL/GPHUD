@@ -2,15 +2,15 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=GS,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package net.coagulate.GPHUD.Modules.Scripting.Language.Generated;
 
-public class GSLessOrEqualThan extends net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode {
-	public GSLessOrEqualThan(int id) {
-		super(id);
-	}
+public
+class GSLessOrEqualThan extends net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode {
+  public GSLessOrEqualThan(int id) {
+    super(id);
+  }
 
-	public GSLessOrEqualThan(GSParser p,
-	                         int id) {
-		super(p,id);
-	}
+  public GSLessOrEqualThan(GSParser p, int id) {
+    super(p, id);
+  }
 
 }
 /* JavaCC - OriginalChecksum=5fb88f858e8465a8660b71be0d145134 (do not edit this line) */

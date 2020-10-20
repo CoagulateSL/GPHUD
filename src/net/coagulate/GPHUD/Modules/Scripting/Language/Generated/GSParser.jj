@@ -895,13 +895,13 @@ void IntegerConstant()                  : {/*@bgen(jjtree) IntegerConstant */
 /*@egen*/
 }
 
-void FloatConstant()                : {/*@bgen(jjtree) FLoatConstant */
-  GSFLoatConstant jjtn000 = new GSFLoatConstant(JJTFLOATCONSTANT);
+void FloatConstant()                : {/*@bgen(jjtree) FloatConstant */
+  GSFloatConstant jjtn000 = new GSFloatConstant(JJTFLOATCONSTANT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
   jjtn000.jjtSetFirstToken(getToken(1));
 /*@egen*/}
-{/*@bgen(jjtree) FLoatConstant */
+{/*@bgen(jjtree) FloatConstant */
     try {
 /*@egen*/
     <FLOATING_POINT_LITERAL>/*@bgen(jjtree)*/
