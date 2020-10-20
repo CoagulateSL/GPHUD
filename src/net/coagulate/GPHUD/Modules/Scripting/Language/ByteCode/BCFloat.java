@@ -97,6 +97,11 @@ public class BCFloat extends ByteCodeDataType {
 		return new BCString(node(),content.toString());
 	}
 
+	@Nonnull
+	public BCInteger toBCInteger() {
+		return new BCInteger(node(),content.intValue());
+	}
+
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {

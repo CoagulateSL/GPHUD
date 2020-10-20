@@ -57,7 +57,7 @@ TOKEN : {
 TOKEN : {
 	<RETURN: "return"> |
 	<WHILE: "while"> |
-	<FLOAT: "float"> |
+	<FLOAT: "Float"> |
 	<ELSE: "else"> |
 	<FOR: "for"> |
 	<INT: "Integer"> |
@@ -113,7 +113,7 @@ void Assignment() #Assignment : {}
 
 void TypeSpecifier() #TypeSpecifier : {}
 {
-    <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
+    <STRING> | <RESPONSE> | <INT> | <FLOAT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"
 }
 
 void IdentifierOrListElement() #IdentifierOrList : {}

@@ -46,6 +46,7 @@ if (jjtc000) {
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case WHILE:
+      case FLOAT:
       case INT:
       case CHARACTER:
       case AVATAR:
@@ -88,6 +89,7 @@ if (jjtc000) {
         WhileLoop();
         break;
         }
+      case FLOAT:
       case INT:
       case CHARACTER:
       case AVATAR:
@@ -211,6 +213,10 @@ if (jjtc000) {
         }
       case INT:{
         jj_consume_token(INT);
+        break;
+        }
+      case FLOAT:{
+        jj_consume_token(FLOAT);
         break;
         }
       case CHARACTER:{
@@ -1794,6 +1800,8 @@ if (jjtc000) {
     jj_scanpos = xsp;
     if (jj_scan_token(23)) {
     jj_scanpos = xsp;
+    if (jj_scan_token(20)) {
+    jj_scanpos = xsp;
     if (jj_scan_token(24)) {
     jj_scanpos = xsp;
     if (jj_scan_token(25)) {
@@ -1801,6 +1809,7 @@ if (jjtc000) {
     if (jj_scan_token(26)) {
     jj_scanpos = xsp;
     if (jj_scan_token(29)) return true;
+    }
     }
     }
     }
@@ -2043,7 +2052,7 @@ if (jjtc000) {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x7f880000,0x7f880000,0x3f800000,0x0,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x28800,0x28800,0x0,0x28800,0x0,0x0,0x28800,};
+      jj_la1_0 = new int[] {0x7f980000,0x7f980000,0x3f900000,0x0,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x28800,0x28800,0x0,0x28800,0x0,0x0,0x28800,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x48,0x40,0x0,0x1,0x0,0x4,0x2,0x1000,0x2000,0x4000,0x8000,0x10000,0x20000,0x40000,0x80000,0x320408,0x0,0x200000,0x320408,0x800000,0x800000,0x320408,};

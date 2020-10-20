@@ -92,6 +92,10 @@ public class GSVM {
 			variables.put(k,v.toBCInteger());
 			return;
 		}
+		if (existing.getClass().equals(BCFloat.class)) {
+			variables.put(k,v.toBCFloat());
+			return;
+		}
 		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+existing.getClass().getSimpleName());
 	}
 

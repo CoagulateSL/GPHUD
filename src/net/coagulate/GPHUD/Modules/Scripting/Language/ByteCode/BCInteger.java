@@ -97,6 +97,10 @@ public class BCInteger extends ByteCodeDataType {
 		return new BCString(node(),content.toString());
 	}
 
+	@Nonnull
+	@Override
+	public BCFloat toBCFloat() { return new BCFloat(node(),content.floatValue()); }
+
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {

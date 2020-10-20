@@ -92,7 +92,7 @@ public interface GSParserConstants {
     "<STRING_LITERAL>",
     "\"return\"",
     "\"while\"",
-    "\"float\"",
+    "\"Float\"",
     "\"else\"",
     "\"for\"",
     "\"Integer\"",

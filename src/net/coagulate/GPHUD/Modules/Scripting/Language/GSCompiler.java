@@ -143,6 +143,10 @@ public class GSCompiler {
 				compiled.add(new BCInteger(node));
 				typed=true;
 			}
+			if (type.equals("Float")) {
+				compiled.add(new BCFloat(node));
+				typed=true;
+			}
 			if (type.equals("Avatar")) {
 				compiled.add(new BCAvatar(node));
 				typed=true;

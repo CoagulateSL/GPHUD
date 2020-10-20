@@ -61,7 +61,7 @@ TOKEN : {
 TOKEN : {
 	<RETURN: "return"> |
 	<WHILE: "while"> |
-	<FLOAT: "float"> |
+	<FLOAT: "Float"> |
 	<ELSE: "else"> |
 	<FOR: "for"> |
 	<INT: "Integer"> |
@@ -242,7 +242,7 @@ void TypeSpecifier()                : {/*@bgen(jjtree) TypeSpecifier */
 {/*@bgen(jjtree) TypeSpecifier */
     try {
 /*@egen*/
-    <STRING> | <RESPONSE> | <INT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"/*@bgen(jjtree)*/
+    <STRING> | <RESPONSE> | <INT> | <FLOAT> | <CHARACTER> | <AVATAR> | <GROUP> | "List"/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);

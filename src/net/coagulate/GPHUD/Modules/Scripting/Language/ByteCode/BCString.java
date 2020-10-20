@@ -101,6 +101,17 @@ public class BCString extends ByteCodeDataType {
 
 	@Nonnull
 	@Override
+	public BCFloat toBCFloat() {
+		try {
+			return new BCFloat(null,Float.parseFloat(getContent()));
+		}
+		catch (@Nonnull final NumberFormatException e) {
+			throw new GSCastException("Can not cast the String '"+getContent()+"' to a Float");
+		}
+	}
+
+	@Nonnull
+	@Override
 	public ByteCodeDataType clone() {
 		return new BCString(node(),content);
 	}
