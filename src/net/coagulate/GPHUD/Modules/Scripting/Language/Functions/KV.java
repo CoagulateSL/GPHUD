@@ -80,7 +80,7 @@ public class KV {
 				Audit.audit(state, Audit.OPERATOR.CHARACTER, null, character.getContent(), "SetCharKV", character.getContent().getName() + "/" + kvName, oldValue, kvValue, "Changed character scope KV configuration (Scripted)");
 			}
 		}
-		state.getInstance().pushConveyances();
+		character.getContent().considerPushingConveyances();
 		return new BCInteger(null,0);
 	}
 }
