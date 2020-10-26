@@ -233,7 +233,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		st.setSourceName(objectName);
 		st.sourceRegion =Region.findNullable(regionName,true);
 		if (st.sourceRegion !=null && st.sourceRegion.isRetired()) {
-			SL.report("Retired region connecting",new UserInputStateException("Region "+regionName+" is retired!"),st);
+			//SL.report("Retired region connecting",new UserInputStateException("Region "+regionName+" is retired!"),st);
 			return new TerminateResponse("This region has been used previously and marked as retired, please contact Iain Maltz to rectify this.");
 		}
 		st.sourceLocation =position;
