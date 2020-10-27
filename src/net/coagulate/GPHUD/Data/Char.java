@@ -416,7 +416,7 @@ public class Char extends TableRow {
 				for (String namepart: nameparts) {
 					namepart=namepart.trim();
 					if (filter.equalsIgnoreCase(namepart)) {
-						throw new UserInputValidationFilterException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.");
+						throw new UserInputValidationFilterException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.",true);
 					}
 				}
 			}
