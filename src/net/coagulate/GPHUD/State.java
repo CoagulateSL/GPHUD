@@ -757,7 +757,11 @@ public class State extends DumpableState {
 		// push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
 		// TO DO - review all this stuff
 		if (pushupdate) {
-			getInstance().pushConveyances();
+			if (dbo instanceof Char) {
+				((Char)dbo).considerPushingConveyances();
+			} else {
+				getInstance().pushConveyances();
+			}
 		}
 	}
 
