@@ -755,7 +755,10 @@ public class State extends DumpableState {
 		purgeCache(dbo);
 		definition.callOnUpdate(this,dbo,value);
 		// push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
-		if (pushupdate) { getInstance().pushConveyances(); }
+		// TO DO - review all this stuff
+		if (pushupdate) {
+			getInstance().pushConveyances();
+		}
 	}
 
 	@Nonnull
