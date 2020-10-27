@@ -738,7 +738,7 @@ public class State extends DumpableState {
 					case COLOR:
 						value=ColorNormaliser.normalise(value);
 						if (!Validators.color(value)) {
-							throw new UserInputValidationParseException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you "+"entered '"+value+"')");
+							throw new UserInputValidationParseException(key+" must be a COLOR (in LSL format, e.g. '< 1 , 0.5 , 1 >', all numbers in range 0.0-1.0, you "+"entered '"+value+"')",true);
 						}
 						// does it have lsl surrounds?
 						break;
