@@ -176,7 +176,7 @@ public abstract class Management {
 				removeform.setAction("../remove");
 				removeform.add(new Hidden("group",group.getName()));
 				removeform.add(new Hidden("member",c.getName()));
-				removeform.add(new Hidden("okreturnurl",st.getFullURL()));
+				removeform.add(new Hidden("okreturnurl","./view/"+group.getId()));
 				removeform.add(new Button("Kick Member",true));
 				t.add(new Cell(removeform));
 			}
