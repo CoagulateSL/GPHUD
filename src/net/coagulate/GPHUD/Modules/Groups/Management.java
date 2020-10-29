@@ -42,30 +42,30 @@ public abstract class Management {
 	}
 
 	public static void manage(@Nonnull final State st,
-	                          final SafeMap values,
-	                          @Nullable final String typefilter) {
+							  @SuppressWarnings("unused") final SafeMap values,
+							  @Nullable final String typeFilter) {
 		final Form f=st.form();
 		f.noForm();
 		final Table t=new Table();
 		f.add(new TextHeader("Group Management"));
-		if (typefilter!=null) { f.add(new TextSubHeader("Filtered by type: "+typefilter)); }
+		if (typeFilter!=null) { f.add(new TextSubHeader("Filtered by type: "+typeFilter)); }
 		final Set<CharacterGroup> groups=st.getInstance().getCharacterGroups();
 		f.add(t);
 		final HeaderRow hr=new HeaderRow();
 		t.add(hr);
 		hr.add("Name");
-		if (typefilter==null) { hr.add("Type"); }
+		if (typeFilter==null) { hr.add("Type"); }
 		hr.add("Owner");
 		hr.add("Open");
 		hr.add("Members");
 		for (final CharacterGroup g: groups) {
 			String keyword=g.getType();
 			if (keyword==null) { keyword=""; }
-			if (typefilter==null || typefilter.equalsIgnoreCase(keyword)) {
+			if (typeFilter==null || typeFilter.equalsIgnoreCase(keyword)) {
 				t.openRow().add(new Link(g.getName(),"/GPHUD/groups/view/"+g.getId()));
 				String owner="";
 				if (g.getOwner()!=null) { owner=g.getOwner().asHtml(st,true); }
-				if (typefilter==null) { t.add(keyword); }
+				if (typeFilter==null) { t.add(keyword); }
 				t.add(owner);
 				if (g.isOpen()) { t.add("Yes"); }
 				else { t.add(""); }
@@ -153,15 +153,15 @@ public abstract class Management {
 		if (group.getOwner()!=null) {
 			owner=group.getOwner().asHtml(st,true);
 		}
-		final Char groupowner=group.getOwner();
+		final Char groupOwner=group.getOwner();
 		t.openRow().add("Owner").add(owner);
 		if (st.hasPermission("Groups.SetOwner")) {
-			final Form setowner=new Form();
-			setowner.setAction("../setowner");
-			setowner.add(new Hidden("group",group.getName()));
-			setowner.add(new Hidden("okreturnurl",st.getFullURL()));
-			setowner.add(new Button("Set Owner",true));
-			t.add(setowner);
+			final Form setOwner=new Form();
+			setOwner.setAction("../setowner");
+			setOwner.add(new Hidden("group",group.getName()));
+			setOwner.add(new Hidden("okreturnurl",st.getFullURL()));
+			setOwner.add(new Button("Set Owner",true));
+			t.add(setOwner);
 		}
 		final Set<Char> members=group.getMembers();
 		t.openRow().add("Members").add(members.size()+" members");
@@ -172,19 +172,19 @@ public abstract class Management {
 		for (final Char c: members) {
 			t.openRow().add("").add(c);
 			if (st.hasPermission("Groups.SetGroup")) {
-				final Form removeform=new Form();
-				removeform.setAction("../remove");
-				removeform.add(new Hidden("group",group.getName()));
-				removeform.add(new Hidden("member",c.getName()));
-				removeform.add(new Hidden("okreturnurl","./view/"+group.getId()));
-				removeform.add(new Button("Kick Member",true));
-				t.add(new Cell(removeform));
+				final Form removeForm=new Form();
+				removeForm.setAction("../remove");
+				removeForm.add(new Hidden("group",group.getName()));
+				removeForm.add(new Hidden("member",c.getName()));
+				removeForm.add(new Hidden("okreturnurl","./view/"+group.getId()));
+				removeForm.add(new Button("Kick Member",true));
+				t.add(new Cell(removeForm));
 			}
 			if (group.isAdmin(c)) { t.add(new Cell(new Color("Red","Admin"))); }
 			else { t.add(""); }
-			if (c==groupowner) { t.add(new Cell(new Color("Red","Leader"))); }
+			if (c==groupOwner) { t.add(new Cell(new Color("Red","Leader"))); }
 			else { t.add(""); }
-			if (c==groupowner || st.hasPermission("Groups.Create")) {
+			if (c==groupOwner || st.hasPermission("Groups.Create")) {
 				t.add(new Form(st,true,"../setadmin","Toggle Admin","group",group.getName(),"character",c.getName(),"Admin",group.isAdmin(c)?"":"true"));
 			}
 		}
@@ -214,34 +214,38 @@ public abstract class Management {
 	                                                    type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
 	                                @Nullable @Arguments(name="newowner",description="New leader, optionally",
 	                                                     type=ArgumentType.CHARACTER,
-	                                                     mandatory=false) final Char newowner) {
-		final Char oldowner=group.getOwner();
-		String oldownername=null;
-		if (oldowner!=null) { oldownername=oldowner.getName(); }
-		if (newowner==oldowner) {
-			if (newowner==null) { return new OKResponse("That group already has no leader"); }
-			return new OKResponse("That character ("+newowner.getName()+") is already the group leader");
+	                                                     mandatory=false) final Char newOwner) {
+		final Char oldOwner=group.getOwner();
+		String oldOwnerName=null;
+		if (oldOwner!=null) { oldOwnerName=oldOwner.getName(); }
+		if (newOwner==oldOwner) {
+			if (newOwner==null) { return new OKResponse("That group already has no leader"); }
+			return new OKResponse("That character ("+newOwner.getName()+") is already the group leader");
 		}
-		if (newowner==null) {
+		if (newOwner==null) {
 			group.setOwner(null);
-			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOwner",group.getName(),oldownername,null,"Group leader removed");
+			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOwner",group.getName(),oldOwnerName,null,"Group leader removed");
 			// following is always true otherwise newowner(from this if) and oldowner(from the following) are null which is handled by "that group already has no leader"
 			//noinspection ConstantConditions
-			if (oldowner!=null) {
-				oldowner.hudMessage(("You are no longer the group leader for "+group.getName()));
+			if (oldOwner!=null) {
+				oldOwner.hudMessage(("You are no longer the group leader for "+group.getName()));
 			}
 			return new OKResponse("Group leader removed.");
 		}
 		// or a member
-		boolean ingroup=false;
-		for (final Char c: group.getMembers()) { if (c==newowner) { ingroup=true; }}
-		if (!ingroup) {
-			return new ErrorResponse("New leader "+newowner.getName()+" must be in group "+group.getName());
+		boolean inGroup=false;
+		for (final Char c: group.getMembers()) {
+			if (c == newOwner) {
+				inGroup = true;
+				break;
+			}}
+		if (!inGroup) {
+			return new ErrorResponse("New leader "+newOwner.getName()+" must be in group "+group.getName());
 		}
-		if (oldowner!=null) { oldowner.hudMessage(("You are no longer the group leader for "+group.getName())); }
-		newowner.hudMessage("You are now the group leader for "+group.getName());
-		group.setOwner(newowner);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newowner,"SetOwner",group.getName(),oldownername,newowner.getName(),"Group leader changed");
+		if (oldOwner!=null) { oldOwner.hudMessage(("You are no longer the group leader for "+group.getName())); }
+		newOwner.hudMessage("You are now the group leader for "+group.getName());
+		group.setOwner(newOwner);
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newOwner,"SetOwner",group.getName(),oldOwnerName,newOwner.getName(),"Group leader changed");
 		return new OKResponse("Group leader updated");
 	}
 
@@ -260,31 +264,30 @@ public abstract class Management {
 	                           @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
 	                                               name="group",description="Group to add character to") final CharacterGroup group,
 	                           @Nonnull @Arguments(name="newmember",description="Character to add to the group",
-	                                               type=ArgumentType.CHARACTER) final Char newmember) {
-		final boolean debug=false;
+	                                               type=ArgumentType.CHARACTER) final Char newMember) {
 		final Attribute attr=st.getAttribute(group);
-		String grouptype=null;
+		String groupType=null;
 		if (attr!=null) {
-			grouptype=attr.getSubType();
+			groupType=attr.getSubType();
 		}
-		CharacterGroup existinggroup=null;
-		if (grouptype!=null) { existinggroup=CharacterGroup.getGroup(newmember,grouptype); }
-		if (existinggroup!=null && existinggroup.getOwner()==newmember) {
-			return new ErrorResponse("Refusing to move character "+newmember.getName()+", they are currently group leader of "+existinggroup.getName()+", you must manually "+"eject them from that position");
+		CharacterGroup existingGroup=null;
+		if (groupType!=null) { existingGroup=CharacterGroup.getGroup(newMember,groupType); }
+		if (existingGroup!=null && existingGroup.getOwner()==newMember) {
+			return new ErrorResponse("Refusing to move character "+newMember.getName()+", they are currently group leader of "+existingGroup.getName()+", you must manually "+"eject them from that position");
 		}
-		if (existinggroup!=null) { existinggroup.removeMember(newmember); }
-		try { group.addMember(newmember); }
+		if (existingGroup!=null) { existingGroup.removeMember(newMember); }
+		try { group.addMember(newMember); }
 		catch (@Nonnull final UserException e) {
-			return new ErrorResponse("Failed to add "+newmember.getName()+" to "+group.getName()+", they are probably in no group now! - "+e.getMessage());
+			return new ErrorResponse("Failed to add "+newMember.getName()+" to "+group.getName()+", they are probably in no group now! - "+e.getMessage());
 		}
-		String oldgroupname=null;
-		if (existinggroup!=null) { oldgroupname=existinggroup.getName(); }
-		String result=newmember.getName()+" is now in group "+group.getName();
-		if (existinggroup!=null) {
-			result=newmember.getName()+" was moved into group "+group.getName()+" (was formerly in "+existinggroup.getName()+")";
+		String oldGroupName=null;
+		if (existingGroup!=null) { oldGroupName=existingGroup.getName(); }
+		String result=newMember.getName()+" is now in group "+group.getName();
+		if (existingGroup!=null) {
+			result=newMember.getName()+" was moved into group "+group.getName()+" (was formerly in "+existingGroup.getName()+")";
 		}
-		newmember.hudMessage("You have been added to the group "+group.getName());
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newmember,"AddMember",group.getName(),oldgroupname,group.getName(),result);
+		newMember.hudMessage("You have been added to the group "+group.getName());
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newMember,"AddMember",group.getName(),oldGroupName,group.getName(),result);
 		return new OKResponse(result);
 	}
 
@@ -333,10 +336,10 @@ public abstract class Management {
 	public static Response delete(@Nonnull final State st,
 	                              @Nonnull @Arguments(name="group",description="Group to delete",
 	                                                  type=ArgumentType.CHARACTERGROUP) final CharacterGroup group) {
-		final String groupname=group.getName();
+		final String groupName=group.getName();
 		group.delete();
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"DeleteGroup",groupname,groupname,null,"Group was deleted");
-		return new OKResponse(groupname+" was deleted");
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"DeleteGroup",groupName,groupName,null,"Group was deleted");
+		return new OKResponse(groupName+" was deleted");
 	}
 
 	@URLs(url="/groups/setadmin")
@@ -365,7 +368,7 @@ public abstract class Management {
 		if (!ok) {
 			return new ErrorResponse("You must be group owner, or have Groups.Create permissions to set admin flags");
 		}
-		final boolean oldflag=group.isAdmin(character);
+		final boolean oldFlag=group.isAdmin(character);
 		group.setAdmin(character,admin);
 		if (admin) {
 			character.hudMessage("You are now a group administrator for "+group.getName());
@@ -373,7 +376,7 @@ public abstract class Management {
 		else {
 			character.hudMessage("You are no longer a group administrator for "+group.getName());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,character,"SetAdmin",group.getName(),oldflag+"",admin+"","Set admin flag");
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,character,"SetAdmin",group.getName(),oldFlag+"",admin+"","Set admin flag");
 		return new OKResponse("Successfully altered admin flag on "+character+" in "+group);
 	}
 
@@ -394,9 +397,9 @@ public abstract class Management {
 	                                          type=ArgumentType.BOOLEAN) final boolean open) {
 		group.validate(st);
 		// must be instance admin or group owner
-		final boolean oldflag=group.isOpen();
+		final boolean oldFlag=group.isOpen();
 		group.setOpen(open);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOpen",group.getName(),oldflag+"",open+"","Set open flag");
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOpen",group.getName(),oldFlag+"",open+"","Set open flag");
 		return new OKResponse("Successfully set open flag to "+open+" on group "+group.getName());
 	}
 
