@@ -333,4 +333,8 @@ public class Obj extends TableRow {
 		final int diff=UnixTime.getUnixTime()-lastrx;
 		if (diff>60) { db().d("update objects set lastrx=?,authnode=? where id=?",UnixTime.getUnixTime(),Interface.getNode(),getId()); }
 	}
+
+    public String getUUID() {
+		return getString("uuid");
+    }
 }
