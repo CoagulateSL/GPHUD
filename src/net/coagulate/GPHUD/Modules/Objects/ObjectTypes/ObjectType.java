@@ -7,6 +7,8 @@ import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -102,6 +104,13 @@ public abstract class ObjectType {
 	@Nonnull
 	public Response collide(final State st,
 	                        final Char collider) { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
+
+	protected void populateVmVariables(State st, GSVM vm) {
+		vm.introduce("OBJECTNAME",new BCString(null,st.object.getName()));
+		vm.introduce("OBJECTTYPE",new BCString(null,st.object.getObjectType().getName()));
+		vm.introduce("OBJECTKEY",new BCString(null,st.object.getUUID()));
+
+	}
 
 	enum MODE {
 		NONE,
