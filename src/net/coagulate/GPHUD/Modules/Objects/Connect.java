@@ -9,12 +9,15 @@ import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.Responses.TerminateResponse;
+import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 
 public class Connect {
@@ -28,7 +31,11 @@ public class Connect {
 	                  permitScripting=false,
 	                  permitJSON=false,
 	                  permitExternal=false)
-	public static Response connect(@Nonnull final State st) {
+	public static Response connect(@Nonnull final State st,
+								   @Argument.Arguments(description = "Boot parameters",name = "bootparams",type = Argument.ArgumentType.TEXT_ONELINE,max=1024,mandatory=false)
+								   @Nullable final String bootParams) {
+		System.out.println("In connect");
+		System.out.println(bootParams);
 		if (!st.hasPermission("Objects.Connect")) {
 			Audit.audit(true,
 			            st,
@@ -60,7 +67,7 @@ public class Connect {
 		final int version=Interface.convertVersion(st.json().getString("version"));
 		final int maxversion=Obj.getMaxVersion();
 		final Obj oldobject=Obj.findOrNull(st,st.objectKey);
-		final Obj obj=Obj.connect(st,st.objectKey,st.getSourceName(),st.getRegion(),st.getSourceOwner(),st.sourceLocation,st.callBackURL(),version);
+		final Obj obj=Obj.connect(st,st.objectKey,st.getSourceName(),st.getRegion(),st.getSourceOwner(),st.sourceLocation,st.callBackURL(),version,bootParams);
 		if (oldobject==null) {
 			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"New","Connection","",st.getSourceName(),"Conected new object at "+st.sourceRegion +"/"+st.sourceLocation);
 		}
@@ -77,6 +84,7 @@ public class Connect {
 			behaviour+="\nOperating mode: "+ot.mode();
 			ot.payload(st,response,st.getRegion(),st.callBackURL());
 		}
+		behaviour+="\nServicing Node: "+ Config.getHostName();
 		if (!st.json().has("silent")) {
 			response.put("message",
 			             "Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatarNullable()+"\nCharacter: "+st.getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour
