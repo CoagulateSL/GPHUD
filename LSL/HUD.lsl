@@ -185,7 +185,7 @@ integer process(key requestid) {
 	if (jsonget("titlerz")!="") { llRegionSayTo(llGetOwner(),broadcastchannel,llJsonSetValue("",["titlerz"],jsonget("titlerz"))); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
-	if (jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
+	if (jsonget("regettitletext")!="" || jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
 		string totitler=llJsonSetValue("",["titler"],(string)titlercolor+"|"+titlertext);
 		llRegionSayTo(llGetOwner(),broadcastchannel,totitler);
 		//llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titler\":\""+(string)titlercolor+"|"+titlertext+"\"}");
