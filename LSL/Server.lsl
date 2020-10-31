@@ -127,21 +127,23 @@ default {
 			string commandprefix="**";
 			if (DEV) { commandprefix="--"; }
 			if (llSubStringIndex(text,commandprefix)==0) {
-				if ((id==SYSTEM_OWNER_UUID || id==llGetOwner()) && text==commandprefix+"reboot") { llResetScript(); }
-				if ((id==SYSTEM_OWNER_UUID) && text==commandprefix+"repackage") { state distribution; }
-				if ((id==SYSTEM_OWNER_UUID || id==llGetOwner()) && text==commandprefix+"status") {
-					llSay(0,"Server module "+VERSION+" "+COMPILEDATE+" "+COMPILETIME);
-					llSay(0,"Server free memory: "+(string)llGetFreeMemory());
-					llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"","");
-					return;
+				if (llList2Float(llGetObjectDetails(id,[OBJECT_BODY_SHAPE_TYPE]),0)>=0.0) {
+					if ((id==SYSTEM_OWNER_UUID || id==llGetOwner()) && text==commandprefix+"reboot") { llResetScript(); }
+					if ((id==SYSTEM_OWNER_UUID) && text==commandprefix+"repackage") { state distribution; }
+					if ((id==SYSTEM_OWNER_UUID || id==llGetOwner()) && text==commandprefix+"status") {
+						llSay(0,"Server module "+VERSION+" "+COMPILEDATE+" "+COMPILETIME);
+						llSay(0,"Server free memory: "+(string)llGetFreeMemory());
+						llMessageLinked(LINK_THIS,LINK_DIAGNOSTICS,"","");
+						return;
+					}
+					//if (!alive) { return; }
+					llSay(0,"Sending command: "+llGetSubString(text,2,-1));
+					json=llJsonSetValue("",["runasavatar"],name);
+					json=llJsonSetValue(json,["runaskey"],id);
+					json=llJsonSetValue(json,["runasnocharacter"],"set");
+					json=llJsonSetValue(json,["console"],llGetSubString(text,2,-1));
+					httpcommand("console","GPHUD/system");
 				}
-				//if (!alive) { return; }
-				llSay(0,"Sending command: "+llGetSubString(text,2,-1));
-				json=llJsonSetValue("",["runasavatar"],name);
-				json=llJsonSetValue(json,["runaskey"],id);
-				json=llJsonSetValue(json,["runasnocharacter"],"set");
-				json=llJsonSetValue(json,["console"],llGetSubString(text,2,-1));
-				httpcommand("console","GPHUD/system");
 			}
 		}
 	}
