@@ -1,9 +1,12 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
@@ -113,7 +116,16 @@ public class ObjType extends TableRow {
 		return list;
 	}
 
-	// ---------- INSTANCE ----------
+    public static ObjType get(State state,String objecttype) {
+		try {
+			return get(GPHUD.getDB().dqiNotNull("select id from objecttypes where instanceid=? and name like ?",state.getInstance().getId(),objecttype));
+		}
+		catch (NoDataException e) {
+			throw new UserConfigurationException("Object type "+objecttype+" does not exist");
+		}
+    }
+
+    // ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getIdColumn() { return "id"; }
