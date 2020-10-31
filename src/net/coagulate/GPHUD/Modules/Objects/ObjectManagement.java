@@ -69,7 +69,7 @@ public class ObjectManagement {
 	          requiresPermission="Objects.ObjectTypes")
 	public static void createObjectType(@Nonnull final State st,
 	                                    @Nonnull final SafeMap map) {
-		if (map.get("Create").equalsIgnoreCase("Create")) {
+		if (map.get("Create").equalsIgnoreCase("Create") && ObjectType.getObjectTypesSet().contains(map.get("behaviour"))) {
 			final JSONObject jsonbase=new JSONObject();
 			jsonbase.put("behaviour",map.get("behaviour"));
 			final ObjType ot=ObjType.create(st,map.get("name"),jsonbase);
