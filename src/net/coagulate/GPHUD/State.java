@@ -525,7 +525,7 @@ public class State extends DumpableState {
 			Zone zone=null;
 			if (character!=null) { zone=character.getZone(); }
 			for (final Event e: Event.getActive(this)) {
-				boolean playerInZone=false;
+				//boolean playerInZone=false;
 				for (Zone eventZone:e.getZones()) {
 					if (eventZone==zone) {
 						eventMap.put(e.getId(), e);
@@ -696,7 +696,7 @@ public class State extends DumpableState {
 	public void setKV(	@Nonnull final TableRow dbo,
 						@Nonnull final String key,
 						@Nullable String value,
-						boolean pushupdate) {
+						boolean pushUpdate) {
 		final KV definition=getKVDefinition(key);
 		if (value!=null && !value.isEmpty()) {
 			if (!definition.template()) { // these are hard to verify :P
@@ -756,7 +756,7 @@ public class State extends DumpableState {
 		definition.callOnUpdate(this,dbo,value);
 		// push to all, unless we're modifying ourselves, then we'll be picked up on the outbound.
 		// TO DO - review all this stuff
-		if (pushupdate) {
+		if (pushUpdate) {
 			if (dbo instanceof Char) {
 				((Char)dbo).considerPushingConveyances();
 			} else {
