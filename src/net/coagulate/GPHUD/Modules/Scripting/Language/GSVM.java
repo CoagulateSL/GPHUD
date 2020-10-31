@@ -201,9 +201,14 @@ public class GSVM {
 	public Response dequeue(final State st,
 	                        final Char target) {
 		final boolean debug=false;
-		final JSONObject totarget=getQueue(target);
-		if (pid!=0) { totarget.put("processid",""+pid); }
-		queue.remove(target);
+		JSONObject totarget=new JSONObject();
+		if (target!=null) {
+			totarget = getQueue(target);
+			if (pid != 0) {
+				totarget.put("processid", "" + pid);
+			}
+			queue.remove(target);
+		}
 		for (final Char k: queue.keySet()) {
 			final JSONObject totransmit=getQueue(k);
 			if (pid!=0) { totransmit.put("processid",""+pid); }
@@ -415,12 +420,12 @@ public class GSVM {
 		column=0;
 		variables.clear();
 		simulation=false;
-		variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
-		variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
-		invokerstate=st;
 		for (final Map.Entry<String,ByteCodeDataType> entry: introductions.entrySet()) {
 			variables.put(entry.getKey(),entry.getValue());
 		}
+		if (!variables.containsKey("CALLER")) { variables.put("CALLER",new BCCharacter(null,st.getCharacter())); }
+		if (!variables.containsKey("AVATAR")) { variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable())); }
+		invokerstate=st;
 	}
 
 	@Nonnull
@@ -444,7 +449,7 @@ public class GSVM {
 			throw new GSInternalError("VM Uncaught: {"+t.getClass().getSimpleName()+"} "+t.getLocalizedMessage()+" "+at(),t);
 		}
 		st.vm=null;
-		final JSONObject json=dequeue(st,st.getCharacter()).asJSON(st);
+		JSONObject json=dequeue(st,st.getCharacterNullable()).asJSON(st);
 		if (invokeonexit!=null && !suspended) {
 			json.put("incommand","runtemplate");
 			json.put("args","0");
