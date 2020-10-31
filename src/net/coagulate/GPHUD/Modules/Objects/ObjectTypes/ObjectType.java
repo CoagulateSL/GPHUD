@@ -44,7 +44,10 @@ public abstract class ObjectType {
 		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
 		if (behaviour.equals("PhantomTeleport")) { return new PhantomTeleporter(st,object); }
 		if (behaviour.equals("RunCommand")) { return new RunCommand(st,object); }
+		if (behaviour.equals("RunScript")) { return new RunScript(st,object); }
+		if (behaviour.equals("PhantomScript")) { return new PhantomScript(st,object); }
 		if (behaviour.equals("NPC")) { return new NPC(st,object); }
+		if (behaviour.equals("PhantomCommand")) { return new PhantomCommand(st,object); }
 		throw new SystemLookupFailureException("Behaviour "+behaviour+" is not known!");
 	}
 
@@ -54,6 +57,9 @@ public abstract class ObjectType {
 		options.put("ClickTeleport","Teleport user on click.");
 		options.put("PhantomTeleport","Teleport user on collision; becomes phantom.");
 		options.put("RunCommand","Causes the character to run a command when they click.");
+		options.put("RunScript","Causes the character to run a script when they click.");
+		options.put("PhantomScript","Causes the character to run a script when they collide; becomes phantom.");
+		options.put("PhantomCommand","Causes the character to run a command when they collide with the object; becomes phantom.");
 		options.put("NPC","Assigns a character to this object and allows it to participate in scripted events");
 		return options;
 	}
@@ -73,6 +79,9 @@ public abstract class ObjectType {
 		types.add("ClickTeleport");
 		types.add("PhantomTeleport");
 		types.add("RunCommand");
+		types.add("RunScript");
+		types.add("PhantomScript");
+		types.add("PhantomCommand");
 		types.add("NPC");
 		return types;
     }
