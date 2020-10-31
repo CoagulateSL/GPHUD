@@ -12,7 +12,9 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 public abstract class ObjectType {
@@ -63,7 +65,16 @@ public abstract class ObjectType {
 		return behaviours;
 	}
 
-	// ---------- INSTANCE ----------
+    public static Set<String> getObjectTypesSet() {
+		Set<String> types=new HashSet<>();
+		types.add("ClickTeleport");
+		types.add("PhantomTeleport");
+		types.add("RunCommand");
+		types.add("NPC");
+		return types;
+    }
+
+    // ---------- INSTANCE ----------
 	@Nonnull
 	public abstract String explainHtml();
 
