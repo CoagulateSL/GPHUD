@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.System.SystemLookupFailureException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjType;
@@ -106,10 +107,10 @@ public abstract class ObjectType {
 	                        final Char collider) { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
 	protected void populateVmVariables(State st, GSVM vm) {
-		vm.introduce("OBJECTNAME",new BCString(null,st.object.getName()));
-		vm.introduce("OBJECTTYPE",new BCString(null,st.object.getObjectType().getName()));
-		vm.introduce("OBJECTKEY",new BCString(null,st.object.getUUID()));
-
+		if (st.getObject().getObjectType()==null) { throw new SystemImplementationException("In object driver but no object type is defined (?)"); }
+		vm.introduce("OBJECTNAME",new BCString(null,st.getObject().getName()));
+		vm.introduce("OBJECTTYPE",new BCString(null,st.getObject().getObjectType().getName()));
+		vm.introduce("OBJECTKEY",new BCString(null,st.getObject().getUUID()));
 	}
 
 	enum MODE {

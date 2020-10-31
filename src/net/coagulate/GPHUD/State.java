@@ -1067,6 +1067,12 @@ public class State extends DumpableState {
 		}
 	}
 
+	@Nonnull
+	public Obj getObject() {
+		if (object==null) { throw new SystemImplementationException("Object data is undefined"); }
+		return object;
+	}
+
 	public enum Sources {
 		NONE,
 		SYSTEM,
