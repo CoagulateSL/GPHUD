@@ -22,7 +22,8 @@ integer ODVERSION=1;
 startLogin() {
 	json=llJsonSetValue("",["version"],VERSION);
 	json=llJsonSetValue(json,["versiondate"],COMPILEDATE);
-	json=llJsonSetValue(json,["versiontime"],COMPILETIME);	
+	json=llJsonSetValue(json,["versiontime"],COMPILETIME);
+	json=llJsonSetValue(json,["bootparams"],llGetObjectDesc());
 	if (BOOTSTAGE==BOOT_COMPLETE) { json=llJsonSetValue(json,["silent"],"silent"); }
 	httpcommand("objects.connect","GPHUD/system");
 }
