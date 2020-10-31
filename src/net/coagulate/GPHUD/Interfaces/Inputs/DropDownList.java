@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Interfaces.Inputs;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
+import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Module;
@@ -85,7 +86,16 @@ public class DropDownList extends Input {
 		return charactergroups;
 	}
 
-	// ---------- INSTANCE ----------
+    public static DropDownList getScriptsList(State st, String name) {
+		final DropDownList scriptsList=new DropDownList(name);
+		Set<Script> list = Script.getScripts(st.getInstance());
+		for (Script script:list) {
+			scriptsList.add(script.getName(),script.getName());
+		}
+		return scriptsList;
+    }
+
+    // ---------- INSTANCE ----------
 	public void add(final String choice) { choices.put(choice,choice); }
 
 	public void add(final String choice,
