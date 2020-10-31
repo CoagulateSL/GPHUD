@@ -127,6 +127,7 @@ public class NPC extends ObjectType {
 		script.validate(st);
 		final GSVM vm=new GSVM(script.getByteCode());
 		vm.introduce("TARGET",new BCCharacter(null,clicker));
+		populateVmVariables(st,vm);
 		final JSONObject jsonresponse=vm.execute(st).asJSON(st);
 		//System.out.println(response.asJSON(st));
 		ch.appendConveyance(st,jsonresponse);
