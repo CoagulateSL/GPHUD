@@ -1,4 +1,5 @@
 #include "GPHUDHeader.lsl"
+#include "SLCore/LSL/SetDev.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
 setlamps() {}
 detach() {
@@ -28,8 +29,8 @@ default {
 	state_entry () {
 		calculatebroadcastchannel();
 		llListen(broadcastchannel,"",NULL_KEY,"");
-		string desc=llGetObjectDesc();
-		if (desc=="DEV" || desc=="DEV-iain") {
+		setDev(FALSE);
+		if (DEV) {
 			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.25,.25,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,1]);
 		} else {
 			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.001,.001,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,0]);
