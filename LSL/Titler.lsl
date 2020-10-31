@@ -22,6 +22,7 @@ go() {
 	} else {
 		llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.001,.001,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,0]);
 	}	
+	llRegionSayTo(llGetOwner(),broadcastchannel,"{\"regettitletext\":\"regettitletext\"}");
 }
 default {
 	state_entry () {
