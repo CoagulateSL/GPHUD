@@ -34,8 +34,6 @@ public class Connect {
 	public static Response connect(@Nonnull final State st,
 								   @Argument.Arguments(description = "Boot parameters",name = "bootparams",type = Argument.ArgumentType.TEXT_ONELINE,max=1024,mandatory=false)
 								   @Nullable final String bootParams) {
-		System.out.println("In connect");
-		System.out.println(bootParams);
 		if (!st.hasPermission("Objects.Connect")) {
 			Audit.audit(true,
 			            st,
