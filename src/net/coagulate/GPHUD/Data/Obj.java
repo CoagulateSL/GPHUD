@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -151,7 +152,8 @@ public class Obj extends TableRow {
 	                          @Nonnull final User owner,
 	                          @Nonnull final String location,
 	                          @Nonnull final String url,
-	                          final int version) {
+	                          final int version,
+							  @Nullable String bootParams) {
 		Obj object=findOrNull(st,uuid);
 		if (object==null) {
 			db().d("insert into objects(uuid,name,regionid,owner,location,lastrx,url,version) values(?,?,?,?,?,?,?,?)",
@@ -180,6 +182,17 @@ public class Obj extends TableRow {
 			       version,
 			       object.getId()
 			      );
+		}
+		// interrogate boot params
+		if (bootParams==null) { bootParams=""; }
+		JSONObject boot=null;
+		for (String part:bootParams.split("/")) {
+			try { boot=new JSONObject(part); }
+			catch (JSONException ignore) {}
+		}
+		if (boot!=null && boot.has("objecttype")) {
+			ObjType objType=ObjType.get(st,boot.getString("objecttype"));
+			object.setObjectType(objType);
 		}
 		return object;
 	}
@@ -337,4 +350,7 @@ public class Obj extends TableRow {
     public String getUUID() {
 		return getString("uuid");
     }
+    public void setObjectType(@Nonnull ObjType objType) {
+		set("objecttype",objType.getId());
+	}
 }
