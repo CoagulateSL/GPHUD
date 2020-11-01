@@ -19,9 +19,9 @@ public abstract class ByteCode {
 
 	public static final Map<Byte,InstructionSet> map=new HashMap<>();
 	@Nullable
-	private ParseNode sourcenode;
+	private ParseNode sourceNode;
 
-	public ByteCode(@Nullable final ParseNode n) { sourcenode=n; }
+	public ByteCode(@Nullable final ParseNode n) { sourceNode =n; }
 
 	// ---------- STATICS ----------
 	@Nonnull
@@ -124,12 +124,12 @@ public abstract class ByteCode {
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public ByteCode node(final ParseNode n) {
-		sourcenode=n;
+		sourceNode =n;
 		return this;
 	}
 
 	@Nullable
-	public ParseNode node() { return sourcenode; }
+	public ParseNode node() { return sourceNode; }
 
 	@Nonnull
 	public abstract String explain();
