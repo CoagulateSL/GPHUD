@@ -162,7 +162,7 @@ public class Output {
 		send.put("linkmessagenumber",messageNumber.toString());
 		send.put("linkmessage",message.toString());
 		send.put("linkid",id.toString());
-		new Transmission(object,send).run();
+		new Transmission(object,send).start();
 		return new BCInteger(null,0);
 	}
 }
