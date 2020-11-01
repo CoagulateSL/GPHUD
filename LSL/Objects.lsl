@@ -130,20 +130,22 @@ all_listen(integer channel,string name,key id,string text) {
 	if (channel==broadcastchannel) {
 		json=text;
 		json=llJsonSetValue(json,["incommand"],"broadcast");
-		if (jsonget("objectdriverversioncheck")!="" && llGetOwnerKey(id)==llGetOwner()) {
-			integer otherversion=(integer)(jsonget("objectdriverversioncheck"));
-			if (otherversion>ODVERSION && updatelock<llGetUnixTime()) {
-				integer pin=0;
-				updatelock=llGetUnixTime()+300;
-				while (pin>-1000 && pin<1000) {
-					pin=((integer)(llFrand(1999999999)-1000000000));
+		if (jsonget("objectdriverversioncheck")!="" && llGetOwnerKey(id)==llGetOwner()) { // If there's an OD version check from a remove object and it's owned by the same as us
+			integer otherversion=(integer)(jsonget("objectdriverversioncheck")); // get the other version
+			if (otherversion>ODVERSION && updatelock<llGetUnixTime()) {  // if their version is bigger than ours
+				if (llGetInventoryType("GPHUD Object Driver Inhibitor")!=INVENTORY_NONE)  { // and we're not inhibited
+					integer pin=0;   // set a pin and request an update
+					updatelock=llGetUnixTime()+300;
+					while (pin>-1000 && pin<1000) {
+						pin=((integer)(llFrand(1999999999)-1000000000));
+					}
+					llSetRemoteScriptAccessPin(pin);
+					string jsonrequestupdate=llJsonSetValue("",["objectdriverupdatepin"],((string)pin));
+					llRegionSayTo(id,broadcastchannel,jsonrequestupdate);
 				}
-				llSetRemoteScriptAccessPin(pin);
-				string jsonrequestupdate=llJsonSetValue("",["objectdriverupdatepin"],((string)pin));
-				llRegionSayTo(id,broadcastchannel,jsonrequestupdate);
 			}
 		}
-		if(UPDATER && jsonget("objectdriverupdatepin")!="") {
+		if(UPDATER && jsonget("objectdriverupdatepin")!="" && llGetOwnerKey(id)==llGetOwner()) {
 			integer pin=(integer)(jsonget("objectdriverupdatepin"));
 			llOwnerSay("Updating object driver in '"+name+"'");
 			llRemoteLoadScriptPin(id,llGetScriptName(),pin,TRUE,0);
@@ -193,7 +195,7 @@ state wait {
 		json=llJsonSetValue("",["objectdriverversioncheck"],((string)ODVERSION));
 		llRegionSay(broadcastchannel,json);
 		UPDATER=TRUE;
-		llSetTimerEvent(0.0);
+		llSetTimerEvent(900.0);
 	}
 }
 
