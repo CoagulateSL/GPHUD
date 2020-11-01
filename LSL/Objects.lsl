@@ -12,14 +12,16 @@
 #include "configuration.lsl"
 #define COMMS_INTERFACE "object"
 #define COMMS_DONT_CHECK_CALLBACK
+#define COMMS_SUPPRESS_LINK_MESSAGES
 #include "SLCore/LSL/CommsV3.lsl"
 
 #define CHECKIN_MINUTES 15
 string MODE="NONE";
 
-integer ODVERSION=1;
+integer ODVERSION=2;
 
 startLogin() {
+	if (llGetInventoryType("GPHUD Object Driver Inhibitor")!=INVENTORY_NONE) { return; }
 	json=llJsonSetValue("",["version"],VERSION);
 	json=llJsonSetValue(json,["versiondate"],COMPILEDATE);
 	json=llJsonSetValue(json,["versiontime"],COMPILETIME);
