@@ -28,11 +28,11 @@ public class Interactions {
 
 		final Obj object=Obj.findOrNull(st,st.objectKey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
-		final ObjType objecttype=object.getObjectType();
-		if (objecttype==null) {
+		final ObjType objectType=object.getObjectType();
+		if (objectType==null) {
 			return new ErrorResponse("This object is not configured with an object type in GPHUD");
 		}
-		final ObjectType ot=ObjectType.materialise(st,objecttype);
+		final ObjectType ot=ObjectType.materialise(st,objectType);
 		return ot.click(st,clicker);
 	}
 
@@ -50,11 +50,11 @@ public class Interactions {
 
 		final Obj object=Obj.findOrNull(st,st.objectKey);
 		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
-		final ObjType objecttype=object.getObjectType();
-		if (objecttype==null) {
+		final ObjType objectType=object.getObjectType();
+		if (objectType==null) {
 			return new ErrorResponse("This object is not configured with an object type in GPHUD");
 		}
-		final ObjectType ot=ObjectType.materialise(st,objecttype);
+		final ObjectType ot=ObjectType.materialise(st,objectType);
 		return ot.collide(st,collider);
 	}
 }
