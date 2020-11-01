@@ -1,13 +1,18 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Data.Landmark;
+import net.coagulate.GPHUD.Data.Obj;
+import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceUnavailableException;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSUnknownIdentifier;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 
@@ -137,5 +142,27 @@ public class Output {
 		return new BCInteger(null,1);
 	}
 
-
+	@Nonnull
+	@GSFunctions.GSFunction(description = "Causes an Object to emit a link message",
+							parameters = "String - UUID for the object to emit the link message<br/>Integer - Integer for the link message<br/>String - Message for the link message<br/>String - Key sent by the message",
+							notes = "Only works with an object driver, HUDs do not support this function",
+							returns = "Integer - The number zero",
+							privileged = false,
+							category = SCRIPT_CATEGORY.OUTPUT)
+	public static BCInteger gsObjectEmitLinkMessage(final State st,
+													@Nonnull final GSVM vm,
+													@Nonnull final BCString objectUUID,
+													@Nonnull final BCInteger messageNumber,
+													@Nonnull final BCString message,
+													@Nonnull final BCString id) {
+		Obj object=Obj.findOrNull(st,objectUUID.toString());
+		if (object==null) { throw new GSUnknownIdentifier("No object with ID "+objectUUID.toString()+" was found"); }
+		if (object.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Object driver attempting cross instance link messaging..."); }
+		JSONObject send=new JSONObject();
+		send.put("linkmessagenumber",messageNumber.toString());
+		send.put("linkmessage",message.toString());
+		send.put("linkid",id.toString());
+		new Transmission(object,send).run();
+		return new BCInteger(null,0);
+	}
 }

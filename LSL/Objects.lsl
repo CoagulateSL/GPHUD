@@ -40,7 +40,7 @@ integer process(key id) {
 		gphud_hang("Failed to register with server:\n"+jsonget("error"));
 		return TRUE;	
 	}
-	if (incommand=="registered") { /*cookie=jsonget("cookie");*/ BOOTSTAGE=BOOT_COMPLETE; llMessageLinked(LINK_THIS,LINK_SET_STAGE,(string)BOOTSTAGE,NULL_KEY); }
+	if (incommand=="registered") { /*cookie=jsonget("cookie");*/ BOOTSTAGE=BOOT_COMPLETE; }
 	if (incommand=="ping") { /*retjson=llJsonSetValue(retjson,["cookie"],cookie);*/ }
 	//if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
 	//if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
@@ -50,6 +50,9 @@ integer process(key id) {
 	if (jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
 		string totitler=llJsonSetValue("",["titler"],(string)titlercolor+"|"+titlertext);
 		llSetText(titlertext,titlercolor,1);
+	}
+	if (jsonget("linkmessagenumber")!="") {
+		llMessageLinked(LINK_SET,((integer)jsonget("linkmessagenumber")),jsonget("linkmessage"),((key)jsonget("linkid")));
 	}
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
@@ -91,7 +94,6 @@ all_http_request(key id,string method,string body) {
 	#ifdef DEBUG
 	llOwnerSay("IN:"+json);
 	#endif
-	llMessageLinked(LINK_THIS,LINK_RECEIVE,json,"");
 	if (comms_http_request(id,method)) { llHTTPResponse(id,200,json); return; }
 	
 	//llOwnerSay("HTTPIN:"+json);
