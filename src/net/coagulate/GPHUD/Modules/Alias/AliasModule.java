@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
-import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Alias;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
@@ -8,6 +7,7 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,12 +23,12 @@ public class AliasModule extends ModuleAnnotation {
 	}
 
 	// ---------- INSTANCE ----------
-	@Nonnull
+	@Nullable
 	@Override
 	public Command getCommandNullable(@Nonnull final State st,
 	                                  @Nonnull final String commandname) {
 		final Alias alias=Alias.getAlias(st,commandname);
-		if (alias==null) { throw new UserInputLookupFailureException("Unknown command alias."+commandname); }
+		if (alias==null) return null;
 		final JSONObject template=alias.getTemplate();
 		return new AliasCommand(st,commandname,template);
 	}
