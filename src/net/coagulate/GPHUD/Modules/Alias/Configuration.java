@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
+import net.coagulate.Core.Exceptions.User.UserConfigurationRecursionException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Alias;
 import net.coagulate.GPHUD.Data.Audit;
@@ -130,28 +132,44 @@ public abstract class Configuration {
 		final JSONObject template=a.getTemplate();
 		f.add(new Paragraph("Invokes command "+template.getString("invoke")));
 		f.add(new Paragraph(new TextSubHeader("Template")));
-		f.add(t);
-		t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description").add("Replaced Description"));
-		final Command c=Modules.getCommand(st,template.getString("invoke"));
-		for (final Argument arg: c.getArguments()) {
-			if (!template.has(arg.name())) { template.put(arg.name(),""); }
-		}
-
-		for (final String name: template.keySet()) {
-			if (!"invoke".equals(name) && !name.endsWith("-desc")) {
-				t.openRow().add(name).add(new TextInput(name,template.getString(name)));
-				Argument arg=null;
-				for (final Argument anarg: c.getArguments()) { if (anarg.name().equals(name)) { arg=anarg; }}
-				if (arg!=null) {
-					t.add(arg.type().toString());
-					t.add(arg.description());
-					final String desc=template.optString(name+"-desc","");
-					t.add(new TextInput(name+"-desc",desc));
-					if (arg.delayTemplating()) { t.add("  <i> ( This parameter uses delayed templating ) </i>"); }
+		try {
+			final Command c = Modules.getCommand(st, template.getString("invoke"));
+			f.add(t);
+			t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description").add("Replaced Description"));
+			for (final Argument arg : c.getArguments()) {
+				if (!template.has(arg.name())) {
+					template.put(arg.name(), "");
 				}
 			}
+
+			for (final String name : template.keySet()) {
+				if (!"invoke".equals(name) && !name.endsWith("-desc")) {
+					t.openRow().add(name).add(new TextInput(name, template.getString(name)));
+					Argument arg = null;
+					for (final Argument anarg : c.getArguments()) {
+						if (anarg.name().equals(name)) {
+							arg = anarg;
+						}
+					}
+					if (arg != null) {
+						t.add(arg.type().toString());
+						t.add(arg.description());
+						final String desc = template.optString(name + "-desc", "");
+						t.add(new TextInput(name + "-desc", desc));
+						if (arg.delayTemplating()) {
+							t.add("  <i> ( This parameter uses delayed templating ) </i>");
+						}
+					}
+				}
+			}
+			if (st.hasPermission("Alias.Config")) {
+				f.add(new Button("Update", "Update"));
+			}
+		} catch (UserConfigurationRecursionException e) {
+			f.add("<b>This command has a recursion problem</b>.  Please delete a link in the recursion to resolve this.<br><pre>"+e.getLocalizedMessage()+"</pre>");
+		} catch (UserInputLookupFailureException e) {
+			f.add("<b>This alias points to an unresolvable command, you should probably delete this alias.<br><pre>"+e.getLocalizedMessage()+"</pre>");
 		}
-		if (st.hasPermission("Alias.Config")) { f.add(new Button("Update","Update")); }
 	}
 
 
