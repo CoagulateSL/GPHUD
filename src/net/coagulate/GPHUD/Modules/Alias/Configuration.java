@@ -92,7 +92,7 @@ public abstract class Configuration {
 		final Table t=new Table();
 		f.add(t);
 		t.openRow().add("Alias Name").add(new TextInput("name"));
-		t.openRow().add("Base Command").add(DropDownList.getCommandsList(st,"command",false));
+		t.openRow().add("Base Command").add(DropDownList.getCommandsList(st,"command",true));
 		t.openRow().add(new Cell(new Button("Submit"),2));
 	}
 
