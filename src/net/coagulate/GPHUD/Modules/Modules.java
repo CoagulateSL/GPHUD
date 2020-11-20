@@ -3,9 +3,11 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationRecursionException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.JavaTools;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -193,7 +195,12 @@ public abstract class Modules {
 	@Nullable
 	public static Command getCommandNullable(final State st,
 	                                         @Nonnull final String proposedcommand) {
-		return get(st,proposedcommand).getCommandNullable(st,extractReference(proposedcommand));
+		try {
+			JavaTools.limitRecursionUserException(50);
+			return get(st, proposedcommand).getCommandNullable(st, extractReference(proposedcommand));
+		} catch (UserConfigurationRecursionException e) {
+			throw new UserConfigurationRecursionException(proposedcommand+" -> "+e.getLocalizedMessage());
+		}
 	}
 
 	@Nonnull
