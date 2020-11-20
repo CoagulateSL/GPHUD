@@ -23,66 +23,54 @@ public class QuickButtons {
 
 	// ---------- STATICS ----------
 	@Commands(description="Triggered when quick button 1 is pressed",
-	          permitConsole=false,
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false,
 	          permitExternal=false)
 	public static Response quickButton1(@Nonnull final State st) {
 		return quickButton(st,1);
 	}
 
 	@Commands(description="Triggered when quick button 2 is pressed",
-	          permitConsole=false,
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false,
 	          permitExternal=false)
 	public static Response quickButton2(@Nonnull final State st) {
 		return quickButton(st,2);
 	}
 
 	@Commands(description="Triggered when quick button 3 is pressed",
-	          permitConsole=false,
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false,
 	          permitExternal=false)
 	public static Response quickButton3(@Nonnull final State st) {
 		return quickButton(st,3);
 	}
 
 	@Commands(description="Triggered when quick button 4 is pressed",
-	          permitConsole=false,
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false,
 	          permitExternal=false)
 	public static Response quickButton4(@Nonnull final State st) {
 		return quickButton(st,4);
 	}
 
 	@Commands(description="Triggered when quick button 5 is pressed",
-	          permitConsole=false,
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false,
 	          permitExternal=false)
 	public static Response quickButton5(@Nonnull final State st) {
 		return quickButton(st,5);
 	}
 
 	@Commands(description="Triggered when quick button 6 is pressed",
-	          permitConsole=false,
 	          permitUserWeb=false,
 	          context=Context.CHARACTER,
 	          permitObject=false,
-	          permitScripting=false,
 	          permitExternal=false)
 	public static Response quickButton6(@Nonnull final State st) {
 		return quickButton(st,6);
