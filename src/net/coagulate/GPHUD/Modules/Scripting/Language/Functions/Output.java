@@ -66,7 +66,7 @@ public class Output {
 	                                    @Nonnull final BCCharacter target,
 	                                    @Nonnull final BCString message) {
 		if (vm.simulation) { return new BCInteger(null,0); }
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		vm.queueOwnerSay(target.getContent(),message.getContent());
 		return new BCInteger(null,0);
 	}
