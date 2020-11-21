@@ -14,6 +14,14 @@ public class GSResourceUnavailableException extends GSException {
 		super(reason,cause);
 	}
 
+	public GSResourceUnavailableException(String reason, boolean suppresslogging) {
+		super(reason, suppresslogging);
+	}
+
+	public GSResourceUnavailableException(String reason, Throwable cause, boolean suppresslogging) {
+		super(reason, cause, suppresslogging);
+	}
+
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Resource Unavailable Exception}: "+getLocalizedMessage(); }
