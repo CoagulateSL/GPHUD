@@ -431,7 +431,7 @@ public abstract class Command {
 		checkCallingInterface(state);
 		// check permission
 		if (!requiresPermission().isEmpty() && !state.hasPermission(requiresPermission())) {
-			throw new UserAccessDeniedException("Permission is denied, you require '"+requiresPermission()+"'");
+			throw new UserAccessDeniedException("Permission is denied, you require '"+requiresPermission()+"'",true);
 		}
 		//check arguments
 		for (final Argument a: getArguments()) {
