@@ -27,7 +27,7 @@ public class ResetHealth {
 	                  permitExternal=false)
 	public static Response resetHealth(@Nonnull final State st) {
 		if (!st.getKV("health.allowreset").boolValue()) {
-			throw new UserAccessDeniedException("Resetting of your health is not permitted.");
+			throw new UserAccessDeniedException("Resetting of your health is not permitted.",true);
 		}
 		final int oldhealth=st.getKV("health.health").intValue();
 		final int newvalue=st.getKV("health.initialhealth").intValue();
