@@ -449,7 +449,7 @@ public class Char extends TableRow {
 			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
 			// and reconstitute it
 			for (final String character: characters) { blockedchars.append(character); }
-			throw new UserInputValidationFilterException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.");
+			throw new UserInputValidationFilterException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.",true);
 		}
 	}
 
