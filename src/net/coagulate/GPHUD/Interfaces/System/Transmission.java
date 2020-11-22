@@ -7,6 +7,7 @@ import net.coagulate.Core.Tools.JsonTools;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.SL.Config;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -180,9 +181,8 @@ public class Transmission extends Thread {
 	}
 
 	public void runUnwrapped() {
-		final boolean debug=false;
 		if (delay>0) {
-			try { Thread.sleep(delay*1000); } catch (@Nonnull final InterruptedException e) {}
+			try { Thread.sleep(delay*1000); } catch (@Nonnull final InterruptedException ignored) {}
 		}
 		int retries=5;
 		if (character!=null) { character.appendConveyance(new net.coagulate.GPHUD.State(character),json); }
@@ -207,7 +207,7 @@ public class Transmission extends Thread {
 			catch (@Nonnull final IOException e) {
 				retries--;
 				GPHUD.getLogger().log(INFO,"IOException "+e.getMessage()+" retries="+retries+" left");
-				try { Thread.sleep(5*1000); } catch (@Nonnull final InterruptedException ee) {}
+				try { Thread.sleep(5*1000); } catch (@Nonnull final InterruptedException ignored) {}
 			}
 		}
 		if (response==null) {
@@ -253,7 +253,6 @@ public class Transmission extends Thread {
 	// ----- Internal Instance -----
 	@Nonnull
 	private String sendAttempt() throws IOException {
-		final boolean debug=false;
 		if (url==null) { throw new IOException("Target URL is nulL"); }
 		final URLConnection transmission=new URL(url).openConnection();
 		transmission.setDoOutput(true);
@@ -267,7 +266,9 @@ public class Transmission extends Thread {
 		out.write(json+"\n");
 		out.flush();
 		out.close();
-		return ByteTools.convertStreamToString(transmission.getInputStream());
+		String response=ByteTools.convertStreamToString(transmission.getInputStream());
+		if (Config.logRequests()) { System.out.println("ReqLog:OUTBOUND - "+Thread.currentThread().getName()+" - "+response.length()+"b/"+json.length()+"b"); }
+		return response;
 	}
 
 	private String dumpCaller() {
