@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Alias;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationRecursionException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -30,7 +31,7 @@ public class AliasCommand extends Command {
 
 	final JSONObject definition;
 	@Nullable
-	final Command targetcommand;
+	Command targetcommand;
 	final String name;
 	@Nonnull
 	String fail="";
@@ -42,7 +43,11 @@ public class AliasCommand extends Command {
 		definition=newdef;
 		this.name=name;
 		if (st.hasModule(definition.getString("invoke"))) {
-			targetcommand=Modules.getCommandNullable(st,definition.getString("invoke"));
+			try { targetcommand=Modules.getCommandNullable(st,definition.getString("invoke")); }
+			catch (UserConfigurationRecursionException e) {
+				targetcommand=null;
+				fail=e.getLocalizedMessage();
+			}
 		}
 		else {
 			targetcommand=null;
