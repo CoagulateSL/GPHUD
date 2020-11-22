@@ -152,7 +152,6 @@ public abstract class Modules {
 	@Nullable
 	public static URL getURLNullable(final State st,
 	                                 @Nonnull String url) {
-		final boolean debug=false;
 		if (url.toLowerCase().startsWith("/gphud/")) { url=url.substring(6); }
 		URL literal=null;
 		URL relaxed=null;
@@ -182,9 +181,8 @@ public abstract class Modules {
 		// if there's a strict match
 		if (literal!=null) { return literal; }
 		// otherwise the relaxed match
-		if (relaxed!=null) { return relaxed; }
+		return relaxed;
 		// if not then its a 404.  do we exception or return null?
-		return null;
 	}
 
 	public static void validatePermission(final State st,
