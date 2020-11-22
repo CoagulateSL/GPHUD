@@ -294,6 +294,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 					parameterMap.put(key,value);
 				}
 				st.postMap(parameterMap);
+				Thread.currentThread().setName("Command "+obj.getString("command"));
 				return Modules.run(st,obj.getString("command"),parameterMap);
 			}
 		}
