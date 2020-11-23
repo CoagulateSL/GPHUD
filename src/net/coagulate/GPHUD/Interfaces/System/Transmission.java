@@ -159,6 +159,12 @@ public class Transmission extends Thread {
 	// can call .start() to background run this, or .run() to async run inline/inthread
 	@Override
 	public void run() {
+		String callerName="UNKNOWN";
+		if (caller!=null) {
+			StackTraceElement callerElement = caller[2];
+			callerName=callerElement.getClassName().replaceFirst("net.coagulate.","")+"."+callerElement.getMethodName()+":"+callerElement.getLineNumber();
+		}
+		Thread.currentThread().setName("Called from "+callerName);
 		try { runUnwrapped(); }
 		catch (@Nonnull final Exception e) {
 			Throwable step=e;
@@ -267,7 +273,7 @@ public class Transmission extends Thread {
 		out.flush();
 		out.close();
 		String response=ByteTools.convertStreamToString(transmission.getInputStream());
-		if (Config.logRequests()) { System.out.println("ReqLog:OUTBOUND - "+Thread.currentThread().getName()+" - "+response.length()+"b/"+json.length()+"b"); }
+		if (Config.logRequests()) { System.out.println("ReqLog:GPHUD/OUTBOUND - "+Thread.currentThread().getName()+" - "+response.length()+"b/"+json.length()+"b"); }
 		return response;
 	}
 
