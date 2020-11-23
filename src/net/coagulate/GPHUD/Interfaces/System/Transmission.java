@@ -273,7 +273,7 @@ public class Transmission extends Thread {
 		out.flush();
 		out.close();
 		String response=ByteTools.convertStreamToString(transmission.getInputStream());
-		if (Config.logRequests()) { System.out.println("ReqLog:GPHUD/OUTBOUND - "+Thread.currentThread().getName()+" - "+response.length()+"b/"+json.length()+"b"); }
+		if (Config.logRequests()) { System.out.println("ReqLog:'GPHUD/OUTBOUND','"+Thread.currentThread().getName()+"',"+response.length()+","+json.length()+",-1"); }
 		return response;
 	}
 
