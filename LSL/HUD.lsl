@@ -1,7 +1,7 @@
 // NEW HUD :P
 //#define DEBUG_BOOT
 //#define DEBUG_JSON
-
+#define COMMS_PROTOCOL "3"
 
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/SetDev.lsl"
@@ -104,8 +104,7 @@ brand() {llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_TEXTURE,ALL_SIDES,GPHUD_LO
 command(string command) {
     jsonput("command",command);
     jsonput("developerkey",COMMS_DEVKEY);
-	jsonput("protocol","2"); // used to redirect various behaviours in the Java side for login
-	
+	jsonput("protocol",COMMS_PROTOCOL);
 	string devinject=""; if (DEV) { devinject="dev."; }
 	string SERVER_URL="http://"+devinject+SERVER_HOSTNAME+"/GPHUD/system";
 	#ifdef DEBUG_JSON

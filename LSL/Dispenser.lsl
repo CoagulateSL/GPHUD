@@ -1,3 +1,4 @@
+#define COMMS_PROTOCOL "3"
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
 

@@ -1,3 +1,4 @@
+#define COMMS_PROTOCOL "3"
 #include "configuration.lsl"
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/SetDev.lsl"

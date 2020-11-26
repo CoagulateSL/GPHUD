@@ -1,17 +1,17 @@
 //#define COMMS_DEBUG
 //#define DEBUG
+#define COMMS_PROTOCOL "3"
+//#define COMMS_INCLUDECOOKIE
+#define COMMS_INCLUDECALLBACK
+//#define COMMS_INCLUDEDIGEST
+#define COMMS_DONT_CHECK_CALLBACK
 #include "configuration.lsl"
 #include "GPHUD/LSL/Constants.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
 #include "SLCore/LSL/SetDev.lsl"
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/ServerMesh.lsl"
-//#define COMMS_INCLUDECOOKIE
-#define COMMS_INCLUDECALLBACK
-//#define COMMS_INCLUDEDIGEST
-#define COMMS_DONT_CHECK_CALLBACK
 #include "SLCore/LSL/CommsV3.lsl"
-
 
 
 
@@ -33,7 +33,6 @@ integer process(key id) {
 	string othercommand=jsonget("command");
 	//llOwnerSay(command+" // "+othercommand);
 	//llOwnerSay(command+" // "+othercommand+" // "+json);
-	gphud_process();
 	#ifdef COMMS_DEBUG
 	llOwnerSay(json);
 	output("Processing command "+command);
