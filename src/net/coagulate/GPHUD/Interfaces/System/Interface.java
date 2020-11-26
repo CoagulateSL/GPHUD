@@ -88,12 +88,13 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			st.setJson(obj);
 			if (obj.has("callback")) {
 				st.callBackURL(obj.getString("callback"));
-			}
-			if (obj.has("callback")) {
 				Char.refreshURL(obj.getString("callback"));
-			}
-			if (obj.has("callback")) {
 				Region.refreshURL(obj.getString("callback"));
+			}
+			st.protocol=0;
+			if (obj.has("protocol")) {
+				try { st.protocol=obj.getInt("protocol"); }
+				catch (NumberFormatException ignore) {}
 			}
 			if (obj.has("cookie")) {
 				Cookie.refreshCookie(obj.getString("cookie"));

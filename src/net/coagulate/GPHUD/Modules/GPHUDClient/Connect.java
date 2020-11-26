@@ -68,7 +68,7 @@ public class Connect {
 		st.json(); // ensure we have the jsons
 		// log client version
 		if (!version.isEmpty() && !versiondate.isEmpty() && !versiontime.isEmpty()) {
-			st.getRegion().recordHUDVersion(st,version,versiondate,versiontime);
+			st.getRegion().recordHUDVersion(st,version,versiondate,versiontime,st.protocol);
 		}
 		// forcibly invite instance owners to group
 		if (st.getInstance().getOwner().getId()==st.getAvatar().getId() && Config.isOfficial()) {
@@ -101,6 +101,7 @@ public class Connect {
 		if (character.getId()==characterid) { return new OKResponse("GPHUD Connection Re-established"); }
 		// and purge the conveyances so they get re-set
 		character.wipeConveyances(st);
+		character.setProtocol(st.protocol);
 		// chain postConnect
 		return postConnect(st);
 	}

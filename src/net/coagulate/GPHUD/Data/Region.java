@@ -205,6 +205,7 @@ public class Region extends TableRow {
 		t.header("Region X");
 		t.header("Region Y");
 		t.header("Retired");
+		t.header("Protocol");
 		for (final ResultsRow row: db().dq("select * from regions where instanceid=?",st.getInstance().getId())) {
 			t.openRow();
 			t.add(row.getIntNullable("regionid"));
@@ -221,6 +222,7 @@ public class Region extends TableRow {
 			Integer retired=row.getIntNullable("retired");
 			if (retired==null) { retired=0; }
 			t.add(retired==0?"":"Retired");
+			t.add(row.getInt("protocol"));
 		}
 		return t;
 	}
@@ -443,8 +445,9 @@ public class Region extends TableRow {
 	public void recordHUDVersion(@Nonnull final State st,
 	                             @Nonnull final String version,
 	                             @Nonnull final String versiondate,
-	                             @Nonnull final String versiontime) {
-		recordVersion(st,"hud",version,versiondate,versiontime);
+	                             @Nonnull final String versiontime,
+								 final int protocol) {
+		recordVersion(st,"hud",version,versiondate,versiontime,protocol);
 	}
 
 	/**
@@ -458,8 +461,9 @@ public class Region extends TableRow {
 	public void recordServerVersion(@Nonnull final State st,
 	                                @Nonnull final String version,
 	                                @Nonnull final String versiondate,
-	                                @Nonnull final String versiontime) {
-		recordVersion(st,"server",version,versiondate,versiontime);
+	                                @Nonnull final String versiontime,
+									final int protocol) {
+		recordVersion(st,"server",version,versiondate,versiontime,protocol);
 	}
 
 	/**
@@ -654,7 +658,8 @@ public class Region extends TableRow {
 	                           @Nonnull final String type,
 	                           @Nonnull final String version,
 	                           @Nonnull final String versiondate,
-	                           @Nonnull final String versiontime) {
+	                           @Nonnull final String versiontime,
+							   int protocol) { // may be overwritten to avoid logging HUD versions in REGIONS table (reserved for server version)
 		final Date d;
 		try {
 			final SimpleDateFormat df=new SimpleDateFormat("MMM d yyyy HH:mm:ss");
@@ -671,11 +676,13 @@ public class Region extends TableRow {
 		final Integer olddatetime=regiondata.getIntNullable("region"+type+"datetime");
 		final int newversion=Interface.convertVersion(version);
 		final int newdatetime=(int) (d.getTime()/1000.0);
-		if (oldversion==null || olddatetime==null || olddatetime!=newdatetime || oldversion!=newversion) {
-			d("update regions set region"+type+"version=?,region"+type+"datetime=? where regionid=?",newversion,newdatetime,getId());
+		final int oldprotocol=protocol();
+		if (type.equalsIgnoreCase("hud")) { protocol=oldprotocol; } // we don't log this in the regions table, just the region server protocol
+		if (oldversion==null || olddatetime==null || olddatetime!=newdatetime || oldversion!=newversion || protocol!=oldprotocol) {
+			d("update regions set region"+type+"version=?,region"+type+"datetime=?,protocol=? where regionid=?",newversion,newdatetime,protocol,getId());
 			final String olddesc=formatVersion(oldversion,olddatetime,false);
 			final String newdesc=formatVersion(newversion,newdatetime,false);
-			st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc);
+			st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc+" protocol "+oldprotocol+" to "+protocol);
 			final State fake=new State();
 			fake.setInstance(st.getInstance());
 			fake.setAvatar(User.getSystem());
@@ -683,7 +690,7 @@ public class Region extends TableRow {
 			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,updown,type,olddesc,newdesc,"Product version "+updown);
 		}
 	}
-
+	public int protocol() { return getInt("protocol"); }
 	/**
 	 * Internal method to reconstruct a human readable version/datetime string for this region's versions.
 	 *

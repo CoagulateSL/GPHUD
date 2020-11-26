@@ -321,6 +321,7 @@ public class Char extends TableRow {
 		t.header("Servicing Server");
 		t.header("Zone");
 		t.header("Region");
+		t.header("protocol");
 		for (final ResultsRow row: db().dq("select * from characters where instanceid=? and (url is not null or playedby is not null)",st.getInstance().getId())) {
 			t.openRow();
 			t.add(row.getIntNullable("characterid"));
@@ -341,6 +342,7 @@ public class Char extends TableRow {
 			t.add(zoneid==null?"":Zone.get(zoneid).getName()+"#"+zoneid);
 			final Integer regionid=row.getIntNullable("regionid");
 			t.add(regionid==null?"":Region.get(regionid,true).getName()+"[#"+regionid+"]");
+			t.add(row.getInt("protocol"));
 		}
 		return t;
 	}
@@ -975,4 +977,9 @@ public class Char extends TableRow {
 		}
 		return conveyances;
 	}
+
+    public void setProtocol(int protocol) {
+		set("protocol",protocol);
+    }
+    public int getProtocol() { return getInt("protocol"); }
 }

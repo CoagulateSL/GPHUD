@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Objects;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Audit;
+import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Obj;
 import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Interfaces.Interface;
@@ -65,7 +66,7 @@ public class Connect {
 		final int version=Interface.convertVersion(st.json().getString("version"));
 		final int maxversion=Obj.getMaxVersion();
 		final Obj oldobject=Obj.findOrNull(st,st.objectKey);
-		final Obj obj=Obj.connect(st,st.objectKey,st.getSourceName(),st.getRegion(),st.getSourceOwner(),st.sourceLocation,st.callBackURL(),version,bootParams);
+		final Obj obj=Obj.connect(st,st.objectKey,st.getSourceName(),st.getRegion(),st.getSourceOwner(),st.sourceLocation,st.callBackURL(),version,bootParams,st.protocol);
 		if (oldobject==null) {
 			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"New","Connection","",st.getSourceName(),"Conected new object at "+st.sourceRegion +"/"+st.sourceLocation);
 		}
@@ -80,6 +81,9 @@ public class Connect {
 			final ObjectType ot=ObjectType.materialise(st,objecttype);
 			behaviour=ot.explainText();
 			behaviour+="\nOperating mode: "+ot.mode();
+			Char associatedCharacter=ot.getCharacter();
+			if (associatedCharacter!=null) { associatedCharacter.setProtocol(st.protocol); }
+			if (st.getCharacterNullable()!=null) { st.getCharacter().setProtocol(st.protocol); }
 			ot.payload(st,response,st.getRegion(),st.callBackURL());
 		}
 		behaviour+="\nServicing Node: "+ Config.getHostName();

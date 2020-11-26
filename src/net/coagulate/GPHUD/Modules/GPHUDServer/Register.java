@@ -97,7 +97,7 @@ public abstract class Register {
 		final Transmission t=new Transmission(region,registered);
 		t.start();
 		final JSONObject j=new JSONObject();
-		region.recordServerVersion(st,version,versiondate,versiontime);
+		region.recordServerVersion(st,version,versiondate,versiontime,st.protocol);
 		j.put("incommand","registering");
 		j.put("instancename",instance.getName());
 		j.put("autoattach",st.getKV("GPHUDServer.AutoAttach"));
