@@ -1,3 +1,4 @@
+#define COMMS_PROTOCOL "3"
 //#define DEBUG
 #include "SLCore/LSL/SetDev.lsl"
 #define MESSAGE_IS_SAY TRUE
@@ -18,7 +19,7 @@
 #define CHECKIN_MINUTES 15
 string MODE="NONE";
 
-integer ODVERSION=2;
+integer ODVERSION=4;
 
 startLogin() {
 	if (llGetInventoryType("GPHUD Object Driver Inhibitor")!=INVENTORY_NONE) { return; }
@@ -32,7 +33,6 @@ startLogin() {
 string titlertext="";
 vector titlercolor=<1,1,1>;
 integer process(key id) {
-	gphud_process();
 	string incommand=jsonget("incommand");
 	integer DONOTRESPOND=FALSE;
 	string retjson="";
@@ -44,8 +44,6 @@ integer process(key id) {
 	}
 	if (incommand=="registered") { /*cookie=jsonget("cookie");*/ BOOTSTAGE=BOOT_COMPLETE; }
 	if (incommand=="ping") { /*retjson=llJsonSetValue(retjson,["cookie"],cookie);*/ }
-	//if (jsonget("eventmessage1")!="") { llOwnerSay(jsonget("eventmessage1")); }
-	//if (jsonget("eventmessage2")!="") { llOwnerSay(jsonget("eventmessage2")); }
 	if (jsonget("mode")!="") { MODE=jsonget("mode"); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
@@ -56,6 +54,41 @@ integer process(key id) {
 	if (jsonget("linkmessagenumber")!="") {
 		llMessageLinked(LINK_SET,((integer)jsonget("linkmessagenumber")),jsonget("linkmessage"),((key)jsonget("linkid")));
 	}
+	integer i=1;
+	if (jsonget("say")!="") {
+		string oldname=llGetObjectName();
+		string newname=jsonget("sayas");
+		if (newname!="") { llSetObjectName(newname); }
+		llSay(0,jsonget("say"));
+		if (newname!="") { llSetObjectName(oldname); }
+	}
+	i=1;
+	while (jsonget("say"+((string)i))!="") {
+		string oldname=llGetObjectName();
+		string newname=jsonget("sayas");
+		if (newname!="") { llSetObjectName(newname); }
+		llSay(0,jsonget("say"+((string)i)));
+		if (newname!="") { llSetObjectName(oldname); }
+		i++;
+	}	
+	if (jsonget("sayashud")!="") { llSay(0,jsonget("sayashud")); }
+	i=1;
+	while (jsonget("sayashud"+((string)i))!="") {
+		llSay(0,jsonget("sayashud"+((string)i)));
+		i++;
+	}	
+	if (jsonget("terminate")!="") {
+		gphud_hang("=== TERMINATED ===: "+jsonget("terminate"));
+	}			
+	if (incommand=="shutdown" || jsonget("shutdown")!="") {
+		gphud_hang("Shutdown requested: "+jsonget("shutdown"));
+	}	
+	if (incommand=="reboot" || jsonget("reboot")!="") {
+		llOwnerSay("Rebooting at request from server: "+jsonget("reboot"));
+		//shutdown();
+		setup();
+	}
+	
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;
