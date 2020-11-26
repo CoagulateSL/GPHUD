@@ -122,6 +122,13 @@ public abstract class ObjectType {
 		vm.introduce("OBJECTKEY",new BCString(null,st.getObject().getUUID()));
 	}
 
+	@Nullable
+	public Char getCharacter() {
+		if (!json.has("character")) { return null; }
+		final int charid=json.getInt("character");
+		return Char.get(charid);
+	}
+
 	enum MODE {
 		NONE,
 		CLICKABLE,
