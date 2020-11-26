@@ -28,38 +28,4 @@ calculatebroadcastchannel() {
 	broadcastchannel=output;
 }
 
-
-integer gphud_process() {
-	string incommand=jsonget("incommand");
-	if (jsonget("message")!="") { typedSay(jsonget("message")); }
-	if (jsonget("say")!="") {
-		string oldname=llGetObjectName();
-		string newname=jsonget("sayas");
-		if (newname!="") { llSetObjectName(newname); }
-		llSay(0,jsonget("say"));
-		if (newname!="") { llSetObjectName(oldname); }
-	}
-	if (jsonget("sayashud")!="") { 
-		llSay(0,jsonget("sayashud"));
-	}
-	if (jsonget("error")!="") {
-		typedSay(jsonget("error"));
-	}
-	if (jsonget("terminate")!="") {
-		typedSay("===TERMINATED===\n"+jsonget("terminate"));
-		gphud_hang(jsonget("terminate"));
-	}			
-	if (incommand=="shutdown" || jsonget("shutdown")!="") {
-		typedSay("---SHUTDOWN REQUESTED---\n"+jsonget("shutdown"));
-		gphud_hang(jsonget("shutdown"));
-	}	
-	if (incommand=="reboot" || jsonget("reboot")!="") {
-		typedSay("Rebooting at request from server: "+jsonget("reboot"));
-		llResetScript();
-	}
-	if (incommand=="ping") {
-		//json=llJsonSetValue("",["incommand"],"pong");
-	}
-	return FALSE;
-}
 #endif
