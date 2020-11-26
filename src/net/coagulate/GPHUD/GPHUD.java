@@ -166,7 +166,6 @@ public class GPHUD extends SLModule {
 			log.config("Add URL index to characters table");
 			GPHUD.getDB().d("ALTER TABLE characters ADD INDEX characters_url_index (url)");
 			log.config("Add URL index to regions table");
-			//noinspection SpellCheckingInspection
 			GPHUD.getDB().d("ALTER TABLE regions ADD INDEX regionss_url_index (url)");
 			log.config("Schema upgrade of GPHUD to version 2 is complete"); currentVersion =2;
 		}
