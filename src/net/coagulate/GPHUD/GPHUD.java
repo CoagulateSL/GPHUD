@@ -138,7 +138,7 @@ public class GPHUD extends SLModule {
 
 		// Initialise the Database layer
 		GPHUD.db=new MariaDBConnection("GPHUD"+(Config.getDevelopment()?"DEV":""),Config.getGPHUDJdbc());
-		schemaCheck(GPHUD.db,"gphud",2);
+		schemaCheck(GPHUD.db,"gphud",SCHEMA_VERSION);
 
 		// Annotation parser
 		Classes.initialise();
@@ -156,8 +156,10 @@ public class GPHUD extends SLModule {
 		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
 	}
 
+	private static final int SCHEMA_VERSION=3;
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
+		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
 		Logger log=GPHUD.getLogger("SchemaUpgrade");
 		if (currentVersion ==1) {
 			log.config("Schema for GPHUD is at version 1, upgrading to version 2");
@@ -167,6 +169,15 @@ public class GPHUD extends SLModule {
 			//noinspection SpellCheckingInspection
 			GPHUD.getDB().d("ALTER TABLE regions ADD INDEX regionss_url_index (url)");
 			log.config("Schema upgrade of GPHUD to version 2 is complete"); currentVersion =2;
+		}
+		if (currentVersion==2) {
+			log.config("Add protocol column to characters table");
+			GPHUD.getDB().d("ALTER TABLE `characters` ADD COLUMN `protocol` INT NOT NULL DEFAULT 0 AFTER `regionid`");
+			log.config("Add protocol column to regions table");
+			GPHUD.getDB().d("ALTER TABLE `regions` ADD COLUMN `protocol` INT NOT NULL DEFAULT 0 AFTER `primuuid`");
+			log.config("Add protocol column to objects table");
+			GPHUD.getDB().d("ALTER TABLE `objects` ADD COLUMN `protocol` INT NOT NULL DEFAULT 0 AFTER `authnode`");
+			log.config("Schema upgrade of GPHUD to version 3 is complete"); currentVersion =3;
 		}
 		return currentVersion;
 	}
