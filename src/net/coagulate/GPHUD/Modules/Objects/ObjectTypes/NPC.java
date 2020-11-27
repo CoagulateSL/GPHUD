@@ -38,14 +38,14 @@ public class NPC extends ObjectType {
 	public void editForm(@Nonnull final State st) {
 		final Table t=new Table();
 		t.add("Character");
-		final DropDownList charlist=Char.getNPCList(st,"character");
-		if (json.has("character")) { charlist.setValue(""+json.getInt("character")); }
-		t.add(charlist);
+		final DropDownList charList=Char.getNPCList(st,"character");
+		if (json.has("character")) { charList.setValue(""+json.getInt("character")); }
+		t.add(charList);
 		t.openRow();
 		t.add("OnClick Script");
-		final DropDownList scriptlist=Script.getList(st,"script");
-		if (json.has("script")) { scriptlist.setValue(""+json.getInt("script")); }
-		t.add(scriptlist);
+		final DropDownList scriptList=Script.getList(st,"script");
+		if (json.has("script")) { scriptList.setValue(""+json.getInt("script")); }
+		t.add(scriptList);
 		t.openRow();
 		t.add(new Cell(new Button("Submit"),2));
 		t.openRow();
@@ -65,19 +65,19 @@ public class NPC extends ObjectType {
 	public void update(@Nonnull final State st) {
 		boolean update=false;
 		if (st.postMap().containsKey("character")) {
-			final int charid=Integer.parseInt(st.postMap().get("character"));
-			Char.get(charid).validate(st);
-			if ((!json.has("character")) || charid!=json.getInt("character")) {
+			final int charId=Integer.parseInt(st.postMap().get("character"));
+			Char.get(charId).validate(st);
+			if ((!json.has("character")) || charId!=json.getInt("character")) {
 				update=true;
-				json.put("character",charid);
+				json.put("character",charId);
 			}
 		}
 		if (st.postMap().containsKey("script")) {
-			final int scriptid=Integer.parseInt(st.postMap().get("script"));
-			final Script script=Script.get(scriptid);
+			final int scriptId=Integer.parseInt(st.postMap().get("script"));
+			final Script script=Script.get(scriptId);
 			script.validate(st);
-			if ((!json.has("script")) || scriptid!=json.getInt("script")) {
-				json.put("script",scriptid);
+			if ((!json.has("script")) || scriptId!=json.getInt("script")) {
+				json.put("script",scriptId);
 				update=true;
 			}
 		}
@@ -97,13 +97,13 @@ public class NPC extends ObjectType {
 	                    @Nullable final String url) {
 		super.payload(st,response,region,url);
 		if (!json.has("character")) { return; }
-		final int charid=json.getInt("character");
-		final Char ch=Char.get(charid);
+		final int charId=json.getInt("character");
+		final Char ch=Char.get(charId);
 		ch.validate(st);
 		ch.setRegion(region);
 		if (url!=null) { ch.setURL(url); }
-		final State newstate=new State(ch);
-		ch.initialConveyances(newstate,response);
+		final State newState=new State(ch);
+		ch.initialConveyances(newState,response);
 	}
 
 	@Nonnull
@@ -118,31 +118,30 @@ public class NPC extends ObjectType {
 	                      @Nonnull final Char clicker) {
 		// do we have a character set
 		if (!json.has("character")) { return new ErrorResponse("No character is associated with this NPC object"); }
-		final int charid=json.getInt("character");
-		final Char ch=Char.get(charid);
+		final int charId=json.getInt("character");
+		final Char ch=Char.get(charId);
 		ch.validate(st);
 		st.setCharacter(ch);
 		if (!json.has("script")) { return new ErrorResponse("No script is associated with this NPC object"); }
-		final int scriptid=json.getInt("script");
-		final Script script=Script.get(scriptid);
+		final int scriptId=json.getInt("script");
+		final Script script=Script.get(scriptId);
 		script.validate(st);
 		final GSVM vm=new GSVM(script.getByteCode());
 		vm.introduce("TARGET",new BCCharacter(null,clicker));
 		vm.introduce("TARGETUUID",new BCString(null,clicker.getPlayedBy().getUUID()));
 		populateVmVariables(st,vm);
-		final JSONObject jsonresponse=vm.execute(st).asJSON(st);
+		final JSONObject jsonResponse=vm.execute(st).asJSON(st);
 		//System.out.println(response.asJSON(st));
-		ch.appendConveyance(st,jsonresponse);
+		ch.appendConveyance(st,jsonResponse);
 		clicker.considerPushingConveyances();
-		return new JSONResponse(jsonresponse);
+		return new JSONResponse(jsonResponse);
 	}
 
 	// ----- Internal Instance -----
 	@Nullable
 	Char getChar() {
-		final String chid=json.optString("character","");
-		final String chname="";
-		if (chid==null || chid.isEmpty()) { return null; }
-		return Char.get(Integer.parseInt(chid));
+		final String charId=json.optString("character","");
+		if (charId==null || charId.isEmpty()) { return null; }
+		return Char.get(Integer.parseInt(charId));
 	}
 }
