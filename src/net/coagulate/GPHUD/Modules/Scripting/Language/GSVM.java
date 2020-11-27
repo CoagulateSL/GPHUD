@@ -220,14 +220,7 @@ public class GSVM {
 	public void queueSayAs(@Nonnull final Char ch,
 	                       final String message) {
 		final JSONObject out=getQueue(ch);
-		String use="say";
-		int index=0;
-		while (out.has(use)) {
-			index++;
-			use="say"+index;
-		}
-		out.put(use,message);
-		out.put("sayas",ch.getName());
+		JSONResponse.sayAs(out,ch.getName(),message);
 	}
 
 	public void queueSay(@Nonnull final Char ch,
