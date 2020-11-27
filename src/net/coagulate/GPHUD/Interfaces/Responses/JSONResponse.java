@@ -51,4 +51,34 @@ public class JSONResponse implements Response {
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemImplementationException("JSONResponse can not be interrogated as a Form");
 	}
+
+	/** Target will emit message under guise of the sayAs name */
+	public static void sayAs(JSONObject json,String sayAs,String message) {
+		int i=1;
+		while (json.has("say"+i)) { i++; }
+		json.put("sayas",sayAs);
+		json.put("say"+i,message);
+	}
+	/** Target will emit message under guise of the sayAs name */
+	public void sayAs(String sayAs,String message) { sayAs(json,sayAs,message); }
+	/** Target will emit message as the GPHUD */
+	public static void sayAsHud(JSONObject json, String message) {
+		int i=1;
+		while (json.has("sayashud"+i)) { i++; }
+		json.put("sayashud"+i,message);
+	}
+	/** Target will emit message as the GPHUD */
+	public void sayAsHud(String message) { sayAsHud(json,message); }
+	/** Target will message the owner (does not work on objects) */
+	public static void ownerSay(JSONObject json,String message) {
+		int i=1;
+		while (json.has("message"+i)) { i++; }
+		json.put("message"+i,message);
+	}
+	/** Target will message the owner (does not work on objects) */
+	public void ownerSay(String message) { ownerSay(json,message); }
+	/** Target will message the owner (does not work on objects) (alias for ownerSay)*/
+	public static void message(JSONObject json,String message) { ownerSay(json,message); }
+	/** Target will message the owner (does not work on objects) (alias for ownerSay*/
+	public void message(String message) { message(json,message); }
 }
