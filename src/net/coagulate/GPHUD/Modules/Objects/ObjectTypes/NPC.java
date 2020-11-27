@@ -128,7 +128,7 @@ public class NPC extends ObjectType {
 		script.validate(st);
 		final GSVM vm=new GSVM(script.getByteCode());
 		vm.introduce("TARGET",new BCCharacter(null,clicker));
-		vm.introduce("TARGETUUID",new BCString(null,clicker.getPlayedBy().getUUID()));
+		vm.introduce("TARGETUUID",new BCString(null,clicker.getPlayedByNullable().getUUID()));
 		populateVmVariables(st,vm);
 		final JSONObject jsonresponse=vm.execute(st).asJSON(st);
 		//System.out.println(response.asJSON(st));

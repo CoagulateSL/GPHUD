@@ -837,10 +837,17 @@ public class Char extends TableRow {
 	 * @return Avatar
 	 */
 	@Nullable
-	public User getPlayedBy() {
+	public User getPlayedByNullable() {
 		final Integer avatarid=dqi("select playedby from characters where characterid=?",getId());
 		if (avatarid==null) { return null; }
 		return User.get(avatarid);
+	}
+
+	@Nonnull
+	public User getPlayedBy() {
+		User response=getPlayedByNullable();
+		if (response!=null) { return response; }
+		throw new UserInputStateException("Character "+getName()+" is not currently registered as being played by any Agent.");
 	}
 
 	/**

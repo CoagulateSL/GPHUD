@@ -574,7 +574,7 @@ public class Instance extends TableRow {
 					if (!buffer.containsKey(reg)) {
 						buffer.put(reg,new JSONObject().put("incommand","disseminate"));
 					}
-					final User user=c.getPlayedBy();
+					final User user=c.getPlayedByNullable();
 					String playedby=null;
 					if (user!=null) { playedby=user.getUUID(); }
 					if (playedby==null) { // maybe its an object

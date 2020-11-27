@@ -165,7 +165,7 @@ public class State extends DumpableState {
 
 	public State(@Nonnull final Char c) {
 		character=c;
-		avatar=c.getPlayedBy();
+		avatar=c.getPlayedByNullable();
 		instance=c.getInstance();
 		region=c.getRegion();
 		zone=c.getZone();
@@ -181,7 +181,7 @@ public class State extends DumpableState {
 		region=r;
 		zone=z;
 		character=c;
-		avatar=c.getPlayedBy();
+		avatar=c.getPlayedByNullable();
 	}
 
 	// ---------- STATICS ----------
@@ -348,7 +348,7 @@ public class State extends DumpableState {
 	public void setCharacter(@Nullable final Char character) {
 		if (character!=null) { character.validate(this); }
 		this.character=character;
-		if (this.character!=null && avatar==null) { avatar=character.getPlayedBy(); }
+		if (this.character!=null && avatar==null) { avatar=character.getPlayedByNullable(); }
 	}
 
 	@Nullable
