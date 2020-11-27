@@ -53,32 +53,37 @@ public class JSONResponse implements Response {
 	}
 
 	/** Target will emit message under guise of the sayAs name */
-	public static void sayAs(JSONObject json,String sayAs,String message) {
+	public static void sayAs(@Nonnull JSONObject json,
+							 @Nonnull String sayAs,
+							 @Nonnull String message) {
 		int i=1;
 		while (json.has("say"+i)) { i++; }
 		json.put("sayas",sayAs);
 		json.put("say"+i,message);
 	}
 	/** Target will emit message under guise of the sayAs name */
-	public void sayAs(String sayAs,String message) { sayAs(json,sayAs,message); }
+	public void sayAs(@Nonnull String sayAs,@Nonnull String message) { sayAs(json,sayAs,message); }
 	/** Target will emit message as the GPHUD */
-	public static void sayAsHud(JSONObject json, String message) {
+	public static void sayAsHud(@Nonnull JSONObject json,
+								@Nonnull String message) {
 		int i=1;
 		while (json.has("sayashud"+i)) { i++; }
 		json.put("sayashud"+i,message);
 	}
 	/** Target will emit message as the GPHUD */
-	public void sayAsHud(String message) { sayAsHud(json,message); }
+	public void sayAsHud(@Nonnull String message) { sayAsHud(json,message); }
 	/** Target will message the owner (does not work on objects) */
-	public static void ownerSay(JSONObject json,String message) {
+	public static void ownerSay(@Nonnull JSONObject json,
+								@Nonnull String message) {
 		int i=1;
 		while (json.has("message"+i)) { i++; }
 		json.put("message"+i,message);
 	}
 	/** Target will message the owner (does not work on objects) */
-	public void ownerSay(String message) { ownerSay(json,message); }
+	public void ownerSay(@Nonnull String message) { ownerSay(json,message); }
 	/** Target will message the owner (does not work on objects) (alias for ownerSay)*/
-	public static void message(JSONObject json,String message) { ownerSay(json,message); }
+	public static void message(@Nonnull JSONObject json,
+							   @Nonnull String message) { ownerSay(json,message); }
 	/** Target will message the owner (does not work on objects) (alias for ownerSay*/
-	public void message(String message) { message(json,message); }
+	public void message(@Nonnull String message) { message(json,message); }
 }
