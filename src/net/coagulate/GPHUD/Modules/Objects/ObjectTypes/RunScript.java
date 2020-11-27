@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -73,6 +74,7 @@ public class RunScript extends ObjectType {
 		script.validate(st);
 		final GSVM vm=new GSVM(script.getByteCode());
 		vm.introduce("CALLER",new BCCharacter(null,clicker));
+		vm.introduce("CALLERUUID",new BCString(null,clicker.getPlayedBy().getUUID()));
 		populateVmVariables(st,vm);
 		return new JSONResponse(vm.execute(st).asJSON(st));
 	}
