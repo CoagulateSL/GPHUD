@@ -54,15 +54,19 @@ public class JSONResponse implements Response {
 
 	/** Target will emit message under guise of the sayAs name */
 	public static void sayAs(@Nonnull JSONObject json,
-							 @Nonnull String sayAs,
+							 @Nullable String sayAs,
 							 @Nonnull String message) {
 		int i=1;
 		while (json.has("say"+i)) { i++; }
-		json.put("sayas",sayAs);
+		if (sayAs!=null) { json.put("sayas",sayAs); }
 		json.put("say"+i,message);
 	}
 	/** Target will emit message under guise of the sayAs name */
-	public void sayAs(@Nonnull String sayAs,@Nonnull String message) { sayAs(json,sayAs,message); }
+	public void sayAs(@Nullable String sayAs,@Nonnull String message) { sayAs(json,sayAs,message); }
+	/** Target will emit message .. not really sure why this differs from sayashud at this point*/
+	public static void say(@Nonnull JSONObject json,@Nonnull String message) { sayAs(json,null,message); }
+	/** Target will emit message .. not really sure why this differs from sayashud at this point*/
+	public void say(@Nonnull String message) { sayAs(null,message); }
 	/** Target will emit message as the GPHUD */
 	public static void sayAsHud(@Nonnull JSONObject json,
 								@Nonnull String message) {
