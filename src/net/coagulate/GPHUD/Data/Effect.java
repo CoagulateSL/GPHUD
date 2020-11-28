@@ -9,6 +9,7 @@ import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Config;
@@ -240,7 +241,7 @@ public class Effect extends TableRow {
 		final String applykv=st.getKV(this,"Effects.RemoveMessage");
 		final JSONObject message=new JSONObject();
 		if (applykv!=null && (!applykv.isEmpty())) {
-			message.put("message",applykv);
+			JSONResponse.message(message,applykv);
 		}
 		conveyEffects(st,character,message);
 		new Transmission(character,message).start();
@@ -347,7 +348,7 @@ public class Effect extends TableRow {
 		final String applykv=st.getKV(this,"Effects.ApplyMessage");
 		final JSONObject message=new JSONObject();
 		if (applykv!=null && (!applykv.isEmpty())) {
-			message.put("message",applykv);
+			JSONResponse.message(message,applykv);
 		}
 		conveyEffects(st,target,message);
 		new Transmission(target,message).start();

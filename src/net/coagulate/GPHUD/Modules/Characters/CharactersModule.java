@@ -186,7 +186,7 @@ public class CharactersModule extends ModuleAnnotation {
 		if (remain>0) {
 			remaining=".  You have "+remain+" more ability points to spend.";
 			final JSONObject json=Modules.getJSONTemplate(st,"characters.spendabilitypoint");
-			json.put("message","Ability point spent on "+attribute+", it increased to "+(existing+1)+remaining);
+			JSONResponse.message(json,"Ability point spent on "+attribute+", it increased to "+(existing+1)+remaining);
 			return new JSONResponse(json);
 		}
 		return new OKResponse("Ability point spent on "+attribute+", it increased to "+(existing+1)+remaining);

@@ -161,7 +161,9 @@ public class Connect {
 			if (message.length()>0) { message.append("\n"); }
 			message.append(amessage);
 		}
-		if (message.length()>0) { rawresponse.put("message",message.toString()); }
+		if (message.length()>0) {
+			JSONResponse.message(rawresponse,message.toString());
+		}
 		// update message count
 		rawresponse.put("messagecount",Message.count(st));
 		// send zoning information

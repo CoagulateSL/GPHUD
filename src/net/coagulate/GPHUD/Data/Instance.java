@@ -10,6 +10,7 @@ import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.State;
@@ -289,7 +290,7 @@ public class Instance extends TableRow {
 	public void broadcastMessage(final String message) {
 		GPHUD.getLogger().info("Sending broadcast to instance "+getName()+" - "+message);
 		final JSONObject j=new JSONObject();
-		j.put("message",message);
+		JSONResponse.message(j,message);
 		j.put("incommand","broadcast");
 		sendServers(j);
 	}

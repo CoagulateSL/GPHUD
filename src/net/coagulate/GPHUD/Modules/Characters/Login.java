@@ -46,7 +46,7 @@ public abstract class Login {
 	                                                   max=40) final String charactername) {
 		if (Char.resolve(st,charactername)!=null) {
 			final JSONObject json=Modules.getJSONTemplate(st,"characters.create");
-			json.put("message","Character name already taken - please retry");
+			JSONResponse.message(json,"Character name already taken - please retry");
 			return new JSONResponse(json);
 		}
 		if (charactername==null) { return new ErrorResponse("You must enter a name for the new character"); }
