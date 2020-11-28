@@ -219,7 +219,7 @@ state dead {
 state wait {
 	state_entry() {
 		dolisten();
-		llSetTimerEvent(60.0);
+		llSetTimerEvent(((integer)(llFrand(60.0)))+60.0);
 	}
 	listen(integer channel,string name,key id,string text) { all_listen(channel,name,id,text); }	
 	changed(integer change) { if ((change & CHANGED_REGION) || (change & CHANGED_REGION_START) || (change & CHANGED_OWNER)) { llResetScript(); }}
@@ -228,12 +228,12 @@ state wait {
 		json=llJsonSetValue("",["objectdriverversioncheck"],((string)ODVERSION));
 		llRegionSay(broadcastchannel,json);
 		UPDATER=TRUE;
-		llSetTimerEvent(900.0);
+		llSetTimerEvent(((integer)(llFrand(60.0)))+900.0);
 	}
 }
 
 state none {
-	state_entry() { llSetTimerEvent(CHECKIN_MINUTES*60.0); 
+	state_entry() { llSetTimerEvent(((integer)(llFrand(60.0)))+CHECKIN_MINUTES*60.0); 
 		llSetStatus(STATUS_PHANTOM,FALSE); llVolumeDetect(FALSE); dolisten();
 		#ifdef DEBUG
 		llOwnerSay("Switched to NONE operational mode");
@@ -255,7 +255,7 @@ state none {
 }
 
 state clickable {
-	state_entry() { llSetTimerEvent(CHECKIN_MINUTES*60.0);
+	state_entry() { llSetTimerEvent(((integer)(llFrand(60.0)))+CHECKIN_MINUTES*60.0);
 		llSetStatus(STATUS_PHANTOM,FALSE); llVolumeDetect(FALSE); dolisten();
 		#ifdef DEBUG
 		llOwnerSay("Switched to CLICKABLE operational mode");
@@ -282,7 +282,7 @@ state clickable {
 	}
 }
 state phantom {
-	state_entry() { llSetTimerEvent(CHECKIN_MINUTES*60.0);
+	state_entry() { llSetTimerEvent(((integer)(llFrand(60.0)))+CHECKIN_MINUTES*60.0);
 		llSetStatus(STATUS_PHANTOM,TRUE); llVolumeDetect(TRUE); dolisten();
 		#ifdef DEBUG
 		llOwnerSay("Switched to PHANTOM VOLUME operational mode");
