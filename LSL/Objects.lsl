@@ -55,21 +55,20 @@ integer process(key id) {
 		llMessageLinked(LINK_SET,((integer)jsonget("linkmessagenumber")),jsonget("linkmessage"),((key)jsonget("linkid")));
 	}
 	integer i=1;
-	if (jsonget("say")!="") {
-		string oldname=llGetObjectName();
-		string newname=jsonget("sayas");
-		if (newname!="") { llSetObjectName(newname); }
-		llSay(0,jsonget("say"));
-		if (newname!="") { llSetObjectName(oldname); }
-	}
-	i=1;
-	while (jsonget("say"+((string)i))!="") {
-		string oldname=llGetObjectName();
-		string newname=jsonget("sayas");
-		if (newname!="") { llSetObjectName(newname); }
-		llSay(0,jsonget("say"+((string)i)));
-		if (newname!="") { llSetObjectName(oldname); }
+	while (jsonget("output"+((string)i))!="") {
+		string line=jsonget("output"+((string)i));
 		i++;
+		string type=llGetSubString(line,0,0);
+		line=llGetSubString(line,1,-1);
+		//if (type=="o") { llOwnerSay(line); } // not in objects :)
+		if (type=="s") { llSay(0,line); }
+		if (type=="a") {
+			integer index=llSubStringIndex(line,"|");
+			string oldname=llGetObjectName();
+			llSetObjectName(llGetSubString(line,0,index-1));
+			llSay(0,llGetSubString(line,index+1,-1));
+			llSetObjectName(oldname);
+		}
 	}	
 	if (jsonget("sayashud")!="") { llSay(0,jsonget("sayashud")); }
 	i=1;
