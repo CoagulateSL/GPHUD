@@ -308,7 +308,7 @@ public class Instance extends TableRow {
 	public int broadcastAdmins(@Nullable final State st,
 	                           final String message) {
 		final JSONObject j=new JSONObject();
-		j.put("message","ADMIN : "+message);
+		JSONResponse.message(j,"ADMIN : "+message);
 		final Set<User> targets=new HashSet<>();
 		targets.add(getOwner());
 		//System.out.println("Pre broadcast!");

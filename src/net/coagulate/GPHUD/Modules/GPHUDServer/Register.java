@@ -93,7 +93,7 @@ public abstract class Register {
 		if (st.getRegion().needsUpdate()) {
 			registrationMessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
 		}
-		registered.put("message",registrationMessage);
+		JSONResponse.message(registered,registrationMessage);
 		final Transmission t=new Transmission(region,registered);
 		t.start();
 		final JSONObject j=new JSONObject();

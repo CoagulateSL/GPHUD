@@ -146,8 +146,8 @@ public abstract class Login {
 							json.put("hudtext","Initialising character...")
 							    .put("hudcolor","<1.0,0.75,0.75>")
 							    .put("titlertext","Initialising character...")
-							    .put("titlercolor","<1.0,0.75,0.75>")
-							    .put("message","Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max);
+							    .put("titlercolor","<1.0,0.75,0.75>");
+							JSONResponse.message(json,"Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max);
 							json.put("incommand","runtemplate");
 							json.put("invoke","characters.initialise");
 							json.put("args","1");

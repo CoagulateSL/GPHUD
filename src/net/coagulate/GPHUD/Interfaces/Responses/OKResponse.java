@@ -19,7 +19,7 @@ public class OKResponse extends TextOK implements Response {
 	@Override
 	public JSONObject asJSON(final State st) {
 		final JSONObject j=new JSONObject();
-		j.put("message",asText(st));
+		JSONResponse.message(j,asText(st));
 		return j;
 	}
 

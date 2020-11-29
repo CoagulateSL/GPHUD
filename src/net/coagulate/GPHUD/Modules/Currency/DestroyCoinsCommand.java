@@ -4,6 +4,7 @@ import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
@@ -211,7 +212,7 @@ public String getFullName() {
 		currency.spawnInAsAdmin(state,target,-ammount,reason);
 		if (target.isOnline()) {
 			final JSONObject json=new JSONObject();
-			json.put("message","[Admin:"+state.getAvatar().getName()+"] You lost "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason);
+			JSONResponse.message(json,"[Admin:"+state.getAvatar().getName()+"] You lost "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason);
 			new Transmission(target,json).start();
 		}
 		return new OKResponse("Destroyed "+currency.longTextForm(ammount)+" of "+name+" from "+target.getName());
