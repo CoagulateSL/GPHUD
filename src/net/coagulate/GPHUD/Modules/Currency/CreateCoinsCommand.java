@@ -214,7 +214,7 @@ public class CreateCoinsCommand extends Command {
 		currency.spawnInAsAdmin(state,target,ammount,reason);
 		if (target.isOnline()) {
 			final JSONObject json=new JSONObject();
-			JSONResponse.message(json,"[Admin:"+state.getAvatar().getName()+"] You gained "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason);
+			JSONResponse.message(json,"[Admin:"+state.getAvatar().getName()+"] You gained "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason, target.getProtocol());
 			new Transmission(target,json).start();
 		}
 		return new OKResponse("Spawned in "+currency.longTextForm(ammount)+" of "+name+" for "+target.getName());

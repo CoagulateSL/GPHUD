@@ -38,7 +38,7 @@ public class SayResponse implements Response {
 	@Override
 	public JSONObject asJSON(final State st) {
 		final JSONObject json=new JSONObject();
-		JSONResponse.sayAs(json,sayas,"/me "+reason);
+		JSONResponse.sayAs(json,sayas,"/me "+reason,st.protocol);
 		return json;
 	}
 

@@ -120,7 +120,7 @@ public abstract class ZoneCommands {
 		final String entrymessage=st.getKV("Zoning.EntryMessage").value();
 		final JSONObject response=new JSONObject();
 		if (entrymessage!=null && !entrymessage.isEmpty()) {
-			JSONResponse.message(response,entrymessage);
+			JSONResponse.message(response,entrymessage,st.protocol);
 		}
 		if (st.hasModule("events")) { EventsMaintenance.zoneTransition(st,response,oldzone,zone); }
 		return new JSONResponse(response);

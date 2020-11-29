@@ -136,32 +136,21 @@ integer process(key requestid) {
 	}
 	if (jsonget("message")!="") { llOwnerSay(jsonget("message")); }
 	integer i=1;
-	while (jsonget("message"+((string)i))!="") {
-		llOwnerSay(jsonget("message"+((string)i)));
+	while (jsonget("output"+((string)i))!="") {
+		string line=jsonget("output"+((string)i));
 		i++;
+		string type=llGetSubString(line,0,0);
+		line=llGetSubString(line,1,-1);
+		if (type=="o") { llOwnerSay(line); }
+		if (type=="s") { llSay(0,line); }
+		if (type=="a") {
+			integer index=llSubStringIndex(line,"|");
+			string oldname=llGetObjectName();
+			llSetObjectName(llGetSubString(line,0,index-1));
+			llSay(0,llGetSubString(line,index+1,-1));
+			llSetObjectName(oldname);
+		}
 	}
-	if (jsonget("say")!="") {
-		string oldname=llGetObjectName();
-		string newname=jsonget("sayas");
-		if (newname!="") { llSetObjectName(newname); }
-		llSay(0,jsonget("say"));
-		if (newname!="") { llSetObjectName(oldname); }
-	}
-	i=1;
-	while (jsonget("say"+((string)i))!="") {
-		string oldname=llGetObjectName();
-		string newname=jsonget("sayas");
-		if (newname!="") { llSetObjectName(newname); }
-		llSay(0,jsonget("say"+((string)i)));
-		if (newname!="") { llSetObjectName(oldname); }
-		i++;
-	}	
-	if (jsonget("sayashud")!="") { llSay(0,jsonget("sayashud")); }
-	i=1;
-	while (jsonget("sayashud"+((string)i))!="") {
-		llSay(0,jsonget("sayashud"+((string)i)));
-		i++;
-	}	
 	if (jsonget("error")!="") { typedSay(jsonget("error")); }
 	if (jsonget("opencmd")!="") { if (jsonget("opencmd")=="true") { opencmd=TRUE; setupListeners(); } else { opencmd=FALSE; setupListeners(); }}
 	if (jsonget("terminate")!="") {

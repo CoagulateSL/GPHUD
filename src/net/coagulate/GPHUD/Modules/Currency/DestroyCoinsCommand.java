@@ -212,7 +212,7 @@ public String getFullName() {
 		currency.spawnInAsAdmin(state,target,-ammount,reason);
 		if (target.isOnline()) {
 			final JSONObject json=new JSONObject();
-			JSONResponse.message(json,"[Admin:"+state.getAvatar().getName()+"] You lost "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason);
+			JSONResponse.message(json,"[Admin:"+state.getAvatar().getName()+"] You lost "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason,target.getProtocol());
 			new Transmission(target,json).start();
 		}
 		return new OKResponse("Destroyed "+currency.longTextForm(ammount)+" of "+name+" from "+target.getName());

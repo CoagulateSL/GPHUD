@@ -290,7 +290,7 @@ public class Instance extends TableRow {
 	public void broadcastMessage(final String message) {
 		GPHUD.getLogger().info("Sending broadcast to instance "+getName()+" - "+message);
 		final JSONObject j=new JSONObject();
-		JSONResponse.message(j,message);
+		JSONResponse.message(j,message,0); //hard wired to the basic protocol ; "message" will always be supported :P
 		j.put("incommand","broadcast");
 		sendServers(j);
 	}
@@ -308,7 +308,7 @@ public class Instance extends TableRow {
 	public int broadcastAdmins(@Nullable final State st,
 	                           final String message) {
 		final JSONObject j=new JSONObject();
-		JSONResponse.message(j,"ADMIN : "+message);
+		JSONResponse.message(j,"ADMIN : "+message,0); //hardwired protocol as a singular (spammed) transmission
 		final Set<User> targets=new HashSet<>();
 		targets.add(getOwner());
 		//System.out.println("Pre broadcast!");

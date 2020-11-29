@@ -89,7 +89,7 @@ public class Connect {
 				        .put("hudcolor","<1.0,0.75,0.75>")
 				        .put("titlertext","Creating character...")
 				        .put("titlercolor","<1.0,0.75,0.75>");
-				response.message("Welcome.  You do not have any characters, please create a new one.");
+				response.message("Welcome.  You do not have any characters, please create a new one.",st.protocol);
 				return response;
 			}
 		}
@@ -162,7 +162,7 @@ public class Connect {
 			message.append(amessage);
 		}
 		if (message.length()>0) {
-			JSONResponse.message(rawresponse,message.toString());
+			JSONResponse.message(rawresponse,message.toString(),st.protocol);
 		}
 		// update message count
 		rawresponse.put("messagecount",Message.count(st));
@@ -231,7 +231,7 @@ public class Connect {
 		    .put("hudcolor","<1.0,0.75,0.75>")
 		    .put("titlertext","Initialising character...")
 		    .put("titlercolor","<1.0,0.75,0.75>");
-		JSONResponse.message(json,"Character creation requires you to select a choice for attribute "+a.getName());
+		JSONResponse.message(json,"Character creation requires you to select a choice for attribute "+a.getName(),st.protocol);
 		CharacterGroup.createChoice(st,json,"arg0",a);
 		json.put("incommand","runtemplate");
 		json.put("invoke","characters.initialise");
@@ -254,7 +254,7 @@ public class Connect {
 		    .put("hudcolor","<1.0,0.75,0.75>")
 		    .put("titlertext","Initialising character...")
 		    .put("titlercolor","<1.0,0.75,0.75>");
-		JSONResponse.message(json,"Character creation requires you to input attribute "+a.getName()+maxstring);
+		JSONResponse.message(json,"Character creation requires you to input attribute "+a.getName()+maxstring,st.protocol);
 		json.put("incommand","runtemplate");
 		json.put("invoke","characters.initialise");
 		json.put("args","1");

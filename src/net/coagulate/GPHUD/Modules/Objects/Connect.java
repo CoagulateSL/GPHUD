@@ -89,7 +89,8 @@ public class Connect {
 		behaviour+="\nServicing Node: "+ Config.getHostName();
 		if (!st.json().has("silent")) {
 			JSONResponse.message(response,
-			             "Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatarNullable()+"\nCharacter: "+st.getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour
+			             "Registered object#"+obj.getId()+"\nName: "+obj.getName()+"\nOwner: "+st.getAvatarNullable()+"\nCharacter: "+st.getCharacterNullable()+"\nVersion: "+version+versionsuffix+"\nBehaviour: "+behaviour,
+						 st.protocol
 			            );
 		}
 		return new JSONResponse(response);

@@ -241,7 +241,7 @@ public class Effect extends TableRow {
 		final String applykv=st.getKV(this,"Effects.RemoveMessage");
 		final JSONObject message=new JSONObject();
 		if (applykv!=null && (!applykv.isEmpty())) {
-			JSONResponse.message(message,applykv);
+			JSONResponse.message(message,applykv,character.getProtocol());
 		}
 		conveyEffects(st,character,message);
 		new Transmission(character,message).start();
@@ -348,7 +348,7 @@ public class Effect extends TableRow {
 		final String applykv=st.getKV(this,"Effects.ApplyMessage");
 		final JSONObject message=new JSONObject();
 		if (applykv!=null && (!applykv.isEmpty())) {
-			JSONResponse.message(message,applykv);
+			JSONResponse.message(message,applykv,target.getProtocol());
 		}
 		conveyEffects(st,target,message);
 		new Transmission(target,message).start();

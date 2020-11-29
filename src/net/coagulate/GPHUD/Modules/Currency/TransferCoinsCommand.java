@@ -272,7 +272,7 @@ public class TransferCoinsCommand extends Command {
 		// tell target
 		if (target.isOnline()) {
 			final JSONObject json=new JSONObject();
-			JSONResponse.message(json,"You received "+currency.longTextForm(received)+" "+currency.getName()+" from "+state.getCharacter().getName()+" : "+reason);
+			JSONResponse.message(json,"You received "+currency.longTextForm(received)+" "+currency.getName()+" from "+state.getCharacter().getName()+" : "+reason,target.getProtocol());
 			new Transmission(target,json).start();
 		}
 		return new OKResponse("Transferred "+currency.longTextForm(sent)+" of "+name+" to "+target.getName()+(taxpayable==0?"":" (Payed to tax: "+currency.shortTextForm(

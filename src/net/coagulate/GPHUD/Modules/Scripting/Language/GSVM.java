@@ -220,25 +220,25 @@ public class GSVM {
 	public void queueSayAs(@Nonnull final Char ch,
 	                       final String message) {
 		final JSONObject out=getQueue(ch);
-		JSONResponse.sayAs(out,ch.getName(),message);
+		JSONResponse.sayAs(out,ch.getName(),message,ch.getProtocol());
 	}
 
 	public void queueSay(@Nonnull final Char ch,
 	                     final String message) {
 		final JSONObject out=getQueue(ch);
-		JSONResponse.sayAsHud(out,message);
+		JSONResponse.sayAsHud(out,message,ch.getProtocol());
 	}
 
-	public void queueTeleport(final Char content,
+	public void queueTeleport(final Char ch,
 	                          final String hudRepresentation) {
-		final JSONObject queue=getQueue(content);
+		final JSONObject queue=getQueue(ch);
 		queue.put("teleport",hudRepresentation);
 	}
 
 	public void queueOwnerSay(final Char ch,
 	                          final String message) {
 		final JSONObject out=getQueue(ch);
-		JSONResponse.ownerSay(out,message);
+		JSONResponse.ownerSay(out,message,ch.getProtocol());
 	}
 
 	public void queueSelectCharacter(final Char ch,

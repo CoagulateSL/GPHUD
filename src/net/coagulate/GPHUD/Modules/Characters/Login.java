@@ -46,7 +46,7 @@ public abstract class Login {
 	                                                   max=40) final String charactername) {
 		if (Char.resolve(st,charactername)!=null) {
 			final JSONObject json=Modules.getJSONTemplate(st,"characters.create");
-			JSONResponse.message(json,"Character name already taken - please retry");
+			JSONResponse.message(json,"Character name already taken - please retry",st.protocol);
 			return new JSONResponse(json);
 		}
 		if (charactername==null) { return new ErrorResponse("You must enter a name for the new character"); }
@@ -147,7 +147,7 @@ public abstract class Login {
 							    .put("hudcolor","<1.0,0.75,0.75>")
 							    .put("titlertext","Initialising character...")
 							    .put("titlercolor","<1.0,0.75,0.75>");
-							JSONResponse.message(json,"Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max);
+							JSONResponse.message(json,"Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max,st.protocol);
 							json.put("incommand","runtemplate");
 							json.put("invoke","characters.initialise");
 							json.put("args","1");
