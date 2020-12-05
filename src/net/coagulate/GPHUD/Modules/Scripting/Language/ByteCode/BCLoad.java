@@ -28,7 +28,7 @@ public class BCLoad extends ByteCode {
 	                    final boolean simulation) {
 		final String name=vm.popString().getContent();
 		final ByteCodeDataType val=vm.get(name);
-		if (val==null) { throw new GSUnknownIdentifier("Variable "+name+" is not defined"); }
+		if (val==null) { throw new GSUnknownIdentifier("Variable "+name+" is not defined",true); }
 		vm.push(val);
 	}
 }
