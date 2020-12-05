@@ -892,7 +892,7 @@ public class Char extends TableRow {
 	public void rename(final String newname) {
 		final int count=dqinn("select count(*) from characters where name like ? and instanceid=?",newname,getInstance().getId());
 		if (count!=0) {
-			throw new UserInputDuplicateValueException("Unable to rename character '"+getName()+"' to '"+newname+"', that name is already taken.");
+			throw new UserInputDuplicateValueException("Unable to rename character '"+getName()+"' to '"+newname+"', that name is already taken.",true);
 		}
 		set("name",newname);
 	}
