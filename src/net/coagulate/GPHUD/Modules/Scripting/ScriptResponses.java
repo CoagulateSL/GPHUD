@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
+import net.coagulate.Core.Database.DBException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ScriptRun;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -32,6 +34,13 @@ public class ScriptResponses {
 		final ScriptRun run=ScriptRun.get(processid);
 		if (run.getRespondant()!=st.getCharacter()) {
 			return new ErrorResponse("Script was not expecting a response from you (?)");
+		}
+		try { response.validate(); }
+		catch (DBException e) {
+			throw new UserInputLookupFailureException("Failed to resolve input to a valid character",e);
+		}
+		if (response.getInstance()!=st.getInstance()) {
+			throw new UserInputLookupFailureException("Failed to resolve input to a valid character at your instance");
 		}
 		final GSVM vm=new GSVM(run,st);
 		// inject response
