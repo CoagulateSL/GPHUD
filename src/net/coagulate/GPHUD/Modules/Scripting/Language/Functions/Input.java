@@ -80,7 +80,7 @@ public class Input {
 				return choices.getContent().get(ThreadLocalRandom.current().nextInt(0,choices.getContent().size())).toBCString();
 			}
 		}
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		final List<String> strchoices=new ArrayList<>();
 		for (final ByteCodeDataType s: choices.getContent()) { strchoices.add(s.toBCString().getContent()); }
 		vm.queueGetChoice(target.getContent(),message.getContent(),strchoices);
