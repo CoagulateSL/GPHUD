@@ -8,10 +8,18 @@ public class GSUnknownIdentifier extends GSException {
 	public GSUnknownIdentifier(final String reason) {
 		super(reason);
 	}
+	public GSUnknownIdentifier(final String reason,boolean suppress) {
+		super(reason,suppress);
+	}
 
 	public GSUnknownIdentifier(final String reason,
 	                           final Throwable cause) {
 		super(reason,cause);
+	}
+	public GSUnknownIdentifier(final String reason,
+							   final Throwable cause,
+							   boolean suppress) {
+		super(reason,cause,suppress);
 	}
 
 	// ---------- INSTANCE ----------
