@@ -239,6 +239,9 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		st.sourceLocation =position;
 		final User owner=User.findOrCreate(ownerName,ownerKey,false);
+		if (owner.isSuspended()) {
+			return new TerminateResponse("Your access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
+		}
 		st.setSourceOwner(owner);
 		st.objectKey =objectKey;
 		st.setAvatar(owner);

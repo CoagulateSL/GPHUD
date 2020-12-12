@@ -213,6 +213,9 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		// some kinda login information exists
 		st.fleshOut();
+		if (st.getAvatarNullable()!=null && st.getAvatar().isSuspended()) {
+			throw new UserAccessDeniedException("Your access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
+		}
 		content=Modules.getURL(st,st.getDebasedNoQueryURL());
 		//System.out.println("Post auth URL is "+st.getDebasedURL()+" and form is "+f+" and content is "+content.getFullName()+" and interceptable is "+interceptable(st
 		// .getDebasedNoQueryURL()));
