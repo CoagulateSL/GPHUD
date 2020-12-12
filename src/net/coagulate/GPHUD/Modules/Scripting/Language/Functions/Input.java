@@ -92,7 +92,7 @@ public class Input {
 	@GSFunctions.GSFunction(description="Checks if a string can be converted into a number successfull",
 	                        parameters="String - string to test",
 	                        notes="",
-	                        returns="Integer - "+"1"+" if the string can convert to an integer, 0 if it fails to do so (and will crash your script if you try)",
+	                        returns="Integer - 1 if the string can convert to an integer, 0 if it fails to do so (and will crash your script if you try)",
 	                        privileged=false,
 	                        category= SCRIPT_CATEGORY.INPUT)
 	public static BCInteger gsIsANumber(final State st,
