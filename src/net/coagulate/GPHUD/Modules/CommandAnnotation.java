@@ -124,9 +124,7 @@ public class CommandAnnotation extends Command {
 			throw new SystemImplementationException("An illegal argument leaked to "+getFullName()+" at "+getMethod().getClass().getName()+"."+getMethod().getName(),e);
 		}
 		catch (final IllegalAccessException e) {
-			throw new SystemImplementationException("Access to target method "+getMethod().getName()+" in "+getMethod().getDeclaringClass().getSimpleName()+" denied by JVM",
-			                                        e
-			);
+			throw new SystemImplementationException("Access to target method "+getMethod().getName()+" in "+getMethod().getDeclaringClass().getSimpleName()+" denied by JVM",e);
 		}
 		catch (final InvocationTargetException e) {
 			final Throwable content=e.getCause();
