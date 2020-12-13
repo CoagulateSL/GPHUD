@@ -9,8 +9,16 @@ public class GSInvalidExpressionException extends GSException {
 		super(reason);
 	}
 
+	public GSInvalidExpressionException(String reason, boolean suppresslogging) {
+		super(reason, suppresslogging);
+	}
+
+	public GSInvalidExpressionException(String reason, Throwable cause, boolean suppresslogging) {
+		super(reason, cause, suppresslogging);
+	}
+
 	public GSInvalidExpressionException(final String reason,
-	                                    final Throwable cause) {
+										final Throwable cause) {
 		super(reason,cause);
 	}
 

@@ -65,7 +65,7 @@ public class BCString extends ByteCodeDataType {
 		if (var.getClass().equals(BCInteger.class)) {
 			toBCInteger().subtract(var);
 		}
-		throw new GSInvalidExpressionException("Can not perform BCString - "+var.getClass().getSimpleName());
+		throw new GSInvalidExpressionException("Can not perform BCString - "+var.getClass().getSimpleName(),true);
 	}
 
 	@Nonnull
@@ -75,7 +75,7 @@ public class BCString extends ByteCodeDataType {
 		if (var.getClass().equals(BCInteger.class)) {
 			toBCInteger().subtract(var);
 		}
-		throw new GSInvalidExpressionException("Can not perform BCString * "+var.getClass().getSimpleName());
+		throw new GSInvalidExpressionException("Can not perform BCString * "+var.getClass().getSimpleName(),true);
 	}
 
 	@Nonnull
@@ -85,7 +85,7 @@ public class BCString extends ByteCodeDataType {
 		if (var.getClass().equals(BCInteger.class)) {
 			toBCInteger().subtract(var);
 		}
-		throw new GSInvalidExpressionException("Can not perform BCString / "+var.getClass().getSimpleName());
+		throw new GSInvalidExpressionException("Can not perform BCString / "+var.getClass().getSimpleName(),true);
 	}
 
 	@Nonnull
@@ -95,7 +95,7 @@ public class BCString extends ByteCodeDataType {
 			return new BCInteger(null,Integer.parseInt(getContent()));
 		}
 		catch (@Nonnull final NumberFormatException e) {
-			throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer");
+			throw new GSCastException("Can not cast the String '"+getContent()+"' to an Integer",true);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class BCString extends ByteCodeDataType {
 			return new BCFloat(null,Float.parseFloat(getContent()));
 		}
 		catch (@Nonnull final NumberFormatException e) {
-			throw new GSCastException("Can not cast the String '"+getContent()+"' to a Float");
+			throw new GSCastException("Can not cast the String '"+getContent()+"' to a Float",true);
 		}
 	}
 
