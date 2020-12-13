@@ -156,7 +156,7 @@ public class GPHUD extends SLModule {
 		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
 	}
 
-	private static final int SCHEMA_VERSION=3;
+	private static final int SCHEMA_VERSION=4;
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
@@ -177,6 +177,13 @@ public class GPHUD extends SLModule {
 			log.config("Add protocol column to objects table");
 			GPHUD.getDB().d("ALTER TABLE `objects` ADD COLUMN `protocol` INT NOT NULL DEFAULT 0 AFTER `authnode`");
 			log.config("Schema upgrade of GPHUD to version 3 is complete"); currentVersion =3;
+		}
+		if (currentVersion==3) {
+			log.config("Expand audit columns");
+			GPHUD.getDB().d("ALTER TABLE `audit` CHANGE COLUMN `changetype` `changetype` VARCHAR(128) NULL DEFAULT NULL");
+			GPHUD.getDB().d("ALTER TABLE `audit` CHANGE COLUMN `changeditem` `changeditem` VARCHAR(128) NULL DEFAULT NULL");
+			log.config("Schema upgrade of GPHUD to version 4 is complete");
+			currentVersion =4;
 		}
 		return currentVersion;
 	}
