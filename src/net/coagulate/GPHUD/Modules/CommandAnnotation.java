@@ -132,11 +132,9 @@ public class CommandAnnotation extends Command {
 			final Throwable content=e.getCause();
 			if (content==null) { throw new SystemImplementationException("Null invocation target exception cause",e); }
 			if (UserException.class.isAssignableFrom(content.getClass())) {
-				throw new UserExecutionException("Command gave error: "+content.getLocalizedMessage(),e);
+				throw new UserExecutionException("Command gave error: "+content.getLocalizedMessage(),content);
 			}
-			throw new SystemExecutionException("Annotated command "+getFullName()+" from "+getMethod().getName()+" in class "+getMethod().getDeclaringClass()
-			                                                                                                                             .getSimpleName()+" exceptioned: "+content
-					.getLocalizedMessage(),e);
+			throw new SystemExecutionException("Annotated command "+getFullName()+" from "+getMethod().getName()+" in class "+getMethod().getDeclaringClass().getSimpleName()+" exceptioned: "+content.getLocalizedMessage(),content);
 		}
 	}
 	void validate(final State st) {
