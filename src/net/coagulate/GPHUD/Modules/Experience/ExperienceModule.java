@@ -180,7 +180,7 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String,Permission> getPermissions(@Nonnull final State st) {
-		final Map<String,Permission> perms=super.getPermissions(st);
+		final Map<String,Permission> perms=new TreeMap<>(super.getPermissions(st));
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getType()==EXPERIENCE) {
 				perms.put("award"+a.getName(),new GenericXPAwardPermission(a.getName()));

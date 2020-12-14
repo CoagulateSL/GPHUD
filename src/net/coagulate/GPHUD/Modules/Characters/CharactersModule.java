@@ -99,7 +99,7 @@ public class CharactersModule extends ModuleAnnotation {
 					if (spent!=null && !spent.isEmpty()) { total=total+Integer.parseInt(spent); }
 				}
 			}
-			catch (@Nonnull final NoDataException e) {} // attribute deleted race condition
+			catch (@Nonnull final NoDataException ignore) {} // attribute deleted race condition
 		}
 		return total;
 	}
@@ -248,7 +248,7 @@ public class CharactersModule extends ModuleAnnotation {
 
 	@Override
 	public Map<String,Permission> getPermissions(@Nullable final State st) {
-		final Map<String,Permission> map=super.getPermissions(st);
+		final Map<String,Permission> map=new TreeMap<>(super.getPermissions(st));
 		if (st==null) { return map; }
 		for (final Attribute a: st.getAttributes()) {
 			map.put("set"+a.getName().toLowerCase(),new AttributePermission(a));
