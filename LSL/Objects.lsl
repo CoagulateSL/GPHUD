@@ -21,6 +21,8 @@ string MODE="NONE";
 
 integer ODVERSION=5;
 
+float maxTouchDistance=0.0;
+
 startLogin() {
 	if (llGetInventoryType("GPHUD Object Driver Inhibitor")!=INVENTORY_NONE) { return; }
 	json=llJsonSetValue("",["version"],VERSION);
@@ -44,6 +46,7 @@ integer process(key id) {
 	}
 	if (incommand=="registered") { /*cookie=jsonget("cookie");*/ BOOTSTAGE=BOOT_COMPLETE; }
 	if (incommand=="ping") { /*retjson=llJsonSetValue(retjson,["cookie"],cookie);*/ }
+	if (jsonget("maxdistance")!="") { maxTouchDistance=(float)jsonget("maxdistance"); }
 	if (jsonget("mode")!="") { MODE=jsonget("mode"); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
@@ -275,9 +278,13 @@ state clickable {
 	on_rez(integer parameter) { llResetScript(); }
 	touch_start(integer n) { 
 		for (n--;n>=0;n--) {
-			json=llJsonSetValue("",["clicker"],">"+llDetectedName(n));
+			vector toucherPos=llList2Vector(llGetObjectDetails(llDetectedKey(n),[OBJECT_POS]),0);
+			float toucherDist=llVecDist(toucherPos,llGetPos());
+			if (maxTouchDistance==0.0 || maxTouchDistance>toucherDist) {
+				json=llJsonSetValue("",["clicker"],">"+llDetectedName(n));
+				httpcommand("objects.clicked","GPHUD/system");
+			}
 		}
-		httpcommand("objects.clicked","GPHUD/system");
 	}
 }
 state phantom {
