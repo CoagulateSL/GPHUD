@@ -322,7 +322,9 @@ public class Attribute extends TableRow {
 		try {
 			return getSubTypeCache().get(getId()+"");
 		} catch (Cache.CacheMiss cacheMiss) {
-			return getSubTypeCache().put(getId()+"",getStringNullable("grouptype"),60*60);
+			String groupType=getStringNullable("grouptype");
+			if (groupType==null) { return null; }
+			return getSubTypeCache().put(getId()+"",groupType,60*60);
 		}
 	}
 	private static Cache<String> getSubTypeCache() { return Cache.getCache("GPHUD-attributes-grouptype"); }
