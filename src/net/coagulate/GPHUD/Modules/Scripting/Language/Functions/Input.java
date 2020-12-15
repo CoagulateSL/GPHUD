@@ -17,7 +17,7 @@ public class Input {
 
 	// ---------- STATICS ----------
 	@Nonnull
-	@GSFunctions.GSFunction(description="Triggers the character's HUD to select a nearby character",
+	@GSFunctions.GSFunction(description="Triggers the character's HUD to select a nearby character, the availablility of manual selection is defined by GPHUDClient.AllowManualByDefault",
 	                        parameters="Character - target - The character to ask<br>String - "+"message - Description for the dialog box",
 	                        notes="",
 	                        category= SCRIPT_CATEGORY.INPUT,
@@ -33,7 +33,7 @@ public class Input {
 		}
 		target.getContent().validate(st);
 		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
-		vm.queueSelectCharacter(target.getContent(),message.getContent());
+		vm.queueSelectCharacter(target.getContent(),message.getContent(),st.getKV("GPHUDClient.AllowManualByDefault").boolValue());
 		vm.suspend(st,target.getContent());
 		return target;
 	}
