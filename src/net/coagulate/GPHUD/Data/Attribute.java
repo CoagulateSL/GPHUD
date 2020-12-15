@@ -44,7 +44,7 @@ public class Attribute extends TableRow {
 	}
 
 	/**
-	 * Find an attribute in an instance.
+	 * Find an attribute in an instance ; NOTE this only finds database attributes.
 	 *
 	 * @param instance Instance to look attribute up in.
 	 * @param name     Name of attribute to locate

@@ -8,6 +8,7 @@ package net.coagulate.GPHUD.Modules.Characters;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -42,8 +43,22 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.*;
 public class CharactersModule extends ModuleAnnotation {
 
 
+	@Override
+	public Permission getPermission(State st, @Nonnull String itemname) {
+		Permission p=super.getPermission(st, itemname);
+		if (p!=null) { return p; }
+		if (itemname.toLowerCase().startsWith("set")) {
+			String attributeName=itemname.substring(3);
+			try {
+				return new AttributePermission(st.getAttribute(attributeName));
+			} catch (UserInputLookupFailureException ignored) {}
+
+		}
+		return null;
+	}
+
 	public CharactersModule(final String name,
-	                        final ModuleDefinition def) {
+							final ModuleDefinition def) {
 		super(name,def);
 	}
 
