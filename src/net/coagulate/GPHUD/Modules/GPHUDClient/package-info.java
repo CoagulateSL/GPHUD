@@ -262,6 +262,15 @@
      conveyas="opencmd",
      template=false)
 
+@KVS(name="AllowManualByDefault",
+	 defaultvalue = "true",
+	 editpermission = "GPHUDClient.Config",
+	 hierarchy = KVHIERARCHY.DELEGATING,
+	 template = false,
+	 description = "If enabled, allows manual selection on default 'character input' prompts from scripting",
+	 scope = KVSCOPE.INSTANCE,
+	 type = KVTYPE.BOOLEAN)
+
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
