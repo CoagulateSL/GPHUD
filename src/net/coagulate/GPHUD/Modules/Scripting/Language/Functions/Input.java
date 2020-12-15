@@ -39,6 +39,31 @@ public class Input {
 	}
 
 	@Nonnull
+	@GSFunctions.GSFunction(description="Triggers the character's HUD to select a nearby character, specifying manual selection enablement/disablement",
+							parameters="Character - target - The character to ask<br>String - message - Description for the dialog box<br>Integer - allowManual - If set to zero will not allow manual target selection, any other value will enable it",
+							notes="",
+							category= SCRIPT_CATEGORY.INPUT,
+							returns="Character - a character the user selected",
+							privileged=false)
+	public static BCCharacter gsSelectCharacterSpecifyManual(@Nonnull final State st,
+												@Nonnull final GSVM vm,
+												@Nonnull final BCCharacter target,
+												@Nonnull final BCString message,
+												@Nonnull final BCInteger allowManual) {
+		if (vm.simulation) {
+			vm.suspend(st,st.getCharacter());
+			return target;
+		}
+		target.getContent().validate(st);
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		boolean allowManualBoolean=true;
+		if (allowManual.getContent()==0) { allowManualBoolean=false; }
+		vm.queueSelectCharacter(target.getContent(),message.getContent(),allowManualBoolean);
+		vm.suspend(st,target.getContent());
+		return target;
+	}
+
+	@Nonnull
 	@GSFunctions.GSFunction(description="Triggers the character's HUD to enter a string",
 	                        parameters="Character - target - The character to ask<br>String - message - "+"Description for the dialog box",
 	                        notes="",
