@@ -50,7 +50,9 @@ public class CharactersModule extends ModuleAnnotation {
 		if (itemname.toLowerCase().startsWith("set")) {
 			String attributeName=itemname.substring(3);
 			try {
-				return new AttributePermission(st.getAttribute(attributeName));
+				Attribute attribute = st.getAttribute(attributeName);
+				if (attribute==null) { return null; }
+				return new AttributePermission(attribute);
 			} catch (UserInputLookupFailureException ignored) {}
 
 		}
