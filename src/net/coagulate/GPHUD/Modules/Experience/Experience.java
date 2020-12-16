@@ -41,13 +41,15 @@ public abstract class Experience {
 	public static int toLevel(@Nonnull final State st,
 	                          final int xp) {
 		if (!st.hasModule("Experience")) { return 0; }
+		int maxLevel=st.getKV("Experience.MaxLevel").intValue();
 		final int step=st.getKV("Experience.LevelXPStep").intValue();
 		int tolevel=0;
-		for (int i=0;i<=1000;i++) {
+		if (maxLevel==0) { maxLevel=1000; }
+		for (int i=0;i<=maxLevel;i++) {
 			tolevel=(int) (tolevel+Math.floor(((float) i)/((float) step))+1);
 			if (tolevel>xp) { return i; }
 		}
-		return 1000;
+		return maxLevel;
 
 	}
 
