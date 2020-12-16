@@ -20,7 +20,7 @@ public class AttributePermission extends Permission {
 
 	final Attribute a;
 
-	public AttributePermission(final Attribute a) {
+	public AttributePermission(@Nonnull final Attribute a) {
 		this.a=a;
 	}
 
