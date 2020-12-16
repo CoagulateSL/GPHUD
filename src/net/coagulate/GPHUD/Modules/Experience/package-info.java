@@ -1,3 +1,4 @@
+
 @ModuleDefinition(description="Enables experience/levels support",
                   implementation="net.coagulate.GPHUD.Modules.Experience.ExperienceModule")
 
@@ -6,7 +7,7 @@
 
 @Permissions(name="ConfigureVisitXP",
              description="Allowed to reconfigure the visitation XP settings",
-             power=Permission.POWER.LOW)
+             power= Permission.POWER.LOW)
 
 @Permissions(name="ConfigureLevels",
              description="Allowed to reconfigure the leveling curve",
@@ -56,7 +57,7 @@
      conveyas="leveltext",
      description="HUD message for leveling up",
      editpermission="Experience.ConfigureLevels",
-     hierarchy=KV.KVHIERARCHY.DELEGATING,
+     hierarchy= KV.KVHIERARCHY.DELEGATING,
      name="LevelText",
      scope=KVSCOPE.COMPLETE,
      template=true,
@@ -78,6 +79,15 @@
      type=KVTYPE.INTEGER,
      scope=KVSCOPE.NONSPATIAL,
      name="AbilityPoints")
+
+@KVS(defaultvalue="0",
+     description = "Maximum level attainable - no further xp can be awarded when at maximum level.  Zero disables.",
+     editpermission="Experience.ConfigureLevels",
+     hierarchy = KV.KVHIERARCHY.CUMULATIVE,
+     type = KVTYPE.INTEGER,
+     scope = KVSCOPE.NONSPATIAL,
+     name="MaxLevel",
+     template = false)
 
 package net.coagulate.GPHUD.Modules.Experience;
 
