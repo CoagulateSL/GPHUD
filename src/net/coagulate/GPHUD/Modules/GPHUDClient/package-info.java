@@ -225,7 +225,7 @@
 @KVS(name="TitlerAltitude",
      defaultvalue="0.19",
      conveyas="titlerz",
-     description="Titler Altitude (height above character",
+     description="Titler Altitude (height above character in meters)",
      editpermission="gphudclient.config",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
