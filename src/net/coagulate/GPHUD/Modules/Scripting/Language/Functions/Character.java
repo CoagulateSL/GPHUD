@@ -1,9 +1,11 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
+import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Modules.Characters.CharactersModule;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSResourceUnavailableException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -55,6 +57,21 @@ public class Character {
         String currentPlayerUUID="";
         if (currentPlayer!=null) { currentPlayerUUID=currentPlayer.getUUID(); }
         return new BCString(null,currentPlayerUUID);
+    }
+
+    @Nonnull
+    @GSFunctions.GSFunction(description = "Resolves a character by name",
+                            category = GSFunctions.SCRIPT_CATEGORY.CHARACTER,
+                            notes = "Returns a Character, throws an error if the character name is not valid",
+                            parameters="String name - the character name to lookup",
+                            privileged = false,
+                            returns = "Character - the appropriate Character object, erroring if resolution fails.")
+    public static BCCharacter gsGetCharacter(@Nonnull final State state,
+                                          GSVM gsvm,
+                                          BCString name) {
+        Char character=Char.findNullable(state.getInstance(),name.getContent());
+        if (character==null) { throw new GSResourceUnavailableException("Unable to resolve '"+name.getContent()+"' to a character.",true); }
+        return new BCCharacter(null,character);
     }
 
 }
