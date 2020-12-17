@@ -25,6 +25,11 @@
              description="May toggle the open status of a group",
              power=Permission.POWER.LOW)
 
+@Permissions(name="SetPrecedence",
+             description="May alter the KV precedence of a group",
+             power=Permission.POWER.LOW)
+
+
 package net.coagulate.GPHUD.Modules.Groups;
 
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
