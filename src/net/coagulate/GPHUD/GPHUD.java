@@ -156,7 +156,7 @@ public class GPHUD extends SLModule {
 		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
 	}
 
-	private static final int SCHEMA_VERSION=4;
+	private static final int SCHEMA_VERSION=5;
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
@@ -183,7 +183,13 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("ALTER TABLE `audit` CHANGE COLUMN `changetype` `changetype` VARCHAR(128) NULL DEFAULT NULL");
 			GPHUD.getDB().d("ALTER TABLE `audit` CHANGE COLUMN `changeditem` `changeditem` VARCHAR(128) NULL DEFAULT NULL");
 			log.config("Schema upgrade of GPHUD to version 4 is complete");
-			currentVersion =4;
+			currentVersion=4;
+		}
+		if (currentVersion==4) {
+			log.config("Add kvprecedence column to charactergroups table");
+			GPHUD.getDB().d("ALTER TABLE `charactergroups` ADD COLUMN `kvprecedence` INT(11) NOT NULL DEFAULT 1 AFTER `owner`");
+			log.config("Schema upgrade of GPHUD to version 5 is complete");
+			currentVersion=5;
 		}
 		return currentVersion;
 	}
