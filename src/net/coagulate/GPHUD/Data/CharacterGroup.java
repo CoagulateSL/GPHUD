@@ -113,12 +113,12 @@ public class CharacterGroup extends TableRow {
 	 * @return Set of Character Groups
 	 */
 	@Nonnull
-	public static Set<CharacterGroup> getGroups(@Nonnull final Char character) {
-		Cache<Set<CharacterGroup>> cache=getCharacterGroupCache();
+	public static List<CharacterGroup> getGroups(@Nonnull final Char character) {
+		Cache<List<CharacterGroup>> cache=getCharacterGroupCache();
 		try { return cache.get(character.getId()+""); }
 		catch (Cache.CacheMiss e) {
-			final Set<CharacterGroup> ret = new TreeSet<>();
-			for (final ResultsRow r : db().dq("select charactergroupid from charactergroupmembers where characterid=?", character.getId())) {
+			final List<CharacterGroup> ret = new ArrayList<>();
+			for (final ResultsRow r : db().dq("select charactergroupmembers.charactergroupid from charactergroupmembers inner join charactergroups on charactergroupmembers.charactergroupid = charactergroups.charactergroupid  where characterid=? order by charactergroups.kvprecedence asc,charactergroups.charactergroupid asc", character.getId())) {
 				ret.add(CharacterGroup.get(r.getInt()));
 			}
 			return cache.put(character.getId()+"",ret,300);
@@ -139,7 +139,7 @@ public class CharacterGroup extends TableRow {
 	 * @return Set of Character Groups
 	 */
 	@Nonnull
-	public static Set<CharacterGroup> getGroups(@Nonnull final State state) {
+	public static List<CharacterGroup> getGroups(@Nonnull final State state) {
 		return getGroups(state.getCharacter());
 	}
 
