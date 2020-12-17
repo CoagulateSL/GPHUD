@@ -258,8 +258,9 @@ public class State extends DumpableState {
 	// requested uri
 	@Nonnull
 	public String getFullURL() {
-		if (uri==null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
-		return uri;
+		return getDebasedURL(); // hmm
+		/*if (uri==null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
+		return uri;*/
 	}
 
 	@Nonnull
