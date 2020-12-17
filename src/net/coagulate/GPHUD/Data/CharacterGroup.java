@@ -127,7 +127,10 @@ public class CharacterGroup extends TableRow {
 	private static void purgeCharacterGroupCache(@Nonnull final Char character) {
 		getCharacterGroupCache().purge(character.getId()+"");
 	}
-	private static Cache<Set<CharacterGroup>> getCharacterGroupCache() {
+	public static void purgeCharacterGroupCaches() {
+		getCharacterGroupCache().purgeAll();
+	}
+	private static Cache<List<CharacterGroup>> getCharacterGroupCache() {
 		return Cache.getCache("GPHUD-charactergroupmemberships");
 	}
 
