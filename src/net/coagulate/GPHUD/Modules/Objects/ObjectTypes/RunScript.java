@@ -2,9 +2,9 @@ package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjType;
+import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
-import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
@@ -14,8 +14,10 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RunScript extends ObjectType {
 	protected RunScript(final State st,
@@ -33,19 +35,24 @@ public class RunScript extends ObjectType {
 	@Override
 	public void editForm(@Nonnull final State st) {
 		final Table t=new Table();
-		t.add("Script").add(DropDownList.getScriptsList(st,"script"));
-		t.openRow();
+		editFormScript(st,t);
+		editFormDistance(st,t);
 		t.add(new Cell(new Button("Submit"),2));
 		st.form().add(t);
 	}
 
 	@Override
+	public void payload(State st, @Nonnull JSONObject response, @Nonnull Region region, @Nullable String url) {
+		super.payload(st, response, region, url);
+		if (json.has("maxdistance")) { response.put("maxdistance",json.get("maxdistance")); }
+	}
+
+	@Override
 	public void update(@Nonnull final State st) {
-		final String script=st.postMap().get("script");
-		if (!script.equals(json.optString("script",""))) {
-			json.put("script",st.postMap().get("script"));
-			object.setBehaviour(json);
-		}
+		boolean changed=false;
+		changed=updateScript(st) || changed;
+		changed=updateDistance(st) || changed;
+		if (changed) { object.setBehaviour(json); }
 	}
 
 	@Nonnull

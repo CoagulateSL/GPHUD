@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjType;
+import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
@@ -15,6 +16,7 @@ import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RunCommand extends ObjectType {
 	protected RunCommand(final State st,
@@ -34,6 +36,7 @@ public class RunCommand extends ObjectType {
 		final Table t=new Table();
 		t.add("Command").add(DropDownList.getCommandsList(st,"command",true));
 		t.openRow();
+		editFormDistance(st,t);
 		t.add(new Cell(new Button("Submit"),2));
 		st.form().add(t);
 	}
@@ -41,10 +44,18 @@ public class RunCommand extends ObjectType {
 	@Override
 	public void update(@Nonnull final State st) {
 		final String command=st.postMap().get("command");
+		boolean changed=false;
 		if (!command.equals(json.optString("command",""))) {
 			json.put("command",st.postMap().get("command"));
-			object.setBehaviour(json);
+			changed=true;
 		}
+		changed=updateDistance(st) || changed;
+		if (changed) { object.setBehaviour(json); }
+	}
+	@Override
+	public void payload(State st, @Nonnull JSONObject response, @Nonnull Region region, @Nullable String url) {
+		super.payload(st, response, region, url);
+		if (json.has("maxdistance")) { response.put("maxdistance",json.get("maxdistance")); }
 	}
 
 	@Nonnull

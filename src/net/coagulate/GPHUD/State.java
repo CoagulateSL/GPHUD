@@ -258,8 +258,9 @@ public class State extends DumpableState {
 	// requested uri
 	@Nonnull
 	public String getFullURL() {
-		if (uri==null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
-		return uri;
+		return getDebasedURL(); // hmm
+		/*if (uri==null) { throw new SystemConsistencyException("Attempted to get URI but it's null?"); }
+		return uri;*/
 	}
 
 	@Nonnull
@@ -539,11 +540,12 @@ public class State extends DumpableState {
 		// characterGroups in ID order
 		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
 			if (character!=null) {
-				final Map<Integer,CharacterGroup> map=new TreeMap<>();
-				for (final CharacterGroup c: CharacterGroup.getGroups(character)) {
-					map.put(c.getId(),c);
-				}
-				check.addAll(map.values());
+				//final Map<Integer,CharacterGroup> map=new TreeMap<>();
+				//for (final CharacterGroup c: CharacterGroup.getGroups(character)) {
+				//	map.put(c.getId(),c);
+				//}
+				//check.addAll(map.values());
+				check.addAll(CharacterGroup.getGroups(character));
 			}
 		}
 		//character

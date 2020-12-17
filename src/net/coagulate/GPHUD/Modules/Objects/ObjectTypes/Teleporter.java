@@ -4,9 +4,7 @@ import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Landmark;
 import net.coagulate.GPHUD.Data.ObjType;
-import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
-import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -33,19 +31,16 @@ public abstract class Teleporter extends ObjectType {
 		return landmark.getHUDRepresentation(false);
 	}
 
-	public void editForm(@Nonnull final State st) {
-		final Table t=new Table();
+	public void teleportEditForm(@Nonnull final State st,@Nonnull final Table t) {
 		t.add("Target Landmark").add(TeleportCommands.getDropDownList(st,"target",json.optString("teleporttarget","")));
 		t.openRow();
 		t.add("Teleporter says").add(new TextInput("teleportersays",json.optString("teleportersays","")));
 		t.openRow();
 		t.add("HUD says to wearer").add(new TextInput("hudsays",json.optString("hudsays","")));
 		t.openRow();
-		t.add(new Cell(new Button("Update"),2));
-		st.form().add(t);
 	}
 
-	public void update(@Nonnull final State st) {
+	public boolean updateTeleport(@Nonnull final State st) {
 		if (!st.postMap().get("target").isEmpty() || !st.postMap().get("teleportersays").isEmpty() || !st.postMap().get("hudsays").isEmpty()) {
 			boolean update=false;
 			final String target=st.postMap().get("target");
@@ -63,10 +58,9 @@ public abstract class Teleporter extends ObjectType {
 				json.put("hudsays",hudsays);
 				update=true;
 			}
-			if (update) {
-				object.setBehaviour(json);
-			}
+			return update;
 		}
+		return false;
 	}
 
 	// ----- Internal Instance -----

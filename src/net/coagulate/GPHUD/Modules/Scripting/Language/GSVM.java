@@ -242,12 +242,13 @@ public class GSVM {
 	}
 
 	public void queueSelectCharacter(final Char ch,
-	                                 final String description) {
+	                                 final String description,
+									 boolean allowManualSelection) {
 		final JSONObject out=getQueue(ch);
 		out.put("args",1);
 		out.put("arg0name","response");
 		out.put("arg0type","SENSORCHAR");
-		out.put("arg0manual","surewhynot");
+		if (allowManualSelection) { out.put("arg0manual","yes"); }
 		out.put("arg0description",description);
 		out.put("incommand","runtemplate");
 		out.put("invoke","Scripting.CharacterResponse");

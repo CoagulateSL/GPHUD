@@ -29,6 +29,9 @@ public class VisitXP extends QuotaedXP {
 			final Module m=Modules.get(null,"Experience");
 			if (m.isEnabled(st)) {
 				st.setCharacter(ch);
+				int maxLevel=st.getKV("Experience.MaxLevel").intValue();
+				if (maxLevel==0) { maxLevel=1000; }
+				if (st.getCharacter().getLevel(st)>=maxLevel) { return; }
 				final int perweek=st.getKV("Experience.VisitXPPerCycle").intValue();
 				final int duration=st.getKV("Experience.VisitXPDuration").intValue();
 				final int points=st.getKV("Experience.VisitXPPoints").intValue();

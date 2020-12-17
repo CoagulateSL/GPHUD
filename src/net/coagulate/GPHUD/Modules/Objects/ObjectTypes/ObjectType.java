@@ -6,6 +6,8 @@ import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
+import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
@@ -133,5 +135,33 @@ public abstract class ObjectType {
 		NONE,
 		CLICKABLE,
 		PHANTOM
+	}
+
+	protected final void editFormScript(@Nonnull final State st, @Nonnull final Table t) {
+		DropDownList scriptsList = DropDownList.getScriptsList(st, "script");
+		scriptsList.setValue(json.optString("script",""));
+		t.add("Script").add(scriptsList);
+		t.openRow();
+	}
+	protected final void editFormDistance(@Nonnull final State st, @Nonnull final Table t) {
+		String maxdistance = json.optString("maxdistance", "10");
+		t.add("Max Click Distance (0=any)").add(new TextInput("maxdistance", maxdistance));
+		t.openRow();
+	}
+	protected final boolean updateScript(State st) {
+		final String script=st.postMap().get("script");
+		if (!script.isBlank() && !script.equals(json.optString("script",""))) {
+			json.put("script",st.postMap().get("script"));
+			return true;
+		}
+		return false;
+	}
+	protected final boolean updateDistance(State st) {
+		final String maxdistance=st.postMap().get("maxdistance");
+		if (!maxdistance.isBlank() && !maxdistance.equals(json.optString("maxdistance",""))) {
+			json.put("maxdistance",st.postMap().get("maxdistance"));
+			return true;
+		}
+		return false;
 	}
 }

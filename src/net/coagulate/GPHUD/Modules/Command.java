@@ -239,7 +239,7 @@ public abstract class Command {
 					}
 					break;
 				case CHARACTERGROUP:
-					final Set<CharacterGroup> groups=st.getInstance().getCharacterGroups();
+					final List<CharacterGroup> groups=st.getInstance().getCharacterGroups();
 					if (groups.size()>12) {
 						json.put("arg"+arg+"type","TEXTBOX");
 					}

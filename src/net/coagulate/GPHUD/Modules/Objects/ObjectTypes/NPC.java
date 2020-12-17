@@ -47,6 +47,7 @@ public class NPC extends ObjectType {
 		if (json.has("script")) { scriptList.setValue(""+json.getInt("script")); }
 		t.add(scriptList);
 		t.openRow();
+		editFormDistance(st,t);
 		t.add(new Cell(new Button("Submit"),2));
 		t.openRow();
 		t.add(new Cell(
@@ -81,6 +82,7 @@ public class NPC extends ObjectType {
 				update=true;
 			}
 		}
+		update=updateDistance(st) || update;
 		if (update) { object.setBehaviour(json); }
 	}
 
@@ -104,6 +106,25 @@ public class NPC extends ObjectType {
 		if (url!=null) { ch.setURL(url); }
 		final State newState=new State(ch);
 		ch.initialConveyances(newState,response);
+		if (json.has("maxdistance")) { response.put("maxdistance",json.get("maxdistance")); }
+		response.remove("qb1texture");
+		response.remove("qb2texture");
+		response.remove("qb3texture");
+		response.remove("qb4texture");
+		response.remove("qb5texture");
+		response.remove("qb6texture");
+		response.remove("motd");
+		response.remove("leveltext");
+		response.remove("legacymenu");
+		response.remove("hudtext");
+		response.remove("namelessprefix");
+		response.remove("opencmd");
+		response.remove("rpchannel");
+		response.remove("setlogo");
+		response.remove("qbbalance");
+		response.remove("uixmenus");
+		response.remove("hudcolor");
+
 	}
 
 	@Nonnull

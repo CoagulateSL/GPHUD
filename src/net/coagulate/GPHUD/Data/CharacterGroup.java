@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -111,12 +113,12 @@ public class CharacterGroup extends TableRow {
 	 * @return Set of Character Groups
 	 */
 	@Nonnull
-	public static Set<CharacterGroup> getGroups(@Nonnull final Char character) {
-		Cache<Set<CharacterGroup>> cache=getCharacterGroupCache();
+	public static List<CharacterGroup> getGroups(@Nonnull final Char character) {
+		Cache<List<CharacterGroup>> cache=getCharacterGroupCache();
 		try { return cache.get(character.getId()+""); }
 		catch (Cache.CacheMiss e) {
-			final Set<CharacterGroup> ret = new TreeSet<>();
-			for (final ResultsRow r : db().dq("select charactergroupid from charactergroupmembers where characterid=?", character.getId())) {
+			final List<CharacterGroup> ret = new ArrayList<>();
+			for (final ResultsRow r : db().dq("select charactergroupmembers.charactergroupid from charactergroupmembers inner join charactergroups on charactergroupmembers.charactergroupid = charactergroups.charactergroupid  where characterid=? order by charactergroups.kvprecedence asc,charactergroups.charactergroupid asc", character.getId())) {
 				ret.add(CharacterGroup.get(r.getInt()));
 			}
 			return cache.put(character.getId()+"",ret,300);
@@ -125,7 +127,10 @@ public class CharacterGroup extends TableRow {
 	private static void purgeCharacterGroupCache(@Nonnull final Char character) {
 		getCharacterGroupCache().purge(character.getId()+"");
 	}
-	private static Cache<Set<CharacterGroup>> getCharacterGroupCache() {
+	public static void purgeCharacterGroupCaches() {
+		getCharacterGroupCache().purgeAll();
+	}
+	private static Cache<List<CharacterGroup>> getCharacterGroupCache() {
 		return Cache.getCache("GPHUD-charactergroupmemberships");
 	}
 
@@ -137,7 +142,7 @@ public class CharacterGroup extends TableRow {
 	 * @return Set of Character Groups
 	 */
 	@Nonnull
-	public static Set<CharacterGroup> getGroups(@Nonnull final State state) {
+	public static List<CharacterGroup> getGroups(@Nonnull final State state) {
 		return getGroups(state.getCharacter());
 	}
 
@@ -414,4 +419,11 @@ public class CharacterGroup extends TableRow {
 		return ret;
 	}
 
+	public int getKVPrecedence() {
+		return getInt("kvprecedence");
+	}
+
+	public void setKVPrecedence(int newPrecedence) {
+		set("kvprecedence",newPrecedence);
+	}
 }

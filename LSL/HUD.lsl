@@ -34,6 +34,7 @@ vector titlercolor=<0,0,0>;
 string titlertext="";
 integer opencmd=FALSE;
 string namelessprefix="";
+string titlerz="0.19";
 //// LOCAL INITIALISATION CODE 
 getNewCommsURL() {
 	URL_STAGE=-1;
@@ -170,11 +171,12 @@ integer process(key requestid) {
 	if (incommand=="radar") { DONOTRESPOND=TRUE; llSensor("",NULL_KEY,AGENT,20,PI); radarto=requestid; }
 	if (incommand=="openurl") { llLoadURL(llGetOwner(),jsonget("description"),jsonget("openurl")); }
 	if (jsonget("motd")!="") { llOwnerSay("MOTD: "+jsonget("motd")); }
-	if (jsonget("titlerz")!="") { llRegionSayTo(llGetOwner(),broadcastchannel,llJsonSetValue("",["titlerz"],jsonget("titlerz"))); }
+	if (jsonget("titlerz")!="") { titlerz=jsonget("titlerz"); llRegionSayTo(llGetOwner(),broadcastchannel,llJsonSetValue("",["titlerz"],titlerz)); }
 	if (jsonget("titlercolor")!="") { titlercolor=(vector)jsonget("titlercolor"); }	
 	if (jsonget("titlertext")!="") { titlertext=jsonget("titlertext"); }
 	if (jsonget("regettitletext")!="" || jsonget("titlertext")!="" || jsonget("titlercolor")!="") { 
 		string totitler=llJsonSetValue("",["titler"],(string)titlercolor+"|"+titlertext);
+		totitler=llJsonSetValue(totitler,["titlerz"],titlerz);
 		llRegionSayTo(llGetOwner(),broadcastchannel,totitler);
 		//llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titler\":\""+(string)titlercolor+"|"+titlertext+"\"}");
 	}

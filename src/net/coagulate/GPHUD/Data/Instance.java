@@ -539,9 +539,9 @@ public class Instance extends TableRow {
 	 * @return Set of CharacterGroups
 	 */
 	@Nonnull
-	public Set<CharacterGroup> getCharacterGroups() {
-		final Set<CharacterGroup> groups=new TreeSet<>();
-		for (final ResultsRow r: dq("select charactergroupid from charactergroups where instanceid=?",getId())) {
+	public List<CharacterGroup> getCharacterGroups() {
+		final List<CharacterGroup> groups=new ArrayList<>();
+		for (final ResultsRow r: dq("select charactergroupid from charactergroups where instanceid=? order by kvprecedence asc,charactergroupid asc",getId())) {
 			groups.add(CharacterGroup.get(r.getInt()));
 		}
 		return groups;

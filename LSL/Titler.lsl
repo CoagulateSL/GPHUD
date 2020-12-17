@@ -45,8 +45,8 @@ default {
 #endif
 
 	listen(integer channel,string name,key id,string message) {
-		//llOwnerSay(message);
 		if (llGetOwnerKey(id)==llGetOwner() && channel==broadcastchannel) {
+			//llOwnerSay(message);
 			json=message;
 			string line=jsonget("titler");
 			if (line!="") { 
@@ -57,7 +57,6 @@ default {
 				//llOwnerSay("'"+color+"'");
 				//llOwnerSay("'"+message2+"'");
 				llSetText(message2,(vector)color,1);
-				return;
 			}
 			if (jsonget("titlerz")!="") { llSetPos(<0,0,(float)(jsonget("titlerz"))>); }
 			if (jsonget("titlerreplace")!="") { llOwnerSay("Duplicate TITLER attached, detaching one"); detach(); }

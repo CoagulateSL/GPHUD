@@ -49,7 +49,7 @@ public abstract class Management {
 		final Table t=new Table();
 		f.add(new TextHeader("Group Management"));
 		if (typeFilter!=null) { f.add(new TextSubHeader("Filtered by type: "+typeFilter)); }
-		final Set<CharacterGroup> groups=st.getInstance().getCharacterGroups();
+		final List<CharacterGroup> groups=st.getInstance().getCharacterGroups();
 		f.add(t);
 		final HeaderRow hr=new HeaderRow();
 		t.add(hr);
@@ -58,11 +58,13 @@ public abstract class Management {
 		hr.add("Owner");
 		hr.add("Open");
 		hr.add("Members");
+		hr.add("KV Precedence");
 		for (final CharacterGroup g: groups) {
 			String keyword=g.getType();
 			if (keyword==null) { keyword=""; }
 			if (typeFilter==null || typeFilter.equalsIgnoreCase(keyword)) {
-				t.openRow().add(new Link(g.getName(),"/GPHUD/groups/view/"+g.getId()));
+				t.openRow();
+				t.add(new Link(g.getName(),"/GPHUD/groups/view/"+g.getId()));
 				String owner="";
 				if (g.getOwner()!=null) { owner=g.getOwner().asHtml(st,true); }
 				if (typeFilter==null) { t.add(keyword); }
@@ -70,6 +72,7 @@ public abstract class Management {
 				if (g.isOpen()) { t.add("Yes"); }
 				else { t.add(""); }
 				t.add(g.getMembers().size()+" members");
+				t.add(g.getKVPrecedence());
 			}
 		}
 		if (st.hasPermission("Groups.Create")) {
@@ -163,6 +166,16 @@ public abstract class Management {
 			setOwner.add(new Button("Set Owner",true));
 			t.add(setOwner);
 		}
+		t.openRow().add("KV Precedence").add(group.getKVPrecedence());
+		if (st.hasPermission("Groups.SetPrecedence")) {
+			final Form setPrecedence=new Form();
+			setPrecedence.setAction("../setprecedence");
+			setPrecedence.add(new Hidden("group",group.getName()));
+			setPrecedence.add(new Hidden("precedence",""+group.getKVPrecedence()));
+			setPrecedence.add(new Hidden("okreturnurl",st.getFullURL()));
+			setPrecedence.add(new Button("Set Precedence",true));
+			t.add(setPrecedence);
+		}
 		final Set<Char> members=group.getMembers();
 		t.openRow().add("Members").add(members.size()+" members");
 		t.openRow().add("Open").add(group.isOpen()?"Yes":"No");
@@ -247,6 +260,31 @@ public abstract class Management {
 		group.setOwner(newOwner);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newOwner,"SetOwner",group.getName(),oldOwnerName,newOwner.getName(),"Group leader changed");
 		return new OKResponse("Group leader updated");
+	}
+
+	@URLs(url="/groups/setprecedence",
+		  requiresPermission="Groups.SetPrecedence")
+	public static void setPrecedenceForm(@Nonnull final State st,
+									@Nonnull final SafeMap values) {
+		Modules.simpleHtml(st, "Groups.SetPrecedence", values);
+	}
+
+	@Nonnull
+	@Commands(context=Context.AVATAR,
+			  description="Set the KV precedence value of a character group",
+			  requiresPermission="Groups.SetPrecedence")
+	public static Response setPrecedence(@Nonnull final State st,
+									@Nonnull @Arguments(name="group",description="Group to change the leader of",
+														type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
+									@Nonnull @Arguments(name="precedence",description="New precedence",
+														 type=ArgumentType.INTEGER) Integer precedence) {
+		int oldPrecedence=group.getKVPrecedence();
+		if (oldPrecedence==precedence) { return new OKResponse("Precedence unchanged"); }
+		group.setKVPrecedence(precedence);
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetPrecedence",group.getName(),""+oldPrecedence,""+precedence,"Changed KV Precedence from "+oldPrecedence+" to "+precedence);
+		CharacterGroup.purgeCharacterGroupCaches();
+		st.getInstance().pushConveyances();
+		return new OKResponse("Precedence updated");
 	}
 
 	@URLs(url="/groups/add",

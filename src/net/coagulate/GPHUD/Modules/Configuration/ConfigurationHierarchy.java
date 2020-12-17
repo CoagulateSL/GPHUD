@@ -155,7 +155,7 @@ public class ConfigurationHierarchy extends Form {
 		t.openRow();
 		if (dbo instanceof Region) { t.setBGColor("#ffe0e0"); }
 		if (dbo instanceof CharacterGroup) {
-			t.add(dbo.getClass().getSimpleName()+" : "+((CharacterGroup) dbo).getTypeNotNull());
+			t.add(dbo.getClass().getSimpleName()+" ("+((CharacterGroup)dbo).getKVPrecedence()+") : "+((CharacterGroup) dbo).getTypeNotNull());
 		}
 		else { t.add(dbo.getClass().getSimpleName()); }
 		t.add(dbo);
@@ -163,35 +163,6 @@ public class ConfigurationHierarchy extends Form {
 		if (value==null) { value=""; }
 		t.add(value);
 		if (kv.editpermission().isEmpty() || st.hasPermission(kv.editpermission())) {
-			/*
-			String typefield = "";
-			final String typename = dbo.getName();
-			String targeturl = "";
-			if (dbo instanceof Instance) {
-				targeturl = "/" + Interface.base() + "/configuration/setinstancevalue";
-				typefield = "instance";
-			}
-			if (dbo instanceof Region) {
-				targeturl = "/" + Interface.base() + "/configuration/setregionvalue";
-				typefield = "region";
-			}
-			if (dbo instanceof Zone) {
-				targeturl = "/" + Interface.base() + "/configuration/setzonevalue";
-				typefield = "zone";
-			}
-			if (dbo instanceof Event) {
-				targeturl = "/" + Interface.base() + "/configuration/seteventvalue";
-				typefield = "event";
-			}
-			if (dbo instanceof CharacterGroup) {
-				targeturl = "/" + Interface.base() + "/configuration/setgroupvalue";
-				typefield = "group";
-			}
-			if (dbo instanceof Char) {
-				targeturl = "/" + Interface.base() + "/configuration/setcharvalue";
-				typefield = "character";
-			}
-			*/
 			String kvvalue=simulated.getRawKV(dbo,kv.fullname());
 			if (kvvalue==null) { kvvalue=""; }
 			final String codename=dbo.getKVTable()+"-"+dbo.getId();

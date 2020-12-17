@@ -225,7 +225,7 @@
 @KVS(name="TitlerAltitude",
      defaultvalue="0.19",
      conveyas="titlerz",
-     description="Titler Altitude (height above character",
+     description="Titler Altitude (height above character in meters)",
      editpermission="gphudclient.config",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
@@ -261,6 +261,15 @@
      hierarchy=KVHIERARCHY.DELEGATING,
      conveyas="opencmd",
      template=false)
+
+@KVS(name="AllowManualByDefault",
+	 defaultvalue = "true",
+	 editpermission = "GPHUDClient.Config",
+	 hierarchy = KVHIERARCHY.DELEGATING,
+	 template = false,
+	 description = "If enabled, allows manual selection on default 'character input' prompts from scripting",
+	 scope = KVSCOPE.INSTANCE,
+	 type = KVTYPE.BOOLEAN)
 
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 

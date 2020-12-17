@@ -676,7 +676,13 @@ public class Char extends TableRow {
 	 * @return Level number
 	 */
 	public int getLevel(@Nonnull final State st) {
-		if (st.hasModule("Experience")) { return Experience.toLevel(st,Experience.getExperience(st,this)); }
+		if (st.hasModule("Experience")) {
+			int level=Experience.toLevel(st,Experience.getExperience(st,this));
+			int maxLevel=st.getKV("Experience.MaxLevel").intValue();
+			if (maxLevel==0) { return level; }
+			if (level>maxLevel) { level=maxLevel; }
+			return level;
+		}
 		return 0;
 	}
 

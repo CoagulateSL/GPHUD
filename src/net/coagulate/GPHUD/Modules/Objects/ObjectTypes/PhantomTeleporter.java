@@ -2,6 +2,9 @@ package net.coagulate.GPHUD.Modules.Objects.ObjectTypes;
 
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.ObjType;
+import net.coagulate.GPHUD.Interfaces.Inputs.Button;
+import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.State;
 
@@ -36,12 +39,17 @@ public class PhantomTeleporter extends Teleporter {
 
 	@Override
 	public void editForm(@Nonnull final State st) {
-		super.editForm(st);
+		final Table t=new Table();
+		teleportEditForm(st,t);
+		t.add(new Cell(new Button("Update"),2));
+		st.form().add(t);
 	}
 
 	@Override
 	public void update(@Nonnull final State st) {
-		super.update(st);
+		boolean changed=false;
+		changed=updateTeleport(st) || changed;
+		if (changed) { object.setBehaviour(json); }
 	}
 
 }
