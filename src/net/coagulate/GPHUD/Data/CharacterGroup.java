@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -414,4 +416,11 @@ public class CharacterGroup extends TableRow {
 		return ret;
 	}
 
+	public int getKVPrecedence() {
+		return getInt("kvprecedence");
+	}
+
+	public void setKVPrecedence(int newPrecedence) {
+		set("kvprecedence",newPrecedence);
+	}
 }
