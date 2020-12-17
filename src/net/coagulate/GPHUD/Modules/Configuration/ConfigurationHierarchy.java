@@ -155,7 +155,7 @@ public class ConfigurationHierarchy extends Form {
 		t.openRow();
 		if (dbo instanceof Region) { t.setBGColor("#ffe0e0"); }
 		if (dbo instanceof CharacterGroup) {
-			t.add(dbo.getClass().getSimpleName()+" : "+((CharacterGroup) dbo).getTypeNotNull());
+			t.add(dbo.getClass().getSimpleName()+" ("+((CharacterGroup)dbo).getKVPrecedence()+") : "+((CharacterGroup) dbo).getTypeNotNull());
 		}
 		else { t.add(dbo.getClass().getSimpleName()); }
 		t.add(dbo);
