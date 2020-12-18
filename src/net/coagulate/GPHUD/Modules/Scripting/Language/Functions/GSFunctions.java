@@ -51,7 +51,8 @@ public class GSFunctions {
 		OUTPUT,
 		RANDOMNESS,
 		ZONES,
-		CHARACTER
+		CHARACTER,
+		SETS
 	}
 
 	/**
