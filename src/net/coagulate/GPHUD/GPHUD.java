@@ -215,6 +215,7 @@ public class GPHUD extends SLModule {
 					"		ON DELETE CASCADE" +
 					"		ON UPDATE RESTRICT" +
 					")");
+			GPHUD.getDB().d("ALTER TABLE `charactersets` ADD UNIQUE INDEX `charactersets_composite` (`characterid` ASC, `attributeid` ASC, `element` ASC)");
 			log.config("Add SET type to attribute attributetype");
 			GPHUD.getDB().d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET') NOT NULL");
 			log.config("Schema upgrade of GPHUD to version 6 is complete");
