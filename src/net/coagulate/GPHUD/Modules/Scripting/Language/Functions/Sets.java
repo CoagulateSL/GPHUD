@@ -77,6 +77,25 @@ public class Sets {
         int value=characterSet.count(element.getContent());
         return new BCInteger(null,value);
     }
+    @Nonnull
+    @GSFunctions.GSFunction(description="Wipes the contents of a set for a character",
+                            returns="Integer - Total quantity of elements formerly in the set (sum of all quantities)",
+                            parameters="Character character - Character to alter<br>"+
+                                    "String set - Name of set to modify",
+                            notes="",
+                            privileged=false,
+                            category= GSFunctions.SCRIPT_CATEGORY.SETS)
+    public static BCInteger gsSetWipe(@Nonnull final State st,
+                                     @Nonnull final GSVM vm,
+                                     @Nonnull final BCCharacter character,
+                                     @Nonnull final BCString set) {
+        CharacterSet characterSet=getSet(st,character,set);
+        int elements=characterSet.countElements();
+        int totalQuantity=characterSet.countTotal();
+        characterSet.wipe();
+        Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsSetWipe", set.getContent(),null, null, "Wiped set, formerly containing "+elements+" elements totalling "+totalQuantity+" quantity");
+        return new BCInteger(null,totalQuantity);
+    }
 
     private static CharacterSet getSet(State st, BCCharacter character, BCString setName) {
         // find Attribute by name
