@@ -50,7 +50,7 @@ public class CharacterSet {
     }
     /** Returns the number of (quantity of) the passed element contained in this set */
     public int count(@Nonnull String element) {
-        Results rows = db().dq("select qty from charactersets where characterid=?,attributeid=?,element=?", character.getId(), set.getId(), element);
+        Results rows = db().dq("select qty from charactersets where characterid=? and attributeid=? and element=?", character.getId(), set.getId(), element);
         if (rows.empty()) { return 0; }
         int total=0;
         for (ResultsRow row:rows) {
