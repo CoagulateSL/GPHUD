@@ -85,5 +85,24 @@ public class Sets {
         return new OKResponse("Set "+qty+" "+element+" in "+character+"'s "+set+" (was "+oldValue+")");
     }
 
+    @Nonnull
+    @Command.Commands(context=Command.Context.AVATAR,
+                      description="Wipes the entire contents of a set")
+    public static Response wipe(@Nonnull final State st,
+                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.CHARACTER,
+                                                            description="Character to modify",
+                                                            name="character") final Char character,
+                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.ATTRIBUTE,
+                                                            description = "Set to wipe",
+                                                            name = "set") final Attribute set) {
+        preCheck(st,set,character);
+        // guess we're ok then (!)
+        CharacterSet characterSet=new CharacterSet(character,set);
+        int elements=characterSet.countElements();
+        int totalCount=characterSet.countTotal();
+        characterSet.wipe();
+        Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,character,"Empty",set.getName(),null,null,"Wiped set "+set.getName()+", formerly containing "+elements+" elements with total quantity "+totalCount);
+        return new OKResponse("Wiped "+character+"'s "+set+", formerly containing "+elements+" elements with total quantity "+totalCount);
+    }
 
 }
