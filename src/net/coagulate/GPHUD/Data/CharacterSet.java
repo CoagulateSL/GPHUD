@@ -79,7 +79,7 @@ public class CharacterSet {
      */
     public void set(@Nonnull String element,int setTo) {
         if (setTo==0) { delete(element); return; }
-        db().d("replace into charactersets(characterid,attributeid,element,qty) values(?,?,?,?)",character.getId(),set.getId(),element,setTo);
+        db().d("insert into charactersets(characterid,attributeid,element,qty) values(?,?,?,?) on duplicate key update qty=?",character.getId(),set.getId(),element,setTo,setTo);
     }
 
 
