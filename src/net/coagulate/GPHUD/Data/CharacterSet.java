@@ -114,4 +114,8 @@ public class CharacterSet {
         }
         return returnMap;
     }
+
+    public void wipe() {
+        db().d("delete from charactersets where characterid=? and attributeid=?",character.getId(),set.getId());
+    }
 }
