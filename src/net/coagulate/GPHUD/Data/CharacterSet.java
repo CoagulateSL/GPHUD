@@ -72,6 +72,16 @@ public class CharacterSet {
         return count;
     }
 
+    /** Sets a quantity of an element
+     *
+     * @param element Element from the set
+     * @param setTo Quantity to set to
+     */
+    public void set(@Nonnull String element,int setTo) {
+        db().d("replace into charactersets(characterid,attributeid,element,qty) values(?,?,?,?)",character.getId(),set.getId(),element,setTo);
+    }
+
+
     /** Remove an element from a set
      *
      * @param element Element to remove entirely from the set
