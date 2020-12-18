@@ -68,7 +68,7 @@ public class CharacterSet {
     public int add(@Nonnull String element,int add) {
         int count=count(element);
         count=count+add;
-        db().d("replace into charactersets(characterid,attributeid,element,qty) values(?,?,?,?)",character.getId(),set.getId(),element,count);
+        set(element,count);
         return count;
     }
 
@@ -78,6 +78,7 @@ public class CharacterSet {
      * @param setTo Quantity to set to
      */
     public void set(@Nonnull String element,int setTo) {
+        if (setTo==0) { delete(element); return; }
         db().d("replace into charactersets(characterid,attributeid,element,qty) values(?,?,?,?)",character.getId(),set.getId(),element,setTo);
     }
 
