@@ -38,7 +38,7 @@ public class CharacterSet {
      * @return The number of different types of thing (elements) in this set
      */
     public int countElements() {
-        return db().dqiNotNull("select count(*) from charactersets where characterid=?,attributeid=?",character.getId(),set.getId());
+        return db().dqiNotNull("select count(*) from charactersets where characterid=? and attributeid=?",character.getId(),set.getId());
     }
 
     /** Count the total number of things in the set (total of all quantities)
@@ -46,7 +46,7 @@ public class CharacterSet {
      * @return The number of items (total quantity) in this set
      */
     public int countTotal() {
-        return db().dqiNotNull("select sum(qty) from charactersets where characterid=?,attributeid=?",character.getId(),set.getId());
+        return db().dqiNotNull("select sum(qty) from charactersets where characterid=? and attributeid=?",character.getId(),set.getId());
     }
     /** Returns the number of (quantity of) the passed element contained in this set */
     public int count(@Nonnull String element) {
