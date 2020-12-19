@@ -46,7 +46,9 @@ public class CharacterSet {
      * @return The number of items (total quantity) in this set
      */
     public int countTotal() {
-        return db().dqiNotNull("select sum(qty) from charactersets where characterid=? and attributeid=?",character.getId(),set.getId());
+        Integer result=db().dqi("select sum(qty) from charactersets where characterid=? and attributeid=?",character.getId(),set.getId());
+        if (result==null) { return 0; }
+        return result;
     }
     /** Returns the number of (quantity of) the passed element contained in this set */
     public int count(@Nonnull String element) {
