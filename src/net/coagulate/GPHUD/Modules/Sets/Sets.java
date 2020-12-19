@@ -15,16 +15,17 @@ import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public class Sets {
 
-    private static void preCheck(State st,Attribute set,Char character) {
+    private static void preCheck(State st,Attribute set,Char character,boolean checkAdmin) {
         // Attribute must be a set
         if (!(set.getType()== Attribute.ATTRIBUTETYPE.SET)) { throw new UserInputStateException("Attribute "+set.getName()+" is of type "+set.getType()+" not SET"); }
         // Attribute must belong to instance (!)
         if (!(set.getInstance()==st.getInstance())) { throw new SystemImplementationException("Attribute "+set+" is not from instance "+st.getInstanceString()); }
         // check permission
-        if (!st.hasPermission("Characters.Set"+set.getName())) { throw new UserAccessDeniedException("You do not have permission Characters.Set"+set.getName()+" required to modify this characters set"); }
+        if (checkAdmin && !st.hasPermission("Characters.Set"+set.getName())) { throw new UserAccessDeniedException("You do not have permission Characters.Set"+set.getName()+" required to modify this characters set"); }
         // check character is of right instance
         if (!(st.getInstance()==character.getInstance())) { throw new SystemImplementationException("Target character "+character+" is not from instance "+st.getInstanceString()); }
     }
@@ -47,7 +48,7 @@ public class Sets {
                                                              type = Argument.ArgumentType.INTEGER,
                                                              description = "Number of element to add (or remove, if negative)",
                                                              mandatory = false) Integer qty) {
-        preCheck(st,set,character);
+        preCheck(st,set,character,true);
         if (qty==null) { qty=1; }
         // guess we're ok then (!)
         CharacterSet characterSet=new CharacterSet(character,set);
@@ -75,7 +76,7 @@ public class Sets {
                                                             type = Argument.ArgumentType.INTEGER,
                                                             description = "Quantity to set to",
                                                             mandatory = false) Integer qty) {
-        preCheck(st,set,character);
+        preCheck(st,set,character,true);
         if (qty==null) { qty=1; }
         // guess we're ok then (!)
         CharacterSet characterSet=new CharacterSet(character,set);
@@ -95,7 +96,7 @@ public class Sets {
                                @Nonnull @Argument.Arguments(type = Argument.ArgumentType.ATTRIBUTE,
                                                             description = "Set to wipe",
                                                             name = "set") final Attribute set) {
-        preCheck(st,set,character);
+        preCheck(st,set,character,true);
         // guess we're ok then (!)
         CharacterSet characterSet=new CharacterSet(character,set);
         int elements=characterSet.countElements();
@@ -105,4 +106,22 @@ public class Sets {
         return new OKResponse("Wiped "+character+"'s "+set+", formerly containing "+elements+" elements with total quantity "+totalCount);
     }
 
+    @Nonnull
+    @Command.Commands(context= Command.Context.CHARACTER,
+                      description="Reports on the contents of a set")
+    public static Response view(@Nonnull final State st,
+                                @Nonnull @Argument.Arguments(type= Argument.ArgumentType.ATTRIBUTE,
+                                                             description="Set to view",
+                                                             name="set") final Attribute set) {
+        preCheck(st,set,st.getCharacter(),false);
+        CharacterSet characterSet=new CharacterSet(st.getCharacter(),set);
+        StringBuilder output=new StringBuilder(set.getName()).append(" contains: ");
+        boolean notFirst=false;
+        for (Map.Entry<String,Integer> element:characterSet.elements().entrySet()) {
+            if (notFirst) { output.append(", "); }
+            output.append(element.getValue()).append("x").append(element.getKey());
+            notFirst=true;
+        }
+        return new OKResponse(output.toString());
+    }
 }
