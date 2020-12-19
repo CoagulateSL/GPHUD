@@ -113,7 +113,7 @@ public class Sets {
                                      @Nonnull final BCString sourceSet,
                                      @Nonnull final BCString destinationSet) {
         CharacterSet source=getSet(st,character,sourceSet);
-        CharacterSet destination=getSet(st,character,sourceSet);
+        CharacterSet destination=getSet(st,character,destinationSet);
         for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
             destination.add(element.getKey(),element.getValue());
         }
