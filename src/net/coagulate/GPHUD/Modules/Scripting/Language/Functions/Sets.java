@@ -7,11 +7,13 @@ import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.CharacterSet;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCList;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class Sets {
     @Nonnull
@@ -96,7 +98,69 @@ public class Sets {
         Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsSetWipe", set.getContent(),null, null, "Wiped set, formerly containing "+elements+" elements totalling "+totalQuantity+" quantity");
         return new BCInteger(null,totalQuantity);
     }
-
+    @Nonnull
+    @GSFunctions.GSFunction(description="Copies (adds) one set to another",
+                            returns="Integer - Total number of items (quantities) in the target set",
+                            parameters="Character character - Character to alter<br>"+
+                                    "String sourceset - Name of set to copy from<br>"+
+                                    "String destinationset - Name of set to copy to",
+                            notes="",
+                            privileged=false,
+                            category= GSFunctions.SCRIPT_CATEGORY.SETS)
+    public static BCInteger gsSetCopy(@Nonnull final State st,
+                                     @Nonnull final GSVM vm,
+                                     @Nonnull final BCCharacter character,
+                                     @Nonnull final BCString sourceSet,
+                                     @Nonnull final BCString destinationSet) {
+        CharacterSet source=getSet(st,character,sourceSet);
+        CharacterSet destination=getSet(st,character,sourceSet);
+        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
+            destination.add(element.getKey(),element.getValue());
+        }
+        int totalItems=destination.countElements();
+        int totalQuantity=destination.countTotal();
+        Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsSetCopy", destinationSet.getContent(),null, null, "Copied set "+sourceSet.getContent()+" to "+destinationSet.getContent()+" which now contains "+totalItems+" totalling quantity "+totalQuantity);
+        return new BCInteger(null,totalQuantity);
+    }
+    @Nonnull
+    @GSFunctions.GSFunction(description="Returns a list of all elements in the set",
+                            returns="List - A list of strings, consisting of the elements in the set",
+                            parameters="Character character - Character to alter<br>"+
+                                    "String set - Name of set to list",
+                            notes="",
+                            privileged=false,
+                            category= GSFunctions.SCRIPT_CATEGORY.SETS)
+    public static BCList gsGetList(@Nonnull final State st,
+                                   @Nonnull final GSVM vm,
+                                   @Nonnull final BCCharacter character,
+                                   @Nonnull final BCString set) {
+        CharacterSet source=getSet(st,character,set);
+        BCList list=new BCList(null);
+        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
+            list.add(new BCString(null,element.getKey()));
+        }
+        return list;
+    }
+    @Nonnull
+    @GSFunctions.GSFunction(description="Returns a list of all elements in the set along with their quantity",
+                            returns="List - A list of strings, and integers consisting of the elements and quantities in the set",
+                            parameters="Character character - Character to alter<br>"+
+                                    "String set - Name of set to map",
+                            notes="Even numbered list indexes (starting at 0) are Strings, odd numbered are Integers (the quantities)",
+                            privileged=false,
+                            category= GSFunctions.SCRIPT_CATEGORY.SETS)
+    public static BCList gsGetMap(@Nonnull final State st,
+                                   @Nonnull final GSVM vm,
+                                   @Nonnull final BCCharacter character,
+                                   @Nonnull final BCString set) {
+        CharacterSet source=getSet(st,character,set);
+        BCList list=new BCList(null);
+        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
+            list.add(new BCString(null,element.getKey()));
+            list.add(new BCInteger(null,element.getValue()));
+        }
+        return list;
+    }
     private static CharacterSet getSet(State st, BCCharacter character, BCString setName) {
         // find Attribute by name
         Attribute attribute=Attribute.find(st.getInstance(),setName.getContent());
