@@ -74,7 +74,7 @@ public class Form implements Renderable {
 	public Form add(final String s) { return add(new Text(s)); }
 
 	@Nonnull
-	public Form add(final Renderable e) {
+	public Form add(@Nonnull final Renderable e) {
 		list.add(e);
 		return this;
 	}
