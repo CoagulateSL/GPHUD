@@ -125,12 +125,12 @@ public class Sets {
     @Nonnull
     @GSFunctions.GSFunction(description="Returns a list of all elements in the set",
                             returns="List - A list of strings, consisting of the elements in the set",
-                            parameters="Character character - Character to alter<br>"+
+                            parameters="Character character - Character to query<br>"+
                                     "String set - Name of set to list",
                             notes="",
                             privileged=false,
                             category= GSFunctions.SCRIPT_CATEGORY.SETS)
-    public static BCList gsGetList(@Nonnull final State st,
+    public static BCList gsSetList(@Nonnull final State st,
                                    @Nonnull final GSVM vm,
                                    @Nonnull final BCCharacter character,
                                    @Nonnull final BCString set) {
@@ -144,12 +144,12 @@ public class Sets {
     @Nonnull
     @GSFunctions.GSFunction(description="Returns a list of all elements in the set along with their quantity",
                             returns="List - A list of strings, and integers consisting of the elements and quantities in the set",
-                            parameters="Character character - Character to alter<br>"+
+                            parameters="Character character - Character to query<br>"+
                                     "String set - Name of set to map",
                             notes="Even numbered list indexes (starting at 0) are Strings, odd numbered are Integers (the quantities)",
                             privileged=false,
                             category= GSFunctions.SCRIPT_CATEGORY.SETS)
-    public static BCList gsGetMap(@Nonnull final State st,
+    public static BCList gsSetMap(@Nonnull final State st,
                                    @Nonnull final GSVM vm,
                                    @Nonnull final BCCharacter character,
                                    @Nonnull final BCString set) {
