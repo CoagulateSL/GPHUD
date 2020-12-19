@@ -161,6 +161,36 @@ public class Sets {
         }
         return list;
     }
+    @Nonnull
+    @GSFunctions.GSFunction(description="Returns a count of the distinct elements (regardless of quantity) in the set",
+                            returns="Integer - Number of elements known in the set",
+                            parameters="Character character - Character to count<br>"+
+                                    "String set - Name of set to count",
+                            notes="",
+                            privileged=false,
+                            category= GSFunctions.SCRIPT_CATEGORY.SETS)
+    public static BCInteger gsSetCount(@Nonnull final State st,
+                                  @Nonnull final GSVM vm,
+                                  @Nonnull final BCCharacter character,
+                                  @Nonnull final BCString set) {
+        CharacterSet source=getSet(st,character,set);
+        return new BCInteger(null,source.countElements());
+    }
+    @Nonnull
+    @GSFunctions.GSFunction(description="Returns a count of the total number of things (counting quantities) in the set",
+                            returns="Integer - Total of all quantities in the set",
+                            parameters="Character character - Character to count<br>"+
+                                    "String set - Name of set to count",
+                            notes="",
+                            privileged=false,
+                            category= GSFunctions.SCRIPT_CATEGORY.SETS)
+    public static BCInteger gsSetQuantity(@Nonnull final State st,
+                                       @Nonnull final GSVM vm,
+                                       @Nonnull final BCCharacter character,
+                                       @Nonnull final BCString set) {
+        CharacterSet source=getSet(st,character,set);
+        return new BCInteger(null,source.countTotal());
+    }
     private static CharacterSet getSet(State st, BCCharacter character, BCString setName) {
         // find Attribute by name
         Attribute attribute=Attribute.find(st.getInstance(),setName.getContent());
