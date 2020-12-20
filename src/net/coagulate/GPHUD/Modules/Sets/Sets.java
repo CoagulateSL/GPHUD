@@ -15,7 +15,6 @@ import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 
 public class Sets {
 
@@ -114,14 +113,6 @@ public class Sets {
                                                              description="Set to view",
                                                              name="set") final Attribute set) {
         preCheck(st,set,st.getCharacter(),false);
-        CharacterSet characterSet=new CharacterSet(st.getCharacter(),set);
-        StringBuilder output=new StringBuilder(set.getName()).append(" contains: ");
-        boolean notFirst=false;
-        for (Map.Entry<String,Integer> element:characterSet.elements().entrySet()) {
-            if (notFirst) { output.append(", "); }
-            output.append(element.getValue()).append("x").append(element.getKey());
-            notFirst=true;
-        }
-        return new OKResponse(output.toString());
+        return new OKResponse(set.getName()+" contains: "+new CharacterSet(st.getCharacter(),set).textList());
     }
 }

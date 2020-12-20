@@ -432,6 +432,10 @@ public class Attribute extends TableRow {
 			return currency.shortSum(st);
 		}
 		if (attributetype==POOL) { return "POOL"; }
+		if (attributetype==SET) {
+			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
+			return set.countElements()+" elements, "+set.countTotal()+" total qty";
+		}
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
 
@@ -465,6 +469,10 @@ public class Attribute extends TableRow {
 			return currency.longSum(st);
 		}
 		if (attributetype==GROUP) { return ""; }
+		if (attributetype==SET) {
+			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
+			return set.textList();
+		}
 		throw new SystemImplementationException("Unhandled type "+getType());
 	}
 

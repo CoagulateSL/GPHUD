@@ -120,4 +120,19 @@ public class CharacterSet {
     public void wipe() {
         db().d("delete from charactersets where characterid=? and attributeid=?",character.getId(),set.getId());
     }
+
+    /** Returns the set as a formatted string, "1xThing, 2xThing2, 3xThing3" etc
+     *
+     * @return The formatted set contents
+     */
+    public String textList() {
+        StringBuilder output=new StringBuilder();
+        boolean notFirst=false;
+        for (Map.Entry<String,Integer> element:elements().entrySet()) {
+            if (notFirst) { output.append(", "); }
+            output.append(element.getValue()).append("x").append(element.getKey());
+            notFirst=true;
+        }
+        return output.toString();
+    }
 }
