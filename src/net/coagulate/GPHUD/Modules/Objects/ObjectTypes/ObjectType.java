@@ -50,7 +50,7 @@ public abstract class ObjectType {
 		if (behaviour.equals("PhantomScript")) { return new PhantomScript(st,object); }
 		if (behaviour.equals("NPC")) { return new NPC(st,object); }
 		if (behaviour.equals("PhantomCommand")) { return new PhantomCommand(st,object); }
-		throw new SystemLookupFailureException("Behaviour "+behaviour+" is not known!");
+		throw new SystemLookupFailureException("Behaviour "+behaviour+" is not known!",true);
 	}
 
 	@Nonnull
