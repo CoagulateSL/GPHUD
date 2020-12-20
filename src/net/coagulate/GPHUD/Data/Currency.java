@@ -254,7 +254,7 @@ public class Currency extends TableRow {
 		if (shortname.size()==1) {
 			return new Coin(shortname.first().getInt("basemultiple"),shortname.first().getString("coinname"),shortname.first().getString("coinnameshort"));
 		}
-		throw new UserInputLookupFailureException("Unable to resolve a coin named "+coin);
+		throw new UserInputLookupFailureException("Unable to resolve a coin named "+coin,true);
 	}
 
 	public void delete(final State st) {
