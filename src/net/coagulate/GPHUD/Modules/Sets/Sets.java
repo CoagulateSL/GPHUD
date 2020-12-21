@@ -11,6 +11,9 @@ import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.URL;
+import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -55,6 +58,11 @@ public class Sets {
         int total=characterSet.add(element,qty);
         Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,character,"Add",set.getName(),""+oldValue,""+total,"Added "+qty+" "+element+" to set, totalling "+total);
         return new OKResponse("Added "+qty+" "+element+" to "+character+"'s "+set+", changing total from "+oldValue+" to "+total);
+    }
+    @URL.URLs(url="/configuration/sets/setset")
+    public static void setForm(@Nonnull final State st,
+                                    @Nonnull final SafeMap values) {
+        Modules.simpleHtml(st,"Sets.Set",values);
     }
 
     @Nonnull
