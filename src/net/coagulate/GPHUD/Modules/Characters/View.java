@@ -4,12 +4,11 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.CharacterPool;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Data.Views.AuditTable;
 import net.coagulate.GPHUD.Data.Views.PoolTable;
-import net.coagulate.GPHUD.Data.Visit;
+import net.coagulate.GPHUD.Interfaces.Inputs.Button;
+import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -37,10 +36,12 @@ import net.coagulate.SL.Config;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.SET;
 
 /**
  * A simple command implementation.
@@ -175,9 +176,39 @@ public abstract class View {
 			kvtable.openRow();
 			kvtable.add(a.getName());
 			//System.out.println("About to print attribute "+a.getName());
-			final String value=a.getCharacterValue(simulated);
+			String value=a.getCharacterValue(simulated);
 			kvtable.add(value!=null?value:"");
-			kvtable.add(a.getCharacterValueDescription(simulated));
+			String description=a.getCharacterValueDescription(simulated);
+			if (a.getType()==SET) {
+				description="";
+				CharacterSet set=new CharacterSet(simulated.getCharacter(),a);
+				if (st.hasPermission("Characters.Set"+a.getName())) {
+					for (Map.Entry<String, Integer> element : set.elements().entrySet()) {
+						final Form create = new Form();
+						create.inline();
+						create.setAction("/GPHUD/configuration/sets/setset");
+						create.add(new Hidden("character", simulated.getCharacter().getName()));
+						create.add(new Hidden("set", a.getName()));
+						create.add(new Hidden("element", element.getKey()));
+						create.add(new Hidden("qty", "" + element.getValue()));
+						create.add(new Hidden("okreturnurl", st.getFullURL()));
+						create.add(new Button(element.getValue() + "x" + element.getKey()));
+						description = description + create.asHtml(simulated, true);
+					}
+					final Form create = new Form();
+					create.inline();
+					create.setAction("/GPHUD/configuration/sets/setset");
+					create.add(new Hidden("character", simulated.getCharacter().getName()));
+					create.add(new Hidden("set", a.getName()));
+					create.add(new Hidden("okreturnurl", st.getFullURL()));
+					create.add(new Button("Add"));
+					content = create.asHtml(simulated, true);
+				} else {
+					// can't edit set
+					description=set.textList();
+				}
+			}
+			kvtable.add(description);
 			kvtable.add(content);
 		}
 		if (st.hasModule("notes")) {
