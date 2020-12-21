@@ -156,7 +156,7 @@ public class GPHUD extends SLModule {
 		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
 	}
 
-	private static final int SCHEMA_VERSION=5;
+	private static final int SCHEMA_VERSION=6;
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
@@ -191,6 +191,37 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 5 is complete");
 			currentVersion=5;
 		}
+		if (currentVersion==5) {
+			log.config("Create table charactersets");
+			GPHUD.getDB().d("CREATE TABLE `charactersets` (" +
+					"	`id` INT NOT NULL AUTO_INCREMENT," +
+					"	`characterid` INT NOT NULL," +
+					"	`attributeid` INT NOT NULL," +
+					"	`element` VARCHAR(128) NOT NULL," +
+					"	`qty` INT NOT NULL DEFAULT 1," +
+					"	PRIMARY KEY (`id`)," +
+					"	UNIQUE INDEX `id_UNIQUE` (`id` ASC)," +
+					"	INDEX `characterid_index` (`characterid` ASC)," +
+					"	INDEX `attributeid_index` (`attributeid` ASC)," +
+					"	INDEX `element` (`element` ASC)," +
+					"	CONSTRAINT `characterid_fk`" +
+					"		FOREIGN KEY (`characterid`)" +
+					"		REFERENCES `characters` (`characterid`)" +
+					"		ON DELETE CASCADE" +
+					"		ON UPDATE RESTRICT," +
+					"	CONSTRAINT `attributeid_fk`" +
+					"		FOREIGN KEY (`attributeid`)" +
+					"		REFERENCES `attributes` (`attributeid`)" +
+					"		ON DELETE CASCADE" +
+					"		ON UPDATE RESTRICT" +
+					")");
+			GPHUD.getDB().d("ALTER TABLE `charactersets` ADD UNIQUE INDEX `charactersets_composite` (`characterid` ASC, `attributeid` ASC, `element` ASC)");
+			log.config("Add SET type to attribute attributetype");
+			GPHUD.getDB().d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET') NOT NULL");
+			log.config("Schema upgrade of GPHUD to version 6 is complete");
+			currentVersion=6;
+		}
+
 		return currentVersion;
 	}
 

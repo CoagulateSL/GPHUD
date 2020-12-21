@@ -152,6 +152,7 @@ public class Attribute extends TableRow {
 		if ("color".equalsIgnoreCase(type)) { return COLOR; }
 		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
 		if ("currency".equalsIgnoreCase(type)) { return CURRENCY; }
+		if ("set".equalsIgnoreCase(type)) { return SET; }
 		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
 	}
 
@@ -238,6 +239,8 @@ public class Attribute extends TableRow {
 				return "experience";
 			case CURRENCY:
 				return "currency";
+			case SET:
+				return "set";
 		}
 		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}
@@ -429,6 +432,10 @@ public class Attribute extends TableRow {
 			return currency.shortSum(st);
 		}
 		if (attributetype==POOL) { return "POOL"; }
+		if (attributetype==SET) {
+			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
+			return set.countElements()+" elements, "+set.countTotal()+" total qty";
+		}
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
 
@@ -462,6 +469,10 @@ public class Attribute extends TableRow {
 			return currency.longSum(st);
 		}
 		if (attributetype==GROUP) { return ""; }
+		if (attributetype==SET) {
+			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
+			return set.textList();
+		}
 		throw new SystemImplementationException("Unhandled type "+getType());
 	}
 
@@ -474,7 +485,7 @@ public class Attribute extends TableRow {
 	public boolean isKV() {
 		final ATTRIBUTETYPE def=getType();
 		if (def==INTEGER || def==FLOAT || def==TEXT || def==COLOR) { return true; }
-		if (def==POOL || def==GROUP || def==EXPERIENCE || def==CURRENCY) { return false; }
+		if (def==POOL || def==GROUP || def==EXPERIENCE || def==CURRENCY || def==SET) { return false; }
 		throw new SystemImplementationException("Unknown attribute type "+def+" in attribute "+this);
 	}
 
@@ -568,7 +579,8 @@ public class Attribute extends TableRow {
 		POOL,
 		COLOR,
 		EXPERIENCE,
-		CURRENCY
+		CURRENCY,
+		SET
 	}
 
 	private static Cache<Boolean> getTemplatableCache() { return Cache.getCache("GPHUD-attribute-templatable"); }

@@ -214,6 +214,7 @@ public class Connect {
 						}
 						break;
 					case POOL:
+					case SET:
 						break;
 					default:
 						throw new SystemConsistencyException("Unhandled attribute type "+type);
