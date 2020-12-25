@@ -284,6 +284,7 @@ public class GPHUD extends SLModule {
 					"    REFERENCES `items` (`id`)" +
 					"    ON DELETE CASCADE" +
 					"    ON UPDATE RESTRICT)");
+			GPHUD.getDB().d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET', 'INVENTORY') NOT NULL");
 			log.config("Schema upgrade of GPHUD to version 7 is complete");
 			currentVersion=7;
 		}
