@@ -153,6 +153,7 @@ public class Attribute extends TableRow {
 		if ("experience".equalsIgnoreCase(type)) { return EXPERIENCE; }
 		if ("currency".equalsIgnoreCase(type)) { return CURRENCY; }
 		if ("set".equalsIgnoreCase(type)) { return SET; }
+		if ("inventory".equalsIgnoreCase(type)) { return INVENTORY; }
 		throw new SystemImplementationException("Unhandled type "+type+" to convert to ATTRIBUTETYPE");
 	}
 
@@ -241,6 +242,8 @@ public class Attribute extends TableRow {
 				return "currency";
 			case SET:
 				return "set";
+			case INVENTORY:
+				return "inventory";
 		}
 		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
 	}
@@ -432,7 +435,7 @@ public class Attribute extends TableRow {
 			return currency.shortSum(st);
 		}
 		if (attributetype==POOL) { return "POOL"; }
-		if (attributetype==SET) {
+		if (attributetype==SET || attributetype==INVENTORY) {
 			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
 			return set.countElements()+" elements, "+set.countTotal()+" total qty";
 		}
@@ -469,7 +472,7 @@ public class Attribute extends TableRow {
 			return currency.longSum(st);
 		}
 		if (attributetype==GROUP) { return ""; }
-		if (attributetype==SET) {
+		if (attributetype==SET || attributetype==INVENTORY) {
 			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
 			return set.textList();
 		}
@@ -485,7 +488,7 @@ public class Attribute extends TableRow {
 	public boolean isKV() {
 		final ATTRIBUTETYPE def=getType();
 		if (def==INTEGER || def==FLOAT || def==TEXT || def==COLOR) { return true; }
-		if (def==POOL || def==GROUP || def==EXPERIENCE || def==CURRENCY || def==SET) { return false; }
+		if (def==POOL || def==GROUP || def==EXPERIENCE || def==CURRENCY || def==SET || def==INVENTORY) { return false; }
 		throw new SystemImplementationException("Unknown attribute type "+def+" in attribute "+this);
 	}
 
@@ -580,7 +583,8 @@ public class Attribute extends TableRow {
 		COLOR,
 		EXPERIENCE,
 		CURRENCY,
-		SET
+		SET,
+		INVENTORY
 	}
 
 	private static Cache<Boolean> getTemplatableCache() { return Cache.getCache("GPHUD-attribute-templatable"); }

@@ -22,8 +22,8 @@ public class CharacterSet {
      * @param set The attribute defining the set
      */
     public CharacterSet(@Nonnull Char character,@Nonnull Attribute set) {
-        if (set.getType()!= Attribute.ATTRIBUTETYPE.SET) {
-            throw new SystemImplementationException("Accessing a set of a non SET attribute type "+set.getName()+" is "+set.getType());
+        if (set.getType()!= Attribute.ATTRIBUTETYPE.SET && set.getType()!= Attribute.ATTRIBUTETYPE.INVENTORY) {
+            throw new SystemImplementationException("Accessing a set of a non SET/INVENTORY attribute type "+set.getName()+" is "+set.getType());
         }
         if (set.getInstance()!=character.getInstance()) {
             throw new SystemImplementationException("SetAttribute/Character instance mismatch");
