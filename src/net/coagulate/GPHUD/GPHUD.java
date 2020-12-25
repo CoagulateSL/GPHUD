@@ -156,7 +156,7 @@ public class GPHUD extends SLModule {
 		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
 	}
 
-	private static final int SCHEMA_VERSION=6;
+	private static final int SCHEMA_VERSION=7;
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
@@ -221,7 +221,72 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 6 is complete");
 			currentVersion=6;
 		}
-
+		if (currentVersion==6) {
+			log.config("Add various items/inventory tables");
+			GPHUD.getDB().d("CREATE TABLE `inventoryconfiguration` (" +
+					"  `attributeid` INT NOT NULL," +
+					"  `maxitems` INT NOT NULL DEFAULT 0," +
+					"  `maxquantity` INT NOT NULL DEFAULT 0," +
+					"  `maxweight` INT NOT NULL DEFAULT 0," +
+					"  `defaultallow` TINYINT NOT NULL DEFAULT 1," +
+					"  PRIMARY KEY (`attributeid`)," +
+					"  UNIQUE INDEX `id_UNIQUE` (`attributeid` ASC)," +
+					"  CONSTRAINT `inventoryconfiguration_fk_attributeid`" +
+					"    FOREIGN KEY (`attributeid`)" +
+					"    REFERENCES `attributes` (`attributeid`)" +
+					"    ON DELETE CASCADE" +
+					"    ON UPDATE RESTRICT)");
+			GPHUD.getDB().d("CREATE TABLE `items` (" +
+					"  `id` INT NOT NULL AUTO_INCREMENT," +
+					"  `instanceid` INT NOT NULL," +
+					"  `name` VARCHAR(128) NOT NULL," +
+					"  `description` VARCHAR(256) NOT NULL DEFAULT ''," +
+					"  `weight` INT NOT NULL DEFAULT 0," +
+					"  PRIMARY KEY (`id`)," +
+					"  UNIQUE INDEX `id_UNIQUE` (`id` ASC)," +
+					"  UNIQUE INDEX `instanceid_itemname_unique` (`instanceid` ASC, `name` ASC)," +
+					"  INDEX `itemname_index` (`name` ASC)," +
+					"  CONSTRAINT `items_instanceid_fk`" +
+					"    FOREIGN KEY (`instanceid`)" +
+					"    REFERENCES `instances` (`instanceid`)" +
+					"    ON DELETE CASCADE" +
+					"    ON UPDATE RESTRICT)");
+			GPHUD.getDB().d("CREATE TABLE `iteminventories` (" +
+					"  `itemid` INT NOT NULL," +
+					"  `inventoryid` INT NOT NULL," +
+					"  `permitted` TINYINT NOT NULL DEFAULT 1," +
+					"  PRIMARY KEY (`itemid`, `inventoryid`)," +
+					"  INDEX `itemid_index` (`itemid` ASC)," +
+					"  INDEX `iteminventories_inventoryid_idx` (`inventoryid` ASC)," +
+					"  CONSTRAINT `iteminventories_inventoryid`" +
+					"    FOREIGN KEY (`inventoryid`)" +
+					"    REFERENCES `attributes` (`attributeid`)" +
+					"    ON DELETE CASCADE" +
+					"    ON UPDATE RESTRICT," +
+					"  CONSTRAINT `iteminventories_itemid`" +
+					"    FOREIGN KEY (`itemid`)" +
+					"    REFERENCES `items` (`id`)" +
+					"    ON DELETE CASCADE" +
+					"    ON UPDATE RESTRICT)");
+			GPHUD.getDB().d("CREATE TABLE `itemverbs` (" +
+					"  `id` INT NOT NULL AUTO_INCREMENT," +
+					"  `itemid` INT NOT NULL," +
+					"  `verb` VARCHAR(64) NOT NULL," +
+					"  `description` VARCHAR(256) NOT NULL DEFAULT ''," +
+					"  `payload` VARCHAR(4096) NOT NULL DEFAULT '{}'," +
+					"  PRIMARY KEY (`id`)," +
+					"  UNIQUE INDEX `id_UNIQUE` (`id` ASC)," +
+					"  INDEX `itemverbs_itemid` (`itemid` ASC)," +
+					"  INDEX `itemverbs_verb` (`verb` ASC)," +
+					"  UNIQUE INDEX `itemid_itemverbs_unique` (`itemid` ASC, `verb` ASC)," +
+					"  CONSTRAINT `itemverbs_itemid_fk`" +
+					"    FOREIGN KEY (`itemid`)" +
+					"    REFERENCES `items` (`id`)" +
+					"    ON DELETE CASCADE" +
+					"    ON UPDATE RESTRICT)");
+			log.config("Schema upgrade of GPHUD to version 7 is complete");
+			currentVersion=7;
+		}
 		return currentVersion;
 	}
 
