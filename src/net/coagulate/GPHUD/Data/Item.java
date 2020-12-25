@@ -7,6 +7,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class Item extends TableRow {
+    public static Item findNullable(@Nonnull final Instance instance, @Nonnull final String name) {
+        Integer id= db().dqi("select id from items where name like ? and instanceid=?",name,instance.getId());
+        if (id==null) { return null; }
+        return Item.get(id);
+    }
+
     @Nonnull
     @Override
     public String getIdColumn() {
