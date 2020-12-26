@@ -103,7 +103,7 @@ public class CharactersModule extends ModuleAnnotation {
 		if (attr.getType()==CURRENCY) {
 			return Currency.find(st,attr.getName()).shortSum(st);
 		}
-		if (attr.getType()==SET) {
+		if (attr.getType()==SET || attr.getType()==INVENTORY) {
 			CharacterSet set=new CharacterSet(st.getCharacter(),attr);
 			return set.countElements()+" / "+set.countTotal();
 		}
