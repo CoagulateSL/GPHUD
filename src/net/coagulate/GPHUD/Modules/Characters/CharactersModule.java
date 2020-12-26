@@ -103,6 +103,10 @@ public class CharactersModule extends ModuleAnnotation {
 		if (attr.getType()==CURRENCY) {
 			return Currency.find(st,attr.getName()).shortSum(st);
 		}
+		if (attr.getType()==SET) {
+			CharacterSet set=new CharacterSet(st.getCharacter(),attr);
+			return set.countElements()+" / "+set.countTotal();
+		}
 		throw new SystemConsistencyException("Failed to resolve templateAttribute for "+attr+" of type "+attr.getType());
 	}
 
