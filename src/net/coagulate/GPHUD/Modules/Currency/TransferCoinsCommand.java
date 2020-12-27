@@ -21,12 +21,12 @@ import java.util.Map;
 
 public class TransferCoinsCommand extends Command {
 	private final String name;
-	private final boolean senderpaystax;
+	private final boolean senderPaysTax;
 
 	public TransferCoinsCommand(final String name,
-	                            final boolean senderpaystax) {
+	                            final boolean senderPaysTax) {
 		this.name=name;
-		this.senderpaystax=senderpaystax;
+		this.senderPaysTax = senderPaysTax;
 	}
 
 	// ---------- INSTANCE ----------
@@ -37,7 +37,7 @@ public class TransferCoinsCommand extends Command {
 
 	@Override
 	public String description() {
-		return "Transfer currency to another player "+(senderpaystax?"(You will pay any incurred taxes)":"(The recipient will receive the ammount less any incurred taxes)");
+		return "Transfer currency to another player "+(senderPaysTax ?"(You will pay any incurred taxes)":"(The recipient will receive the ammount less any incurred taxes)");
 	}
 
 	@Nonnull
@@ -105,7 +105,7 @@ public class TransferCoinsCommand extends Command {
 			public boolean mandatory() { return true; }
 
 			@Override
-			public Class<? extends Object> objectType() { return Char.class; }
+			public Class<?> objectType() { return Char.class; }
 
 			@Nonnull
             @Override
@@ -141,7 +141,7 @@ public class TransferCoinsCommand extends Command {
 			public boolean mandatory() { return true; }
 
 			@Override
-			public Class<? extends Object> objectType() { return String.class; }
+			public Class<?> objectType() { return String.class; }
 
 			@Nonnull
             @Override
@@ -177,7 +177,7 @@ public class TransferCoinsCommand extends Command {
 			public boolean mandatory() { return true; }
 
 			@Override
-			public Class<? extends Object> objectType() { return String.class; }
+			public Class<?> objectType() { return String.class; }
 
 			@Nonnull
             @Override
@@ -202,13 +202,13 @@ public class TransferCoinsCommand extends Command {
 	@Nonnull
 	@Override
 	public String getFullName() {
-		return "Currency.Transfer"+(senderpaystax?"PayTax":"")+name;
+		return "Currency.Transfer"+(senderPaysTax ?"PayTax":"")+name;
 	}
 
 	@Nonnull
 	@Override
 	public String getName() {
-		return "Transfer"+(senderpaystax?"PayTax":"")+name;
+		return "Transfer"+(senderPaysTax ?"PayTax":"")+name;
 	}
 
 	// ----- Internal Instance -----
@@ -217,59 +217,59 @@ public class TransferCoinsCommand extends Command {
 	                           final Map<String,Object> arguments) {
 		final Char target=(Char) arguments.get("target");
 		final Currency currency=Currency.find(state,name);
-		final int ammount=currency.decode((String) arguments.get("ammount"));
-		if (ammount<1) { return new ErrorResponse("Ammount must be a positive integer"); }
+		final int amount=currency.decode((String) arguments.get("ammount"));
+		if (amount<1) { return new ErrorResponse("Ammount must be a positive integer"); }
 		final String reason=(String) arguments.get("reason");
 		if (!currency.tradable()) { return new ErrorResponse("Sorry, you are not allowed to transfer "+currency.getName()); }
 
-		final State targetstate=new State(target);
+		final State targetState=new State(target);
 
-		final float taxrate=targetstate.getKV("Currency.TransactionTax"+currency.getName()).floatValue()/100F;
+		final float taxRate=targetState.getKV("Currency.TransactionTax"+currency.getName()).floatValue()/100F;
 
-		final int taxpayable=(int) (((float) ammount)*taxrate);
-		final int remainder=ammount-taxpayable;
+		final int taxPayable=(int) (((float) amount)*taxRate);
+		final int remainder=amount-taxPayable;
 
-		int balancecheck=ammount;
-		if (senderpaystax) { balancecheck+=taxpayable; }
-		if (currency.sum(state)<balancecheck) {
-			return new ErrorResponse("You do not have enough currency to complete this transaction; you need "+currency.shortTextForm(balancecheck));
+		int balanceCheck=amount;
+		if (senderPaysTax) { balanceCheck+=taxPayable; }
+		if (currency.sum(state)<balanceCheck) {
+			return new ErrorResponse("You do not have enough currency to complete this transaction; you need "+currency.shortTextForm(balanceCheck));
 		}
 		// check we can send taxes somewhere, else abort before doing anything
-		final String taxrecipient=targetstate.getKV("Currency.TransactionTaxRecipient"+currency.getName()).value();
-		Char taxto=null;
-		if (!taxrecipient.isEmpty()) {
-			taxto=Char.findNullable(state.getInstance(),taxrecipient);
-			if (taxto==null) { throw new UserConfigurationException("The tax recipient ("+taxrecipient+") does not exist"); }
+		final String taxRecipient=targetState.getKV("Currency.TransactionTaxRecipient"+currency.getName()).value();
+		Char taxTo=null;
+		if (!taxRecipient.isEmpty()) {
+			taxTo=Char.findNullable(state.getInstance(),taxRecipient);
+			if (taxTo==null) { throw new UserConfigurationException("The tax recipient ("+taxRecipient+") does not exist"); }
 		}
 
 		// remove money from A, send money to B and to tax pot (!?)
 		final int received;
 		final int sent;
-		if (senderpaystax) {
-			currency.spawnInByChar(targetstate,state.getCharacter(),-(ammount+taxpayable),reason+(taxpayable==0?"":" (Tax:"+currency.shortTextForm(taxpayable)+")"));
-			currency.spawnInByChar(state,target,ammount,reason);
-			sent=ammount+taxpayable;
-			received=ammount;
+		if (senderPaysTax) {
+			currency.spawnInByChar(targetState,state.getCharacter(),-(amount+taxPayable),reason+(taxPayable==0?"":" (Tax:"+currency.shortTextForm(taxPayable)+")"));
+			currency.spawnInByChar(state,target,amount,reason);
+			sent=amount+taxPayable;
+			received=amount;
 		}
 		else {
-			currency.spawnInByChar(targetstate,state.getCharacter(),-ammount,reason);
-			currency.spawnInByChar(state,target,remainder,reason+(taxpayable==0?"":" (Tax:"+currency.shortTextForm(taxpayable)+")"));
+			currency.spawnInByChar(targetState,state.getCharacter(),-amount,reason);
+			currency.spawnInByChar(state,target,remainder,reason+(taxPayable==0?"":" (Tax:"+currency.shortTextForm(taxPayable)+")"));
 			received=remainder;
-			sent=ammount;
+			sent=amount;
 		}
 		// does the tax go anywhere?
-		if (taxto!=null) {
-			if (senderpaystax) {
+		if (taxTo!=null) {
+			if (senderPaysTax) {
 				currency.spawnInByChar(state,
-				                       taxto,
-				                       taxpayable,
-				                       "Tax for transfer of "+currency.shortTextForm(ammount)+" "+currency.getName()+" to "+target.getName()+": "+reason);
+				                       taxTo,
+				                       taxPayable,
+				                       "Tax for transfer of "+currency.shortTextForm(amount)+" "+currency.getName()+" to "+target.getName()+": "+reason);
 			}
 			else {
-				currency.spawnInByChar(targetstate,
-				                       taxto,
-				                       taxpayable,
-				                       "Tax for receipt of "+currency.shortTextForm(ammount)+" "+currency.getName()+" from "+state.getCharacter().getName()+": "+reason);
+				currency.spawnInByChar(targetState,
+				                       taxTo,
+				                       taxPayable,
+				                       "Tax for receipt of "+currency.shortTextForm(amount)+" "+currency.getName()+" from "+state.getCharacter().getName()+": "+reason);
 			}
 		}
 		// tell target
@@ -278,7 +278,7 @@ public class TransferCoinsCommand extends Command {
 			JSONResponse.message(json,"You received "+currency.longTextForm(received)+" "+currency.getName()+" from "+state.getCharacter().getName()+" : "+reason,target.getProtocol());
 			new Transmission(target,json).start();
 		}
-		return new OKResponse("Transferred "+currency.longTextForm(sent)+" of "+name+" to "+target.getName()+(taxpayable==0?"":" (Payed to tax: "+currency.shortTextForm(
-				taxpayable)+")"));
+		return new OKResponse("Transferred "+currency.longTextForm(sent)+" of "+name+" to "+target.getName()+(taxPayable==0?"":" (Payed to tax: "+currency.shortTextForm(
+				taxPayable)+")"));
 	}
 }

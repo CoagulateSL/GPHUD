@@ -99,7 +99,7 @@ public class DestroyCoinsCommand extends Command {
 		public boolean mandatory() { return true; }
 
 		@Override
-		public Class<? extends Object> objectType() { return Char.class; }
+		public Class<?> objectType() { return Char.class; }
 
 		@Nonnull
         @Override
@@ -136,7 +136,7 @@ public class DestroyCoinsCommand extends Command {
 		public boolean mandatory() { return true; }
 
 		@Override
-		public Class<? extends Object> objectType() { return String.class; }
+		public Class<?> objectType() { return String.class; }
 
 		@Nonnull
         @Override
@@ -169,7 +169,7 @@ public class DestroyCoinsCommand extends Command {
 		public boolean mandatory() { return true; }
 
 		@Override
-		public Class<? extends Object> objectType() { return String.class; }
+		public Class<?> objectType() { return String.class; }
 
 		@Nonnull
         @Override

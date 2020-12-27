@@ -103,7 +103,7 @@ public class CreateCoinsCommand extends Command {
 		public boolean mandatory() { return true; }
 
 		@Override
-		public Class<? extends Object> objectType() { return Char.class; }
+		public Class<?> objectType() { return Char.class; }
 
 		@Override
 		public boolean delayTemplating() { return false;}
@@ -140,7 +140,7 @@ public class CreateCoinsCommand extends Command {
 		public boolean mandatory() { return true; }
 
 		@Override
-		public Class<? extends Object> objectType() { return String.class; }
+		public Class<?> objectType() { return String.class; }
 
 		@Override
 		public boolean delayTemplating() { return false;}
@@ -169,7 +169,7 @@ public class CreateCoinsCommand extends Command {
 		public boolean mandatory() { return true; }
 
 		@Override
-		public Class<? extends Object> objectType() { return String.class; }
+		public Class<?> objectType() { return String.class; }
 
 		@Nonnull
         @Override
@@ -210,15 +210,15 @@ public class CreateCoinsCommand extends Command {
 	                           final Map<String,Object> arguments) {
 		final Char target=(Char) arguments.get("target");
 		final Currency currency=Currency.find(state,name);
-		final int ammount=currency.decode((String) arguments.get("ammount"));
-		if (ammount<1) { return new ErrorResponse("Ammount must be a positive integer"); }
+		final int amount=currency.decode((String) arguments.get("ammount"));
+		if (amount<1) { return new ErrorResponse("Ammount must be a positive integer"); }
 		final String reason=(String) arguments.get("reason");
-		currency.spawnInAsAdmin(state,target,ammount,reason);
+		currency.spawnInAsAdmin(state,target,amount,reason);
 		if (target.isOnline()) {
 			final JSONObject json=new JSONObject();
-			JSONResponse.message(json,"[Admin:"+state.getAvatar().getName()+"] You gained "+currency.longTextForm(ammount)+" of "+currency.getName()+" : "+reason, target.getProtocol());
+			JSONResponse.message(json,"[Admin:"+state.getAvatar().getName()+"] You gained "+currency.longTextForm(amount)+" of "+currency.getName()+" : "+reason, target.getProtocol());
 			new Transmission(target,json).start();
 		}
-		return new OKResponse("Spawned in "+currency.longTextForm(ammount)+" of "+name+" for "+target.getName());
+		return new OKResponse("Spawned in "+currency.longTextForm(amount)+" of "+name+" for "+target.getName());
 	}
 }
