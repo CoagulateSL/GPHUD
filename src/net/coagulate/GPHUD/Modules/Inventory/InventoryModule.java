@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -17,7 +18,7 @@ public class InventoryModule extends ModuleAnnotation {
 
     @Nonnull
     @Override
-    public Map<String, KV> getKVDefinitions(State st) {
+    public Map<String, KV> getKVDefinitions(@Nonnull State st) {
         Map<String,KV> kvSet=new TreeMap<>();
         for (Inventory inventory:Inventory.getInventories(st.getInstance())) {
             MaxItemsKV maxItemsKV=new MaxItemsKV(inventory);
@@ -32,10 +33,11 @@ public class InventoryModule extends ModuleAnnotation {
         return kvSet;
     }
 
+    @Nullable
     @Override
-    public KV getKVDefinition(State st, String qualifiedname) {
+    public KV getKVDefinition(@Nonnull State st,@Nonnull String qualifiedName) {
         Map<String,KV> map=getKVDefinitions(st);
-        String reference=Modules.extractReference(qualifiedname);
+        String reference=Modules.extractReference(qualifiedName);
         if (reference==null) { return null; }
         for (String mapKey:map.keySet()) {
             if (reference.equalsIgnoreCase(mapKey)) { return map.get(mapKey); }
