@@ -435,9 +435,13 @@ public class Attribute extends TableRow {
 			return currency.shortSum(st);
 		}
 		if (attributetype==POOL) { return "POOL"; }
-		if (attributetype==SET || attributetype==INVENTORY) {
+		if (attributetype==SET) {
 			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
 			return set.countElements()+" elements, "+set.countTotal()+" total qty";
+		}
+		if (attributetype==INVENTORY) {
+			final Inventory set=new Inventory(st.getCharacter(),this);
+			return set.countElements()+" items, "+set.countTotal()+" total qty";
 		}
 		throw new SystemImplementationException("Unhandled non KV type "+getType());
 	}
@@ -472,8 +476,12 @@ public class Attribute extends TableRow {
 			return currency.longSum(st);
 		}
 		if (attributetype==GROUP) { return ""; }
-		if (attributetype==SET || attributetype==INVENTORY) {
+		if (attributetype==SET) {
 			final CharacterSet set=new CharacterSet(st.getCharacter(),this);
+			return set.textList();
+		}
+		if (attributetype==INVENTORY) {
+			final Inventory set=new Inventory(st.getCharacter(),this);
 			return set.textList();
 		}
 		throw new SystemImplementationException("Unhandled type "+getType());
