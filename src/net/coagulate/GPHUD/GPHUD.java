@@ -225,9 +225,6 @@ public class GPHUD extends SLModule {
 			log.config("Add various items/inventory tables");
 			GPHUD.getDB().d("CREATE TABLE `inventoryconfiguration` (" +
 					"  `attributeid` INT NOT NULL," +
-					"  `maxitems` INT NOT NULL DEFAULT 0," +
-					"  `maxquantity` INT NOT NULL DEFAULT 0," +
-					"  `maxweight` INT NOT NULL DEFAULT 0," +
 					"  `defaultallow` TINYINT NOT NULL DEFAULT 1," +
 					"  PRIMARY KEY (`attributeid`)," +
 					"  UNIQUE INDEX `id_UNIQUE` (`attributeid` ASC)," +
