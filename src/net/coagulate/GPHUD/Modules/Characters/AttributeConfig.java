@@ -125,6 +125,7 @@ public class AttributeConfig {
 		choices.add("TEXT");
 		choices.add("COLOR");
 		choices.add("SET");
+		choices.add("INVENTORY");
 		if (st.hasModule("Experience")) { choices.add("EXPERIENCE"); }
 		if (st.hasModule("Currency")) { choices.add("CURRENCY"); }
 		return choices;
