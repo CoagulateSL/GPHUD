@@ -39,7 +39,7 @@ public class Sets {
                                @Nonnull @Argument.Arguments(type = Argument.ArgumentType.CHARACTER,
                                                             description="Character to modify",
                                                             name="character") final Char character,
-                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.ATTRIBUTE,
+                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.SET,
                                                             description = "Set to add to",
                                                             name = "set") final Attribute set,
                                @Nonnull @Argument.Arguments(description = "Element to add to set",
@@ -72,7 +72,7 @@ public class Sets {
                                @Nonnull @Argument.Arguments(type = Argument.ArgumentType.CHARACTER,
                                                             description="Character to modify",
                                                             name="character") final Char character,
-                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.ATTRIBUTE,
+                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.SET,
                                                             description = "Set to add to",
                                                             name = "set") final Attribute set,
                                @Nonnull @Argument.Arguments(description = "Element to add to set",
@@ -100,7 +100,7 @@ public class Sets {
                                @Nonnull @Argument.Arguments(type = Argument.ArgumentType.CHARACTER,
                                                             description="Character to modify",
                                                             name="character") final Char character,
-                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.ATTRIBUTE,
+                               @Nonnull @Argument.Arguments(type = Argument.ArgumentType.SET,
                                                             description = "Set to wipe",
                                                             name = "set") final Attribute set) {
         preCheck(st,set,character,true);
@@ -117,7 +117,7 @@ public class Sets {
     @Command.Commands(context= Command.Context.CHARACTER,
                       description="Reports on the contents of a set")
     public static Response view(@Nonnull final State st,
-                                @Nonnull @Argument.Arguments(type= Argument.ArgumentType.ATTRIBUTE,
+                                @Nonnull @Argument.Arguments(type= Argument.ArgumentType.SET,
                                                              description="Set to view",
                                                              name="set") final Attribute set) {
         preCheck(st,set,st.getCharacter(),false);

@@ -67,6 +67,9 @@ public abstract class Argument {
 		EFFECT,
 		ATTRIBUTE,
 		ATTRIBUTE_WRITABLE,
+		SET,
+		INVENTORY,
+		ITEM,
 		CURRENCY
 	}
 

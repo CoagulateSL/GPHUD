@@ -182,6 +182,9 @@ public abstract class Classes {
 						case ATTRIBUTE:
 						case ATTRIBUTE_WRITABLE:
 						case CURRENCY:
+						case INVENTORY:
+						case SET:
+						case ITEM:
 							requiresmax=false;
 							break;
 						default:
