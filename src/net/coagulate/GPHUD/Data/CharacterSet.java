@@ -5,12 +5,10 @@ import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class CharacterSet {
     protected final Char character;
@@ -115,6 +113,20 @@ public class CharacterSet {
         }
         return returnSet;
     }
+
+    public static final Set<Attribute> getAll(@Nonnull final State state) { return getAll(state.getInstance()); }
+    public static final Set<Attribute> getAll(@Nonnull final Instance instance) {
+        Set<Attribute> attributes=Attribute.getAttributes(instance);
+        Set<Attribute> sets=new HashSet<>();
+        for (Attribute attribute:attributes) {
+            if (attribute.getType()==myType()) {
+                sets.add(attribute);
+            }
+        }
+        return sets;
+    }
+
+    protected static Attribute.ATTRIBUTETYPE myType() { return Attribute.ATTRIBUTETYPE.SET; }
 
     /** Retrieve a map of the elements and their quantity ; i.e. the set
      *

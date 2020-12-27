@@ -61,6 +61,6 @@ public class Inventory extends CharacterSet {
         }
         return weight;
     }
-
+    protected static Attribute.ATTRIBUTETYPE myType() { return Attribute.ATTRIBUTETYPE.SET; }
 
 }
