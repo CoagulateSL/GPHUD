@@ -13,18 +13,18 @@
 @KVS(name="MOTD",
      type=KVTYPE.TEXT,
      scope=KVSCOPE.INSTANCE,
-     editpermission="Instance.SetMOTD",
-     defaultvalue="Welcome, --AVATAR--, you are connected as --NAME--",
-     conveyas="motd",
+     editPermission ="Instance.SetMOTD",
+     defaultValue ="Welcome, --AVATAR--, you are connected as --NAME--",
+     conveyAs ="motd",
      description="Instance Message of the Day (MOTD)",
      template=true)
 
 @KVS(name="status",
      type=KVTYPE.TEXT,
      scope=KVSCOPE.INSTANCE,
-     editpermission="instance.owner",
-     conveyas="instancestatus",
-     defaultvalue="",
+     editPermission ="instance.owner",
+     conveyAs ="instancestatus",
+     defaultValue ="",
      description="Status of the instance (do not edit, it gets overwritten)",
      template=false,
      hidden=true)
@@ -39,8 +39,8 @@
 
 @KVS(name="MaxCharacters",
      description="Maximum number of characters an avatar might own",
-     defaultvalue="1",
-     editpermission="Instance.ConfigureCharacters",
+     defaultValue ="1",
+     editPermission ="Instance.ConfigureCharacters",
      hierarchy=KVHIERARCHY.CUMULATIVE,
      scope=KVSCOPE.COMPLETE,
      template=false,
@@ -48,8 +48,8 @@
 
 @KVS(name="CharacterSwitchEnabled",
      description="Allowed to switch/create characters (consider applying to a zone)",
-     defaultvalue="false",
-     editpermission="Instance.ConfigureCharacters",
+     defaultValue ="false",
+     editPermission ="Instance.ConfigureCharacters",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
      template=false,
@@ -57,8 +57,8 @@
 
 @KVS(name="AutoNameCharacter",
      description="Should avatars have a default character created using their avatar name (traditional behaviour)",
-     editpermission="Instance.ConfigureCharacters",
-     defaultvalue="true",
+     editPermission ="Instance.ConfigureCharacters",
+     defaultValue ="true",
      hierarchy=KVHIERARCHY.NONE,
      scope=KVSCOPE.INSTANCE,
      template=false,
@@ -66,35 +66,35 @@
 
 @KVS(name="ViewSelfTemplate",
      description="The default template for the self-view character sheet command",
-     editpermission="Instance.EditCharacterSheets",
+     editPermission ="Instance.EditCharacterSheets",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.TEXT,
      template=true,
-     defaultvalue="--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
+     defaultValue ="--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
 
 @KVS(name="ViewOtherTemplate",
      description="The default template for the view-other character sheet command",
-     editpermission="Instance.EditCharacterSheets",
+     editPermission ="Instance.EditCharacterSheets",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.TEXT,
      template=true,
-     defaultvalue="--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
+     defaultValue ="--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
 
 @KVS(name="ShowSelfTemplate",
      description="The default template for the public-show character sheet command",
-     editpermission="Instance.EditCharacterSheets",
+     editPermission ="Instance.EditCharacterSheets",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.TEXT,
      template=true,
-     defaultvalue="--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
+     defaultValue ="--NEWLINE--Character: --NAME----NEWLINE--Played by:--AVATAR--")
 
 @KVS(name="CharInitScript",
      description="Script to use to initialise a character's information, leave blank to use default",
-     defaultvalue="",
-     editpermission="Instance.ConfigureCharacters",
+     defaultValue ="",
+     editPermission ="Instance.ConfigureCharacters",
      type=KVTYPE.TEXT,
      template=false,
      scope=KVSCOPE.INSTANCE,
@@ -102,8 +102,8 @@
 
 @KVS(name="AllowSelfRetire",
      description="Allow the character to retire themselves",
-     defaultvalue="false",
-     editpermission="Instance.ConfigureCharacters",
+     defaultValue ="false",
+     editPermission ="Instance.ConfigureCharacters",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
      template=false,
@@ -111,17 +111,17 @@
 
 @KVS(name="RunOnLogin",
      description="Command user should automatically run on login",
-     defaultvalue="",
+     defaultValue ="",
      type=KVTYPE.COMMAND,
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
      template=true,
-     editpermission="Instance.SetLoginScript")
+     editPermission ="Instance.SetLoginScript")
 
 @KVS(name="AllowedNamingSymbols",
      description="What characters may be used in a character's name, A-Z, a-z and space are assumed OK",
-     defaultvalue="'-,.",
-     editpermission="Instance.ConfigureCharacters",
+     defaultValue ="'-,.",
+     editPermission ="Instance.ConfigureCharacters",
      type=KVTYPE.TEXT,
      template=false,
      scope=KVSCOPE.INSTANCE)
@@ -131,8 +131,8 @@
      scope=KVSCOPE.INSTANCE,
      template=false,
      type=KVTYPE.TEXT,
-     editpermission="Instance.ConfigureCharacters",
-     defaultvalue="")
+     editPermission ="Instance.ConfigureCharacters",
+     defaultValue ="")
 
 @Permissions(name="EditCharacterSheets",
              description="Allows the editing of the character sheet display formats",

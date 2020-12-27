@@ -16,7 +16,7 @@ public class GenericXPPeriodKV extends KV {
 	public boolean isGenerated() { return true; }
 
 	@Nonnull
-	public String fullname() { return "Experience."+myname; }
+	public String fullName() { return "Experience."+myname; }
 
 	@Nonnull
 	public KVSCOPE scope() { return KVSCOPE.NONSPATIAL; }
@@ -28,13 +28,13 @@ public class GenericXPPeriodKV extends KV {
 	public String description() { return "Cycle length, in days, for "+myname+" limit"; }
 
 	@Nonnull
-	public String editpermission() { return "Experience.ConfigureXP"; }
+	public String editPermission() { return "Experience.ConfigureXP"; }
 
 	@Nonnull
-	public String defaultvalue() { return "6.75"; }
+	public String defaultValue() { return "6.75"; }
 
 	@Nonnull
-	public String conveyas() { return ""; }
+	public String conveyAs() { return ""; }
 
 	@Nonnull
 	public KVHIERARCHY hierarchy() { return KVHIERARCHY.CUMULATIVE; }

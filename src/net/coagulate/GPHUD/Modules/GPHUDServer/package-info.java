@@ -7,8 +7,8 @@
 
 @KVS(scope = KVSCOPE.SERVER,
      type = KVTYPE.BOOLEAN,
-     defaultvalue = "false",
-     editpermission = "GPHUDServer.Config",
+     defaultValue = "false",
+     editPermission = "GPHUDServer.Config",
      name = "AutoAttach",
      description = "Enable Experience based auto attachment of the HUD",
      hierarchy = KVHIERARCHY.DELEGATING,
@@ -16,8 +16,8 @@
 
 @KVS(scope = KVSCOPE.SERVER,
      type = KVTYPE.BOOLEAN,
-     defaultvalue = "false",
-     editpermission = "GPHUDServer.Config",
+     defaultValue = "false",
+     editPermission = "GPHUDServer.Config",
      name = "ParcelONLY",
      description = "Scan only the PARCEL rather than the whole REGION",
      hierarchy = KVHIERARCHY.DELEGATING,
@@ -26,8 +26,8 @@
 @KVS(scope = KVSCOPE.SERVER,
      type = KVTYPE.FLOAT,
      hierarchy = KVHIERARCHY.DELEGATING,
-     editpermission = "GPHUDServer.Config",
-     defaultvalue = "0",
+     editPermission = "GPHUDServer.Config",
+     defaultValue = "0",
      description = "Minimum height for HUD attach",
      name = "DispenserMinimumZ",
      template = false
@@ -36,8 +36,8 @@
 @KVS(scope = KVSCOPE.SERVER,
      type = KVTYPE.FLOAT,
      hierarchy = KVHIERARCHY.DELEGATING,
-     editpermission = "GPHUDServer.Config",
-     defaultvalue = "9999",
+     editPermission = "GPHUDServer.Config",
+     defaultValue = "9999",
      description = "Maximum height for HUD attach",
      name = "DispenserMaximumZ",
      template = false

@@ -26,9 +26,9 @@
              power=Permission.POWER.LOW)
 
 @KVS(name="XPPerCycle",
-     defaultvalue="5",
+     defaultValue ="5",
      description="Maximum faction XP the player may earn in a cycle.  Requires Experience module.  Set to zero to disable.",
-     editpermission="Faction.Configure",
+     editPermission ="Faction.Configure",
      scope=KVSCOPE.NONSPATIAL,
      type=KVTYPE.INTEGER,
      hierarchy=KVHIERARCHY.DELEGATING,
@@ -38,9 +38,9 @@
        description="Faction awarded XP")
 
 @KVS(name="XPCycleLength",
-     defaultvalue="6.75",
+     defaultValue ="6.75",
      description="Number of days per faction XP cycle",
-     editpermission="Faction.Configure",
+     editPermission ="Faction.Configure",
      scope=KVSCOPE.NONSPATIAL,
      type=KVTYPE.FLOAT,
      hierarchy=KVHIERARCHY.DELEGATING,

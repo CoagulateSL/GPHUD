@@ -25,7 +25,7 @@ public class TransactionTaxKV extends KV {
 
 	@Nonnull
 	@Override
-	public String fullname() {
+	public String fullName() {
 		return "Currency.TransactionTax"+name;
 	}
 
@@ -49,18 +49,18 @@ public class TransactionTaxKV extends KV {
 
 	@Nonnull
 	@Override
-	public String editpermission() {
+	public String editPermission() {
 		return "Currency.Configure";
 	}
 
 	@Override
-	public String defaultvalue() {
+	public String defaultValue() {
 		return "0";
 	}
 
 	@Nonnull
 	@Override
-	public String conveyas() {
+	public String conveyAs() {
 		return "";
 	}
 

@@ -4,8 +4,8 @@
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.INTEGER,
      description="Number of sides on the default dice roll",
-     editpermission="roller.config",
-     defaultvalue="100",
+     editPermission ="roller.config",
+     defaultValue ="100",
      hierarchy=KVHIERARCHY.DELEGATING,
      template=true)
 
@@ -13,8 +13,8 @@
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.INTEGER,
      description="Number of dice to roll by default",
-     editpermission="roller.config",
-     defaultvalue="1",
+     editPermission ="roller.config",
+     defaultValue ="1",
      hierarchy=KVHIERARCHY.DELEGATING,
      template=true)
 

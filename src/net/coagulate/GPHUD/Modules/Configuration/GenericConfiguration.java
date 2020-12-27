@@ -61,17 +61,17 @@ public class GenericConfiguration {
 					if (!kv.hidden()) {
 						kvtable.openRow();
 						if (dbo instanceof Char) {
-							kvtable.add(new Link(module.getName()+"."+kv.name(),st.getFullURL()+"/"+kv.fullname().replace('.','/')));
+							kvtable.add(new Link(module.getName()+"."+kv.name(),st.getFullURL()+"/"+kv.fullName().replace('.','/')));
 						}
 						else {
-							kvtable.add(new Link(module.getName()+"."+kv.name(),"/GPHUD/configuration/view/"+kv.fullname().replace('.','/')));
+							kvtable.add(new Link(module.getName()+"."+kv.name(),"/GPHUD/configuration/view/"+kv.fullName().replace('.','/')));
 						}
 						kvtable.add(kv.description());
-						String raw=simulated.getRawKV(dbo,kv.fullname());
+						String raw=simulated.getRawKV(dbo,kv.fullName());
 						if (raw==null) { raw=""; }
 						kvtable.add(raw);
 						try {
-							final KVValue kvval=simulated.getKV(kv.fullname());
+							final KVValue kvval=simulated.getKV(kv.fullName());
 							kvtable.add(kvval.value());
 							kvtable.add(kvval.path());
 						}

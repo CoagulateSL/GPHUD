@@ -76,7 +76,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	                            @Nonnull final Map<String,KV> filterfrom) {
 		final Map<String,KV> copy= new HashMap<>(filterfrom); // lame concurrency fix?
 		for (final KV kv: copy.values()) {
-			final String conveyas=kv.conveyas();
+			final String conveyas=kv.conveyAs();
 			if (!conveyas.isEmpty()) {
 				final String newname="conveyance-"+conveyas;
 				//System.out.println("CREATING CONVEYANCE KV "+newname);

@@ -31,12 +31,12 @@ public class ConfigurationHierarchy extends Form {
 	                              @Nonnull final SafeMap parameters) {
 		if (simulated==null) { simulated=st; }
 		noForm();
-		add(new TextHeader(kv.fullname()));
+		add(new TextHeader(kv.fullName()));
 		add(kv.description()).br();
 		br();
-		final String editperm=kv.editpermission();
+		final String editperm=kv.editPermission();
 		if (!editperm.isEmpty()) { add("<b>Requires Permission:</b> "+editperm).br(); }
-		final String convey=kv.conveyas();
+		final String convey=kv.conveyAs();
 		if (!convey.isEmpty()) { add("<b>Conveyed as:</b> "+convey).br(); }
 		add("<b>KV Type:</b> "+kv.type()).br();
 		add("<b>Hierarchy Type:</b> "+kv.hierarchy()).br();
@@ -83,11 +83,11 @@ public class ConfigurationHierarchy extends Form {
 				type="Effect";
 			}
 			if (dbo==null) { throw new SystemImplementationException("Did not get a DBO from "+dboname); }
-			if (st.hasPermission(kv.editpermission())) {
-				final String oldvalue=st.getRawKV(dbo,kv.fullname());
+			if (st.hasPermission(kv.editPermission())) {
+				final String oldvalue=st.getRawKV(dbo,kv.fullName());
 				try {
-					st.setKV(dbo,kv.fullname(),value);
-					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Set"+type+"KV",kv.fullname(),oldvalue,value,"Changed "+type+"/"+dbo.getNameSafe()+" configuration");
+					st.setKV(dbo,kv.fullName(),value);
+					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Set"+type+"KV",kv.fullName(),oldvalue,value,"Changed "+type+"/"+dbo.getNameSafe()+" configuration");
 					add("<font color=green>OK: Value updated</font>");
 					st.purgeCache(dbo);
 				}
@@ -96,7 +96,7 @@ public class ConfigurationHierarchy extends Form {
 				}
 			}
 			else {
-				add("<font color=red>ERROR: You do not have edit permission "+kv.editpermission()+"</font>");
+				add("<font color=red>ERROR: You do not have edit permission "+kv.editPermission()+"</font>");
 			}
 			br();
 		}
@@ -107,7 +107,7 @@ public class ConfigurationHierarchy extends Form {
 		h.openRow();
 		h.add("SYSTEM");
 		h.add("Default");
-		h.add(kv.defaultvalue());
+		h.add(kv.defaultValue());
 		final Instance instance=simulated.getInstance();
 		final Set<String> alledits=new HashSet<>();
 		if (kv.appliesTo(instance)) { addKVRow(st,h,kv,instance,simulated,alledits); }
@@ -128,7 +128,7 @@ public class ConfigurationHierarchy extends Form {
 			if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits); }
 		}
 		try {
-			final KVValue kvexample=simulated.getKV(kv.fullname());
+			final KVValue kvexample=simulated.getKV(kv.fullName());
 			h.openRow();
 			h.add("<i>Example</i>").add("<i>"+kvexample.path()+"</i>").add("<i>"+kvexample.value()+"</i>");
 		}
@@ -159,11 +159,11 @@ public class ConfigurationHierarchy extends Form {
 		}
 		else { t.add(dbo.getClass().getSimpleName()); }
 		t.add(dbo);
-		String value=simulated.getRawKV(dbo,kv.fullname());
+		String value=simulated.getRawKV(dbo,kv.fullName());
 		if (value==null) { value=""; }
 		t.add(value);
-		if (kv.editpermission().isEmpty() || st.hasPermission(kv.editpermission())) {
-			String kvvalue=simulated.getRawKV(dbo,kv.fullname());
+		if (kv.editPermission().isEmpty() || st.hasPermission(kv.editPermission())) {
+			String kvvalue=simulated.getRawKV(dbo,kv.fullName());
 			if (kvvalue==null) { kvvalue=""; }
 			final String codename=dbo.getKVTable()+"-"+dbo.getId();
 			alledits.add("edit-"+codename);
@@ -210,7 +210,7 @@ public class ConfigurationHierarchy extends Form {
 				Attribute selfeditable=null;
 				// vet against attributes
 				for (final Attribute attr: st.getAttributes()) {
-					if (attr.isKV() && kv.fullname().equalsIgnoreCase("Characters."+attr.getName())) {
+					if (attr.isKV() && kv.fullName().equalsIgnoreCase("Characters."+attr.getName())) {
 						if (attr.getSelfModify()) {
 							selfeditable=attr;
 						}

@@ -25,7 +25,7 @@ public class TemplatePrefix extends KV {
 
 	@Nonnull
 	@Override
-	public String fullname() {
+	public String fullName() {
 		return "TemplateWrapper."+name();
 	}
 
@@ -49,19 +49,19 @@ public class TemplatePrefix extends KV {
 
 	@Nonnull
 	@Override
-	public String editpermission() {
+	public String editPermission() {
 		return "TemplateWrapper.EditAffix";
 	}
 
 	@Nonnull
 	@Override
-	public String defaultvalue() {
+	public String defaultValue() {
 		return "<";
 	}
 
 	@Nonnull
 	@Override
-	public String conveyas() {
+	public String conveyAs() {
 		return "";
 	}
 

@@ -52,10 +52,10 @@ public abstract class KVMap {
 					r.add(kv.scope().toString());
 					r.add(kv.type().toString());
 					r.add(kv.hierarchy().toString());
-					r.add(kv.editpermission());
-					r.add(kv.defaultvalue());
+					r.add(kv.editPermission());
+					r.add(kv.defaultValue());
 					r.add(kv.description());
-					r.add(kv.conveyas().isEmpty()?"":"Conv");
+					r.add(kv.conveyAs().isEmpty()?"":"Conv");
 					r.add(kv.template()?"Tmpl":"");
 					r.add(kv.onUpdate().isEmpty()?"":"Upd");
 					if (kv.isGenerated()) { r.add(new Color("blue","Generated")); }

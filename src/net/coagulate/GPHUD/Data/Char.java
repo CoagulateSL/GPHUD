@@ -768,12 +768,12 @@ public class Char extends TableRow {
 			final KV kv=entry.getKey();
 			if (kv!=null) {
 				final String oldvalue=entry.getValue();
-				final String newvalue=st.getKV(kv.fullname()).value();
-				final String conveyas=kv.conveyas();
+				final String newvalue=st.getKV(kv.fullName()).value();
+				final String conveyas=kv.conveyAs();
 				if (!conveyas.isEmpty()) {
 					payload.put(conveyas,newvalue); // always put in init
 					if (!oldvalue.equals(newvalue)) {
-						setKV(st,"gphudclient.conveyance-"+kv.conveyas(),newvalue); // skip cache flush
+						setKV(st,"gphudclient.conveyance-"+kv.conveyAs(),newvalue); // skip cache flush
 					}
 				}
 			}
@@ -799,12 +799,12 @@ public class Char extends TableRow {
 			final KV kv=entry.getKey();
 			if (kv!=null) {
 				final String oldvalue=entry.getValue();
-				final String newvalue=st.getKV(kv.fullname()).value();
-				final String conveyas=kv.conveyas();
+				final String newvalue=st.getKV(kv.fullName()).value();
+				final String conveyas=kv.conveyAs();
 				if (!conveyas.isEmpty()) {
 					if (!oldvalue.equals(newvalue)) {
 						payload.put(conveyas,newvalue);
-						setKV(st,"gphudclient.conveyance-"+kv.conveyas(),newvalue); // skip cache update/flush
+						setKV(st,"gphudclient.conveyance-"+kv.conveyAs(),newvalue); // skip cache update/flush
 					}
 				}
 			}
@@ -959,7 +959,7 @@ public class Char extends TableRow {
 		final Set<KV> conveyances=new TreeSet<>();
 		for (final KV kv: Modules.getKVSet(st)) {
 			if (kv!=null) {
-				final String conveyas=kv.conveyas();
+				final String conveyas=kv.conveyAs();
 				if (!conveyas.isEmpty()) {
 					conveyances.add(kv);
 				}
@@ -982,10 +982,10 @@ public class Char extends TableRow {
 		final Map<KV,String> conveyances=new TreeMap<>();
 		for (final KV kv: getConveyances(st)) {
 			try {
-				conveyances.put(kv,st.getKV("gphudclient.conveyance-"+kv.conveyas()).value());
+				conveyances.put(kv,st.getKV("gphudclient.conveyance-"+kv.conveyAs()).value());
 			}
 			catch (@Nonnull final SystemException e) {
-				st.logger().log(SEVERE,"Exceptioned loading conveyance "+kv.conveyas()+" in instance "+st.getInstanceString()+" - "+e.getLocalizedMessage());
+				st.logger().log(SEVERE,"Exceptioned loading conveyance "+kv.conveyAs()+" in instance "+st.getInstanceString()+" - "+e.getLocalizedMessage());
 			}
 		}
 		return conveyances;

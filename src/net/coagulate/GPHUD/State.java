@@ -583,14 +583,14 @@ public class State extends DumpableState {
 				// from highest to lowest, first value we find takes precedence.
 				for (final TableRow dbo: targets) {
 					if (ret==null) { // already found? do nothing
-						if (kvDefined(dbo,kv) && getKV(dbo,kv.fullname())!=null) { ret=dbo; }
+						if (kvDefined(dbo,kv) && getKV(dbo,kv.fullName())!=null) { ret=dbo; }
 					}
 				}
 				break;
 			case DELEGATING:
 				// rather the inverse logic, just take the 'lowest' match
 				for (final TableRow dbo: targets) {
-					if (kvDefined(dbo,kv) && getKV(dbo,kv.fullname())!=null) { ret=dbo; }
+					if (kvDefined(dbo,kv) && getKV(dbo,kv.fullName())!=null) { ret=dbo; }
 				}
 				break;
 			case CUMULATIVE:
@@ -649,7 +649,7 @@ public class State extends DumpableState {
 	}
 
 	public String templateDefault(@Nonnull final KV kv) {
-		final String s=kv.defaultvalue();
+		final String s=kv.defaultValue();
 		if (!kv.template()) { return s; }
 		boolean evaluate=false;
 		boolean isInt=false;
@@ -1060,7 +1060,7 @@ public class State extends DumpableState {
 	private boolean kvDefined(@Nonnull final TableRow o,
 	                          @Nonnull final KV kv) {
 		final Map<String,String> kvMap=getKVMap(o);
-		return kvMap.containsKey(kv.fullname().toLowerCase());
+		return kvMap.containsKey(kv.fullName().toLowerCase());
 	}
 
 	private void updateCookie() {

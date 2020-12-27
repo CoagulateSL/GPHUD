@@ -25,8 +25,8 @@
 
 @KV.KVS(name="ApplyMessage",
         description="Message to send to the character when they gain this effect",
-        defaultvalue="",
-        editpermission="Effects.Edit",
+        defaultValue ="",
+        editPermission ="Effects.Edit",
         type=KV.KVTYPE.TEXT,
         template=true,
         scope=KV.KVSCOPE.EFFECT,
@@ -34,8 +34,8 @@
 
 @KV.KVS(name="RemoveMessage",
         description="Message to send to the character when they lose this effect",
-        defaultvalue="",
-        editpermission="Effects.Edit",
+        defaultValue ="",
+        editPermission ="Effects.Edit",
         type=KV.KVTYPE.TEXT,
         template=true,
         scope=KV.KVSCOPE.EFFECT,
@@ -43,8 +43,8 @@
 
 @KV.KVS(name="EffectIcon",
         description="UUID of a texture to use to represent this effect in the HUD",
-        defaultvalue="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4",
-        editpermission="Effects.Edit",
+        defaultValue ="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4",
+        editPermission ="Effects.Edit",
         template=false,
         hierarchy=KVHIERARCHY.DELEGATING,
         scope=KVSCOPE.EFFECT,
@@ -52,8 +52,8 @@
 
 @KV.KVS(name="ShowEffect",
         description="Does this effect show up on the HUD summary icons",
-        defaultvalue="true",
-        editpermission="Effects.Edit",
+        defaultValue ="true",
+        editPermission ="Effects.Edit",
         template=false,
         hierarchy=KVHIERARCHY.DELEGATING,
         scope=KVSCOPE.EFFECT,

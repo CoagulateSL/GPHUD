@@ -38,11 +38,11 @@ public class EditValues {
 	                                              mandatory=false) final String value) {
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(st.getInstance())) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to instances");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to instances");
 		}
 		final String oldvalue=st.getRawKV(st.getInstance(),key);
 		st.setKV(st.getInstance(),key,value);
@@ -75,11 +75,11 @@ public class EditValues {
 		region.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(region)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to regions");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to regions");
 		}
 		final String oldvalue=st.getRawKV(region,key);
 		st.setKV(region,key,value);
@@ -113,11 +113,11 @@ public class EditValues {
 		zone.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(zone)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to zones");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to zones");
 		}
 		final String oldvalue=st.getRawKV(zone,key);
 		st.setKV(zone,key,value);
@@ -146,11 +146,11 @@ public class EditValues {
 		event.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(event)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to events");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to events");
 		}
 		final String oldvalue=st.getRawKV(event,key);
 		st.setKV(event,key,value);
@@ -180,11 +180,11 @@ public class EditValues {
 		group.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(group)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to character groups");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to character groups");
 		}
 		final String oldvalue=st.getRawKV(group,key);
 		st.setKV(group,key,value);
@@ -218,11 +218,11 @@ public class EditValues {
 		effect.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(effect)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to effects");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to effects");
 		}
 		final String oldvalue=st.getRawKV(effect,key);
 		st.setKV(effect,key,value);
@@ -259,11 +259,11 @@ public class EditValues {
 		character.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(character)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to characters");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to characters");
 		}
 		final String oldvalue=st.getRawKV(character,key);
 		st.setKV(character,key,value);
@@ -287,11 +287,11 @@ public class EditValues {
 		character.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(character)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to characters");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to characters");
 		}
 		if (!(kv.type()==KVTYPE.INTEGER)) {
 			return new ErrorResponse("This command will only change INTEGER KVs, the requested key "+key+" is of type "+kv.type());
@@ -348,11 +348,11 @@ public class EditValues {
 		character.validate(st);
 		Modules.validateKV(st,key);
 		final KV kv=Modules.getKVDefinition(st,key);
-		if (!st.hasPermission(kv.editpermission())) {
-			return new ErrorResponse("You lack permission '"+kv.editpermission()+"' necessary to set the value of "+key);
+		if (!st.hasPermission(kv.editPermission())) {
+			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(character)) {
-			return new ErrorResponse("KV "+kv.fullname()+" of scope "+kv.scope()+" does not apply to characters");
+			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to characters");
 		}
 		if (!(kv.type()==KVTYPE.FLOAT)) {
 			return new ErrorResponse("This command will only change FLOAT KVs, the requested key "+key+" is of type "+kv.type());

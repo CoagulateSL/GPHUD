@@ -78,7 +78,7 @@ public class KV {
 			String kvValue = ((BCString) array[(2 * i) + 1]).getContent();
 			final net.coagulate.GPHUD.Modules.KV kv = Modules.getKVDefinition(altState, kvName);
 			if (!kv.appliesTo(character.getContent())) {
-				throw new GSInvalidFunctionCall("KV " + kv.fullname() + " of scope " + kv.scope() + " does not apply to characters");
+				throw new GSInvalidFunctionCall("KV " + kv.fullName() + " of scope " + kv.scope() + " does not apply to characters");
 			}
 			final String oldValue=altState.getRawKV(character.getContent(),kvName);
 			if (oldValue!=null  && (!oldValue.equals(kvValue))) {

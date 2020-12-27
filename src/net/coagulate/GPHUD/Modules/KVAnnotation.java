@@ -29,7 +29,7 @@ public class KVAnnotation extends KV {
 	public boolean isGenerated() { return generated; }
 
 	@Nonnull
-	public String fullname() { return module.getName()+"."+meta.name(); }
+	public String fullName() { return module.getName()+"."+meta.name(); }
 
 	@Nonnull
 	public KVSCOPE scope() { return meta.scope(); }
@@ -41,20 +41,20 @@ public class KVAnnotation extends KV {
 	public String description() { return meta.description(); }
 
 	@Nonnull
-	public String editpermission() { return meta.editpermission(); }
+	public String editPermission() { return meta.editPermission(); }
 
 	@Nonnull
-	public String defaultvalue() {
+	public String defaultValue() {
 		if (Config.getGrid()== Config.GRID.OSGRID) {
-			if (!meta.defaultvalueosgrid().isEmpty()) {
-				return meta.defaultvalueosgrid();
+			if (!meta.defaultValueOSGrid().isEmpty()) {
+				return meta.defaultValueOSGrid();
 			}
 		}
-		return meta.defaultvalue();
+		return meta.defaultValue();
 	}
 
 	@Nonnull
-	public String conveyas() { return meta.conveyas(); }
+	public String conveyAs() { return meta.conveyAs(); }
 
 	@Nonnull
 	public KVHIERARCHY hierarchy() { return meta.hierarchy(); }
@@ -74,8 +74,8 @@ public class KVAnnotation extends KV {
 
 	// ----- Internal Instance -----
 	private void validate(final State st) {
-		if (!editpermission().isEmpty()) {
-			Modules.validatePermission(st,editpermission());
+		if (!editPermission().isEmpty()) {
+			Modules.validatePermission(st, editPermission());
 		}
 	}
 

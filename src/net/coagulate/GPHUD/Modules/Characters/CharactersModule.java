@@ -229,8 +229,8 @@ public class CharactersModule extends ModuleAnnotation {
 			return new ErrorResponse("This attribute is not self modifiable, it can only be changed directly by an admin");
 		}
 		final KV kv=st.getKVDefinition("Characters."+attribute.getName());
-		final String oldvalue=st.getRawKV(st.getCharacter(),kv.fullname());
-		st.setKV(st.getCharacter(),kv.fullname(),value);
+		final String oldvalue=st.getRawKV(st.getCharacter(),kv.fullName());
+		st.setKV(st.getCharacter(),kv.fullName(),value);
 		Audit.audit(true,
 		            st,
 		            Audit.OPERATOR.CHARACTER,
@@ -240,7 +240,7 @@ public class CharactersModule extends ModuleAnnotation {
 		            attribute.getNameSafe(),
 		            oldvalue,
 		            value,
-		            "Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullname()
+		            "Character updated their own "+attribute.getNameSafe()+" via KV "+kv.fullName()
 		           );
 		return new OKResponse("Your character updated for Attribute "+attribute.getName());
 	}

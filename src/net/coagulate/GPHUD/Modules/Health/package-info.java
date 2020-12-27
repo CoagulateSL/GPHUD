@@ -11,8 +11,8 @@
 
 @KVS(name="allowreset",
      description="May user reset their own health",
-     defaultvalue="false",
-     editpermission="health.config",
+     defaultValue ="false",
+     editPermission ="health.config",
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.BOOLEAN,
      hierarchy=KVHIERARCHY.DELEGATING,
@@ -20,8 +20,8 @@
 
 @KVS(name="initialhealth",
      description="Initial health value",
-     defaultvalue="10",
-     editpermission="health.config",
+     defaultValue ="10",
+     editPermission ="health.config",
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.INTEGER,
      hierarchy=KVHIERARCHY.CUMULATIVE,
@@ -29,16 +29,16 @@
 
 @KVS(name="health",
      description="Current health",
-     editpermission="health"+".sethealth",
+     editPermission ="health"+".sethealth",
      scope=KVSCOPE.COMPLETE,
-     defaultvalue="10",
+     defaultValue ="10",
      template=true,
      type=KVTYPE.INTEGER,
      hierarchy=KVHIERARCHY.DELEGATING)
 
 @KVS(name="allowNegative",
-     defaultvalue="false",
-     editpermission="health.config",
+     defaultValue ="false",
+     editPermission ="health.config",
      description="Allow health to go negative (otherwise stops at zero)",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
@@ -47,10 +47,10 @@
 
 @KVS(name="allowSelfSet",
      description="Allow character to set their own health",
-     editpermission="health.config",
+     editPermission ="health.config",
      hierarchy=KVHIERARCHY.DELEGATING,
      type=KVTYPE.BOOLEAN,
-     defaultvalue="false",
+     defaultValue ="false",
      scope=KVSCOPE.COMPLETE,
      template=false)
 

@@ -7,9 +7,9 @@
              power=Permission.POWER.LOW)
 
 @KVS(name="EntryMessage",
-     defaultvalue="",
+     defaultValue ="",
      description="Message emitted when zone is entered",
-     editpermission="Zoning.Config",
+     editPermission ="Zoning.Config",
      scope=KVSCOPE.ZONE,
      type=KVTYPE.TEXT,
      template=false)

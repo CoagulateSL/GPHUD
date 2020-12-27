@@ -4,7 +4,6 @@ import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Inventory;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
-import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -38,10 +37,8 @@ public class InventoryModule extends ModuleAnnotation {
 
     @Nullable
     @Override
-    public KV getKVDefinition(@Nonnull State st,@Nonnull String qualifiedName) {
+    public KV getKVDefinition(@Nonnull State st,@Nonnull String reference) {
         Map<String,KV> map=getKVDefinitions(st);
-        String reference=Modules.extractReference(qualifiedName);
-        if (reference==null) { return null; }
         for (String mapKey:map.keySet()) {
             if (reference.equalsIgnoreCase(mapKey)) { return map.get(mapKey); }
         }

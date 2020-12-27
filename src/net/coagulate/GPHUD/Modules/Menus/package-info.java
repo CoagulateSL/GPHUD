@@ -17,9 +17,9 @@
      hierarchy=KVHIERARCHY.NONE,
      scope=KVSCOPE.INSTANCE,
      template=true,
-     editpermission="User.SuperAdmin",
-     conveyas="legacymenu",
-     defaultvalue="--MAINMENU--",
+     editPermission ="User.SuperAdmin",
+     conveyAs ="legacymenu",
+     defaultValue ="--MAINMENU--",
      hidden=true)
 
 package net.coagulate.GPHUD.Modules.Menus;

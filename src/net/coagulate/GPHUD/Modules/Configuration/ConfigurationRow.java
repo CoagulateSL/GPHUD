@@ -22,20 +22,20 @@ public class ConfigurationRow extends Row {
 	                        @Nonnull final TableRow dbo,
 	                        @Nonnull final KV kv,
 	                        @Nonnull final State simulated) {
-		final String kvname=kv.fullname();
+		final String kvname=kv.fullName();
 		//kv=st.getKVDefinition(kvname);
 		add(kv.name());
 		add(kv.description());
-		add(kv.editpermission());
+		add(kv.editPermission());
 		if (kv.type()==KVTYPE.UUID) {
-			add(kv.defaultvalue()+"<br><img height=48 width=48 src=\""+SL.textureURL(kv.defaultvalue())+"\">");
+			add(kv.defaultValue()+"<br><img height=48 width=48 src=\""+SL.textureURL(kv.defaultValue())+"\">");
 			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\""+SL.textureURL(simulated.getRawKV(dbo,kvname)+"\">"));
 		}
 		else {
-			add(kv.defaultvalue());
-			add(simulated.getRawKV(dbo,kv.fullname()));
+			add(kv.defaultValue());
+			add(simulated.getRawKV(dbo,kv.fullName()));
 		}
-		if (st.hasPermission(kv.editpermission())) {
+		if (st.hasPermission(kv.editPermission())) {
 			final Form ev=new Form();
 			ev.setAction("./setinstancevalue");
 			ev.add(new Hidden("key",kvname));
@@ -46,7 +46,7 @@ public class ConfigurationRow extends Row {
 			final Form rv=new Form();
 			rv.setAction("./setinstancevalue");
 			rv.add(new Hidden("key",kvname));
-			rv.add(new Hidden("value",kv.defaultvalue()));
+			rv.add(new Hidden("value",kv.defaultValue()));
 			rv.add(new Hidden("okreturnurl",st.getFullURL()));
 			rv.add(new Button("Reset Value",true));
 			add(rv);

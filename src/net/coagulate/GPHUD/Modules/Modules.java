@@ -395,8 +395,8 @@ public abstract class Modules {
 					for (final String key: mod.getKVDefinitions(st).keySet()) {
 						final KV kv=mod.getKVDefinition(st,key);
 						// this seems broken?
-						final String value=st.getKV(kv.fullname()).value();
-						if (!kv.conveyas().isEmpty()) { convey.put(kv.conveyas(),value); }
+						final String value=st.getKV(kv.fullName()).value();
+						if (!kv.conveyAs().isEmpty()) { convey.put(kv.conveyAs(),value); }
 					}
 				}
 			}

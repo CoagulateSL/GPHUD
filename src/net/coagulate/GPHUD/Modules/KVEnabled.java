@@ -29,7 +29,7 @@ public class KVEnabled extends KV {
 
 	@Nonnull
 	@Override
-	public String fullname() {
+	public String fullName() {
 		return module.getName()+"."+name();
 	}
 
@@ -43,12 +43,12 @@ public class KVEnabled extends KV {
 	public String description() { return "Enabled flag for this module"; }
 
 	@Nonnull
-	public String editpermission() { return "Instance.ModuleEnablement"; }
+	public String editPermission() { return "Instance.ModuleEnablement"; }
 
-	public String defaultvalue() { return def; }
+	public String defaultValue() { return def; }
 
 	@Nonnull
-	public String conveyas() { return ""; }
+	public String conveyAs() { return ""; }
 
 	@Nonnull
 	public KVHIERARCHY hierarchy() { return KVHIERARCHY.NONE; }

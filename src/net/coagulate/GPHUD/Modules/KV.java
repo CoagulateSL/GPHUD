@@ -3,19 +3,14 @@ package net.coagulate.GPHUD.Modules;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.*;
-import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.State;
-import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.logging.Level.FINE;
 
 /**
  * Wraps a KV (Key Value) element.
@@ -28,7 +23,7 @@ public abstract class KV extends NameComparable {
 	public abstract boolean isGenerated();
 
 	@Nonnull
-	public abstract String fullname();
+	public abstract String fullName();
 
 	@Nonnull
 	public abstract KVSCOPE scope();
@@ -40,12 +35,12 @@ public abstract class KV extends NameComparable {
 	public abstract String description();
 
 	@Nonnull
-	public abstract String editpermission();
+	public abstract String editPermission();
 
-	public abstract String defaultvalue();
+	public abstract String defaultValue();
 
 	@Nonnull
-	public abstract String conveyas();
+	public abstract String conveyAs();
 
 	@Nonnull
 	public abstract KVHIERARCHY hierarchy();
@@ -60,25 +55,17 @@ public abstract class KV extends NameComparable {
 	public boolean appliesTo(final TableRow o) {
 		switch (scope()) {
 			case CHARACTER:
-				if (o instanceof Char) { return true; }
-				return false;
+				return o instanceof Char;
 			case EVENT:
-				if (o instanceof Event) { return true; }
-				return false;
+				return o instanceof Event;
 			case INSTANCE:
-				if (o instanceof Instance) { return true; }
-				return false;
+				return o instanceof Instance;
 			case SERVER:
-				if (o instanceof Instance || o instanceof Region) { return true; }
-				return false;
+				return o instanceof Instance || o instanceof Region;
 			case NONSPATIAL:
-				if (o instanceof Instance || o instanceof CharacterGroup || o instanceof Char || o instanceof Effect) { return true; }
-				return false;
+				return o instanceof Instance || o instanceof CharacterGroup || o instanceof Char || o instanceof Effect;
 			case SPATIAL:
-				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event) {
-					return true;
-				}
-				return false;
+				return o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event;
 			case COMPLETE:
 				// probably should just return true but...
 				if (o instanceof Instance || o instanceof Region || o instanceof Zone || o instanceof Event || o instanceof CharacterGroup || o instanceof Char || o instanceof Effect) {
@@ -86,11 +73,9 @@ public abstract class KV extends NameComparable {
 				}
 				throw new SystemImplementationException("KV of COMPLETE scope was passed unknown DBObject "+o.getClass().getName()+".  Ammend whitelist or debug caller.");
 			case ZONE:
-				if (o instanceof Zone) { return true; }
-				return false;
+				return o instanceof Zone;
 			case EFFECT:
-				if (o instanceof Effect) { return true; }
-				return false;
+				return o instanceof Effect;
 			default:
 				throw new SystemImplementationException("Unhandled scope "+scope());
 		}
@@ -110,59 +95,44 @@ public abstract class KV extends NameComparable {
 		//convey(st,value);
 	}
 
-	public void convey(@Nonnull final State st,
-	                   final String value) {
-		if (!conveyas().isEmpty()) {
-			final Set<Region> regions=Region.getRegions(st,false);
-			final JSONObject message=new JSONObject();
-			message.put("incommand","broadcast");
-			message.put(conveyas(),value);
-			for (final Region r: regions) {
-				st.logger().log(FINE,"Conveying to "+r+" '"+name()+"' "+conveyas()+"="+value);
-				final Transmission t=new Transmission(r,message);
-				t.start();
-			}
-		}
-	}
-
 	@Override
 	public String toString() {
-		return fullname();
+		return fullName();
 	}
 
 	/**
 	 * Called by State.setKV when a particular KV is updated
 	 *
 	 * @param state         The associated state making the KV change
-	 * @param updatedobject The updated TableRow object (formerly DBObject)
-	 * @param newvalue      the new value written to the KV table
+	 * @param updatedObject The updated TableRow object (formerly DBObject)
+	 * @param newValue      the new value written to the KV table
 	 */
 	public void callOnUpdate(final State state,
-	                         final TableRow updatedobject,
-	                         final String newvalue) {
+	                         final TableRow updatedObject,
+	                         final String newValue) {
 		// does this KV have an onUpdate method
 		if (onUpdate().isEmpty()) { return; }
-		final String targetmethod=onUpdate();
-		final Matcher split=Pattern.compile("(.*)\\.([^.]*)").matcher(targetmethod);
-		if (!split.matches()) { throw new SystemImplementationException("String "+targetmethod+" didn't match the regexp in callOnUpdate()"); }
-		final String classname=split.group(1);
-		final String methodname=split.group(2);
+		final String targetMethod=onUpdate();
+		final Matcher split=Pattern.compile("(.*)\\.([^.]*)").matcher(targetMethod);
+		if (!split.matches()) { throw new SystemImplementationException("String "+targetMethod+" didn't match the regexp in callOnUpdate()"); }
+		final String className=split.group(1);
+		final String methodName=split.group(2);
 		try {
-			final Class<?> clas=Class.forName(classname);
-			final Method method=clas.getMethod(methodname,State.class,KV.class,TableRow.class,String.class);
-			method.invoke(null,state,this,updatedobject,newvalue);
+			final Class<?> aClass=Class.forName(className);
+			final Method method=aClass.getMethod(methodName,State.class,KV.class,TableRow.class,String.class);
+			method.invoke(null,state,this,updatedObject,newValue);
 		}
 		catch (final InvocationTargetException e) {
-			throw new SystemImplementationException("onUpdate target exceptioned for KV "+fullname(),e);
+			throw new SystemImplementationException("onUpdate target exceptioned for KV "+ fullName(),e);
 		}
 		catch (final NoSuchMethodException e) {
-			throw new SystemImplementationException("onUpdate method "+targetmethod+" from KV "+fullname()+" does not exist or match signature",e);
+			throw new SystemImplementationException("onUpdate method "+targetMethod+" from KV "+ fullName()+" does not exist or match signature",e);
 		}
 		catch (final IllegalAccessException e) {
-			throw new SystemImplementationException("onUpdate method "+targetmethod+" from KV "+fullname()+" does not have correct access modifier",e);
+			throw new SystemImplementationException("onUpdate method "+targetMethod+" from KV "+ fullName()+" does not have correct access modifier",e);
 		}
 		catch (final ClassNotFoundException e) {
-			throw new SystemImplementationException("onUpdate class "+classname+" from KV "+fullname()+" does not exist",e);
+			throw new SystemImplementationException("onUpdate class "+className+" from KV "+ fullName()+" does not exist",e);
 		}
 
 	}
@@ -241,13 +211,13 @@ public abstract class KV extends NameComparable {
 
 		@Nonnull String description();
 
-		@Nonnull String editpermission();
+		@Nonnull String editPermission();
 
-		@Nonnull String defaultvalue();
+		@Nonnull String defaultValue();
 
-		@Nonnull String defaultvalueosgrid() default "";
+		@Nonnull String defaultValueOSGrid() default "";
 
-		@Nonnull String conveyas() default "";
+		@Nonnull String conveyAs() default "";
 
 		@Nonnull KVHIERARCHY hierarchy() default KVHIERARCHY.NONE;
 
