@@ -124,7 +124,8 @@ public class CreateCoinsCommand extends Command {
 		public boolean isGenerated() { return true; }
 
 		// ---------- INSTANCE ----------
-		@Override
+		@Nonnull
+        @Override
 		public String name() { return "ammount"; }
 
 		@Nonnull
@@ -170,7 +171,8 @@ public class CreateCoinsCommand extends Command {
 		@Override
 		public Class<? extends Object> objectType() { return String.class; }
 
-		@Override
+		@Nonnull
+        @Override
 		public String name() { return "reason"; }
 
 		@Override

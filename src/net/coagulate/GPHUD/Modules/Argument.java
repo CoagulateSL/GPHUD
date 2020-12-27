@@ -28,7 +28,7 @@ public abstract class Argument {
 	public abstract boolean mandatory();
 
 	//public abstract String choiceMethod();
-	public abstract Class<? extends Object> objectType();
+	public abstract Class<?> objectType();
 
 	public abstract boolean delayTemplating();
 

@@ -101,7 +101,8 @@ public class DestroyCoinsCommand extends Command {
 		@Override
 		public Class<? extends Object> objectType() { return Char.class; }
 
-		@Override
+		@Nonnull
+        @Override
 		public String name() { return "target"; }
 
 		@Override
@@ -137,7 +138,8 @@ public class DestroyCoinsCommand extends Command {
 		@Override
 		public Class<? extends Object> objectType() { return String.class; }
 
-		@Override
+		@Nonnull
+        @Override
 		public String name() { return "ammount"; }
 
 		@Override
@@ -169,7 +171,8 @@ public class DestroyCoinsCommand extends Command {
 		@Override
 		public Class<? extends Object> objectType() { return String.class; }
 
-		@Override
+		@Nonnull
+        @Override
 		public String name() { return "reason"; }
 
 		@Override
