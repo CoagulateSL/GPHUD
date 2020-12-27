@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Inventory;
 
-import net.coagulate.GPHUD.Data.Inventory;
+import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Modules.KV;
 
 import javax.annotation.Nonnull;
@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
  */
 public class MaxWeightKV extends KV {
 
-	@Nonnull final Inventory inventory;
+	@Nonnull final Attribute inventory;
 
-	public MaxWeightKV(@Nonnull final Inventory inventory) {
+	public MaxWeightKV(@Nonnull final Attribute inventory) {
 		this.inventory=inventory;
 	}
 

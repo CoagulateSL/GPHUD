@@ -13,8 +13,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class CharacterSet {
-    private final Char character;
-    private final Attribute set;
+    protected final Char character;
+    protected final Attribute set;
 
     /** Create a reference to a particular set on a character.
      *
@@ -22,17 +22,28 @@ public class CharacterSet {
      * @param set The attribute defining the set
      */
     public CharacterSet(@Nonnull Char character,@Nonnull Attribute set) {
-        if (set.getType()!= Attribute.ATTRIBUTETYPE.SET && set.getType()!= Attribute.ATTRIBUTETYPE.INVENTORY) {
-            throw new SystemImplementationException("Accessing a set of a non SET/INVENTORY attribute type "+set.getName()+" is "+set.getType());
+        this.character=character;
+        this.set=set;
+        checks(character,set);
+    }
+    private void checks(@Nonnull Char character,@Nonnull Attribute set) {
+        if (set.getType()!= Attribute.ATTRIBUTETYPE.SET) {
+            throw new SystemImplementationException("Accessing a set of a non SET attribute type "+set.getName()+" is "+set.getType());
         }
         if (set.getInstance()!=character.getInstance()) {
             throw new SystemImplementationException("SetAttribute/Character instance mismatch");
         }
-        this.character=character;
-        this.set=set;
     }
 
-    private static DBConnection db() { return GPHUD.getDB(); }
+    protected CharacterSet(@Nonnull Char character,@Nonnull Attribute set,boolean noChecks) {
+        this.character = character;
+        this.set = set;
+        if (!noChecks) {
+            checks(character, set);
+        }
+    }
+
+    protected static DBConnection db() { return GPHUD.getDB(); }
     /** Count the number of distinct elements (text strings) in the set
      *
      * @return The number of different types of thing (elements) in this set

@@ -10,11 +10,11 @@ import javax.annotation.Nonnull;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class MaxItemsKV extends KV {
+public class DefaultAllowKV extends KV {
 
 	@Nonnull final Attribute inventory;
 
-	public MaxItemsKV(@Nonnull final Attribute inventory) {
+	public DefaultAllowKV(@Nonnull final Attribute inventory) {
 		this.inventory=inventory;
 	}
 
@@ -33,31 +33,31 @@ public class MaxItemsKV extends KV {
 	@Nonnull
 	@Override
 	public KVSCOPE scope() {
-		return KVSCOPE.COMPLETE;
+		return KVSCOPE.INSTANCE;
 	}
 
 	@Nonnull
 	@Override
 	public KVTYPE type() {
-		return KVTYPE.INTEGER;
+		return KVTYPE.BOOLEAN;
 	}
 
 	@Nonnull
 	@Override
 	public String description() {
-		return "Maximum number of types of items storable in "+inventory.getName();
+		return "Wether an inventory "+inventory.getName()+" is allows to store new items by default";
 	}
 
 	@Nonnull
 	@Override
 	public String editpermission() {
-		return "Inventory.ConfigureLimits";
+		return "Inventory.ConfigureAccess";
 	}
 
 	@Nonnull
 	@Override
 	public String defaultvalue() {
-		return "0";
+		return "true";
 	}
 
 	@Nonnull
@@ -69,16 +69,16 @@ public class MaxItemsKV extends KV {
 	@Nonnull
 	@Override
 	public KVHIERARCHY hierarchy() {
-		return KVHIERARCHY.CUMULATIVE;
+		return KVHIERARCHY.DELEGATING;
 	}
 
 	@Override
-	public boolean template() { return true; }
+	public boolean template() { return false; }
 
 	@Nonnull
 	@Override
 	public String name() {
-		return inventory.getName()+"MaxItems";
+		return inventory.getName()+"DefaultAllow";
 	}
 
 }
