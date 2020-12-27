@@ -14,7 +14,7 @@ import java.util.Set;
 public class Inventory extends TableRow {
     @Nonnull private final Attribute inventory;
 
-    @Nonnull public Set<Inventory> getInventories(@Nonnull final Instance instance) {
+    @Nonnull public static Set<Inventory> getInventories(@Nonnull final Instance instance) {
         Set<Inventory> inventory=new HashSet<>();
         for (ResultsRow row:db().dq("select attributeid from attributes where instanceid=? and attributetype='INVENTORY'",instance.getId())) {
             inventory.add(Inventory.get(row.getInt("attributeid")));
@@ -22,6 +22,11 @@ public class Inventory extends TableRow {
         return inventory;
     }
 
+    @Nonnull
+    @Override
+    public String getName() {
+        return inventory.getName();
+    }
 
     public CharacterSet set(@Nonnull final Char character) {
         return new CharacterSet(character,inventory);
