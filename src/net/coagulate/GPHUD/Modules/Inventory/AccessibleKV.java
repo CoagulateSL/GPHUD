@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Inventory;
 
 import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Modules.KV;
 
 import javax.annotation.Nonnull;
 
@@ -10,30 +9,9 @@ import javax.annotation.Nonnull;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class AccessibleKV extends KV {
-
-	@Nonnull final Attribute inventory;
-
-	public AccessibleKV(@Nonnull final Attribute inventory) {
-		this.inventory=inventory;
-	}
-
-	// ---------- INSTANCE ----------
-	@Override
-	public boolean isGenerated() {
-		return true;
-	}
-
-	@Nonnull
-	@Override
-	public String fullname() {
-		return "Inventory."+name();
-	}
-
-	@Nonnull
-	@Override
-	public KVSCOPE scope() {
-		return KVSCOPE.COMPLETE;
+public class AccessibleKV extends InventoryKV {
+	public AccessibleKV(@Nonnull Attribute inventory) {
+		super(inventory);
 	}
 
 	@Nonnull
@@ -50,20 +28,14 @@ public class AccessibleKV extends KV {
 
 	@Nonnull
 	@Override
-	public String editpermission() {
+	public String editPermission() {
 		return "Inventory.ConfigureAccess";
 	}
 
 	@Nonnull
 	@Override
-	public String defaultvalue() {
+	public String defaultValue() {
 		return "true";
-	}
-
-	@Nonnull
-	@Override
-	public String conveyas() {
-		return "";
 	}
 
 	@Nonnull
@@ -72,13 +44,10 @@ public class AccessibleKV extends KV {
 		return KVHIERARCHY.DELEGATING;
 	}
 
-	@Override
-	public boolean template() { return false; }
-
 	@Nonnull
 	@Override
-	public String name() {
-		return inventory.getName()+"Accessible";
+	protected String suffix() {
+		return "Accessible";
 	}
 
 }

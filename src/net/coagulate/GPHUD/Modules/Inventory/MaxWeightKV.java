@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Inventory;
 
 import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Modules.KV;
 
 import javax.annotation.Nonnull;
 
@@ -10,66 +9,22 @@ import javax.annotation.Nonnull;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class MaxWeightKV extends KV {
+public class MaxWeightKV extends InventoryKV {
 
-	@Nonnull final Attribute inventory;
-
-	public MaxWeightKV(@Nonnull final Attribute inventory) {
-		this.inventory=inventory;
-	}
-
-	// ---------- INSTANCE ----------
-	@Override
-	public boolean isGenerated() {
-		return true;
-	}
-
-	@Nonnull
-	@Override
-	public String fullname() {
-		return "Inventory."+name();
-	}
-
-	@Nonnull
-	@Override
-	public KVSCOPE scope() {
-		return KVSCOPE.COMPLETE;
-	}
-
-	@Nonnull
-	@Override
-	public KVTYPE type() {
-		return KVTYPE.INTEGER;
+	public MaxWeightKV(@Nonnull Attribute inventory) {
+		super(inventory);
 	}
 
 	@Nonnull
 	@Override
 	public String description() {
-		return "Maximum total quantity of weight storable in "+inventory.getName();
+		return "Maximum total weight of items storable in "+inventory.getName();
 	}
 
 	@Nonnull
 	@Override
-	public String editpermission() {
+	public String editPermission() {
 		return "Inventory.ConfigureLimits";
-	}
-
-	@Nonnull
-	@Override
-	public String defaultvalue() {
-		return "0";
-	}
-
-	@Nonnull
-	@Override
-	public String conveyas() {
-		return "";
-	}
-
-	@Nonnull
-	@Override
-	public KVHIERARCHY hierarchy() {
-		return KVHIERARCHY.CUMULATIVE;
 	}
 
 	@Override
@@ -77,8 +32,8 @@ public class MaxWeightKV extends KV {
 
 	@Nonnull
 	@Override
-	public String name() {
-		return inventory.getName()+"MaxWeight";
+	protected String suffix() {
+		return "MaxWeight";
 	}
 
 }

@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Inventory;
 
 import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Modules.KV;
 
 import javax.annotation.Nonnull;
 
@@ -10,24 +9,10 @@ import javax.annotation.Nonnull;
  *
  * @author Iain Price <gphud@predestined.net>
  */
-public class DefaultAllowKV extends KV {
+public class DefaultAllowKV extends InventoryKV {
 
-	@Nonnull final Attribute inventory;
-
-	public DefaultAllowKV(@Nonnull final Attribute inventory) {
-		this.inventory=inventory;
-	}
-
-	// ---------- INSTANCE ----------
-	@Override
-	public boolean isGenerated() {
-		return true;
-	}
-
-	@Nonnull
-	@Override
-	public String fullname() {
-		return "Inventory."+name();
+	public DefaultAllowKV(@Nonnull Attribute inventory) {
+		super(inventory);
 	}
 
 	@Nonnull
@@ -45,25 +30,19 @@ public class DefaultAllowKV extends KV {
 	@Nonnull
 	@Override
 	public String description() {
-		return "Wether an inventory "+inventory.getName()+" is allows to store new items by default";
+		return "Wether an inventory "+inventory.getName()+" is allowed to store new items by default";
 	}
 
 	@Nonnull
 	@Override
-	public String editpermission() {
+	public String editPermission() {
 		return "Inventory.ConfigureAccess";
 	}
 
 	@Nonnull
 	@Override
-	public String defaultvalue() {
+	public String defaultValue() {
 		return "true";
-	}
-
-	@Nonnull
-	@Override
-	public String conveyas() {
-		return "";
 	}
 
 	@Nonnull
@@ -72,13 +51,10 @@ public class DefaultAllowKV extends KV {
 		return KVHIERARCHY.DELEGATING;
 	}
 
-	@Override
-	public boolean template() { return false; }
-
 	@Nonnull
 	@Override
-	public String name() {
-		return inventory.getName()+"DefaultAllow";
+	protected String suffix() {
+		return "DefaultAllow";
 	}
 
 }
