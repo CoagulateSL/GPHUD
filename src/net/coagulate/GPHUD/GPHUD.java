@@ -223,12 +223,15 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==6) {
 			log.config("Add various items/inventory tables");
+
 			GPHUD.getDB().d("CREATE TABLE `items` (" +
 					"  `id` INT NOT NULL AUTO_INCREMENT," +
 					"  `instanceid` INT NOT NULL," +
 					"  `name` VARCHAR(128) NOT NULL," +
 					"  `description` VARCHAR(256) NOT NULL DEFAULT ''," +
 					"  `weight` INT NOT NULL DEFAULT 0," +
+					"  `tradable` TINYINT NOT NULL DEFAULT 1," +
+					"  `destroyable` TINYINT NOT NULL DEFAULT 1," +
 					"  PRIMARY KEY (`id`)," +
 					"  UNIQUE INDEX `id_UNIQUE` (`id` ASC)," +
 					"  UNIQUE INDEX `instanceid_itemname_unique` (`instanceid` ASC, `name` ASC)," +

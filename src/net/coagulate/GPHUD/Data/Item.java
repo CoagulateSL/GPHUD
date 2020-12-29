@@ -1,7 +1,11 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
+import net.coagulate.GPHUD.Interfaces.Outputs.Link;
+import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -29,9 +33,37 @@ public class Item extends TableRow {
     }
 
     public static Item findNullable(@Nonnull final Instance instance, @Nonnull final String name) {
-        Integer id= db().dqi("select id from items where name like ? and instanceid=?",name,instance.getId());
+        Integer id=null;
+        try { id=db().dqi("select id from items where name like ? and instanceid=?",name,instance.getId()); }
+        catch (NoDataException ignored) {}
         if (id==null) { return null; }
         return Item.get(id);
+    }
+
+    public static Table getSummaryPage(Instance instance) {
+        Table table=new Table();
+        table.add(new HeaderRow().add("Name").add("Weight").add("Description"));
+        for (ResultsRow row:db().dq("select * from items where instanceid=? order by name",instance.getId())) {
+            table.openRow();
+            table.add(new Link(row.getString("name"),"/GPHUD/configuration/items/"+row.getInt("id")))
+                    .add(row.getInt("weight"))
+                    .add(row.getString("description"));
+        }
+        return table;
+    }
+
+    public static Item findOrCreate(@Nonnull final State state,@Nonnull final String name) {
+        Item item=findNullable(state.getInstance(),name);
+        if (item!=null) { return item; }
+        Audit.audit(true,state, Audit.OPERATOR.AVATAR,null,null,"Add","Item",null,name,"Created new item");
+        create(state.getInstance(),name);
+        item=findNullable(state.getInstance(),name);
+        if (item!=null) { return item; }
+        throw new SystemImplementationException("Tried to create item '"+name+"' in instance "+state.getInstance()+" and found nothing afterwards");
+    }
+
+    private static void create(@Nonnull final Instance instance,@Nonnull final String name) {
+        db().d("insert into items(instanceid,name) values(?,?)",instance.getId(),name);
     }
 
     @Nonnull
@@ -102,4 +134,8 @@ public class Item extends TableRow {
     public void weight(int newWeight) { set("weight",newWeight); }
 
 
+    public boolean destroyable() { return getBool("destroyable"); }
+    public boolean tradable() { return getBool("tradable"); }
+    public void destroyable(boolean destroyable) { set("destroyable",destroyable); }
+    public void tradable(boolean tradable) { set("tradable",tradable); }
 }
