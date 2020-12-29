@@ -1,9 +1,11 @@
 package net.coagulate.GPHUD.Modules.Experience;
 
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Templater;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
 
@@ -36,6 +38,17 @@ public abstract class Experience {
 		if (!st.hasModule("Experience")) { return ""; }
 		if (st.getCharacterNullable()==null) { return ""; }
 		return toLevel(st,getExperience(st,st.getCharacter()))+"";
+	}
+
+	@Nonnull
+	@Templater.Template(name="TARGET:LEVEL",
+						description="TARGET's level")
+	public static String getTargetLevel(@Nonnull final State st,
+										final String key) {
+		if (!st.hasModule("Roller")) { return ""; }
+		if (st.getTargetNullable()==null) { throw new UserInputStateException("No target!"); }
+		final State target=st.getTargetNullable();
+		return Experience.toLevel(target,Experience.getExperience(target,target.getCharacter()))+"";
 	}
 
 	public static int toLevel(@Nonnull final State st,
