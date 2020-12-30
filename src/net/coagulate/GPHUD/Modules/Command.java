@@ -405,19 +405,19 @@ public abstract class Command {
 					}
 					t.add(choiceList);
 					break;
-				case SET:
-					final DropDownList setList=new DropDownList(arg.name());
-					for (Attribute attribute:CharacterSet.getAll(st)) {
-						setList.add(attribute.getName());
-					}
-					t.add(setList);
-					break;
 				case INVENTORY:
 					final DropDownList inventoryList=new DropDownList(arg.name());
 					for (Attribute attribute:Inventory.getAll(st)) {
 						inventoryList.add(attribute.getName());
 					}
 					t.add(inventoryList);
+					break;
+				case SET:
+					final DropDownList setList=new DropDownList(arg.name());
+					for (Attribute attribute:CharacterSet.getAll(st)) {
+						setList.add(attribute.getName());
+					}
+					t.add(setList);
 					break;
 				case ITEM:
 					final DropDownList itemList=new DropDownList(arg.name());
@@ -526,6 +526,8 @@ public abstract class Command {
 				return m;
 			//case FLOAT:
 			case ATTRIBUTE_WRITABLE:
+			case SET:
+			case INVENTORY:
 			case ATTRIBUTE:
 				Attribute attr=null;
 				for (final Attribute a: state.getAttributes()) {
@@ -534,12 +536,16 @@ public abstract class Command {
 							throw new SystemConsistencyException("Duplicate attribute definition found for "+v);
 						}
 						if (type==ArgumentType.ATTRIBUTE || a.getSelfModify()) { attr=a; }
+						if (type==ArgumentType.SET && a.getType()== Attribute.ATTRIBUTETYPE.SET) { attr=a; }
+						if (type==ArgumentType.INVENTORY && a.getType()== Attribute.ATTRIBUTETYPE.INVENTORY) { attr=a; }
 					}
 				}
 				if (attr==null) {
 					throw new UserInputLookupFailureException("Unable to resolve '"+v+"' to an attribute");
 				}
 				return attr;
+			case ITEM:
+				return assertNotNull(Item.findNullable(state.getInstance(),v),v,"item");
 			case CURRENCY:
 				return assertNotNull(Currency.find(state,v),v,"currency");
 			case PERMISSIONSGROUP:
@@ -660,6 +666,8 @@ public abstract class Command {
 			case CHARACTER:
 			case ATTRIBUTE_WRITABLE:
 			case ATTRIBUTE:
+			case SET:
+			case INVENTORY:
 			case COORDINATES:
 			case ZONE:
 			case REGION:
@@ -677,6 +685,7 @@ public abstract class Command {
 			case CHARACTERGROUP:
 			case EVENT:
 			case KVLIST:
+			case ITEM:
 				return 128;
 			default:
 				throw new SystemImplementationException("Argument "+argument.name()+" of type "+argument.type().name()+" fell through maximum length");
