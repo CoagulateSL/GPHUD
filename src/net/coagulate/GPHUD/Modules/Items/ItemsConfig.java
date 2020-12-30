@@ -1,9 +1,11 @@
 package net.coagulate.GPHUD.Modules.Items;
 
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
+import net.coagulate.GPHUD.Data.Inventory;
 import net.coagulate.GPHUD.Data.Item;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
+import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.User.Form;
@@ -47,7 +49,9 @@ public class ItemsConfig {
     @Command.Commands(description="Create or modify an item (based on name)",
                       context= Command.Context.AVATAR,
                       requiresPermission="Items.Edit",
-                      permitObject=false)
+                      permitObject=false,
+                      permitExternal = false,
+                      permitScripting = false)
     public static Response edit(@Nonnull final State st,
                                 @Nonnull @Arguments(name="name",
                                                     description="Name of item",
@@ -98,6 +102,69 @@ public class ItemsConfig {
         Item item=Item.get(Integer.parseInt(id));
         if (item.getInstance()!=st.getInstance()) { throw new UserInputStateException("Item "+id+" is from a different instance"); }
         f.add(new TextHeader("Item: "+item.getName()));
+        f.add(new TextSubHeader("Properties"));
         f.noForm();
+        Table propertiesTable=new Table();
+        f.add(propertiesTable);
+        propertiesTable.openRow().add(new Cell("Name")).add(item.getName());
+        propertiesTable.openRow().add(new Cell("Description")).add(item.description());
+        propertiesTable.openRow().add("Weight").add(item.weight());
+        propertiesTable.openRow().add("Tradable").add(item.tradable());
+        propertiesTable.openRow().add("Destroyable").add(item.destroyable());
+        if (st.hasPermission("Items.Edit")) {
+            f.add(new Form(st,true,"/GPHUD/configuration/items/edititem","Edit Item",
+                    "name",item.getName(),
+                    "tradable",item.tradable()?"true":"",
+                    "destroyable",item.destroyable()?"true":"",
+                    "weight",""+item.weight(),
+                    "description",item.description()));
+        }
+        f.add(new Separator());
+        f.add(new TextSubHeader("Allowed In Inventories"));
+        Table inventories=new Table();
+        f.add(inventories);
+        for (Attribute inventory: Inventory.getAll(st.getInstance())) {
+            inventories.openRow();
+            inventories.add(inventory.getName());
+            boolean allowed=Inventory.allows(st,inventory,item);
+            if (allowed) { inventories.add("Permitted"); }
+            else { inventories.add("Forbidden"); }
+            if (st.hasPermission("Items.EditInventories")) {
+                inventories.add(new Form(st,true,"/GPHUD/configuration/items/inventoryallow","Toggle",
+                        "item",item.getName(),
+                                "inventory",inventory.getName(),
+                                "allowed",allowed?"":"true"));
+            }
+        }
+        f.add(new Separator());
     }
+
+    @URL.URLs(url="/configuration/items/inventoryallow",
+              requiresPermission="Items.EditInventories")
+    public static void editInventoriesPage(@Nonnull final State st,
+                                    @Nonnull final SafeMap values) {
+        Modules.simpleHtml(st,"Items.EditInventories",values);
+    }
+
+    @Nonnull
+    @Command.Commands(description="Alter an items allowed state in an inventory",
+                      context= Command.Context.AVATAR,
+                      requiresPermission="Items.EditInventories",
+                      permitObject=false,
+                      permitExternal = false,
+                      permitScripting = false)
+    public static Response editInventories(@Nonnull final State st,
+                                @Nonnull @Arguments(name="item",
+                                                    description="Item",
+                                                    type= Argument.ArgumentType.ITEM) final Item item,
+                                @Nonnull @Arguments(name="inventory",
+                                                    description="Inventory",
+                                                    type= Argument.ArgumentType.INVENTORY) final Attribute inventory,
+                                @Nonnull @Arguments(name="allowed",
+                                                    description="Item allowed",
+                                                    type= Argument.ArgumentType.BOOLEAN) final Boolean allowed) {
+        Inventory.allows(st,inventory,item,allowed);
+        return new OKResponse("Item inventory allowed status updated");
+    }
+
 }
