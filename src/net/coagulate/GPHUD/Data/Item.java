@@ -42,11 +42,13 @@ public class Item extends TableRow {
 
     public static Table getSummaryPage(Instance instance) {
         Table table=new Table();
-        table.add(new HeaderRow().add("Name").add("Weight").add("Description"));
+        table.add(new HeaderRow().add("Name").add("Weight").add("Tradable").add("Destroyable").add("Description"));
         for (ResultsRow row:db().dq("select * from items where instanceid=? order by name",instance.getId())) {
             table.openRow();
             table.add(new Link(row.getString("name"),"/GPHUD/configuration/items/"+row.getInt("id")))
                     .add(row.getInt("weight"))
+                    .add(row.getBool("tradable")?"Yes":"")
+                    .add(row.getBool("destroyable")?"Yes":"")
                     .add(row.getString("description"));
         }
         return table;
