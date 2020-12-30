@@ -20,7 +20,7 @@ public class InventoryModule extends ModuleAnnotation {
     @Override
     public Map<String, KV> getKVDefinitions(@Nonnull State st) {
         Map<String,KV> kvSet=new TreeMap<>();
-        for (Attribute inventory:Inventory.getInventories(st.getInstance())) {
+        for (Attribute inventory:Inventory.getAll(st.getInstance())) {
             MaxItemsKV maxItemsKV=new MaxItemsKV(inventory);
             kvSet.put(maxItemsKV.name(),maxItemsKV);
             MaxQuantityKV maxQuantityKV=new MaxQuantityKV(inventory);
