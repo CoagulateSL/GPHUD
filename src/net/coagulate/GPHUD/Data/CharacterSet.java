@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 import java.util.*;
 
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.SET;
+
 public class CharacterSet {
     protected final Char character;
     protected final Attribute set;
@@ -25,7 +27,7 @@ public class CharacterSet {
         checks(character,set);
     }
     private void checks(@Nonnull Char character,@Nonnull Attribute set) {
-        if (set.getType()!= Attribute.ATTRIBUTETYPE.SET) {
+        if (set.getType()!= SET) {
             throw new SystemImplementationException("Accessing a set of a non SET attribute type "+set.getName()+" is "+set.getType());
         }
         if (set.getInstance()!=character.getInstance()) {
@@ -114,19 +116,17 @@ public class CharacterSet {
         return returnSet;
     }
 
-    public static final Set<Attribute> getAll(@Nonnull final State state) { return getAll(state.getInstance()); }
-    public static final Set<Attribute> getAll(@Nonnull final Instance instance) {
+    public static Set<Attribute> getAll(@Nonnull final State state) { return getAll(state.getInstance()); }
+    public static Set<Attribute> getAll(@Nonnull final Instance instance) {
         Set<Attribute> attributes=Attribute.getAttributes(instance);
         Set<Attribute> sets=new HashSet<>();
         for (Attribute attribute:attributes) {
-            if (attribute.getType()==myType()) {
+            if (attribute.getType()==SET) {
                 sets.add(attribute);
             }
         }
         return sets;
     }
-
-    protected static Attribute.ATTRIBUTETYPE myType() { return Attribute.ATTRIBUTETYPE.SET; }
 
     /** Retrieve a map of the elements and their quantity ; i.e. the set
      *

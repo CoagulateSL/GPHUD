@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -26,12 +27,25 @@ public class Inventory extends CharacterSet {
         }
     }
 
-    @Nonnull public static Set<Attribute> getInventories(@Nonnull final Instance instance) {
-        Set<Attribute> inventory=new HashSet<>();
-        for (ResultsRow row:db().dq("select attributeid from attributes where instanceid=? and attributetype='INVENTORY'",instance.getId())) {
-            inventory.add(Attribute.get(row.getInt("attributeid")));
+    public static final Set<Attribute> getAll(@Nonnull final State state) { return getAll(state.getInstance()); }
+    public static final Set<Attribute> getAll(@Nonnull final Instance instance) {
+        Set<Attribute> attributes=Attribute.getAttributes(instance);
+        Set<Attribute> sets=new HashSet<>();
+        for (Attribute attribute:attributes) {
+            if (attribute.getType()== Attribute.ATTRIBUTETYPE.INVENTORY) {
+                sets.add(attribute);
+            }
         }
-        return inventory;
+        return sets;
+    }
+    public static boolean allows(@Nonnull State st,@Nonnull Attribute inventory,@Nonnull Item item) {
+        for (ResultsRow row:db().dq("select permitted from iteminventories where itemid=? and inventoryid=?",item.getId(),inventory.getId())) {
+            return row.getBool();
+        }
+        return st.getKV("Inventory."+inventory.getName()+"DefaultAllow").boolValue();
+    }
+    public static void allows(@Nonnull State st,@Nonnull Attribute inventory,@Nonnull Item item,boolean allow) {
+        db().d("insert into iteminventories(itemid,inventoryid,permitted) values(?,?,?) on duplicate key update permitted=?",item.getId(),inventory.getId(),allow,allow);
     }
 
     @Nonnull
@@ -61,6 +75,5 @@ public class Inventory extends CharacterSet {
         }
         return weight;
     }
-    protected static Attribute.ATTRIBUTETYPE myType() { return Attribute.ATTRIBUTETYPE.SET; }
 
 }
