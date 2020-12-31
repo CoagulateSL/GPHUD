@@ -24,9 +24,9 @@ public class CharacterSet {
     public CharacterSet(@Nonnull Char character,@Nonnull Attribute set) {
         this.character=character;
         this.set=set;
-        checks(character,set);
+        checks();
     }
-    private void checks(@Nonnull Char character,@Nonnull Attribute set) {
+    private void checks() {
         if (set.getType()!= SET) {
             throw new SystemImplementationException("Accessing a set of a non SET attribute type "+set.getName()+" is "+set.getType());
         }
@@ -39,7 +39,7 @@ public class CharacterSet {
         this.character = character;
         this.set = set;
         if (!noChecks) {
-            checks(character, set);
+            checks();
         }
     }
 
