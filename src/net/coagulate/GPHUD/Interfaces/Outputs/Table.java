@@ -108,7 +108,12 @@ public class Table implements Renderable {
 		if (nowrap) { s.append(" style=\"white-space: nowrap;\""); }
 		s.append(">");
 		if (headerrow!=null) { s.append(headerrow.asHtml(st,rich)); }
-		for (final Row r: table) { s.append(r.asHtml(st,rich)); }
+		int rownum=0;
+		for (final Row r: table) {
+			if (r.isResetNumbering()) { rownum=0; }
+			s.append(r.asHtml(st,rich,rownum));
+			rownum++;
+		}
 		s.append("</table>");
 		return s.toString();
 	}

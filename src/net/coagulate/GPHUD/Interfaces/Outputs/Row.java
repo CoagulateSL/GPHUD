@@ -61,8 +61,12 @@ public class Row implements Renderable {
 	@Override
 	public String asHtml(final State st,
 	                     final boolean rich) {
+		return asHtml(st,rich,0);
+	}
+	public String asHtml(State st, boolean rich, int rownum) {
 		final StringBuilder s=new StringBuilder("<tr");
 		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
+		else { s.append(" bgcolor=#").append((rownum % 2)==1?"f0f0f0":"ffffff"); }
 		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }
 		s.append(">");
 		for (final Cell c: row) {
@@ -71,6 +75,10 @@ public class Row implements Renderable {
 		}
 		return s+"</tr>";
 	}
+
+	private boolean reset=false;
+	public Row resetNumbering() { reset=true; return this; }
+	public boolean isResetNumbering() { return reset; }
 
 	@Nullable
 	@Override
