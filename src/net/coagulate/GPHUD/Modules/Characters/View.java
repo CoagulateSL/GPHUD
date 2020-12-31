@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.Hidden;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Cell;
+import net.coagulate.GPHUD.Interfaces.Outputs.Row;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -40,8 +41,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
-import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.EXPERIENCE;
-import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.SET;
+import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.*;
 
 /**
  * A simple command implementation.
@@ -139,7 +139,7 @@ public abstract class View {
 			kvtable.add(xp+" XP").add("Level "+Experience.toLevel(st,xp));
 		}
 		kvtable.openRow().add(new Cell("<i>Assuming "+simulated+"</i>",5));
-		kvtable.openRow().add(new Cell(new TextSubHeader("Attributes"),5));
+		kvtable.add(new Row(new Cell(new TextSubHeader("Attributes"),5)).resetNumbering());
 		final Set<String> experiences=new HashSet<>();
 		for (final Attribute a: st.getAttributes()) {
 			if (a.getType()==EXPERIENCE) { experiences.add(a.getName()); }
@@ -179,17 +179,33 @@ public abstract class View {
 			String value=a.getCharacterValue(simulated);
 			kvtable.add(value!=null?value:"");
 			String description=a.getCharacterValueDescription(simulated);
-			if (a.getType()==SET) {
+			if (a.getType()==SET || a.getType()==INVENTORY) {
 				description="";
-				CharacterSet set=new CharacterSet(simulated.getCharacter(),a);
+				CharacterSet set;
+				String actionURL="/GPHUD/configuration/sets/setset";
+				String actionAddURL=actionURL;
+				String attributeField="set";
+				String setButton="Set";
+				String elementField="element";
+				if (a.getType()==INVENTORY) {
+					set=new Inventory(simulated.getCharacter(),a);
+					actionURL="/GPHUD/configuration/inventory/set";
+					actionAddURL="/GPHUD/configuration/inventory/add";
+					attributeField="inventory";
+					setButton="Add";
+					elementField="item";
+				}
+				else {
+					set=new CharacterSet(simulated.getCharacter(),a);
+				}
 				if (st.hasPermission("Characters.Set"+a.getName())) {
 					for (Map.Entry<String, Integer> element : set.elements().entrySet()) {
 						final Form create = new Form();
 						create.inline();
-						create.setAction("/GPHUD/configuration/sets/setset");
+						create.setAction(actionURL);
 						create.add(new Hidden("character", simulated.getCharacter().getName()));
-						create.add(new Hidden("set", a.getName()));
-						create.add(new Hidden("element", element.getKey()));
+						create.add(new Hidden(attributeField, a.getName()));
+						create.add(new Hidden(elementField, element.getKey()));
 						create.add(new Hidden("qty", "" + element.getValue()));
 						create.add(new Hidden("okreturnurl", st.getFullURL()));
 						create.add(new Button(element.getValue() + "x" + element.getKey()));
@@ -197,11 +213,12 @@ public abstract class View {
 					}
 					final Form create = new Form();
 					create.inline();
-					create.setAction("/GPHUD/configuration/sets/setset");
+					create.setAction(actionAddURL);
 					create.add(new Hidden("character", simulated.getCharacter().getName()));
-					create.add(new Hidden("set", a.getName()));
+					create.add(new Hidden(attributeField, a.getName()));
 					create.add(new Hidden("okreturnurl", st.getFullURL()));
-					create.add(new Button("Add"));
+					create.add(new Hidden("qty", "1"));
+					create.add(new Button(setButton));
 					content = create.asHtml(simulated, true);
 				} else {
 					// can't edit set
