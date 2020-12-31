@@ -114,12 +114,14 @@ uixInventory() {
 		PRIM_LINK_TARGET, HUD_MAIN,
 			PRIM_TEXT,text,hudtextcolor,1];
 	integer i=0;
+	float additional=((float)llGetListLength(llParseStringKeepNulls(inventorytitle,["\n"],[]))) * 0.01;
+	
 	for (i=1;i<=14;i++) {
 		if (i<=(inventoryshown+2) && inventoryshown>0) {
 
 			l+=[PRIM_LINK_TARGET, llList2Integer(inventoryprims,i-1),
 			//PRIM_POS_LOCAL, <0,0,inventorybasez + inventoryoffsetz*(((float)(i-1)))>,
-			PRIM_POS_LOCAL, <0,inventorywidth/2.0 * ( ( ( i % 2) * 2.0 ) - 1.0)  ,inventorybasez + inventoryoffsetz*(((float)((i+1)/2)))>,
+			PRIM_POS_LOCAL, <0,inventorywidth/2.0 * ( ( ( i % 2) * 2.0 ) - 1.0)  ,additional + inventorybasez + inventoryoffsetz*(((float)((i+1)/2)))>,
 			PRIM_SIZE,<0,inventorywidth,inventoryoffsetz>,
 			PRIM_TEXT,llList2String(inventorytext,i-1),<0,0,0>,1];
 		} else {
@@ -139,14 +141,14 @@ uixInventory() {
 			float titlewidth=inventorywidth*2.0;
 			float chars=((float)(llStringLength(inventorytitle)));
 			if (chars*CHARACTERWIDTH>titlewidth) { titlewidth=chars*CHARACTERWIDTH; }
-			l+=[PRIM_LINK_TARGET, HUD_INVENTORY_CLOSE, PRIM_POS_LOCAL, <0,0,inventoryoffsetz * ((inventoryshown/2)+3)>,
-			PRIM_LINK_TARGET, HUD_INVENTORY_TITLE_UPPER, PRIM_POS_LOCAL, <0,0,inventoryoffsetz * 2>,
-			PRIM_SIZE,<0,titlewidth,inventoryoffsetz>,
+			l+=[PRIM_LINK_TARGET, HUD_INVENTORY_CLOSE, PRIM_POS_LOCAL, <0,0,additional + inventoryoffsetz * ((inventoryshown/2)+3)>,
+			PRIM_LINK_TARGET, HUD_INVENTORY_TITLE_UPPER, PRIM_POS_LOCAL, <0,0,(additional/2.0) + inventoryoffsetz * 2>,
+			PRIM_SIZE,<0,titlewidth,inventoryoffsetz + additional >,
 			PRIM_LINK_TARGET, HUD_INVENTORY_TITLE_LOWER, PRIM_POS_LOCAL, <0,0,inventoryoffsetz* 1.5>,
 			PRIM_SIZE,<0,0,0>,PRIM_TEXT,inventorytitle,<0,0,0>,1
 			]; 
 		} else {
-			l+=[PRIM_LINK_TARGET, HUD_INVENTORY_CLOSE, PRIM_POS_LOCAL, <0,0,inventoryoffsetz * ((inventoryshown/2)+2)>,
+			l+=[PRIM_LINK_TARGET, HUD_INVENTORY_CLOSE, PRIM_POS_LOCAL, <0,0,additional + inventoryoffsetz * ((inventoryshown/2)+2)>,
 			PRIM_LINK_TARGET, HUD_INVENTORY_TITLE_UPPER, PRIM_POS_LOCAL, <0,0,-0.2>,
 			PRIM_SIZE,<0,0.03,0.03>,
 			PRIM_LINK_TARGET, HUD_INVENTORY_TITLE_LOWER, PRIM_POS_LOCAL, <0,0,-0.2>,
