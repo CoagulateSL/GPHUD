@@ -77,6 +77,10 @@ public class Inventory extends CharacterSet {
         return weight;
     }
 
+    public boolean accessible(State state) {
+        return state.getKV("Inventory." + getName() + "Accessible").boolValue();
+    }
+
     public int count(Item item) {
         return count(item.getName());
     }
@@ -84,7 +88,7 @@ public class Inventory extends CharacterSet {
         // whole bunch of access checks to do
         State state=new State(character);
         // Is the inventory accessible
-        if (checkAccessible && !state.getKV("Inventory." + getName() + "Accessible").boolValue()) {
+        if (checkAccessible && !accessible(state)) {
             throw new UserInventoryException("Inventory "+getName()+" is not accessible from your current location");
         }
         // Is the item allowed in the inventory
