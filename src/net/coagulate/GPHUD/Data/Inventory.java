@@ -28,8 +28,8 @@ public class Inventory extends CharacterSet {
         }
     }
 
-    public static final Set<Attribute> getAll(@Nonnull final State state) { return getAll(state.getInstance()); }
-    public static final Set<Attribute> getAll(@Nonnull final Instance instance) {
+    public static Set<Attribute> getAll(@Nonnull final State state) { return getAll(state.getInstance()); }
+    public static Set<Attribute> getAll(@Nonnull final Instance instance) {
         Set<Attribute> attributes=Attribute.getAttributes(instance);
         Set<Attribute> sets=new HashSet<>();
         for (Attribute attribute:attributes) {
@@ -84,7 +84,7 @@ public class Inventory extends CharacterSet {
         // whole bunch of access checks to do
         State state=new State(character);
         // Is the inventory accessible
-        if (checkAccessible && state.getKV("Inventory."+getName()+"Accessible").boolValue()==false) {
+        if (checkAccessible && !state.getKV("Inventory." + getName() + "Accessible").boolValue()) {
             throw new UserInventoryException("Inventory "+getName()+" is not accessible from your current location");
         }
         // Is the item allowed in the inventory
