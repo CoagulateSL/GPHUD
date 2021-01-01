@@ -17,6 +17,7 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
@@ -704,12 +705,29 @@ public class Char extends TableRow {
 	 */
 	public void push(@Nonnull final String key,
 	                 @Nonnull final String value) {
-		final String url=getURL();
-		if (url==null) { return; }
 		final JSONObject j=new JSONObject();
 		j.put(key,value);
-		final Transmission t=new Transmission(this,j);
+		push(j);
+	}
+
+	/**
+	 * Transmits a JSON object to the characters hud.
+	 *
+	 * @param json JSON Object to push
+	 */
+	public void push(@Nonnull final JSONObject json) {
+		final String url=getURL();
+		if (url==null) { return; }
+		final Transmission t=new Transmission(this,json);
 		t.start();
+	}
+
+	/** Transmits a JSONResponse to a characters HUD
+	 *
+	 * @param json JSON Response to push
+	 */
+	public void push(@Nonnull final JSONResponse json) {
+		push(json.asJSON(new State(this)));
 	}
 
 	/**
