@@ -1,11 +1,16 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ItemVerb extends TableRow {
     @Nonnull
@@ -76,4 +81,35 @@ public class ItemVerb extends TableRow {
     public JSONObject payload() { return new JSONObject(getString("payload")); }
     public void payload(JSONObject newDescription) { set("payload",newDescription.toString()); }
 
+    @Nullable
+    public static ItemVerb findNullable(@Nonnull final Item item,@Nonnull final String verb) {
+        for (ResultsRow row:db().dq("select * from itemverbs where itemid=? and verb=?",item.getId(),verb)) {
+            return get(row.getInt("id"));
+        }
+        return null;
+    }
+
+    @Nonnull
+    public static ItemVerb find(@Nonnull final Item item,@Nonnull final String verb) {
+        ItemVerb ret=findNullable(item,verb);
+        if (ret==null) { throw new UserInputLookupFailureException("Item "+item.getName()+" has no action "+verb); }
+        return ret;
+    }
+
+    @Nonnull
+    public static ItemVerb create(@Nonnull final Item item,@Nonnull final String verb) {
+        ItemVerb ret=findNullable(item,verb);
+        if (ret!=null) { throw new UserInputDuplicateValueException("Item "+item.getName()+" already has an action named "+verb); }
+        db().d("insert into itemverbs(itemid,verb) values(?,?)",item.getId(),verb);
+        return find(item,verb);
+    }
+
+    @Nonnull
+    public static Set<ItemVerb> findAll(@Nonnull final Item item) {
+        Set<ItemVerb> set=new TreeSet<>();
+        for (ResultsRow row:db().dq("select id from itemverbs where itemid=?",item.getId())) {
+            set.add(get(row.getInt("id")));
+        }
+        return set;
+    }
 }
