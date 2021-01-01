@@ -1,10 +1,9 @@
 package net.coagulate.GPHUD.Modules.Inventory;
 
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Inventory;
-import net.coagulate.GPHUD.Data.Item;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
@@ -25,21 +24,23 @@ public class Interactions {
                                     @Argument.Arguments(type = Argument.ArgumentType.INVENTORY,
                                                         description = "Inventory to interact with",
                                                         name = "inventory") @Nonnull final Attribute inventory) {
-        Inventory inv=new Inventory(state.getCharacter(),inventory);
-        if (!inv.accessible(state)) { return new ErrorResponse("Inventory "+inventory.getName()+" is not accessible from this location!"); }
-        JSONObject json=new JSONObject();
-        json.put("inventory",inventory.getName());
-        json.put("arg0name","item");
-        json.put("arg0description","Pick an item to interact with");
-        json.put("arg0type","SELECT");
-        int button=0;
-        for (String item:inv.elements().keySet()) {
-            json.put("arg0button"+button,item);
+        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        if (!inv.accessible(state)) {
+            return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
+        }
+        JSONObject json = new JSONObject();
+        json.put("inventory", inventory.getName());
+        json.put("arg0name", "item");
+        json.put("arg0description", "Pick an item to interact with");
+        json.put("arg0type", "SELECT");
+        int button = 0;
+        for (String item : inv.elements().keySet()) {
+            json.put("arg0button" + button, item);
             button++;
         }
-        json.put("args",1);
-        json.put("invoke","Inventory.InteractItem");
-        json.put("incommand","runtemplate");
+        json.put("args", 1);
+        json.put("invoke", "Inventory.InteractItem");
+        json.put("incommand", "runtemplate");
         return new JSONResponse(json);
     }
 
@@ -51,24 +52,26 @@ public class Interactions {
                       permitUserWeb = false)
     public static Response interactItem(@Nonnull final State state,
                                         @Argument.Arguments(type = Argument.ArgumentType.INVENTORY,
-                                                        description = "Inventory to interact with",
-                                                        name = "inventory") @Nonnull final Attribute inventory,
-                                        @Argument.Arguments(name="item",
+                                                            description = "Inventory to interact with",
+                                                            name = "inventory") @Nonnull final Attribute inventory,
+                                        @Argument.Arguments(name = "item",
                                                             description = "Item to interact with",
                                                             type = Argument.ArgumentType.ITEM) @Nonnull final Item item) {
-        Inventory inv=new Inventory(state.getCharacter(),inventory);
-        if (!inv.accessible(state)) { return new ErrorResponse("Inventory "+inventory.getName()+" is not accessible from this location!"); }
-        int count=inv.count(item);
-        if (count<1) {
-            return new ErrorResponse("Your inventory "+inventory.getName()+" does not contain any "+item.getName());
+        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        if (!inv.accessible(state)) {
+            return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
         }
-        JSONObject json=new JSONObject();
-        json.put("inventory",inventory.getName());
-        json.put("item",item.getName());
-        json.put("arg0name","verb");
-        json.put("arg0description","Pick an action\n"+item.getName()+"\n(Qty: "+count+")");
-        json.put("arg0type","SELECT");
-        int button=0;
+        int count = inv.count(item);
+        if (count < 1) {
+            return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
+        }
+        JSONObject json = new JSONObject();
+        json.put("inventory", inventory.getName());
+        json.put("item", item.getName());
+        json.put("arg0name", "verb");
+        json.put("arg0description", "Pick an action\n" + item.getName() + "\n(Qty: " + count + ")");
+        json.put("arg0type", "SELECT");
+        int button = 0;
         if (item.destroyable()) {
             json.put("arg0button" + button, "Destroy");
             button++;
@@ -82,9 +85,9 @@ public class Interactions {
             json.put("arg0button"+button,item2);
             button++;
         }*/
-        json.put("args",1);
-        json.put("invoke","Inventory.InteractItemVerb");
-        json.put("incommand","runtemplate");
+        json.put("args", 1);
+        json.put("invoke", "Inventory.InteractItemVerb");
+        json.put("incommand", "runtemplate");
         return new JSONResponse(json);
     }
 
@@ -99,13 +102,13 @@ public class Interactions {
                                             @Argument.Arguments(type = Argument.ArgumentType.INVENTORY,
                                                                 description = "Inventory to interact with",
                                                                 name = "inventory") @Nonnull final Attribute inventory,
-                                            @Argument.Arguments(name="item",
+                                            @Argument.Arguments(name = "item",
                                                                 description = "Item to interact with",
                                                                 type = Argument.ArgumentType.ITEM) @Nonnull final Item item,
-                                            @Argument.Arguments(name="verb",
+                                            @Argument.Arguments(name = "verb",
                                                                 description = "Interaction verb to use",
                                                                 type = Argument.ArgumentType.TEXT_ONELINE,
-                                                                max=64) @Nonnull final String verb) {
+                                                                max = 64) @Nonnull final String verb) {
         Inventory inv = new Inventory(state.getCharacter(), inventory);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
@@ -115,20 +118,119 @@ public class Interactions {
             return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
         }
         JSONObject json = new JSONObject();
-        json.put("incommand","runtemplate");
-        json.put("inventory",inventory.getName());
-        json.put("item",item.getName());
+        json.put("incommand", "runtemplate");
+        json.put("inventory", inventory.getName());
+        json.put("item", item.getName());
         if (verb.equalsIgnoreCase("Destroy")) {
-            json.put("invoke","Inventory.DestroyItem");
-            json.put("arg0name","quantity");
-            json.put("arg0description","Ammount of "+item.getName()+" to destroy from "+inventory.getName()+"\n(You have "+count+")\nUse -1 to destroy ALL");
-            json.put("arg0type","TEXTBOX");
-            json.put("args",1);
+            json.put("invoke", "Inventory.DestroyItem");
+            json.put("arg0name", "quantity");
+            json.put("arg0description", "Ammount of " + item.getName() + " to destroy from " + inventory.getName() + "\n(You have " + count + ")\nUse -1 to destroy ALL");
+            json.put("arg0type", "TEXTBOX");
+            json.put("args", 1);
             return new JSONResponse(json);
         }
         if (verb.equalsIgnoreCase("Give To")) {
-
+            json.put("invoke", "Inventory.GiveItem");
+            json.put("arg0name", "target");
+            json.put("arg0description", "Who to give to?");
+            json.put("arg0type", "SENSOR");
+            //json.put("arg0manual","fortesting");
+            json.put("arg1name", "quantity");
+            json.put("arg1description", "Ammount of " + item.getName() + " to give from " + inventory.getName() + "\n(You have " + count + ")\nUse -1 to GIVE ALL");
+            json.put("arg1type", "TEXTBOX");
+            json.put("args", 2);
+            return new JSONResponse(json);
         }
-        return new ErrorResponse("Unknown interaction '"+verb+"' on item "+item.getName());
+        return new ErrorResponse("Unknown interaction '" + verb + "' on item " + item.getName());
+    }
+
+    @Command.Commands(description = "Destroys an item from an inventory",
+                      permitScripting = false,
+                      permitExternal = false,
+                      context = Command.Context.CHARACTER,
+                      permitObject = false,
+                      permitUserWeb = false,
+                      notes = "This is called by Inventory.InteractItem usually, you would start most user interactions from Inventory.Interact command")
+    public static Response destroyItem(@Nonnull final State state,
+                                       @Argument.Arguments(type = Argument.ArgumentType.INVENTORY,
+                                                           description = "Inventory to interact with",
+                                                           name = "inventory") @Nonnull final Attribute inventory,
+                                       @Argument.Arguments(name = "item",
+                                                           description = "Item to interact with",
+                                                           type = Argument.ArgumentType.ITEM) @Nonnull final Item item,
+                                       @Argument.Arguments(name="quantity",
+                                                           type = Argument.ArgumentType.INTEGER,
+                                                           description = "Number to destroy from inventory, -1 means ALL") int quantity) {
+        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        if (!inv.accessible(state)) {
+            return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
+        }
+        int count = inv.count(item);
+        if (quantity==-1) { quantity=count; }
+        if (quantity<1) { return new ErrorResponse("You must destroy at least one item to do anything"); }
+        if (count < 1) {
+            return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
+        }
+        if (quantity>count) {
+            return new ErrorResponse("You can not destroy "+quantity+" x "+item.getName()+" from "+inventory.getName()+" because it only contains "+count);
+        }
+        try {
+            int newAmount=inv.add(item,-quantity,true);
+            Audit.audit(false,state, Audit.OPERATOR.CHARACTER,null,null,"Destroy",item.getName(),""+count,""+newAmount,"Destroyed "+quantity+" "+item.getName()+" from "+inventory.getName());
+            return new OKResponse("Destroyed "+quantity+" x "+item.getName()+" from "+inventory.getName()+", "+newAmount+" remain in this inventory");
+        }
+        catch (UserInventoryException e) { return new ErrorResponse(e.getLocalizedMessage()); }
+    }
+
+    @Command.Commands(description = "Gives an item from an inventory",
+                      permitScripting = false,
+                      permitExternal = false,
+                      context = Command.Context.CHARACTER,
+                      permitObject = false,
+                      permitUserWeb = false,
+                      notes = "This is called by Inventory.InteractItem usually, you would start most user interactions from Inventory.Interact command")
+    public static Response giveItem(@Nonnull final State state,
+                                    @Argument.Arguments(type = Argument.ArgumentType.INVENTORY,
+                                                           description = "Inventory to interact with",
+                                                           name = "inventory") @Nonnull final Attribute inventory,
+                                    @Argument.Arguments(name = "item",
+                                                           description = "Item to interact with",
+                                                           type = Argument.ArgumentType.ITEM) @Nonnull final Item item,
+                                    @Argument.Arguments(name="target",
+                                                           description="Target to give items to",
+                                                           type= Argument.ArgumentType.CHARACTER_NEAR) @Nonnull final Char target,
+                                    @Argument.Arguments(name="quantity",
+                                                           type = Argument.ArgumentType.INTEGER,
+                                                           description = "Number to give from inventory, -1 means ALL") int quantity) {
+        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        Inventory targetInv = new Inventory(target,inventory);
+        if (!inv.accessible(state)) {
+            return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
+        }
+        int count = inv.count(item);
+        if (quantity==-1) { quantity=count; }
+        if (quantity<1) { return new ErrorResponse("You must give at least one item to do anything"); }
+        if (state.getCharacter()==target) {
+            // give to self is a bad idea since it makes the audit logs report stupid incorrect counts
+            return new ErrorResponse("You may not give items to yourself, silly!");
+        }
+        if (count < 1) {
+            return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
+        }
+        if (quantity>count) {
+            return new ErrorResponse("You can not give "+quantity+" x "+item.getName()+" from "+inventory.getName()+" because it only contains "+count);
+        }
+        try {
+            int targetOldAmount=targetInv.count(item);
+            int targetNewAmount=targetInv.add(item,quantity,true);
+            int newAmount=inv.add(item,-quantity,true);
+            Audit.audit(false,state,null,target, state.getAvatar(),state.getCharacter(),"Recieve",item.getName(),""+targetOldAmount,""+targetNewAmount,"Received "+quantity+" "+item.getName()+" from "+state.getCharacter().getName()+"'s "+inventory.getName()+", we had "+targetOldAmount+" and now have "+targetNewAmount);
+            Audit.audit(false,state, Audit.OPERATOR.CHARACTER,null,target,"Give",item.getName(),""+count,""+newAmount,"Gave "+quantity+" "+item.getName()+" from "+inventory.getName()+" to "+target.getName());
+            JSONResponse push=new JSONResponse(new JSONObject());
+            push.message("You received "+quantity+" x "+item.getName()+" from "+state.getCharacter().getName()+" to "+inventory.getName(),target.getProtocol());
+            target.push(push);
+            return new OKResponse("Gave "+quantity+" x "+item.getName()+" from "+inventory.getName()+" to "+target.getName()+", "+newAmount+" remain in this inventory");
+        }
+        catch (UserInventoryException e) { return new ErrorResponse(e.getLocalizedMessage()); }
     }
 }
