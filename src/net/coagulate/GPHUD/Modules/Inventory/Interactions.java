@@ -165,6 +165,9 @@ public class Interactions {
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
         }
+        if (!item.destroyable()) {
+            return new ErrorResponse("Item "+item.getName()+" can not be destroyed!");
+        }
         int count = inv.count(item);
         if (quantity==-1) { quantity=count; }
         if (quantity<1) { return new ErrorResponse("You must destroy at least one item to do anything"); }
@@ -206,6 +209,9 @@ public class Interactions {
         Inventory targetInv = new Inventory(target,inventory);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
+        }
+        if (!item.tradable()) {
+            return new ErrorResponse("Item "+item.getName()+" can not be traded!");
         }
         int count = inv.count(item);
         if (quantity==-1) { quantity=count; }
