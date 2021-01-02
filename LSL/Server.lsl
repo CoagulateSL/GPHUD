@@ -64,6 +64,12 @@ integer process(key id) {
 	if (jsonget("instantmessage")!="") {
 		llMessageLinked(LINK_THIS,LINK_INSTANT_MESSAGE_SEND,jsonget("instantmessagemessage"),jsonget("instantmessage"));
 	}
+	if (jsonget("terminate")!="") {
+		gphud_hang("=== TERMINATED ===: "+jsonget("terminate"));
+	}			
+	if (command=="shutdown" || jsonget("shutdown")!="") {
+		gphud_hang("Shutdown requested: "+jsonget("shutdown"));
+	}		
 	json="{}"; // clear the response :P
 	return TRUE;
 }
