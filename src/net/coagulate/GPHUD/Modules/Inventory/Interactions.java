@@ -80,11 +80,21 @@ public class Interactions {
             json.put("arg0button" + button, "Give To");
             button++;
         }
-        //Verbs
-        /*for (String item2:inv.elements().keySet()) {
-            json.put("arg0button"+button,item2);
+        int accessible=0;
+        for (Attribute checking:Inventory.getAll(state)) {
+            Inventory checkInventory=new Inventory(state.getCharacter(),checking);
+            if (checkInventory.accessible(state) && checkInventory.allows(state,item)) {
+                accessible++;
+            }
+        }
+        if (accessible>1) {
+            json.put("arg0button"+button,"Move To");
             button++;
-        }*/
+        }
+        for (ItemVerb verb:ItemVerb.findAll(item)) {
+            json.put("arg0button"+button,verb.getName());
+            button++;
+        }
         json.put("args", 1);
         json.put("invoke", "Inventory.InteractItemVerb");
         json.put("incommand", "runtemplate");
@@ -137,6 +147,30 @@ public class Interactions {
             //json.put("arg0manual","fortesting");
             json.put("arg1name", "quantity");
             json.put("arg1description", "Ammount of " + item.getName() + " to give from " + inventory.getName() + "\n(You have " + count + ")\nUse -1 to GIVE ALL");
+            json.put("arg1type", "TEXTBOX");
+            json.put("args", 2);
+            return new JSONResponse(json);
+        }
+        if (verb.equalsIgnoreCase("Move To")) {
+            json.put("invoke", "Inventory.MoveItem");
+            json.put("arg0name", "target");
+            json.put("arg0description", "Inventory to move to?");
+            json.put("arg0type", "SELECT");
+            int accessible=0;
+            for (Attribute checking:Inventory.getAll(state)) {
+                if (checking.getId()!=inventory.getId()) {
+                    Inventory checkInventory = new Inventory(state.getCharacter(), checking);
+                    if (checkInventory.accessible(state)) {
+                        if (checkInventory.allows(state, item)) {
+                            json.put("arg0button" + accessible, checking.getName());
+                            accessible++;
+                        }
+                    }
+                }
+            }
+            //json.put("arg0manual","fortesting");
+            json.put("arg1name", "quantity");
+            json.put("arg1description", "Ammount of " + item.getName() + " to move from " + inventory.getName() + "\n(You have " + count + ")\nUse -1 to MOVE ALL");
             json.put("arg1type", "TEXTBOX");
             json.put("args", 2);
             return new JSONResponse(json);
@@ -236,6 +270,56 @@ public class Interactions {
             push.message("You received "+quantity+" x "+item.getName()+" from "+state.getCharacter().getName()+" to "+inventory.getName(),target.getProtocol());
             target.push(push);
             return new OKResponse("Gave "+quantity+" x "+item.getName()+" from "+inventory.getName()+" to "+target.getName()+", "+newAmount+" remain in this inventory");
+        }
+        catch (UserInventoryException e) { return new ErrorResponse(e.getLocalizedMessage()); }
+    }
+    @Command.Commands(description = "Move an item from one inventory to another",
+                      permitScripting = false,
+                      permitExternal = false,
+                      context = Command.Context.CHARACTER,
+                      permitObject = false,
+                      permitUserWeb = false,
+                      notes = "This is called by Inventory.InteractItem usually, you would start most user interactions from Inventory.Interact command")
+    public static Response moveItem(@Nonnull final State state,
+                                    @Argument.Arguments(type = Argument.ArgumentType.INVENTORY,
+                                                        description = "Inventory to move from",
+                                                        name = "inventory") @Nonnull final Attribute inventory,
+                                    @Argument.Arguments(name = "item",
+                                                        description = "Item to move",
+                                                        type = Argument.ArgumentType.ITEM) @Nonnull final Item item,
+                                    @Argument.Arguments(name="target",
+                                                        description="Target inventory to move items to",
+                                                        type= Argument.ArgumentType.INVENTORY) @Nonnull final Attribute target,
+                                    @Argument.Arguments(name="quantity",
+                                                        type = Argument.ArgumentType.INTEGER,
+                                                        description = "Number to move from inventory, -1 means ALL") int quantity) {
+        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        Inventory targetInv = new Inventory(state.getCharacter(),target);
+        if (!inv.accessible(state)) {
+            return new ErrorResponse("Inventory " + inv.getName() + " is not accessible from this location!");
+        }
+        if (!targetInv.accessible(state)) {
+            return new ErrorResponse("Inventory " + targetInv.getName() + " is not accessible from this location!");
+        }
+        int count = inv.count(item);
+        if (quantity==-1) { quantity=count; }
+        if (quantity<1) { return new ErrorResponse("You must move at least one item to do anything"); }
+        if (count < 1) {
+            return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
+        }
+        if (quantity>count) {
+            return new ErrorResponse("You can not move "+quantity+" x "+item.getName()+" from "+inventory.getName()+" because it only contains "+count);
+        }
+        if (!targetInv.allows(state,item)) {
+            return new ErrorResponse("You can not move "+item.getName()+" to "+targetInv.getName()+" because it can not contain this item");
+        }
+        try {
+            int targetOldAmount=targetInv.count(item);
+            int targetNewAmount=targetInv.add(item,quantity,true);
+            int newAmount=inv.add(item,-quantity,false);
+            Audit.audit(false,state, Audit.OPERATOR.CHARACTER,null,null,"Move",item.getName(),""+targetOldAmount,""+targetNewAmount,"Moved "+quantity+" "+item.getName()+" from "+inv.getName()+" to "+targetInv.getName());
+            JSONResponse push=new JSONResponse(new JSONObject());
+            return new OKResponse("Moved "+quantity+" x "+item.getName()+" from "+inv.getName()+" to "+targetInv.getName()+", "+newAmount+" remain in this inventory and "+targetNewAmount+" in the target inventory");
         }
         catch (UserInventoryException e) { return new ErrorResponse(e.getLocalizedMessage()); }
     }
