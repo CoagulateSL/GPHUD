@@ -39,6 +39,12 @@ public class Inventory extends CharacterSet {
         }
         return sets;
     }
+    public boolean allows(@Nonnull State st,@Nonnull Item item) {
+        for (ResultsRow row:db().dq("select permitted from iteminventories where itemid=? and inventoryid=?",item.getId(),set.getId())) {
+            return row.getBool();
+        }
+        return st.getKV("Inventory."+set.getName()+"DefaultAllow").boolValue();
+    }
     public static boolean allows(@Nonnull State st,@Nonnull Attribute inventory,@Nonnull Item item) {
         for (ResultsRow row:db().dq("select permitted from iteminventories where itemid=? and inventoryid=?",item.getId(),inventory.getId())) {
             return row.getBool();
