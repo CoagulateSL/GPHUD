@@ -72,7 +72,7 @@ public class ItemVerb extends TableRow {
     }
     protected ItemVerb(final int id) { super(id); }
 
-    public Instance getInstance() { return Instance.get(getInt("instanceid")); }
+    public Instance getInstance() { return getItem().getInstance(); }
 
     public String description() { return getString("description"); }
     public void description(String newDescription) { set("description",newDescription); }
@@ -111,5 +111,9 @@ public class ItemVerb extends TableRow {
             set.add(get(row.getInt("id")));
         }
         return set;
+    }
+
+    public Item getItem() {
+        return Item.get(getInt("itemid"));
     }
 }
