@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Items.VerbActor;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -175,7 +176,9 @@ public class Interactions {
             json.put("args", 2);
             return new JSONResponse(json);
         }
-        return new ErrorResponse("Unknown interaction '" + verb + "' on item " + item.getName());
+        ItemVerb itemVerb=ItemVerb.findNullable(item,verb);
+        if (itemVerb==null) { return new ErrorResponse("Unknown interaction '" + verb + "' on item " + item.getName()); }
+        return VerbActor.act(state,inventory,item,itemVerb);
     }
 
     @Command.Commands(description = "Destroys an item from an inventory",
