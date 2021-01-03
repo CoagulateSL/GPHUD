@@ -144,4 +144,10 @@ public class Table implements Renderable {
 		if (openrow==null) { openRow(); }
 		openrow.setbgcolor(bgcolor);
 	}
+
+    public Table openRow(String rowID) {
+		openRow();
+		openrow.id(rowID);
+		return this;
+    }
 }

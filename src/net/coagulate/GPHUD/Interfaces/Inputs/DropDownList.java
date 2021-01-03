@@ -107,7 +107,9 @@ public class DropDownList extends Input {
 	                     final boolean rich) {
 		final StringBuilder r=new StringBuilder();
 		r.append("<select name=\"").append(name).append("\"");
-		if (submitonchange) { r.append("onchange=\"this.form.submit()\""); }
+		if (submitonchange) { r.append("onchange=\"this.form.submit()\" "); }
+		if (!onchange.isBlank()) { r.append("onchange=\""+onchange+"\" "); }
+		if (!id.isBlank()) { r.append("id=\""+id+"\" "); }
 		r.append(">");
 		for (final Map.Entry<String,String> entry: choices.entrySet()) {
 			final String option=entry.getKey();
@@ -135,4 +137,11 @@ public class DropDownList extends Input {
 		submitonchange=true;
 		return this;
 	}
+	String onchange="";
+	@Nonnull public DropDownList javascriptOnChange(@Nonnull final String javascript) {
+		onchange=javascript;
+		return this;
+	}
+	String id="";
+	@Nonnull public DropDownList id(String newid) { this.id=newid; return this; }
 }

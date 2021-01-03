@@ -65,6 +65,7 @@ public class Row implements Renderable {
 	}
 	public String asHtml(State st, boolean rich, int rownum) {
 		final StringBuilder s=new StringBuilder("<tr");
+		if (!id.isBlank()) { s.append(" id=\""+id+"\" "); }
 		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
 		else { s.append(" bgcolor=#").append((rownum % 2)==1?"f0f0f0":"ffffff"); }
 		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }
@@ -101,5 +102,8 @@ public class Row implements Renderable {
 	public void align(final String alignment) {
 		this.alignment=alignment;
 	}
-
+	private String id="";
+    public void id(String rowID) {
+    	this.id=rowID;
+    }
 }

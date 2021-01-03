@@ -1,10 +1,10 @@
 package net.coagulate.GPHUD.Modules.Items;
 
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.Inventory;
-import net.coagulate.GPHUD.Data.Item;
+import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.Interfaces.Inputs.Button;
+import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -136,6 +136,30 @@ public class ItemsConfig {
                                 "allowed",allowed?"":"true"));
             }
         }
+        f.add(new Separator());
+        f.add(new TextSubHeader("Available Actions"));
+        if (!values.get("newaction").isBlank()) {
+            String newAction=values.get("newaction");
+            if (newAction.equalsIgnoreCase("Give To") ||
+                newAction.equalsIgnoreCase("Destroy") ||
+                newAction.equalsIgnoreCase("Move To")) {
+                f.add(new TextError("Can not create new action "+newAction+", this verb is reserved"));
+            } else {
+                try { ItemVerb.create(item,newAction); }
+                catch (UserException e) { f.add(new TextError(e.getLocalizedMessage())); }
+            }
+        }
+        Table verbs=new Table();
+        f.add(verbs);
+        for (ItemVerb verb:ItemVerb.findAll(item)) {
+            verbs.openRow();
+            verbs.add(new Link(verb.getName(),"/GPHUD/configuration/items/verbs/"+verb.getId()));
+            verbs.add(verb.description());
+            verbs.add(VerbActor.decode(verb));
+        }
+        Form newAction=new Form();
+        newAction.add(new TextInput("newaction")).add(new Button("Create"));
+        f.add(newAction);
         f.add(new Separator());
     }
 
