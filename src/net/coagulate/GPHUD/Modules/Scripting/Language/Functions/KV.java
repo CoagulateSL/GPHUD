@@ -80,8 +80,9 @@ public class KV {
 			if (!kv.appliesTo(character.getContent())) {
 				throw new GSInvalidFunctionCall("KV " + kv.fullName() + " of scope " + kv.scope() + " does not apply to characters");
 			}
-			final String oldValue=altState.getRawKV(character.getContent(),kvName);
-			if (oldValue!=null  && (!oldValue.equals(kvValue))) {
+			String oldValue=altState.getRawKV(character.getContent(),kvName);
+			if (oldValue==null) { oldValue=""; }
+			if (!oldValue.equals(kvValue)) {
 				altState.setKV(character.getContent(), kvName, kvValue, false);
 				Audit.audit(state, Audit.OPERATOR.CHARACTER, null, character.getContent(), "SetCharKV", character.getContent().getName() + "/" + kvName, oldValue, kvValue, "Changed character scope KV configuration (Scripted)");
 			}
