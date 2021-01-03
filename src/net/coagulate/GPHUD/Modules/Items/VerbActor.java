@@ -4,6 +4,7 @@ import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -41,6 +42,9 @@ public class VerbActor {
         }
         if (action.equalsIgnoreCase("script")) {
             GSVM vm=new GSVM(Script.find(state,payload.optString("script","")).getByteCode());
+            vm.introduce("ITEMNAME",new BCString(null,item.getName()));
+            vm.introduce("ITEMVERB",new BCString(null,itemVerb.getName()));
+            vm.introduce("INVENTORY",new BCString(null,inventory.getName()));
             return vm.execute(state);
         }
         return new OKResponse(itemVerb.getName()+" performed on "+item.getName());
