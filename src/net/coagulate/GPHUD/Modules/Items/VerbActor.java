@@ -1,18 +1,27 @@
 package net.coagulate.GPHUD.Modules.Items;
 
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Inventory;
-import net.coagulate.GPHUD.Data.Item;
-import net.coagulate.GPHUD.Data.ItemVerb;
-import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
+import net.coagulate.GPHUD.Data.*;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 
 public class VerbActor {
     public static String decode(ItemVerb verb) {
-        return "NOT IMPLEMENTED";
+        String response="";
+        JSONObject payload=verb.payload();
+        if (payload.has("consumesitem")) { response+="[Consumes Item] "; }
+        if (payload.optString("action").equalsIgnoreCase("script")) {
+            response+="[Script:"+payload.optString("script","")+"] ";
+        }
+        if (payload.optString("action").equalsIgnoreCase("payload")) {
+            response+="[Command:"+payload.optString("command","")+"] ";
+        }
+        return response;
     }
 
     public static Response act(@Nonnull final State state,
@@ -20,6 +29,20 @@ public class VerbActor {
                                @Nonnull final Item item,
                                @Nonnull final ItemVerb itemVerb) {
         Inventory inventory=new Inventory(state.getCharacter(),attribute);
-        return new ErrorResponse("NOT IMPLEMENTED");
+        JSONObject payload=itemVerb.payload();
+        int valueBefore=inventory.count(item);
+        int valueAfter;
+        if (payload.has("consumesitem")) { valueAfter=inventory.add(item,-1,false); }
+        else { valueAfter=valueBefore; }
+        Audit.audit(state, Audit.OPERATOR.CHARACTER,null,null,"Use:"+itemVerb.getName(),item.getName(),""+valueBefore,""+valueAfter,"Character uses item from "+inventory.getName());
+        String action=payload.optString("action","");
+        if (action.equalsIgnoreCase("command")) {
+            return Modules.getJSONTemplateResponse(state,payload.optString("command",""));
+        }
+        if (action.equalsIgnoreCase("script")) {
+            GSVM vm=new GSVM(Script.find(state,payload.optString("script","")).getByteCode());
+            return vm.execute(state);
+        }
+        return new OKResponse(itemVerb.getName()+" performed on "+item.getName());
     }
 }

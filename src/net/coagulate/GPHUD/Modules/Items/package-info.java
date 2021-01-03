@@ -7,9 +7,11 @@
                         description = "Permission to add or edit item definitions",
                         power = LOW)
 @Permission.Permissions(name = "editinventories",
-                        description = "Permission to changes what inventories an item is allowed in",
+                        description = "Permission to change what inventories an item is allowed in",
                         power = LOW)
-
+@Permission.Permissions(name = "editverbs",
+                        description = "Permission to change what actions an item has",
+                        power = LOW)
 package net.coagulate.GPHUD.Modules.Items;
 
 import net.coagulate.GPHUD.Modules.Module;
