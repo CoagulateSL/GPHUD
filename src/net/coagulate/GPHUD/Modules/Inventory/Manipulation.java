@@ -84,7 +84,7 @@ public class Manipulation {
 
     @Nonnull
     @Command.Commands(context = Command.Context.AVATAR,
-                      description = "Set the number of an element in a set")
+                      description = "Set the number of an item in an inventory")
     public static Response set(@Nonnull final State st,
                                @Nonnull @Argument.Arguments(type = Argument.ArgumentType.CHARACTER,
                                                             description = "Character to modify",
