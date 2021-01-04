@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -66,6 +67,13 @@ public class Item extends TableRow {
 
     private static void create(@Nonnull final Instance instance,@Nonnull final String name) {
         db().d("insert into items(instanceid,name) values(?,?)",instance.getId(),name);
+    }
+
+    @Nonnull
+    public static Item find(State state, String itemName) {
+        Item item=findNullable(state.getInstance(),itemName);
+        if (item==null) { throw new UserInputLookupFailureException("Item '"+itemName+"' does not exist"); }
+        return item;
     }
 
     @Nonnull

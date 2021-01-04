@@ -52,7 +52,8 @@ public class GSFunctions {
 		RANDOMNESS,
 		ZONES,
 		CHARACTER,
-		SETS
+		SETS,
+		INVENTORY
 	}
 
 	/**
