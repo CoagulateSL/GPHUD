@@ -262,6 +262,30 @@ public abstract class Command {
 				case AVATAR_NEAR:
 					json.put("arg"+arg+"type","SENSOR");
 					break;
+				case INVENTORY:
+					json.put("arg"+arg+"type","SELECT");
+					button=0;
+					for (final Attribute inventory:Inventory.getAll(st)) {
+						json.put("arg"+arg+"button"+button,inventory.getName());
+						button++;
+					}
+					break;
+				case SET:
+					json.put("arg"+arg+"type","SELECT");
+					button=0;
+					for (final Attribute set:CharacterSet.getAll(st)) {
+						json.put("arg"+arg+"button"+button,set.getName());
+						button++;
+					}
+					break;
+				case ITEM:
+					json.put("arg"+arg+"type","SELECT");
+					button=0;
+					for (final Item item:Item.getAll(st)) {
+						json.put("arg"+arg+"button"+button,item.getName());
+						button++;
+					}
+					break;
 				default:
 					throw new SystemImplementationException("Unhandled ENUM TYPE in getJSONTemplate():"+argument.type());
 			}
