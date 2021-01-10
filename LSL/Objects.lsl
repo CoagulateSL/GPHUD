@@ -19,7 +19,7 @@
 #define CHECKIN_MINUTES 15
 string MODE="NONE";
 
-integer ODVERSION=6;
+integer ODVERSION=7;
 
 float maxTouchDistance=0.0;
 
@@ -88,7 +88,7 @@ integer process(key id) {
 	if (incommand=="reboot" || jsonget("reboot")!="") {
 		llOwnerSay("Rebooting at request from server: "+jsonget("reboot"));
 		//shutdown();
-		setup();
+		llResetScript();
 	}
 	
 	json=retjson;
