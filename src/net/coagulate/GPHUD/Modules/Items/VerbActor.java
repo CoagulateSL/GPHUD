@@ -19,7 +19,7 @@ public class VerbActor {
         if (payload.optString("action").equalsIgnoreCase("script")) {
             response+="[Script:"+payload.optString("script","")+"] ";
         }
-        if (payload.optString("action").equalsIgnoreCase("payload")) {
+        if (payload.optString("action").equalsIgnoreCase("command")) {
             response+="[Command:"+payload.optString("command","")+"] ";
         }
         return response;
