@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Items;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.*;
@@ -40,7 +41,7 @@ public class ItemsConfig {
 
     @URL.URLs(url="/configuration/items/edititem",
               requiresPermission="Items.Edit")
-    public static void addAttribute(@Nonnull final State st,
+    public static void editItem(@Nonnull final State st,
                                     @Nonnull final SafeMap values) {
         Modules.simpleHtml(st,"Items.Edit",values);
     }
@@ -119,6 +120,11 @@ public class ItemsConfig {
                     "weight",""+item.weight(),
                     "description",item.description()));
         }
+        if (st.hasPermission("Items.Delete")) {
+            f.add(new Form(st,true,"/GPHUD/configuration/items/deleteitem","Delete Item",
+                    "name",item.getName(),
+                    "okreturnurl","/GPHUD/configuration/items"));
+        }
         f.add(new Separator());
         f.add(new TextSubHeader("Allowed In Inventories"));
         Table inventories=new Table();
@@ -189,6 +195,33 @@ public class ItemsConfig {
                                                     type= Argument.ArgumentType.BOOLEAN) final Boolean allowed) {
         Inventory.allows(st,inventory,item,allowed);
         return new OKResponse("Item inventory allowed status updated");
+    }
+
+
+    @URL.URLs(url="/configuration/items/deleteitem",
+              requiresPermission="Items.Delete")
+    public static void addAttribute(@Nonnull final State st,
+                                    @Nonnull final SafeMap values) {
+        Modules.simpleHtml(st,"Items.Delete",values);
+    }
+
+    @Nonnull
+    @Command.Commands(description="Delete an item",
+                      context= Command.Context.AVATAR,
+                      requiresPermission="Items.Delete",
+                      permitObject=false,
+                      permitExternal = false,
+                      permitScripting = false)
+    public static Response delete(@Nonnull final State st,
+                                @Nonnull @Arguments(name="name",
+                                                    description="Item to delete",
+                                                    type= Argument.ArgumentType.ITEM,
+                                                    max=128) final Item name) {
+        if (name.getInstance()!=st.getInstance()) { throw new SystemImplementationException("Item instance / state instance mismatch"); }
+        String itemName=name.getName();
+        name.delete();
+        Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Delete","Item",itemName,null,"Deleted item "+itemName);
+        return new OKResponse("Item created/updated");
     }
 
 }

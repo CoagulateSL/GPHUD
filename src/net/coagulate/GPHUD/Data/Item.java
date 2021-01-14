@@ -148,4 +148,9 @@ public class Item extends TableRow {
     public boolean tradable() { return getBool("tradable"); }
     public void destroyable(boolean destroyable) { set("destroyable",destroyable); }
     public void tradable(boolean tradable) { set("tradable",tradable); }
+
+    public void delete() {
+        Inventory.deleteAll(getInstance(),getName());
+        d("delete from items where id=?",getId());
+    }
 }

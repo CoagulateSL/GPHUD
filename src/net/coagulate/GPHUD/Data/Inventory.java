@@ -39,6 +39,13 @@ public class Inventory extends CharacterSet {
         }
         return sets;
     }
+
+    public static void deleteAll(Instance instance,String itemName) {
+        for (Attribute attribute:getAll(instance)) {
+            db().d("delete from charactersets where attributeid=? and element=?",attribute.getId(),itemName);
+        }
+    }
+
     public boolean allows(@Nonnull State st,@Nonnull Item item) {
         for (ResultsRow row:db().dq("select permitted from iteminventories where itemid=? and inventoryid=?",item.getId(),set.getId())) {
             return row.getBool();

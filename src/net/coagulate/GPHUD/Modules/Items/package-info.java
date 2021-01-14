@@ -12,9 +12,14 @@
 @Permission.Permissions(name = "editverbs",
                         description = "Permission to change what actions an item has",
                         power = LOW)
+@Permission.Permissions(name="delete",
+                        description="Permission to permenantly delete items",
+                        power=MEDIUM)
+
 package net.coagulate.GPHUD.Modules.Items;
 
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Permission;
 
 import static net.coagulate.GPHUD.Modules.Permission.POWER.LOW;
+import static net.coagulate.GPHUD.Modules.Permission.POWER.MEDIUM;
