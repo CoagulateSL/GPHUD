@@ -116,4 +116,8 @@ public class ItemVerb extends TableRow {
     public Item getItem() {
         return Item.get(getInt("itemid"));
     }
+
+    public void delete() {
+        d("delete from itemverbs where id=?",getId());
+    }
 }

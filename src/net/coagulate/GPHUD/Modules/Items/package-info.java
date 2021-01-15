@@ -15,6 +15,9 @@
 @Permission.Permissions(name="delete",
                         description="Permission to permenantly delete items",
                         power=MEDIUM)
+@Permission.Permissions(name="deleteverb",
+                        description="Permission to delete an action",
+                        power=MEDIUM)
 
 package net.coagulate.GPHUD.Modules.Items;
 

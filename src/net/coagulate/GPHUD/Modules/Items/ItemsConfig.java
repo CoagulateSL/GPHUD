@@ -162,6 +162,7 @@ public class ItemsConfig {
             verbs.add(new Link(verb.getName(),"/GPHUD/configuration/items/verbs/"+verb.getId()));
             verbs.add(verb.description());
             verbs.add(VerbActor.decode(verb));
+            verbs.add(new Form(st,true,"/GPHUD/configuration/items/deleteverb","Delete","item",item.getName(),"verb",verb.getName()));
         }
         Form newAction=new Form();
         newAction.add(new TextInput("newaction")).add(new Button("Create"));
@@ -200,7 +201,7 @@ public class ItemsConfig {
 
     @URL.URLs(url="/configuration/items/deleteitem",
               requiresPermission="Items.Delete")
-    public static void addAttribute(@Nonnull final State st,
+    public static void deleteForm(@Nonnull final State st,
                                     @Nonnull final SafeMap values) {
         Modules.simpleHtml(st,"Items.Delete",values);
     }
@@ -221,7 +222,7 @@ public class ItemsConfig {
         String itemName=name.getName();
         name.delete();
         Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Delete","Item",itemName,null,"Deleted item "+itemName);
-        return new OKResponse("Item created/updated");
+        return new OKResponse("Item "+itemName+" deleted");
     }
 
 }

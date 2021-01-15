@@ -1,13 +1,21 @@
 package net.coagulate.GPHUD.Modules.Items;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Item;
 import net.coagulate.GPHUD.Data.ItemVerb;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.CheckBox;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.User.Form;
+import net.coagulate.GPHUD.Modules.Argument;
+import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
@@ -72,4 +80,37 @@ public class VerbEditor {
         ret.javascriptOnChange("update();");
         return ret;
     }
+
+
+    @URL.URLs(url="/configuration/items/deleteverb",
+              requiresPermission="Items.DeleteVerb")
+    public static void deleteForm(@Nonnull final State st,
+                                    @Nonnull final SafeMap values) {
+        Modules.simpleHtml(st,"Items.DeleteVerb",values);
+    }
+
+    @Nonnull
+    @Command.Commands(description="Delete an item action",
+                      context= Command.Context.AVATAR,
+                      requiresPermission="Items.DeleteVerb",
+                      permitObject=false,
+                      permitExternal = false,
+                      permitScripting = false)
+    public static Response deleteVerb(@Nonnull final State st,
+                                  @Nonnull @Argument.Arguments(name="item",
+                                                               description="Item to delete action from",
+                                                               type= Argument.ArgumentType.ITEM,
+                                                               max=128) final Item item,
+                                      @Nonnull @Argument.Arguments(name="verb",
+                                                                   description="Action to delete",
+                                                                   type= Argument.ArgumentType.TEXT_ONELINE,
+                                                                   max=128) final String verb) {
+        if (item.getInstance()!=st.getInstance()) { throw new SystemImplementationException("Item instance / state instance mismatch"); }
+        ItemVerb itemVerb=ItemVerb.findNullable(item,verb);
+        if (itemVerb==null) { return new ErrorResponse("There is no verb named '"+verb+"' for item "+item.getName()); }
+        itemVerb.delete();
+        Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Delete","Verb",verb,null,"Deleted action "+verb+" from item "+item.getName());
+        return new OKResponse("Item "+item.getName()+" action "+verb+" deleted");
+    }
+
 }
