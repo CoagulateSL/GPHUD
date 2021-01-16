@@ -19,7 +19,7 @@ import java.util.TreeMap;
  */
 public class MenuModule extends ModuleAnnotation {
 
-    public static final int MAXBUTTONS = 40;
+    public static final int MAX_BUTTONS = 40;
 
     public MenuModule(final String name,
                       final ModuleDefinition annotation) {
@@ -61,8 +61,8 @@ public class MenuModule extends ModuleAnnotation {
     @Nonnull
     @Override
     public Command getCommandNullable(@Nonnull final State st,
-                                      @Nonnull final String commandname) {
-        return new MenuCommand(st, commandname, Menu.getMenu(st, commandname).getJSON());
+                                      @Nonnull final String commandName) {
+        return new MenuCommand(st, commandName, Menu.getMenu(st, commandName).getJSON());
     }
 
     @Nonnull
