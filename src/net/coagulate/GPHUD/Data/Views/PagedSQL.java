@@ -114,8 +114,15 @@ public abstract class PagedSQL implements Renderable {
 		}
 		r.append("</tr>");
 		final Results results=runQuery();
+		boolean rowColor=false;
 		for (final ResultsRow row: results) {
-			r.append("<tr>");
+			if (rowColor) {
+				r.append("<tr bgcolor=\"#f0f0f0\">");
+				rowColor=false;
+			} else {
+				r.append("<tr>");
+				rowColor = true;
+			}
 			r.append(formatRow(st,row));
 			r.append("</tr>");
 		}
