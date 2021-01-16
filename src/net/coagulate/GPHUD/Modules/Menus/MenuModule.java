@@ -32,8 +32,21 @@ public class MenuModule extends ModuleAnnotation {
           description="The packaged form of this users main menu")
 public static String generateMainMenu(final State st,
                                       final String key) {
-	if (st.mainMenuTemplate ==null) {
-		st.mainMenuTemplate =Modules.getJSONTemplate(st,"menus.main").toString();
+	if (st.mainMenuTemplate == null) {
+		JSONObject menu=Modules.getJSONTemplate(st, "menus.main");
+		if (st.getCharacter().getProtocol()>=4) { // shortened format
+			int button=0;
+			StringBuilder newMainMenuTemplate=new StringBuilder();
+
+			while (menu.has("arg0button"+button)) {
+				if (!st.mainMenuTemplate.isBlank()) { newMainMenuTemplate.append("|"); }
+				newMainMenuTemplate.append(menu.getString("arg0button"+button));
+				button++;
+			}
+			st.mainMenuTemplate=newMainMenuTemplate.toString();
+		} else {
+			st.mainMenuTemplate = menu.toString();
+		}
 	}
 	return st.mainMenuTemplate;
 }
