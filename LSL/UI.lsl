@@ -160,7 +160,19 @@ process() {
 	}	
 	if (incommand=="registered") { /*cookie=jsontwoget("cookie");*/ }
 	if (jsontwoget("zoning")!="") { zoning=llParseStringKeepNulls(jsontwoget("zoning"),["|"],[]); calculateZone();}
-	if (jsontwoget("legacymenu")!="") { mainmenu=jsontwoget("legacymenu"); }
+	if (jsontwoget("legacymenu")!="") {
+		mainmenu="";
+		list mainmenuparts=llParseStringKeepNulls(jsontwoget("legacymenu"),["|"],[]);
+		integer n=0;
+		mainmenu=llJsonSetValue(mainmenu,["arg0description"],"Choice of menu item");
+		mainmenu=llJsonSetValue(mainmenu,["arg0type"],"SELECT");
+		mainmenu=llJsonSetValue(mainmenu,["invoke"],"Menus.Main");
+		mainmenu=llJsonSetValue(mainmenu,["args"],"1");
+		mainmenu=llJsonSetValue(mainmenu,["arg0name"],"choice");
+		for (n=0;n<llGetListLength(mainmenuparts);n++) {
+			mainmenu=llJsonSetValue(mainmenu,["arg0button"+((string)n)],llList2String(mainmenuparts,n));
+		}
+	}
 	if (jsontwoget("url")!="") { comms_url=jsontwoget("url"); }
 	if (jsontwoget("zone")!="" && jsontwoget("zonemessage")!="") {
 		if (jsontwoget("zone")==ourzone) { llOwnerSay(jsontwoget("zonemessage")); }

@@ -1,4 +1,4 @@
-#define COMMS_PROTOCOL "3"
+#define COMMS_PROTOCOL "4"
 //#define DEBUG
 #include "SLCore/LSL/SetDev.lsl"
 #define MESSAGE_IS_SAY TRUE
