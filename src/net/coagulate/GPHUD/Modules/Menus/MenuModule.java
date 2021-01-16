@@ -38,9 +38,12 @@ public class MenuModule extends ModuleAnnotation {
                 int button = 0;
                 StringBuilder newMainMenuTemplate = new StringBuilder();
 
+                boolean first = true;
                 while (menu.has("arg0button" + button)) {
-                    if (!st.mainMenuTemplate.isBlank()) {
+                    if (!first) {
                         newMainMenuTemplate.append("|");
+                    } else {
+                        first = false;
                     }
                     newMainMenuTemplate.append(menu.getString("arg0button" + button));
                     button++;
