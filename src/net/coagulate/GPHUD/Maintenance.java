@@ -20,7 +20,7 @@ import static java.util.logging.Level.*;
  */
 public class Maintenance extends Thread {
 
-	public static final int PINGHUDINTERVAL=5;
+	public static final int PINGHUDINTERVAL=15;
 	public static final int PINGSERVERINTERVAL=5;
 
 	// ---------- STATICS ----------
