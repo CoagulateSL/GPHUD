@@ -6,6 +6,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
@@ -14,21 +15,19 @@ import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import static java.util.logging.Level.SEVERE;
-import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 
 /**
  * @author Iain Price
  */
 public abstract class TableRow extends net.coagulate.Core.Database.TableRow implements Renderable, Comparable<TableRow> {
 	public static final int REFRESH_INTERVAL=60;
-	final Map<String,CacheElement> cache=new HashMap<>();
-	boolean validated;
+
+	protected boolean validated;
 
 	public TableRow(final int id) { super(id); }
 
@@ -37,7 +36,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 
 	// ---------- STATICS ----------
-	public static final DBConnection db() { return GPHUD.getDB(); }
+	public static DBConnection db() { return GPHUD.getDB(); }
 
 	/**
 	 * Returns a formatted view link.
@@ -69,7 +68,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * Specifically checks the ID matches one and only one row, as it should.
 	 * Only checks once, after which it shorts and returns ASAP. (sets a flag).
 	 */
-	public void validate() {
+	protected void validate() {
 		if (validated) { return; }
 		final int count=dqinn("select count(*) from "+getTableName()+" where "+getIdColumn()+"=?",getId());
 		if (count>1) {
@@ -97,6 +96,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getLinkTarget();
 
+	private static final Cache<String> nameCache=new Cache<>(60);
 	/**
 	 * Gets the name of this object, optionally using the cache.
 	 *
@@ -105,14 +105,9 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nonnull
 	public String getName() {
 		if (getNameField()==null) { throw new SystemConsistencyException("Getting name of something with a null getNameField()"); }
-		try { return (String) cacheGet("name"); } catch (@Nonnull final CacheMiss ex) {}
-		final String name=getStringNullable(getNameField());
-		if (name==null) { return "<null>"; }
-		if ("".equals(name)) { return "<blank>"; }
-		final int cachetime=getNameCacheTime();
-		if (cachetime==0) { return name; } // dont cache some things
-		return (String) cachePut("name",name,getNameCacheTime());
+		return nameCache.get(this,()->getStringNullable(getNameField()));
 	}
+	protected void clearNameCache() { nameCache.purge(this); }
 
 	/**
 	 * Highly protected version of getName() that never fails.
@@ -173,6 +168,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getKVIdField();
 
+	private static final Cache<Map<String,String>> kvCache=new Cache<>(60);
 	/**
 	 * Set a KV value for this object
 	 *
@@ -183,14 +179,14 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	public void setKV(final State st,
 	                  @Nonnull final String key,
 	                  @Nullable final String value) {
-		kvcheck();
-		String oldvalue=null;
+		kvCheck();
+		String oldValue=null;
 		try {
-			oldvalue=dqs("select v from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
+			oldValue=dqs("select v from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
 		}
-		catch (@Nonnull final NoDataException e) {}
-		if (value==null && oldvalue==null) { return; }
-		if (value!=null && value.equals(oldvalue)) { return; }
+		catch (@Nonnull final NoDataException ignored) {}
+		if (value==null && oldValue==null) { return; }
+		if (value!=null && value.equals(oldValue)) { return; }
 		Modules.validateKV(st,key);
 		if (value==null || value.isEmpty()) {
 			d("delete from "+getKVTable()+" where "+getKVIdField()+"=? and k like ?",getId(),key);
@@ -198,6 +194,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		else {
 			d("replace into "+getKVTable()+"("+getKVIdField()+",k,v) values(?,?,?)",getId(),key,value);
 		}
+		kvCache.purge(this);
 	}
 
 	/**
@@ -205,14 +202,15 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 *
 	 * @return A Map of String K to String V pairs.
 	 */
-	@Nonnull
-	public Map<String,String> loadKVs() {
-		kvcheck();
-		final Map<String,String> result=new TreeMap<>();
-		for (final ResultsRow row: dq("select k,v from "+getKVTable()+" where "+getKVIdField()+"=?",getId())) {
-			result.put(row.getString("k").toLowerCase(),row.getString("v"));
-		}
-		return result;
+	@Nonnull public Map<String,String> loadKVs() {
+		return kvCache.get(this,()->{
+			kvCheck();
+			final Map<String,String> result=new TreeMap<>();
+			for (final ResultsRow row: dq("select k,v from "+getKVTable()+" where "+getKVIdField()+"=?",getId())) {
+				result.put(row.getString("k").toLowerCase(),row.getString("v"));
+			}
+			return result;
+		});
 	}
 
 	/**
@@ -222,9 +220,6 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	@Override
 	public int compareTo(@Nonnull final TableRow t) {
-		/*if (!TableRow.class.isAssignableFrom(t.getClass())) {
-			throw new SystemImplementationException(t.getClass().getName() + " is not assignable from DBObject");
-		}*/
 		final String ours=getNameSafe();
 		final String theirs=t.getNameSafe();
 		return ours.compareTo(theirs);
@@ -237,14 +232,13 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 *
 	 * @param st            State
 	 * @param name          Name to look up
-	 * @param instancelocal in the state's instance or globally if false
+	 * @param instanceLocal in the state's instance or globally if false
 	 *
 	 * @return the ID number of the matching record, or zero if there is no match
 	 */
 	int resolveToID(@Nonnull final State st,
 	                @Nullable final String name,
-	                final boolean instancelocal) {
-		final boolean debug=false;
+	                final boolean instanceLocal) {
 		if (name==null) { return 0; }
 		if (name.isEmpty()) { return 0; }
 		try {
@@ -252,10 +246,10 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			final int id=Integer.parseInt(name);
 			if (id>0) { return id; }
 		}
-		catch (@Nonnull final NumberFormatException e) {} // not a number then :P
+		catch (@Nonnull final NumberFormatException ignored) {} // not a number then :P
 		try {
 			final int id;
-			if (instancelocal) {
+			if (instanceLocal) {
 				id=dqinn("select "+getIdColumn()+" from "+getTableName()+" where "+getNameField()+" like ? and instanceid=?",name,st.getInstance().getId());
 			}
 			else {
@@ -263,7 +257,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			}
 			if (id>0) { return id; }
 		}
-		catch (@Nonnull final NoDataException e) { }
+		catch (@Nonnull final NoDataException ignored) { }
 		catch (@Nonnull final TooMuchDataException e) {
 			GPHUD.getLogger().warning("Multiple matches searching for "+name+" in "+getClass());
 		}
@@ -273,71 +267,9 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	/**
 	 * Exception if any of the KV configuration is nulled
 	 */
-	void kvcheck() {
+	void kvCheck() {
 		if (getKVTable()==null || getKVIdField()==null) {
 			throw new SystemImplementationException("DBObject "+getClass().getName()+" does not support KV mappings");
 		}
-	}
-
-	/**
-	 * Get an object from the cache
-	 *
-	 * @param key Cache key
-	 *
-	 * @return Object from the cache
-	 *
-	 * @throws CacheMiss If there is no cached object by that key
-	 */
-	@Nonnull
-	Object cacheGet(@Nonnull final String key) throws CacheMiss {
-		if (!cache.containsKey(key)) { throw new CacheMiss(); }
-		final CacheElement ele=cache.get(key);
-		if (ele==null) { throw new CacheMiss(); }
-		if (ele.expires<getUnixTime()) {
-			cache.remove(key);
-			throw new CacheMiss();
-		}
-		return ele.element;
-	}
-
-	/**
-	 * Store an element in the cache
-	 *
-	 * @param key             Cache key
-	 * @param object          Cache element
-	 * @param lifetimeseconds How long to cache for in seconds
-	 *
-	 * @return The object being cached (object)
-	 */
-	@Nonnull
-	Object cachePut(@Nonnull final String key,
-	                @Nonnull final Object object,
-	                final int lifetimeseconds) {
-		final CacheElement ele=new CacheElement(object,getUnixTime()+lifetimeseconds);
-		cache.put(key,ele);
-		return object;
-	}
-
-	/**
-	 * The cache time in seconds for the name of this object
-	 *
-	 * @return Cache time in seconds
-	 */
-	protected abstract int getNameCacheTime();
-
-	private static class CacheElement {
-		@Nonnull
-		public final Object element;
-		public final int expires;
-
-		public CacheElement(@Nonnull final Object element,
-		                    final int expires) {
-			this.element=element;
-			this.expires=expires;
-		}
-	}
-
-	protected static class CacheMiss extends Exception {
-		private static final long serialVersionUID=1L;
 	}
 }
