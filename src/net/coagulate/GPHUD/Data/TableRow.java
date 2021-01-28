@@ -96,7 +96,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getLinkTarget();
 
-	private static final Cache<String> nameCache=Cache.getCache("GPHUD/nameCache",60);
+	private static final Cache<String> nameCache=Cache.getCache("GPHUD/nameCache",CacheConfig.NAME);
 	/**
 	 * Gets the name of this object, optionally using the cache.
 	 *
@@ -168,7 +168,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getKVIdField();
 
-	private static final Cache<Map<String,String>> kvCache=Cache.getCache("GPHUD/kvCache",60);
+	protected static final Cache<Map<String,String>> kvCache=Cache.getCache("GPHUD/kvCache", CacheConfig.KV);
 	/**
 	 * Set a KV value for this object
 	 *
