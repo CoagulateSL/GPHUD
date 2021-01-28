@@ -11,6 +11,7 @@ import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationFilterException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
@@ -56,7 +57,7 @@ public class Char extends TableRow {
 	 */
 	@Nonnull
 	public static Char get(final int id) {
-		return (Char) factoryPut("Character",id,new Char(id));
+		return (Char) factoryPut("Character",id,Char::new);
 	}
 
 	/**
@@ -397,6 +398,7 @@ public class Char extends TableRow {
 		       key,
 		       instance.getId()
 		      );
+		kvCache.purgeAll();
 	}
 
 	/**
@@ -508,6 +510,7 @@ public class Char extends TableRow {
 		return getIntNullable("urllast");
 	}
 
+	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/charInstance",CacheConfig.INSTANCE);
 	/**
 	 * Get the instance for this character.
 	 *
@@ -515,9 +518,12 @@ public class Char extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return instanceCache.get(this,()->
+			Instance.get(getInt("instanceid"))
+		);
 	}
 
+	private static final Cache<User> ownerCache=Cache.getCache("GPHUD/charOwner",CacheConfig.CHAR_OWNER);
 	/**
 	 * Get the owning avatar for this character.
 	 *
@@ -525,7 +531,7 @@ public class Char extends TableRow {
 	 */
 	@Nonnull
 	public User getOwner() {
-		return User.get(getInt("owner"));
+		return ownerCache.get(this,()->User.get(getInt("owner")));
 	}
 
 	/**
@@ -535,6 +541,7 @@ public class Char extends TableRow {
 	 */
 	public void setOwner(@Nonnull final User newowner) {
 		set("owner",newowner.getId());
+		ownerCache.set(this,newowner);
 		// purge any primary characters referring to this
 		// deprecated PrimaryCharacter.purge(this);
 	}
@@ -552,7 +559,6 @@ public class Char extends TableRow {
 	}
 
 	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
 		validate();
 		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Char / State Instance mismatch"); }
 	}
@@ -597,6 +603,7 @@ public class Char extends TableRow {
 	public void wipeConveyances(@Nonnull final State st) {
 		db().d("delete from characterkvstore where characterid=? and k like 'gphudclient.conveyance-%'",getId());
 		st.purgeCache(this);
+		kvCache.purge(this);
 	}
 
 	@Deprecated
@@ -626,6 +633,7 @@ public class Char extends TableRow {
 	                           final String conveyance) {
 		db().d("delete from characterkvstore where characterid=? and k like ?",getId(),"gphudclient.conveyance-"+conveyance);
 		st.purgeCache(this);
+		kvCache.purge(this);
 	}
 
 	// ----- Internal Instance -----
@@ -919,6 +927,7 @@ public class Char extends TableRow {
 			throw new UserInputDuplicateValueException("Unable to rename character '"+getName()+"' to '"+newname+"', that name is already taken.",true);
 		}
 		set("name",newname);
+		clearNameCache();
 	}
 
 	/**
@@ -960,8 +969,6 @@ public class Char extends TableRow {
 			new Transmission(this,json).start();
 		}
 	}
-
-	protected int getNameCacheTime() { return 5; } // characters /may/ be renamable, just not really sure at this point
 
 	/**
 	 * Used to load a list of conveyances
@@ -1009,8 +1016,12 @@ public class Char extends TableRow {
 		return conveyances;
 	}
 
+	private static final Cache<Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PROTOCOL_LEVEL);
     public void setProtocol(int protocol) {
 		set("protocol",protocol);
+		protocolCache.set(this,protocol);
     }
-    public int getProtocol() { return getInt("protocol"); }
+    public int getProtocol() {
+		return protocolCache.get(this,()->getInt("protocol"));
+	}
 }
