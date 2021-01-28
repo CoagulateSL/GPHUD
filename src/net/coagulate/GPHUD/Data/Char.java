@@ -69,11 +69,11 @@ public class Char extends TableRow {
 	 */
 	public static void refreshURL(@Nonnull final String url) {
 		final String t="characters";
-		final int refreshifolderthan=getUnixTime()-REFRESH_INTERVAL;
-		final int toupdate=db().dqiNotNull("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
-		if (toupdate==0) { return; }
-		if (toupdate>1) {
-			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
+		final int refreshIfOlderThank=getUnixTime()-REFRESH_INTERVAL;
+		final int toUpdate=db().dqiNotNull("select count(*) from "+t+" where url=? and urllast<?",url,refreshIfOlderThank);
+		if (toUpdate==0) { return; }
+		if (toUpdate>1) {
+			GPHUD.getLogger().warning("Unexpected anomoly, "+toUpdate+" rows to update on "+t+" url "+url);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Character","Refreshing CHARACTER url "+url);
 		if (url.startsWith("https")) { MailTools.logTrace("HTTPS URL violation",url); }
@@ -150,7 +150,7 @@ public class Char extends TableRow {
 	@Nonnull
 	public static Set<Char> getActive(final Instance i) {
 		final Set<Char> chars=new TreeSet<>();
-		for (final ResultsRow r: db().dq("select characterid from characters where url is not null")) {
+		for (final ResultsRow r: db().dq("select characterid from characters where url is not null and instanceid=?",i.getId())) {
 			chars.add(get(r.getInt()));
 		}
 		return chars;
@@ -228,17 +228,17 @@ public class Char extends TableRow {
 	 * Get most recent character used at an instance
 	 *
 	 * @param avatar           User to look up most recent character for
-	 * @param optionalinstance Specific instance to search in, or null for find in all instances
+	 * @param optionalInstance Specific instance to search in, or null for find in all instances
 	 *
 	 * @return Most recently used character matching parameters, or null
 	 */
 	@Nullable
 	public static Char getMostRecent(@Nonnull final User avatar,
-	                                 @Nullable final Instance optionalinstance) {
-		if (optionalinstance==null) { return getMostRecent(avatar); }
+	                                 @Nullable final Instance optionalInstance) {
+		if (optionalInstance==null) { return getMostRecent(avatar); }
 		final Results results=db().dq("select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",
 		                              avatar.getId(),
-		                              optionalinstance.getId()
+		                              optionalInstance.getId()
 		                             );
 		if (results.empty()) { return null; }
 		try {
@@ -254,14 +254,14 @@ public class Char extends TableRow {
 	 * Return a HTML list of userid/username of NPCs at this instance
 	 *
 	 * @param st       Inters instance
-	 * @param listname name attribute of the HTML list
+	 * @param listName name attribute of the HTML list
 	 *
 	 * @return A DropDownList
 	 */
 	@Nonnull
 	public static DropDownList getNPCList(@Nonnull final State st,
-	                                      final String listname) {
-		final DropDownList list=new DropDownList(listname);
+	                                      final String listName) {
+		final DropDownList list=new DropDownList(listName);
 		for (final ResultsRow row: db().dq("select characterid,name from characters where instanceid=? and owner=?",st.getInstance().getId(),User.getSystem().getId())) {
 			list.add(row.getIntNullable("characterid")+"",row.getStringNullable("name"));
 		}
@@ -330,8 +330,8 @@ public class Char extends TableRow {
 			t.add(row.getStringNullable("name"));
 			final Integer owner=row.getIntNullable("owner");
 			t.add(owner==null?"Null?":User.get(owner).getName()+"[#"+owner+"]");
-			final Integer playedby=row.getIntNullable("playedby");
-			t.add(playedby==null?"":User.get(playedby).getName()+"[#"+playedby+"]");
+			final Integer playedBy=row.getIntNullable("playedby");
+			t.add(playedBy==null?"":User.get(playedBy).getName()+"[#"+playedBy+"]");
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("lastactive"),st.getAvatar().getTimeZone()));
 			Integer retired=row.getIntNullable("retired");
 			if (retired==null) { retired=0; }
@@ -340,10 +340,10 @@ public class Char extends TableRow {
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("urlfirst"),st.getAvatar().getTimeZone()));
 			t.add(UnixTime.fromUnixTime(row.getIntNullable("urllast"),st.getAvatar().getTimeZone()));
 			t.add(row.getStringNullable("authnode"));
-			final Integer zoneid=row.getIntNullable("zoneid");
-			t.add(zoneid==null?"":Zone.get(zoneid).getName()+"#"+zoneid);
-			final Integer regionid=row.getIntNullable("regionid");
-			t.add(regionid==null?"":Region.get(regionid,true).getName()+"[#"+regionid+"]");
+			final Integer zoneId=row.getIntNullable("zoneid");
+			t.add(zoneId==null?"":Zone.get(zoneId).getName()+"#"+zoneId);
+			final Integer regionId=row.getIntNullable("regionid");
+			t.add(regionId==null?"":Region.get(regionId,true).getName()+"[#"+regionId+"]");
 			t.add(row.getInt("protocol"));
 		}
 		return t;
@@ -368,13 +368,13 @@ public class Char extends TableRow {
 	 * Log out an avatar.
 	 *
 	 * @param user      Avatar to logout
-	 * @param otherthan Character to not log out, or null to log out all by the user
+	 * @param otherThan Character to not log out, or null to log out all by the user
 	 */
 	public static void logoutByAvatar(@Nonnull final User user,
-	                                  @Nullable final Char otherthan) {
+	                                  @Nullable final Char otherThan) {
 		for (final ResultsRow row: db().dq("select characterid from characters where playedby=?",user.getId())) {
 			final Char character=Char.get(row.getInt());
-			if (!character.equals(otherthan)) {
+			if (!character.equals(otherThan)) {
 				Visit.closeVisits(character,character.getRegion());
 				character.disconnect();
 			}
@@ -391,10 +391,10 @@ public class Char extends TableRow {
 	 */
 	static void wipeKV(@Nonnull final Instance instance,
 	                   final String key) {
-		final String kvtable="characterkvstore";
-		final String maintable="characters";
-		final String idcolumn="characterid";
-		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
+		final String kvTable="characterkvstore";
+		final String mainTable="characters";
+		final String idColumn="characterid";
+		db().d("delete from "+kvTable+" using "+kvTable+","+mainTable+" where "+kvTable+".k like ? and "+kvTable+"."+idColumn+"="+mainTable+"."+idColumn+" and "+mainTable+".instanceid=?",
 		       key,
 		       instance.getId()
 		      );
@@ -412,15 +412,15 @@ public class Char extends TableRow {
 	private static void checkFilteredNamingList(@Nonnull final State st,
 	                                            @Nonnull final String name) {
 		// break the users name into components based on certain characters
-		final String[] nameparts=name.split("[ ,.\\-]");  // space comma dot dash
-		final String[] filterlist=st.getKV("Instance.FilteredNamingList").toString().split(",");
-		for (String filter: filterlist) {
+		final String[] nameParts=name.split("[ ,.\\-]");  // space comma dot dash
+		final String[] filterList=st.getKV("Instance.FilteredNamingList").toString().split(",");
+		for (String filter: filterList) {
 			filter=filter.trim();
 			if (!filter.isEmpty()) {
 				// compare filter to all name parts
-				for (String namepart: nameparts) {
-					namepart=namepart.trim();
-					if (filter.equalsIgnoreCase(namepart)) {
+				for (String namePart: nameParts) {
+					namePart=namePart.trim();
+					if (filter.equalsIgnoreCase(namePart)) {
 						throw new UserInputValidationFilterException("Character name contains prohibited word '"+filter+"', please reconsider your name.  Please do not simply "+"work around this filter as sim staff will not be as easily fooled.",true);
 					}
 				}
@@ -440,21 +440,21 @@ public class Char extends TableRow {
 	                                              @Nonnull String name) {
 		// in this approach we eliminate characters we allow.  If the result is an empty string, they win.  Else "uhoh"
 		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
-		final String allowlist=st.getKV("Instance.AllowedNamingSymbols").toString();
-		for (int i=0;i<allowlist.length();i++) {
-			final String allow=allowlist.charAt(i)+"";
+		final String allowList=st.getKV("Instance.AllowedNamingSymbols").toString();
+		for (int i=0;i<allowList.length();i++) {
+			final String allow=allowList.charAt(i)+"";
 			name=name.replaceAll(Pattern.quote(allow),"");
 		}
 		// unique the characters in the string.  There's a better way of doing this surely.
 		if (!name.trim().isEmpty()) {
-			final StringBuilder blockedchars=new StringBuilder();
+			final StringBuilder blockedChars=new StringBuilder();
 			// bad de-duping code
 			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
 			// stick all the symbols in a set :P
 			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
 			// and reconstitute it
-			for (final String character: characters) { blockedchars.append(character); }
-			throw new UserInputValidationFilterException("Disallowed characters present in character name, avoid using the following: "+blockedchars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.",true);
+			for (final String character: characters) { blockedChars.append(character); }
+			throw new UserInputValidationFilterException("Disallowed characters present in character name, avoid using the following: "+blockedChars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.",true);
 		}
 	}
 
@@ -479,35 +479,25 @@ public class Char extends TableRow {
 	 * @param url URL to set to
 	 */
 	public void setURL(@Nonnull final String url) {
-		final String oldurl=getURL();
+		final String oldURL=getURL();
 		final int now=getUnixTime();
 
 		// update last used timer if we're the same URL and its more than 60 seconds since the last timer and we're done
-		if (url.equals(oldurl)) {
+		if (url.equals(oldURL)) {
 			refreshURL(url);
 			return;
 		}
 
 		// if there was a URL, send it a shutdown
-		if (oldurl!=null && !("".equals(oldurl))) {
+		if (oldURL!=null && !("".equals(oldURL))) {
 			final JSONObject shutdown=new JSONObject().put("incommand","shutdown").put("shutdown","Connection replaced by new character connection");
-			final Transmission t=new Transmission(this,shutdown,oldurl);
+			final Transmission t=new Transmission(this,shutdown,oldURL);
 			t.start();
 		}
 		// set the URL
 		if (url.startsWith("https")) { MailTools.logTrace("HTTPS URL violation",url); }
 		d("update characters set url=?, lastactive=?, urllast=?, urlfirst=?, authnode=? where characterid=?",url,now,now,now,Interface.getNode(),getId());
 
-	}
-
-	/**
-	 * Gets the last active time for the URL.
-	 *
-	 * @return Unix format timestamp for the last use of this URL - accurate to within REFRESH_INTERVAL
-	 */
-	@Nullable
-	public Integer getURLLast() {
-		return getIntNullable("urllast");
 	}
 
 	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/charInstance",CacheConfig.INSTANCE);
@@ -537,11 +527,11 @@ public class Char extends TableRow {
 	/**
 	 * Set the owner of this character.
 	 *
-	 * @param newowner The new owner
+	 * @param newOwner The new owner
 	 */
-	public void setOwner(@Nonnull final User newowner) {
-		set("owner",newowner.getId());
-		ownerCache.set(this,newowner);
+	public void setOwner(@Nonnull final User newOwner) {
+		set("owner",newOwner.getId());
+		ownerCache.set(this,newOwner);
 		// purge any primary characters referring to this
 		// deprecated PrimaryCharacter.purge(this);
 	}
@@ -648,14 +638,13 @@ public class Char extends TableRow {
 	@Nonnull
 	public List<Char> getNearbyCharacters(@Nonnull final State st) {
 		final Char character=st.getCharacter();
-		final boolean debug=false;
 		final List<Char> chars=new ArrayList<>();
 		final String uri=character.getURL();
 		if (uri==null || uri.isEmpty()) {
 			throw new UserInputStateException("Your character does not have a valid in-world presence");
 		}
-		final JSONObject radarrequest=new JSONObject().put("incommand","radar");
-		final Transmission t=new Transmission(this,radarrequest);
+		final JSONObject radarRequest=new JSONObject().put("incommand","radar");
+		final Transmission t=new Transmission(this,radarRequest);
 		//noinspection CallToThreadRun
 		t.run();
 		final JSONObject j=t.getResponse();
@@ -787,19 +776,18 @@ public class Char extends TableRow {
 	 */
 	public void initialConveyances(@Nonnull final State st,
 	                               @Nonnull final JSONObject payload) {
-		final boolean debug=false;
 		validate(st);
-		final Map<KV,String> oldconveyances=loadConveyances(st);
-		for (final Map.Entry<KV,String> entry: oldconveyances.entrySet()) {
+		final Map<KV,String> oldConveyances=loadConveyances(st);
+		for (final Map.Entry<KV,String> entry: oldConveyances.entrySet()) {
 			final KV kv=entry.getKey();
 			if (kv!=null) {
-				final String oldvalue=entry.getValue();
-				final String newvalue=st.getKV(kv.fullName()).value();
-				final String conveyas=kv.conveyAs();
-				if (!conveyas.isEmpty()) {
-					payload.put(conveyas,newvalue); // always put in init
-					if (!oldvalue.equals(newvalue)) {
-						setKV(st,"gphudclient.conveyance-"+kv.conveyAs(),newvalue); // skip cache flush
+				final String oldValue=entry.getValue();
+				final String newValue=st.getKV(kv.fullName()).value();
+				final String conveyAs=kv.conveyAs();
+				if (!conveyAs.isEmpty()) {
+					payload.put(conveyAs,newValue); // always put in init
+					if (!oldValue.equals(newValue)) {
+						setKV(st,"gphudclient.conveyance-"+kv.conveyAs(),newValue); // skip cache flush
 					}
 				}
 			}
@@ -815,22 +803,21 @@ public class Char extends TableRow {
 	public void appendConveyance(@Nonnull State st,
 	                             @Nonnull final JSONObject payload) {
 		// SANITY NOTE TO SELF - there is also initialConveyance which does almost exactly the same, which is bad
-		final boolean debug=false;
 		validate(st);
 		if (st.getCharacter()!=this) {
 			st=new State(this);
 		}
-		final Map<KV,String> oldconveyances=loadConveyances(st);
-		for (final Map.Entry<KV,String> entry: oldconveyances.entrySet()) {
+		final Map<KV,String> oldConveyances=loadConveyances(st);
+		for (final Map.Entry<KV,String> entry: oldConveyances.entrySet()) {
 			final KV kv=entry.getKey();
 			if (kv!=null) {
-				final String oldvalue=entry.getValue();
-				final String newvalue=st.getKV(kv.fullName()).value();
-				final String conveyas=kv.conveyAs();
-				if (!conveyas.isEmpty()) {
-					if (!oldvalue.equals(newvalue)) {
-						payload.put(conveyas,newvalue);
-						setKV(st,"gphudclient.conveyance-"+kv.conveyAs(),newvalue); // skip cache update/flush
+				final String oldValue=entry.getValue();
+				final String newValue=st.getKV(kv.fullName()).value();
+				final String conveyAs=kv.conveyAs();
+				if (!conveyAs.isEmpty()) {
+					if (!oldValue.equals(newValue)) {
+						payload.put(conveyAs,newValue);
+						setKV(st,"gphudclient.conveyance-"+kv.conveyAs(),newValue); // skip cache update/flush
 					}
 				}
 			}
@@ -870,9 +857,9 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public User getPlayedByNullable() {
-		final Integer avatarid=dqi("select playedby from characters where characterid=?",getId());
-		if (avatarid==null) { return null; }
-		return User.get(avatarid);
+		final Integer avatarId=dqi("select playedby from characters where characterid=?",getId());
+		if (avatarId==null) { return null; }
+		return User.get(avatarId);
 	}
 
 	@Nonnull
@@ -919,27 +906,15 @@ public class Char extends TableRow {
 	 * Rename a character
 	 * //TODO implement filtering
 	 *
-	 * @param newname The characters new name
+	 * @param newName The characters new name
 	 */
-	public void rename(final String newname) {
-		final int count=dqinn("select count(*) from characters where name like ? and instanceid=?",newname,getInstance().getId());
+	public void rename(final String newName) {
+		final int count=dqinn("select count(*) from characters where name like ? and instanceid=?",newName,getInstance().getId());
 		if (count!=0) {
-			throw new UserInputDuplicateValueException("Unable to rename character '"+getName()+"' to '"+newname+"', that name is already taken.",true);
+			throw new UserInputDuplicateValueException("Unable to rename character '"+getName()+"' to '"+newName+"', that name is already taken.",true);
 		}
-		set("name",newname);
+		set("name",newName);
 		clearNameCache();
-	}
-
-	/**
-	 * Close out a URL.
-	 *
-	 * @param st State.
-	 */
-	public void closeURL(@Nonnull final State st) {
-		if (st.getInstance()!=getInstance()) { throw new IllegalStateException("State character instanceid mismatch"); }
-		d("update characters set url=null,urlfirst=null,urllast=null,authnode=null,zoneid=null,regionid=null,lastactive=UNIX_TIMESTAMP(),playedby=null where characterid=?",
-		  st.getCharacter().getId()
-		 );
 	}
 
 	/**
@@ -954,8 +929,7 @@ public class Char extends TableRow {
 	 */
 	public boolean isOnline() {
 		final String s=getURL();
-		if (s==null || s.isEmpty()) { return false; }
-		return true;
+		return s != null && !s.isEmpty();
 	}
 
 	/**
@@ -984,8 +958,8 @@ public class Char extends TableRow {
 		final Set<KV> conveyances=new TreeSet<>();
 		for (final KV kv: Modules.getKVSet(st)) {
 			if (kv!=null) {
-				final String conveyas=kv.conveyAs();
-				if (!conveyas.isEmpty()) {
+				final String conveyAs=kv.conveyAs();
+				if (!conveyAs.isEmpty()) {
 					conveyances.add(kv);
 				}
 			}
