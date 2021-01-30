@@ -511,7 +511,7 @@ public class Char extends TableRow {
 			Instance.get(getInt("instanceid"))
 		);
 	}
-	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/charInstance",CacheConfig.INSTANCE);
+	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/charInstance",CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Get the owning avatar for this character.
@@ -522,7 +522,7 @@ public class Char extends TableRow {
 	public User getOwner() {
 		return ownerCache.get(this,()->User.get(getInt("owner")));
 	}
-	private static final Cache<User> ownerCache=Cache.getCache("GPHUD/charOwner",CacheConfig.CHAR_OWNER);
+	private static final Cache<User> ownerCache=Cache.getCache("GPHUD/charOwner",CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Set the owner of this character.
@@ -997,5 +997,5 @@ public class Char extends TableRow {
     public int getProtocol() {
 		return protocolCache.get(this,()->getInt("protocol"));
 	}
-	private static final Cache<Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PROTOCOL_LEVEL);
+	private static final Cache<Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
 }
