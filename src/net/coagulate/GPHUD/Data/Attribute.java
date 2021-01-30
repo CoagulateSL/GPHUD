@@ -106,13 +106,13 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Set<Attribute> getAttributes(@Nonnull final Instance instance) {
-		return attributeSetCache.get(instance,()-> {
+		return attributeSetCache.get(()-> {
 			final Set<Attribute> set = new TreeSet<>();
 			for (final ResultsRow r : db().dq("select attributeid from attributes where instanceid=?", instance.getId())) {
 				set.add(Attribute.get(r.getInt()));
 			}
 			return set;
-		});
+		}, instance);
 	}
 	private static final Cache<Set<Attribute>> attributeSetCache=Cache.getCache("GPHUD/attributeSet", CacheConfig.OPERATIONAL_CONFIG);
 
@@ -255,7 +255,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		return instanceCache.get(this,()-> Instance.get(getInt("instanceid")));
+		return instanceCache.get(()-> Instance.get(getInt("instanceid")), this);
 	}
 	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/attributeInstance",CacheConfig.PERMANENT_CONFIG);
 
@@ -303,8 +303,8 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public ATTRIBUTETYPE getType() {
-		return attributeTypeCache.get(this,()->
-			fromString(getString("attributetype"))
+		return attributeTypeCache.get(()->
+			fromString(getString("attributetype")), this
 		);
 	}
 	private static final Cache<ATTRIBUTETYPE> attributeTypeCache=Cache.getCache("GPHUD/AttributeType",CacheConfig.OPERATIONAL_CONFIG);
@@ -316,7 +316,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nullable
 	public String getSubType() {
-		return subTypeCache.get(this,()->getStringNullable("grouptype"));
+		return subTypeCache.get(()->getStringNullable("grouptype"), this);
 	}
 	private static final Cache<String> subTypeCache=Cache.getCache("GPHUD/AttributeSubType",CacheConfig.OPERATIONAL_CONFIG);
 
