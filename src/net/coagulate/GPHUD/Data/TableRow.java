@@ -96,7 +96,6 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getLinkTarget();
 
-	private static final Cache<String> nameCache=Cache.getCache("GPHUD/nameCache",CacheConfig.NAME);
 	/**
 	 * Gets the name of this object, optionally using the cache.
 	 *
@@ -108,6 +107,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		return nameCache.get(this,()->getStringNullable(getNameField()));
 	}
 	protected void clearNameCache() { nameCache.purge(this); }
+	private static final Cache<String> nameCache=Cache.getCache("GPHUD/nameCache",CacheConfig.NAME);
 
 	/**
 	 * Highly protected version of getName() that never fails.

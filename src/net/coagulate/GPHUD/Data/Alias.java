@@ -35,7 +35,6 @@ public class Alias extends TableRow {
 	@Nonnull
 	public static Alias get(final int id) { return (Alias) factoryPut("Alias",id,Alias::new); }
 
-	private static final Cache<Map<String,Alias>> aliasMapCache=Cache.getCache("GPHUD/aliasMap",CacheConfig.ALIAS);
 	/**
 	 * Returns a map of aliases for this state.
 	 *
@@ -53,8 +52,8 @@ public class Alias extends TableRow {
 			return aliases;
 		});
 	}
+	private static final Cache<Map<String,Alias>> aliasMapCache=Cache.getCache("GPHUD/aliasMap",CacheConfig.ALIAS);
 
-	private static final Cache<Map<String,JSONObject>> aliasTemplateCache=Cache.getCache("GPHUD/aliasTemplate",CacheConfig.ALIAS);
 	/**
 	 * Get aliased command templates for this state
 	 *
@@ -72,6 +71,7 @@ public class Alias extends TableRow {
 			return aliases;
 		});
 	}
+	private static final Cache<Map<String,JSONObject>> aliasTemplateCache=Cache.getCache("GPHUD/aliasTemplate",CacheConfig.ALIAS);
 
 	/**
 	 * Get a particular alias from an instance.
@@ -161,11 +161,11 @@ public class Alias extends TableRow {
 
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
-	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/AliasInstance", CacheConfig.INSTANCE);
 	@Nullable
 	public Instance getInstance() {
 		return instanceCache.get(this,()-> Instance.get(getInt("instanceid")));
 	}
+	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/AliasInstance", CacheConfig.INSTANCE);
 
 	/**
 	 * Gets the JSON payload for this alias.  See alias module.

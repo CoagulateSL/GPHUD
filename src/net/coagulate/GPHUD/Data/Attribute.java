@@ -97,7 +97,6 @@ public class Attribute extends TableRow {
 	@Nonnull
 	public static Set<Attribute> getAttributes(@Nonnull final State st) { return getAttributes(st.getInstance()); }
 
-	private static final Cache<Set<Attribute>> attributeSetCache=Cache.getCache("GPHUD/attributeSet", CacheConfig.ATTRIBUTES);
 	/**
 	 * Get the attributes for the instance.
 	 *
@@ -115,6 +114,7 @@ public class Attribute extends TableRow {
 			return set;
 		});
 	}
+	private static final Cache<Set<Attribute>> attributeSetCache=Cache.getCache("GPHUD/attributeSet", CacheConfig.ATTRIBUTES);
 
 	/**
 	 * Find attribute by name
@@ -248,7 +248,6 @@ public class Attribute extends TableRow {
 	// ----- Internal Statics -----
 	// ---------- INSTANCE ----------
 
-	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/attributeInstance",CacheConfig.INSTANCE);
 	/**
 	 * Gets the instance associated with this attribute.
 	 *
@@ -258,6 +257,7 @@ public class Attribute extends TableRow {
 	public Instance getInstance() {
 		return instanceCache.get(this,()-> Instance.get(getInt("instanceid")));
 	}
+	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/attributeInstance",CacheConfig.INSTANCE);
 
 	@Nonnull
 	@Override
@@ -296,7 +296,6 @@ public class Attribute extends TableRow {
 	@Override
 	public String getKVIdField() { return null; }
 
-	private static final Cache<ATTRIBUTETYPE> attributeTypeCache=Cache.getCache("GPHUD/AttributeType",CacheConfig.ATTRIBUTES);
 	/**
 	 * Get this attributes ATTRIBUTETYPE
 	 *
@@ -308,8 +307,8 @@ public class Attribute extends TableRow {
 			fromString(getString("attributetype"))
 		);
 	}
+	private static final Cache<ATTRIBUTETYPE> attributeTypeCache=Cache.getCache("GPHUD/AttributeType",CacheConfig.ATTRIBUTES);
 
-	private static final Cache<String> subTypeCache=Cache.getCache("GPHUD/AttributeSubType",CacheConfig.ATTRIBUTES);
 	/**
 	 * Get this attribute's subtype, used by groups to define attribute mappings and exclusions.
 	 *
@@ -319,6 +318,7 @@ public class Attribute extends TableRow {
 	public String getSubType() {
 		return subTypeCache.get(this,()->getStringNullable("grouptype"));
 	}
+	private static final Cache<String> subTypeCache=Cache.getCache("GPHUD/AttributeSubType",CacheConfig.ATTRIBUTES);
 
 	/**
 	 * Returns if this attribute uses ability points.
