@@ -574,7 +574,7 @@ public class Attribute extends TableRow {
 	}
 
 	public boolean templatable() {
-		return getBool("templatable");
+		return templatableCache.get(this,()->getBool("templatable"));
 	}
 
 	public void templatable(final State st,
@@ -582,5 +582,7 @@ public class Attribute extends TableRow {
 		if (newValue==templatable()) { return; }
 		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newValue,"Set templatable to "+newValue);
 		set("templatable",newValue);
+		templatableCache.set(this,newValue);
 	}
+	private static final Cache<Boolean> templatableCache=Cache.getCache("gphud/attributeTemplatable",CacheConfig.OPERATIONAL_CONFIG);
 }
