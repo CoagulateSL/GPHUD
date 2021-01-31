@@ -29,7 +29,10 @@ public class Currency extends TableRow {
 	@Nonnull
 	public static Currency find(final State st,
 	                            final String name) {
-		return get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name));
+		return st.getInstance().currencyNameCache.get(
+				()->get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name)),
+				name
+		);
 	}
 
 	public static Currency findNullable(final State st,
@@ -49,6 +52,7 @@ public class Currency extends TableRow {
 			throw new UserInputDuplicateValueException("A currency named "+name+" already exists");
 		}
 		GPHUD.getDB().d("insert into currencies(instanceid,name,basecoin,basecoinshort) values(?,?,?,?)",st.getInstance().getId(),name,name,name);
+		st.getInstance().currencyNameCache.purgeAll();
 	}
 
 	public static List<Currency> getAll(final State state) {
@@ -250,6 +254,7 @@ public class Currency extends TableRow {
 		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Currency delete instance/state instance mismatch"); }
 		getPool(st).delete(st);
 		d("delete from currencies where id=?",getId());
+		st.getInstance().currencyNameCache.purgeAll();
 	}
 
 	@Nonnull
