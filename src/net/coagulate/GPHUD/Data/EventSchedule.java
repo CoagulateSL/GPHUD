@@ -36,7 +36,7 @@ public class EventSchedule extends TableRow {
 	 */
 	@Nonnull
 	public static EventSchedule get(final int id) {
-		return (EventSchedule) factoryPut("EventSchedule",id,new EventSchedule(id));
+		return (EventSchedule) factoryPut("EventSchedule",id,EventSchedule::new);
 	}
 
 	/**

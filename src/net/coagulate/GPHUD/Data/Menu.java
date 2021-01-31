@@ -38,7 +38,7 @@ public class Menu extends TableRow {
 	 */
 	@Nonnull
 	public static Menu get(final int id) {
-		return (Menu) factoryPut("Menus",id,new Menu(id));
+		return (Menu) factoryPut("Menus",id,Menu::new);
 	}
 
 	/**

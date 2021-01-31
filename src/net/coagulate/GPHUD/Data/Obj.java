@@ -24,7 +24,7 @@ public class Obj extends TableRow {
     // ---------- STATICS ----------
     @Nonnull
     public static Obj get(final int id) {
-        return (Obj) factoryPut("Objects", id, new Obj(id));
+        return (Obj) factoryPut("Objects", id, Obj::new);
     }
 
     @Nonnull
@@ -316,11 +316,6 @@ public class Obj extends TableRow {
     @Override
     public String getKVIdField() {
         return null;
-    }
-
-    @Override
-    protected int getNameCacheTime() {
-        return 600;
     }
 
     /**

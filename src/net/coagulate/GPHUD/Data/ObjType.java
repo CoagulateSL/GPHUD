@@ -25,7 +25,7 @@ public class ObjType extends TableRow {
 	// ---------- STATICS ----------
 	@Nonnull
 	public static ObjType get(final int id) {
-		return (ObjType) factoryPut("ObjectTypes",id,new ObjType(id));
+		return (ObjType) factoryPut("ObjectTypes",id,ObjType::new);
 	}
 
 	/**
@@ -196,8 +196,5 @@ public class ObjType extends TableRow {
 	public String getTableName() {
 		return "objecttypes";
 	}
-	@Override
-	protected int getNameCacheTime() { return 60*60; }
-
 }
 

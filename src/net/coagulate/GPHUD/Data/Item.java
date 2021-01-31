@@ -111,11 +111,6 @@ public class Item extends TableRow {
         return null;
     }
 
-    @Override
-    protected int getNameCacheTime() {
-        return 900;
-    }
-
     @Nonnull
     @Override
     public String getTableName() {
@@ -131,7 +126,7 @@ public class Item extends TableRow {
      */
     @Nonnull
     public static Item get(@Nonnull final Integer id) {
-        return (Item) factoryPut("Item",id,new Item(id));
+        return (Item) factoryPut("Item",id,Item::new);
     }
     protected Item(final int id) { super(id); }
 

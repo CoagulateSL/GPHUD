@@ -62,7 +62,7 @@ public class Instance extends TableRow {
 	 */
 	@Nonnull
 	public static Instance get(@Nonnull final Integer id) {
-		return (Instance) factoryPut("Instance",id,new Instance(id));
+		return (Instance) factoryPut("Instance",id,Instance::new);
 	}
 
 	/**

@@ -35,7 +35,7 @@ public class ScriptResponses {
 		if (run.getRespondant()!=st.getCharacter()) {
 			return new ErrorResponse("Script was not expecting a response from you (?)");
 		}
-		try { response.validate(); }
+		try { response.validate(st); }
 		catch (DBException e) {
 			throw new UserInputLookupFailureException("Failed to resolve input to a valid character",e);
 		}

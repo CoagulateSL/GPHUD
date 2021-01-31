@@ -31,7 +31,7 @@ public class AdminNote extends TableRow {
 	 */
 	@Nonnull
 	public static AdminNote get(final int id) {
-		return (AdminNote) factoryPut("AdminNotes",id,new AdminNote(id));
+		return (AdminNote) factoryPut("AdminNotes",id,AdminNote::new);
 	}
 
 	/**

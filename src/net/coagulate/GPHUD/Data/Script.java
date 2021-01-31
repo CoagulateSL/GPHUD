@@ -73,7 +73,7 @@ public class Script extends TableRow {
 
 	@Nonnull
 	public static Script get(final int id) {
-		return (Script) factoryPut("Scripts",id,new Script(id));
+		return (Script) factoryPut("Scripts",id,Script::new);
 	}
 
 	/**
@@ -286,6 +286,4 @@ public class Script extends TableRow {
 		validate();
 		return getBytes("bytecode");
 	}
-	@Override
-	protected int getNameCacheTime() { return 60*60; }
 }

@@ -48,11 +48,6 @@ public class ItemVerb extends TableRow {
         return null;
     }
 
-    @Override
-    protected int getNameCacheTime() {
-        return 900;
-    }
-
     @Nonnull
     @Override
     public String getTableName() {
@@ -68,7 +63,7 @@ public class ItemVerb extends TableRow {
      */
     @Nonnull
     public static ItemVerb get(@Nonnull final Integer id) {
-        return (ItemVerb) factoryPut("ItemVerb",id,new ItemVerb(id));
+        return (ItemVerb) factoryPut("ItemVerb",id,ItemVerb::new);
     }
     protected ItemVerb(final int id) { super(id); }
 

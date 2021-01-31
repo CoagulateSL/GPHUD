@@ -89,7 +89,7 @@ public class Region extends TableRow {
 	@Nonnull
 	public static Region get(final int id,
 	                         final boolean allowretired) {
-		final Region r=(Region) factoryPut("Region",id,new Region(id));
+		final Region r=(Region) factoryPut("Region",id,Region::new);
 		if (r.isRetired() && (!allowretired)) {
 			final UserException exception=new UserInputStateException("Attempt to access retired region "+r.getName());
 			GPHUD.getLogger("Regions").log(WARNING,"Attempt to access retired region",exception);

@@ -189,6 +189,10 @@ public class CharacterGroup extends TableRow {
 		kvCache.purgeAll();
 	}
 
+	public static void purgeCharacterGroupPrecedenceCaches() {
+		precedenceCache.purgeAll();
+	}
+
 	// ---------- INSTANCE ----------
 
 	/**

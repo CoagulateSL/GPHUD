@@ -43,7 +43,7 @@ public class Effect extends TableRow {
 	 */
 	@Nonnull
 	public static Effect get(final int id) {
-		return (Effect) factoryPut("Effect",id,new Effect(id));
+		return (Effect) factoryPut("Effect",id,Effect::new);
 	}
 
 	/**
