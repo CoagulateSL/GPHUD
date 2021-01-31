@@ -44,13 +44,13 @@ public class Alias extends TableRow {
 	 */
 	@Nonnull
 	public static Map<String,Alias> getAliasMap(@Nonnull final State st) {
-		return aliasMapCache.get(()->{
+		return aliasMapCache.get(st.getInstance(), ()->{
 			final Map<String, Alias> aliases = new TreeMap<>();
 			for (final ResultsRow r : db().dq("select name,aliasid from aliases where instanceid=?", st.getInstance().getId())) {
 				aliases.put(r.getStringNullable("name"), get(r.getInt("aliasid")));
 			}
 			return aliases;
-		}, st.getInstance());
+		});
 	}
 	private static final Cache<Map<String,Alias>> aliasMapCache=Cache.getCache("GPHUD/aliasMap",CacheConfig.OPERATIONAL_CONFIG);
 
@@ -63,13 +63,13 @@ public class Alias extends TableRow {
 	 */
 	@Nonnull
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
-		return aliasTemplateCache.get(()-> {
+		return aliasTemplateCache.get(st.getInstance(), ()-> {
 			final Map<String, JSONObject> aliases = new TreeMap<>();
 			for (final ResultsRow r : db().dq("select name,template from aliases where instanceid=?", st.getInstance().getId())) {
 				aliases.put(r.getString("name"), new JSONObject(r.getString("template")));
 			}
 			return aliases;
-		}, st.getInstance());
+		});
 	}
 	private static final Cache<Map<String,JSONObject>> aliasTemplateCache=Cache.getCache("GPHUD/aliasTemplate",CacheConfig.OPERATIONAL_CONFIG);
 
@@ -163,7 +163,7 @@ public class Alias extends TableRow {
 
 	@Nullable
 	public Instance getInstance() {
-		return instanceCache.get(()-> Instance.get(getInt("instanceid")), this);
+		return instanceCache.get(this, ()-> Instance.get(getInt("instanceid")));
 	}
 	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/AliasInstance", CacheConfig.PERMANENT_CONFIG);
 

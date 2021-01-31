@@ -104,7 +104,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nonnull
 	public String getName() {
 		if (getNameField()==null) { throw new SystemConsistencyException("Getting name of something with a null getNameField()"); }
-		return nameCache.get(()->getStringNullable(getNameField()), this);
+		return nameCache.get(this, ()->getStringNullable(getNameField()));
 	}
 	protected void clearNameCache() { nameCache.purge(this); }
 	private static final Cache<String> nameCache=Cache.getCache("GPHUD/nameCache",CacheConfig.MUTABLE);
@@ -203,14 +203,14 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 * @return A Map of String K to String V pairs.
 	 */
 	@Nonnull public Map<String,String> loadKVs() {
-		return kvCache.get(()->{
+		return kvCache.get(this, ()->{
 			kvCheck();
 			final Map<String,String> result=new TreeMap<>();
 			for (final ResultsRow row: dq("select k,v from "+getKVTable()+" where "+getKVIdField()+"=?",getId())) {
 				result.put(row.getString("k").toLowerCase(),row.getString("v"));
 			}
 			return result;
-		}, this);
+		});
 	}
 
 	/**

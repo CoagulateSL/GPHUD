@@ -114,13 +114,13 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nonnull
 	public static List<CharacterGroup> getGroups(@Nonnull final Char character) {
-		return characterGroupsCache.get(()->{
+		return characterGroupsCache.get(character, ()->{
 			final List<CharacterGroup> ret = new ArrayList<>();
 			for (final ResultsRow r : db().dq("select charactergroupmembers.charactergroupid from charactergroupmembers inner join charactergroups on charactergroupmembers.charactergroupid = charactergroups.charactergroupid  where characterid=? order by charactergroups.kvprecedence asc,charactergroups.charactergroupid asc", character.getId())) {
 				ret.add(CharacterGroup.get(r.getInt()));
 			}
 			return ret;
-		}, character);
+		});
 	}
 	private static final Cache<List<CharacterGroup>> characterGroupsCache=Cache.getCache("GPHUD/characterGroups", CacheConfig.OPERATIONAL_CONFIG);
 
@@ -202,7 +202,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		return instanceCache.get(()->Instance.get(getInt("instanceid")), this);
+		return instanceCache.get(this, ()->Instance.get(getInt("instanceid")));
 	}
 	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/characterGroupInstance",CacheConfig.PERMANENT_CONFIG);
 
@@ -250,7 +250,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nonnull
 	public Set<Char> getMembers() {
-		return groupMembershipCache.get(()->{
+		return groupMembershipCache.get(this, ()->{
 			final Set<Char> members=new TreeSet<>();
 			final Results results=dq("select characterid from charactergroupmembers where charactergroupid=?",getId());
 			for (final ResultsRow r: results) {
@@ -258,7 +258,7 @@ public class CharacterGroup extends TableRow {
 				members.add(record);
 			}
 			return members;
-		}, this);
+		});
 	}
 	private static final Cache<Set<Char>> groupMembershipCache=Cache.getCache("GPHUD/characterGroupMembers",CacheConfig.OPERATIONAL_CONFIG);
 
@@ -280,7 +280,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public String getType() {
-		return typeCache.get(()->dqs("select type from charactergroups where charactergroupid=?",getId()), this);
+		return typeCache.get(this, ()->dqs("select type from charactergroups where charactergroupid=?",getId()));
 	}
 	private static final Cache<String> typeCache=Cache.getCache("GPHUD/characterGroupType", CacheConfig.OPERATIONAL_CONFIG);
 
@@ -424,7 +424,7 @@ public class CharacterGroup extends TableRow {
 	}
 
 	public int getKVPrecedence() {
-		return precedenceCache.get(()->getInt("kvprecedence"), this);
+		return precedenceCache.get(this, ()->getInt("kvprecedence"));
 	}
 
 	public void setKVPrecedence(int newPrecedence) {

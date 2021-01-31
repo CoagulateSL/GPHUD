@@ -507,9 +507,9 @@ public class Char extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		return instanceCache.get(()->
-			Instance.get(getInt("instanceid")), this
-		);
+		return instanceCache.get(this, ()->
+			Instance.get(getInt("instanceid"))
+        );
 	}
 	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/charInstance",CacheConfig.PERMANENT_CONFIG);
 
@@ -520,7 +520,7 @@ public class Char extends TableRow {
 	 */
 	@Nonnull
 	public User getOwner() {
-		return ownerCache.get(()->User.get(getInt("owner")), this);
+		return ownerCache.get(this, ()->User.get(getInt("owner")));
 	}
 	private static final Cache<User> ownerCache=Cache.getCache("GPHUD/charOwner",CacheConfig.PERMANENT_CONFIG);
 
@@ -995,7 +995,7 @@ public class Char extends TableRow {
 		protocolCache.set(this,protocol);
     }
     public int getProtocol() {
-		return protocolCache.get(()->getInt("protocol"), this);
+		return protocolCache.get(this, ()->getInt("protocol"));
 	}
 	private static final Cache<Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
 }
