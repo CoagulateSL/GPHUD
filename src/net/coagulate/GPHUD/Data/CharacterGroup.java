@@ -79,7 +79,7 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nonnull
 	public static CharacterGroup get(final int id) {
-		return (CharacterGroup) factoryPut("CharacterGroup",id,new CharacterGroup(id));
+		return (CharacterGroup) factoryPut("CharacterGroup",id,CharacterGroup::new);
 	}
 
 	/**
@@ -114,25 +114,15 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nonnull
 	public static List<CharacterGroup> getGroups(@Nonnull final Char character) {
-		Cache<List<CharacterGroup>> cache=getCharacterGroupCache();
-		try { return cache.get(character.getId()+""); }
-		catch (Cache.CacheMiss e) {
+		return characterGroupsCache.get(character, ()->{
 			final List<CharacterGroup> ret = new ArrayList<>();
 			for (final ResultsRow r : db().dq("select charactergroupmembers.charactergroupid from charactergroupmembers inner join charactergroups on charactergroupmembers.charactergroupid = charactergroups.charactergroupid  where characterid=? order by charactergroups.kvprecedence asc,charactergroups.charactergroupid asc", character.getId())) {
 				ret.add(CharacterGroup.get(r.getInt()));
 			}
-			return cache.put(character.getId()+"",ret,300);
-		}
+			return ret;
+		});
 	}
-	private static void purgeCharacterGroupCache(@Nonnull final Char character) {
-		getCharacterGroupCache().purge(character.getId()+"");
-	}
-	public static void purgeCharacterGroupCaches() {
-		getCharacterGroupCache().purgeAll();
-	}
-	private static Cache<List<CharacterGroup>> getCharacterGroupCache() {
-		return Cache.getCache("GPHUD-charactergroupmemberships");
-	}
+	private static final Cache<List<CharacterGroup>> characterGroupsCache=Cache.getCache("GPHUD/characterGroups", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get all the groups this character is in
@@ -196,6 +186,11 @@ public class CharacterGroup extends TableRow {
 		       key,
 		       instance.getId()
 		      );
+		kvCache.purgeAll();
+	}
+
+	public static void purgeCharacterGroupPrecedenceCaches() {
+		precedenceCache.purgeAll();
 	}
 
 	// ---------- INSTANCE ----------
@@ -207,8 +202,9 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return instanceCache.get(this, ()->Instance.get(getInt("instanceid")));
 	}
+	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/characterGroupInstance",CacheConfig.PERMANENT_CONFIG);
 
 	@Nonnull
 	@Override
@@ -223,7 +219,6 @@ public class CharacterGroup extends TableRow {
 	}
 
 	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
 		validate();
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("CharacterGroup / State Instance mismatch");
@@ -255,21 +250,27 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nonnull
 	public Set<Char> getMembers() {
-		final Set<Char> members=new TreeSet<>();
-		final Results results=dq("select characterid from charactergroupmembers where charactergroupid=?",getId());
-		for (final ResultsRow r: results) {
-			final Char record=Char.get(r.getInt());
-			members.add(record);
-		}
-		return members;
+		return groupMembershipCache.get(this, ()->{
+			final Set<Char> members=new TreeSet<>();
+			final Results results=dq("select characterid from charactergroupmembers where charactergroupid=?",getId());
+			for (final ResultsRow r: results) {
+				final Char record=Char.get(r.getInt());
+				members.add(record);
+			}
+			return members;
+		});
 	}
+	private static final Cache<Set<Char>> groupMembershipCache=Cache.getCache("GPHUD/characterGroupMembers",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Delete this character group
 	 */
 	public void delete() {
 		d("delete from charactergroups where charactergroupid=?",getId());
-		getCharacterGroupCache().purgeAll();
+		groupMembershipCache.purge(this);
+		characterGroupsCache.purgeAll();
+		kvCache.purge(this);
+		typeCache.purge(this);
 	}
 
 	/**
@@ -278,7 +279,10 @@ public class CharacterGroup extends TableRow {
 	 * @return Group type, or null if not typed
 	 */
 	@Nullable
-	public String getType() { return dqs("select type from charactergroups where charactergroupid=?",getId()); }
+	public String getType() {
+		return typeCache.get(this, ()->dqs("select type from charactergroups where charactergroupid=?",getId()));
+	}
+	private static final Cache<String> typeCache=Cache.getCache("GPHUD/characterGroupType", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Joins a character to this group.
@@ -303,7 +307,7 @@ public class CharacterGroup extends TableRow {
 			}
 		}
 		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
-		purgeCharacterGroupCache(character);
+		characterGroupsCache.purge(character);
 	}
 
 	/**
@@ -317,7 +321,7 @@ public class CharacterGroup extends TableRow {
 		}
 		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
-		purgeCharacterGroupCache(character);
+		characterGroupsCache.purge(character);
 		if (exists==0) { throw new UserInputStateException("Character not in group."); }
 	}
 
@@ -420,10 +424,12 @@ public class CharacterGroup extends TableRow {
 	}
 
 	public int getKVPrecedence() {
-		return getInt("kvprecedence");
+		return precedenceCache.get(this, ()->getInt("kvprecedence"));
 	}
 
 	public void setKVPrecedence(int newPrecedence) {
 		set("kvprecedence",newPrecedence);
+		precedenceCache.set(this,newPrecedence);
 	}
+	private static final Cache<Integer> precedenceCache=Cache.getCache("GPHUD/characterGroupPrecedence",CacheConfig.OPERATIONAL_CONFIG);
 }

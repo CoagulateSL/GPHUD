@@ -5,6 +5,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -32,7 +33,7 @@ public class Alias extends TableRow {
 	 * @return An Alias representation
 	 */
 	@Nonnull
-	public static Alias get(final int id) { return (Alias) factoryPut("Alias",id,new Alias(id)); }
+	public static Alias get(final int id) { return (Alias) factoryPut("Alias",id,Alias::new); }
 
 	/**
 	 * Returns a map of aliases for this state.
@@ -43,12 +44,15 @@ public class Alias extends TableRow {
 	 */
 	@Nonnull
 	public static Map<String,Alias> getAliasMap(@Nonnull final State st) {
-		final Map<String,Alias> aliases=new TreeMap<>();
-		for (final ResultsRow r: db().dq("select name,aliasid from aliases where instanceid=?",st.getInstance().getId())) {
-			aliases.put(r.getStringNullable("name"),get(r.getInt("aliasid")));
-		}
-		return aliases;
+		return aliasMapCache.get(st.getInstance(), ()->{
+			final Map<String, Alias> aliases = new TreeMap<>();
+			for (final ResultsRow r : db().dq("select name,aliasid from aliases where instanceid=?", st.getInstance().getId())) {
+				aliases.put(r.getStringNullable("name"), get(r.getInt("aliasid")));
+			}
+			return aliases;
+		});
 	}
+	private static final Cache<Map<String,Alias>> aliasMapCache=Cache.getCache("GPHUD/aliasMap",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get aliased command templates for this state
@@ -59,12 +63,15 @@ public class Alias extends TableRow {
 	 */
 	@Nonnull
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
-		final Map<String,JSONObject> aliases=new TreeMap<>();
-		for (final ResultsRow r: db().dq("select name,template from aliases where instanceid=?",st.getInstance().getId())) {
-			aliases.put(r.getString("name"),new JSONObject(r.getString("template")));
-		}
-		return aliases;
+		return aliasTemplateCache.get(st.getInstance(), ()-> {
+			final Map<String, JSONObject> aliases = new TreeMap<>();
+			for (final ResultsRow r : db().dq("select name,template from aliases where instanceid=?", st.getInstance().getId())) {
+				aliases.put(r.getString("name"), new JSONObject(r.getString("template")));
+			}
+			return aliases;
+		});
 	}
+	private static final Cache<Map<String,JSONObject>> aliasTemplateCache=Cache.getCache("GPHUD/aliasTemplate",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get a particular alias from an instance.
@@ -83,7 +90,7 @@ public class Alias extends TableRow {
 		}
 		catch (@Nonnull final NoDataException e) { return null; }
 	}
-
+	private static void clearCaches(Instance instance) { aliasTemplateCache.purge(instance); aliasMapCache.purge(instance); }
 	/**
 	 * Create a new alias.
 	 * Protects against weird name inputs and duplicate aliases.
@@ -106,11 +113,12 @@ public class Alias extends TableRow {
 			throw new UserInputValidationParseException("Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		db().d("insert into aliases(instanceid,name,template) values(?,?,?)",st.getInstance().getId(),name,template.toString());
-		final Alias newalias=getAlias(st,name);
-		if (newalias==null) {
+		final Alias newAlias=getAlias(st,name);
+		if (newAlias==null) {
 			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance().getId()+", created but not found?");
 		}
-		return newalias;
+		clearCaches(st.getInstance());
+		return newAlias;
 	}
 
 	// ---------- INSTANCE ----------
@@ -127,7 +135,6 @@ public class Alias extends TableRow {
 	}
 
 	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
 		validate();
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Alias / State Instance mismatch");
@@ -156,8 +163,9 @@ public class Alias extends TableRow {
 
 	@Nullable
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return instanceCache.get(this, ()-> Instance.get(getInt("instanceid")));
 	}
+	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/AliasInstance", CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Gets the JSON payload for this alias.  See alias module.
@@ -177,13 +185,12 @@ public class Alias extends TableRow {
 	 */
 	public void setTemplate(@Nonnull final JSONObject template) {
 		d("update aliases set template=? where aliasid=?",template.toString(),getId());
+		clearCaches(getInstance());
 	}
-
-	public void flushKVCache(final State st) {}
-	// for integrity reasons, renames should be doen through recreates (sadface)
 
 	public void delete() {
 		d("delete from aliases where aliasid=?",getId());
+		clearCaches(getInstance());
 	}
 
 }

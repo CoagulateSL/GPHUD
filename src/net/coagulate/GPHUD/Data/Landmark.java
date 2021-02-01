@@ -17,7 +17,7 @@ public class Landmark extends TableRow {
 	// ---------- STATICS ----------
 	@Nonnull
 	public static Landmark get(final int id) {
-		return (Landmark) factoryPut("Landmarks",id,new Landmark(id));
+		return (Landmark) factoryPut("Landmarks",id,Landmark::new);
 	}
 
 	/**
@@ -153,9 +153,6 @@ public class Landmark extends TableRow {
 	public String getKVIdField() {
 		return null;
 	}
-
-	@Override
-	protected int getNameCacheTime() { return 60*60; }
 
 	/**
 	 * Returns this landmark in a delimited format the HUD understands

@@ -36,7 +36,7 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public static Zone get(final int id) {
-		return (Zone) factoryPut("Zone",id,new Zone(id));
+		return (Zone) factoryPut("Zone",id,Zone::new);
 	}
 
 	/**
@@ -183,9 +183,6 @@ public class Zone extends TableRow {
 	public String getKVIdField() {
 		return "zoneid";
 	}
-
-	@Override
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
 
 	/**
 	 * Get the defined areas for this zone.

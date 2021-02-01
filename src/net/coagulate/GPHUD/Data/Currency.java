@@ -8,7 +8,6 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
-import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.GPHUD;
@@ -24,21 +23,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Currency extends TableRow {
-
-
-	private boolean selfvalidated;
-
 	public Currency(final int id) {super(id);}
 
 	// ---------- STATICS ----------
 	@Nonnull
 	public static Currency find(final State st,
 	                            final String name) {
-		Cache<Currency> cache=Cache.getCache("GPHUD-currencynames-" + st.getInstance().getId());
-		try { return cache.get(name); }
-		catch (Cache.CacheMiss e) {
-			return cache.put(name,get(GPHUD.getDB().dqiNotNull("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name)),300);
-		}
+		return st.getInstance().currencyNameCache.get(
+				name, ()->get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name))
+		);
 	}
 
 	public static Currency findNullable(final State st,
@@ -49,7 +42,7 @@ public class Currency extends TableRow {
 
 	@Nonnull
 	public static Currency get(final int id) {
-		return (Currency) factoryPut("Currency",id,new Currency(id));
+		return (Currency) factoryPut("Currency",id,Currency::new);
 	}
 
 	public static void create(final State st,
@@ -58,6 +51,7 @@ public class Currency extends TableRow {
 			throw new UserInputDuplicateValueException("A currency named "+name+" already exists");
 		}
 		GPHUD.getDB().d("insert into currencies(instanceid,name,basecoin,basecoinshort) values(?,?,?,?)",st.getInstance().getId(),name,name,name);
+		st.getInstance().currencyNameCache.purgeAll();
 	}
 
 	public static List<Currency> getAll(final State state) {
@@ -79,10 +73,8 @@ public class Currency extends TableRow {
 
 	@Override
 	public void validate(@Nonnull final State st) {
-		if (selfvalidated) { return; }
-		super.validate();
+		validate();
 		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Currency instance/state instance mismatch"); }
-		selfvalidated=true;
 	}
 
 	@Nullable
@@ -259,9 +251,9 @@ public class Currency extends TableRow {
 
 	public void delete(final State st) {
 		if (st.getInstance()!=getInstance()) { throw new SystemConsistencyException("Currency delete instance/state instance mismatch"); }
-		Cache.getCache("GPHUD-currencynames-" + st.getInstance().getId()).purge(getName());
 		getPool(st).delete(st);
 		d("delete from currencies where id=?",getId());
+		st.getInstance().currencyNameCache.purgeAll();
 	}
 
 	@Nonnull
@@ -335,9 +327,6 @@ public class Currency extends TableRow {
 	public boolean tradable() {
 		return getBool("tradable");
 	}
-
-	@Override
-	protected int getNameCacheTime() { return 60*60; }
 
 	private String textSum(final State st,
 	                       final boolean longform) {

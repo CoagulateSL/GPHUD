@@ -40,7 +40,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute get(final int id) {
-		return (Attribute) factoryPut("Attribute",id,new Attribute(id));
+		return (Attribute) factoryPut("Attribute",id,Attribute::new);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class Attribute extends TableRow {
 	 * Find an attribute that is a group by 'type'.
 	 *
 	 * @param instance  Instance to look in
-	 * @param grouptype Group type (subtype) to look for
+	 * @param groupType Group type (subtype) to look for
 	 *
 	 * @return The matching Attribute
 	 *
@@ -77,13 +77,13 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute findGroup(@Nonnull final Instance instance,
-	                                  @Nonnull final String grouptype) {
+	                                  @Nonnull final String groupType) {
 		try {
-			final int id=db().dqiNotNull("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),grouptype);
+			final int id=db().dqiNotNull("select attributeid from attributes where instanceid=? and attributetype='GROUP' and grouptype=?",instance.getId(),groupType);
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {
-			throw new UserInputLookupFailureException("Unable to find an attribute representing a group of type "+grouptype,e);
+			throw new UserInputLookupFailureException("Unable to find an attribute representing a group of type "+groupType,e);
 		}
 	}
 
@@ -106,18 +106,15 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Set<Attribute> getAttributes(@Nonnull final Instance instance) {
-		try { return Cache.<Set<Attribute>>getCache("GPHUD-AttributeSet").get(instance.getId()+""); }
-		catch (Cache.CacheMiss e) {
+		return attributeSetCache.get(instance, ()-> {
 			final Set<Attribute> set = new TreeSet<>();
 			for (final ResultsRow r : db().dq("select attributeid from attributes where instanceid=?", instance.getId())) {
 				set.add(Attribute.get(r.getInt()));
 			}
-			return Cache.<Set<Attribute>>getCache("GPHUD-AttributeSet").put(instance.getId()+"",set,60);
-		}
+			return set;
+		});
 	}
-	private static void purgeAttributeSetCache(@Nonnull final Instance instance) {
-		Cache.<Set<Attribute>>getCache("GPHUD-AttributeSet").purge(instance.getId()+"");
-	}
+	private static final Cache<Set<Attribute>> attributeSetCache=Cache.getCache("GPHUD/attributeSet", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Find attribute by name
@@ -162,33 +159,33 @@ public class Attribute extends TableRow {
 	 *
 	 * @param instance          Instance to create in
 	 * @param name              Name of attribute
-	 * @param selfmodify        unpriviledged user self-modify
+	 * @param selfModify        unpriviledged user self-modify
 	 * @param attributetype     "type" of attribute (defined at module level)
-	 * @param grouptype         subtype of attribute (see module)
-	 * @param usesabilitypoints can be increased by ability points (costs against ability points)
+	 * @param groupType         subtype of attribute (see module)
+	 * @param usesAbilityPoints can be increased by ability points (costs against ability points)
 	 * @param required          value must be supplied
-	 * @param defaultvalue      default value (where not required attribute)
+	 * @param defaultValue      default value (where not required attribute)
 	 */
 	public static void create(@Nonnull final Instance instance,
 	                          @Nonnull final String name,
-	                          final boolean selfmodify,
+	                          final boolean selfModify,
 	                          @Nonnull final ATTRIBUTETYPE attributetype,
-	                          @Nullable final String grouptype,
-	                          final boolean usesabilitypoints,
+	                          @Nullable final String groupType,
+	                          final boolean usesAbilityPoints,
 	                          final boolean required,
-	                          @Nullable String defaultvalue) {
-		if ("".equals(defaultvalue)) { defaultvalue=null; }
+	                          @Nullable String defaultValue) {
+		if ("".equals(defaultValue)) { defaultValue=null; }
 		db().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
 		       instance.getId(),
 		       name,
-		       selfmodify,
+		       selfModify,
 		       toString(attributetype),
-		       grouptype,
-		       usesabilitypoints,
+		       groupType,
+		       usesAbilityPoints,
 		       required,
-		       defaultvalue
+		       defaultValue
 		      );
-		purgeAttributeSetCache(instance);
+		attributeSetCache.purge(instance);
 	}
 
 	/**
@@ -196,22 +193,22 @@ public class Attribute extends TableRow {
 	 *
 	 * @param st                State Instance to create in
 	 * @param name              Name of attribute
-	 * @param selfmodify        unpriviledged user self-modify
+	 * @param selfModify        unpriviledged user self-modify
 	 * @param attributetype     "type" of attribute (defined at module level)
-	 * @param grouptype         subtype of attribute (see module)
-	 * @param usesabilitypoints can be increased by ability points (costs against ability points)
+	 * @param groupType         subtype of attribute (see module)
+	 * @param usesAbilityPoints can be increased by ability points (costs against ability points)
 	 * @param required          value must be supplied
-	 * @param defaultvalue      default value (where not required attribute)
+	 * @param defaultValue      default value (where not required attribute)
 	 */
 	public static void create(@Nonnull final State st,
 	                          @Nonnull final String name,
-	                          final boolean selfmodify,
+	                          final boolean selfModify,
 	                          @Nonnull final ATTRIBUTETYPE attributetype,
-	                          @Nullable final String grouptype,
-	                          final boolean usesabilitypoints,
+	                          @Nullable final String groupType,
+	                          final boolean usesAbilityPoints,
 	                          final boolean required,
-	                          @Nullable final String defaultvalue) {
-		create(st.getInstance(),name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue);
+	                          @Nullable final String defaultValue) {
+		create(st.getInstance(),name,selfModify,attributetype,groupType,usesAbilityPoints,required,defaultValue);
 	}
 
 	/**
@@ -258,8 +255,9 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return instanceCache.get(this, ()-> Instance.get(getInt("instanceid")));
 	}
+	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/attributeInstance",CacheConfig.PERMANENT_CONFIG);
 
 	@Nonnull
 	@Override
@@ -274,7 +272,6 @@ public class Attribute extends TableRow {
 	}
 
 	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
 		validate();
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Attribute / State Instance mismatch");
@@ -299,9 +296,6 @@ public class Attribute extends TableRow {
 	@Override
 	public String getKVIdField() { return null; }
 
-	@Override
-	protected int getNameCacheTime() { return 60*60; } // 1 hour, attributes can NOT be renamed because they create a KV based on the name :P
-
 	/**
 	 * Get this attributes ATTRIBUTETYPE
 	 *
@@ -309,14 +303,11 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public ATTRIBUTETYPE getType() {
-		String type;
-		try { type=(String) cacheGet("type"); }
-		catch (@Nonnull final CacheMiss ex) {
-			type=getString("attributetype");
-			cachePut("type",type,getNameCacheTime());
-		}
-		return fromString(type);
+		return attributeTypeCache.get(this, ()->
+			fromString(getString("attributetype"))
+		);
 	}
+	private static final Cache<ATTRIBUTETYPE> attributeTypeCache=Cache.getCache("GPHUD/AttributeType",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get this attribute's subtype, used by groups to define attribute mappings and exclusions.
@@ -325,16 +316,9 @@ public class Attribute extends TableRow {
 	 */
 	@Nullable
 	public String getSubType() {
-		try {
-			return getSubTypeCache().get(getId()+"");
-		} catch (Cache.CacheMiss cacheMiss) {
-			String groupType=getStringNullable("grouptype");
-			if (groupType==null) { return null; }
-			return getSubTypeCache().put(getId()+"",groupType,60*60);
-		}
+		return subTypeCache.get(this, ()->getStringNullable("grouptype"));
 	}
-	private static Cache<String> getSubTypeCache() { return Cache.getCache("GPHUD-attributes-grouptype"); }
-	private void flushSubTypeCache() { getSubTypeCache().purge(getId()+"");}
+	private static final Cache<String> subTypeCache=Cache.getCache("GPHUD/AttributeSubType",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Returns if this attribute uses ability points.
@@ -342,14 +326,8 @@ public class Attribute extends TableRow {
 	 * @return True if it does
 	 */
 	public boolean usesAbilityPoints() {
-		try {
-			return getAbilityPointsCache().get(getId()+"");
-		} catch (Cache.CacheMiss cacheMiss) {
-			return getAbilityPointsCache().put(getId()+"",getBool("usesabilitypoints"),5*60);
-		}
+		return getBool("usesabilitypoints");
 	}
-	private static Cache<Boolean> getAbilityPointsCache() { return Cache.getCache("GPHUD-attributes-usesabilitypoints"); }
-	private static void flushAbilityPointsCache(Attribute a) { getAbilityPointsCache().purge(a.getId()+"");}
 
 	/**
 	 * Return if this attribute is mandatory.
@@ -378,10 +356,10 @@ public class Attribute extends TableRow {
 	/**
 	 * Set the default value for this attribute.
 	 *
-	 * @param defaultvalue New default value
+	 * @param defaultValue New default value
 	 */
-	public void setDefaultValue(@Nullable final String defaultvalue) {
-		set("defaultvalue",defaultvalue);
+	public void setDefaultValue(@Nullable final String defaultValue) {
+		set("defaultvalue",defaultValue);
 	}
 
 	/**
@@ -394,10 +372,10 @@ public class Attribute extends TableRow {
 	/**
 	 * Set the self modify flag.
 	 *
-	 * @param selfmodify Character can self modify the attribute
+	 * @param selfModify Character can self modify the attribute
 	 */
-	public void setSelfModify(final Boolean selfmodify) {
-		set("selfmodify",selfmodify);
+	public void setSelfModify(final Boolean selfModify) {
+		set("selfmodify",selfModify);
 	}
 
 	/**
@@ -554,11 +532,10 @@ public class Attribute extends TableRow {
 	/**
 	 * Set the uses abilitypoints flag.
 	 *
-	 * @param usesabilitypoints Flags new value
+	 * @param usesAbilityPoints Flags new value
 	 */
-	public void setUsesAbilityPoints(final Boolean usesabilitypoints) {
-		set("usesabilitypoints",usesabilitypoints);
-		flushAbilityPointsCache(this);
+	public void setUsesAbilityPoints(final Boolean usesAbilityPoints) {
+		set("usesabilitypoints",usesAbilityPoints);
 	}
 
 	/**
@@ -575,7 +552,8 @@ public class Attribute extends TableRow {
 			if (c!=null) { c.delete(st); }
 		}
 		d("delete from attributes where attributeid=?",getId());
-		purgeAttributeSetCache(instance);
+		attributeSetCache.purge(this);
+		attributeTypeCache.purge(this);
 	}
 
 	public boolean readOnly() {
@@ -595,21 +573,16 @@ public class Attribute extends TableRow {
 		INVENTORY
 	}
 
-	private static Cache<Boolean> getTemplatableCache() { return Cache.getCache("GPHUD-attribute-templatable"); }
-	private static void purgeTemplatableCache(Attribute a) { getTemplatableCache().purge(a.getId()+""); }
 	public boolean templatable() {
-		try {
-			return getTemplatableCache().get(getId()+"");
-		} catch (Cache.CacheMiss cacheMiss) {
-			return getTemplatableCache().put(getId()+"",getBool("templatable"),5*60);
-		}
+		return templatableCache.get(this,()->getBool("templatable"));
 	}
 
 	public void templatable(final State st,
-	                        final boolean newvalue) {
-		if (newvalue==templatable()) { return; }
-		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newvalue,"Set templatable to "+newvalue);
-		set("templatable",newvalue);
-		purgeTemplatableCache(this);
+	                        final boolean newValue) {
+		if (newValue==templatable()) { return; }
+		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newValue,"Set templatable to "+newValue);
+		set("templatable",newValue);
+		templatableCache.set(this,newValue);
 	}
+	private static final Cache<Boolean> templatableCache=Cache.getCache("gphud/attributeTemplatable",CacheConfig.OPERATIONAL_CONFIG);
 }

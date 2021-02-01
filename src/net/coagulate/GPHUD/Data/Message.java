@@ -29,7 +29,7 @@ public class Message extends TableRow {
 	 */
 	@Nonnull
 	public static Message get(final int id) {
-		return (Message) factoryPut("Message",id,new Message(id));
+		return (Message) factoryPut("Message",id,Message::new);
 	}
 
 	/**

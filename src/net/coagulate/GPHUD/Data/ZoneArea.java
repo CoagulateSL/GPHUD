@@ -28,7 +28,7 @@ public class ZoneArea extends TableRow {
 	 */
 	@Nonnull
 	public static ZoneArea get(final int id) {
-		return (ZoneArea) factoryPut("ZoneArea",id,new ZoneArea(id));
+		return (ZoneArea) factoryPut("ZoneArea",id,ZoneArea::new);
 	}
 
 	// ---------- INSTANCE ----------
@@ -80,9 +80,6 @@ public class ZoneArea extends TableRow {
 
 	@Nullable
 	public String getKVIdField() { return null; }
-
-	@Override
-	protected int getNameCacheTime() { return 0; }
 
 	/**
 	 * Set the position for this zone area.

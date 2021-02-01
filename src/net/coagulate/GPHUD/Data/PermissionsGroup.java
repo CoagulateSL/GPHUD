@@ -72,7 +72,7 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nonnull
 	public static PermissionsGroup get(final int id) {
-		return (PermissionsGroup) factoryPut("PermissionsGroup",id,new PermissionsGroup(id));
+		return (PermissionsGroup) factoryPut("PermissionsGroup",id,PermissionsGroup::new);
 	}
 
 	/**

@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
@@ -35,8 +36,9 @@ public class Instance extends TableRow {
 	private static final int ADMIN_PESTER_INTERVAL=3600; // seconds
 	private static final int SERVER_UPDATE_INTERVAL=30;
 	private static final Map<String,Integer> lastStatus =new TreeMap<>(); // naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
+    Cache<Currency> currencyNameCache=Cache.getCache("gphud/instanceCurrency",CacheConfig.PERMANENT_CONFIG);
 
-	protected Instance(final int id) { super(id); }
+    protected Instance(final int id) { super(id); }
 
 	// ---------- STATICS ----------
 
@@ -62,7 +64,7 @@ public class Instance extends TableRow {
 	 */
 	@Nonnull
 	public static Instance get(@Nonnull final Integer id) {
-		return (Instance) factoryPut("Instance",id,new Instance(id));
+		return (Instance) factoryPut("Instance",id,Instance::new);
 	}
 
 	/**

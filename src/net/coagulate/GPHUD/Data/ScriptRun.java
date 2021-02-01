@@ -41,7 +41,7 @@ public class ScriptRun extends TableRow {
 	@Nonnull
 	public static ScriptRun get(final int id) {
 		try {
-			return (ScriptRun) factoryPut("ScriptRuns",id,new ScriptRun(id));
+			return (ScriptRun) factoryPut("ScriptRuns",id,ScriptRun::new);
 		}
 		catch (final NoDataException e) { throw new UserInputNotFoundException("Script run no longer exists",e,true); }
 	}
@@ -114,6 +114,4 @@ public class ScriptRun extends TableRow {
 	public byte[] getByteCode() {
 		return getBytes("bytecode");
 	}
-	@Override
-	protected int getNameCacheTime() { return 0; }
 }

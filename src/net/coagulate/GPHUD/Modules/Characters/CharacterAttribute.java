@@ -79,9 +79,9 @@ public abstract class CharacterAttribute extends Attribute {
 	/**
 	 * Set the default value for this attribute.
 	 *
-	 * @param defaultvalue New default value
+	 * @param defaultValue New default value
 	 */
-	public void setDefaultValue(final String defaultvalue) {
+	public void setDefaultValue(final String defaultValue) {
 		throw new UserInputStateException("Not valid on auto generated attribute");
 	}
 
@@ -90,9 +90,9 @@ public abstract class CharacterAttribute extends Attribute {
 	/**
 	 * Set the self modify flag.
 	 *
-	 * @param selfmodify Character can self modify the attribute
+	 * @param selfModify Character can self modify the attribute
 	 */
-	public void setSelfModify(final Boolean selfmodify) {
+	public void setSelfModify(final Boolean selfModify) {
 		throw new UserInputStateException("Not valid on auto generated attribute");
 	}
 
@@ -110,9 +110,9 @@ public abstract class CharacterAttribute extends Attribute {
 	/**
 	 * Set the uses abilitypoints flag.
 	 *
-	 * @param usesabilitypoints Flags new value
+	 * @param usesAbilityPoints Flags new value
 	 */
-	public void setUsesAbilityPoints(final Boolean usesabilitypoints) {
+	public void setUsesAbilityPoints(final Boolean usesAbilityPoints) {
 		throw new SystemImplementationException("Not valid on auto generated attribute");
 	}
 
@@ -132,7 +132,7 @@ public abstract class CharacterAttribute extends Attribute {
 
 	@Override
 	public void templatable(final State st,
-	                        final boolean newvalue) {
+	                        final boolean newValue) {
 		throw new UserInputStateException("Non user attribute can not have its templatable flag changed");
 	}
 }

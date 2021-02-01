@@ -282,7 +282,7 @@ public abstract class Management {
 		if (oldPrecedence==precedence) { return new OKResponse("Precedence unchanged"); }
 		group.setKVPrecedence(precedence);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetPrecedence",group.getName(),""+oldPrecedence,""+precedence,"Changed KV Precedence from "+oldPrecedence+" to "+precedence);
-		CharacterGroup.purgeCharacterGroupCaches();
+		CharacterGroup.purgeCharacterGroupPrecedenceCaches();
 		st.getInstance().pushConveyances();
 		return new OKResponse("Precedence updated");
 	}

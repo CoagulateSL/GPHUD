@@ -34,7 +34,7 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public static Event get(final int id) {
-		return (Event) factoryPut("Event",id,new Event(id));
+		return (Event) factoryPut("Event",id,Event::new);
 	}
 
 	/**
