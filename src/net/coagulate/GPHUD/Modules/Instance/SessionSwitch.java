@@ -28,12 +28,13 @@ public class SessionSwitch {
 	public static void switchInstance(@Nonnull final State st,
 	                                  @Nonnull final SafeMap values) {
 		final Form f=st.form();
+		f.noForm();
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
 		for (final Instance i: Instance.getInstances()) {
 			final String id=i.getId()+"";
 			f.add("<table><tr><td align=center width=300px><img src=\""+i.getLogoURL(st)+"\" height=150px width="+i.getLogoWidth(150)+"px></td><td>");
-			f.add(new Button("Select Instance - "+id,"Select Instance - "+i.getName()));
+			f.add(new Form().add(new Button("Select Instance - "+id,"Select Instance - "+i.getName())));
 			if (!values.get("Select Instance - "+id).isEmpty()) {
 				st.setInstance(i);
 				st.cookie().setInstance(i);
