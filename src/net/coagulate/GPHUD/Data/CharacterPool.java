@@ -59,9 +59,13 @@ public class CharacterPool {
 	 */
 	public static int sumPool(@Nonnull final Char character,
 	                          @Nonnull final Pool pool) {
-		final Integer sum=db().dqi("select sum(adjustment) from characterpools where characterid=? and poolname like ?",character.getId(),pool.fullName());
-		if (sum==null) { return 0; }
-		return sum;
+		return character.poolSumCache.get(pool,()-> {
+			final Integer sum = db().dqi("select sum(adjustment) from characterpools where characterid=? and poolname like ?", character.getId(), pool.fullName());
+			if (sum == null) {
+				return 0;
+			}
+			return sum;
+		});
 	}
 
 	/**
@@ -101,6 +105,7 @@ public class CharacterPool {
 		       description,
 		       getUnixTime()
 		      );
+		target.poolSumCache.purge(pool);
 	}
 
 	/**
@@ -126,6 +131,7 @@ public class CharacterPool {
 		       description,
 		       getUnixTime()
 		      );
+		target.poolSumCache.purge(pool);
 	}
 
 	/**
@@ -151,6 +157,7 @@ public class CharacterPool {
 		       description,
 		       getUnixTime()
 		      );
+		target.poolSumCache.purge(pool);
 	}
 
 	/**
