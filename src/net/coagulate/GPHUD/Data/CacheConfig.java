@@ -11,5 +11,6 @@ public final class CacheConfig {
     public static final int PERMANENT_CONFIG = ONE_HOUR; // cachable forever, but frees up memory.
     // Not all actually permanent but does imply that caching works properly at least.
     public static final int MUTABLE = ONE_MINUTE;
+    public static final int MINIMAL = 1; // for things that update, but we might want to cache for the remainder of this request
 
 }
