@@ -209,6 +209,7 @@ public class Attribute extends TableRow {
 	                          final boolean required,
 	                          @Nullable final String defaultValue) {
 		create(st.getInstance(),name,selfModify,attributetype,groupType,usesAbilityPoints,required,defaultValue);
+		attributeSetCache.purge(st.getInstance());
 	}
 
 	/**
@@ -326,8 +327,9 @@ public class Attribute extends TableRow {
 	 * @return True if it does
 	 */
 	public boolean usesAbilityPoints() {
-		return getBool("usesabilitypoints");
+		return usesAbilityPointsCache.get(this,()->getBool("usesabilitypoints"));
 	}
+	private static final Cache<Boolean> usesAbilityPointsCache=Cache.getCache("GPHUD/AttributeAbilityPoints",CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Return if this attribute is mandatory.
@@ -536,6 +538,7 @@ public class Attribute extends TableRow {
 	 */
 	public void setUsesAbilityPoints(final Boolean usesAbilityPoints) {
 		set("usesabilitypoints",usesAbilityPoints);
+		usesAbilityPointsCache.set(this,usesAbilityPoints);
 	}
 
 	/**
@@ -554,6 +557,7 @@ public class Attribute extends TableRow {
 		d("delete from attributes where attributeid=?",getId());
 		attributeSetCache.purge(this);
 		attributeTypeCache.purge(this);
+		usesAbilityPointsCache.purge(this);
 	}
 
 	public boolean readOnly() {
