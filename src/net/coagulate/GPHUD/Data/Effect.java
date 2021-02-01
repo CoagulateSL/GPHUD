@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -155,13 +156,16 @@ public class Effect extends TableRow {
 	@Nonnull
 	public static Set<Effect> get(@Nonnull final State st,
 	                              @Nonnull final Char character) {
-		expirationCheck(st,character);
-		final Set<Effect> set=new HashSet<>();
-		for (final ResultsRow row: db().dq("select effectid from effectsapplications where characterid=? and expires>=?",character.getId(),UnixTime.getUnixTime())) {
-			set.add(get(row.getInt()));
-		}
-		return set;
+		return effectCache.get(character,()-> {
+			expirationCheck(st, character);
+			final Set<Effect> set = new HashSet<>();
+			for (final ResultsRow row : db().dq("select effectid from effectsapplications where characterid=? and expires>=?", character.getId(), UnixTime.getUnixTime())) {
+				set.add(get(row.getInt()));
+			}
+			return set;
+		});
 	}
+	private static final Cache<Set<Effect>> effectCache=Cache.getCache("GPHUD/EffectsActive",CacheConfig.MINIMAL);
 
 	/**
 	 * Add conveyances for effects to the JSON object.
