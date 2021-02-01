@@ -588,6 +588,7 @@ public class Char extends TableRow {
 		  null, //region
 		  getId()
 		 ); //character id
+		zoneCache.purge(this);
 	}
 
 	public void wipeConveyances(@Nonnull final State st) {
@@ -616,7 +617,7 @@ public class Char extends TableRow {
 		  region.getId(), //region id
 		  getId()
 		 ); // where char id
-
+		zoneCache.purge(this);
 	}
 
 	public void wipeConveyance(final State st,
@@ -744,12 +745,14 @@ public class Char extends TableRow {
 	 */
 	@Nullable
 	public Zone getZone() {
-		try {
-			final Integer id=dqi("select zoneid from characters where characterid=?",getId());
-			if (id==null) { return null; }
-			return Zone.get(id);
-		}
-		catch (@Nonnull final NoDataException e) { return null; }
+		return zoneCache.get(this,()->{
+			try {
+				final Integer id=dqi("select zoneid from characters where characterid=?",getId());
+				if (id==null) { return null; }
+				return Zone.get(id);
+			}
+			catch (@Nonnull final NoDataException e) { return null; }
+		});
 	}
 
 	/**
@@ -762,11 +765,14 @@ public class Char extends TableRow {
 		if (zone!=null) { id=zone.getId(); }
 		if (id==null) {
 			d("update characters set zoneid=null where characterid=?",getId());
+			zoneCache.set(this,null);
 			return;
 		}
 		d("update characters set zoneid=? where characterid=?",id,getId());
+		zoneCache.set(this,zone);
 	}
 
+	private static final Cache<Zone> zoneCache=Cache.getCache("gphud/characterZone",CacheConfig.MUTABLE);
 
 	/**
 	 * Set up all conveyances assuming the HUD has no state.
