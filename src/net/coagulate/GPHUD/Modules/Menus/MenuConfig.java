@@ -88,7 +88,7 @@ public abstract class MenuConfig {
 		}
 		if (st.hasPermission("Menus.Config") && "Submit".equals(values.get("Submit"))) {
 			final JSONObject json=new JSONObject();
-			for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
+			for (int i = 1; i<=MenuModule.MAX_BUTTONS; i++) {
 				final String button=values.get("button"+i);
 				final String command=values.get("command"+i);
 				if (!button.isEmpty() && !command.isEmpty()) {
@@ -126,7 +126,7 @@ public abstract class MenuConfig {
 		if (st.hasPermission("Menus.Config")) { f.add(new Button("Submit")); }
 		f.add(t);
 		final JSONObject j=m.getJSON();
-		for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
+		for (int i = 1; i<=MenuModule.MAX_BUTTONS; i++) {
 			t.openRow().add("Button "+i);
 			final Table tt=new Table();
 			t.add(tt);

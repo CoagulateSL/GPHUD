@@ -1,7 +1,7 @@
 // NEW HUD :P
 //#define DEBUG_BOOT
 //#define DEBUG_JSON
-#define COMMS_PROTOCOL "3"
+#define COMMS_PROTOCOL "4"
 
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/SetDev.lsl"

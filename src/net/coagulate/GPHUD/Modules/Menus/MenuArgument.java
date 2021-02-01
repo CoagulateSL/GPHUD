@@ -84,7 +84,7 @@ public class MenuArgument extends Argument {
 	@Nonnull
 	public List<String> getChoices(final State st) {
 		final List<String> options=new ArrayList<>();
-		for (int i=1;i<=MenuModule.MAXBUTTONS;i++) {
+		for (int i = 1; i<=MenuModule.MAX_BUTTONS; i++) {
 
 			if (meta.has("button"+i)) {
 				boolean haspermissions=false;
