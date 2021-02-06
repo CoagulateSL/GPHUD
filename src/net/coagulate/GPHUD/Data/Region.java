@@ -9,6 +9,7 @@ import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Interface;
@@ -254,8 +255,9 @@ public class Region extends TableRow {
 	 * @return retirement flag
 	 */
 	public boolean isRetired() {
-		return getBool("retired");
+		return retiredCache.get(this,()->getBool("retired"));
 	}
+	private static final Cache<Boolean> retiredCache=Cache.getCache("gphud/regionretired",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Gets the instance associated with this region
