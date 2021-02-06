@@ -5,6 +5,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -151,18 +152,20 @@ public class Event extends TableRow {
 	 */
 	@Nonnull
 	public static Set<Event> getActive(@Nonnull final Instance instance) {
-		final Set<Event> events=new TreeSet<>();
-		final int now=getUnixTime();
-		for (final ResultsRow r: db().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and "+"eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
-		                                 instance.getId(),
-		                                 now,
-		                                 now
-		                                )) {
-			events.add(get(r.getInt()));
-		}
-		return events;
-
+		return activeEventsCache.get(instance,()->{
+			final Set<Event> events=new TreeSet<>();
+			final int now=getUnixTime();
+			for (final ResultsRow r: db().dq("select eventsschedule.eventid from eventsschedule,events where eventsschedule.eventid=events.eventid and events.instanceid=? and eventsschedule.starttime<? and eventsschedule.endtime>? and eventsschedule.started=1",
+											 instance.getId(),
+											 now,
+											 now
+											)) {
+				events.add(get(r.getInt()));
+			}
+			return events;
+		});
 	}
+	private static final Cache<Set<Event>> activeEventsCache=Cache.getCache("gphud/eventActive", CacheConfig.MINIMAL); // does this help?
 
 	/**
 	 * Get all currently active events for an instance.
