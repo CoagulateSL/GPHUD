@@ -336,7 +336,10 @@ public class Attribute extends TableRow {
 	 *
 	 * @return true if this attribute is required
 	 */
-	public boolean getRequired() { return getBool("required"); }
+	public boolean getRequired() {
+		return requiredCache.get(this,()->getBool("required"));
+	}
+	private static final Cache<Boolean> requiredCache=Cache.getCache("gphud/attributeRequired",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Sets the required flag.
@@ -344,7 +347,7 @@ public class Attribute extends TableRow {
 	 * @param required New required flag state.
 	 */
 	public void setRequired(final boolean required) {
-		set("required",required);
+		set("required",required);requiredCache.set(this,required);
 	}
 
 	/**
