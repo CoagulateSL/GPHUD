@@ -68,7 +68,7 @@ public abstract class Modules {
 	                         @Nonnull final String nameorreference) {
 		final Module m=modules.get(extractModule(nameorreference).toLowerCase());
 		if (st!=null && !m.isEnabled(st)) {
-			throw new UserConfigurationException("Module "+m.getName()+" is not enabled in this instance");
+			throw new UserConfigurationException("Module "+m.getName()+" is not enabled in this instance",true);
 		}
 		if (st==null) { return m; }
 		// check dependancies
