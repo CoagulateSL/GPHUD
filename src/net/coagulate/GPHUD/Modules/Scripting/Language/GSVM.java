@@ -301,7 +301,10 @@ public class GSVM {
 			}
 			else {
 				final BCList list=(BCList) bcd;
-				initlist.addAll(list.getContent());
+				List<ByteCodeDataType> theList = list.getContent();
+				for (int i= theList.size()-1;i >= 0;i--) {
+					initlist.add(theList.get(i));
+				}
 				initlist.add(list);
 			}
 			initlist.add(new BCString(null,entry.getKey()));
