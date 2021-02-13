@@ -2,6 +2,7 @@
 #define _INCLUDE_GPHUD_HEADER
 #include "configuration.lsl"
 #include "GPHUD/LSL/Constants.lsl"
+#include "SLCore/LSL/SetDev.lsl"
 
 // reason for shutdown
 integer broadcastchannel=0;
@@ -26,6 +27,8 @@ calculatebroadcastchannel() {
 	output=-llAbs(output);
 	if (output>-1000) { output=output-99999; }
 	broadcastchannel=output;
+	setDev(FALSE);
+	if (DEV) { broadcastchannel-=10; }
 }
 
 #endif
