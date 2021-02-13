@@ -19,7 +19,7 @@
 #define CHECKIN_MINUTES 15
 string MODE="NONE";
 
-integer ODVERSION=8;
+integer ODVERSION=9;
 
 float maxTouchDistance=0.0;
 
