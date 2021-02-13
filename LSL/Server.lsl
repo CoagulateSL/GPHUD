@@ -127,6 +127,9 @@ default {
 			if (jsonget("dispense")!="") {
 				llMessageLinked(LINK_THIS,LINK_DISPENSE,"",(key)jsonget("dispense"));
 			}
+			if (jsonget("dispensetitler")!="") {
+				llMessageLinked(LINK_THIS,LINK_DISPENSE_TITLER,jsonget("attachmentpoint"),(key)jsonget("dispensetitler"));
+			}			
 		}
 		if (channel==0) {
 			string commandprefix="**";

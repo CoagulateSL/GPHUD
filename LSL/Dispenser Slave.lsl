@@ -5,9 +5,9 @@ integer listener=0;
 integer scriptnumber=0;
 key target=NULL_KEY;
 integer TITLER=1;
-rezSequence(key targetid) {
-	llRezObject("GPHUD",llGetPos()+<0,0,llFrand(3.5)+1.5>,ZERO_VECTOR,ZERO_ROTATION,(integer)((string)targetid));
-	llRezObject("GPHUD Titler",llGetPos()+<0,0,llFrand(3.5)+1.5>,ZERO_VECTOR,ZERO_ROTATION,(integer)((string)targetid));
+rezSequence(key targetid,integer rezHUD,integer rezTitler) {
+	if (rezHUD) { llRezObject("GPHUD",llGetPos()+<0,0,llFrand(3.5)+1.5>,ZERO_VECTOR,ZERO_ROTATION,(integer)((string)targetid)); }
+	if (rezTitler) { llRezObject("GPHUD Titler",llGetPos()+<0,0,llFrand(3.5)+1.5>,ZERO_VECTOR,ZERO_ROTATION,(integer)((string)targetid)); }
 }
 
 default {
@@ -22,9 +22,19 @@ default {
 		}
 		if (num==1) {
 			if (message==llGetScriptName()) {
-				rezSequence(id); 
+				rezSequence(id,TRUE,TRUE); 
 			}
 		}
+		if (num==2) {
+			if (message==llGetScriptName()) {
+				rezSequence(id,TRUE,FALSE); 
+			}
+		}
+		if (num==3) {
+			if (message==llGetScriptName()) {
+				rezSequence(id,FALSE,TRUE); 
+			}
+		}		
 	}	
 }
 

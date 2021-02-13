@@ -20,6 +20,7 @@ integer cycle=0;
 list stage=[];
 list time=[];
 list secret=[];
+list attachment=[];
 integer listens=4;
 
 integer autoattach=FALSE;
@@ -51,6 +52,7 @@ listdel(integer i) {
 	stage=llDeleteSubList(stage,i,i);
 	time=llDeleteSubList(time,i,i);
 	secret=llDeleteSubList(secret,i,i);
+	attachment=llDeleteSubList(attachment,i,i);
 
 }
 #ifndef NOEXPERIENCES
@@ -103,6 +105,7 @@ adduser(key check,integer when) {
 	if (llGetObjectDesc()=="DEV") { asecret+=1; }
 	if (llGetObjectDesc()=="DEV-iain") { asecret+=2; }
 	secret+=[asecret];
+	attachment+=[2];
 	llRegionSayTo(check,broadcastchannel,"GOTHUD");
 }
 execute() {
@@ -163,7 +166,7 @@ execute() {
 			if (istage==0) { //querying timed out, rez a hud
 				// so we shoudl rez them a hud
 				string slscript=getSlaveScript();
-				llMessageLinked(LINK_THIS,1,slscript,(key)((string)isecret));
+				llMessageLinked(LINK_THIS,2,slscript,(key)((string)isecret));
 				if (debug) { llOwnerSay("Dispenser:Rez for "+llKey2Name(ik)+" with secret "+(string)isecret+" via slave "+slscript); }
 				stage=llListReplaceList(stage,[1],i,i);
 				time=llListReplaceList(time,[now+10],i,i);
@@ -244,6 +247,18 @@ default {
 		}
 		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser free memory: "+(string)llGetFreeMemory()+" tracked elements "+(string)llGetListLength(keys)); }
 		if (num==LINK_DISPENSE) { forcedispense(id); }
+		if (num==LINK_DISPENSE_TITLER) {
+			string slscript=getSlaveScript();
+			integer match=-1;
+			integer i=0;
+			for (i=0;i<llGetListLength(keys);i++) {
+				if (id==llList2Key(keys,i)) { match=i; }
+			}
+			if (match!=-1) {
+				attachment=llListReplaceList(attachment,[(integer)message],match,match);
+				llMessageLinked(LINK_THIS,3,slscript,(key)((string)llList2Integer(secret,match)));
+			}
+		}		
 	}	
 		
 	timer() {
@@ -266,7 +281,7 @@ default {
 				integer i=llListFindList(secret,[sec]);
 				if (i!=-1) {
 					if (debug) { llOwnerSay("Responded to attachment query for "+llKey2Name(llList2Key(keys,i))); }
-					llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i));
+					llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i)+"|"+(string)llList2Integer(attachment,i));
 					stage=llListReplaceList(stage,[2],i,i);
 					time=llListReplaceList(time,[llGetUnixTime()+180],i,i);
 				}

@@ -199,6 +199,11 @@ integer process(key requestid) {
 		command("GPHUDClient.call");
 		json=oldjson; oldjson="";
 	}	
+	if (jsonget("titler")!="") {
+		string r=llJsonSetValue("",["attachmentpoint"],jsonget("titler"));
+		r=llJsonSetValue(r,["dispensetitler"],(string)llGetOwner());
+		if (((integer)jsonget("titler"))!=0) { llRegionSay(broadcastchannel,r); }
+	}
 	json=retjson;
 	if (DONOTRESPOND) { return FALSE; }
 	return TRUE;

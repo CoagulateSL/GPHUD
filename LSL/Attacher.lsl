@@ -34,6 +34,7 @@ dumpLinks() {
 	}
 }
 #endif
+integer isTitler() { return llSubStringIndex(llGetObjectName(),"Titler")!=-1; }
 terminate(string reason,vector color,float delay) {
 	llSetText(reason,color,1.0);
 	llSleep(delay);
@@ -65,7 +66,7 @@ integer dodie=FALSE;
 
 default {
 	state_entry() {
-		if (llSubStringIndex(llGetObjectName(),"Titler")!=-1) { ATTACH_LOCATION=ATTACH_HEAD; }
+		if (isTitler()) { ATTACH_LOCATION=ATTACH_HEAD; }
 		state standby;
 	}
 }
@@ -115,7 +116,14 @@ state standby {
 	touch_start(integer n) { if (llDetectedKey(0)==SYSTEM_OWNER_UUID) { status("Sending fake startup message!"); llMessageLinked(LINK_THIS,LINK_GO,"",""); state comatose; }}
 	listen(integer channel,string name,key id,string message) {
 		if (channel==broadcastchannel+2) {
-			suggestedowner=(key)message;
+			if (llSubStringIndex(message,"|")==-1) {
+				suggestedowner=(key)message;
+			} else {
+				suggestedowner=(key)llGetSubString(message,0,35);
+				if (isTitler()) {
+					ATTACH_LOCATION=(integer)llGetSubString(message,37,-1);
+				}
+			}
 			state initiateattach;
 		}
 	}
