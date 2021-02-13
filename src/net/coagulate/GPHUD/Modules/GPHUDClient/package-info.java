@@ -271,6 +271,28 @@
      scope = KVSCOPE.INSTANCE,
      type = KVTYPE.BOOLEAN)
 
+@KVS(name="TitlerAttachment",
+     defaultValue="Head",
+     description = "Attachment location for the Titler, can be set to 'None' to disable the Titler entirely",
+     type = KVTYPE.TEXT,
+     hierarchy = KVHIERARCHY.DELEGATING,
+     scope = KVSCOPE.COMPLETE,
+     editPermission = "GPHUDClient.Config",
+     template = false)
+
+@KVS(name="TitlerAttachmentConverted",
+     defaultValue="--TITLERATTACHPOINT--",
+     description = "Converted attachment point as the HUD needs it - do not change!",
+     type = KVTYPE.TEXT,
+     hierarchy = KVHIERARCHY.DELEGATING,
+     scope = KVSCOPE.INSTANCE,
+     conveyAs = "titler",
+     editPermission = "User.SuperAdmin",
+     template = true)
+
+
+
+
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
