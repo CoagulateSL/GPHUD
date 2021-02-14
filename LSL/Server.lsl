@@ -70,6 +70,12 @@ integer process(key id) {
 	if (command=="shutdown" || jsonget("shutdown")!="") {
 		gphud_hang("Shutdown requested: "+jsonget("shutdown"));
 	}		
+	integer output=1;
+	while (jsonget("output"+(string)output)) {
+		llSay(0,llGetSubString(jsonget("output"+(string)output),1,-1));
+		output++;
+	}
+	
 	json="{}"; // clear the response :P
 	return TRUE;
 }
