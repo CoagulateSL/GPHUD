@@ -1077,6 +1077,10 @@ public class State extends DumpableState {
 		return object;
 	}
 
+	private boolean suppressOutput =false;
+	public void suppressOutput(boolean template) { this.suppressOutput =template; }
+	public boolean suppressOutput() { return suppressOutput; }
+
 	public enum Sources {
 		NONE,
 		SYSTEM,
