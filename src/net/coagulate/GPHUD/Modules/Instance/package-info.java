@@ -172,6 +172,10 @@
            requiresPermission="Characters.ViewAll",
            url="/characters/retiredlist?sort=Name")
 
+@Permissions(name="Reporting",
+             description="Allowed to spend reporting credits on generating and downloading reports",
+             power = Permission.POWER.MEDIUM)
+
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
