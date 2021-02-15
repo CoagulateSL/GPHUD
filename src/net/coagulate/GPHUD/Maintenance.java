@@ -138,6 +138,16 @@ public class Maintenance extends Thread {
 		}
 	}
 
+	public static void quotaCredits() {
+		try {
+			Instance.quotaCredits();
+		}
+		catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Quota update caught an exception",e);
+		}
+
+	}
+
 	public static class PingTransmission extends Transmission {
 		public PingTransmission(final Char c,
 		                        @Nonnull final JSONObject json,
