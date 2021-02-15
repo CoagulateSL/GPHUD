@@ -97,6 +97,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			//todo
 			//noinspection deprecation
 			Page.page().add(new Raw(renderHTML(state())));
+			if (state().suppressOutput()) { return; }
 			Page.page().template(new PlainTextMapper.PlainTextTemplate());
 		}
 		catch (@Nonnull final RedirectionException redir) {
@@ -189,6 +190,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 
 		// we compute the body first, so any changes it causes to the rest of the data (like logging out, menu changes etc) is reflected
 		final String body=renderBodyProtected(st);
+		if (st.suppressOutput()) { return ""; }
 		String p="";
 		p+=headerHTML(st);
 		p+=body;
