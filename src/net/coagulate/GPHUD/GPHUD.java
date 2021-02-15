@@ -154,9 +154,10 @@ public class GPHUD extends SLModule {
 	@Override
 	public void maintenance() {
 		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
+		if (nextRun("GPHUD-Maintenance-Report-Quota",60*60,5*60)) { Maintenance.quotaCredits(); }
 	}
 
-	private static final int SCHEMA_VERSION=7;
+	private static final int SCHEMA_VERSION=8;
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
@@ -277,6 +278,19 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET', 'INVENTORY') NOT NULL");
 			log.config("Schema upgrade of GPHUD to version 7 is complete");
 			currentVersion=7;
+		}
+		if (currentVersion==7) {
+			log.config("Add report and quota to instances table");
+			GPHUD.getDB().d("ALTER TABLE `instances` " +
+					"ADD COLUMN `reportquota` INT NULL DEFAULT 0," +
+					"ADD COLUMN `downloadquota` INT NULL DEFAULT 0," +
+					"ADD COLUMN `nextquotaincrease` INT NULL DEFAULT 0," +
+					"ADD COLUMN `report` TEXT NULL," +
+					"ADD COLUMN `reporttds` INT NULL DEFAULT 0");
+
+
+			log.config("Schema upgrade of GPHUD to version 8 is complete");
+			currentVersion=8;
 		}
 		return currentVersion;
 	}
