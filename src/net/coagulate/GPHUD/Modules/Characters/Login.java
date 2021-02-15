@@ -103,9 +103,11 @@ public abstract class Login {
 		}
 
 		final String url=st.getCharacter().getURL();
+		int protocol=st.getCharacter().getProtocol();
 		st.getCharacter().disconnect();
 		character.login(st.getAvatar(),st.getRegion(),url);
 		st.setCharacter(character);
+		st.getCharacter().setProtocol(protocol); // migrate protocol
 		character.wipeConveyances(st);
 		return Connect.postConnect(st);
 	}
