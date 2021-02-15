@@ -86,6 +86,7 @@ public class Reporting {
                       permitExternal = false,
                       context = Command.Context.AVATAR)
     public static Response generateReport(@Nonnull final State state) {
+        if (state.getInstance().generating()!=0) { return new ErrorResponse("Already generating a report!"); }
         if (!state.isSuperUser()) {
             if (!state.getInstance().spendReportCredit()) {
                 return new ErrorResponse("Sorry, you have no report generation credits left");
@@ -96,6 +97,7 @@ public class Reporting {
     }
 
     public static void runReport(State state) {
+        state.getInstance().generating(UnixTime.getUnixTime());
         Set<Char> set = state.getInstance().getCharacters();
         Set<Attribute> attributes = state.getAttributes();
         SL.log("Reporting").info("Beginning report for " + state.getInstance() + " with " + set.size() + " characters x " + attributes.size() + " attributes");
@@ -169,7 +171,9 @@ public class Reporting {
             }
             state.getInstance().setReport(output.toString());
             SL.log("Reporting").info("Report generation for " + state.getInstance() + " with " + set.size() + " characters x " + attributes.size() + " attributes is now complete.");
+            state.getInstance().generating(0);
         } catch (IOException e) {
+            state.getInstance().generating(0);
             throw new SystemImplementationException("Error writing CSV to StringWriter (!)", e);
         }
     }

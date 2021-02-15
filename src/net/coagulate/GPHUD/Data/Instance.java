@@ -730,4 +730,7 @@ public class Instance extends TableRow {
 		if (quota>0) { set("downloadquota",quota-1); return true; }
 		return false;
 	}
+
+	public int generating() { return getInt("reporting"); }
+	public void generating(int value) { set("reporting",value); }
 }
