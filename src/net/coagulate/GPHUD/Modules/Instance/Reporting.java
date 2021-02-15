@@ -92,7 +92,7 @@ public class Reporting {
             }
         }
         new Thread(() -> runReport(state)).start();
-        return new OKResponse("Report generation in progress, this will probably take "+ UnixTime.duration(state.getInstance().countCharacters()/10,true));
+        return new OKResponse("Report generation in progress, this will probably take "+ UnixTime.duration(state.getInstance().countCharacters()/20,true));
     }
 
     public static void runReport(State state) {
@@ -163,7 +163,7 @@ public class Reporting {
 
                 csv.println();
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException ignored) {
                 }
             }
