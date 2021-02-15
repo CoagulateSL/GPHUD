@@ -13,17 +13,10 @@
              name="ConnectObjects",
              power=POWER.MEDIUM)
 
-// one day i need to make a module able to have many side menus
-@SideMenu.SideMenus(name="Reporting",
-                    priority=255,
-                    requiresPermission="Instance.Reporting",
-                    url="/reporting")
-
 
 package net.coagulate.GPHUD.Modules.External;
 
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
 import net.coagulate.GPHUD.Modules.Permission.POWER;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
-import net.coagulate.GPHUD.Modules.SideMenu;
 
