@@ -11,8 +11,9 @@ import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.Experience.GenericXP;
-import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
@@ -96,7 +97,7 @@ public class Reporting {
 
     public static void runReport(State state) {
         Set<Char> set = state.getInstance().getCharacters();
-        Set<Attribute> attributes = Attribute.getAttributes(state);
+        Set<Attribute> attributes = state.getAttributes();
         SL.log("Reporting").info("Beginning report for " + state.getInstance() + " with " + set.size() + " characters x " + attributes.size() + " attributes");
         StringWriter output = new StringWriter();
         try {
@@ -105,6 +106,8 @@ public class Reporting {
             for (Attribute attribute : attributes) {
                 csv.print(attribute.getName());
             }
+            csv.print("Total XP");
+            csv.print("Level");
             csv.println();
             for (Char ch : set) {
                 State charState = new State(ch);
@@ -115,7 +118,11 @@ public class Reporting {
                             csv.print(new CharacterSet(ch, attribute).textList());
                             break;
                         case POOL:
-                            csv.print(CharacterPool.sumPool(ch, Modules.getPool(charState, attribute.getName())));
+                            if (QuotaedXP.class.isAssignableFrom(attribute.getClass())) {
+                                final QuotaedXP xp=(QuotaedXP) attribute;
+                                csv.print(CharacterPool.sumPool(charState,(xp.getPool(charState))));
+                            }
+                            else { csv.print("SomeKindOfPool (?)"); }
                             break;
                         case GROUP:
                             String subType = attribute.getSubType();
@@ -142,6 +149,10 @@ public class Reporting {
                             break;
                     }
                 }
+                final int xp= Experience.getExperience(charState,ch);
+                csv.print(xp);
+                csv.print(Experience.toLevel(charState,xp));
+
                 csv.println();
                 try {
                     Thread.sleep(100);
