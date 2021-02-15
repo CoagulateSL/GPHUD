@@ -103,6 +103,10 @@ public class Reporting {
         try {
             CSVPrinter csv = new CSVPrinter(output, CSVFormat.EXCEL);
             csv.print("ID");
+            csv.print("Character Name");
+            csv.print("Retired");
+            csv.print("Owner Name");
+            csv.print("Last Active (SLT)");
             for (Attribute attribute : attributes) {
                 csv.print(attribute.getName());
             }
@@ -112,6 +116,10 @@ public class Reporting {
             for (Char ch : set) {
                 State charState = new State(ch);
                 csv.print(ch.getId());
+                csv.print(ch.getName());
+                csv.print(ch.retired());
+                csv.print(ch.getOwner().getName());
+                csv.print(UnixTime.fromUnixTime(ch.getLastPlayed(),"America/Los_Angeles"));
                 for (Attribute attribute : attributes) {
                     switch (attribute.getType()) {
                         case SET:
