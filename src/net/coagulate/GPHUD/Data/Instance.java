@@ -6,6 +6,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.Core.Tools.UnixTime;
@@ -120,6 +121,18 @@ public class Instance extends TableRow {
 			instances.add(get(r.getInt("instanceid")));
 		}
 		return instances;
+	}
+
+	public static void quotaCredits() {
+		int quotaLimit=Config.getQuotaLimit();
+		int quotaInterval=Config.getQuotaInterval();
+		for (ResultsRow row:db().dq("select instanceid from instances where nextquotaincrease<?",UnixTime.getUnixTime())) {
+			db().d("update instances set reportquota=least(reportquota+1,?),downloadquota=least(downloadquota+1,?),nextquotaincrease=? where instanceid=?",
+					quotaLimit,
+					quotaLimit,
+					UnixTime.getUnixTime()+quotaInterval,
+					row.getInt());
+		}
 	}
 
 	// ---------- INSTANCE ----------
@@ -678,4 +691,43 @@ public class Instance extends TableRow {
 		return true;
 	}
 
+    public Set<Char> getCharacters() {
+		Set<Char> chars=new HashSet<>();
+		for (ResultsRow row:dq("select characterid from characters where instanceid=?",getId())) {
+			chars.add(Char.get(row.getInt()));
+		}
+		return chars;
+    }
+
+	public void setReport(@Nonnull final String report) {
+		set("report",report);
+		set("reporttds",UnixTime.getUnixTime());
+	}
+
+	public boolean spendReportCredit() {
+		int quota=getInt("reportquota");
+		if (quota>0) { set("reportquota",quota-1); return true; }
+		return false;
+	}
+
+	public int countCharacters() {
+		return dqinn("select count(*) from characters where instanceid=?",getId());
+	}
+
+	public int reportCredits() { return getInt("reportquota"); }
+
+	public int downloadCredits() { return getInt("downloadquota"); }
+
+	public int lastReport() { return getInt("reporttds"); }
+
+	public String getReport() {
+		if (lastReport()==0) { throw new UserInputStateException("No report has been generated"); }
+		return getString("report");
+	}
+
+	public boolean spendDownloadCredit() {
+		int quota=getInt("downloadquota");
+		if (quota>0) { set("downloadquota",quota-1); return true; }
+		return false;
+	}
 }
