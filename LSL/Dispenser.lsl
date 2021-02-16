@@ -25,7 +25,7 @@ integer listens=4;
 
 integer autoattach=FALSE;
 integer parcelonly=TRUE;
-integer debug=FALSE;
+//integer debug=FALSE;
 integer slave=0;
 integer IN_EXPERIENCE=TRUE;
 integer IS_ACTIVE=FALSE;
@@ -94,7 +94,7 @@ adduser(key check,integer when) {
 		if ((pos.z)<minz || (pos.z)>maxz) { return; }
 	}
 	if (llListFindList(keys,[check])!=-1) { return; }
-	if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
+	//if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
 	keys+=[check];
 	if (when==-1) { stage+=[-1]; } else { stage+=[0]; }
 	time+=[when];
@@ -137,7 +137,7 @@ execute() {
 			for (ii=llGetListLength(keys)-1;ii>=0;ii--) {
 				key check=llList2Key(keys,ii);
 				if (llListFindList(newkeys,[check])==-1) {
-					if (debug) { llOwnerSay("Dispenser:Left user "+llKey2Name(check)); }
+					//if (debug) { llOwnerSay("Dispenser:Left user "+llKey2Name(check)); }
 					listdel(ii);
 				}
 			}
@@ -160,19 +160,19 @@ execute() {
 		integer isecret=llList2Integer(secret,i);
 		if (istage>=0 && itime<=now && actions>0) {
 			actions--;
-			if (debug) { llOwnerSay("Dispenser:Acting on "+llKey2Name(ik)+" in stage "+(string)istage+", "+(string)actions+" actions remain"); }
+			//if (debug) { llOwnerSay("Dispenser:Acting on "+llKey2Name(ik)+" in stage "+(string)istage+", "+(string)actions+" actions remain"); }
 			
 			// actions
 			if (istage==0) { //querying timed out, rez a hud
 				// so we shoudl rez them a hud
 				string slscript=getSlaveScript();
 				llMessageLinked(LINK_THIS,2,slscript,(key)((string)isecret));
-				if (debug) { llOwnerSay("Dispenser:Rez for "+llKey2Name(ik)+" with secret "+(string)isecret+" via slave "+slscript); }
+				//if (debug) { llOwnerSay("Dispenser:Rez for "+llKey2Name(ik)+" with secret "+(string)isecret+" via slave "+slscript); }
 				stage=llListReplaceList(stage,[1],i,i);
 				time=llListReplaceList(time,[now+10],i,i);
 			}
 			if (istage==1) { //hud querying us timed out?
-				llSay(0,"Dispenser Module: Alert: Slow rez or rez failure detected for "+llKey2Name(ik)+", resetting their entry");
+				llSay(0,"Slow rez or failure for "+llKey2Name(ik)+", resetting");
 				listdel(i);
 				return;
 			}
@@ -193,10 +193,10 @@ process(key id) {
 	if (jsonget("autoattach")!="")
 	{
 		if (jsonget("autoattach")=="true") {
-			if (autoattach==FALSE) { llOwnerSay("Dispenser: Enabling auto attach"); }
+			//if (autoattach==FALSE) { llOwnerSay("Dispenser: Enabling auto attach"); }
 			autoattach=TRUE;
 		} else {
-			if (autoattach==TRUE) { llOwnerSay("Dispenser: Disabling auto attach"); }
+			//if (autoattach==TRUE) { llOwnerSay("Dispenser: Disabling auto attach"); }
 			autoattach=FALSE;
 		}
 	}
@@ -205,10 +205,10 @@ process(key id) {
 	if (jsonget("parcelonly")!="")
 	{
 		if (jsonget("parcelonly")=="true") {
-			if (parcelonly==FALSE) { llOwnerSay("Dispenser: Enabling parcel only"); }
+			//if (parcelonly==FALSE) { llOwnerSay("Dispenser: Enabling parcel only"); }
 			parcelonly=TRUE;
 		} else {
-			if (parcelonly==TRUE) { llOwnerSay("Dispenser: Disabling parcel only"); }
+			//if (parcelonly==TRUE) { llOwnerSay("Dispenser: Disabling parcel only"); }
 			parcelonly=FALSE;
 		}
 	}
@@ -231,7 +231,7 @@ default {
 				if (BOOTSTAGE==BOOT_COMPLETE) {
 					setDev(FALSE);
 					// our startup!
-					llOwnerSay("Dispenser: Server Booted ; searching existing HUDs");
+					llOwnerSay("Dispenser: Searching existing HUDs");
 					llSetTimerEvent(2.0);
 					processafter=llGetUnixTime()+30;
 					calculatebroadcastchannel();
@@ -245,7 +245,7 @@ default {
 			integer scriptnumber=getSlaveId();
 			llMessageLinked(LINK_THIS,LINK_IM_SLAVE_0-scriptnumber,message,id);
 		}
-		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser free memory: "+(string)llGetFreeMemory()+" tracked elements "+(string)llGetListLength(keys)); }
+		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser mem: "+(string)llGetFreeMemory()+" elements "+(string)llGetListLength(keys)); }
 		if (num==LINK_DISPENSE) { forcedispense(id); }
 		if (num==LINK_DISPENSE_TITLER) {
 			string slscript=getSlaveScript();
@@ -280,7 +280,7 @@ default {
 				integer sec=(integer)message;
 				integer i=llListFindList(secret,[sec]);
 				if (i!=-1) {
-					if (debug) { llOwnerSay("Responded to attachment query for "+llKey2Name(llList2Key(keys,i))); }
+					//if (debug) { llOwnerSay("Responded to attachment query for "+llKey2Name(llList2Key(keys,i))); }
 					llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i)+"|"+(string)llList2Integer(attachment,i));
 					stage=llListReplaceList(stage,[2],i,i);
 					time=llListReplaceList(time,[llGetUnixTime()+180],i,i);
@@ -289,7 +289,7 @@ default {
 			if (channel==broadcastchannel) {
 				if (message=="GOTHUD") {
 					key k=llGetOwnerKey(id);
-					if (debug) { llOwnerSay("Dispenser:Has Hud "+llKey2Name(k)); }
+					//if (debug) { llOwnerSay("Dispenser:Has Hud "+llKey2Name(k)); }
 					integer n=llListFindList(keys,[k]);
 					if (n!=-1) {
 						stage=llListReplaceList(stage,[-1],n,n);
