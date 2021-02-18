@@ -308,6 +308,7 @@ public class CharacterGroup extends TableRow {
 		}
 		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
 		characterGroupsCache.purge(character);
+		groupMembershipCache.purge(this);
 	}
 
 	/**
@@ -322,6 +323,7 @@ public class CharacterGroup extends TableRow {
 		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
 		characterGroupsCache.purge(character);
+		groupMembershipCache.purge(this);
 		if (exists==0) { throw new UserInputStateException("Character not in group."); }
 	}
 
