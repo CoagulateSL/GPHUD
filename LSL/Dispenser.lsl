@@ -56,6 +56,7 @@ listdel(integer i) {
 
 }
 #ifndef NOEXPERIENCES
+/*
 string validateExperience() {
 	list experience=llGetExperienceDetails(NULL_KEY);
 	if (llGetListLength(experience)==0) {
@@ -66,8 +67,16 @@ string validateExperience() {
 	string experiencename=llList2String(experience,0);
 	string statemessage=llList2String(experience,4);
 	return experiencename+" - "+statemessage;
+}*/
+validateExperience() {
+	list experience=;
+	if (llGetListLength(llGetExperienceDetails(NULL_KEY))==0) {
+		IN_EXPERIENCE=FALSE;
+	} else { IN_EXPERIENCE=TRUE; }
 }
-string experienceError() {
+
+// removed to save memory
+/*string experienceError() {
 	list experience=llGetExperienceDetails(NULL_KEY);
 	if (llGetListLength(experience)==0) {
 		return "";
@@ -76,7 +85,7 @@ string experienceError() {
 	string experiencename=llList2String(experience,0);
 	string statemessage=llList2String(experience,4);
 	return "Experience error : "+experiencename+" - "+statemessage;
-}
+}*/
 #endif
 forcedispense(key who) {
 	adduser(who,llGetUnixTime()+10);
@@ -112,10 +121,13 @@ execute() {
 	integer now=llGetUnixTime();
 	cycle++;
 #ifndef NOEXPERIENCES
+	// function removed to save memory in dispenser
+	/*
 	if ((cycle % 120) == 1) { 
 		string experiencestatus=experienceError();
 		if (experiencestatus!="") { llOwnerSay(experiencestatus); }
 	}
+	*/
 #endif	
 	if ((cycle % 2) == 1) {
 		integer scope=AGENT_LIST_REGION;
@@ -130,6 +142,7 @@ execute() {
 			}	
 			json+="\"}";
 			httpcommand("gphudserver.setregionavatars","GPHUD/system");
+			json="";
 		}
 		if (autoattach) {
 			// purge leavers
@@ -171,6 +184,7 @@ execute() {
 				stage=llListReplaceList(stage,[1],i,i);
 				time=llListReplaceList(time,[now+10],i,i);
 			}
+			/*
 			if (istage==1) { //hud querying us timed out?
 				llSay(0,"Slow rez or failure for "+llKey2Name(ik)+", resetting");
 				listdel(i);
@@ -179,8 +193,8 @@ execute() {
 			if (istage==2) { //hud attaching timed out?
 				listdel(i); // we just delete them, this will cause us to ping their HUD :)
 				return;			
-			}
-			
+			}*/
+			if (istage==1 || istage==2) { listdel(i); }
 			if (actions==0) { return; }
 		}
 	}
@@ -189,7 +203,7 @@ execute() {
 process(key id) {
 	string command=jsonget("incommand");
 	string othercommand=jsonget("command");
-	if (jsonget("url")!="") { comms_url=jsonget("url"); } // llOwnerSay("Dispenser: Inherited URL"); }
+	// if (jsonget("url")!="") { comms_url=jsonget("url"); } // llOwnerSay("Dispenser: Inherited URL"); } // do we need this ? why?
 	if (jsonget("autoattach")!="")
 	{
 		if (jsonget("autoattach")=="true") {
@@ -219,9 +233,10 @@ integer processafter=-1;
 default {
 	state_entry() {
 #ifndef NOEXPERIENCES	
-		llOwnerSay(validateExperience());
+		//llOwnerSay(validateExperience());
+		validateExperience();
 #endif		
-		llOwnerSay("Dispenser: Awaiting Server Boot Complete");
+		llOwnerSay("Dispenser: Standby...");
 	}
 	link_message(integer from,integer num,string message,key id) {
 		if (num==LINK_SET_STAGE) {
@@ -231,7 +246,7 @@ default {
 				if (BOOTSTAGE==BOOT_COMPLETE) {
 					setDev(FALSE);
 					// our startup!
-					llOwnerSay("Dispenser: Searching existing HUDs");
+					llOwnerSay("Dispenser: HUD Scan");
 					llSetTimerEvent(2.0);
 					processafter=llGetUnixTime()+30;
 					calculatebroadcastchannel();
@@ -262,7 +277,7 @@ default {
 	}	
 		
 	timer() {
-		if (!IS_ACTIVE && llGetUnixTime()>processafter) { llOwnerSay("Dispenser: Startup complete"); IS_ACTIVE=TRUE; }
+		if (!IS_ACTIVE && llGetUnixTime()>processafter) { llOwnerSay("Dispenser: Active"); IS_ACTIVE=TRUE; }
 		if (IS_ACTIVE) {execute(); }
 	}
 	on_rez(integer n) { llResetScript(); }
@@ -308,7 +323,7 @@ default {
 		llOwnerSay("REPLY:"+body);
 		#endif
 		if (status==200) {
-			json=body;
+			json=body; body="";
 			process(NULL_KEY);
 		}
 	}	
