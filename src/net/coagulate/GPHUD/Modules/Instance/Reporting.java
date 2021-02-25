@@ -24,7 +24,6 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.http.entity.ContentType;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Set;
 
@@ -172,7 +171,7 @@ public class Reporting {
             state.getInstance().setReport(output.toString());
             SL.log("Reporting").info("Report generation for " + state.getInstance() + " with " + set.size() + " characters x " + attributes.size() + " attributes is now complete.");
             state.getInstance().generating(0);
-        } catch (IOException e) {
+        } catch (Exception e) {
             state.getInstance().generating(0);
             throw new SystemImplementationException("Error writing CSV to StringWriter (!)", e);
         }
