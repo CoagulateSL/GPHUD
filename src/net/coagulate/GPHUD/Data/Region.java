@@ -680,7 +680,7 @@ public class Region extends TableRow {
 		final int newdatetime=(int) (d.getTime()/1000.0);
 		final int oldprotocol=protocol();
 		if (type.equalsIgnoreCase("hud")) { protocol=oldprotocol; } // we don't log this in the regions table, just the region server protocol
-		if (oldversion==null || olddatetime==null || olddatetime!=newdatetime || oldversion!=newversion || protocol!=oldprotocol) {
+		if (oldversion==null || olddatetime==null || olddatetime<newdatetime || oldversion<newversion || protocol>oldprotocol) {
 			d("update regions set region"+type+"version=?,region"+type+"datetime=?,protocol=? where regionid=?",newversion,newdatetime,protocol,getId());
 			final String olddesc=formatVersion(oldversion,olddatetime,false);
 			final String newdesc=formatVersion(newversion,newdatetime,false);
