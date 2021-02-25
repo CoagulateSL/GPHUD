@@ -48,25 +48,29 @@ public class SQL {
 		for (final Map.Entry<String,Integer> entry: count.entrySet()) {
 			final String sql=entry.getKey();
 			final int c=entry.getValue();
-			final long t=time.get(sql);
+			final Long t=time.get(sql);
 			final Row newrow=new Row();
 			newrow.add(c);
 			newrow.add(sql);
-			newrow.add(t+"ms");
-			if (c>0) { newrow.add(t/c+"ms"); }
+			if (t==null) { newrow.add("-"); } else { newrow.add(t+"ms"); }
+			if (c>0 && t!=null) { newrow.add(t/c+"ms"); }
 			Set<Row> rowset=new HashSet<>();
 			if (bycount.containsKey(c)) { rowset=bycount.get(c); }
 			rowset.add(newrow);
 			bycount.put(c,rowset);
-			rowset=new HashSet<>();
-			if (bytime.containsKey(t)) { rowset=bytime.get(t); }
-			rowset.add(newrow);
-			bytime.put(t,rowset);
-			final double avg=((double) t)/((double) c);
-			rowset=new HashSet<>();
-			if (byper.containsKey(avg)) { rowset=byper.get(avg); }
-			rowset.add(newrow);
-			byper.put(avg,rowset);
+			if (t!=null) {
+				rowset = new HashSet<>();
+				if (bytime.containsKey(t)) {
+					rowset = bytime.get(t);
+				}
+				rowset.add(newrow);
+				bytime.put(t, rowset);
+				final double avg=((double) t)/((double) c);
+				rowset=new HashSet<>();
+				if (byper.containsKey(avg)) { rowset=byper.get(avg); }
+				rowset.add(newrow);
+				byper.put(avg,rowset);
+			}
 		}
 
 
