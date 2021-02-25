@@ -157,7 +157,6 @@ public class GPHUD extends SLModule {
 		if (nextRun("GPHUD-Maintenance-Report-Quota",60*60,5*60)) { Maintenance.quotaCredits(); }
 	}
 
-	private static final int SCHEMA_VERSION=9;
 	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
@@ -299,8 +298,15 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 9 is complete");
 			currentVersion=9;
 		}
+		if (currentVersion==9) {
+			log.config("Increase size of report storage");
+			GPHUD.getDB().d("ALTER TABLE `instances` CHANGE COLUMN `report` `report` LONGTEXT NULL DEFAULT NULL");
+			log.config("Schema upgrade of GPHUD to version 10 is complete");
+			currentVersion=10;
+		}
 		return currentVersion;
 	}
+	private static final int SCHEMA_VERSION=10;
 
 	@Override
 	public void startup() {
