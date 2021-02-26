@@ -12,15 +12,16 @@
 
 list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :P)
 // stages are
+// stage % 100
 // 0 - querying them for an existing HUD
 // 1 - rezzed hud, waiting for it to query us
 // 2 - hud rezzed and told where to go, should get a checkin response (eventually)
-// -1 - complete
+// 99 - complete
+// stage / 100 is the attachment point (INTEGER DIVISION - ALWAYS ROUND DOWN)
 integer cycle=0;
 list stage=[];
 list time=[];
 list secret=[];
-list attachment=[];
 integer listens=4;
 
 integer autoattach=FALSE;
@@ -52,8 +53,6 @@ listdel(integer i) {
 	stage=llDeleteSubList(stage,i,i);
 	time=llDeleteSubList(time,i,i);
 	secret=llDeleteSubList(secret,i,i);
-	attachment=llDeleteSubList(attachment,i,i);
-
 }
 #ifndef NOEXPERIENCES
 /*
@@ -69,7 +68,6 @@ string validateExperience() {
 	return experiencename+" - "+statemessage;
 }*/
 validateExperience() {
-	list experience=;
 	if (llGetListLength(llGetExperienceDetails(NULL_KEY))==0) {
 		IN_EXPERIENCE=FALSE;
 	} else { IN_EXPERIENCE=TRUE; }
@@ -105,7 +103,7 @@ adduser(key check,integer when) {
 	if (llListFindList(keys,[check])!=-1) { return; }
 	//if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
 	keys+=[check];
-	if (when==-1) { stage+=[-1]; } else { stage+=[0]; }
+	if (when==-1) { stage+=[299]; } else { stage+=[200]; } // default attachment point 2, stage is 0 or 99 (start or completed)
 	time+=[when];
 	integer asecret=1000+((integer)llFrand(999999999));
 	asecret=asecret/3;
@@ -114,7 +112,7 @@ adduser(key check,integer when) {
 	if (llGetObjectDesc()=="DEV") { asecret+=1; }
 	if (llGetObjectDesc()=="DEV-iain") { asecret+=2; }
 	secret+=[asecret];
-	attachment+=[2];
+	//attachment+=[2];
 	llRegionSayTo(check,broadcastchannel,"GOTHUD");
 }
 execute() {
@@ -168,10 +166,10 @@ execute() {
 	integer i=0;
 	for (i=0;i<llGetListLength(keys);i++) {
 		key ik=llList2Key(keys,i);
-		integer istage=llList2Integer(stage,i);
+		integer istage=llList2Integer(stage,i) % 100;
 		integer itime=llList2Integer(time,i);
 		integer isecret=llList2Integer(secret,i);
-		if (istage>=0 && itime<=now && actions>0) {
+		if (istage>=0 && istage<99 && itime<=now && actions>0) {
 			actions--;
 			//if (debug) { llOwnerSay("Dispenser:Acting on "+llKey2Name(ik)+" in stage "+(string)istage+", "+(string)actions+" actions remain"); }
 			
@@ -270,7 +268,9 @@ default {
 				if (id==llList2Key(keys,i)) { match=i; }
 			}
 			if (match!=-1) {
-				attachment=llListReplaceList(attachment,[(integer)message],match,match);
+				integer newstage=llList2Integer(stage,match); newstage=newstage%100; // wipe the attachment
+				newstage=newstage+(((integer)message)*100);			
+				stage=llListReplaceList(stage,[newstage],match,match);
 				llMessageLinked(LINK_THIS,3,slscript,(key)((string)llList2Integer(secret,match)));
 			}
 		}		
@@ -296,8 +296,11 @@ default {
 				integer i=llListFindList(secret,[sec]);
 				if (i!=-1) {
 					//if (debug) { llOwnerSay("Responded to attachment query for "+llKey2Name(llList2Key(keys,i))); }
-					llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i)+"|"+(string)llList2Integer(attachment,i));
-					stage=llListReplaceList(stage,[2],i,i);
+					integer attachment=llList2Integer(stage,i); attachment=attachment/100;
+					llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i)+"|"+(string)attachment);
+					integer newstage=llList2Integer(stage,i); newstage=newstage/100; newstage=newstage*100; // wipe the stage
+					newstage=newstage+2;
+					stage=llListReplaceList(stage,[newstage],i,i);
 					time=llListReplaceList(time,[llGetUnixTime()+180],i,i);
 				}
 			}
@@ -307,7 +310,11 @@ default {
 					//if (debug) { llOwnerSay("Dispenser:Has Hud "+llKey2Name(k)); }
 					integer n=llListFindList(keys,[k]);
 					if (n!=-1) {
-						stage=llListReplaceList(stage,[-1],n,n);
+						integer newstage=llList2Integer(stage,n);
+						newstage=newstage/100;
+						newstage=newstage*100; // wipe the stage
+						newstage=newstage+99;
+						stage=llListReplaceList(stage,[newstage],n,n);
 					}
 				}
 				json=message;
