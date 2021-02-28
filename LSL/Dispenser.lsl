@@ -1,12 +1,7 @@
-#define COMMS_PROTOCOL "3"
 #include "GPHUDHeader.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
 
-//#define COMMS_INCLUDECOOKIE
-#define COMMS_INCLUDECALLBACK
-//#define COMMS_INCLUDEDIGEST
 #include "configuration.lsl"
-#define COMMS_DONT_CHECK_CALLBACK
 #include "SLCore/LSL/CommsV3.lsl"
 #include "SLCore/LSL/SetDev.lsl"
 
@@ -18,21 +13,16 @@ list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :
 // 2 - hud rezzed and told where to go, should get a checkin response (eventually)
 // 99 - complete
 // stage / 100 is the attachment point (INTEGER DIVISION - ALWAYS ROUND DOWN)
-integer cycle=0;
 list stage=[];
 list time=[];
 list secret=[];
-integer listens=4;
 
-integer autoattach=FALSE;
-integer parcelonly=TRUE;
+integer cycle=0;
+
 //integer debug=FALSE;
 integer slave=0;
 integer IN_EXPERIENCE=TRUE;
 integer IS_ACTIVE=FALSE;
-
-float minz=0;
-float maxz=9999;
 
 
 integer getSlaveId() {
@@ -93,13 +83,6 @@ forcedispense(key who) {
 	time=llListReplaceList(time,[0],i,i);
 }
 adduser(key check,integer when) {
-	if (minz!=0 || maxz!=9999) { 
-		list details=llGetObjectDetails(check,[OBJECT_POS]);
-		if (llGetListLength(details)==0) { return; }
-		vector pos=llList2Vector(details,0);
-		//llSay(0,llKey2Name(check)+" at z "+((string)(pos.z))+" range "+((string)minz)+" - "+((string)maxz));
-		if ((pos.z)<minz || (pos.z)>maxz) { return; }
-	}
 	if (llListFindList(keys,[check])!=-1) { return; }
 	//if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
 	keys+=[check];
@@ -127,40 +110,6 @@ execute() {
 	}
 	*/
 #endif	
-	if ((cycle % 2) == 1) {
-		integer scope=AGENT_LIST_REGION;
-		if (parcelonly) { scope=AGENT_LIST_PARCEL; }
-		list newkeys=llGetAgentList(scope,[]);
-		if ((cycle % 30) == 1) {
-			json="";
-			json+="{\"userlist\":\"";
-			integer ii=0;
-			for (ii=0;ii<llGetListLength(newkeys);ii++) {
-				json=json+(string)llList2Key(newkeys,ii)+"="+llKey2Name(llList2String(newkeys,ii))+",";
-			}	
-			json+="\"}";
-			httpcommand("gphudserver.setregionavatars","GPHUD/system");
-			json="";
-		}
-		if (autoattach) {
-			// purge leavers
-			integer ii=0;
-			for (ii=llGetListLength(keys)-1;ii>=0;ii--) {
-				key check=llList2Key(keys,ii);
-				if (llListFindList(newkeys,[check])==-1) {
-					//if (debug) { llOwnerSay("Dispenser:Left user "+llKey2Name(check)); }
-					listdel(ii);
-				}
-			}
-			// add new people
-			for (ii=0;ii<llGetListLength(newkeys);ii++) {
-				key check=llList2Key(newkeys,ii);
-				if (llListFindList(keys,[check])==-1) {
-					adduser(check,now+5);
-				}
-			}
-		}
-	}
 	// every cycle, progress a number of these "things"
 	integer actions=1;
 	integer i=0;
@@ -197,36 +146,6 @@ execute() {
 		}
 	}
 }
-
-process(key id) {
-	string command=jsonget("incommand");
-	string othercommand=jsonget("command");
-	// if (jsonget("url")!="") { comms_url=jsonget("url"); } // llOwnerSay("Dispenser: Inherited URL"); } // do we need this ? why?
-	if (jsonget("autoattach")!="")
-	{
-		if (jsonget("autoattach")=="true") {
-			//if (autoattach==FALSE) { llOwnerSay("Dispenser: Enabling auto attach"); }
-			autoattach=TRUE;
-		} else {
-			//if (autoattach==TRUE) { llOwnerSay("Dispenser: Disabling auto attach"); }
-			autoattach=FALSE;
-		}
-	}
-	if (jsonget("minz")) { minz=((float)jsonget("minz")); }
-	if (jsonget("maxz")) { maxz=((float)jsonget("maxz")); }
-	if (jsonget("parcelonly")!="")
-	{
-		if (jsonget("parcelonly")=="true") {
-			//if (parcelonly==FALSE) { llOwnerSay("Dispenser: Enabling parcel only"); }
-			parcelonly=TRUE;
-		} else {
-			//if (parcelonly==TRUE) { llOwnerSay("Dispenser: Disabling parcel only"); }
-			parcelonly=FALSE;
-		}
-	}
-}
-
-
 integer processafter=-1;
 default {
 	state_entry() {
@@ -237,6 +156,12 @@ default {
 		llOwnerSay("Dispenser: Standby...");
 	}
 	link_message(integer from,integer num,string message,key id) {
+		if (num==LINK_DISPENSER_FORCE) { forcedispense(id); }
+		if (num==LINK_DISPENSER_ADD) { adduser(id,(integer)message); }
+		if (num==LINK_DISPENSER_DELETE) {
+			integer i=llListFindList(keys,[id]);
+			if (i!=-1) { listdel(i); }
+		}
 		if (num==LINK_SET_STAGE) {
 			integer NEWBOOTSTAGE=((integer)message);
 			if (NEWBOOTSTAGE!=BOOTSTAGE) {
@@ -325,15 +250,6 @@ default {
 		}
 
 	}
-	http_response( key request_id, integer status, list metadata, string body ) {
-		#ifdef DEBUG
-		llOwnerSay("REPLY:"+body);
-		#endif
-		if (status==200) {
-			json=body; body="";
-			process(NULL_KEY);
-		}
-	}	
 }
 
 
