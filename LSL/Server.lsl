@@ -71,11 +71,13 @@ integer process(key id) {
 		gphud_hang("Shutdown requested: "+jsonget("shutdown"));
 	}		
 	integer output=1;
-	while (jsonget("output"+(string)output)) {
+	while (jsonget("output"+(string)output)!="") {
 		llSay(0,llGetSubString(jsonget("output"+(string)output),1,-1));
 		output++;
 	}
-	
+	if (jsonget("error")!="") { 
+		llSay(0,"ERROR: "+jsonget("error"));
+	}
 	json="{}"; // clear the response :P
 	return TRUE;
 }
@@ -101,6 +103,7 @@ setup() {
 		calculatebroadcastchannel();
 		llSetObjectName(name);
 		llResetOtherScript("Dispenser");
+		llResetOtherScript("SimScanner");
 		return;
 	}
 	if (BOOTSTAGE==BOOT_APP) {
