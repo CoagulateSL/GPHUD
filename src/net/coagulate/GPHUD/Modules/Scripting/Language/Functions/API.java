@@ -34,7 +34,7 @@ public class API {
 	                                @Nonnull final BCString apicall,
 	                                @Nonnull final BCList parameters) {
 		final BCResponse response=gsAPI(st,vm,caller,apicall,parameters,false);
-		if (response.isError()) { throw new GSExecutionException(response.toBCString().getContent()); }
+		if (response.isError()) { throw new UserInputStateException(response.toBCString().getContent(),true); }
 		return response;
 	}
 
@@ -51,7 +51,7 @@ public class API {
 	                                        @Nonnull final BCString apicall,
 	                                        @Nonnull final BCList parameters) {
 		final BCResponse response=gsAPI(st,vm,caller,apicall,parameters,true);
-		if (response.isError()) { throw new UserInputStateException(response.toBCString().getContent()); }
+		if (response.isError()) { throw new UserInputStateException(response.toBCString().getContent(),true); }
 		return response;
 	}
 
