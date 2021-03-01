@@ -144,7 +144,7 @@ public class Interactions {
             json.put("invoke", "Inventory.GiveItem");
             json.put("arg0name", "target");
             json.put("arg0description", "Who to give to?");
-            json.put("arg0type", "SENSOR");
+            json.put("arg0type", "SENSORCHAR");
             //json.put("arg0manual","fortesting");
             json.put("arg1name", "quantity");
             json.put("arg1description", "Ammount of " + item.getName() + " to give from " + inventory.getName() + "\n(You have " + count + ")\nUse -1 to GIVE ALL");
