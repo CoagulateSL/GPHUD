@@ -558,7 +558,7 @@ public class Attribute extends TableRow {
 			if (c!=null) { c.delete(st); }
 		}
 		d("delete from attributes where attributeid=?",getId());
-		attributeSetCache.purge(this);
+		attributeSetCache.purge(getInstance());
 		attributeTypeCache.purge(this);
 		usesAbilityPointsCache.purge(this);
 	}
