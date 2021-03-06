@@ -96,7 +96,7 @@ public class GSVM {
 			variables.put(k,v.toBCFloat());
 			return;
 		}
-		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+existing.getClass().getSimpleName());
+		throw new GSInvalidExpressionException("Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+existing.getClass().getSimpleName(),true);
 	}
 
 	@Nonnull
