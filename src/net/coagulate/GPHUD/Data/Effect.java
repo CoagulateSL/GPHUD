@@ -337,7 +337,7 @@ public class Effect extends TableRow {
 		// validate everything
 		target.validate(st);
 		validate(st);
-		if (seconds<=0) { throw new UserInputInvalidChoiceException("Number of seconds to apply effect must be greater than zero"); }
+		if (seconds<=0) { throw new UserInputInvalidChoiceException("Number of seconds to apply effect must be greater than zero",false); }
 		final int expires=UnixTime.getUnixTime()+seconds;
 		// any existing?
 		if (dqinn("select count(*) from effectsapplications where effectid=? and characterid=? and expires>=?",getId(),target.getId(),expires)>0) {
