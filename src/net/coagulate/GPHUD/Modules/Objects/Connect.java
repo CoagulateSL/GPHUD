@@ -1,7 +1,5 @@
 package net.coagulate.GPHUD.Modules.Objects;
 
-import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Tools.MailTools;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Obj;
@@ -19,7 +17,6 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
 
 public class Connect {
 
@@ -51,12 +48,13 @@ public class Connect {
 		}
 		// require a callback url
 		if (st.callBackURLNullable()==null || st.callBackURL().isEmpty()) {
+			/*
 			try {
 				MailTools.mail("Callback URL is null or blank, sending reboot",st.toHTML());
 			}
 			catch (final MessagingException e) {
 				throw new SystemImplementationException("Mailout exception",e);
-			}
+			}*/
 			final JSONObject json=new JSONObject();
 			json.put("reboot","No callback URL was presented, server requests us to restart");
 			return new JSONResponse(json);
