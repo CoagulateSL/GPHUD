@@ -86,8 +86,6 @@ public class State extends DumpableState {
 	public String command;
 	@Nullable
 	public Zone zone;
-	// used by the HUD interface to stash things briefly
-	public boolean sendShow;
 	@Nullable
 	public Integer roll;
 	@Nullable
@@ -218,13 +216,6 @@ public class State extends DumpableState {
 		return types;
 	}
 
-	/*@Nullable
-	public Attribute getAttributeOrException(@Nonnull final String name) {
-		final Attribute a=getAttribute(name);
-		if (a==null) { throw new UserInputLookupFailureException("No such character attribute '"+name+"'"); }
-		return a;
-	}*/
-
 	@Nullable
 	public Attribute getAttribute(@Nonnull final String name) {
 		final Set<Attribute> map=getAttributes();
@@ -294,9 +285,6 @@ public class State extends DumpableState {
 		target=new State(instance,region,zone,c);
 	}
 
-	/*@Nonnull
-	public KVValue getTargetKV(@Nonnull final String kvName) { return getTarget().getKV(kvName); }
-	*/
 	/**
 	 * Get the region name - this is EITHER the name of the Region object (see getRegion()) or a temporary string.
 	 * The temporary string is set by setRegionName and is only used if the Region object is null (getRegion() errors, getRegionNullable() nulls).
@@ -400,36 +388,6 @@ public class State extends DumpableState {
 		return instance.toString();
 	}
 
-	/*@Nullable
-	public String getInstanceAndRegionString() {
-		return getInstanceString()+" @ "+getRegionName();
-	}*/
-
-	/*@Nonnull
-	public String getOwnerString() {
-		return getSourceOwner().toString();
-	}*/
-
-	/*@Nullable
-	public String getURIString() {
-		if (uri==null) { return "<null>"; }
-		return uri;
-	}*/
-
-	@Nonnull
-	public String getIdString() {
-		String response="";
-		if (character!=null) {
-			response+=character.toString();
-			if (avatar!=null) { response+="/Avatar:"+avatar+""; }
-			return response;
-		}
-		if (avatar!=null) { return avatar.toString(); }
-		return "NO-ID#?";
-	}
-
-	public void flushSuperUser() { superuser=null; }
-
 	public boolean isSuperUser() {
 		populateSuperUser();
 		if (superuser==null) { return false; }
@@ -456,9 +414,9 @@ public class State extends DumpableState {
 		if (User.getSystem().equals(getAvatarNullable())) { return true; }
 		preparePermissionsCache();
 		if (permissionsCache ==null) { return false; }
-		for (final String checkagainst:permission.split(",")) {
+		for (final String checkAgainst:permission.split(",")) {
 			for (final String check : permissionsCache) {
-				if (check.equalsIgnoreCase(checkagainst)) {
+				if (check.equalsIgnoreCase(checkAgainst)) {
 					return true;
 				}
 			}
@@ -494,19 +452,6 @@ public class State extends DumpableState {
 		if (instanceOwner ==null) { return false; }
 		return instanceOwner;
 	}
-
-	/*public boolean deniedPermission(@Nullable final String permission) {
-		if (permission==null || permission.isEmpty()) { return true; }
-		if (hasPermission(permission)) { return false; }
-		form().add(new TextError("Permission Denied!  You require permission "+permission+" to access this content"));
-		return true;
-	}*/
-
-	/*public void assertPermission(@Nullable final String permission) {
-		if (permission==null || permission.isEmpty()) { return; }
-		if (hasPermission(permission)) { return; }
-		throw new SystemConsistencyException("ALERT! Permission assertion failed on permission "+permission);
-	}*/
 
 	@Nonnull
 	public KV getKVDefinition(@Nonnull final String kvName) {
@@ -546,11 +491,6 @@ public class State extends DumpableState {
 		// characterGroups in ID order
 		if (scope==KV.KVSCOPE.COMPLETE || scope==KV.KVSCOPE.NONSPATIAL) {
 			if (character!=null) {
-				//final Map<Integer,CharacterGroup> map=new TreeMap<>();
-				//for (final CharacterGroup c: CharacterGroup.getGroups(character)) {
-				//	map.put(c.getId(),c);
-				//}
-				//check.addAll(map.values());
 				check.addAll(CharacterGroup.getGroups(character));
 			}
 		}
