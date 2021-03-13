@@ -443,7 +443,7 @@ public class State extends DumpableState {
 	 * Note this assumes superuser is always allowed, as is instance owner.
 	 * DO NOT USE THIS TO PROTECT SUPERUSER ONLY OPERATIONS IN ANY WAY, INSTANCE OWNERS CAN ALWAYS DO EVERYTHING THE PERMISSION SYSTEM ALLOWS.
 	 *
-	 * @param permission Permission string to check
+	 * @param permission Permission string to check, can be a comma separated list
 	 *
 	 * @return true/false
 	 */
@@ -456,7 +456,13 @@ public class State extends DumpableState {
 		if (User.getSystem().equals(getAvatarNullable())) { return true; }
 		preparePermissionsCache();
 		if (permissionsCache ==null) { return false; }
-		for (final String check: permissionsCache) { if (check.equalsIgnoreCase(permission)) { return true; } }
+		for (final String checkagainst:permission.split(",")) {
+			for (final String check : permissionsCache) {
+				if (check.equalsIgnoreCase(checkagainst)) {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 
