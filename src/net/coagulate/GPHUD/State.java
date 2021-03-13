@@ -710,24 +710,24 @@ public class State extends DumpableState {
 					case INTEGER: // check it parses into an int
 						try { Integer.parseInt(value); }
 						catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a whole number, you entered '"+value+"' ("+e.getLocalizedMessage()+")");
+							throw new UserInputValidationParseException(key+" must be a whole number, you entered '"+value+"' ("+e.getLocalizedMessage()+")",true);
 						}
 						break;
 					case FLOAT:
 						try { Float.parseFloat(value); }
 						catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a number, you entered '"+value+"' ("+e.getLocalizedMessage()+")");
+							throw new UserInputValidationParseException(key+" must be a number, you entered '"+value+"' ("+e.getLocalizedMessage()+")",true);
 						}
 						break;
 					case UUID:
 						if (!Validators.uuid(value)) {
-							throw new UserInputValidationParseException(key+" must be a UUID , you entered '"+value+"'");
+							throw new UserInputValidationParseException(key+" must be a UUID , you entered '"+value+"'",true);
 						}
 						break;
 					case BOOLEAN:
 						value=value.toLowerCase();
 						if (!("true".equals(value) || "false".equals(value))) {
-							throw new UserInputValidationParseException(key+" must be true/false");
+							throw new UserInputValidationParseException(key+" must be true/false",true);
 						}
 						break;
 					case COMMAND:
