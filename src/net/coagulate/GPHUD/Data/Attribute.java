@@ -61,7 +61,7 @@ public class Attribute extends TableRow {
 			return get(id);
 		}
 		catch (@Nonnull final NoDataException e) {
-			throw new UserInputLookupFailureException("Unable to find attribute '"+name+"' in instance '"+instance+"'",e);
+			throw new UserInputLookupFailureException("Unable to find attribute '"+name+"' in instance '"+instance+"'",e,true);
 		}
 	}
 
