@@ -419,6 +419,9 @@ public class State extends DumpableState {
 				if (check.equalsIgnoreCase(checkAgainst)) {
 					return true;
 				}
+				if (checkAgainst.endsWith(".*")) {
+					if (check.startsWith(checkAgainst.substring(0, checkAgainst.length()-2)));
+				}
 			}
 		}
 		return false;
