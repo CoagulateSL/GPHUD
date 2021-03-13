@@ -103,6 +103,10 @@ public class Maintenance extends Thread {
 
 	// for calling from OTHER MAINTENANCE CODE (GPHUD from SL)
 	public static void gphudMaintenance() {
+		try { ScriptRun.maintenance(); }
+		catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance script run expiration caught an exception",e);
+		}
 		try { Maintenance.refreshCharacterURLs(); }
 		catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e);

@@ -46,7 +46,11 @@ public class ScriptRun extends TableRow {
 		catch (final NoDataException e) { throw new UserInputNotFoundException("Script run no longer exists",e,true); }
 	}
 
-	// ---------- INSTANCE ----------
+    public static void maintenance() {
+		db().d("delete from scriptruns where expires<UNIX_TIMESTAMP()");
+    }
+
+    // ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getIdColumn() { return "id"; }
