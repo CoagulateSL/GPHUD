@@ -178,6 +178,9 @@ public abstract class Module {
 
 	public void validatePermission(final State st,
 	                               @Nonnull final String permission) {
+		if (permission.equals("*")) { // just check the module exists here really, which we did by getting this far
+			return;
+		}
 		final Map<String,Permission> perms=getPermissions(st);
 		if (!perms.containsKey(permission.toLowerCase())) {
 			throw new SystemImplementationException("Permission does not exist ["+permission+"] in ["+getName()+"]");
