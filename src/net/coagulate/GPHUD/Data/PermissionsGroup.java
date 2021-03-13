@@ -271,8 +271,8 @@ public class PermissionsGroup extends TableRow {
 	public boolean canEject(@Nonnull final State st) {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
-			final int inviteflag=dqinn("select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),st.getAvatar().getId());
-			if (inviteflag==1) { return true; }
+			final int kickflag=dqinn("select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),st.getAvatar().getId());
+			if (kickflag==1) { return true; }
 			return false;
 		}
 		catch (@Nonnull final NullPointerException|NoDataException e) { return false; }
