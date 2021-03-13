@@ -19,6 +19,7 @@
 
 @SideMenus(name="Factions",
            priority=50,
+           requiresPermission = "Faction.*",
            url="/factions")
 
 @Permissions(name="SetOwner",
