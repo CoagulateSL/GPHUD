@@ -26,8 +26,7 @@ import javax.annotation.Nonnull;
 public abstract class Member {
 
 	// ---------- STATICS ----------
-	@URLs(url="/permissionsgroups/eject",
-	      requiresPermission="Instance.ManagePermissions")
+	@URLs(url="/permissionsgroups/eject")
 	public static void ejectForm(@Nonnull final State st,
 	                             @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"permissionsgroups.eject",values);
@@ -35,7 +34,6 @@ public abstract class Member {
 
 	@Nonnull
 	@Commands(context=Context.AVATAR,
-	          requiresPermission="Instance.ManagePermissions",
 	          description="Remove a member from a permissions group",
 	          permitObject=false,
 	          permitScripting=false,
@@ -54,8 +52,7 @@ public abstract class Member {
 		return new OKResponse("Removed "+avatar.getName()+" from permissions group "+permissionsgroup.getNameSafe());
 	}
 
-	@URLs(url="/permissionsgroups/invite",
-	      requiresPermission="Instance.ManagePermissions")
+	@URLs(url="/permissionsgroups/invite")
 	public static void createForm(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"permissionsgroups.invite",values);
@@ -63,7 +60,6 @@ public abstract class Member {
 
 	@Nonnull
 	@Commands(context=Context.AVATAR,
-	          requiresPermission="Instance.ManagePermissions",
 	          description="Adds a user to a permissions group",
 	          permitScripting=false,
 	          permitExternal=false,
