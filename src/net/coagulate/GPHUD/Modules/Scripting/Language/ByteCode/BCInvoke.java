@@ -59,7 +59,7 @@ public class BCInvoke extends ByteCode {
 			}
 			// otherwise we have multiple arguments at both ends, does it match?
 			if (argcount!=(parameters.length-2)) {
-				throw new GSInvalidFunctionCall("Call to "+functionname+" has incorrect number of arguments - it requires "+(parameters.length-2)+" and was supplied "+argcount);
+				throw new GSInvalidFunctionCall("Call to "+functionname+" has incorrect number of arguments - it requires "+(parameters.length-2)+" and was supplied "+argcount,true);
 			}
 			// okay, number of arguments matches, what about the individual types
 			final Object[] pass=new Object[parameters.length];
@@ -69,7 +69,7 @@ public class BCInvoke extends ByteCode {
 				if (!parameters[i+2].equals(args[i].getClass())) {
 					throw new GSInvalidFunctionCall("Call to "+functionname+", parameter "+i+" is expected to be of type "+parameters[i+2].getSimpleName()+" but was "+"supplied"+" "+args[i]
 							.getClass()
-							.getSimpleName());
+							.getSimpleName(),true);
 				}
 				pass[i+2]=args[i];
 			}

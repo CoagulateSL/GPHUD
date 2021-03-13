@@ -14,6 +14,14 @@ public class GSInvalidFunctionCall extends GSException {
 		super(reason,cause);
 	}
 
+	public GSInvalidFunctionCall(String reason, boolean suppresslogging) {
+		super(reason, suppresslogging);
+	}
+
+	public GSInvalidFunctionCall(String reason, Throwable cause, boolean suppresslogging) {
+		super(reason, cause, suppresslogging);
+	}
+
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public String toString() { return "{GS Invalid Function Call Exception}: "+getLocalizedMessage(); }
