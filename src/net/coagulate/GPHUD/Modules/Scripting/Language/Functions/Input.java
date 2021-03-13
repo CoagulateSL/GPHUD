@@ -32,7 +32,7 @@ public class Input {
 			return target;
 		}
 		target.getContent().validate(st);
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		vm.queueSelectCharacter(target.getContent(),message.getContent(),st.getKV("GPHUDClient.AllowManualByDefault").boolValue());
 		vm.suspend(st,target.getContent());
 		return target;
@@ -55,7 +55,7 @@ public class Input {
 			return target;
 		}
 		target.getContent().validate(st);
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		boolean allowManualBoolean=true;
 		if (allowManual.getContent()==0) { allowManualBoolean=false; }
 		vm.queueSelectCharacter(target.getContent(),message.getContent(),allowManualBoolean);
@@ -78,7 +78,7 @@ public class Input {
 			vm.suspend(st,st.getCharacter());
 			return new BCString(null,"Simulated user input");
 		}
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		vm.queueGetText(target.getContent(),message.getContent());
 		vm.suspend(st,target.getContent());
 		return new BCString(null,"");
