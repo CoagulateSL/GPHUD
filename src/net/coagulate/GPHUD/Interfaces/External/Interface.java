@@ -207,7 +207,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 				throw new UserRemoteFailureException("External API Error - checkavatarpermission key is supplied but null value attached");
 			}
 			final String userid=obj.getString("checkavatarpermission");
-			if (userid.isBlank()) { throw new UserRemoteFailureException("External API Error - checkavatarpermission supplied a blank string"); }
+			if (userid.isBlank()) { throw new UserRemoteFailureException("External API Error - checkavatarpermission supplied a blank string",true); }
 			User user=User.findUserKeyNullable(userid);
 			if (user==null) { user=User.findUsername(userid,false); }
 			final State testPermission=new State(st.getInstance());
