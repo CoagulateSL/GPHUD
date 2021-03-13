@@ -155,7 +155,7 @@
              power=Permission.POWER.HIGH)
 
 @Permissions(name="PermissonsMembers",
-             description="Can join or remove users from permissions groups",
+             description="Can join or remove users from permissions groups, wether a member or not (can join themselves to any group).  For per-group invite/kick powers see the group members list.",
              power=Permission.POWER.HIGH)
 
 @Permissions(name="CookBooks",
