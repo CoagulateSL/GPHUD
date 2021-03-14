@@ -66,7 +66,13 @@ public class ModuleAnnotation extends Module {
 
 	@Nullable
 	public Set<SideSubMenu> getSideSubMenus(final State st) {
-		return sidemenus;
+		HashSet<SideSubMenu> filtered=new HashSet<>();
+		for (SideSubMenu item:sidemenus) {
+			if (item.requiresPermission().isBlank() || st.hasPermission(item.requiresPermission())) {
+				filtered.add(item);
+			}
+		}
+		return filtered;
 	}
 
 	@Nullable
@@ -75,7 +81,7 @@ public class ModuleAnnotation extends Module {
 		final boolean debug=false;
 		URL liberalmatch=null;
 		for (final URL m: contents) {
-			if (m.url().toLowerCase().equals(url.toLowerCase())) {
+			if (m.url().equalsIgnoreCase(url)) {
 				return m;
 			}
 			if (m.url().endsWith("*")) {
