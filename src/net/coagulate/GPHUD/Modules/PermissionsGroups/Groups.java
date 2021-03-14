@@ -142,7 +142,8 @@ public abstract class Groups {
 	@URLs(url="/permissionsgroups/create",
 	      requiresPermission="Instance.ManagePermissions")
 	@SideSubMenus(name="Create",
-	              priority=10)
+	              priority=10,
+				  requiresPermission = "Instance.ManagePermissions")
 	public static void createGroupPage(@Nonnull final State st,
 	                                   @Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit"))) { st.form().add(Modules.run(st,"permissionsgroups.create",values)); }
