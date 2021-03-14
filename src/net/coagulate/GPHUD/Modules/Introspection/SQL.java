@@ -20,9 +20,11 @@ import java.util.*;
  */
 public class SQL {
 	// ---------- STATICS ----------
-	@URLs(url="/introspection/sql")
+	@URLs(url="/introspection/sql",
+		  requiresPermission = "User.SuperAdmin")
 	@SideSubMenu.SideSubMenus(name="SQL",
-	                          priority=9999)
+	                          priority=9999,
+							  requiresPermission = "User.SuperAdmin")
 	public static void sqlIndex(@Nonnull final State st,
 	                            final SafeMap values) {
 		if (!DBConnection.sqlLogging()) {

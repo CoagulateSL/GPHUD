@@ -4,7 +4,7 @@
 @Permissions(description="Super admin shadow permission",
              name="SuperAdmin",
              power=POWER.HIGH,
-             grantable=false)
+             grantable=false) // note this doesn't actually protect anything, (owners bypass this?) you MUST use State.isSuperAdmin()
 // one day i need to make a module able to have many side menus
 @SideMenu.SideMenus(name="Reporting",
                     priority=255,

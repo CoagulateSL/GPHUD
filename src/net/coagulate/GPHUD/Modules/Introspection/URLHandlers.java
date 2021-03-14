@@ -21,8 +21,10 @@ import java.util.TreeMap;
  */
 public abstract class URLHandlers {
 	// ---------- STATICS ----------
-	@URLs(url="/introspection/urlhandlers")
+	@URLs(url="/introspection/urlhandlers",
+		  requiresPermission = "User.SuperAdmin")
 	@SideSubMenus(name="URL Handlers",
+	              requiresPermission = "User.SuperAdmin",
 	              priority=99)
 	public static void createForm(@Nonnull final State st,
 	                              final SafeMap values) {
