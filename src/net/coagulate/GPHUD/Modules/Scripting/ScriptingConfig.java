@@ -35,7 +35,8 @@ import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULA
 
 public class ScriptingConfig {
 	// ---------- STATICS ----------
-	@URL.URLs(url="/configuration/scripting")
+	@URL.URLs(url="/configuration/scripting",
+			  requiresPermission = "Scripting.*")
 	public static void configPage(@Nonnull final State st,
 	                              final SafeMap values) {
 		final Form f=st.form();

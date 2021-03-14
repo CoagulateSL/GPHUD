@@ -17,7 +17,8 @@ import java.util.List;
 
 public class PublishingConfig {
 	// ---------- STATICS ----------
-	@URL.URLs(url="/configuration/publishing")
+	@URL.URLs(url="/configuration/publishing",
+			  requiresPermission = "Publishing.*")
 	public static void configPage(@Nonnull final State st,
 	                              final SafeMap values) {
 		final Form f=st.form();
