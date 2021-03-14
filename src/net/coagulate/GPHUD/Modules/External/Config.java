@@ -31,7 +31,8 @@ import javax.annotation.Nonnull;
 public class Config {
 
 	// ---------- STATICS ----------
-	@URLs(url="/configuration/external")
+	@URLs(url="/configuration/external",
+		  requiresPermission = "External.*")
 	public static void configPage(@Nonnull final State st,
 	                              final SafeMap values) { configPage(st,values,st.simulate(st.getCharacterNullable())); }
 
