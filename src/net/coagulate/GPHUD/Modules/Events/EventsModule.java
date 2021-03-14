@@ -29,7 +29,7 @@ public class EventsModule extends ModuleAnnotation {
 		final Set<Event> events=Event.getAll(st);
 		final Set<SideSubMenu> ret=new HashSet<>();
 		for (final Event event: events) {
-			ret.add(new StaticSideSubMenu(event.getName(),event.getId(),"/events/view/"+event.getId(),""));
+			ret.add(new StaticSideSubMenu(event.getName(),event.getId(),"/event/view/"+event.getId(),""));
 		}
 		return ret;
 	}
