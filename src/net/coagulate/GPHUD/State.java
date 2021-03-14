@@ -408,6 +408,11 @@ public class State extends DumpableState {
 	public boolean hasPermission(@Nullable final String permission) {
 		if (permission==null || permission.isEmpty()) { return true; }
 		//        Modules.validatePermission(permission);
+		// special case, just in case i do something stupid...
+		if (permission.equalsIgnoreCase("User.SuperAdmin")) {
+			if (isSuperUser()) { return true; }
+			return false; // not even instance owners or elevated stuff bypasses superadmin powers!
+		}
 		if (isSuperUser()) { return true; }
 		if (isInstanceOwner()) { return true; }
 		if (elevated()) { return true; }
