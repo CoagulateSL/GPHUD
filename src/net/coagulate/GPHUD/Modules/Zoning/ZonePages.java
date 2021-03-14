@@ -24,7 +24,8 @@ import javax.annotation.Nonnull;
 public abstract class ZonePages {
 
 	// ---------- STATICS ----------
-	@URLs(url="/configuration/zoning")
+	@URLs(url="/configuration/zoning",
+		  requiresPermission = "Zoning.*")
 	public static void listZones(@Nonnull final State st,
 	                             final SafeMap values) {
 		final Form f=st.form();
