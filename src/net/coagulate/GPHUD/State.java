@@ -420,7 +420,9 @@ public class State extends DumpableState {
 					return true;
 				}
 				if (checkAgainst.endsWith(".*")) {
-					if (check.startsWith(checkAgainst.substring(0, checkAgainst.length()-2)));
+					if (check.startsWith(checkAgainst.substring(0, checkAgainst.length()-2))) {
+						return true;
+					}
 				}
 			}
 		}
