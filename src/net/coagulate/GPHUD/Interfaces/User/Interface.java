@@ -561,7 +561,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 					String r="<h1>ERROR</h1><p>Sorry, your request could not be completed<br><pre>"+t.getLocalizedMessage()+"</pre></p>";
 					GPHUD.getLogger().log(INFO,"UserInterface/UserException "+t);
 					if (Config.getDevelopment()) {
-						r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>User Mode Exception</h1>"+ ExceptionTools.dumpException(t)+"<Br><br>"+st.toHTML();
+						r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>User Mode Exception</h1>"+ ExceptionTools.dumpException(t);
 						SL.report("GPHUD Web User Exception",t,st);
 						GPHUD.getLogger().log(WARNING,"UserInterface/UserException",t);
 					}
@@ -571,7 +571,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 				GPHUD.getLogger().log(WARNING,"UserInterface/NonUserException",t);
 				String r="<h1>INTERNAL ERROR</h1><p>Sorry, your request could not be completed due to an internal error.</p>";
 				if (Config.getDevelopment()) {
-					r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>NonUser Exception</h1>"+ExceptionTools.dumpException(t)+"<Br><br>"+st.toHTML();
+					r+="<hr><h1 align=center>DEV MODE</h1><hr><h1>NonUser Exception</h1>"+ExceptionTools.dumpException(t);
 				}
 				return r;
 			}
