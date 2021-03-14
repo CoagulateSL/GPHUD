@@ -17,9 +17,11 @@ import javax.annotation.Nonnull;
 
 public class Status {
 	// ---------- STATICS ----------
-	@URLs(url="/introspection/status")
+	@URLs(url="/introspection/status",
+		  requiresPermission = "Introspection.ViewStatus")
 	@SideSubMenus(name="Status",
-	              priority=99)
+	              priority=99,
+				  requiresPermission = "Introspection.ViewStatus")
 	public static void createForm(@Nonnull final State st,
 	                              final SafeMap values) {
 		final Form f=st.form();

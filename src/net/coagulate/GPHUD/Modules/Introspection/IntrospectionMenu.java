@@ -33,8 +33,10 @@ public class IntrospectionMenu {
 		f.p("Permission tokens registered to the system.");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/templates\">Templates</a>"));
 		f.p("Expandable template items registered in the system");
-		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/status\">Status</a>"));
-		f.p("Status of active objects within this instance, used for debugging login/logout but left generally available");
+		if (st.hasPermission("Instance.ViewStatus")) {
+			f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/status\">Status</a>"));
+			f.p("Status of active objects and characters within this instance, used for debugging");
+		}
 		if (st.isSuperUser()) {
 			f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/urlhandlers\">URL Handlers</a>"));
 			f.p("Classes that are hooking into URLs.");
