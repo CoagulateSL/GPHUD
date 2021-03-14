@@ -22,7 +22,8 @@ import javax.annotation.Nonnull;
 
 public class ItemsConfig {
 
-    @URL.URLs(url="/configuration/items")
+    @URL.URLs(url="/configuration/items",
+              requiresPermission = "Items.*")
     public static void configPage(@Nonnull final State st,
                                   @Nonnull final SafeMap values) {
         final Form f=st.form();
