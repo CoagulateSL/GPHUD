@@ -26,7 +26,8 @@ import java.util.Map;
 public abstract class MenuConfig {
 
 	// ---------- STATICS ----------
-	@URLs(url="/configuration/menus")
+	@URLs(url="/configuration/menus",
+		  requiresPermission = "Menus.*")
 	public static void configure(@Nonnull final State st,
 	                             final SafeMap values) {
 		final boolean candelete=st.hasPermission("Menus.Delete");
