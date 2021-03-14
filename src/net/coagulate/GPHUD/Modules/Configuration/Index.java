@@ -46,7 +46,7 @@ public abstract class Index {
 			if (m.hasConfig(st)) { hasconfig=true; }
 			if (m.canDisable()) {
 				configurable.openRow();
-				if (hasconfig && m.isEnabled(st)) {
+				if (hasconfig && m.isEnabled(st) && ConfigurationModule.canConfigure(st,m)) {
 					configurable.add(new Link(m.getName(),"/GPHUD/configuration/"+m.getName()));
 				}
 				else {
@@ -80,7 +80,7 @@ public abstract class Index {
 			}
 			else {  // note how this renders in one loop but produces two tables.  it feels a bit odd.
 				core.openRow();
-				if (hasconfig) {
+				if (hasconfig && ConfigurationModule.canConfigure(st,m)) {
 					core.add(new Link(m.getName(),"/GPHUD/configuration/"+m.getName()));
 				}
 				else {
