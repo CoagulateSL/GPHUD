@@ -11,6 +11,9 @@ detach() {
 integer permitted=FALSE;
 go() {
 	llSetText("Starting Up...",<1,1,1>,1);
+	setDev(FALSE);
+	calculatebroadcastchannel();
+	llListen(broadcastchannel,"",NULL_KEY,"");
 	if (llGetAttached()!=0) { llRegionSayTo(llGetOwner(),broadcastchannel,"{\"titlerreplace\":\"titlerreplace\"}"); }
 #ifndef NOEXPERIENCES
 	if (!permitted) { llRequestExperiencePermissions(llGetOwner(),""); }
@@ -27,9 +30,9 @@ go() {
 }
 default {
 	state_entry () {
-		calculatebroadcastchannel();
-		llListen(broadcastchannel,"",NULL_KEY,"");
 		setDev(FALSE);
+		calculatebroadcastchannel();
+		//llListen(broadcastchannel,"",NULL_KEY,"");
 		if (DEV) {
 			llSetLinkPrimitiveParamsFast(LINK_THIS,[PRIM_SIZE,<.25,.25,0>,PRIM_COLOR,ALL_SIDES,<1,1,1>,1]);
 		} else {
