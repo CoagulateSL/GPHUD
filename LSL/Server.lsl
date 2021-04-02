@@ -103,7 +103,7 @@ setup() {
 		calculatebroadcastchannel();
 		llSetObjectName(name);
 		llResetOtherScript("Dispenser");
-		llResetOtherScript("SimScanner");
+		//llResetOtherScript("SimScanner");
 		return;
 	}
 	if (BOOTSTAGE==BOOT_APP) {
