@@ -2,11 +2,13 @@ package net.coagulate.GPHUD.Modules.Effects;
 
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Effect;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -49,10 +51,11 @@ public class EffectsCommands {
 	}
 
 	@Command.Commands(description="Show effects applied to your character",
-	                  context=Command.Context.CHARACTER,
+	                  context=Command.Context.ANY, // Characters tend to click this before being logged in, lets not error
 	                  permitScripting=false,
 	                  permitExternal=false)
 	public static Response show(@Nonnull final State st) {
+		if (st.getCharacterNullable()==null) { return new JSONResponse(new JSONObject()); }
 		Effect.expirationCheck(st,st.getCharacter());
 		final Set<Effect> effects=Effect.get(st,st.getCharacter());
 		if (effects.isEmpty()) { return new OKResponse("You have no effects applied"); }
