@@ -3,12 +3,12 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSExecutionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
@@ -119,7 +119,10 @@ public class API {
 			final Response value=Modules.run(callingstate,apicall.getContent(),args);
 			return new BCResponse(null,value);
 		}
-		catch (@Nonnull final UserException e) { throw new GSExecutionException(apicall+" {"+e.getClass().getSimpleName()+"} "+e.getLocalizedMessage(),e); }
+		catch (@Nonnull final UserException e) {
+			return new BCResponse(null,new ErrorResponse(e.getLocalizedMessage()));
+			//throw new GSExecutionException(apicall+" {"+e.getClass().getSimpleName()+"} "+e.getLocalizedMessage(),e);
+		}
 		catch (@Nonnull final RuntimeException e) { throw new GSInternalError("gsAPI runtimed: "+e,e); }
 	}
 
