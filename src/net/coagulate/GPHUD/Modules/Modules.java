@@ -278,21 +278,25 @@ public abstract class Modules {
 							}
 							else {
 								// is a multi word thing
-								StringBuilder string=new StringBuilder();
-								while (!words[i].endsWith("\"")) {
-									if (string.length()>0) { string.append(" "); }
-									string.append(words[i]);
-									i++;
-								}
-								string.append(" ").append(words[i]);
-								if (!respectnewlines) {
-									string=new StringBuilder(string.toString().replaceAll("\n",""));
-									string=new StringBuilder(string.toString().replaceAll("\r",""));
-								}
-								string=new StringBuilder(string.toString().replaceFirst("^\"",""));
-								string=new StringBuilder(string.toString().replaceAll("\"$",""));
-								//System.out.println(string);
-								parameters.put(argname,string.toString());
+								try {
+									StringBuilder string = new StringBuilder();
+									while (!words[i].endsWith("\"")) {
+										if (string.length() > 0) {
+											string.append(" ");
+										}
+										string.append(words[i]);
+										i++;
+									}
+									string.append(" ").append(words[i]);
+									if (!respectnewlines) {
+										string = new StringBuilder(string.toString().replaceAll("\n", ""));
+										string = new StringBuilder(string.toString().replaceAll("\r", ""));
+									}
+									string = new StringBuilder(string.toString().replaceFirst("^\"", ""));
+									string = new StringBuilder(string.toString().replaceAll("\"$", ""));
+									//System.out.println(string);
+									parameters.put(argname, string.toString());
+								} catch (ArrayIndexOutOfBoundsException e) { throw new UserInputValidationParseException("Failed to find closure for a string (a matching \")",e,true); }
 							}
 						}
 						else {
