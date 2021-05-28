@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Events;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Event;
 import net.coagulate.GPHUD.Data.EventSchedule;
@@ -36,13 +37,15 @@ public abstract class EventsMaintenance {
 			String message=config.get("events.zonestartmessage");
 			for (final Zone loc: e.getZones()) {
 				if (message!=null && !message.isEmpty()) {
-					loc.broadcastMessage("[Event:"+e.getName()+"] "+message);
+					try { loc.broadcastMessage("[Event:"+e.getName()+"] "+message); }
+					catch (UserRemoteFailureException ignore) {}
 				}
 				inzone.addAll(Char.getInZone(loc));
 			}
 			message=config.get("events.broadcaststartmessage");
 			if (message!=null && !message.isEmpty()) {
-				e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message);
+				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); }
+				catch (UserRemoteFailureException ignore) {}
 			}
 			schedule.started();
 			for (final Char c: inzone) {
@@ -58,12 +61,14 @@ public abstract class EventsMaintenance {
 			String message=config.get("events.zonestopmessage");
 			if (message!=null && !message.isEmpty()) {
 				for (final Zone loc: e.getZones()) {
-					loc.broadcastMessage("[Event:"+e.getName()+"] "+message);
+					try { loc.broadcastMessage("[Event:"+e.getName()+"] "+message); }
+					catch (UserRemoteFailureException ignore) {}
 				}
 			}
 			message=config.get("events.broadcaststopmessage");
 			if (message!=null && !message.isEmpty()) {
-				e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message);
+				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); }
+				catch (UserRemoteFailureException ignore) {}
 			}
 			final State temp=new State();
 			temp.setInstance(e.getInstance());
