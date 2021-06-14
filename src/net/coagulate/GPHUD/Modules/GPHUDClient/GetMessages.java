@@ -32,7 +32,7 @@ public abstract class GetMessages {
 
 	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.CHARACTER,
+	@Commands(context=Context.ANY,
 	          permitScripting=false,
 	          description="Get a message",
 	          permitConsole=false,
@@ -40,6 +40,7 @@ public abstract class GetMessages {
 	          permitExternal=false,
 	          permitObject=false)
 	public static Response getMessage(@Nonnull final State st) {
+		if (st.getCharacterNullable()==null) { return new JSONResponse(new JSONObject()); }
 		final Message m=Message.getNextMessage(st);
 		if (m==null) { return new ErrorResponse("You have no outstanding messages."); }
 		m.setActive();
