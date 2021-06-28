@@ -304,8 +304,8 @@ public class CharacterPool {
 	// ----- Internal Statics -----
 	private static DBConnection db() { return GPHUD.getDB(); }
 
-    public static void delete(String fullName) {
-		GPHUD.getDB().d("delete from characterpools where poolname like ?",fullName);
+    public static void delete(String fullName,Instance instance) {
+		GPHUD.getDB().d("delete characterpools from characterpools left join characters on characterpools.characterid=characters.characterid where characterpools.poolname like ? and characters.instanceid=?",fullName,instance.getId());
     }
 
     // ---------- INSTANCE ----------

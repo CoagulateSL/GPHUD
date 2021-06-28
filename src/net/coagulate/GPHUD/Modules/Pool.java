@@ -26,7 +26,7 @@ public abstract class Pool extends NameComparable {
 	public abstract String fullName();
 
 	public void delete(final State st) {
-		CharacterPool.delete(fullName());
+		CharacterPool.delete(fullName(),st.getInstance());
 	}
 
 	public int entries(final State st,
