@@ -84,7 +84,7 @@ public class Output {
 	                                   @Nonnull final BCString landmark) {
 		if (vm.simulation) { return new BCInteger(null,0); }
 		GSFunctions.assertModule(st,"Teleportation");
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		final Landmark t=Landmark.find(st,landmark.getContent());
 		if (t==null) { throw new GSResourceUnavailableException("Can not find landmark "+landmark.getContent()); }
 		vm.queueTeleport(target.getContent(),t.getHUDRepresentation(false));
