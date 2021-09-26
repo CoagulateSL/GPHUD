@@ -72,7 +72,7 @@ public class Item extends TableRow {
     @Nonnull
     public static Item find(State state, String itemName) {
         Item item=findNullable(state.getInstance(),itemName);
-        if (item==null) { throw new UserInputLookupFailureException("Item '"+itemName+"' does not exist"); }
+        if (item==null) { throw new UserInputLookupFailureException("Item '"+itemName+"' does not exist",true); }
         return item;
     }
 
