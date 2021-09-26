@@ -9,11 +9,13 @@ import net.coagulate.GPHUD.Data.Item;
 import net.coagulate.GPHUD.Modules.Inventory.UserInventoryException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCList;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class Inventories {
     @Nonnull
@@ -118,5 +120,25 @@ public class Inventories {
         // check character is of right instance
         if (!(st.getInstance()==character.getContent().getInstance())) { throw new SystemImplementationException("Target character "+character.getContent()+" is not from instance "+st.getInstanceString()); }
         return new Inventory(character.getContent(),attribute);
+    }
+
+    @Nonnull
+    @GSFunctions.GSFunction(description="Returns a list of all items in the inventory",
+                            returns="List - A list of strings, consisting of the items in the inventory",
+                            parameters="Character character - Character to query<br>"+
+                                    "String inventory - Name of inventory to list",
+                            notes="",
+                            privileged=false,
+                            category= GSFunctions.SCRIPT_CATEGORY.INVENTORY)
+    public static BCList gsInventoryList(@Nonnull final State st,
+                                   @Nonnull final GSVM vm,
+                                   @Nonnull final BCCharacter character,
+                                   @Nonnull final BCString inventory) {
+        Inventory source = getInventory(st, character, inventory);
+        BCList list=new BCList(null);
+        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
+            list.append(new BCString(null,element.getKey()));
+        }
+        return list;
     }
 }
