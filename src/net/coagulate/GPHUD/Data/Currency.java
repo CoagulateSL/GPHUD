@@ -34,6 +34,7 @@ public class Currency extends TableRow {
 		);
 	}
 
+	@Nullable
 	public static Currency findNullable(final State st,
 	                                    final String name) {
 		try { return find(st,name); }
