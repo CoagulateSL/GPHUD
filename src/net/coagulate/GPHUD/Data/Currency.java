@@ -126,7 +126,7 @@ public class Currency extends TableRow {
 			}
 			else {
 				//System.out.println("Not a match");
-				throw new UserInputValidationParseException("Unable to parse '"+ammount+"' into an ammount of currency");
+				throw new UserInputValidationParseException("Unable to parse '"+ammount+"' into an ammount of currency",true);
 			}
 		}
 		return total;
