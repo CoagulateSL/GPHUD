@@ -162,7 +162,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 
 	// ----- Internal Instance -----
 	protected Response execute(@Nonnull final State st) {
-		final JSONObject obj=st.json();
+		final JSONObject obj=st.jsonNullable();
+		if (obj==null) { throw new UserInputEmptyException("No JSON payload was received with this request, please make a POST request to this URL with a valid JSON structure (See External Access API Documentation for more details)",true); }
 		st.sourceLocation =st.getClientIP();
 		// get developer key
 		if (!obj.has("developerkey")) { throw new UserInputEmptyException("No developer credentials were supplied in the request"); }
