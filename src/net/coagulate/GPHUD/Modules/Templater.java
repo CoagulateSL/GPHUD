@@ -223,7 +223,7 @@ public abstract class Templater {
 							}
 						}
 						else {
-							throw new UserInputValidationParseException("Unexpected: "+(char) ch+" at "+pos+" in '"+str+"'");
+							throw new UserInputValidationParseException("Unexpected: "+(char) ch+" at "+pos+" in '"+str+"'",true);
 						}
 					}
 				}

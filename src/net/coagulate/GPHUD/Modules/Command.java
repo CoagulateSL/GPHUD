@@ -556,6 +556,7 @@ public abstract class Command {
 				Attribute attr=null;
 				for (final Attribute a: state.getAttributes()) {
 					if (a.getName().equalsIgnoreCase(v)) {
+						//noinspection VariableNotUsedInsideIf
 						if (attr!=null) {
 							throw new SystemConsistencyException("Duplicate attribute definition found for "+v);
 						}
@@ -565,7 +566,7 @@ public abstract class Command {
 					}
 				}
 				if (attr==null) {
-					throw new UserInputLookupFailureException("Unable to resolve '"+v+"' to an attribute");
+					throw new UserInputLookupFailureException("Unable to resolve '"+v+"' to an attribute",true);
 				}
 				return attr;
 			case ITEM:

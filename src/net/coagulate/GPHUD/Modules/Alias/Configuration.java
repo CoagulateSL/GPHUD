@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Alias;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationRecursionException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.UserException;
@@ -43,8 +44,13 @@ public abstract class Configuration {
 				f.add("<p color=red>Alias '"+values.get("deletealias")+"' was not fount</p>");
 			}
 			else {
-				alias.delete();
-				f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been deleted</p>");
+				try {
+					alias.delete();
+					f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been deleted</p>");
+				}
+				catch (NoDataException e) {
+					f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been (already?) deleted</p>");
+				}
 			}
 		}
 

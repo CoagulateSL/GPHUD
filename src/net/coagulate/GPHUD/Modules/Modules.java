@@ -318,9 +318,9 @@ public abstract class Modules {
 			return run(st,parametermap.get("console"));
 		}
 		final Module module=get(st,qualifiedcommandname);
-		if (module==null) { throw new UserInputLookupFailureException("Unknown module in "+qualifiedcommandname); }
+		if (module==null) { throw new UserInputLookupFailureException("Unknown module in "+qualifiedcommandname,true); }
 		final Command command=module.getCommandNullable(st,extractReference(qualifiedcommandname));
-		if (command==null) { throw new UserInputLookupFailureException("Unknown command in "+qualifiedcommandname); }
+		if (command==null) { throw new UserInputLookupFailureException("Unknown command in "+qualifiedcommandname,true); }
 		return command.run(st,parametermap);
 	}
 
@@ -347,7 +347,7 @@ public abstract class Modules {
 	public static KV getKVDefinition(@Nonnull final State st,
 	                                 @Nonnull final String qualifiedname) {
 		final KV kv=getKVDefinitionNullable(st,qualifiedname);
-		if (kv==null) { throw new UserInputLookupFailureException("Failed to resolve KV definition "+qualifiedname); }
+		if (kv==null) { throw new UserInputLookupFailureException("Failed to resolve KV definition "+qualifiedname,true); }
 		return kv;
 	}
 

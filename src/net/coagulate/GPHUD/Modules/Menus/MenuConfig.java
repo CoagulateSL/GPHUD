@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
@@ -45,6 +46,9 @@ public abstract class MenuConfig {
 			}
 			catch (final UserException e) {
 				f.add(new TextError("Failed to delete menu "+values.get("deletemenu")+": "+e.getLocalizedMessage()));
+			}
+			catch (final NoDataException e2) {
+				f.add(new TextError("Failed to find menu "+values.get("deletemenu")+"?"));
 			}
 			f.add("<br><br>");
 		}
