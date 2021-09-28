@@ -116,7 +116,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	@Nonnull
-	public Command getCommandNullable(final State st,
+	public Command getCommandNullable(@Nonnull final State st,
 	                                  @Nonnull final String commandname) {
 		final Command c=commands.get(commandname.toLowerCase());
 		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name); }
@@ -124,7 +124,7 @@ public class ModuleAnnotation extends Module {
 	}
 
 	@Nonnull
-	public Pool getPool(final State st,
+	public Pool getPool(@Nonnull final State st,
 	                    @Nonnull final String itemname) {
 		final Pool p=poolmap.get(itemname.toLowerCase());
 		if (p==null) {
