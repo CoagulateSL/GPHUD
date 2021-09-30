@@ -158,6 +158,10 @@ public class GPHUD extends SLModule {
 	}
 
 	@Override
+	public void maintenanceInternal() {
+	}
+
+	@Override
 	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
 		Logger log=GPHUD.getLogger("SchemaUpgrade");
