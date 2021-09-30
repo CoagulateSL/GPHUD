@@ -253,7 +253,7 @@ public class ColorNormaliser {
 
 	private static String cleanseValue(final String v) {
 		// remove anything that isn't a number, hex digit or decimal point
-		return v.replaceAll("[^A-Fa-f0-9\\.]","");
+		return v.replaceAll("[^A-Fa-f0-9.]","");
 	}
 }
 

@@ -209,6 +209,7 @@ public abstract class View {
 						create.add(new Hidden("qty", "" + element.getValue()));
 						create.add(new Hidden("okreturnurl", st.getFullURL()));
 						create.add(new Button(element.getValue() + "x" + element.getKey()));
+						//noinspection StringConcatenationInLoop
 						description = description + create.asHtml(simulated, true);
 					}
 					final Form create = new Form();

@@ -109,13 +109,15 @@ public class API {
 			if (callingstate.getInstance()!=st.getInstance()) {
 				throw new SystemConsistencyException("State instances mismatch in gsAPI, aborting");
 			}
+			/*
 			final StringBuilder paramlist=new StringBuilder("(");
 			for (final ByteCodeDataType bcdt: parameters.getContent()) {
 				if (paramlist.length()>1) { paramlist.append(", "); }
 				paramlist.append(bcdt);
 			}
 			paramlist.append(")");
-			//GPHUD.getLogger("gsAPI").fine("gsAPI calling "+apicall+", our state is "+st+" and their state is "+callingstate+", the parameters list is "+paramlist);
+			GPHUD.getLogger("gsAPI").fine("gsAPI calling "+apicall+", our state is "+st+" and their state is "+callingstate+", the parameters list is "+paramlist);
+			*/
 			final Response value=Modules.run(callingstate,apicall.getContent(),args);
 			return new BCResponse(null,value);
 		}

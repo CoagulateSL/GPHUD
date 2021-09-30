@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Modules.*;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
@@ -61,10 +62,10 @@ public class CurrencyModule extends ModuleAnnotation {
 		return super.getKVDefinition(st,qualifiedname);
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
-	public Command getCommandNullable(final State st,
-	                                  @Nonnull final String commandname) {
+	public Command getCommandNullable(@Nonnull final State st,
+									  @Nonnull final String commandname) {
 		if (commandname.toLowerCase().startsWith("create")) {
 			if (Attribute.find(st.getInstance(),commandname.substring(6)).getType()==ATTRIBUTETYPE.CURRENCY) {
 				return new CreateCoinsCommand(commandname.substring(6));

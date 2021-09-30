@@ -49,8 +49,7 @@ public class RunScript extends ObjectType {
 
 	@Override
 	public void update(@Nonnull final State st) {
-		boolean changed=false;
-		changed=updateScript(st) || changed;
+		boolean changed=updateScript(st);
 		changed=updateDistance(st) || changed;
 		if (changed) { object.setBehaviour(json); }
 	}

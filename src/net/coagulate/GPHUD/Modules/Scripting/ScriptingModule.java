@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Modules.Command;
@@ -23,7 +24,10 @@ public class ScriptingModule extends ModuleAnnotation {
 	public Command getCommandNullable(@Nonnull final State st,
 	                                  @Nonnull final String commandname) {
 		if (commandname.equalsIgnoreCase("characterresponse") || commandname.equalsIgnoreCase("stringresponse")) {
-			return super.getCommandNullable(st,commandname);
+			Command check = super.getCommandNullable(st, commandname);
+			// del me once getCommandNullable stops being nullable
+			if (check==null) { throw new SystemImplementationException("Unexpected failure to locate internal command "+commandname); }
+			return check;
 		}
 		final Script script=Script.findNullable(st,commandname.replaceFirst("gs",""));
 		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists",true); }

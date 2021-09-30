@@ -115,14 +115,23 @@ public class ModuleAnnotation extends Module {
 		return ret;
 	}
 
-	@Nonnull
+	@Nullable // this call hierarchy is a mess, things lower down return null even if we dont (as in overrides)
+	// wether this return null is useful is questionable, perhaps migrate everything to Nonnull at some point as a project
+	// TODO - consider migrating to @Nonnull
 	public Command getCommandNullable(@Nonnull final State st,
 	                                  @Nonnull final String commandname) {
 		final Command c=commands.get(commandname.toLowerCase());
 		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name); }
 		return c;
 	}
-
+	@Nonnull
+	// TODO - purge this method
+	public Command getCommand(@Nonnull final State st,
+									  @Nonnull final String commandname) {
+		final Command c=commands.get(commandname.toLowerCase());
+		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name); }
+		return c;
+	}
 	@Nonnull
 	public Pool getPool(@Nonnull final State st,
 	                    @Nonnull final String itemname) {
@@ -187,7 +196,7 @@ public class ModuleAnnotation extends Module {
 	Response run(@Nonnull final State st,
 	             @Nonnull final String commandname,
 	             @Nonnull final String[] args) {
-		final Command command=getCommandNullable(st,commandname);
+		final Command command=getCommand(st,commandname);
 		return command.run(st,args);
 	}
 

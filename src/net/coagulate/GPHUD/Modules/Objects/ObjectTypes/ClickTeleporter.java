@@ -51,8 +51,7 @@ public class ClickTeleporter extends Teleporter {
 
 	@Override
 	public void update(@Nonnull final State st) {
-		boolean changed=false;
-		changed=updateDistance(st) || changed;
+		boolean changed=updateDistance(st);
 		changed=updateTeleport(st) || changed;
 		if (changed) { object.setBehaviour(json); }
 	}

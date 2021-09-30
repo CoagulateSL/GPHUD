@@ -142,8 +142,8 @@ public class ExperienceModule extends ModuleAnnotation {
 
 	@Nonnull
 	@Override
-	public Pool getPool(final State st,
-	                    @Nonnull final String itemname) {
+	public Pool getPool(@Nonnull final State st,
+						@Nonnull final String itemname) {
 		final Map<String,Pool> pmap=getPoolMap(st);
 		for (final Map.Entry<String,Pool> entry: pmap.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase(itemname)) { return entry.getValue(); }

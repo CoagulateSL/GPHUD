@@ -148,7 +148,6 @@ public abstract class CookBook {
 		boolean already=false;
 		if (menu==null) {
 			full=false;
-			already=false;
 		}
 		else {
 			for (int i=1;i<=12;i++) {

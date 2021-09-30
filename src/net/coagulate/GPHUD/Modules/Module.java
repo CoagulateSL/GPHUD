@@ -90,8 +90,8 @@ public abstract class Module {
 	}
 
 	@Nonnull
-	public abstract Pool getPool(State st,
-	                             String itemname);
+	public abstract Pool getPool(@Nonnull State st,
+	                             @Nonnull String itemname);
 
 	public abstract Permission getPermission(State st,
 	                                         String itemname);

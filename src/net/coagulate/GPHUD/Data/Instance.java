@@ -37,7 +37,7 @@ public class Instance extends TableRow {
 	private static final int ADMIN_PESTER_INTERVAL=3600; // seconds
 	private static final int SERVER_UPDATE_INTERVAL=30;
 	private static final Map<String,Integer> lastStatus =new TreeMap<>(); // naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
-    Cache<Currency> currencyNameCache=Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
+    final Cache<Currency> currencyNameCache=Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
 
     protected Instance(final int id) { super(id); }
 
