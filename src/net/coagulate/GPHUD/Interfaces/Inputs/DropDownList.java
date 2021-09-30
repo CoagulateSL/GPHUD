@@ -108,8 +108,8 @@ public class DropDownList extends Input {
 		final StringBuilder r=new StringBuilder();
 		r.append("<select name=\"").append(name).append("\"");
 		if (submitonchange) { r.append("onchange=\"this.form.submit()\" "); }
-		if (!onchange.isBlank()) { r.append("onchange=\""+onchange+"\" "); }
-		if (!id.isBlank()) { r.append("id=\""+id+"\" "); }
+		if (!onchange.isBlank()) { r.append("onchange=\"").append(onchange).append("\" "); }
+		if (!id.isBlank()) { r.append("id=\"").append(id).append("\" "); }
 		r.append(">");
 		for (final Map.Entry<String,String> entry: choices.entrySet()) {
 			final String option=entry.getKey();

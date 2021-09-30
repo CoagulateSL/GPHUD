@@ -39,6 +39,14 @@ public class Table implements Renderable {
 	}
 
 	@Nonnull
+	public Row openReturnRow() {
+		if (openrow!=null) { closeRow(); }
+		openrow=new Row();
+		add(openrow);
+		return openrow;
+	}
+
+	@Nonnull
 	public Table closeRow() {
 		openrow=null;
 		return this;
@@ -146,8 +154,7 @@ public class Table implements Renderable {
 	}
 
     public Table openRow(String rowID) {
-		openRow();
-		openrow.id(rowID);
+		openReturnRow().id(rowID);
 		return this;
     }
 }
