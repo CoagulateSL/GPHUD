@@ -114,11 +114,11 @@ public class ModuleAnnotation extends Module {
 		if (ret==null) { throw new SystemImplementationException("Invalid KV "+qualifiedname+" in module "+getName()); }
 		return ret;
 	}
-
+	
 	@Nullable // this call hierarchy is a mess, things lower down return null even if we dont (as in overrides)
 	// wether this return null is useful is questionable, perhaps migrate everything to Nonnull at some point as a project
 	// TODO - consider migrating to @Nonnull
-	public Command getCommandNullable(@Nonnull final State st,
+	public Command getCommandNullable(final State st,
 	                                  @Nonnull final String commandname) {
 		final Command c=commands.get(commandname.toLowerCase());
 		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name); }
@@ -133,7 +133,7 @@ public class ModuleAnnotation extends Module {
 		return c;
 	}
 	@Nonnull
-	public Pool getPool(@Nonnull final State st,
+	public Pool getPool(final State st,
 	                    @Nonnull final String itemname) {
 		final Pool p=poolmap.get(itemname.toLowerCase());
 		if (p==null) {
