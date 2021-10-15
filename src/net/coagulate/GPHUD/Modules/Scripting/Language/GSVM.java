@@ -405,7 +405,9 @@ public class GSVM {
 		column=0;
 		variables.clear();
 		simulation=false;
-		variables.putAll(introductions);
+		for (final Map.Entry<String,ByteCodeDataType> entry: introductions.entrySet()) {
+			variables.put(entry.getKey(),entry.getValue());
+		}
 		if (!variables.containsKey("CALLER")) { variables.put("CALLER",new BCCharacter(null,st.getCharacter())); }
 		if (!variables.containsKey("AVATAR")) { variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable())); }
 		invokerstate=st;

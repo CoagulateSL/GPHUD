@@ -101,7 +101,8 @@ public class Form implements Renderable {
 		if (form) {
 			response.append("<form method=post");
 			if (action!=null && !action.isEmpty()) { response.append(" action=\"").append(action).append("\""); }
-			response.append(" style=\"").append(inline ? "display: inline; " : "").append("border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; ").append("padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n");
+			response.append(
+					" style=\""+(inline?"display: inline; ":"")+"border-top-width: 0px; border-right-width: 0px; border-left-width: 0px; border-bottom-width: 0px; padding-bottom: 0px; padding-top: 0px; "+"padding-left: 0px; padding-right: 0px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px;\">\n");
 		}
 		for (final Renderable r: list) {
 			if (!(r instanceof NullResponse)) {

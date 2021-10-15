@@ -156,7 +156,7 @@ public class Output {
 													@Nonnull final BCString message,
 													@Nonnull final BCString id) {
 		Obj object=Obj.findOrNull(st,objectUUID.toString());
-		if (object==null) { throw new GSUnknownIdentifier("No object with ID "+ objectUUID +" was found"); }
+		if (object==null) { throw new GSUnknownIdentifier("No object with ID "+objectUUID.toString()+" was found"); }
 		if (object.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Object driver attempting cross instance link messaging..."); }
 		JSONObject send=new JSONObject();
 		send.put("linkmessagenumber",messageNumber.toString());

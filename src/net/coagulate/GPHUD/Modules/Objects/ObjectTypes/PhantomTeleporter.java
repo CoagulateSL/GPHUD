@@ -47,7 +47,8 @@ public class PhantomTeleporter extends Teleporter {
 
 	@Override
 	public void update(@Nonnull final State st) {
-		boolean changed=updateTeleport(st);
+		boolean changed=false;
+		changed=updateTeleport(st) || changed;
 		if (changed) { object.setBehaviour(json); }
 	}
 

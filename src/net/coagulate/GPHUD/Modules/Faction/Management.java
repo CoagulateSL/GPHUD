@@ -184,12 +184,7 @@ public abstract class Management {
 		}
 		// or a member
 		boolean ingroup=false;
-		for (final Char c: faction.getMembers()) {
-			if (c == newowner) {
-				ingroup = true;
-				break;
-			}
-		}
+		for (final Char c: faction.getMembers()) { if (c==newowner) { ingroup=true; }}
 		if (!ingroup) {
 			return new ErrorResponse("New leader "+newowner.getName()+" must be in faction "+faction.getName());
 		}

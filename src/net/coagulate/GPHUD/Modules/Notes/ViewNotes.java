@@ -84,7 +84,7 @@ public class ViewNotes {
 	                            final SafeMap values) {
 		Integer targetid=null;
 		final String[] parts=st.getDebasedURL().split("/");
-		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException ignored) {}
+		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
 		if (targetid==null) {
 			throw new UserInputValidationParseException("Failed to extract character id from "+parts[parts.length-1]);
 		}
@@ -109,7 +109,7 @@ public class ViewNotes {
 	                            final SafeMap values) {
 		Integer targetid=null;
 		final String[] parts=st.getDebasedURL().split("/");
-		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException ignored) {}
+		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
 		if (targetid==null) {
 			throw new UserInputValidationParseException("Failed to extract user id from "+parts[parts.length-1]);
 		}
