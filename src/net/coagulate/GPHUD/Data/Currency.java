@@ -30,7 +30,7 @@ public class Currency extends TableRow {
 	public static Currency find(final State st,
 	                            final String name) {
 		return st.getInstance().currencyNameCache.get(
-				name, ()->get(GPHUD.getDB().dqiNotNull("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name))
+				name, ()->get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name))
 		);
 	}
 
