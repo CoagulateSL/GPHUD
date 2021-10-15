@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
+import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 
 /**
@@ -73,6 +74,10 @@ public abstract class Avatars {
 		json.put("parcelonly",st.getKV("gphudserver.parcelonly"));
 		json.put("minz",st.getKV("gphudserver.dispenserminimumz"));
 		json.put("maxz",st.getKV("gphudserver.dispensermaximumz"));
+		if (region.getURLNullable()==null) {
+			json.put("rebootserver","rebootserver");
+			st.logger().log(SEVERE,"Rebooting region server for "+region+" due to null URL");
+		}
 		return new JSONResponse(json);
 	}
 
