@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSMathsError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -88,6 +89,7 @@ public class BCInteger extends ByteCodeDataType {
 	@Override
 	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
 		//check float, eventually
+		if (var.toInteger()==0) { throw new GSMathsError("Division by zero"); }
 		return new BCInteger(node(),toInteger()/var.toInteger());
 	}
 
