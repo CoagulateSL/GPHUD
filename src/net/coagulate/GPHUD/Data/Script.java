@@ -38,7 +38,7 @@ public class Script extends TableRow {
 	@Nonnull
 	public static Table getTable(@Nonnull final State state,final boolean canDelete) {
 		@Nonnull final Instance instance=state.getInstance();
-		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by id asc",instance.getId());
+		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by name asc",instance.getId());
 		final Table o=new Table();
 		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
 		for (final ResultsRow row: rows) {
