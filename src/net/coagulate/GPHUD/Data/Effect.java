@@ -410,5 +410,18 @@ public class Effect extends TableRow {
 		if (remains==-1) { return "--"; }
 		return UnixTime.duration(remains,true).trim();
 	}
+
+	/** Get the effect's metadata.
+	 * @return the metadata
+	 */
+	@Nonnull
+	public String getMetaData() { return getString("metadata"); }
+
+	/** Set the effect's metadata.
+	 * @param metaData The new metadata (not null)
+	 */
+	public void setMetaData(@Nonnull final String metaData) {
+		set("metadata",metaData);
+	}
 }
 
