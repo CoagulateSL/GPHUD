@@ -213,4 +213,8 @@ public class Menu extends TableRow {
 	}
 
 	public void flushKVCache(final State st) {}
+
+	public String getDescription() {
+		return getString("description");
+	}
 }
