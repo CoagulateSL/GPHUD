@@ -120,12 +120,25 @@ public abstract class MenuConfig {
 				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will "+"be omitted from the menu.  Layout of buttons is as follows:"));
 		f.add(new Paragraph(
 				"Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen (if UIX is not enabled in GPHUDClient)."));
+		f.add(new Paragraph("If you ARE using UIX (GPHUDClient.UIXMenus) then the full length text of menu labels will appear to the end user, and the ordering will be linearly across rows, left to right"));
 		final Table example=new Table();
 		f.add(example);
 		example.openRow().add("10").add("11").add("12");
 		example.openRow().add("7").add("8").add("9");
 		example.openRow().add("4").add("5").add("6");
 		example.openRow().add("1").add("2").add("3");
+		if (st.hasPermission("Menus.Config")) {
+			if (!values.get("cloneas").isEmpty()) {
+				String newname=values.get("cloneas");
+				if (Menu.getMenuNullable(st,newname)==null) {
+					Menu.create(st,newname,m.getDescription(), m.getJSON());
+					f.add(new TextOK("Menu cloned, note you are still editing the original"));
+				} else {
+					f.add(new TextError("Unable to clone menu to "+newname+", it already exists"));
+				}
+			}
+			f.add("You may clone this menu with a new name:").add(new TextInput("cloneas","")).add(new Button("Clone")).br();
+		}
 		final Table t=new Table();
 		f.add(new TextSubHeader("Button configuration"));
 		if (st.hasPermission("Menus.Config")) { f.add(new Button("Submit")); }
