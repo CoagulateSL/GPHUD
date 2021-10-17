@@ -83,4 +83,16 @@ public class EffectsFunctions {
 		else { return new BCInteger(null,0); }
 	}
 
+	@GSFunction(description="Gets the MetaData attached to a named effect",
+				parameters="String - Name of the effect to query",
+				privileged = false,
+				returns="String - The metadata attached to the effect, may be an empty string",
+				notes="",
+				category = SCRIPT_CATEGORY.EFFECTS)
+	public static BCString gsGetEffectMetaData(final State st,
+											   @Nonnull final GSVM vm,
+											   @Nonnull final BCString effect) {
+		net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.assertModule(st,"Effects");
+		return new BCString(null,Effect.get(st,effect.getContent()).getMetaData());
+	}
 }
