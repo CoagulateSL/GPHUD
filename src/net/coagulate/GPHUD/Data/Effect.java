@@ -99,13 +99,16 @@ public class Effect extends TableRow {
 	 *
 	 * @param st   State
 	 * @param name Name of effect
+	 * @param metaData Optional metadata to attach to the effect
 	 *
 	 * @throws UserInputDuplicateValueException If the effect already exists
 	 */
 	public static void create(@Nonnull final State st,
-	                          @Nonnull final String name) {
+	                          @Nonnull final String name,
+							  @Nullable String metaData) { // we dont like null metadata but we'll sneak a change in
 		if (Effect.getNullable(st,name)!=null) { throw new UserInputDuplicateValueException("There is already an effect named "+name); }
-		db().d("insert into effects(instanceid,name) values(?,?)",st.getInstance().getId(),name);
+		if (metaData==null) { metaData=""; }
+		db().d("insert into effects(instanceid,name,metadata) values(?,?,?)",st.getInstance().getId(),name,metaData);
 	}
 
 	/**

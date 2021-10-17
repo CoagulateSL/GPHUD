@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class CreateDelete {
 	// ---------- STATICS ----------
@@ -21,10 +22,15 @@ public class CreateDelete {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static final Response create(final State st,
-	                                    @Argument.Arguments(name="name",description="Name of the new effect",
+										@Argument.Arguments(name="name",description="Name of the new effect",
 	                                                        type=Argument.ArgumentType.TEXT_CLEAN,
-	                                                        max=64) @Nonnull final String name) {
-		Effect.create(st,name);
+	                                                        max=64) @Nonnull final String name,
+										@Argument.Arguments(name="metadata",description = "Attached metadata",
+															type= Argument.ArgumentType.TEXT_ONELINE,
+															max=1024,
+															mandatory = false) @Nullable String metaData) {
+		if (metaData==null) { metaData=""; }
+		Effect.create(st,name,metaData);
 		return new OKResponse("Created new effect "+name);
 	}
 
