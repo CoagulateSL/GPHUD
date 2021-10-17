@@ -22,10 +22,13 @@ public class Configuration {
 		f.noForm();
 		final Table at=new Table();
 		f.add(at);
-		at.add(new HeaderRow().add("Name"));
+		at.add(new HeaderRow().add("Name").add("Metadata"));
 		for (final Effect effect: Effect.getAll(st.getInstance())) {
 			at.openRow();
 			at.add(effect);
+			String metaData=effect.getMetaData();
+			if (metaData.isEmpty()) { metaData="<i>None Set</i>"; }
+			at.add(metaData);
 			if (st.hasPermission("Effects.Delete")) {
 				at.add(new Form(st,true,"./Effects/Delete","Delete","name",effect.getName()));
 			}
