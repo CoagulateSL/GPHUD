@@ -308,9 +308,15 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 10 is complete");
 			currentVersion=10;
 		}
+		if (currentVersion==10) {
+			log.config("Add metadata column to effects");
+			GPHUD.getDB().d("ALTER TABLE `effects` ADD COLUMN `metadata` VARCHAR(1024) NOT NULL DEFAULT ''");
+			log.config("Schema upgrade of GPHUD to version 11 is complete");
+			currentVersion=11;
+		}
 		return currentVersion;
 	}
-	private static final int SCHEMA_VERSION=10;
+	private static final int SCHEMA_VERSION=11;
 
 	@Override
 	public void startup() {
