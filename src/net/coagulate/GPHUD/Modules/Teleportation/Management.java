@@ -28,6 +28,9 @@ public class Management {
 			t.add(landmark.getRegion(true).getName());
 			t.add(landmark.getCoordinates());
 			t.add(landmark.getLookAt());
+			if (st.hasPermission("Teleportation.DeleteLandmark")) {
+				t.add(new Form(st,true,"./Teleportation/DeleteLandmark","Delete","name",landmark.getName()));
+			}
 		}
 	}
 }

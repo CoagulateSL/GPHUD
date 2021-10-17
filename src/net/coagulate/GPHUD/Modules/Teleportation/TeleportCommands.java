@@ -11,6 +11,9 @@ import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.URL;
+import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -105,6 +108,13 @@ public class TeleportCommands {
 		Landmark.obliterate(st.getInstance(),name);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Delete",name,"","","Deleted landmark "+name);
 		return new OKResponse("Deleted landmark "+name);
+	}
+
+	@URL.URLs(url="/configuration/teleportation/deletelandmark",
+			  requiresPermission="Teleportation.DeleteLandmark")
+	public static void toggleTemplatable(@Nonnull final State st,
+										 @Nonnull final SafeMap values) {
+		Modules.simpleHtml(st,"Teleportation.DeleteLandmark",values);
 	}
 
 	@Nonnull

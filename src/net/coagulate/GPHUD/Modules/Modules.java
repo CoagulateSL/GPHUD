@@ -436,6 +436,17 @@ public abstract class Modules {
 		c.simpleHtml(st,values);
 	}
 
+	public static void simpleHtml(@Nonnull final State st,
+								  @Nonnull final String command,
+								  @Nonnull final String... params) {
+		SafeMap map=new SafeMap();
+		if ((params.length % 2)==1) { throw new SystemImplementationException("Expects an even number of varargs"); }
+		for (int i=0;i<params.length;i+=2) {
+			map.put(params[i],params[i+1]);
+		}
+		simpleHtml(st,command,map);
+	}
+
 	public static void initialiseInstance(final State st) {
 		for (final Module module: getModules()) {
 			module.initialiseInstance(st);
