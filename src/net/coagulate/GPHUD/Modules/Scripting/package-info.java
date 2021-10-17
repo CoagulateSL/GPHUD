@@ -11,6 +11,9 @@
                         name="CompilePrivileged",
                         power=Permission.POWER.HIGH)
 
+@Permission.Permissions(description="Allows the deletion of scripts",
+                        name="Delete",
+                        power=Permission.POWER.HIGH)
 package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.GPHUD.Modules.Module;

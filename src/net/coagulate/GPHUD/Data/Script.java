@@ -10,6 +10,7 @@ import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
+import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Config;
 
@@ -30,12 +31,13 @@ public class Script extends TableRow {
 	 * Creates a list of all scripts at an instance.
 	 * TODO break this function down.
 	 *
-	 * @param instance Instance to query
+	 * @param state Contains instance to query
 	 *
 	 * @return a Table
 	 */
 	@Nonnull
-	public static Table getTable(@Nonnull final Instance instance) {
+	public static Table getTable(@Nonnull final State state,final boolean canDelete) {
+		@Nonnull final Instance instance=state.getInstance();
 		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by id asc",instance.getId());
 		final Table o=new Table();
 		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
@@ -51,6 +53,9 @@ public class Script extends TableRow {
 			else {
 				o.add("<font color=red>"+(sourceversion==null?"None":""+sourceversion)+"</font>");
 				o.add("<font color=red>"+(bytecodeversion==null?"None":""+bytecodeversion)+"</font>");
+			}
+			if (canDelete) {
+				o.add(new Form(state,true,"/GPHUD/configuration/scripting/delete","Delete","scriptname",row.getStringNullable("name")));
 			}
 		}
 		return o;
@@ -285,5 +290,9 @@ public class Script extends TableRow {
 	public byte[] getByteCode() {
 		validate();
 		return getBytes("bytecode");
+	}
+
+	public void delete() {
+		d("delete from scripts where id=?",getId());
 	}
 }
