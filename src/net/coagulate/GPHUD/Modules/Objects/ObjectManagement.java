@@ -12,11 +12,14 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
 import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
+import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Interfaces.User.Form;
+import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
+import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.Modules.URL;
 import net.coagulate.GPHUD.SafeMap;
@@ -118,5 +121,31 @@ public class ObjectManagement {
 		st.getRegion().sendServer(json);
 		return new OKResponse("OK - Sent you an Object Driver script");
 	}
+
+	@Nonnull
+	@Command.Commands(description="Remove an object type by name",
+					  context=Command.Context.AVATAR,
+					  requiresPermission="Objects.ObjectTypes",
+					  permitExternal=false,
+					  permitObject=false,
+					  permitScripting=false)
+	public static Response deleteObjectType(@Nonnull final State st,
+										  @Argument.Arguments(name="name", description="Object Type to remove",
+															  type=Argument.ArgumentType.TEXT_ONELINE,
+															  max=64) final String name) {
+		final ObjType ot=ObjType.get(st,name);
+		if (ot==null) { return new ErrorResponse("Can not delete object type "+name+" - it does not exist"); }
+		ot.delete();
+		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Delete",name,"","","Deleted Object Type "+name);
+		return new OKResponse("Deleted ObjectType "+name);
+	}
+
+	@URL.URLs(url="/configuration/objects/deleteobjecttype",
+			  requiresPermission="Objects.ObjectTypes")
+	public static void toggleTemplatable(@Nonnull final State st,
+										 @Nonnull final SafeMap values) {
+		Modules.simpleHtml(st,"Objects.DeleteObjectType",values);
+	}
+
 
 }

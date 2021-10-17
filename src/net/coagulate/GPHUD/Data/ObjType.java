@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
+import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -76,6 +77,11 @@ public class ObjType extends TableRow {
 			try { r.append(ObjectType.materialise(st,ot).explainHtml()); }
 			catch (SystemLookupFailureException e) { r.append("<i>NoType</i>"); }
 			r.append("</td>");
+			if (st.hasPermission("Objects.ObjectTypes")) {
+				r.append("<td>");
+				r.append(new Form(st,true,"/GPHUD/Configuration/Objects/DeleteObjectType","Delete","name",row.getStringNullable("name")).asHtml(st,true));
+				r.append("</td>");
+			}
 			r.append("</tr>");
 		}
 		r.append("</table>");
@@ -195,6 +201,10 @@ public class ObjType extends TableRow {
 	@Override
 	public String getTableName() {
 		return "objecttypes";
+	}
+
+	public void delete() {
+		d("delete from objecttypes where id=?",getId());
 	}
 }
 
