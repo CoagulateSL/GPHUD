@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Effects;
 
+import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Effect;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -60,5 +61,30 @@ public class CreateDelete {
 		Modules.simpleHtml(st,"Effects.Delete",parameters);
 	}
 
-
+	@Command.Commands(description="Set MetaData on an effect",
+					  context=Command.Context.AVATAR,
+					  requiresPermission="Effects.Edit",
+					  permitScripting=false,
+					  permitExternal=false,
+					  permitObject=false)
+	public static final Response setMetaData(final State st,
+										@Argument.Arguments(name="effect",description="The effect to alter",
+															type=Argument.ArgumentType.EFFECT,
+															max=64) @Nonnull final Effect effect,
+										@Argument.Arguments(name="metadata",description = "Metadata",
+															type= Argument.ArgumentType.TEXT_ONELINE,
+															max=1024,
+															mandatory = false) @Nullable String metaData) {
+		effect.validate(st);
+		if (metaData==null) { metaData=""; }
+		String oldMetaData=effect.getMetaData();
+		effect.setMetaData(metaData);
+		Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,"Edit","MetaData",oldMetaData,metaData,"User set effect metadata");
+		return new OKResponse("Metadata updated for "+effect);
+	}
+	@URL.URLs(url="/configuration/Effects/SetMetaData")
+	public static void setMetaDataPage(final State st,
+								  final SafeMap parameters) {
+		Modules.simpleHtml(st,"Effects.SetMetaData",parameters);
+	}
 }

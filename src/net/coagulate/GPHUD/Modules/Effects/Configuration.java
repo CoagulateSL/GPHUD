@@ -27,8 +27,11 @@ public class Configuration {
 			at.openRow();
 			at.add(effect);
 			String metaData=effect.getMetaData();
-			if (metaData.isEmpty()) { metaData="<i>None Set</i>"; }
-			at.add(metaData);
+			if (st.hasPermission("Effects.Edit")) {
+				at.add(new Form(st,true,"./Effects/SetMetaData",metaData.isEmpty()?"None Set":metaData,"effect",effect.getName(),"metadata",metaData));
+			} else {
+				at.add(metaData);
+			}
 			if (st.hasPermission("Effects.Delete")) {
 				at.add(new Form(st,true,"./Effects/Delete","Delete","name",effect.getName()));
 			}
