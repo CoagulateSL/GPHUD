@@ -298,10 +298,19 @@ public class ScriptingConfig {
 		output.append("</table></td><td><table>");
 		for (final Map.Entry<String,ByteCodeDataType> entry: step.resultingvariables.entrySet()) {
 			String decode="???";
+			boolean italics=entry.getKey().startsWith(" ");
 			if (entry.getValue()!=null) {
 				decode=entry.getValue().htmlDecode();
 			}
-			output.append("<tr><th>").append(entry.getKey()).append("</th><td>").append(decode).append("</td></tr>");
+			output.append("<tr><th>").
+					append(italics?"<i>":"").
+					append(entry.getKey()).
+					append(italics?"</i>":"").
+					append("</th><td>").
+					append(italics?"<i>":"").
+					append(decode.replaceAll("<td>","<td>"+(italics?"<i>":""))).
+					append(italics?"</i>":"").
+					append("</td></tr>");
 		}
 		output.append("</table></td></tr>");
 		if (step.t!=null) {
