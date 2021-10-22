@@ -98,6 +98,7 @@ void Statement() #Statement : {}
     Conditional() |
     WhileLoop() |
     Initialiser() ";" |
+    Return() ";" |
     LOOKAHEAD(2) Assignment() ";"
 }
 
@@ -135,6 +136,11 @@ void Identifier() #Identifier : {}
 void Expression() #Expression : {}
 {
     LogicalOr()
+}
+
+void Return() #Return : {}
+{
+  <RETURN> ( Expression() )?
 }
 
 void LogicalOr() #LogicalOr : {} { LogicalAnd() ( <LOGICALOR> LogicalAnd() )* }

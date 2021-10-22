@@ -13,32 +13,33 @@ public interface GSParserTreeConstants
   public int JJTIDENTIFIERWITHINDEX = 7;
   public int JJTIDENTIFIER = 8;
   public int JJTEXPRESSION = 9;
-  public int JJTLOGICALOR = 10;
-  public int JJTLOGICALAND = 11;
-  public int JJTINEQUALITY = 12;
-  public int JJTEQUALITY = 13;
-  public int JJTGREATERTHAN = 14;
-  public int JJTLESSTHAN = 15;
-  public int JJTGREATEROREQUALTHAN = 16;
-  public int JJTLESSOREQUALTHAN = 17;
-  public int JJTADD = 18;
-  public int JJTSUBTRACT = 19;
-  public int JJTMULTIPLY = 20;
-  public int JJTDIVIDE = 21;
-  public int JJTUNARYMINUS = 22;
-  public int JJTLOGICALNOT = 23;
-  public int JJTTERM = 24;
-  public int JJTLISTINDEX = 25;
-  public int JJTSTRINGCONSTANT = 26;
-  public int JJTINTEGERCONSTANT = 27;
-  public int JJTFLOATCONSTANT = 28;
-  public int JJTFUNCTIONCALL = 29;
-  public int JJTFUNCTIONNAME = 30;
-  public int JJTPARAMETERS = 31;
-  public int JJTPARAMETER = 32;
-  public int JJTCONDITIONAL = 33;
-  public int JJTLIST = 34;
-  public int JJTWHILELOOP = 35;
+  public int JJTRETURN = 10;
+  public int JJTLOGICALOR = 11;
+  public int JJTLOGICALAND = 12;
+  public int JJTINEQUALITY = 13;
+  public int JJTEQUALITY = 14;
+  public int JJTGREATERTHAN = 15;
+  public int JJTLESSTHAN = 16;
+  public int JJTGREATEROREQUALTHAN = 17;
+  public int JJTLESSOREQUALTHAN = 18;
+  public int JJTADD = 19;
+  public int JJTSUBTRACT = 20;
+  public int JJTMULTIPLY = 21;
+  public int JJTDIVIDE = 22;
+  public int JJTUNARYMINUS = 23;
+  public int JJTLOGICALNOT = 24;
+  public int JJTTERM = 25;
+  public int JJTLISTINDEX = 26;
+  public int JJTSTRINGCONSTANT = 27;
+  public int JJTINTEGERCONSTANT = 28;
+  public int JJTFLOATCONSTANT = 29;
+  public int JJTFUNCTIONCALL = 30;
+  public int JJTFUNCTIONNAME = 31;
+  public int JJTPARAMETERS = 32;
+  public int JJTPARAMETER = 33;
+  public int JJTCONDITIONAL = 34;
+  public int JJTLIST = 35;
+  public int JJTWHILELOOP = 36;
 
 
   public String[] jjtNodeName = {
@@ -52,6 +53,7 @@ public interface GSParserTreeConstants
     "IdentifierWithIndex",
     "Identifier",
     "Expression",
+    "Return",
     "LogicalOr",
     "LogicalAnd",
     "InEquality",
@@ -80,4 +82,4 @@ public interface GSParserTreeConstants
     "WhileLoop",
   };
 }
-/* JavaCC - OriginalChecksum=c0951aebc482613548b40496a704c655 (do not edit this line) */
+/* JavaCC - OriginalChecksum=dc29a1c8bd7383b91ad6663b3316e984 (do not edit this line) */
