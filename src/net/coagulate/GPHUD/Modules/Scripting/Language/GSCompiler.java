@@ -55,7 +55,10 @@ public class GSCompiler {
 	public List<ByteCode> compile(final State st) {
 		lastdebuglineno=-1;
 		lastdebugcolno=-1;
-		return compile(st,startnode);
+		List<ByteCode> code=compile(st,startnode);
+		code.add(new BCInteger(null,0));
+		code.add(new BCReturn(null));
+		return code;
 	}
 
 	// ----- Internal Instance -----
