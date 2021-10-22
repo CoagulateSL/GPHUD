@@ -30,7 +30,8 @@ public class GSVM {
 	public int column;
 	public boolean simulation;
     @Nonnull public final int canary;
-    int IC;
+	public String source;
+	int IC;
 	@Nullable
 	String invokeonexit;
 	boolean suspended;
