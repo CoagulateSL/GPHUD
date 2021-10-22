@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
@@ -28,7 +29,8 @@ public class GSVM {
 	public int row;
 	public int column;
 	public boolean simulation;
-	int IC;
+    @Nonnull public final int canary;
+    int IC;
 	@Nullable
 	String invokeonexit;
 	boolean suspended;
@@ -43,9 +45,12 @@ public class GSVM {
 		{
 			for (int i=0;i<code.length;i++) { bytecode[i]=code[i]; }
 		}
+		canary = ThreadLocalRandom.current().nextInt();
 	}
 
-	public GSVM(@Nonnull final byte[] code) { bytecode=code; }
+	public GSVM(@Nonnull final byte[] code) { bytecode=code;
+		canary = ThreadLocalRandom.current().nextInt();
+	}
 
 	public GSVM(@Nonnull final ScriptRun run,
 	            @Nonnull final State st) {
@@ -61,6 +66,7 @@ public class GSVM {
 		suspensions=((BCInteger) (variables.get(" SUSP"))).getContent();
 		if (variables.containsKey((" ONEXIT"))) { invokeonexit=((BCString) variables.get(" ONEXIT")).getContent(); }
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
+		canary = ThreadLocalRandom.current().nextInt();
 	}
 
 	// ---------- INSTANCE ----------

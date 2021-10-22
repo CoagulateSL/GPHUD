@@ -118,6 +118,8 @@ public abstract class ByteCode {
 				return new BCFloat(null,vm.getFloat());
 			case BranchRelativeIfZero:
 				return new BCBranchRelativeIfZero(null,vm.getInt());
+			case Return:
+				return new BCReturn(null);
 		}
 		throw new SystemImplementationException("Failed to materialise instruction "+decode);
 	}
@@ -215,7 +217,8 @@ public abstract class ByteCode {
 		Divide2((byte) 34),
 		Negate((byte) 35),
 		Float((byte)36),
-		BranchRelativeIfZero((byte)37);
+		BranchRelativeIfZero((byte)37),
+		Return((byte)38);
 		private final byte value;
 
 
