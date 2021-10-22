@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+@Deprecated(forRemoval = true,since = "3.19.3") // non relative jumps are to be abandoned.
 public class BCBranchIfZero extends ByteCode {
 
 	@Nullable

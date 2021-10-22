@@ -46,6 +46,7 @@ public abstract class ByteCode {
 			case Integer:
 				return new BCInteger(null,vm.getInt());
 			case BranchIfZero:
+				//noinspection removal - legacy support for absolute jumps in previously compiled bytecode
 				return new BCBranchIfZero(null,vm.getInt());
 			case Avatar:
 				return new BCAvatar(null,User.get(vm.getInt()));
