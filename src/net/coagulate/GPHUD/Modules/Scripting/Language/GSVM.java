@@ -123,7 +123,10 @@ public class GSVM {
 		return line+"</td></tr></table>";
 	}
 
-	public ByteCodeDataType pop() { return stack.pop(); }
+	public ByteCodeDataType pop() {
+		if (stack.empty()) { throw new GSInternalError("Attempted to pop from the stack but it is empty!"); }
+		return stack.pop();
+	}
 
 	public void push(final ByteCodeDataType add) { stack.push(add); }
 
