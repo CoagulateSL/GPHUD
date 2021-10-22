@@ -18,17 +18,13 @@ public class BCReturn extends ByteCode {
 	@Nonnull
 	@Override
 	public String explain() {
-		return "Return";
+		return "Return (Pop return value, pop stack canary, pop return PC, push return value)";
 	}
 
 	@Override
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Return.get());
 	}
-
-	@Nonnull
-	@Override
-	public String htmlDecode() { return "Return"; }
 
 	@Override
 	public void execute(final State st,
