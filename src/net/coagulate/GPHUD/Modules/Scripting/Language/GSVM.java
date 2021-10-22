@@ -355,7 +355,7 @@ public class GSVM {
 		initialiseVM(st);
 		simulation=true;
 		try {
-			while (PC<bytecode.length) {
+			while (PC>=0 && PC<bytecode.length) {
 				increaseIC();
 				final ExecutionStep frame=new ExecutionStep();
 				frame.programcounter=PC;
@@ -420,13 +420,16 @@ public class GSVM {
 		if (!variables.containsKey("CALLER")) { variables.put("CALLER",new BCCharacter(null,st.getCharacter())); }
 		if (!variables.containsKey("AVATAR")) { variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable())); }
 		invokerstate=st;
+		// return compatible stack state
+		push(new BCInteger(null,-1));
+		push(new BCInteger(null,canary));
 	}
 
 	@Nonnull
 	private Response executeloop(@Nonnull final State st) {
 		ExecutionStep currentstep=new ExecutionStep();
 		try {
-			while (PC<bytecode.length && !suspended) {
+			while (PC>=0 && PC<bytecode.length && !suspended) {
 				increaseIC();
 				//noinspection UnusedAssignment
 				currentstep=new ExecutionStep();
