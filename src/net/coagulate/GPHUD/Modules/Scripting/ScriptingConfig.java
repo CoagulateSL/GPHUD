@@ -116,7 +116,7 @@ public class ScriptingConfig {
 					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","ParseFail","Saved script, with parse failures");
 				}
 				if (gsscript!=null) {
-					final GSCompiler compiler=new GSCompiler(gsscript);
+					final GSCompiler compiler=new GSCompiler(gsscript, script.getName());
 					compiler.compile(st);
 					script.setBytecode(compiler.toByteCode(st),version,GSCompiler.COMPILER_VERSION);
 					f.p("Script compiled and saved OK!");
@@ -211,7 +211,7 @@ public class ScriptingConfig {
 
 		final GSCompiler compiler;
 		try {
-			compiler=new GSCompiler(gsscript);
+			compiler=new GSCompiler(gsscript,"SIMULATION");
 			if (stage==STAGE.COMPILER) {
 				final List<ByteCode> bytecode=compiler.compile(st);
 				final StringBuilder code=new StringBuilder("<pre><table border=0>");

@@ -27,13 +27,15 @@ public class GSCompiler {
 	private int jumpnumber=1;
 	private int lastdebuglineno=-1;
 	private int lastdebugcolno=-1;
+	private String scriptname="Unknown?";
 
-	public GSCompiler(final Node passednode) {
+	public GSCompiler(final Node passednode,@Nonnull final String scriptname) {
 		if (!(passednode instanceof ParseNode)) {
 			throw new SystemImplementationException("Compiler error - passed node is of type "+passednode.getClass()
 			                                                                                             .getCanonicalName()+" which is not a ParseNode implementation");
 		}
 		startnode=(ParseNode) passednode;
+		this.scriptname=scriptname;
 	}
 
 	// ---------- INSTANCE ----------
@@ -55,7 +57,10 @@ public class GSCompiler {
 	public List<ByteCode> compile(final State st) {
 		lastdebuglineno=-1;
 		lastdebugcolno=-1;
-		List<ByteCode> code=compile(st,startnode);
+		List<ByteCode> code=new ArrayList<>();
+		code.add(new BCString(null,scriptname));
+		code.add(new BCDebugSource(null));
+		code.addAll(compile(st,startnode));
 		code.add(new BCInteger(null,0));
 		code.add(new BCReturn(null));
 		return code;

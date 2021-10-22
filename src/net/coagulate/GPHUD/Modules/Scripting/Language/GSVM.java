@@ -108,7 +108,7 @@ public class GSVM {
 
 	@Nonnull
 	public String at() {
-		return "at row "+row+", column "+column+", PC="+startPC+(startPC >= 0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode.get(bytecode[startPC])+")":"");
+		return "at "+source+" row "+row+", column "+column+", PC="+startPC+(startPC >= 0 && startPC<bytecode.length?", OP="+bytecode[startPC]+" ("+ByteCode.get(bytecode[startPC])+")":"");
 	}
 
 	@Nonnull
