@@ -91,6 +91,7 @@ public class GSCompiler {
 		if (node instanceof GSDivide) { return -1; }
 		if (node instanceof GSLogicalNot) { return 1; }
 		if (node instanceof GSUnaryMinus) { return 1; }
+		if (node instanceof GSReturn) { return -1; }
 
 		throw new SystemImplementationException("Expected Children not defined for node "+node.getClass()
 		                                                                                      .getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
@@ -444,6 +445,18 @@ public class GSCompiler {
 			compiled.add(new BCString(node.child(0),node.child(0).tokens()));
 			addDebug(compiled,node);
 			compiled.add(new BCLoadIndexed(node));
+			return compiled;
+		}
+
+		if (node instanceof GSReturn) { // a return statement with an optional value, otherwise we insert int 0
+			if (node.children()>1) { throw new GSInternalError("Compilation error, 0 or 1 children expected"); }
+			addDebug(compiled,node);
+			if (node.children()==1) {
+				compiled.addAll(compile(st,node.child(0)));
+			} else {
+				compiled.add(new BCInteger(node,0));
+			}
+			compiled.add(new BCReturn(node));
 			return compiled;
 		}
 
