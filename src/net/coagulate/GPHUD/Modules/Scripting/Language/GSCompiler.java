@@ -225,13 +225,17 @@ public class GSCompiler {
 			checkType(node,1,GSStatement.class);
 			// evaluate the condition, branch if zero, otherwise run the statement
 			compiled.addAll(compile(st,node.child(0))); // compile condition
+			final BCLabel jumpsource=new BCLabel(node,jumpnumber++);
 			final BCLabel posttruth=new BCLabel(node,jumpnumber++);
+			final BCLabel prefalse=new BCLabel(node,jumpnumber++);
 			final BCLabel postfalse=new BCLabel(node,jumpnumber++);
 			addDebug(compiled,node);
-			compiled.add(new BCBranchIfZero(node,posttruth)); // if false, branch to posttruth
+			compiled.add(jumpsource);
+			compiled.add(new BCBranchRelativeIfZero(node,jumpsource,posttruth)); // if false, branch to posttruth
 			compiled.addAll(compile(st,node.child(1))); // truth
 			compiled.add(new BCInteger(node,0)); // if we're still here (in truth)
-			compiled.add(new BCBranchIfZero(node,postfalse)); // branch to end of whole statement
+			compiled.add(prefalse);
+			compiled.add(new BCBranchRelativeIfZero(node,prefalse,postfalse)); // branch to end of whole statement
 			compiled.add(posttruth); // where we go if false
 			if (node.children()==3) { compiled.addAll(compile(st,node.child(2))); }
 			compiled.add(postfalse); // end of the whole thing
@@ -242,15 +246,19 @@ public class GSCompiler {
 			checkType(node,0,GSExpression.class);
 			checkType(node,1,GSStatement.class);
 			final BCLabel start=new BCLabel(node,jumpnumber++);
+			final BCLabel conditionstart=new BCLabel(node,jumpnumber++);
+			final BCLabel loopend=new BCLabel(node,jumpnumber++);
 			final BCLabel end=new BCLabel(node,jumpnumber++);
 			// check condition, exit if false, code block, repeat
 			addDebug(compiled,node);
 			compiled.add(start);
 			compiled.addAll(compile(st,node.child(0)));
-			compiled.add(new BCBranchIfZero(node,end));
+			compiled.add(conditionstart);
+			compiled.add(new BCBranchRelativeIfZero(node,conditionstart,end));
 			compiled.addAll(compile(st,node.child(1)));
 			compiled.add(new BCInteger(node,0));
-			compiled.add(new BCBranchIfZero(node,start));
+			compiled.add(loopend);
+			compiled.add(new BCBranchRelativeIfZero(node,loopend,start));
 			compiled.add(end);
 			return compiled;
 		}
