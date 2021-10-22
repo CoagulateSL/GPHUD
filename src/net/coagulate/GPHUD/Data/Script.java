@@ -263,11 +263,12 @@ public class Script extends TableRow {
 	 *
 	 * @param toByteCode Bytecode
 	 * @param version    Version number
+	 * @param compilerversion    Version number of compiler we compiled with
 	 */
 	public void setBytecode(@Nonnull final Byte[] toByteCode,
-	                        final int version) {
+	                        final int version,final int compilerversion) {
 		validate();
-		d("update scripts set bytecode=?, bytecodeversion=? where id=?",toByteCode,version,getId());
+		d("update scripts set bytecode=?, bytecodeversion=?, compilerversion=? where id=?",toByteCode,version,compilerversion,getId());
 		if (Config.getDevelopment()) {
 			final byte[] compareto=getByteCode();
 			if (compareto.length!=toByteCode.length) {

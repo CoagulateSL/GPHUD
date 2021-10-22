@@ -15,6 +15,13 @@ import java.util.Map;
 
 public class GSCompiler {
 
+	/** Used to note which compilation engine we compiled with, where it matters
+	 * 0 - The original (pre relative jumps) compiler, note some operator ordering changed prior to this (version 2 BC ops)
+	 * 1 - Relocatable code compiler - this compiler only generates relative jumps, previously we only generated absolute jumps
+	 *   - Code compiled with version 1 compiler can run at any memory location so supports being included and memory mapped
+	 *   - Code compiled prior to version 1 uses absolute jumps and will corrupt the script state if relocated from base address 0x0
+	 */
+	public static final int COMPILER_VERSION = 1;
 	@Nonnull
 	private final ParseNode startnode;
 	private int jumpnumber=1;

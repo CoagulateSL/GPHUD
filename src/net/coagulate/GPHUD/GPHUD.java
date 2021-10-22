@@ -314,9 +314,15 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 11 is complete");
 			currentVersion=11;
 		}
+		if (currentVersion==11) {
+			log.config("Add compiler version column to scripts");
+			GPHUD.getDB().d("ALTER TABLE `scripts` ADD COLUMN `compilerversion` INT NOT NULL DEFAULT '0'");
+			log.config("Schema upgrade of GPHUD to version 12 is complete");
+			currentVersion=12;
+		}
 		return currentVersion;
 	}
-	private static final int SCHEMA_VERSION=11;
+	private static final int SCHEMA_VERSION=12;
 
 	@Override
 	public void startup() {

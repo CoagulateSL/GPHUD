@@ -118,7 +118,7 @@ public class ScriptingConfig {
 				if (gsscript!=null) {
 					final GSCompiler compiler=new GSCompiler(gsscript);
 					compiler.compile(st);
-					script.setBytecode(compiler.toByteCode(st),version);
+					script.setBytecode(compiler.toByteCode(st),version,GSCompiler.COMPILER_VERSION);
 					f.p("Script compiled and saved OK!");
 					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
 				}
