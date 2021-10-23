@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Data.ScriptRun;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -29,7 +30,6 @@ public class GSVM {
 	public int row;
 	public int column;
 	public boolean simulation;
-    @Nonnull public final int canary;
 	public String source;
 	int IC;
 	@Nullable
@@ -46,28 +46,28 @@ public class GSVM {
 		{
 			for (int i=0;i<code.length;i++) { bytecode[i]=code[i]; }
 		}
-		canary = ThreadLocalRandom.current().nextInt();
+		introduce(" CANARY",new BCInteger(null,ThreadLocalRandom.current().nextInt()));
 	}
 
-	public GSVM(@Nonnull final byte[] code) { bytecode=code;
-		canary = ThreadLocalRandom.current().nextInt();
+	public GSVM(@Nonnull final Script script) {
+		bytecode=script.getByteCode();
+		introduce(" CODEBASE "+script.getName(),new BCInteger(null,0));
+		introduce(" CANARY",new BCInteger(null,ThreadLocalRandom.current().nextInt()));
 	}
-
 	public GSVM(@Nonnull final ScriptRun run,
 	            @Nonnull final State st) {
 		st.vm=this;
 		// run the initialiser as prep
-		initialiseVM(st);
+		initialiseVM(st,true);
 		bytecode=run.getInitialiser();
 		executeloop(st);
-		// stack and variables should be restored
+		// stack and variables should now be restored, configure for resuming the run.
 		bytecode=run.getByteCode();
 		PC=((BCInteger) (variables.get(" PC"))).getContent();
 		IC=((BCInteger) (variables.get(" IC"))).getContent();
 		suspensions=((BCInteger) (variables.get(" SUSP"))).getContent();
 		if (variables.containsKey((" ONEXIT"))) { invokeonexit=((BCString) variables.get(" ONEXIT")).getContent(); }
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
-		canary = ThreadLocalRandom.current().nextInt();
 	}
 
 	// ---------- INSTANCE ----------
@@ -169,7 +169,7 @@ public class GSVM {
 	public Response execute(@Nonnull final State st) {
 		// like simulation but we dont keep the whole execution trace
 		st.vm=this;
-		initialiseVM(st);
+		initialiseVM(st,false);
 		return executeloop(st);
 	}
 
@@ -353,7 +353,7 @@ public class GSVM {
 	public List<ExecutionStep> simulate(@Nonnull final State st) {
 		invokerstate=st;
 		final List<ExecutionStep> simulationsteps=new ArrayList<>();
-		initialiseVM(st);
+		initialiseVM(st,false);
 		simulation=true;
 		try {
 			while (PC>=0 && PC<bytecode.length) {
@@ -406,7 +406,8 @@ public class GSVM {
 	}
 
 	// ----- Internal Instance -----
-	private void initialiseVM(@Nonnull final State st) {
+	private void initialiseVM(@Nonnull final State st,final boolean skipCanary ) {
+		//skip canary - used by the initialiser bytecode that restores the stack+variable map for a resumed suspension
 		stack.clear();
 		PC=0;
 		IC=0;
@@ -422,8 +423,16 @@ public class GSVM {
 		if (!variables.containsKey("AVATAR")) { variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable())); }
 		invokerstate=st;
 		// return compatible stack state
-		push(new BCInteger(null,-1));
-		push(new BCInteger(null,canary));
+		if (!skipCanary) {
+			push(new BCInteger(null, -1));
+			push(new BCInteger(null, getCanary()));
+		}
+	}
+
+	public int getCanary() {
+		ByteCodeDataType canary = variables.get(" CANARY");
+		if (canary==null) { throw new GSInternalError("Canary not found? ("+source+" - "+row+":"+column+")"); }
+		return canary.toInteger();
 	}
 
 	@Nonnull

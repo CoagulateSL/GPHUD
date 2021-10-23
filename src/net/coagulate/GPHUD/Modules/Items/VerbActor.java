@@ -41,7 +41,7 @@ public class VerbActor {
             return Modules.getJSONTemplateResponse(state,payload.optString("command",""));
         }
         if (action.equalsIgnoreCase("script")) {
-            GSVM vm=new GSVM(Script.find(state,payload.optString("script","")).getByteCode());
+            GSVM vm=new GSVM(Script.find(state,payload.optString("script","")));
             vm.introduce("ITEMNAME",new BCString(null,item.getName()));
             vm.introduce("ITEMVERB",new BCString(null,itemVerb.getName()));
             vm.introduce("INVENTORY",new BCString(null,inventory.getName()));

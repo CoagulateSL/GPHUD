@@ -7,6 +7,7 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.GSUnknownIdentifier;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -16,10 +17,13 @@ public class GSFunctions {
 	private static final Map<String,Method> functionMap =new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 	// ---------- STATICS ----------
+	@Nonnull
 	public static Method get(final String functionName) {
 		if (functionMap.containsKey(functionName)) { return functionMap.get(functionName); }
 		throw new GSUnknownIdentifier("Function call "+functionName+" is not defined.");
 	}
+	@Nullable
+	public static Method getNullable(@Nonnull final String functionName) { return functionMap.get(functionName); }
 
 	public static void register(final String string,
 	                            final Method method) {

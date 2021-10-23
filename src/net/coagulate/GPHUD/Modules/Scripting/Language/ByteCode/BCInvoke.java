@@ -2,11 +2,9 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidFunctionCall;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
-import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
+import net.coagulate.GPHUD.Modules.Scripting.Language.*;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -33,8 +31,13 @@ public class BCInvoke extends ByteCode {
 	                    @Nonnull final GSVM vm,
 	                    final boolean simulation) {
 		final String functionname=vm.popString().getContent();
-		final Method function=GSFunctions.get(functionname);
+		final Method function=GSFunctions.getNullable(functionname);
 		final int argcount=vm.popInteger().getContent();
+		if (function==null) {
+			if (argcount!=0) { throw new GSInvalidFunctionCall("Calls to other scripts do not currently take parameters"); }
+			executeCall(st,vm,simulation,functionname);
+			return;
+		}
 		final ByteCodeDataType[] args=new ByteCodeDataType[argcount];
 		for (int i=0;i<argcount;i++) { args[i]=vm.pop(); }
 		// MAGIC GOES HERE
@@ -108,5 +111,36 @@ public class BCInvoke extends ByteCode {
 		}
 		final ByteCodeDataType ret=(ByteCodeDataType) rawret;
 		ret.stack(vm);
+	}
+
+	private void executeCall(final State st,
+							 @Nonnull final GSVM vm,
+							 final boolean simulation,
+							 @Nonnull final String scriptname) {
+		// well then.  We need the function in memory, set up the return function and jump to it, also dealing with debug info and stuff.  ehh
+		// 1) Load function
+		if (vm.get(" CODEBASE "+scriptname)==null) { // function is not loaded
+			Script script = Script.findNullable(st, scriptname);
+			if (script == null) {
+				throw new GSUnknownIdentifier("Can not find function or script '" + scriptname + "'", true);
+			}
+			if (script.getCompilerVersion()<1) {
+				throw new GSInvalidFunctionCall("Script "+scriptname+" must be recompiled (it was compiled by a compiler that used absolute addressing in branch instructions which inhibits relocation / inclusion).");
+			}
+			vm.set(" CODEBASE " + scriptname, new BCInteger(null, vm.bytecode.length)); // stash the start place
+			// merge the new script onto the end of the existing bytecode.
+			byte[] append = script.getByteCode();
+			byte[] merge = new byte[vm.bytecode.length + append.length];
+			System.arraycopy(vm.bytecode, 0, merge, 0, vm.bytecode.length);
+			System.arraycopy(append, 0, merge, vm.bytecode.length, append.length);
+			vm.bytecode = merge;
+		}
+		int targetPC=vm.get(" CODEBASE "+scriptname).toBCInteger().getContent();
+		// 2) Set up return stack
+		vm.stack.push(new BCInteger(null,vm.PC)); // stash the return PC
+		vm.stack.push(new BCInteger(null,vm.getCanary())); // stash the canary.
+		// 3) Call function
+		vm.PC=targetPC;
+		// 4) Restore debug - can't do this here, we lose control in (3) - compiler must reassert this :)
 	}
 }

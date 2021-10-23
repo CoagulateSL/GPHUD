@@ -147,7 +147,7 @@ public class NPC extends ObjectType {
 		final int scriptId=json.getInt("script");
 		final Script script=Script.get(scriptId);
 		script.validate(st);
-		final GSVM vm=new GSVM(script.getByteCode());
+		final GSVM vm=new GSVM(script);
 		vm.introduce("TARGET",new BCCharacter(null,clicker));
 		vm.introduce("TARGETUUID",new BCString(null,clicker.getPlayedBy().getUUID()));
 		populateVmVariables(st,vm);

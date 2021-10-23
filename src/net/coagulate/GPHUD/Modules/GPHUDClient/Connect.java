@@ -279,7 +279,7 @@ public class Connect {
 				return null;
 			}
 			else {
-				final GSVM initialisecharacter=new GSVM(init.getByteCode());
+				final GSVM initialisecharacter=new GSVM(init);
 				initialisecharacter.invokeOnExit("GPHUDClient.postConnect");
 				final Response response=initialisecharacter.execute(st);
 				if (initialisecharacter.suspended()) { // bail here

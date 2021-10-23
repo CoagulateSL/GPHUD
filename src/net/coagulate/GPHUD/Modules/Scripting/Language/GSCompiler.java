@@ -100,7 +100,6 @@ public class GSCompiler {
 		if (node instanceof GSLogicalNot) { return 1; }
 		if (node instanceof GSUnaryMinus) { return 1; }
 		if (node instanceof GSReturn) { return -1; }
-
 		throw new SystemImplementationException("Expected Children not defined for node "+node.getClass()
 		                                                                                      .getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
@@ -285,9 +284,9 @@ public class GSCompiler {
 			if (node.jjtGetNumChildren()>1) { checkType(node,1,GSParameters.class); }
 			// validate the function name
 			final String functionname=node.child(0).tokens();
-			if (!validFunction(functionname)) {
+			/*if (!validFunction(functionname)) {
 				throw new GSUnknownIdentifier("Function "+functionname+" does not exist");
-			}
+			}*/ // no longer relevant as this code formation is used to call other scripts
 			if (priviledgedFunction(functionname) && !st.hasPermission("Scripting.CompilePrivileged")) {
 				throw new UserInputStateException("You can not call function "+functionname+" due to not having the permission Scripting.CompilePrivileged");
 			}
@@ -495,7 +494,9 @@ public class GSCompiler {
 		for (final String funname: functionsmap.keySet()) {
 			if (funname.equals(name)) { return functionsmap.get(name).getAnnotation(GSFunctions.GSFunction.class).privileged(); }
 		}
-		throw new SystemImplementationException("Failed to find function for priviledge check after it was marked as valid");
+		if (name.startsWith("gs")) {
+			throw new SystemImplementationException("Failed to find function for priviledge check using reserved prefix 'gs'");
+		} else { return false; }
 	}
 
 }

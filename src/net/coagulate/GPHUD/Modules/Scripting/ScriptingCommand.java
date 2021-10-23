@@ -98,7 +98,7 @@ public class ScriptingCommand extends Command {
 @Override
 protected Response execute(final State state,
                            final Map<String,Object> arguments) {
-	final GSVM vm=new GSVM(script.getByteCode());
+	final GSVM vm=new GSVM(script);
 	//System.out.println("Script about to execute "+script.getNameSafe());
 	return vm.execute(state);
 }

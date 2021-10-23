@@ -38,8 +38,8 @@ public class BCReturn extends ByteCode {
 		// If the absolute PC is -1 then this terminates the VM.
 		ByteCodeDataType data=vm.pop();
 		int canary=vm.popInteger().getContent();
-		if (canary!=vm.canary) {
-			throw new GSInternalError("Return canary failed, got "+canary+" and expected "+vm.canary);
+		if (canary!=vm.getCanary()) {
+			throw new GSInternalError("Return canary failed, got "+canary+" and expected "+vm.getCanary());
 		}
 		int newpc=vm.popInteger().getContent();
 		vm.push(data);
