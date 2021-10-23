@@ -296,4 +296,8 @@ public class Script extends TableRow {
 	public void delete() {
 		d("delete from scripts where id=?",getId());
 	}
+
+    public int getCompilerVersion() {
+		return getInt("compilerversion");
+    }
 }
