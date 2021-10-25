@@ -833,7 +833,7 @@ CREATE TABLE `visits` (
   KEY `characterid_fk_idx` (`characterid`),
   KEY `regionid_fk_idx` (`regionid`),
   KEY `visits_avatarid_fk_idx` (`avatarid`),
-  KEY `endime_index` (`endtime`),
+  KEY `endime_index` (`characterid,`endtime`),
   CONSTRAINT `visits_avatarid_fk` FOREIGN KEY (`avatarid`) REFERENCES `sl`.`users` (`id`),
   CONSTRAINT `visits_characterid_fk` FOREIGN KEY (`characterid`) REFERENCES `characters` (`characterid`) ON DELETE CASCADE,
   CONSTRAINT `visits_regionid_fk` FOREIGN KEY (`regionid`) REFERENCES `regions` (`regionid`) ON DELETE SET NULL
