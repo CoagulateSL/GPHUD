@@ -408,7 +408,7 @@ public class Instance extends TableRow {
 			}
 			additional+=") ";
 		}
-		for (final ResultsRow r: dq("select * from characters where instanceid=? "+additional,parameters.toArray())) {
+		for (final ResultsRow r: getDatabase().dqSlow("select * from characters where instanceid=? "+additional,parameters.toArray())) {
 			final int retired=r.getInt("retired");
 			final int charId=r.getInt("characterid");
 			final CharacterSummary cr=new CharacterSummary();
@@ -421,7 +421,7 @@ public class Instance extends TableRow {
 			cr.online= r.getStringNullable("url") != null && !r.getString("url").isEmpty();
 			idMap.put(charId,cr);
 		}
-		for (final ResultsRow r: dq(
+		for (final ResultsRow r: getDatabase().dqSlow(
 				"select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers"+".charactergroupid=charactergroups.charactergroupid and instanceid=?",
 				getId()
 		                           )) {
@@ -433,20 +433,20 @@ public class Instance extends TableRow {
 				cr.setGroup(groupType,groupName);
 			}
 		}
-		for (final ResultsRow r: dq(
+		for (final ResultsRow r: getDatabase().dqSlow(
 				"select visits.characterid,sum(endtime-starttime) as totaltime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is not null group by characterid"
 		,getId())) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: dq(
+		for (final ResultsRow r: getDatabase().dqSlow(
 				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is not null and starttime>? group by characterid",getId(),
 		                            UnixTime.getUnixTime()-(Experience.getCycle(st))
 		                           )) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).recentvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: dq("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is null and starttime>?",getId(),UnixTime.getUnixTime()-(Experience.getCycle(st)))) {
+		for (final ResultsRow r: getDatabase().dqSlow("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is null and starttime>?",getId(),UnixTime.getUnixTime()-(Experience.getCycle(st)))) {
 			final int id=r.getInt("characterid");
 			final int add=UnixTime.getUnixTime()-r.getInt("starttime");
 			if (idMap.containsKey(id)) {
@@ -454,7 +454,7 @@ public class Instance extends TableRow {
 				idMap.get(id).totalvisits=idMap.get(id).totalvisits+add;
 			}
 		}
-		for (final ResultsRow r: dq(
+		for (final ResultsRow r: getDatabase().dqSlow(
 				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and (poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP') group by "+"characterid",getId())) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalxp=r.getInt("total"); }
