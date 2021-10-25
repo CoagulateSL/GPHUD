@@ -430,17 +430,20 @@ public class Instance extends TableRow {
 				cr.setGroup(groupType,groupName);
 			}
 		}
-		for (final ResultsRow r: dq("select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null group by characterid")) {
+		for (final ResultsRow r: dq(
+				"select visits.characterid,sum(endtime-starttime) as totaltime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and endtime is not null group by characterid"
+		,getId())) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: dq("select characterid,sum(endtime-starttime) as totaltime from visits where endtime is not null and starttime>? group by characterid",
+		for (final ResultsRow r: dq(
+				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and endtime is not null and starttime>? group by characterid",getId(),
 		                            UnixTime.getUnixTime()-(Experience.getCycle(st))
 		                           )) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).recentvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: dq("select characterid,starttime from visits where endtime is null and starttime>?",UnixTime.getUnixTime()-(Experience.getCycle(st)))) {
+		for (final ResultsRow r: dq("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and endtime is null and starttime>?",getId(),UnixTime.getUnixTime()-(Experience.getCycle(st)))) {
 			final int id=r.getInt("characterid");
 			final int add=UnixTime.getUnixTime()-r.getInt("starttime");
 			if (idMap.containsKey(id)) {
@@ -449,7 +452,7 @@ public class Instance extends TableRow {
 			}
 		}
 		for (final ResultsRow r: dq(
-				"select characterid,sum(adjustment) as total from characterpools where poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP' group by "+"characterid")) {
+				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? and poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP' group by "+"characterid",getId())) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalxp=r.getInt("total"); }
 		}
