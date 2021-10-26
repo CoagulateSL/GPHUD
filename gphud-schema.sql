@@ -117,6 +117,7 @@ CREATE TABLE `audit` (
   KEY `audit_sourceowner_fk_idx` (`sourceowner`),
   KEY `audit_sourceavatarid_fk_idx` (`sourceavatarid`),
   KEY `audit_destavatarid_fk_idx` (`destavatarid`),
+  KEY `audit_tds` (`instanceid`,`timedate`),
   CONSTRAINT `audit_destavatarid_fk` FOREIGN KEY (`destavatarid`) REFERENCES `sl`.`users` (`id`),
   CONSTRAINT `audit_destcharacterid_fk` FOREIGN KEY (`destcharacterid`) REFERENCES `characters` (`characterid`) ON DELETE CASCADE,
   CONSTRAINT `audit_instanceid_fk` FOREIGN KEY (`instanceid`) REFERENCES `instances` (`instanceid`) ON DELETE CASCADE,
