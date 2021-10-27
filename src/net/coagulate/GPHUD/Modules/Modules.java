@@ -219,11 +219,11 @@ public abstract class Modules {
 	                                         @Nonnull final String qualifiedcommandname) {
 		final Module module=get(st,qualifiedcommandname);
 		if (module==null) {
-			throw new UserInputLookupFailureException("Unable to resolve module in "+qualifiedcommandname,false);
+			throw new UserInputLookupFailureException("Unable to resolve module in "+qualifiedcommandname,true);
 		}
 		final Command command=module.getCommandNullable(st,extractReference(qualifiedcommandname));
 		if (command==null) {
-			throw new UserInputLookupFailureException("Unable to resolve command in "+qualifiedcommandname,false);
+			throw new UserInputLookupFailureException("Unable to resolve command in "+qualifiedcommandname,true);
 		}
 		return command.getJSONTemplate(st);
 	}
