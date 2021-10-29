@@ -326,6 +326,13 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 13 is complete");
 			currentVersion=13;
 		}
+		if (currentVersion==12) {
+			log.config("Add script parameter map to scripts table");
+			GPHUD.getDB().d("ALTER TABLE `scripts` ADD COLUMN `parameterlist` VARCHAR(4096) NULL DEFAULT NULL AFTER `compilerversion`");
+			log.config("Schema upgrade of GPHUD to version 13 is complete");
+			currentVersion=13;
+		}
+
 		return currentVersion;
 	}
 	private static final int SCHEMA_VERSION=13;
