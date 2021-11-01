@@ -26,12 +26,10 @@ CREATE TABLE `adminnotes` (
   `adminonly` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `adminnotes_tds` (`tds`),
   KEY `adminnotes_instanceid` (`instanceid`),
   KEY `adminnotes_adminid` (`adminid`),
   KEY `adminnotes_targetuser` (`targetuser`),
   KEY `adminnotes_targetchar` (`targetchar`),
-  KEY `adminnotes_adminonly` (`adminonly`),
   CONSTRAINT `adminnotes_adminid_fk` FOREIGN KEY (`adminid`) REFERENCES `sl`.`users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `adminnotes_instanceid_fk` FOREIGN KEY (`instanceid`) REFERENCES `instances` (`instanceid`) ON DELETE CASCADE,
   CONSTRAINT `adminnotes_targetchar_fk` FOREIGN KEY (`targetchar`) REFERENCES `characters` (`characterid`) ON DELETE CASCADE,
@@ -757,8 +755,6 @@ CREATE TABLE `regions` (
   PRIMARY KEY (`regionid`),
   UNIQUE KEY `name_UNIQUE` (`name`),
   KEY `instance_index` (`instanceid`),
-  KEY `authnode_index` (`authnode`),
-  KEY `retired_index` (`retired`),
   CONSTRAINT `regions_instance_fk` FOREIGN KEY (`instanceid`) REFERENCES `instances` (`instanceid`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=228 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
