@@ -9,8 +9,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-      time: "13:30"
-      timezone: "Europe/London"
     assignees:
       - "iprice"
     commit-message:
