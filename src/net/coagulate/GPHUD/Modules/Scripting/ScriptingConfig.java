@@ -89,6 +89,9 @@ public class ScriptingConfig {
 		final String id=split[split.length-1];
 		final Script script=Script.get(Integer.parseInt(id));
 		script.validate(st);
+		if (!values.get("scriptalias").isEmpty()) {
+			script.alias(values.get("scriptalias"));
+		}
 		if (!values.get("scriptsource").isEmpty()) {
 			script.setSource(values.get("scriptsource"));
 			f.p("Script source saved OK!");
@@ -143,6 +146,7 @@ public class ScriptingConfig {
 		else {
 			versions.add("Byte code version").add(script.getByteCodeVersion()+"");
 		}
+		versions.openRow().add("Script alias").add(new TextInput("scriptalias",script.alias()));
 		f.add(versions);
 		f.br();
 		f.add("<textarea name=scriptsource rows=25 cols=80>"+script.getSource()+"</textarea>");
