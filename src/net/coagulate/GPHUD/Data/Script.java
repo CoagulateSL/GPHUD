@@ -300,4 +300,12 @@ public class Script extends TableRow {
     public int getCompilerVersion() {
 		return getInt("compilerversion");
     }
+
+	public @Nonnull String alias() {
+		String alias=getStringNullable("alias");
+		return alias==null?"":alias;
+	}
+	public void alias(@Nullable String newAlias) {
+		set("alias",newAlias);
+	}
 }
