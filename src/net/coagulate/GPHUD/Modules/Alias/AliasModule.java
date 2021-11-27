@@ -47,7 +47,9 @@ public class AliasModule extends ModuleAnnotation {
 		final Map<String,JSONObject> templates=Alias.getTemplates(st);
 		for (final Map.Entry<String,JSONObject> entry: templates.entrySet()) {
 			final String name=entry.getKey();
-			commands.put(name,new AliasCommand(st,name,entry.getValue()));
+			try { commands.put(name,new AliasCommand(st,name,entry.getValue())); }
+			catch (Exception ignore) { // could be a lookup failure for an alias, so just don't add it
+			}
 		}
 		return commands;
 	}
