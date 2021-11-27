@@ -322,7 +322,7 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==12) {
 			log.config("Add alias to scripts");
-			GPHUD.getDB().d("ALTER TABLE `scripts` ADD COLUMN `alias` VARCHAR(64) NULL DEFAULT NULL AFTER `parameterlist`");
+			GPHUD.getDB().d("ALTER TABLE `scripts` ADD COLUMN `alias` VARCHAR(64) NULL DEFAULT NULL");
 			log.config("Schema upgrade of GPHUD to version 13 is complete");
 			currentVersion=13;
 		}
