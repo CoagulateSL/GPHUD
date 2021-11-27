@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 /*
 Short form here.
 
-[XX Release Notes] | [https://bugs.coagulate.net/ Bugs/Requests] | [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about Update Notices]
+[XX Notes] [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about Update Notices] [https://github.com/CoagulateSL/GPHUD/issues Bugs/Requests] [https://github.com/CoagulateSL/GPHUD/projects Roadmap]
 
  */
 public class GPHUD extends SLModule {
