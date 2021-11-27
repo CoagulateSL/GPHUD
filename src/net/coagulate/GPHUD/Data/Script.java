@@ -40,9 +40,9 @@ public class Script extends TableRow {
 	@Nonnull
 	public static Table getTable(@Nonnull final State state,final boolean canDelete) {
 		@Nonnull final Instance instance=state.getInstance();
-		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by name asc",instance.getId());
+		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion,alias from scripts where instanceid=? order by name asc",instance.getId());
 		final Table o=new Table();
-		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
+		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version").add("Alias"));
 		for (final ResultsRow row: rows) {
 			o.openRow();
 			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getIntNullable("id")+"\">"+row.getStringNullable("name")+"</a>");
@@ -56,6 +56,9 @@ public class Script extends TableRow {
 				o.add("<font color=red>"+(sourceversion==null?"None":""+sourceversion)+"</font>");
 				o.add("<font color=red>"+(bytecodeversion==null?"None":""+bytecodeversion)+"</font>");
 			}
+			String alias=row.getStringNullable("alias");
+			if (alias==null) { alias=""; }
+			o.add(alias);
 			if (canDelete) {
 				o.add(new Form(state,true,"/GPHUD/configuration/scripting/delete","Delete","scriptname",row.getStringNullable("name")));
 			}
