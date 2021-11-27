@@ -320,9 +320,15 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 12 is complete");
 			currentVersion=12;
 		}
+		if (currentVersion==12) {
+			log.config("Add alias to scripts");
+			GPHUD.getDB().d("ALTER TABLE `scripts` ADD COLUMN `alias` VARCHAR(64) NULL DEFAULT NULL AFTER `parameterlist`");
+			log.config("Schema upgrade of GPHUD to version 13 is complete");
+			currentVersion=13;
+		}
 		return currentVersion;
 	}
-	private static final int SCHEMA_VERSION=12;
+	private static final int SCHEMA_VERSION=13;
 
 	@Override
 	public void startup() {

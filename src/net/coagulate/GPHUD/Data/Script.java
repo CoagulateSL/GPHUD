@@ -3,8 +3,10 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
@@ -38,9 +40,9 @@ public class Script extends TableRow {
 	@Nonnull
 	public static Table getTable(@Nonnull final State state,final boolean canDelete) {
 		@Nonnull final Instance instance=state.getInstance();
-		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion from scripts where instanceid=? order by name asc",instance.getId());
+		final Results rows=db().dq("select id,name,sourceversion,bytecodeversion,alias from scripts where instanceid=? order by name asc",instance.getId());
 		final Table o=new Table();
-		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version"));
+		o.add(new HeaderRow().add("Name").add("Version").add("Compiled Version").add("Alias"));
 		for (final ResultsRow row: rows) {
 			o.openRow();
 			o.add("<a href=\"/GPHUD/configuration/scripting/edit/"+row.getIntNullable("id")+"\">"+row.getStringNullable("name")+"</a>");
@@ -54,6 +56,9 @@ public class Script extends TableRow {
 				o.add("<font color=red>"+(sourceversion==null?"None":""+sourceversion)+"</font>");
 				o.add("<font color=red>"+(bytecodeversion==null?"None":""+bytecodeversion)+"</font>");
 			}
+			String alias=row.getStringNullable("alias");
+			if (alias==null) { alias=""; }
+			o.add(alias);
 			if (canDelete) {
 				o.add(new Form(state,true,"/GPHUD/configuration/scripting/delete","Delete","scriptname",row.getStringNullable("name")));
 			}
@@ -126,8 +131,17 @@ public class Script extends TableRow {
 			final int id=db().dqiNotNull("select id from scripts where instanceid=? and name like ?",st.getInstance().getId(),scriptname);
 			return new Script(id);
 		}
-		catch (final NoDataException e) {
-			throw new UserInputLookupFailureException("Script by name "+scriptname+" does not exist",e);
+		catch (final NoDataException ignore) {
+			try {
+				final int id = db().dqiNotNull("select id from scripts where instanceid=? and alias like ?", st.getInstance().getId(), scriptname);
+				return new Script(id);
+			}
+			catch (final NoDataException nde){
+				throw new UserInputLookupFailureException("Script by name/alias " + scriptname + " does not exist", nde);
+			}
+			catch (final TooMuchDataException tmde) {
+				throw new UserConfigurationException("There are multiple scripts with the alias "+scriptname,tmde);
+			}
 		}
 	}
 
@@ -300,4 +314,12 @@ public class Script extends TableRow {
     public int getCompilerVersion() {
 		return getInt("compilerversion");
     }
+
+	public @Nonnull String alias() {
+		String alias=getStringNullable("alias");
+		return alias==null?"":alias;
+	}
+	public void alias(@Nullable String newAlias) {
+		set("alias",newAlias);
+	}
 }
