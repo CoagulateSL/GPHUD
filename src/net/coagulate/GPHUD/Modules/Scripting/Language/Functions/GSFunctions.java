@@ -57,7 +57,8 @@ public class GSFunctions {
 		ZONES,
 		CHARACTER,
 		SETS,
-		INVENTORY
+		INVENTORY,
+		UTILITY
 	}
 
 	/**

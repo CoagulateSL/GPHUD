@@ -21,7 +21,7 @@ public class GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
 
 	public final Stack<ByteCodeDataType> stack=new Stack<>();
-	final Map<String,ByteCodeDataType> variables=new TreeMap<>();
+	public final Map<String,ByteCodeDataType> variables=new TreeMap<>();
 	final Map<Char,JSONObject> queue=new HashMap<>();
 	final Map<String,ByteCodeDataType> introductions=new HashMap<>();
 	@Nonnull
