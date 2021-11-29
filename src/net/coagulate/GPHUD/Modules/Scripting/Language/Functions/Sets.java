@@ -156,8 +156,8 @@ public class Sets {
         CharacterSet source=getSet(st,character,set);
         BCList list=new BCList(null);
         for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
-            list.add(new BCString(null,element.getKey()));
-            list.add(new BCInteger(null,element.getValue()));
+            list.append(new BCString(null,element.getKey()));
+            list.append(new BCInteger(null,element.getValue()));
         }
         return list;
     }
