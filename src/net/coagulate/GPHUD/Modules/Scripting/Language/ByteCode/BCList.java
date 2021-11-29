@@ -69,6 +69,7 @@ public class BCList extends ByteCodeDataType {
 	}
 
 	@Nonnull
+	/** Appends a BCDT to the existing list */
 	public BCList append(final ByteCodeDataType value) {
 		content.add(value);
 		elements++;
@@ -93,6 +94,9 @@ public class BCList extends ByteCodeDataType {
 
 	@Nullable
 	@Override
+	/** Performs mathematical addition upon a list, that is, it takes two lists and adds them together to produce a third list for assignment.
+	 * NOT TO BE CONFUSED WITH APPEND.  Would I ever.
+	 */
 	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
 		final BCList newlist=new BCList(node());
 		newlist.addAll(this);
