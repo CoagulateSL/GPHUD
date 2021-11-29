@@ -64,9 +64,9 @@ public class Sets {
     @Nonnull
     @GSFunctions.GSFunction(description="Get the quantity of an element in a set, or zero if not present",
                             returns="Integer - Number of this element in set",
-                            parameters="Character character - Character to alter<br>"+
-                                    "String set - Name of set to modify<br>"+
-                                    "String element - Name of element to alter in set",
+                            parameters="Character character - Character to query<br>"+
+                                    "String set - Name of set to query<br>"+
+                                    "String element - Name of element to query in set",
                             notes="",
                             privileged=false,
                             category= GSFunctions.SCRIPT_CATEGORY.SETS)
