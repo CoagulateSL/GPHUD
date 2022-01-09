@@ -26,7 +26,7 @@ public class ScriptingModule extends ModuleAnnotation {
 			return super.getCommandNullable(st,commandname);
 		}
 		final Script script=Script.findNullable(st,commandname.replaceFirst("gs",""));
-		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists",false); }
+		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists",true); }
 		return new ScriptingCommand(script);
 	}
 
