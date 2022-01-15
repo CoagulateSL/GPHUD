@@ -55,7 +55,7 @@ public class BCList extends ByteCodeDataType {
 		for (int i=0;i<elements;i++) {
 			final ByteCodeDataType data=vm.pop();
 			if (data instanceof BCList) {
-				throw new GSInvalidExpressionException("You can not nest a List inside a List");
+				throw new GSInvalidExpressionException("You can not nest a List inside a List",true);
 			}
 			content.add(data);
 		}
