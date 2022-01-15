@@ -20,17 +20,17 @@ public abstract class ByteCodeDataType extends ByteCode {
 
 	@Nullable
 	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can not subtract using type "+var.getClass().getSimpleName());
+		throw new GSInvalidExpressionException("Can not subtract using type "+var.getClass().getSimpleName(),true);
 	}
 
 	@Nullable
 	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can not multiply using type "+var.getClass().getSimpleName());
+		throw new GSInvalidExpressionException("Can not multiply using type "+var.getClass().getSimpleName(),true);
 	}
 
 	@Nullable
 	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can not divide using type "+var.getClass().getSimpleName());
+		throw new GSInvalidExpressionException("Can not divide using type "+var.getClass().getSimpleName(),true);
 	}
 
 	@Nonnull
