@@ -183,7 +183,9 @@ public class ObjType extends TableRow {
 	 */
 	@Nonnull
 	public JSONObject getBehaviour() {
-		final String s=getStringNullable("behaviour");
+		String s=null;
+		try { s=getStringNullable("behaviour"); }
+		catch (NoDataException ignore) {}
 		if (s==null || s.isEmpty()) { return new JSONObject(); }
 		return new JSONObject(s);
 	}
