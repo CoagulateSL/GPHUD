@@ -7,7 +7,7 @@
 
 
     <groupId>net.coagulate.SL</groupId>
-    <artifactId>GPHUD</artifactId>
+    <artifactId>gphud</artifactId>
     <version>3.19.6</version>
     <repositories>
         <repository>
