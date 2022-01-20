@@ -1,17 +1,14 @@
-name: Release
-
-on: 
-  push:
-    tags:
-      - v*
-    
+on:
+  release:
+    types: [created]
+name: Package Release
 jobs:
-  build:
+  generate:
+    name: Create release-artifacts
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
-      
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 17
@@ -20,11 +17,52 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+      - name: Set version number
+        run: |
+          sed 's/VERSIONNUMBERGOESHERE/${{github.ref_name}}/' <pom.xml >pom.xml2 ; mv pom.xml2 pom.xml
+          BUILDINFO=`ls -1 src/net/coagulate/Core/BuildInfo/*.java`
+          CLASSNAME=`echo $BUILDINFO|sed 's/.*\/\([^\/]*\).java/\1/;'`
+          MAJOR=`echo ${{github.ref_name}}|sed 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\1/'`
+          MINOR=`echo ${{github.ref_name}}|sed 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\2/'`
+          BUGFIX=`echo ${{github.ref_name}}|sed 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\3/'`
+          BUILDDATE=`git show -s --format=%at`
+          echo Write version $MAJOR $MINOR $BUGFIX date $BUILDDATE sha $GITHUB_SHA to file $BUILDINFO
+          echo 'package net.coagulate.Core.BuildInfo;' >$BUILDINFO
+          echo 'import java.util.Date;'  >>$BUILDINFO
+          echo 'public class '$CLASSNAME' {'  >>$BUILDINFO
+          echo '	public static final int MAJORVERSION='$MAJOR';'  >>$BUILDINFO
+          echo '	public static final int MINORVERSION='$MINOR';'  >>$BUILDINFO
+          echo '	public static final int BUGFIXVERSION='$BUGFIX';'  >>$BUILDINFO
+          echo '	public static final String COMMITID="'$GITHUB_SHA'";'  >>$BUILDINFO
+          echo '	public static final Date BUILDDATE=new Date('$BUILDDATE');'  >>$BUILDINFO
+          echo '}'  >>$BUILDINFO
+          cat $BUILDINFO
       - name: Build with Maven
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
-        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/settings.xml      
+        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/settings.xml package
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Dump environment
+        run: set
+      - name: Identify release asset
+        run: echo '::set-output name=UPLOAD_FILE::'`cd bin;ls -1 *-jar-with-dependencies.jar`
+        id: getname
+      - name: Display release ID
+        run: echo Target is ${{ steps.getname.outputs.UPLOAD_FILE }}
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./bin/${{ steps.getname.outputs.UPLOAD_FILE }}
+          asset_name: ${{ steps.getname.outputs.UPLOAD_FILE }}
+          asset_content_type: application/octet-stream
       - name: Publish to GitHub Packages Apache Maven
         run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}          
