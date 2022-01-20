@@ -34,7 +34,7 @@ jobs:
           echo '	public static final int MINORVERSION='$MINOR';'  >>$BUILDINFO
           echo '	public static final int BUGFIXVERSION='$BUGFIX';'  >>$BUILDINFO
           echo '	public static final String COMMITID="'$GITHUB_SHA'";'  >>$BUILDINFO
-          echo '	public static final Date BUILDDATE=new Date('$BUILDDATE');'  >>$BUILDINFO
+          echo '	public static final Date BUILDDATE=new Date('$BUILDDATE'000L);'  >>$BUILDINFO
           echo '}'  >>$BUILDINFO
           cat $BUILDINFO
       - name: Build with Maven
