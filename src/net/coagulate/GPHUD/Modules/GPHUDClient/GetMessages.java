@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
@@ -87,6 +88,10 @@ public abstract class GetMessages {
 		final Char from=Char.get(j.getInt("from"));
 		final CharacterGroup faction=CharacterGroup.get(j.getInt("to"));
 		final JSONObject template=Modules.getJSONTemplate(st,"gphudclient.acceptrejectmessage");
+		try {faction.getName();}
+		catch (NoDataException e) {
+			return new ErrorResponse("Your message was an invite to a faction that no longer exists.");
+		}
 		template.put("arg0description","You have been invited to join "+faction.getName()+" by "+from.getName());
 		return new JSONResponse(template);
 	}
