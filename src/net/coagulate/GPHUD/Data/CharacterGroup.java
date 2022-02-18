@@ -26,7 +26,7 @@ import java.util.TreeSet;
  */
 public class CharacterGroup extends TableRow {
 
-	protected CharacterGroup(final int id) { super(id); }
+	protected CharacterGroup(final int id) { super(id); validate(); }
 
 	// ---------- STATICS ----------
 
