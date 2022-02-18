@@ -26,7 +26,7 @@ public abstract class Teleporter extends ObjectType {
 	public String getTeleportTarget(@Nonnull final State st) {
 		final Landmark landmark=Landmark.find(st.getInstance(),json.optString("teleporttarget","unset"));
 		if (landmark==null) {
-			throw new UserConfigurationException("Teleport target is not set on clickTeleporter "+object.getName());
+			throw new UserConfigurationException("Teleport target is not set on clickTeleporter "+object.getName(),true);
 		}
 		return landmark.getHUDRepresentation(false);
 	}
