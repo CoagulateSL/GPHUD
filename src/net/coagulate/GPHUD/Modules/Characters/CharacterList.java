@@ -67,7 +67,7 @@ public class CharacterList {
 	                                 final String searchtext) {
 		String r="";
 		final int pagecount=(int) Math.ceil(((double) rowcount)/50);
-		r+="<tr><td align=center colspan=99999>";
+		r+="<tr><td align=left colspan=99999>";
 		r+="<button type=submit name=submit value=submit>Search:</button><input type=text name=search value=\""+searchtext+"\">";
 		r+="&nbsp;&nbsp;&nbsp;";
 		r+="<input type=hidden name=page-default value="+page+">";
