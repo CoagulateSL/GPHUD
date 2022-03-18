@@ -58,7 +58,8 @@ public class GSFunctions {
 		CHARACTER,
 		SETS,
 		INVENTORY,
-		UTILITY
+		UTILITY,
+		ITEMS
 	}
 
 	/**
