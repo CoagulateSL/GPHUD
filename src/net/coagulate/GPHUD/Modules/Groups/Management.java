@@ -303,6 +303,20 @@ public abstract class Management {
 	                                               name="group",description="Group to add character to") final CharacterGroup group,
 	                           @Nonnull @Arguments(name="newmember",description="Character to add to the group",
 	                                               type=ArgumentType.CHARACTER) final Char newMember) {
+		return add(st,group,newMember,true);
+	}
+	@Nonnull
+	@Commands(context=Context.AVATAR,
+			  description="Add a member to this group.  Does not notify target of group change.",
+			  requiresPermission="Groups.SetGroup")
+	public static Response addSilently(@Nonnull final State st,
+							   @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
+												   name="group",description="Group to add character to") final CharacterGroup group,
+							   @Nonnull @Arguments(name="newmember",description="Character to add to the group",
+												   type=ArgumentType.CHARACTER) final Char newMember) {
+		return add(st,group,newMember,false);
+	}
+	private static Response add(@Nonnull final State st,final CharacterGroup group,final Char newMember,boolean notify) {
 		final Attribute attr=st.getAttribute(group);
 		String groupType=null;
 		if (attr!=null) {
@@ -324,7 +338,7 @@ public abstract class Management {
 		if (existingGroup!=null) {
 			result=newMember.getName()+" was moved into group "+group.getName()+" (was formerly in "+existingGroup.getName()+")";
 		}
-		newMember.hudMessage("You have been added to the group "+group.getName());
+		if (notify) { newMember.hudMessage("You have been added to the group "+group.getName()); }
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newMember,"AddMember",group.getName(),oldGroupName,group.getName(),result);
 		return new OKResponse(result);
 	}
@@ -345,6 +359,21 @@ public abstract class Management {
 	                                                  name="group",description="Group to remove character from") final CharacterGroup group,
 	                              @Nonnull @Arguments(name="member",description="Character to remove from the group",
 	                                                  type=ArgumentType.CHARACTER) final Char member) {
+		return remove(st,group,member,true);
+	}
+	@Nonnull
+	@Commands(context=Context.AVATAR,
+			  description="Remove a member from this group without notifying them of the change",
+			  requiresPermission="Groups.SetGroup")
+	public static Response removeSilently(@Nonnull final State st,
+								  @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
+													  name="group",description="Group to remove character from") final CharacterGroup group,
+								  @Nonnull @Arguments(name="member",description="Character to remove from the group",
+													  type=ArgumentType.CHARACTER) final Char member) {
+		return remove(st,group,member,false);
+	}
+
+	private static Response remove(@Nonnull final State st, final CharacterGroup group, final Char member, boolean notify) {
 		if (group.getOwner()==member) {
 			return new ErrorResponse("Will not remove "+member.getName()+" from "+group.getName()+", they are the group leader, you must demote them by replacing them or "+"leaving the group leaderless.");
 		}
@@ -352,7 +381,7 @@ public abstract class Management {
 		catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove member - "+e.getMessage());
 		}
-		member.hudMessage("You have been removed from group "+group.getName());
+		if (notify) { member.hudMessage("You have been removed from group "+group.getName()); }
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,member,"RemoveMember",group.getName(),group.getName(),null,"Removed member from group");
 		return new OKResponse(member.getName()+" was removed from group "+group.getName());
 	}
