@@ -158,7 +158,7 @@ public abstract class PagedSQL implements Renderable {
 		String r="";
 		final int rowcount=getRowCount();
 		final int pagecount=(int) Math.ceil(((double) rowcount)/pagesize);
-		r+="<tr><td align=center colspan=99999>";
+		r+="<tr><td align=left colspan=99999>";
 		//String encodedsearchtext="";
 		//try { encodedsearchtext=URLEncoder.encode(searchtext,"UTF-8"); }
 		//catch (UnsupportedEncodingException e) { encodedsearchtext="Encoder failure"; }
