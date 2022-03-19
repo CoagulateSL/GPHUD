@@ -25,7 +25,7 @@ public class Randomness {
 	                               @Nonnull final BCInteger minimum,
 	                               @Nonnull final BCInteger maximum) {
 		if ((maximum.toInteger())<(minimum.toInteger())) {
-			throw new GSInvalidFunctionCall("Maximum must be greater than or equal to minuimum ("+minimum+" should be <= "+maximum+")");
+			throw new GSInvalidFunctionCall("Maximum must be greater than or equal to minuimum ("+minimum+" should be <= "+maximum+")",true);
 		}
 		return new BCInteger(null,ThreadLocalRandom.current().nextInt(minimum.toInteger(),maximum.toInteger()+1));
 	}
