@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public class ScriptRun extends TableRow {
 	public ScriptRun(final int id) {
 		super(id);
-		validate();
+		if (id!=-1) { validate(); }
 	}
 
 	// ---------- STATICS ----------
