@@ -2,7 +2,7 @@ package net.coagulate.GPHUD;
 
 import net.coagulate.Core.BuildInfo.GPHUDBuildInfo;
 import net.coagulate.Core.Database.DBConnection;
-import net.coagulate.Core.Database.MariaDBConnection;
+import net.coagulate.Core.Database.MySqlDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.GPHUD.Data.Region;
@@ -137,7 +137,7 @@ public class GPHUD extends SLModule {
 		GPHUD.log= Logger.getLogger("net.coagulate.GPHUD");
 
 		// Initialise the Database layer
-		GPHUD.db=new MariaDBConnection("GPHUD"+(Config.getDevelopment()?"DEV":""),Config.getGPHUDJdbc());
+		GPHUD.db=new MySqlDBConnection("GPHUD"+(Config.getDevelopment()?"DEV":""),Config.getGPHUDJdbc());
 		schemaCheck(GPHUD.db,"gphud",SCHEMA_VERSION);
 
 		// Annotation parser
