@@ -94,9 +94,9 @@ public class PoolTable extends PagedSQL {
 		ret+="</td>";
 		ret+="<td align=right>";
 		if (poolname.toLowerCase().startsWith("currency.")) {
-			ret+=Currency.find(state,poolname.substring(9)).shortTextForm(row.getInt("cumsum"));
+			ret+=Currency.find(state,poolname.substring(9)).shortTextForm((int)(row.getFloat("cumsum")));
 		} else {
-			ret+=row.getInt("cumsum")+"";
+			ret+=((int)(row.getFloat("cumsum")))+"";
 		}
 		ret+="</td>";
 		return ret;
