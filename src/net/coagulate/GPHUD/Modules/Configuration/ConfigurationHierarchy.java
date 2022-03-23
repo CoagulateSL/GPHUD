@@ -102,6 +102,7 @@ public class ConfigurationHierarchy extends Form {
 		}
 
 		final Table h=new Table();
+		final DropDownList commandsDropDown=DropDownList.getCommandsList(st,"value-undefined",true);
 		add(h);
 		//h.border(true);
 		h.openRow();
@@ -110,22 +111,22 @@ public class ConfigurationHierarchy extends Form {
 		h.add(kv.defaultValue());
 		final Instance instance=simulated.getInstance();
 		final Set<String> alledits=new HashSet<>();
-		if (kv.appliesTo(instance)) { addKVRow(st,h,kv,instance,simulated,alledits); }
+		if (kv.appliesTo(instance)) { addKVRow(st,h,kv,instance,simulated,alledits,commandsDropDown); }
 		for (final Region r: Region.getRegions(instance,false)) {
-			if (kv.appliesTo(r)) { addKVRow(st,h,kv,r,simulated,alledits); }
+			if (kv.appliesTo(r)) { addKVRow(st,h,kv,r,simulated,alledits,commandsDropDown); }
 		}
-		for (final Zone z: Zone.getZones(instance)) { if (kv.appliesTo(z)) { addKVRow(st,h,kv,z,simulated,alledits); } }
-		for (final Event e: Event.getAll(instance)) { if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits); } }
+		for (final Zone z: Zone.getZones(instance)) { if (kv.appliesTo(z)) { addKVRow(st,h,kv,z,simulated,alledits,commandsDropDown); } }
+		for (final Event e: Event.getAll(instance)) { if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits,commandsDropDown); } }
 		for (final CharacterGroup cg: instance.getCharacterGroups()) {
-			if (kv.appliesTo(cg)) { addKVRow(st,h,kv,cg,simulated,alledits); }
+			if (kv.appliesTo(cg)) { addKVRow(st,h,kv,cg,simulated,alledits,commandsDropDown); }
 		}
 		if (simulated.getCharacterNullable()!=null) {
 			if (kv.appliesTo(simulated.getCharacter())) {
-				addKVRow(st,h,kv,simulated.getCharacter(),simulated,alledits);
+				addKVRow(st,h,kv,simulated.getCharacter(),simulated,alledits,commandsDropDown);
 			}
 		}
 		for (final Effect e: Effect.getAll(st.getInstance())) {
-			if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits); }
+			if (kv.appliesTo(e)) { addKVRow(st,h,kv,e,simulated,alledits,commandsDropDown); }
 		}
 		try {
 			final KVValue kvexample=simulated.getKV(kv.fullName());
@@ -151,7 +152,8 @@ public class ConfigurationHierarchy extends Form {
 	              @Nonnull final KV kv,
 	              @Nonnull final TableRow dbo,
 	              @Nonnull final State simulated,
-	              @Nonnull final Set<String> alledits) {
+	              @Nonnull final Set<String> alledits,
+				  @Nonnull final DropDownList commandsDropDown) {
 		t.openRow();
 		if (dbo instanceof Region) { t.setBGColor("#ffe0e0"); }
 		if (dbo instanceof CharacterGroup) {
@@ -191,9 +193,9 @@ public class ConfigurationHierarchy extends Form {
 					editor="<input size=36 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
 					break;
 				case COMMAND:
-					final DropDownList d=DropDownList.getCommandsList(st,"value-"+codename,true);
-					d.setValue(value);
-					editor=d.asHtml(st,true);
+					commandsDropDown.setValue(value);
+					commandsDropDown.name("value-"+codename);
+					editor=commandsDropDown.asHtml(st,true);
 					break;
 				case COLOR:
 					editor="<input size=30 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
