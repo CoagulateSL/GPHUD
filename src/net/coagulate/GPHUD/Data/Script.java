@@ -9,6 +9,7 @@ import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -79,12 +80,15 @@ public class Script extends TableRow {
 		final int existing=db().dqiNotNull("select count(*) from scripts where name like ? and instanceid=?",scriptname,st.getInstance().getId());
 		if (existing>0) { throw new UserInputDuplicateValueException("script with that name already exists"); }
 		db().d("insert into scripts(instanceid,name) values(?,?)",st.getInstance().getId(),scriptname);
+		scriptCache.purge(st.getInstance());
 	}
 
 	@Nonnull
 	public static Script get(final int id) {
 		return (Script) factoryPut("Scripts",id,Script::new);
 	}
+
+	private static final Cache<Set<Script>> scriptCache=Cache.getCache("gphud/scriptlist", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get all script objects for an instance
@@ -95,11 +99,13 @@ public class Script extends TableRow {
 	 */
 	@Nonnull
 	public static Set<Script> getScripts(@Nonnull final Instance instance) {
-		final Set<Script> scripts=new HashSet<>();
-		for (final ResultsRow row: db().dq("select id from scripts where instanceid=?",instance.getId())) {
-			scripts.add(new Script(row.getInt("id")));
-		}
-		return scripts;
+		return scriptCache.get(instance,()-> {
+			final Set<Script> scripts = new HashSet<>();
+			for (final ResultsRow row : db().dq("select id from scripts where instanceid=?", instance.getId())) {
+				scripts.add(new Script(row.getInt("id")));
+			}
+			return scripts;
+		});
 	}
 
 	/**
@@ -308,7 +314,9 @@ public class Script extends TableRow {
 	}
 
 	public void delete() {
+		Instance i=getInstance();
 		d("delete from scripts where id=?",getId());
+		scriptCache.purge(i);
 	}
 
     public int getCompilerVersion() {
