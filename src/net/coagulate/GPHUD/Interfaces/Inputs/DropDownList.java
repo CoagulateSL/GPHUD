@@ -23,7 +23,7 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class DropDownList extends Input {
-	final String name;
+	String name;
 	final Map<String,String> choices=new TreeMap<>();
 	boolean submitonchange;
 
@@ -131,6 +131,8 @@ public class DropDownList extends Input {
 	public String getName() {
 		return name;
 	}
+
+	public void name(@Nonnull final String newName) { name=newName; }
 
 	@Nonnull
 	public DropDownList submitOnChange() {
