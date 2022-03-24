@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
+import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Modules.Command;
@@ -37,7 +38,8 @@ public class ScriptingModule extends ModuleAnnotation {
 		final Map<String,Command> commands=new HashMap<>();
 		final Set<Script> scripts=Script.getScripts(st);
 		for (final Script script: scripts) {
-			commands.put(script.getName(),new ScriptingCommand(script));
+			try { commands.put(script.getName(),new ScriptingCommand(script)); }
+			catch (NoDataException ignored) {}
 		}
 		return commands;
 	}
