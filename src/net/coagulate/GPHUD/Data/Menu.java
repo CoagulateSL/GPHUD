@@ -79,7 +79,7 @@ public class Menu extends TableRow {
 	public static Menu getMenu(@Nonnull final State st,
 	                           @Nonnull final String name) {
 		final Menu ret=getMenuNullable(st,name);
-		if (ret==null) { throw new UserInputLookupFailureException("No menu called "+name+" is found"); }
+		if (ret==null) { throw new UserInputLookupFailureException("No menu called "+name+" is found",true); }
 		return ret;
 	}
 
