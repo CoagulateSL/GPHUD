@@ -32,7 +32,7 @@ public class Output {
 	                                    @Nonnull final BCCharacter target,
 	                                    @Nonnull final BCString message) {
 		if (vm.simulation) { return new BCInteger(null,0); }
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		vm.queueSayAs(target.getContent(),message.getContent());
 		return new BCInteger(null,0);
 	}
@@ -49,7 +49,7 @@ public class Output {
 	                                   @Nonnull final BCCharacter target,
 	                                   @Nonnull final BCString message) {
 		if (vm.simulation) { return new BCInteger(null,0); }
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online"); }
+		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
 		vm.queueSay(target.getContent(),message.getContent());
 		return new BCInteger(null,0);
 	}
