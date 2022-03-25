@@ -186,10 +186,7 @@ public class PermissionsGroup extends TableRow {
 	public String getKVIdField() { return null; }
 
 	public boolean hasMember(@Nonnull final User avatar) {
-		if (dqinn("select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),avatar.getId())>0) {
-			return true;
-		}
-		return false;
+		return dqinn("select count(*) from permissionsgroupmembers where permissionsgroupid=? and avatarid=?", getId(), avatar.getId()) > 0;
 	}
 
 	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
@@ -233,10 +230,8 @@ public class PermissionsGroup extends TableRow {
 		for (final ResultsRow r: results) {
 			final PermissionsGroupMembership record=new PermissionsGroupMembership();
 			record.avatar=User.get(r.getInt("avatarid"));
-			record.caninvite=false;
-			if (r.getInt("caninvite")==1) { record.caninvite=true; }
-			record.cankick=false;
-			if (r.getInt("cankick")==1) { record.cankick=true; }
+			record.caninvite= r.getInt("caninvite") == 1;
+			record.cankick= r.getInt("cankick") == 1;
 			members.add(record);
 		}
 		return members;
@@ -262,8 +257,7 @@ public class PermissionsGroup extends TableRow {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
 			final int inviteflag=dqinn("select caninvite from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),st.getAvatar().getId());
-			if (inviteflag==1) { return true; }
-			return false;
+			return inviteflag == 1;
 		}
 		catch (@Nonnull final NullPointerException|NoDataException e) { return false; }
 	}
@@ -279,8 +273,7 @@ public class PermissionsGroup extends TableRow {
 		if (st.hasPermission("instance.permissionsmembers")) { return true; }
 		try {
 			final int kickflag=dqinn("select cankick from permissionsgroupmembers where permissionsgroupid=? and avatarid=?",getId(),st.getAvatar().getId());
-			if (kickflag==1) { return true; }
-			return false;
+			return kickflag == 1;
 		}
 		catch (@Nonnull final NullPointerException|NoDataException e) { return false; }
 	}
@@ -361,6 +354,7 @@ public class PermissionsGroup extends TableRow {
 		d("delete from permissions where permissionsgroupid=? and permission=?",getId(),permission);
 	}
 
+	@SuppressWarnings("EmptyMethod") // We have no KVs for permissions groups as they're OOC
 	public void flushKVCache(final State st) {}
 
 	/**
