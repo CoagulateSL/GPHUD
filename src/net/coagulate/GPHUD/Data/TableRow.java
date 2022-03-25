@@ -75,7 +75,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			throw new TooMuchDataException("Too many rows - got "+count+" instead of 1 while validating "+getTableName()+" - "+getId());
 		}
 		if (count<1) {
-			throw new NoDataException("No rows - got "+count+" instead of 1 while validating "+getTableName()+" - "+getId());
+			throw new NoDataException("No rows - got "+count+" instead of 1 while validating "+getTableName()+" - "+getId(),true);
 		}
 		validated=true;
 	}

@@ -40,10 +40,10 @@ public class ScriptResponses {
 			}
 			try { response.validate(st); }
 			catch (DBException e) {
-				throw new UserInputLookupFailureException("Failed to resolve input to a valid character",e);
+				throw new UserInputLookupFailureException("Failed to resolve input to a valid character",e,true);
 			}
 			if (response.getInstance()!=st.getInstance()) {
-				throw new UserInputLookupFailureException("Failed to resolve input to a valid character at your instance");
+				throw new UserInputLookupFailureException("Failed to resolve input to a valid character at your instance",true);
 			}
 			final GSVM vm=new GSVM(run,st);
 			// inject response
