@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -114,8 +115,10 @@ public class PermissionsGroup extends TableRow {
 		if (exists!=0) { throw new UserInputDuplicateValueException("Permissions group already exists? ("+exists+" results)"); }
 		db().d("insert into permissionsgroups(name,instanceid) values(?,?)",name,st.getInstance().getId());
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","PermissionsGroup",null,name,"Avatar created new permissions group");
+		permissionsGroupsSetCache.purge(st.getInstance());
 	}
 
+	private static final Cache<Set<PermissionsGroup>> permissionsGroupsSetCache=Cache.getCache("gphud/instancepermissiongroups", CacheConfig.PERMANENT_CONFIG);
 	/**
 	 * Get all the permissionsgroups for an instance.
 	 *
@@ -123,12 +126,14 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nonnull
 	public static Set<PermissionsGroup> getPermissionsGroups(@Nonnull final State st) {
-		final Results results=db().dq("select permissionsgroupid from permissionsgroups where instanceid=?",st.getInstance().getId());
-		final Set<PermissionsGroup> set=new TreeSet<>();
-		for (final ResultsRow r: results) {
-			set.add(PermissionsGroup.get(r.getInt("permissionsgroupid")));
-		}
-		return set;
+		return permissionsGroupsSetCache.get(st.getInstance(),()-> {
+			final Results results = db().dq("select permissionsgroupid from permissionsgroups where instanceid=?", st.getInstance().getId());
+			final Set<PermissionsGroup> set = new TreeSet<>();
+			for (final ResultsRow r : results) {
+				set.add(PermissionsGroup.get(r.getInt("permissionsgroupid")));
+			}
+			return set;
+		});
 	}
 
 
@@ -241,7 +246,9 @@ public class PermissionsGroup extends TableRow {
 	 * Delete this permissionsgroup
 	 */
 	public void delete() {
+		Instance instance=getInstance();
 		d("delete from permissionsgroups where permissionsgroupid=?",getId());
+		permissionsGroupsSetCache.purge(instance);
 	}
 
 	/**
