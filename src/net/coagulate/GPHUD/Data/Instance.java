@@ -548,9 +548,7 @@ public class Instance extends TableRow {
 	public void createCharacterGroup(final String name,
 	                                 final boolean open,
 	                                 final String keyword) {
-		final int count=dqinn("select count(*) from charactergroups where instanceid=? and name like ?",getId(),name);
-		if (count>0) { throw new UserInputDuplicateValueException("Failed to create group, already exists."); }
-		d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)",getId(),name,open,keyword);
+		CharacterGroup.create(this,name,open,keyword);
 	}
 
 	/**
@@ -561,11 +559,7 @@ public class Instance extends TableRow {
 	 */
 	@Nonnull
 	public List<CharacterGroup> getCharacterGroups() {
-		final List<CharacterGroup> groups=new ArrayList<>();
-		for (final ResultsRow r: dq("select charactergroupid from charactergroups where instanceid=? order by kvprecedence asc,charactergroupid asc",getId())) {
-			groups.add(CharacterGroup.get(r.getInt()));
-		}
-		return groups;
+		return CharacterGroup.getInstanceGroups(this);
 	}
 
 	/**

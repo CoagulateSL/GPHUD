@@ -105,6 +105,17 @@ public class CharacterGroup extends TableRow {
 		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
+	private static final Cache<List<CharacterGroup>> instanceGroupsCache=Cache.getCache("gphud/instancegroups",CacheConfig.PERMANENT_CONFIG);
+	public static List<CharacterGroup> getInstanceGroups(Instance instance) {
+		return instanceGroupsCache.get(instance,()-> {
+			final List<CharacterGroup> groups = new ArrayList<>();
+			for (final ResultsRow r : db().dq("select charactergroupid from charactergroups where instanceid=? order by kvprecedence asc,charactergroupid asc", instance.getId())) {
+				groups.add(CharacterGroup.get(r.getInt()));
+			}
+			return groups;
+		});
+	}
+
 	/**
 	 * Get all the groups this character is in
 	 *
@@ -132,7 +143,7 @@ public class CharacterGroup extends TableRow {
 	 * @return Set of Character Groups
 	 */
 	@Nonnull
-	public static List<CharacterGroup> getGroups(@Nonnull final State state) {
+	public static List<CharacterGroup> getCharactersGroups(@Nonnull final State state) {
 		return getGroups(state.getCharacter());
 	}
 
@@ -191,6 +202,13 @@ public class CharacterGroup extends TableRow {
 
 	public static void purgeCharacterGroupPrecedenceCaches() {
 		precedenceCache.purgeAll();
+	}
+
+	public static void create(Instance instance, String name, boolean open, String keyword) {
+		final int count=db().dqiNotNull("select count(*) from charactergroups where instanceid=? and name like ?",instance.getId(),name);
+		if (count>0) { throw new UserInputDuplicateValueException("Failed to create group, already exists."); }
+		db().d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)",instance.getId(),name,open,keyword);
+		instanceGroupsCache.purge(instance);
 	}
 
 	// ---------- INSTANCE ----------
@@ -266,11 +284,13 @@ public class CharacterGroup extends TableRow {
 	 * Delete this character group
 	 */
 	public void delete() {
+		Instance instance=getInstance();
 		d("delete from charactergroups where charactergroupid=?",getId());
 		groupMembershipCache.purge(this);
 		characterGroupsCache.purgeAll();
 		kvCache.purge(this);
 		typeCache.purge(this);
+		instanceGroupsCache.purge(instance);
 	}
 
 	/**
