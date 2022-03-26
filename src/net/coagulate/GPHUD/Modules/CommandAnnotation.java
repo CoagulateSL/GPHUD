@@ -10,10 +10,7 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +127,7 @@ public class CommandAnnotation extends Command {
 			final Throwable content=e.getCause();
 			if (content==null) { throw new SystemImplementationException("Null invocation target exception cause",e); }
 			if (UserException.class.isAssignableFrom(content.getClass())) {
-				throw new UserExecutionException(content.getLocalizedMessage(),content);
+				throw (UserException)content;
 			}
 			throw new SystemExecutionException("Annotated command "+getFullName()+" from "+getMethod().getName()+" in class "+getMethod().getDeclaringClass().getSimpleName()+" exceptioned: "+content.getLocalizedMessage(),content);
 		}

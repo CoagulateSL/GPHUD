@@ -143,7 +143,7 @@ public class Script extends TableRow {
 				return new Script(id);
 			}
 			catch (final NoDataException nde){
-				throw new UserInputLookupFailureException("Script by name/alias " + scriptname + " does not exist", nde);
+				throw new UserInputLookupFailureException("Script by name/alias " + scriptname + " does not exist", nde,true);
 			}
 			catch (final TooMuchDataException tmde) {
 				throw new UserConfigurationException("There are multiple scripts with the alias "+scriptname,tmde);
