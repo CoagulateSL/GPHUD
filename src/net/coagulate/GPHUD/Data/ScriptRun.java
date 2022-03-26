@@ -34,7 +34,7 @@ public class ScriptRun extends TableRow {
 		// and/or how painful/impractical it is to write complex IO in SL
 		db().d("delete from scriptruns where respondant=?",respondant.getId());
 		final int expires=UnixTime.getUnixTime()+900;
-		db().d("insert into scriptruns(bytecode,initialiser,respondant,expires) values(?,?,?,?)",code,initialiser,respondant.getId(),expires);
+		db().d("replace into scriptruns(bytecode,initialiser,respondant,expires) values(?,?,?,?)",code,initialiser,respondant.getId(),expires);
 		return get(db().dqiNotNull("select id from scriptruns where initialiser=? and respondant=? and expires=?",initialiser,respondant.getId(),expires));
 	}
 
