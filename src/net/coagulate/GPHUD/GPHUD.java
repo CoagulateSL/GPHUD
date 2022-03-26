@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD;
 
 import net.coagulate.Core.BuildInfo.GPHUDBuildInfo;
-import net.coagulate.Core.BuildInfo.JSLBotBuildInfo;
 import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.MySqlDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
