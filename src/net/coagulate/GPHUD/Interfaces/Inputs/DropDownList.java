@@ -2,10 +2,7 @@ package net.coagulate.GPHUD.Interfaces.Inputs;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.GPHUD.Data.CacheConfig;
-import net.coagulate.GPHUD.Data.CharacterGroup;
-import net.coagulate.GPHUD.Data.PermissionsGroup;
-import net.coagulate.GPHUD.Data.Script;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.Module;
@@ -46,13 +43,13 @@ public class DropDownList extends Input {
 	public static DropDownList getCommandsList(final State st,
 	                                           final String name) { return getCommandsList(st,name,true); }
 
-	private static final Cache<DropDownList> generatedCommandsCache=Cache.getCache("gphud/gencmddropdown", CacheConfig.SHORT);
-	private static final Cache<DropDownList> nongeneratedCommandsCache=Cache.getCache("gphud/nongencmddropdown", CacheConfig.SHORT);
+	private static final Cache<Instance,DropDownList> generatedCommandsCache=Cache.getCache("gphud/gencmddropdown", CacheConfig.SHORT);
+	private static final Cache<Instance,DropDownList> nongeneratedCommandsCache=Cache.getCache("gphud/nongencmddropdown", CacheConfig.SHORT);
 	@Nonnull
 	public static DropDownList getCommandsList(final State st,
 	                                           final String name,
 	                                           final boolean allowgenerated) {
-		Cache<DropDownList> targetCache=nongeneratedCommandsCache;
+		Cache<Instance,DropDownList> targetCache=nongeneratedCommandsCache;
 		if (allowgenerated) { targetCache=generatedCommandsCache; }
 		return targetCache.get(st.getInstance(),()->{
 			final DropDownList commands=new DropDownList(name);
@@ -67,7 +64,7 @@ public class DropDownList extends Input {
 		}).clone(name);
 	}
 
-	private static final Cache<DropDownList> permissionsCache=Cache.getCache("gphud/permissionsdropdown",CacheConfig.SHORT);
+	private static final Cache<Instance,DropDownList> permissionsCache=Cache.getCache("gphud/permissionsdropdown",CacheConfig.SHORT);
 	public static DropDownList getPermissionsList(final State st,
 	                                              final String name) {
 		return permissionsCache.get(st.getInstance(),()-> {
@@ -84,7 +81,7 @@ public class DropDownList extends Input {
 		}).clone(name);
 	}
 
-	private static final Cache<DropDownList> permissionsGroupsCache=Cache.getCache("gphud/permissionsgroupsdropdown",CacheConfig.SHORT);
+	private static final Cache<Instance,DropDownList> permissionsGroupsCache=Cache.getCache("gphud/permissionsgroupsdropdown",CacheConfig.SHORT);
 	public static DropDownList getPermissionsGroups(final State st,
 	                                                final String name) {
 		return permissionsGroupsCache.get(st.getInstance(),()-> {
@@ -98,7 +95,7 @@ public class DropDownList extends Input {
 		}).clone(name);
 	}
 
-	private static final Cache<DropDownList> charGroupsCache=Cache.getCache("gphud/chargroupsdropdown",CacheConfig.SHORT);
+	private static final Cache<Instance,DropDownList> charGroupsCache=Cache.getCache("gphud/chargroupsdropdown",CacheConfig.SHORT);
 	public static DropDownList getCharacterGroups(final State st,
 	                                              final String name) {
 		return charGroupsCache.get(st.getInstance(),()-> {
@@ -112,7 +109,7 @@ public class DropDownList extends Input {
 		}).clone(name);
 	}
 
-	private static final Cache<DropDownList> scriptsCache=Cache.getCache("gphud/scriptsdropdown",CacheConfig.SHORT);
+	private static final Cache<Instance,DropDownList> scriptsCache=Cache.getCache("gphud/scriptsdropdown",CacheConfig.SHORT);
     public static DropDownList getScriptsList(State st, String name) {
 		return scriptsCache.get(st.getInstance(),()-> {
 			final DropDownList scriptsList = new DropDownList(name);

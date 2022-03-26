@@ -105,7 +105,7 @@ public class CharacterGroup extends TableRow {
 		catch (@Nonnull final NoDataException e) { return null; }
 	}
 
-	private static final Cache<List<CharacterGroup>> instanceGroupsCache=Cache.getCache("gphud/instancegroups",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Instance,List<CharacterGroup>> instanceGroupsCache=Cache.getCache("gphud/instancegroups",CacheConfig.PERMANENT_CONFIG);
 	public static List<CharacterGroup> getInstanceGroups(Instance instance) {
 		return instanceGroupsCache.get(instance,()-> {
 			final List<CharacterGroup> groups = new ArrayList<>();

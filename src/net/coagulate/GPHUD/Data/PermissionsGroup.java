@@ -118,7 +118,7 @@ public class PermissionsGroup extends TableRow {
 		permissionsGroupsSetCache.purge(st.getInstance());
 	}
 
-	private static final Cache<Set<PermissionsGroup>> permissionsGroupsSetCache=Cache.getCache("gphud/instancepermissiongroups", CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Instance,Set<PermissionsGroup>> permissionsGroupsSetCache=Cache.getCache("gphud/instancepermissiongroups", CacheConfig.PERMANENT_CONFIG);
 	/**
 	 * Get all the permissionsgroups for an instance.
 	 *
