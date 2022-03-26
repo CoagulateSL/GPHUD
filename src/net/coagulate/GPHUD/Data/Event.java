@@ -165,7 +165,7 @@ public class Event extends TableRow {
 			return events;
 		});
 	}
-	private static final Cache<Set<Event>> activeEventsCache=Cache.getCache("gphud/eventActive", CacheConfig.MINIMAL); // does this help?
+	private static final Cache<Instance,Set<Event>> activeEventsCache=Cache.getCache("gphud/eventActive", CacheConfig.MINIMAL); // does this help?
 
 	/**
 	 * Get all currently active events for an instance.

@@ -257,7 +257,7 @@ public class Region extends TableRow {
 	public boolean isRetired() {
 		return retiredCache.get(this,()->getBool("retired"));
 	}
-	private static final Cache<Boolean> retiredCache=Cache.getCache("gphud/regionretired",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Region,Boolean> retiredCache=Cache.getCache("gphud/regionretired",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Gets the instance associated with this region

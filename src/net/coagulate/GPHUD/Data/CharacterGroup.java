@@ -122,7 +122,7 @@ public class CharacterGroup extends TableRow {
 			return ret;
 		});
 	}
-	private static final Cache<List<CharacterGroup>> characterGroupsCache=Cache.getCache("GPHUD/characterGroups", CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Char,List<CharacterGroup>> characterGroupsCache=Cache.getCache("GPHUD/characterGroups", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get all the groups this character is in
@@ -204,7 +204,7 @@ public class CharacterGroup extends TableRow {
 	public Instance getInstance() {
 		return instanceCache.get(this, ()->Instance.get(getInt("instanceid")));
 	}
-	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/characterGroupInstance",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<CharacterGroup,Instance> instanceCache=Cache.getCache("GPHUD/characterGroupInstance",CacheConfig.PERMANENT_CONFIG);
 
 	@Nonnull
 	@Override
@@ -260,7 +260,7 @@ public class CharacterGroup extends TableRow {
 			return members;
 		});
 	}
-	private static final Cache<Set<Char>> groupMembershipCache=Cache.getCache("GPHUD/characterGroupMembers",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<CharacterGroup,Set<Char>> groupMembershipCache=Cache.getCache("GPHUD/characterGroupMembers",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Delete this character group
@@ -282,7 +282,7 @@ public class CharacterGroup extends TableRow {
 	public String getType() {
 		return typeCache.get(this, ()->dqs("select type from charactergroups where charactergroupid=?",getId()));
 	}
-	private static final Cache<String> typeCache=Cache.getCache("GPHUD/characterGroupType", CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<CharacterGroup,String> typeCache=Cache.getCache("GPHUD/characterGroupType", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Joins a character to this group.
@@ -433,5 +433,5 @@ public class CharacterGroup extends TableRow {
 		set("kvprecedence",newPrecedence);
 		precedenceCache.set(this,newPrecedence);
 	}
-	private static final Cache<Integer> precedenceCache=Cache.getCache("GPHUD/characterGroupPrecedence",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<CharacterGroup,Integer> precedenceCache=Cache.getCache("GPHUD/characterGroupPrecedence",CacheConfig.OPERATIONAL_CONFIG);
 }

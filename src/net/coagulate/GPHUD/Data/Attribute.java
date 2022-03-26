@@ -114,7 +114,7 @@ public class Attribute extends TableRow {
 			return set;
 		});
 	}
-	private static final Cache<Set<Attribute>> attributeSetCache=Cache.getCache("GPHUD/attributeSet", CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Instance,Set<Attribute>> attributeSetCache=Cache.getCache("GPHUD/attributeSet", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Find attribute by name
@@ -258,7 +258,7 @@ public class Attribute extends TableRow {
 	public Instance getInstance() {
 		return instanceCache.get(this, ()-> Instance.get(getInt("instanceid")));
 	}
-	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/attributeInstance",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Attribute,Instance> instanceCache=Cache.getCache("GPHUD/attributeInstance",CacheConfig.PERMANENT_CONFIG);
 
 	@Nonnull
 	@Override
@@ -308,7 +308,7 @@ public class Attribute extends TableRow {
 			fromString(getString("attributetype"))
 		);
 	}
-	private static final Cache<ATTRIBUTETYPE> attributeTypeCache=Cache.getCache("GPHUD/AttributeType",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Attribute,ATTRIBUTETYPE> attributeTypeCache=Cache.getCache("GPHUD/AttributeType",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get this attribute's subtype, used by groups to define attribute mappings and exclusions.
@@ -319,7 +319,7 @@ public class Attribute extends TableRow {
 	public String getSubType() {
 		return subTypeCache.get(this, ()->getStringNullable("grouptype"));
 	}
-	private static final Cache<String> subTypeCache=Cache.getCache("GPHUD/AttributeSubType",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Attribute,String> subTypeCache=Cache.getCache("GPHUD/AttributeSubType",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Returns if this attribute uses ability points.
@@ -329,7 +329,7 @@ public class Attribute extends TableRow {
 	public boolean usesAbilityPoints() {
 		return usesAbilityPointsCache.get(this,()->getBool("usesabilitypoints"));
 	}
-	private static final Cache<Boolean> usesAbilityPointsCache=Cache.getCache("GPHUD/AttributeAbilityPoints",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Attribute,Boolean> usesAbilityPointsCache=Cache.getCache("GPHUD/AttributeAbilityPoints",CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Return if this attribute is mandatory.
@@ -339,7 +339,7 @@ public class Attribute extends TableRow {
 	public boolean getRequired() {
 		return requiredCache.get(this,()->getBool("required"));
 	}
-	private static final Cache<Boolean> requiredCache=Cache.getCache("gphud/attributeRequired",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Attribute,Boolean> requiredCache=Cache.getCache("gphud/attributeRequired",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Sets the required flag.
@@ -591,5 +591,5 @@ public class Attribute extends TableRow {
 		set("templatable",newValue);
 		templatableCache.set(this,newValue);
 	}
-	private static final Cache<Boolean> templatableCache=Cache.getCache("gphud/attributeTemplatable",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Attribute,Boolean> templatableCache=Cache.getCache("gphud/attributeTemplatable",CacheConfig.OPERATIONAL_CONFIG);
 }

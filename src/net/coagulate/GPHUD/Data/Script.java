@@ -88,7 +88,7 @@ public class Script extends TableRow {
 		return (Script) factoryPut("Scripts",id,Script::new);
 	}
 
-	private static final Cache<Set<Script>> scriptCache=Cache.getCache("gphud/scriptlist", CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Instance,Set<Script>> scriptCache=Cache.getCache("gphud/scriptlist", CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get all script objects for an instance
