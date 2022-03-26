@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD;
 
 import net.coagulate.Core.BuildInfo.GPHUDBuildInfo;
+import net.coagulate.Core.BuildInfo.JSLBotBuildInfo;
 import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.MySqlDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,9 +38,6 @@ Short form here.
 
  */
 public class GPHUD extends SLModule {
-	public final int majorVersion() { return GPHUDBuildInfo.MAJORVERSION; }
-	public final int minorVersion() { return GPHUDBuildInfo.MINORVERSION; }
-	public final int bugFixVersion() { return GPHUDBuildInfo.BUGFIXVERSION; }
 	public final String commitId() { return GPHUDBuildInfo.COMMITID; }
 	public Date getBuildDate() { return GPHUDBuildInfo.BUILDDATE; }
 
@@ -63,7 +62,7 @@ public class GPHUD extends SLModule {
 		return "\n"+branding();
 	}
 
-	public static String version() { return GPHUDBuildInfo.MAJORVERSION+"."+GPHUDBuildInfo.MINORVERSION+"."+GPHUDBuildInfo.BUGFIXVERSION; }
+	public static String build() { return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(GPHUDBuildInfo.BUILDDATE)+" @"+GPHUDBuildInfo.COMMITID; }
 	@Nullable
 	static Logger log;
 	@Nullable
@@ -88,10 +87,10 @@ public class GPHUD extends SLModule {
 		if (Config.isOfficial()) {
 			return "&gt;&nbsp;" + (Config.getDevelopment() ? "DEVELOPMENT" : "Production") + "<br>" +
 					"&gt;&nbsp;" + Config.getHostName() + "<br>" +
-					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + version() + "</a><br>" +
+					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + build() + "</a><br>" +
 					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getStackBuildDate() + "</a>";
 		} else {
-			return  "&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + version() + "</a><br>" +
+			return  "&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + build() + "</a><br>" +
 					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getStackBuildDate() + "</a><br>"+
 					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/landingpage\">(C) Coagulate SL</a><br>" +
 					"&gt;&nbsp;<b>Operated by:</b><br>" +
@@ -103,7 +102,7 @@ public class GPHUD extends SLModule {
 
 	@Nonnull
 	public static String serverVersion() {
-		return "GPHUD Stack " + version() + " " + SL.getStackBuildDate() + " (C) secondlife:///app/agent/" + Config.getCreatorUUID() + "/about / Iain Price, Coagulate";
+		return "GPHUD Stack " + build() + " (C) secondlife:///app/agent/" + Config.getCreatorUUID() + "/about / Iain Price, Coagulate";
 	}
 
 	@Nonnull
@@ -116,7 +115,7 @@ public class GPHUD extends SLModule {
 	@Override
 	public Map<ServiceTile, Integer> getServices() {
 		HashMap<ServiceTile,Integer> map = new HashMap<>();
-		map.put(new ServiceTile("GPHUD","Second generation role-play HUD - used to implement attribute/dice based RP environments","/GPHUD/","/resources/serviceicon-gphud.png",getVersion(),getBuildDateString(),commitId()),10);
+		map.put(new ServiceTile("GPHUD","Second generation role-play HUD - used to implement attribute/dice based RP environments","/GPHUD/","/resources/serviceicon-gphud.png",getBuild(),getBuildDateString(),commitId()),10);
 		return map;
 	}
 
