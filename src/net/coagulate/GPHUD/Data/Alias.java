@@ -52,7 +52,7 @@ public class Alias extends TableRow {
 			return aliases;
 		});
 	}
-	private static final Cache<Map<String,Alias>> aliasMapCache=Cache.getCache("GPHUD/aliasMap",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Instance,Map<String,Alias>> aliasMapCache=Cache.getCache("GPHUD/aliasMap",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get aliased command templates for this state
@@ -71,7 +71,7 @@ public class Alias extends TableRow {
 			return aliases;
 		});
 	}
-	private static final Cache<Map<String,JSONObject>> aliasTemplateCache=Cache.getCache("GPHUD/aliasTemplate",CacheConfig.OPERATIONAL_CONFIG);
+	private static final Cache<Instance,Map<String,JSONObject>> aliasTemplateCache=Cache.getCache("GPHUD/aliasTemplate",CacheConfig.OPERATIONAL_CONFIG);
 
 	/**
 	 * Get a particular alias from an instance.
@@ -165,7 +165,7 @@ public class Alias extends TableRow {
 	public Instance getInstance() {
 		return instanceCache.get(this, ()-> Instance.get(getInt("instanceid")));
 	}
-	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/AliasInstance", CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Alias,Instance> instanceCache=Cache.getCache("GPHUD/AliasInstance", CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Gets the JSON payload for this alias.  See alias module.

@@ -168,7 +168,7 @@ public class Effect extends TableRow {
 			return set;
 		});
 	}
-	private static final Cache<Set<Effect>> effectCache=Cache.getCache("GPHUD/EffectsActive",CacheConfig.MINIMAL);
+	private static final Cache<Char,Set<Effect>> effectCache=Cache.getCache("GPHUD/EffectsActive",CacheConfig.MINIMAL);
 
 	/**
 	 * Add conveyances for effects to the JSON object.

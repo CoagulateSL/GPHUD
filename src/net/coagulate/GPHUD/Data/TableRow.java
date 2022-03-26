@@ -107,7 +107,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		return nameCache.get(this, ()->getStringNullable(getNameField()));
 	}
 	protected void clearNameCache() { nameCache.purge(this); }
-	private static final Cache<String> nameCache=Cache.getCache("GPHUD/nameCache",CacheConfig.MUTABLE);
+	private static final Cache<TableRow,String> nameCache=Cache.getCache("GPHUD/nameCache",CacheConfig.MUTABLE);
 
 	/**
 	 * Highly protected version of getName() that never fails.
@@ -171,7 +171,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getKVIdField();
 
-	protected static final Cache<Map<String,String>> kvCache=Cache.getCache("GPHUD/kvCache", CacheConfig.MUTABLE);
+	protected static final Cache<TableRow,Map<String,String>> kvCache=Cache.getCache("GPHUD/kvCache", CacheConfig.MUTABLE);
 	/**
 	 * Set a KV value for this object
 	 *

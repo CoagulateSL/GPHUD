@@ -24,6 +24,7 @@ import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
@@ -44,7 +45,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Char extends TableRow {
 
-	protected Cache<Integer> poolSumCache=Cache.getCache("GPHUD/characterPoolSums/"+getId(),CacheConfig.OPERATIONAL_CONFIG);
+	protected Cache<Pool,Integer> poolSumCache=Cache.getCache("GPHUD/characterPoolSums/"+getId(),CacheConfig.OPERATIONAL_CONFIG);
 
 	protected Char(final int id) { super(id); }
 
@@ -513,7 +514,7 @@ public class Char extends TableRow {
 			Instance.get(getInt("instanceid"))
         );
 	}
-	private static final Cache<Instance> instanceCache=Cache.getCache("GPHUD/charInstance",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Char,Instance> instanceCache=Cache.getCache("GPHUD/charInstance",CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Get the owning avatar for this character.
@@ -524,7 +525,7 @@ public class Char extends TableRow {
 	public User getOwner() {
 		return ownerCache.get(this, ()->User.get(getInt("owner")));
 	}
-	private static final Cache<User> ownerCache=Cache.getCache("GPHUD/charOwner",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Char,User> ownerCache=Cache.getCache("GPHUD/charOwner",CacheConfig.PERMANENT_CONFIG);
 
 	/**
 	 * Set the owner of this character.
@@ -774,7 +775,7 @@ public class Char extends TableRow {
 		zoneCache.set(this,zone);
 	}
 
-	private static final Cache<Zone> zoneCache=Cache.getCache("gphud/characterZone",CacheConfig.MUTABLE);
+	private static final Cache<Char,Zone> zoneCache=Cache.getCache("gphud/characterZone",CacheConfig.MUTABLE);
 
 	/**
 	 * Set up all conveyances assuming the HUD has no state.
@@ -1005,5 +1006,5 @@ public class Char extends TableRow {
     public int getProtocol() {
 		return protocolCache.get(this, ()->getInt("protocol"));
 	}
-	private static final Cache<Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Char,Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
 }
