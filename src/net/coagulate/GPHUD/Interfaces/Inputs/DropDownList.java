@@ -1,6 +1,8 @@
 package net.coagulate.GPHUD.Interfaces.Inputs;
 
 import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Tools.Cache;
+import net.coagulate.GPHUD.Data.CacheConfig;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Data.Script;
@@ -18,14 +20,21 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * A drop down list choice.
+ * A dropdown list choice.
  *
  * @author Iain Price <gphud@predestined.net>
  */
 public class DropDownList extends Input {
 	String name;
 	final Map<String,String> choices=new TreeMap<>();
-	boolean submitonchange;
+	boolean submitOnChange;
+
+	@Nonnull
+	private DropDownList clone(String newName) {
+		DropDownList newList=new DropDownList(newName);
+		newList.choices.putAll(choices);
+		return newList;
+	}
 
 	public DropDownList(final String name) {
 		this.name=name;
@@ -37,62 +46,82 @@ public class DropDownList extends Input {
 	public static DropDownList getCommandsList(final State st,
 	                                           final String name) { return getCommandsList(st,name,true); }
 
+	private static final Cache<DropDownList> generatedCommandsCache=Cache.getCache("gphud/gencmddropdown", CacheConfig.SHORT);
+	private static final Cache<DropDownList> nongeneratedCommandsCache=Cache.getCache("gphud/nongencmddropdown", CacheConfig.SHORT);
 	@Nonnull
 	public static DropDownList getCommandsList(final State st,
 	                                           final String name,
 	                                           final boolean allowgenerated) {
-		final DropDownList commands=new DropDownList(name);
-		for (final Module mod: Modules.getModules()) {
-			for (final Command c: mod.getCommands(st).values()) {
-				if (allowgenerated || !c.isGenerated()) {
-					commands.add(c.getFullName(),c.getFullName()+" - "+c.description());
+		Cache<DropDownList> targetCache=nongeneratedCommandsCache;
+		if (allowgenerated) { targetCache=generatedCommandsCache; }
+		return targetCache.get(st.getInstance(),()->{
+			final DropDownList commands=new DropDownList(name);
+			for (final Module mod: Modules.getModules()) {
+				for (final Command c: mod.getCommands(st).values()) {
+					if (allowgenerated || !c.isGenerated()) {
+						commands.add(c.getFullName(),c.getFullName()+" - "+c.description());
+					}
 				}
 			}
-		}
-		return commands;
+			return commands;
+		}).clone(name);
 	}
 
+	private static final Cache<DropDownList> permissionsCache=Cache.getCache("gphud/permissionsdropdown",CacheConfig.SHORT);
 	public static DropDownList getPermissionsList(final State st,
 	                                              final String name) {
-		final DropDownList permissions=new DropDownList(name);
-		for (final Module mod: Modules.getModules()) {
-			for (final Permission p: mod.getPermissions(st).values()) {
-				try { permissions.add(mod.getName()+"."+p.name(),mod.getName()+"."+p.name()); }
-				catch (NoDataException ignored) {} // the attribute went away
+		return permissionsCache.get(st.getInstance(),()-> {
+			final DropDownList permissions = new DropDownList(name);
+			for (final Module mod : Modules.getModules()) {
+				for (final Permission p : mod.getPermissions(st).values()) {
+					try {
+						permissions.add(mod.getName() + "." + p.name(), mod.getName() + "." + p.name());
+					} catch (NoDataException ignored) {
+					} // the attribute went away
+				}
 			}
-		}
-		return permissions;
+			return permissions;
+		}).clone(name);
 	}
 
+	private static final Cache<DropDownList> permissionsGroupsCache=Cache.getCache("gphud/permissionsgroupsdropdown",CacheConfig.SHORT);
 	public static DropDownList getPermissionsGroups(final State st,
 	                                                final String name) {
-		final DropDownList permissions=new DropDownList(name);
-		for (final Module mod: Modules.getModules()) {
-			for (final PermissionsGroup p: PermissionsGroup.getPermissionsGroups(st)) {
-				permissions.add(p.getName(),p.getName());
+		return permissionsGroupsCache.get(st.getInstance(),()-> {
+			final DropDownList permissions = new DropDownList(name);
+			for (final Module mod : Modules.getModules()) {
+				for (final PermissionsGroup p : PermissionsGroup.getPermissionsGroups(st)) {
+					permissions.add(p.getName(), p.getName());
+				}
 			}
-		}
-		return permissions;
+			return permissions;
+		}).clone(name);
 	}
 
+	private static final Cache<DropDownList> charGroupsCache=Cache.getCache("gphud/chargroupsdropdown",CacheConfig.SHORT);
 	public static DropDownList getCharacterGroups(final State st,
 	                                              final String name) {
-		final DropDownList charactergroups=new DropDownList(name);
-		for (final Module mod: Modules.getModules()) {
-			for (final CharacterGroup cg: st.getInstance().getCharacterGroups()) {
-				charactergroups.add(cg.getName(),cg.getName());
+		return charGroupsCache.get(st.getInstance(),()-> {
+			final DropDownList charactergroups = new DropDownList(name);
+			for (final Module mod : Modules.getModules()) {
+				for (final CharacterGroup cg : st.getInstance().getCharacterGroups()) {
+					charactergroups.add(cg.getName(), cg.getName());
+				}
 			}
-		}
-		return charactergroups;
+			return charactergroups;
+		}).clone(name);
 	}
 
+	private static final Cache<DropDownList> scriptsCache=Cache.getCache("gphud/scriptsdropdown",CacheConfig.SHORT);
     public static DropDownList getScriptsList(State st, String name) {
-		final DropDownList scriptsList=new DropDownList(name);
-		Set<Script> list = Script.getScripts(st.getInstance());
-		for (Script script:list) {
-			scriptsList.add(script.getName(),script.getName());
-		}
-		return scriptsList;
+		return scriptsCache.get(st.getInstance(),()-> {
+			final DropDownList scriptsList = new DropDownList(name);
+			Set<Script> list = Script.getScripts(st.getInstance());
+			for (Script script : list) {
+				scriptsList.add(script.getName(), script.getName());
+			}
+			return scriptsList;
+		}).clone(name);
     }
 
     // ---------- INSTANCE ----------
@@ -107,7 +136,7 @@ public class DropDownList extends Input {
 	                     final boolean rich) {
 		final StringBuilder r=new StringBuilder();
 		r.append("<select name=\"").append(name).append("\"");
-		if (submitonchange) { r.append("onchange=\"this.form.submit()\" "); }
+		if (submitOnChange) { r.append("onchange=\"this.form.submit()\" "); }
 		if (!onchange.isBlank()) { r.append("onchange=\"").append(onchange).append("\" "); }
 		if (!id.isBlank()) { r.append("id=\"").append(id).append("\" "); }
 		r.append(">");
@@ -136,7 +165,7 @@ public class DropDownList extends Input {
 
 	@Nonnull
 	public DropDownList submitOnChange() {
-		submitonchange=true;
+		submitOnChange =true;
 		return this;
 	}
 	String onchange="";
@@ -145,5 +174,5 @@ public class DropDownList extends Input {
 		return this;
 	}
 	String id="";
-	@Nonnull public DropDownList id(String newid) { this.id=newid; return this; }
+	@Nonnull public DropDownList id(String newId) { this.id=newId; return this; }
 }
