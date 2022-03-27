@@ -16,12 +16,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          path: GPHUD
+          path: ../
       - name: Checkout JavaCore
         uses: actions/checkout@v2
         with:
           repository: 'CoagulateSL/JavaCore'
-          path: JavaCore
+          path: ../
       - name: Checkout SLCore
         uses: actions/checkout@v2
         with:
