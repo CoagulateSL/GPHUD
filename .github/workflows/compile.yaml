@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          path: GPHUD
       - name: Checkout JavaCore
         uses: actions/checkout@v2
         with:
@@ -34,4 +36,5 @@ jobs:
       - name: Build with Maven
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
-        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/settings.xml
+        working-directory: GPHUD/
+        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/GPHUD/settings.xml
