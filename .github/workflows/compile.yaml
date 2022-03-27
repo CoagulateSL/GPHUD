@@ -16,12 +16,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          path: ../
+          path: GPHUD
       - name: Checkout JavaCore
         uses: actions/checkout@v2
         with:
           repository: 'CoagulateSL/JavaCore'
-          path: ../
+          path: JavaCore
       - name: Checkout SLCore
         uses: actions/checkout@v2
         with:
@@ -36,4 +36,5 @@ jobs:
       - name: Build with Maven
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
+        working-directory: GPHUD
         run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/settings.xml
