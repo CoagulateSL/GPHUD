@@ -16,7 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          submodules: 'true'
+          path: GPHUD
+      - name: Checkout JavaCore
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/JavaCore'
+          path: JavaCore
+      - name: Checkout SLCore
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/SLCore'          
+          path: SLCore
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
@@ -26,4 +36,5 @@ jobs:
       - name: Build with Maven
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
-        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/settings.xml
+        working-directory: GPHUD/
+        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/GPHUD/settings.xml
