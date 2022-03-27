@@ -83,8 +83,8 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.basedir}/JavaCore/src</source>
-                                <source>${project.basedir}/SLCore/src</source>
+                                <source>${project.basedir}/../JavaCore/src</source>
+                                <source>${project.basedir}/../SLCore/src</source>
                             </sources>
                         </configuration>
                     </execution>
