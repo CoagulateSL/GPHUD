@@ -9,7 +9,7 @@
 
 
 // Imported legacy change logs!
-@Classes.Change(date="2022-03-28",component = Core,type=Change,message="Migrated to Java 17d")
+@Classes.Change(date="2022-03-28",component = Core,type=Change,message="Migrated to Java 17")
 @Classes.Change(date="2022-03-28",component = Core,type=Change,message="Moved to Version-Number-Less architecture")
 @Classes.Change(date="2022-03-28",component = Core,type=Change,message="Switched to MySQL native Database driver")
 @Classes.Change(date="2022-03-28",component = Core,type=Change,message="Improved cache performance of other deep lists e.g. on the menus page")
