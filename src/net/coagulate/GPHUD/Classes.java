@@ -16,10 +16,11 @@ import net.coagulate.GPHUD.Modules.SideMenu.SideMenus;
 import net.coagulate.GPHUD.Modules.SideSubMenu.SideSubMenus;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.Modules.URL.URLs;
+import net.coagulate.SL.ChangeLogging;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.annotation.Annotation;
+import java.lang.annotation.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,6 +36,25 @@ import java.util.logging.Logger;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Classes {
+	public enum COMPONENT {Core,Scripting,GSVM,RegionServer,DatabaseSchema,HUD,ItemGiver,API,ObjectDriver,Protocol}
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Target(ElementType.PACKAGE)
+	@Repeatable(Changes.class)
+	public @interface Change {
+		// ---------- INSTANCE ----------
+		@Nonnull String date();
+		@Nonnull COMPONENT component();
+		@Nonnull ChangeLogging.CHANGETYPE type();
+		@Nonnull String message();
+	}
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Target(ElementType.PACKAGE)
+	public @interface Changes {
+		// ---------- INSTANCE ----------
+		@Nonnull Change[] value();
+	}
 
 	private static final boolean LOGREGISTERS=false;
 	@Nullable
@@ -246,7 +266,6 @@ public abstract class Classes {
 			GSFunctions.register(m.getName(),m);
 		}
 	}
-
 
 	@Nonnull
 	private static Logger log() {
