@@ -503,6 +503,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		else {
 			s.append("<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>");
 			s.append("<a href=\"/GPHUD/Help\">Documentation</a><br>");
+			s.append("<a href=\"/GPHUD/ChangeLog\">Change Log</a><br>");
 			s.append("<hr width=150px>");
 			return s.toString();
 		}
@@ -523,6 +524,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			s.append("<br>");
 		}
 		s.append("<a href=\"/GPHUD/Help\">Documentation</a><br>");
+		s.append("<a href=\"/GPHUD/ChangeLog\">Change Log</a><br>");
 		s.append("<hr width=150px>");
 		String sectionHead="<b>PERMISSIONS:</b><br>";
 		if (st.isSuperUser()) {
@@ -590,6 +592,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	private boolean interceptable(@Nullable final String url) {
 		if ("/logout".equalsIgnoreCase(url)) { return false; }
 		if ("/Help".equalsIgnoreCase(url)) { return false; }
+		if ("/ChangeLog".equalsIgnoreCase(url)) { return false; }
 		return url == null || !url.toLowerCase().startsWith("/published/");
 	}
 

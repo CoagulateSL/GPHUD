@@ -5,7 +5,13 @@ import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.MySqlDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
+import net.coagulate.Core.Tools.ClassTools;
 import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Modules.ModuleAnnotation;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Permission;
+import net.coagulate.GPHUD.Modules.PermissionAnnotation;
+import net.coagulate.SL.ChangeLogging;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.HTML.ServiceTile;
 import net.coagulate.SL.SL;
@@ -14,6 +20,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +45,24 @@ Short form here.
 
  */
 public class GPHUD extends SLModule {
+	@Override
+	public void registerChanges() {
+		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Change.class)) {
+			for (final Annotation a: c.getAnnotationsByType(Classes.Change.class)) {
+				Classes.Change casted=(Classes.Change)a;
+				ChangeLogging.add(new ChangeLogging.Change(casted.date(),"GPHUD",casted.component().name(),casted.type(),casted.message()));
+			}
+		}
+		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Changes.class)) {
+			for (final Annotation as: c.getAnnotationsByType(Classes.Changes.class)) {
+				for (final Classes.Change a: ((Classes.Changes) as).value()) {
+					Classes.Change casted=(Classes.Change)a;
+					ChangeLogging.add(new ChangeLogging.Change(casted.date(),"GPHUD",casted.component().name(),casted.type(),casted.message()));
+				}
+			}
+		}
+	}
+
 	public final String commitId() { return GPHUDBuildInfo.COMMITID; }
 	public Date getBuildDate() { return GPHUDBuildInfo.BUILDDATE; }
 
