@@ -111,11 +111,11 @@ public class GPHUD extends SLModule {
 		if (Config.isOfficial()) {
 			return "&gt;&nbsp;" + (Config.getDevelopment() ? "DEVELOPMENT" : "Production") + "<br>" +
 					"&gt;&nbsp;" + Config.getHostName() + "<br>" +
-					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getModule("GPHUD").getBuildDateString() + "</a><br>" +
-					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getModule("GPHUD").commitId() + "</a>";
+					"&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">" + SL.getModule("GPHUD").getBuildDateString() + "</a><br>" +
+					"&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">" + SL.getModule("GPHUD").commitId() + "</a>";
 		} else {
-			return  "&gt;&nbsp;<a href=\"https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getModule("GPHUD").getBuildDateString() + "</a><br>" +
-					"&gt;&nbsp;<a href=\"/Docs/GPHUD/index.php/Release_Notes.html#head\" target=\"_new\">" + SL.getModule("GPHUD").commitId() + "</a><br>"+
+			return  "&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">" + SL.getModule("GPHUD").getBuildDateString() + "</a><br>" +
+					"&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">" + SL.getModule("GPHUD").commitId() + "</a><br>"+
 					"&gt;&nbsp;<a href=\"https://sl.coagulate.net/landingpage\">(C) Coagulate SL</a><br>" +
 					"&gt;&nbsp;<b>Operated by:</b><br>" +
 					"&gt;&nbsp;" + Config.getBrandingName().replaceAll(" ","&nbsp;") + "<br>" +
