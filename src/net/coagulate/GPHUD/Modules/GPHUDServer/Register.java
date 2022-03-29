@@ -14,6 +14,7 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,7 +90,7 @@ public abstract class Register {
 		st.logger().log(INFO,"Sending post registration message to "+regionName);
 		final JSONObject registered=new JSONObject().put("incommand","registered");
 		String registrationMessage;
-		registrationMessage=GPHUD.serverVersion()+" [https://sl.coagulate.net/Docs/GPHUD/index.php/Release_Notes.html#head Release Notes]"+GPHUD.brandingWithNewline();
+		registrationMessage=GPHUD.serverVersion()+" [https://"+ Config.getURLHost()+"/GPHUD/ChangeLog Change Log]"+GPHUD.brandingWithNewline();
 		if (st.getRegion().needsUpdate()) {
 			registrationMessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
 		}

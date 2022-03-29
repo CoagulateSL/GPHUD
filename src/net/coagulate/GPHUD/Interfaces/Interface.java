@@ -44,7 +44,7 @@ public abstract class Interface extends URLMapper<Method> {
 	@Nonnull
 	public static String generateURL(final State st,
 	                                 final String ending) {
-		return "https://"+(Config.getDevelopment()?"dev.":"")+Config.getURLHost()+"/"+base()+"/"+ending;
+		return "https://"+Config.getURLHost()+"/"+base()+"/"+ending;
 	}
 
 	public static int convertVersion(@Nonnull final String version) {
