@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Char;
@@ -143,22 +144,24 @@ public abstract class Login {
 					//System.out.println("Max is "+max);
 					if (max!=null && max>0) {
 						//System.out.println("About to check "+max+" > "+Float.parseFloat(value));
-						if (Float.parseFloat(value)>max) {
-							final JSONObject json=new JSONObject();
-							json.put("hudtext","Initialising character...")
-							    .put("hudcolor","<1.0,0.75,0.75>")
-							    .put("titlertext","Initialising character...")
-							    .put("titlercolor","<1.0,0.75,0.75>");
-							JSONResponse.message(json,"Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max,st.protocol);
-							json.put("incommand","runtemplate");
-							json.put("invoke","characters.initialise");
-							json.put("args","1");
-							json.put("attribute",attribute.getName());
-							json.put("arg0name","value");
-							json.put("arg0description","You must select a "+attribute.getName()+" for your Character before you can use it (no greater than "+max+")");
-							json.put("arg0type","TEXTBOX");
-							return new JSONResponse(json);
-						}
+						try {
+							if (Float.parseFloat(value)>max) {
+								final JSONObject json=new JSONObject();
+								json.put("hudtext","Initialising character...")
+									.put("hudcolor","<1.0,0.75,0.75>")
+									.put("titlertext","Initialising character...")
+									.put("titlercolor","<1.0,0.75,0.75>");
+								JSONResponse.message(json,"Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max,st.protocol);
+								json.put("incommand","runtemplate");
+								json.put("invoke","characters.initialise");
+								json.put("args","1");
+								json.put("attribute",attribute.getName());
+								json.put("arg0name","value");
+								json.put("arg0description","You must select a "+attribute.getName()+" for your Character before you can use it (no greater than "+max+")");
+								json.put("arg0type","TEXTBOX");
+								return new JSONResponse(json);
+							}
+						} catch (NumberFormatException e) { throw new UserInputValidationParseException("Not a number:"+value,e,true); }
 					}
 				}
 				st.setKV(st.getCharacter(),"characters."+attribute.getName(),value);
