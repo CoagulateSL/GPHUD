@@ -16,6 +16,8 @@
                         power=Permission.POWER.HIGH)
 
 @Classes.Change(date = "2022-03-31",type = ChangeLogging.CHANGETYPE.Add,component = Classes.COMPONENT.GSVM,message = "Log warnings for type mismatch on variable assignment, and also assignment to a non-defined variable.  NOTE THESE WILL EVENTUALLY BE ERRORS.  Merged for review.")
+@Classes.Change(date="2022-03-31",component = Classes.COMPONENT.GSVM,type = ChangeLogging.CHANGETYPE.Add,message="Added BCDiscard, pops a value from the stack and discards it")
+@Classes.Change(date="2022-03-31",component = Classes.COMPONENT.Scripting,type = ChangeLogging.CHANGETYPE.Add,message = "New top level language construct, the DiscardExpression.  No longer must every expression have an assignment, e.g. 'Response discard=gsAPI(Stuff)', but can just be written as gsAPI(Stuff), the result will now be automatically discarded.")
 
 package net.coagulate.GPHUD.Modules.Scripting;
 
