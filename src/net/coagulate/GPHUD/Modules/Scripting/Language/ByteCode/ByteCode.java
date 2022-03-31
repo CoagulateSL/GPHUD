@@ -122,6 +122,8 @@ public abstract class ByteCode {
 				return new BCReturn(null);
 			case DebugSource:
 				return new BCDebugSource(null);
+			case Discard:
+				return new BCDiscard(null);
 		}
 		throw new SystemImplementationException("Failed to materialise instruction "+decode);
 	}
@@ -221,7 +223,8 @@ public abstract class ByteCode {
 		Float((byte)36),
 		BranchRelativeIfZero((byte)37),
 		Return((byte)38),
-		DebugSource((byte)39);
+		DebugSource((byte)39),
+		Discard((byte)40);
 		private final byte value;
 
 

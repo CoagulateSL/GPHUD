@@ -6,46 +6,48 @@ public interface GSParserTreeConstants
   public int JJTSTART = 0;
   public int JJTVOID = 1;
   public int JJTSTATEMENT = 2;
-  public int JJTINITIALISER = 3;
-  public int JJTASSIGNMENT = 4;
-  public int JJTTYPESPECIFIER = 5;
-  public int JJTIDENTIFIERORLIST = 6;
-  public int JJTIDENTIFIERWITHINDEX = 7;
-  public int JJTIDENTIFIER = 8;
-  public int JJTEXPRESSION = 9;
-  public int JJTRETURN = 10;
-  public int JJTLOGICALOR = 11;
-  public int JJTLOGICALAND = 12;
-  public int JJTINEQUALITY = 13;
-  public int JJTEQUALITY = 14;
-  public int JJTGREATERTHAN = 15;
-  public int JJTLESSTHAN = 16;
-  public int JJTGREATEROREQUALTHAN = 17;
-  public int JJTLESSOREQUALTHAN = 18;
-  public int JJTADD = 19;
-  public int JJTSUBTRACT = 20;
-  public int JJTMULTIPLY = 21;
-  public int JJTDIVIDE = 22;
-  public int JJTUNARYMINUS = 23;
-  public int JJTLOGICALNOT = 24;
-  public int JJTTERM = 25;
-  public int JJTLISTINDEX = 26;
-  public int JJTSTRINGCONSTANT = 27;
-  public int JJTINTEGERCONSTANT = 28;
-  public int JJTFLOATCONSTANT = 29;
-  public int JJTFUNCTIONCALL = 30;
-  public int JJTFUNCTIONNAME = 31;
-  public int JJTPARAMETERS = 32;
-  public int JJTPARAMETER = 33;
-  public int JJTCONDITIONAL = 34;
-  public int JJTLIST = 35;
-  public int JJTWHILELOOP = 36;
+  public int JJTDISCARDEXPRESSION = 3;
+  public int JJTINITIALISER = 4;
+  public int JJTASSIGNMENT = 5;
+  public int JJTTYPESPECIFIER = 6;
+  public int JJTIDENTIFIERORLIST = 7;
+  public int JJTIDENTIFIERWITHINDEX = 8;
+  public int JJTIDENTIFIER = 9;
+  public int JJTEXPRESSION = 10;
+  public int JJTRETURN = 11;
+  public int JJTLOGICALOR = 12;
+  public int JJTLOGICALAND = 13;
+  public int JJTINEQUALITY = 14;
+  public int JJTEQUALITY = 15;
+  public int JJTGREATERTHAN = 16;
+  public int JJTLESSTHAN = 17;
+  public int JJTGREATEROREQUALTHAN = 18;
+  public int JJTLESSOREQUALTHAN = 19;
+  public int JJTADD = 20;
+  public int JJTSUBTRACT = 21;
+  public int JJTMULTIPLY = 22;
+  public int JJTDIVIDE = 23;
+  public int JJTUNARYMINUS = 24;
+  public int JJTLOGICALNOT = 25;
+  public int JJTTERM = 26;
+  public int JJTLISTINDEX = 27;
+  public int JJTSTRINGCONSTANT = 28;
+  public int JJTINTEGERCONSTANT = 29;
+  public int JJTFLOATCONSTANT = 30;
+  public int JJTFUNCTIONCALL = 31;
+  public int JJTFUNCTIONNAME = 32;
+  public int JJTPARAMETERS = 33;
+  public int JJTPARAMETER = 34;
+  public int JJTCONDITIONAL = 35;
+  public int JJTLIST = 36;
+  public int JJTWHILELOOP = 37;
 
 
   public String[] jjtNodeName = {
     "Start",
     "void",
     "Statement",
+    "DiscardExpression",
     "Initialiser",
     "Assignment",
     "TypeSpecifier",
@@ -82,4 +84,4 @@ public interface GSParserTreeConstants
     "WhileLoop",
   };
 }
-/* JavaCC - OriginalChecksum=dc29a1c8bd7383b91ad6663b3316e984 (do not edit this line) */
+/* JavaCC - OriginalChecksum=18f7ac41a89fca48d57510af8125d24e (do not edit this line) */

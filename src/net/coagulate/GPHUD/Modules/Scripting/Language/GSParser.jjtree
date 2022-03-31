@@ -99,7 +99,13 @@ void Statement() #Statement : {}
     WhileLoop() |
     Initialiser() ";" |
     Return() ";" |
-    LOOKAHEAD(2) Assignment() ";"
+    LOOKAHEAD(2) Assignment() ";" |
+    DiscardExpression() ";"
+}
+
+void DiscardExpression() #DiscardExpression : {}
+{
+    Expression()
 }
 
 void Initialiser() #Initialiser : {}
