@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 /*
 Short form here.
 
-[XX Notes] [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about Update Notices] [https://github.com/CoagulateSL/GPHUD/issues Bugs/Requests] [https://github.com/CoagulateSL/GPHUD/projects Roadmap]
+[https://sl.coagulate.net/GPHUD/ChangeLog Changes] [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about Update Notices] [https://github.com/CoagulateSL/GPHUD/issues Bugs/Requests]
 
  */
 public class GPHUD extends SLModule {
