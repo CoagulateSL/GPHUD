@@ -9,6 +9,7 @@
 
 
 // Imported legacy change logs!
+@Classes.Change(date="2022-04-04",component = Core,type=Fix,message="Change error when a KV is mass set via scripting to report properly an unknown KV rather than an internal error.")
 @Classes.Change(date="2022-03-28",component = Core,type=Change,message="Migrated to Java 17")
 @Classes.Change(date="2022-03-28",component = Core,type=Change,message="Moved to Version-Number-Less architecture")
 @Classes.Change(date="2022-03-28",component = Core,type=Change,message="Switched to MySQL native Database driver")
