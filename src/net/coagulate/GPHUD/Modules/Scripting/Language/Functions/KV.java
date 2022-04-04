@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidFunctionCall;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSUnknownIdentifier;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
 
@@ -76,7 +77,8 @@ public class KV {
 			}
 			String kvName = ((BCString) array[2 * i]).getContent();
 			String kvValue = ((BCString) array[(2 * i) + 1]).getContent();
-			final net.coagulate.GPHUD.Modules.KV kv = Modules.getKVDefinition(altState, kvName);
+			final net.coagulate.GPHUD.Modules.KV kv = Modules.getKVDefinitionNullable(altState, kvName);
+			if (kv==null) { throw new GSUnknownIdentifier("gsSetCharacterKVs: KV '"+kv+"' does not exist", true); }
 			if (!kv.appliesTo(character.getContent())) {
 				throw new GSInvalidFunctionCall("KV " + kv.fullName() + " of scope " + kv.scope() + " does not apply to characters",true);
 			}
