@@ -55,12 +55,12 @@ public class GenericXPPool extends Pool {
 					pool,
 					maxxp,
 					period
-			                                                                                                                                                                             ));
+			                                                                                                                                                                             ),true);
 		}
 		if ((awarded+ammount)>maxxp) {
-			throw new UserInputStateException("This will push the character beyond their "+pool.name()+" XP limit, they can be awarded "+(maxxp-awarded)+" XP right now");
+			throw new UserInputStateException("This will push the character beyond their "+pool.name()+" XP limit, they can be awarded "+(maxxp-awarded)+" XP right now",true);
 		}
-		if (reason==null) { throw new UserInputEmptyException("You must supply a reason"); }
+		if (reason==null) { throw new UserInputEmptyException("You must supply a reason",true); }
 		// else award xp :P
 		int maxLevel=targetstate.getKV("Experience.MaxLevel").intValue();
 		if (maxLevel==0) { maxLevel=1000; }
