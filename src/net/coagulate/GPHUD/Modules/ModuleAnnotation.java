@@ -47,7 +47,7 @@ public class ModuleAnnotation extends Module {
 	                            final String value,
 	                            final String type) {
 		if (o==null) {
-			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type);
+			throw new UserInputLookupFailureException("Unable to resolve '"+value+"' to a "+type,true);
 		}
 		return o;
 	}
@@ -111,7 +111,7 @@ public class ModuleAnnotation extends Module {
 	public KV getKVDefinition(final State st,
 	                          @Nonnull final String qualifiedname) {
 		final KV ret=getKVDefinitionNullable(st,qualifiedname);
-		if (ret==null) { throw new UserInputLookupFailureException("Invalid KV "+qualifiedname+" in module "+getName()); }
+		if (ret==null) { throw new UserInputLookupFailureException("Invalid KV "+qualifiedname+" in module "+getName(),true); }
 		return ret;
 	}
 
@@ -121,7 +121,7 @@ public class ModuleAnnotation extends Module {
 	public Command getCommandNullable(final State st,
 	                                  @Nonnull final String commandname) {
 		final Command c=commands.get(commandname.toLowerCase());
-		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name); }
+		if (c==null) { throw new UserInputLookupFailureException("No such command "+commandname+" in module "+name,true); }
 		return c;
 	}
 
@@ -130,7 +130,7 @@ public class ModuleAnnotation extends Module {
 	                    @Nonnull final String itemname) {
 		final Pool p=poolmap.get(itemname.toLowerCase());
 		if (p==null) {
-			throw new UserInputLookupFailureException("There is no pool named "+itemname+" in module "+getName());
+			throw new UserInputLookupFailureException("There is no pool named "+itemname+" in module "+getName(),true);
 		}
 		return p;
 	}
@@ -174,7 +174,7 @@ public class ModuleAnnotation extends Module {
 	public void validateKV(@Nonnull final State st,
 	                       @Nonnull final String key) {
 		if (Modules.getKVDefinitionNullable(st,key)==null) {
-			throw new UserInputLookupFailureException("KV key "+key+" in module "+getName()+" does not exist");
+			throw new UserInputLookupFailureException("KV key "+key+" in module "+getName()+" does not exist",true);
 		}
 	}
 
