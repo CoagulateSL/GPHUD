@@ -6,6 +6,7 @@ import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Database.TooMuchDataException;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.State;
@@ -354,9 +355,13 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public Char getOwner() {
-		final Integer owner=dqi("select owner from charactergroups where charactergroupid=?",getId());
-		if (owner==null) { return null; }
-		return Char.get(owner);
+		try {
+			final Integer owner = dqi("select owner from charactergroups where charactergroupid=?", getId());
+			if (owner == null) {
+				return null;
+			}
+			return Char.get(owner);
+		} catch (NoDataException e) { throw new UserInputLookupFailureException("Group ID "+getNameSafe()+"/"+getId()+" no longer exists."); }
 	}
 
 	/**
