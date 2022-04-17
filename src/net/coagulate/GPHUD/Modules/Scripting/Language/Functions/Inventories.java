@@ -113,15 +113,15 @@ public class Inventories {
         // find Attribute by name
         final Attribute attribute = Attribute.find(st.getInstance(), inventoryName.getContent());
         // Attribute must be a set
-        if (!(attribute.getType() == Attribute.ATTRIBUTETYPE.INVENTORY)) {
+        if (attribute.getType() != Attribute.ATTRIBUTETYPE.INVENTORY) {
             throw new UserInputStateException("Attribute " + attribute.getName() + " is of type " + attribute.getType() + " not INVENTORY");
         }
         // Attribute must belong to instance (!)
-        if (!(attribute.getInstance() == st.getInstance())) {
+        if (attribute.getInstance() != st.getInstance()) {
             throw new SystemImplementationException("Attribute " + attribute + " is not from instance " + st.getInstanceString());
         }
         // check character is of right instance
-        if (!(st.getInstance() == character.getContent().getInstance())) {
+        if (st.getInstance() != character.getContent().getInstance()) {
             throw new SystemImplementationException("Target character " + character.getContent() + " is not from instance " + st.getInstanceString());
         }
         return new Inventory(character.getContent(), attribute);

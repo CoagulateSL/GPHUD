@@ -23,11 +23,11 @@ public class Sets {
 
     private static void preCheck(final State st, final Attribute set, final Char character, final boolean checkAdmin) {
         // Attribute must be a set
-        if (!(set.getType() == Attribute.ATTRIBUTETYPE.SET)) {
+        if (set.getType() != Attribute.ATTRIBUTETYPE.SET) {
             throw new UserInputStateException("Attribute " + set.getName() + " is of type " + set.getType() + " not SET", true);
         }
         // Attribute must belong to instance (!)
-        if (!(set.getInstance() == st.getInstance())) {
+        if (set.getInstance() != st.getInstance()) {
             throw new SystemImplementationException("Attribute " + set + " is not from instance " + st.getInstanceString());
         }
         // check permission
@@ -35,7 +35,7 @@ public class Sets {
             throw new UserAccessDeniedException("You do not have permission Characters.Set" + set.getName() + " required to modify this characters set", true);
         }
         // check character is of right instance
-        if (!(st.getInstance() == character.getInstance())) {
+        if (st.getInstance() != character.getInstance()) {
             throw new SystemImplementationException("Target character " + character + " is not from instance " + st.getInstanceString());
         }
     }

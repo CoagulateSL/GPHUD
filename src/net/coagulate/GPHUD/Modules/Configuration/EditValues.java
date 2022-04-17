@@ -291,10 +291,10 @@ public class EditValues {
 			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(character)) {
-			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to characters");
+			return new ErrorResponse("KV " + kv.fullName() + " of scope " + kv.scope() + " does not apply to characters");
 		}
-		if (!(kv.type()==KVTYPE.INTEGER)) {
-			return new ErrorResponse("This command will only change INTEGER KVs, the requested key "+key+" is of type "+kv.type());
+		if (kv.type() != KVTYPE.INTEGER) {
+			return new ErrorResponse("This command will only change INTEGER KVs, the requested key " + key + " is of type " + kv.type());
 		}
 		// we have very different behaviour depending on the hierarchy type:
 		Integer newvalue=null;
@@ -352,10 +352,10 @@ public class EditValues {
 			return new ErrorResponse("You lack permission '"+kv.editPermission()+"' necessary to set the value of "+key);
 		}
 		if (!kv.appliesTo(character)) {
-			return new ErrorResponse("KV "+kv.fullName()+" of scope "+kv.scope()+" does not apply to characters");
+			return new ErrorResponse("KV " + kv.fullName() + " of scope " + kv.scope() + " does not apply to characters");
 		}
-		if (!(kv.type()==KVTYPE.FLOAT)) {
-			return new ErrorResponse("This command will only change FLOAT KVs, the requested key "+key+" is of type "+kv.type());
+		if (kv.type() != KVTYPE.FLOAT) {
+			return new ErrorResponse("This command will only change FLOAT KVs, the requested key " + key + " is of type " + kv.type());
 		}
 		// we have very different behaviour depending on the hierarchy type:
 		Float newvalue=null;

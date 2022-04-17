@@ -74,23 +74,23 @@ public class ItemsConfig {
                                                     type= Argument.ArgumentType.BOOLEAN) final Boolean destroyable) {
         final Item item = Item.findOrCreate(st, name);
         if (!item.description().equals(description)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Description",item.description(),description,"Changed item '"+item.getName()+"' description");
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Description", item.description(), description, "Changed item '" + item.getName() + "' description");
             item.description(description);
         }
-        if (!(item.weight()==weight)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Weight",""+item.weight(),""+weight,"Changed item '"+item.getName()+"' weight");
+        if (item.weight() != weight) {
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Weight", "" + item.weight(), "" + weight, "Changed item '" + item.getName() + "' weight");
             item.weight(weight);
         }
-        if (!(item.tradable()==tradable)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Tradable",""+item.tradable(),""+tradable,"Changed item '"+item.getName()+"' tradarable flag");
+        if (item.tradable() != tradable) {
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Tradable", "" + item.tradable(), "" + tradable, "Changed item '" + item.getName() + "' tradarable flag");
             item.tradable(tradable);
         }
-        if (!(item.destroyable()==destroyable)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Destroyable",""+item.destroyable(),""+destroyable,"Changed item '"+item.getName()+"' destoyable flag");
+        if (item.destroyable() != destroyable) {
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Destroyable", "" + item.destroyable(), "" + destroyable, "Changed item '" + item.getName() + "' destoyable flag");
             item.destroyable(destroyable);
         }
         return new OKResponse("Item created/updated");

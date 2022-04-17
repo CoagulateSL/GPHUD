@@ -21,11 +21,11 @@ public class Manipulation {
 
     private static Inventory preCheck(final State st, final Attribute inventory, final Char character, final boolean checkAdmin) {
         // Attribute must be an inventory
-        if (!(inventory.getType() == Attribute.ATTRIBUTETYPE.INVENTORY)) {
+        if (inventory.getType() != Attribute.ATTRIBUTETYPE.INVENTORY) {
             throw new UserInputStateException("Attribute " + inventory.getName() + " is of type " + inventory.getType() + " not INVENTORY");
         }
         // Attribute must belong to instance (!)
-        if (!(inventory.getInstance() == st.getInstance())) {
+        if (inventory.getInstance() != st.getInstance()) {
             throw new SystemImplementationException("Attribute " + inventory + " is not from instance " + st.getInstanceString());
         }
         // check permission
@@ -33,7 +33,7 @@ public class Manipulation {
             throw new UserAccessDeniedException("You do not have permission Characters.Set" + inventory.getName() + " required to modify this characters inventory");
         }
         // check character is of right instance
-        if (!(st.getInstance() == character.getInstance())) {
+        if (st.getInstance() != character.getInstance()) {
             throw new SystemImplementationException("Target character " + character + " is not from instance " + st.getInstanceString());
         }
         return new Inventory(character,inventory);
