@@ -13,10 +13,11 @@ jobs:
       packages: read
       
     steps:
-      - name: Checkout repository
+      - name: Checkout CoagulateSL
         uses: actions/checkout@v2
         with:
-          path: GPHUD
+          path: CoagulateSL
+          repository: 'CoagulateSL/CoagulateSL'          
       - name: Checkout JavaCore
         uses: actions/checkout@v2
         with:
@@ -25,8 +26,41 @@ jobs:
       - name: Checkout SLCore
         uses: actions/checkout@v2
         with:
-          repository: 'CoagulateSL/SLCore'          
-          path: SLCore
+          repository: 'CoagulateSL/SLCore'
+          path: SLCore     
+      - name: Checkout JSLBot
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/JSLBot'
+          path: JSLBot          
+      - name: Checkout JSLBotBridge
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/JSLBotBridge'
+          path: JSLBotBridge
+      - name: Checkout Billing
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/Billing'
+          path: Billing
+          token: ${{ secrets.PACKAGE_READ }}
+      - name: Checkout RegionMonitoring
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/RegionMonitoring'
+          path: RegionMonitoring
+          token: ${{ secrets.PACKAGE_READ }}      
+      - name: Checkout LSLR
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/LSLR'
+          path: LSLR
+          token: ${{ secrets.PACKAGE_READ }}
+      - name: Checkout GPHUD
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/GPHUD'
+          path: GPHUD           
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
@@ -36,5 +70,5 @@ jobs:
       - name: Build with Maven
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
-        working-directory: GPHUD/
-        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/GPHUD/settings.xml
+        working-directory: CoagulateSL
+        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/CoagulateSL/settings.xml
