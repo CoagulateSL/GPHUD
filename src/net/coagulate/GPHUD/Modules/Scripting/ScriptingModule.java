@@ -23,8 +23,8 @@ public class ScriptingModule extends ModuleAnnotation {
 	@Override
 	public Command getCommandNullable(@Nonnull final State st,
 	                                  @Nonnull final String commandname) {
-		if (commandname.equalsIgnoreCase("characterresponse") || commandname.equalsIgnoreCase("stringresponse")) {
-			return super.getCommandNullable(st,commandname);
+		if ("characterresponse".equalsIgnoreCase(commandname) || "stringresponse".equalsIgnoreCase(commandname)) {
+			return super.getCommandNullable(st, commandname);
 		}
 		final Script script=Script.findNullable(st,commandname.replaceFirst("gs",""));
 		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists",true); }

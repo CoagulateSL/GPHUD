@@ -152,12 +152,14 @@ public class ItemsConfig {
         f.add(new TextSubHeader("Available Actions"));
         if (!values.get("newaction").isBlank()) {
             final String newAction = values.get("newaction");
-            if (newAction.equalsIgnoreCase("Give To") ||
-                newAction.equalsIgnoreCase("Destroy") ||
-                newAction.equalsIgnoreCase("Move To")) {
-                f.add(new TextError("Can not create new action "+newAction+", this verb is reserved"));
+            if ("Give To".equalsIgnoreCase(newAction) ||
+                    "Destroy".equalsIgnoreCase(newAction) ||
+                    "Move To".equalsIgnoreCase(newAction)) {
+                f.add(new TextError("Can not create new action " + newAction + ", this verb is reserved"));
             } else {
-                try { ItemVerb.create(item,newAction); } catch (final UserException e) {
+                try {
+                    ItemVerb.create(item, newAction);
+                } catch (final UserException e) {
                     f.add(new TextError(e.getLocalizedMessage()));
                 }
             }

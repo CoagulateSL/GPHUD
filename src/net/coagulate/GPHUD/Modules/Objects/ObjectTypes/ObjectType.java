@@ -41,16 +41,30 @@ public abstract class ObjectType {
 	@Nonnull
 	public static ObjectType materialise(final State st,
 	                                     @Nonnull final ObjType object) {
-		final JSONObject json=object.getBehaviour();
-		final String behaviour=json.optString("behaviour","");
-		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
-		if (behaviour.equals("PhantomTeleport")) { return new PhantomTeleporter(st,object); }
-		if (behaviour.equals("RunCommand")) { return new RunCommand(st,object); }
-		if (behaviour.equals("RunScript")) { return new RunScript(st,object); }
-		if (behaviour.equals("PhantomScript")) { return new PhantomScript(st,object); }
-		if (behaviour.equals("NPC")) { return new NPC(st,object); }
-		if (behaviour.equals("PhantomCommand")) { return new PhantomCommand(st,object); }
-		throw new SystemLookupFailureException("Behaviour "+behaviour+" is not known!",true);
+		final JSONObject json = object.getBehaviour();
+		final String behaviour = json.optString("behaviour", "");
+		if ("ClickTeleport".equals(behaviour)) {
+			return new ClickTeleporter(st, object);
+		}
+		if ("PhantomTeleport".equals(behaviour)) {
+			return new PhantomTeleporter(st, object);
+		}
+		if ("RunCommand".equals(behaviour)) {
+			return new RunCommand(st, object);
+		}
+		if ("RunScript".equals(behaviour)) {
+			return new RunScript(st, object);
+		}
+		if ("PhantomScript".equals(behaviour)) {
+			return new PhantomScript(st, object);
+		}
+		if ("NPC".equals(behaviour)) {
+			return new NPC(st, object);
+		}
+		if ("PhantomCommand".equals(behaviour)) {
+			return new PhantomCommand(st, object);
+		}
+		throw new SystemLookupFailureException("Behaviour " + behaviour + " is not known!", true);
 	}
 
 	@Nonnull

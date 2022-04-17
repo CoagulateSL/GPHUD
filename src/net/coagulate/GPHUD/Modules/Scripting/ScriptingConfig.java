@@ -163,29 +163,29 @@ public class ScriptingConfig {
 		f.add(new Button("View ALL","View ALL"));
 		//if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
 		f.br();
-		if (values.get("View Parse Tree").equals("View Parse Tree") || values.get("View ALL").equals("View ALL")) {
+		if ("View Parse Tree".equals(values.get("View Parse Tree")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
-			f.add(debug(st,script.getSource(),STAGE.PARSER));
+			f.add(debug(st, script.getSource(), STAGE.PARSER));
 		}
-		if (values.get("View Compiler Output").equals("View Compiler Output") || values.get("View ALL").equals("View ALL")) {
+		if ("View Compiler Output".equals(values.get("View Compiler Output")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Compiler Output"));
-			f.add(debug(st,script.getSource(),STAGE.COMPILER));
+			f.add(debug(st, script.getSource(), STAGE.COMPILER));
 		}
-		if (values.get("View Raw ByteCode").equals("View Raw ByteCode") || values.get("View ALL").equals("View ALL")) {
+		if ("View Raw ByteCode".equals(values.get("View Raw ByteCode")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Raw ByteCode"));
-			f.add(debug(st,script.getSource(),STAGE.BYTECODE));
+			f.add(debug(st, script.getSource(), STAGE.BYTECODE));
 		}
-		if (values.get("View Disassembly").equals("View Disassembly") || values.get("View ALL").equals("View ALL")) {
+		if ("View Disassembly".equals(values.get("View Disassembly")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Disassembly"));
-			f.add(debug(st,script.getSource(),STAGE.DISASSEMBLY));
+			f.add(debug(st, script.getSource(), STAGE.DISASSEMBLY));
 		}
-		if (values.get("View Simulation").equals("View Simulation") || values.get("View ALL").equals("View ALL")) {
+		if ("View Simulation".equals(values.get("View Simulation")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st,script.getSource(),SIMULATION));
+			f.add(debug(st, script.getSource(), SIMULATION));
 		}
-		if (values.get("View Results").equals("View Results") || values.get("View ALL").equals("View ALL")) {
+		if ("View Results".equals(values.get("View Results")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st,script.getSource(),STAGE.RESULTS));
+			f.add(debug(st, script.getSource(), STAGE.RESULTS));
 		}
 		//if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}

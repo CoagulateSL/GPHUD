@@ -48,8 +48,8 @@ public class TemplateWrapper extends ModuleAnnotation {
 		final Map<String,String> list=new TreeMap<>(Templater.templates);
 		final Map<String,String> listtrimmed=new TreeMap<>();
 		for (final Module m: Modules.getModules()) {
-			if (!m.getName().equals("TemplateWrapper")) {
-				m.addTemplateDescriptions(st,list);
+			if (!"TemplateWrapper".equals(m.getName())) {
+				m.addTemplateDescriptions(st, list);
 			}
 		}
 		for (final Map.Entry<String,String> entry: list.entrySet()) {

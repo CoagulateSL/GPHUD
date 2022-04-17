@@ -67,8 +67,12 @@ public class TeleportCommands {
 		String position=null;
 		String rotation=null;
 		for (final Header h: st.req().getAllHeaders()) {
-			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Position")) { position=h.getValue(); }
-			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Rotation")) { rotation=h.getValue(); }
+			if ("X-SecondLife-Local-Position".equalsIgnoreCase(h.getName())) {
+				position = h.getValue();
+			}
+			if ("X-SecondLife-Local-Rotation".equalsIgnoreCase(h.getName())) {
+				rotation = h.getValue();
+			}
 		}
 		if (position==null || rotation==null) {
 			throw new UserInputEmptyException("Unable to calculate your location/rotation information");

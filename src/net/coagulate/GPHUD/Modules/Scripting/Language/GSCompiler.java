@@ -147,40 +147,40 @@ public class GSCompiler {
 			boolean typed=false;
 			final String type=node.child(0).tokens();
 			// INITIALISE the variable - reverse place name and null content.  Then we just implement "set variable".
-			if (type.equals("String")) {
+			if ("String".equals(type)) {
 				compiled.add(new BCString(node));
-				typed=true;
+				typed = true;
 			}
-			if (type.equals("Response")) {
+			if ("Response".equals(type)) {
 				compiled.add(new BCResponse(node));
-				typed=true;
+				typed = true;
 			}
-			if (type.equals("Integer")) {
+			if ("Integer".equals(type)) {
 				compiled.add(new BCInteger(node));
-				typed=true;
+				typed = true;
 			}
-			if (type.equals("Float")) {
+			if ("Float".equals(type)) {
 				compiled.add(new BCFloat(node));
-				typed=true;
+				typed = true;
 			}
-			if (type.equals("Avatar")) {
+			if ("Avatar".equals(type)) {
 				compiled.add(new BCAvatar(node));
-				typed=true;
+				typed = true;
 			}
-			if (type.equals("Group")) {
+			if ("Group".equals(type)) {
 				compiled.add(new BCGroup(node));
-				typed=true;
+				typed = true;
 			}
-			if (type.equals("Character")) {
+			if ("Character".equals(type)) {
 				compiled.add(new BCCharacter(node));
-				typed=true;
+				typed = true;
 			}
-			if (type.equals("List")) {
+			if ("List".equals(type)) {
 				compiled.add(new BCList(node));
-				typed=true;
+				typed = true;
 			}
 			if (!typed) {
-				throw new SystemImplementationException("Unable to initialise variable of type "+type+" (not implemented)");
+				throw new SystemImplementationException("Unable to initialise variable of type " + type + " (not implemented)");
 			}
 			final BCString identifier=new BCString(node.child(1),node.child(1).tokens());
 			compiled.add(identifier);

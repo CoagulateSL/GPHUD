@@ -679,17 +679,19 @@ public class Region extends TableRow {
 		final int newversion=Interface.convertVersion(version);
 		final int newdatetime=(int) (d.getTime()/1000.0);
 		final int oldprotocol=protocol();
-		if (type.equalsIgnoreCase("hud")) { protocol=oldprotocol; } // we don't log this in the regions table, just the region server protocol
-		if (oldversion==null || olddatetime==null || olddatetime<newdatetime || oldversion<newversion || protocol>oldprotocol) {
-			d("update regions set region"+type+"version=?,region"+type+"datetime=?,protocol=? where regionid=?",newversion,newdatetime,protocol,getId());
-			final String olddesc=formatVersion(oldversion,olddatetime,false);
-			final String newdesc=formatVersion(newversion,newdatetime,false);
-			st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc+" protocol "+oldprotocol+" to "+protocol);
-			final State fake=new State();
+		if ("hud".equalsIgnoreCase(type)) {
+			protocol = oldprotocol;
+		} // we don't log this in the regions table, just the region server protocol
+		if (oldversion == null || olddatetime == null || olddatetime < newdatetime || oldversion < newversion || protocol > oldprotocol) {
+			d("update regions set region" + type + "version=?,region" + type + "datetime=?,protocol=? where regionid=?", newversion, newdatetime, protocol, getId());
+			final String olddesc = formatVersion(oldversion, olddatetime, false);
+			final String newdesc = formatVersion(newversion, newdatetime, false);
+			st.logger().info("Version upgrade of " + type + " from " + olddesc + " to " + newdesc + " protocol " + oldprotocol + " to " + protocol);
+			final State fake = new State();
 			fake.setInstance(st.getInstance());
 			fake.setAvatar(User.getSystem());
-			final String updown=(olddatetime==null || olddatetime<newdatetime?"Upgrade":"Downgrade");
-			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,updown,type,olddesc,newdesc,"Product version "+updown);
+			final String updown = (olddatetime == null || olddatetime < newdatetime ? "Upgrade" : "Downgrade");
+			Audit.audit(fake, Audit.OPERATOR.AVATAR, null, null, updown, type, olddesc, newdesc, "Product version " + updown);
 		}
 	}
 	public int protocol() { return getInt("protocol"); }

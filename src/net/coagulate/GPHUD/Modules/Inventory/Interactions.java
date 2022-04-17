@@ -132,7 +132,7 @@ public class Interactions {
         json.put("incommand", "runtemplate");
         json.put("inventory", inventory.getName());
         json.put("item", item.getName());
-        if (verb.equalsIgnoreCase("Destroy")) {
+        if ("Destroy".equalsIgnoreCase(verb)) {
             json.put("invoke", "Inventory.DestroyItem");
             json.put("arg0name", "quantity");
             json.put("arg0description", "Ammount of " + item.getName() + " to destroy from " + inventory.getName() + "\n(You have " + count + ")\nUse -1 to destroy ALL");
@@ -140,7 +140,7 @@ public class Interactions {
             json.put("args", 1);
             return new JSONResponse(json);
         }
-        if (verb.equalsIgnoreCase("Give To")) {
+        if ("Give To".equalsIgnoreCase(verb)) {
             json.put("invoke", "Inventory.GiveItem");
             json.put("arg0name", "target");
             json.put("arg0description", "Who to give to?");
@@ -152,12 +152,12 @@ public class Interactions {
             json.put("args", 2);
             return new JSONResponse(json);
         }
-        if (verb.equalsIgnoreCase("Move To")) {
+        if ("Move To".equalsIgnoreCase(verb)) {
             json.put("invoke", "Inventory.MoveItem");
             json.put("arg0name", "target");
             json.put("arg0description", "Inventory to move to?");
             json.put("arg0type", "SELECT");
-            int accessible=0;
+            int accessible = 0;
             for (final Attribute checking : Inventory.getAll(state)) {
                 if (checking.getId() != inventory.getId()) {
                     final Inventory checkInventory = new Inventory(state.getCharacter(), checking);

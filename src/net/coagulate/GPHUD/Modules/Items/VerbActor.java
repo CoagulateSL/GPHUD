@@ -18,10 +18,10 @@ public class VerbActor {
         if (payload.has("consumesitem")) {
             response += "[Consumes Item] ";
         }
-        if (payload.optString("action").equalsIgnoreCase("script")) {
+        if ("script".equalsIgnoreCase(payload.optString("action"))) {
             response += "[Script:" + payload.optString("script", "") + "] ";
         }
-        if (payload.optString("action").equalsIgnoreCase("command")) {
+        if ("command".equalsIgnoreCase(payload.optString("action"))) {
             response += "[Command:" + payload.optString("command", "") + "] ";
         }
         return response;
@@ -42,14 +42,14 @@ public class VerbActor {
         }
         Audit.audit(state, Audit.OPERATOR.CHARACTER, null, null, "Use:" + itemVerb.getName(), item.getName(), "" + valueBefore, "" + valueAfter, "Character uses item from " + inventory.getName());
         final String action = payload.optString("action", "");
-        if (action.equalsIgnoreCase("command")) {
+        if ("command".equalsIgnoreCase(action)) {
             return Modules.getJSONTemplateResponse(state, payload.optString("command", ""));
         }
-        if (action.equalsIgnoreCase("script")) {
+        if ("script".equalsIgnoreCase(action)) {
             final GSVM vm = new GSVM(Script.find(state, payload.optString("script", "")));
             vm.introduce("ITEMNAME", new BCString(null, item.getName()));
-            vm.introduce("ITEMVERB",new BCString(null,itemVerb.getName()));
-            vm.introduce("INVENTORY",new BCString(null,inventory.getName()));
+            vm.introduce("ITEMVERB", new BCString(null, itemVerb.getName()));
+            vm.introduce("INVENTORY", new BCString(null, inventory.getName()));
             return vm.execute(state);
         }
         return new OKResponse(itemVerb.getName()+" performed on "+item.getName());

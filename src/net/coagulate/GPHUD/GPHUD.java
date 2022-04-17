@@ -369,7 +369,7 @@ public class GPHUD extends SLModule {
 
 	@Override
 	public Object weakInvoke(final String command, final Object... arguments) {
-		if (command.equalsIgnoreCase("im")) {
+		if ("im".equalsIgnoreCase(command)) {
 			if (!Config.getDistributionRegion().isBlank()) {
 				final Region r = Region.findNullable(Config.getDistributionRegion(), false);
 				if (r == null) {

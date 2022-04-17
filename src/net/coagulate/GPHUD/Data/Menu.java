@@ -171,7 +171,7 @@ public class Menu extends TableRow {
 
 	public void delete(final State st) {
 		final String oldname=getName();
-		if (oldname.equalsIgnoreCase("Main")) {
+		if ("Main".equalsIgnoreCase(oldname)) {
 			throw new UserInputInvalidChoiceException("You can not delete the Main menu as this is hard wired to the main HUD button");
 		}
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"delete","Menus",oldname,"","Deleted menu "+oldname);
