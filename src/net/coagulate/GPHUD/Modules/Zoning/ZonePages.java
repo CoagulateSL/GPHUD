@@ -74,20 +74,21 @@ public abstract class ZonePages {
 	                            final SafeMap values,
 	                            @Nonnull final Zone z,
 	                            final boolean brief) {
-		final boolean full=false;
-		boolean admin=false;
-		if (st.hasPermission("zoning.config")) { admin=true; }
-		final Form f=st.form();
+		final boolean full = false;
+		boolean admin = st.hasPermission("zoning.config");
+		final Form f = st.form();
 		f.noForm();
-		f.add(new TextHeader("Zone: "+z.getName()));
-		final Table t=new Table();
+		f.add(new TextHeader("Zone: " + z.getName()));
+		final Table t = new Table();
 		f.add(t);
 		t.border(false);
-		for (final ZoneArea a: z.getZoneAreas()) {
-			String name="NoPosition";
-			final String[] vectors=a.getVectors();
-			if (vectors!=null) { name=vectors[0]+" - "+vectors[1]; }
-			t.openRow().add("Location").add(a.getRegion(true).getName()+", "+name);
+		for (final ZoneArea a : z.getZoneAreas()) {
+			String name = "NoPosition";
+			final String[] vectors = a.getVectors();
+			if (vectors != null) {
+				name = vectors[0] + " - " + vectors[1];
+			}
+			t.openRow().add("Location").add(a.getRegion(true).getName() + ", " + name);
 			if (admin) { t.add(new Form(st,true,"../deletearea","Delete Area","zoneareaid",a.getId()+"")); }
 		}
 		if (admin) { t.openRow().add("").add(new Form(st,true,"../addarea","Add Area","zone",z.getName())); }

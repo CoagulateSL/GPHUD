@@ -51,15 +51,16 @@ public class Input {
 												@Nonnull final BCString message,
 												@Nonnull final BCInteger allowManual) {
 		if (vm.simulation) {
-			vm.suspend(st,st.getCharacter());
+			vm.suspend(st, st.getCharacter());
 			return target;
 		}
 		target.getContent().validate(st);
-		if (!target.isOnline()) { throw new GSResourceUnavailableException("Character "+target+" is not online",true); }
-		boolean allowManualBoolean=true;
-		if (allowManual.getContent()==0) { allowManualBoolean=false; }
-		vm.queueSelectCharacter(target.getContent(),message.getContent(),allowManualBoolean);
-		vm.suspend(st,target.getContent());
+		if (!target.isOnline()) {
+			throw new GSResourceUnavailableException("Character " + target + " is not online", true);
+		}
+		boolean allowManualBoolean = allowManual.getContent() != 0;
+		vm.queueSelectCharacter(target.getContent(), message.getContent(), allowManualBoolean);
+		vm.suspend(st, target.getContent());
 		return target;
 	}
 

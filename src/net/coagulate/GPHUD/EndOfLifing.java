@@ -47,10 +47,11 @@ public abstract class EndOfLifing {
 	public static boolean hasExpired(final int major,
 	                                 final int minor,
 	                                 final int bugfix) {
-		final Date endoflife=getEndOfLife(major,minor,bugfix);
-		if (endoflife==null) { return false; }
-		if (endoflife.before(new Date())) { return true; }
-		return false;
+		final Date endoflife = getEndOfLife(major, minor, bugfix);
+		if (endoflife == null) {
+			return false;
+		}
+		return endoflife.before(new Date());
 	}
 
 	public static Float expiresIn(final int version) {

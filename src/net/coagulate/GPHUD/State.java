@@ -411,10 +411,7 @@ public class State extends DumpableState {
 		//        Modules.validatePermission(permission);
 		// special case, just in case i do something stupid...
 		if ("User.SuperAdmin".equalsIgnoreCase(permission)) {
-			if (isSuperUser()) {
-				return true;
-			}
-			return false; // not even instance owners or elevated stuff bypasses superadmin powers!
+			return isSuperUser();// not even instance owners or elevated stuff bypasses superadmin powers!
 		}
 		if (isSuperUser()) {
 			return true;

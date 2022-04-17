@@ -323,8 +323,7 @@ public abstract class Management {
 			return new ErrorResponse(character.getName()+" is not a member of faction "+faction.getName());
 		}
 		// must be instance admin or faction owner
-		boolean ok=false;
-		if (faction.getOwner()==st.getCharacter()) { ok=true; }
+		boolean ok = faction.getOwner() == st.getCharacter();
 		if (!ok && st.hasPermission("Faction.Create")) {ok=true; }
 		if (!ok) {
 			return new ErrorResponse("You must be faction owner, or have Faction.Create permissions to set admin flags");

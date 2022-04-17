@@ -50,10 +50,7 @@ public class ConfigurationModule extends ModuleAnnotation {
     public static boolean canConfigure(@Nonnull final State state,
                                        @Nonnull final String moduleName) {
         final URL urlHandler = Modules.getURL(state, "/configuration/" + moduleName);
-        if (urlHandler.requiresPermission().isBlank() || state.hasPermission(urlHandler.requiresPermission())) {
-            return true;
-        }
-        return false;
+        return urlHandler.requiresPermission().isBlank() || state.hasPermission(urlHandler.requiresPermission());
     }
 
     public static boolean canConfigure(@Nonnull final State state,

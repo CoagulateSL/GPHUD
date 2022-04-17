@@ -27,10 +27,7 @@ public class VerbEditor {
     @URL.URLs(url = "/configuration/items/verbs/*")
     public static void itemPage(@Nonnull final State st,
                                 @Nonnull final SafeMap values) {
-        boolean permitted = false;
-        if (st.hasPermission("Items.EditVerbs")) {
-            permitted = true;
-        }
+        boolean permitted = st.hasPermission("Items.EditVerbs");
         final Form f = st.form();
         final String id = st.getDebasedURL().substring("/configuration/items/verbs/".length());
         final ItemVerb itemVerb = ItemVerb.get(Integer.parseInt(id));

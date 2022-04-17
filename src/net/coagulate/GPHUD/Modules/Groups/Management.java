@@ -434,22 +434,22 @@ public abstract class Management {
 	                                @Arguments(name="admin",description="Admin flag to set on the character in this group",
 	                                           type=ArgumentType.BOOLEAN) final boolean admin) {
 		if (!group.hasMember(character)) {
-			return new ErrorResponse(character.getName()+" is not a member of group "+group.getName());
+			return new ErrorResponse(character.getName() + " is not a member of group " + group.getName());
 		}
 		// must be instance admin or group owner
-		boolean ok=false;
-		if (group.getOwner()==st.getCharacter()) { ok=true; }
-		if (!ok && st.hasPermission("Groups.Create")) {ok=true; }
+		boolean ok = group.getOwner() == st.getCharacter();
+		if (!ok && st.hasPermission("Groups.Create")) {
+			ok = true;
+		}
 		if (!ok) {
 			return new ErrorResponse("You must be group owner, or have Groups.Create permissions to set admin flags");
 		}
-		final boolean oldFlag=group.isAdmin(character);
-		group.setAdmin(character,admin);
+		final boolean oldFlag = group.isAdmin(character);
+		group.setAdmin(character, admin);
 		if (admin) {
-			character.hudMessage("You are now a group administrator for "+group.getName());
-		}
-		else {
-			character.hudMessage("You are no longer a group administrator for "+group.getName());
+			character.hudMessage("You are now a group administrator for " + group.getName());
+		} else {
+			character.hudMessage("You are no longer a group administrator for " + group.getName());
 		}
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,character,"SetAdmin",group.getName(),oldFlag+"",admin+"","Set admin flag");
 		return new OKResponse("Successfully altered admin flag on "+character+" in "+group);

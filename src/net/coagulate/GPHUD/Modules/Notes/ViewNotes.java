@@ -82,49 +82,53 @@ public class ViewNotes {
 	@URLs(url="/Notes/ViewChar/*")
 	public static void viewChar(@Nonnull final State st,
 	                            final SafeMap values) {
-		Integer targetid=null;
-		final String[] parts=st.getDebasedURL().split("/");
-		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
-		if (targetid==null) {
-			throw new UserInputValidationParseException("Failed to extract character id from "+parts[parts.length-1]);
+		Integer targetid = null;
+		final String[] parts = st.getDebasedURL().split("/");
+		try {
+			targetid = Integer.parseInt(parts[parts.length - 1]);
+		} catch (@Nonnull final NumberFormatException e) {
 		}
-		final Char target=Char.get(targetid);
-		if (st.getInstance()!=target.getInstance()) {
+		if (targetid == null) {
+			throw new UserInputValidationParseException("Failed to extract character id from " + parts[parts.length - 1]);
+		}
+		final Char target = Char.get(targetid);
+		if (st.getInstance() != target.getInstance()) {
 			throw new UserInputStateException("State instance/target mismatch");
 		}
-		boolean admin=false;
-		if (st.hasPermission("Notes.View")) { admin=true; }
+		boolean admin = st.hasPermission("Notes.View");
 		if (!admin) {
-			if (st.getAvatarNullable()!=target.getOwner()) {
+			if (st.getAvatarNullable() != target.getOwner()) {
 				throw new UserAccessDeniedException("You can only view your own character");
 			}
 		}
-		final Form f=st.form();
-		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(st,AdminNote.get(st.getInstance(),target.getOwner(),target,admin,false),st.getAvatar().getTimeZone()));
+		final Form f = st.form();
+		f.add(new TextHeader((admin ? "Admin " : "User ") + " view of admin notes for " + target));
+		f.add(formatNotes(st, AdminNote.get(st.getInstance(), target.getOwner(), target, admin, false), st.getAvatar().getTimeZone()));
 	}
 
 	@URLs(url="/Notes/ViewUser/*")
 	public static void viewUser(@Nonnull final State st,
 	                            final SafeMap values) {
-		Integer targetid=null;
-		final String[] parts=st.getDebasedURL().split("/");
-		try { targetid=Integer.parseInt(parts[parts.length-1]); } catch (@Nonnull final NumberFormatException e) {}
-		if (targetid==null) {
-			throw new UserInputValidationParseException("Failed to extract user id from "+parts[parts.length-1]);
+		Integer targetid = null;
+		final String[] parts = st.getDebasedURL().split("/");
+		try {
+			targetid = Integer.parseInt(parts[parts.length - 1]);
+		} catch (@Nonnull final NumberFormatException e) {
 		}
-		final User target=User.get(targetid);
+		if (targetid == null) {
+			throw new UserInputValidationParseException("Failed to extract user id from " + parts[parts.length - 1]);
+		}
+		final User target = User.get(targetid);
 
-		boolean admin=false;
-		if (st.hasPermission("Notes.View")) { admin=true; }
+		boolean admin = st.hasPermission("Notes.View");
 		if (!admin) {
-			if (st.getAvatarNullable()!=target) {
+			if (st.getAvatarNullable() != target) {
 				throw new UserAccessDeniedException("You can only view your own character");
 			}
 		}
-		final Form f=st.form();
-		f.add(new TextHeader((admin?"Admin ":"User ")+" view of admin notes for "+target));
-		f.add(formatNotes(st,AdminNote.get(st.getInstance(),target,admin,false),st.getAvatar().getTimeZone()));
+		final Form f = st.form();
+		f.add(new TextHeader((admin ? "Admin " : "User ") + " view of admin notes for " + target));
+		f.add(formatNotes(st, AdminNote.get(st.getInstance(), target, admin, false), st.getAvatar().getTimeZone()));
 	}
 
 	@URLs(url="/Notes/ViewAll",
