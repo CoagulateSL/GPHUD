@@ -191,7 +191,9 @@ public class Currency extends TableRow {
 		final StringBuilder result=new StringBuilder();
 		for (final ResultsRow row: getCurrencyCoins()) {
 			if (ammount >= row.getInt("basemultiple")) {
-				if (result.length()>0) { result.append(" "); }
+				if (!result.isEmpty()) {
+					result.append(" ");
+				}
 				final int bycoin=ammount/row.getInt("basemultiple");
 				result.append(bycoin);
 				if (longform) { result.append(" ").append(row.getString("coinname")); }
@@ -200,7 +202,9 @@ public class Currency extends TableRow {
 			}
 		}
 		if (ammount>0) {
-			if (result.length()>0) { result.append(" "); }
+			if (!result.isEmpty()) {
+				result.append(" ");
+			}
 			result.append(ammount);
 			if (longform) { result.append(" ").append(getBaseCoinName()); }
 			else { result.append(getBaseCoinNameShort()); }

@@ -100,7 +100,9 @@ public class Table implements Renderable {
 		final StringBuilder res=new StringBuilder();
 		if (headerrow!=null) { res.append(headerrow.asText(st)); }
 		for (final Row r: table) {
-			if (res.length()>0) { res.append("\n"); }
+			if (!res.isEmpty()) {
+				res.append("\n");
+			}
 			res.append(r.asText(st));
 		}
 		return res.toString();

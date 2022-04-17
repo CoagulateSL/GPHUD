@@ -773,23 +773,33 @@ public class State extends DumpableState {
 	public String toString() {
 		final StringBuilder ret=new StringBuilder();
 		if (instance!=null) {
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Instance:").append(instance.getName());
 		}
 		if (region!=null) {
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Region:").append(region.getName());
 		}
 		if (zone!=null) {
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Zone:").append(zone.getName());
 		}
 		if (character!=null) {
 			for (final CharacterGroup c: CharacterGroup.getGroups(character)) {
-				if (ret.length()>0) { ret.append(", "); }
+				if (!ret.isEmpty()) {
+					ret.append(", ");
+				}
 				ret.append("Group:").append(c.getName());
 			}
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Char:").append(character.getName());
 		}
 		return ret.toString();

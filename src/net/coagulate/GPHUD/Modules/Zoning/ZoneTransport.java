@@ -19,7 +19,9 @@ public abstract class ZoneTransport {
 		for (final Zone z: r.getZones()) {
 			final String s=z.getTransportFormat();
 			//if (s != null) {
-			if (response.length()>0) { response.append("|"); }
+			if (!response.isEmpty()) {
+				response.append("|");
+			}
 			response.append(s);
 			//}
 		}

@@ -158,11 +158,13 @@ public class Connect {
 		// dump the messages
 		final StringBuilder message=new StringBuilder();
 		for (final String amessage: loginmessages) {
-			if (message.length()>0) { message.append("\n"); }
+			if (!message.isEmpty()) {
+				message.append("\n");
+			}
 			message.append(amessage);
 		}
-		if (message.length()>0) {
-			JSONResponse.message(rawresponse,message.toString(),st.protocol);
+		if (!message.isEmpty()) {
+			JSONResponse.message(rawresponse, message.toString(), st.protocol);
 		}
 		// update message count
 		rawresponse.put("messagecount",Message.count(st));

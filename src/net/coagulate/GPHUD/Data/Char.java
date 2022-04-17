@@ -948,8 +948,8 @@ public class Char extends TableRow {
 		final JSONObject json=new JSONObject();
 		appendConveyance(new State(this),json);
 		//System.out.println("Consider pushing: "+json.toString()+" = "+json.keySet().size());
-		if (json.keySet().size()>0) {
-			new Transmission(this,json).start();
+		if (!json.keySet().isEmpty()) {
+			new Transmission(this, json).start();
 		}
 	}
 

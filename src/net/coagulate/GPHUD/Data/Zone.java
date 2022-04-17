@@ -211,7 +211,9 @@ public class Zone extends TableRow {
 		for (final ZoneArea a: areas) {
 			final String[] vectors=a.getVectors();
 			if (vectors!=null) {
-				if (s.length()>0) { s.append("|"); }
+				if (!s.isEmpty()) {
+					s.append("|");
+				}
 				s.append(getName()).append("|").append(vectors[0]).append("|").append(vectors[1]);
 			}
 		}

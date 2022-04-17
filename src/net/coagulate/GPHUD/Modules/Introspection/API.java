@@ -55,7 +55,9 @@ public abstract class API {
 				final String[] split=proposedcommand.split("\\.");
 				final StringBuilder options=new StringBuilder();
 				for (final String s: p.getChoices(st)) {
-					if (options.length()>0) { options.append(", "); }
+					if (!options.isEmpty()) {
+						options.append(", ");
+					}
 					options.append(s);
 				}
 				f.add(" ["+options+"]");

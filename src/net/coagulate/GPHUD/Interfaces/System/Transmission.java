@@ -283,7 +283,9 @@ public class Transmission extends Thread {
 		for (int i=2;i<5;i++) {
 			if (caller!=null && caller.length>i) {
 				final StackTraceElement ele=caller[i];
-				if (ret.length()>0) { ret.append(" <- "); }
+				if (!ret.isEmpty()) {
+					ret.append(" <- ");
+				}
 				ret.append(ele.getClassName().replaceFirst("net.coagulate.GPHUD.","")).append(".").append(ele.getMethodName()).append(":").append(ele.getLineNumber());
 			}
 		}

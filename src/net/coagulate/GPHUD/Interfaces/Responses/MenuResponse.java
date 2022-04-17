@@ -55,9 +55,12 @@ public class MenuResponse implements Response {
 		final StringBuilder s=new StringBuilder();
 		if (header!=null && !header.isEmpty()) { s.append(new TextHeader(header).asHtml(st,rich)); }
 		for (final Renderable r: menu) {
-			if (s.length()>0) {
-				if (rich) { s.append("<br>"); }
-				else { s.append(" | "); }
+			if (!s.isEmpty()) {
+				if (rich) {
+					s.append("<br>");
+				} else {
+					s.append(" | ");
+				}
 			}
 			s.append(r.asHtml(st,rich));
 		}

@@ -281,7 +281,7 @@ public abstract class Modules {
 								try {
 									StringBuilder string = new StringBuilder();
 									while (!words[i].endsWith("\"")) {
-										if (string.length() > 0) {
+										if (!string.isEmpty()) {
 											string.append(" ");
 										}
 										string.append(words[i]);

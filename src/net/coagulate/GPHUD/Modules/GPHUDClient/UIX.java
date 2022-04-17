@@ -29,14 +29,14 @@ public class UIX {
 		if (commandtoinvoke.contains(" ")) { return Modules.run(st,commandtoinvoke,false); }
 		// we just ignore effects clicks that happen when effects is disabled ...  bit of a bodge really :P
 		if (commandtoinvoke.toLowerCase().startsWith("effects.")) {
-			if (!Modules.get(null,"Effects").isEnabled(st)) {
+			if (!Modules.get(null, "Effects").isEnabled(st)) {
 				// no-op then
 				return new NoResponse();
 			}
 		}
-		if (Modules.getCommand(st,commandtoinvoke).getArguments().size()==0) {
+		if (Modules.getCommand(st, commandtoinvoke).getArguments().isEmpty()) {
 			//argh, it's argless cap'n
-			return Modules.run(st,commandtoinvoke,false);
+			return Modules.run(st, commandtoinvoke, false);
 		}
 		return Modules.getJSONTemplateResponse(st,commandtoinvoke);
 	}

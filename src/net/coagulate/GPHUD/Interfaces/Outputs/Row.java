@@ -51,7 +51,9 @@ public class Row implements Renderable {
 	public String asText(final State st) {
 		final StringBuilder s=new StringBuilder();
 		for (final Cell c: row) {
-			if (s.length()>0) { s.append(" : "); }
+			if (!s.isEmpty()) {
+				s.append(" : ");
+			}
 			s.append(c.asText(st));
 		}
 		return s.toString();
