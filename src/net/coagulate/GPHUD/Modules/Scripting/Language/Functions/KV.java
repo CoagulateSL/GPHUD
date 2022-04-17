@@ -67,26 +67,30 @@ public class KV {
 											  @Nonnull final BCList setPairs) {
 		final State altState=new State(character.getContent());
 		character.getContent().validate(state);
-		ByteCodeDataType[] array = setPairs.getContent().toArray(new ByteCodeDataType[0]);
+		final ByteCodeDataType[] array = setPairs.getContent().toArray(new ByteCodeDataType[0]);
 		for (int i=0;i<(array.length/2);i++) {
-			if (!(array[2*i] instanceof BCString)) {
-				throw new GSInvalidFunctionCall("gsSetCharacterKVs: All parameters in the list must be Strings, parameter "+(2*i)+" (counting from zero) is of type "+array[2*i].getClass().getSimpleName(),true);
-			}
-			if (!(array[(2*i)+1] instanceof BCString)) {
-				throw new GSInvalidFunctionCall("gsSetCharacterKVs: All parameters in the list must be Strings, parameter "+((2*i)+1)+" (counting from zero) is of type "+array[(2*i)+1].getClass().getSimpleName(),true);
-			}
-			String kvName = ((BCString) array[2 * i]).getContent();
-			String kvValue = ((BCString) array[(2 * i) + 1]).getContent();
-			final net.coagulate.GPHUD.Modules.KV kv = Modules.getKVDefinitionNullable(altState, kvName);
-			if (kv==null) { throw new GSUnknownIdentifier("gsSetCharacterKVs: KV '"+kv+"' does not exist", true); }
-			if (!kv.appliesTo(character.getContent())) {
-				throw new GSInvalidFunctionCall("KV " + kv.fullName() + " of scope " + kv.scope() + " does not apply to characters",true);
-			}
-			String oldValue=altState.getRawKV(character.getContent(),kvName);
-			if (oldValue==null) { oldValue=""; }
-			if (!oldValue.equals(kvValue)) {
-				altState.setKV(character.getContent(), kvName, kvValue, false);
-				Audit.audit(state, Audit.OPERATOR.CHARACTER, null, character.getContent(), "SetCharKV", character.getContent().getName() + "/" + kvName, oldValue, kvValue, "Changed character scope KV configuration (Scripted)");
+            if (!(array[2 * i] instanceof BCString)) {
+                throw new GSInvalidFunctionCall("gsSetCharacterKVs: All parameters in the list must be Strings, parameter " + (2 * i) + " (counting from zero) is of type " + array[2 * i].getClass().getSimpleName(), true);
+            }
+            if (!(array[(2 * i) + 1] instanceof BCString)) {
+                throw new GSInvalidFunctionCall("gsSetCharacterKVs: All parameters in the list must be Strings, parameter " + ((2 * i) + 1) + " (counting from zero) is of type " + array[(2 * i) + 1].getClass().getSimpleName(), true);
+            }
+            final String kvName = ((BCString) array[2 * i]).getContent();
+            final String kvValue = ((BCString) array[(2 * i) + 1]).getContent();
+            final net.coagulate.GPHUD.Modules.KV kv = Modules.getKVDefinitionNullable(altState, kvName);
+            if (kv == null) {
+                throw new GSUnknownIdentifier("gsSetCharacterKVs: KV '" + kv + "' does not exist", true);
+            }
+            if (!kv.appliesTo(character.getContent())) {
+                throw new GSInvalidFunctionCall("KV " + kv.fullName() + " of scope " + kv.scope() + " does not apply to characters", true);
+            }
+            String oldValue = altState.getRawKV(character.getContent(), kvName);
+            if (oldValue == null) {
+                oldValue = "";
+            }
+            if (!oldValue.equals(kvValue)) {
+                altState.setKV(character.getContent(), kvName, kvValue, false);
+                Audit.audit(state, Audit.OPERATOR.CHARACTER, null, character.getContent(), "SetCharKV", character.getContent().getName() + "/" + kvName, oldValue, kvValue, "Changed character scope KV configuration (Scripted)");
 			}
 		}
 		character.getContent().considerPushingConveyances();

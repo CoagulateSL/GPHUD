@@ -27,33 +27,35 @@ public class VerbEditor {
     @URL.URLs(url = "/configuration/items/verbs/*")
     public static void itemPage(@Nonnull final State st,
                                 @Nonnull final SafeMap values) {
-        boolean permitted=false;
-        if (st.hasPermission("Items.EditVerbs")) { permitted=true; }
+        boolean permitted = false;
+        if (st.hasPermission("Items.EditVerbs")) {
+            permitted = true;
+        }
         final Form f = st.form();
-        String id = st.getDebasedURL().substring("/configuration/items/verbs/".length());
-        ItemVerb itemVerb = ItemVerb.get(Integer.parseInt(id));
+        final String id = st.getDebasedURL().substring("/configuration/items/verbs/".length());
+        final ItemVerb itemVerb = ItemVerb.get(Integer.parseInt(id));
         if (itemVerb.getInstance() != st.getInstance()) {
             throw new UserInputStateException("ItemVerb " + id + " is from a different instance");
         }
         if (permitted && !values.get("Submit").isBlank()) {
-            JSONObject payload=new JSONObject();
-            payload.put("action",values.get("actiontype"));
-            payload.put("command",values.get("command"));
-            payload.put("script",values.get("script"));
+            final JSONObject payload = new JSONObject();
+            payload.put("action", values.get("actiontype"));
+            payload.put("command", values.get("command"));
+            payload.put("script", values.get("script"));
             if (!values.get("consumesitem").isBlank()) {
-                payload.put("consumesitem","true");
+                payload.put("consumesitem", "true");
             }
             itemVerb.payload(payload);
         }
-        Item item=itemVerb.getItem();
-        JSONObject payload=itemVerb.payload();
-        f.add(new Link("&lt;- Back to Items list","/GPHUD/configuration/items"));
+        final Item item = itemVerb.getItem();
+        final JSONObject payload = itemVerb.payload();
+        f.add(new Link("&lt;- Back to Items list", "/GPHUD/configuration/items"));
         f.add(new Text("<br>"));
-        f.add(new Link("&lt;- Back to Item "+item.getName(),"/GPHUD/configuration/items/"+item.getId()));
+        f.add(new Link("&lt;- Back to Item " + item.getName(), "/GPHUD/configuration/items/" + item.getId()));
         f.add(new Text("<br>"));
-        f.add(new TextHeader("Item: " + item.getName()+"<br>Verb: "+itemVerb.getName()));
+        f.add(new TextHeader("Item: " + item.getName() + "<br>Verb: " + itemVerb.getName()));
         //f.noForm();
-        Table table=new Table();
+        final Table table = new Table();
         f.add(table);
         table.border(false);
         table.add(new Cell("Description").th()).add(item.description());
@@ -66,15 +68,18 @@ public class VerbEditor {
                 "document.getElementById(\"scriptrow\").hidden=!(action==\"script\"); " +
                 "document.getElementById(\"commandrow\").hidden=!(action==\"command\"); " +
                 "} update(); </script>");
-        table.openRow().add("Consumes Item").add(new CheckBox("consumesitem").setValue(payload.optString("consumesitem","")));
-        if (permitted) { table.openRow().add(new Cell(new Button("Submit"),2)); }
-        else { table.openRow().add(new Cell("You do not have permission to edit this item action",2)); }
+        table.openRow().add("Consumes Item").add(new CheckBox("consumesitem").setValue(payload.optString("consumesitem", "")));
+        if (permitted) {
+            table.openRow().add(new Cell(new Button("Submit"), 2));
+        } else {
+            table.openRow().add(new Cell("You do not have permission to edit this item action", 2));
+        }
     }
 
-    private static DropDownList selector(String value) {
-        DropDownList ret=new DropDownList("actiontype");
-        ret.add("script","Invoke Script");
-        ret.add("command","Invoke Command");
+    private static DropDownList selector(final String value) {
+        final DropDownList ret = new DropDownList("actiontype");
+        ret.add("script", "Invoke Script");
+        ret.add("command", "Invoke Command");
         ret.setValue(value);
         ret.id("actiontype");
         ret.javascriptOnChange("update();");
@@ -82,7 +87,7 @@ public class VerbEditor {
     }
 
 
-    @URL.URLs(url="/configuration/items/deleteverb",
+    @URL.URLs(url = "/configuration/items/deleteverb",
               requiresPermission="Items.DeleteVerb")
     public static void deleteForm(@Nonnull final State st,
                                     @Nonnull final SafeMap values) {
@@ -106,7 +111,7 @@ public class VerbEditor {
                                                                    type= Argument.ArgumentType.TEXT_ONELINE,
                                                                    max=128) final String verb) {
         if (item.getInstance()!=st.getInstance()) { throw new SystemImplementationException("Item instance / state instance mismatch"); }
-        ItemVerb itemVerb=ItemVerb.findNullable(item,verb);
+        final ItemVerb itemVerb = ItemVerb.findNullable(item, verb);
         if (itemVerb==null) { return new ErrorResponse("There is no verb named '"+verb+"' for item "+item.getName()); }
         itemVerb.delete();
         Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Delete","Verb",verb,null,"Deleted action "+verb+" from item "+item.getName());

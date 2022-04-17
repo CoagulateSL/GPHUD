@@ -42,10 +42,12 @@ public class RunScript extends ObjectType {
 	}
 
 	@Override
-	public void payload(State st, @Nonnull JSONObject response, @Nonnull Region region, @Nullable String url) {
-		super.payload(st, response, region, url);
-		if (json.has("maxdistance")) { response.put("maxdistance",json.get("maxdistance")); }
-	}
+    public void payload(final State st, @Nonnull final JSONObject response, @Nonnull final Region region, @Nullable final String url) {
+        super.payload(st, response, region, url);
+        if (json.has("maxdistance")) {
+            response.put("maxdistance", json.get("maxdistance"));
+        }
+    }
 
 	@Override
 	public void update(@Nonnull final State st) {
@@ -74,7 +76,7 @@ public class RunScript extends ObjectType {
 		if (json.optString("script","").isEmpty()) {
 			return new ErrorResponse("Script to invoke is not configured in this object type");
 		}
-		Script script=Script.findNullable(st,json.getString("script"));
+        final Script script = Script.findNullable(st, json.getString("script"));
 		if (script==null) {
 			return new ErrorResponse("Script '" + json.getString("script") + "' does not exist");
 		}

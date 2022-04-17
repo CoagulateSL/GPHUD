@@ -14,11 +14,11 @@ public abstract class GSException extends UserException {
 		super(reason,cause);
 	}
 
-	public GSException(String reason, boolean suppresslogging) {
-		super(reason, suppresslogging);
-	}
+	public GSException(final String reason, final boolean suppresslogging) {
+        super(reason, suppresslogging);
+    }
 
-	public GSException(String reason, Throwable cause, boolean suppresslogging) {
-		super(reason, cause, suppresslogging);
-	}
+    public GSException(final String reason, final Throwable cause, final boolean suppresslogging) {
+        super(reason, cause, suppresslogging);
+    }
 }

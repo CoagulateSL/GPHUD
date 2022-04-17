@@ -1,9 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
-import net.coagulate.GPHUD.Data.Audit;
-import net.coagulate.GPHUD.Data.CharacterSet;
 import net.coagulate.GPHUD.Data.Item;
-import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
@@ -22,7 +19,7 @@ public class Items {
     public static BCString gsItemDescription(@Nonnull final State st,
                                      @Nonnull final GSVM vm,
                                      @Nonnull final BCString itemName) {
-        Item item=Item.findNullable(st.getInstance(),itemName.getContent());
+        final Item item = Item.findNullable(st.getInstance(), itemName.getContent());
         return new BCString(null,item==null?"":item.description());
     }
 
@@ -36,7 +33,7 @@ public class Items {
     public static BCInteger gsItemWeight(@Nonnull final State st,
                                              @Nonnull final GSVM vm,
                                              @Nonnull final BCString itemName) {
-        Item item=Item.findNullable(st.getInstance(),itemName.getContent());
+        final Item item = Item.findNullable(st.getInstance(), itemName.getContent());
         return new BCInteger(null,item==null?-1:item.weight());
     }
 }

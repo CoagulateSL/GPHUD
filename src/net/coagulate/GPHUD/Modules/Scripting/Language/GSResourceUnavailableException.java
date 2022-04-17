@@ -14,13 +14,13 @@ public class GSResourceUnavailableException extends GSException {
 		super(reason,cause);
 	}
 
-	public GSResourceUnavailableException(String reason, boolean suppresslogging) {
-		super(reason, suppresslogging);
-	}
+	public GSResourceUnavailableException(final String reason, final boolean suppresslogging) {
+        super(reason, suppresslogging);
+    }
 
-	public GSResourceUnavailableException(String reason, Throwable cause, boolean suppresslogging) {
-		super(reason, cause, suppresslogging);
-	}
+    public GSResourceUnavailableException(final String reason, final Throwable cause, final boolean suppresslogging) {
+        super(reason, cause, suppresslogging);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nonnull

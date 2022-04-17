@@ -129,7 +129,7 @@ public abstract class MenuConfig {
 		example.openRow().add("1").add("2").add("3");
 		if (st.hasPermission("Menus.Config")) {
 			if (!values.get("cloneas").isEmpty()) {
-				String newname=values.get("cloneas");
+				final String newname = values.get("cloneas");
 				if (Menu.getMenuNullable(st,newname)==null) {
 					Menu.create(st,newname,m.getDescription(), m.getJSON());
 					f.add(new TextOK("Menu cloned, note you are still editing the original"));

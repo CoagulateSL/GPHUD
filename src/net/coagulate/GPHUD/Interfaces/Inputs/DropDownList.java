@@ -27,11 +27,11 @@ public class DropDownList extends Input {
 	boolean submitOnChange;
 
 	@Nonnull
-	private DropDownList clone(String newName) {
-		DropDownList newList=new DropDownList(newName);
-		newList.choices.putAll(choices);
-		return newList;
-	}
+    private DropDownList clone(final String newName) {
+        final DropDownList newList = new DropDownList(newName);
+        newList.choices.putAll(choices);
+        return newList;
+    }
 
 	public DropDownList(final String name) {
 		this.name=name;
@@ -71,10 +71,10 @@ public class DropDownList extends Input {
 			final DropDownList permissions = new DropDownList(name);
 			for (final Module mod : Modules.getModules()) {
 				for (final Permission p : mod.getPermissions(st).values()) {
-					try {
-						permissions.add(mod.getName() + "." + p.name(), mod.getName() + "." + p.name());
-					} catch (NoDataException ignored) {
-					} // the attribute went away
+                    try {
+                        permissions.add(mod.getName() + "." + p.name(), mod.getName() + "." + p.name());
+                    } catch (final NoDataException ignored) {
+                    } // the attribute went away
 				}
 			}
 			return permissions;
@@ -110,15 +110,16 @@ public class DropDownList extends Input {
 	}
 
 	private static final Cache<Instance,DropDownList> scriptsCache=Cache.getCache("gphud/scriptsdropdown",CacheConfig.SHORT);
-    public static DropDownList getScriptsList(State st, String name) {
-		return scriptsCache.get(st.getInstance(),()-> {
-			final DropDownList scriptsList = new DropDownList(name);
-			Set<Script> list = Script.getScripts(st.getInstance());
-			for (Script script : list) {
-				scriptsList.add(script.getName(), script.getName());
-			}
-			return scriptsList;
-		}).clone(name);
+
+    public static DropDownList getScriptsList(final State st, final String name) {
+        return scriptsCache.get(st.getInstance(), () -> {
+            final DropDownList scriptsList = new DropDownList(name);
+            final Set<Script> list = Script.getScripts(st.getInstance());
+            for (final Script script : list) {
+                scriptsList.add(script.getName(), script.getName());
+            }
+            return scriptsList;
+        }).clone(name);
     }
 
     // ---------- INSTANCE ----------
@@ -171,5 +172,10 @@ public class DropDownList extends Input {
 		return this;
 	}
 	String id="";
-	@Nonnull public DropDownList id(String newId) { this.id=newId; return this; }
+
+    @Nonnull
+    public DropDownList id(final String newId) {
+        this.id = newId;
+        return this;
+    }
 }

@@ -33,10 +33,10 @@ public class MenuModule extends ModuleAnnotation {
     public static String generateMainMenu(final State st,
                                           final String key) {
         if (st.mainMenuTemplate == null) {
-            JSONObject menu = Modules.getJSONTemplate(st, "menus.main");
+            final JSONObject menu = Modules.getJSONTemplate(st, "menus.main");
             if (st.getCharacter().getProtocol() >= 4) { // shortened format
                 int button = 0;
-                StringBuilder newMainMenuTemplate = new StringBuilder();
+                final StringBuilder newMainMenuTemplate = new StringBuilder();
 
                 boolean first = true;
                 while (menu.has("arg0button" + button)) {

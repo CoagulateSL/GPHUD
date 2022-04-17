@@ -58,22 +58,30 @@ public class Row implements Renderable {
 	}
 
 	@Nonnull
-	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
-		return asHtml(st,rich,0);
-	}
-	public String asHtml(State st, boolean rich, int rownum) {
-		final StringBuilder s=new StringBuilder("<tr");
-		if (!id.isBlank()) { s.append(" id=\"").append(id).append("\" "); }
-		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
-		else { s.append(" bgcolor=#").append((rownum % 2)==1?"f0f0f0":"ffffff"); }
-		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }
-		s.append(">");
-		for (final Cell c: row) {
-			c.header=isHeader();
-			s.append(c.asHtml(st,rich));
-		}
+    @Override
+    public String asHtml(final State st,
+                         final boolean rich) {
+        return asHtml(st, rich, 0);
+    }
+
+    public String asHtml(final State st, final boolean rich, final int rownum) {
+        final StringBuilder s = new StringBuilder("<tr");
+        if (!id.isBlank()) {
+            s.append(" id=\"").append(id).append("\" ");
+        }
+        if (!bgcolor.isEmpty()) {
+            s.append(" bgcolor=").append(bgcolor);
+        } else {
+            s.append(" bgcolor=#").append((rownum % 2) == 1 ? "f0f0f0" : "ffffff");
+        }
+        if (!alignment.isEmpty()) {
+            s.append(" align=").append(alignment);
+        }
+        s.append(">");
+        for (final Cell c : row) {
+            c.header = isHeader();
+            s.append(c.asHtml(st, rich));
+        }
 		return s+"</tr>";
 	}
 
@@ -103,7 +111,8 @@ public class Row implements Renderable {
 		this.alignment=alignment;
 	}
 	private String id="";
-    public void id(String rowID) {
-    	this.id=rowID;
+
+    public void id(final String rowID) {
+        this.id = rowID;
     }
 }

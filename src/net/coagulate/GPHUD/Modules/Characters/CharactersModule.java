@@ -44,18 +44,23 @@ public class CharactersModule extends ModuleAnnotation {
 
 
 	@Override
-	public Permission getPermission(State st, @Nonnull String itemname) {
-		Permission p=super.getPermission(st, itemname);
-		if (p!=null) { return p; }
-		if (itemname.toLowerCase().startsWith("set")) {
-			String attributeName=itemname.substring(3);
-			try {
-				Attribute attribute = st.getAttribute(attributeName);
-				if (attribute==null) { return null; }
-				return new AttributePermission(attribute);
-			} catch (UserInputLookupFailureException ignored) {}
+    public Permission getPermission(final State st, @Nonnull final String itemname) {
+        final Permission p = super.getPermission(st, itemname);
+        if (p != null) {
+            return p;
+        }
+        if (itemname.toLowerCase().startsWith("set")) {
+            final String attributeName = itemname.substring(3);
+            try {
+                final Attribute attribute = st.getAttribute(attributeName);
+                if (attribute == null) {
+                    return null;
+                }
+                return new AttributePermission(attribute);
+            } catch (final UserInputLookupFailureException ignored) {
+            }
 
-		}
+        }
 		return null;
 	}
 
@@ -104,11 +109,11 @@ public class CharactersModule extends ModuleAnnotation {
 			return Currency.find(st,attr.getName()).shortSum(st);
 		}
 		if (attr.getType()==SET) {
-			CharacterSet set=new CharacterSet(st.getCharacter(),attr);
+            final CharacterSet set = new CharacterSet(st.getCharacter(), attr);
 			return set.countElements()+" / "+set.countTotal();
 		}
 		if (attr.getType()==INVENTORY) {
-			Inventory inventory=new Inventory(st.getCharacter(),attr);
+            final Inventory inventory = new Inventory(st.getCharacter(), attr);
 			return inventory.countElements()+" / "+inventory.countTotal();
 		}
 		throw new SystemConsistencyException("Failed to resolve templateAttribute for "+attr+" of type "+attr.getType());

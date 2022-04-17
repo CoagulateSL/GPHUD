@@ -153,8 +153,8 @@ public class Table implements Renderable {
 		openrow.setbgcolor(bgcolor);
 	}
 
-    public Table openRow(String rowID) {
-		openReturnRow().id(rowID);
-		return this;
+    public Table openRow(final String rowID) {
+        openReturnRow().id(rowID);
+        return this;
     }
 }

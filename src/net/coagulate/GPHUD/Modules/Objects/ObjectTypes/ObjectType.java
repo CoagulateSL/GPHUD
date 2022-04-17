@@ -77,7 +77,7 @@ public abstract class ObjectType {
 	}
 
     public static Set<String> getObjectTypesSet() {
-		Set<String> types=new HashSet<>();
+		final Set<String> types = new HashSet<>();
 		types.add("ClickTeleport");
 		types.add("PhantomTeleport");
 		types.add("RunCommand");
@@ -117,11 +117,13 @@ public abstract class ObjectType {
 	public Response collide(final State st,
 	                        final Char collider) { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
-	protected void populateVmVariables(State st, GSVM vm) {
-		if (st.getObject().getObjectType()==null) { throw new SystemImplementationException("In object driver but no object type is defined (?)"); }
-		vm.introduce("OBJECTNAME",new BCString(null,st.getObject().getName()));
-		vm.introduce("OBJECTTYPE",new BCString(null,st.getObject().getObjectType().getName()));
-		vm.introduce("OBJECTKEY",new BCString(null,st.getObject().getUUID()));
+	protected void populateVmVariables(final State st, final GSVM vm) {
+		if (st.getObject().getObjectType() == null) {
+			throw new SystemImplementationException("In object driver but no object type is defined (?)");
+		}
+		vm.introduce("OBJECTNAME", new BCString(null, st.getObject().getName()));
+		vm.introduce("OBJECTTYPE", new BCString(null, st.getObject().getObjectType().getName()));
+		vm.introduce("OBJECTKEY", new BCString(null, st.getObject().getUUID()));
 	}
 
 	@Nullable
@@ -138,28 +140,31 @@ public abstract class ObjectType {
 	}
 
 	protected final void editFormScript(@Nonnull final State st, @Nonnull final Table t) {
-		DropDownList scriptsList = DropDownList.getScriptsList(st, "script");
+		final DropDownList scriptsList = DropDownList.getScriptsList(st, "script");
 		scriptsList.setValue(json.optString("script",""));
 		t.add("Script").add(scriptsList);
 		t.openRow();
 	}
+
 	protected final void editFormDistance(@Nonnull final State st, @Nonnull final Table t) {
-		String maxdistance = json.optString("maxdistance", "10");
+		final String maxdistance = json.optString("maxdistance", "10");
 		t.add("Max Click Distance (0=any)").add(new TextInput("maxdistance", maxdistance));
 		t.openRow();
 	}
-	protected final boolean updateScript(State st) {
-		final String script=st.postMap().get("script");
-		if (!script.isBlank() && !script.equals(json.optString("script",""))) {
-			json.put("script",st.postMap().get("script"));
+
+	protected final boolean updateScript(final State st) {
+		final String script = st.postMap().get("script");
+		if (!script.isBlank() && !script.equals(json.optString("script", ""))) {
+			json.put("script", st.postMap().get("script"));
 			return true;
 		}
 		return false;
 	}
-	protected final boolean updateDistance(State st) {
-		final String maxdistance=st.postMap().get("maxdistance");
-		if (!maxdistance.isBlank() && !maxdistance.equals(json.optString("maxdistance",""))) {
-			json.put("maxdistance",st.postMap().get("maxdistance"));
+
+	protected final boolean updateDistance(final State st) {
+		final String maxdistance = st.postMap().get("maxdistance");
+		if (!maxdistance.isBlank() && !maxdistance.equals(json.optString("maxdistance", ""))) {
+			json.put("maxdistance", st.postMap().get("maxdistance"));
 			return true;
 		}
 		return false;

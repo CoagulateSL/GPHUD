@@ -44,12 +44,13 @@ public class State extends DumpableState {
 
 	public static void maintenance() {
 		try {
-			for (Thread entry : stateMap.keySet()) {
+			for (final Thread entry : stateMap.keySet()) {
 				if (!entry.isAlive()) {
 					stateMap.remove(entry);
 				}
 			}
-		} catch (ConcurrentModificationException ignored) {}
+		} catch (final ConcurrentModificationException ignored) {
+		}
 	}
 	public static State get() {
 		if (!stateMap.containsKey(Thread.currentThread())) { throw new SystemImplementationException("GPHUD session State is not initialised at this point."); }
@@ -490,8 +491,8 @@ public class State extends DumpableState {
 			if (character!=null) { zone=character.getZone(); }
 			for (final Event e: Event.getActive(this)) {
 				//boolean playerInZone=false;
-				for (Zone eventZone:e.getZones()) {
-					if (eventZone==zone) {
+				for (final Zone eventZone : e.getZones()) {
+					if (eventZone == zone) {
 						eventMap.put(e.getId(), e);
 					}
 				}
@@ -646,27 +647,31 @@ public class State extends DumpableState {
 		return out;
 	}
 
-	public void purgeCache(final TableRow dbo) { kvMaps.remove(dbo); }
+	public void purgeCache(final TableRow dbo) {
+		kvMaps.remove(dbo);
+	}
 
 	public void setKV(@Nonnull final TableRow dbo,
-	                  @Nonnull final String key,
-	                  @Nullable String value) {
-		setKV(dbo,key,value,true);
+					  @Nonnull final String key,
+					  @Nullable final String value) {
+		setKV(dbo, key, value, true);
 	}
-	public void setKV(	@Nonnull final TableRow dbo,
-						@Nonnull final String key,
-						@Nullable String value,
-						boolean pushUpdate) {
-		final KV definition=getKVDefinition(key);
-		if (value!=null && !value.isEmpty()) {
+
+	public void setKV(@Nonnull final TableRow dbo,
+					  @Nonnull final String key,
+					  @Nullable String value,
+					  final boolean pushUpdate) {
+		final KV definition = getKVDefinition(key);
+		if (value != null && !value.isEmpty()) {
 			if (!definition.template()) { // these are hard to verify :P
 				switch (definition.type()) {
 					case TEXT: // no checking here :P
 						break;
 					case INTEGER: // check it parses into an int
-						try { Integer.parseInt(value); }
-						catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a whole number, you entered '"+value+"' ("+e.getLocalizedMessage()+")",true);
+						try {
+							Integer.parseInt(value);
+						} catch (@Nonnull final NumberFormatException e) {
+							throw new UserInputValidationParseException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")", true);
 						}
 						break;
 					case FLOAT:
@@ -1034,8 +1039,14 @@ public class State extends DumpableState {
 	}
 
 	private boolean suppressOutput =false;
-	public void suppressOutput(boolean template) { this.suppressOutput =template; }
-	public boolean suppressOutput() { return suppressOutput; }
+
+	public void suppressOutput(final boolean template) {
+		this.suppressOutput = template;
+	}
+
+	public boolean suppressOutput() {
+		return suppressOutput;
+	}
 
 	public enum Sources {
 		NONE,

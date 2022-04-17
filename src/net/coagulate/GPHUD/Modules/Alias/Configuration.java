@@ -48,9 +48,9 @@ public abstract class Configuration {
 					alias.delete();
 					f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been deleted</p>");
 				}
-				catch (NoDataException e) {
-					f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been (already?) deleted</p>");
-				}
+				catch (final NoDataException e) {
+                    f.add("<p color=green>Alias '" + values.get("deletealias") + "' has been (already?) deleted</p>");
+                }
 			}
 		}
 
@@ -161,21 +161,21 @@ public abstract class Configuration {
 						t.add(arg.type().toString());
 						t.add(arg.description());
 						final String desc = template.optString(name + "-desc", "");
-						t.add(new TextInput(name + "-desc", desc));
-						if (arg.delayTemplating()) {
-							t.add("  <i> ( This parameter uses delayed templating ) </i>");
-						}
-					}
-				}
-			}
-			if (st.hasPermission("Alias.Config")) {
-				f.add(new Button("Update", "Update"));
-			}
-		} catch (UserConfigurationRecursionException e) {
-			f.add("<b>This command has a recursion problem</b>.  Please delete a link in the recursion to resolve this.<br><pre>"+e.getLocalizedMessage()+"</pre>");
-		} catch (UserInputLookupFailureException e) {
-			f.add("<b>This alias points to an unresolvable command, you should probably delete this alias.<br><pre>"+e.getLocalizedMessage()+"</pre>");
-		}
+                        t.add(new TextInput(name + "-desc", desc));
+                        if (arg.delayTemplating()) {
+                            t.add("  <i> ( This parameter uses delayed templating ) </i>");
+                        }
+                    }
+                }
+            }
+            if (st.hasPermission("Alias.Config")) {
+                f.add(new Button("Update", "Update"));
+            }
+        } catch (final UserConfigurationRecursionException e) {
+            f.add("<b>This command has a recursion problem</b>.  Please delete a link in the recursion to resolve this.<br><pre>" + e.getLocalizedMessage() + "</pre>");
+        } catch (final UserInputLookupFailureException e) {
+            f.add("<b>This alias points to an unresolvable command, you should probably delete this alias.<br><pre>" + e.getLocalizedMessage() + "</pre>");
+        }
 	}
 
 

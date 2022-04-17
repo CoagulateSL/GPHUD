@@ -89,9 +89,9 @@ public abstract class GetMessages {
 		final CharacterGroup faction=CharacterGroup.get(j.getInt("to"));
 		final JSONObject template=Modules.getJSONTemplate(st,"gphudclient.acceptrejectmessage");
 		try {faction.getName();}
-		catch (NoDataException e) {
-			return new ErrorResponse("Your message was an invite to a faction that no longer exists.");
-		}
+		catch (final NoDataException e) {
+            return new ErrorResponse("Your message was an invite to a faction that no longer exists.");
+        }
 		template.put("arg0description","You have been invited to join "+faction.getName()+" by "+from.getName());
 		return new JSONResponse(template);
 	}

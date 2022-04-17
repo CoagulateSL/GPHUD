@@ -72,7 +72,7 @@ public class ItemsConfig {
                                 @Nonnull @Arguments(name="destroyable",
                                                     description="Players can destroy item from inventory",
                                                     type= Argument.ArgumentType.BOOLEAN) final Boolean destroyable) {
-        Item item=Item.findOrCreate(st,name);
+        final Item item = Item.findOrCreate(st, name);
         if (!item.description().equals(description)) {
             Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
                     "Description",item.description(),description,"Changed item '"+item.getName()+"' description");
@@ -100,13 +100,15 @@ public class ItemsConfig {
     public static void itemPage(@Nonnull final State st,
                                   @Nonnull final SafeMap values) {
         final Form f = st.form();
-        String id=st.getDebasedURL().substring("/configuration/items/".length());
-        Item item=Item.get(Integer.parseInt(id));
-        if (item.getInstance()!=st.getInstance()) { throw new UserInputStateException("Item "+id+" is from a different instance"); }
-        f.add(new TextHeader("Item: "+item.getName()));
+        final String id = st.getDebasedURL().substring("/configuration/items/".length());
+        final Item item = Item.get(Integer.parseInt(id));
+        if (item.getInstance() != st.getInstance()) {
+            throw new UserInputStateException("Item " + id + " is from a different instance");
+        }
+        f.add(new TextHeader("Item: " + item.getName()));
         f.add(new TextSubHeader("Properties"));
         f.noForm();
-        Table propertiesTable=new Table();
+        final Table propertiesTable = new Table();
         f.add(propertiesTable);
         propertiesTable.openRow().add(new Cell("Name")).add(item.getName());
         propertiesTable.openRow().add(new Cell("Description")).add(item.description());
@@ -128,44 +130,48 @@ public class ItemsConfig {
         }
         f.add(new Separator());
         f.add(new TextSubHeader("Allowed In Inventories"));
-        Table inventories=new Table();
+        final Table inventories = new Table();
         f.add(inventories);
-        for (Attribute inventory: Inventory.getAll(st.getInstance())) {
+        for (final Attribute inventory : Inventory.getAll(st.getInstance())) {
             inventories.openRow();
             inventories.add(inventory.getName());
-            boolean allowed=Inventory.allows(st,inventory,item);
-            if (allowed) { inventories.add("Permitted"); }
-            else { inventories.add("Forbidden"); }
+            final boolean allowed = Inventory.allows(st, inventory, item);
+            if (allowed) {
+                inventories.add("Permitted");
+            } else {
+                inventories.add("Forbidden");
+            }
             if (st.hasPermission("Items.EditInventories")) {
-                inventories.add(new Form(st,true,"/GPHUD/configuration/items/inventoryallow","Toggle",
-                        "item",item.getName(),
-                                "inventory",inventory.getName(),
-                                "allowed",allowed?"":"true"));
+                inventories.add(new Form(st, true, "/GPHUD/configuration/items/inventoryallow", "Toggle",
+                        "item", item.getName(),
+                        "inventory", inventory.getName(),
+                        "allowed", allowed ? "" : "true"));
             }
         }
         f.add(new Separator());
         f.add(new TextSubHeader("Available Actions"));
         if (!values.get("newaction").isBlank()) {
-            String newAction=values.get("newaction");
+            final String newAction = values.get("newaction");
             if (newAction.equalsIgnoreCase("Give To") ||
                 newAction.equalsIgnoreCase("Destroy") ||
                 newAction.equalsIgnoreCase("Move To")) {
                 f.add(new TextError("Can not create new action "+newAction+", this verb is reserved"));
             } else {
-                try { ItemVerb.create(item,newAction); }
-                catch (UserException e) { f.add(new TextError(e.getLocalizedMessage())); }
+                try { ItemVerb.create(item,newAction); } catch (final UserException e) {
+                    f.add(new TextError(e.getLocalizedMessage()));
+                }
             }
         }
-        Table verbs=new Table();
+        final Table verbs = new Table();
         f.add(verbs);
-        for (ItemVerb verb:ItemVerb.findAll(item)) {
+        for (final ItemVerb verb : ItemVerb.findAll(item)) {
             verbs.openRow();
-            verbs.add(new Link(verb.getName(),"/GPHUD/configuration/items/verbs/"+verb.getId()));
+            verbs.add(new Link(verb.getName(), "/GPHUD/configuration/items/verbs/" + verb.getId()));
             verbs.add(verb.description());
             verbs.add(VerbActor.decode(verb));
-            verbs.add(new Form(st,true,"/GPHUD/configuration/items/deleteverb","Delete","item",item.getName(),"verb",verb.getName()));
+            verbs.add(new Form(st, true, "/GPHUD/configuration/items/deleteverb", "Delete", "item", item.getName(), "verb", verb.getName()));
         }
-        Form newAction=new Form();
+        final Form newAction = new Form();
         newAction.add(new TextInput("newaction")).add(new Button("Create"));
         f.add(newAction);
         f.add(new Separator());
@@ -220,7 +226,7 @@ public class ItemsConfig {
                                                     type= Argument.ArgumentType.ITEM,
                                                     max=128) final Item name) {
         if (name.getInstance()!=st.getInstance()) { throw new SystemImplementationException("Item instance / state instance mismatch"); }
-        String itemName=name.getName();
+        final String itemName = name.getName();
         name.delete();
         Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Delete","Item",itemName,null,"Deleted item "+itemName);
         return new OKResponse("Item "+itemName+" deleted");

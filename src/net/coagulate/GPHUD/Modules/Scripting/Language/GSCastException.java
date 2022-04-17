@@ -9,9 +9,9 @@ public class GSCastException extends GSInvalidExpressionException {
 		super(reason);
 	}
 
-	public GSCastException(String reason, boolean suppresslogging) {
-		super(reason, suppresslogging);
-	}
+	public GSCastException(final String reason, final boolean suppresslogging) {
+        super(reason, suppresslogging);
+    }
 
 	public GSCastException(final String reason,
 						   final Throwable cause) {

@@ -51,14 +51,14 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	public static final boolean DEBUG_JSON=false;
 
 	@Override
-	protected void earlyInitialiseState(HttpRequest request, HttpContext context) {
-		super.earlyInitialiseState(request,context);
-		State st=state();
-		st.source=State.Sources.SYSTEM;
+	protected void earlyInitialiseState(final HttpRequest request, final HttpContext context) {
+		super.earlyInitialiseState(request, context);
+		final State st = state();
+		st.source = State.Sources.SYSTEM;
 	}
 
 	@Override
-	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
+	protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
 	}
 
 	@Override
@@ -67,12 +67,12 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 	@Override
-	protected boolean checkAuthenticationNeeded(Method content) {
+	protected boolean checkAuthenticationNeeded(final Method content) {
 		return false;
 	}
 
 	@Override
-	protected void processPostEntity(HttpEntity entity, Map<String, String> parameters) {
+	protected void processPostEntity(final HttpEntity entity, final Map<String, String> parameters) {
 		try {
 			final State st = state();
 			final JSONObject obj;
@@ -93,8 +93,10 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			}
 			st.protocol=0;
 			if (obj.has("protocol")) {
-				try { st.protocol=obj.getInt("protocol"); }
-				catch (NumberFormatException ignore) {}
+				try {
+					st.protocol = obj.getInt("protocol");
+				} catch (final NumberFormatException ignore) {
+				}
 			}
 			if (obj.has("cookie")) {
 				Cookie.refreshCookie(obj.getString("cookie"));
@@ -102,31 +104,35 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			if (obj.has("interface") && obj.get("interface").equals("object")) {
 				st.source = State.Sources.OBJECT;
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new SystemRemoteFailureException("Failure processing System Interface input");
 		}
 	}
 
 	@Nullable
 	@Override
-	protected Method lookupPage(HttpRequest request) {
-		try { return getClass().getDeclaredMethod("execute",State.class); } catch (NoSuchMethodException e) {
-			throw new SystemImplementationException("Weird internal method lookup failure",e);
+	protected Method lookupPage(final HttpRequest request) {
+		try {
+			return getClass().getDeclaredMethod("execute", State.class);
+		} catch (final NoSuchMethodException e) {
+			throw new SystemImplementationException("Weird internal method lookup failure", e);
 		}
 	}
 
 	@Override
-	protected void executePage(Method content) {
-		final State st=state();
-		final Response response=execute(st);
-		if (response==null) { throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!"); }
-		final JSONObject jsonResponse=response.asJSON(st);
+	protected void executePage(final Method content) {
+		final State st = state();
+		final Response response = execute(st);
+		if (response == null) {
+			throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
+		}
+		final JSONObject jsonResponse = response.asJSON(st);
 		// did titler change?
-		if (st.getCharacterNullable()!=null) {
-			st.getCharacter().appendConveyance(st,jsonResponse);
+		if (st.getCharacterNullable() != null) {
+			st.getCharacter().appendConveyance(st, jsonResponse);
 		}
 		jsonResponse.remove("developerkey");
-		final String out=jsonResponse.toString();
+		final String out = jsonResponse.toString();
 		if (DEBUG_JSON) { System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonResponse)); }
 		if (out.length() >= 4096) { SL.report("Output exceeds limit of 4096 characters",new SystemImplementationException("Trace"),st); }
 		Page.page().template(new PlainTextMapper.PlainTextTemplate());
@@ -394,33 +400,33 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 	@Override
-	protected void renderUnhandledError(HttpRequest request, HttpContext context, HttpResponse response, Throwable t) {
-		SL.report("SysIF UnkEx: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error","Sorry, an unhandled internal error occurred.");
-		json.put("responsetype","UnhandledException");
+	protected void renderUnhandledError(final HttpRequest request, final HttpContext context, final HttpResponse response, final Throwable t) {
+		SL.report("SysIF UnkEx: " + t.getLocalizedMessage(), t, state());
+		final JSONObject json = new JSONObject();
+		json.put("error", "Sorry, an unhandled internal error occurred.");
+		json.put("responsetype", "UnhandledException");
 		response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
 		response.setStatusCode(200);
 	}
 
 	@Override
-	protected void renderSystemError(HttpRequest request, HttpContext context, HttpResponse response, SystemException t) {
-		SL.report("SysIF SysEx: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error","Sorry, an internal error occurred.");
-		json.put("responsetype","SystemException");
-		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+	protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException t) {
+		SL.report("SysIF SysEx: " + t.getLocalizedMessage(), t, state());
+		final JSONObject json = new JSONObject();
+		json.put("error", "Sorry, an internal error occurred.");
+		json.put("responsetype", "SystemException");
+		response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
 		response.setStatusCode(200);
 	}
 
 	@Override
-	protected void renderUserError(HttpRequest request, HttpContext context, HttpResponse response, UserException t) {
-		SL.report("SysIF User: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error",t.getLocalizedMessage());
-		json.put("responsetype","UserException");
-		json.put("errorclass",t.getClass().getSimpleName());
-		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+	protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException t) {
+		SL.report("SysIF User: " + t.getLocalizedMessage(), t, state());
+		final JSONObject json = new JSONObject();
+		json.put("error", t.getLocalizedMessage());
+		json.put("responsetype", "UserException");
+		json.put("errorclass", t.getClass().getSimpleName());
+		response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
 		response.setStatusCode(200);
 	}
 }

@@ -50,33 +50,33 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	public static final boolean DEBUG_JSON=false;
 
 	@Override
-	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
-		State st=state();
-		st.source= Sources.EXTERNAL;
-	}
+    protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
+        final State st = state();
+        st.source = Sources.EXTERNAL;
+    }
 
 	@Override
 	protected void loadSession() {
 
 	}
 
-	@Override
-	protected boolean checkAuthenticationNeeded(Method content) {
-		return false;
-	}
+    @Override
+    protected boolean checkAuthenticationNeeded(final Method content) {
+        return false;
+    }
 
-	@Override
-	protected void processPostEntity(HttpEntity entity, Map<String, String> parameters) {
-		try {
-			final State st = state();
-			final JSONObject obj;
-			final String message = ByteTools.convertStreamToString(entity.getContent());
-			try {
-				obj = new JSONObject(message);
-				st.setJson(obj);
-			} catch (@Nonnull final JSONException e) {
-				throw new SystemBadValueException("Parse error in '" + message + "'", e);
-			}
+    @Override
+    protected void processPostEntity(final HttpEntity entity, final Map<String, String> parameters) {
+        try {
+            final State st = state();
+            final JSONObject obj;
+            final String message = ByteTools.convertStreamToString(entity.getContent());
+            try {
+                obj = new JSONObject(message);
+                st.setJson(obj);
+            } catch (@Nonnull final JSONException e) {
+                throw new SystemBadValueException("Parse error in '" + message + "'", e);
+            }
 			if (DEBUG_JSON) {
 				System.out.println("EXTERNAL INTERFACE INPUT:\n" + JsonTools.jsonToString(obj));
 			}
@@ -86,44 +86,47 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			}
 			if (obj.has("callback")) {
 				Char.refreshURL(obj.getString("callback"));
-			}
-			if (obj.has("callback")) {
-				Region.refreshURL(obj.getString("callback"));
-			}
-			if (obj.has("cookie")) {
-				Cookie.refreshCookie(obj.getString("cookie"));
-			}
-			if (obj.has("interface") && obj.get("interface").equals("object")) {
-				st.source = State.Sources.OBJECT;
-			}
-		} catch (IOException e) {
-			throw new SystemRemoteFailureException("Failure processing System Interface input");
-		}
+            }
+            if (obj.has("callback")) {
+                Region.refreshURL(obj.getString("callback"));
+            }
+            if (obj.has("cookie")) {
+                Cookie.refreshCookie(obj.getString("cookie"));
+            }
+            if (obj.has("interface") && obj.get("interface").equals("object")) {
+                st.source = State.Sources.OBJECT;
+            }
+        } catch (final IOException e) {
+            throw new SystemRemoteFailureException("Failure processing System Interface input");
+        }
 	}
 
-	@Override
-	protected Method lookupPageFromUri(String line) {
-		try { return getClass().getDeclaredMethod("execute",State.class); }
-		catch (NoSuchMethodException e) { throw new SystemImplementationException("Local method reflection failed..."); }
-	}
+    @Override
+    protected Method lookupPageFromUri(final String line) {
+        try {
+            return getClass().getDeclaredMethod("execute", State.class);
+        } catch (final NoSuchMethodException e) {
+            throw new SystemImplementationException("Local method reflection failed...");
+        }
+    }
 
 	@Override
 	protected ContentType getContentType() {
 		return ContentType.APPLICATION_JSON;
 	}
 
-	@Override
-	protected void executePage(Method content) {
-		final State st = state();
-		Page.page().template(new PlainTextMapper.PlainTextTemplate());
-		final Response response = execute(st);
-		if (response == null) {
-			throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
-		}
-		final JSONObject jsonResponse = response.asJSON(st);
-		// did titler change?
-		if (st.getCharacterNullable() != null) {
-			st.getCharacter().appendConveyance(st, jsonResponse);
+    @Override
+    protected void executePage(final Method content) {
+        final State st = state();
+        Page.page().template(new PlainTextMapper.PlainTextTemplate());
+        final Response response = execute(st);
+        if (response == null) {
+            throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
+        }
+        final JSONObject jsonResponse = response.asJSON(st);
+        // did titler change?
+        if (st.getCharacterNullable() != null) {
+            st.getCharacter().appendConveyance(st, jsonResponse);
 		}
 		jsonResponse.remove("developerkey");
 		jsonResponse.put("responsetype", response.getClass().getSimpleName());
@@ -277,34 +280,34 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 
-	@Override
-	protected void renderUnhandledError(HttpRequest request, HttpContext context, HttpResponse response, Throwable t) {
-		SL.report("ExtIF UnkEx: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error","Sorry, an unhandled internal error occurred.");
-		json.put("responsetype","UnhandledException");
-		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
-		response.setStatusCode(200);
-	}
+    @Override
+    protected void renderUnhandledError(final HttpRequest request, final HttpContext context, final HttpResponse response, final Throwable t) {
+        SL.report("ExtIF UnkEx: " + t.getLocalizedMessage(), t, state());
+        final JSONObject json = new JSONObject();
+        json.put("error", "Sorry, an unhandled internal error occurred.");
+        json.put("responsetype", "UnhandledException");
+        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
+        response.setStatusCode(200);
+    }
 
-	@Override
-	protected void renderSystemError(HttpRequest request, HttpContext context, HttpResponse response, SystemException t) {
-		SL.report("ExtIF SysEx: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error","Sorry, an internal error occurred.");
-		json.put("responsetype","SystemException");
-		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
-		response.setStatusCode(200);
-	}
+    @Override
+    protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException t) {
+        SL.report("ExtIF SysEx: " + t.getLocalizedMessage(), t, state());
+        final JSONObject json = new JSONObject();
+        json.put("error", "Sorry, an internal error occurred.");
+        json.put("responsetype", "SystemException");
+        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
+        response.setStatusCode(200);
+    }
 
-	@Override
-	protected void renderUserError(HttpRequest request, HttpContext context, HttpResponse response, UserException t) {
-		SL.report("ExtIF User: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error",t.getLocalizedMessage());
-		json.put("responsetype","UserException");
-		json.put("errorclass",t.getClass().getSimpleName());
-		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
-		response.setStatusCode(200);
-	}
+    @Override
+    protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException t) {
+        SL.report("ExtIF User: " + t.getLocalizedMessage(), t, state());
+        final JSONObject json = new JSONObject();
+        json.put("error", t.getLocalizedMessage());
+        json.put("responsetype", "UserException");
+        json.put("errorclass", t.getClass().getSimpleName());
+        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
+        response.setStatusCode(200);
+    }
 }

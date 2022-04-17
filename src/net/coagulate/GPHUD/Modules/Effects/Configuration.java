@@ -26,7 +26,7 @@ public class Configuration {
 		for (final Effect effect: Effect.getAll(st.getInstance())) {
 			at.openRow();
 			at.add(effect);
-			String metaData=effect.getMetaData();
+			final String metaData = effect.getMetaData();
 			if (st.hasPermission("Effects.Edit")) {
 				at.add(new Form(st,true,"./Effects/SetMetaData",metaData.isEmpty()?"None Set":metaData,"effect",effect.getName(),"metadata",metaData));
 			} else {

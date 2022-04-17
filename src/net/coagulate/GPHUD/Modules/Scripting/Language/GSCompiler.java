@@ -57,7 +57,7 @@ public class GSCompiler {
 	public List<ByteCode> compile(final State st) {
 		lastdebuglineno=-1;
 		lastdebugcolno=-1;
-		List<ByteCode> code=new ArrayList<>();
+		final List<ByteCode> code = new ArrayList<>();
 		code.add(new BCString(null,scriptname));
 		code.add(new BCDebugSource(null));
 		code.addAll(compile(st,startnode));

@@ -10,9 +10,9 @@ import java.util.List;
 
 public class BCDebugSource extends ByteCode {
 
-	public BCDebugSource(@Nullable ParseNode n) {
-		super(n);
-	}
+	public BCDebugSource(@Nullable final ParseNode n) {
+        super(n);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nonnull

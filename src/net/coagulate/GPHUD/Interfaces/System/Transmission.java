@@ -161,7 +161,7 @@ public class Transmission extends Thread {
 	public void run() {
 		String callerName="UNKNOWN";
 		if (caller!=null) {
-			StackTraceElement callerElement = caller[2];
+			final StackTraceElement callerElement = caller[2];
 			callerName=callerElement.getClassName().replaceFirst("net.coagulate.","")+"."+callerElement.getMethodName()+":"+callerElement.getLineNumber();
 		}
 		Thread.currentThread().setName("Called from "+callerName);
@@ -273,7 +273,7 @@ public class Transmission extends Thread {
 		out.write(json+"\n");
 		out.flush();
 		out.close();
-		String response=ByteTools.convertStreamToString(transmission.getInputStream());
+		final String response = ByteTools.convertStreamToString(transmission.getInputStream());
 		if (Config.logRequests()) { System.out.println("ReqLog:'GPHUD/OUTBOUND','"+Thread.currentThread().getName()+"',"+response.length()+","+json.length()+",-1"); }
 		return response;
 	}

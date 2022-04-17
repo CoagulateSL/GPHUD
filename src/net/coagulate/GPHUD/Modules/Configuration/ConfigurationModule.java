@@ -27,8 +27,8 @@ public class ConfigurationModule extends ModuleAnnotation {
 	@Nullable
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(final State st) {
-		Set<SideSubMenu> submenus=new HashSet<>();
-		final Map<String,SideSubMenu> map=new TreeMap<>();
+		final Set<SideSubMenu> submenus = new HashSet<>();
+        final Map<String, SideSubMenu> map = new TreeMap<>();
 		for (final Module m: Modules.getModules()) {
 			if (m.isEnabled(st)) {
 				if (m.alwaysHasConfig() || !m.getKVDefinitions(st).isEmpty()) {
@@ -47,16 +47,17 @@ public class ConfigurationModule extends ModuleAnnotation {
 		return submenus;
 	}
 
-	public static boolean canConfigure(@Nonnull final State state,
-									   @Nonnull String moduleName) {
-		URL urlHandler = Modules.getURL(state, "/configuration/" + moduleName);
-		if (urlHandler.requiresPermission().isBlank() || state.hasPermission(urlHandler.requiresPermission())) {
-			return true;
-		}
-		return false;
-	}
-	public static boolean canConfigure(@Nonnull final State state,
-									   @Nonnull Module module) {
-		return canConfigure(state,module.getName());
-	}
+    public static boolean canConfigure(@Nonnull final State state,
+                                       @Nonnull final String moduleName) {
+        final URL urlHandler = Modules.getURL(state, "/configuration/" + moduleName);
+        if (urlHandler.requiresPermission().isBlank() || state.hasPermission(urlHandler.requiresPermission())) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean canConfigure(@Nonnull final State state,
+                                       @Nonnull final Module module) {
+        return canConfigure(state, module.getName());
+    }
 }

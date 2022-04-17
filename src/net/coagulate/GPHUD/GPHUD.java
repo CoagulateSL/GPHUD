@@ -7,10 +7,6 @@ import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.Core.Tools.ClassTools;
 import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.GPHUD.Modules.ModuleAnnotation;
-import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.Modules.Permission;
-import net.coagulate.GPHUD.Modules.PermissionAnnotation;
 import net.coagulate.SL.ChangeLogging;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.HTML.ServiceTile;
@@ -21,11 +17,9 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 import java.util.logging.Logger;
 
 /**
@@ -49,14 +43,14 @@ public class GPHUD extends SLModule {
 	public void registerChanges() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Change.class)) {
 			for (final Annotation a: c.getAnnotationsByType(Classes.Change.class)) {
-				Classes.Change casted=(Classes.Change)a;
+				final Classes.Change casted = (Classes.Change) a;
 				ChangeLogging.add(new ChangeLogging.Change(casted.date(),"GPHUD",casted.component().name(),casted.type(),casted.message()));
 			}
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Changes.class)) {
 			for (final Annotation as: c.getAnnotationsByType(Classes.Changes.class)) {
 				for (final Classes.Change a: ((Classes.Changes) as).value()) {
-					Classes.Change casted=(Classes.Change)a;
+					final Classes.Change casted = (Classes.Change) a;
 					ChangeLogging.add(new ChangeLogging.Change(casted.date(),"GPHUD",casted.component().name(),casted.type(),casted.message()));
 				}
 			}
@@ -138,7 +132,7 @@ public class GPHUD extends SLModule {
 	@Nullable
 	@Override
 	public Map<ServiceTile, Integer> getServices() {
-		HashMap<ServiceTile,Integer> map = new HashMap<>();
+		final HashMap<ServiceTile, Integer> map = new HashMap<>();
 		map.put(new ServiceTile("GPHUD","Second generation role-play HUD - used to implement attribute/dice based RP environments","/GPHUD/","/resources/serviceicon-gphud.png",commitId(),getBuildDateString()),10);
 		return map;
 	}
@@ -185,16 +179,17 @@ public class GPHUD extends SLModule {
 	}
 
 	@Override
-	protected int schemaUpgrade(DBConnection db, String schemaName, int currentVersion) {
+	protected int schemaUpgrade(final DBConnection db, final String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
-		Logger log=GPHUD.getLogger("SchemaUpgrade");
-		if (currentVersion ==1) {
+		final Logger log = GPHUD.getLogger("SchemaUpgrade");
+		if (currentVersion == 1) {
 			log.config("Schema for GPHUD is at version 1, upgrading to version 2");
 			log.config("Add URL index to characters table");
 			GPHUD.getDB().d("ALTER TABLE characters ADD INDEX characters_url_index (url)");
 			log.config("Add URL index to regions table");
 			GPHUD.getDB().d("ALTER TABLE regions ADD INDEX regionss_url_index (url)");
-			log.config("Schema upgrade of GPHUD to version 2 is complete"); currentVersion =2;
+			log.config("Schema upgrade of GPHUD to version 2 is complete");
+			currentVersion = 2;
 		}
 		if (currentVersion==2) {
 			log.config("Add protocol column to characters table");
@@ -373,15 +368,15 @@ public class GPHUD extends SLModule {
 	}
 
 	@Override
-	public Object weakInvoke(String command, Object... arguments) {
+	public Object weakInvoke(final String command, final Object... arguments) {
 		if (command.equalsIgnoreCase("im")) {
 			if (!Config.getDistributionRegion().isBlank()) {
-				Region r=Region.findNullable(Config.getDistributionRegion(),false);
-				if (r==null) {
+				final Region r = Region.findNullable(Config.getDistributionRegion(), false);
+				if (r == null) {
 					log().warning("Instant messaging services unavailable, Distribution Region badly configured");
 					return null;
 				}
-				JSONObject json=new JSONObject();
+				final JSONObject json = new JSONObject();
 				json.put("instantmessage", arguments[0]);
 				json.put("instantmessagemessage", arguments[1]);
 				r.sendServerSync(json);

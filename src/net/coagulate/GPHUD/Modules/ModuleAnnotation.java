@@ -66,14 +66,14 @@ public class ModuleAnnotation extends Module {
 
 	@Nullable
 	public Set<SideSubMenu> getSideSubMenus(final State st) {
-		HashSet<SideSubMenu> filtered=new HashSet<>();
-		for (SideSubMenu item:sidemenus) {
-			if (item.requiresPermission().isBlank() || st.hasPermission(item.requiresPermission())) {
-				filtered.add(item);
-			}
-		}
-		return filtered;
-	}
+        final HashSet<SideSubMenu> filtered = new HashSet<>();
+        for (final SideSubMenu item : sidemenus) {
+            if (item.requiresPermission().isBlank() || st.hasPermission(item.requiresPermission())) {
+                filtered.add(item);
+            }
+        }
+        return filtered;
+    }
 
 	@Nullable
 	public URL getURL(final State st,

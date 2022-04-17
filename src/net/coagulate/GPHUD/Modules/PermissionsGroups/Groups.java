@@ -303,8 +303,10 @@ public abstract class Groups {
 		final StringBuilder r=new StringBuilder();
 		final TreeMap<String,Permission> sorted=new TreeMap<>();
 		for (final Permission p: permissions) {
-			try { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }
-			catch (NoDataException ignored) {} // badly cached attribute
+			try {
+                sorted.put(p.getModule(st).getName() + "." + p.name(), p);
+            } catch (final NoDataException ignored) {
+            } // badly cached attribute
 		}
 		for (final Permission p: sorted.values()) {
 			final String fullname=p.getModule(st).getName()+"."+p.name();

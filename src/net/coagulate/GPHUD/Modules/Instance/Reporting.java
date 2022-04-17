@@ -50,23 +50,26 @@ public class Reporting {
               requiresPermission = "Instance.Reporting")
     public static void webGenerateReport(@Nonnull final State state,
                                         @Nonnull final SafeMap parameters) {
-        Form f=state.form();
-        Response success=generateReport(state);
-        if (success instanceof ErrorResponse) { f.add(new Paragraph(new TextError(success.asHtml(state,true)))); }
-        else { f.add(new Paragraph(new TextOK(success.asHtml(state,true)))); }
-        f.add(new Paragraph(new Link("Return to reporting","/GPHUD/reporting")));
+        final Form f = state.form();
+        final Response success = generateReport(state);
+        if (success instanceof ErrorResponse) {
+            f.add(new Paragraph(new TextError(success.asHtml(state, true))));
+        } else {
+            f.add(new Paragraph(new TextOK(success.asHtml(state, true))));
+        }
+        f.add(new Paragraph(new Link("Return to reporting", "/GPHUD/reporting")));
     }
     @URL.URLs(url="/reporting",
               requiresPermission = "Instance.Reporting")
     public static void reportingPage(@Nonnull final State state,
                                      @Nonnull final SafeMap parameters) {
-        Form f=state.form();
+        final Form f = state.form();
         f.add(new TextHeader("Report Generation"));
         f.add(new Paragraph("Your instance currently has "+state.getInstance().reportCredits()+" reporting credits and "+state.getInstance().downloadCredits()+" download credits."));
         if (state.getInstance().reportCredits()>0 || state.isSuperUser()) {
             f.add(new Paragraph(new Link("Generate New Report","/GPHUD/reporting/generate")));
         }
-        int lastReport=state.getInstance().lastReport();
+        final int lastReport = state.getInstance().lastReport();
         if (lastReport==0) {
             f.add(new Paragraph("Your instance currently has no generated report"));
         } else {
@@ -95,49 +98,50 @@ public class Reporting {
         return new OKResponse("Report generation in progress, this will probably take "+ UnixTime.duration(state.getInstance().countCharacters()/20,true));
     }
 
-    public static void runReport(State state) {
+    public static void runReport(final State state) {
         state.getInstance().generating(UnixTime.getUnixTime());
-        Set<Char> set = state.getInstance().getCharacters();
-        Set<Attribute> attributes = state.getAttributes();
+        final Set<Char> set = state.getInstance().getCharacters();
+        final Set<Attribute> attributes = state.getAttributes();
         SL.log("Reporting").info("Beginning report for " + state.getInstance() + " with " + set.size() + " characters x " + attributes.size() + " attributes");
-        StringWriter output = new StringWriter();
+        final StringWriter output = new StringWriter();
         try {
-            CSVPrinter csv = new CSVPrinter(output, CSVFormat.EXCEL);
+            final CSVPrinter csv = new CSVPrinter(output, CSVFormat.EXCEL);
             csv.print("ID");
             csv.print("Character Name");
             csv.print("Retired");
             csv.print("Owner Name");
             csv.print("Last Active (SLT)");
-            for (Attribute attribute : attributes) {
+            for (final Attribute attribute : attributes) {
                 csv.print(attribute.getName());
             }
             csv.print("Total XP");
             csv.print("Level");
             csv.println();
-            for (Char ch : set) {
-                State charState = new State(ch);
+            for (final Char ch : set) {
+                final State charState = new State(ch);
                 csv.print(ch.getId());
                 csv.print(ch.getName());
                 csv.print(ch.retired());
                 csv.print(ch.getOwner().getName());
-                csv.print(UnixTime.fromUnixTime(ch.getLastPlayed(),"America/Los_Angeles"));
-                for (Attribute attribute : attributes) {
+                csv.print(UnixTime.fromUnixTime(ch.getLastPlayed(), "America/Los_Angeles"));
+                for (final Attribute attribute : attributes) {
                     switch (attribute.getType()) {
                         case SET:
                             csv.print(new CharacterSet(ch, attribute).textList());
                             break;
                         case POOL:
                             if (QuotaedXP.class.isAssignableFrom(attribute.getClass())) {
-                                final QuotaedXP xp=(QuotaedXP) attribute;
-                                csv.print(CharacterPool.sumPool(charState,(xp.getPool(charState))));
+                                final QuotaedXP xp = (QuotaedXP) attribute;
+                                csv.print(CharacterPool.sumPool(charState, (xp.getPool(charState))));
+                            } else {
+                                csv.print("SomeKindOfPool (?)");
                             }
-                            else { csv.print("SomeKindOfPool (?)"); }
                             break;
                         case GROUP:
-                            String subType = attribute.getSubType();
+                            final String subType = attribute.getSubType();
                             if (subType==null) { csv.print(""); }
                             else {
-                                CharacterGroup groupMembership = CharacterGroup.getGroup(ch,subType);
+                                final CharacterGroup groupMembership = CharacterGroup.getGroup(ch, subType);
                                 csv.print(groupMembership == null ? "" : groupMembership.getName());
                             }
                             break;
@@ -165,13 +169,13 @@ public class Reporting {
                 csv.println();
                 try {
                     Thread.sleep(50);
-                } catch (InterruptedException ignored) {
+                } catch (final InterruptedException ignored) {
                 }
             }
             state.getInstance().setReport(output.toString());
             SL.log("Reporting").info("Report generation for " + state.getInstance() + " with " + set.size() + " characters x " + attributes.size() + " attributes is now complete.");
             state.getInstance().generating(0);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             state.getInstance().generating(0);
             throw new SystemImplementationException("Error writing CSV to StringWriter (!)", e);
         }

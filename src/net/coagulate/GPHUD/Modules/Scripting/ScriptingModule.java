@@ -39,7 +39,8 @@ public class ScriptingModule extends ModuleAnnotation {
 		final Set<Script> scripts=Script.getScripts(st);
 		for (final Script script: scripts) {
 			try { commands.put(script.getName(),new ScriptingCommand(script)); }
-			catch (NoDataException ignored) {}
+			catch (final NoDataException ignored) {
+            }
 		}
 		return commands;
 	}

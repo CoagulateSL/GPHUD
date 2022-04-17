@@ -32,11 +32,11 @@ public class Sets {
                                     @Nonnull final BCString set,
                                     @Nonnull final BCString element,
                                     @Nonnull final BCInteger amount) {
-        CharacterSet characterSet=getSet(st,character,set);
-        int oldValue=characterSet.count(element.getContent());
-        int newAmount=characterSet.add(element.getContent(), amount.getContent());
-        Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsSetAdd", set.getContent(),""+oldValue, ""+newAmount, "Added "+amount.getContent()+" "+element.getContent()+" to set, changing total from "+oldValue+" to "+newAmount);
-        return new BCInteger(null,newAmount);
+        final CharacterSet characterSet = getSet(st, character, set);
+        final int oldValue = characterSet.count(element.getContent());
+        final int newAmount = characterSet.add(element.getContent(), amount.getContent());
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetAdd", set.getContent(), "" + oldValue, "" + newAmount, "Added " + amount.getContent() + " " + element.getContent() + " to set, changing total from " + oldValue + " to " + newAmount);
+        return new BCInteger(null, newAmount);
     }
 
     @Nonnull
@@ -55,10 +55,10 @@ public class Sets {
                                      @Nonnull final BCString set,
                                      @Nonnull final BCString element,
                                      @Nonnull final BCInteger amount) {
-        CharacterSet characterSet=getSet(st,character,set);
-        int oldValue=characterSet.count(element.getContent());
+        final CharacterSet characterSet = getSet(st, character, set);
+        final int oldValue = characterSet.count(element.getContent());
         characterSet.set(element.getContent(), amount.getContent());
-        Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsSetSet", set.getContent(),""+oldValue, ""+(amount.getContent()), "Added "+amount.getContent()+" "+element.getContent()+" to set, changing total from "+oldValue+" to "+amount.getContent());
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetSet", set.getContent(), "" + oldValue, "" + (amount.getContent()), "Added " + amount.getContent() + " " + element.getContent() + " to set, changing total from " + oldValue + " to " + amount.getContent());
         return amount;
     }
     @Nonnull
@@ -75,9 +75,9 @@ public class Sets {
                                      @Nonnull final BCCharacter character,
                                      @Nonnull final BCString set,
                                      @Nonnull final BCString element) {
-        CharacterSet characterSet=getSet(st,character,set);
-        int value=characterSet.count(element.getContent());
-        return new BCInteger(null,value);
+        final CharacterSet characterSet = getSet(st, character, set);
+        final int value = characterSet.count(element.getContent());
+        return new BCInteger(null, value);
     }
     @Nonnull
     @GSFunctions.GSFunction(description="Wipes the contents of a set for a character",
@@ -91,12 +91,12 @@ public class Sets {
                                      @Nonnull final GSVM vm,
                                      @Nonnull final BCCharacter character,
                                      @Nonnull final BCString set) {
-        CharacterSet characterSet=getSet(st,character,set);
-        int elements=characterSet.countElements();
-        int totalQuantity=characterSet.countTotal();
+        final CharacterSet characterSet = getSet(st, character, set);
+        final int elements = characterSet.countElements();
+        final int totalQuantity = characterSet.countTotal();
         characterSet.wipe();
-        Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsSetWipe", set.getContent(),null, null, "Wiped set, formerly containing "+elements+" elements totalling "+totalQuantity+" quantity");
-        return new BCInteger(null,totalQuantity);
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetWipe", set.getContent(), null, null, "Wiped set, formerly containing " + elements + " elements totalling " + totalQuantity + " quantity");
+        return new BCInteger(null, totalQuantity);
     }
     @Nonnull
     @GSFunctions.GSFunction(description="Copies (adds) one set to another",
@@ -112,15 +112,15 @@ public class Sets {
                                      @Nonnull final BCCharacter character,
                                      @Nonnull final BCString sourceSet,
                                      @Nonnull final BCString destinationSet) {
-        CharacterSet source=getSet(st,character,sourceSet);
-        CharacterSet destination=getSet(st,character,destinationSet);
-        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
-            destination.add(element.getKey(),element.getValue());
+        final CharacterSet source = getSet(st, character, sourceSet);
+        final CharacterSet destination = getSet(st, character, destinationSet);
+        for (final Map.Entry<String, Integer> element : source.elements().entrySet()) {
+            destination.add(element.getKey(), element.getValue());
         }
-        int totalItems=destination.countElements();
-        int totalQuantity=destination.countTotal();
-        Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsSetCopy", destinationSet.getContent(),null, null, "Copied set "+sourceSet.getContent()+" to "+destinationSet.getContent()+" which now contains "+totalItems+" totalling quantity "+totalQuantity);
-        return new BCInteger(null,totalQuantity);
+        final int totalItems = destination.countElements();
+        final int totalQuantity = destination.countTotal();
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetCopy", destinationSet.getContent(), null, null, "Copied set " + sourceSet.getContent() + " to " + destinationSet.getContent() + " which now contains " + totalItems + " totalling quantity " + totalQuantity);
+        return new BCInteger(null, totalQuantity);
     }
     @Nonnull
     @GSFunctions.GSFunction(description="Returns a list of all elements in the set",
@@ -134,10 +134,10 @@ public class Sets {
                                    @Nonnull final GSVM vm,
                                    @Nonnull final BCCharacter character,
                                    @Nonnull final BCString set) {
-        CharacterSet source=getSet(st,character,set);
-        BCList list=new BCList(null);
-        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
-            list.append(new BCString(null,element.getKey()));
+        final CharacterSet source = getSet(st, character, set);
+        final BCList list = new BCList(null);
+        for (final Map.Entry<String, Integer> element : source.elements().entrySet()) {
+            list.append(new BCString(null, element.getKey()));
         }
         return list;
     }
@@ -153,11 +153,11 @@ public class Sets {
                                    @Nonnull final GSVM vm,
                                    @Nonnull final BCCharacter character,
                                    @Nonnull final BCString set) {
-        CharacterSet source=getSet(st,character,set);
-        BCList list=new BCList(null);
-        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
-            list.append(new BCString(null,element.getKey()));
-            list.append(new BCInteger(null,element.getValue()));
+        final CharacterSet source = getSet(st, character, set);
+        final BCList list = new BCList(null);
+        for (final Map.Entry<String, Integer> element : source.elements().entrySet()) {
+            list.append(new BCString(null, element.getKey()));
+            list.append(new BCInteger(null, element.getValue()));
         }
         return list;
     }
@@ -173,7 +173,7 @@ public class Sets {
                                   @Nonnull final GSVM vm,
                                   @Nonnull final BCCharacter character,
                                   @Nonnull final BCString set) {
-        CharacterSet source=getSet(st,character,set);
+        final CharacterSet source = getSet(st, character, set);
         return new BCInteger(null,source.countElements());
     }
     @Nonnull
@@ -181,25 +181,32 @@ public class Sets {
                             returns="Integer - Total of all quantities in the set",
                             parameters="Character character - Character to count<br>"+
                                     "String set - Name of set to count",
-                            notes="",
-                            privileged=false,
-                            category= GSFunctions.SCRIPT_CATEGORY.SETS)
+                            notes = "",
+                            privileged = false,
+                            category = GSFunctions.SCRIPT_CATEGORY.SETS)
     public static BCInteger gsSetQuantity(@Nonnull final State st,
-                                       @Nonnull final GSVM vm,
-                                       @Nonnull final BCCharacter character,
-                                       @Nonnull final BCString set) {
-        CharacterSet source=getSet(st,character,set);
-        return new BCInteger(null,source.countTotal());
+                                          @Nonnull final GSVM vm,
+                                          @Nonnull final BCCharacter character,
+                                          @Nonnull final BCString set) {
+        final CharacterSet source = getSet(st, character, set);
+        return new BCInteger(null, source.countTotal());
     }
-    private static CharacterSet getSet(State st, BCCharacter character, BCString setName) {
+
+    private static CharacterSet getSet(final State st, final BCCharacter character, final BCString setName) {
         // find Attribute by name
-        Attribute attribute=Attribute.find(st.getInstance(),setName.getContent());
+        final Attribute attribute = Attribute.find(st.getInstance(), setName.getContent());
         // Attribute must be a set
-        if (!(attribute.getType()== Attribute.ATTRIBUTETYPE.SET)) { throw new UserInputStateException("Attribute "+attribute.getName()+" is of type "+attribute.getType()+" not SET"); }
+        if (!(attribute.getType() == Attribute.ATTRIBUTETYPE.SET)) {
+            throw new UserInputStateException("Attribute " + attribute.getName() + " is of type " + attribute.getType() + " not SET");
+        }
         // Attribute must belong to instance (!)
-        if (!(attribute.getInstance()==st.getInstance())) { throw new SystemImplementationException("Attribute "+attribute+" is not from instance "+st.getInstanceString()); }
+        if (!(attribute.getInstance() == st.getInstance())) {
+            throw new SystemImplementationException("Attribute " + attribute + " is not from instance " + st.getInstanceString());
+        }
         // check character is of right instance
-        if (!(st.getInstance()==character.getContent().getInstance())) { throw new SystemImplementationException("Target character "+character.getContent()+" is not from instance "+st.getInstanceString()); }
-        return new CharacterSet(character.getContent(),attribute);
+        if (!(st.getInstance() == character.getContent().getInstance())) {
+            throw new SystemImplementationException("Target character " + character.getContent() + " is not from instance " + st.getInstanceString());
+        }
+        return new CharacterSet(character.getContent(), attribute);
     }
 }

@@ -50,16 +50,21 @@ public class ClickTeleporter extends Teleporter {
 	}
 
 	@Override
-	public void update(@Nonnull final State st) {
-		boolean changed=false;
-		changed=updateDistance(st) || changed;
-		changed=updateTeleport(st) || changed;
-		if (changed) { object.setBehaviour(json); }
-	}
-	@Override
-	public void payload(State st, @Nonnull JSONObject response, @Nonnull Region region, @Nullable String url) {
-		super.payload(st, response, region, url);
-		if (json.has("maxdistance")) { response.put("maxdistance",json.get("maxdistance")); }
-	}
+    public void update(@Nonnull final State st) {
+        boolean changed = false;
+        changed = updateDistance(st) || changed;
+        changed = updateTeleport(st) || changed;
+        if (changed) {
+            object.setBehaviour(json);
+        }
+    }
+
+    @Override
+    public void payload(final State st, @Nonnull final JSONObject response, @Nonnull final Region region, @Nullable final String url) {
+        super.payload(st, response, region, url);
+        if (json.has("maxdistance")) {
+            response.put("maxdistance", json.get("maxdistance"));
+        }
+    }
 
 }

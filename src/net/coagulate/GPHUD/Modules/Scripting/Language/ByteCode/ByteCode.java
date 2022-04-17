@@ -170,7 +170,7 @@ public abstract class ByteCode {
 
 	void addFloat(@Nonnull final List<Byte> bytes,
 				final float a) {
-		int asInt=Float.floatToIntBits(a);
+		final int asInt = Float.floatToIntBits(a);
 		bytes.add((byte) ((asInt >> 24)&0xff));
 		bytes.add((byte) ((asInt >> 16)&0xff));
 		bytes.add((byte) ((asInt >> 8)&0xff));

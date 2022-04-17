@@ -431,21 +431,21 @@ public abstract class Command {
 					break;
 				case INVENTORY:
 					final DropDownList inventoryList=new DropDownList(arg.name());
-					for (Attribute attribute:Inventory.getAll(st)) {
+					for (final Attribute attribute : Inventory.getAll(st)) {
 						inventoryList.add(attribute.getName());
 					}
 					t.add(inventoryList);
 					break;
 				case SET:
 					final DropDownList setList=new DropDownList(arg.name());
-					for (Attribute attribute:CharacterSet.getAll(st)) {
+					for (final Attribute attribute : CharacterSet.getAll(st)) {
 						setList.add(attribute.getName());
 					}
 					t.add(setList);
 					break;
 				case ITEM:
 					final DropDownList itemList=new DropDownList(arg.name());
-					for (String item:Item.getNames(st)) {
+					for (final String item : Item.getNames(st)) {
 						itemList.add(item);
 					}
 					t.add(itemList);

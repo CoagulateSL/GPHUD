@@ -38,14 +38,16 @@ public abstract class EventsMaintenance {
 			for (final Zone loc: e.getZones()) {
 				if (message!=null && !message.isEmpty()) {
 					try { loc.broadcastMessage("[Event:"+e.getName()+"] "+message); }
-					catch (UserRemoteFailureException ignore) {}
+					catch (final UserRemoteFailureException ignore) {
+					}
 				}
 				inzone.addAll(Char.getInZone(loc));
 			}
 			message=config.get("events.broadcaststartmessage");
 			if (message!=null && !message.isEmpty()) {
-				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); }
-				catch (UserRemoteFailureException ignore) {}
+				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); } catch (final
+				UserRemoteFailureException ignore) {
+				}
 			}
 			schedule.started();
 			for (final Char c: inzone) {
@@ -61,14 +63,16 @@ public abstract class EventsMaintenance {
 			String message=config.get("events.zonestopmessage");
 			if (message!=null && !message.isEmpty()) {
 				for (final Zone loc: e.getZones()) {
-					try { loc.broadcastMessage("[Event:"+e.getName()+"] "+message); }
-					catch (UserRemoteFailureException ignore) {}
+					try { loc.broadcastMessage("[Event:"+e.getName()+"] "+message); } catch (final
+					UserRemoteFailureException ignore) {
+					}
 				}
 			}
 			message=config.get("events.broadcaststopmessage");
 			if (message!=null && !message.isEmpty()) {
-				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); }
-				catch (UserRemoteFailureException ignore) {}
+				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); } catch (final
+				UserRemoteFailureException ignore) {
+				}
 			}
 			final State temp=new State();
 			temp.setInstance(e.getInstance());

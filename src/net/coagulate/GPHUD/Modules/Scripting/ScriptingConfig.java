@@ -53,7 +53,7 @@ public class ScriptingConfig {
 	public static void deleteScript(@Nonnull final State st,
 									@Nonnull final SafeMap values) {
 		final Form f = st.form();
-		String scriptName=values.get("scriptname");
+        final String scriptName = values.get("scriptname");
 		if (!(scriptName.isEmpty() || values.get("confirm").isEmpty())) {
 			Script.find(st,scriptName).delete();
 			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Delete",values.get("scriptname"),"","","Deleted script");
@@ -301,8 +301,8 @@ public class ScriptingConfig {
 		}
 		output.append("</table></td><td><table>");
 		for (final Map.Entry<String,ByteCodeDataType> entry: step.resultingvariables.entrySet()) {
-			String decode="???";
-			boolean italics=entry.getKey().startsWith(" ");
+            String decode = "???";
+            final boolean italics = entry.getKey().startsWith(" ");
 			if (entry.getValue()!=null) {
 				decode=entry.getValue().htmlDecode();
 			}

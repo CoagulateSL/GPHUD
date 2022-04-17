@@ -103,8 +103,8 @@ public abstract class Login {
 			return new ErrorResponse("Character '"+character+"' has been retired and can not be selected");
 		}
 
-		final String url=st.getCharacter().getURL();
-		int protocol=st.getCharacter().getProtocol();
+		final String url = st.getCharacter().getURL();
+		final int protocol = st.getCharacter().getProtocol();
 		st.getCharacter().disconnect();
 		character.login(st.getAvatar(),st.getRegion(),url);
 		st.setCharacter(character);
@@ -151,17 +151,19 @@ public abstract class Login {
 									.put("hudcolor","<1.0,0.75,0.75>")
 									.put("titlertext","Initialising character...")
 									.put("titlercolor","<1.0,0.75,0.75>");
-								JSONResponse.message(json,"Character creation requires you to input attribute "+attribute.getName()+" WHICH MUST BE NO MORE THAN "+max,st.protocol);
-								json.put("incommand","runtemplate");
-								json.put("invoke","characters.initialise");
-								json.put("args","1");
-								json.put("attribute",attribute.getName());
-								json.put("arg0name","value");
-								json.put("arg0description","You must select a "+attribute.getName()+" for your Character before you can use it (no greater than "+max+")");
-								json.put("arg0type","TEXTBOX");
+								JSONResponse.message(json, "Character creation requires you to input attribute " + attribute.getName() + " WHICH MUST BE NO MORE THAN " + max, st.protocol);
+								json.put("incommand", "runtemplate");
+								json.put("invoke", "characters.initialise");
+								json.put("args", "1");
+								json.put("attribute", attribute.getName());
+								json.put("arg0name", "value");
+								json.put("arg0description", "You must select a " + attribute.getName() + " for your Character before you can use it (no greater than " + max + ")");
+								json.put("arg0type", "TEXTBOX");
 								return new JSONResponse(json);
 							}
-						} catch (NumberFormatException e) { throw new UserInputValidationParseException("Not a number:"+value,e,true); }
+						} catch (final NumberFormatException e) {
+							throw new UserInputValidationParseException("Not a number:" + value, e, true);
+						}
 					}
 				}
 				st.setKV(st.getCharacter(),"characters."+attribute.getName(),value);

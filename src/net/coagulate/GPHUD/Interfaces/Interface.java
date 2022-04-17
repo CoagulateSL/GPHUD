@@ -58,38 +58,41 @@ public abstract class Interface extends URLMapper<Method> {
 		return 10000*major+100*minor+bugfix;
 	}
 
-	protected State state() { return threadState.get(Thread.currentThread()); }
-	@Override
-	protected void earlyInitialiseState(HttpRequest request, HttpContext context) {
-		super.earlyInitialiseState(request,context);
-		threadState.put(Thread.currentThread(),new State(request,context));
-	}
+	protected State state() {
+        return threadState.get(Thread.currentThread());
+    }
 
-	@Override
-	protected Method lookupPageFromUri(String line) {
-		final State st=state();
-		st.setURL(line);
-		return super.lookupPageFromUri(line);
-	}
+    @Override
+    protected void earlyInitialiseState(final HttpRequest request, final HttpContext context) {
+        super.earlyInitialiseState(request, context);
+        threadState.put(Thread.currentThread(), new State(request, context));
+    }
 
-	@Override
-	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
-	}
+    @Override
+    protected Method lookupPageFromUri(final String line) {
+        final State st = state();
+        st.setURL(line);
+        return super.lookupPageFromUri(line);
+    }
+
+    @Override
+    protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
+    }
 
 	@Override
 	protected void loadSession() {
 
 	}
 
-	@Override
-	protected boolean checkAuthenticationNeeded(Method content) {
-		return false;
-	}
+    @Override
+    protected boolean checkAuthenticationNeeded(final Method content) {
+        return false;
+    }
 
-	@Override
-	protected void executePage(Method content) {
+    @Override
+    protected void executePage(final Method content) {
 
-	}
+    }
 
 	@Override
 	protected void cleanup() {

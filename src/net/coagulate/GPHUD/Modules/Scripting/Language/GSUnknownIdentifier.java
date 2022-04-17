@@ -6,21 +6,23 @@ public class GSUnknownIdentifier extends GSException {
 	private static final long serialVersionUID=1L;
 
 	public GSUnknownIdentifier(final String reason) {
-		super(reason);
-	}
-	public GSUnknownIdentifier(final String reason,boolean suppress) {
-		super(reason,suppress);
-	}
+        super(reason);
+    }
 
-	public GSUnknownIdentifier(final String reason,
-	                           final Throwable cause) {
-		super(reason,cause);
-	}
-	public GSUnknownIdentifier(final String reason,
-							   final Throwable cause,
-							   boolean suppress) {
-		super(reason,cause,suppress);
-	}
+    public GSUnknownIdentifier(final String reason, final boolean suppress) {
+        super(reason, suppress);
+    }
+
+    public GSUnknownIdentifier(final String reason,
+                               final Throwable cause) {
+        super(reason, cause);
+    }
+
+    public GSUnknownIdentifier(final String reason,
+                               final Throwable cause,
+                               final boolean suppress) {
+        super(reason, cause, suppress);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nonnull

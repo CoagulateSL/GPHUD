@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class AccessibleKV extends InventoryKV {
-	public AccessibleKV(@Nonnull Attribute inventory) {
+	public AccessibleKV(@Nonnull final Attribute inventory) {
 		super(inventory);
 	}
 

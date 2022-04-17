@@ -270,22 +270,24 @@ public abstract class Management {
 	}
 
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-			  description="Set the KV precedence value of a character group",
-			  requiresPermission="Groups.SetPrecedence")
-	public static Response setPrecedence(@Nonnull final State st,
-									@Nonnull @Arguments(name="group",description="Group to change the leader of",
-														type=ArgumentType.CHARACTERGROUP) final CharacterGroup group,
-									@Nonnull @Arguments(name="precedence",description="New precedence",
-														 type=ArgumentType.INTEGER) Integer precedence) {
-		int oldPrecedence=group.getKVPrecedence();
-		if (oldPrecedence==precedence) { return new OKResponse("Precedence unchanged"); }
-		group.setKVPrecedence(precedence);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetPrecedence",group.getName(),""+oldPrecedence,""+precedence,"Changed KV Precedence from "+oldPrecedence+" to "+precedence);
-		CharacterGroup.purgeCharacterGroupPrecedenceCaches();
-		st.getInstance().pushConveyances();
-		return new OKResponse("Precedence updated");
-	}
+    @Commands(context = Context.AVATAR,
+              description = "Set the KV precedence value of a character group",
+              requiresPermission = "Groups.SetPrecedence")
+    public static Response setPrecedence(@Nonnull final State st,
+                                         @Nonnull @Arguments(name = "group", description = "Group to change the leader of",
+                                                             type = ArgumentType.CHARACTERGROUP) final CharacterGroup group,
+                                         @Nonnull @Arguments(name = "precedence", description = "New precedence",
+                                                             type = ArgumentType.INTEGER) final Integer precedence) {
+        final int oldPrecedence = group.getKVPrecedence();
+        if (oldPrecedence == precedence) {
+            return new OKResponse("Precedence unchanged");
+        }
+        group.setKVPrecedence(precedence);
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetPrecedence", group.getName(), "" + oldPrecedence, "" + precedence, "Changed KV Precedence from " + oldPrecedence + " to " + precedence);
+        CharacterGroup.purgeCharacterGroupPrecedenceCaches();
+        st.getInstance().pushConveyances();
+        return new OKResponse("Precedence updated");
+    }
 
 	@URLs(url="/groups/add",
 	      requiresPermission="Groups.SetGroup")
@@ -306,27 +308,30 @@ public abstract class Management {
 		return add(st,group,newMember,true);
 	}
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-			  description="Add a member to this group.  Does not notify target of group change.",
-			  requiresPermission="Groups.SetGroup")
-	public static Response addSilently(@Nonnull final State st,
-							   @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-												   name="group",description="Group to add character to") final CharacterGroup group,
-							   @Nonnull @Arguments(name="newmember",description="Character to add to the group",
-												   type=ArgumentType.CHARACTER) final Char newMember) {
-		return add(st,group,newMember,false);
-	}
-	private static Response add(@Nonnull final State st,final CharacterGroup group,final Char newMember,boolean notify) {
-		final Attribute attr=st.getAttribute(group);
-		String groupType=null;
-		if (attr!=null) {
-			groupType=attr.getSubType();
-		}
-		CharacterGroup existingGroup=null;
-		if (groupType!=null) { existingGroup=CharacterGroup.getGroup(newMember,groupType); }
-		if (existingGroup!=null && existingGroup.getOwner()==newMember) {
-			return new ErrorResponse("Refusing to move character "+newMember.getName()+", they are currently group leader of "+existingGroup.getName()+", you must manually "+"eject them from that position");
-		}
+    @Commands(context = Context.AVATAR,
+              description = "Add a member to this group.  Does not notify target of group change.",
+              requiresPermission = "Groups.SetGroup")
+    public static Response addSilently(@Nonnull final State st,
+                                       @Nonnull @Arguments(type = ArgumentType.CHARACTERGROUP,
+                                                           name = "group", description = "Group to add character to") final CharacterGroup group,
+                                       @Nonnull @Arguments(name = "newmember", description = "Character to add to the group",
+                                                           type = ArgumentType.CHARACTER) final Char newMember) {
+        return add(st, group, newMember, false);
+    }
+
+    private static Response add(@Nonnull final State st, final CharacterGroup group, final Char newMember, final boolean notify) {
+        final Attribute attr = st.getAttribute(group);
+        String groupType = null;
+        if (attr != null) {
+            groupType = attr.getSubType();
+        }
+        CharacterGroup existingGroup = null;
+        if (groupType != null) {
+            existingGroup = CharacterGroup.getGroup(newMember, groupType);
+        }
+        if (existingGroup != null && existingGroup.getOwner() == newMember) {
+            return new ErrorResponse("Refusing to move character " + newMember.getName() + ", they are currently group leader of " + existingGroup.getName() + ", you must manually " + "eject them from that position");
+        }
 		if (existingGroup!=null) { existingGroup.removeMember(newMember); }
 		try { group.addMember(newMember); }
 		catch (@Nonnull final UserException e) {
@@ -373,17 +378,20 @@ public abstract class Management {
 		return remove(st,group,member,false);
 	}
 
-	private static Response remove(@Nonnull final State st, final CharacterGroup group, final Char member, boolean notify) {
-		if (group.getOwner()==member) {
-			return new ErrorResponse("Will not remove "+member.getName()+" from "+group.getName()+", they are the group leader, you must demote them by replacing them or "+"leaving the group leaderless.");
-		}
-		try { group.removeMember(member); }
-		catch (@Nonnull final UserException e) {
-			return new ErrorResponse("Failed to remove member - "+e.getMessage());
-		}
-		if (notify) { member.hudMessage("You have been removed from group "+group.getName()); }
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,member,"RemoveMember",group.getName(),group.getName(),null,"Removed member from group");
-		return new OKResponse(member.getName()+" was removed from group "+group.getName());
+    private static Response remove(@Nonnull final State st, final CharacterGroup group, final Char member, final boolean notify) {
+        if (group.getOwner() == member) {
+            return new ErrorResponse("Will not remove " + member.getName() + " from " + group.getName() + ", they are the group leader, you must demote them by replacing them or " + "leaving the group leaderless.");
+        }
+        try {
+            group.removeMember(member);
+        } catch (@Nonnull final UserException e) {
+            return new ErrorResponse("Failed to remove member - " + e.getMessage());
+        }
+        if (notify) {
+            member.hudMessage("You have been removed from group " + group.getName());
+        }
+        Audit.audit(st, Audit.OPERATOR.AVATAR, null, member, "RemoveMember", group.getName(), group.getName(), null, "Removed member from group");
+        return new OKResponse(member.getName() + " was removed from group " + group.getName());
 	}
 
 	@URLs(url="/groups/delete",

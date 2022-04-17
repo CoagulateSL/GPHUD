@@ -9,9 +9,9 @@ public class GSArrayIndexOutOfBoundsException extends GSInvalidExpressionExcepti
 		super(reason);
 	}
 
-	public GSArrayIndexOutOfBoundsException(String reason, boolean suppresslogging) {
-		super(reason, suppresslogging);
-	}
+	public GSArrayIndexOutOfBoundsException(final String reason, final boolean suppresslogging) {
+        super(reason, suppresslogging);
+    }
 
 	public GSArrayIndexOutOfBoundsException(final String reason,
 											final Throwable cause) {

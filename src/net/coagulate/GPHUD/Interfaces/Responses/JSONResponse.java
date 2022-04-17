@@ -68,65 +68,110 @@ public class JSONResponse implements Response {
 	For non say as types, the string following the first character is output.
 	 */
 
-	public static String findFreePrefix(@Nonnull JSONObject json,
-										@Nonnull String prefix) {
-		int i=1;
-		while (json.has(prefix+i)) { i++; }
-		return prefix+i;
-	}
+    public static String findFreePrefix(@Nonnull final JSONObject json,
+                                        @Nonnull final String prefix) {
+        int i = 1;
+        while (json.has(prefix + i)) {
+            i++;
+        }
+        return prefix + i;
+    }
 
-	/** Target will emit message under guise of the sayAs name */
-	public static void sayAs(@Nonnull JSONObject json,
-							 @Nullable String sayAs,
-							 @Nonnull String message,
-							 final int protocol) {
-		if (protocol<3) {
-			if (sayAs != null) {
-				json.put("sayas", sayAs);
-			}
-			json.put(findFreePrefix(json, "say"), message);
-		} else {
-			if (sayAs==null) {
-				json.put(findFreePrefix(json, "output"), "s" + message);
-			} else {
-				json.put(findFreePrefix(json, "output"), "a" + sayAs+"|"+message);
-			}
-		}
-	}
-	/** Target will emit message under guise of the sayAs name */
-	public void sayAs(@Nullable String sayAs,@Nonnull String message,final int protocol) { sayAs(json,sayAs,message,protocol); }
-	/** Target will emit message .. not really sure why this differs from sayashud at this point*/
-	public static void say(@Nonnull JSONObject json,@Nonnull String message,final int protocol) { sayAs(json,null,message,protocol); }
-	/** Target will emit message .. not really sure why this differs from sayashud at this point*/
-	public void say(@Nonnull String message,final int protocol) { sayAs(null,message,protocol); }
-	/** Target will emit message as the GPHUD */
-	public static void sayAsHud(@Nonnull JSONObject json,
-								@Nonnull String message,
-								final int protocol) {
-		if (protocol<3) {
-			json.put(findFreePrefix(json,"sayashud"),message);
-		} else {
-			json.put(findFreePrefix(json, "output"), "s" + message);
-		}
-	}
-	/** Target will emit message as the GPHUD */
-	public void sayAsHud(@Nonnull String message,final int protocol) { sayAsHud(json,message,protocol); }
-	/** Target will message the owner (does not work on objects) */
-	public static void ownerSay(@Nonnull JSONObject json,
-								@Nonnull String message,
-								final int protocol) {
-		if (protocol<3) {
-			json.put(findFreePrefix(json,"message"),message);
-		} else {
-			json.put(findFreePrefix(json, "output"), "o" + message);
-		}
-	}
-	/** Target will message the owner (does not work on objects) */
-	public void ownerSay(@Nonnull String message,final int protocol) { ownerSay(json,message,protocol); }
-	/** Target will message the owner (does not work on objects) (alias for ownerSay)*/
-	public static void message(@Nonnull JSONObject json,
-							   @Nonnull String message,
-							   final int protocol) { ownerSay(json,message,protocol); }
-	/** Target will message the owner (does not work on objects) (alias for ownerSay*/
-	public void message(@Nonnull String message,final int protocol) { message(json,message,protocol); }
+    /**
+     * Target will emit message under guise of the sayAs name
+     */
+    public static void sayAs(@Nonnull final JSONObject json,
+                             @Nullable final String sayAs,
+                             @Nonnull final String message,
+                             final int protocol) {
+        if (protocol < 3) {
+            if (sayAs != null) {
+                json.put("sayas", sayAs);
+            }
+            json.put(findFreePrefix(json, "say"), message);
+        } else {
+            if (sayAs == null) {
+                json.put(findFreePrefix(json, "output"), "s" + message);
+            } else {
+                json.put(findFreePrefix(json, "output"), "a" + sayAs + "|" + message);
+            }
+        }
+    }
+
+    /**
+     * Target will emit message under guise of the sayAs name
+     */
+    public void sayAs(@Nullable final String sayAs, @Nonnull final String message, final int protocol) {
+        sayAs(json, sayAs, message, protocol);
+    }
+
+    /**
+     * Target will emit message .. not really sure why this differs from sayashud at this point
+     */
+    public static void say(@Nonnull final JSONObject json, @Nonnull final String message, final int protocol) {
+        sayAs(json, null, message, protocol);
+    }
+
+    /**
+     * Target will emit message .. not really sure why this differs from sayashud at this point
+     */
+    public void say(@Nonnull final String message, final int protocol) {
+        sayAs(null, message, protocol);
+    }
+
+    /**
+     * Target will emit message as the GPHUD
+     */
+    public static void sayAsHud(@Nonnull final JSONObject json,
+                                @Nonnull final String message,
+                                final int protocol) {
+        if (protocol < 3) {
+            json.put(findFreePrefix(json, "sayashud"), message);
+        } else {
+            json.put(findFreePrefix(json, "output"), "s" + message);
+        }
+    }
+
+    /**
+     * Target will emit message as the GPHUD
+     */
+    public void sayAsHud(@Nonnull final String message, final int protocol) {
+        sayAsHud(json, message, protocol);
+    }
+
+    /**
+     * Target will message the owner (does not work on objects)
+     */
+    public static void ownerSay(@Nonnull final JSONObject json,
+                                @Nonnull final String message,
+                                final int protocol) {
+        if (protocol < 3) {
+            json.put(findFreePrefix(json, "message"), message);
+        } else {
+            json.put(findFreePrefix(json, "output"), "o" + message);
+        }
+    }
+
+    /**
+     * Target will message the owner (does not work on objects)
+     */
+    public void ownerSay(@Nonnull final String message, final int protocol) {
+        ownerSay(json, message, protocol);
+    }
+
+    /**
+     * Target will message the owner (does not work on objects) (alias for ownerSay)
+     */
+    public static void message(@Nonnull final JSONObject json,
+                               @Nonnull final String message,
+                               final int protocol) {
+        ownerSay(json, message, protocol);
+    }
+
+    /**
+     * Target will message the owner (does not work on objects) (alias for ownerSay
+     */
+    public void message(@Nonnull final String message, final int protocol) {
+        message(json, message, protocol);
+    }
 }

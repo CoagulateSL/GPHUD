@@ -65,10 +65,10 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 	@Override
-	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
-		State state=state();
-		state.source= State.Sources.USER;
-		state.parameterDebugRaw=new SafeMap();
+	protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
+		final State state = state();
+		state.source = State.Sources.USER;
+		state.parameterDebugRaw = new SafeMap();
 		state.parameterDebugRaw.putAll(parameters);
 	}
 
@@ -78,31 +78,34 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 	@Override
-	protected boolean checkAuthenticationNeeded(Method content) {
+	protected boolean checkAuthenticationNeeded(final Method content) {
 		return false;
 	}
 
 	@Nullable
 	@Override
-	protected Method lookupPageFromUri(String uri) {
+	protected Method lookupPageFromUri(final String uri) {
 		state().setURL(uri);
-		try { return getClass().getDeclaredMethod("renderHTML",State.class); } catch (NoSuchMethodException e) {
-			throw new SystemImplementationException("Internal reflection failed with method not found",e);
+		try {
+			return getClass().getDeclaredMethod("renderHTML", State.class);
+		} catch (final NoSuchMethodException e) {
+			throw new SystemImplementationException("Internal reflection failed with method not found", e);
 		}
 	}
 
 	@Override
-	protected void executePage(Method content) {
+	protected void executePage(final Method content) {
 		try {
 			//todo
 			//noinspection deprecation
 			Page.page().add(new Raw(renderHTML(state())));
-			if (state().suppressOutput()) { return; }
+			if (state().suppressOutput()) {
+				return;
+			}
 			Page.page().template(new PlainTextMapper.PlainTextTemplate());
-		}
-		catch (@Nonnull final RedirectionException redir) {
+		} catch (@Nonnull final RedirectionException redir) {
 			Page.page().responseCode(HttpStatus.SC_SEE_OTHER);
-			String targeturl=redir.getURL();
+			String targeturl = redir.getURL();
 			//System.out.println("PRE:"+targeturl);
 			if (targeturl.startsWith("/") && !targeturl.startsWith("/GPHUD")) { targeturl="/GPHUD"+targeturl; }
 			//System.out.println("POST:"+targeturl);
@@ -661,41 +664,41 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		return selectavatars;
 	}*/
 	@Override
-	protected void renderUnhandledError(HttpRequest request, HttpContext context, HttpResponse response, Throwable t) {
-		SL.report("GPWeb UnkEx: "+t.getLocalizedMessage(),t,state());
-		State st=state();
-		String page=headerHTML(st);
-		page+="<p><h1>Unhandled Internal Error</h1></p>";
-		page+="<p>Sorry, an unhandled internal error has occurred.</p>";
-		page+="<p>The system administrator has been mailed about this issue.</p>";
-		page+=footerHTML(st);
+	protected void renderUnhandledError(final HttpRequest request, final HttpContext context, final HttpResponse response, final Throwable t) {
+		SL.report("GPWeb UnkEx: " + t.getLocalizedMessage(), t, state());
+		final State st = state();
+		String page = headerHTML(st);
+		page += "<p><h1>Unhandled Internal Error</h1></p>";
+		page += "<p>Sorry, an unhandled internal error has occurred.</p>";
+		page += "<p>The system administrator has been mailed about this issue.</p>";
+		page += footerHTML(st);
 		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
 		response.setStatusCode(200);
 	}
 
 	@Override
-	protected void renderSystemError(HttpRequest request, HttpContext context, HttpResponse response, SystemException t) {
-		SL.report("GPWeb SysEx: "+t.getLocalizedMessage(),t,state());
-		State st=state();
-		String page=headerHTML(st);
-		page+="<p><h1>Internal Error</h1></p>";
-		page+="<p>Sorry, an internal error has occurred.</p>";
-		page+="<p>The system administrator has been mailed about this issue.</p>";
-		page+=footerHTML(st);
+	protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException t) {
+		SL.report("GPWeb SysEx: " + t.getLocalizedMessage(), t, state());
+		final State st = state();
+		String page = headerHTML(st);
+		page += "<p><h1>Internal Error</h1></p>";
+		page += "<p>Sorry, an internal error has occurred.</p>";
+		page += "<p>The system administrator has been mailed about this issue.</p>";
+		page += footerHTML(st);
 		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
 		response.setStatusCode(200);
 	}
 
 	@Override
-	protected void renderUserError(HttpRequest request, HttpContext context, HttpResponse response, UserException t) {
-		SL.report("GPWeb User: "+t.getLocalizedMessage(),t,state());
-		State st=state();
-		String page=headerHTML(st);
-		page+="<p><h1>Error</h1></p>";
-		page+="<p>There was an error processing your request.</p>";
-		page+="<p>Please review your inputs and the error message, this type of error is likely more related to user data, configuration, or similar, rather than being a system error.</p>";
-		page+="<p><b>ERROR:</b> "+t.getLocalizedMessage();
-		page+=footerHTML(st);
+	protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException t) {
+		SL.report("GPWeb User: " + t.getLocalizedMessage(), t, state());
+		final State st = state();
+		String page = headerHTML(st);
+		page += "<p><h1>Error</h1></p>";
+		page += "<p>There was an error processing your request.</p>";
+		page += "<p>Please review your inputs and the error message, this type of error is likely more related to user data, configuration, or similar, rather than being a system error.</p>";
+		page += "<p><b>ERROR:</b> " + t.getLocalizedMessage();
+		page += footerHTML(st);
 		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
 		response.setStatusCode(200);
 	}

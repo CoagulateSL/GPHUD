@@ -44,10 +44,10 @@ public class AliasCommand extends Command {
 		this.name=name;
 		if (st.hasModule(definition.getString("invoke"))) {
 			try { targetcommand=Modules.getCommandNullable(st,definition.getString("invoke")); }
-			catch (UserConfigurationRecursionException e) {
-				targetcommand=null;
-				fail=e.getLocalizedMessage();
-			}
+			catch (final UserConfigurationRecursionException e) {
+                targetcommand = null;
+                fail = e.getLocalizedMessage();
+            }
 		}
 		else {
 			targetcommand=null;

@@ -252,16 +252,18 @@ public class GSVM {
 	}
 
 	public void queueSelectCharacter(final Char ch,
-	                                 final String description,
-									 boolean allowManualSelection) {
-		final JSONObject out=getQueue(ch);
-		out.put("args",1);
-		out.put("arg0name","response");
-		out.put("arg0type","SENSORCHAR");
-		if (allowManualSelection) { out.put("arg0manual","yes"); }
-		out.put("arg0description",description);
-		out.put("incommand","runtemplate");
-		out.put("invoke","Scripting.CharacterResponse");
+									 final String description,
+									 final boolean allowManualSelection) {
+		final JSONObject out = getQueue(ch);
+		out.put("args", 1);
+		out.put("arg0name", "response");
+		out.put("arg0type", "SENSORCHAR");
+		if (allowManualSelection) {
+			out.put("arg0manual", "yes");
+		}
+		out.put("arg0description", description);
+		out.put("incommand", "runtemplate");
+		out.put("invoke", "Scripting.CharacterResponse");
 	}
 
 	public void queueGetText(final Char ch,
@@ -310,8 +312,8 @@ public class GSVM {
 				initlist.add(bcd);
 			}
 			else {
-				final BCList list=(BCList) bcd;
-				List<ByteCodeDataType> theList = list.getContent();
+				final BCList list = (BCList) bcd;
+				final List<ByteCodeDataType> theList = list.getContent();
 				for (int i= theList.size()-1;i >= 0;i--) {
 					initlist.add(theList.get(i));
 				}
@@ -394,7 +396,7 @@ public class GSVM {
 		return ret;
 	}
 	public float getFloat() {
-		int getInt=getInt();
+		final int getInt = getInt();
 		//System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
 		return Float.intBitsToFloat(getInt);
 	}
@@ -430,7 +432,7 @@ public class GSVM {
 	}
 
 	public int getCanary() {
-		ByteCodeDataType canary = variables.get(" CANARY");
+		final ByteCodeDataType canary = variables.get(" CANARY");
 		if (canary==null) { throw new GSInternalError("Canary not found? ("+source+" - "+row+":"+column+")"); }
 		return canary.toInteger();
 	}
@@ -456,7 +458,7 @@ public class GSVM {
 			throw new GSInternalError("VM Uncaught: {"+t.getClass().getSimpleName()+"} "+t.getLocalizedMessage()+" "+at(),t);
 		}
 		st.vm=null;
-		JSONObject json=dequeue(st,st.getCharacterNullable()).asJSON(st);
+		final JSONObject json = dequeue(st, st.getCharacterNullable()).asJSON(st);
 		if (invokeonexit!=null && !suspended) {
 			json.put("incommand","runtemplate");
 			json.put("args","0");
