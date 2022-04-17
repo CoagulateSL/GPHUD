@@ -23,8 +23,6 @@ import java.util.Set;
  */
 public class NullResponse implements Response {
 
-	public NullResponse() {}
-
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
