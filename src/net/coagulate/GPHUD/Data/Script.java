@@ -315,15 +315,16 @@ public class Script extends TableRow {
 
 	public void delete() {
 		final Instance i = getInstance();
-		d("delete from scripts where id=?",getId());
+		d("delete from scripts where id=?", getId());
 		scriptCache.purge(i);
 	}
 
-    public int getCompilerVersion() {
+	public int getCompilerVersion() {
 		return getInt("compilerversion");
-    }
+	}
 
-	public @Nonnull String alias() {
+	@Nonnull
+	public String alias() {
 		final String alias = getStringNullable("alias");
 		return alias == null ? "" : alias;
 	}
