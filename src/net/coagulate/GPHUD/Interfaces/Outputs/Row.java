@@ -85,7 +85,7 @@ public class Row implements Renderable {
 		return s+"</tr>";
 	}
 
-	private boolean reset=false;
+	private boolean reset;
 	public Row resetNumbering() { reset=true; return this; }
 	public boolean isResetNumbering() { return reset; }
 

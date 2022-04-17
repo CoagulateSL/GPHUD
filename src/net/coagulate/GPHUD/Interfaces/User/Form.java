@@ -179,7 +179,7 @@ public class Form implements Renderable {
 		}
 		return null;
 	}
-	private boolean inline=false;
+	private boolean inline;
 	public void inline() {
 		inline=true;
 	}

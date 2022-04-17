@@ -39,8 +39,8 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
 public class State extends DumpableState {
 	public Map<String,String> externals;
 
-	private static final Map<Thread, State> stateMap =new ConcurrentHashMap<>();
-	public int protocol=0; // protocol as specified by remote JSON, if it exists
+	private static final Map<Thread, State> stateMap = new ConcurrentHashMap<>();
+	public int protocol; // protocol as specified by remote JSON, if it exists
 
 	public static void maintenance() {
 		try {
@@ -1038,7 +1038,7 @@ public class State extends DumpableState {
 		return object;
 	}
 
-	private boolean suppressOutput =false;
+	private boolean suppressOutput;
 
 	public void suppressOutput(final boolean template) {
 		this.suppressOutput = template;
