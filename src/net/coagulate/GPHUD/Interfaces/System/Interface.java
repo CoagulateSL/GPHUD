@@ -278,7 +278,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			// we are a known region, connected to an instance
 
 			// are they authorised to run stuff?
-			boolean authorised = developer.getId() == 1;
+			final boolean authorised = developer.getId() == 1;
 			// TODO check the region's instance, check the permits, blah blah, proper authorisation.  "iain" gets to skip all this.
 			// respond to it
 			if (authorised) {
@@ -346,7 +346,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		if (console.startsWith("createinstance ")) {
 			final User ava=st.getAvatarNullable();
 			if (ava==null) { return new ErrorResponse("Null avatar associated with request??"); }
-			boolean ok = ava.isSuperAdmin();
+			final boolean ok = ava.isSuperAdmin();
 			//if (ava.canCreate()) { ok=true; }
 			if (!ok) {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");

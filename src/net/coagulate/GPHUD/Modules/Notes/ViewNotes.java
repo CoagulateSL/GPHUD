@@ -95,7 +95,7 @@ public class ViewNotes {
 		if (st.getInstance() != target.getInstance()) {
 			throw new UserInputStateException("State instance/target mismatch");
 		}
-		boolean admin = st.hasPermission("Notes.View");
+		final boolean admin = st.hasPermission("Notes.View");
 		if (!admin) {
 			if (st.getAvatarNullable() != target.getOwner()) {
 				throw new UserAccessDeniedException("You can only view your own character");
@@ -120,7 +120,7 @@ public class ViewNotes {
 		}
 		final User target = User.get(targetid);
 
-		boolean admin = st.hasPermission("Notes.View");
+		final boolean admin = st.hasPermission("Notes.View");
 		if (!admin) {
 			if (st.getAvatarNullable() != target) {
 				throw new UserAccessDeniedException("You can only view your own character");

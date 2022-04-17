@@ -58,7 +58,7 @@ public class Input {
 		if (!target.isOnline()) {
 			throw new GSResourceUnavailableException("Character " + target + " is not online", true);
 		}
-		boolean allowManualBoolean = allowManual.getContent() != 0;
+		final boolean allowManualBoolean = allowManual.getContent() != 0;
 		vm.queueSelectCharacter(target.getContent(), message.getContent(), allowManualBoolean);
 		vm.suspend(st, target.getContent());
 		return target;

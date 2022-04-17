@@ -75,7 +75,7 @@ public abstract class ZonePages {
 	                            @Nonnull final Zone z,
 	                            final boolean brief) {
 		final boolean full = false;
-		boolean admin = st.hasPermission("zoning.config");
+		final boolean admin = st.hasPermission("zoning.config");
 		final Form f = st.form();
 		f.noForm();
 		f.add(new TextHeader("Zone: " + z.getName()));
