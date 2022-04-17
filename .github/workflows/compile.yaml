@@ -16,8 +16,9 @@ jobs:
       - name: Checkout CoagulateSL
         uses: actions/checkout@v2
         with:
+          repository: 'CoagulateSL/CoagulateSL'        
           path: CoagulateSL
-          repository: 'CoagulateSL/CoagulateSL'          
+          token: ${{ secrets.PACKAGE_READ }}
       - name: Checkout JavaCore
         uses: actions/checkout@v2
         with:
