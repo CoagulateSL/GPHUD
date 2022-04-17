@@ -185,7 +185,7 @@ public class ScriptingConfig {
 		}
 		if ("View Results".equals(values.get("View Results")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st, script.getSource(), STAGE.RESULTS));
+			f.add(debug(st, script.getSource(), RESULTS));
 		}
 		//if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}

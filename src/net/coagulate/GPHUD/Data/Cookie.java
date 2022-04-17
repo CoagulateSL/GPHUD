@@ -8,7 +8,6 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Tokens;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -135,7 +134,7 @@ public class Cookie {
 	 * Trigger expired cookie cleaning
 	 */
 	public static void expire() {
-		db().d("delete from cookies where expires<?",UnixTime.getUnixTime());
+		db().d("delete from cookies where expires<?", getUnixTime());
 	}
 
 	// ----- Internal Statics -----

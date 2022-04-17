@@ -281,7 +281,7 @@ public class Char extends TableRow {
 	public static Results getPingable() {
 		return db().dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+"limit 0,30",
 		               Interface.getNode(),
-		               UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
+		               getUnixTime() - (Maintenance.PINGHUDINTERVAL * 60)
 		              );
 	}
 
@@ -581,16 +581,16 @@ public class Char extends TableRow {
 	 * Disconnects a character.  Does not send a terminate to the URL
 	 */
 	public void disconnect() {
-		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",null, //playedby
-		  UnixTime.getUnixTime()-1, //lastactive
-		  null, //url
-		  null, //urlfirst
-		  null, //urllast
-		  null, //authnode
-		  null, //zone
-		  null, //region
-		  getId()
-		 ); //character id
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?", null, //playedby
+				getUnixTime() - 1, //lastactive
+				null, //url
+				null, //urlfirst
+				null, //urllast
+				null, //authnode
+				null, //zone
+				null, //region
+				getId()
+		); //character id
 		zoneCache.purge(this);
 	}
 
@@ -602,7 +602,7 @@ public class Char extends TableRow {
 
 	@Deprecated
 	public void setActive() {
-		db().d("update characters set lastactive=? where characterid=?",UnixTime.getUnixTime()+1,getId());
+		db().d("update characters set lastactive=? where characterid=?", getUnixTime() + 1, getId());
 	}
 
 	public void login(final User user,
@@ -610,16 +610,16 @@ public class Char extends TableRow {
 	                  final String url) {
 		disconnectURL(url);
 		logoutByAvatar(user,this);
-		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",user.getId(), // played by
-		  UnixTime.getUnixTime(), // last active
-		  url, // url
-		  UnixTime.getUnixTime(), //urlfirst
-		  UnixTime.getUnixTime(), // urllast
-		  Interface.getNode(), //node
-		  null, //zone
-		  region.getId(), //region id
-		  getId()
-		 ); // where char id
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?", user.getId(), // played by
+				getUnixTime(), // last active
+				url, // url
+				getUnixTime(), //urlfirst
+				getUnixTime(), // urllast
+				Interface.getNode(), //node
+				null, //zone
+				region.getId(), //region id
+				getId()
+		); // where char id
 		zoneCache.purge(this);
 	}
 
@@ -930,7 +930,7 @@ public class Char extends TableRow {
 	 * Called when a ping to the URL completes, update the timer
 	 */
 	public void pinged() {
-		d("update characters set urllast=? where characterid=?",UnixTime.getUnixTime(),getId());
+		d("update characters set urllast=? where characterid=?", getUnixTime(), getId());
 	}
 
 	/**

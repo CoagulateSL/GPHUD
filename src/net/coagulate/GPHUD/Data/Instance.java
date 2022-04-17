@@ -9,7 +9,6 @@ import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -126,11 +125,11 @@ public class Instance extends TableRow {
 	public static void quotaCredits() {
 		final int quotaLimit = Config.getQuotaLimit();
 		final int quotaInterval = Config.getQuotaInterval();
-		for (final ResultsRow row : db().dq("select instanceid from instances where nextquotaincrease<?", UnixTime.getUnixTime())) {
+		for (final ResultsRow row : db().dq("select instanceid from instances where nextquotaincrease<?", getUnixTime())) {
 			db().d("update instances set reportquota=least(reportquota+1,?),downloadquota=least(downloadquota+1,?),nextquotaincrease=? where instanceid=?",
 					quotaLimit,
 					quotaLimit,
-					UnixTime.getUnixTime() + quotaInterval,
+					getUnixTime() + quotaInterval,
 					row.getInt());
 		}
 	}
@@ -389,7 +388,7 @@ public class Instance extends TableRow {
 		final List<Object> parameters=new ArrayList<>();
 		parameters.add(getId());
 		String additional = "";
-		final int lastActive = UnixTime.getUnixTime() - (60 * 60 * 24 * 30 * 3);
+		final int lastActive = getUnixTime() - (60 * 60 * 24 * 30 * 3);
 		String charactersScoping = "";
 		if (!showRetired) {
 			charactersScoping=" and characters.retired=0 and characters.lastactive>"+lastActive+" ";
@@ -440,24 +439,26 @@ public class Instance extends TableRow {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: getDatabase().dqSlow(
-				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is not null and starttime>? group by characterid",getId(),
-		                            UnixTime.getUnixTime()-(Experience.getCycle(st))
-		                           )) {
-			final int id=r.getInt("characterid");
-			if (idMap.containsKey(id)) { idMap.get(id).recentvisits=r.getInt("totaltime"); }
-		}
-		for (final ResultsRow r: getDatabase().dqSlow("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is null and starttime>?",getId(),UnixTime.getUnixTime()-(Experience.getCycle(st)))) {
-			final int id=r.getInt("characterid");
-			final int add=UnixTime.getUnixTime()-r.getInt("starttime");
+		for (final ResultsRow r : getDatabase().dqSlow(
+				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? " + charactersScoping + " and endtime is not null and starttime>? group by characterid", getId(),
+				getUnixTime() - (Experience.getCycle(st))
+		)) {
+			final int id = r.getInt("characterid");
 			if (idMap.containsKey(id)) {
-				idMap.get(id).recentvisits=idMap.get(id).recentvisits+add;
-				idMap.get(id).totalvisits=idMap.get(id).totalvisits+add;
+				idMap.get(id).recentvisits = r.getInt("totaltime");
 			}
 		}
-		for (final ResultsRow r: getDatabase().dqSlow(
-				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and (poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP') group by "+"characterid",getId())) {
-			final int id=r.getInt("characterid");
+		for (final ResultsRow r : getDatabase().dqSlow("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? " + charactersScoping + " and endtime is null and starttime>?", getId(), getUnixTime() - (Experience.getCycle(st)))) {
+			final int id = r.getInt("characterid");
+			final int add = getUnixTime() - r.getInt("starttime");
+			if (idMap.containsKey(id)) {
+				idMap.get(id).recentvisits = idMap.get(id).recentvisits + add;
+				idMap.get(id).totalvisits = idMap.get(id).totalvisits + add;
+			}
+		}
+		for (final ResultsRow r : getDatabase().dqSlow(
+				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? " + charactersScoping + " and (poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP') group by " + "characterid", getId())) {
+			final int id = r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalxp=r.getInt("total"); }
 		}
 		final Map<Integer,String> avatarNames=User.getIdToNameMap();
@@ -665,7 +666,7 @@ public class Instance extends TableRow {
 	 * @return true if it is permitted to send an update to this target at this time
 	 */
 	private boolean canStatus(final String url) {
-		final int now=UnixTime.getUnixTime();
+		final int now = getUnixTime();
 		if (lastStatus.containsKey(url)) {
 			final int last= lastStatus.get(url);
 			if (url.startsWith("admins-") || url.startsWith("expiring-")) {  // bodge, admins get weird INTERVAL minute pestering :P
@@ -701,8 +702,8 @@ public class Instance extends TableRow {
 	}
 
 	public void setReport(@Nonnull final String report) {
-		set("report",report);
-		set("reporttds",UnixTime.getUnixTime());
+		set("report", report);
+		set("reporttds", getUnixTime());
 	}
 
 	public boolean spendReportCredit() {

@@ -19,7 +19,6 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
 
 import static java.util.logging.Level.*;
 
@@ -181,7 +180,7 @@ public class Transmission extends Thread {
 				if (caller!=null) { se.setStackTrace(caller); }
 				step.initCause(se);
 			}
-			GPHUD.getLogger("Transmission").log(Level.WARNING,"Transmission threw exception from inner wrapper",e);
+			GPHUD.getLogger("Transmission").log(WARNING, "Transmission threw exception from inner wrapper", e);
 
 		}
 	}

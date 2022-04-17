@@ -10,7 +10,6 @@ import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -69,15 +68,15 @@ public class Region extends TableRow {
 	 * @param url URL to refresh
 	 */
 	public static void refreshURL(@Nonnull final String url) {
-		final String t="regions";
-		final int refreshifolderthan=UnixTime.getUnixTime()-TableRow.REFRESH_INTERVAL;
-		final int toupdate=db().dqiNotNull("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
+		final String t = "regions";
+		final int refreshifolderthan = getUnixTime() - TableRow.REFRESH_INTERVAL;
+		final int toupdate = db().dqiNotNull("select count(*) from " + t + " where url=? and urllast<?", url, refreshifolderthan);
 		if (toupdate==0) { return; }
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Region","Refreshing REGION url "+url);
-		db().d("update "+t+" set urllast=?,authnode=? where url=?",UnixTime.getUnixTime(),Interface.getNode(),url);
+		db().d("update " + t + " set urllast=?,authnode=? where url=?", getUnixTime(), Interface.getNode(), url);
 	}
 
 	/**
@@ -155,7 +154,7 @@ public class Region extends TableRow {
 	public static Results getPingable() {
 		return db().dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+"asc limit 0,"+"30",
 		               Interface.getNode(),
-		               UnixTime.getUnixTime()-(Maintenance.PINGSERVERINTERVAL*60)
+				getUnixTime() - (Maintenance.PINGSERVERINTERVAL * 60)
 		              );
 	}
 
@@ -211,13 +210,13 @@ public class Region extends TableRow {
 			t.openRow();
 			t.add(row.getIntNullable("regionid"));
 			t.add(row.getStringNullable("name"));
-			t.add(row.getStringNullable("url")!=null?"Present":"");
-			t.add(UnixTime.fromUnixTime(row.getIntNullable("urllast"),st.getAvatar().getTimeZone()));
+			t.add(row.getStringNullable("url") != null ? "Present" : "");
+			t.add(fromUnixTime(row.getIntNullable("urllast"), st.getAvatar().getTimeZone()));
 			t.add(row.getStringNullable("authnode"));
 			t.add(row.getIntNullable("regionserverversion"));
-			t.add(UnixTime.fromUnixTime(row.getIntNullable("regionserverdatetime"),st.getAvatar().getTimeZone()));
+			t.add(fromUnixTime(row.getIntNullable("regionserverdatetime"), st.getAvatar().getTimeZone()));
 			t.add(row.getIntNullable("regionhudversion"));
-			t.add(UnixTime.fromUnixTime(row.getIntNullable("regionhuddatetime"),st.getAvatar().getTimeZone()));
+			t.add(fromUnixTime(row.getIntNullable("regionhuddatetime"), st.getAvatar().getTimeZone()));
 			t.add(row.getIntNullable("regionx"));
 			t.add(row.getIntNullable("regiony"));
 			Integer retired=row.getIntNullable("retired");
@@ -407,11 +406,11 @@ public class Region extends TableRow {
 				final int count=rows.size();
 				if (count>0) {
 					st.logger().info("Disconnected avatar "+avatar.getName());
-					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters"+".owner=? and characters.instanceid=?",
-					  avatarid,
-					  st.getInstance().getId()
-					 );
-					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",UnixTime.getUnixTime(),getId(),avatarid);
+					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters" + ".owner=? and characters.instanceid=?",
+							avatarid,
+							st.getInstance().getId()
+					);
+					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?", getUnixTime(), getId(), avatarid);
 				}
 				// compute visit XP ((TODO REFACTOR ME?))
 				for (final ResultsRow r: rows) {

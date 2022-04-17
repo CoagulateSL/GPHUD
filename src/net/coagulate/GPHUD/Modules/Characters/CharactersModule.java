@@ -164,7 +164,7 @@ public class CharactersModule extends ModuleAnnotation {
 		for (final Attribute attribute: st.getAttributes()) {
 			if (attribute.isKV() && attribute.usesAbilityPoints()) {
 				// type check too
-				if (attribute.getType()==Attribute.ATTRIBUTETYPE.INTEGER || attribute.getType()==Attribute.ATTRIBUTETYPE.FLOAT) {
+				if (attribute.getType() == INTEGER || attribute.getType() == FLOAT) {
 					ret.add(attribute.getName());
 				}
 			}
