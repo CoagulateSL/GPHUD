@@ -128,34 +128,32 @@ public class ScriptingConfig {
 			}
 			catch (@Nonnull final NullPointerException ex) {
 				throw new GSInternalError("Null pointer exception in compiler",ex);
-			}
-			catch (@Nonnull final Throwable t) {
-				f.p("Compilation failed; "+t);
-				Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
+			} catch (@Nonnull final Throwable t) {
+				f.p("Compilation failed; " + t);
+				Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Save", script.getName(), "", "CompileFail", "Saved script, with compilation failures");
 			}
 		}
-		f.add(new TextHeader("Edit script "+script.getName()));
-		final Table versions=new Table();
-		versions.add("Source code version").add(script.getSourceVersion()+"");
+		f.add(new TextHeader("Edit script " + script.getName()));
+		final Table versions = new Table();
+		versions.add("Source code version").add(script.getSourceVersion() + "");
 		versions.openRow();
-		if (script.getSourceVersion()!=script.getByteCodeVersion()) {
+		if (script.getSourceVersion() == script.getByteCodeVersion()) {
+			versions.add("Byte code version").add(script.getByteCodeVersion() + "");
+		} else {
 			versions.add("<font color=red>Byte code version</font>")
-			        .add("<font color=red>"+script.getByteCodeVersion()+"</font>")
-			        .add("<font color=red>Compiled version is behind source version, please attempt to SAVE SOURCE</font>");
+					.add("<font color=red>" + script.getByteCodeVersion() + "</font>")
+					.add("<font color=red>Compiled version is behind source version, please attempt to SAVE SOURCE</font>");
 		}
-		else {
-			versions.add("Byte code version").add(script.getByteCodeVersion()+"");
-		}
-		versions.openRow().add("Script alias").add(new TextInput("scriptalias",script.alias()));
+		versions.openRow().add("Script alias").add(new TextInput("scriptalias", script.alias()));
 		f.add(versions);
 		f.br();
-		f.add("<textarea name=scriptsource rows=25 cols=80>"+script.getSource()+"</textarea>");
+		f.add("<textarea name=scriptsource rows=25 cols=80>" + script.getSource() + "</textarea>");
 		f.br();
-		f.add(new Button("Save Source","Save Source"));
+		f.add(new Button("Save Source", "Save Source"));
 		f.br().br().add("<hr>").br();
 		f.add("Debugging information: ");
-		f.add(new Button("View Parse Tree","View Parse Tree"));
-		f.add(new Button("View Compiler Output","View Compiler Output"));
+		f.add(new Button("View Parse Tree", "View Parse Tree"));
+		f.add(new Button("View Compiler Output", "View Compiler Output"));
 		f.add(new Button("View Raw ByteCode","View Raw ByteCode"));
 		f.add(new Button("View Disassembly","View Disassembly"));
 		f.add(new Button("View Simulation","View Simulation"));

@@ -278,37 +278,40 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			// we are a known region, connected to an instance
 
 			// are they authorised to run stuff?
-			boolean authorised=false;
-			if (developer.getId()==1) { authorised=true; }
+			boolean authorised = false;
+			if (developer.getId() == 1) {
+				authorised = true;
+			}
 			// TODO check the region's instance, check the permits, blah blah, proper authorisation.  "iain" gets to skip all this.
 			// respond to it
-			if (!authorised) {
-				st.logger().warning("Developer "+developer+" is not authorised at this location:"+st.getRegionName());
-				return new TerminateResponse("Developer key is not authorised at this instance");
-			}
-			else {
+			if (authorised) {
 				// OK.  object has dev key, is authorised, resolves.  Process the actual contents oO
-				final Instance instance=region.getInstance();
+				final Instance instance = region.getInstance();
 				st.setInstance(instance);
 				st.setRegion(region);
-				if (st.getCharacterNullable()==null) {
-					st.setCharacter(Char.getMostRecent(st.getAvatar(),st.getInstance()));
+				if (st.getCharacterNullable() == null) {
+					st.setCharacter(Char.getMostRecent(st.getAvatar(), st.getInstance()));
 				}
 				try {
 					obj.getString("runasnocharacter");
 					st.setCharacter(null);
+				} catch (@Nonnull final JSONException ignored) {
 				}
-				catch (@Nonnull final JSONException ignored) {}
-				if (st.getCharacterNullable()!=null) { st.zone=st.getCharacter().getZone(); }
-				final SafeMap parameterMap=new SafeMap();
-				for (final String key: st.json().keySet()) {
-					final String value=st.json().get(key).toString();
+				if (st.getCharacterNullable() != null) {
+					st.zone = st.getCharacter().getZone();
+				}
+				final SafeMap parameterMap = new SafeMap();
+				for (final String key : st.json().keySet()) {
+					final String value = st.json().get(key).toString();
 					//System.out.println(key+"="+(value==null?"NULL":value));
-					parameterMap.put(key,value);
+					parameterMap.put(key, value);
 				}
 				st.postMap(parameterMap);
-				Thread.currentThread().setName("Command "+obj.getString("command"));
-				return Modules.run(st,obj.getString("command"),parameterMap);
+				Thread.currentThread().setName("Command " + obj.getString("command"));
+				return Modules.run(st, obj.getString("command"), parameterMap);
+			} else {
+				st.logger().warning("Developer " + developer + " is not authorised at this location:" + st.getRegionName());
+				return new TerminateResponse("Developer key is not authorised at this instance");
 			}
 		}
 

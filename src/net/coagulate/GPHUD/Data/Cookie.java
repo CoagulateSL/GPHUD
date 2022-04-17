@@ -194,16 +194,15 @@ public class Cookie {
 	public void setCharacter(@Nullable final Char character) {
 		Integer id=null;
 		if (character!=null) {
-			id=character.getId();
-			final Instance i=getInstance();
-			if (i!=null) { // if has instance, character should be from it...
-				if (character.getInstance()!=i) {
-					throw new SystemConsistencyException("Character is not from the selected instance");
-				}
-			}
-			else {
+			id = character.getId();
+			final Instance i = getInstance();
+			if (i == null) {
 				// if instance /is/ null, then set it :P
 				setInstance(null);
+			} else { // if has instance, character should be from it...
+				if (character.getInstance() != i) {
+					throw new SystemConsistencyException("Character is not from the selected instance");
+				}
 			}
 		}
 		db().d("update cookies set characterid=? where cookie=?",id,cookie);

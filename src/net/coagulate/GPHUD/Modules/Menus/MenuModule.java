@@ -40,10 +40,10 @@ public class MenuModule extends ModuleAnnotation {
 
                 boolean first = true;
                 while (menu.has("arg0button" + button)) {
-                    if (!first) {
-                        newMainMenuTemplate.append("|");
-                    } else {
+                    if (first) {
                         first = false;
+                    } else {
+                        newMainMenuTemplate.append("|");
                     }
                     newMainMenuTemplate.append(menu.getString("arg0button" + button));
                     button++;

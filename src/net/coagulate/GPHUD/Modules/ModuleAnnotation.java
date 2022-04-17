@@ -88,14 +88,15 @@ public class ModuleAnnotation extends Module {
 				String compareto=m.url().toLowerCase();
 				compareto=compareto.substring(0,compareto.length()-1);
 				if (url.toLowerCase().startsWith(compareto)) {
-					if (liberalmatch!=null) {
-						if (liberalmatch.url().length()==m.url().length()) {
-							throw new SystemImplementationException("Multiple liberal matches for "+url+" - "+m.getFullName()+" conflicts with "+liberalmatch.getFullName());
+					if (liberalmatch == null) {
+						liberalmatch = m;
+					} else {
+						if (liberalmatch.url().length() == m.url().length()) {
+							throw new SystemImplementationException("Multiple liberal matches for " + url + " - " + m.getFullName() + " conflicts with " + liberalmatch.getFullName());
 						}
-						if (m.url().length()>liberalmatch.url().length()) { liberalmatch=m; }
-					}
-					else {
-						liberalmatch=m;
+						if (m.url().length() > liberalmatch.url().length()) {
+							liberalmatch = m;
+						}
 					}
 				}
 			}

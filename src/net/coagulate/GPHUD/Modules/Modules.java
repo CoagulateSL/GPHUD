@@ -159,16 +159,17 @@ public abstract class Modules {
 			final URL proposed=mod.getURL(st,url);
 			if (proposed!=null) {
 				if (proposed.url().endsWith("*")) {
-					if (relaxed!=null) {
+					if (relaxed == null) {
+						relaxed = proposed;
+					} else {
 						// break if matching prefix length, otherwise...
-						if (relaxed.url().length()==proposed.url().length()) {
-							throw new SystemImplementationException("Multiple relaxed matches between "+proposed.url()+" and "+relaxed.url());
+						if (relaxed.url().length() == proposed.url().length()) {
+							throw new SystemImplementationException("Multiple relaxed matches between " + proposed.url() + " and " + relaxed.url());
 						}
-						if (relaxed.url().length()<proposed.url().length()) {
-							relaxed=proposed;
+						if (relaxed.url().length() < proposed.url().length()) {
+							relaxed = proposed;
 						}  // pick longer prefix
 					}
-					else { relaxed=proposed; }
 				}
 				else {
 					if (literal!=null) {

@@ -204,16 +204,19 @@ public class AliasCommand extends Command {
 				boolean delaytemplating=false;
 				for (final Argument arg: getTargetCommand().getArguments()) {
 					if (arg.name().equals(key)) {
-						if (arg.type()==ArgumentType.FLOAT || arg.type()==ArgumentType.INTEGER) {
-							numeric=true;
-							if (arg.type()==ArgumentType.INTEGER) { integer=true; }
+						if (arg.type() == ArgumentType.FLOAT || arg.type() == ArgumentType.INTEGER) {
+							numeric = true;
+							if (arg.type() == ArgumentType.INTEGER) {
+								integer = true;
+							}
 						}
-						if (arg.delayTemplating()) { delaytemplating=true; }
-						if (!delaytemplating) {
-							arguments.put(key,convertArgument(state,arg,Templater.template(state,getDefinition().getString(key),numeric,integer)));
+						if (arg.delayTemplating()) {
+							delaytemplating = true;
 						}
-						else {
-							arguments.put(key,convertArgument(state,arg,getDefinition().getString(key)));
+						if (delaytemplating) {
+							arguments.put(key, convertArgument(state, arg, getDefinition().getString(key)));
+						} else {
+							arguments.put(key, convertArgument(state, arg, Templater.template(state, getDefinition().getString(key), numeric, integer)));
 						}
 					}
 				}

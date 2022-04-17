@@ -56,13 +56,12 @@ public abstract class Groups {
 			permtable.openRow();
 			permtable.add(permission);
 			try {
-				final Permission rawpermission=Modules.getPermission(st,permission);
-				if (rawpermission!=null) {
+				final Permission rawpermission = Modules.getPermission(st, permission);
+				if (rawpermission == null) {
+					permtable.add("<font color=red><i>Permission no longer exists</i></font>");
+				} else {
 					permtable.add(rawpermission.description());
 					permtable.setBGColor(rawpermission.getColor());
-				}
-				else {
-					permtable.add("<font color=red><i>Permission no longer exists</i></font>");
 				}
 			}
 			catch (@Nonnull final UserException permissionerror) {

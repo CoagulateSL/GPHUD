@@ -90,7 +90,9 @@ public class Obj extends TableRow {
             r.append("<td>").append(UnixTime.duration(since)).append(" ago</td>");
             if (st.hasPermission("Objects.MapObjects")) {
                 String objecttype = st.postMap().get(row.getString("uuid"));
-                if (!objecttype.isEmpty()) {
+                if (objecttype.isEmpty()) {
+                    objecttype = row.getStringNullable("objecttype");
+                } else {
                     final Integer oldobjecttype = row.getIntNullable("objecttype");
                     if (oldobjecttype == null || oldobjecttype != Integer.parseInt(objecttype)) {
                         db().d("update objects set objecttype=? where id=?", objecttype, row.getIntNullable("id"));
@@ -110,8 +112,6 @@ public class Obj extends TableRow {
                         ot.payload(st, reconfigurepayload, obj.getRegion(), obj.getURL());
                         new Transmission(Obj.get(row.getInt("id")), reconfigurepayload).start();
                     }
-                } else {
-                    objecttype = row.getStringNullable("objecttype");
                 }
                 r.append("<td>")
                         .append(ObjType.getDropDownList(st, row.getString("uuid")).submitOnChange().setValue(objecttype).asHtml(st, true))

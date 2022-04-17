@@ -308,16 +308,15 @@ public class GSVM {
 		final List<ByteCode> initlist=new ArrayList<>(stack);
 		for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
 			final ByteCodeDataType bcd=entry.getValue();
-			if (!bcd.getClass().equals(BCList.class)) {
-				initlist.add(bcd);
-			}
-			else {
+			if (bcd.getClass().equals(BCList.class)) {
 				final BCList list = (BCList) bcd;
 				final List<ByteCodeDataType> theList = list.getContent();
-				for (int i= theList.size()-1;i >= 0;i--) {
+				for (int i = theList.size() - 1; i >= 0; i--) {
 					initlist.add(theList.get(i));
 				}
 				initlist.add(list);
+			} else {
+				initlist.add(bcd);
 			}
 			initlist.add(new BCString(null,entry.getKey()));
 			initlist.add(new BCInitialise(null));

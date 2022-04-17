@@ -336,19 +336,20 @@ public class Instance extends TableRow {
 			final Results charList=dq("select characterid from characters where instanceid=? and playedby=? and url is not null",getId(),a.getId());
 			//System.out.println("select characterid from characters where instanceid="+getId()+" and playedby="+a.getId()+" and url is not null;");
 			//System.out.println("In chars:"+charList.size());
-			for (final ResultsRow rr: charList) { chars.add(Char.get(rr.getInt())); }
+			for (final ResultsRow rr : charList) {
+				chars.add(Char.get(rr.getInt()));
+			}
 		}
 		//System.out.println("Characters:"+chars.size());
 		//for (Char target:chars) { System.out.println(target.getName()); }
-		for (final Char c: chars) {
-			final Transmission t=new Transmission(c,j);
+		for (final Char c : chars) {
+			final Transmission t = new Transmission(c, j);
 			t.start();
 		}
-		if (st!=null) {
-			st.logger().info("Sent to "+chars.size()+" admins : "+message);
-		}
-		else {
-			GPHUD.getLogger(getNameSafe()).info("Sent to "+chars.size()+" admins : "+message);
+		if (st == null) {
+			GPHUD.getLogger(getNameSafe()).info("Sent to " + chars.size() + " admins : " + message);
+		} else {
+			st.logger().info("Sent to " + chars.size() + " admins : " + message);
 		}
 		return chars.size();
 	}
@@ -497,22 +498,30 @@ public class Instance extends TableRow {
 				if (sortBy.equals("visit time (last "+Experience.getCycleLabel(st).toLowerCase()+")")) {
 					value=cs.recentvisits;
 				}
-				if ("total xp".equals(sortBy)) { value=cs.totalxp; }
-				if ("level".equals(sortBy)) { value=cs.totalxp; }
+				if ("total xp".equals(sortBy)) {
+					value = cs.totalxp;
+				}
+				if ("level".equals(sortBy)) {
+					value = cs.totalxp;
+				}
 
-				Set<CharacterSummary> records=new TreeSet<>();
-				if (sorted.containsKey(value)) { records=sorted.get(value); }
+				Set<CharacterSummary> records = new TreeSet<>();
+				if (sorted.containsKey(value)) {
+					records = sorted.get(value);
+				}
 				records.add(cs);
-				sorted.put(value,records);
+				sorted.put(value, records);
 			}
-			final List<Integer> sortedKeys=new ArrayList<>(sorted.keySet());
-			if (!reverse) { sortedKeys.sort(Collections.reverseOrder()); }
-			else {
+			final List<Integer> sortedKeys = new ArrayList<>(sorted.keySet());
+			if (reverse) {
 				Collections.sort(sortedKeys);
 			} // note reverse is reversed for numbers
+			else {
+				sortedKeys.sort(Collections.reverseOrder());
+			}
 			// default is biggest at top, smallest at bottom, which is reverse order as the NORMAL order.   alphabetic is a-z so forward order for the NORMAL order....
-			for (final Integer key: sortedKeys) {
-				final Set<CharacterSummary> set=sorted.get(key);
+			for (final Integer key : sortedKeys) {
+				final Set<CharacterSummary> set = sorted.get(key);
 				sortedlist.addAll(set);
 			}
 

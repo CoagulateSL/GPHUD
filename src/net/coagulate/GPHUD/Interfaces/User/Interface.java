@@ -485,23 +485,26 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			s.append("<b>Avatar:</b> ");
 			//if (st.user!=null) s+="[<a href=\"/GPHUD/switch/avatar\">Switch</a>]"; // you can only switch avis if you're a logged in user, as that's what binds avis
 			s.append("<br>");
-			if (st.getAvatarNullable()!=null) {
+			if (st.getAvatarNullable() == null) {
+				s.append("<i>none</i><br>");
+			} else {
 				s.append(st.getAvatarNullable().getGPHUDLink()).append("<br>");
 			}
-			else { s.append("<i>none</i><br>"); }
 
 
 			s.append("<b>Instance:</b> [<a href=\"/GPHUD/switch/instance\">Switch</a>]<br>");
-			if (st.getInstanceNullable()!=null) {
-				s.append(st.getInstance().asHtml(st,true)).append("<br>");
+			if (st.getInstanceNullable() == null) {
+				s.append("<i>none</i><br>");
+			} else {
+				s.append(st.getInstance().asHtml(st, true)).append("<br>");
 			}
-			else { s.append("<i>none</i><br>"); }
 
 			s.append("<b>Character:</b> [<a href=\"/GPHUD/switch/character\">Switch</a>]<br>");
-			if (st.getCharacterNullable()!=null) {
-				s.append(st.getCharacter().asHtml(st,true)).append("<br>");
+			if (st.getCharacterNullable() == null) {
+				s.append("<i>none</i><br>");
+			} else {
+				s.append(st.getCharacter().asHtml(st, true)).append("<br>");
 			}
-			else { s.append("<i>none</i><br>"); }
 		}
 		else {
 			s.append("<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>");

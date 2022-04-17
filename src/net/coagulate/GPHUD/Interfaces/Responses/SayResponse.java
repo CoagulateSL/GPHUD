@@ -51,13 +51,16 @@ public class SayResponse implements Response {
 	@Nonnull
 	@Override
 	public String asText(@Nonnull final State st) {
-		if (st.getCharacterNullable()!=null) {
-			final Transmission t=new Transmission(st.getCharacter(),asJSON(st));
+		if (st.getCharacterNullable() != null) {
+			final Transmission t = new Transmission(st.getCharacter(), asJSON(st));
 			t.start();
 		}
 		final String message;
-		if (sayas!=null) { message="\""+sayas+" "+reason+"\""; }
-		else { message="\""+reason+"\""; }
+		if (sayas == null) {
+			message = "\"" + reason + "\"";
+		} else {
+			message = "\"" + sayas + " " + reason + "\"";
+		}
 		return message;
 	}
 

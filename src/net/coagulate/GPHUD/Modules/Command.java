@@ -585,28 +585,27 @@ public abstract class Command {
 				if (v.startsWith(">")) {
 					v=v.substring(1);
 					try {
-						final User a=User.findUsername(v,false);
-						targetChar=Char.getActive(a,state.getInstance());
+						final User a = User.findUsername(v, false);
+						targetChar = Char.getActive(a, state.getInstance());
+					} catch (@Nonnull final NoDataException e) {
+						throw new UserInputLookupFailureException("Unable to find character of avatar named '" + v + "'", e);
 					}
-					catch (@Nonnull final NoDataException e) {
-						throw new UserInputLookupFailureException("Unable to find character of avatar named '"+v+"'",e);
-					}
+				} else {
+					targetChar = Char.resolve(state, v);
 				}
-				else {
-					targetChar=Char.resolve(state,v);
-				}
-				if (targetChar!=null) { return targetChar; }
-				else {
-					throw new UserInputLookupFailureException("Unable to find character named '"+v+"'");
+				if (targetChar == null) {
+					throw new UserInputLookupFailureException("Unable to find character named '" + v + "'");
+				} else {
+					return targetChar;
 				}
 			case REGION:
-				return assertNotNull(Region.findNullable(v,false),v,"region name");
+				return assertNotNull(Region.findNullable(v, false), v, "region name");
 			case EVENT:
-				return assertNotNull(Event.find(state.getInstance(),v),v,"event name");
+				return assertNotNull(Event.find(state.getInstance(), v), v, "event name");
 			case EFFECT:
-				return assertNotNull(Effect.find(state.getInstance(),v),v,"effect name");
+				return assertNotNull(Effect.find(state.getInstance(), v), v, "effect name");
 			case ZONE:
-				return assertNotNull(Zone.findNullable(state.getInstance(),v),v,"zone name");
+				return assertNotNull(Zone.findNullable(state.getInstance(), v), v, "zone name");
 			case AVATAR:
 			case AVATAR_NEAR:
 				final User user=User.findUsernameNullable(v,false);

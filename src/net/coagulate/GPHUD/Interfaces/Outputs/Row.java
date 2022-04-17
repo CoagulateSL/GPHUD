@@ -69,16 +69,16 @@ public class Row implements Renderable {
     public String asHtml(final State st, final boolean rich, final int rownum) {
         final StringBuilder s = new StringBuilder("<tr");
         if (!id.isBlank()) {
-            s.append(" id=\"").append(id).append("\" ");
-        }
-        if (!bgcolor.isEmpty()) {
-            s.append(" bgcolor=").append(bgcolor);
-        } else {
-            s.append(" bgcolor=#").append((rownum % 2) == 1 ? "f0f0f0" : "ffffff");
-        }
-        if (!alignment.isEmpty()) {
-            s.append(" align=").append(alignment);
-        }
+			s.append(" id=\"").append(id).append("\" ");
+		}
+		if (bgcolor.isEmpty()) {
+			s.append(" bgcolor=#").append((rownum % 2) == 1 ? "f0f0f0" : "ffffff");
+		} else {
+			s.append(" bgcolor=").append(bgcolor);
+		}
+		if (!alignment.isEmpty()) {
+			s.append(" align=").append(alignment);
+		}
         s.append(">");
         for (final Cell c : row) {
             c.header = isHeader();

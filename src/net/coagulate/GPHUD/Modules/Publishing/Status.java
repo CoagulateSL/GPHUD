@@ -53,14 +53,19 @@ public class Status extends Publishing {
 		int players=0;
 		final TreeMap<String,String> playerlist=new TreeMap<>();
 		for (final Region r: Region.getRegions(instance,false)) {
-			String statuscolor="#c00000";
-			if (r.getOnlineStatus("Europe/London").toLowerCase().startsWith("online")) { statuscolor="#00c000"; }
-			if (!first) { line.append(", "); }
-			else { first=false; }
+			String statuscolor = "#c00000";
+			if (r.getOnlineStatus("Europe/London").toLowerCase().startsWith("online")) {
+				statuscolor = "#00c000";
+			}
+			if (first) {
+				first = false;
+			} else {
+				line.append(", ");
+			}
 			line.append("<font color=\"").append(statuscolor).append("\">").append(r.getName()).append("</font>");
-			players=r.getOpenVisitCount();
-			for (final Char c: r.getOpenVisits()) {
-				playerlist.put(c.getOwner().getName(),c.getOwner().getName()+" <i>as</i> "+c.getName()+"<br>");
+			players = r.getOpenVisitCount();
+			for (final Char c : r.getOpenVisits()) {
+				playerlist.put(c.getOwner().getName(), c.getOwner().getName() + " <i>as</i> " + c.getName() + "<br>");
 			}
 		}
 		st.form().add(line+"<br>");
