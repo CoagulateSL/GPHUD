@@ -29,9 +29,12 @@ import java.util.Map.Entry;
  */
 public class Effect extends TableRow {
 
-	private Effect() {super();}
+	private Effect() {
+	}
 
-	protected Effect(final int id) { super(id); }
+	protected Effect(final int id) {
+		super(id);
+	}
 
 	// ---------- STATICS ----------
 

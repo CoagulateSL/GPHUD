@@ -30,9 +30,8 @@ public class MenuCommand extends Command {
 	public MenuCommand(final State st,
 	                   final String name,
 	                   final JSONObject newdef) {
-		super();
-		definition=newdef;
-		this.name=name;
+        definition = newdef;
+		this.name = name;
 		description="This spawns the "+name+" menu";
 		targetcommand=this;
 	}

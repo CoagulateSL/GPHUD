@@ -19,8 +19,7 @@ public class GenericXPPool extends Pool {
 	private final String myname;
 
 	public GenericXPPool(final String name) {
-		super();
-		myname=name;
+        myname = name;
 	}
 
 	// ---------- INSTANCE ----------

@@ -32,8 +32,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	public TableRow(final int id) { super(id); }
 
 	protected TableRow() {
-		super();
-	}
+    }
 
 	// ---------- STATICS ----------
 	public static DBConnection db() { return GPHUD.getDB(); }

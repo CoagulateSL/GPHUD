@@ -12,9 +12,8 @@ public class TransactionTaxRecipientKV extends KV {
 
 	public TransactionTaxRecipientKV(@Nonnull final State st,
 	                                 @Nonnull final Currency currency) {
-		super();
-		this.currency=currency;
-		name=currency.getName();
+        this.currency = currency;
+		name = currency.getName();
 	}
 
 	// ---------- INSTANCE ----------

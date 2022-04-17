@@ -39,7 +39,6 @@ public class AliasCommand extends Command {
 	public AliasCommand(@Nonnull final State st,
 	                    final String name,
 	                    final JSONObject newdef) {
-		super();
 		definition=newdef;
 		this.name=name;
 		if (st.hasModule(definition.getString("invoke"))) {

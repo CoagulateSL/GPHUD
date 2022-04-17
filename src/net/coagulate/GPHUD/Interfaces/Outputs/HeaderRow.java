@@ -7,7 +7,8 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
  */
 public class HeaderRow extends Row {
 
-	public HeaderRow() {super();}
+	public HeaderRow() {
+	}
 
 	public HeaderRow(final Cell c) {
 		super(c);
