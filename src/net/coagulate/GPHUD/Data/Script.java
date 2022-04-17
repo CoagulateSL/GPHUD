@@ -314,7 +314,7 @@ public class Script extends TableRow {
 	}
 
 	public void delete() {
-		Instance i=getInstance();
+		final Instance i = getInstance();
 		d("delete from scripts where id=?",getId());
 		scriptCache.purge(i);
 	}
@@ -324,10 +324,11 @@ public class Script extends TableRow {
     }
 
 	public @Nonnull String alias() {
-		String alias=getStringNullable("alias");
-		return alias==null?"":alias;
+		final String alias = getStringNullable("alias");
+		return alias == null ? "" : alias;
 	}
-	public void alias(@Nullable String newAlias) {
-		set("alias",newAlias);
+
+	public void alias(@Nullable final String newAlias) {
+		set("alias", newAlias);
 	}
 }

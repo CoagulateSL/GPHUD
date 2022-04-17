@@ -124,13 +124,13 @@ public class Instance extends TableRow {
 	}
 
 	public static void quotaCredits() {
-		int quotaLimit=Config.getQuotaLimit();
-		int quotaInterval=Config.getQuotaInterval();
-		for (ResultsRow row:db().dq("select instanceid from instances where nextquotaincrease<?",UnixTime.getUnixTime())) {
+		final int quotaLimit = Config.getQuotaLimit();
+		final int quotaInterval = Config.getQuotaInterval();
+		for (final ResultsRow row : db().dq("select instanceid from instances where nextquotaincrease<?", UnixTime.getUnixTime())) {
 			db().d("update instances set reportquota=least(reportquota+1,?),downloadquota=least(downloadquota+1,?),nextquotaincrease=? where instanceid=?",
 					quotaLimit,
 					quotaLimit,
-					UnixTime.getUnixTime()+quotaInterval,
+					UnixTime.getUnixTime() + quotaInterval,
 					row.getInt());
 		}
 	}
@@ -212,7 +212,7 @@ public class Instance extends TableRow {
 		String eol="";
 		if (expiresIn!=null && expiresIn>14) { eol+="EOL: "+updateWithin; }
 		if (Config.getDevelopment()) { newStatus.append("===DEVELOPMENT===\n \n"); }
-		String version=SL.getModule("GPHUD").getBuildDateString()+" @"+SL.getModule("GPHUD").commitId();
+		final String version = SL.getModule("GPHUD").getBuildDateString() + " @" + SL.getModule("GPHUD").commitId();
 		newStatus.append("Server: ").append(Config.getHostName()).append(" - ").append(version).append("\n").append(eol).append("\n \n");
 		if (expiresIn!=null) {
 			if (expiresIn<7 && canStatus("expiring-"+getId())) {
@@ -388,9 +388,9 @@ public class Instance extends TableRow {
 		}
 		final List<Object> parameters=new ArrayList<>();
 		parameters.add(getId());
-		String additional="";
-		int lastActive=UnixTime.getUnixTime()-(60*60*24*30*3);
-		String charactersScoping="";
+		String additional = "";
+		final int lastActive = UnixTime.getUnixTime() - (60 * 60 * 24 * 30 * 3);
+		String charactersScoping = "";
 		if (!showRetired) {
 			charactersScoping=" and characters.retired=0 and characters.lastactive>"+lastActive+" ";
 			additional+=charactersScoping;
@@ -693,12 +693,12 @@ public class Instance extends TableRow {
 	}
 
     public Set<Char> getCharacters() {
-		Set<Char> chars=new HashSet<>();
-		for (ResultsRow row:dq("select characterid from characters where instanceid=?",getId())) {
+		final Set<Char> chars = new HashSet<>();
+		for (final ResultsRow row : dq("select characterid from characters where instanceid=?", getId())) {
 			chars.add(Char.get(row.getInt()));
 		}
 		return chars;
-    }
+	}
 
 	public void setReport(@Nonnull final String report) {
 		set("report",report);
@@ -706,7 +706,7 @@ public class Instance extends TableRow {
 	}
 
 	public boolean spendReportCredit() {
-		int quota=getInt("reportquota");
+		final int quota = getInt("reportquota");
 		if (quota>0) { set("reportquota",quota-1); return true; }
 		return false;
 	}
@@ -727,11 +727,16 @@ public class Instance extends TableRow {
 	}
 
 	public boolean spendDownloadCredit() {
-		int quota=getInt("downloadquota");
+		final int quota = getInt("downloadquota");
 		if (quota>0) { set("downloadquota",quota-1); return true; }
 		return false;
 	}
 
-	public int generating() { return getInt("reporting"); }
-	public void generating(int value) { set("reporting",value); }
+	public int generating() {
+		return getInt("reporting");
+	}
+
+	public void generating(final int value) {
+		set("reporting", value);
+	}
 }

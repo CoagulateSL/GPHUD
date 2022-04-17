@@ -107,8 +107,8 @@ public class CharacterGroup extends TableRow {
 	}
 
 	private static final Cache<Instance,List<CharacterGroup>> instanceGroupsCache=Cache.getCache("gphud/instancegroups",CacheConfig.PERMANENT_CONFIG);
-	public static List<CharacterGroup> getInstanceGroups(Instance instance) {
-		return instanceGroupsCache.get(instance,()-> {
+	public static List<CharacterGroup> getInstanceGroups(final Instance instance) {
+		return instanceGroupsCache.get(instance, () -> {
 			final List<CharacterGroup> groups = new ArrayList<>();
 			for (final ResultsRow r : db().dq("select charactergroupid from charactergroups where instanceid=? order by kvprecedence asc,charactergroupid asc", instance.getId())) {
 				groups.add(CharacterGroup.get(r.getInt()));
@@ -205,10 +205,12 @@ public class CharacterGroup extends TableRow {
 		precedenceCache.purgeAll();
 	}
 
-	public static void create(Instance instance, String name, boolean open, String keyword) {
-		final int count=db().dqiNotNull("select count(*) from charactergroups where instanceid=? and name like ?",instance.getId(),name);
-		if (count>0) { throw new UserInputDuplicateValueException("Failed to create group, already exists."); }
-		db().d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)",instance.getId(),name,open,keyword);
+	public static void create(final Instance instance, final String name, final boolean open, final String keyword) {
+		final int count = db().dqiNotNull("select count(*) from charactergroups where instanceid=? and name like ?", instance.getId(), name);
+		if (count > 0) {
+			throw new UserInputDuplicateValueException("Failed to create group, already exists.");
+		}
+		db().d("insert into charactergroups(instanceid,name,open,type) values (?,?,?,?)", instance.getId(), name, open, keyword);
 		instanceGroupsCache.purge(instance);
 	}
 
@@ -285,7 +287,7 @@ public class CharacterGroup extends TableRow {
 	 * Delete this character group
 	 */
 	public void delete() {
-		Instance instance=getInstance();
+		final Instance instance = getInstance();
 		d("delete from charactergroups where charactergroupid=?",getId());
 		groupMembershipCache.purge(this);
 		characterGroupsCache.purgeAll();
@@ -361,7 +363,9 @@ public class CharacterGroup extends TableRow {
 				return null;
 			}
 			return Char.get(owner);
-		} catch (NoDataException e) { throw new UserInputLookupFailureException("Group ID "+getNameSafe()+"/"+getId()+" no longer exists."); }
+		} catch (final NoDataException e) {
+			throw new UserInputLookupFailureException("Group ID " + getNameSafe() + "/" + getId() + " no longer exists.");
+		}
 	}
 
 	/**
@@ -454,9 +458,9 @@ public class CharacterGroup extends TableRow {
 		return precedenceCache.get(this, ()->getInt("kvprecedence"));
 	}
 
-	public void setKVPrecedence(int newPrecedence) {
-		set("kvprecedence",newPrecedence);
-		precedenceCache.set(this,newPrecedence);
+	public void setKVPrecedence(final int newPrecedence) {
+		set("kvprecedence", newPrecedence);
+		precedenceCache.set(this, newPrecedence);
 	}
 	private static final Cache<CharacterGroup,Integer> precedenceCache=Cache.getCache("GPHUD/characterGroupPrecedence",CacheConfig.OPERATIONAL_CONFIG);
 }

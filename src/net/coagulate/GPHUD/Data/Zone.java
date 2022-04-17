@@ -206,8 +206,8 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public String getTransportFormat() {
-		final Set<ZoneArea> areas=getZoneAreas();
-		StringBuilder s=new StringBuilder();
+		final Set<ZoneArea> areas = getZoneAreas();
+		final StringBuilder s = new StringBuilder();
 		for (final ZoneArea a: areas) {
 			final String[] vectors=a.getVectors();
 			if (vectors!=null) {

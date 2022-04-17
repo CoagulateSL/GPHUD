@@ -83,14 +83,20 @@ public class Alias extends TableRow {
 	 */
 	@Nullable
 	public static Alias getAlias(@Nonnull final State st,
-	                             final String name) {
+								 final String name) {
 		try {
-			final int id=db().dqiNotNull("select aliasid from aliases where instanceid=? and name like ?",st.getInstance().getId(),name);
+			final int id = db().dqiNotNull("select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
 			return get(id);
+		} catch (@Nonnull final NoDataException e) {
+			return null;
 		}
-		catch (@Nonnull final NoDataException e) { return null; }
 	}
-	private static void clearCaches(Instance instance) { aliasTemplateCache.purge(instance); aliasMapCache.purge(instance); }
+
+	private static void clearCaches(final Instance instance) {
+		aliasTemplateCache.purge(instance);
+		aliasMapCache.purge(instance);
+	}
+
 	/**
 	 * Create a new alias.
 	 * Protects against weird name inputs and duplicate aliases.

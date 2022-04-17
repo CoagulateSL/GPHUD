@@ -196,14 +196,14 @@ public class Obj extends TableRow {
             bootParams = "";
         }
         JSONObject boot = null;
-        for (String part : bootParams.split("/")) {
+        for (final String part : bootParams.split("/")) {
             try {
                 boot = new JSONObject(part);
-            } catch (JSONException ignore) {
+            } catch (final JSONException ignore) {
             }
         }
         if (boot != null && boot.has("objecttype")) {
-            ObjType objType = ObjType.get(st, boot.getString("objecttype"));
+            final ObjType objType = ObjType.get(st, boot.getString("objecttype"));
             object.setObjectType(objType);
         }
         return object;
@@ -382,8 +382,11 @@ public class Obj extends TableRow {
         return getString("uuid");
     }
 
-    public void setObjectType(@Nonnull ObjType objType) {
+    public void setObjectType(@Nonnull final ObjType objType) {
         set("objecttype", objType.getId());
     }
-    public int getProtocol() { return getInt("protocol"); }
+
+    public int getProtocol() {
+        return getInt("protocol");
+    }
 }

@@ -241,7 +241,7 @@ public class PermissionsGroup extends TableRow {
 	 * Delete this permissionsgroup
 	 */
 	public void delete() {
-		Instance instance=getInstance();
+		final Instance instance = getInstance();
 		d("delete from permissionsgroups where permissionsgroupid=?",getId());
 		permissionsGroupsSetCache.purge(instance);
 	}

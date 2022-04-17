@@ -679,8 +679,8 @@ public class Char extends TableRow {
 	 */
 	public int getLevel(@Nonnull final State st) {
 		if (st.hasModule("Experience")) {
-			int level=Experience.toLevel(st,Experience.getExperience(st,this));
-			int maxLevel=st.getKV("Experience.MaxLevel").intValue();
+			int level = Experience.toLevel(st, Experience.getExperience(st, this));
+			final int maxLevel = st.getKV("Experience.MaxLevel").intValue();
 			if (maxLevel==0) { return level; }
 			if (level>maxLevel) { level=maxLevel; }
 			return level;
@@ -873,7 +873,7 @@ public class Char extends TableRow {
 
 	@Nonnull
 	public User getPlayedBy() {
-		User response=getPlayedByNullable();
+		final User response = getPlayedByNullable();
 		if (response!=null) { return response; }
 		throw new UserInputStateException("Character "+getName()+" is not currently registered as being played by any Agent.");
 	}
@@ -999,12 +999,13 @@ public class Char extends TableRow {
 		return conveyances;
 	}
 
-    public void setProtocol(int protocol) {
-		set("protocol",protocol);
-		protocolCache.set(this,protocol);
-    }
-    public int getProtocol() {
-		return protocolCache.get(this, ()->getInt("protocol"));
+	public void setProtocol(final int protocol) {
+		set("protocol", protocol);
+		protocolCache.set(this, protocol);
+	}
+
+	public int getProtocol() {
+		return protocolCache.get(this, () -> getInt("protocol"));
 	}
 	private static final Cache<Char,Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
 }

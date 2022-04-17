@@ -18,38 +18,42 @@ public class Item extends TableRow {
 
     @Nonnull public static Set<Item> getAll(@Nonnull final State state) { return getAll(state.getInstance()); }
     @Nonnull public static Set<Item> getAll(@Nonnull final Instance instance) {
-        Set<Item> items=new TreeSet<>();
-        for (ResultsRow row:db().dq("select id from items where instanceid=?",instance.getId())) {
+        final Set<Item> items = new TreeSet<>();
+        for (final ResultsRow row : db().dq("select id from items where instanceid=?", instance.getId())) {
             items.add(Item.get(row.getInt("id")));
         }
         return items;
     }
     @Nonnull public static Set<String> getNames(@Nonnull final State state) { return getNames(state.getInstance()); }
     @Nonnull public static Set<String> getNames(@Nonnull final Instance instance) {
-        Set<String> items=new TreeSet<>();
-        for (ResultsRow row:db().dq("select name from items where instanceid=?",instance.getId())) {
+        final Set<String> items = new TreeSet<>();
+        for (final ResultsRow row : db().dq("select name from items where instanceid=?", instance.getId())) {
             items.add(row.getString("name"));
         }
         return items;
     }
 
     public static Item findNullable(@Nonnull final Instance instance, @Nonnull final String name) {
-        Integer id=null;
-        try { id=db().dqi("select id from items where name like ? and instanceid=?",name,instance.getId()); }
-        catch (NoDataException ignored) {}
-        if (id==null) { return null; }
+        Integer id = null;
+        try {
+            id = db().dqi("select id from items where name like ? and instanceid=?", name, instance.getId());
+        } catch (final NoDataException ignored) {
+        }
+        if (id == null) {
+            return null;
+        }
         return Item.get(id);
     }
 
-    public static Table getSummaryPage(Instance instance) {
-        Table table=new Table();
+    public static Table getSummaryPage(final Instance instance) {
+        final Table table = new Table();
         table.add(new HeaderRow().add("Name").add("Weight").add("Tradable").add("Destroyable").add("Description"));
-        for (ResultsRow row:db().dq("select * from items where instanceid=? order by name",instance.getId())) {
+        for (final ResultsRow row : db().dq("select * from items where instanceid=? order by name", instance.getId())) {
             table.openRow();
-            table.add(new Link(row.getString("name"),"/GPHUD/configuration/items/"+row.getInt("id")))
+            table.add(new Link(row.getString("name"), "/GPHUD/configuration/items/" + row.getInt("id")))
                     .add(row.getInt("weight"))
-                    .add(row.getBool("tradable")?"Yes":"")
-                    .add(row.getBool("destroyable")?"Yes":"")
+                    .add(row.getBool("tradable") ? "Yes" : "")
+                    .add(row.getBool("destroyable") ? "Yes" : "")
                     .add(row.getString("description"));
         }
         return table;
@@ -70,9 +74,11 @@ public class Item extends TableRow {
     }
 
     @Nonnull
-    public static Item find(State state, String itemName) {
-        Item item=findNullable(state.getInstance(),itemName);
-        if (item==null) { throw new UserInputLookupFailureException("Item '"+itemName+"' does not exist",true); }
+    public static Item find(final State state, final String itemName) {
+        final Item item = findNullable(state.getInstance(), itemName);
+        if (item == null) {
+            throw new UserInputLookupFailureException("Item '" + itemName + "' does not exist", true);
+        }
         return item;
     }
 
@@ -83,8 +89,10 @@ public class Item extends TableRow {
     }
 
     @Override
-    public void validate(@Nonnull State st) {
-        if (st.getInstance()!=getInstance()) { throw new SystemImplementationException("State Instance/Item Instance mismatch"); }
+    public void validate(@Nonnull final State st) {
+        if (st.getInstance() != getInstance()) {
+            throw new SystemImplementationException("State Instance/Item Instance mismatch");
+        }
     }
 
     @Nullable
@@ -132,20 +140,41 @@ public class Item extends TableRow {
 
     public Instance getInstance() { return Instance.get(getInt("instanceid")); }
 
-    public String description() { return getString("description"); }
-    public void description(String newDescription) { set("description",newDescription); }
+    public String description() {
+        return getString("description");
+    }
 
-    public int weight() { return getInt("weight"); }
-    public void weight(int newWeight) { set("weight",newWeight); }
+    public void description(final String newDescription) {
+        set("description", newDescription);
+    }
+
+    public int weight() {
+        return getInt("weight");
+    }
+
+    public void weight(final int newWeight) {
+        set("weight", newWeight);
+    }
 
 
-    public boolean destroyable() { return getBool("destroyable"); }
-    public boolean tradable() { return getBool("tradable"); }
-    public void destroyable(boolean destroyable) { set("destroyable",destroyable); }
-    public void tradable(boolean tradable) { set("tradable",tradable); }
+    public boolean destroyable() {
+        return getBool("destroyable");
+    }
+
+    public boolean tradable() {
+        return getBool("tradable");
+    }
+
+    public void destroyable(final boolean destroyable) {
+        set("destroyable", destroyable);
+    }
+
+    public void tradable(final boolean tradable) {
+        set("tradable", tradable);
+    }
 
     public void delete() {
-        Inventory.deleteAll(getInstance(),getName());
-        d("delete from items where id=?",getId());
+        Inventory.deleteAll(getInstance(), getName());
+        d("delete from items where id=?", getId());
     }
 }

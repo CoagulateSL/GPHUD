@@ -549,7 +549,7 @@ public class Attribute extends TableRow {
 	 */
 	public void delete(final State st) {
 		// delete data
-		Instance instance=getInstance();
+		final Instance instance = getInstance();
 		if (instance!=st.getInstance()) { throw new SystemConsistencyException("State instance / attribute instance mismatch during DELETE of all things"); }
 		final ATTRIBUTETYPE type=getType();
 		if (type==TEXT || type==FLOAT || type==INTEGER || type==COLOR) { getInstance().wipeKV("Characters."+getName()); }
