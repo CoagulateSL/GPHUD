@@ -43,6 +43,6 @@ public class BCReturn extends ByteCode {
         }
         final int newpc = vm.popInteger().getContent();
         vm.push(data);
-        vm.PC = newpc;
+		vm.programCounter = newpc;
     }
 }

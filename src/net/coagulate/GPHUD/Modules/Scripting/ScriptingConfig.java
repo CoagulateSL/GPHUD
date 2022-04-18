@@ -290,7 +290,7 @@ public class ScriptingConfig {
 	@Nonnull
 	private static String formatStep(@Nonnull final GSVM.ExecutionStep step) {
 		final StringBuilder output=new StringBuilder();
-		output.append("<tr><td>").append(step.IC).append("</td><th>").append(step.programcounter).append("</th><td>").append(step.decode).append("</td><td><table>");
+		output.append("<tr><td>").append(step.instructionCount).append("</td><th>").append(step.programCounter).append("</th><td>").append(step.decode).append("</td><td><table>");
 		for (int i=0;i<step.resultingstack.size();i++) {
 			output.append("<tr><th>").append(i).append("</th><td>").append(step.resultingstack.get(i).htmlDecode()).append("</td></tr>");
 		}

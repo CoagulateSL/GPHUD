@@ -143,10 +143,10 @@ public class BCInvoke extends ByteCode {
 		}
 		final int targetPC = vm.get(" CODEBASE " + scriptname).toBCInteger().getContent();
 		// 2) Set up return stack
-		vm.stack.push(new BCInteger(null,vm.PC)); // stash the return PC
-		vm.stack.push(new BCInteger(null,vm.getCanary())); // stash the canary.
+		vm.stack.push(new BCInteger(null, vm.programCounter)); // stash the return PC
+		vm.stack.push(new BCInteger(null, vm.getCanary())); // stash the canary.
 		// 3) Call function
-		vm.PC=targetPC;
+		vm.programCounter = targetPC;
 		// 4) Restore debug - can't do this here, we lose control in (3) - compiler must reassert this :)
 	}
 }

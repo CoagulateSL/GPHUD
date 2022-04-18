@@ -53,7 +53,9 @@ public class BCBranchIfZero extends ByteCode {
 		// pop an int
 		final BCInteger conditional=vm.popInteger();
 		// set PC if zero
-		if (conditional.getContent()==0) { vm.PC=target().address(); }
+		if (conditional.getContent() == 0) {
+			vm.programCounter = target().address();
+		}
 	}
 
 	// ----- Internal Instance -----

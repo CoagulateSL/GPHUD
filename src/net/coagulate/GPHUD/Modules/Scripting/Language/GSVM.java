@@ -20,18 +20,24 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
 
-	public final Stack<ByteCodeDataType> stack=new Stack<>();
-	public final Map<String,ByteCodeDataType> variables=new TreeMap<>();
-	final Map<Char,JSONObject> queue=new HashMap<>();
-	final Map<String,ByteCodeDataType> introductions=new HashMap<>();
+	public final Stack<ByteCodeDataType> stack = new Stack<>();
+	public final Map<String, ByteCodeDataType> variables = new TreeMap<>();
+	final Map<Char, JSONObject> queue = new HashMap<>();
+	final Map<String, ByteCodeDataType> introductions = new HashMap<>();
 	@Nonnull
 	public byte[] bytecode;
-	public int PC;
+	/**
+	 * As in what instruction we're executing ; R15 if you ARM
+	 */
+	public int programCounter;
 	public int row;
 	public int column;
 	public boolean simulation;
 	public String source;
-	int IC;
+	/**
+	 * Total number of instructions executed, not to be confused with programCounter ; this is a resource limit counter
+	 */
+	int instructionCount;
 	@Nullable
 	String invokeonexit;
 	boolean suspended;
@@ -56,17 +62,19 @@ public class GSVM {
 	}
 	public GSVM(@Nonnull final ScriptRun run,
 	            @Nonnull final State st) {
-		st.vm=this;
+		st.vm = this;
 		// run the initialiser as prep
-		initialiseVM(st,true);
-		bytecode=run.getInitialiser();
+		initialiseVM(st, true);
+		bytecode = run.getInitialiser();
 		executeloop(st);
 		// stack and variables should now be restored, configure for resuming the run.
-		bytecode=run.getByteCode();
-		PC=((BCInteger) (variables.get(" PC"))).getContent();
-		IC=((BCInteger) (variables.get(" IC"))).getContent();
-		suspensions=((BCInteger) (variables.get(" SUSP"))).getContent();
-		if (variables.containsKey((" ONEXIT"))) { invokeonexit=((BCString) variables.get(" ONEXIT")).getContent(); }
+		bytecode = run.getByteCode();
+		programCounter = ((BCInteger) (variables.get(" PC"))).getContent();
+		instructionCount = ((BCInteger) (variables.get(" IC"))).getContent();
+		suspensions = ((BCInteger) (variables.get(" SUSP"))).getContent();
+		if (variables.containsKey((" ONEXIT"))) {
+			invokeonexit = ((BCString) variables.get(" ONEXIT")).getContent();
+		}
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
 	}
 
@@ -113,15 +121,14 @@ public class GSVM {
 
 	@Nonnull
 	public String toHtml() {
-		PC=0;
-		final StringBuilder line=new StringBuilder("<table>");
-		while (PC<bytecode.length) {
-			line.append("<tr><th>").append(PC).append("</th><td>");
+		programCounter = 0;
+		final StringBuilder line = new StringBuilder("<table>");
+		while (programCounter < bytecode.length) {
+			line.append("<tr><th>").append(programCounter).append("</th><td>");
 			try {
-				final ByteCode instruction=ByteCode.load(this);
+				final ByteCode instruction = ByteCode.load(this);
 				line.append(instruction.htmlDecode());
-			}
-			catch (@Nonnull final Exception e) {
+			} catch (@Nonnull final Exception e) {
 				line.append("</td></tr><tr><td colspan=5>").append(e).append("</tD></tr></table>");
 				return line.toString();
 			}
@@ -296,17 +303,21 @@ public class GSVM {
 
 	public void suspend(final State st,
 	                    @Nonnull final Char respondant) {
-		variables.put(" PC",new BCInteger(null,PC));
-		variables.put(" IC",new BCInteger(null,IC));
-		variables.put(" SUSP",new BCInteger(null,suspensions));
-		if (invokeonexit!=null) { variables.put(" ONEXIT",new BCString(null,invokeonexit)); }
+		variables.put(" PC", new BCInteger(null, programCounter));
+		variables.put(" IC", new BCInteger(null, instructionCount));
+		variables.put(" SUSP", new BCInteger(null, suspensions));
+		if (invokeonexit != null) {
+			variables.put(" ONEXIT", new BCString(null, invokeonexit));
+		}
 		suspensions++;
-		if (suspensions>10) {
+		if (suspensions > 10) {
 			throw new GSResourceLimitExceededException("Maximum number of VM suspensions reached - too many user input requests?");
 		}
 		// simulations dont suspend.  but do update the variables and fake a suspension count.  for completeness :P
-		if (simulation) { return; }
-		suspended=true;
+		if (simulation) {
+			return;
+		}
+		suspended = true;
 		final List<ByteCode> initlist=new ArrayList<>(stack);
 		for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
 			final ByteCodeDataType bcd=entry.getValue();
@@ -357,23 +368,27 @@ public class GSVM {
 		invokerstate=st;
 		final List<ExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM(st,false);
-		simulation=true;
+		simulation = true;
 		try {
-			while (PC>=0 && PC<bytecode.length) {
+			while (programCounter >= 0 && programCounter < bytecode.length) {
 				increaseIC();
-				final ExecutionStep frame=new ExecutionStep();
-				frame.programcounter=PC;
-				startPC=PC;
-				final ByteCode instruction=ByteCode.load(this);
-				frame.decode=instruction.htmlDecode();
-				instruction.execute(st,this,true);
-				for (int i=0;i<stack.size();i++) { frame.resultingstack.push(stack.elementAt(i).clone()); }
-				for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
-					ByteCodeDataType clone=null;
-					if (entry.getValue()!=null) { clone=entry.getValue().clone(); }
-					frame.resultingvariables.put(entry.getKey(),clone);
+				final ExecutionStep frame = new ExecutionStep();
+				frame.programCounter = programCounter;
+				startPC = programCounter;
+				final ByteCode instruction = ByteCode.load(this);
+				frame.decode = instruction.htmlDecode();
+				instruction.execute(st, this, true);
+				for (int i = 0; i < stack.size(); i++) {
+					frame.resultingstack.push(stack.elementAt(i).clone());
 				}
-				frame.IC=IC;
+				for (final Map.Entry<String, ByteCodeDataType> entry : variables.entrySet()) {
+					ByteCodeDataType clone = null;
+					if (entry.getValue() != null) {
+						clone = entry.getValue().clone();
+					}
+					frame.resultingvariables.put(entry.getKey(), clone);
+				}
+				frame.instructionCount = instructionCount;
 				simulationsteps.add(frame);
 			}
 		}
@@ -387,13 +402,13 @@ public class GSVM {
 	}
 
 	public int getInt() {
-		final int a=bytecode[PC]&0xff;
-		final int b=bytecode[PC+1]&0xff;
-		final int c=bytecode[PC+2]&0xff;
-		final int d=bytecode[PC+3]&0xff;
-		final int ret=(a<<24)+(b<<16)+(c<<8)+d;
+		final int a = bytecode[programCounter] & 0xff;
+		final int b = bytecode[programCounter + 1] & 0xff;
+		final int c = bytecode[programCounter + 2] & 0xff;
+		final int d = bytecode[programCounter + 3] & 0xff;
+		final int ret = (a << 24) + (b << 16) + (c << 8) + d;
 		//System.out.println("getInt: "+a+" "+b+" "+c+" "+d+" = "+ret);
-		PC+=4;
+		programCounter +=4;
 		return ret;
 	}
 	public float getFloat() {
@@ -403,26 +418,30 @@ public class GSVM {
 	}
 
 	public int getShort() {
-		final int ret=((((int) bytecode[PC]&0xff)<<8)+(((int) bytecode[PC+1]&0xff)));
-		PC+=2;
+		final int ret = ((((int) bytecode[programCounter] & 0xff) << 8) + (((int) bytecode[programCounter + 1] & 0xff)));
+		programCounter +=2;
 		return ret;
 	}
 
 	// ----- Internal Instance -----
-	private void initialiseVM(@Nonnull final State st,final boolean skipCanary ) {
+	private void initialiseVM(@Nonnull final State st,final boolean skipCanary) {
 		//skip canary - used by the initialiser bytecode that restores the stack+variable map for a resumed suspension
 		stack.clear();
-		PC=0;
-		IC=0;
-		startPC=0;
-		row=0;
-		column=0;
+		programCounter = 0;
+		instructionCount = 0;
+		startPC = 0;
+		row = 0;
+		column = 0;
 		variables.clear();
 		simulation = false;
 		variables.putAll(introductions);
-		if (!variables.containsKey("CALLER")) { variables.put("CALLER",new BCCharacter(null,st.getCharacter())); }
-		if (!variables.containsKey("AVATAR")) { variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable())); }
-		invokerstate=st;
+		if (!variables.containsKey("CALLER")) {
+			variables.put("CALLER", new BCCharacter(null, st.getCharacter()));
+		}
+		if (!variables.containsKey("AVATAR")) {
+			variables.put("AVATAR", new BCAvatar(null, st.getAvatarNullable()));
+		}
+		invokerstate = st;
 		// return compatible stack state
 		if (!skipCanary) {
 			push(new BCInteger(null, -1));
@@ -440,11 +459,11 @@ public class GSVM {
 	private Response executeloop(@Nonnull final State st) {
 		ExecutionStep currentstep=new ExecutionStep();
 		try {
-			while (PC>=0 && PC<bytecode.length && !suspended) {
+			while (programCounter >= 0 && programCounter < bytecode.length && !suspended) {
 				increaseIC();
 				//noinspection UnusedAssignment
-				currentstep=new ExecutionStep();
-				startPC=PC;
+				currentstep = new ExecutionStep();
+				startPC = programCounter;
 				ByteCode.load(this).execute(st,this,false);
 			}
 		}
@@ -472,20 +491,20 @@ public class GSVM {
 	}
 
 	private void increaseIC() {
-		IC++;
-		if (IC>10000) {
+		instructionCount++;
+		if (instructionCount > 10000) {
 			throw new GSResourceLimitExceededException("Instruction count exceeded, infinite loop (or complex script)?");
 		}
 	}
 
 	public static class ExecutionStep {
-		public final Stack<ByteCodeDataType> resultingstack=new Stack<>();
-		public final Map<String,ByteCodeDataType> resultingvariables=new TreeMap<>();
-		public int programcounter;
+		public final Stack<ByteCodeDataType> resultingstack = new Stack<>();
+		public final Map<String, ByteCodeDataType> resultingvariables = new TreeMap<>();
+		public int programCounter;
 		@Nullable
-		public String decode="";
+		public String decode = "";
 		@Nullable
 		public Throwable t;
-		public int IC;
+		public int instructionCount;
 	}
 }
