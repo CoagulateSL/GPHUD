@@ -32,13 +32,13 @@ public class ModuleAnnotation extends Module {
 	SideMenu sidemenu;
 
 	public ModuleAnnotation(final String name,
-	                        final ModuleDefinition def) {
-		super(name,def);
+							final ModuleDefinition annotation) {
+		super(name, annotation);
 		if (canDisable()) {
-			registerKV(new KVEnabled(this,defaultDisable()?"false":"true"));
+			registerKV(new KVEnabled(this, defaultDisable() ? "false" : "true"));
 		}
 
-		generated=false;
+		generated = false;
 	}
 
 	// ----- Internal Statics -----

@@ -8,17 +8,17 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCAdd2 extends ByteCode {
-	public BCAdd2(final ParseNode n) {
-		super(n);
-	}
+    public BCAdd2(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public String explain() {
-		return "Add2 (Pop two from stack, add 1st+2nd,push result)";
-	}
-	// Pop two, op, push result
+    // ---------- INSTANCE ----------
+    @Nonnull
+    @Override
+    public String explain() {
+        return "Add2 (Pop two from stack, add 1st+2nd,push result)";
+    }
+    // Pop two, op, push result
 
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Add2.get());

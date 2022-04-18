@@ -69,10 +69,10 @@ public abstract class Interface extends URLMapper<Method> {
     }
 
     @Override
-    protected Method lookupPageFromUri(final String line) {
+    protected Method lookupPageFromUri(final String uri) {
         final State st = state();
-        st.setURL(line);
-        return super.lookupPageFromUri(line);
+        st.setURL(uri);
+        return super.lookupPageFromUri(uri);
     }
 
     @Override

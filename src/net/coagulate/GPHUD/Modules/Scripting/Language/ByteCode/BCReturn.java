@@ -10,18 +10,18 @@ import java.util.List;
 
 public class BCReturn extends ByteCode {
 
-	public BCReturn(final ParseNode n) {
-		super(n);
-	}
+    public BCReturn(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public String explain() {
-		return "Return (Pop return value, pop stack canary, pop return PC, push return value)";
-	}
+    // ---------- INSTANCE ----------
+    @Nonnull
+    @Override
+    public String explain() {
+        return "Return (Pop return value, pop stack canary, pop return PC, push return value)";
+    }
 
-	@Override
+    @Override
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Return.get());
 	}

@@ -10,8 +10,8 @@ import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 public class EffectsModule extends ModuleAnnotation {
 
 	public EffectsModule(final String name,
-	                     final ModuleDefinition def) {
-		super(name,def);
-	}
+                         final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 }

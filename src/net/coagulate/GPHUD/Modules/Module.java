@@ -216,10 +216,12 @@ dead code?
 	}
 
 	public void addTemplateDescriptions(final State st,
-	                                    final Map<String,String> templates) {}
+                                        final Map<String, String> cumulativeMap) {
+    }
 
-	public void addTemplateMethods(final State st,
-	                               final Map<String,Method> ret) { }
+    public void addTemplateMethods(final State st,
+                                   final Map<String, Method> cumulativeMap) {
+    }
 
 	@Nonnull
 	public Set<CharacterAttribute> getAttributes(final State st) {

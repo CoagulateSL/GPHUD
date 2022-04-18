@@ -10,17 +10,19 @@ import java.util.List;
 
 public class BCLoad extends ByteCode {
 
-	public BCLoad(final ParseNode n) {
-		super(n);
-	}
+    public BCLoad(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	@Nonnull
-	public String explain() { return "LoadVariable (Pop name, push variable value)"; }
+    // ---------- INSTANCE ----------
+    @Nonnull
+    public String explain() {
+        return "LoadVariable (Pop name, push variable value)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.Load.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.Load.get());
+    }
 
 	@Override
 	public void execute(final State st,

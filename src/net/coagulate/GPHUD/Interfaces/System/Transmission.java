@@ -47,17 +47,17 @@ public class Transmission extends Thread {
 	boolean succeeded;
 
 	public Transmission(@Nullable final Char character,
-	                    @Nonnull final JSONObject json,
-	                    @Nullable final String oldurl) {
-		if (debugspawn) {
-			System.out.println("Transmission to character "+character+" on url "+oldurl+" with json "+json);
-			Thread.dumpStack();
-		}
-		caller=Thread.currentThread().getStackTrace();
-		this.character=character;
-		url=oldurl;
-		this.json=json;
-	}
+                        @Nonnull final JSONObject json,
+                        @Nullable final String url) {
+        if (debugspawn) {
+            System.out.println("Transmission to character " + character + " on url " + url + " with json " + json);
+            Thread.dumpStack();
+        }
+        caller = Thread.currentThread().getStackTrace();
+        this.character = character;
+        this.url = url;
+        this.json = json;
+    }
 
 	public Transmission(@Nonnull final Obj obj,
 	                    @Nonnull final JSONObject json) {

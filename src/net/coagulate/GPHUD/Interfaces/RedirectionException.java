@@ -17,10 +17,11 @@ public class RedirectionException extends RuntimeException {
 		this(values.get("okreturnurl"));
 	}
 
-	public RedirectionException(final String url) {
-		super("Redirecting to "+url);
-		this.url=url;
-	}
+    @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
+    public RedirectionException(final String url) {
+        super("Redirecting to "+url);
+        this.url=url;
+    }
 
 	// ---------- INSTANCE ----------
 	public String getURL() { return url; }

@@ -10,18 +10,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCLessThanEqual extends ByteCode {
-	public BCLessThanEqual(final ParseNode n) {
-		super(n);
-	}
+    public BCLessThanEqual(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Pop two, op, push result
-	@Nonnull
-	public String explain() { return "LessThan (Pop two, compare, push 1 if less than, else 0)"; }
+    // ---------- INSTANCE ----------
+    // Pop two, op, push result
+    @Nonnull
+    public String explain() {
+        return "LessThan (Pop two, compare, push 1 if less than, else 0)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.LessThanEqual.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.LessThanEqual.get());
+    }
 
 	@Override
 	public void execute(final State st,

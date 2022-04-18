@@ -15,7 +15,9 @@ public class BCList extends ByteCodeDataType {
 	final List<ByteCodeDataType> content=new ArrayList<>(); // used by the VM
 	int elements; // used by the compiler
 
-	public BCList(final ParseNode n) {super(n);}
+	public BCList(final ParseNode node) {
+		super(node);
+	}
 
 	public BCList(final ParseNode n,
 	              final int elements) {

@@ -17,9 +17,9 @@ import java.util.Set;
 public class GroupModule extends ModuleAnnotation {
 
 	public GroupModule(final String name,
-	                   final ModuleDefinition def) {
-		super(name,def);
-	}
+                       final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nonnull

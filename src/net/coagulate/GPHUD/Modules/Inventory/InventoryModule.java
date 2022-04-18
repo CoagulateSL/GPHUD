@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class InventoryModule extends ModuleAnnotation {
-    public InventoryModule(final String name, final ModuleDefinition def) {
-        super(name, def);
+    public InventoryModule(final String name, final ModuleDefinition annotation) {
+        super(name, annotation);
     }
 
     @Nonnull
@@ -37,10 +37,10 @@ public class InventoryModule extends ModuleAnnotation {
 
     @Nullable
     @Override
-    public KV getKVDefinition(@Nonnull final State st, @Nonnull final String reference) {
+    public KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) {
         final Map<String, KV> map = getKVDefinitions(st);
         for (final String mapKey : map.keySet()) {
-            if (reference.equalsIgnoreCase(mapKey)) {
+            if (qualifiedname.equalsIgnoreCase(mapKey)) {
                 return map.get(mapKey);
             }
         }

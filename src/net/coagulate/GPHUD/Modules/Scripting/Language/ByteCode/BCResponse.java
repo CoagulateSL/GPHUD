@@ -14,7 +14,9 @@ public class BCResponse extends ByteCodeDataType {
 	String message="";
 	boolean error;
 
-	public BCResponse(final ParseNode n) {super(n);}
+	public BCResponse(final ParseNode node) {
+        super(node);
+    }
 
 	public BCResponse(final ParseNode n,
 	                  @Nonnull final Response content) {

@@ -17,9 +17,9 @@ import static java.util.logging.Level.SEVERE;
 public class TemplateWrapper extends ModuleAnnotation {
 
 	public TemplateWrapper(final String name,
-	                       final ModuleDefinition def) {
-		super(name,def);
-	}
+                           final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- STATICS ----------
 	@Nullable
@@ -84,27 +84,30 @@ public class TemplateWrapper extends ModuleAnnotation {
 		return super.getKVDefinition(st,qualifiedname);
 	}
 
-	@Override
-	public void addTemplateDescriptions(@Nonnull final State st,
-	                                    @Nonnull final Map<String,String> addto) {
-		if (!st.hasModule("TemplateWrapper")) { return; }
-		for (final String template: getExternalTemplates(st).keySet()) {
-			addto.put("--WRAPPED:"+template.toUpperCase()+"--","Wrapped form of template "+template);
-		}
-	}
+    @Override
+    public void addTemplateDescriptions(@Nonnull final State st,
+                                        @Nonnull final Map<String, String> cumulativeMap) {
+        if (!st.hasModule("TemplateWrapper")) {
+            return;
+        }
+        for (final String template : getExternalTemplates(st).keySet()) {
+            cumulativeMap.put("--WRAPPED:" + template.toUpperCase() + "--", "Wrapped form of template " + template);
+        }
+    }
 
-	@Override
-	public void addTemplateMethods(@Nonnull final State st,
-	                               @Nonnull final Map<String,Method> addto) {
-		if (!st.hasModule("TemplateWrapper")) { return; }
-		for (final String template: getExternalTemplates(st).keySet()) {
-			try {
-				addto.put("--WRAPPED:"+template.toUpperCase()+"--",getClass().getMethod("templateWrapper",State.class,String.class));
-			}
-			catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
-				SL.report("Templating referencing exception??",ex,st);
-				st.logger().log(SEVERE,"Exception referencing own templating method??",ex);
-			}
-		}
+    @Override
+    public void addTemplateMethods(@Nonnull final State st,
+                                   @Nonnull final Map<String, Method> cumulativeMap) {
+        if (!st.hasModule("TemplateWrapper")) {
+            return;
+        }
+        for (final String template : getExternalTemplates(st).keySet()) {
+            try {
+                cumulativeMap.put("--WRAPPED:" + template.toUpperCase() + "--", getClass().getMethod("templateWrapper", State.class, String.class));
+            } catch (@Nonnull final NoSuchMethodException | SecurityException ex) {
+                SL.report("Templating referencing exception??", ex, st);
+                st.logger().log(SEVERE, "Exception referencing own templating method??", ex);
+            }
+        }
 	}
 }

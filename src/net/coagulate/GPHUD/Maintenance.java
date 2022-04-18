@@ -153,11 +153,11 @@ public class Maintenance extends Thread {
 	}
 
 	public static class PingTransmission extends Transmission {
-		public PingTransmission(final Char c,
-		                        @Nonnull final JSONObject json,
-		                        final String url) {
-			super(c,json,url);
-		}
+		public PingTransmission(final Char character,
+                                @Nonnull final JSONObject json,
+                                final String url) {
+            super(character, json, url);
+        }
 
 		// ---------- INSTANCE ----------
 		public void run() {

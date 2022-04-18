@@ -12,23 +12,25 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TextOK implements Renderable {
-	protected final String s;
+	protected final String content;
 
-	public TextOK(final String s) { this.s=s; }
+    public TextOK(final String content) {
+        this.content = content;
+    }
 
 
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		return "OK : "+s;
+        return "OK : " + content;
 	}
 
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
 	                     final boolean rich) {
-		return "<font color=green>OK : "+s+"</font>";
+        return "<font color=green>OK : " + content + "</font>";
 	}
 
 	@Nullable

@@ -15,7 +15,9 @@ public class BCCharacter extends ByteCodeDataType {
 	@Nullable
 	private Char content;
 
-	public BCCharacter(final ParseNode n) { super(n); }
+	public BCCharacter(final ParseNode node) {
+        super(node);
+    }
 
 	public BCCharacter(final ParseNode n,
 	                   @Nonnull final Char content) {

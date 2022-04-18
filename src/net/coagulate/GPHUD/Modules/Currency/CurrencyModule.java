@@ -16,9 +16,9 @@ import java.util.TreeMap;
 public class CurrencyModule extends ModuleAnnotation {
 
 	public CurrencyModule(final String name,
-	                      final ModuleDefinition def) {
-		super(name,def);
-	}
+                          final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- STATICS ----------
 	@Nonnull
@@ -155,31 +155,30 @@ public class CurrencyModule extends ModuleAnnotation {
 		return permissions;
 	}
 
-	// ---------- INSTANCE ----------
-	@Override
-	public void addTemplateDescriptions(final State st,
-	                                    final Map<String,String> templates) {
-		super.addTemplateDescriptions(st,templates);
-		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
-			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
-				templates.put("--"+a.getName().toUpperCase()+":LONG--","Long format template for currenct "+a.getName());
-			}
-		}
-	}
+    // ---------- INSTANCE ----------
+    @Override
+    public void addTemplateDescriptions(final State st,
+                                        final Map<String, String> cumulativeMap) {
+        super.addTemplateDescriptions(st, cumulativeMap);
+        for (final Attribute a : Attribute.getAttributes(st.getInstance())) {
+            if (a.getType() == ATTRIBUTETYPE.CURRENCY) {
+                cumulativeMap.put("--" + a.getName().toUpperCase() + ":LONG--", "Long format template for currenct " + a.getName());
+            }
+        }
+    }
 
-	@Override
-	public void addTemplateMethods(final State st,
-	                               final Map<String,Method> ret) {
-		super.addTemplateMethods(st,ret);
-		for (final Attribute a: Attribute.getAttributes(st.getInstance())) {
-			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
-				try {
-					ret.put("--"+a.getName().toUpperCase()+":LONG--",getClass().getMethod("templateCurrencyLong",State.class,String.class));
-				}
-				catch (final NoSuchMethodException failure) {
-					throw new SystemImplementationException("Reflection failed for long form currency templater", failure);
-				}
-			}
-		}
+    @Override
+    public void addTemplateMethods(final State st,
+                                   final Map<String, Method> cumulativeMap) {
+        super.addTemplateMethods(st, cumulativeMap);
+        for (final Attribute a : Attribute.getAttributes(st.getInstance())) {
+            if (a.getType() == ATTRIBUTETYPE.CURRENCY) {
+                try {
+                    cumulativeMap.put("--" + a.getName().toUpperCase() + ":LONG--", getClass().getMethod("templateCurrencyLong", State.class, String.class));
+                } catch (final NoSuchMethodException failure) {
+                    throw new SystemImplementationException("Reflection failed for long form currency templater", failure);
+                }
+            }
+        }
 	}
 }

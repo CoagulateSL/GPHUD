@@ -19,9 +19,9 @@ import java.util.TreeMap;
 public class ConfigurationModule extends ModuleAnnotation {
 
 	public ConfigurationModule(final String name,
-	                           final ModuleDefinition def) {
-		super(name,def);
-	}
+                               final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nullable

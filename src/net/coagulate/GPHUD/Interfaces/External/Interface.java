@@ -92,7 +92,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
     @Override
-    protected Method lookupPageFromUri(final String line) {
+    protected Method lookupPageFromUri(final String uri) {
         try {
             return getClass().getDeclaredMethod("execute", State.class);
         } catch (final NoSuchMethodException e) {
@@ -281,8 +281,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
     }
 
     @Override
-    protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException t) {
-        SL.report("ExtIF SysEx: " + t.getLocalizedMessage(), t, state());
+    protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException systemException) {
+        SL.report("ExtIF SysEx: " + systemException.getLocalizedMessage(), systemException, state());
         final JSONObject json = new JSONObject();
         json.put("error", "Sorry, an internal error occurred.");
         json.put("responsetype", "SystemException");
@@ -291,12 +291,12 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
     }
 
     @Override
-    protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException t) {
-        SL.report("ExtIF User: " + t.getLocalizedMessage(), t, state());
+    protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException userException) {
+        SL.report("ExtIF User: " + userException.getLocalizedMessage(), userException, state());
         final JSONObject json = new JSONObject();
-        json.put("error", t.getLocalizedMessage());
+        json.put("error", userException.getLocalizedMessage());
         json.put("responsetype", "UserException");
-        json.put("errorclass", t.getClass().getSimpleName());
+        json.put("errorclass", userException.getClass().getSimpleName());
         response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
         response.setStatusCode(200);
     }

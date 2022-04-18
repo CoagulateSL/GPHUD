@@ -65,9 +65,9 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 
 	public CharactersModule(final String name,
-							final ModuleDefinition def) {
-		super(name,def);
-	}
+                            final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- STATICS ----------
 	@Nullable
@@ -286,29 +286,28 @@ public class CharactersModule extends ModuleAnnotation {
 		return map;
 	}
 
-	@Override
-	public void addTemplateDescriptions(@Nonnull final State st,
-	                                    @Nonnull final Map<String,String> addto) {
-		final Map<String,KV> ourmap=getKVDefinitions(st);
-		for (final Attribute attr: st.getAttributes()) {
-			addto.put("--"+attr.getName().toUpperCase()+"--","Character attribute "+attr.getName());
-			addto.put("--TARGET:"+attr.getName().toUpperCase()+"--","TARGET Character attribute "+attr.getName());
-		}
-	}
+    @Override
+    public void addTemplateDescriptions(@Nonnull final State st,
+                                        @Nonnull final Map<String, String> cumulativeMap) {
+        final Map<String, KV> ourmap = getKVDefinitions(st);
+        for (final Attribute attr : st.getAttributes()) {
+            cumulativeMap.put("--" + attr.getName().toUpperCase() + "--", "Character attribute " + attr.getName());
+            cumulativeMap.put("--TARGET:" + attr.getName().toUpperCase() + "--", "TARGET Character attribute " + attr.getName());
+        }
+    }
 
-	@Override
-	public void addTemplateMethods(@Nonnull final State st,
-	                               @Nonnull final Map<String,Method> addto) {
-		final Map<String,KV> ourmap=getKVDefinitions(st);
-		for (final Attribute attr: st.getAttributes()) {
-			try {
-				addto.put("--"+attr.getName().toUpperCase()+"--",getClass().getMethod("templateAttribute",State.class,String.class));
-				addto.put("--TARGET:"+attr.getName().toUpperCase()+"--",getClass().getMethod("templateAttribute",State.class,String.class));
-			}
-			catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
-				SL.report("Templating referencing exception??",ex,st);
-				st.logger().log(SEVERE,"Exception referencing own templating method??",ex);
-			}
+    @Override
+    public void addTemplateMethods(@Nonnull final State st,
+                                   @Nonnull final Map<String, Method> cumulativeMap) {
+        final Map<String, KV> ourmap = getKVDefinitions(st);
+        for (final Attribute attr : st.getAttributes()) {
+            try {
+                cumulativeMap.put("--" + attr.getName().toUpperCase() + "--", getClass().getMethod("templateAttribute", State.class, String.class));
+                cumulativeMap.put("--TARGET:" + attr.getName().toUpperCase() + "--", getClass().getMethod("templateAttribute", State.class, String.class));
+            } catch (@Nonnull final NoSuchMethodException | SecurityException ex) {
+                SL.report("Templating referencing exception??", ex, st);
+                st.logger().log(SEVERE, "Exception referencing own templating method??", ex);
+            }
 		}
 	}
 }

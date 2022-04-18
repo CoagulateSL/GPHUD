@@ -13,18 +13,20 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class BCInvoke extends ByteCode {
-	public BCInvoke(final ParseNode n) {
-		super(n);
-	}
+    public BCInvoke(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Invoke a function.  Pop name, arg count, N*arguments
-	@Nonnull
-	public String explain() { return "Invoke (pop function name, pop arg count, pop arguments, push result)"; }
+    // ---------- INSTANCE ----------
+    // Invoke a function.  Pop name, arg count, N*arguments
+    @Nonnull
+    public String explain() {
+        return "Invoke (pop function name, pop arg count, pop arguments, push result)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.Invoke.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.Invoke.get());
+    }
 
 	@Override
 	public void execute(final State st,

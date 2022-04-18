@@ -694,29 +694,29 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 	@Override
-	protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException t) {
-		SL.report("GPWeb SysEx: " + t.getLocalizedMessage(), t, state());
-		final State st = state();
-		String page = headerHTML(st);
-		page += "<p><h1>Internal Error</h1></p>";
-		page += "<p>Sorry, an internal error has occurred.</p>";
-		page += "<p>The system administrator has been mailed about this issue.</p>";
-		page += footerHTML(st);
-		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
-		response.setStatusCode(200);
-	}
+    protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException systemException) {
+        SL.report("GPWeb SysEx: " + systemException.getLocalizedMessage(), systemException, state());
+        final State st = state();
+        String page = headerHTML(st);
+        page += "<p><h1>Internal Error</h1></p>";
+        page += "<p>Sorry, an internal error has occurred.</p>";
+        page += "<p>The system administrator has been mailed about this issue.</p>";
+        page += footerHTML(st);
+        response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
+        response.setStatusCode(200);
+    }
 
-	@Override
-	protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException t) {
-		SL.report("GPWeb User: " + t.getLocalizedMessage(), t, state());
-		final State st = state();
-		String page = headerHTML(st);
-		page += "<p><h1>Error</h1></p>";
-		page += "<p>There was an error processing your request.</p>";
-		page += "<p>Please review your inputs and the error message, this type of error is likely more related to user data, configuration, or similar, rather than being a system error.</p>";
-		page += "<p><b>ERROR:</b> " + t.getLocalizedMessage();
-		page += footerHTML(st);
-		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
-		response.setStatusCode(200);
-	}
+    @Override
+    protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException userException) {
+        SL.report("GPWeb User: " + userException.getLocalizedMessage(), userException, state());
+        final State st = state();
+        String page = headerHTML(st);
+        page += "<p><h1>Error</h1></p>";
+        page += "<p>There was an error processing your request.</p>";
+        page += "<p>Please review your inputs and the error message, this type of error is likely more related to user data, configuration, or similar, rather than being a system error.</p>";
+        page += "<p><b>ERROR:</b> " + userException.getLocalizedMessage();
+        page += footerHTML(st);
+        response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
+        response.setStatusCode(200);
+    }
 }

@@ -30,9 +30,9 @@ import static net.coagulate.GPHUD.Modules.Command.Context.AVATAR;
 public class ExperienceModule extends ModuleAnnotation {
 
 	public ExperienceModule(final String name,
-	                        final ModuleDefinition def) {
-		super(name,def);
-	}
+                            final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- STATICS ----------
 	@Nonnull

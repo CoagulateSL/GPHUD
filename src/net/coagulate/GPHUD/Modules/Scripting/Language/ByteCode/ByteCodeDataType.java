@@ -10,18 +10,20 @@ import javax.annotation.Nullable;
 
 public abstract class ByteCodeDataType extends ByteCode {
 
-	protected ByteCodeDataType(final ParseNode n) {
-		super(n);
-	}
+    protected ByteCodeDataType(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	@Nullable
-	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) { return new BCString(node(),toString()+var); }
+    // ---------- INSTANCE ----------
+    @Nullable
+    public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+        return new BCString(node(), toString() + var);
+    }
 
-	@Nullable
-	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can not subtract using type "+var.getClass().getSimpleName(),true);
-	}
+    @Nullable
+    public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
+        throw new GSInvalidExpressionException("Can not subtract using type " + var.getClass().getSimpleName(), true);
+    }
 
 	@Nullable
 	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {

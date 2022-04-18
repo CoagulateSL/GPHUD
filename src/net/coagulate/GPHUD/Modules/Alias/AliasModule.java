@@ -18,8 +18,8 @@ import java.util.TreeMap;
  */
 public class AliasModule extends ModuleAnnotation {
 	public AliasModule(final String name,
-	                   final ModuleDefinition definition) {
-		super(name,definition);
+					   final ModuleDefinition annotation) {
+		super(name, annotation);
 	}
 
 	// ---------- INSTANCE ----------

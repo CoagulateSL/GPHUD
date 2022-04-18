@@ -5,13 +5,13 @@ import net.coagulate.Core.Exceptions.UserException;
 public abstract class GSException extends UserException {
 	private static final long serialVersionUID = 1L;
 
-	protected GSException(final String reason) {
-		super(reason);
+	protected GSException(final String message) {
+		super(message);
 	}
 
-	protected GSException(final String reason,
+	protected GSException(final String message,
 						  final Throwable cause) {
-		super(reason, cause);
+		super(message, cause);
 	}
 
 	protected GSException(final String reason, final boolean suppresslogging) {

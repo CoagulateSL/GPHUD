@@ -11,7 +11,9 @@ import java.util.List;
 public class BCFloat extends ByteCodeDataType {
 	private Float content=0f;
 
-	public BCFloat(final ParseNode n) { super(n); }
+	public BCFloat(final ParseNode node) {
+        super(node);
+    }
 
 	public BCFloat(final ParseNode n,
                    final Float content) {

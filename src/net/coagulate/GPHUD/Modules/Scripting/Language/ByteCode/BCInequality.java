@@ -8,18 +8,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCInequality extends ByteCode {
-	public BCInequality(final ParseNode n) {
-		super(n);
-	}
+    public BCInequality(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Pop two, op, push result
-	@Nonnull
-	public String explain() { return "Inequality (Pop two, push 1 if unequal, 0 if equal)"; }
+    // ---------- INSTANCE ----------
+    // Pop two, op, push result
+    @Nonnull
+    public String explain() {
+        return "Inequality (Pop two, push 1 if unequal, 0 if equal)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.Inequality.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.Inequality.get());
+    }
 
 	@Override
 	public void execute(final State st,

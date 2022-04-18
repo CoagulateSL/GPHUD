@@ -12,7 +12,9 @@ import java.util.List;
 public class BCInteger extends ByteCodeDataType {
 	private Integer content=0;
 
-	public BCInteger(final ParseNode n) { super(n); }
+	public BCInteger(final ParseNode node) {
+        super(node);
+    }
 
 	public BCInteger(final ParseNode n,
 	                 final Integer content) {

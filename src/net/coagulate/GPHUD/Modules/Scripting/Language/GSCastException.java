@@ -3,19 +3,19 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 import javax.annotation.Nonnull;
 
 public class GSCastException extends GSInvalidExpressionException {
-	private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-	public GSCastException(final String reason) {
-		super(reason);
-	}
+    public GSCastException(final String message) {
+        super(message);
+    }
 
     public GSCastException(final String reason, final boolean suppresslogging) {
         super(reason, suppresslogging);
     }
 
-    public GSCastException(final String reason,
+    public GSCastException(final String message,
                            final Throwable cause) {
-        super(reason, cause);
+        super(message, cause);
     }
 
     public GSCastException(final String reason,

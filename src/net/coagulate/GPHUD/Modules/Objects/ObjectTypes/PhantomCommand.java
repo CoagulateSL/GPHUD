@@ -60,14 +60,14 @@ public class PhantomCommand extends ObjectType {
 	}
 
 	@Nonnull
-	@Override
-	public Response collide(@Nonnull final State st,
-	                      @Nonnull final Char clicker) {
-		if (json.optString("command","").isEmpty()) {
-			return new ErrorResponse("Command to invoke is not configured in this object type");
-		}
-		final JSONObject resp=Modules.getJSONTemplate(st,json.getString("command"));
-		new Transmission(clicker,resp).start();
-		return new JSONResponse(new JSONObject());
-	}
+    @Override
+    public Response collide(@Nonnull final State st,
+                            @Nonnull final Char collider) {
+        if (json.optString("command", "").isEmpty()) {
+            return new ErrorResponse("Command to invoke is not configured in this object type");
+        }
+        final JSONObject resp = Modules.getJSONTemplate(st, json.getString("command"));
+        new Transmission(collider, resp).start();
+        return new JSONResponse(new JSONObject());
+    }
 }

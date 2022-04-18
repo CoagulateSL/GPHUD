@@ -95,17 +95,23 @@ public class MenuCommand extends Command {
 	public String getName() { return name; }
 
 	@Nonnull
-	@Override
-	public Response execute(@Nonnull final State st,
-	                        @Nonnull final Map<String,Object> parametermap) {
-		final String selected=(String) parametermap.get("choice");
-		int choice=-1;
-		for (int i = 1; i<=MenuModule.MAX_BUTTONS; i++) { if (definition.optString("button"+i,"").equals(selected)) { choice=i; } }
-		if (choice==-1) { throw new UserInputLookupFailureException("Menu "+getName()+" has no element "+selected,true); }
-		final String commandtoinvoke=definition.optString("command"+choice,"");
-		if (commandtoinvoke.isEmpty()) {
-			throw new UserConfigurationException("Menu "+getName()+" command "+selected+" is choice "+choice+" and does not have a command to invoke");
-		}
-		return Modules.getJSONTemplateResponse(st,commandtoinvoke);
-	}
+    @Override
+    public Response execute(@Nonnull final State state,
+                            @Nonnull final Map<String, Object> arguments) {
+        final String selected = (String) arguments.get("choice");
+        int choice = -1;
+        for (int i = 1; i <= MenuModule.MAX_BUTTONS; i++) {
+            if (definition.optString("button" + i, "").equals(selected)) {
+                choice = i;
+            }
+        }
+        if (choice == -1) {
+            throw new UserInputLookupFailureException("Menu " + getName() + " has no element " + selected, true);
+        }
+        final String commandtoinvoke = definition.optString("command" + choice, "");
+        if (commandtoinvoke.isEmpty()) {
+            throw new UserConfigurationException("Menu " + getName() + " command " + selected + " is choice " + choice + " and does not have a command to invoke");
+        }
+        return Modules.getJSONTemplateResponse(state, commandtoinvoke);
+    }
 }

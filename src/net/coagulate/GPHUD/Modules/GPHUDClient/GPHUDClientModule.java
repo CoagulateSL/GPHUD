@@ -23,9 +23,9 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	final Map<String,KV> base=new TreeMap<>();
 
 	public GPHUDClientModule(final String name,
-	                         final ModuleDefinition def) {
-		super(name,def);
-	}
+                             final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- STATICS ----------
 	@Nonnull

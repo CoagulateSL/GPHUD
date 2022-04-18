@@ -12,24 +12,28 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TextError implements Renderable {
-	protected final String s;
+	protected final String content;
 
-	public TextError(final String s) { this.s=s; }
+    public TextError(final String content) {
+        this.content = content;
+    }
 
-	// ---------- INSTANCE ----------
-	public String getMessage(final State st) { return s; }
+    // ---------- INSTANCE ----------
+    public String getMessage(final State st) {
+        return content;
+    }
 
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		return ">>> ERROR : "+s;
+        return ">>> ERROR : " + content;
 	}
 
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
 	                     final boolean rich) {
-		return "<font color=red><b> *** ERROR : "+s+" ***</b></font>";
+        return "<font color=red><b> *** ERROR : " + content + " ***</b></font>";
 	}
 
 	@Nullable

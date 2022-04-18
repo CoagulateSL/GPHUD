@@ -17,22 +17,22 @@ import java.util.Map;
 
 public abstract class ByteCode {
 
-	public static final Map<Byte,InstructionSet> map=new HashMap<>();
-	@Nullable
-	private ParseNode sourceNode;
+    public static final Map<Byte, InstructionSet> map = new HashMap<>();
+    @Nullable
+    private ParseNode sourceNode;
 
-	protected ByteCode(@Nullable final ParseNode n) {
-		sourceNode = n;
-	}
+    protected ByteCode(@Nullable final ParseNode node) {
+        sourceNode = node;
+    }
 
-	// ---------- STATICS ----------
-	@Nonnull
-	public static ByteCode load(@Nonnull final GSVM vm) {
-		final byte instruction = vm.bytecode[vm.programCounter];
-		final InstructionSet decode = ByteCode.get(instruction);
-		if (decode==null) {
-			throw new GSInternalError("Unable to decode instruction " + instruction + " at index " + vm.programCounter);
-		}
+    // ---------- STATICS ----------
+    @Nonnull
+    public static ByteCode load(@Nonnull final GSVM vm) {
+        final byte instruction = vm.bytecode[vm.programCounter];
+        final InstructionSet decode = ByteCode.get(instruction);
+        if (decode == null) {
+            throw new GSInternalError("Unable to decode instruction " + instruction + " at index " + vm.programCounter);
+        }
 		vm.programCounter++;
 		switch (decode) {
 			case Add:

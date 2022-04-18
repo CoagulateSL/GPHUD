@@ -15,7 +15,7 @@ import java.util.Set;
 public class ScriptingModule extends ModuleAnnotation {
 	public ScriptingModule(final String name,
 	                       final ModuleDefinition annotation) {
-		super(name,annotation);
+		super(name, annotation);
 	}
 
 	// ---------- INSTANCE ----------

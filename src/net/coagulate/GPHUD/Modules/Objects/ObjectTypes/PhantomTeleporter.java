@@ -31,11 +31,11 @@ public class PhantomTeleporter extends Teleporter {
 	public MODE mode() { return MODE.PHANTOM; }
 
 	@Nonnull
-	@Override
-	public Response collide(@Nonnull final State st,
-	                        @Nonnull final Char clicker) {
-		return execute(st,clicker);
-	}
+    @Override
+    public Response collide(@Nonnull final State st,
+                            @Nonnull final Char collider) {
+        return execute(st, collider);
+    }
 
 	@Override
 	public void editForm(@Nonnull final State st) {

@@ -18,9 +18,9 @@ import java.util.Set;
 public class EventsModule extends ModuleAnnotation {
 
 	public EventsModule(final String name,
-	                    final ModuleDefinition def) {
-		super(name,def);
-	}
+                        final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nonnull

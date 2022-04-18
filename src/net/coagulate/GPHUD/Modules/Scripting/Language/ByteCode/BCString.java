@@ -10,7 +10,9 @@ public class BCString extends ByteCodeDataType {
 	@Nonnull
 	private String content="";
 
-	public BCString(final ParseNode n) {super(n);}
+	public BCString(final ParseNode node) {
+        super(node);
+    }
 
 	public BCString(final ParseNode n,
 	                @Nonnull final String content) {
