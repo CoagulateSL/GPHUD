@@ -39,9 +39,9 @@ public class InventoryModule extends ModuleAnnotation {
     @Override
     public KV getKVDefinition(@Nonnull final State st, @Nonnull final String qualifiedname) {
         final Map<String, KV> map = getKVDefinitions(st);
-        for (final String mapKey : map.keySet()) {
-            if (qualifiedname.equalsIgnoreCase(mapKey)) {
-                return map.get(mapKey);
+        for (final Map.Entry<String, KV> entry : map.entrySet()) {
+            if (qualifiedname.equalsIgnoreCase(entry.getKey())) {
+                return entry.getValue();
             }
         }
         return null;
