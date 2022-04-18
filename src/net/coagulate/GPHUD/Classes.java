@@ -104,15 +104,15 @@ public abstract class Classes {
 	private static void loadPermissions() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Permissions.class)) {
 			final String modulename=getModuleName(c);
-			for (final Annotation a: c.getAnnotationsByType(Permissions.class)) {
-				if (LOGREGISTERS) { log().config("Registering permission "+modulename+"/"+((Permissions) a).name()); }
-				((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation((Permissions) a,modulename));
+			for (final Permissions a: c.getAnnotationsByType(Permissions.class)) {
+				if (LOGREGISTERS) { log().config("Registering permission "+modulename+"/"+ a.name()); }
+				((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,modulename));
 			}
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Permissionss.class)) {
 			final String modulename=getModuleName(c);
-			for (final Annotation as: c.getAnnotationsByType(Permissionss.class)) {
-				for (final Permissions a: ((Permissionss) as).value()) {
+			for (final Permissionss as: c.getAnnotationsByType(Permissionss.class)) {
+				for (final Permissions a: as.value()) {
 					if (LOGREGISTERS) { log().config("Registering permissions "+modulename+"/"+a.name()); }
 					((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,modulename));
 				}

@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.annotation.Annotation;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,14 +41,14 @@ public class GPHUD extends SLModule {
 	@Override
 	public void registerChanges() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Change.class)) {
-			for (final Annotation a: c.getAnnotationsByType(Classes.Change.class)) {
-				final Classes.Change casted = (Classes.Change) a;
+			for (final Classes.Change a: c.getAnnotationsByType(Classes.Change.class)) {
+				final Classes.Change casted = a;
 				ChangeLogging.add(new ChangeLogging.Change(casted.date(),"GPHUD",casted.component().name(),casted.type(),casted.message()));
 			}
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Changes.class)) {
-			for (final Annotation as: c.getAnnotationsByType(Classes.Changes.class)) {
-				for (final Classes.Change a: ((Classes.Changes) as).value()) {
+			for (final Classes.Changes as: c.getAnnotationsByType(Classes.Changes.class)) {
+				for (final Classes.Change a: as.value()) {
 					ChangeLogging.add(new ChangeLogging.Change(a.date(), "GPHUD", a.component().name(), a.type(), a.message()));
 				}
 			}
