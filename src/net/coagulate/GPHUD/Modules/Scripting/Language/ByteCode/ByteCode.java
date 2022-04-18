@@ -28,12 +28,12 @@ public abstract class ByteCode {
 	// ---------- STATICS ----------
 	@Nonnull
 	public static ByteCode load(@Nonnull final GSVM vm) {
-		final byte instruction=vm.bytecode[vm.PC];
-		final InstructionSet decode=ByteCode.get(instruction);
+		final byte instruction = vm.bytecode[vm.programCounter];
+		final InstructionSet decode = ByteCode.get(instruction);
 		if (decode==null) {
-			throw new GSInternalError("Unable to decode instruction "+instruction+" at index "+vm.PC);
+			throw new GSInternalError("Unable to decode instruction " + instruction + " at index " + vm.programCounter);
 		}
-		vm.PC++;
+		vm.programCounter++;
 		switch (decode) {
 			case Add:
 				return new BCAdd(null);
@@ -55,11 +55,12 @@ public abstract class ByteCode {
 			case String:
 				final int length=vm.getShort();
 				final byte[] string=new byte[length];
-				try { System.arraycopy(vm.bytecode,vm.PC,string,0,length); }
-				catch (@Nonnull final RuntimeException e) {
-					throw new GSInternalError("Failed to arraycopy "+length+" from pos "+vm.PC,e);
+				try {
+					System.arraycopy(vm.bytecode, vm.programCounter, string, 0, length);
+				} catch (@Nonnull final RuntimeException e) {
+					throw new GSInternalError("Failed to arraycopy " + length + " from pos " + vm.programCounter, e);
 				}
-				vm.PC+=length;
+				vm.programCounter += length;
 				final String str=new String(string);
 				return new BCString(null,str);
 			case Debug:
