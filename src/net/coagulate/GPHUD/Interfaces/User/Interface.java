@@ -72,17 +72,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		state.parameterDebugRaw.putAll(parameters);
 	}
 
-	@Override
-	protected void loadSession() {
-
-	}
-
-	@Override
-	protected boolean checkAuthenticationNeeded(final Method content) {
-		return false;
-	}
-
-	@Nullable
+    @Nullable
 	@Override
 	protected Method lookupPageFromUri(final String uri) {
 		state().setURL(uri);

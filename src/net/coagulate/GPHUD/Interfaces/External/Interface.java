@@ -55,16 +55,6 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
         st.source = Sources.EXTERNAL;
     }
 
-	@Override
-	protected void loadSession() {
-
-	}
-
-    @Override
-    protected boolean checkAuthenticationNeeded(final Method content) {
-        return false;
-    }
-
     @Override
     protected void processPostEntity(final HttpEntity entity, final Map<String, String> parameters) {
         try {

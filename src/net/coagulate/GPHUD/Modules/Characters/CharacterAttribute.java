@@ -8,7 +8,6 @@ import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Contains the data related to an attribute defined for an instance.
@@ -45,14 +44,6 @@ public abstract class CharacterAttribute extends Attribute {
 	@Nonnull
 	@Override
 	public String getLinkTarget() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
-	@Nullable
-	@Override
-	public String getKVTable() { return null; }
-
-	@Nullable
-	@Override
-	public String getKVIdField() { return null; }
 
 	@Nonnull
 	public abstract ATTRIBUTETYPE getType();

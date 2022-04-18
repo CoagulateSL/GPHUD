@@ -57,21 +57,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		st.source = State.Sources.SYSTEM;
 	}
 
-	@Override
-	protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
-	}
-
-	@Override
-	protected void loadSession() {
-
-	}
-
-	@Override
-	protected boolean checkAuthenticationNeeded(final Method content) {
-		return false;
-	}
-
-	@Override
+    @Override
 	protected void processPostEntity(final HttpEntity entity, final Map<String, String> parameters) {
 		try {
 			final State st = state();

@@ -84,9 +84,4 @@ public class FactionAttribute extends CharacterAttribute {
 		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
 
-	@Override
-	public boolean readOnly() {
-		return true;
-	}
-
 }
