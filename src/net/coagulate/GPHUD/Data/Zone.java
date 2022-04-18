@@ -96,12 +96,12 @@ public class Zone extends TableRow {
 	}
 
 	/**
-	 * Get a list of all zones.
-	 *
-	 * instance Instance to get zones for
-	 *
-	 * @return Set (possibly empty) of Zones
-	 */
+     * Get a list of all zones.
+     * <p>
+     * instance Instance to get zones for
+     *
+     * @return Set (possibly empty) of Zones
+     */
 	@Nonnull
 	public static Set<Zone> getZones(@Nonnull final Instance instance) {
 		final Set<Zone> zones=new TreeSet<>();
@@ -109,14 +109,14 @@ public class Zone extends TableRow {
 			zones.add(Zone.get(r.getInt()));
 		}
 		return zones;
-	}
+    }
 
-	/**
-	 * Get a list of all zones.
-	 *
-	 * state State to get zones for
-	 *
-	 * @return Set (possibly empty) of Zones
+    /**
+     * Get a list of all zones.
+     * <p>
+     * state State to get zones for
+     *
+     * @return Set (possibly empty) of Zones
 	 */
 	public static Set<Zone> getZones(@Nonnull final State st) {
 		return getZones(st.getInstance());

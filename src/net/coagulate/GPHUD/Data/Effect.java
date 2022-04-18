@@ -150,15 +150,14 @@ public class Effect extends TableRow {
 	}
 
 	/**
-	 * Get effects for a character
-	 *
-	 * Procs expiration
-	 *
-	 * @param st        State
-	 * @param character Character to get effects for
-	 *
-	 * @return A Set of Effect objects describing the characters active effects
-	 */
+     * Get effects for a character
+     * <p>
+     * Procs expiration
+     *
+     * @param st        State
+     * @param character Character to get effects for
+     * @return A Set of Effect objects describing the characters active effects
+     */
 	@Nonnull
 	public static Set<Effect> get(@Nonnull final State st,
 	                              @Nonnull final Char character) {

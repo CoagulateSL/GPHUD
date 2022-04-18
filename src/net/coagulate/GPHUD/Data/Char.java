@@ -273,7 +273,7 @@ public class Char extends TableRow {
 
 	/**
 	 * Get a list of HUDs that haven't checked in in over 60 seconds
-	 *
+	 * <p>
 	 * //TODO this needs to be improved
 	 *
 	 * @return Results set of a db query (boo)

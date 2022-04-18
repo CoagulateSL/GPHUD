@@ -385,12 +385,11 @@ public class Attribute extends TableRow {
 
 	/**
 	 * Gets the character's current final value for an attribute.
-	 *
+	 * <p>
 	 * KVs are passed through the usual getKV mechanism
 	 * POOLs and EXPERIENCE are summed pools
 	 *
 	 * @param st State, infers character
-	 *
 	 * @return The current value for the character, technically nullable
 	 */
 	@Nullable
@@ -426,12 +425,12 @@ public class Attribute extends TableRow {
 			final Inventory set=new Inventory(st.getCharacter(),this);
 			return set.countElements()+" items, "+set.countTotal()+" total qty";
 		}
-		throw new SystemImplementationException("Unhandled non KV type "+getType());
+		throw new SystemImplementationException("Unhandled non KV type " + getType());
 	}
 
 	/**
 	 * Get additional information about the value this attribute has for a given character
-	 *
+	 * <p>
 	 * KV get the computed path
 	 * POOL and EXPERIENCE return quotaed information, if quotaed
 	 * GROUP return nothing
