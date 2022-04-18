@@ -53,11 +53,6 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		return new Link(name,"/GPHUD/"+target+"/view/"+id).asHtml(null,true);
 	}
 
-	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public abstract String getIdColumn();
-
 	@Nonnull
 	@Override
 	public final DBConnection getDatabase() { return db(); }
