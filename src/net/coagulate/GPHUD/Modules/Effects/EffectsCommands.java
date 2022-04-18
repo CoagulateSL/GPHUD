@@ -87,7 +87,7 @@ public class EffectsCommands {
 		for (final Effect effect : Effect.get(st, target)) {
 			boolean zap = false;
 			if (substring) {
-				if (effect.getMetaData().indexOf(metaData) > -1) zap = true;
+				if (effect.getMetaData().contains(metaData)) zap = true;
 			} else {
 				if (effect.getMetaData().equals(metaData)) zap = true;
 			}
@@ -146,7 +146,7 @@ public class EffectsCommands {
         for (final Effect effect : Effect.get(st, target)) {
             boolean zappable = false;
             if (substring) {
-                if (effect.getMetaData().indexOf(metaData) > -1) zappable = true;
+				if (effect.getMetaData().contains(metaData)) zappable = true;
             } else {
                 if (effect.getMetaData().equals(metaData)) zappable = true;
             }
