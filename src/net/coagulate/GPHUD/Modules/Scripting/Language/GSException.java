@@ -2,8 +2,11 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.Core.Exceptions.UserException;
 
+import java.io.Serial;
+
 public abstract class GSException extends UserException {
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	protected GSException(final String message) {
 		super(message);

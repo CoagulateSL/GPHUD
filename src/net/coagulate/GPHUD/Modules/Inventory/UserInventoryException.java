@@ -2,8 +2,11 @@ package net.coagulate.GPHUD.Modules.Inventory;
 
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 
+import java.io.Serial;
+
 public class UserInventoryException extends UserInputStateException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public UserInventoryException(final String message) {

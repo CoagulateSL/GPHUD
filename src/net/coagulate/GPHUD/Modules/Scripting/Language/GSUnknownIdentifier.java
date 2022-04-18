@@ -1,8 +1,10 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 public class GSUnknownIdentifier extends GSException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public GSUnknownIdentifier(final String message) {

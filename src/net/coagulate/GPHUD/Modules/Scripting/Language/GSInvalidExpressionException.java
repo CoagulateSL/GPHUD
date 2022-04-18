@@ -1,8 +1,10 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import javax.annotation.Nonnull;
+import java.io.Serial;
 
 public class GSInvalidExpressionException extends GSException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public GSInvalidExpressionException(final String message) {
