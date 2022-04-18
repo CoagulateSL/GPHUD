@@ -62,13 +62,15 @@ public class Cookie {
 	 * @param cookie Cookie to refresh.
 	 */
 	public static void refreshCookie(@Nonnull final String cookie) {
-		final int refreshifexpiresbefore=getUnixTime()+COOKIE_REFRESH;
-		final int toupdate=db().dqiNotNull("select count(*) from cookies where cookie=? and expires<? and renewable=1",cookie,refreshifexpiresbefore);
-		if (toupdate==0) { return; }
-		if (toupdate>1) {
-			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on cookie "+cookie);
+		final int refreshBefore = getUnixTime() + COOKIE_REFRESH;
+		final int toupdate = db().dqiNotNull("select count(*) from cookies where cookie=? and expires<? and renewable=1", cookie, refreshBefore);
+		if (toupdate == 0) {
+			return;
 		}
-		db().d("update cookies set expires=? where cookie=?",getUnixTime()+COOKIE_LIFESPAN,cookie);
+		if (toupdate > 1) {
+			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on cookie " + cookie);
+		}
+		db().d("update cookies set expires=? where cookie=?", getUnixTime() + COOKIE_LIFESPAN, cookie);
 	}
 
 	/**
