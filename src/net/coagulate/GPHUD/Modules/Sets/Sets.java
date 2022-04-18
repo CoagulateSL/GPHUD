@@ -66,7 +66,7 @@ public class Sets {
         final CharacterSet characterSet = new CharacterSet(character, set);
         final int oldValue = characterSet.count(element);
         final int total = characterSet.add(element, qty);
-        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Add", set.getName(), "" + oldValue, "" + total, "Added " + qty + " " + element + " to set, totalling " + total);
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Add", set.getName(), String.valueOf(oldValue), String.valueOf(total), "Added " + qty + " " + element + " to set, totalling " + total);
         return new OKResponse("Added " + qty + " " + element + " to " + character + "'s " + set + ", changing total from " + oldValue + " to " + total);
     }
     @URL.URLs(url="/configuration/sets/setset")
@@ -101,7 +101,7 @@ public class Sets {
         final CharacterSet characterSet = new CharacterSet(character, set);
         final int oldValue = characterSet.count(element);
         characterSet.set(element, qty);
-        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Set", set.getName(), "" + oldValue, "" + qty, "Set " + qty + " x " + element);
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Set", set.getName(), String.valueOf(oldValue), String.valueOf(qty), "Set " + qty + " x " + element);
         return new OKResponse("Set " + qty + " " + element + " in " + character + "'s " + set + " (was " + oldValue + ")");
     }
 

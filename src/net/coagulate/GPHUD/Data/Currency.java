@@ -157,8 +157,8 @@ public class Currency extends TableRow {
 
 	public void removeCoin(final State st,
 	                       final int basevalue) {
-		d("delete from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
-		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"Delete",getName(),basevalue+"","","Removed coin of value "+basevalue);
+		d("delete from currencycoins where currencyid=? and basemultiple=?", getId(), basevalue);
+		Audit.audit(true, st, OPERATOR.AVATAR, null, null, "Delete", getName(), String.valueOf(basevalue), "", "Removed coin of value " + basevalue);
 	}
 
 	public void setBaseCoinNames(final State state,
@@ -302,8 +302,8 @@ public class Currency extends TableRow {
 	                           final Char character,
 	                           final int ammount,
 	                           final String description) {
-		getPool(st).addAdmin(st,character,ammount,description);
-		Audit.audit(true,st,OPERATOR.AVATAR,null,character,"Create",getName(),null,ammount+"","Admin spawned in currency: "+description);
+		getPool(st).addAdmin(st, character, ammount, description);
+		Audit.audit(true, st, OPERATOR.AVATAR, null, character, "Create", getName(), null, String.valueOf(ammount), "Admin spawned in currency: " + description);
 	}
 
 	/**
@@ -360,8 +360,8 @@ public class Currency extends TableRow {
 	                     final boolean tradable) {
 		final boolean oldvalue=tradable();
 		if (tradable==oldvalue) { return; }
-		set("tradable",tradable);
-		Audit.audit(true,state,OPERATOR.AVATAR,null,null,"Currency","Tradable",oldvalue+"",tradable+"","Admin set currency to tradable status "+tradable);
+		set("tradable", tradable);
+		Audit.audit(true, state, OPERATOR.AVATAR, null, null, "Currency", "Tradable", String.valueOf(oldvalue), String.valueOf(tradable), "Admin set currency to tradable status " + tradable);
 	}
 
 	// ----- Internal Instance -----

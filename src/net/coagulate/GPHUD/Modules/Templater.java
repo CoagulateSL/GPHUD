@@ -72,9 +72,13 @@ public abstract class Templater {
 		if (string==null) { return null; }
 		if ("".equals(string)) { return ""; }
 		try {
-			if (evaluate && !integer) { return eval(string)+""; }
+			if (evaluate && !integer) {
+				return String.valueOf(eval(string));
+			}
 			//noinspection ConstantConditions
-			if (evaluate && integer) { return ""+((int) (eval(string))); }
+			if (evaluate && integer) {
+				return String.valueOf((int) (eval(string)));
+			}
 		}
 		catch (@Nonnull final Exception e) {
 			SL.report("Expression failed for "+string,e,st);
@@ -89,9 +93,13 @@ public abstract class Templater {
 	                              final String keyword,
 	                              final boolean evaluate,
 	                              final boolean integer) {
-		if (evaluate && integer) { return ((int) eval(getValue(st,keyword)))+""; }
-		if (evaluate) { return eval(getValue(st,keyword))+""; }
-		return getValue(st,keyword);
+		if (evaluate && integer) {
+			return String.valueOf((int) eval(getValue(st, keyword)));
+		}
+		if (evaluate) {
+			return String.valueOf(eval(getValue(st, keyword)));
+		}
+		return getValue(st, keyword);
 	}
 
 	@Nonnull

@@ -583,8 +583,10 @@ public class State extends DumpableState {
 						}
 					}
 					if (triggered) {
-						if (kv.type()==KV.KVTYPE.INTEGER) { return new KVValue(((int) sum)+"",path.toString()); }
-						return new KVValue(sum+"",path.toString());
+						if (kv.type() == KV.KVTYPE.INTEGER) {
+							return new KVValue(String.valueOf((int) sum), path.toString());
+						}
+						return new KVValue(String.valueOf(sum), path.toString());
 					}
 				}
 				return new KVValue(templateDefault(kv),"Template Default");

@@ -32,7 +32,7 @@ public class SessionSwitch {
 		f.add(new TextHeader("Select Instance"));
 		f.add(new Separator());
 		for (final Instance i: Instance.getInstances()) {
-			final String id=i.getId()+"";
+			final String id = String.valueOf(i.getId());
 			f.add("<table><tr><td align=center width=300px><img src=\""+i.getLogoURL(st)+"\" height=150px width="+i.getLogoWidth(150)+"px></td><td>");
 			f.add(new Form().add(new Button("Select Instance - "+id,"Select Instance - "+i.getName())));
 			if (!values.get("Select Instance - "+id).isEmpty()) {
@@ -73,8 +73,8 @@ public class SessionSwitch {
 		}
 		f.add(new Separator());
 		for (final Char c: chars) {
-			final String id=c.getId()+"";
-			final String name=c.getName();
+			final String id = String.valueOf(c.getId());
+			final String name = c.getName();
 			f.add(new Form(st,true,"","Select Character - "+name,"charid",id));
 			View.viewCharacter(st,values,c,true);
 			f.add(new Separator());

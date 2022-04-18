@@ -36,7 +36,7 @@ public class GPHUDClientModule extends ModuleAnnotation {
 	                                   @Arguments(name="offset",description="Offset, in meters",
 	                                              max=3,
 	                                              type=Argument.ArgumentType.FLOAT) final Float offset) {
-		st.setKV(st.getCharacter(),"GPHUDClient.TitlerAltitude",offset+"");
+		st.setKV(st.getCharacter(), "GPHUDClient.TitlerAltitude", String.valueOf(offset));
 		return new OKResponse("Updated your Titler altitude to "+offset);
 	}
 

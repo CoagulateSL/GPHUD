@@ -71,17 +71,17 @@ public class AttributeConfig {
 			at.add(blankNulls(a.getSubType()));
 
 			if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
-				at.add(new Form(st,true,"./characters/toggleap",a.usesAbilityPoints()+"","attribute",a.getName(),a.usesAbilityPoints()?"usesabilitypoints":"noop","set"));
+				at.add(new Form(st, true, "./characters/toggleap", String.valueOf(a.usesAbilityPoints()), "attribute", a.getName(), a.usesAbilityPoints() ? "usesabilitypoints" : "noop", "set"));
 			}
 			else { at.add(a.usesAbilityPoints()); }
 
 			if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
-				at.add(new Form(st,true,"./characters/toggleselfmodify",a.getSelfModify()+"","attribute",a.getName(),a.getSelfModify()?"selfmodify":"noop","set"));
+				at.add(new Form(st, true, "./characters/toggleselfmodify", String.valueOf(a.getSelfModify()), "attribute", a.getName(), a.getSelfModify() ? "selfmodify" : "noop", "set"));
 			}
 			else { at.add(a.getSelfModify()); }
 
 			if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
-				at.add(new Form(st,true,"./characters/togglerequired",a.getRequired()+"","attribute",a.getName(),a.getRequired()?"required":"noop","set"));
+				at.add(new Form(st, true, "./characters/togglerequired", String.valueOf(a.getRequired()), "attribute", a.getName(), a.getRequired() ? "required" : "noop", "set"));
 			}
 			else { at.add(a.getRequired()); }
 
@@ -91,7 +91,7 @@ public class AttributeConfig {
 			else { at.add(blankNulls(a.getDefaultValue())); }
 
 			if (!a.readOnly() && st.hasPermission("Characters.CreateAttribute")) {
-				at.add(new Form(st,true,"./characters/toggletemplatable",a.templatable()+"","attribute",a.getName(),a.templatable()?"templatable":"noop","set"));
+				at.add(new Form(st, true, "./characters/toggletemplatable", String.valueOf(a.templatable()), "attribute", a.getName(), a.templatable() ? "templatable" : "noop", "set"));
 			}
 			else { at.add(a.templatable()); }
 
@@ -224,7 +224,7 @@ public class AttributeConfig {
 		attribute.validate(st);
 		final boolean oldvalue=attribute.usesAbilityPoints();
 		attribute.setUsesAbilityPoints(usesabilitypoints);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Attribute/SetAP",attribute.getName(),oldvalue+"",usesabilitypoints+"","Avatar set use of ability points");
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Attribute/SetAP", attribute.getName(), String.valueOf(oldvalue), String.valueOf(usesabilitypoints), "Avatar set use of ability points");
 		return new OKResponse("Attribute ability points flag updated");
 	}
 
@@ -249,7 +249,7 @@ public class AttributeConfig {
 		attribute.validate(st);
 		final boolean oldvalue=attribute.getSelfModify();
 		attribute.setSelfModify(selfmodify);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Attribute/SetSelfModify",attribute.getName(),oldvalue+"",selfmodify+"","Avatar set self modify");
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Attribute/SetSelfModify", attribute.getName(), String.valueOf(oldvalue), String.valueOf(selfmodify), "Avatar set self modify");
 		return new OKResponse("Attribute self modification flag updated");
 	}
 
@@ -273,7 +273,7 @@ public class AttributeConfig {
 		attribute.validate(st);
 		final boolean oldvalue=attribute.getRequired();
 		attribute.setRequired(required);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Attribute/SetRequired",attribute.getName(),oldvalue+"",required+"","Avatar set required");
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Attribute/SetRequired", attribute.getName(), String.valueOf(oldvalue), String.valueOf(required), "Avatar set required");
 		return new OKResponse("Attribute requried flag updated");
 	}
 

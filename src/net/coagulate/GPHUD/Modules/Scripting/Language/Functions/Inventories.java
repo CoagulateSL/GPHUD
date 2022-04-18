@@ -39,7 +39,7 @@ public class Inventories {
             final Item item = Item.find(st, itemName.getContent());
             final int oldValue = inventory.count(item);
             final int newValue = inventory.add(item, amount.getContent(), true);
-            Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsInventoryAdd", inventory.getName(), "" + oldValue, "" + newValue, "Added " + amount.getContent() + " " + itemName.getContent() + " to inventory, changing total from " + oldValue + " to " + newValue);
+            Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsInventoryAdd", inventory.getName(), String.valueOf(oldValue), String.valueOf(newValue), "Added " + amount.getContent() + " " + itemName.getContent() + " to inventory, changing total from " + oldValue + " to " + newValue);
             return new BCString(null, "");
         } catch (final UserInventoryException e) {
             return new BCString(null, e.getLocalizedMessage());

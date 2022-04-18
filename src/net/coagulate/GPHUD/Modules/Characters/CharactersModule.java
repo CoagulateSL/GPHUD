@@ -100,7 +100,7 @@ public class CharactersModule extends ModuleAnnotation {
 		}
 		if (attr.getType()==POOL || attr.getType()==EXPERIENCE) {
 			if (attr instanceof final QuotaedXP xp) {
-				return CharacterPool.sumPool(st, xp.getPool(st)) + "";
+				return String.valueOf(CharacterPool.sumPool(st, xp.getPool(st)));
 			} else {
 				return "POOL";
 			}
@@ -148,7 +148,7 @@ public class CharactersModule extends ModuleAnnotation {
 	public static String abilityPoints(@Nonnull final State st,
 	                                   final String key) {
 		if (st.getCharacterNullable()==null) { return ""; }
-		return abilityPointsRemaining(st)+"";
+		return String.valueOf(abilityPointsRemaining(st));
 	}
 
 	/**
@@ -199,18 +199,18 @@ public class CharactersModule extends ModuleAnnotation {
 		final String localstr=st.getKV(st.getCharacter(),"Characters."+attribute);
 		int local=0;
 		if (localstr!=null && !localstr.isEmpty()) { local=Integer.parseInt(localstr); }
-		st.setKV(st.getCharacter(),"characters."+attribute,(local+1)+"");
+		st.setKV(st.getCharacter(), "characters." + attribute, String.valueOf(local + 1));
 		Audit.audit(true,
-		            st,
-		            Audit.OPERATOR.CHARACTER,
-		            null,
-		            st.getCharacter(),
-		            "AbilityIncrease",
-		            attribute,
-		            local+"",
-		            (local+1)+"",
-		            "Character spent ability point to increase "+attribute+" from (total) "+existing+" to "+(existing+1)
-		           );
+				st,
+				Audit.OPERATOR.CHARACTER,
+				null,
+				st.getCharacter(),
+				"AbilityIncrease",
+				attribute,
+				String.valueOf(local),
+				String.valueOf(local + 1),
+				"Character spent ability point to increase " + attribute + " from (total) " + existing + " to " + (existing + 1)
+		);
 		String remaining="";
 		remain--;
 		if (remain>0) {

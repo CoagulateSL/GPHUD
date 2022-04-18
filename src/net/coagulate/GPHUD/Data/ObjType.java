@@ -119,7 +119,7 @@ public class ObjType extends TableRow {
 	                                           @Nonnull final String name) {
 		final DropDownList list=new DropDownList(name);
 		for (final ResultsRow row: db().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
-			list.add(row.getInt("id")+"",row.getStringNullable("name"));
+			list.add(String.valueOf(row.getInt("id")), row.getStringNullable("name"));
 		}
 		return list;
 	}

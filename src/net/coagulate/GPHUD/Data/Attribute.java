@@ -394,11 +394,11 @@ public class Attribute extends TableRow {
 		}
 		if (attributetype==EXPERIENCE) {
 			final GenericXP xp=new GenericXP(getName());
-			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
+			return String.valueOf(CharacterPool.sumPool(st, (xp.getPool(st))));
 		}
 		if (attributetype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
-			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
+			return String.valueOf(CharacterPool.sumPool(st, (xp.getPool(st))));
 		}
 		if (attributetype==CURRENCY) {
 			final Currency currency=Currency.findNullable(st,getName());
@@ -575,8 +575,8 @@ public class Attribute extends TableRow {
 	public void templatable(final State st,
 	                        final boolean newValue) {
 		if (newValue==templatable()) { return; }
-		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newValue,"Set templatable to "+newValue);
-		set("templatable",newValue);
+		Audit.audit(false, st, OPERATOR.AVATAR, null, null, "Set", getName() + "/Templatable", String.valueOf(templatable()), String.valueOf(newValue), "Set templatable to " + newValue);
+		set("templatable", newValue);
 		templatableCache.set(this,newValue);
 	}
 	private static final Cache<Attribute,Boolean> templatableCache=Cache.getCache("gphud/attributeTemplatable",CacheConfig.OPERATIONAL_CONFIG);

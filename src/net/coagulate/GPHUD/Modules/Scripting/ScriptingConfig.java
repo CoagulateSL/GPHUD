@@ -133,10 +133,10 @@ public class ScriptingConfig {
 		}
 		f.add(new TextHeader("Edit script " + script.getName()));
 		final Table versions = new Table();
-		versions.add("Source code version").add(script.getSourceVersion() + "");
+		versions.add("Source code version").add(String.valueOf(script.getSourceVersion()));
 		versions.openRow();
 		if (script.getSourceVersion() == script.getByteCodeVersion()) {
-			versions.add("Byte code version").add(script.getByteCodeVersion() + "");
+			versions.add("Byte code version").add(String.valueOf(script.getByteCodeVersion()));
 		} else {
 			versions.add("<font color=red>Byte code version</font>")
 					.add("<font color=red>" + script.getByteCodeVersion() + "</font>")

@@ -198,7 +198,7 @@ public class Effect extends TableRow {
 		for (final Entry<Integer,Effect> entry: byduration.entrySet()) {
 			if (i<4) {
 				final Effect effect=entry.getValue();
-				json.put("effect"+i,(entry.getKey()+UnixTime.getUnixTime())+"");
+				json.put("effect" + i, String.valueOf(entry.getKey() + UnixTime.getUnixTime()));
 				String texture=st.getKV(effect,"Effects.EffectIcon");
 				if (texture==null || texture.isEmpty()) { texture="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4"; }
 				json.put("effect"+i+"t",texture);

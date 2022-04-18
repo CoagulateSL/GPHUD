@@ -215,13 +215,15 @@ public class GSVM {
 		if (target!=null) {
 			totarget = getQueue(target);
 			if (pid != 0) {
-				totarget.put("processid", "" + pid);
+				totarget.put("processid", String.valueOf(pid));
 			}
 			queue.remove(target);
 		}
 		for (final Char k: queue.keySet()) {
 			final JSONObject totransmit=getQueue(k);
-			if (pid!=0) { totransmit.put("processid",""+pid); }
+			if (pid != 0) {
+				totransmit.put("processid", String.valueOf(pid));
+			}
 			new Transmission(k,totransmit).start();
 		}
 		return new JSONResponse(totarget);

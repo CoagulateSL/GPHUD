@@ -336,7 +336,7 @@ public abstract class Management {
 		else {
 			character.hudMessage("You are no longer a faction administrator for "+faction.getName());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,character,"SetAdmin",faction.getName(),oldflag+"",admin+"","Set admin flag");
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetAdmin", faction.getName(), String.valueOf(oldflag), String.valueOf(admin), "Set admin flag");
 		return new OKResponse("Successfully altered admin flag on "+character+" in "+faction);
 	}
 

@@ -64,8 +64,8 @@ public class GenericXPPool extends Pool {
 		int maxLevel=targetstate.getKV("Experience.MaxLevel").intValue();
 		if (maxLevel==0) { maxLevel=1000; }
 		if (targetstate.getCharacter().getLevel(targetstate)>=maxLevel) { throw new UserInputStateException("This character is already at maximum level and can not be awarded any more experience of any type",true); }
-		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,target,"Pool Add",pool.name(),null,ammount+"",reason);
-		CharacterPool.addPool(st,target,pool,ammount,reason);
+		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, target, "Pool Add", pool.name(), null, String.valueOf(ammount), reason);
+		CharacterPool.addPool(st, target, pool, ammount, reason);
 		if (target!=st.getCharacterNullable()) {
 			if (incontext) {
 				target.hudMessage("You were granted "+ammount+" point"+(ammount==1?"":"s")+" of "+pool.name()+" XP by "+st.getCharacter().getName()+" for "+reason);

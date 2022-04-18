@@ -35,7 +35,7 @@ public class Sets {
         final CharacterSet characterSet = getSet(st, character, set);
         final int oldValue = characterSet.count(element.getContent());
         final int newAmount = characterSet.add(element.getContent(), amount.getContent());
-        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetAdd", set.getContent(), "" + oldValue, "" + newAmount, "Added " + amount.getContent() + " " + element.getContent() + " to set, changing total from " + oldValue + " to " + newAmount);
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetAdd", set.getContent(), String.valueOf(oldValue), String.valueOf(newAmount), "Added " + amount.getContent() + " " + element.getContent() + " to set, changing total from " + oldValue + " to " + newAmount);
         return new BCInteger(null, newAmount);
     }
 
@@ -58,7 +58,7 @@ public class Sets {
         final CharacterSet characterSet = getSet(st, character, set);
         final int oldValue = characterSet.count(element.getContent());
         characterSet.set(element.getContent(), amount.getContent());
-        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetSet", set.getContent(), "" + oldValue, "" + (amount.getContent()), "Added " + amount.getContent() + " " + element.getContent() + " to set, changing total from " + oldValue + " to " + amount.getContent());
+        Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsSetSet", set.getContent(), String.valueOf(oldValue), String.valueOf(amount.getContent()), "Added " + amount.getContent() + " " + element.getContent() + " to set, changing total from " + oldValue + " to " + amount.getContent());
         return amount;
     }
     @Nonnull

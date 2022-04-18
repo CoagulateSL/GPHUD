@@ -98,7 +98,7 @@ public class Row implements Renderable {
 	}
 
 	public void add(final Integer ownerid) {
-		add(""+ownerid);
+		add(String.valueOf(ownerid));
 	}
 
 	public void add(final boolean online) {

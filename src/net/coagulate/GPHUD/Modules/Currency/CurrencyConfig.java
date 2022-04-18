@@ -193,11 +193,11 @@ public class CurrencyConfig {
 		coins.sort(Comparator.comparingInt(o->o.value));
 		for (final Coin coin: coins) {
 			t.openRow();
-			t.add(new Cell(coin.value+"").align("right"));
+			t.add(new Cell(String.valueOf(coin.value)).align("right"));
 			t.add(currency.getBaseCoinName());
 			t.add("=");
-			t.add("1 "+coin.basecoinname+" ("+coin.basecoinnameshort+")");
-			t.add(new Form(st,true,"/GPHUD/Configuration/Currency/RemoveCoin","Delete Coin","currency",currency.getName(),"basevalue",coin.value+""));
+			t.add("1 " + coin.basecoinname + " (" + coin.basecoinnameshort + ")");
+			t.add(new Form(st, true, "/GPHUD/Configuration/Currency/RemoveCoin", "Delete Coin", "currency", currency.getName(), "basevalue", String.valueOf(coin.value)));
 		}
 		f.add(t);
 		f.add(new Form(st,true,"/GPHUD/Configuration/Currency/AddCoin","Add Coin","currency",currency.getName()));

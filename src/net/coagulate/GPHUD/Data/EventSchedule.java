@@ -293,15 +293,15 @@ public class EventSchedule extends TableRow {
 				final int finallyawarded=new EventXP(-1).cappedSystemAward(fake,wanttoaward,description);
 				if (finallyawarded>0) {
 					Audit.audit(fake,
-					            Audit.OPERATOR.AVATAR,
-					            null,
-					            fake.getCharacter(),
-					            "Add",
-					            "EventXP",
-					            null,
-					            finallyawarded+"",
-					            description+" ("+finallyawarded+" of up to "+wanttoaward+" for time spent)"
-					           );
+							Audit.OPERATOR.AVATAR,
+							null,
+							fake.getCharacter(),
+							"Add",
+							"EventXP",
+							null,
+							String.valueOf(finallyawarded),
+							description + " (" + finallyawarded + " of up to " + wanttoaward + " for time spent)"
+					);
 				}
 			}
 		}
@@ -319,7 +319,7 @@ public class EventSchedule extends TableRow {
 	@Nonnull
 	private String pad(final Integer padme,
 	                   final int howmuch) {
-		final StringBuilder padder=new StringBuilder(padme+"");
+		final StringBuilder padder = new StringBuilder(String.valueOf(padme));
 		while (padder.length()<howmuch) { padder.append(" "); }
 		return padder.toString();
 	}

@@ -40,7 +40,7 @@ public class VerbActor {
         } else {
             valueAfter = valueBefore;
         }
-        Audit.audit(state, Audit.OPERATOR.CHARACTER, null, null, "Use:" + itemVerb.getName(), item.getName(), "" + valueBefore, "" + valueAfter, "Character uses item from " + inventory.getName());
+        Audit.audit(state, Audit.OPERATOR.CHARACTER, null, null, "Use:" + itemVerb.getName(), item.getName(), String.valueOf(valueBefore), String.valueOf(valueAfter), "Character uses item from " + inventory.getName());
         final String action = payload.optString("action", "");
         if ("command".equalsIgnoreCase(action)) {
             return Modules.getJSONTemplateResponse(state, payload.optString("command", ""));

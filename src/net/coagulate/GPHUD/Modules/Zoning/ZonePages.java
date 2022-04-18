@@ -37,7 +37,7 @@ public abstract class ZonePages {
 			f.add(new Link(zone.getName(),"./zoning/view/"+zone.getId()));
 			if (st.hasPermission("Zoning.config")) {
 				f.add("</td><td>");
-				f.add(new Form(st,true,"./Zoning/Delete","Delete Zone","zone",zone.getName()+""));
+				f.add(new Form(st, true, "./Zoning/Delete", "Delete Zone", "zone", zone.getName()));
 			}
 			f.add("</td></tr>");
 		}
@@ -89,7 +89,9 @@ public abstract class ZonePages {
 				name = vectors[0] + " - " + vectors[1];
 			}
 			t.openRow().add("Location").add(a.getRegion(true).getName() + ", " + name);
-			if (admin) { t.add(new Form(st,true,"../deletearea","Delete Area","zoneareaid",a.getId()+"")); }
+			if (admin) {
+				t.add(new Form(st, true, "../deletearea", "Delete Area", "zoneareaid", String.valueOf(a.getId())));
+			}
 		}
 		if (admin) { t.openRow().add("").add(new Form(st,true,"../addarea","Add Area","zone",z.getName())); }
 		f.add(new TextSubHeader("Influenced KVs"));

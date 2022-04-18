@@ -35,9 +35,9 @@ public class Set {
 		final String oldvalue=st.getKV("Health.health").value();
 		// so we want to set to the target - the baseline i guess
 		final int setto=target;
-		st.setKV(st.getCharacter(),"health.health",setto+"");
+		st.setKV(st.getCharacter(), "health.health", String.valueOf(setto));
 		st.purgeCache(st.getCharacter());
-		audit(st,Audit.OPERATOR.CHARACTER,st.getAvatarNullable(),st.getCharacter(),"Set","Health",oldvalue,target+"","Set character their own health");
+		audit(st, Audit.OPERATOR.CHARACTER, st.getAvatarNullable(), st.getCharacter(), "Set", "Health", oldvalue, String.valueOf(target), "Set character their own health");
 		return new SayResponse("set their health to "+target,st.getCharacter().getName());
 	}
 }

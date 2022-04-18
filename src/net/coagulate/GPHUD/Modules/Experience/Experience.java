@@ -27,7 +27,7 @@ public abstract class Experience {
 	                                final String key) {
 		if (!st.hasModule("Experience")) { return ""; }
 		if (st.getCharacterNullable()==null) { return ""; }
-		return getExperience(st,st.getCharacter())+"";
+		return String.valueOf(getExperience(st, st.getCharacter()));
 	}
 
 	@Nonnull
@@ -37,7 +37,7 @@ public abstract class Experience {
 	                              final String key) {
 		if (!st.hasModule("Experience")) { return ""; }
 		if (st.getCharacterNullable()==null) { return ""; }
-		return toLevel(st,getExperience(st,st.getCharacter()))+"";
+		return String.valueOf(toLevel(st, getExperience(st, st.getCharacter())));
 	}
 
 	@Nonnull
@@ -48,7 +48,7 @@ public abstract class Experience {
 		if (!st.hasModule("Roller")) { return ""; }
 		if (st.getTargetNullable()==null) { throw new UserInputStateException("No target!"); }
 		final State target=st.getTargetNullable();
-		return Experience.toLevel(target,Experience.getExperience(target,target.getCharacter()))+"";
+		return String.valueOf(Experience.toLevel(target, Experience.getExperience(target, target.getCharacter())));
 	}
 
 	public static int toLevel(@Nonnull final State st,

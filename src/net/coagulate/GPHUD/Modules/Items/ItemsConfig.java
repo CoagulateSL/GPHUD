@@ -80,17 +80,17 @@ public class ItemsConfig {
         }
         if (item.weight() != weight) {
             Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
-                    "Weight", "" + item.weight(), "" + weight, "Changed item '" + item.getName() + "' weight");
+                    "Weight", String.valueOf(item.weight()), String.valueOf(weight), "Changed item '" + item.getName() + "' weight");
             item.weight(weight);
         }
         if (item.tradable() != tradable) {
             Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
-                    "Tradable", "" + item.tradable(), "" + tradable, "Changed item '" + item.getName() + "' tradarable flag");
+                    "Tradable", String.valueOf(item.tradable()), String.valueOf(tradable), "Changed item '" + item.getName() + "' tradarable flag");
             item.tradable(tradable);
         }
         if (item.destroyable() != destroyable) {
             Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
-                    "Destroyable", "" + item.destroyable(), "" + destroyable, "Changed item '" + item.getName() + "' destoyable flag");
+                    "Destroyable", String.valueOf(item.destroyable()), String.valueOf(destroyable), "Changed item '" + item.getName() + "' destoyable flag");
             item.destroyable(destroyable);
         }
         return new OKResponse("Item created/updated");
@@ -116,12 +116,12 @@ public class ItemsConfig {
         propertiesTable.openRow().add("Tradable").add(item.tradable());
         propertiesTable.openRow().add("Destroyable").add(item.destroyable());
         if (st.hasPermission("Items.Edit")) {
-            f.add(new Form(st,true,"/GPHUD/configuration/items/edititem","Edit Item",
-                    "name",item.getName(),
-                    "tradable",item.tradable()?"true":"",
-                    "destroyable",item.destroyable()?"true":"",
-                    "weight",""+item.weight(),
-                    "description",item.description()));
+            f.add(new Form(st, true, "/GPHUD/configuration/items/edititem", "Edit Item",
+                    "name", item.getName(),
+                    "tradable", item.tradable() ? "true" : "",
+                    "destroyable", item.destroyable() ? "true" : "",
+                    "weight", String.valueOf(item.weight()),
+                    "description", item.description()));
         }
         if (st.hasPermission("Items.Delete")) {
             f.add(new Form(st,true,"/GPHUD/configuration/items/deleteitem","Delete Item",

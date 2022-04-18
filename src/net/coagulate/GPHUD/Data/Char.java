@@ -266,7 +266,7 @@ public class Char extends TableRow {
 	                                      final String listName) {
 		final DropDownList list=new DropDownList(listName);
 		for (final ResultsRow row: db().dq("select characterid,name from characters where instanceid=? and owner=?",st.getInstance().getId(),User.getSystem().getId())) {
-			list.add(row.getIntNullable("characterid")+"",row.getStringNullable("name"));
+			list.add(String.valueOf(row.getIntNullable("characterid")), row.getStringNullable("name"));
 		}
 		return list;
 	}
@@ -445,7 +445,7 @@ public class Char extends TableRow {
 		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
 		final String allowList=st.getKV("Instance.AllowedNamingSymbols").toString();
 		for (int i=0;i<allowList.length();i++) {
-			final String allow=allowList.charAt(i)+"";
+			final String allow = String.valueOf(allowList.charAt(i));
 			name=name.replaceAll(Pattern.quote(allow),"");
 		}
 		// unique the characters in the string.  There's a better way of doing this surely.
@@ -454,7 +454,9 @@ public class Char extends TableRow {
 			// bad de-duping code
 			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
 			// stick all the symbols in a set :P
-			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
+			for (int i = 0; i < name.length(); i++) {
+				characters.add(String.valueOf(name.charAt(i)));
+			}
 			// and reconstitute it
 			for (final String character: characters) { blockedChars.append(character); }
 			throw new UserInputValidationFilterException("Disallowed characters present in character name, avoid using the following: "+blockedChars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.",true);

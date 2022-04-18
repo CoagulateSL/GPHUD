@@ -216,7 +216,7 @@ public class Interactions {
         }
         try {
             final int newAmount = inv.add(item, -quantity, true);
-            Audit.audit(false,state, Audit.OPERATOR.CHARACTER,null,null,"Destroy",item.getName(),""+count,""+newAmount,"Destroyed "+quantity+" "+item.getName()+" from "+inventory.getName());
+            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, null, "Destroy", item.getName(), String.valueOf(count), String.valueOf(newAmount), "Destroyed " + quantity + " " + item.getName() + " from " + inventory.getName());
             return new OKResponse("Destroyed "+quantity+" x "+item.getName()+" from "+inventory.getName()+", "+newAmount+" remain in this inventory");
         } catch (final UserInventoryException e) {
             return new ErrorResponse(e.getLocalizedMessage());
@@ -272,8 +272,8 @@ public class Interactions {
             final int targetOldAmount = targetInv.count(item);
             final int targetNewAmount = targetInv.add(item, quantity, true);
             final int newAmount = inv.add(item, -quantity, true);
-            Audit.audit(false, state, null, target, state.getAvatar(), state.getCharacter(), "Recieve", item.getName(), "" + targetOldAmount, "" + targetNewAmount, "Received " + quantity + " " + item.getName() + " from " + state.getCharacter().getName() + "'s " + inventory.getName() + ", we had " + targetOldAmount + " and now have " + targetNewAmount);
-            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, target, "Give", item.getName(), "" + count, "" + newAmount, "Gave " + quantity + " " + item.getName() + " from " + inventory.getName() + " to " + target.getName());
+            Audit.audit(false, state, null, target, state.getAvatar(), state.getCharacter(), "Recieve", item.getName(), String.valueOf(targetOldAmount), String.valueOf(targetNewAmount), "Received " + quantity + " " + item.getName() + " from " + state.getCharacter().getName() + "'s " + inventory.getName() + ", we had " + targetOldAmount + " and now have " + targetNewAmount);
+            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, target, "Give", item.getName(), String.valueOf(count), String.valueOf(newAmount), "Gave " + quantity + " " + item.getName() + " from " + inventory.getName() + " to " + target.getName());
             final JSONResponse push = new JSONResponse(new JSONObject());
             push.message("You received " + quantity + " x " + item.getName() + " from " + state.getCharacter().getName() + " to " + inventory.getName(), target.getProtocol());
             target.push(push);
@@ -330,7 +330,7 @@ public class Interactions {
             final int targetOldAmount = targetInv.count(item);
             final int targetNewAmount = targetInv.add(item, quantity, true);
             final int newAmount = inv.add(item, -quantity, false);
-            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, null, "Move", item.getName(), "" + targetOldAmount, "" + targetNewAmount, "Moved " + quantity + " " + item.getName() + " from " + inv.getName() + " to " + targetInv.getName());
+            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, null, "Move", item.getName(), String.valueOf(targetOldAmount), String.valueOf(targetNewAmount), "Moved " + quantity + " " + item.getName() + " from " + inv.getName() + " to " + targetInv.getName());
             final JSONResponse push = new JSONResponse(new JSONObject());
             return new OKResponse("Moved " + quantity + " x " + item.getName() + " from " + inv.getName() + " to " + targetInv.getName() + ", " + newAmount + " remain in this inventory and " + targetNewAmount + " in the target inventory");
         } catch (final UserInventoryException e) {

@@ -68,7 +68,7 @@ public class Manipulation {
         final int oldValue = inv.count(item);
         try {
             final int total = inv.add(item, qty, false);
-            Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Add", inventory.getName(), "" + oldValue, "" + total, "Added " + qty + " " + item + " to inventory, totalling " + total);
+            Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Add", inventory.getName(), String.valueOf(oldValue), String.valueOf(total), "Added " + qty + " " + item + " to inventory, totalling " + total);
             return new OKResponse("Added " + qty + " " + item + " to " + character + "'s " + inventory + ", changing total from " + oldValue + " to " + total);
         } catch (final UserInventoryException error) {
             return new ErrorResponse(error.getLocalizedMessage());
@@ -105,7 +105,7 @@ public class Manipulation {
         // guess we're ok then (!)
         final int oldValue = inv.count(item);
         final int total = inv.set(item, qty, false);
-        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Set", inventory.getName(), "" + oldValue, "" + total, "Set " + total + " x " + item.getName());
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Set", inventory.getName(), String.valueOf(oldValue), String.valueOf(total), "Set " + total + " x " + item.getName());
         return new OKResponse("Set " + total + " " + item.getName() + " in " + character + "'s " + inventory.getName() + " (was " + oldValue + ")");
     }
 

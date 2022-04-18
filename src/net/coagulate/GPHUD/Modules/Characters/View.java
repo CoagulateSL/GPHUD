@@ -206,8 +206,8 @@ public abstract class View {
                         create.add(new Hidden("character", simulated.getCharacter().getName()));
                         create.add(new Hidden(attributeField, a.getName()));
                         create.add(new Hidden(elementField, element.getKey()));
-                        create.add(new Hidden("qty", "" + element.getValue()));
-                        create.add(new Hidden("okreturnurl", st.getFullURL()));
+						create.add(new Hidden("qty", String.valueOf(element.getValue())));
+						create.add(new Hidden("okreturnurl", st.getFullURL()));
                         create.add(new Button(element.getValue() + "x" + element.getKey()));
                         description = description + create.asHtml(simulated, true);
 					}

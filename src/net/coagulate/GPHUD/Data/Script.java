@@ -50,12 +50,12 @@ public class Script extends TableRow {
 			final Integer sourceversion=row.getIntNullable("sourceversion");
 			final Integer bytecodeversion=row.getIntNullable("bytecodeversion");
 			if (Objects.equals(sourceversion,bytecodeversion)) {
-				o.add((sourceversion==null?"None":""+sourceversion));
-				o.add((bytecodeversion==null?"None":""+bytecodeversion));
+				o.add((sourceversion == null ? "None" : String.valueOf(sourceversion)));
+				o.add((bytecodeversion == null ? "None" : String.valueOf(bytecodeversion)));
 			}
 			else {
-				o.add("<font color=red>"+(sourceversion==null?"None":""+sourceversion)+"</font>");
-				o.add("<font color=red>"+(bytecodeversion==null?"None":""+bytecodeversion)+"</font>");
+				o.add("<font color=red>" + (sourceversion == null ? "None" : String.valueOf(sourceversion)) + "</font>");
+				o.add("<font color=red>" + (bytecodeversion == null ? "None" : String.valueOf(bytecodeversion)) + "</font>");
 			}
 			String alias=row.getStringNullable("alias");
 			if (alias==null) { alias=""; }
@@ -178,7 +178,7 @@ public class Script extends TableRow {
 	                                   @Nonnull final String listname) {
 		final DropDownList list=new DropDownList(listname);
 		for (final ResultsRow row: db().dq("select id,name from scripts where instanceid=?",st.getInstance().getId())) {
-			list.add(""+row.getIntNullable("id"),row.getStringNullable("name"));
+			list.add(String.valueOf(row.getIntNullable("id")), row.getStringNullable("name"));
 		}
 		return list;
 	}

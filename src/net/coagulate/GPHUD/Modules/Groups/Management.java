@@ -170,9 +170,9 @@ public abstract class Management {
 		if (st.hasPermission("Groups.SetPrecedence")) {
 			final Form setPrecedence=new Form();
 			setPrecedence.setAction("../setprecedence");
-			setPrecedence.add(new Hidden("group",group.getName()));
-			setPrecedence.add(new Hidden("precedence",""+group.getKVPrecedence()));
-			setPrecedence.add(new Hidden("okreturnurl",st.getFullURL()));
+			setPrecedence.add(new Hidden("group", group.getName()));
+			setPrecedence.add(new Hidden("precedence", String.valueOf(group.getKVPrecedence())));
+			setPrecedence.add(new Hidden("okreturnurl", st.getFullURL()));
 			setPrecedence.add(new Button("Set Precedence",true));
 			t.add(setPrecedence);
 		}
@@ -282,9 +282,9 @@ public abstract class Management {
         if (oldPrecedence == precedence) {
             return new OKResponse("Precedence unchanged");
         }
-        group.setKVPrecedence(precedence);
-        Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetPrecedence", group.getName(), "" + oldPrecedence, "" + precedence, "Changed KV Precedence from " + oldPrecedence + " to " + precedence);
-        CharacterGroup.purgeCharacterGroupPrecedenceCaches();
+		group.setKVPrecedence(precedence);
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetPrecedence", group.getName(), String.valueOf(oldPrecedence), String.valueOf(precedence), "Changed KV Precedence from " + oldPrecedence + " to " + precedence);
+		CharacterGroup.purgeCharacterGroupPrecedenceCaches();
         st.getInstance().pushConveyances();
         return new OKResponse("Precedence updated");
     }
@@ -451,7 +451,7 @@ public abstract class Management {
 		} else {
 			character.hudMessage("You are no longer a group administrator for " + group.getName());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,character,"SetAdmin",group.getName(),oldFlag+"",admin+"","Set admin flag");
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetAdmin", group.getName(), String.valueOf(oldFlag), String.valueOf(admin), "Set admin flag");
 		return new OKResponse("Successfully altered admin flag on "+character+" in "+group);
 	}
 
@@ -474,7 +474,7 @@ public abstract class Management {
 		// must be instance admin or group owner
 		final boolean oldFlag=group.isOpen();
 		group.setOpen(open);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOpen",group.getName(),oldFlag+"",open+"","Set open flag");
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "SetOpen", group.getName(), String.valueOf(oldFlag), String.valueOf(open), "Set open flag");
 		return new OKResponse("Successfully set open flag to "+open+" on group "+group.getName());
 	}
 
