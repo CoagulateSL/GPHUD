@@ -142,9 +142,9 @@ public class EffectsCommands {
     private static Response orderedRemoval(@Nonnull final State st, @Nonnull final Char target,
                                            @Nonnull final String metaData, final boolean substring,
                                            final int max, final boolean ascendingOrder) {
-        int count = 0;
-        final List<Effect> ordered = new ArrayList<>();
-        for (final Effect effect : Effect.get(st, target)) {
+		int count = 0;
+		final List<Effect> ordered = new ArrayList<>();
+		for (final Effect effect : Effect.get(st, target)) {
 			boolean zappable = false;
 			if (substring) {
 				if (effect.getMetaData().contains(metaData)) zappable = true;
