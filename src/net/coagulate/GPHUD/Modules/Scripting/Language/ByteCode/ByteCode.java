@@ -21,7 +21,9 @@ public abstract class ByteCode {
 	@Nullable
 	private ParseNode sourceNode;
 
-	public ByteCode(@Nullable final ParseNode n) { sourceNode =n; }
+	protected ByteCode(@Nullable final ParseNode n) {
+		sourceNode = n;
+	}
 
 	// ---------- STATICS ----------
 	@Nonnull

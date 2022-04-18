@@ -31,10 +31,10 @@ public abstract class Module {
 	final ModuleDefinition annotation;
 
 
-	public Module(final String name,
-	              final ModuleDefinition annotation) {
-		this.name=name;
-		this.annotation=annotation;
+	protected Module(final String name,
+					 final ModuleDefinition annotation) {
+		this.name = name;
+		this.annotation = annotation;
 		Modules.register(this);
 
 	}
@@ -42,7 +42,7 @@ public abstract class Module {
 	// ----- Internal Statics -----
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
 			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");

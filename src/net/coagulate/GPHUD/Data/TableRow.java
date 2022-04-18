@@ -29,7 +29,9 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	protected boolean validated;
 
-	public TableRow(final int id) { super(id); }
+	protected TableRow(final int id) {
+		super(id);
+	}
 
 	protected TableRow() {
     }

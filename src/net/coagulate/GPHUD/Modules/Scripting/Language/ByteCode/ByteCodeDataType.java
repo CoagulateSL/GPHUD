@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 
 public abstract class ByteCodeDataType extends ByteCode {
 
-	public ByteCodeDataType(final ParseNode n) {
+	protected ByteCodeDataType(final ParseNode n) {
 		super(n);
 	}
 
