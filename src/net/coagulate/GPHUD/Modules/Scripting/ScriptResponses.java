@@ -49,7 +49,7 @@ public class ScriptResponses {
             vm.push(new BCCharacter(null, response));
             return vm.resume(st);
         } catch (final NoDataException e) {
-            throw new UserInputStateException("Your script run has expired or been replaced by a newer script run", true);
+            throw new UserInputStateException("Your script run has expired or been replaced by a newer script run", e, true);
         }
 	}
 
@@ -77,7 +77,7 @@ public class ScriptResponses {
             vm.push(new BCString(null, response));
             return vm.resume(st);
         } catch (final NoDataException e) {
-            throw new UserInputStateException("Your script run has expired or been replaced by a newer script run", true);
+			throw new UserInputStateException("Your script run has expired or been replaced by a newer script run", e, true);
         }
 	}
 }

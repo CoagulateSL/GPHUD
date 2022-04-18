@@ -672,13 +672,13 @@ public class State extends DumpableState {
 						try {
 							Integer.parseInt(value);
 						} catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")", true);
+							throw new UserInputValidationParseException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")", e, true);
 						}
 						break;
 					case FLOAT:
 						try { Float.parseFloat(value); }
 						catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a number, you entered '"+value+"' ("+e.getLocalizedMessage()+")",true);
+							throw new UserInputValidationParseException(key + " must be a number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")", e, true);
 						}
 						break;
 					case UUID:
@@ -695,10 +695,10 @@ public class State extends DumpableState {
 					case COMMAND:
 						try { Modules.getCommandNullable(this,value); }
 						catch (@Nonnull final SystemException e) {
-							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' and it gave a weird error");
+							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error", e);
 						}
 						catch (@Nonnull final UserException f) {
-							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' ("+f.getLocalizedMessage()+")");
+							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")", f);
 						}
 						break;
 					case COLOR:

@@ -198,7 +198,7 @@ public abstract class Modules {
             JavaTools.limitRecursionUserException(50);
             return get(st, proposedcommand).getCommandNullable(st, extractReference(proposedcommand));
         } catch (final UserConfigurationRecursionException e) {
-            throw new UserConfigurationRecursionException(proposedcommand + " -> " + e.getLocalizedMessage());
+            throw new UserConfigurationRecursionException(proposedcommand + " -> " + e.getLocalizedMessage(), e);
         }
 	}
 

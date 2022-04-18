@@ -97,7 +97,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
                 st.source = State.Sources.OBJECT;
             }
         } catch (final IOException e) {
-            throw new SystemRemoteFailureException("Failure processing System Interface input");
+            throw new SystemRemoteFailureException("Failure processing System Interface input", e);
         }
 	}
 
@@ -106,7 +106,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
         try {
             return getClass().getDeclaredMethod("execute", State.class);
         } catch (final NoSuchMethodException e) {
-            throw new SystemImplementationException("Local method reflection failed...");
+            throw new SystemImplementationException("Local method reflection failed...", e);
         }
     }
 

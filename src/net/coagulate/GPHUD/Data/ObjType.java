@@ -128,7 +128,7 @@ public class ObjType extends TableRow {
 		try {
 			return get(GPHUD.getDB().dqiNotNull("select id from objecttypes where instanceid=? and name like ?", state.getInstance().getId(), objecttype));
 		} catch (final NoDataException e) {
-			throw new UserConfigurationException("Object type " + objecttype + " does not exist", true);
+			throw new UserConfigurationException("Object type " + objecttype + " does not exist", e, true);
 		}
 	}
 

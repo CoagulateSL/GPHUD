@@ -364,7 +364,7 @@ public class CharacterGroup extends TableRow {
 			}
 			return Char.get(owner);
 		} catch (final NoDataException e) {
-			throw new UserInputLookupFailureException("Group ID " + getNameSafe() + "/" + getId() + " no longer exists.");
+			throw new UserInputLookupFailureException("Group ID " + getNameSafe() + "/" + getId() + " no longer exists.", e);
 		}
 	}
 

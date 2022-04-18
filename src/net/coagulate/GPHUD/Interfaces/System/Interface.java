@@ -105,7 +105,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 				st.source = State.Sources.OBJECT;
 			}
 		} catch (final IOException e) {
-			throw new SystemRemoteFailureException("Failure processing System Interface input");
+			throw new SystemRemoteFailureException("Failure processing System Interface input", e);
 		}
 	}
 

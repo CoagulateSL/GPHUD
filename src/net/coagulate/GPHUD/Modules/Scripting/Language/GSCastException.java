@@ -9,16 +9,24 @@ public class GSCastException extends GSInvalidExpressionException {
 		super(reason);
 	}
 
-	public GSCastException(final String reason, final boolean suppresslogging) {
+    public GSCastException(final String reason, final boolean suppresslogging) {
         super(reason, suppresslogging);
     }
 
-	public GSCastException(final String reason,
-						   final Throwable cause) {
-		super(reason,cause);
-	}
+    public GSCastException(final String reason,
+                           final Throwable cause) {
+        super(reason, cause);
+    }
 
-	// ---------- INSTANCE ----------
-	@Nonnull
-	public String toString() { return "{GS Cast Exception}: "+getLocalizedMessage(); }
+    public GSCastException(final String reason,
+                           final Throwable cause,
+                           final boolean suppresslogging) {
+        super(reason, cause, suppresslogging);
+    }
+
+    // ---------- INSTANCE ----------
+    @Nonnull
+    public String toString() {
+        return "{GS Cast Exception}: " + getLocalizedMessage();
+    }
 }

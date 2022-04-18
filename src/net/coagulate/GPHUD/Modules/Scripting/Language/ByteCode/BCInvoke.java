@@ -93,18 +93,24 @@ public class BCInvoke extends ByteCode {
 			rawret=function.invoke(null,parameters);
 		}
 		catch (@Nonnull final IllegalAccessException e) {
-			throw new GSInternalError("Method access to "+function.getName()+" in "+function.getDeclaringClass()+" is not permitted.  Check access qualifier is public.");
+			throw new GSInternalError("Method access to " + function.getName() + " in " + function.getDeclaringClass() + " is not permitted.  Check access qualifier is public.", e);
 		}
 		catch (@Nonnull final InvocationTargetException e) {
 			final Throwable t=e.getCause();
 			if (t!=null) {
-				if (UserException.class.isAssignableFrom(t.getClass())) { throw ((UserException) t); }
-				if (SystemException.class.isAssignableFrom(t.getClass())) { throw ((SystemException) t); }
-				if (RuntimeException.class.isAssignableFrom(t.getClass())) {
-					throw new GSInvalidFunctionCall("Function "+function.getName()+" errored: "+t,t);
+				if (UserException.class.isAssignableFrom(t.getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw ((UserException) t);
 				}
-				throw new GSInternalError("Unhandled exception in GPHUDScript invoke bytecode calling "+function.getName()+" in "+function.getDeclaringClass().getSimpleName(),
-				                          t
+				if (SystemException.class.isAssignableFrom(t.getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw ((SystemException) t);
+				}
+				if (RuntimeException.class.isAssignableFrom(t.getClass())) {
+					//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw new GSInvalidFunctionCall("Function " + function.getName() + " errored: " + t, t);
+				}
+				//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+				throw new GSInternalError("Unhandled exception in GPHUDScript invoke bytecode calling " + function.getName() + " in " + function.getDeclaringClass().getSimpleName(),
+						t
 				);
 			}
 			throw new GSInternalError("No cause to invocation target exception from "+function.getDeclaringClass().getSimpleName()+"/"+function.getName(),e);

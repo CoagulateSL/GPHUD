@@ -177,7 +177,7 @@ public class CurrencyModule extends ModuleAnnotation {
 					ret.put("--"+a.getName().toUpperCase()+":LONG--",getClass().getMethod("templateCurrencyLong",State.class,String.class));
 				}
 				catch (final NoSuchMethodException failure) {
-					throw new SystemImplementationException("Reflection failed for long form currency templater");
+					throw new SystemImplementationException("Reflection failed for long form currency templater", failure);
 				}
 			}
 		}

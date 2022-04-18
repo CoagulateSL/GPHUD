@@ -184,7 +184,7 @@ public class AliasCommand extends Command {
 						targchar=Char.getActive(a,state.getInstance());
 					}
 					catch (@Nonnull final NoDataException e) {
-						throw new UserInputLookupFailureException("Unable to find character or avatar named '"+v+"'");
+						throw new UserInputLookupFailureException("Unable to find character or avatar named '" + v + "'", e);
 					}
 				}
 				else {

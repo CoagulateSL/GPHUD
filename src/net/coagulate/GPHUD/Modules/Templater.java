@@ -276,9 +276,13 @@ public abstract class Templater {
 				throw new SystemImplementationException("Templater exceptioned",ex);
 			}
 			catch (@Nonnull final InvocationTargetException e) {
-				if (UserException.class.isAssignableFrom(e.getCause().getClass())) { throw (UserException) e.getCause(); }
-				if (SystemException.class.isAssignableFrom(e.getCause().getClass())) { throw (SystemException) e.getCause(); }
-				throw new SystemImplementationException("Unable to invoke target",e);
+				if (UserException.class.isAssignableFrom(e.getCause().getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw (UserException) e.getCause();
+				}
+				if (SystemException.class.isAssignableFrom(e.getCause().getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw (SystemException) e.getCause();
+				}
+				throw new SystemImplementationException("Unable to invoke target", e);
 			}
 		}
 		throw new SystemImplementationException("No template implementation for "+keyword);

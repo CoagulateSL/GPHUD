@@ -37,7 +37,7 @@ public class Distribution {
 		}
 		catch (@Nonnull final UserException e) {
 			throw new UserRemoteFailureException(
-					"Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+e.getLocalizedMessage()+"]");
+					"Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance [" + e.getLocalizedMessage() + "]", e);
 		}
 		return new OKResponse("A new region server should be en route to you from the master server");
 	}
