@@ -27,7 +27,7 @@ public class GSCompiler {
 	private int jumpnumber=1;
 	private int lastdebuglineno=-1;
 	private int lastdebugcolno=-1;
-	private String scriptname="Unknown?";
+	private String scriptname;
 
 	public GSCompiler(final Node passednode,@Nonnull final String scriptname) {
 		if (!(passednode instanceof ParseNode)) {
