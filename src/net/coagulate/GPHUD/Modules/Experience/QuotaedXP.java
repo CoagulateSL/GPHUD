@@ -108,8 +108,7 @@ public abstract class QuotaedXP extends CharacterAttribute {
 
 	@Nonnull
 	public String periodRoughly(@Nonnull final State st) {
-		final int seconds=periodSeconds(st);
-		float days=(float) seconds;
+		float days= periodSeconds(st);
 		days=days/(60*60*24);
 		return Math.round(days)+" days";
 	}

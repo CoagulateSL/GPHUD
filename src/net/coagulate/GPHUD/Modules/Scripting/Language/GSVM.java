@@ -418,7 +418,7 @@ public class GSVM {
 	}
 
 	public int getShort() {
-		final int ret = ((((int) bytecode[programCounter] & 0xff) << 8) + (((int) bytecode[programCounter + 1] & 0xff)));
+		final int ret = (((bytecode[programCounter] & 0xff) << 8) + ((bytecode[programCounter + 1] & 0xff)));
 		programCounter +=2;
 		return ret;
 	}

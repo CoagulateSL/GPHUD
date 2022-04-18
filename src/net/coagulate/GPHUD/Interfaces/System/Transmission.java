@@ -187,7 +187,7 @@ public class Transmission extends Thread {
 
 	public void runUnwrapped() {
 		if (delay>0) {
-			try { Thread.sleep(delay*1000); } catch (@Nonnull final InterruptedException ignored) {}
+			try { Thread.sleep(delay* 1000L); } catch (@Nonnull final InterruptedException ignored) {}
 		}
 		int retries=5;
 		if (character!=null) { character.appendConveyance(new net.coagulate.GPHUD.State(character),json); }

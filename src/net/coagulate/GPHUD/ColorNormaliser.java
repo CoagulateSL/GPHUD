@@ -527,9 +527,9 @@ public class ColorNormaliser {
 	private static String intToFloat(final String[] component) {
 		// fine, 3 integers 0-255 to turn into fun with floats
 		try {
-			final float r=((float) Integer.parseInt(component[0]))/255.0f;
-			final float g=((float) Integer.parseInt(component[1]))/255.0f;
-			final float b=((float) Integer.parseInt(component[2]))/255.0f;
+			final float r= Integer.parseInt(component[0]) /255.0f;
+			final float g= Integer.parseInt(component[1]) /255.0f;
+			final float b= Integer.parseInt(component[2]) /255.0f;
 			// and so
 			return "<"+r+","+g+","+b+">";
 		}

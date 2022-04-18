@@ -78,7 +78,7 @@ public abstract class EndOfLifing {
 		if (endoflife==null) { return null; }
 		long expiresin=endoflife.getTime()-new Date().getTime();
 		expiresin=expiresin/1000L; // milliseconds
-		@SuppressWarnings("UnnecessaryLocalVariable") final float daysexpiresin=expiresin/(60f*60f*24f); //convert to days
+		@SuppressWarnings("UnnecessaryLocalVariable") final float daysexpiresin=expiresin/(60.0f * 60.0f * 24.0f); //convert to days
 		//daysexpiresin=((float)((int)(100.0*daysexpiresin)))/100.0f;
 		//System.out.println("Version check: "+major+"."+minor+"."+bugfix+" expires in "+daysexpiresin+" days");
 		return daysexpiresin;

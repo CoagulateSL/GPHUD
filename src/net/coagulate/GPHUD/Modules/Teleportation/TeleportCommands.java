@@ -92,7 +92,7 @@ public class TeleportCommands {
 
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
 
-		Landmark.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+((float) 1));
+		Landmark.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+ 1);
 		return new OKResponse("Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
 	}
 

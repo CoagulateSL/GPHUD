@@ -224,9 +224,9 @@ public class TransferCoinsCommand extends Command {
 
 		final State targetState=new State(target);
 
-		final float taxRate=targetState.getKV("Currency.TransactionTax"+currency.getName()).floatValue()/100F;
+		final float taxRate=targetState.getKV("Currency.TransactionTax"+currency.getName()).floatValue()/ 100.0F;
 
-		final int taxPayable=(int) (((float) amount)*taxRate);
+		final int taxPayable=(int) (amount *taxRate);
 		final int remainder=amount-taxPayable;
 
 		int balanceCheck=amount;

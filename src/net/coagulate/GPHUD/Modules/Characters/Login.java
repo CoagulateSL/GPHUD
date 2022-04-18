@@ -44,12 +44,12 @@ public abstract class Login {
 	public static Response create(@Nonnull final State st,
 	                              @Nullable @Arguments(type = ArgumentType.TEXT_CLEAN,
 													   name = "charactername", description = """
-										  Name of the new character
-										  \s
-										  PLEASE ENTER A NAME ONLY
-										  NOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.
-										  \s
-										  The name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.""",
+										Name of the new character
+										\s
+										PLEASE ENTER A NAME ONLY
+										NOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.
+										\s
+										The name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.""",
 													   max = 40) final String charactername) {
 		if (Char.resolve(st,charactername)!=null) {
 			final JSONObject json=Modules.getJSONTemplate(st,"characters.create");

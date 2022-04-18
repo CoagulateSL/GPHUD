@@ -59,7 +59,7 @@ public abstract class Experience {
 		int tolevel=0;
 		if (maxLevel==0) { maxLevel=1000; }
 		for (int i=0;i<=maxLevel;i++) {
-			tolevel=(int) (tolevel+Math.floor(((float) i)/((float) step))+1);
+			tolevel=(int) (tolevel+Math.floor(((float) i)/ step)+1);
 			if (tolevel>xp) { return i; }
 		}
 		return maxLevel;

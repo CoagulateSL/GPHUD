@@ -209,7 +209,7 @@ public class Instance extends TableRow {
 		final int minVersion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=? and retired=0",getId());
 		final Float expiresIn=EndOfLifing.expiresIn(minVersion);
 		String updateWithin="";
-		if (expiresIn!=null) { updateWithin=((int) expiresIn.floatValue())+" days "+((int) ((expiresIn-((int) expiresIn.floatValue()))*24f))+" hours"; }
+		if (expiresIn!=null) { updateWithin=((int) expiresIn.floatValue())+" days "+((int) ((expiresIn-((int) expiresIn.floatValue()))* 24.0f))+" hours"; }
 		String eol="";
 		if (expiresIn!=null && expiresIn>14) { eol+="EOL: "+updateWithin; }
 		if (Config.getDevelopment()) { newStatus.append("===DEVELOPMENT===\n \n"); }
