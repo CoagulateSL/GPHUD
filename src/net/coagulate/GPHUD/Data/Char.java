@@ -494,9 +494,9 @@ public class Char extends TableRow {
 		}
 
 		// if there was a URL, send it a shutdown
-		if (oldURL!=null && !("".equals(oldURL))) {
-			final JSONObject shutdown=new JSONObject().put("incommand","shutdown").put("shutdown","Connection replaced by new character connection");
-			final Transmission t=new Transmission(this,shutdown,oldURL);
+		if (oldURL != null && !(oldURL.isEmpty())) {
+			final JSONObject shutdown = new JSONObject().put("incommand", "shutdown").put("shutdown", "Connection replaced by new character connection");
+			final Transmission t = new Transmission(this, shutdown, oldURL);
 			t.start();
 		}
 		// set the URL

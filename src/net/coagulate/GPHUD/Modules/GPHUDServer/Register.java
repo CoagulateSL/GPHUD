@@ -80,8 +80,8 @@ public abstract class Register {
 		}
 		String url=null;
 		try { url=st.json().getString("callback"); } catch (@Nonnull final JSONException ignored) {}
-		if (url==null || "".equals(url)) {
-			st.logger().log(WARNING,"No callback URL sent to GPHUDClient.Register");
+		if (url == null || url.isEmpty()) {
+			st.logger().log(WARNING, "No callback URL sent to GPHUDClient.Register");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
 		region.setURL(url);

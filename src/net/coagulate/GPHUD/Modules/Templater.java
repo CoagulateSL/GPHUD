@@ -69,8 +69,12 @@ public abstract class Templater {
 	                              final boolean evaluate,
 	                              final boolean integer) {
 		string=template(st,string);
-		if (string==null) { return null; }
-		if ("".equals(string)) { return ""; }
+		if (string == null) {
+			return null;
+		}
+		if (string.isEmpty()) {
+			return "";
+		}
 		try {
 			if (evaluate && !integer) {
 				return String.valueOf(eval(string));

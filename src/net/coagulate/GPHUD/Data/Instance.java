@@ -78,7 +78,9 @@ public class Instance extends TableRow {
 	 */
 	public static void create(@Nonnull final String name,
 	                          @Nonnull final User caller) {
-		if ("".equals(name)) { throw new UserInputEmptyException("Can't create null or empty instance"); }
+		if (name.isEmpty()) {
+			throw new UserInputEmptyException("Can't create null or empty instance");
+		}
 		final int exists=db().dqiNotNull("select count(*) from instances where name like ?",name);
 		if (exists!=0) {
 			throw new UserInputDuplicateValueException("Instance already exists!");

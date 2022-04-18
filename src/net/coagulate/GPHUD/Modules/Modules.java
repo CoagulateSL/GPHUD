@@ -242,7 +242,9 @@ public abstract class Modules {
 	public static Response run(@Nonnull final State st,
 	                           @Nullable final String console,
 	                           final boolean fromconsole) {
-		if (console==null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
+		if (console == null || console.isEmpty()) {
+			return new ErrorResponse("No console string supplied");
+		}
 		final String[] words=console.split(" ");
 		int i=0;
 		String command=words[0].toLowerCase();

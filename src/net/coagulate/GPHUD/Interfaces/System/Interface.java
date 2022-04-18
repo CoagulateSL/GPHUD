@@ -240,20 +240,20 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		// hooks to allow things to run as "not the objects owner" (the default)
 		String runAsAvatar=null;
 		try { runAsAvatar=obj.getString("runasavatar"); } catch (@Nonnull final JSONException ignored) {}
-		if (runAsAvatar!=null && (!("".equals(runAsAvatar)))) {
-			st.setAvatar(User.findUsername(runAsAvatar,false));
+		if (runAsAvatar != null && (!(runAsAvatar.isEmpty()))) {
+			st.setAvatar(User.findUsername(runAsAvatar, false));
 			if (st.getAvatar().isSuspended()) {
 				return new TerminateResponse("Your access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
 			}
-			st.isSuid =true;
+			st.isSuid = true;
 		}
 		st.object=Obj.findOrNull(st,objectKey);
 		if (st.object!=null) { st.object.updateRX(); }
 		String runAsCharacter=null;
 		try { runAsCharacter=obj.getString("runascharacter"); } catch (@Nonnull final JSONException ignored) {}
-		if (runAsCharacter!=null && (!("".equals(runAsCharacter)))) {
+		if (runAsCharacter != null && (!(runAsCharacter.isEmpty()))) {
 			st.setCharacter(Char.get(Integer.parseInt(runAsCharacter)));
-			st.isSuid =true;
+			st.isSuid = true;
 		}
 		// load region from database, if it exists
 		final Region region=Region.findNullable(regionName,false);
@@ -347,8 +347,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			//ava.canCreate(false);
 			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Instance","",console,"");
 			final String success=Region.joinInstance(regionName,instance);
-			if (!"".equals(success)) {
-				return new ErrorResponse("Region registration failed after instance creation: "+success);
+			if (!success.isEmpty()) {
+				return new ErrorResponse("Region registration failed after instance creation: " + success);
 			}
 			final Region region=Region.find(regionName,false);
 			st.setRegion(region);

@@ -174,7 +174,9 @@ public class Attribute extends TableRow {
 	                          final boolean usesAbilityPoints,
 	                          final boolean required,
 	                          @Nullable String defaultValue) {
-		if ("".equals(defaultValue)) { defaultValue=null; }
+		if (defaultValue != null && defaultValue.isEmpty()) {
+			defaultValue = null;
+		}
 		db().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
 		       instance.getId(),
 		       name,

@@ -369,10 +369,10 @@ public class Region extends TableRow {
 			return;
 		}
 
-		if (oldurl!=null && !("".equals(oldurl))) {
-			GPHUD.getLogger().info("Sending shutdown to old URL : "+oldurl);
-			final JSONObject tx=new JSONObject().put("incommand","shutdown").put("shutdown","Connection replaced by new region server");
-			final Transmission t=new Transmission(this,tx,oldurl);
+		if (oldurl != null && !(oldurl.isEmpty())) {
+			GPHUD.getLogger().info("Sending shutdown to old URL : " + oldurl);
+			final JSONObject tx = new JSONObject().put("incommand", "shutdown").put("shutdown", "Connection replaced by new region server");
+			final Transmission t = new Transmission(this, tx, oldurl);
 			t.start();
 		}
 

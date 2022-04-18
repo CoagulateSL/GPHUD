@@ -362,10 +362,9 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		if (st.avatar!=null || st.getCharacterNullable()!=null) { return null; }
 		if (cookieAuthenticationOnly()) {
 			final Form failed=new Form();
-			if (cookie!=null && !"".equals(cookie)) {
+			if (cookie != null && !cookie.isEmpty()) {
 				failed.add("Sorry, your session has expired, please start a new session somehow");
-			}
-			else {
+			} else {
 				failed.add("Sorry, login failed, cookie not received at this time.");
 			}
 			return failed;
