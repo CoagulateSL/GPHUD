@@ -92,13 +92,13 @@ public class Roller {
 		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
 		String event="rolled "+dice+"d"+sides+" ";
 		event+="for "+reason+", and rolled ";
-		String allrolls="";
+		StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (!allrolls.isEmpty()) {
-				allrolls += ", ";
+			if (allrolls.length() > 0) {
+				allrolls.append(", ");
 			}
-			allrolls=allrolls+num;
+			allrolls.append(num);
 		}
 
 		event+=allrolls;
@@ -144,18 +144,18 @@ public class Roller {
 		if (bias!=0) { event+="(with bias "+bias+") "; }
 		event+="for "+reason+", and rolled ";
 		int total=0;
-		String allrolls="";
+		StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (!allrolls.isEmpty()) {
-				allrolls += ", ";
+			if (allrolls.length() > 0) {
+				allrolls.append(", ");
 			}
 			total=total+num;
-			allrolls=allrolls+num;
+			allrolls.append(num);
 		}
 
 		if (bias!=0) {
-			allrolls=allrolls+"+"+bias;
+			allrolls.append("+").append(bias);
 			total+=bias;
 		}
 		event+=total+" ("+allrolls+")";
@@ -240,32 +240,32 @@ public class Roller {
 		st.setTarget(target);
 
 		int total=0;
-		String allrolls="";
+		StringBuilder allrolls= new StringBuilder();
 		int targettotal=0;
-		String targetallrolls="";
+		StringBuilder targetallrolls= new StringBuilder();
 		int attempts=100;
 		while (total==targettotal && attempts>0) {
 			total=0;
-			allrolls="";
+			allrolls = new StringBuilder();
 			targettotal=0;
-			targetallrolls="";
+			targetallrolls = new StringBuilder();
 			attempts--;
 			final List<Integer> rolls=roll(st,dice,sides);
 			for (final int num: rolls) {
-				if (!allrolls.isEmpty()) {
-					allrolls += ", ";
+				if (allrolls.length() > 0) {
+					allrolls.append(", ");
 				}
 				total=total+num;
-				allrolls=allrolls+num;
+				allrolls.append(num);
 			}
 			total=total+bias;
 			final List<Integer> targetrolls=roll(st.getTarget(),targetdice,targetsides);
 			for (final int num: targetrolls) {
-				if (!targetallrolls.isEmpty()) {
-					targetallrolls += ", ";
+				if (targetallrolls.length() > 0) {
+					targetallrolls.append(", ");
 				}
 				targettotal=targettotal+num;
-				targetallrolls=targetallrolls+num;
+				targetallrolls.append(num);
 			}
 			targettotal=targettotal+targetbias;
 		}

@@ -117,14 +117,14 @@ public class ResetHealth {
 		if (reason==null) { reason="No Reason"; }
 
 		int total=0;
-		String allrolls="";
+		StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=Roller.roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (!allrolls.isEmpty()) {
-				allrolls += ", ";
+			if (allrolls.length() > 0) {
+				allrolls.append(", ");
 			}
 			total=total+num;
-			allrolls=allrolls+num;
+			allrolls.append(num);
 		}
 		total=total+bias;
 
