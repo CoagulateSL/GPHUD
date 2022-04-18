@@ -45,7 +45,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Char extends TableRow {
 
-	protected Cache<Pool,Integer> poolSumCache=Cache.getCache("GPHUD/characterPoolSums/"+getId(),CacheConfig.OPERATIONAL_CONFIG);
+	protected final Cache<Pool, Integer> poolSumCache = Cache.getCache("GPHUD/characterPoolSums/" + getId(), CacheConfig.OPERATIONAL_CONFIG);
 
 	protected Char(final int id) { super(id); }
 
