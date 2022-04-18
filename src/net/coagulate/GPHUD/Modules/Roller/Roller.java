@@ -92,7 +92,7 @@ public class Roller {
 		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
 		String event="rolled "+dice+"d"+sides+" ";
 		event+="for "+reason+", and rolled ";
-		StringBuilder allrolls= new StringBuilder();
+		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
 			if (allrolls.length() > 0) {
@@ -144,7 +144,7 @@ public class Roller {
 		if (bias!=0) { event+="(with bias "+bias+") "; }
 		event+="for "+reason+", and rolled ";
 		int total=0;
-		StringBuilder allrolls= new StringBuilder();
+		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
 			if (allrolls.length() > 0) {

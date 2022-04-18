@@ -117,7 +117,7 @@ public class ResetHealth {
 		if (reason==null) { reason="No Reason"; }
 
 		int total=0;
-		StringBuilder allrolls= new StringBuilder();
+		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=Roller.roll(st,dice,sides);
 		for (final int num: rolls) {
 			if (allrolls.length() > 0) {
