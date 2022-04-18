@@ -10,6 +10,7 @@ import java.util.TreeMap;
  *
  * @author iain
  */
+@SuppressWarnings("MethodOverloadsMethodOfSuperclass")
 public class SafeMap extends TreeMap<String,String> {
 	@Serial
     private static final long serialVersionUID=1L;

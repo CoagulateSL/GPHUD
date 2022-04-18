@@ -15,6 +15,7 @@ import java.util.Set;
 public class Button extends Input {
 
 	final String name;
+	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	final String value;
 	boolean borderless;
 

@@ -60,7 +60,7 @@ public abstract class CharacterAttribute extends Attribute {
 	 *
 	 * @param required New required flag state.
 	 */
-	public void setRequired(final Boolean required) {
+	public void setRequired(final boolean required) {
 		throw new UserInputStateException("Not valid on auto generated attribute");
 	}
 
