@@ -27,7 +27,7 @@ import java.util.Set;
 public abstract class PagedSQL implements Renderable {
 
 	public String searchtext = "";
-	protected final int pagesize = 50;
+	protected static final int pagesize = 50;
 	final String prefix;
 	final SafeMap parameters;
 	final Instance instance;
