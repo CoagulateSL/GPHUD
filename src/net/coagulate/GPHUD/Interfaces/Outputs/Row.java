@@ -72,6 +72,7 @@ public class Row implements Renderable {
 			s.append(" id=\"").append(id).append("\" ");
 		}
 		if (bgcolor.isEmpty()) {
+			//noinspection BadOddness
 			s.append(" bgcolor=#").append((rownum % 2) == 1 ? "f0f0f0" : "ffffff");
 		} else {
 			s.append(" bgcolor=").append(bgcolor);
