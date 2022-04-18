@@ -127,30 +127,30 @@ public abstract class Login {
 		//System.out.println("Initialise "+attribute+" to "+value);
 		final boolean debug=false;
 		switch (attribute.getType()) {
-			case FLOAT:
-			case INTEGER:
-			case TEXT:
+			case FLOAT, INTEGER, TEXT -> {
 				// its a KV.  check it has no KV already.
-				final String existingvalue=st.getRawKV(st.getCharacter(),"characters."+attribute.getName());
-				if (existingvalue!=null) {
-					return new ErrorResponse("Can not initialise a non null value (currently:"+existingvalue+")");
+				final String existingvalue = st.getRawKV(st.getCharacter(), "characters." + attribute.getName());
+				if (existingvalue != null) {
+					return new ErrorResponse("Can not initialise a non null value (currently:" + existingvalue + ")");
 				}
 				// does it exceed the max, if a max is configured, or anything
-				if (attribute.getType()==Attribute.ATTRIBUTETYPE.FLOAT || attribute.getType()==Attribute.ATTRIBUTETYPE.INTEGER) {
-					final KVValue maxkv=st.getKV("characters."+attribute.getName()+"MAX");
-					Float max=null;
+				if (attribute.getType() == Attribute.ATTRIBUTETYPE.FLOAT || attribute.getType() == Attribute.ATTRIBUTETYPE.INTEGER) {
+					final KVValue maxkv = st.getKV("characters." + attribute.getName() + "MAX");
+					Float max = null;
 					//System.out.println("Checking bounds on "+attribute.getName()+" of type "+attribute.getType()+" with value "+value+" and max "+maxkv);
-					if (!maxkv.value().isEmpty()) { max=maxkv.floatValue(); }
+					if (!maxkv.value().isEmpty()) {
+						max = maxkv.floatValue();
+					}
 					//System.out.println("Max is "+max);
-					if (max!=null && max>0) {
+					if (max != null && max > 0) {
 						//System.out.println("About to check "+max+" > "+Float.parseFloat(value));
 						try {
-							if (Float.parseFloat(value)>max) {
-								final JSONObject json=new JSONObject();
-								json.put("hudtext","Initialising character...")
-									.put("hudcolor","<1.0,0.75,0.75>")
-									.put("titlertext","Initialising character...")
-									.put("titlercolor","<1.0,0.75,0.75>");
+							if (Float.parseFloat(value) > max) {
+								final JSONObject json = new JSONObject();
+								json.put("hudtext", "Initialising character...")
+										.put("hudcolor", "<1.0,0.75,0.75>")
+										.put("titlertext", "Initialising character...")
+										.put("titlercolor", "<1.0,0.75,0.75>");
 								JSONResponse.message(json, "Character creation requires you to input attribute " + attribute.getName() + " WHICH MUST BE NO MORE THAN " + max, st.protocol);
 								json.put("incommand", "runtemplate");
 								json.put("invoke", "characters.initialise");
@@ -166,36 +166,36 @@ public abstract class Login {
 						}
 					}
 				}
-				st.setKV(st.getCharacter(),"characters."+attribute.getName(),value);
-				break;
-			case GROUP:
+				st.setKV(st.getCharacter(), "characters." + attribute.getName(), value);
+			}
+			case GROUP -> {
 				// its a group... check user has no group already
-				if (attribute.getSubType()!=null) {
-					final CharacterGroup group=CharacterGroup.getGroup(st,attribute.getSubType());
-					if (group!=null) {
-						return new ErrorResponse("You already have membership of '"+group.getNameSafe()+"' which is of type "+attribute.getSubType());
+				if (attribute.getSubType() != null) {
+					final CharacterGroup group = CharacterGroup.getGroup(st, attribute.getSubType());
+					if (group != null) {
+						return new ErrorResponse("You already have membership of '" + group.getNameSafe() + "' which is of type " + attribute.getSubType());
 					}
 				}
 				// check the target group is of the right type
-				final CharacterGroup target=CharacterGroup.resolve(st,value);
-				if (target==null) { return new ErrorResponse("Unable to find the requested group "+value); }
-				final String targettype=target.getType();
-				if (targettype==null) {
-					return new ErrorResponse("Group "+target.getNameSafe()+" is not a typed group");
+				final CharacterGroup target = CharacterGroup.resolve(st, value);
+				if (target == null) {
+					return new ErrorResponse("Unable to find the requested group " + value);
+				}
+				final String targettype = target.getType();
+				if (targettype == null) {
+					return new ErrorResponse("Group " + target.getNameSafe() + " is not a typed group");
 				}
 				if (!targettype.equals(attribute.getSubType())) {
-					return new ErrorResponse("Group "+target.getNameSafe()+" is of type "+target.getType()+" rather than the required "+attribute.getSubType()+" required by "+"attribute "+attribute
+					return new ErrorResponse("Group " + target.getNameSafe() + " is of type " + target.getType() + " rather than the required " + attribute.getSubType() + " required by " + "attribute " + attribute
 							.getName());
 				}
 				// check the group is open
 				if (!target.isOpen()) {
-					return new ErrorResponse("You can not join group "+target.getNameSafe()+" of type "+target.getType()+", it is not open for joining");
+					return new ErrorResponse("You can not join group " + target.getNameSafe() + " of type " + target.getType() + ", it is not open for joining");
 				}
 				target.addMember(st.getCharacter());
-				break;
-
-			case POOL:
-				throw new UserInputStateException("Attempt to initialise pool attribute is invalid.");
+			}
+			case POOL -> throw new UserInputStateException("Attempt to initialise pool attribute is invalid.");
 		}
 		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,st.getCharacter(),"Initialise",attribute.getName(),null,value,"Character creation initialised attribute");
 

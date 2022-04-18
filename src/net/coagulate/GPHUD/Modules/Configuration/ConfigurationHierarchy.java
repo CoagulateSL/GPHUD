@@ -172,36 +172,35 @@ public class ConfigurationHierarchy extends Form {
 			String editor;
 			//t.add(new Form(st, true, targeturl, "Edit",typefield,typename,"key",kv.fullname(),"value",kvvalue));
 			switch (kv.type()) {
-				case BOOLEAN:
-					Boolean selected=null;
-					if ("true".equalsIgnoreCase(value)) { selected=true; }
-					if ("false".equalsIgnoreCase(value)) { selected=false; }
-					editor="<input type=\"radio\" name=\"value-"+codename+"\" value=\"true\" "+((selected!=null && selected)?"checked=checked":"")+">True";
-					editor+="<input type=\"radio\" name=\"value-"+codename+"\" value=\"false\" "+((selected!=null && !selected)?"checked=checked":"")+">False";
-					editor+="<input type=\"radio\" name=\"value-"+codename+"\" value=\"\" "+((selected==null)?"checked=checked":"")+">Unset";
-					break;
-				case INTEGER:
-					editor="<input size=10 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
-					break;
-				case TEXT:
-					editor="<input size=80 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
-					break;
-				case FLOAT:
-					editor="<input size=20 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
-					break;
-				case UUID:
-					editor="<input size=36 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
-					break;
-				case COMMAND:
+				case BOOLEAN -> {
+					Boolean selected = null;
+					if ("true".equalsIgnoreCase(value)) {
+						selected = true;
+					}
+					if ("false".equalsIgnoreCase(value)) {
+						selected = false;
+					}
+					editor = "<input type=\"radio\" name=\"value-" + codename + "\" value=\"true\" " + ((selected != null && selected) ? "checked=checked" : "") + ">True";
+					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"false\" " + ((selected != null && !selected) ? "checked=checked" : "") + ">False";
+					editor += "<input type=\"radio\" name=\"value-" + codename + "\" value=\"\" " + ((selected == null) ? "checked=checked" : "") + ">Unset";
+				}
+				case INTEGER ->
+						editor = "<input size=10 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
+				case TEXT ->
+						editor = "<input size=80 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
+				case FLOAT ->
+						editor = "<input size=20 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
+				case UUID ->
+						editor = "<input size=36 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
+				case COMMAND -> {
 					commandsDropDown.setValue(value);
-					commandsDropDown.name("value-"+codename);
-					editor=commandsDropDown.asHtml(st,true);
-					break;
-				case COLOR:
-					editor="<input size=30 type=\"text\" name=\"value-"+codename+"\" value=\""+value+"\">";
-					break;
-				default:
-					throw new SystemImplementationException("No editor for type "+kv.type()+" for object "+dbo.getKVTable()+"."+dbo.getNameSafe());
+					commandsDropDown.name("value-" + codename);
+					editor = commandsDropDown.asHtml(st, true);
+				}
+				case COLOR ->
+						editor = "<input size=30 type=\"text\" name=\"value-" + codename + "\" value=\"" + value + "\">";
+				default ->
+						throw new SystemImplementationException("No editor for type " + kv.type() + " for object " + dbo.getKVTable() + "." + dbo.getNameSafe());
 			}
 			editor+="<input type=hidden name=dbobject value=\""+dbo.getKVTable()+"\">";
 			editor+="<input type=hidden name=id value=\""+dbo.getId()+"\">";
