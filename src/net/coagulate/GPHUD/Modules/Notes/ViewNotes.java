@@ -86,7 +86,7 @@ public class ViewNotes {
 		final String[] parts = st.getDebasedURL().split("/");
 		try {
 			targetid = Integer.parseInt(parts[parts.length - 1]);
-		} catch (@Nonnull final NumberFormatException e) {
+		} catch (@Nonnull final NumberFormatException ignored) {
 		}
 		if (targetid == null) {
 			throw new UserInputValidationParseException("Failed to extract character id from " + parts[parts.length - 1]);
@@ -113,7 +113,7 @@ public class ViewNotes {
 		final String[] parts = st.getDebasedURL().split("/");
 		try {
 			targetid = Integer.parseInt(parts[parts.length - 1]);
-		} catch (@Nonnull final NumberFormatException e) {
+		} catch (@Nonnull final NumberFormatException ignored) {
 		}
 		if (targetid == null) {
 			throw new UserInputValidationParseException("Failed to extract user id from " + parts[parts.length - 1]);
