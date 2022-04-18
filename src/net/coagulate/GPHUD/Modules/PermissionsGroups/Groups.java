@@ -231,7 +231,7 @@ public abstract class Groups {
 		final Form f=st.form();
 		f.add(new TextHeader("Edit permissions group "+pg.getName()));
 		// this is all a bit tedious really :)
-		final Map<Permission.POWER,Set<Permission>> permissions=new HashMap<>();
+		final Map<Permission.POWER,Set<Permission>> permissions= new EnumMap<>(Permission.POWER.class);
 		permissions.put(Permission.POWER.LOW,new HashSet<>());
 		permissions.put(Permission.POWER.MEDIUM,new HashSet<>());
 		permissions.put(Permission.POWER.HIGH,new HashSet<>());
