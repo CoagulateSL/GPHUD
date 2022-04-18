@@ -42,9 +42,15 @@ public abstract class Login {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response create(@Nonnull final State st,
-	                              @Nullable @Arguments(type=ArgumentType.TEXT_CLEAN,
-	                                                   name="charactername",description="Name of the new character\n \nPLEASE ENTER A NAME ONLY\nNOT A DESCRIPTION OF E.G. "+"SCENT.  YOU MAY GET AN "+"OPPORTUNITY TO DO THIS LATER.\n \nThe name is how your character will be represented, including e.g. "+"people"+" "+"trying to give you XP will need this FULL NAME.  It should JUST be a NAME.",
-	                                                   max=40) final String charactername) {
+	                              @Nullable @Arguments(type = ArgumentType.TEXT_CLEAN,
+													   name = "charactername", description = """
+										  Name of the new character
+										  \s
+										  PLEASE ENTER A NAME ONLY
+										  NOT A DESCRIPTION OF E.G. SCENT.  YOU MAY GET AN OPPORTUNITY TO DO THIS LATER.
+										  \s
+										  The name is how your character will be represented, including e.g. people trying to give you XP will need this FULL NAME.  It should JUST be a NAME.""",
+													   max = 40) final String charactername) {
 		if (Char.resolve(st,charactername)!=null) {
 			final JSONObject json=Modules.getJSONTemplate(st,"characters.create");
 			JSONResponse.message(json,"Character name already taken - please retry",st.protocol);

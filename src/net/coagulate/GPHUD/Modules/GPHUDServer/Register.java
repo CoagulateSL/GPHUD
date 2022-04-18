@@ -91,7 +91,11 @@ public abstract class Register {
 		String registrationMessage;
 		registrationMessage=GPHUD.serverVersion()+" [https://"+ Config.getURLHost()+"/GPHUD/ChangeLog Change Log]"+GPHUD.brandingWithNewline();
 		if (st.getRegion().needsUpdate()) {
-			registrationMessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
+			registrationMessage += """
+
+					=====
+					Update required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version.
+					=====""";
 		}
 		JSONResponse.message(registered,registrationMessage,region.protocol());
 		final Transmission t=new Transmission(region,registered);

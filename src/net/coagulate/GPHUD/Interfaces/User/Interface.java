@@ -59,9 +59,34 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	// leave this here for now
 	@Nonnull
 	public static String styleSheet() {
-		return ""+"<style>\n"+".tooltip {\n"+"    position: relative;\n"+"    display: inline-block;\n"+"    border-bottom: 1px dotted black; /* If you want dots under the hover text */\n"+"}\n"+"\n"+".tooltip .tooltiptext {\n"+"    visibility: hidden;\n"+
-				//"    width: 120px;\n" +
-				"    background-color: #e0e0e0;\n"+"    color: black;\n"+"    text-align: center;\n"+"    padding: 5px 0;\n"+"    border-radius: 6px;\n"+" \n"+"     top: "+"-5px;\n"+"    left: 105%; "+"    position: absolute;\n"+"    z-index: 1;\n"+"white-space: nowrap;\n"+"}\n"+"\n"+"/* Show the tooltip text when you mouse "+"over the tooltip container */\n"+".tooltip:hover .tooltiptext {\n"+"    visibility: visible;\n"+"}\n"+"</style>";
+		//"    width: 120px;\n" +
+		return """
+				<style>
+				.tooltip {
+				    position: relative;
+				    display: inline-block;
+				    border-bottom: 1px dotted black; /* If you want dots under the hover text */
+				}
+
+				.tooltip .tooltiptext {
+				    visibility: hidden;
+				    background-color: #e0e0e0;
+				    color: black;
+				    text-align: center;
+				    padding: 5px 0;
+				    border-radius: 6px;
+				\s
+				     top: -5px;
+				    left: 105%;     position: absolute;
+				    z-index: 1;
+				white-space: nowrap;
+				}
+
+				/* Show the tooltip text when you mouse over the tooltip container */
+				.tooltip:hover .tooltiptext {
+				    visibility: visible;
+				}
+				</style>""";
 	}
 
 	@Override
