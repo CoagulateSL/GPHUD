@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Publishing;
 
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
-import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Config;
