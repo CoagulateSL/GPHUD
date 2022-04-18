@@ -164,17 +164,20 @@ public class Form implements Renderable {
 	private Input scourRenderables(@Nonnull final Set<Renderable> subrenderables,
 	                               final String name) {
 		for (final Renderable r: subrenderables) {
-			if (r instanceof Input) {
-				final Input i=(Input) r;
+			if (r instanceof final Input i) {
 				// if match
 				//System.out.println("Searching "+name+" against "+i.getName());
-				if (i.getName().equalsIgnoreCase(name)) { return i; }
+				if (i.getName().equalsIgnoreCase(name)) {
+					return i;
+				}
 			}
 			// no match, recurse
-			final Set<Renderable> subsub=r.getSubRenderables();
-			if (subsub!=null) {
-				final Input i=scourRenderables(subsub,name);
-				if (i!=null) { return i; }
+			final Set<Renderable> subsub = r.getSubRenderables();
+			if (subsub != null) {
+				final Input i = scourRenderables(subsub, name);
+				if (i != null) {
+					return i;
+				}
 			}
 		}
 		return null;

@@ -174,16 +174,14 @@ public class AliasCommand extends Command {
 
 		if (arguments.containsKey("target")) {
 			final Object vobject=arguments.get("target");
-			if (vobject instanceof String) {
-				String v=(String) vobject;
+			if (vobject instanceof String v) {
 				final Char targchar;
 				if (v.startsWith(">")) {
-					v=v.substring(1);
+					v = v.substring(1);
 					try {
-						final User a=User.findUsername(v,false);
-						targchar=Char.getActive(a,state.getInstance());
-					}
-					catch (@Nonnull final NoDataException e) {
+						final User a = User.findUsername(v, false);
+						targchar = Char.getActive(a, state.getInstance());
+					} catch (@Nonnull final NoDataException e) {
 						throw new UserInputLookupFailureException("Unable to find character or avatar named '" + v + "'", e);
 					}
 				}

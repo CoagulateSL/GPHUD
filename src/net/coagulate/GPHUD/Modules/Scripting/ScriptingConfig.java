@@ -107,16 +107,14 @@ public class ScriptingConfig {
 					gsscript=parser.Start();
 				}
 				catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-					if (e instanceof ParseException) {
-						final ParseException pe=(ParseException) e;
+					if (e instanceof final ParseException pe) {
 						final String tokenimage;
-						tokenimage="Last token: "+pe.currentToken.image+"<br>";
-						f.p("<b>Parse failed:</b> "+e+"<br>"+tokenimage);
+						tokenimage = "Last token: " + pe.currentToken.image + "<br>";
+						f.p("<b>Parse failed:</b> " + e + "<br>" + tokenimage);
+					} else {
+						f.p("<b>Parse failed:</b> " + e);
 					}
-					else {
-						f.p("<b>Parse failed:</b> "+e);
-					}
-					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","ParseFail","Saved script, with parse failures");
+					Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Save", script.getName(), "", "ParseFail", "Saved script, with parse failures");
 				}
 				if (gsscript!=null) {
 					final GSCompiler compiler=new GSCompiler(gsscript, script.getName());
@@ -202,13 +200,12 @@ public class ScriptingConfig {
 			if (stage==STAGE.PARSER) { return gsscript.toHtml(); }
 		}
 		catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-			if (e instanceof ParseException) {
-				final ParseException pe=(ParseException) e;
+			if (e instanceof final ParseException pe) {
 				final String tokenimage;
-				tokenimage="Last token: "+pe.currentToken.image+"<br>";
-				return "<b>Parse failed:</b> "+e+"<br>"+tokenimage;
+				tokenimage = "Last token: " + pe.currentToken.image + "<br>";
+				return "<b>Parse failed:</b> " + e + "<br>" + tokenimage;
 			}
-			return "<b>Parse failed:</b> "+e;
+			return "<b>Parse failed:</b> " + e;
 		}
 
 		final GSCompiler compiler;

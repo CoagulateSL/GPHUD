@@ -99,11 +99,11 @@ public class CharactersModule extends ModuleAnnotation {
 			return group.getName();
 		}
 		if (attr.getType()==POOL || attr.getType()==EXPERIENCE) {
-			if (attr instanceof QuotaedXP) {
-				final QuotaedXP xp=(QuotaedXP) attr;
-				return CharacterPool.sumPool(st,xp.getPool(st))+"";
+			if (attr instanceof final QuotaedXP xp) {
+				return CharacterPool.sumPool(st, xp.getPool(st)) + "";
+			} else {
+				return "POOL";
 			}
-			else { return "POOL"; }
 		}
 		if (attr.getType()==CURRENCY) {
 			return Currency.find(st,attr.getName()).shortSum(st);
