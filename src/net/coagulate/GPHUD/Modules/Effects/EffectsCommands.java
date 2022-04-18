@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -144,24 +145,27 @@ public class EffectsCommands {
         int count = 0;
         final List<Effect> ordered = new ArrayList<>();
         for (final Effect effect : Effect.get(st, target)) {
-            boolean zappable = false;
-            if (substring) {
+			boolean zappable = false;
+			if (substring) {
 				if (effect.getMetaData().contains(metaData)) zappable = true;
-            } else {
-                if (effect.getMetaData().equals(metaData)) zappable = true;
-            }
-            if (zappable) {
-                ordered.add(effect);
-            }
-        }
-		if (ascendingOrder) { ordered.sort((x,y)->x.compareTo(y)); }
-		else { ordered.sort((x,y)->y.compareTo(x)); }
-        for (final Effect effect : ordered) {
-            if (count < max) {
-                effect.remove(st, target, true);
-                count++;
-            }
-        }
-		return new OKResponse("Removed "+count+" effects from "+target);
+			} else {
+				if (effect.getMetaData().equals(metaData)) zappable = true;
+			}
+			if (zappable) {
+				ordered.add(effect);
+			}
+		}
+		if (ascendingOrder) {
+			ordered.sort(Comparator.naturalOrder());
+		} else {
+			ordered.sort(Comparator.reverseOrder());
+		}
+		for (final Effect effect : ordered) {
+			if (count < max) {
+				effect.remove(st, target, true);
+				count++;
+			}
+		}
+		return new OKResponse("Removed " + count + " effects from " + target);
 	}
 }
