@@ -71,28 +71,28 @@ public class EffectsCommands {
 	}
 
 	@Command.Commands(description="Remove effects with a matching metadata",
-                      context= Command.Context.AVATAR,
-                      requiresPermission = "Effects.Remove")
-    public static Response removeByMetadata(@Nonnull final State st,
-                                            @Argument.Arguments(name = "target", description = "Character to remove effect from",
-                                                                type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-                                            @Argument.Arguments(name = "metadata", description = "Metadata to search for",
-                                                                type = Argument.ArgumentType.TEXT_ONELINE,
-                                                                max = 1024) @Nonnull final String metaData,
-                                            @Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
-                                                                name = "substring",
-                                                                description = "Perform a substring search",
-                                                                mandatory = true) final boolean substring) {
-        int count = 0;
-        for (final Effect effect : Effect.get(st, target)) {
-            boolean zap = false;
-            if (substring) {
-                if (effect.getMetaData().indexOf(metaData) > -1) zap = true;
-            } else {
-                if (effect.getMetaData().equals(metaData)) zap = true;
-            }
-            if (zap) {
-                effect.remove(st, target, true);
+					  context = Command.Context.AVATAR,
+					  requiresPermission = "Effects.Remove")
+	public static Response removeByMetadata(@Nonnull final State st,
+											@Argument.Arguments(name = "target", description = "Character to remove effect from",
+																type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
+											@Argument.Arguments(name = "metadata", description = "Metadata to search for",
+																type = Argument.ArgumentType.TEXT_ONELINE,
+																max = 1024) @Nonnull final String metaData,
+											@Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
+																name = "substring",
+																description = "Perform a substring search"
+											) final boolean substring) {
+		int count = 0;
+		for (final Effect effect : Effect.get(st, target)) {
+			boolean zap = false;
+			if (substring) {
+				if (effect.getMetaData().indexOf(metaData) > -1) zap = true;
+			} else {
+				if (effect.getMetaData().equals(metaData)) zap = true;
+			}
+			if (zap) {
+				effect.remove(st, target, true);
                 count++;
             }
         }
@@ -103,38 +103,38 @@ public class EffectsCommands {
 					  context= Command.Context.AVATAR,
 					  requiresPermission="Effects.Remove")
 	public static Response removeByMetadataShortestN(@Nonnull final State st,
-                                                     @Argument.Arguments(name = "target", description = "Character to remove effect from",
-                                                                         type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-                                                     @Argument.Arguments(name = "metadata", description = "Metadata to search for",
-                                                                         type = Argument.ArgumentType.TEXT_ONELINE,
-                                                                         max = 1024) @Nonnull final String metaData,
-                                                     @Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
-                                                                         name = "substring",
-                                                                         description = "Perform a substring search",
-                                                                         mandatory = true) final boolean substring,
-                                                     @Argument.Arguments(name = "number",
-                                                                         type = Argument.ArgumentType.INTEGER,
-                                                                         description = "Maximum number of effects to remove",
-                                                                         max = 100) final int max) {
+													 @Argument.Arguments(name = "target", description = "Character to remove effect from",
+																		 type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
+													 @Argument.Arguments(name = "metadata", description = "Metadata to search for",
+																		 type = Argument.ArgumentType.TEXT_ONELINE,
+																		 max = 1024) @Nonnull final String metaData,
+													 @Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
+																		 name = "substring",
+																		 description = "Perform a substring search"
+													 ) final boolean substring,
+													 @Argument.Arguments(name = "number",
+																		 type = Argument.ArgumentType.INTEGER,
+																		 description = "Maximum number of effects to remove",
+																		 max = 100) final int max) {
 		return orderedRemoval(st, target, metaData, substring, max, true);
 	}
 	@Command.Commands(description="Remove up to N longest duration effects with a matching metadata",
 					  context= Command.Context.AVATAR,
 					  requiresPermission="Effects.Remove")
 	public static Response removeByMetadataLongestN(@Nonnull final State st,
-                                                    @Argument.Arguments(name = "target", description = "Character to remove effect from",
-                                                                        type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-                                                    @Argument.Arguments(name = "metadata", description = "Metadata to search for",
-                                                                        type = Argument.ArgumentType.TEXT_ONELINE,
-                                                                        max = 1024) @Nonnull final String metaData,
-                                                    @Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
-                                                                        name = "substring",
-                                                                        description = "Perform a substring search",
-                                                                        mandatory = true) final boolean substring,
-                                                    @Argument.Arguments(name = "number",
-                                                                        type = Argument.ArgumentType.INTEGER,
-                                                                        description = "Maximum number of effects to remove",
-                                                                        max = 100) final int max) {
+													@Argument.Arguments(name = "target", description = "Character to remove effect from",
+																		type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
+													@Argument.Arguments(name = "metadata", description = "Metadata to search for",
+																		type = Argument.ArgumentType.TEXT_ONELINE,
+																		max = 1024) @Nonnull final String metaData,
+													@Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
+																		name = "substring",
+																		description = "Perform a substring search"
+													) final boolean substring,
+													@Argument.Arguments(name = "number",
+																		type = Argument.ArgumentType.INTEGER,
+																		description = "Maximum number of effects to remove",
+																		max = 100) final int max) {
         return orderedRemoval(st, target, metaData, substring, max, false);
     }
 
