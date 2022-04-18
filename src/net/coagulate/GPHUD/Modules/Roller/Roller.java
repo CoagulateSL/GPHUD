@@ -95,7 +95,7 @@ public class Roller {
 		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (allrolls.length() > 0) {
+			if (!allrolls.isEmpty()) {
 				allrolls.append(", ");
 			}
 			allrolls.append(num);
@@ -147,7 +147,7 @@ public class Roller {
 		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (allrolls.length() > 0) {
+			if (!allrolls.isEmpty()) {
 				allrolls.append(", ");
 			}
 			total=total+num;
@@ -252,7 +252,7 @@ public class Roller {
 			attempts--;
 			final List<Integer> rolls=roll(st,dice,sides);
 			for (final int num: rolls) {
-				if (allrolls.length() > 0) {
+				if (!allrolls.isEmpty()) {
 					allrolls.append(", ");
 				}
 				total=total+num;
@@ -261,7 +261,7 @@ public class Roller {
 			total=total+bias;
 			final List<Integer> targetrolls=roll(st.getTarget(),targetdice,targetsides);
 			for (final int num: targetrolls) {
-				if (targetallrolls.length() > 0) {
+				if (!targetallrolls.isEmpty()) {
 					targetallrolls.append(", ");
 				}
 				targettotal=targettotal+num;

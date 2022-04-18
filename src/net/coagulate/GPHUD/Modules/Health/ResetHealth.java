@@ -120,7 +120,7 @@ public class ResetHealth {
 		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=Roller.roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (allrolls.length() > 0) {
+			if (!allrolls.isEmpty()) {
 				allrolls.append(", ");
 			}
 			total=total+num;
