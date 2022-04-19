@@ -96,12 +96,12 @@ public class Zone extends TableRow {
 	}
 
 	/**
-	 * Get a list of all zones.
-	 *
-	 * instance Instance to get zones for
-	 *
-	 * @return Set (possibly empty) of Zones
-	 */
+     * Get a list of all zones.
+     * <p>
+     * instance Instance to get zones for
+     *
+     * @return Set (possibly empty) of Zones
+     */
 	@Nonnull
 	public static Set<Zone> getZones(@Nonnull final Instance instance) {
 		final Set<Zone> zones=new TreeSet<>();
@@ -109,14 +109,14 @@ public class Zone extends TableRow {
 			zones.add(Zone.get(r.getInt()));
 		}
 		return zones;
-	}
+    }
 
-	/**
-	 * Get a list of all zones.
-	 *
-	 * state State to get zones for
-	 *
-	 * @return Set (possibly empty) of Zones
+    /**
+     * Get a list of all zones.
+     * <p>
+     * state State to get zones for
+     *
+     * @return Set (possibly empty) of Zones
 	 */
 	public static Set<Zone> getZones(@Nonnull final State st) {
 		return getZones(st.getInstance());
@@ -206,12 +206,14 @@ public class Zone extends TableRow {
 	 */
 	@Nonnull
 	public String getTransportFormat() {
-		final Set<ZoneArea> areas=getZoneAreas();
-		StringBuilder s=new StringBuilder();
+		final Set<ZoneArea> areas = getZoneAreas();
+		final StringBuilder s = new StringBuilder();
 		for (final ZoneArea a: areas) {
 			final String[] vectors=a.getVectors();
 			if (vectors!=null) {
-				if (s.length()>0) { s.append("|"); }
+				if (!s.isEmpty()) {
+					s.append("|");
+				}
 				s.append(getName()).append("|").append(vectors[0]).append("|").append(vectors[1]);
 			}
 		}

@@ -10,18 +10,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCGreaterThanEqual extends ByteCode {
-	public BCGreaterThanEqual(final ParseNode n) {
-		super(n);
-	}
+    public BCGreaterThanEqual(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Pop two, op, push result
-	@Nonnull
-	public String explain() { return "GreaterThan (Pop two, compare, push 1 if greater than, else 0)"; }
+    // ---------- INSTANCE ----------
+    // Pop two, op, push result
+    @Nonnull
+    public String explain() {
+        return "GreaterThan (Pop two, compare, push 1 if greater than, else 0)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.GreaterThanEqual.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.GreaterThanEqual.get());
+    }
 
 	@Override
 	public void execute(final State st,

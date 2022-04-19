@@ -25,7 +25,7 @@ public class Distribution {
 	                  permitExternal=false)
 	public static Response getServer(@Nonnull final State st) {
 		try {
-			String distributionregion= Config.getDistributionRegion();
+			final String distributionregion = Config.getDistributionRegion();
 			if (distributionregion.isBlank()) { return new ErrorResponse("No distribution region has been set up and no new server can be sent to you"); }
 			final JSONObject json=new JSONObject();
 			json.put("incommand","broadcast");
@@ -37,7 +37,7 @@ public class Distribution {
 		}
 		catch (@Nonnull final UserException e) {
 			throw new UserRemoteFailureException(
-					"Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+e.getLocalizedMessage()+"]");
+					"Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance [" + e.getLocalizedMessage() + "]", e);
 		}
 		return new OKResponse("A new region server should be en route to you from the master server");
 	}

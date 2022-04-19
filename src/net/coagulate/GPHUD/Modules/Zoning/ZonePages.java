@@ -37,7 +37,7 @@ public abstract class ZonePages {
 			f.add(new Link(zone.getName(),"./zoning/view/"+zone.getId()));
 			if (st.hasPermission("Zoning.config")) {
 				f.add("</td><td>");
-				f.add(new Form(st,true,"./Zoning/Delete","Delete Zone","zone",zone.getName()+""));
+				f.add(new Form(st, true, "./Zoning/Delete", "Delete Zone", "zone", zone.getName()));
 			}
 			f.add("</td></tr>");
 		}
@@ -74,21 +74,24 @@ public abstract class ZonePages {
 	                            final SafeMap values,
 	                            @Nonnull final Zone z,
 	                            final boolean brief) {
-		final boolean full=false;
-		boolean admin=false;
-		if (st.hasPermission("zoning.config")) { admin=true; }
-		final Form f=st.form();
+		final boolean full = false;
+		final boolean admin = st.hasPermission("zoning.config");
+		final Form f = st.form();
 		f.noForm();
-		f.add(new TextHeader("Zone: "+z.getName()));
-		final Table t=new Table();
+		f.add(new TextHeader("Zone: " + z.getName()));
+		final Table t = new Table();
 		f.add(t);
 		t.border(false);
-		for (final ZoneArea a: z.getZoneAreas()) {
-			String name="NoPosition";
-			final String[] vectors=a.getVectors();
-			if (vectors!=null) { name=vectors[0]+" - "+vectors[1]; }
-			t.openRow().add("Location").add(a.getRegion(true).getName()+", "+name);
-			if (admin) { t.add(new Form(st,true,"../deletearea","Delete Area","zoneareaid",a.getId()+"")); }
+		for (final ZoneArea a : z.getZoneAreas()) {
+			String name = "NoPosition";
+			final String[] vectors = a.getVectors();
+			if (vectors != null) {
+				name = vectors[0] + " - " + vectors[1];
+			}
+			t.openRow().add("Location").add(a.getRegion(true).getName() + ", " + name);
+			if (admin) {
+				t.add(new Form(st, true, "../deletearea", "Delete Area", "zoneareaid", String.valueOf(a.getId())));
+			}
 		}
 		if (admin) { t.openRow().add("").add(new Form(st,true,"../addarea","Add Area","zone",z.getName())); }
 		f.add(new TextSubHeader("Influenced KVs"));

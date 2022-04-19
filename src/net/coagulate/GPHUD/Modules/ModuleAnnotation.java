@@ -32,13 +32,13 @@ public class ModuleAnnotation extends Module {
 	SideMenu sidemenu;
 
 	public ModuleAnnotation(final String name,
-	                        final ModuleDefinition def) {
-		super(name,def);
+							final ModuleDefinition annotation) {
+		super(name, annotation);
 		if (canDisable()) {
-			registerKV(new KVEnabled(this,defaultDisable()?"false":"true"));
+			registerKV(new KVEnabled(this, defaultDisable() ? "false" : "true"));
 		}
 
-		generated=false;
+		generated = false;
 	}
 
 	// ----- Internal Statics -----
@@ -66,14 +66,14 @@ public class ModuleAnnotation extends Module {
 
 	@Nullable
 	public Set<SideSubMenu> getSideSubMenus(final State st) {
-		HashSet<SideSubMenu> filtered=new HashSet<>();
-		for (SideSubMenu item:sidemenus) {
-			if (item.requiresPermission().isBlank() || st.hasPermission(item.requiresPermission())) {
-				filtered.add(item);
-			}
-		}
-		return filtered;
-	}
+        final HashSet<SideSubMenu> filtered = new HashSet<>();
+        for (final SideSubMenu item : sidemenus) {
+            if (item.requiresPermission().isBlank() || st.hasPermission(item.requiresPermission())) {
+                filtered.add(item);
+            }
+        }
+        return filtered;
+    }
 
 	@Nullable
 	public URL getURL(final State st,
@@ -88,14 +88,15 @@ public class ModuleAnnotation extends Module {
 				String compareto=m.url().toLowerCase();
 				compareto=compareto.substring(0,compareto.length()-1);
 				if (url.toLowerCase().startsWith(compareto)) {
-					if (liberalmatch!=null) {
-						if (liberalmatch.url().length()==m.url().length()) {
-							throw new SystemImplementationException("Multiple liberal matches for "+url+" - "+m.getFullName()+" conflicts with "+liberalmatch.getFullName());
+					if (liberalmatch == null) {
+						liberalmatch = m;
+					} else {
+						if (liberalmatch.url().length() == m.url().length()) {
+							throw new SystemImplementationException("Multiple liberal matches for " + url + " - " + m.getFullName() + " conflicts with " + liberalmatch.getFullName());
 						}
-						if (m.url().length()>liberalmatch.url().length()) { liberalmatch=m; }
-					}
-					else {
-						liberalmatch=m;
+						if (m.url().length() > liberalmatch.url().length()) {
+							liberalmatch = m;
+						}
 					}
 				}
 			}

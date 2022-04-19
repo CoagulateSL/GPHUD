@@ -47,10 +47,11 @@ public abstract class EndOfLifing {
 	public static boolean hasExpired(final int major,
 	                                 final int minor,
 	                                 final int bugfix) {
-		final Date endoflife=getEndOfLife(major,minor,bugfix);
-		if (endoflife==null) { return false; }
-		if (endoflife.before(new Date())) { return true; }
-		return false;
+		final Date endoflife = getEndOfLife(major, minor, bugfix);
+		if (endoflife == null) {
+			return false;
+		}
+		return endoflife.before(new Date());
 	}
 
 	public static Float expiresIn(final int version) {
@@ -77,7 +78,7 @@ public abstract class EndOfLifing {
 		if (endoflife==null) { return null; }
 		long expiresin=endoflife.getTime()-new Date().getTime();
 		expiresin=expiresin/1000L; // milliseconds
-		@SuppressWarnings("UnnecessaryLocalVariable") final float daysexpiresin=expiresin/(60f*60f*24f); //convert to days
+		@SuppressWarnings("UnnecessaryLocalVariable") final float daysexpiresin=expiresin/(60.0f * 60.0f * 24.0f); //convert to days
 		//daysexpiresin=((float)((int)(100.0*daysexpiresin)))/100.0f;
 		//System.out.println("Version check: "+major+"."+minor+"."+bugfix+" expires in "+daysexpiresin+" days");
 		return daysexpiresin;

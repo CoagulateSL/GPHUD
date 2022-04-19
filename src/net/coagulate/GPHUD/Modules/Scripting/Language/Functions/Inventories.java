@@ -34,15 +34,14 @@ public class Inventories {
                                     @Nonnull final BCString inventoryName,
                                     @Nonnull final BCString itemName,
                                     @Nonnull final BCInteger amount) {
-        Inventory inventory=getInventory(st,character,inventoryName);
+        final Inventory inventory = getInventory(st, character, inventoryName);
         try {
-            Item item=Item.find(st,itemName.getContent());
-            int oldValue=inventory.count(item);
-            int newValue=inventory.add(item,amount.getContent(),true);
-            Audit.audit(true,st, Audit.OPERATOR.CHARACTER,null,character.getContent(),"gsInventoryAdd", inventory.getName(),""+oldValue, ""+newValue, "Added "+amount.getContent()+" "+itemName.getContent()+" to inventory, changing total from "+oldValue+" to "+newValue);
-            return new BCString(null,"");
-        }
-        catch (UserInventoryException e) {
+            final Item item = Item.find(st, itemName.getContent());
+            final int oldValue = inventory.count(item);
+            final int newValue = inventory.add(item, amount.getContent(), true);
+            Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, character.getContent(), "gsInventoryAdd", inventory.getName(), String.valueOf(oldValue), String.valueOf(newValue), "Added " + amount.getContent() + " " + itemName.getContent() + " to inventory, changing total from " + oldValue + " to " + newValue);
+            return new BCString(null, "");
+        } catch (final UserInventoryException e) {
             return new BCString(null, e.getLocalizedMessage());
         }
     }
@@ -61,7 +60,7 @@ public class Inventories {
                                      @Nonnull final BCCharacter character,
                                      @Nonnull final BCString inventoryName,
                                      @Nonnull final BCString itemName) {
-        Inventory inventory=getInventory(st,character,inventoryName);
+        final Inventory inventory = getInventory(st, character, inventoryName);
         return new BCInteger(null,inventory.count(Item.find(st,itemName.getContent())));
     }
 
@@ -110,16 +109,22 @@ public class Inventories {
         return new BCInteger(null,getInventory(st,character,inventoryName).countWeight());
     }
 
-    private static Inventory getInventory(State st, BCCharacter character, BCString inventoryName) {
+    private static Inventory getInventory(final State st, final BCCharacter character, final BCString inventoryName) {
         // find Attribute by name
-        Attribute attribute=Attribute.find(st.getInstance(),inventoryName.getContent());
+        final Attribute attribute = Attribute.find(st.getInstance(), inventoryName.getContent());
         // Attribute must be a set
-        if (!(attribute.getType()== Attribute.ATTRIBUTETYPE.INVENTORY)) { throw new UserInputStateException("Attribute "+attribute.getName()+" is of type "+attribute.getType()+" not INVENTORY"); }
+        if (attribute.getType() != Attribute.ATTRIBUTETYPE.INVENTORY) {
+            throw new UserInputStateException("Attribute " + attribute.getName() + " is of type " + attribute.getType() + " not INVENTORY");
+        }
         // Attribute must belong to instance (!)
-        if (!(attribute.getInstance()==st.getInstance())) { throw new SystemImplementationException("Attribute "+attribute+" is not from instance "+st.getInstanceString()); }
+        if (attribute.getInstance() != st.getInstance()) {
+            throw new SystemImplementationException("Attribute " + attribute + " is not from instance " + st.getInstanceString());
+        }
         // check character is of right instance
-        if (!(st.getInstance()==character.getContent().getInstance())) { throw new SystemImplementationException("Target character "+character.getContent()+" is not from instance "+st.getInstanceString()); }
-        return new Inventory(character.getContent(),attribute);
+        if (st.getInstance() != character.getContent().getInstance()) {
+            throw new SystemImplementationException("Target character " + character.getContent() + " is not from instance " + st.getInstanceString());
+        }
+        return new Inventory(character.getContent(), attribute);
     }
 
     @Nonnull
@@ -134,10 +139,10 @@ public class Inventories {
                                    @Nonnull final GSVM vm,
                                    @Nonnull final BCCharacter character,
                                    @Nonnull final BCString inventory) {
-        Inventory source = getInventory(st, character, inventory);
-        BCList list=new BCList(null);
-        for(Map.Entry<String,Integer> element:source.elements().entrySet()) {
-            list.append(new BCString(null,element.getKey()));
+        final Inventory source = getInventory(st, character, inventory);
+        final BCList list = new BCList(null);
+        for (final Map.Entry<String, Integer> element : source.elements().entrySet()) {
+            list.append(new BCString(null, element.getKey()));
         }
         return list;
     }

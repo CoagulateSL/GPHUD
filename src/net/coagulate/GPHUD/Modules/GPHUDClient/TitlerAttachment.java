@@ -23,8 +23,8 @@ public class TitlerAttachment {
     public static String translateAttachmentPoint(@Nonnull final State st,
                                                 final String key) {
         if (st.getCharacterNullable()==null) { return "2"; }
-        String attachmentPoint=st.getKV("GPHUDClient.TitlerAttachment").toString();
-        int converted=2; // Default to skull if everything else fails
+        final String attachmentPoint = st.getKV("GPHUDClient.TitlerAttachment").toString();
+        int converted = 2; // Default to skull if everything else fails
         if (!attachmentPoint.isBlank()) {
             for (int i = 0; i < ATTACHMENT_POINTS.length; i++) {
                 if (ATTACHMENT_POINTS[i].equalsIgnoreCase(attachmentPoint)) { converted=i; }
@@ -58,7 +58,7 @@ public class TitlerAttachment {
                       permitScripting = false,
                       permitObject = false)
     public static Response resetTitler(@Nonnull final State state) {
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("titler",state.getKV("GPHUDClient.TitlerAttachmentConverted").toString());
         JSONResponse.ownerSay(json,"Updating titler",state.getCharacter().getProtocol());
         return new JSONResponse(json);

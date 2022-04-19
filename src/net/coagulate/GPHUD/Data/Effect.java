@@ -29,9 +29,12 @@ import java.util.Map.Entry;
  */
 public class Effect extends TableRow {
 
-	private Effect() {super();}
+	private Effect() {
+	}
 
-	protected Effect(final int id) { super(id); }
+	protected Effect(final int id) {
+		super(id);
+	}
 
 	// ---------- STATICS ----------
 
@@ -147,15 +150,14 @@ public class Effect extends TableRow {
 	}
 
 	/**
-	 * Get effects for a character
-	 *
-	 * Procs expiration
-	 *
-	 * @param st        State
-	 * @param character Character to get effects for
-	 *
-	 * @return A Set of Effect objects describing the characters active effects
-	 */
+     * Get effects for a character
+     * <p>
+     * Procs expiration
+     *
+     * @param st        State
+     * @param character Character to get effects for
+     * @return A Set of Effect objects describing the characters active effects
+     */
 	@Nonnull
 	public static Set<Effect> get(@Nonnull final State st,
 	                              @Nonnull final Char character) {
@@ -196,7 +198,7 @@ public class Effect extends TableRow {
 		for (final Entry<Integer,Effect> entry: byduration.entrySet()) {
 			if (i<4) {
 				final Effect effect=entry.getValue();
-				json.put("effect"+i,(entry.getKey()+UnixTime.getUnixTime())+"");
+				json.put("effect" + i, String.valueOf(entry.getKey() + UnixTime.getUnixTime()));
 				String texture=st.getKV(effect,"Effects.EffectIcon");
 				if (texture==null || texture.isEmpty()) { texture="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4"; }
 				json.put("effect"+i+"t",texture);

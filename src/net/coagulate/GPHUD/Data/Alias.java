@@ -83,14 +83,20 @@ public class Alias extends TableRow {
 	 */
 	@Nullable
 	public static Alias getAlias(@Nonnull final State st,
-	                             final String name) {
+								 final String name) {
 		try {
-			final int id=db().dqiNotNull("select aliasid from aliases where instanceid=? and name like ?",st.getInstance().getId(),name);
+			final int id = db().dqiNotNull("select aliasid from aliases where instanceid=? and name like ?", st.getInstance().getId(), name);
 			return get(id);
+		} catch (@Nonnull final NoDataException e) {
+			return null;
 		}
-		catch (@Nonnull final NoDataException e) { return null; }
 	}
-	private static void clearCaches(Instance instance) { aliasTemplateCache.purge(instance); aliasMapCache.purge(instance); }
+
+	private static void clearCaches(final Instance instance) {
+		aliasTemplateCache.purge(instance);
+		aliasMapCache.purge(instance);
+	}
+
 	/**
 	 * Create a new alias.
 	 * Protects against weird name inputs and duplicate aliases.
@@ -109,7 +115,7 @@ public class Alias extends TableRow {
 	                           @Nonnull final String name,
 	                           @Nonnull final JSONObject template) {
 		if (getAlias(st,name)!=null) { throw new UserInputDuplicateValueException("Alias "+name+" already exists"); }
-		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
+		if (name.matches(".*[^A-Za-z\\d-=_,].*")) {
 			throw new UserInputValidationParseException("Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		db().d("insert into aliases(instanceid,name,template) values(?,?,?)",st.getInstance().getId(),name,template.toString());

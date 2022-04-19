@@ -21,15 +21,23 @@ import javax.annotation.Nullable;
 
 public class Sets {
 
-    private static void preCheck(State st,Attribute set,Char character,boolean checkAdmin) {
+    private static void preCheck(final State st, final Attribute set, final Char character, final boolean checkAdmin) {
         // Attribute must be a set
-        if (!(set.getType()== Attribute.ATTRIBUTETYPE.SET)) { throw new UserInputStateException("Attribute "+set.getName()+" is of type "+set.getType()+" not SET",true); }
+        if (set.getType() != Attribute.ATTRIBUTETYPE.SET) {
+            throw new UserInputStateException("Attribute " + set.getName() + " is of type " + set.getType() + " not SET", true);
+        }
         // Attribute must belong to instance (!)
-        if (!(set.getInstance()==st.getInstance())) { throw new SystemImplementationException("Attribute "+set+" is not from instance "+st.getInstanceString()); }
+        if (set.getInstance() != st.getInstance()) {
+            throw new SystemImplementationException("Attribute " + set + " is not from instance " + st.getInstanceString());
+        }
         // check permission
-        if (checkAdmin && !st.hasPermission("Characters.Set"+set.getName())) { throw new UserAccessDeniedException("You do not have permission Characters.Set"+set.getName()+" required to modify this characters set",true); }
+        if (checkAdmin && !st.hasPermission("Characters.Set" + set.getName())) {
+            throw new UserAccessDeniedException("You do not have permission Characters.Set" + set.getName() + " required to modify this characters set", true);
+        }
         // check character is of right instance
-        if (!(st.getInstance()==character.getInstance())) { throw new SystemImplementationException("Target character "+character+" is not from instance "+st.getInstanceString()); }
+        if (st.getInstance() != character.getInstance()) {
+            throw new SystemImplementationException("Target character " + character + " is not from instance " + st.getInstanceString());
+        }
     }
 
     @Nonnull
@@ -50,14 +58,16 @@ public class Sets {
                                                              type = Argument.ArgumentType.INTEGER,
                                                              description = "Number of element to add (or remove, if negative)",
                                                              mandatory = false) Integer qty) {
-        preCheck(st,set,character,true);
-        if (qty==null) { qty=1; }
+        preCheck(st, set, character, true);
+        if (qty == null) {
+            qty = 1;
+        }
         // guess we're ok then (!)
-        CharacterSet characterSet=new CharacterSet(character,set);
-        int oldValue=characterSet.count(element);
-        int total=characterSet.add(element,qty);
-        Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,character,"Add",set.getName(),""+oldValue,""+total,"Added "+qty+" "+element+" to set, totalling "+total);
-        return new OKResponse("Added "+qty+" "+element+" to "+character+"'s "+set+", changing total from "+oldValue+" to "+total);
+        final CharacterSet characterSet = new CharacterSet(character, set);
+        final int oldValue = characterSet.count(element);
+        final int total = characterSet.add(element, qty);
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Add", set.getName(), String.valueOf(oldValue), String.valueOf(total), "Added " + qty + " " + element + " to set, totalling " + total);
+        return new OKResponse("Added " + qty + " " + element + " to " + character + "'s " + set + ", changing total from " + oldValue + " to " + total);
     }
     @URL.URLs(url="/configuration/sets/setset")
     public static void setForm(@Nonnull final State st,
@@ -83,14 +93,16 @@ public class Sets {
                                                             type = Argument.ArgumentType.INTEGER,
                                                             description = "Quantity to set to",
                                                             mandatory = false) Integer qty) {
-        preCheck(st,set,character,true);
-        if (qty==null) { qty=1; }
+        preCheck(st, set, character, true);
+        if (qty == null) {
+            qty = 1;
+        }
         // guess we're ok then (!)
-        CharacterSet characterSet=new CharacterSet(character,set);
-        int oldValue=characterSet.count(element);
-        characterSet.set(element,qty);
-        Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,character,"Set",set.getName(),""+oldValue,""+qty,"Set "+qty+" x "+element);
-        return new OKResponse("Set "+qty+" "+element+" in "+character+"'s "+set+" (was "+oldValue+")");
+        final CharacterSet characterSet = new CharacterSet(character, set);
+        final int oldValue = characterSet.count(element);
+        characterSet.set(element, qty);
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Set", set.getName(), String.valueOf(oldValue), String.valueOf(qty), "Set " + qty + " x " + element);
+        return new OKResponse("Set " + qty + " " + element + " in " + character + "'s " + set + " (was " + oldValue + ")");
     }
 
     @Nonnull
@@ -103,14 +115,14 @@ public class Sets {
                                @Nonnull @Argument.Arguments(type = Argument.ArgumentType.SET,
                                                             description = "Set to wipe",
                                                             name = "set") final Attribute set) {
-        preCheck(st,set,character,true);
+        preCheck(st, set, character, true);
         // guess we're ok then (!)
-        CharacterSet characterSet=new CharacterSet(character,set);
-        int elements=characterSet.countElements();
-        int totalCount=characterSet.countTotal();
+        final CharacterSet characterSet = new CharacterSet(character, set);
+        final int elements = characterSet.countElements();
+        final int totalCount = characterSet.countTotal();
         characterSet.wipe();
-        Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,character,"Empty",set.getName(),null,null,"Wiped set "+set.getName()+", formerly containing "+elements+" elements with total quantity "+totalCount);
-        return new OKResponse("Wiped "+character+"'s "+set+", formerly containing "+elements+" elements with total quantity "+totalCount);
+        Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, character, "Empty", set.getName(), null, null, "Wiped set " + set.getName() + ", formerly containing " + elements + " elements with total quantity " + totalCount);
+        return new OKResponse("Wiped " + character + "'s " + set + ", formerly containing " + elements + " elements with total quantity " + totalCount);
     }
 
     @Nonnull

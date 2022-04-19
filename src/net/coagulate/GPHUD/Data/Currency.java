@@ -107,10 +107,10 @@ public class Currency extends TableRow {
 	 */
 	public int decode(String ammount) {
 		// if its just a number, lets bail fast
-		if (Pattern.compile("[0-9]*").matcher(ammount).matches()) { return Integer.parseInt(ammount); }
+		if (Pattern.compile("\\d*").matcher(ammount).matches()) { return Integer.parseInt(ammount); }
 
 		// right, what can we do.... split it into groups of numbers and non numbers I guess
-		final Pattern pattern=Pattern.compile("([0-9]+)([^0-9]*)([0-9]?.*)");  // splits into number, coin, remainder
+		final Pattern pattern=Pattern.compile("(\\d+)(\\D*)(\\d?.*)");  // splits into number, coin, remainder
 		int total=0;
 		while (!ammount.trim().isEmpty()) {
 			final Matcher matcher=pattern.matcher(ammount);
@@ -157,8 +157,8 @@ public class Currency extends TableRow {
 
 	public void removeCoin(final State st,
 	                       final int basevalue) {
-		d("delete from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
-		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"Delete",getName(),basevalue+"","","Removed coin of value "+basevalue);
+		d("delete from currencycoins where currencyid=? and basemultiple=?", getId(), basevalue);
+		Audit.audit(true, st, OPERATOR.AVATAR, null, null, "Delete", getName(), String.valueOf(basevalue), "", "Removed coin of value " + basevalue);
 	}
 
 	public void setBaseCoinNames(final State state,
@@ -191,7 +191,9 @@ public class Currency extends TableRow {
 		final StringBuilder result=new StringBuilder();
 		for (final ResultsRow row: getCurrencyCoins()) {
 			if (ammount >= row.getInt("basemultiple")) {
-				if (result.length()>0) { result.append(" "); }
+				if (!result.isEmpty()) {
+					result.append(" ");
+				}
 				final int bycoin=ammount/row.getInt("basemultiple");
 				result.append(bycoin);
 				if (longform) { result.append(" ").append(row.getString("coinname")); }
@@ -200,7 +202,9 @@ public class Currency extends TableRow {
 			}
 		}
 		if (ammount>0) {
-			if (result.length()>0) { result.append(" "); }
+			if (!result.isEmpty()) {
+				result.append(" ");
+			}
 			result.append(ammount);
 			if (longform) { result.append(" ").append(getBaseCoinName()); }
 			else { result.append(getBaseCoinNameShort()); }
@@ -298,8 +302,8 @@ public class Currency extends TableRow {
 	                           final Char character,
 	                           final int ammount,
 	                           final String description) {
-		getPool(st).addAdmin(st,character,ammount,description);
-		Audit.audit(true,st,OPERATOR.AVATAR,null,character,"Create",getName(),null,ammount+"","Admin spawned in currency: "+description);
+		getPool(st).addAdmin(st, character, ammount, description);
+		Audit.audit(true, st, OPERATOR.AVATAR, null, character, "Create", getName(), null, String.valueOf(ammount), "Admin spawned in currency: " + description);
 	}
 
 	/**
@@ -356,8 +360,8 @@ public class Currency extends TableRow {
 	                     final boolean tradable) {
 		final boolean oldvalue=tradable();
 		if (tradable==oldvalue) { return; }
-		set("tradable",tradable);
-		Audit.audit(true,state,OPERATOR.AVATAR,null,null,"Currency","Tradable",oldvalue+"",tradable+"","Admin set currency to tradable status "+tradable);
+		set("tradable", tradable);
+		Audit.audit(true, state, OPERATOR.AVATAR, null, null, "Currency", "Tradable", String.valueOf(oldvalue), String.valueOf(tradable), "Admin set currency to tradable status " + tradable);
 	}
 
 	// ----- Internal Instance -----

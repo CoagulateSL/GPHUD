@@ -39,12 +39,16 @@ public class NPC extends ObjectType {
 		final Table t=new Table();
 		t.add("Character");
 		final DropDownList charList=Char.getNPCList(st,"character");
-		if (json.has("character")) { charList.setValue(""+json.getInt("character")); }
+		if (json.has("character")) {
+			charList.setValue(String.valueOf(json.getInt("character")));
+		}
 		t.add(charList);
 		t.openRow();
 		t.add("OnClick Script");
 		final DropDownList scriptList=Script.getList(st,"script");
-		if (json.has("script")) { scriptList.setValue(""+json.getInt("script")); }
+		if (json.has("script")) {
+			scriptList.setValue(String.valueOf(json.getInt("script")));
+		}
 		t.add(scriptList);
 		t.openRow();
 		editFormDistance(st,t);

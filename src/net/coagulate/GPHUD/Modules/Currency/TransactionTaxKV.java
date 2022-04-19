@@ -12,9 +12,8 @@ public class TransactionTaxKV extends KV {
 
 	public TransactionTaxKV(@Nonnull final State st,
 	                        @Nonnull final Currency currency) {
-		super();
-		this.currency=currency;
-		name=currency.getName();
+        this.currency = currency;
+		name = currency.getName();
 	}
 
 	// ---------- INSTANCE ----------

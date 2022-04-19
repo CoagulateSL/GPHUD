@@ -108,19 +108,22 @@ public abstract class CookBook {
 	                                 @Nonnull final String name,
 	                                 final String description) {
 		t.openRow();
-		t.add("Create menu '"+name+"'");
-		final Menu existing=Menu.getMenuNullable(st,name);
-		if (existing!=null) { t.add("AlreadyExists"); }
-		else { t.add("OK"); }
+		t.add("Create menu '" + name + "'");
+		final Menu existing = Menu.getMenuNullable(st, name);
+		if (existing == null) {
+			t.add("OK");
+		} else {
+			t.add("AlreadyExists");
+		}
 		if (!act) {
-			t.add("Create a blank menu: "+description);
+			t.add("Create a blank menu: " + description);
 			return;
 		}
-		if (existing!=null) {
+		if (existing != null) {
 			t.add("Can't complete");
 			return;
 		}
-		Menu.create(st,name,description,new JSONObject());
+		Menu.create(st, name, description, new JSONObject());
 		t.add("OK");
 	}
 
@@ -152,19 +155,25 @@ public abstract class CookBook {
 		}
 		else {
 			for (int i=1;i<=12;i++) {
-				if (!menu.has("button"+i)) {
-					full=false;
-					if (empty==-1) { empty=i; }
-				}
-				else {
-					if (menu.getString("button"+i).equals(label)) { already=true; }
+				if (menu.has("button" + i)) {
+					if (menu.getString("button" + i).equals(label)) {
+						already = true;
+					}
+				} else {
+					full = false;
+					if (empty == -1) {
+						empty = i;
+					}
 				}
 			}
 		}
 		if (already) { t.add("AlreadyExists"); }
 		else {
-			if (!full) { t.add("OK"); }
-			else { t.add("MenuFull"); }
+			if (full) {
+				t.add("MenuFull");
+			} else {
+				t.add("OK");
+			}
 		}
 		if (!act) {
 			t.add("Create menu item '"+label+"' to run "+command);

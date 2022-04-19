@@ -25,9 +25,8 @@ public class MenuArgument extends Argument {
 
 	public MenuArgument(final Command command,
 	                    final JSONObject definition) {
-		super();
-		this.command=command;
-		meta=definition;
+        this.command = command;
+		meta = definition;
 	}
 
 	// ---------- INSTANCE ----------

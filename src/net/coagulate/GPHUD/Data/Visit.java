@@ -67,12 +67,11 @@ public class Visit {
 	 */
 	public static void closeVisits(@Nonnull final Char character,
 	                               @Nullable final Region region) {
-		db().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",character.getId());
-		if (region!=null) {
-			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",character.getId(),region.getId());
-		}
-		else {
-			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and endtime is null",character.getId());
+		db().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?", character.getId());
+		if (region == null) {
+			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and endtime is null", character.getId());
+		} else {
+			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null", character.getId(), region.getId());
 		}
 	}
 

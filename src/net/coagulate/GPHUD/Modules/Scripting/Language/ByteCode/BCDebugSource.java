@@ -10,18 +10,18 @@ import java.util.List;
 
 public class BCDebugSource extends ByteCode {
 
-	public BCDebugSource(@Nullable ParseNode n) {
-		super(n);
-	}
+    public BCDebugSource(@Nullable final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public String explain() {
-		return "Set Debug Source (Pop source script name)";
-	}
+    // ---------- INSTANCE ----------
+    @Nonnull
+    @Override
+    public String explain() {
+        return "Set Debug Source (Pop source script name)";
+    }
 
-	@Override
+    @Override
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.DebugSource.get());
 	}

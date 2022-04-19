@@ -26,25 +26,27 @@ import java.util.Set;
 
 public abstract class PagedSQL implements Renderable {
 
-	public String searchtext="";
-	protected final int pagesize=50;
+	public String searchtext = "";
+	protected static final int pagesize = 50;
 	final String prefix;
 	final SafeMap parameters;
 	final Instance instance;
 	protected int page;
 
-	public PagedSQL(@Nonnull final State state,
-	                @Nonnull final String prefix,
-	                @Nonnull final SafeMap parameters) {
-		instance=state.getInstance();
-		this.prefix=prefix;
-		this.parameters=parameters;
+	protected PagedSQL(@Nonnull final State state,
+					   @Nonnull final String prefix,
+					   @Nonnull final SafeMap parameters) {
+		instance = state.getInstance();
+		this.prefix = prefix;
+		this.parameters = parameters;
 	}
 
 	// ----- Internal Statics -----
 	@Nonnull
 	protected static String cleanse(@Nullable final String s) {
-		if (s==null) { return ""; }
+		if (s == null) {
+			return "";
+		}
 		return s;
 	}
 

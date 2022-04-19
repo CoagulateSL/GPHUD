@@ -12,7 +12,9 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class OKResponse extends TextOK implements Response {
-	public OKResponse(final String message) { super(message); }
+	public OKResponse(final String content) {
+        super(content);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nonnull
@@ -26,7 +28,7 @@ public class OKResponse extends TextOK implements Response {
 	@Nonnull
 	@Override
 	public String scriptResponse() {
-		return "OK: "+s;
+        return "OK: " + content;
 	}
 
 }

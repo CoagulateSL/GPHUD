@@ -31,10 +31,10 @@ public abstract class Module {
 	final ModuleDefinition annotation;
 
 
-	public Module(final String name,
-	              final ModuleDefinition annotation) {
-		this.name=name;
-		this.annotation=annotation;
+	protected Module(final String name,
+					 final ModuleDefinition annotation) {
+		this.name = name;
+		this.annotation = annotation;
 		Modules.register(this);
 
 	}
@@ -42,7 +42,7 @@ public abstract class Module {
 	// ----- Internal Statics -----
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
+			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
 			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
@@ -178,7 +178,7 @@ public abstract class Module {
 
 	public void validatePermission(final State st,
 	                               @Nonnull final String permission) {
-		if (permission.equals("*")) { // just check the module exists here really, which we did by getting this far
+		if ("*".equals(permission)) { // just check the module exists here really, which we did by getting this far
 			return;
 		}
 		final Map<String,Permission> perms=getPermissions(st);
@@ -216,10 +216,12 @@ dead code?
 	}
 
 	public void addTemplateDescriptions(final State st,
-	                                    final Map<String,String> templates) {}
+                                        final Map<String, String> cumulativeMap) {
+    }
 
-	public void addTemplateMethods(final State st,
-	                               final Map<String,Method> ret) { }
+    public void addTemplateMethods(final State st,
+                                   final Map<String, Method> cumulativeMap) {
+    }
 
 	@Nonnull
 	public Set<CharacterAttribute> getAttributes(final State st) {

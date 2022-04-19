@@ -159,16 +159,17 @@ public abstract class Modules {
 			final URL proposed=mod.getURL(st,url);
 			if (proposed!=null) {
 				if (proposed.url().endsWith("*")) {
-					if (relaxed!=null) {
+					if (relaxed == null) {
+						relaxed = proposed;
+					} else {
 						// break if matching prefix length, otherwise...
-						if (relaxed.url().length()==proposed.url().length()) {
-							throw new SystemImplementationException("Multiple relaxed matches between "+proposed.url()+" and "+relaxed.url());
+						if (relaxed.url().length() == proposed.url().length()) {
+							throw new SystemImplementationException("Multiple relaxed matches between " + proposed.url() + " and " + relaxed.url());
 						}
-						if (relaxed.url().length()<proposed.url().length()) {
-							relaxed=proposed;
+						if (relaxed.url().length() < proposed.url().length()) {
+							relaxed = proposed;
 						}  // pick longer prefix
 					}
-					else { relaxed=proposed; }
 				}
 				else {
 					if (literal!=null) {
@@ -194,11 +195,11 @@ public abstract class Modules {
 	public static Command getCommandNullable(final State st,
 	                                         @Nonnull final String proposedcommand) {
 		try {
-			JavaTools.limitRecursionUserException(50);
-			return get(st, proposedcommand).getCommandNullable(st, extractReference(proposedcommand));
-		} catch (UserConfigurationRecursionException e) {
-			throw new UserConfigurationRecursionException(proposedcommand+" -> "+e.getLocalizedMessage());
-		}
+            JavaTools.limitRecursionUserException(50);
+            return get(st, proposedcommand).getCommandNullable(st, extractReference(proposedcommand));
+        } catch (final UserConfigurationRecursionException e) {
+            throw new UserConfigurationRecursionException(proposedcommand + " -> " + e.getLocalizedMessage(), e);
+        }
 	}
 
 	@Nonnull
@@ -241,7 +242,9 @@ public abstract class Modules {
 	public static Response run(@Nonnull final State st,
 	                           @Nullable final String console,
 	                           final boolean fromconsole) {
-		if (console==null || "".equals(console)) { return new ErrorResponse("No console string supplied"); }
+		if (console == null || console.isEmpty()) {
+			return new ErrorResponse("No console string supplied");
+		}
 		final String[] words=console.split(" ");
 		int i=0;
 		String command=words[0].toLowerCase();
@@ -281,22 +284,24 @@ public abstract class Modules {
 								try {
 									StringBuilder string = new StringBuilder();
 									while (!words[i].endsWith("\"")) {
-										if (string.length() > 0) {
+										if (!string.isEmpty()) {
 											string.append(" ");
 										}
 										string.append(words[i]);
 										i++;
-									}
-									string.append(" ").append(words[i]);
-									if (!respectnewlines) {
-										string = new StringBuilder(string.toString().replaceAll("\n", ""));
-										string = new StringBuilder(string.toString().replaceAll("\r", ""));
-									}
-									string = new StringBuilder(string.toString().replaceFirst("^\"", ""));
-									string = new StringBuilder(string.toString().replaceAll("\"$", ""));
-									//System.out.println(string);
-									parameters.put(argname, string.toString());
-								} catch (ArrayIndexOutOfBoundsException e) { throw new UserInputValidationParseException("Failed to find closure for a string (a matching \")",e,true); }
+                                    }
+                                    string.append(" ").append(words[i]);
+                                    if (!respectnewlines) {
+                                        string = new StringBuilder(string.toString().replaceAll("\n", ""));
+                                        string = new StringBuilder(string.toString().replaceAll("\r", ""));
+                                    }
+                                    string = new StringBuilder(string.toString().replaceFirst("^\"", ""));
+                                    string = new StringBuilder(string.toString().replaceAll("\"$", ""));
+                                    //System.out.println(string);
+                                    parameters.put(argname, string.toString());
+                                } catch (final ArrayIndexOutOfBoundsException e) {
+                                    throw new UserInputValidationParseException("Failed to find closure for a string (a matching \")", e, true);
+                                }
 							}
 						}
 						else {
@@ -439,7 +444,7 @@ public abstract class Modules {
 	public static void simpleHtml(@Nonnull final State st,
 								  @Nonnull final String command,
 								  @Nonnull final String... params) {
-		SafeMap map=new SafeMap();
+        final SafeMap map = new SafeMap();
 		if ((params.length % 2)==1) { throw new SystemImplementationException("Expects an even number of varargs"); }
 		for (int i=0;i<params.length;i+=2) {
 			map.put(params[i],params[i+1]);

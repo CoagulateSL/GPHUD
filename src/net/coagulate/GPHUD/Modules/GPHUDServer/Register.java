@@ -68,21 +68,20 @@ public abstract class Register {
 		 */
 		final Region region=st.getRegion();
 		for (final Header header: st.req().getAllHeaders()) {
-			if (header.getName().equalsIgnoreCase("X-SecondLife-Region")) {
+			if ("X-SecondLife-Region".equalsIgnoreCase(header.getName())) {
 				//System.out.println("Element: "+header.getValue());
-				final Matcher match=Pattern.compile("^.* \\(([0-9]+), ([0-9]+)\\)$").matcher(header.getValue());
+				final Matcher match = Pattern.compile("^.* \\((\\d+), (\\d+)\\)$").matcher(header.getValue());
 				if (match.matches()) {
-					region.setGlobalCoordinates(Integer.parseInt(match.group(1)),Integer.parseInt(match.group(2)));
-				}
-				else {
-					st.logger().log(WARNING,"Failed to parse region format: "+header.getValue());
+					region.setGlobalCoordinates(Integer.parseInt(match.group(1)), Integer.parseInt(match.group(2)));
+				} else {
+					st.logger().log(WARNING, "Failed to parse region format: " + header.getValue());
 				}
 			}
 		}
 		String url=null;
 		try { url=st.json().getString("callback"); } catch (@Nonnull final JSONException ignored) {}
-		if (url==null || "".equals(url)) {
-			st.logger().log(WARNING,"No callback URL sent to GPHUDClient.Register");
+		if (url == null || url.isEmpty()) {
+			st.logger().log(WARNING, "No callback URL sent to GPHUDClient.Register");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
 		region.setURL(url);
@@ -92,7 +91,11 @@ public abstract class Register {
 		String registrationMessage;
 		registrationMessage=GPHUD.serverVersion()+" [https://"+ Config.getURLHost()+"/GPHUD/ChangeLog Change Log]"+GPHUD.brandingWithNewline();
 		if (st.getRegion().needsUpdate()) {
-			registrationMessage+="\n=====\nUpdate required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version"+".\n=====";
+			registrationMessage += """
+
+					=====
+					Update required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version.
+					=====""";
 		}
 		JSONResponse.message(registered,registrationMessage,region.protocol());
 		final Transmission t=new Transmission(region,registered);

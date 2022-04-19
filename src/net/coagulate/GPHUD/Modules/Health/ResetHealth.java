@@ -27,13 +27,13 @@ public class ResetHealth {
 	                  permitExternal=false)
 	public static Response resetHealth(@Nonnull final State st) {
 		if (!st.getKV("health.allowreset").boolValue()) {
-			throw new UserAccessDeniedException("Resetting of your health is not permitted.",true);
+			throw new UserAccessDeniedException("Resetting of your health is not permitted.", true);
 		}
-		final int oldhealth=st.getKV("health.health").intValue();
-		final int newvalue=st.getKV("health.initialhealth").intValue();
-		st.setKV(st.getCharacter(),"health.health",newvalue+"");
-		Audit.audit(true,st,Audit.OPERATOR.CHARACTER,null,st.getCharacter(),"SET","Health.Health",oldhealth+"",newvalue+"","Character reset their health");
-		return new SayResponse("reset health from "+oldhealth+" to "+newvalue,st.getCharacter().getName());
+		final int oldhealth = st.getKV("health.health").intValue();
+		final int newvalue = st.getKV("health.initialhealth").intValue();
+		st.setKV(st.getCharacter(), "health.health", String.valueOf(newvalue));
+		Audit.audit(true, st, Audit.OPERATOR.CHARACTER, null, st.getCharacter(), "SET", "Health.Health", String.valueOf(oldhealth), String.valueOf(newvalue), "Character reset their health");
+		return new SayResponse("reset health from " + oldhealth + " to " + newvalue, st.getCharacter().getName());
 	}
 
 	@Nonnull
@@ -117,12 +117,14 @@ public class ResetHealth {
 		if (reason==null) { reason="No Reason"; }
 
 		int total=0;
-		String allrolls="";
+		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=Roller.roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (!"".equals(allrolls)) { allrolls+=", "; }
+			if (!allrolls.isEmpty()) {
+				allrolls.append(", ");
+			}
 			total=total+num;
-			allrolls=allrolls+num;
+			allrolls.append(num);
 		}
 		total=total+bias;
 

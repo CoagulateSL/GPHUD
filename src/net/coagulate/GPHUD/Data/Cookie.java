@@ -8,7 +8,6 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Tokens;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -63,13 +62,15 @@ public class Cookie {
 	 * @param cookie Cookie to refresh.
 	 */
 	public static void refreshCookie(@Nonnull final String cookie) {
-		final int refreshifexpiresbefore=getUnixTime()+COOKIE_REFRESH;
-		final int toupdate=db().dqiNotNull("select count(*) from cookies where cookie=? and expires<? and renewable=1",cookie,refreshifexpiresbefore);
-		if (toupdate==0) { return; }
-		if (toupdate>1) {
-			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on cookie "+cookie);
+		final int refreshBefore = getUnixTime() + COOKIE_REFRESH;
+		final int toupdate = db().dqiNotNull("select count(*) from cookies where cookie=? and expires<? and renewable=1", cookie, refreshBefore);
+		if (toupdate == 0) {
+			return;
 		}
-		db().d("update cookies set expires=? where cookie=?",getUnixTime()+COOKIE_LIFESPAN,cookie);
+		if (toupdate > 1) {
+			GPHUD.getLogger().warning("Unexpected anomoly, " + toupdate + " rows to update on cookie " + cookie);
+		}
+		db().d("update cookies set expires=? where cookie=?", getUnixTime() + COOKIE_LIFESPAN, cookie);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class Cookie {
 	 * Trigger expired cookie cleaning
 	 */
 	public static void expire() {
-		db().d("delete from cookies where expires<?",UnixTime.getUnixTime());
+		db().d("delete from cookies where expires<?", getUnixTime());
 	}
 
 	// ----- Internal Statics -----
@@ -195,16 +196,15 @@ public class Cookie {
 	public void setCharacter(@Nullable final Char character) {
 		Integer id=null;
 		if (character!=null) {
-			id=character.getId();
-			final Instance i=getInstance();
-			if (i!=null) { // if has instance, character should be from it...
-				if (character.getInstance()!=i) {
-					throw new SystemConsistencyException("Character is not from the selected instance");
-				}
-			}
-			else {
+			id = character.getId();
+			final Instance i = getInstance();
+			if (i == null) {
 				// if instance /is/ null, then set it :P
 				setInstance(null);
+			} else { // if has instance, character should be from it...
+				if (character.getInstance() != i) {
+					throw new SystemConsistencyException("Character is not from the selected instance");
+				}
 			}
 		}
 		db().d("update cookies set characterid=? where cookie=?",id,cookie);

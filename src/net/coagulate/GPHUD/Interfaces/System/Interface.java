@@ -51,28 +51,14 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	public static final boolean DEBUG_JSON=false;
 
 	@Override
-	protected void earlyInitialiseState(HttpRequest request, HttpContext context) {
-		super.earlyInitialiseState(request,context);
-		State st=state();
-		st.source=State.Sources.SYSTEM;
+	protected void earlyInitialiseState(final HttpRequest request, final HttpContext context) {
+		super.earlyInitialiseState(request, context);
+		final State st = state();
+		st.source = State.Sources.SYSTEM;
 	}
 
-	@Override
-	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
-	}
-
-	@Override
-	protected void loadSession() {
-
-	}
-
-	@Override
-	protected boolean checkAuthenticationNeeded(Method content) {
-		return false;
-	}
-
-	@Override
-	protected void processPostEntity(HttpEntity entity, Map<String, String> parameters) {
+    @Override
+	protected void processPostEntity(final HttpEntity entity, final Map<String, String> parameters) {
 		try {
 			final State st = state();
 			final JSONObject obj;
@@ -93,8 +79,10 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			}
 			st.protocol=0;
 			if (obj.has("protocol")) {
-				try { st.protocol=obj.getInt("protocol"); }
-				catch (NumberFormatException ignore) {}
+				try {
+					st.protocol = obj.getInt("protocol");
+				} catch (final NumberFormatException ignore) {
+				}
 			}
 			if (obj.has("cookie")) {
 				Cookie.refreshCookie(obj.getString("cookie"));
@@ -102,31 +90,35 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			if (obj.has("interface") && obj.get("interface").equals("object")) {
 				st.source = State.Sources.OBJECT;
 			}
-		} catch (IOException e) {
-			throw new SystemRemoteFailureException("Failure processing System Interface input");
+		} catch (final IOException e) {
+			throw new SystemRemoteFailureException("Failure processing System Interface input", e);
 		}
 	}
 
 	@Nullable
 	@Override
-	protected Method lookupPage(HttpRequest request) {
-		try { return getClass().getDeclaredMethod("execute",State.class); } catch (NoSuchMethodException e) {
-			throw new SystemImplementationException("Weird internal method lookup failure",e);
+	protected Method lookupPage(final HttpRequest request) {
+		try {
+			return getClass().getDeclaredMethod("execute", State.class);
+		} catch (final NoSuchMethodException e) {
+			throw new SystemImplementationException("Weird internal method lookup failure", e);
 		}
 	}
 
 	@Override
-	protected void executePage(Method content) {
-		final State st=state();
-		final Response response=execute(st);
-		if (response==null) { throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!"); }
-		final JSONObject jsonResponse=response.asJSON(st);
+	protected void executePage(final Method content) {
+		final State st = state();
+		final Response response = execute(st);
+		if (response == null) {
+			throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
+		}
+		final JSONObject jsonResponse = response.asJSON(st);
 		// did titler change?
-		if (st.getCharacterNullable()!=null) {
-			st.getCharacter().appendConveyance(st,jsonResponse);
+		if (st.getCharacterNullable() != null) {
+			st.getCharacter().appendConveyance(st, jsonResponse);
 		}
 		jsonResponse.remove("developerkey");
-		final String out=jsonResponse.toString();
+		final String out = jsonResponse.toString();
 		if (DEBUG_JSON) { System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonResponse)); }
 		if (out.length() >= 4096) { SL.report("Output exceeds limit of 4096 characters",new SystemImplementationException("Trace"),st); }
 		Page.page().template(new PlainTextMapper.PlainTextTemplate());
@@ -227,7 +219,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 				GPHUD.getLogger().info("Failed to get owner name from headers for key "+ownerKey+", looked up in DB as "+ownerName+".");
 			}
 		}
-		regionName=regionName.replaceFirst(" \\([0-9]+, [0-9]+\\)","");
+		regionName=regionName.replaceFirst(" \\(\\d+, \\d+\\)","");
 
 		st.setRegionName(regionName);
 		st.isSuid =false;
@@ -248,20 +240,20 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		// hooks to allow things to run as "not the objects owner" (the default)
 		String runAsAvatar=null;
 		try { runAsAvatar=obj.getString("runasavatar"); } catch (@Nonnull final JSONException ignored) {}
-		if (runAsAvatar!=null && (!("".equals(runAsAvatar)))) {
-			st.setAvatar(User.findUsername(runAsAvatar,false));
+		if (runAsAvatar != null && (!(runAsAvatar.isEmpty()))) {
+			st.setAvatar(User.findUsername(runAsAvatar, false));
 			if (st.getAvatar().isSuspended()) {
 				return new TerminateResponse("Your access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
 			}
-			st.isSuid =true;
+			st.isSuid = true;
 		}
 		st.object=Obj.findOrNull(st,objectKey);
 		if (st.object!=null) { st.object.updateRX(); }
 		String runAsCharacter=null;
 		try { runAsCharacter=obj.getString("runascharacter"); } catch (@Nonnull final JSONException ignored) {}
-		if (runAsCharacter!=null && (!("".equals(runAsCharacter)))) {
+		if (runAsCharacter != null && (!(runAsCharacter.isEmpty()))) {
 			st.setCharacter(Char.get(Integer.parseInt(runAsCharacter)));
-			st.isSuid =true;
+			st.isSuid = true;
 		}
 		// load region from database, if it exists
 		final Region region=Region.findNullable(regionName,false);
@@ -272,37 +264,37 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			// we are a known region, connected to an instance
 
 			// are they authorised to run stuff?
-			boolean authorised=false;
-			if (developer.getId()==1) { authorised=true; }
+			final boolean authorised = developer.getId() == 1;
 			// TODO check the region's instance, check the permits, blah blah, proper authorisation.  "iain" gets to skip all this.
 			// respond to it
-			if (!authorised) {
-				st.logger().warning("Developer "+developer+" is not authorised at this location:"+st.getRegionName());
-				return new TerminateResponse("Developer key is not authorised at this instance");
-			}
-			else {
+			if (authorised) {
 				// OK.  object has dev key, is authorised, resolves.  Process the actual contents oO
-				final Instance instance=region.getInstance();
+				final Instance instance = region.getInstance();
 				st.setInstance(instance);
 				st.setRegion(region);
-				if (st.getCharacterNullable()==null) {
-					st.setCharacter(Char.getMostRecent(st.getAvatar(),st.getInstance()));
+				if (st.getCharacterNullable() == null) {
+					st.setCharacter(Char.getMostRecent(st.getAvatar(), st.getInstance()));
 				}
 				try {
 					obj.getString("runasnocharacter");
 					st.setCharacter(null);
+				} catch (@Nonnull final JSONException ignored) {
 				}
-				catch (@Nonnull final JSONException ignored) {}
-				if (st.getCharacterNullable()!=null) { st.zone=st.getCharacter().getZone(); }
-				final SafeMap parameterMap=new SafeMap();
-				for (final String key: st.json().keySet()) {
-					final String value=st.json().get(key).toString();
+				if (st.getCharacterNullable() != null) {
+					st.zone = st.getCharacter().getZone();
+				}
+				final SafeMap parameterMap = new SafeMap();
+				for (final String key : st.json().keySet()) {
+					final String value = st.json().get(key).toString();
 					//System.out.println(key+"="+(value==null?"NULL":value));
-					parameterMap.put(key,value);
+					parameterMap.put(key, value);
 				}
 				st.postMap(parameterMap);
-				Thread.currentThread().setName("Command "+obj.getString("command"));
-				return Modules.run(st,obj.getString("command"),parameterMap);
+				Thread.currentThread().setName("Command " + obj.getString("command"));
+				return Modules.run(st, obj.getString("command"), parameterMap);
+			} else {
+				st.logger().warning("Developer " + developer + " is not authorised at this location:" + st.getRegionName());
+				return new TerminateResponse("Developer key is not authorised at this instance");
 			}
 		}
 
@@ -340,8 +332,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		if (console.startsWith("createinstance ")) {
 			final User ava=st.getAvatarNullable();
 			if (ava==null) { return new ErrorResponse("Null avatar associated with request??"); }
-			boolean ok=false;
-			if (ava.isSuperAdmin()) { ok=true; }
+			final boolean ok = ava.isSuperAdmin();
 			//if (ava.canCreate()) { ok=true; }
 			if (!ok) {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");
@@ -356,8 +347,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			//ava.canCreate(false);
 			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Instance","",console,"");
 			final String success=Region.joinInstance(regionName,instance);
-			if (!"".equals(success)) {
-				return new ErrorResponse("Region registration failed after instance creation: "+success);
+			if (!success.isEmpty()) {
+				return new ErrorResponse("Region registration failed after instance creation: " + success);
 			}
 			final Region region=Region.find(regionName,false);
 			st.setRegion(region);
@@ -394,33 +385,33 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 
 	@Override
-	protected void renderUnhandledError(HttpRequest request, HttpContext context, HttpResponse response, Throwable t) {
-		SL.report("SysIF UnkEx: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error","Sorry, an unhandled internal error occurred.");
-		json.put("responsetype","UnhandledException");
+	protected void renderUnhandledError(final HttpRequest request, final HttpContext context, final HttpResponse response, final Throwable t) {
+		SL.report("SysIF UnkEx: " + t.getLocalizedMessage(), t, state());
+		final JSONObject json = new JSONObject();
+		json.put("error", "Sorry, an unhandled internal error occurred.");
+		json.put("responsetype", "UnhandledException");
 		response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
 		response.setStatusCode(200);
 	}
 
 	@Override
-	protected void renderSystemError(HttpRequest request, HttpContext context, HttpResponse response, SystemException t) {
-		SL.report("SysIF SysEx: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error","Sorry, an internal error occurred.");
-		json.put("responsetype","SystemException");
-		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
-		response.setStatusCode(200);
-	}
+    protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException systemException) {
+        SL.report("SysIF SysEx: " + systemException.getLocalizedMessage(), systemException, state());
+        final JSONObject json = new JSONObject();
+        json.put("error", "Sorry, an internal error occurred.");
+        json.put("responsetype", "SystemException");
+        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
+        response.setStatusCode(200);
+    }
 
-	@Override
-	protected void renderUserError(HttpRequest request, HttpContext context, HttpResponse response, UserException t) {
-		SL.report("SysIF User: "+t.getLocalizedMessage(),t,state());
-		JSONObject json=new JSONObject();
-		json.put("error",t.getLocalizedMessage());
-		json.put("responsetype","UserException");
-		json.put("errorclass",t.getClass().getSimpleName());
-		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
-		response.setStatusCode(200);
-	}
+    @Override
+    protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException userException) {
+        SL.report("SysIF User: " + userException.getLocalizedMessage(), userException, state());
+        final JSONObject json = new JSONObject();
+        json.put("error", userException.getLocalizedMessage());
+        json.put("responsetype", "UserException");
+        json.put("errorclass", userException.getClass().getSimpleName());
+        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
+        response.setStatusCode(200);
+    }
 }

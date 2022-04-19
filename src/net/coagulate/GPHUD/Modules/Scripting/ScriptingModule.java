@@ -15,7 +15,7 @@ import java.util.Set;
 public class ScriptingModule extends ModuleAnnotation {
 	public ScriptingModule(final String name,
 	                       final ModuleDefinition annotation) {
-		super(name,annotation);
+		super(name, annotation);
 	}
 
 	// ---------- INSTANCE ----------
@@ -23,8 +23,8 @@ public class ScriptingModule extends ModuleAnnotation {
 	@Override
 	public Command getCommandNullable(@Nonnull final State st,
 	                                  @Nonnull final String commandname) {
-		if (commandname.equalsIgnoreCase("characterresponse") || commandname.equalsIgnoreCase("stringresponse")) {
-			return super.getCommandNullable(st,commandname);
+		if ("characterresponse".equalsIgnoreCase(commandname) || "stringresponse".equalsIgnoreCase(commandname)) {
+			return super.getCommandNullable(st, commandname);
 		}
 		final Script script=Script.findNullable(st,commandname.replaceFirst("gs",""));
 		if (script==null) { throw new UserInputLookupFailureException("No script named "+commandname+" exists",true); }
@@ -39,7 +39,8 @@ public class ScriptingModule extends ModuleAnnotation {
 		final Set<Script> scripts=Script.getScripts(st);
 		for (final Script script: scripts) {
 			try { commands.put(script.getName(),new ScriptingCommand(script)); }
-			catch (NoDataException ignored) {}
+			catch (final NoDataException ignored) {
+            }
 		}
 		return commands;
 	}

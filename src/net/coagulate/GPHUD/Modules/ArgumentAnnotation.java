@@ -80,7 +80,9 @@ public class ArgumentAnnotation extends Argument {
 
 	public boolean mandatory() { return meta.mandatory(); }
 
-	public Class<? extends Object> objectType() { return parameter.getType(); }
+	public Class<?> objectType() {
+		return parameter.getType();
+	}
 
 	public boolean delayTemplating() { return meta.delayTemplating(); }
 

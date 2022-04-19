@@ -33,17 +33,17 @@ public class MenuModule extends ModuleAnnotation {
     public static String generateMainMenu(final State st,
                                           final String key) {
         if (st.mainMenuTemplate == null) {
-            JSONObject menu = Modules.getJSONTemplate(st, "menus.main");
+            final JSONObject menu = Modules.getJSONTemplate(st, "menus.main");
             if (st.getCharacter().getProtocol() >= 4) { // shortened format
                 int button = 0;
-                StringBuilder newMainMenuTemplate = new StringBuilder();
+                final StringBuilder newMainMenuTemplate = new StringBuilder();
 
                 boolean first = true;
                 while (menu.has("arg0button" + button)) {
-                    if (!first) {
-                        newMainMenuTemplate.append("|");
-                    } else {
+                    if (first) {
                         first = false;
+                    } else {
+                        newMainMenuTemplate.append("|");
                     }
                     newMainMenuTemplate.append(menu.getString("arg0button" + button));
                     button++;
@@ -64,8 +64,8 @@ public class MenuModule extends ModuleAnnotation {
     @Nonnull
     @Override
     public Command getCommandNullable(@Nonnull final State st,
-                                      @Nonnull final String commandName) {
-        return new MenuCommand(st, commandName, Menu.getMenu(st, commandName).getJSON());
+                                      @Nonnull final String commandname) {
+        return new MenuCommand(st, commandname, Menu.getMenu(st, commandname).getJSON());
     }
 
     @Nonnull

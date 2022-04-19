@@ -305,154 +305,140 @@ public abstract class Command {
 			t.openRow();
 			//                t.add(p.getName());
 			t.add(arg.description());
-			switch (arg.type()) {
-				case AVATAR:
-				case TEXT_CLEAN:
-				case TEXT_INTERNAL_NAME:
-				case TEXT_ONELINE:
-				case TEXT_MULTILINE:
-				case COORDINATES:
-				case CHARACTER:
-				case CHARACTER_PLAYABLE: // FIXME this can be done properly
-				case FLOAT:
-				case INTEGER:
-					t.add(new TextInput(arg.name()));
-					break;
-				case PASSWORD:
-					t.add(new PasswordInput(arg.name()));
-					break;
-				case BOOLEAN:
-					t.add(new CheckBox(arg.name()));
-					break;
-				case ATTRIBUTE_WRITABLE:
-				case ATTRIBUTE:
-					final DropDownList attributes=new DropDownList(arg.name());
-					for (final Attribute a: st.getAttributes()) {
-						if (arg.type()==ArgumentType.ATTRIBUTE || a.getSelfModify()) { attributes.add(a.getName()); }
+			switch (arg.type()) { // FIXME this can be done properly
+				case AVATAR, TEXT_CLEAN, TEXT_INTERNAL_NAME, TEXT_ONELINE, TEXT_MULTILINE, COORDINATES, CHARACTER, CHARACTER_PLAYABLE, FLOAT, INTEGER ->
+						t.add(new TextInput(arg.name()));
+				case PASSWORD -> t.add(new PasswordInput(arg.name()));
+				case BOOLEAN -> t.add(new CheckBox(arg.name()));
+				case ATTRIBUTE_WRITABLE, ATTRIBUTE -> {
+					final DropDownList attributes = new DropDownList(arg.name());
+					for (final Attribute a : st.getAttributes()) {
+						if (arg.type() == ArgumentType.ATTRIBUTE || a.getSelfModify()) {
+							attributes.add(a.getName());
+						}
 					}
 					t.add(attributes);
-					break;
-				case CHARACTER_FACTION:
-					final DropDownList factionMembers=new DropDownList(arg.name());
-					final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
-					if (faction==null) {
+				}
+				case CHARACTER_FACTION -> {
+					final DropDownList factionMembers = new DropDownList(arg.name());
+					final CharacterGroup faction = CharacterGroup.getGroup(st, "Faction");
+					if (faction == null) {
 						throw new UserInputStateException("You are in no faction");
 					}
-					for (final Char c: faction.getMembers()) {
+					for (final Char c : faction.getMembers()) {
 						factionMembers.add(c.getName());
 					}
 					t.add(factionMembers);
-					break;
-				case CHARACTER_NEAR:
-					final DropDownList characters=new DropDownList(arg.name());
-					for (final Char c: st.getCharacter().getNearbyCharacters(st)) {
+				}
+				case CHARACTER_NEAR -> {
+					final DropDownList characters = new DropDownList(arg.name());
+					for (final Char c : st.getCharacter().getNearbyCharacters(st)) {
 						characters.add(c.getName());
 					}
 					t.add(characters);
-					break;
-				case EFFECT:
-					final DropDownList effectList=new DropDownList(arg.name());
-					for (final Effect effect: Effect.getAll(st.getInstance())) {
+				}
+				case EFFECT -> {
+					final DropDownList effectList = new DropDownList(arg.name());
+					for (final Effect effect : Effect.getAll(st.getInstance())) {
 						effectList.add(effect.getName());
 					}
 					t.add(effectList);
-					break;
-				case EVENT:
-					final DropDownList eventList=new DropDownList(arg.name());
-					for (final Event event: Event.getAll(st.getInstance())) {
+				}
+				case EVENT -> {
+					final DropDownList eventList = new DropDownList(arg.name());
+					for (final Event event : Event.getAll(st.getInstance())) {
 						eventList.add(event.getName());
 					}
 					t.add(eventList);
-					break;
-				case MODULE:
-					final DropDownList moduleList=new DropDownList(arg.name());
-					for (final Module aModule: Modules.getModules()) {
+				}
+				case MODULE -> {
+					final DropDownList moduleList = new DropDownList(arg.name());
+					for (final Module aModule : Modules.getModules()) {
 						moduleList.add(aModule.getName());
 					}
 					t.add(moduleList);
-					break;
-				case CURRENCY:
-					final DropDownList currencyList=new DropDownList(arg.name());
-					for (final Currency aCurrency: Currency.getAll(st)) {
+				}
+				case CURRENCY -> {
+					final DropDownList currencyList = new DropDownList(arg.name());
+					for (final Currency aCurrency : Currency.getAll(st)) {
 						currencyList.add(aCurrency.getName());
 					}
 					t.add(currencyList);
-					break;
-				case REGION:
-					final DropDownList regionList=new DropDownList(arg.name());
-					for (final Region aRegion: Region.getRegions(st,false)) {
+				}
+				case REGION -> {
+					final DropDownList regionList = new DropDownList(arg.name());
+					for (final Region aRegion : Region.getRegions(st, false)) {
 						regionList.add(aRegion.getName());
 					}
 					t.add(regionList);
-					break;
-				case ZONE:
-					final DropDownList zoneList=new DropDownList(arg.name());
-					for (final Zone aZone: Zone.getZones(st)) {
+				}
+				case ZONE -> {
+					final DropDownList zoneList = new DropDownList(arg.name());
+					for (final Zone aZone : Zone.getZones(st)) {
 						zoneList.add(aZone.getName());
 					}
 					t.add(zoneList);
-					break;
-				case KVLIST:
-					final DropDownList list=new DropDownList(arg.name());
-					for (final String g: Modules.getKVList(st)) {
-						list.add(g,g+" - "+st.getKVDefinition(g).description());
+				}
+				case KVLIST -> {
+					final DropDownList list = new DropDownList(arg.name());
+					for (final String g : Modules.getKVList(st)) {
+						list.add(g, g + " - " + st.getKVDefinition(g).description());
 					}
 					t.add(list);
-					break;
-				case CHARACTERGROUP:
-					final DropDownList charGroupList=new DropDownList(arg.name());
-					for (final CharacterGroup g: st.getInstance().getCharacterGroups()) {
+				}
+				case CHARACTERGROUP -> {
+					final DropDownList charGroupList = new DropDownList(arg.name());
+					for (final CharacterGroup g : st.getInstance().getCharacterGroups()) {
 						charGroupList.add(g.getNameSafe());
 					}
 					t.add(charGroupList);
-					break;
-				case PERMISSIONSGROUP:
-					final DropDownList permGroupList=new DropDownList(arg.name());
-					for (final PermissionsGroup g: PermissionsGroup.getPermissionsGroups(st)) {
+				}
+				case PERMISSIONSGROUP -> {
+					final DropDownList permGroupList = new DropDownList(arg.name());
+					for (final PermissionsGroup g : PermissionsGroup.getPermissionsGroups(st)) {
 						permGroupList.add(g.getNameSafe());
 					}
 					t.add(permGroupList);
-					break;
-				case PERMISSION:
-					final DropDownList permList=new DropDownList(arg.name());
-					for (final Module m: Modules.getModules()) {
-						for (final String entry: m.getPermissions(st).keySet()) {
-							permList.add(m.getName()+"."+entry);
+				}
+				case PERMISSION -> {
+					final DropDownList permList = new DropDownList(arg.name());
+					for (final Module m : Modules.getModules()) {
+						for (final String entry : m.getPermissions(st).keySet()) {
+							permList.add(m.getName() + "." + entry);
 						}
 					}
 					t.add(permList);
-					break;
-				case CHOICE:
-					final DropDownList choiceList=new DropDownList(arg.name());
-					for (final String s: arg.getChoices(st)) {
+				}
+				case CHOICE -> {
+					final DropDownList choiceList = new DropDownList(arg.name());
+					for (final String s : arg.getChoices(st)) {
 						choiceList.add(s);
 					}
 					t.add(choiceList);
-					break;
-				case INVENTORY:
-					final DropDownList inventoryList=new DropDownList(arg.name());
-					for (Attribute attribute:Inventory.getAll(st)) {
+				}
+				case INVENTORY -> {
+					final DropDownList inventoryList = new DropDownList(arg.name());
+					for (final Attribute attribute : Inventory.getAll(st)) {
 						inventoryList.add(attribute.getName());
 					}
 					t.add(inventoryList);
-					break;
-				case SET:
-					final DropDownList setList=new DropDownList(arg.name());
-					for (Attribute attribute:CharacterSet.getAll(st)) {
+				}
+				case SET -> {
+					final DropDownList setList = new DropDownList(arg.name());
+					for (final Attribute attribute : CharacterSet.getAll(st)) {
 						setList.add(attribute.getName());
 					}
 					t.add(setList);
-					break;
-				case ITEM:
-					final DropDownList itemList=new DropDownList(arg.name());
-					for (String item:Item.getNames(st)) {
+				}
+				case ITEM -> {
+					final DropDownList itemList = new DropDownList(arg.name());
+					for (final String item : Item.getNames(st)) {
 						itemList.add(item);
 					}
 					t.add(itemList);
-					break;
-
-				default:
-					throw new SystemImplementationException("Unhandled ENUM TYPE in populateForm():"+arg.type());
+				}
+				default ->
+						throw new SystemImplementationException("Unhandled ENUM TYPE in populateForm():" + arg.type());
 			}
 		}
 		if (getArgumentCount()>0) {
@@ -505,12 +491,12 @@ public abstract class Command {
 		final ArgumentType type=argument.type();
 		switch (type) {
 			case TEXT_INTERNAL_NAME:
-				if (v.matches(".*[^a-zA-Z0-9].*")) {
+				if (v.matches(".*[^a-zA-Z\\d].*")) {
 					throw new UserInputValidationFilterException(argument.name()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
 				}
 				// don't put anything here, follow up into the next thing
 			case TEXT_CLEAN:
-				if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
+				if (v.matches(".*[^a-zA-Z\\d.'\\-, ].*")) {
 					throw new UserInputValidationFilterException(argument.name()+" should only consist of simple characters (a-z 0-9 .'-,) and you entered '"+v+"'");
 				}
 				// don't put anything here, follow up into the next thing
@@ -585,28 +571,27 @@ public abstract class Command {
 				if (v.startsWith(">")) {
 					v=v.substring(1);
 					try {
-						final User a=User.findUsername(v,false);
-						targetChar=Char.getActive(a,state.getInstance());
+						final User a = User.findUsername(v, false);
+						targetChar = Char.getActive(a, state.getInstance());
+					} catch (@Nonnull final NoDataException e) {
+						throw new UserInputLookupFailureException("Unable to find character of avatar named '" + v + "'", e);
 					}
-					catch (@Nonnull final NoDataException e) {
-						throw new UserInputLookupFailureException("Unable to find character of avatar named '"+v+"'",e);
-					}
+				} else {
+					targetChar = Char.resolve(state, v);
 				}
-				else {
-					targetChar=Char.resolve(state,v);
-				}
-				if (targetChar!=null) { return targetChar; }
-				else {
-					throw new UserInputLookupFailureException("Unable to find character named '"+v+"'");
+				if (targetChar == null) {
+					throw new UserInputLookupFailureException("Unable to find character named '" + v + "'");
+				} else {
+					return targetChar;
 				}
 			case REGION:
-				return assertNotNull(Region.findNullable(v,false),v,"region name");
+				return assertNotNull(Region.findNullable(v, false), v, "region name");
 			case EVENT:
-				return assertNotNull(Event.find(state.getInstance(),v),v,"event name");
+				return assertNotNull(Event.find(state.getInstance(), v), v, "event name");
 			case EFFECT:
-				return assertNotNull(Effect.find(state.getInstance(),v),v,"effect name");
+				return assertNotNull(Effect.find(state.getInstance(), v), v, "effect name");
 			case ZONE:
-				return assertNotNull(Zone.findNullable(state.getInstance(),v),v,"zone name");
+				return assertNotNull(Zone.findNullable(state.getInstance(), v), v, "zone name");
 			case AVATAR:
 			case AVATAR_NEAR:
 				final User user=User.findUsernameNullable(v,false);
@@ -673,48 +658,16 @@ public abstract class Command {
 	}
 
 	private int getMaximumLength(final Argument argument) {
-		final ArgumentType type=argument.type();
-		switch (type) {
-			case TEXT_CLEAN:
-			case TEXT_ONELINE:
-			case TEXT_INTERNAL_NAME:
-			case TEXT_MULTILINE:
-				return argument.max();
-			case PASSWORD:
-			case CHOICE:
-				return 1024;
-			case BOOLEAN:
-				return 8;
-			case INTEGER:
-			case FLOAT:
-				return 32;
-			case CHARACTER:
-			case ATTRIBUTE_WRITABLE:
-			case ATTRIBUTE:
-			case SET:
-			case INVENTORY:
-			case COORDINATES:
-			case ZONE:
-			case REGION:
-			case MODULE:
-			case PERMISSION:
-			case PERMISSIONSGROUP:
-			case AVATAR_NEAR:
-			case AVATAR:
-			case CHARACTER_FACTION:
-			case CHARACTER_NEAR:
-			case CHARACTER_PLAYABLE:
-			case EFFECT:
-			case CURRENCY:
-				return 64;
-			case CHARACTERGROUP:
-			case EVENT:
-			case KVLIST:
-			case ITEM:
-				return 128;
-			default:
-				throw new SystemImplementationException("Argument "+argument.name()+" of type "+argument.type().name()+" fell through maximum length");
-		}
+		final ArgumentType type = argument.type();
+		return switch (type) {
+			case TEXT_CLEAN, TEXT_ONELINE, TEXT_INTERNAL_NAME, TEXT_MULTILINE -> argument.max();
+			case PASSWORD, CHOICE -> 1024;
+			case BOOLEAN -> 8;
+			case INTEGER, FLOAT -> 32;
+			case CHARACTER, ATTRIBUTE_WRITABLE, ATTRIBUTE, SET, INVENTORY, COORDINATES, ZONE, REGION, MODULE, PERMISSION, PERMISSIONSGROUP, AVATAR_NEAR, AVATAR, CHARACTER_FACTION, CHARACTER_NEAR, CHARACTER_PLAYABLE, EFFECT, CURRENCY ->
+					64;
+			case CHARACTERGROUP, EVENT, KVLIST, ITEM -> 128;
+		};
 	}
 
 

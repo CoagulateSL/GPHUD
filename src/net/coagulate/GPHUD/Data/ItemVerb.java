@@ -20,8 +20,10 @@ public class ItemVerb extends TableRow {
     }
 
     @Override
-    public void validate(@Nonnull State st) {
-        if (st.getInstance()!=getInstance()) { throw new SystemImplementationException("State Instance/Item Instance mismatch"); }
+    public void validate(@Nonnull final State st) {
+        if (st.getInstance() != getInstance()) {
+            throw new SystemImplementationException("State Instance/Item Instance mismatch");
+        }
     }
 
     @Nullable
@@ -69,16 +71,33 @@ public class ItemVerb extends TableRow {
 
     public Instance getInstance() { return getItem().getInstance(); }
 
-    public String description() { return getString("description"); }
-    public void description(String newDescription) { set("description",newDescription); }
-    public String verb() { return getString("verb"); }
-    public void verb(String newDescription) { set("verb",newDescription); }
-    public JSONObject payload() { return new JSONObject(getString("payload")); }
-    public void payload(JSONObject newDescription) { set("payload",newDescription.toString()); }
+    public String description() {
+        return getString("description");
+    }
+
+    public void description(final String newDescription) {
+        set("description", newDescription);
+    }
+
+    public String verb() {
+        return getString("verb");
+    }
+
+    public void verb(final String newDescription) {
+        set("verb", newDescription);
+    }
+
+    public JSONObject payload() {
+        return new JSONObject(getString("payload"));
+    }
+
+    public void payload(final JSONObject newDescription) {
+        set("payload", newDescription.toString());
+    }
 
     @Nullable
     public static ItemVerb findNullable(@Nonnull final Item item,@Nonnull final String verb) {
-        for (ResultsRow row:db().dq("select * from itemverbs where itemid=? and verb=?",item.getId(),verb)) {
+        for (final ResultsRow row : db().dq("select * from itemverbs where itemid=? and verb=?", item.getId(), verb)) {
             return get(row.getInt("id"));
         }
         return null;
@@ -86,14 +105,14 @@ public class ItemVerb extends TableRow {
 
     @Nonnull
     public static ItemVerb find(@Nonnull final Item item,@Nonnull final String verb) {
-        ItemVerb ret=findNullable(item,verb);
+        final ItemVerb ret = findNullable(item, verb);
         if (ret==null) { throw new UserInputLookupFailureException("Item "+item.getName()+" has no action "+verb); }
         return ret;
     }
 
     @Nonnull
     public static ItemVerb create(@Nonnull final Item item,@Nonnull final String verb) {
-        ItemVerb ret=findNullable(item,verb);
+        final ItemVerb ret = findNullable(item, verb);
         if (ret!=null) { throw new UserInputDuplicateValueException("Item "+item.getName()+" already has an action named "+verb); }
         db().d("insert into itemverbs(itemid,verb) values(?,?)",item.getId(),verb);
         return find(item,verb);
@@ -101,8 +120,8 @@ public class ItemVerb extends TableRow {
 
     @Nonnull
     public static Set<ItemVerb> findAll(@Nonnull final Item item) {
-        Set<ItemVerb> set=new TreeSet<>();
-        for (ResultsRow row:db().dq("select id from itemverbs where itemid=?",item.getId())) {
+        final Set<ItemVerb> set = new TreeSet<>();
+        for (final ResultsRow row : db().dq("select id from itemverbs where itemid=?", item.getId())) {
             set.add(get(row.getInt("id")));
         }
         return set;

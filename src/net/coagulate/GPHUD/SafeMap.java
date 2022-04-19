@@ -2,6 +2,7 @@ package net.coagulate.GPHUD;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serial;
 import java.util.TreeMap;
 
 /**
@@ -9,8 +10,10 @@ import java.util.TreeMap;
  *
  * @author iain
  */
+@SuppressWarnings("MethodOverloadsMethodOfSuperclass")
 public class SafeMap extends TreeMap<String,String> {
-	private static final long serialVersionUID=1L;
+	@Serial
+    private static final long serialVersionUID=1L;
 
 	// ----- Internal Statics -----
 	@Nonnull

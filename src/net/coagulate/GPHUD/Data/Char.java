@@ -45,7 +45,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Char extends TableRow {
 
-	protected Cache<Pool,Integer> poolSumCache=Cache.getCache("GPHUD/characterPoolSums/"+getId(),CacheConfig.OPERATIONAL_CONFIG);
+	protected final Cache<Pool, Integer> poolSumCache = Cache.getCache("GPHUD/characterPoolSums/" + getId(), CacheConfig.OPERATIONAL_CONFIG);
 
 	protected Char(final int id) { super(id); }
 
@@ -266,14 +266,14 @@ public class Char extends TableRow {
 	                                      final String listName) {
 		final DropDownList list=new DropDownList(listName);
 		for (final ResultsRow row: db().dq("select characterid,name from characters where instanceid=? and owner=?",st.getInstance().getId(),User.getSystem().getId())) {
-			list.add(row.getIntNullable("characterid")+"",row.getStringNullable("name"));
+			list.add(String.valueOf(row.getIntNullable("characterid")), row.getStringNullable("name"));
 		}
 		return list;
 	}
 
 	/**
 	 * Get a list of HUDs that haven't checked in in over 60 seconds
-	 *
+	 * <p>
 	 * //TODO this needs to be improved
 	 *
 	 * @return Results set of a db query (boo)
@@ -281,7 +281,7 @@ public class Char extends TableRow {
 	public static Results getPingable() {
 		return db().dq("select characterid,name,url,urllast from characters where url is not null and authnode like ? and urllast<? order by urllast asc "+"limit 0,30",
 		               Interface.getNode(),
-		               UnixTime.getUnixTime()-(Maintenance.PINGHUDINTERVAL*60)
+		               getUnixTime() - (Maintenance.PINGHUDINTERVAL * 60)
 		              );
 	}
 
@@ -445,7 +445,7 @@ public class Char extends TableRow {
 		name=name.replaceAll("[A-Za-z ]",""); // alphabetic, space and dash
 		final String allowList=st.getKV("Instance.AllowedNamingSymbols").toString();
 		for (int i=0;i<allowList.length();i++) {
-			final String allow=allowList.charAt(i)+"";
+			final String allow = String.valueOf(allowList.charAt(i));
 			name=name.replaceAll(Pattern.quote(allow),"");
 		}
 		// unique the characters in the string.  There's a better way of doing this surely.
@@ -454,7 +454,9 @@ public class Char extends TableRow {
 			// bad de-duping code
 			final Set<String> characters=new HashSet<>(); // just dont like the java type 'character' in this project
 			// stick all the symbols in a set :P
-			for (int i=0;i<name.length();i++) { characters.add(name.charAt(i)+""); }
+			for (int i = 0; i < name.length(); i++) {
+				characters.add(String.valueOf(name.charAt(i)));
+			}
 			// and reconstitute it
 			for (final String character: characters) { blockedChars.append(character); }
 			throw new UserInputValidationFilterException("Disallowed characters present in character name, avoid using the following: "+blockedChars+".  Please ensure you are "+"entering JUST A NAME at this point, not descriptive details.",true);
@@ -492,9 +494,9 @@ public class Char extends TableRow {
 		}
 
 		// if there was a URL, send it a shutdown
-		if (oldURL!=null && !("".equals(oldURL))) {
-			final JSONObject shutdown=new JSONObject().put("incommand","shutdown").put("shutdown","Connection replaced by new character connection");
-			final Transmission t=new Transmission(this,shutdown,oldURL);
+		if (oldURL != null && !(oldURL.isEmpty())) {
+			final JSONObject shutdown = new JSONObject().put("incommand", "shutdown").put("shutdown", "Connection replaced by new character connection");
+			final Transmission t = new Transmission(this, shutdown, oldURL);
 			t.start();
 		}
 		// set the URL
@@ -581,16 +583,16 @@ public class Char extends TableRow {
 	 * Disconnects a character.  Does not send a terminate to the URL
 	 */
 	public void disconnect() {
-		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",null, //playedby
-		  UnixTime.getUnixTime()-1, //lastactive
-		  null, //url
-		  null, //urlfirst
-		  null, //urllast
-		  null, //authnode
-		  null, //zone
-		  null, //region
-		  getId()
-		 ); //character id
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?", null, //playedby
+				getUnixTime() - 1, //lastactive
+				null, //url
+				null, //urlfirst
+				null, //urllast
+				null, //authnode
+				null, //zone
+				null, //region
+				getId()
+		); //character id
 		zoneCache.purge(this);
 	}
 
@@ -602,7 +604,7 @@ public class Char extends TableRow {
 
 	@Deprecated
 	public void setActive() {
-		db().d("update characters set lastactive=? where characterid=?",UnixTime.getUnixTime()+1,getId());
+		db().d("update characters set lastactive=? where characterid=?", getUnixTime() + 1, getId());
 	}
 
 	public void login(final User user,
@@ -610,16 +612,16 @@ public class Char extends TableRow {
 	                  final String url) {
 		disconnectURL(url);
 		logoutByAvatar(user,this);
-		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",user.getId(), // played by
-		  UnixTime.getUnixTime(), // last active
-		  url, // url
-		  UnixTime.getUnixTime(), //urlfirst
-		  UnixTime.getUnixTime(), // urllast
-		  Interface.getNode(), //node
-		  null, //zone
-		  region.getId(), //region id
-		  getId()
-		 ); // where char id
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?", user.getId(), // played by
+				getUnixTime(), // last active
+				url, // url
+				getUnixTime(), //urlfirst
+				getUnixTime(), // urllast
+				Interface.getNode(), //node
+				null, //zone
+				region.getId(), //region id
+				getId()
+		); // where char id
 		zoneCache.purge(this);
 	}
 
@@ -679,8 +681,8 @@ public class Char extends TableRow {
 	 */
 	public int getLevel(@Nonnull final State st) {
 		if (st.hasModule("Experience")) {
-			int level=Experience.toLevel(st,Experience.getExperience(st,this));
-			int maxLevel=st.getKV("Experience.MaxLevel").intValue();
+			int level = Experience.toLevel(st, Experience.getExperience(st, this));
+			final int maxLevel = st.getKV("Experience.MaxLevel").intValue();
 			if (maxLevel==0) { return level; }
 			if (level>maxLevel) { level=maxLevel; }
 			return level;
@@ -873,7 +875,7 @@ public class Char extends TableRow {
 
 	@Nonnull
 	public User getPlayedBy() {
-		User response=getPlayedByNullable();
+		final User response = getPlayedByNullable();
 		if (response!=null) { return response; }
 		throw new UserInputStateException("Character "+getName()+" is not currently registered as being played by any Agent.");
 	}
@@ -930,7 +932,7 @@ public class Char extends TableRow {
 	 * Called when a ping to the URL completes, update the timer
 	 */
 	public void pinged() {
-		d("update characters set urllast=? where characterid=?",UnixTime.getUnixTime(),getId());
+		d("update characters set urllast=? where characterid=?", getUnixTime(), getId());
 	}
 
 	/**
@@ -948,8 +950,8 @@ public class Char extends TableRow {
 		final JSONObject json=new JSONObject();
 		appendConveyance(new State(this),json);
 		//System.out.println("Consider pushing: "+json.toString()+" = "+json.keySet().size());
-		if (json.keySet().size()>0) {
-			new Transmission(this,json).start();
+		if (!json.keySet().isEmpty()) {
+			new Transmission(this, json).start();
 		}
 	}
 
@@ -999,12 +1001,13 @@ public class Char extends TableRow {
 		return conveyances;
 	}
 
-    public void setProtocol(int protocol) {
-		set("protocol",protocol);
-		protocolCache.set(this,protocol);
-    }
-    public int getProtocol() {
-		return protocolCache.get(this, ()->getInt("protocol"));
+	public void setProtocol(final int protocol) {
+		set("protocol", protocol);
+		protocolCache.set(this, protocol);
+	}
+
+	public int getProtocol() {
+		return protocolCache.get(this, () -> getInt("protocol"));
 	}
 	private static final Cache<Char,Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
 }

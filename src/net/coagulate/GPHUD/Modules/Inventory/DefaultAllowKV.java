@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
  */
 public class DefaultAllowKV extends InventoryKV {
 
-	public DefaultAllowKV(@Nonnull Attribute inventory) {
-		super(inventory);
-	}
+	public DefaultAllowKV(@Nonnull final Attribute inventory) {
+        super(inventory);
+    }
 
 	@Nonnull
 	@Override

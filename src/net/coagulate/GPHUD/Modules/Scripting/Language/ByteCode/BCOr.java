@@ -8,18 +8,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCOr extends ByteCode {
-	public BCOr(final ParseNode n) {
-		super(n);
-	}
+    public BCOr(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Pop two, op, push result
-	@Nonnull
-	public String explain() { return "LogicalOr (Pop two, if either not zero push 1, else push 0)"; }
+    // ---------- INSTANCE ----------
+    // Pop two, op, push result
+    @Nonnull
+    public String explain() {
+        return "LogicalOr (Pop two, if either not zero push 1, else push 0)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.LogicalOr.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.LogicalOr.get());
+    }
 
 	@Override
 	public void execute(final State st,

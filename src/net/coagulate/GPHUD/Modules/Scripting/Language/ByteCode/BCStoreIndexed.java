@@ -9,18 +9,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCStoreIndexed extends ByteCode {
-	public BCStoreIndexed(final ParseNode n) {
-		super(n);
-	}
+    public BCStoreIndexed(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Assign a value to an array index
-	// POP the NAME.  POP the index.  POP the content.
-	@Nonnull
-	public String explain() { return "AssignElement (Pop variable name, pop index, pop content, assign)"; }
+    // ---------- INSTANCE ----------
+    // Assign a value to an array index
+    // POP the NAME.  POP the index.  POP the content.
+    @Nonnull
+    public String explain() {
+        return "AssignElement (Pop variable name, pop index, pop content, assign)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.StoreIndexed.get());
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.StoreIndexed.get());
 	}
 
 	@Override

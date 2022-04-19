@@ -31,7 +31,7 @@ public class GSFunctions {
 		final Form f=st.form();
 		String proposedcommand=uri;
 		proposedcommand=proposedcommand.replaceAll("/",".");
-		proposedcommand=proposedcommand.replaceAll("[^A-Za-z0-9.]","");  // limited character set.  XSS protect etc blah blah tainted user input blah
+		proposedcommand=proposedcommand.replaceAll("[^A-Za-z\\d.]","");  // limited character set.  XSS protect etc blah blah tainted user input blah
 
 		final Method method=net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.get(proposedcommand);
 		if (method==null) {

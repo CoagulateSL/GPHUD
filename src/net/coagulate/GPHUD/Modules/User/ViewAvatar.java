@@ -52,17 +52,17 @@ public abstract class ViewAvatar {
 		if (a.getId()==User.getSystem().getId()) {
 			f.p("<b>SYSTEM is a virtual avatar used as an actor for automatic events that are run by GPHUD itself, e.g. character creation, visit xp, and more</b>");
 		}
-		final Table kvtable=new Table();
+		final Table kvtable = new Table();
 		f.add(kvtable);
-		for (final Char c: Char.getCharacters(st.getInstance(),a)) {
+		for (final Char c : Char.getCharacters(st.getInstance(), a)) {
 			kvtable.openRow().add("Owned Character").add(c);
 		}
-		final String lastactive=fromUnixTime(a.getLastActive(),tz)+" "+tz;
+		final String lastactive = fromUnixTime(a.getLastActive(), tz) + " " + tz;
 		kvtable.openRow().add("Last Active").add(lastactive);
 		kvtable.openRow().add("Selected Time Zone").add(tz);
 
-		kvtable.openRow().add("SuperUser").add(""+a.isSuperAdmin());
-		kvtable.openRow().add("DeveloperKey").add(""+a.hasDeveloperKey());
+		kvtable.openRow().add("SuperUser").add(String.valueOf(a.isSuperAdmin()));
+		kvtable.openRow().add("DeveloperKey").add(String.valueOf(a.hasDeveloperKey()));
 	}
 
 	@URLs(url="/avatars/settimezone")

@@ -13,9 +13,9 @@ import java.util.TreeMap;
 
 /**
  * Implements a naming cache, please read the warnings.
- *
+ * <p>
  * PRIMARY USE: Audit display
- *
+ * <p>
  * Warning:  GPHUD is not intended to use caching - the database can be updated by external systems (e.g. the other node).
  * As such caches may become out of date.
  * However, the Audit page contains vast numbers of numeric ID to name lookups, and rather than "miss-cache" or not cache these lookups (about a dozen per Audit record)

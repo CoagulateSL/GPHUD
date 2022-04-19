@@ -80,8 +80,8 @@ public class PoolTable extends PagedSQL {
 		ret+="<td align=right>";
 		ret+=(srcav+(srcav.isEmpty() || srcch.isEmpty()?"":"/")+srcch);
 		ret+="</td>";
-		final String newvaluestr=""+row.getInt("adjustment");
-		final Renderable notes=new Text(cleanse(row.getStringNullable("description")));
+		final String newvaluestr = String.valueOf(row.getInt("adjustment"));
+		final Renderable notes = new Text(cleanse(row.getStringNullable("description")));
 		ret+="<td align=right>";
 		if (poolname.toLowerCase().startsWith("currency.")) {
 			ret+=Currency.find(state,poolname.substring(9)).shortTextForm(row.getInt("adjustment"));
@@ -96,7 +96,7 @@ public class PoolTable extends PagedSQL {
 		if (poolname.toLowerCase().startsWith("currency.")) {
 			ret+=Currency.find(state,poolname.substring(9)).shortTextForm((int)(row.getFloat("cumsum")));
 		} else {
-			ret+=((int)(row.getFloat("cumsum")))+"";
+			ret += String.valueOf((int) (row.getFloat("cumsum")));
 		}
 		ret+="</td>";
 		return ret;

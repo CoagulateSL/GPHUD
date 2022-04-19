@@ -39,17 +39,18 @@ import static net.coagulate.GPHUD.Modules.KV.KVTYPE.COLOR;
 public class State extends DumpableState {
 	public Map<String,String> externals;
 
-	private static final Map<Thread, State> stateMap =new ConcurrentHashMap<>();
-	public int protocol=0; // protocol as specified by remote JSON, if it exists
+	private static final Map<Thread, State> stateMap = new ConcurrentHashMap<>();
+	public int protocol; // protocol as specified by remote JSON, if it exists
 
 	public static void maintenance() {
 		try {
-			for (Thread entry : stateMap.keySet()) {
+			for (final Thread entry : stateMap.keySet()) {
 				if (!entry.isAlive()) {
 					stateMap.remove(entry);
 				}
 			}
-		} catch (ConcurrentModificationException ignored) {}
+		} catch (final ConcurrentModificationException ignored) {
+		}
 	}
 	public static State get() {
 		if (!stateMap.containsKey(Thread.currentThread())) { throw new SystemImplementationException("GPHUD session State is not initialised at this point."); }
@@ -265,7 +266,7 @@ public class State extends DumpableState {
 	public String getDebasedNoQueryURL() {
 		String ret=getDebasedURL();
 		//System.out.println("Pre parsing:"+ret);
-		if (ret.contains("?")) { ret=ret.substring(0,ret.indexOf("?")); }
+		if (ret.contains("?")) { ret=ret.substring(0,ret.indexOf('?')); }
 		//System.out.println("Post parsing:"+ret);
 		return ret;
 	}
@@ -409,11 +410,12 @@ public class State extends DumpableState {
 		if (permission==null || permission.isEmpty()) { return true; }
 		//        Modules.validatePermission(permission);
 		// special case, just in case i do something stupid...
-		if (permission.equalsIgnoreCase("User.SuperAdmin")) {
-			if (isSuperUser()) { return true; }
-			return false; // not even instance owners or elevated stuff bypasses superadmin powers!
+		if ("User.SuperAdmin".equalsIgnoreCase(permission)) {
+			return isSuperUser();// not even instance owners or elevated stuff bypasses superadmin powers!
 		}
-		if (isSuperUser()) { return true; }
+		if (isSuperUser()) {
+			return true;
+		}
 		if (isInstanceOwner()) { return true; }
 		if (elevated()) { return true; }
 		if (User.getSystem().equals(getAvatarNullable())) { return true; }
@@ -490,8 +492,8 @@ public class State extends DumpableState {
 			if (character!=null) { zone=character.getZone(); }
 			for (final Event e: Event.getActive(this)) {
 				//boolean playerInZone=false;
-				for (Zone eventZone:e.getZones()) {
-					if (eventZone==zone) {
+				for (final Zone eventZone : e.getZones()) {
+					if (eventZone == zone) {
 						eventMap.put(e.getId(), e);
 					}
 				}
@@ -581,8 +583,10 @@ public class State extends DumpableState {
 						}
 					}
 					if (triggered) {
-						if (kv.type()==KV.KVTYPE.INTEGER) { return new KVValue(((int) sum)+"",path.toString()); }
-						return new KVValue(sum+"",path.toString());
+						if (kv.type() == KV.KVTYPE.INTEGER) {
+							return new KVValue(String.valueOf((int) sum), path.toString());
+						}
+						return new KVValue(String.valueOf(sum), path.toString());
 					}
 				}
 				return new KVValue(templateDefault(kv),"Template Default");
@@ -646,33 +650,37 @@ public class State extends DumpableState {
 		return out;
 	}
 
-	public void purgeCache(final TableRow dbo) { kvMaps.remove(dbo); }
+	public void purgeCache(final TableRow dbo) {
+		kvMaps.remove(dbo);
+	}
 
 	public void setKV(@Nonnull final TableRow dbo,
-	                  @Nonnull final String key,
-	                  @Nullable String value) {
-		setKV(dbo,key,value,true);
+					  @Nonnull final String key,
+					  @Nullable final String value) {
+		setKV(dbo, key, value, true);
 	}
-	public void setKV(	@Nonnull final TableRow dbo,
-						@Nonnull final String key,
-						@Nullable String value,
-						boolean pushUpdate) {
-		final KV definition=getKVDefinition(key);
-		if (value!=null && !value.isEmpty()) {
+
+	public void setKV(@Nonnull final TableRow dbo,
+					  @Nonnull final String key,
+					  @Nullable String value,
+					  final boolean pushUpdate) {
+		final KV definition = getKVDefinition(key);
+		if (value != null && !value.isEmpty()) {
 			if (!definition.template()) { // these are hard to verify :P
 				switch (definition.type()) {
 					case TEXT: // no checking here :P
 						break;
 					case INTEGER: // check it parses into an int
-						try { Integer.parseInt(value); }
-						catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a whole number, you entered '"+value+"' ("+e.getLocalizedMessage()+")",true);
+						try {
+							Integer.parseInt(value);
+						} catch (@Nonnull final NumberFormatException e) {
+							throw new UserInputValidationParseException(key + " must be a whole number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")", e, true);
 						}
 						break;
 					case FLOAT:
 						try { Float.parseFloat(value); }
 						catch (@Nonnull final NumberFormatException e) {
-							throw new UserInputValidationParseException(key+" must be a number, you entered '"+value+"' ("+e.getLocalizedMessage()+")",true);
+							throw new UserInputValidationParseException(key + " must be a number, you entered '" + value + "' (" + e.getLocalizedMessage() + ")", e, true);
 						}
 						break;
 					case UUID:
@@ -689,10 +697,10 @@ public class State extends DumpableState {
 					case COMMAND:
 						try { Modules.getCommandNullable(this,value); }
 						catch (@Nonnull final SystemException e) {
-							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' and it gave a weird error");
+							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' and it gave a weird error", e);
 						}
 						catch (@Nonnull final UserException f) {
-							throw new UserInputValidationParseException(key+" must be an internal command, you entered '"+value+"' ("+f.getLocalizedMessage()+")");
+							throw new UserInputValidationParseException(key + " must be an internal command, you entered '" + value + "' (" + f.getLocalizedMessage() + ")", f);
 						}
 						break;
 					case COLOR:
@@ -768,23 +776,33 @@ public class State extends DumpableState {
 	public String toString() {
 		final StringBuilder ret=new StringBuilder();
 		if (instance!=null) {
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Instance:").append(instance.getName());
 		}
 		if (region!=null) {
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Region:").append(region.getName());
 		}
 		if (zone!=null) {
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Zone:").append(zone.getName());
 		}
 		if (character!=null) {
 			for (final CharacterGroup c: CharacterGroup.getGroups(character)) {
-				if (ret.length()>0) { ret.append(", "); }
+				if (!ret.isEmpty()) {
+					ret.append(", ");
+				}
 				ret.append("Group:").append(c.getName());
 			}
-			if (ret.length()>0) { ret.append(", "); }
+			if (!ret.isEmpty()) {
+				ret.append(", ");
+			}
 			ret.append("Char:").append(character.getName());
 		}
 		return ret.toString();
@@ -1033,9 +1051,15 @@ public class State extends DumpableState {
 		return object;
 	}
 
-	private boolean suppressOutput =false;
-	public void suppressOutput(boolean template) { this.suppressOutput =template; }
-	public boolean suppressOutput() { return suppressOutput; }
+	private boolean suppressOutput;
+
+	public void suppressOutput(final boolean template) {
+		this.suppressOutput = template;
+	}
+
+	public boolean suppressOutput() {
+		return suppressOutput;
+	}
 
 	public enum Sources {
 		NONE,

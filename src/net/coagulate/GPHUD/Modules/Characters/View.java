@@ -176,13 +176,13 @@ public abstract class View {
 			kvtable.openRow();
 			kvtable.add(a.getName());
 			//System.out.println("About to print attribute "+a.getName());
-			String value=a.getCharacterValue(simulated);
+			final String value = a.getCharacterValue(simulated);
 			kvtable.add(value!=null?value:"");
-			String description=a.getCharacterValueDescription(simulated);
+			StringBuilder description= new StringBuilder(a.getCharacterValueDescription(simulated));
 			if (a.getType()==SET || a.getType()==INVENTORY) {
-				description="";
-				CharacterSet set;
-				String actionURL="/GPHUD/configuration/sets/setset";
+				description = new StringBuilder();
+                final CharacterSet set;
+                String actionURL = "/GPHUD/configuration/sets/setset";
 				String actionAddURL=actionURL;
 				String attributeField="set";
 				String setButton="Set";
@@ -199,17 +199,17 @@ public abstract class View {
 					set=new CharacterSet(simulated.getCharacter(),a);
 				}
 				if (st.hasPermission("Characters.Set"+a.getName())) {
-					for (Map.Entry<String, Integer> element : set.elements().entrySet()) {
-						final Form create = new Form();
-						create.inline();
-						create.setAction(actionURL);
-						create.add(new Hidden("character", simulated.getCharacter().getName()));
-						create.add(new Hidden(attributeField, a.getName()));
-						create.add(new Hidden(elementField, element.getKey()));
-						create.add(new Hidden("qty", "" + element.getValue()));
+                    for (final Map.Entry<String, Integer> element : set.elements().entrySet()) {
+                        final Form create = new Form();
+                        create.inline();
+                        create.setAction(actionURL);
+                        create.add(new Hidden("character", simulated.getCharacter().getName()));
+                        create.add(new Hidden(attributeField, a.getName()));
+                        create.add(new Hidden(elementField, element.getKey()));
+						create.add(new Hidden("qty", String.valueOf(element.getValue())));
 						create.add(new Hidden("okreturnurl", st.getFullURL()));
-						create.add(new Button(element.getValue() + "x" + element.getKey()));
-						description = description + create.asHtml(simulated, true);
+                        create.add(new Button(element.getValue() + "x" + element.getKey()));
+                        description.append(create.asHtml(simulated, true));
 					}
 					final Form create = new Form();
 					create.inline();
@@ -222,10 +222,10 @@ public abstract class View {
 					content = create.asHtml(simulated, true);
 				} else {
 					// can't edit set
-					description=set.textList();
+					description = new StringBuilder(set.textList());
 				}
 			}
-			kvtable.add(description);
+			kvtable.add(description.toString());
 			kvtable.add(content);
 		}
 		if (st.hasModule("notes")) {

@@ -184,7 +184,12 @@ public abstract class Management {
 		}
 		// or a member
 		boolean ingroup=false;
-		for (final Char c: faction.getMembers()) { if (c==newowner) { ingroup=true; }}
+		for (final Char c: faction.getMembers()) {
+			if (c == newowner) {
+				ingroup = true;
+				break;
+			}
+		}
 		if (!ingroup) {
 			return new ErrorResponse("New leader "+newowner.getName()+" must be in faction "+faction.getName());
 		}
@@ -323,8 +328,7 @@ public abstract class Management {
 			return new ErrorResponse(character.getName()+" is not a member of faction "+faction.getName());
 		}
 		// must be instance admin or faction owner
-		boolean ok=false;
-		if (faction.getOwner()==st.getCharacter()) { ok=true; }
+		boolean ok = faction.getOwner() == st.getCharacter();
 		if (!ok && st.hasPermission("Faction.Create")) {ok=true; }
 		if (!ok) {
 			return new ErrorResponse("You must be faction owner, or have Faction.Create permissions to set admin flags");
@@ -337,7 +341,7 @@ public abstract class Management {
 		else {
 			character.hudMessage("You are no longer a faction administrator for "+faction.getName());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,character,"SetAdmin",faction.getName(),oldflag+"",admin+"","Set admin flag");
+		Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetAdmin", faction.getName(), String.valueOf(oldflag), String.valueOf(admin), "Set admin flag");
 		return new OKResponse("Successfully altered admin flag on "+character+" in "+faction);
 	}
 

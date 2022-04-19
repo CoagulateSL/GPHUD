@@ -79,7 +79,7 @@ public class Connect {
 			final ObjectType ot=ObjectType.materialise(st,objecttype);
 			behaviour=ot.explainText();
 			behaviour+="\nOperating mode: "+ot.mode();
-			Char associatedCharacter=ot.getCharacter();
+			final Char associatedCharacter = ot.getCharacter();
 			if (associatedCharacter!=null) { associatedCharacter.setProtocol(st.protocol); }
 			if (st.getCharacterNullable()!=null) { st.getCharacter().setProtocol(st.protocol); }
 			ot.payload(st,response,st.getRegion(),st.callBackURL());

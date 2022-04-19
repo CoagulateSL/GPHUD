@@ -29,11 +29,12 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 
 	protected boolean validated;
 
-	public TableRow(final int id) { super(id); }
+	protected TableRow(final int id) {
+		super(id);
+	}
 
 	protected TableRow() {
-		super();
-	}
+    }
 
 	// ---------- STATICS ----------
 	public static DBConnection db() { return GPHUD.getDB(); }
@@ -53,11 +54,6 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	                             final int id) {
 		return new Link(name,"/GPHUD/"+target+"/view/"+id).asHtml(null,true);
 	}
-
-	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public abstract String getIdColumn();
 
 	@Nonnull
 	@Override

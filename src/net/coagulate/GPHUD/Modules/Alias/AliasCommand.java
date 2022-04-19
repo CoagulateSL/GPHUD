@@ -39,15 +39,14 @@ public class AliasCommand extends Command {
 	public AliasCommand(@Nonnull final State st,
 	                    final String name,
 	                    final JSONObject newdef) {
-		super();
 		definition=newdef;
 		this.name=name;
 		if (st.hasModule(definition.getString("invoke"))) {
 			try { targetcommand=Modules.getCommandNullable(st,definition.getString("invoke")); }
-			catch (UserConfigurationRecursionException e) {
-				targetcommand=null;
-				fail=e.getLocalizedMessage();
-			}
+			catch (final UserConfigurationRecursionException e) {
+                targetcommand = null;
+                fail = e.getLocalizedMessage();
+            }
 		}
 		else {
 			targetcommand=null;
@@ -175,17 +174,15 @@ public class AliasCommand extends Command {
 
 		if (arguments.containsKey("target")) {
 			final Object vobject=arguments.get("target");
-			if (vobject instanceof String) {
-				String v=(String) vobject;
+			if (vobject instanceof String v) {
 				final Char targchar;
 				if (v.startsWith(">")) {
-					v=v.substring(1);
+					v = v.substring(1);
 					try {
-						final User a=User.findUsername(v,false);
-						targchar=Char.getActive(a,state.getInstance());
-					}
-					catch (@Nonnull final NoDataException e) {
-						throw new UserInputLookupFailureException("Unable to find character or avatar named '"+v+"'");
+						final User a = User.findUsername(v, false);
+						targchar = Char.getActive(a, state.getInstance());
+					} catch (@Nonnull final NoDataException e) {
+						throw new UserInputLookupFailureException("Unable to find character or avatar named '" + v + "'", e);
 					}
 				}
 				else {
@@ -205,16 +202,19 @@ public class AliasCommand extends Command {
 				boolean delaytemplating=false;
 				for (final Argument arg: getTargetCommand().getArguments()) {
 					if (arg.name().equals(key)) {
-						if (arg.type()==ArgumentType.FLOAT || arg.type()==ArgumentType.INTEGER) {
-							numeric=true;
-							if (arg.type()==ArgumentType.INTEGER) { integer=true; }
+						if (arg.type() == ArgumentType.FLOAT || arg.type() == ArgumentType.INTEGER) {
+							numeric = true;
+							if (arg.type() == ArgumentType.INTEGER) {
+								integer = true;
+							}
 						}
-						if (arg.delayTemplating()) { delaytemplating=true; }
-						if (!delaytemplating) {
-							arguments.put(key,convertArgument(state,arg,Templater.template(state,getDefinition().getString(key),numeric,integer)));
+						if (arg.delayTemplating()) {
+							delaytemplating = true;
 						}
-						else {
-							arguments.put(key,convertArgument(state,arg,getDefinition().getString(key)));
+						if (delaytemplating) {
+							arguments.put(key, convertArgument(state, arg, getDefinition().getString(key)));
+						} else {
+							arguments.put(key, convertArgument(state, arg, Templater.template(state, getDefinition().getString(key), numeric, integer)));
 						}
 					}
 				}

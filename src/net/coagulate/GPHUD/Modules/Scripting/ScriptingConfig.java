@@ -53,7 +53,7 @@ public class ScriptingConfig {
 	public static void deleteScript(@Nonnull final State st,
 									@Nonnull final SafeMap values) {
 		final Form f = st.form();
-		String scriptName=values.get("scriptname");
+        final String scriptName = values.get("scriptname");
 		if (!(scriptName.isEmpty() || values.get("confirm").isEmpty())) {
 			Script.find(st,scriptName).delete();
 			Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Delete",values.get("scriptname"),"","","Deleted script");
@@ -107,16 +107,14 @@ public class ScriptingConfig {
 					gsscript=parser.Start();
 				}
 				catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-					if (e instanceof ParseException) {
-						final ParseException pe=(ParseException) e;
+					if (e instanceof final ParseException pe) {
 						final String tokenimage;
-						tokenimage="Last token: "+pe.currentToken.image+"<br>";
-						f.p("<b>Parse failed:</b> "+e+"<br>"+tokenimage);
+						tokenimage = "Last token: " + pe.currentToken.image + "<br>";
+						f.p("<b>Parse failed:</b> " + e + "<br>" + tokenimage);
+					} else {
+						f.p("<b>Parse failed:</b> " + e);
 					}
-					else {
-						f.p("<b>Parse failed:</b> "+e);
-					}
-					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","ParseFail","Saved script, with parse failures");
+					Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Save", script.getName(), "", "ParseFail", "Saved script, with parse failures");
 				}
 				if (gsscript!=null) {
 					final GSCompiler compiler=new GSCompiler(gsscript, script.getName());
@@ -128,34 +126,32 @@ public class ScriptingConfig {
 			}
 			catch (@Nonnull final NullPointerException ex) {
 				throw new GSInternalError("Null pointer exception in compiler",ex);
-			}
-			catch (@Nonnull final Throwable t) {
-				f.p("Compilation failed; "+t);
-				Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
+			} catch (@Nonnull final Throwable t) {
+				f.p("Compilation failed; " + t);
+				Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Save", script.getName(), "", "CompileFail", "Saved script, with compilation failures");
 			}
 		}
-		f.add(new TextHeader("Edit script "+script.getName()));
-		final Table versions=new Table();
-		versions.add("Source code version").add(script.getSourceVersion()+"");
+		f.add(new TextHeader("Edit script " + script.getName()));
+		final Table versions = new Table();
+		versions.add("Source code version").add(String.valueOf(script.getSourceVersion()));
 		versions.openRow();
-		if (script.getSourceVersion()!=script.getByteCodeVersion()) {
+		if (script.getSourceVersion() == script.getByteCodeVersion()) {
+			versions.add("Byte code version").add(String.valueOf(script.getByteCodeVersion()));
+		} else {
 			versions.add("<font color=red>Byte code version</font>")
-			        .add("<font color=red>"+script.getByteCodeVersion()+"</font>")
-			        .add("<font color=red>Compiled version is behind source version, please attempt to SAVE SOURCE</font>");
+					.add("<font color=red>" + script.getByteCodeVersion() + "</font>")
+					.add("<font color=red>Compiled version is behind source version, please attempt to SAVE SOURCE</font>");
 		}
-		else {
-			versions.add("Byte code version").add(script.getByteCodeVersion()+"");
-		}
-		versions.openRow().add("Script alias").add(new TextInput("scriptalias",script.alias()));
+		versions.openRow().add("Script alias").add(new TextInput("scriptalias", script.alias()));
 		f.add(versions);
 		f.br();
-		f.add("<textarea name=scriptsource rows=25 cols=80>"+script.getSource()+"</textarea>");
+		f.add("<textarea name=scriptsource rows=25 cols=80>" + script.getSource() + "</textarea>");
 		f.br();
-		f.add(new Button("Save Source","Save Source"));
+		f.add(new Button("Save Source", "Save Source"));
 		f.br().br().add("<hr>").br();
 		f.add("Debugging information: ");
-		f.add(new Button("View Parse Tree","View Parse Tree"));
-		f.add(new Button("View Compiler Output","View Compiler Output"));
+		f.add(new Button("View Parse Tree", "View Parse Tree"));
+		f.add(new Button("View Compiler Output", "View Compiler Output"));
 		f.add(new Button("View Raw ByteCode","View Raw ByteCode"));
 		f.add(new Button("View Disassembly","View Disassembly"));
 		f.add(new Button("View Simulation","View Simulation"));
@@ -163,29 +159,29 @@ public class ScriptingConfig {
 		f.add(new Button("View ALL","View ALL"));
 		//if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
 		f.br();
-		if (values.get("View Parse Tree").equals("View Parse Tree") || values.get("View ALL").equals("View ALL")) {
+		if ("View Parse Tree".equals(values.get("View Parse Tree")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
-			f.add(debug(st,script.getSource(),STAGE.PARSER));
+			f.add(debug(st, script.getSource(), STAGE.PARSER));
 		}
-		if (values.get("View Compiler Output").equals("View Compiler Output") || values.get("View ALL").equals("View ALL")) {
+		if ("View Compiler Output".equals(values.get("View Compiler Output")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Compiler Output"));
-			f.add(debug(st,script.getSource(),STAGE.COMPILER));
+			f.add(debug(st, script.getSource(), STAGE.COMPILER));
 		}
-		if (values.get("View Raw ByteCode").equals("View Raw ByteCode") || values.get("View ALL").equals("View ALL")) {
+		if ("View Raw ByteCode".equals(values.get("View Raw ByteCode")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Raw ByteCode"));
-			f.add(debug(st,script.getSource(),STAGE.BYTECODE));
+			f.add(debug(st, script.getSource(), STAGE.BYTECODE));
 		}
-		if (values.get("View Disassembly").equals("View Disassembly") || values.get("View ALL").equals("View ALL")) {
+		if ("View Disassembly".equals(values.get("View Disassembly")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Disassembly"));
-			f.add(debug(st,script.getSource(),STAGE.DISASSEMBLY));
+			f.add(debug(st, script.getSource(), STAGE.DISASSEMBLY));
 		}
-		if (values.get("View Simulation").equals("View Simulation") || values.get("View ALL").equals("View ALL")) {
+		if ("View Simulation".equals(values.get("View Simulation")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st,script.getSource(),SIMULATION));
+			f.add(debug(st, script.getSource(), SIMULATION));
 		}
-		if (values.get("View Results").equals("View Results") || values.get("View ALL").equals("View ALL")) {
+		if ("View Results".equals(values.get("View Results")) || "View ALL".equals(values.get("View ALL"))) {
 			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st,script.getSource(),STAGE.RESULTS));
+			f.add(debug(st, script.getSource(), RESULTS));
 		}
 		//if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}
@@ -204,13 +200,12 @@ public class ScriptingConfig {
 			if (stage==STAGE.PARSER) { return gsscript.toHtml(); }
 		}
 		catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-			if (e instanceof ParseException) {
-				final ParseException pe=(ParseException) e;
+			if (e instanceof final ParseException pe) {
 				final String tokenimage;
-				tokenimage="Last token: "+pe.currentToken.image+"<br>";
-				return "<b>Parse failed:</b> "+e+"<br>"+tokenimage;
+				tokenimage = "Last token: " + pe.currentToken.image + "<br>";
+				return "<b>Parse failed:</b> " + e + "<br>" + tokenimage;
 			}
-			return "<b>Parse failed:</b> "+e;
+			return "<b>Parse failed:</b> " + e;
 		}
 
 		final GSCompiler compiler;
@@ -295,14 +290,14 @@ public class ScriptingConfig {
 	@Nonnull
 	private static String formatStep(@Nonnull final GSVM.ExecutionStep step) {
 		final StringBuilder output=new StringBuilder();
-		output.append("<tr><td>").append(step.IC).append("</td><th>").append(step.programcounter).append("</th><td>").append(step.decode).append("</td><td><table>");
+		output.append("<tr><td>").append(step.instructionCount).append("</td><th>").append(step.programCounter).append("</th><td>").append(step.decode).append("</td><td><table>");
 		for (int i=0;i<step.resultingstack.size();i++) {
 			output.append("<tr><th>").append(i).append("</th><td>").append(step.resultingstack.get(i).htmlDecode()).append("</td></tr>");
 		}
 		output.append("</table></td><td><table>");
 		for (final Map.Entry<String,ByteCodeDataType> entry: step.resultingvariables.entrySet()) {
-			String decode="???";
-			boolean italics=entry.getKey().startsWith(" ");
+            String decode = "???";
+            final boolean italics = entry.getKey().startsWith(" ");
 			if (entry.getValue()!=null) {
 				decode=entry.getValue().htmlDecode();
 			}

@@ -9,9 +9,11 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BCFloat extends ByteCodeDataType {
-	private Float content=0f;
+	private Float content= 0.0f;
 
-	public BCFloat(final ParseNode n) { super(n); }
+	public BCFloat(final ParseNode node) {
+        super(node);
+    }
 
 	public BCFloat(final ParseNode n,
                    final Float content) {

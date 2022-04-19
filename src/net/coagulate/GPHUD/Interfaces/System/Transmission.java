@@ -19,7 +19,6 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
 
 import static java.util.logging.Level.*;
 
@@ -48,17 +47,17 @@ public class Transmission extends Thread {
 	boolean succeeded;
 
 	public Transmission(@Nullable final Char character,
-	                    @Nonnull final JSONObject json,
-	                    @Nullable final String oldurl) {
-		if (debugspawn) {
-			System.out.println("Transmission to character "+character+" on url "+oldurl+" with json "+json);
-			Thread.dumpStack();
-		}
-		caller=Thread.currentThread().getStackTrace();
-		this.character=character;
-		url=oldurl;
-		this.json=json;
-	}
+                        @Nonnull final JSONObject json,
+                        @Nullable final String url) {
+        if (debugspawn) {
+            System.out.println("Transmission to character " + character + " on url " + url + " with json " + json);
+            Thread.dumpStack();
+        }
+        caller = Thread.currentThread().getStackTrace();
+        this.character = character;
+        this.url = url;
+        this.json = json;
+    }
 
 	public Transmission(@Nonnull final Obj obj,
 	                    @Nonnull final JSONObject json) {
@@ -161,7 +160,7 @@ public class Transmission extends Thread {
 	public void run() {
 		String callerName="UNKNOWN";
 		if (caller!=null) {
-			StackTraceElement callerElement = caller[2];
+			final StackTraceElement callerElement = caller[2];
 			callerName=callerElement.getClassName().replaceFirst("net.coagulate.","")+"."+callerElement.getMethodName()+":"+callerElement.getLineNumber();
 		}
 		Thread.currentThread().setName("Called from "+callerName);
@@ -181,14 +180,14 @@ public class Transmission extends Thread {
 				if (caller!=null) { se.setStackTrace(caller); }
 				step.initCause(se);
 			}
-			GPHUD.getLogger("Transmission").log(Level.WARNING,"Transmission threw exception from inner wrapper",e);
+			GPHUD.getLogger("Transmission").log(WARNING, "Transmission threw exception from inner wrapper", e);
 
 		}
 	}
 
 	public void runUnwrapped() {
 		if (delay>0) {
-			try { Thread.sleep(delay*1000); } catch (@Nonnull final InterruptedException ignored) {}
+			try { Thread.sleep(delay* 1000L); } catch (@Nonnull final InterruptedException ignored) {}
 		}
 		int retries=5;
 		if (character!=null) { character.appendConveyance(new net.coagulate.GPHUD.State(character),json); }
@@ -273,7 +272,7 @@ public class Transmission extends Thread {
 		out.write(json+"\n");
 		out.flush();
 		out.close();
-		String response=ByteTools.convertStreamToString(transmission.getInputStream());
+		final String response = ByteTools.convertStreamToString(transmission.getInputStream());
 		if (Config.logRequests()) { System.out.println("ReqLog:'GPHUD/OUTBOUND','"+Thread.currentThread().getName()+"',"+response.length()+","+json.length()+",-1"); }
 		return response;
 	}
@@ -283,7 +282,9 @@ public class Transmission extends Thread {
 		for (int i=2;i<5;i++) {
 			if (caller!=null && caller.length>i) {
 				final StackTraceElement ele=caller[i];
-				if (ret.length()>0) { ret.append(" <- "); }
+				if (!ret.isEmpty()) {
+					ret.append(" <- ");
+				}
 				ret.append(ele.getClassName().replaceFirst("net.coagulate.GPHUD.","")).append(".").append(ele.getMethodName()).append(":").append(ele.getLineNumber());
 			}
 		}

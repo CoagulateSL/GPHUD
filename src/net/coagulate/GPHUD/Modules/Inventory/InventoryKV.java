@@ -14,8 +14,8 @@ public abstract class InventoryKV extends KV {
 
 	@Nonnull final Attribute inventory;
 
-	public InventoryKV(@Nonnull final Attribute inventory) {
-		this.inventory=inventory;
+	protected InventoryKV(@Nonnull final Attribute inventory) {
+		this.inventory = inventory;
 	}
 
 	// ---------- INSTANCE ----------

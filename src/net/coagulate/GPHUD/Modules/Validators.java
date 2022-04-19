@@ -32,8 +32,8 @@ public class Validators {
 			GPHUD.getLogger("Validation").fine(value+" no dash at pos 23");
 			return false;
 		}
-		if (!value.replaceAll("[0-9a-fA-F-]","").isEmpty()) {
-			GPHUD.getLogger("Validation").fine(value+" not 0-9a-f-, left '"+value.replaceAll("[0-9a-fA-F-]","")+"'");
+		if (!value.replaceAll("[\\da-fA-F-]","").isEmpty()) {
+			GPHUD.getLogger("Validation").fine(value+" not 0-9a-f-, left '"+value.replaceAll("[\\da-fA-F-]","")+"'");
 			return false;
 		}
 		return true;

@@ -75,7 +75,9 @@ public class ObjType extends TableRow {
 			 .append("</a></td>");
 			r.append("<td>");
 			try { r.append(ObjectType.materialise(st,ot).explainHtml()); }
-			catch (SystemLookupFailureException e) { r.append("<i>NoType</i>"); }
+			catch (final SystemLookupFailureException e) {
+				r.append("<i>NoType</i>");
+			}
 			r.append("</td>");
 			if (st.hasPermission("Objects.ObjectTypes")) {
 				r.append("<td>");
@@ -117,19 +119,18 @@ public class ObjType extends TableRow {
 	                                           @Nonnull final String name) {
 		final DropDownList list=new DropDownList(name);
 		for (final ResultsRow row: db().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
-			list.add(row.getInt("id")+"",row.getStringNullable("name"));
+			list.add(String.valueOf(row.getInt("id")), row.getStringNullable("name"));
 		}
 		return list;
 	}
 
-    public static ObjType get(State state,String objecttype) {
+	public static ObjType get(final State state, final String objecttype) {
 		try {
-			return get(GPHUD.getDB().dqiNotNull("select id from objecttypes where instanceid=? and name like ?",state.getInstance().getId(),objecttype));
+			return get(GPHUD.getDB().dqiNotNull("select id from objecttypes where instanceid=? and name like ?", state.getInstance().getId(), objecttype));
+		} catch (final NoDataException e) {
+			throw new UserConfigurationException("Object type " + objecttype + " does not exist", e, true);
 		}
-		catch (NoDataException e) {
-			throw new UserConfigurationException("Object type "+objecttype+" does not exist",true);
-		}
-    }
+	}
 
     // ---------- INSTANCE ----------
 	@Nonnull
@@ -184,8 +185,8 @@ public class ObjType extends TableRow {
 	@Nonnull
 	public JSONObject getBehaviour() {
 		String s=null;
-		try { s=getStringNullable("behaviour"); }
-		catch (NoDataException ignore) {}
+		try { s=getStringNullable("behaviour"); } catch (final NoDataException ignore) {
+		}
 		if (s==null || s.isEmpty()) { return new JSONObject(); }
 		return new JSONObject(s);
 	}

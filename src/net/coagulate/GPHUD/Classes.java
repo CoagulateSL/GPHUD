@@ -104,15 +104,15 @@ public abstract class Classes {
 	private static void loadPermissions() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Permissions.class)) {
 			final String modulename=getModuleName(c);
-			for (final Annotation a: c.getAnnotationsByType(Permissions.class)) {
-				if (LOGREGISTERS) { log().config("Registering permission "+modulename+"/"+((Permissions) a).name()); }
-				((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation((Permissions) a,modulename));
+			for (final Permissions a: c.getAnnotationsByType(Permissions.class)) {
+				if (LOGREGISTERS) { log().config("Registering permission "+modulename+"/"+ a.name()); }
+				((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,modulename));
 			}
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Permissionss.class)) {
 			final String modulename=getModuleName(c);
-			for (final Annotation as: c.getAnnotationsByType(Permissionss.class)) {
-				for (final Permissions a: ((Permissionss) as).value()) {
+			for (final Permissionss as: c.getAnnotationsByType(Permissionss.class)) {
+				for (final Permissions a: as.value()) {
 					if (LOGREGISTERS) { log().config("Registering permissions "+modulename+"/"+a.name()); }
 					((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,modulename));
 				}
@@ -165,55 +165,19 @@ public abstract class Classes {
 			for (final Parameter p: m.getParameters()) {
 				if (firstparam) { firstparam=false; }
 				else {
-					final Argument.Arguments[] annotations=p.getAnnotationsByType(Argument.Arguments.class);
-					if (annotations.length!=1) {
-						throw new SystemImplementationException("Command "+modulename+"/"+m.getName()+" parameter "+p.getName()+" has no Arguments annotation");
+					final Argument.Arguments[] annotations = p.getAnnotationsByType(Argument.Arguments.class);
+					if (annotations.length != 1) {
+						throw new SystemImplementationException("Command " + modulename + "/" + m.getName() + " parameter " + p.getName() + " has no Arguments annotation");
 					}
-					final Argument.Arguments annotation=annotations[0];
-					final boolean requiresmax;
-					switch (annotation.type()) {
-						case TEXT_CLEAN:
-						case TEXT_ONELINE:
-						case TEXT_INTERNAL_NAME:
-						case TEXT_MULTILINE:
-							requiresmax=true;
-							break;
-						case PASSWORD:
-						case INTEGER:
-						case FLOAT:
-						case BOOLEAN:
-						case CHOICE:
-						case CHARACTER:
-						case CHARACTER_PLAYABLE:
-						case CHARACTER_NEAR:
-						case CHARACTER_FACTION:
-						case AVATAR:
-						case AVATAR_NEAR:
-						case PERMISSIONSGROUP:
-						case PERMISSION:
-						case CHARACTERGROUP:
-						case KVLIST:
-						case MODULE:
-						case REGION:
-						case ZONE:
-						case COORDINATES:
-						case EVENT:
-						case EFFECT:
-						case ATTRIBUTE:
-						case ATTRIBUTE_WRITABLE:
-						case CURRENCY:
-						case INVENTORY:
-						case SET:
-						case ITEM:
-							requiresmax=false;
-							break;
-						default:
-							throw new SystemImplementationException("Unchecked argument type "+annotation.type().name());
-
-					}
-					if (requiresmax && annotation.max()<0) {
-						throw new SystemImplementationException("Missing MAX parameter on argument annotation in ["+modulename+"]"+m.getClass()
-						                                                                                                            .getSimpleName()+"/"+m.getName()+"/"+p.getName());
+					final Argument.Arguments annotation = annotations[0];
+					final boolean requiresmax = switch (annotation.type()) {
+						case TEXT_CLEAN, TEXT_ONELINE, TEXT_INTERNAL_NAME, TEXT_MULTILINE -> true;
+						case PASSWORD, INTEGER, FLOAT, BOOLEAN, CHOICE, CHARACTER, CHARACTER_PLAYABLE, CHARACTER_NEAR, CHARACTER_FACTION, AVATAR, AVATAR_NEAR, PERMISSIONSGROUP, PERMISSION, CHARACTERGROUP, KVLIST, MODULE, REGION, ZONE, COORDINATES, EVENT, EFFECT, ATTRIBUTE, ATTRIBUTE_WRITABLE, CURRENCY, INVENTORY, SET, ITEM ->
+								false;
+					};
+					if (requiresmax && annotation.max() < 0) {
+						throw new SystemImplementationException("Missing MAX parameter on argument annotation in [" + modulename + "]" + m.getClass()
+								.getSimpleName() + "/" + m.getName() + "/" + p.getName());
 					}
 				}
 			}

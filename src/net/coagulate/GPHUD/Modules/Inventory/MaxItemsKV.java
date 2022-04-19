@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
  */
 public class MaxItemsKV extends InventoryKV {
 
-	public MaxItemsKV(@Nonnull Attribute inventory) {
-		super(inventory);
-	}
+	public MaxItemsKV(@Nonnull final Attribute inventory) {
+        super(inventory);
+    }
 
 	@Nonnull
 	@Override

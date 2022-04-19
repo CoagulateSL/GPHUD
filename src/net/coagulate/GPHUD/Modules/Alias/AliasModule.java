@@ -18,8 +18,8 @@ import java.util.TreeMap;
  */
 public class AliasModule extends ModuleAnnotation {
 	public AliasModule(final String name,
-	                   final ModuleDefinition definition) {
-		super(name,definition);
+					   final ModuleDefinition annotation) {
+		super(name, annotation);
 	}
 
 	// ---------- INSTANCE ----------
@@ -48,8 +48,8 @@ public class AliasModule extends ModuleAnnotation {
 		for (final Map.Entry<String,JSONObject> entry: templates.entrySet()) {
 			final String name=entry.getKey();
 			try { commands.put(name,new AliasCommand(st,name,entry.getValue())); }
-			catch (Exception ignore) { // could be a lookup failure for an alias, so just don't add it
-			}
+			catch (final Exception ignore) { // could be a lookup failure for an alias, so just don't add it
+            }
 		}
 		return commands;
 	}

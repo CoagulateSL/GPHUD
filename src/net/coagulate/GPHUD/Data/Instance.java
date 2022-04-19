@@ -9,7 +9,6 @@ import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -36,8 +35,8 @@ public class Instance extends TableRow {
 
 	private static final int ADMIN_PESTER_INTERVAL=3600; // seconds
 	private static final int SERVER_UPDATE_INTERVAL=30;
-	private static final Map<String,Integer> lastStatus =new TreeMap<>(); // naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
-    Cache<String,Currency> currencyNameCache=Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
+	private static final Map<String, Integer> lastStatus = new TreeMap<>(); // naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
+	final Cache<String, Currency> currencyNameCache = Cache.getCache("gphud/instanceCurrency/" + getId(), CacheConfig.PERMANENT_CONFIG);
 
     protected Instance(final int id) { super(id); }
 
@@ -79,7 +78,9 @@ public class Instance extends TableRow {
 	 */
 	public static void create(@Nonnull final String name,
 	                          @Nonnull final User caller) {
-		if ("".equals(name)) { throw new UserInputEmptyException("Can't create null or empty instance"); }
+		if (name.isEmpty()) {
+			throw new UserInputEmptyException("Can't create null or empty instance");
+		}
 		final int exists=db().dqiNotNull("select count(*) from instances where name like ?",name);
 		if (exists!=0) {
 			throw new UserInputDuplicateValueException("Instance already exists!");
@@ -124,13 +125,13 @@ public class Instance extends TableRow {
 	}
 
 	public static void quotaCredits() {
-		int quotaLimit=Config.getQuotaLimit();
-		int quotaInterval=Config.getQuotaInterval();
-		for (ResultsRow row:db().dq("select instanceid from instances where nextquotaincrease<?",UnixTime.getUnixTime())) {
+		final int quotaLimit = Config.getQuotaLimit();
+		final int quotaInterval = Config.getQuotaInterval();
+		for (final ResultsRow row : db().dq("select instanceid from instances where nextquotaincrease<?", getUnixTime())) {
 			db().d("update instances set reportquota=least(reportquota+1,?),downloadquota=least(downloadquota+1,?),nextquotaincrease=? where instanceid=?",
 					quotaLimit,
 					quotaLimit,
-					UnixTime.getUnixTime()+quotaInterval,
+					getUnixTime() + quotaInterval,
 					row.getInt());
 		}
 	}
@@ -208,11 +209,11 @@ public class Instance extends TableRow {
 		final int minVersion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=? and retired=0",getId());
 		final Float expiresIn=EndOfLifing.expiresIn(minVersion);
 		String updateWithin="";
-		if (expiresIn!=null) { updateWithin=((int) expiresIn.floatValue())+" days "+((int) ((expiresIn-((int) expiresIn.floatValue()))*24f))+" hours"; }
+		if (expiresIn!=null) { updateWithin=((int) expiresIn.floatValue())+" days "+((int) ((expiresIn-((int) expiresIn.floatValue()))* 24.0f))+" hours"; }
 		String eol="";
 		if (expiresIn!=null && expiresIn>14) { eol+="EOL: "+updateWithin; }
 		if (Config.getDevelopment()) { newStatus.append("===DEVELOPMENT===\n \n"); }
-		String version=SL.getModule("GPHUD").getBuildDateString()+" @"+SL.getModule("GPHUD").commitId();
+		final String version = SL.getModule("GPHUD").getBuildDateString() + " @" + SL.getModule("GPHUD").commitId();
 		newStatus.append("Server: ").append(Config.getHostName()).append(" - ").append(version).append("\n").append(eol).append("\n \n");
 		if (expiresIn!=null) {
 			if (expiresIn<7 && canStatus("expiring-"+getId())) {
@@ -337,19 +338,20 @@ public class Instance extends TableRow {
 			final Results charList=dq("select characterid from characters where instanceid=? and playedby=? and url is not null",getId(),a.getId());
 			//System.out.println("select characterid from characters where instanceid="+getId()+" and playedby="+a.getId()+" and url is not null;");
 			//System.out.println("In chars:"+charList.size());
-			for (final ResultsRow rr: charList) { chars.add(Char.get(rr.getInt())); }
+			for (final ResultsRow rr : charList) {
+				chars.add(Char.get(rr.getInt()));
+			}
 		}
 		//System.out.println("Characters:"+chars.size());
 		//for (Char target:chars) { System.out.println(target.getName()); }
-		for (final Char c: chars) {
-			final Transmission t=new Transmission(c,j);
+		for (final Char c : chars) {
+			final Transmission t = new Transmission(c, j);
 			t.start();
 		}
-		if (st!=null) {
-			st.logger().info("Sent to "+chars.size()+" admins : "+message);
-		}
-		else {
-			GPHUD.getLogger(getNameSafe()).info("Sent to "+chars.size()+" admins : "+message);
+		if (st == null) {
+			GPHUD.getLogger(getNameSafe()).info("Sent to " + chars.size() + " admins : " + message);
+		} else {
+			st.logger().info("Sent to " + chars.size() + " admins : " + message);
 		}
 		return chars.size();
 	}
@@ -388,9 +390,9 @@ public class Instance extends TableRow {
 		}
 		final List<Object> parameters=new ArrayList<>();
 		parameters.add(getId());
-		String additional="";
-		int lastActive=UnixTime.getUnixTime()-(60*60*24*30*3);
-		String charactersScoping="";
+		String additional = "";
+		final int lastActive = getUnixTime() - (60 * 60 * 24 * 30 * 3);
+		String charactersScoping = "";
 		if (!showRetired) {
 			charactersScoping=" and characters.retired=0 and characters.lastactive>"+lastActive+" ";
 			additional+=charactersScoping;
@@ -440,24 +442,26 @@ public class Instance extends TableRow {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalvisits=r.getInt("totaltime"); }
 		}
-		for (final ResultsRow r: getDatabase().dqSlow(
-				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is not null and starttime>? group by characterid",getId(),
-		                            UnixTime.getUnixTime()-(Experience.getCycle(st))
-		                           )) {
-			final int id=r.getInt("characterid");
-			if (idMap.containsKey(id)) { idMap.get(id).recentvisits=r.getInt("totaltime"); }
-		}
-		for (final ResultsRow r: getDatabase().dqSlow("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is null and starttime>?",getId(),UnixTime.getUnixTime()-(Experience.getCycle(st)))) {
-			final int id=r.getInt("characterid");
-			final int add=UnixTime.getUnixTime()-r.getInt("starttime");
+		for (final ResultsRow r : getDatabase().dqSlow(
+				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? " + charactersScoping + " and endtime is not null and starttime>? group by characterid", getId(),
+				getUnixTime() - (Experience.getCycle(st))
+		)) {
+			final int id = r.getInt("characterid");
 			if (idMap.containsKey(id)) {
-				idMap.get(id).recentvisits=idMap.get(id).recentvisits+add;
-				idMap.get(id).totalvisits=idMap.get(id).totalvisits+add;
+				idMap.get(id).recentvisits = r.getInt("totaltime");
 			}
 		}
-		for (final ResultsRow r: getDatabase().dqSlow(
-				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and (poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP') group by "+"characterid",getId())) {
-			final int id=r.getInt("characterid");
+		for (final ResultsRow r : getDatabase().dqSlow("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? " + charactersScoping + " and endtime is null and starttime>?", getId(), getUnixTime() - (Experience.getCycle(st)))) {
+			final int id = r.getInt("characterid");
+			final int add = getUnixTime() - r.getInt("starttime");
+			if (idMap.containsKey(id)) {
+				idMap.get(id).recentvisits = idMap.get(id).recentvisits + add;
+				idMap.get(id).totalvisits = idMap.get(id).totalvisits + add;
+			}
+		}
+		for (final ResultsRow r : getDatabase().dqSlow(
+				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? " + charactersScoping + " and (poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP') group by " + "characterid", getId())) {
+			final int id = r.getInt("characterid");
 			if (idMap.containsKey(id)) { idMap.get(id).totalxp=r.getInt("total"); }
 		}
 		final Map<Integer,String> avatarNames=User.getIdToNameMap();
@@ -496,22 +500,30 @@ public class Instance extends TableRow {
 				if (sortBy.equals("visit time (last "+Experience.getCycleLabel(st).toLowerCase()+")")) {
 					value=cs.recentvisits;
 				}
-				if ("total xp".equals(sortBy)) { value=cs.totalxp; }
-				if ("level".equals(sortBy)) { value=cs.totalxp; }
+				if ("total xp".equals(sortBy)) {
+					value = cs.totalxp;
+				}
+				if ("level".equals(sortBy)) {
+					value = cs.totalxp;
+				}
 
-				Set<CharacterSummary> records=new TreeSet<>();
-				if (sorted.containsKey(value)) { records=sorted.get(value); }
+				Set<CharacterSummary> records = new TreeSet<>();
+				if (sorted.containsKey(value)) {
+					records = sorted.get(value);
+				}
 				records.add(cs);
-				sorted.put(value,records);
+				sorted.put(value, records);
 			}
-			final List<Integer> sortedKeys=new ArrayList<>(sorted.keySet());
-			if (!reverse) { sortedKeys.sort(Collections.reverseOrder()); }
-			else {
+			final List<Integer> sortedKeys = new ArrayList<>(sorted.keySet());
+			if (reverse) {
 				Collections.sort(sortedKeys);
 			} // note reverse is reversed for numbers
+			else {
+				sortedKeys.sort(Collections.reverseOrder());
+			}
 			// default is biggest at top, smallest at bottom, which is reverse order as the NORMAL order.   alphabetic is a-z so forward order for the NORMAL order....
-			for (final Integer key: sortedKeys) {
-				final Set<CharacterSummary> set=sorted.get(key);
+			for (final Integer key : sortedKeys) {
+				final Set<CharacterSummary> set = sorted.get(key);
 				sortedlist.addAll(set);
 			}
 
@@ -665,7 +677,7 @@ public class Instance extends TableRow {
 	 * @return true if it is permitted to send an update to this target at this time
 	 */
 	private boolean canStatus(final String url) {
-		final int now=UnixTime.getUnixTime();
+		final int now = getUnixTime();
 		if (lastStatus.containsKey(url)) {
 			final int last= lastStatus.get(url);
 			if (url.startsWith("admins-") || url.startsWith("expiring-")) {  // bodge, admins get weird INTERVAL minute pestering :P
@@ -693,20 +705,20 @@ public class Instance extends TableRow {
 	}
 
     public Set<Char> getCharacters() {
-		Set<Char> chars=new HashSet<>();
-		for (ResultsRow row:dq("select characterid from characters where instanceid=?",getId())) {
+		final Set<Char> chars = new HashSet<>();
+		for (final ResultsRow row : dq("select characterid from characters where instanceid=?", getId())) {
 			chars.add(Char.get(row.getInt()));
 		}
 		return chars;
-    }
+	}
 
 	public void setReport(@Nonnull final String report) {
-		set("report",report);
-		set("reporttds",UnixTime.getUnixTime());
+		set("report", report);
+		set("reporttds", getUnixTime());
 	}
 
 	public boolean spendReportCredit() {
-		int quota=getInt("reportquota");
+		final int quota = getInt("reportquota");
 		if (quota>0) { set("reportquota",quota-1); return true; }
 		return false;
 	}
@@ -727,11 +739,16 @@ public class Instance extends TableRow {
 	}
 
 	public boolean spendDownloadCredit() {
-		int quota=getInt("downloadquota");
+		final int quota = getInt("downloadquota");
 		if (quota>0) { set("downloadquota",quota-1); return true; }
 		return false;
 	}
 
-	public int generating() { return getInt("reporting"); }
-	public void generating(int value) { set("reporting",value); }
+	public int generating() {
+		return getInt("reporting");
+	}
+
+	public void generating(final int value) {
+		set("reporting", value);
+	}
 }

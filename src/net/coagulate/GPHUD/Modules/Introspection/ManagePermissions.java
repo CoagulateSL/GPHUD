@@ -42,17 +42,18 @@ public abstract class ManagePermissions {
 						t.add(entry.getKey());
 						t.add(entry.getValue().description());
 						boolean bump = true;
-						if (entry.getValue().isGenerated()) {
-							t.add("<i>Generated</i>");
-							bump = false;
-						}
-						if (!entry.getValue().grantable()) {
-							if (bump) {
-								t.add("");
-							}
-							t.add(new Color("red", "Ungrantable"));
-						}
-					} catch (NoDataException ignored) {}  // data went away mid run
+                        if (entry.getValue().isGenerated()) {
+                            t.add("<i>Generated</i>");
+                            bump = false;
+                        }
+                        if (!entry.getValue().grantable()) {
+                            if (bump) {
+                                t.add("");
+                            }
+                            t.add(new Color("red", "Ungrantable"));
+                        }
+                    } catch (final NoDataException ignored) {
+                    }  // data went away mid run
 				}
 				t.add(new Row(new Cell(new Separator(), 999)));
 			}

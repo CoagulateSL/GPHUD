@@ -43,19 +43,24 @@ public class RunCommand extends ObjectType {
 
 	@Override
 	public void update(@Nonnull final State st) {
-		final String command=st.postMap().get("command");
-		boolean changed=false;
-		if (!command.equals(json.optString("command",""))) {
-			json.put("command",st.postMap().get("command"));
-			changed=true;
+		final String command = st.postMap().get("command");
+		boolean changed = false;
+		if (!command.equals(json.optString("command", ""))) {
+			json.put("command", st.postMap().get("command"));
+			changed = true;
 		}
-		changed=updateDistance(st) || changed;
-		if (changed) { object.setBehaviour(json); }
+		changed = updateDistance(st) || changed;
+		if (changed) {
+			object.setBehaviour(json);
+		}
 	}
+
 	@Override
-	public void payload(State st, @Nonnull JSONObject response, @Nonnull Region region, @Nullable String url) {
+	public void payload(final State st, @Nonnull final JSONObject response, @Nonnull final Region region, @Nullable final String url) {
 		super.payload(st, response, region, url);
-		if (json.has("maxdistance")) { response.put("maxdistance",json.get("maxdistance")); }
+		if (json.has("maxdistance")) {
+			response.put("maxdistance", json.get("maxdistance"));
+		}
 	}
 
 	@Nonnull

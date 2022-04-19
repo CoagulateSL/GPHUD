@@ -25,17 +25,17 @@ public class Interactions {
                                     @Argument.Arguments(type = Argument.ArgumentType.INVENTORY,
                                                         description = "Inventory to interact with",
                                                         name = "inventory") @Nonnull final Attribute inventory) {
-        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        final Inventory inv = new Inventory(state.getCharacter(), inventory);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
         }
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("inventory", inventory.getName());
         json.put("arg0name", "item");
         json.put("arg0description", "Pick an item to interact with");
         json.put("arg0type", "SELECT");
         int button = 0;
-        for (String item : inv.elements().keySet()) {
+        for (final String item : inv.elements().keySet()) {
             json.put("arg0button" + button, item);
             button++;
         }
@@ -58,15 +58,15 @@ public class Interactions {
                                         @Argument.Arguments(name = "item",
                                                             description = "Item to interact with",
                                                             type = Argument.ArgumentType.ITEM) @Nonnull final Item item) {
-        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        final Inventory inv = new Inventory(state.getCharacter(), inventory);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
         }
-        int count = inv.count(item);
+        final int count = inv.count(item);
         if (count < 1) {
             return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
         }
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("inventory", inventory.getName());
         json.put("item", item.getName());
         json.put("arg0name", "verb");
@@ -81,19 +81,19 @@ public class Interactions {
             json.put("arg0button" + button, "Give To");
             button++;
         }
-        int accessible=0;
-        for (Attribute checking:Inventory.getAll(state)) {
-            Inventory checkInventory=new Inventory(state.getCharacter(),checking);
-            if (checkInventory.accessible(state) && checkInventory.allows(state,item)) {
+        int accessible = 0;
+        for (final Attribute checking : Inventory.getAll(state)) {
+            final Inventory checkInventory = new Inventory(state.getCharacter(), checking);
+            if (checkInventory.accessible(state) && checkInventory.allows(state, item)) {
                 accessible++;
             }
         }
-        if (accessible>1) {
-            json.put("arg0button"+button,"Move To");
+        if (accessible > 1) {
+            json.put("arg0button" + button, "Move To");
             button++;
         }
-        for (ItemVerb verb:ItemVerb.findAll(item)) {
-            json.put("arg0button"+button,verb.getName());
+        for (final ItemVerb verb : ItemVerb.findAll(item)) {
+            json.put("arg0button" + button, verb.getName());
             button++;
         }
         json.put("args", 1);
@@ -120,19 +120,19 @@ public class Interactions {
                                                                 description = "Interaction verb to use",
                                                                 type = Argument.ArgumentType.TEXT_ONELINE,
                                                                 max = 64) @Nonnull final String verb) {
-        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        final Inventory inv = new Inventory(state.getCharacter(), inventory);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
         }
-        int count = inv.count(item);
+        final int count = inv.count(item);
         if (count < 1) {
             return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
         }
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("incommand", "runtemplate");
         json.put("inventory", inventory.getName());
         json.put("item", item.getName());
-        if (verb.equalsIgnoreCase("Destroy")) {
+        if ("Destroy".equalsIgnoreCase(verb)) {
             json.put("invoke", "Inventory.DestroyItem");
             json.put("arg0name", "quantity");
             json.put("arg0description", "Ammount of " + item.getName() + " to destroy from " + inventory.getName() + "\n(You have " + count + ")\nUse -1 to destroy ALL");
@@ -140,7 +140,7 @@ public class Interactions {
             json.put("args", 1);
             return new JSONResponse(json);
         }
-        if (verb.equalsIgnoreCase("Give To")) {
+        if ("Give To".equalsIgnoreCase(verb)) {
             json.put("invoke", "Inventory.GiveItem");
             json.put("arg0name", "target");
             json.put("arg0description", "Who to give to?");
@@ -152,15 +152,15 @@ public class Interactions {
             json.put("args", 2);
             return new JSONResponse(json);
         }
-        if (verb.equalsIgnoreCase("Move To")) {
+        if ("Move To".equalsIgnoreCase(verb)) {
             json.put("invoke", "Inventory.MoveItem");
             json.put("arg0name", "target");
             json.put("arg0description", "Inventory to move to?");
             json.put("arg0type", "SELECT");
-            int accessible=0;
-            for (Attribute checking:Inventory.getAll(state)) {
-                if (checking.getId()!=inventory.getId()) {
-                    Inventory checkInventory = new Inventory(state.getCharacter(), checking);
+            int accessible = 0;
+            for (final Attribute checking : Inventory.getAll(state)) {
+                if (checking.getId() != inventory.getId()) {
+                    final Inventory checkInventory = new Inventory(state.getCharacter(), checking);
                     if (checkInventory.accessible(state)) {
                         if (checkInventory.allows(state, item)) {
                             json.put("arg0button" + accessible, checking.getName());
@@ -176,7 +176,7 @@ public class Interactions {
             json.put("args", 2);
             return new JSONResponse(json);
         }
-        ItemVerb itemVerb=ItemVerb.findNullable(item,verb);
+        final ItemVerb itemVerb = ItemVerb.findNullable(item, verb);
         if (itemVerb==null) { return new ErrorResponse("Unknown interaction '" + verb + "' on item " + item.getName()); }
         return VerbActor.act(state,inventory,item,itemVerb);
     }
@@ -198,14 +198,14 @@ public class Interactions {
                                        @Argument.Arguments(name="quantity",
                                                            type = Argument.ArgumentType.INTEGER,
                                                            description = "Number to destroy from inventory, -1 means ALL") int quantity) {
-        Inventory inv = new Inventory(state.getCharacter(), inventory);
+        final Inventory inv = new Inventory(state.getCharacter(), inventory);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
         }
         if (!item.destroyable()) {
             return new ErrorResponse("Item "+item.getName()+" can not be destroyed!");
         }
-        int count = inv.count(item);
+        final int count = inv.count(item);
         if (quantity==-1) { quantity=count; }
         if (quantity<1) { return new ErrorResponse("You must destroy at least one item to do anything"); }
         if (count < 1) {
@@ -215,11 +215,12 @@ public class Interactions {
             return new ErrorResponse("You can not destroy "+quantity+" x "+item.getName()+" from "+inventory.getName()+" because it only contains "+count);
         }
         try {
-            int newAmount=inv.add(item,-quantity,true);
-            Audit.audit(false,state, Audit.OPERATOR.CHARACTER,null,null,"Destroy",item.getName(),""+count,""+newAmount,"Destroyed "+quantity+" "+item.getName()+" from "+inventory.getName());
+            final int newAmount = inv.add(item, -quantity, true);
+            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, null, "Destroy", item.getName(), String.valueOf(count), String.valueOf(newAmount), "Destroyed " + quantity + " " + item.getName() + " from " + inventory.getName());
             return new OKResponse("Destroyed "+quantity+" x "+item.getName()+" from "+inventory.getName()+", "+newAmount+" remain in this inventory");
+        } catch (final UserInventoryException e) {
+            return new ErrorResponse(e.getLocalizedMessage());
         }
-        catch (UserInventoryException e) { return new ErrorResponse(e.getLocalizedMessage()); }
     }
 
     @Command.Commands(description = "Gives an item from an inventory",
@@ -242,18 +243,22 @@ public class Interactions {
                                     @Argument.Arguments(name="quantity",
                                                            type = Argument.ArgumentType.INTEGER,
                                                            description = "Number to give from inventory, -1 means ALL") int quantity) {
-        Inventory inv = new Inventory(state.getCharacter(), inventory);
-        Inventory targetInv = new Inventory(target,inventory);
+        final Inventory inv = new Inventory(state.getCharacter(), inventory);
+        final Inventory targetInv = new Inventory(target, inventory);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inventory.getName() + " is not accessible from this location!");
         }
         if (!item.tradable()) {
-            return new ErrorResponse("Item "+item.getName()+" can not be traded!");
+            return new ErrorResponse("Item " + item.getName() + " can not be traded!");
         }
-        int count = inv.count(item);
-        if (quantity==-1) { quantity=count; }
-        if (quantity<1) { return new ErrorResponse("You must give at least one item to do anything"); }
-        if (state.getCharacter()==target) {
+        final int count = inv.count(item);
+        if (quantity == -1) {
+            quantity = count;
+        }
+        if (quantity < 1) {
+            return new ErrorResponse("You must give at least one item to do anything");
+        }
+        if (state.getCharacter() == target) {
             // give to self is a bad idea since it makes the audit logs report stupid incorrect counts
             return new ErrorResponse("You may not give items to yourself, silly!");
         }
@@ -264,17 +269,18 @@ public class Interactions {
             return new ErrorResponse("You can not give "+quantity+" x "+item.getName()+" from "+inventory.getName()+" because it only contains "+count);
         }
         try {
-            int targetOldAmount=targetInv.count(item);
-            int targetNewAmount=targetInv.add(item,quantity,true);
-            int newAmount=inv.add(item,-quantity,true);
-            Audit.audit(false,state,null,target, state.getAvatar(),state.getCharacter(),"Recieve",item.getName(),""+targetOldAmount,""+targetNewAmount,"Received "+quantity+" "+item.getName()+" from "+state.getCharacter().getName()+"'s "+inventory.getName()+", we had "+targetOldAmount+" and now have "+targetNewAmount);
-            Audit.audit(false,state, Audit.OPERATOR.CHARACTER,null,target,"Give",item.getName(),""+count,""+newAmount,"Gave "+quantity+" "+item.getName()+" from "+inventory.getName()+" to "+target.getName());
-            JSONResponse push=new JSONResponse(new JSONObject());
-            push.message("You received "+quantity+" x "+item.getName()+" from "+state.getCharacter().getName()+" to "+inventory.getName(),target.getProtocol());
+            final int targetOldAmount = targetInv.count(item);
+            final int targetNewAmount = targetInv.add(item, quantity, true);
+            final int newAmount = inv.add(item, -quantity, true);
+            Audit.audit(false, state, null, target, state.getAvatar(), state.getCharacter(), "Recieve", item.getName(), String.valueOf(targetOldAmount), String.valueOf(targetNewAmount), "Received " + quantity + " " + item.getName() + " from " + state.getCharacter().getName() + "'s " + inventory.getName() + ", we had " + targetOldAmount + " and now have " + targetNewAmount);
+            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, target, "Give", item.getName(), String.valueOf(count), String.valueOf(newAmount), "Gave " + quantity + " " + item.getName() + " from " + inventory.getName() + " to " + target.getName());
+            final JSONResponse push = new JSONResponse(new JSONObject());
+            push.message("You received " + quantity + " x " + item.getName() + " from " + state.getCharacter().getName() + " to " + inventory.getName(), target.getProtocol());
             target.push(push);
-            return new OKResponse("Gave "+quantity+" x "+item.getName()+" from "+inventory.getName()+" to "+target.getName()+", "+newAmount+" remain in this inventory");
+            return new OKResponse("Gave " + quantity + " x " + item.getName() + " from " + inventory.getName() + " to " + target.getName() + ", " + newAmount + " remain in this inventory");
+        } catch (final UserInventoryException e) {
+            return new ErrorResponse(e.getLocalizedMessage());
         }
-        catch (UserInventoryException e) { return new ErrorResponse(e.getLocalizedMessage()); }
     }
     @Command.Commands(description = "Move an item from one inventory to another",
                       permitScripting = false,
@@ -296,17 +302,21 @@ public class Interactions {
                                     @Argument.Arguments(name="quantity",
                                                         type = Argument.ArgumentType.INTEGER,
                                                         description = "Number to move from inventory, -1 means ALL") int quantity) {
-        Inventory inv = new Inventory(state.getCharacter(), inventory);
-        Inventory targetInv = new Inventory(state.getCharacter(),target);
+        final Inventory inv = new Inventory(state.getCharacter(), inventory);
+        final Inventory targetInv = new Inventory(state.getCharacter(), target);
         if (!inv.accessible(state)) {
             return new ErrorResponse("Inventory " + inv.getName() + " is not accessible from this location!");
         }
         if (!targetInv.accessible(state)) {
             return new ErrorResponse("Inventory " + targetInv.getName() + " is not accessible from this location!");
         }
-        int count = inv.count(item);
-        if (quantity==-1) { quantity=count; }
-        if (quantity<1) { return new ErrorResponse("You must move at least one item to do anything"); }
+        final int count = inv.count(item);
+        if (quantity == -1) {
+            quantity = count;
+        }
+        if (quantity < 1) {
+            return new ErrorResponse("You must move at least one item to do anything");
+        }
         if (count < 1) {
             return new ErrorResponse("Your inventory " + inventory.getName() + " does not contain any " + item.getName());
         }
@@ -317,13 +327,14 @@ public class Interactions {
             return new ErrorResponse("You can not move "+item.getName()+" to "+targetInv.getName()+" because it can not contain this item");
         }
         try {
-            int targetOldAmount=targetInv.count(item);
-            int targetNewAmount=targetInv.add(item,quantity,true);
-            int newAmount=inv.add(item,-quantity,false);
-            Audit.audit(false,state, Audit.OPERATOR.CHARACTER,null,null,"Move",item.getName(),""+targetOldAmount,""+targetNewAmount,"Moved "+quantity+" "+item.getName()+" from "+inv.getName()+" to "+targetInv.getName());
-            JSONResponse push=new JSONResponse(new JSONObject());
-            return new OKResponse("Moved "+quantity+" x "+item.getName()+" from "+inv.getName()+" to "+targetInv.getName()+", "+newAmount+" remain in this inventory and "+targetNewAmount+" in the target inventory");
+            final int targetOldAmount = targetInv.count(item);
+            final int targetNewAmount = targetInv.add(item, quantity, true);
+            final int newAmount = inv.add(item, -quantity, false);
+            Audit.audit(false, state, Audit.OPERATOR.CHARACTER, null, null, "Move", item.getName(), String.valueOf(targetOldAmount), String.valueOf(targetNewAmount), "Moved " + quantity + " " + item.getName() + " from " + inv.getName() + " to " + targetInv.getName());
+            final JSONResponse push = new JSONResponse(new JSONObject());
+            return new OKResponse("Moved " + quantity + " x " + item.getName() + " from " + inv.getName() + " to " + targetInv.getName() + ", " + newAmount + " remain in this inventory and " + targetNewAmount + " in the target inventory");
+        } catch (final UserInventoryException e) {
+            return new ErrorResponse(e.getLocalizedMessage());
         }
-        catch (UserInventoryException e) { return new ErrorResponse(e.getLocalizedMessage()); }
     }
 }

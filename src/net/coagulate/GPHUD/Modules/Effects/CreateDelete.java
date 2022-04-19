@@ -77,7 +77,7 @@ public class CreateDelete {
 															mandatory = false) @Nullable String metaData) {
 		effect.validate(st);
 		if (metaData==null) { metaData=""; }
-		String oldMetaData=effect.getMetaData();
+		final String oldMetaData = effect.getMetaData();
 		effect.setMetaData(metaData);
 		Audit.audit(st, Audit.OPERATOR.AVATAR,null,null,"Edit","MetaData",oldMetaData,metaData,"User set effect metadata");
 		return new OKResponse("Metadata updated for "+effect);

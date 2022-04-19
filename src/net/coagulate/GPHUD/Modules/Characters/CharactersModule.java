@@ -44,25 +44,30 @@ public class CharactersModule extends ModuleAnnotation {
 
 
 	@Override
-	public Permission getPermission(State st, @Nonnull String itemname) {
-		Permission p=super.getPermission(st, itemname);
-		if (p!=null) { return p; }
-		if (itemname.toLowerCase().startsWith("set")) {
-			String attributeName=itemname.substring(3);
-			try {
-				Attribute attribute = st.getAttribute(attributeName);
-				if (attribute==null) { return null; }
-				return new AttributePermission(attribute);
-			} catch (UserInputLookupFailureException ignored) {}
+    public Permission getPermission(final State st, @Nonnull final String itemname) {
+        final Permission p = super.getPermission(st, itemname);
+        if (p != null) {
+            return p;
+        }
+        if (itemname.toLowerCase().startsWith("set")) {
+            final String attributeName = itemname.substring(3);
+            try {
+                final Attribute attribute = st.getAttribute(attributeName);
+                if (attribute == null) {
+                    return null;
+                }
+                return new AttributePermission(attribute);
+            } catch (final UserInputLookupFailureException ignored) {
+            }
 
-		}
+        }
 		return null;
 	}
 
 	public CharactersModule(final String name,
-							final ModuleDefinition def) {
-		super(name,def);
-	}
+                            final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- STATICS ----------
 	@Nullable
@@ -94,21 +99,21 @@ public class CharactersModule extends ModuleAnnotation {
 			return group.getName();
 		}
 		if (attr.getType()==POOL || attr.getType()==EXPERIENCE) {
-			if (attr instanceof QuotaedXP) {
-				final QuotaedXP xp=(QuotaedXP) attr;
-				return CharacterPool.sumPool(st,xp.getPool(st))+"";
+			if (attr instanceof final QuotaedXP xp) {
+				return String.valueOf(CharacterPool.sumPool(st, xp.getPool(st)));
+			} else {
+				return "POOL";
 			}
-			else { return "POOL"; }
 		}
 		if (attr.getType()==CURRENCY) {
 			return Currency.find(st,attr.getName()).shortSum(st);
 		}
 		if (attr.getType()==SET) {
-			CharacterSet set=new CharacterSet(st.getCharacter(),attr);
+            final CharacterSet set = new CharacterSet(st.getCharacter(), attr);
 			return set.countElements()+" / "+set.countTotal();
 		}
 		if (attr.getType()==INVENTORY) {
-			Inventory inventory=new Inventory(st.getCharacter(),attr);
+            final Inventory inventory = new Inventory(st.getCharacter(), attr);
 			return inventory.countElements()+" / "+inventory.countTotal();
 		}
 		throw new SystemConsistencyException("Failed to resolve templateAttribute for "+attr+" of type "+attr.getType());
@@ -143,7 +148,7 @@ public class CharactersModule extends ModuleAnnotation {
 	public static String abilityPoints(@Nonnull final State st,
 	                                   final String key) {
 		if (st.getCharacterNullable()==null) { return ""; }
-		return abilityPointsRemaining(st)+"";
+		return String.valueOf(abilityPointsRemaining(st));
 	}
 
 	/**
@@ -159,7 +164,7 @@ public class CharactersModule extends ModuleAnnotation {
 		for (final Attribute attribute: st.getAttributes()) {
 			if (attribute.isKV() && attribute.usesAbilityPoints()) {
 				// type check too
-				if (attribute.getType()==Attribute.ATTRIBUTETYPE.INTEGER || attribute.getType()==Attribute.ATTRIBUTETYPE.FLOAT) {
+				if (attribute.getType() == INTEGER || attribute.getType() == FLOAT) {
 					ret.add(attribute.getName());
 				}
 			}
@@ -194,18 +199,18 @@ public class CharactersModule extends ModuleAnnotation {
 		final String localstr=st.getKV(st.getCharacter(),"Characters."+attribute);
 		int local=0;
 		if (localstr!=null && !localstr.isEmpty()) { local=Integer.parseInt(localstr); }
-		st.setKV(st.getCharacter(),"characters."+attribute,(local+1)+"");
+		st.setKV(st.getCharacter(), "characters." + attribute, String.valueOf(local + 1));
 		Audit.audit(true,
-		            st,
-		            Audit.OPERATOR.CHARACTER,
-		            null,
-		            st.getCharacter(),
-		            "AbilityIncrease",
-		            attribute,
-		            local+"",
-		            (local+1)+"",
-		            "Character spent ability point to increase "+attribute+" from (total) "+existing+" to "+(existing+1)
-		           );
+				st,
+				Audit.OPERATOR.CHARACTER,
+				null,
+				st.getCharacter(),
+				"AbilityIncrease",
+				attribute,
+				String.valueOf(local),
+				String.valueOf(local + 1),
+				"Character spent ability point to increase " + attribute + " from (total) " + existing + " to " + (existing + 1)
+		);
 		String remaining="";
 		remain--;
 		if (remain>0) {
@@ -281,29 +286,28 @@ public class CharactersModule extends ModuleAnnotation {
 		return map;
 	}
 
-	@Override
-	public void addTemplateDescriptions(@Nonnull final State st,
-	                                    @Nonnull final Map<String,String> addto) {
-		final Map<String,KV> ourmap=getKVDefinitions(st);
-		for (final Attribute attr: st.getAttributes()) {
-			addto.put("--"+attr.getName().toUpperCase()+"--","Character attribute "+attr.getName());
-			addto.put("--TARGET:"+attr.getName().toUpperCase()+"--","TARGET Character attribute "+attr.getName());
-		}
-	}
+    @Override
+    public void addTemplateDescriptions(@Nonnull final State st,
+                                        @Nonnull final Map<String, String> cumulativeMap) {
+        final Map<String, KV> ourmap = getKVDefinitions(st);
+        for (final Attribute attr : st.getAttributes()) {
+            cumulativeMap.put("--" + attr.getName().toUpperCase() + "--", "Character attribute " + attr.getName());
+            cumulativeMap.put("--TARGET:" + attr.getName().toUpperCase() + "--", "TARGET Character attribute " + attr.getName());
+        }
+    }
 
-	@Override
-	public void addTemplateMethods(@Nonnull final State st,
-	                               @Nonnull final Map<String,Method> addto) {
-		final Map<String,KV> ourmap=getKVDefinitions(st);
-		for (final Attribute attr: st.getAttributes()) {
-			try {
-				addto.put("--"+attr.getName().toUpperCase()+"--",getClass().getMethod("templateAttribute",State.class,String.class));
-				addto.put("--TARGET:"+attr.getName().toUpperCase()+"--",getClass().getMethod("templateAttribute",State.class,String.class));
-			}
-			catch (@Nonnull final NoSuchMethodException|SecurityException ex) {
-				SL.report("Templating referencing exception??",ex,st);
-				st.logger().log(SEVERE,"Exception referencing own templating method??",ex);
-			}
+    @Override
+    public void addTemplateMethods(@Nonnull final State st,
+                                   @Nonnull final Map<String, Method> cumulativeMap) {
+        final Map<String, KV> ourmap = getKVDefinitions(st);
+        for (final Attribute attr : st.getAttributes()) {
+            try {
+                cumulativeMap.put("--" + attr.getName().toUpperCase() + "--", getClass().getMethod("templateAttribute", State.class, String.class));
+                cumulativeMap.put("--TARGET:" + attr.getName().toUpperCase() + "--", getClass().getMethod("templateAttribute", State.class, String.class));
+            } catch (@Nonnull final NoSuchMethodException | SecurityException ex) {
+                SL.report("Templating referencing exception??", ex, st);
+                st.logger().log(SEVERE, "Exception referencing own templating method??", ex);
+            }
 		}
 	}
 }

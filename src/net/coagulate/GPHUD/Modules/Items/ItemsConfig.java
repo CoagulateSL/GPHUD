@@ -72,25 +72,25 @@ public class ItemsConfig {
                                 @Nonnull @Arguments(name="destroyable",
                                                     description="Players can destroy item from inventory",
                                                     type= Argument.ArgumentType.BOOLEAN) final Boolean destroyable) {
-        Item item=Item.findOrCreate(st,name);
+        final Item item = Item.findOrCreate(st, name);
         if (!item.description().equals(description)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Description",item.description(),description,"Changed item '"+item.getName()+"' description");
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Description", item.description(), description, "Changed item '" + item.getName() + "' description");
             item.description(description);
         }
-        if (!(item.weight()==weight)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Weight",""+item.weight(),""+weight,"Changed item '"+item.getName()+"' weight");
+        if (item.weight() != weight) {
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Weight", String.valueOf(item.weight()), String.valueOf(weight), "Changed item '" + item.getName() + "' weight");
             item.weight(weight);
         }
-        if (!(item.tradable()==tradable)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Tradable",""+item.tradable(),""+tradable,"Changed item '"+item.getName()+"' tradarable flag");
+        if (item.tradable() != tradable) {
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Tradable", String.valueOf(item.tradable()), String.valueOf(tradable), "Changed item '" + item.getName() + "' tradarable flag");
             item.tradable(tradable);
         }
-        if (!(item.destroyable()==destroyable)) {
-            Audit.audit(false,st, Audit.OPERATOR.AVATAR,null,null,"Item",
-                    "Destroyable",""+item.destroyable(),""+destroyable,"Changed item '"+item.getName()+"' destoyable flag");
+        if (item.destroyable() != destroyable) {
+            Audit.audit(false, st, Audit.OPERATOR.AVATAR, null, null, "Item",
+                    "Destroyable", String.valueOf(item.destroyable()), String.valueOf(destroyable), "Changed item '" + item.getName() + "' destoyable flag");
             item.destroyable(destroyable);
         }
         return new OKResponse("Item created/updated");
@@ -100,13 +100,15 @@ public class ItemsConfig {
     public static void itemPage(@Nonnull final State st,
                                   @Nonnull final SafeMap values) {
         final Form f = st.form();
-        String id=st.getDebasedURL().substring("/configuration/items/".length());
-        Item item=Item.get(Integer.parseInt(id));
-        if (item.getInstance()!=st.getInstance()) { throw new UserInputStateException("Item "+id+" is from a different instance"); }
-        f.add(new TextHeader("Item: "+item.getName()));
+        final String id = st.getDebasedURL().substring("/configuration/items/".length());
+        final Item item = Item.get(Integer.parseInt(id));
+        if (item.getInstance() != st.getInstance()) {
+            throw new UserInputStateException("Item " + id + " is from a different instance");
+        }
+        f.add(new TextHeader("Item: " + item.getName()));
         f.add(new TextSubHeader("Properties"));
         f.noForm();
-        Table propertiesTable=new Table();
+        final Table propertiesTable = new Table();
         f.add(propertiesTable);
         propertiesTable.openRow().add(new Cell("Name")).add(item.getName());
         propertiesTable.openRow().add(new Cell("Description")).add(item.description());
@@ -114,12 +116,12 @@ public class ItemsConfig {
         propertiesTable.openRow().add("Tradable").add(item.tradable());
         propertiesTable.openRow().add("Destroyable").add(item.destroyable());
         if (st.hasPermission("Items.Edit")) {
-            f.add(new Form(st,true,"/GPHUD/configuration/items/edititem","Edit Item",
-                    "name",item.getName(),
-                    "tradable",item.tradable()?"true":"",
-                    "destroyable",item.destroyable()?"true":"",
-                    "weight",""+item.weight(),
-                    "description",item.description()));
+            f.add(new Form(st, true, "/GPHUD/configuration/items/edititem", "Edit Item",
+                    "name", item.getName(),
+                    "tradable", item.tradable() ? "true" : "",
+                    "destroyable", item.destroyable() ? "true" : "",
+                    "weight", String.valueOf(item.weight()),
+                    "description", item.description()));
         }
         if (st.hasPermission("Items.Delete")) {
             f.add(new Form(st,true,"/GPHUD/configuration/items/deleteitem","Delete Item",
@@ -128,44 +130,50 @@ public class ItemsConfig {
         }
         f.add(new Separator());
         f.add(new TextSubHeader("Allowed In Inventories"));
-        Table inventories=new Table();
+        final Table inventories = new Table();
         f.add(inventories);
-        for (Attribute inventory: Inventory.getAll(st.getInstance())) {
+        for (final Attribute inventory : Inventory.getAll(st.getInstance())) {
             inventories.openRow();
             inventories.add(inventory.getName());
-            boolean allowed=Inventory.allows(st,inventory,item);
-            if (allowed) { inventories.add("Permitted"); }
-            else { inventories.add("Forbidden"); }
+            final boolean allowed = Inventory.allows(st, inventory, item);
+            if (allowed) {
+                inventories.add("Permitted");
+            } else {
+                inventories.add("Forbidden");
+            }
             if (st.hasPermission("Items.EditInventories")) {
-                inventories.add(new Form(st,true,"/GPHUD/configuration/items/inventoryallow","Toggle",
-                        "item",item.getName(),
-                                "inventory",inventory.getName(),
-                                "allowed",allowed?"":"true"));
+                inventories.add(new Form(st, true, "/GPHUD/configuration/items/inventoryallow", "Toggle",
+                        "item", item.getName(),
+                        "inventory", inventory.getName(),
+                        "allowed", allowed ? "" : "true"));
             }
         }
         f.add(new Separator());
         f.add(new TextSubHeader("Available Actions"));
         if (!values.get("newaction").isBlank()) {
-            String newAction=values.get("newaction");
-            if (newAction.equalsIgnoreCase("Give To") ||
-                newAction.equalsIgnoreCase("Destroy") ||
-                newAction.equalsIgnoreCase("Move To")) {
-                f.add(new TextError("Can not create new action "+newAction+", this verb is reserved"));
+            final String newAction = values.get("newaction");
+            if ("Give To".equalsIgnoreCase(newAction) ||
+                    "Destroy".equalsIgnoreCase(newAction) ||
+                    "Move To".equalsIgnoreCase(newAction)) {
+                f.add(new TextError("Can not create new action " + newAction + ", this verb is reserved"));
             } else {
-                try { ItemVerb.create(item,newAction); }
-                catch (UserException e) { f.add(new TextError(e.getLocalizedMessage())); }
+                try {
+                    ItemVerb.create(item, newAction);
+                } catch (final UserException e) {
+                    f.add(new TextError(e.getLocalizedMessage()));
+                }
             }
         }
-        Table verbs=new Table();
+        final Table verbs = new Table();
         f.add(verbs);
-        for (ItemVerb verb:ItemVerb.findAll(item)) {
+        for (final ItemVerb verb : ItemVerb.findAll(item)) {
             verbs.openRow();
-            verbs.add(new Link(verb.getName(),"/GPHUD/configuration/items/verbs/"+verb.getId()));
+            verbs.add(new Link(verb.getName(), "/GPHUD/configuration/items/verbs/" + verb.getId()));
             verbs.add(verb.description());
             verbs.add(VerbActor.decode(verb));
-            verbs.add(new Form(st,true,"/GPHUD/configuration/items/deleteverb","Delete","item",item.getName(),"verb",verb.getName()));
+            verbs.add(new Form(st, true, "/GPHUD/configuration/items/deleteverb", "Delete", "item", item.getName(), "verb", verb.getName()));
         }
-        Form newAction=new Form();
+        final Form newAction = new Form();
         newAction.add(new TextInput("newaction")).add(new Button("Create"));
         f.add(newAction);
         f.add(new Separator());
@@ -220,7 +228,7 @@ public class ItemsConfig {
                                                     type= Argument.ArgumentType.ITEM,
                                                     max=128) final Item name) {
         if (name.getInstance()!=st.getInstance()) { throw new SystemImplementationException("Item instance / state instance mismatch"); }
-        String itemName=name.getName();
+        final String itemName = name.getName();
         name.delete();
         Audit.audit(true,st, Audit.OPERATOR.AVATAR,null,null,"Delete","Item",itemName,null,"Deleted item "+itemName);
         return new OKResponse("Item "+itemName+" deleted");

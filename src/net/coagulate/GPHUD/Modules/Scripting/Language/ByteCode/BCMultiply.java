@@ -8,18 +8,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCMultiply extends ByteCode {
-	public BCMultiply(final ParseNode n) {
-		super(n);
-	}
+    public BCMultiply(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Pop two, op, push result
-	@Nonnull
-	public String explain() { return "Multiply (Pop two, multiply, push result)"; }
+    // ---------- INSTANCE ----------
+    // Pop two, op, push result
+    @Nonnull
+    public String explain() {
+        return "Multiply (Pop two, multiply, push result)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.Multiply.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.Multiply.get());
+    }
 
 	@Override
 	public void execute(final State st,

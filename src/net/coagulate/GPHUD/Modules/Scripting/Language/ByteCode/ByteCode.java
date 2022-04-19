@@ -17,21 +17,23 @@ import java.util.Map;
 
 public abstract class ByteCode {
 
-	public static final Map<Byte,InstructionSet> map=new HashMap<>();
-	@Nullable
-	private ParseNode sourceNode;
+    public static final Map<Byte, InstructionSet> map = new HashMap<>();
+    @Nullable
+    private ParseNode sourceNode;
 
-	public ByteCode(@Nullable final ParseNode n) { sourceNode =n; }
+    protected ByteCode(@Nullable final ParseNode node) {
+        sourceNode = node;
+    }
 
-	// ---------- STATICS ----------
-	@Nonnull
-	public static ByteCode load(@Nonnull final GSVM vm) {
-		final byte instruction=vm.bytecode[vm.PC];
-		final InstructionSet decode=ByteCode.get(instruction);
-		if (decode==null) {
-			throw new GSInternalError("Unable to decode instruction "+instruction+" at index "+vm.PC);
-		}
-		vm.PC++;
+    // ---------- STATICS ----------
+    @Nonnull
+    public static ByteCode load(@Nonnull final GSVM vm) {
+        final byte instruction = vm.bytecode[vm.programCounter];
+        final InstructionSet decode = ByteCode.get(instruction);
+        if (decode == null) {
+            throw new GSInternalError("Unable to decode instruction " + instruction + " at index " + vm.programCounter);
+        }
+		vm.programCounter++;
 		switch (decode) {
 			case Add:
 				return new BCAdd(null);
@@ -53,11 +55,12 @@ public abstract class ByteCode {
 			case String:
 				final int length=vm.getShort();
 				final byte[] string=new byte[length];
-				try { System.arraycopy(vm.bytecode,vm.PC,string,0,length); }
-				catch (@Nonnull final RuntimeException e) {
-					throw new GSInternalError("Failed to arraycopy "+length+" from pos "+vm.PC,e);
+				try {
+					System.arraycopy(vm.bytecode, vm.programCounter, string, 0, length);
+				} catch (@Nonnull final RuntimeException e) {
+					throw new GSInternalError("Failed to arraycopy " + length + " from pos " + vm.programCounter, e);
 				}
-				vm.PC+=length;
+				vm.programCounter += length;
 				final String str=new String(string);
 				return new BCString(null,str);
 			case Debug:
@@ -170,7 +173,7 @@ public abstract class ByteCode {
 
 	void addFloat(@Nonnull final List<Byte> bytes,
 				final float a) {
-		int asInt=Float.floatToIntBits(a);
+		final int asInt = Float.floatToIntBits(a);
 		bytes.add((byte) ((asInt >> 24)&0xff));
 		bytes.add((byte) ((asInt >> 16)&0xff));
 		bytes.add((byte) ((asInt >> 8)&0xff));

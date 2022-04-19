@@ -19,9 +19,9 @@ import java.util.Set;
 public class FactionsModule extends ModuleAnnotation {
 
 	public FactionsModule(final String name,
-	                      final ModuleDefinition def) {
-		super(name,def);
-	}
+                          final ModuleDefinition annotation) {
+        super(name, annotation);
+    }
 
 	// ---------- INSTANCE ----------
 	@Nonnull

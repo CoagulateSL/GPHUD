@@ -73,17 +73,26 @@ public class URLAnnotation extends URL {
 			throw new SystemImplementationException("Illegal arguments on content, should be (State,Map<String,String>), at "+st.getDebasedURL(),ex);
 		}
 		catch (@Nonnull final InvocationTargetException ex) {
-			final Throwable contained=ex.getCause();
-			if (contained instanceof RedirectionException) { throw (RedirectionException) contained; }
-			if (SystemException.class.isAssignableFrom(contained.getClass())) { throw (SystemException) contained; }
-			if (UserException.class.isAssignableFrom(contained.getClass())) { throw (UserException) contained; }
+			final Throwable contained = ex.getCause();
+			if (contained instanceof RedirectionException) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+				throw (RedirectionException) contained;
+			}
+			if (SystemException.class.isAssignableFrom(contained.getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+				throw (SystemException) contained;
+			}
+			if (UserException.class.isAssignableFrom(contained.getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+				throw (UserException) contained;
+			}
 			if (contained instanceof NumberFormatException) {
-				throw new UserInputValidationParseException("Number Format Exception",contained);
+				//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+				throw new UserInputValidationParseException("Number Format Exception", contained);
 			}
 			if (contained instanceof NullPointerException) {
-				throw new SystemImplementationException("Null Pointer Exception",contained);
+				//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+				throw new SystemImplementationException("Null Pointer Exception", contained);
 			}
-			throw new SystemImplementationException("Non GPHUD exception inside page at "+st.getDebasedURL(),contained);
+			//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+			throw new SystemImplementationException("Non GPHUD exception inside page at " + st.getDebasedURL(), contained);
 		}
 	}
 

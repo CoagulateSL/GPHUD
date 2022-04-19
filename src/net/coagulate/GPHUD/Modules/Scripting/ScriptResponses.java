@@ -38,18 +38,19 @@ public class ScriptResponses {
 			if (run.getRespondant()!=st.getCharacter()) {
 				return new ErrorResponse("Script was not expecting a response from you (?)");
 			}
-			try { response.validate(st); }
-			catch (DBException e) {
-				throw new UserInputLookupFailureException("Failed to resolve input to a valid character",e,true);
-			}
-			if (response.getInstance()!=st.getInstance()) {
-				throw new UserInputLookupFailureException("Failed to resolve input to a valid character at your instance",true);
-			}
-			final GSVM vm=new GSVM(run,st);
-			// inject response
-			vm.push(new BCCharacter(null,response));
-			return vm.resume(st);
-		} catch (NoDataException e) { throw new UserInputStateException("Your script run has expired or been replaced by a newer script run",true); }
+			try { response.validate(st); } catch (final DBException e) {
+                throw new UserInputLookupFailureException("Failed to resolve input to a valid character", e, true);
+            }
+            if (response.getInstance() != st.getInstance()) {
+                throw new UserInputLookupFailureException("Failed to resolve input to a valid character at your instance", true);
+            }
+            final GSVM vm = new GSVM(run, st);
+            // inject response
+            vm.push(new BCCharacter(null, response));
+            return vm.resume(st);
+        } catch (final NoDataException e) {
+            throw new UserInputStateException("Your script run has expired or been replaced by a newer script run", e, true);
+        }
 	}
 
 	@Nonnull
@@ -66,15 +67,17 @@ public class ScriptResponses {
 	                                      @Nonnull @Argument.Arguments(name="response",description="The string response",
 	                                                                   type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                                   max=1024) final String response) {
-		try {
-			final ScriptRun run=ScriptRun.get(processid);
-			if (run.getRespondant()!=st.getCharacter()) {
-				return new ErrorResponse("Script was not expecting a response from you (?)");
-			}
-			final GSVM vm=new GSVM(run,st);
-			// inject response
-			vm.push(new BCString(null,response));
-			return vm.resume(st);
-		} catch (NoDataException e) { throw new UserInputStateException("Your script run has expired or been replaced by a newer script run",true); }
+        try {
+            final ScriptRun run = ScriptRun.get(processid);
+            if (run.getRespondant() != st.getCharacter()) {
+                return new ErrorResponse("Script was not expecting a response from you (?)");
+            }
+            final GSVM vm = new GSVM(run, st);
+            // inject response
+            vm.push(new BCString(null, response));
+            return vm.resume(st);
+        } catch (final NoDataException e) {
+			throw new UserInputStateException("Your script run has expired or been replaced by a newer script run", e, true);
+        }
 	}
 }

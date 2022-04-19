@@ -51,33 +51,44 @@ public class Row implements Renderable {
 	public String asText(final State st) {
 		final StringBuilder s=new StringBuilder();
 		for (final Cell c: row) {
-			if (s.length()>0) { s.append(" : "); }
+			if (!s.isEmpty()) {
+				s.append(" : ");
+			}
 			s.append(c.asText(st));
 		}
 		return s.toString();
 	}
 
 	@Nonnull
-	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
-		return asHtml(st,rich,0);
-	}
-	public String asHtml(State st, boolean rich, int rownum) {
-		final StringBuilder s=new StringBuilder("<tr");
-		if (!id.isBlank()) { s.append(" id=\"").append(id).append("\" "); }
-		if (!bgcolor.isEmpty()) { s.append(" bgcolor=").append(bgcolor); }
-		else { s.append(" bgcolor=#").append((rownum % 2)==1?"f0f0f0":"ffffff"); }
-		if (!alignment.isEmpty()) { s.append(" align=").append(alignment); }
-		s.append(">");
-		for (final Cell c: row) {
-			c.header=isHeader();
-			s.append(c.asHtml(st,rich));
+    @Override
+    public String asHtml(final State st,
+                         final boolean rich) {
+        return asHtml(st, rich, 0);
+    }
+
+    public String asHtml(final State st, final boolean rich, final int rownum) {
+        final StringBuilder s = new StringBuilder("<tr");
+        if (!id.isBlank()) {
+			s.append(" id=\"").append(id).append("\" ");
 		}
+		if (bgcolor.isEmpty()) {
+			//noinspection BadOddness
+			s.append(" bgcolor=#").append((rownum % 2) == 1 ? "f0f0f0" : "ffffff");
+		} else {
+			s.append(" bgcolor=").append(bgcolor);
+		}
+		if (!alignment.isEmpty()) {
+			s.append(" align=").append(alignment);
+		}
+        s.append(">");
+        for (final Cell c : row) {
+            c.header = isHeader();
+            s.append(c.asHtml(st, rich));
+        }
 		return s+"</tr>";
 	}
 
-	private boolean reset=false;
+	private boolean reset;
 	public Row resetNumbering() { reset=true; return this; }
 	public boolean isResetNumbering() { return reset; }
 
@@ -88,7 +99,7 @@ public class Row implements Renderable {
 	}
 
 	public void add(final Integer ownerid) {
-		add(""+ownerid);
+		add(String.valueOf(ownerid));
 	}
 
 	public void add(final boolean online) {
@@ -103,7 +114,8 @@ public class Row implements Renderable {
 		this.alignment=alignment;
 	}
 	private String id="";
-    public void id(String rowID) {
-    	this.id=rowID;
+
+    public void id(final String rowID) {
+        this.id = rowID;
     }
 }

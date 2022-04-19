@@ -34,7 +34,7 @@ public abstract class API {
 		final Form f=st.form();
 		String proposedcommand=uri;
 		proposedcommand=proposedcommand.replaceAll("/",".");
-		proposedcommand=proposedcommand.replaceAll("[^A-Za-z0-9.]","");  // limited character set.  XSS protect etc blah blah tainted user input blah
+		proposedcommand=proposedcommand.replaceAll("[^A-Za-z\\d.]","");  // limited character set.  XSS protect etc blah blah tainted user input blah
 
 		final Command c=Modules.getCommandNullable(st,proposedcommand);
 		if (c==null) {
@@ -55,50 +55,58 @@ public abstract class API {
 				final String[] split=proposedcommand.split("\\.");
 				final StringBuilder options=new StringBuilder();
 				for (final String s: p.getChoices(st)) {
-					if (options.length()>0) { options.append(", "); }
+					if (!options.isEmpty()) {
+						options.append(", ");
+					}
 					options.append(s);
 				}
 				f.add(" ["+options+"]");
 			}
 			f.add(" - Mandatory: "+p.mandatory());
-			f.add(" - "+p.description());
+			f.add(" - " + p.description());
 			f.add("<br>");
 		}
-		if (c.requiresPermission()!=null && !c.requiresPermission().isEmpty()) {
+		if (c.requiresPermission() != null && !c.requiresPermission().isEmpty()) {
 			f.add(new TextSubHeader("Permission Required to Invoke"));
 			f.add(c.requiresPermission());
 		}
 		f.add(new TextSubHeader("Operational Context"));
 		f.add(c.context().toString());
 		f.add(new TextSubHeader("Interface Access"));
-		if (!c.permitConsole()) { f.add(new Color("red","Console access denied")); }
-		else {
-			f.add(new Color("green","Accessible via console"));
+		if (c.permitConsole()) {
+			f.add(new Color("green", "Accessible via console"));
+		} else {
+			f.add(new Color("red", "Console access denied"));
 		}
 		f.add("<br>");
-		if (!c.permitHUD()) { f.add(new Color("red","HUD access denied")); }
-		else {
-			f.add(new Color("green","Accessible via HUD"));
+		if (c.permitHUD()) {
+			f.add(new Color("green", "Accessible via HUD"));
+		} else {
+			f.add(new Color("red", "HUD access denied"));
 		}
 		f.add("<br>");
-		if (!c.permitWeb()) { f.add(new Color("red","Web access denied")); }
-		else {
-			f.add(new Color("green","Accessible via Web"));
+		if (c.permitWeb()) {
+			f.add(new Color("green", "Accessible via Web"));
+		} else {
+			f.add(new Color("red", "Web access denied"));
 		}
 		f.add("<br>");
-		if (!c.permitScripting()) { f.add(new Color("red","Scripting access denied")); }
-		else {
-			f.add(new Color("green","Accessible via Scripting module"));
+		if (c.permitScripting()) {
+			f.add(new Color("green", "Accessible via Scripting module"));
+		} else {
+			f.add(new Color("red", "Scripting access denied"));
 		}
 		f.add("<br>");
-		if (!c.permitObject()) { f.add(new Color("red","Object access denied")); }
-		else {
-			f.add(new Color("green","Accessible via Object API"));
+		if (c.permitObject()) {
+			f.add(new Color("green", "Accessible via Object API"));
+		} else {
+			f.add(new Color("red", "Object access denied"));
 		}
 		f.add("<br>");
-		if (!c.permitExternal()) { f.add(new Color("red","External access denied")); }
-		else {
-			f.add(new Color("green","Accessible via External API"));
+		if (c.permitExternal()) {
+			f.add(new Color("green", "Accessible via External API"));
+		} else {
+			f.add(new Color("red", "External access denied"));
 		}
 		f.add("<br>");
 		f.add("<br>");

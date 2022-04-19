@@ -72,12 +72,12 @@ public class ObjectManagement {
 	          requiresPermission="Objects.ObjectTypes")
 	public static void createObjectType(@Nonnull final State st,
 	                                    @Nonnull final SafeMap map) {
-		if (map.get("Create").equalsIgnoreCase("Create") && ObjectType.getObjectTypesSet().contains(map.get("behaviour"))) {
-			final JSONObject jsonbase=new JSONObject();
-			jsonbase.put("behaviour",map.get("behaviour"));
-			final ObjType ot=ObjType.create(st,map.get("name"),jsonbase);
-			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","ObjectType",null,map.get("name"),"Created new object type of behaviour "+map.get("behaviour"));
-			throw new RedirectionException("/GPHUD/configuration/objects/objecttypes/"+ot.getId());
+		if ("Create".equalsIgnoreCase(map.get("Create")) && ObjectType.getObjectTypesSet().contains(map.get("behaviour"))) {
+			final JSONObject jsonbase = new JSONObject();
+			jsonbase.put("behaviour", map.get("behaviour"));
+			final ObjType ot = ObjType.create(st, map.get("name"), jsonbase);
+			Audit.audit(st, Audit.OPERATOR.AVATAR, null, null, "Create", "ObjectType", null, map.get("name"), "Created new object type of behaviour " + map.get("behaviour"));
+			throw new RedirectionException("/GPHUD/configuration/objects/objecttypes/" + ot.getId());
 		}
 		final Form f=st.form();
 		final Table input=new Table();

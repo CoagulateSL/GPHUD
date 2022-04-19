@@ -176,7 +176,7 @@ public abstract class DateTime {
 	// ----- Internal Statics -----
 	@Nonnull
 	private static String fromUnixTime(final int date,
-	                                   @Nonnull final DateFormat df) { return df.format(new Date(((long) (date))*((long) 1000))); }
+	                                   @Nonnull final DateFormat df) { return df.format(new Date((date) *(1000L))); }
 
 	@Nonnull
 	private static TextInput ti(final String prefix,

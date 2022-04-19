@@ -15,7 +15,9 @@ public class BCAvatar extends ByteCodeDataType {
 	@Nullable
 	private User content;
 
-	public BCAvatar(final ParseNode n) { super(n); }
+	public BCAvatar(final ParseNode node) {
+        super(node);
+    }
 
 	public BCAvatar(final ParseNode node,
 	                @Nullable final User content) {

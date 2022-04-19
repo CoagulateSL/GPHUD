@@ -30,7 +30,9 @@ public class ParseNode extends net.coagulate.GPHUD.Modules.Scripting.Language.Ge
 		if (t!=null) {
 			boolean last=false;
 			while (!last) {
-				if (s.length()>0) { s.append(" "); }
+				if (!s.isEmpty()) {
+					s.append(" ");
+				}
 				s.append(t.image);
 				if (t==jjtGetLastToken()) { last=true; }
 				else { t=t.next; }

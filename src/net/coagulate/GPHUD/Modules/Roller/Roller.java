@@ -92,11 +92,13 @@ public class Roller {
 		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
 		String event="rolled "+dice+"d"+sides+" ";
 		event+="for "+reason+", and rolled ";
-		String allrolls="";
+		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (!"".equals(allrolls)) { allrolls+=", "; }
-			allrolls=allrolls+num;
+			if (!allrolls.isEmpty()) {
+				allrolls.append(", ");
+			}
+			allrolls.append(num);
 		}
 
 		event+=allrolls;
@@ -142,21 +144,23 @@ public class Roller {
 		if (bias!=0) { event+="(with bias "+bias+") "; }
 		event+="for "+reason+", and rolled ";
 		int total=0;
-		String allrolls="";
+		final StringBuilder allrolls= new StringBuilder();
 		final List<Integer> rolls=roll(st,dice,sides);
 		for (final int num: rolls) {
-			if (!"".equals(allrolls)) { allrolls+=", "; }
+			if (!allrolls.isEmpty()) {
+				allrolls.append(", ");
+			}
 			total=total+num;
-			allrolls=allrolls+num;
+			allrolls.append(num);
 		}
 
 		if (bias!=0) {
-			allrolls=allrolls+"+"+bias;
+			allrolls.append("+").append(bias);
 			total+=bias;
 		}
 		event+=total+" ("+allrolls+")";
-		st.roll=total;
-		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,null,"Roll",null,null,""+total,event);
+		st.roll = total;
+		Audit.audit(st, Audit.OPERATOR.CHARACTER, null, null, "Roll", null, null, String.valueOf(total), event);
 		return new SayResponse(event,st.getCharacter().getName());
 	}
 
@@ -236,28 +240,32 @@ public class Roller {
 		st.setTarget(target);
 
 		int total=0;
-		String allrolls="";
+		StringBuilder allrolls= new StringBuilder();
 		int targettotal=0;
-		String targetallrolls="";
+		StringBuilder targetallrolls= new StringBuilder();
 		int attempts=100;
 		while (total==targettotal && attempts>0) {
 			total=0;
-			allrolls="";
+			allrolls = new StringBuilder();
 			targettotal=0;
-			targetallrolls="";
+			targetallrolls = new StringBuilder();
 			attempts--;
 			final List<Integer> rolls=roll(st,dice,sides);
 			for (final int num: rolls) {
-				if (!"".equals(allrolls)) { allrolls+=", "; }
+				if (!allrolls.isEmpty()) {
+					allrolls.append(", ");
+				}
 				total=total+num;
-				allrolls=allrolls+num;
+				allrolls.append(num);
 			}
 			total=total+bias;
 			final List<Integer> targetrolls=roll(st.getTarget(),targetdice,targetsides);
 			for (final int num: targetrolls) {
-				if (!"".equals(targetallrolls)) { targetallrolls+=", "; }
+				if (!targetallrolls.isEmpty()) {
+					targetallrolls.append(", ");
+				}
 				targettotal=targettotal+num;
-				targetallrolls=targetallrolls+num;
+				targetallrolls.append(num);
 			}
 			targettotal=targettotal+targetbias;
 		}
@@ -279,8 +287,8 @@ public class Roller {
 		}
 		event+="("+total+"v"+targettotal+")";
 		st.roll=total;
-		st.getTarget().roll=targettotal;
-		Audit.audit(st,Audit.OPERATOR.CHARACTER,st.getTarget().getAvatarNullable(),st.getTarget().getCharacter(),"Roll",null,null,""+total,event);
+		st.getTarget().roll = targettotal;
+		Audit.audit(st, Audit.OPERATOR.CHARACTER, st.getTarget().getAvatarNullable(), st.getTarget().getCharacter(), "Roll", null, null, String.valueOf(total), event);
 		return new SayResponse(event,st.getCharacter().getName());
 	}
 

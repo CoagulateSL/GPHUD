@@ -55,18 +55,18 @@ public abstract class MenuConfig {
 		final Map<String,Integer> menus=Menu.getMenusMap(st);
 		for (final Map.Entry<String,Integer> entry: menus.entrySet()) {
 			if (candelete) {
-				String innercontent="";
-				innercontent+="<button "+(entry.getKey()
-				                               .equalsIgnoreCase("Main")?"disabled":"")+" style=\"border: 0;\" onclick=\"document.getElementById('delete-"+entry.getValue()+"').style.display='inline';\">Delete</button>";
-				innercontent+="<div id=\"delete-"+entry.getValue()+"\" style=\"display: none;\">";
-				innercontent+="&nbsp;&nbsp;&nbsp;";
-				innercontent+="CONFIRM DELETE? ";
-				innercontent+="<form style=\"display: inline;\" method=post>";
-				innercontent+="<input type=hidden name=deletemenu value=\""+entry.getValue()+"\">";
-				innercontent+="<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>";
-				innercontent+="</form>";
-				innercontent+="</div>";
-				innercontent+="&nbsp;&nbsp;&nbsp;";
+				String innercontent = "";
+				innercontent += "<button " + ("Main"
+						.equalsIgnoreCase(entry.getKey()) ? "disabled" : "") + " style=\"border: 0;\" onclick=\"document.getElementById('delete-" + entry.getValue() + "').style.display='inline';\">Delete</button>";
+				innercontent += "<div id=\"delete-" + entry.getValue() + "\" style=\"display: none;\">";
+				innercontent += "&nbsp;&nbsp;&nbsp;";
+				innercontent += "CONFIRM DELETE? ";
+				innercontent += "<form style=\"display: inline;\" method=post>";
+				innercontent += "<input type=hidden name=deletemenu value=\"" + entry.getValue() + "\">";
+				innercontent += "<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>";
+				innercontent += "</form>";
+				innercontent += "</div>";
+				innercontent += "&nbsp;&nbsp;&nbsp;";
 				f.add(innercontent);
 			}
 			f.add("<a href=\"./menus/view/"+entry.getValue()+"\">"+entry.getKey()+"</a><br>");
@@ -129,7 +129,7 @@ public abstract class MenuConfig {
 		example.openRow().add("1").add("2").add("3");
 		if (st.hasPermission("Menus.Config")) {
 			if (!values.get("cloneas").isEmpty()) {
-				String newname=values.get("cloneas");
+				final String newname = values.get("cloneas");
 				if (Menu.getMenuNullable(st,newname)==null) {
 					Menu.create(st,newname,m.getDescription(), m.getJSON());
 					f.add(new TextOK("Menu cloned, note you are still editing the original"));

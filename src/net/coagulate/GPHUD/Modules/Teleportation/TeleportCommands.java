@@ -67,8 +67,12 @@ public class TeleportCommands {
 		String position=null;
 		String rotation=null;
 		for (final Header h: st.req().getAllHeaders()) {
-			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Position")) { position=h.getValue(); }
-			if (h.getName().equalsIgnoreCase("X-SecondLife-Local-Rotation")) { rotation=h.getValue(); }
+			if ("X-SecondLife-Local-Position".equalsIgnoreCase(h.getName())) {
+				position = h.getValue();
+			}
+			if ("X-SecondLife-Local-Rotation".equalsIgnoreCase(h.getName())) {
+				rotation = h.getValue();
+			}
 		}
 		if (position==null || rotation==null) {
 			throw new UserInputEmptyException("Unable to calculate your location/rotation information");
@@ -88,7 +92,7 @@ public class TeleportCommands {
 
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
 
-		Landmark.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+((float) 1));
+		Landmark.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+ 1);
 		return new OKResponse("Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
 	}
 

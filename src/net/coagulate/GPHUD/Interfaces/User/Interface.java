@@ -59,50 +59,68 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	// leave this here for now
 	@Nonnull
 	public static String styleSheet() {
-		return ""+"<style>\n"+".tooltip {\n"+"    position: relative;\n"+"    display: inline-block;\n"+"    border-bottom: 1px dotted black; /* If you want dots under the hover text */\n"+"}\n"+"\n"+".tooltip .tooltiptext {\n"+"    visibility: hidden;\n"+
-				//"    width: 120px;\n" +
-				"    background-color: #e0e0e0;\n"+"    color: black;\n"+"    text-align: center;\n"+"    padding: 5px 0;\n"+"    border-radius: 6px;\n"+" \n"+"     top: "+"-5px;\n"+"    left: 105%; "+"    position: absolute;\n"+"    z-index: 1;\n"+"white-space: nowrap;\n"+"}\n"+"\n"+"/* Show the tooltip text when you mouse "+"over the tooltip container */\n"+".tooltip:hover .tooltiptext {\n"+"    visibility: visible;\n"+"}\n"+"</style>";
+		//"    width: 120px;\n" +
+		return """
+				<style>
+				.tooltip {
+				    position: relative;
+				    display: inline-block;
+				    border-bottom: 1px dotted black; /* If you want dots under the hover text */
+				}
+
+				.tooltip .tooltiptext {
+				    visibility: hidden;
+				    background-color: #e0e0e0;
+				    color: black;
+				    text-align: center;
+				    padding: 5px 0;
+				    border-radius: 6px;
+				\s
+				     top: -5px;
+				    left: 105%;     position: absolute;
+				    z-index: 1;
+				white-space: nowrap;
+				}
+
+				/* Show the tooltip text when you mouse over the tooltip container */
+				.tooltip:hover .tooltiptext {
+				    visibility: visible;
+				}
+				</style>""";
 	}
 
 	@Override
-	protected void initialiseState(HttpRequest request, HttpContext context, Map<String, String> parameters, Map<String, String> cookies) {
-		State state=state();
-		state.source= State.Sources.USER;
-		state.parameterDebugRaw=new SafeMap();
+	protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
+		final State state = state();
+		state.source = State.Sources.USER;
+		state.parameterDebugRaw = new SafeMap();
 		state.parameterDebugRaw.putAll(parameters);
 	}
 
+    @Nullable
 	@Override
-	protected void loadSession() {
-
-	}
-
-	@Override
-	protected boolean checkAuthenticationNeeded(Method content) {
-		return false;
-	}
-
-	@Nullable
-	@Override
-	protected Method lookupPageFromUri(String uri) {
+	protected Method lookupPageFromUri(final String uri) {
 		state().setURL(uri);
-		try { return getClass().getDeclaredMethod("renderHTML",State.class); } catch (NoSuchMethodException e) {
-			throw new SystemImplementationException("Internal reflection failed with method not found",e);
+		try {
+			return getClass().getDeclaredMethod("renderHTML", State.class);
+		} catch (final NoSuchMethodException e) {
+			throw new SystemImplementationException("Internal reflection failed with method not found", e);
 		}
 	}
 
 	@Override
-	protected void executePage(Method content) {
+	protected void executePage(final Method content) {
 		try {
 			//todo
 			//noinspection deprecation
 			Page.page().add(new Raw(renderHTML(state())));
-			if (state().suppressOutput()) { return; }
+			if (state().suppressOutput()) {
+				return;
+			}
 			Page.page().template(new PlainTextMapper.PlainTextTemplate());
-		}
-		catch (@Nonnull final RedirectionException redir) {
+		} catch (@Nonnull final RedirectionException redir) {
 			Page.page().responseCode(HttpStatus.SC_SEE_OTHER);
-			String targeturl=redir.getURL();
+			String targeturl = redir.getURL();
 			//System.out.println("PRE:"+targeturl);
 			if (targeturl.startsWith("/") && !targeturl.startsWith("/GPHUD")) { targeturl="/GPHUD"+targeturl; }
 			//System.out.println("POST:"+targeturl);
@@ -344,10 +362,9 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		if (st.avatar!=null || st.getCharacterNullable()!=null) { return null; }
 		if (cookieAuthenticationOnly()) {
 			final Form failed=new Form();
-			if (cookie!=null && !"".equals(cookie)) {
+			if (cookie != null && !cookie.isEmpty()) {
 				failed.add("Sorry, your session has expired, please start a new session somehow");
-			}
-			else {
+			} else {
 				failed.add("Sorry, login failed, cookie not received at this time.");
 			}
 			return failed;
@@ -482,23 +499,26 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			s.append("<b>Avatar:</b> ");
 			//if (st.user!=null) s+="[<a href=\"/GPHUD/switch/avatar\">Switch</a>]"; // you can only switch avis if you're a logged in user, as that's what binds avis
 			s.append("<br>");
-			if (st.getAvatarNullable()!=null) {
+			if (st.getAvatarNullable() == null) {
+				s.append("<i>none</i><br>");
+			} else {
 				s.append(st.getAvatarNullable().getGPHUDLink()).append("<br>");
 			}
-			else { s.append("<i>none</i><br>"); }
 
 
 			s.append("<b>Instance:</b> [<a href=\"/GPHUD/switch/instance\">Switch</a>]<br>");
-			if (st.getInstanceNullable()!=null) {
-				s.append(st.getInstance().asHtml(st,true)).append("<br>");
+			if (st.getInstanceNullable() == null) {
+				s.append("<i>none</i><br>");
+			} else {
+				s.append(st.getInstance().asHtml(st, true)).append("<br>");
 			}
-			else { s.append("<i>none</i><br>"); }
 
 			s.append("<b>Character:</b> [<a href=\"/GPHUD/switch/character\">Switch</a>]<br>");
-			if (st.getCharacterNullable()!=null) {
-				s.append(st.getCharacter().asHtml(st,true)).append("<br>");
+			if (st.getCharacterNullable() == null) {
+				s.append("<i>none</i><br>");
+			} else {
+				s.append(st.getCharacter().asHtml(st, true)).append("<br>");
 			}
-			else { s.append("<i>none</i><br>"); }
 		}
 		else {
 			s.append("<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>");
@@ -661,42 +681,42 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		return selectavatars;
 	}*/
 	@Override
-	protected void renderUnhandledError(HttpRequest request, HttpContext context, HttpResponse response, Throwable t) {
-		SL.report("GPWeb UnkEx: "+t.getLocalizedMessage(),t,state());
-		State st=state();
-		String page=headerHTML(st);
-		page+="<p><h1>Unhandled Internal Error</h1></p>";
-		page+="<p>Sorry, an unhandled internal error has occurred.</p>";
-		page+="<p>The system administrator has been mailed about this issue.</p>";
-		page+=footerHTML(st);
+	protected void renderUnhandledError(final HttpRequest request, final HttpContext context, final HttpResponse response, final Throwable t) {
+		SL.report("GPWeb UnkEx: " + t.getLocalizedMessage(), t, state());
+		final State st = state();
+		String page = headerHTML(st);
+		page += "<p><h1>Unhandled Internal Error</h1></p>";
+		page += "<p>Sorry, an unhandled internal error has occurred.</p>";
+		page += "<p>The system administrator has been mailed about this issue.</p>";
+		page += footerHTML(st);
 		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
 		response.setStatusCode(200);
 	}
 
 	@Override
-	protected void renderSystemError(HttpRequest request, HttpContext context, HttpResponse response, SystemException t) {
-		SL.report("GPWeb SysEx: "+t.getLocalizedMessage(),t,state());
-		State st=state();
-		String page=headerHTML(st);
-		page+="<p><h1>Internal Error</h1></p>";
-		page+="<p>Sorry, an internal error has occurred.</p>";
-		page+="<p>The system administrator has been mailed about this issue.</p>";
-		page+=footerHTML(st);
-		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
-		response.setStatusCode(200);
-	}
+    protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException systemException) {
+        SL.report("GPWeb SysEx: " + systemException.getLocalizedMessage(), systemException, state());
+        final State st = state();
+        String page = headerHTML(st);
+        page += "<p><h1>Internal Error</h1></p>";
+        page += "<p>Sorry, an internal error has occurred.</p>";
+        page += "<p>The system administrator has been mailed about this issue.</p>";
+        page += footerHTML(st);
+        response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
+        response.setStatusCode(200);
+    }
 
-	@Override
-	protected void renderUserError(HttpRequest request, HttpContext context, HttpResponse response, UserException t) {
-		SL.report("GPWeb User: "+t.getLocalizedMessage(),t,state());
-		State st=state();
-		String page=headerHTML(st);
-		page+="<p><h1>Error</h1></p>";
-		page+="<p>There was an error processing your request.</p>";
-		page+="<p>Please review your inputs and the error message, this type of error is likely more related to user data, configuration, or similar, rather than being a system error.</p>";
-		page+="<p><b>ERROR:</b> "+t.getLocalizedMessage();
-		page+=footerHTML(st);
-		response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
-		response.setStatusCode(200);
-	}
+    @Override
+    protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException userException) {
+        SL.report("GPWeb User: " + userException.getLocalizedMessage(), userException, state());
+        final State st = state();
+        String page = headerHTML(st);
+        page += "<p><h1>Error</h1></p>";
+        page += "<p>There was an error processing your request.</p>";
+        page += "<p>Please review your inputs and the error message, this type of error is likely more related to user data, configuration, or similar, rather than being a system error.</p>";
+        page += "<p><b>ERROR:</b> " + userException.getLocalizedMessage();
+        page += footerHTML(st);
+        response.setEntity(new StringEntity(page, ContentType.TEXT_HTML));
+        response.setStatusCode(200);
+    }
 }

@@ -99,7 +99,7 @@ public class EventsPages {
 		for (final EventSchedule es: schedule) {
 			final Row esrow=es.asRow(tz);
 			if (st.hasPermission("events.schedule")) {
-				esrow.add(new Form(st,true,"./deleteschedule","Remove","eventscheduleid",es.getId()+""));
+				esrow.add(new Form(st, true, "./deleteschedule", "Remove", "eventscheduleid", String.valueOf(es.getId())));
 			}
 			sch.add(esrow);
 		}

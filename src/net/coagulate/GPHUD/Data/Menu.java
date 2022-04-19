@@ -103,7 +103,7 @@ public class Menu extends TableRow {
 		if (getMenuNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("Menu "+name+" already exists");
 		}
-		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
+		if (name.matches(".*[^A-Za-z\\d-=_,].*")) {
 			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		db().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",st.getInstance().getId(),name,description,template.toString());
@@ -171,7 +171,7 @@ public class Menu extends TableRow {
 
 	public void delete(final State st) {
 		final String oldname=getName();
-		if (oldname.equalsIgnoreCase("Main")) {
+		if ("Main".equalsIgnoreCase(oldname)) {
 			throw new UserInputInvalidChoiceException("You can not delete the Main menu as this is hard wired to the main HUD button");
 		}
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"delete","Menus",oldname,"","Deleted menu "+oldname);

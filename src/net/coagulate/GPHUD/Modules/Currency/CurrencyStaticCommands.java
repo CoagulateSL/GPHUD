@@ -20,7 +20,9 @@ public class CurrencyStaticCommands {
 		final StringBuilder report=new StringBuilder("Current balance:");
 		for (final Attribute a: Attribute.getAttributes(state.getInstance())) {
 			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
-				if (report.length()>0) { report.append("\n"); }
+				if (!report.isEmpty()) {
+					report.append("\n");
+				}
 				report.append(a.getName()).append(" - ");
 				final Currency currency=Currency.find(state,a.getName());
 				report.append(currency.longSum(state));

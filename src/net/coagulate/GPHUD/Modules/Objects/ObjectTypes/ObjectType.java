@@ -41,16 +41,30 @@ public abstract class ObjectType {
 	@Nonnull
 	public static ObjectType materialise(final State st,
 	                                     @Nonnull final ObjType object) {
-		final JSONObject json=object.getBehaviour();
-		final String behaviour=json.optString("behaviour","");
-		if (behaviour.equals("ClickTeleport")) { return new ClickTeleporter(st,object); }
-		if (behaviour.equals("PhantomTeleport")) { return new PhantomTeleporter(st,object); }
-		if (behaviour.equals("RunCommand")) { return new RunCommand(st,object); }
-		if (behaviour.equals("RunScript")) { return new RunScript(st,object); }
-		if (behaviour.equals("PhantomScript")) { return new PhantomScript(st,object); }
-		if (behaviour.equals("NPC")) { return new NPC(st,object); }
-		if (behaviour.equals("PhantomCommand")) { return new PhantomCommand(st,object); }
-		throw new SystemLookupFailureException("Behaviour "+behaviour+" is not known!",true);
+		final JSONObject json = object.getBehaviour();
+		final String behaviour = json.optString("behaviour", "");
+		if ("ClickTeleport".equals(behaviour)) {
+			return new ClickTeleporter(st, object);
+		}
+		if ("PhantomTeleport".equals(behaviour)) {
+			return new PhantomTeleporter(st, object);
+		}
+		if ("RunCommand".equals(behaviour)) {
+			return new RunCommand(st, object);
+		}
+		if ("RunScript".equals(behaviour)) {
+			return new RunScript(st, object);
+		}
+		if ("PhantomScript".equals(behaviour)) {
+			return new PhantomScript(st, object);
+		}
+		if ("NPC".equals(behaviour)) {
+			return new NPC(st, object);
+		}
+		if ("PhantomCommand".equals(behaviour)) {
+			return new PhantomCommand(st, object);
+		}
+		throw new SystemLookupFailureException("Behaviour " + behaviour + " is not known!", true);
 	}
 
 	@Nonnull
@@ -77,7 +91,7 @@ public abstract class ObjectType {
 	}
 
     public static Set<String> getObjectTypesSet() {
-		Set<String> types=new HashSet<>();
+		final Set<String> types = new HashSet<>();
 		types.add("ClickTeleport");
 		types.add("PhantomTeleport");
 		types.add("RunCommand");
@@ -117,11 +131,13 @@ public abstract class ObjectType {
 	public Response collide(final State st,
 	                        final Char collider) { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
 
-	protected void populateVmVariables(State st, GSVM vm) {
-		if (st.getObject().getObjectType()==null) { throw new SystemImplementationException("In object driver but no object type is defined (?)"); }
-		vm.introduce("OBJECTNAME",new BCString(null,st.getObject().getName()));
-		vm.introduce("OBJECTTYPE",new BCString(null,st.getObject().getObjectType().getName()));
-		vm.introduce("OBJECTKEY",new BCString(null,st.getObject().getUUID()));
+	protected void populateVmVariables(final State st, final GSVM vm) {
+		if (st.getObject().getObjectType() == null) {
+			throw new SystemImplementationException("In object driver but no object type is defined (?)");
+		}
+		vm.introduce("OBJECTNAME", new BCString(null, st.getObject().getName()));
+		vm.introduce("OBJECTTYPE", new BCString(null, st.getObject().getObjectType().getName()));
+		vm.introduce("OBJECTKEY", new BCString(null, st.getObject().getUUID()));
 	}
 
 	@Nullable
@@ -138,28 +154,31 @@ public abstract class ObjectType {
 	}
 
 	protected final void editFormScript(@Nonnull final State st, @Nonnull final Table t) {
-		DropDownList scriptsList = DropDownList.getScriptsList(st, "script");
+		final DropDownList scriptsList = DropDownList.getScriptsList(st, "script");
 		scriptsList.setValue(json.optString("script",""));
 		t.add("Script").add(scriptsList);
 		t.openRow();
 	}
+
 	protected final void editFormDistance(@Nonnull final State st, @Nonnull final Table t) {
-		String maxdistance = json.optString("maxdistance", "10");
+		final String maxdistance = json.optString("maxdistance", "10");
 		t.add("Max Click Distance (0=any)").add(new TextInput("maxdistance", maxdistance));
 		t.openRow();
 	}
-	protected final boolean updateScript(State st) {
-		final String script=st.postMap().get("script");
-		if (!script.isBlank() && !script.equals(json.optString("script",""))) {
-			json.put("script",st.postMap().get("script"));
+
+	protected final boolean updateScript(final State st) {
+		final String script = st.postMap().get("script");
+		if (!script.isBlank() && !script.equals(json.optString("script", ""))) {
+			json.put("script", st.postMap().get("script"));
 			return true;
 		}
 		return false;
 	}
-	protected final boolean updateDistance(State st) {
-		final String maxdistance=st.postMap().get("maxdistance");
-		if (!maxdistance.isBlank() && !maxdistance.equals(json.optString("maxdistance",""))) {
-			json.put("maxdistance",st.postMap().get("maxdistance"));
+
+	protected final boolean updateDistance(final State st) {
+		final String maxdistance = st.postMap().get("maxdistance");
+		if (!maxdistance.isBlank() && !maxdistance.equals(json.optString("maxdistance", ""))) {
+			json.put("maxdistance", st.postMap().get("maxdistance"));
 			return true;
 		}
 		return false;

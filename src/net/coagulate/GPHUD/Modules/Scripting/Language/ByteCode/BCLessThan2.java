@@ -10,18 +10,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCLessThan2 extends ByteCode {
-	public BCLessThan2(final ParseNode n) {
-		super(n);
-	}
+    public BCLessThan2(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Pop two, op, push result
-	@Nonnull
-	public String explain() { return "LessThan2 (Pop two, compare, push 1 if deeper is less than top most, else 0)"; }
+    // ---------- INSTANCE ----------
+    // Pop two, op, push result
+    @Nonnull
+    public String explain() {
+        return "LessThan2 (Pop two, compare, push 1 if deeper is less than top most, else 0)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.LessThan2.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.LessThan2.get());
+    }
 
 	@Override
 	public void execute(final State st,

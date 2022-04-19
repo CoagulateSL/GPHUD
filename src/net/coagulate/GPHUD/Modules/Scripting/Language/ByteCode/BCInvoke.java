@@ -13,18 +13,20 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class BCInvoke extends ByteCode {
-	public BCInvoke(final ParseNode n) {
-		super(n);
-	}
+    public BCInvoke(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Invoke a function.  Pop name, arg count, N*arguments
-	@Nonnull
-	public String explain() { return "Invoke (pop function name, pop arg count, pop arguments, push result)"; }
+    // ---------- INSTANCE ----------
+    // Invoke a function.  Pop name, arg count, N*arguments
+    @Nonnull
+    public String explain() {
+        return "Invoke (pop function name, pop arg count, pop arguments, push result)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.Invoke.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.Invoke.get());
+    }
 
 	@Override
 	public void execute(final State st,
@@ -93,18 +95,24 @@ public class BCInvoke extends ByteCode {
 			rawret=function.invoke(null,parameters);
 		}
 		catch (@Nonnull final IllegalAccessException e) {
-			throw new GSInternalError("Method access to "+function.getName()+" in "+function.getDeclaringClass()+" is not permitted.  Check access qualifier is public.");
+			throw new GSInternalError("Method access to " + function.getName() + " in " + function.getDeclaringClass() + " is not permitted.  Check access qualifier is public.", e);
 		}
 		catch (@Nonnull final InvocationTargetException e) {
 			final Throwable t=e.getCause();
 			if (t!=null) {
-				if (UserException.class.isAssignableFrom(t.getClass())) { throw ((UserException) t); }
-				if (SystemException.class.isAssignableFrom(t.getClass())) { throw ((SystemException) t); }
-				if (RuntimeException.class.isAssignableFrom(t.getClass())) {
-					throw new GSInvalidFunctionCall("Function "+function.getName()+" errored: "+t,t);
+				if (UserException.class.isAssignableFrom(t.getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw ((UserException) t);
 				}
-				throw new GSInternalError("Unhandled exception in GPHUDScript invoke bytecode calling "+function.getName()+" in "+function.getDeclaringClass().getSimpleName(),
-				                          t
+				if (SystemException.class.isAssignableFrom(t.getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw ((SystemException) t);
+				}
+				if (RuntimeException.class.isAssignableFrom(t.getClass())) {
+					//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw new GSInvalidFunctionCall("Function " + function.getName() + " errored: " + t, t);
+				}
+				//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+				throw new GSInternalError("Unhandled exception in GPHUDScript invoke bytecode calling " + function.getName() + " in " + function.getDeclaringClass().getSimpleName(),
+						t
 				);
 			}
 			throw new GSInternalError("No cause to invocation target exception from "+function.getDeclaringClass().getSimpleName()+"/"+function.getName(),e);
@@ -120,27 +128,27 @@ public class BCInvoke extends ByteCode {
 		// well then.  We need the function in memory, set up the return function and jump to it, also dealing with debug info and stuff.  ehh
 		// 1) Load function
 		if (vm.get(" CODEBASE "+scriptname)==null) { // function is not loaded
-			Script script = Script.findNullable(st, scriptname);
+			final Script script = Script.findNullable(st, scriptname);
 			if (script == null) {
 				throw new GSUnknownIdentifier("Can not find function or script '" + scriptname + "'", true);
 			}
-			if (script.getCompilerVersion()<1) {
-				throw new GSInvalidFunctionCall("Script "+scriptname+" must be recompiled (it was compiled by a compiler that used absolute addressing in branch instructions which inhibits relocation / inclusion).");
+			if (script.getCompilerVersion() < 1) {
+				throw new GSInvalidFunctionCall("Script " + scriptname + " must be recompiled (it was compiled by a compiler that used absolute addressing in branch instructions which inhibits relocation / inclusion).");
 			}
 			vm.set(" CODEBASE " + scriptname, new BCInteger(null, vm.bytecode.length)); // stash the start place
 			// merge the new script onto the end of the existing bytecode.
-			byte[] append = script.getByteCode();
-			byte[] merge = new byte[vm.bytecode.length + append.length];
+			final byte[] append = script.getByteCode();
+			final byte[] merge = new byte[vm.bytecode.length + append.length];
 			System.arraycopy(vm.bytecode, 0, merge, 0, vm.bytecode.length);
 			System.arraycopy(append, 0, merge, vm.bytecode.length, append.length);
 			vm.bytecode = merge;
 		}
-		int targetPC=vm.get(" CODEBASE "+scriptname).toBCInteger().getContent();
+		final int targetPC = vm.get(" CODEBASE " + scriptname).toBCInteger().getContent();
 		// 2) Set up return stack
-		vm.stack.push(new BCInteger(null,vm.PC)); // stash the return PC
-		vm.stack.push(new BCInteger(null,vm.getCanary())); // stash the canary.
+		vm.stack.push(new BCInteger(null, vm.programCounter)); // stash the return PC
+		vm.stack.push(new BCInteger(null, vm.getCanary())); // stash the canary.
 		// 3) Call function
-		vm.PC=targetPC;
+		vm.programCounter = targetPC;
 		// 4) Restore debug - can't do this here, we lose control in (3) - compiler must reassert this :)
 	}
 }

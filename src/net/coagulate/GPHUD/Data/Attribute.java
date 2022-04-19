@@ -174,7 +174,9 @@ public class Attribute extends TableRow {
 	                          final boolean usesAbilityPoints,
 	                          final boolean required,
 	                          @Nullable String defaultValue) {
-		if ("".equals(defaultValue)) { defaultValue=null; }
+		if (defaultValue != null && defaultValue.isEmpty()) {
+			defaultValue = null;
+		}
 		db().d("insert into attributes(instanceid,name,selfmodify,attributetype,grouptype,usesabilitypoints,required,defaultvalue) values(?,?,?,?,?,?,?,?)",
 		       instance.getId(),
 		       name,
@@ -221,29 +223,18 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static String toString(@Nonnull final ATTRIBUTETYPE type) {
-		switch (type) {
-			case TEXT:
-				return "text";
-			case FLOAT:
-				return "float";
-			case INTEGER:
-				return "integer";
-			case GROUP:
-				return "group";
-			case POOL:
-				return "pool";
-			case COLOR:
-				return "color";
-			case EXPERIENCE:
-				return "experience";
-			case CURRENCY:
-				return "currency";
-			case SET:
-				return "set";
-			case INVENTORY:
-				return "inventory";
-		}
-		throw new SystemImplementationException("Unhandled attributetype to string mapping for "+type);
+		return switch (type) {
+			case TEXT -> "text";
+			case FLOAT -> "float";
+			case INTEGER -> "integer";
+			case GROUP -> "group";
+			case POOL -> "pool";
+			case COLOR -> "color";
+			case EXPERIENCE -> "experience";
+			case CURRENCY -> "currency";
+			case SET -> "set";
+			case INVENTORY -> "inventory";
+		};
 	}
 
 	// ----- Internal Statics -----
@@ -385,12 +376,11 @@ public class Attribute extends TableRow {
 
 	/**
 	 * Gets the character's current final value for an attribute.
-	 *
+	 * <p>
 	 * KVs are passed through the usual getKV mechanism
 	 * POOLs and EXPERIENCE are summed pools
 	 *
 	 * @param st State, infers character
-	 *
 	 * @return The current value for the character, technically nullable
 	 */
 	@Nullable
@@ -406,11 +396,11 @@ public class Attribute extends TableRow {
 		}
 		if (attributetype==EXPERIENCE) {
 			final GenericXP xp=new GenericXP(getName());
-			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
+			return String.valueOf(CharacterPool.sumPool(st, (xp.getPool(st))));
 		}
 		if (attributetype==POOL && QuotaedXP.class.isAssignableFrom(getClass())) {
 			final QuotaedXP xp=(QuotaedXP) this;
-			return CharacterPool.sumPool(st,(xp.getPool(st)))+"";
+			return String.valueOf(CharacterPool.sumPool(st, (xp.getPool(st))));
 		}
 		if (attributetype==CURRENCY) {
 			final Currency currency=Currency.findNullable(st,getName());
@@ -426,12 +416,12 @@ public class Attribute extends TableRow {
 			final Inventory set=new Inventory(st.getCharacter(),this);
 			return set.countElements()+" items, "+set.countTotal()+" total qty";
 		}
-		throw new SystemImplementationException("Unhandled non KV type "+getType());
+		throw new SystemImplementationException("Unhandled non KV type " + getType());
 	}
 
 	/**
 	 * Get additional information about the value this attribute has for a given character
-	 *
+	 * <p>
 	 * KV get the computed path
 	 * POOL and EXPERIENCE return quotaed information, if quotaed
 	 * GROUP return nothing
@@ -549,7 +539,7 @@ public class Attribute extends TableRow {
 	 */
 	public void delete(final State st) {
 		// delete data
-		Instance instance=getInstance();
+		final Instance instance = getInstance();
 		if (instance!=st.getInstance()) { throw new SystemConsistencyException("State instance / attribute instance mismatch during DELETE of all things"); }
 		final ATTRIBUTETYPE type=getType();
 		if (type==TEXT || type==FLOAT || type==INTEGER || type==COLOR) { getInstance().wipeKV("Characters."+getName()); }
@@ -587,8 +577,8 @@ public class Attribute extends TableRow {
 	public void templatable(final State st,
 	                        final boolean newValue) {
 		if (newValue==templatable()) { return; }
-		Audit.audit(false,st,OPERATOR.AVATAR,null,null,"Set",getName()+"/Templatable",""+templatable(),""+newValue,"Set templatable to "+newValue);
-		set("templatable",newValue);
+		Audit.audit(false, st, OPERATOR.AVATAR, null, null, "Set", getName() + "/Templatable", String.valueOf(templatable()), String.valueOf(newValue), "Set templatable to " + newValue);
+		set("templatable", newValue);
 		templatableCache.set(this,newValue);
 	}
 	private static final Cache<Attribute,Boolean> templatableCache=Cache.getCache("gphud/attributeTemplatable",CacheConfig.OPERATIONAL_CONFIG);

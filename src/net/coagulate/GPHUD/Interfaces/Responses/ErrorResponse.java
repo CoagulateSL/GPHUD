@@ -13,23 +13,23 @@ import javax.annotation.Nonnull;
  */
 public class ErrorResponse extends TextError implements Response {
 
-	public ErrorResponse(final String r) {
-		super(r);
-	}
+    public ErrorResponse(final String content) {
+        super(content);
+    }
 
-	// ---------- INSTANCE ----------
-	@Nonnull
-	@Override
-	public JSONObject asJSON(final State st) {
-		final JSONObject j=new JSONObject();
-		j.put("error",asText(st));
-		return j;
-	}
+    // ---------- INSTANCE ----------
+    @Nonnull
+    @Override
+    public JSONObject asJSON(final State st) {
+        final JSONObject j = new JSONObject();
+        j.put("error", asText(st));
+        return j;
+    }
 
 	@Nonnull
 	@Override
 	public String scriptResponse() {
-		return "Error: "+s;
+        return "Error: " + content;
 	}
 
 }

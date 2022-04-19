@@ -10,18 +10,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCEquality extends ByteCode {
-	public BCEquality(final ParseNode n) {
-		super(n);
-	}
+    public BCEquality(final ParseNode node) {
+        super(node);
+    }
 
-	// ---------- INSTANCE ----------
-	// Pop two, op, push result
-	@Nonnull
-	public String explain() { return "Equality (Pop two, compare, push 1 for match, 0 for no match)"; }
+    // ---------- INSTANCE ----------
+    // Pop two, op, push result
+    @Nonnull
+    public String explain() {
+        return "Equality (Pop two, compare, push 1 for match, 0 for no match)";
+    }
 
-	public void toByteCode(@Nonnull final List<Byte> bytes) {
-		bytes.add(InstructionSet.Equality.get());
-	}
+    public void toByteCode(@Nonnull final List<Byte> bytes) {
+        bytes.add(InstructionSet.Equality.get());
+    }
 
 	@Override
 	public void execute(final State st,

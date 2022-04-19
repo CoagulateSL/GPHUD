@@ -56,13 +56,12 @@ public abstract class Groups {
 			permtable.openRow();
 			permtable.add(permission);
 			try {
-				final Permission rawpermission=Modules.getPermission(st,permission);
-				if (rawpermission!=null) {
+				final Permission rawpermission = Modules.getPermission(st, permission);
+				if (rawpermission == null) {
+					permtable.add("<font color=red><i>Permission no longer exists</i></font>");
+				} else {
 					permtable.add(rawpermission.description());
 					permtable.setBGColor(rawpermission.getColor());
-				}
-				else {
-					permtable.add("<font color=red><i>Permission no longer exists</i></font>");
 				}
 			}
 			catch (@Nonnull final UserException permissionerror) {
@@ -72,8 +71,8 @@ public abstract class Groups {
 			if (st.hasPermission("instance.managepermissions")) {
 				final Form dp=new Form();
 				dp.setAction("../delpermission");
-				dp.add(new Hidden("permissionsgroup",""+pg.getName()));
-				dp.add(new Hidden("Permission",permission));
+				dp.add(new Hidden("permissionsgroup", pg.getName()));
+				dp.add(new Hidden("Permission", permission));
 				dp.add(new Hidden("okreturnurl",st.getFullURL()));
 				dp.add(new Button("Delete Permission",true));
 				permtable.add(dp);
@@ -104,8 +103,8 @@ public abstract class Groups {
 				spf.add(new Hidden("okreturnurl",st.getFullURL()));
 				membertable.add(spf);
 				spf.setAction("../setpermissions");
-				spf.add(new Hidden("permissionsgroup",""+pg.getName()));
-				spf.add(new Hidden("Avatar",member.avatar.getName()));
+				spf.add(new Hidden("permissionsgroup", pg.getName()));
+				spf.add(new Hidden("Avatar", member.avatar.getName()));
 				if (member.caninvite) { spf.add(new Hidden("CanInvite","on")); }
 				if (member.cankick) { spf.add(new Hidden("CanKick","on")); }
 				spf.add(new Button("Set Invite/Kick"));
@@ -114,8 +113,8 @@ public abstract class Groups {
 				final Form ef=new Form();
 				ef.add(new Hidden("okreturnurl",st.getFullURL()));
 				ef.setAction("../eject");
-				ef.add(new Hidden("permissionsgroup",""+pg.getName()));
-				ef.add(new Hidden("Avatar",member.avatar.getName()));
+				ef.add(new Hidden("permissionsgroup", pg.getName()));
+				ef.add(new Hidden("Avatar", member.avatar.getName()));
 				ef.add(new Button("Eject"));
 				membertable.add(ef);
 			}
@@ -124,14 +123,14 @@ public abstract class Groups {
 			final Form invite=new Form();
 			invite.add(new Hidden("okreturnurl",st.getFullURL()));
 			invite.setAction("../invite");
-			invite.add(new Hidden("permissionsgroup",""+pg.getName()));
+			invite.add(new Hidden("permissionsgroup", pg.getName()));
 			invite.add(new Button("Add Member"));
 			f.add(invite);
 		}
 		if (st.hasPermission("instance.managepermissions")) {
 			final Form df=new Form();
 			df.setAction("../delete");
-			df.add(new Hidden("permissionsgroup",""+pg.getName()));
+			df.add(new Hidden("permissionsgroup", pg.getName()));
 			df.add(new Button("DELETE GROUP"));
 			f.add(new Separator());
 			f.add(df);
@@ -232,7 +231,7 @@ public abstract class Groups {
 		final Form f=st.form();
 		f.add(new TextHeader("Edit permissions group "+pg.getName()));
 		// this is all a bit tedious really :)
-		final Map<Permission.POWER,Set<Permission>> permissions=new HashMap<>();
+		final Map<Permission.POWER,Set<Permission>> permissions= new EnumMap<>(Permission.POWER.class);
 		permissions.put(Permission.POWER.LOW,new HashSet<>());
 		permissions.put(Permission.POWER.MEDIUM,new HashSet<>());
 		permissions.put(Permission.POWER.HIGH,new HashSet<>());
@@ -303,8 +302,10 @@ public abstract class Groups {
 		final StringBuilder r=new StringBuilder();
 		final TreeMap<String,Permission> sorted=new TreeMap<>();
 		for (final Permission p: permissions) {
-			try { sorted.put(p.getModule(st).getName()+"."+p.name(),p); }
-			catch (NoDataException ignored) {} // badly cached attribute
+			try {
+                sorted.put(p.getModule(st).getName() + "." + p.name(), p);
+            } catch (final NoDataException ignored) {
+            } // badly cached attribute
 		}
 		for (final Permission p: sorted.values()) {
 			final String fullname=p.getModule(st).getName()+"."+p.name();

@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemExecutionException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
-import net.coagulate.Core.Exceptions.User.UserExecutionException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
@@ -10,7 +9,10 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -127,8 +129,10 @@ public class CommandAnnotation extends Command {
 			final Throwable content=e.getCause();
 			if (content==null) { throw new SystemImplementationException("Null invocation target exception cause",e); }
 			if (UserException.class.isAssignableFrom(content.getClass())) {
+				//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
 				throw (UserException)content;
 			}
+			//noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
 			throw new SystemExecutionException("Annotated command "+getFullName()+" from "+getMethod().getName()+" in class "+getMethod().getDeclaringClass().getSimpleName()+" exceptioned: "+content.getLocalizedMessage(),content);
 		}
 	}

@@ -69,12 +69,20 @@ public abstract class Templater {
 	                              final boolean evaluate,
 	                              final boolean integer) {
 		string=template(st,string);
-		if (string==null) { return null; }
-		if ("".equals(string)) { return ""; }
+		if (string == null) {
+			return null;
+		}
+		if (string.isEmpty()) {
+			return "";
+		}
 		try {
-			if (evaluate && !integer) { return eval(string)+""; }
+			if (evaluate && !integer) {
+				return String.valueOf(eval(string));
+			}
 			//noinspection ConstantConditions
-			if (evaluate && integer) { return ""+((int) (eval(string))); }
+			if (evaluate && integer) {
+				return String.valueOf((int) (eval(string)));
+			}
 		}
 		catch (@Nonnull final Exception e) {
 			SL.report("Expression failed for "+string,e,st);
@@ -89,9 +97,13 @@ public abstract class Templater {
 	                              final String keyword,
 	                              final boolean evaluate,
 	                              final boolean integer) {
-		if (evaluate && integer) { return ((int) eval(getValue(st,keyword)))+""; }
-		if (evaluate) { return eval(getValue(st,keyword))+""; }
-		return getValue(st,keyword);
+		if (evaluate && integer) {
+			return String.valueOf((int) eval(getValue(st, keyword)));
+		}
+		if (evaluate) {
+			return String.valueOf(eval(getValue(st, keyword)));
+		}
+		return getValue(st, keyword);
 	}
 
 	@Nonnull
@@ -202,25 +214,18 @@ public abstract class Templater {
 					}
 					else {
 						if (ch >= 'a' && ch<='z') { // functions
-							while (ch >= 'a' && ch<='z') { nextChar(); }
-							final String func=str.substring(startPos,pos);
-							x=parseFactor();
-							switch (func) {
-								case "sqrt":
-									x=Math.sqrt(x);
-									break;
-								case "sin":
-									x=Math.sin(Math.toRadians(x));
-									break;
-								case "cos":
-									x=Math.cos(Math.toRadians(x));
-									break;
-								case "tan":
-									x=Math.tan(Math.toRadians(x));
-									break;
-								default:
-									throw new UserInputValidationParseException("Unknown function: "+func);
+							while (ch >= 'a' && ch <= 'z') {
+								nextChar();
 							}
+							final String func = str.substring(startPos, pos);
+							x = parseFactor();
+							x = switch (func) {
+								case "sqrt" -> Math.sqrt(x);
+								case "sin" -> Math.sin(Math.toRadians(x));
+								case "cos" -> Math.cos(Math.toRadians(x));
+								case "tan" -> Math.tan(Math.toRadians(x));
+								default -> throw new UserInputValidationParseException("Unknown function: " + func);
+							};
 						}
 						else {
 							throw new UserInputValidationParseException("Unexpected: "+(char) ch+" at "+pos+" in '"+str+"'",true);
@@ -276,9 +281,13 @@ public abstract class Templater {
 				throw new SystemImplementationException("Templater exceptioned",ex);
 			}
 			catch (@Nonnull final InvocationTargetException e) {
-				if (UserException.class.isAssignableFrom(e.getCause().getClass())) { throw (UserException) e.getCause(); }
-				if (SystemException.class.isAssignableFrom(e.getCause().getClass())) { throw (SystemException) e.getCause(); }
-				throw new SystemImplementationException("Unable to invoke target",e);
+				if (UserException.class.isAssignableFrom(e.getCause().getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw (UserException) e.getCause();
+				}
+				if (SystemException.class.isAssignableFrom(e.getCause().getClass())) { //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+					throw (SystemException) e.getCause();
+				}
+				throw new SystemImplementationException("Unable to invoke target", e);
 			}
 		}
 		throw new SystemImplementationException("No template implementation for "+keyword);

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -71,77 +72,82 @@ public class EffectsCommands {
 	}
 
 	@Command.Commands(description="Remove effects with a matching metadata",
-					  context= Command.Context.AVATAR,
-					  requiresPermission="Effects.Remove")
+					  context = Command.Context.AVATAR,
+					  requiresPermission = "Effects.Remove")
 	public static Response removeByMetadata(@Nonnull final State st,
-											@Argument.Arguments(name="target",description="Character to remove effect from",
-												type=Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-											@Argument.Arguments(name="metadata",description="Metadata to search for",
-												type=Argument.ArgumentType.TEXT_ONELINE,
-												max=1024) @Nonnull final String metaData,
-											@Argument.Arguments(type= Argument.ArgumentType.BOOLEAN,
-																name="substring",
-																description = "Perform a substring search",
-																mandatory = true) boolean substring) {
-		int count=0;
-		for (Effect effect:Effect.get(st,target)) {
-			boolean zap=false;
-			if (substring) { if (effect.getMetaData().indexOf(metaData)>-1) zap=true; }
-			else {if (effect.getMetaData().equals(metaData)) zap=true; }
-			if (zap) {
-				effect.remove(st,target,true); count++;
+											@Argument.Arguments(name = "target", description = "Character to remove effect from",
+																type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
+											@Argument.Arguments(name = "metadata", description = "Metadata to search for",
+																type = Argument.ArgumentType.TEXT_ONELINE,
+																max = 1024) @Nonnull final String metaData,
+											@Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
+																name = "substring",
+																description = "Perform a substring search"
+											) final boolean substring) {
+		int count = 0;
+		for (final Effect effect : Effect.get(st, target)) {
+			boolean zap = false;
+			if (substring) {
+				if (effect.getMetaData().contains(metaData)) zap = true;
+			} else {
+				if (effect.getMetaData().equals(metaData)) zap = true;
 			}
-		}
-		return new OKResponse("Removed "+count+" effects from "+target);
+			if (zap) {
+				effect.remove(st, target, true);
+                count++;
+            }
+        }
+        return new OKResponse("Removed " + count + " effects from " + target);
 	}
 
 	@Command.Commands(description="Remove up to N shortest duration effects with a matching metadata",
 					  context= Command.Context.AVATAR,
 					  requiresPermission="Effects.Remove")
 	public static Response removeByMetadataShortestN(@Nonnull final State st,
-													 @Argument.Arguments(name="target",description="Character to remove effect from",
-																type=Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-													 @Argument.Arguments(name="metadata",description="Metadata to search for",
-																type=Argument.ArgumentType.TEXT_ONELINE,
-																max=1024) @Nonnull final String metaData,
-													 @Argument.Arguments(type= Argument.ArgumentType.BOOLEAN,
-																name="substring",
-																description = "Perform a substring search",
-																mandatory = true) boolean substring,
-													 @Argument.Arguments(name="number",
-																		 type= Argument.ArgumentType.INTEGER,
-																		 description="Maximum number of effects to remove",
-																		 max=100) final int max) {
+													 @Argument.Arguments(name = "target", description = "Character to remove effect from",
+																		 type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
+													 @Argument.Arguments(name = "metadata", description = "Metadata to search for",
+																		 type = Argument.ArgumentType.TEXT_ONELINE,
+																		 max = 1024) @Nonnull final String metaData,
+													 @Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
+																		 name = "substring",
+																		 description = "Perform a substring search"
+													 ) final boolean substring,
+													 @Argument.Arguments(name = "number",
+																		 type = Argument.ArgumentType.INTEGER,
+																		 description = "Maximum number of effects to remove",
+																		 max = 100) final int max) {
 		return orderedRemoval(st, target, metaData, substring, max, true);
 	}
 	@Command.Commands(description="Remove up to N longest duration effects with a matching metadata",
 					  context= Command.Context.AVATAR,
 					  requiresPermission="Effects.Remove")
 	public static Response removeByMetadataLongestN(@Nonnull final State st,
-													 @Argument.Arguments(name="target",description="Character to remove effect from",
-																		 type=Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
-													 @Argument.Arguments(name="metadata",description="Metadata to search for",
-																		 type=Argument.ArgumentType.TEXT_ONELINE,
-																		 max=1024) @Nonnull final String metaData,
-													 @Argument.Arguments(type= Argument.ArgumentType.BOOLEAN,
-																		 name="substring",
-																		 description = "Perform a substring search",
-																		 mandatory = true) boolean substring,
-													 @Argument.Arguments(name="number",
-																		 type= Argument.ArgumentType.INTEGER,
-																		 description="Maximum number of effects to remove",
-																		 max=100) final int max) {
-		return orderedRemoval(st, target, metaData, substring, max, false);
-	}
-	private static Response orderedRemoval(@Nonnull final State st,@Nonnull final Char target,
-										   @Nonnull final String metaData, boolean substring,
-										   final int max,final boolean ascendingOrder) {
-		int count=0;
-		List<Effect> ordered=new ArrayList<>();
-		for (Effect effect:Effect.get(st,target)) {
+													@Argument.Arguments(name = "target", description = "Character to remove effect from",
+																		type = Argument.ArgumentType.CHARACTER) @Nonnull final Char target,
+													@Argument.Arguments(name = "metadata", description = "Metadata to search for",
+																		type = Argument.ArgumentType.TEXT_ONELINE,
+																		max = 1024) @Nonnull final String metaData,
+													@Argument.Arguments(type = Argument.ArgumentType.BOOLEAN,
+																		name = "substring",
+																		description = "Perform a substring search"
+													) final boolean substring,
+													@Argument.Arguments(name = "number",
+																		type = Argument.ArgumentType.INTEGER,
+																		description = "Maximum number of effects to remove",
+																		max = 100) final int max) {
+        return orderedRemoval(st, target, metaData, substring, max, false);
+    }
+
+    private static Response orderedRemoval(@Nonnull final State st, @Nonnull final Char target,
+                                           @Nonnull final String metaData, final boolean substring,
+                                           final int max, final boolean ascendingOrder) {
+		int count = 0;
+		final List<Effect> ordered = new ArrayList<>();
+		for (final Effect effect : Effect.get(st, target)) {
 			boolean zappable = false;
 			if (substring) {
-				if (effect.getMetaData().indexOf(metaData) > -1) zappable = true;
+				if (effect.getMetaData().contains(metaData)) zappable = true;
 			} else {
 				if (effect.getMetaData().equals(metaData)) zappable = true;
 			}
@@ -149,14 +155,17 @@ public class EffectsCommands {
 				ordered.add(effect);
 			}
 		}
-		if (ascendingOrder) { ordered.sort((x,y)->x.compareTo(y)); }
-		else { ordered.sort((x,y)->y.compareTo(x)); }
-		for (Effect effect:ordered) {
-			if (count<max) {
+		if (ascendingOrder) {
+			ordered.sort(Comparator.naturalOrder());
+		} else {
+			ordered.sort(Comparator.reverseOrder());
+		}
+		for (final Effect effect : ordered) {
+			if (count < max) {
 				effect.remove(st, target, true);
 				count++;
 			}
 		}
-		return new OKResponse("Removed "+count+" effects from "+target);
+		return new OKResponse("Removed " + count + " effects from " + target);
 	}
 }
