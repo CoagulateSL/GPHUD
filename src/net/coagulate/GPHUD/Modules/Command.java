@@ -667,8 +667,6 @@ public abstract class Command {
 			case CHARACTER, ATTRIBUTE_WRITABLE, ATTRIBUTE, SET, INVENTORY, COORDINATES, ZONE, REGION, MODULE, PERMISSION, PERMISSIONSGROUP, AVATAR_NEAR, AVATAR, CHARACTER_FACTION, CHARACTER_NEAR, CHARACTER_PLAYABLE, EFFECT, CURRENCY ->
 					64;
 			case CHARACTERGROUP, EVENT, KVLIST, ITEM -> 128;
-			default ->
-					throw new SystemImplementationException("Argument " + argument.name() + " of type " + argument.type().name() + " fell through maximum length");
 		};
 	}
 

@@ -42,8 +42,7 @@ public class GPHUD extends SLModule {
 	public void registerChanges() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Change.class)) {
 			for (final Classes.Change a: c.getAnnotationsByType(Classes.Change.class)) {
-				final Classes.Change casted = a;
-				ChangeLogging.add(new ChangeLogging.Change(casted.date(),"GPHUD",casted.component().name(),casted.type(),casted.message()));
+				ChangeLogging.add(new ChangeLogging.Change(a.date(),"GPHUD", a.component().name(), a.type(), a.message()));
 			}
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Changes.class)) {

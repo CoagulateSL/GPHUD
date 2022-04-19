@@ -174,8 +174,6 @@ public abstract class Classes {
 						case TEXT_CLEAN, TEXT_ONELINE, TEXT_INTERNAL_NAME, TEXT_MULTILINE -> true;
 						case PASSWORD, INTEGER, FLOAT, BOOLEAN, CHOICE, CHARACTER, CHARACTER_PLAYABLE, CHARACTER_NEAR, CHARACTER_FACTION, AVATAR, AVATAR_NEAR, PERMISSIONSGROUP, PERMISSION, CHARACTERGROUP, KVLIST, MODULE, REGION, ZONE, COORDINATES, EVENT, EFFECT, ATTRIBUTE, ATTRIBUTE_WRITABLE, CURRENCY, INVENTORY, SET, ITEM ->
 								false;
-						default ->
-								throw new SystemImplementationException("Unchecked argument type " + annotation.type().name());
 					};
 					if (requiresmax && annotation.max() < 0) {
 						throw new SystemImplementationException("Missing MAX parameter on argument annotation in [" + modulename + "]" + m.getClass()
