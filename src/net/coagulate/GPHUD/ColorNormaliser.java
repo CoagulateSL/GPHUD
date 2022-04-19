@@ -495,7 +495,7 @@ public class ColorNormaliser {
 	private static String[] tripletise(@Nullable final String hexstring) {
 		// fairly straight forward internal use only blah blah
 		if (hexstring==null) { return null; }
-		final Matcher tripletise=Pattern.compile("#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])").matcher(hexstring);
+		final Matcher tripletise=Pattern.compile("#?([\\da-fA-F][\\da-fA-F])([\\da-fA-F][\\da-fA-F])([\\da-fA-F][\\da-fA-F])").matcher(hexstring);
 		if (!tripletise.matches()) { return null; } // really shouldn't be a thing
 		final String[] triplet=new String[3];
 		triplet[0]=tripletise.group(1);
@@ -551,7 +551,7 @@ public class ColorNormaliser {
 
 	private static String cleanseValue(final String v) {
 		// remove anything that isn't a number, hex digit or decimal point
-		return v.replaceAll("[^A-Fa-f0-9\\.]","");
+		return v.replaceAll("[^A-Fa-f\\d.]","");
 	}
 }
 

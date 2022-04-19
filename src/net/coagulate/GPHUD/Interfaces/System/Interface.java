@@ -219,7 +219,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 				GPHUD.getLogger().info("Failed to get owner name from headers for key "+ownerKey+", looked up in DB as "+ownerName+".");
 			}
 		}
-		regionName=regionName.replaceFirst(" \\([0-9]+, [0-9]+\\)","");
+		regionName=regionName.replaceFirst(" \\(\\d+, \\d+\\)","");
 
 		st.setRegionName(regionName);
 		st.isSuid =false;

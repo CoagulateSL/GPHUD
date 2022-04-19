@@ -103,7 +103,7 @@ public class Menu extends TableRow {
 		if (getMenuNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("Menu "+name+" already exists");
 		}
-		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
+		if (name.matches(".*[^A-Za-z\\d-=_,].*")) {
 			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		db().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",st.getInstance().getId(),name,description,template.toString());

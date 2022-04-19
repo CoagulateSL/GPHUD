@@ -107,10 +107,10 @@ public class Currency extends TableRow {
 	 */
 	public int decode(String ammount) {
 		// if its just a number, lets bail fast
-		if (Pattern.compile("[0-9]*").matcher(ammount).matches()) { return Integer.parseInt(ammount); }
+		if (Pattern.compile("\\d*").matcher(ammount).matches()) { return Integer.parseInt(ammount); }
 
 		// right, what can we do.... split it into groups of numbers and non numbers I guess
-		final Pattern pattern=Pattern.compile("([0-9]+)([^0-9]*)([0-9]?.*)");  // splits into number, coin, remainder
+		final Pattern pattern=Pattern.compile("(\\d+)(\\D*)(\\d?.*)");  // splits into number, coin, remainder
 		int total=0;
 		while (!ammount.trim().isEmpty()) {
 			final Matcher matcher=pattern.matcher(ammount);

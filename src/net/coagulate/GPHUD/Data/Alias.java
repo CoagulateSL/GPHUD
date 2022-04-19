@@ -115,7 +115,7 @@ public class Alias extends TableRow {
 	                           @Nonnull final String name,
 	                           @Nonnull final JSONObject template) {
 		if (getAlias(st,name)!=null) { throw new UserInputDuplicateValueException("Alias "+name+" already exists"); }
-		if (name.matches(".*[^A-Za-z0-9-=_,].*")) {
+		if (name.matches(".*[^A-Za-z\\d-=_,].*")) {
 			throw new UserInputValidationParseException("Aliases must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
 		db().d("insert into aliases(instanceid,name,template) values(?,?,?)",st.getInstance().getId(),name,template.toString());

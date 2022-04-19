@@ -491,12 +491,12 @@ public abstract class Command {
 		final ArgumentType type=argument.type();
 		switch (type) {
 			case TEXT_INTERNAL_NAME:
-				if (v.matches(".*[^a-zA-Z0-9].*")) {
+				if (v.matches(".*[^a-zA-Z\\d].*")) {
 					throw new UserInputValidationFilterException(argument.name()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
 				}
 				// don't put anything here, follow up into the next thing
 			case TEXT_CLEAN:
-				if (v.matches(".*[^a-zA-Z0-9.'\\-, ].*")) {
+				if (v.matches(".*[^a-zA-Z\\d.'\\-, ].*")) {
 					throw new UserInputValidationFilterException(argument.name()+" should only consist of simple characters (a-z 0-9 .'-,) and you entered '"+v+"'");
 				}
 				// don't put anything here, follow up into the next thing
