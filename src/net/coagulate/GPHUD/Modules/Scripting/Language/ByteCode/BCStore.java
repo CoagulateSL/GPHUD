@@ -35,12 +35,15 @@ public class BCStore extends ByteCode {
 			st.logger().warning("SCRIPTWARNING:"+st.getInstanceNullable()+":"+vm.source+":"+vm.row+":"+vm.column+" - Variable '"+variablename+"' is not defined");
 			//throw new UserConfigurationException("Variable '"+variablename+"' is not defined");
 		}
-		if (existing!=null) {
+/*		if (existing!=null) {
 			if (!existing.getClass().equals(value.getClass())) {
 				st.logger().warning("SCRIPTWARNING:" + st.getInstanceNullable() + ":" + vm.source + ":" + vm.row + ":" + vm.column + " - Variable '" + variablename + "' is of type " + existing.getClass().getSimpleName() + " but being assigned type " + value.getClass().getSimpleName());
 				//throw new UserConfigurationException("Variable '"+variablename+"' is of type "+existing.getClass().getSimpleName()+" but being assigned type "+value.getClass().getSimpleName());
 			}
 		}
+		// THIS block of code just checks that we're assigning to the same type as the value.  but this happens in user scripts a LOT.
+		// i ended up wondering if polymorhphism automatically applies here, and I've decided not to push this check for now.
+ */
 		vm.set(variablename,value);
 	}
 
