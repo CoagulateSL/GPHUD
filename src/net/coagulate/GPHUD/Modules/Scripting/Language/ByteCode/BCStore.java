@@ -33,17 +33,8 @@ public class BCStore extends ByteCode {
 		final ByteCodeDataType existing = vm.get(variablename);
 		if (existing==null) { // variable did not already exist
 			st.logger().warning("SCRIPTWARNING:"+st.getInstanceNullable()+":"+vm.source+":"+vm.row+":"+vm.column+" - Variable '"+variablename+"' is not defined");
-			//throw new UserConfigurationException("Variable '"+variablename+"' is not defined");
 		}
-/*		if (existing!=null) {
-			if (!existing.getClass().equals(value.getClass())) {
-				st.logger().warning("SCRIPTWARNING:" + st.getInstanceNullable() + ":" + vm.source + ":" + vm.row + ":" + vm.column + " - Variable '" + variablename + "' is of type " + existing.getClass().getSimpleName() + " but being assigned type " + value.getClass().getSimpleName());
-				//throw new UserConfigurationException("Variable '"+variablename+"' is of type "+existing.getClass().getSimpleName()+" but being assigned type "+value.getClass().getSimpleName());
-			}
-		}
-		// THIS block of code just checks that we're assigning to the same type as the value.  but this happens in user scripts a LOT.
-		// i ended up wondering if polymorhphism automatically applies here, and I've decided not to push this check for now.
- */
+		// Variable type assignment ; e.g. assigning a String to an Integer, is handled in vm.set by some basic polymorphism
 		vm.set(variablename,value);
 	}
 
