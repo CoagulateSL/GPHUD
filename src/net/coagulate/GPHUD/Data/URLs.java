@@ -9,8 +9,17 @@ import javax.annotation.Nonnull;
 
 import static java.util.logging.Level.*;
 
+/**
+ * Abstract class for URL management across GPHUD
+ */
 public class URLs {
-	// TODO THIS MESSES WITH URLS
+	/**
+	 * Purges a URL from the system - useful if it 404'ed which means the SL remote end no longer exists
+	 * <p>
+	 * Purges from Characters, Objects and Regions.
+	 *
+	 * @param url The URL to purge.
+	 */
 	public static void purgeURL(final String url) {
 		try {
 			for (final ResultsRow row: GPHUD.getDB().dq("select characterid,regionid from characters where url=?",url)) {
