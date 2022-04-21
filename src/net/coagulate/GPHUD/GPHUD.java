@@ -347,10 +347,16 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 14 is complete");
 			currentVersion=14;
 		}
-
+		if (currentVersion==14) {
+			log.config("Add instance termination countdown to instances table");
+			GPHUD.getDB().d("ALTER TABLE `instances` ADD COLUMN `retireat` INT DEFAULT NULL");
+			GPHUD.getDB().d("ALTER TABLE `instances` ADD COLUMN `retirewarn` INT DEFAULT NULL");
+			log.config("Schema upgrade of GPHUD to version 15 is complete");
+			currentVersion=15;
+		}
 		return currentVersion;
 	}
-	private static final int SCHEMA_VERSION=14;
+	private static final int SCHEMA_VERSION=15;
 
 	@Override
 	public void startup() {
