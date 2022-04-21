@@ -217,7 +217,7 @@ public class Transmission extends Thread {
 		}
 		if (response==null) {
 			GPHUD.getLogger().log(WARNING,"Failed all retransmission attempts for "+json);
-			URLs.purgeURL(url);
+			//URLs.purgeURL(url);
 			return;
 		}
 		if (region!=null) { Region.refreshURL(url); }

@@ -39,11 +39,10 @@ public class URLs {
         } catch (@Nonnull final DBException ex) {
             GPHUD.getLogger().log(SEVERE, "Failed to purge URL from characters", ex);
         }
-        /*
         try {
             GPHUD.getDB().d("update regions set url=null,authnode=null where url=?", url);
         } catch (@Nonnull final DBException ex) {
             GPHUD.getLogger().log(SEVERE, "Failed to purge URL from regions", ex);
-        }*/ // lets not do this for now, network outages cause purging of all region URLs and they're not currently recoverable
+        }
     }
 }
