@@ -151,7 +151,11 @@ public class Maintenance extends Thread {
 		}
 
 	}
-
+	
+	public static void instanceCleanup() {
+	
+	}
+	
 	public static class PingTransmission extends Transmission {
 		public PingTransmission(final Char character,
                                 @Nonnull final JSONObject json,

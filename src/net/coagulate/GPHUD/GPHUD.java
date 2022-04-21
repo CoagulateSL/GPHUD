@@ -169,6 +169,7 @@ public class GPHUD extends SLModule {
 	public void maintenance() {
 		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
 		if (nextRun("GPHUD-Maintenance-Report-Quota",60*60,5*60)) { Maintenance.quotaCredits(); }
+		if (nextRun("GPHUD-Instance-Cleanup",60*60,15*60)) { Maintenance.instanceCleanup(); }
 	}
 
 	@Override
