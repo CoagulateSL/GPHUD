@@ -40,7 +40,7 @@ public class URLs {
 		}
 		try {
 			for (final ResultsRow row: GPHUD.getDB().dq("select regionid,instanceid from regions where url=?",url)) {
-				GPHUD.getLogger().log(INFO,"Disconnecting "+Region.get(row.getInt("regionid"),true).getName()+" from instance "+Instance.get(row.getInt("instanceid")).getName());
+				GPHUD.getLogger().log(INFO,"Disconnecting URL for region "+Region.get(row.getInt("regionid"),true).getName()+" from instance "+Instance.get(row.getInt("instanceid")).getName());
 				GPHUD.getDB().d("update regions set url=null,authnode=null where regionid=?",row.getInt("regionid"));
 			}
 		} catch (@Nonnull final DBException ex) {
