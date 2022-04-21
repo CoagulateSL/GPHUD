@@ -38,6 +38,15 @@ Short form here.
 
  */
 public class GPHUD extends SLModule {
+	
+	/** The interval in seconds for fast events, like checking event start */
+	public static final int FAST_MAINT_INTERVAL=60;
+	/** The interval in seconds for slow events such as refreshing report quota or checking expiration of regions/instances */
+	public static final int SLOW_MAINT_INTERVAL=60*60;
+	/** The allowed variance for the fast timer */
+	public static final int MAINT_VAR_SMALL=5;
+	/** The allowed variance for the slow timer */
+	public static final int MAINT_VAR_LARGE=15*60;
 	@Override
 	public void registerChanges() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Change.class)) {
@@ -79,24 +88,42 @@ public class GPHUD extends SLModule {
 	}
 
 	@Nullable
-	static Logger log;
+	static Logger log=null;
 	@Nullable
-	static DBConnection db;
+	static DBConnection db=null;
 
 	// ---------- STATICS ----------
+	
+	/** Get a subspace of the GPHUD logger
+	 *
+	 * @param subspace Sub name
+	 * @return The logger
+	 */
 	public static Logger getLogger(final String subspace) { return Logger.getLogger(log().getName()+"."+subspace); }
-
+	
+	/** Get the main GPHUD Logger
+	 *
+	 * @return The logger
+	 */
 	@Nonnull
 	public static Logger getLogger() {
 		return log();
 	}
-
+	
+	/** Get the GPHUD DB connection
+	 *
+	 * @return The DBConnection
+	 */
 	@Nonnull
 	public static DBConnection getDB() {
 		if (db==null) { throw new SystemInitialisationException("Calling DB before DB is initialised"); }
 		return db;
 	}
-
+	
+	/** Get the menu panel host/version info, customised for this environment
+	 *
+	 * @return A block of HTML
+	 */
 	@Nonnull
 	public static String menuPanelEnvironment() {
 		if (Config.isOfficial()) {
@@ -114,12 +141,20 @@ public class GPHUD extends SLModule {
 
 		}
 	}
-
+	
+	/** Returns an SL formatted string regarding the server build
+	 *
+	 * @return Said string
+	 */
 	@Nonnull
 	public static String serverVersion() {
 		return "GPHUD "+SL.getModule("GPHUD").getBuildDateString()+" @"+SL.getModule("GPHUD").commitId()+" (C) secondlife:///app/agent/" + Config.getCreatorUUID() + "/about / Iain Price, Coagulate";
 	}
-
+	
+	/** Get a generic logger if available, otherwise exception.
+	 *
+	 * @return The GPHUD logger
+	 */
 	@Nonnull
 	public static Logger log() {
 		if (log==null) { throw new SystemInitialisationException("Log not yet initialised"); }
@@ -167,15 +202,16 @@ public class GPHUD extends SLModule {
 
 	@Override
 	public void maintenance() {
-		if (nextRun("GPHUD-Maintenance",60,5)) { Maintenance.gphudMaintenance(); }
-		if (nextRun("GPHUD-Maintenance-Report-Quota",60*60,5*60)) { Maintenance.quotaCredits(); }
-		if (nextRun("GPHUD-Instance-Cleanup",60*60,15*60)) { Maintenance.instanceCleanup(); }
+		if (nextRun("GPHUD-Maintenance",FAST_MAINT_INTERVAL,MAINT_VAR_SMALL)) { Maintenance.gphudMaintenance(); }
+		if (nextRun("GPHUD-Maintenance-Report-Quota",SLOW_MAINT_INTERVAL,MAINT_VAR_LARGE)) { Maintenance.quotaCredits(); }
+		if (nextRun("GPHUD-Instance-Cleanup",SLOW_MAINT_INTERVAL,MAINT_VAR_LARGE)) { Maintenance.instanceCleanup(); }
 	}
 
 	@Override
 	public void maintenanceInternal() {
 	}
 
+	@SuppressWarnings("MagicNumber")
 	@Override
 	protected int schemaUpgrade(final DBConnection db, final String schemaName, int currentVersion) {
 		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
@@ -371,6 +407,7 @@ public class GPHUD extends SLModule {
 
 	}
 
+	@Nullable
 	@Override
 	public Object weakInvoke(final String command, final Object... arguments) {
 		if ("im".equalsIgnoreCase(command)) {
