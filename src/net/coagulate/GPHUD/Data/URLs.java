@@ -7,8 +7,7 @@ import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
 
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
+import static java.util.logging.Level.*;
 
 public class URLs {
     // TODO THIS MESSES WITH URLS
@@ -40,7 +39,10 @@ public class URLs {
             GPHUD.getLogger().log(SEVERE, "Failed to purge URL from characters", ex);
         }
         try {
-            GPHUD.getDB().d("update regions set url=null,authnode=null where url=?", url);
+            for (final ResultsRow row:GPHUD.getDB().dq("select regionid,instanceid from regions where url=?",url)) {
+                GPHUD.getLogger().log(INFO,"Disconnecting "+Region.get(row.getInt("regionid"),true).getName()+" from instance "+Instance.get(row.getInt("instanceid")).getName());
+                GPHUD.getDB().d("update regions set url=null,authnode=null where regionid=?",row.getInt("regionid"));
+            }
         } catch (@Nonnull final DBException ex) {
             GPHUD.getLogger().log(SEVERE, "Failed to purge URL from regions", ex);
         }
