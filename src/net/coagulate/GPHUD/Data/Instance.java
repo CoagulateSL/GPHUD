@@ -206,7 +206,8 @@ public class Instance extends TableRow {
 		String statusColor="<0.5,1,0.5>";
 		int level=0;
 		final StringBuilder newStatus=new StringBuilder();
-		final int minVersion=dqinn("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=? and retired=0",getId());
+		final Integer minVersion=dqi("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=? and retired=0",getId());
+		if (minVersion==null) { return; } // no active instances?
 		final Float expiresIn=EndOfLifing.expiresIn(minVersion);
 		String updateWithin="";
 		if (expiresIn!=null) { updateWithin=((int) expiresIn.floatValue())+" days "+((int) ((expiresIn-((int) expiresIn.floatValue()))* 24.0f))+" hours"; }
