@@ -136,6 +136,7 @@ public class Region extends TableRow {
 		if (exists==0) {
 			GPHUD.getLogger().info("Joined region '"+region+"' to instance "+i);
 			db().d("insert into regions(name,instanceid) values(?,?)",region,i.getId());
+			db().d("update instance set retireat=null,retirewarn=null where instanceid=?",i.getId());
 			return "";
 		}
 		return "Region is already registered!";
