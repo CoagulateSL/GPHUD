@@ -415,9 +415,7 @@ public class GPHUD extends SLModule {
 	}
 	
 	@Override
-	public void shutdown() {
-	
-	}
+	public void shutdown() {}
 	
 	@Nullable
 	@Override
