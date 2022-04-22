@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Instance;
 
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Interfaces.Outputs.Color;
@@ -43,6 +44,10 @@ public abstract class ViewInstance {
 			map.openRow().add("").add("").add("Server "+r.getServerVersion(true));
 			map.openRow().add("").add("").add("HUD "+r.getHUDVersion(true));
 			if (r.needsUpdate()) { map.openRow().add("").add("").add(new Color("orange","Update Required")); }
+		}
+		Integer retireAt=i.retireAt();
+		if (retireAt!=null) {
+			map.openRow().add("<font color=red>Will delete at</font>").add(UnixTime.fromUnixTime(retireAt,"UTC")).add("<font color=red>"+UnixTime.durationRelativeToNow(retireAt,true)+"</font>");
 		}
 	}
 

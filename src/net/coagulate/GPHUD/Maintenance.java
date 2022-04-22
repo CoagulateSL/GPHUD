@@ -2,12 +2,16 @@ package net.coagulate.GPHUD;
 
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Events.EventsMaintenance;
+import net.coagulate.SL.Config;
+import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 import static java.util.logging.Level.*;
 
@@ -90,7 +94,9 @@ public class Maintenance extends Thread {
 				i.updateStatus();
 			}
 			catch (@Nonnull final Exception e) {
-				GPHUD.getLogger().log(WARNING,"Exception while pushing status update for instance "+i.getNameSafe());
+				if (Config.getDevelopment()) { GPHUD.getLogger().log(WARNING,"Exception while pushing status update for instance "+i.getNameSafe(),e); }
+				else
+				{ GPHUD.getLogger().log(WARNING,"Exception while pushing status update for instance "+i.getNameSafe()); }
 			}
 		}
 	}
@@ -151,11 +157,70 @@ public class Maintenance extends Thread {
 		}
 
 	}
-	
+	private static boolean disablementNoted=false;
 	public static void instanceCleanup() {
-	
+		if (!Config.getGPHUDAutoCleanInstances()) {
+			if (!disablementNoted) {
+				disablementNoted=true;
+				GPHUD.getLogger().log(CONFIG,"Region/Instance automatic retirement is disabled.");
+			}
+			return;
+		}
+		// Look for regions we've not heard from in a while
+		for (Region region:Region.getTimedOut()) {
+			System.out.println("In instanceCleanup region "+region.getName());
+			String instance=region.getInstance().getName();
+			String name=region.getName();
+			region.retire();
+			GPHUD.getLogger(instance).log(INFO,"Region "+name+" was retired due to inactivity.");
+			SL.im(region.getInstance().getOwner().getUUID(),"=== GPHUD Information ===\n"+
+																	"Instance: "+instance+"\n"+
+																	"Region: "+name+"\n"+
+																	"-\n"+
+																	"The above region has been marked 'retired' due to extended inactivity.");
+		}
+		for(Instance instance:Instance.getExpiredInstances()) {
+			String name=instance.getName();
+			String owner=instance.getOwner().getUUID();
+			instance.delete();
+			GPHUD.getLogger(name).log(SEVERE,"Instance passed termination time and is being deleted.");
+			SL.im(owner,"=== GPHUD Warning ===\n"+
+								"Instance: "+instance+"\n"+
+								"-\n"+
+								"This instance has passed its expiration date and has been deleted.");
+		}
+		Set<Instance> activeInstances=Region.getActiveInstances();
+		for (Instance instance:Instance.getNonRetiringInstances()) {
+			// all instances with zero active regions should have retireat set, otherwise we set it now.
+			String name=instance.getName();
+			if (!activeInstances.contains(instance)) {
+				GPHUD.getLogger(name).log(WARNING,"Instance has no active regions and is being scheduled for termination.");
+				instance.setRetireAt(UnixTime.getUnixTime()+Config.getGPHUDInstanceTimeout());
+				instance.setRetireWarn(UnixTime.getUnixTime()+(Config.getGPHUDInstanceTimeout()/2));
+				SL.im(instance.getOwner().getUUID(),"=== GPHUD Warning ===\n" +
+															"Instance: "+instance+"\n"+
+															"Deletes At: "+UnixTime.fromUnixTime(instance.retireAt(),"UTC")+" UTC\n"+
+															"Deletes In: "+UnixTime.durationRelativeToNow(instance.retireAt(),true)+"\n"+
+															"-\n"+
+															"This instance no longer has any active regions associated with it and it will be automatically deleted when the above time has elapsed.");
+			}
+		}
+		for (Instance instance:Instance.getWarnableInstances()) {
+			// all instances with zero active regions should have retireat set, otherwise we set it now.
+			String name=instance.getName();
+			if (!activeInstances.contains(instance)) {
+				GPHUD.getLogger(name).log(WARNING,"Instance passed termination warning time.");
+				SL.im(instance.getOwner().getUUID(),"=== GPHUD Warning ===\n" +
+															"Instance: "+instance+"\n"+
+															"Deletes At: "+UnixTime.fromUnixTime(instance.retireAt(),"UTC")+" UTC\n"+
+															"Deletes In: "+UnixTime.durationRelativeToNow(instance.retireAt(),true)+"\n"+
+															"-\n"+
+															"This instance no longer has any active regions associated with it and it will be automatically deleted when the above time has elapsed.\n"+
+															"This is a second, and final warning.  You will be informed next once the instance has been deleted.");
+				instance.setRetireWarn(UnixTime.getUnixTime()+Config.getGPHUDInstanceTimeout()+(60*60*24));
+			}
+		}
 	}
-	
 	public static class PingTransmission extends Transmission {
 		public PingTransmission(final Char character,
                                 @Nonnull final JSONObject json,

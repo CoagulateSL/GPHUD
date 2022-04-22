@@ -10,6 +10,7 @@ import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -18,6 +19,7 @@ import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 
@@ -245,7 +247,24 @@ public class Region extends TableRow {
 		       instance.getId()
 		      );
 	}
-
+	
+	public static Set<Region> getTimedOut() {
+		Set<Region> set=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().dq("select regionid from regions where retired=0 and urllast<?",UnixTime.getUnixTime()-Config.getGPHUDRegionTimeout())) {
+			set.add(Region.get(row.getInt("regionid"),true));
+		}
+		return set;
+	}
+	
+	/** Returns active instances ; that is instances with an active region */
+	public static Set<Instance> getActiveInstances() {
+		Set<Instance> activeInstances=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().dq("select distinct instanceid from regions where retired=0")) {
+			activeInstances.add(Instance.get(row.getInt("instanceid")));
+		}
+		return activeInstances;
+	}
+	
 	// ---------- INSTANCE ----------
 
 	/**
@@ -721,5 +740,10 @@ public class Region extends TableRow {
 			if (html) { v+=" )</i>"; }
 		}
 		return v;
+	}
+	
+	public void retire() {
+		set("retired",1);
+		retiredCache.purge(this);
 	}
 }

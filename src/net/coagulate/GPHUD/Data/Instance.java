@@ -9,6 +9,7 @@ import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -135,7 +136,35 @@ public class Instance extends TableRow {
 					row.getInt());
 		}
 	}
-
+	
+	@Nonnull
+	public static Set<Instance> getNonRetiringInstances() {
+		Set<Instance> instances=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().dq("select instanceid from instances where retireat is null")) {
+			instances.add(Instance.get(row.getInt("instanceid")));
+		}
+		return instances;
+	}
+	
+	@Nonnull
+	public static Set<Instance> getWarnableInstances() {
+		Set<Instance> instances=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().
+					dq("select instanceid from instances where retireat is not null and retirewarn<?",UnixTime.getUnixTime())) {
+			instances.add(Instance.get(row.getInt("instanceid")));
+		}
+		return instances;
+	}
+	
+	public static Set<Instance> getExpiredInstances() {
+		Set<Instance> instances=new HashSet<>();
+		for (ResultsRow row:GPHUD.getDB().
+									dq("select instanceid from instances where retireat<?",UnixTime.getUnixTime())) {
+			instances.add(Instance.get(row.getInt("instanceid")));
+		}
+		return instances;
+	}
+	
 	// ---------- INSTANCE ----------
 
 	/**
@@ -751,5 +780,23 @@ public class Instance extends TableRow {
 
 	public void generating(final int value) {
 		set("reporting", value);
+	}
+	
+	public void setRetireAt(@Nullable Integer retireat) {
+		set("retireat",retireat);
+	}
+	@Nullable
+	public Integer retireAt() {
+		return getIntNullable("retireat");
+	}
+	
+	public void setRetireWarn(@Nullable Integer warnAt) {
+		set("retirewarn",warnAt);
+	}
+	@Nullable
+	public Integer retireWarn() { return getIntNullable("retirewarn"); }
+	
+	public void delete() {
+		d("delete from instances where instanceid=?",getId());
 	}
 }
