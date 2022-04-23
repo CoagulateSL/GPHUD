@@ -126,7 +126,7 @@ public class Connect {
 		if (interception!=null) { return interception; }
 
 		// server version note
-		loginmessages.add(GPHUD.serverVersion()+" [https://"+Config.getURLHost()+"/GPHUD/ChangeLog Change Log]"+GPHUD.brandingWithNewline());
+		loginmessages.add(GPHUD.serverVersion()+" "+GPHUD.brandingWithNewline());
 
 		// if instance owner and region version is out of date, send update and message
 		if (st.getInstance().getOwner().getId()==st.getAvatar().getId()) {
