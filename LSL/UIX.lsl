@@ -139,7 +139,12 @@ uixInventory() {
 	if (inventoryshown>0) {
 		if (inventorytitle!="") { 
 			float titlewidth=inventorywidth*2.0;
-			float chars=((float)(llStringLength(inventorytitle)));
+			float chars=0;
+			list lines=llParseStringKeepNulls(inventorytitle,["\n"],[]);
+			for (i=0;i<llGetListLength(lines);i++) {
+				float thislen=(float)(llStringLength(llList2String(lines,i)));
+				if (thislen>chars) { chars=thislen; }
+			}
 			if (chars*CHARACTERWIDTH>titlewidth) { titlewidth=chars*CHARACTERWIDTH; }
 			l+=[PRIM_LINK_TARGET, HUD_INVENTORY_CLOSE, PRIM_POS_LOCAL, <0,0,additional + inventoryoffsetz * ((inventoryshown/2)+3)>,
 			PRIM_LINK_TARGET, HUD_INVENTORY_TITLE_UPPER, PRIM_POS_LOCAL, <0,0,(additional/2.0) + inventoryoffsetz * 2>,
