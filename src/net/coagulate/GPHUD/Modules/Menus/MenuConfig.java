@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
+import net.coagulate.GPHUD.Interfaces.Inputs.TextArea;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.*;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
@@ -105,13 +106,14 @@ public abstract class MenuConfig {
 				}
 			}
 			m.setJSON(json);
+			if (!values.get("description").isEmpty()) {
+				String formDescription=values.get("description");
+				if (!m.getDescription().equals(formDescription)) {
+					m.setDescription(formDescription);
+				}
+			}
 			if ("Main".equalsIgnoreCase(m.getName())) {
-				/*final JSONObject broadcastupdate=new JSONObject();
-				broadcastupdate.put("incommand","broadcast");
-				final JSONObject legacymenu=Modules.getJSONTemplate(st,"menus.main");
-				broadcastupdate.put("legacymenu",legacymenu.toString());
-				st.getInstance().sendServers(broadcastupdate);*/
-				st.getInstance().pushConveyances(); // this works now for menus as a conveyance?
+				st.getInstance().pushConveyances();
 			}
 		}
 		final Form f=st.form();
@@ -139,6 +141,7 @@ public abstract class MenuConfig {
 			}
 			f.add("You may clone this menu with a new name:").add(new TextInput("cloneas","")).add(new Button("Clone")).br();
 		}
+		f.add("Description:").add(new TextArea("description",m.getDescription(),5,40)).br();
 		final Table t=new Table();
 		f.add(new TextSubHeader("Button configuration"));
 		if (st.hasPermission("Menus.Config")) { f.add(new Button("Submit")); }
