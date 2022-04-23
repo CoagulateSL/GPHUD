@@ -26,29 +26,40 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class MenuConfig {
-
+	/** Number of columns in the description text area */
+	public static final int DESCRIPTION_COLUMNS=40;
+	/** Number of rows in the description text area */
+	private static final int DESCRIPTION_ROWS=5;
+	
 	// ---------- STATICS ----------
+	
+	/**
+	 * Page to configure menus
+	 *
+	 * @param st     State
+	 * @param values Parameter map
+	 */
 	@URLs(url="/configuration/menus",
-		  requiresPermission = "Menus.*")
+			requiresPermission="Menus.*")
 	public static void configure(@Nonnull final State st,
-	                             final SafeMap values) {
+								 final SafeMap values) {
 		final boolean candelete=st.hasPermission("Menus.Delete");
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextSubHeader("Dialog menu configuration"));
-		if (candelete && values.containsKey("deletemenu")) {
+		if (candelete&&values.containsKey("deletemenu")) {
 			try {
 				final Menu menu=Menu.get(Integer.parseInt(values.get("deletemenu")));
-				if (menu.getInstance()!=st.getInstance()) { throw new SystemConsistencyException("Menu and deleter are from different instances"); }
+				if (menu.getInstance()!=st.getInstance()) {
+					throw new SystemConsistencyException("Menu and deleter are from different instances");
+				}
 				final String namewas=menu.getName();
 				final int id=menu.getId();
 				menu.delete(st);
 				f.add(new TextOK("Menu "+namewas+"#"+id+" was deleted!"));
-			}
-			catch (final UserException e) {
+			} catch (final UserException e) {
 				f.add(new TextError("Failed to delete menu "+values.get("deletemenu")+": "+e.getLocalizedMessage()));
-			}
-			catch (final NoDataException e2) {
+			} catch (final NoDataException e2) {
 				f.add(new TextError("Failed to find menu "+values.get("deletemenu")+"?"));
 			}
 			f.add("<br><br>");
@@ -56,18 +67,17 @@ public abstract class MenuConfig {
 		final Map<String,Integer> menus=Menu.getMenusMap(st);
 		for (final Map.Entry<String,Integer> entry: menus.entrySet()) {
 			if (candelete) {
-				String innercontent = "";
-				innercontent += "<button " + ("Main"
-						.equalsIgnoreCase(entry.getKey()) ? "disabled" : "") + " style=\"border: 0;\" onclick=\"document.getElementById('delete-" + entry.getValue() + "').style.display='inline';\">Delete</button>";
-				innercontent += "<div id=\"delete-" + entry.getValue() + "\" style=\"display: none;\">";
-				innercontent += "&nbsp;&nbsp;&nbsp;";
-				innercontent += "CONFIRM DELETE? ";
-				innercontent += "<form style=\"display: inline;\" method=post>";
-				innercontent += "<input type=hidden name=deletemenu value=\"" + entry.getValue() + "\">";
-				innercontent += "<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>";
-				innercontent += "</form>";
-				innercontent += "</div>";
-				innercontent += "&nbsp;&nbsp;&nbsp;";
+				final String innercontent="<button "+("Main"
+															  .equalsIgnoreCase(entry.getKey())?"disabled":"")+" style=\"border: 0;\" onclick=\"document.getElementById('delete-"+entry.getValue()+"').style.display='inline';\">Delete</button>"+
+												  "<div id=\"delete-"+entry.getValue()+"\" style=\"display: none;\">"+
+												  "&nbsp;&nbsp;&nbsp;"+
+												  "CONFIRM DELETE? "+
+												  "<form style=\"display: inline;\" method=post>"+
+												  "<input type=hidden name=deletemenu value=\""+entry.getValue()+"\">"+
+												  "<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>"+
+												  "</form>"+
+												  "</div>"+
+												  "&nbsp;&nbsp;&nbsp;";
 				f.add(innercontent);
 			}
 			f.add("<a href=\"./menus/view/"+entry.getValue()+"\">"+entry.getKey()+"</a><br>");
@@ -76,38 +86,55 @@ public abstract class MenuConfig {
 			f.add("<br><a href=\"./menus/create\">Create new menu</a><br>");
 		}
 	}
-
+	
+	/**
+	 * Page to view a menu's configuration
+	 *
+	 * @param st     State
+	 * @param values Parameter map
+	 */
 	@URLs(url="/configuration/menus/view/*")
 	public static void viewMenus(@Nonnull final State st,
-	                             @Nonnull final SafeMap values) {
+								 @Nonnull final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final Menu m=Menu.get(Integer.parseInt(id));
 		viewMenus(st,values,m);
 	}
-
+	
+	/**
+	 * Configure a particular menu (or just view)
+	 *
+	 * @param st     State
+	 * @param values Parameter map
+	 * @param m      Menu
+	 */
 	public static void viewMenus(@Nonnull final State st,
-	                             @Nonnull final SafeMap values,
-	                             @Nonnull final Menu m) {
+								 @Nonnull final SafeMap values,
+								 @Nonnull final Menu m) {
 		if (m.getInstance()!=st.getInstance()) {
 			throw new UserInputStateException("That menu belongs to a different instance");
 		}
-		if (st.hasPermission("Menus.Config") && "Submit".equals(values.get("Submit"))) {
+		if (st.hasPermission("Menus.Config")&&"Submit".equals(values.get("Submit"))) {
 			final JSONObject json=new JSONObject();
-			for (int i = 1; i<=MenuModule.MAX_BUTTONS; i++) {
+			for (int i=1;i<=MenuModule.MAX_BUTTONS;i++) {
 				final String button=values.get("button"+i);
 				final String command=values.get("command"+i);
-				if (!button.isEmpty() && !command.isEmpty()) {
+				if (!button.isEmpty()&&!command.isEmpty()) {
 					json.put("button"+i,button);
 					json.put("command"+i,command);
-					if (!values.get("permission"+i).isEmpty()) { json.put("permission"+i,values.get("permission"+i)); }
-					if (!values.get("permissiongroup"+i).isEmpty()) { json.put("permissiongroup"+i,values.get("permissiongroup"+i)); }
-					if (!values.get("charactergroup"+i).isEmpty()) { json.put("charactergroup"+i,values.get("charactergroup"+i)); }
+					if (!values.get("permission"+i).isEmpty()) {json.put("permission"+i,values.get("permission"+i));}
+					if (!values.get("permissiongroup"+i).isEmpty()) {
+						json.put("permissiongroup"+i,values.get("permissiongroup"+i));
+					}
+					if (!values.get("charactergroup"+i).isEmpty()) {
+						json.put("charactergroup"+i,values.get("charactergroup"+i));
+					}
 				}
 			}
 			m.setJSON(json);
 			if (!values.get("description").isEmpty()) {
-				String formDescription=values.get("description");
+				final String formDescription=values.get("description");
 				if (!m.getDescription().equals(formDescription)) {
 					m.setDescription(formDescription);
 				}
@@ -131,9 +158,9 @@ public abstract class MenuConfig {
 		example.openRow().add("1").add("2").add("3");
 		if (st.hasPermission("Menus.Config")) {
 			if (!values.get("cloneas").isEmpty()) {
-				final String newname = values.get("cloneas");
+				final String newname=values.get("cloneas");
 				if (Menu.getMenuNullable(st,newname)==null) {
-					Menu.create(st,newname,m.getDescription(), m.getJSON());
+					Menu.create(st,newname,m.getDescription(),m.getJSON());
 					f.add(new TextOK("Menu cloned, note you are still editing the original"));
 				} else {
 					f.add(new TextError("Unable to clone menu to "+newname+", it already exists"));
@@ -141,13 +168,13 @@ public abstract class MenuConfig {
 			}
 			f.add("You may clone this menu with a new name:").add(new TextInput("cloneas","")).add(new Button("Clone")).br();
 		}
-		f.add("Description:").add(new TextArea("description",m.getDescription(),5,40)).br();
+		f.add("Description:").add(new TextArea("description",m.getDescription(),DESCRIPTION_ROWS,DESCRIPTION_COLUMNS)).br();
 		final Table t=new Table();
 		f.add(new TextSubHeader("Button configuration"));
-		if (st.hasPermission("Menus.Config")) { f.add(new Button("Submit")); }
+		if (st.hasPermission("Menus.Config")) {f.add(new Button("Submit"));}
 		f.add(t);
 		final JSONObject j=m.getJSON();
-		for (int i = 1; i<=MenuModule.MAX_BUTTONS; i++) {
+		for (int i=1;i<=MenuModule.MAX_BUTTONS;i++) {
 			t.openRow().add("Button "+i);
 			final Table tt=new Table();
 			t.add(tt);
@@ -168,17 +195,24 @@ public abstract class MenuConfig {
 			t.openRow().add("");
 			final DropDownList command=DropDownList.getCommandsList(st,"command"+i);
 			command.setValue(j.optString("command"+i,""));
+			//noinspection MagicNumber
 			t.add(new Cell(command,99));
-
+			
 		}
-
+		
 	}
-
+	
+	/**
+	 * Create a menu
+	 *
+	 * @param st     State
+	 * @param values Parameter Map
+	 */
 	@URLs(url="/configuration/menus/create",
-	      requiresPermission="Menus.Config")
+			requiresPermission="Menus.Config")
 	public static void createMenu(@Nonnull final State st,
-	                              @Nonnull final SafeMap values) {
-		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty()) {
+								  @Nonnull final SafeMap values) {
+		if ("Submit".equals(values.get("Submit"))&&!values.get("name").isEmpty()) {
 			final Menu menu=Menu.create(st,values.get("name"),values.get("description"),new JSONObject());
 			throw new RedirectionException("./view/"+menu.getId());
 		}
@@ -187,8 +221,8 @@ public abstract class MenuConfig {
 		final Table t=new Table();
 		f.add(t);
 		t.openRow().add("Name").add(new TextInput("name"));
-		t.openRow().add("Description").add(new TextInput("description"));
+		t.openRow().add("Description").add(new TextArea("description","",DESCRIPTION_ROWS,DESCRIPTION_COLUMNS));
 		t.openRow().add(new Cell(new Button("Submit"),2));
 	}
-
+	
 }
