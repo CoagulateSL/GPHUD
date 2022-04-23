@@ -73,13 +73,15 @@ public abstract class Teleporter extends ObjectType {
 		final JSONObject doteleport=new JSONObject();
 		doteleport.put("teleport",getTeleportTarget(st));
 		final String hudsays=json.optString("hudsays","");
-		if (!hudsays.isEmpty()) {
+		if (!hudsays.isBlank()) {
 			JSONResponse.message(doteleport,hudsays,clicker.getProtocol());
 		}
 		new Transmission(clicker,doteleport).start();
 		final String teleportersays=json.optString("teleportersays","");
 		final JSONObject resp=new JSONObject();
-		JSONResponse.say(resp,teleportersays,st.protocol);
+		if (!teleportersays.isBlank()) {
+			JSONResponse.say(resp,teleportersays,st.protocol);
+		}
 		return new JSONResponse(resp);
 	}
 }
