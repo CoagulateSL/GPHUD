@@ -13,33 +13,36 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * An implementation of the teleporter that activates on click
+ */
 public class ClickTeleporter extends Teleporter {
 	ClickTeleporter(final State st,
-	                @Nonnull final ObjType object) {
+					@Nonnull final ObjType object) {
 		super(st,object);
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explainHtml() {
 		return "A Click Teleporter : Teleport user on activation to "+json.optString("teleporttarget","(unset)");
 	}
-
+	
 	@Nonnull
-	public String explainText() { return explainHtml(); }
-
+	public String explainText() {return explainHtml();}
+	
 	@Nonnull
 	@Override
-	public MODE mode() { return MODE.CLICKABLE; }
-
+	public MODE mode() {return MODE.CLICKABLE;}
+	
 	@Nonnull
 	@Override
 	public Response click(@Nonnull final State st,
-	                      @Nonnull final Char clicker) {
+						  @Nonnull final Char clicker) {
 		return execute(st,clicker);
 	}
-
+	
 	@Override
 	public void editForm(@Nonnull final State st) {
 		final Table t=new Table();
@@ -48,23 +51,23 @@ public class ClickTeleporter extends Teleporter {
 		t.add(new Cell(new Button("Update"),2));
 		st.form().add(t);
 	}
-
+	
 	@Override
-    public void update(@Nonnull final State st) {
-        boolean changed = false;
-        changed = updateDistance(st) || changed;
-        changed = updateTeleport(st) || changed;
-        if (changed) {
-            object.setBehaviour(json);
-        }
-    }
-
-    @Override
-    public void payload(final State st, @Nonnull final JSONObject response, @Nonnull final Region region, @Nullable final String url) {
-        super.payload(st, response, region, url);
-        if (json.has("maxdistance")) {
-            response.put("maxdistance", json.get("maxdistance"));
-        }
-    }
-
+	public void update(@Nonnull final State st) {
+		boolean changed=false;
+		changed=updateDistance(st)||changed;
+		changed=updateTeleport(st)||changed;
+		if (changed) {
+			object.setBehaviour(json);
+		}
+	}
+	
+	@Override
+	public void payload(final State st,@Nonnull final JSONObject response,@Nonnull final Region region,@Nullable final String url) {
+		super.payload(st,response,region,url);
+		if (json.has("maxdistance")) {
+			response.put("maxdistance",json.get("maxdistance"));
+		}
+	}
+	
 }
