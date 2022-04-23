@@ -71,7 +71,7 @@ public class MenuModule extends ModuleAnnotation {
     @Override
     public Command getCommandNullable(@Nonnull final State st,
                                       @Nonnull final String commandname) {
-        return new MenuCommand(st, commandname, Menu.getMenu(st, commandname));
+        return new MenuCommand(Menu.getMenu(st, commandname));
     }
 
     @Nonnull
@@ -82,7 +82,7 @@ public class MenuModule extends ModuleAnnotation {
         for (final Map.Entry<String, JSONObject> entry : templates.entrySet()) {
             try {
                 final String name=entry.getKey();
-                commands.put(name,new MenuCommand(st,name,Menu.getMenu(st,name)));
+                commands.put(name,new MenuCommand(Menu.getMenu(st,name)));
             } catch (NoDataException|UserInputLookupFailureException ignore) {}
         }
         return commands;

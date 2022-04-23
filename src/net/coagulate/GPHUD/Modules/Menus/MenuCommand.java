@@ -21,62 +21,63 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public class MenuCommand extends Command {
-
+	
 	@Nonnull
 	final Command targetcommand;
 	final String description;
 	final String name;
 	final Menu menu;
-
-	public MenuCommand(final State st,
-	                   final String name,
-					   final Menu menu) {
-		this.name = name;
+	
+	/** Creates a new menu command representing a particular menu
+	 * @param menu The menu we're invoking
+	 * */
+	public MenuCommand(final Menu menu) {
+		this.name=menu.getName();
 		description="This spawns the "+name+" menu";
 		this.menu=menu;
 		targetcommand=this;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
 		return true;
 	}
-
+	
 	@Nonnull
 	@Override
-	public String description() { return description; }
-
+	public String description() {return description;}
+	
 	@Nonnull
 	@Override
-	public String notes() { return ""; }
-
+	public String notes() {return "";}
+	
 	@Nonnull
 	@Override
-	public String requiresPermission() { return ""; }
-
+	public String requiresPermission() {return "";}
+	
 	@Nonnull
 	@Override
-	public Context context() { return Context.CHARACTER; }
-
+	public Context context() {return Context.CHARACTER;}
+	
 	@Override
-	public boolean permitHUD() { return true; }
-
+	public boolean permitHUD() {return true;}
+	
 	@Override
-	public boolean permitObject() { return false; }
-
+	public boolean permitObject() {return false;}
+	
 	@Override
-	public boolean permitConsole() { return false; }
-
+	public boolean permitConsole() {return false;}
+	
 	@Override
-	public boolean permitWeb() { return false; }
-
+	public boolean permitWeb() {return false;}
+	
 	@Override
-	public boolean permitScripting() { return false; }
-
+	public boolean permitScripting() {return false;}
+	
 	@Override
-	public boolean permitExternal() { return false; }
-
+	public boolean permitExternal() {return false;}
+	
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
@@ -84,36 +85,36 @@ public class MenuCommand extends Command {
 		args.add(new MenuArgument(this,menu));
 		return args;
 	}
-
+	
 	@Override
-	public int getArgumentCount() { return 1; }
-
+	public int getArgumentCount() {return 1;}
+	
 	@Nonnull
 	@Override
-	public String getFullName() { return "Menus."+getName(); }
-
+	public String getFullName() {return "Menus."+getName();}
+	
 	@Nonnull
-	public String getName() { return name; }
-
+	public String getName() {return name;}
+	
 	@Nonnull
-    @Override
-    public Response execute(@Nonnull final State state,
-                            @Nonnull final Map<String, Object> arguments) {
-		JSONObject definition=menu.getJSON();
-        final String selected = (String) arguments.get("choice");
-        int choice = -1;
-        for (int i = 1; i <= MenuModule.MAX_BUTTONS; i++) {
-            if (definition.optString("button" + i, "").equals(selected)) {
-                choice = i;
-            }
-        }
-        if (choice == -1) {
-            throw new UserInputLookupFailureException("Menu " + getName() + " has no element " + selected, true);
-        }
-        final String commandtoinvoke = definition.optString("command" + choice, "");
-        if (commandtoinvoke.isEmpty()) {
-            throw new UserConfigurationException("Menu " + getName() + " command " + selected + " is choice " + choice + " and does not have a command to invoke");
-        }
-        return Modules.getJSONTemplateResponse(state, commandtoinvoke);
-    }
+	@Override
+	public Response execute(@Nonnull final State state,
+							@Nonnull final Map<String,Object> arguments) {
+		final JSONObject definition=menu.getJSON();
+		final String selected=(String)arguments.get("choice");
+		int choice=-1;
+		for (int i=1;i<=MenuModule.MAX_BUTTONS;i++) {
+			if (definition.optString("button"+i,"").equals(selected)) {
+				choice=i;
+			}
+		}
+		if (choice==-1) {
+			throw new UserInputLookupFailureException("Menu "+getName()+" has no element "+selected,true);
+		}
+		final String commandtoinvoke=definition.optString("command"+choice,"");
+		if (commandtoinvoke.isEmpty()) {
+			throw new UserConfigurationException("Menu "+getName()+" command "+selected+" is choice "+choice+" and does not have a command to invoke");
+		}
+		return Modules.getJSONTemplateResponse(state,commandtoinvoke);
+	}
 }
