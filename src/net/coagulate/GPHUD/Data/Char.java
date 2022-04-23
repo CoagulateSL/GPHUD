@@ -597,7 +597,9 @@ public class Char extends TableRow {
 	}
 
 	public void wipeConveyances(@Nonnull final State st) {
-		db().d("delete from characterkvstore where characterid=? and k like 'gphudclient.conveyance-%'",getId());
+		db().d("delete from characterkvstore where characterid=? and "+
+								  "k like 'gphudclient.conveyance-%' and "+
+					              "k not like 'gphudclient.conveyance-leveltext'",getId());
 		st.purgeCache(this);
 		kvCache.purge(this);
 	}

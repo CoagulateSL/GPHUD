@@ -290,11 +290,14 @@
      editPermission = "User.SuperAdmin",
      template = true)
 
-
+@Change(date="2022-04-23",type=CHANGETYPE.Delete,component=COMPONENT.HUD,message="Removed HUD's personal version startup message")
+@Change(date="2022-04-23",type=CHANGETYPE.Change,component=COMPONENT.HUD,message="Truncated general version startup messages")
 
 
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
+import net.coagulate.GPHUD.Classes.COMPONENT;
+import net.coagulate.GPHUD.Classes.Change;
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
 import net.coagulate.GPHUD.Modules.KV.KVS;
 import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
@@ -302,4 +305,5 @@ import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
+import net.coagulate.SL.ChangeLogging.CHANGETYPE;
 
