@@ -215,6 +215,16 @@ public class Menu extends TableRow {
 	public void flushKVCache(final State st) {}
 
 	public String getDescription() {
-		return getString("description");
+		final String desc=getString("description");
+		if (desc==null) { return ""; }
+		return desc;
+	}
+	
+	/** Set the menus description
+	 *
+	 * @param description The new description for
+	 */
+	public void setDescription(@Nullable final String description) {
+		set("description",description);
 	}
 }
