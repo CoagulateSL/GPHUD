@@ -1,4 +1,4 @@
-#define COMMS_PROTOCOL "3"
+#define COMMS_PROTOCOL "5"
 #include "Constants.lsl"
 #include "SLCore/LSL/SetDev.lsl"
 #include "SLCore/LSL/JsonTools.lsl"
