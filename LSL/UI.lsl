@@ -163,13 +163,13 @@ process() {
 	if (jsontwoget("legacymenu")!="") {
 		mainmenu="";
 		list mainmenuparts=llParseStringKeepNulls(jsontwoget("legacymenu"),["|"],[]);
-		integer n=0;
-		mainmenu=llJsonSetValue(mainmenu,["arg0description"],"Choice of menu item");
+		integer n=1;
+		mainmenu=llJsonSetValue(mainmenu,["arg0description"],llList2String(mainmenuparts,0));
 		mainmenu=llJsonSetValue(mainmenu,["arg0type"],"SELECT");
 		mainmenu=llJsonSetValue(mainmenu,["invoke"],"Menus.Main");
 		mainmenu=llJsonSetValue(mainmenu,["args"],"1");
 		mainmenu=llJsonSetValue(mainmenu,["arg0name"],"choice");
-		for (n=0;n<llGetListLength(mainmenuparts);n++) {
+		for (n=1;n<llGetListLength(mainmenuparts);n++) {
 			mainmenu=llJsonSetValue(mainmenu,["arg0button"+((string)n)],llList2String(mainmenuparts,n));
 		}
 	}
