@@ -24,28 +24,26 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Menu extends TableRow {
-
-	protected Menu(final int id) { super(id); }
-
+	
+	protected Menu(final int id) {super(id);}
+	
 	// ---------- STATICS ----------
-
+	
 	/**
 	 * Factory style constructor
 	 *
 	 * @param id the ID number we want to get
-	 *
 	 * @return An Avatar representation
 	 */
 	@Nonnull
 	public static Menu get(final int id) {
-		return (Menu) factoryPut("Menus",id,Menu::new);
+		return (Menu)factoryPut("Menus",id,Menu::new);
 	}
-
+	
 	/**
 	 * Get a list of menus and their ID for an instance.
 	 *
 	 * @param st Infers instance
-	 *
 	 * @return Map of String menu name to Integer menu ID for this instance.
 	 */
 	@Nonnull
@@ -56,33 +54,39 @@ public class Menu extends TableRow {
 		}
 		return aliases;
 	}
-
+	
 	/**
 	 * Load instance menu by name
 	 *
 	 * @param st   State (infers instance)
 	 * @param name Name of the menu to load
-	 *
 	 * @return Menus object
 	 */
 	@Nullable
 	public static Menu getMenuNullable(@Nonnull final State st,
-	                                   @Nonnull final String name) {
+									   @Nonnull final String name) {
 		try {
 			final int id=db().dqiNotNull("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
 			return get(id);
-		}
-		catch (@Nonnull final NoDataException e) { return null; }
+		} catch (@Nonnull final NoDataException e) {return null;}
 	}
-
+	
+	/**
+	 * Returns a reference to the Menu named, or throws an exception if it cant be found.
+	 *
+	 * @param st   State
+	 * @param name Name of the menu
+	 * @return The menu object
+	 * @throws UserInputLookupFailureException If the menu doesn't exist
+	 */
 	@Nonnull
 	public static Menu getMenu(@Nonnull final State st,
-	                           @Nonnull final String name) {
+							   @Nonnull final String name) {
 		final Menu ret=getMenuNullable(st,name);
-		if (ret==null) { throw new UserInputLookupFailureException("No menu called "+name+" is found",true); }
+		if (ret==null) {throw new UserInputLookupFailureException("No menu called "+name+" is found",true);}
 		return ret;
 	}
-
+	
 	/**
 	 * Create a new menu,by name and description, with the given json data blob
 	 *
@@ -90,16 +94,14 @@ public class Menu extends TableRow {
 	 * @param name        Name of the new menu
 	 * @param description Description of the new menu
 	 * @param template    JSONObject template for the new menu (belongs to Menus module)
-	 *
 	 * @return the new Menus object
-	 *
 	 * @throws UserException If the name is invalid or duplicated.
 	 */
 	@Nonnull
 	public static Menu create(@Nonnull final State st,
-	                          @Nonnull final String name,
-	                          @Nonnull final String description,
-	                          @Nonnull final JSONObject template) {
+							  @Nonnull final String name,
+							  @Nonnull final String description,
+							  @Nonnull final JSONObject template) {
 		if (getMenuNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("Menu "+name+" already exists");
 		}
@@ -113,12 +115,11 @@ public class Menu extends TableRow {
 		}
 		return newalias;
 	}
-
+	
 	/**
 	 * Load all the menus for an instance
 	 *
 	 * @param st State, infers instance
-	 *
 	 * @return Map of Name to JSONPayloads for all menus in this instance.
 	 */
 	@Nonnull
@@ -129,46 +130,51 @@ public class Menu extends TableRow {
 		}
 		return aliases;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
 		return "menus";
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getIdColumn() {
 		return "menuid";
 	}
-
+	
 	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
+		if (validated) {return;}
 		validate();
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Menus / State Instance mismatch");
 		}
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getNameField() {
 		return "name";
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/configuration/menus/"+getId();
 	}
-
+	
 	@Nullable
-	public String getKVTable() { return null; }
-
+	public String getKVTable() {return null;}
+	
 	@Nullable
-	public String getKVIdField() { return null; }
-
+	public String getKVIdField() {return null;}
+	
+	/**
+	 * Deletes this menu, if its not the Main menu
+	 *
+	 * @param st The State
+	 */
 	public void delete(final State st) {
 		final String oldname=getName();
 		if ("Main".equalsIgnoreCase(oldname)) {
@@ -177,9 +183,9 @@ public class Menu extends TableRow {
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"delete","Menus",oldname,"","Deleted menu "+oldname);
 		d("delete from menus where menuid=?",getId());
 	}
-
-	protected int getNameCacheTime() { return 60*60; } // this name doesn't change, cache 1 hour
-
+	
+	protected int getNameCacheTime() {return CacheConfig.PERMANENT_CONFIG;} // this name doesn't change, cache 1 hour
+	
 	/**
 	 * Load the JSON payload for this menu.
 	 *
@@ -188,10 +194,10 @@ public class Menu extends TableRow {
 	@Nonnull
 	public JSONObject getJSON() {
 		final String json=dqs("select json from menus where menuid=?",getId());
-		if (json==null) { throw new SystemBadValueException("No (null) template for menu id "+getId()); }
+		if (json==null) {throw new SystemBadValueException("No (null) template for menu id "+getId());}
 		return new JSONObject(json);
 	}
-
+	
 	/**
 	 * Set the JSON payload.
 	 *
@@ -200,7 +206,7 @@ public class Menu extends TableRow {
 	public void setJSON(@Nonnull final JSONObject template) {
 		d("update menus set json=? where menuid=?",template.toString(),getId());
 	}
-
+	
 	/**
 	 * Obtain the instanceID this menu belongs to.
 	 *
@@ -211,10 +217,31 @@ public class Menu extends TableRow {
 		final int id=dqinn("select instanceid from menus where menuid=?",getId());
 		return Instance.get(id);
 	}
-
-	public void flushKVCache(final State st) {}
-
+	
+	/**
+	 * Flush the non existant KV cache
+	 *
+	 * @param st State
+	 */
+	public void flushKVCache(@SuppressWarnings("unused") final State st) {}
+	
+	/** Get the current description.
+	 *
+	 * @return The current description, or the empty string if not set
+	 */
+	@Nonnull
 	public String getDescription() {
-		return getString("description");
+		final String desc=getString("description");
+		if (desc==null) {return "";}
+		return desc;
+	}
+	
+	/**
+	 * Set the menus description
+	 *
+	 * @param description The new description for
+	 */
+	public void setDescription(@Nullable final String description) {
+		set("description",description);
 	}
 }
