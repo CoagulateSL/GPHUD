@@ -84,6 +84,7 @@ public class JSONResponse implements Response {
                              @Nullable final String sayAs,
                              @Nonnull final String message,
                              final int protocol) {
+		if (message.isEmpty()) { return; }
         if (protocol < 3) {
             if (sayAs != null) {
                 json.put("sayas", sayAs);
@@ -125,6 +126,7 @@ public class JSONResponse implements Response {
     public static void sayAsHud(@Nonnull final JSONObject json,
                                 @Nonnull final String message,
                                 final int protocol) {
+		if (message.isEmpty()) { return; }
         if (protocol < 3) {
             json.put(findFreePrefix(json, "sayashud"), message);
         } else {
@@ -145,6 +147,7 @@ public class JSONResponse implements Response {
     public static void ownerSay(@Nonnull final JSONObject json,
                                 @Nonnull final String message,
                                 final int protocol) {
+		if (message.isEmpty()) { return; }
         if (protocol < 3) {
             json.put(findFreePrefix(json, "message"), message);
         } else {
