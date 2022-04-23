@@ -134,8 +134,9 @@ public class Char extends TableRow {
 		return get(id);
 	}
 
+	@Nullable
 	public static Char findNullable(final Instance instance,
-	                                final String name) {
+									final String name) {
 		final Results results=GPHUD.getDB().dq("select characterid from characters where name like ? and instanceid=?",name,instance.getId());
 		if (results.empty()) { return null; }
 		if (results.size()>1) { return null; }
@@ -274,8 +275,6 @@ public class Char extends TableRow {
 	/**
 	 * Get a list of HUDs that haven't checked in in over 60 seconds
 	 * <p>
-	 * //TODO this needs to be improved
-	 *
 	 * @return Results set of a db query (boo)
 	 */
 	public static Results getPingable() {
@@ -597,7 +596,9 @@ public class Char extends TableRow {
 	}
 
 	public void wipeConveyances(@Nonnull final State st) {
-		db().d("delete from characterkvstore where characterid=? and k like 'gphudclient.conveyance-%'",getId());
+		db().d("delete from characterkvstore where characterid=? and "+
+								  "k like 'gphudclient.conveyance-%' and "+
+					              "k not like 'gphudclient.conveyance-leveltext'",getId());
 		st.purgeCache(this);
 		kvCache.purge(this);
 	}
@@ -915,8 +916,6 @@ public class Char extends TableRow {
 
 	/**
 	 * Rename a character
-	 * //TODO implement filtering
-	 *
 	 * @param newName The characters new name
 	 */
 	public void rename(final String newName) {
