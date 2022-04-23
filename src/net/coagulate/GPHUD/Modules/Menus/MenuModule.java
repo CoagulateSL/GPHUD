@@ -36,10 +36,14 @@ public class MenuModule extends ModuleAnnotation {
                                           final String key) {
         if (st.mainMenuTemplate == null) {
             final JSONObject menu = Modules.getJSONTemplate(st, "menus.main");
-            if (st.getCharacter().getProtocol() >= 4) { // shortened format
+            final int protocol=st.getCharacter().getProtocol();
+            if (protocol >= 4) { // shortened format
                 int button = 0;
                 final StringBuilder newMainMenuTemplate = new StringBuilder();
-
+                if (protocol >= 5) {
+                    // protocol 5 expects the main menu description first.
+                    newMainMenuTemplate.append(menu.optString("arg0description","Select a menu item.")+"|");
+                }
                 boolean first = true;
                 while (menu.has("arg0button" + button)) {
                     if (first) {
