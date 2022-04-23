@@ -18,15 +18,15 @@ public class TextArea extends Input {
 	Integer columns;
 	@Nullable
 	Integer rows;
-
+	
 	public TextArea(final String name) {this.name=name;}
-
+	
 	public TextArea(final String name,
 					final String value) {
 		this.name=name;
 		this.value=value;
 	}
-
+	
 	public TextArea(final String name,
 					final int rows,
 					final int columns) {
@@ -34,7 +34,7 @@ public class TextArea extends Input {
 		this.rows=rows;
 		this.columns=columns;
 	}
-
+	
 	public TextArea(final String name,
 					final String value,
 					final int rows,
@@ -44,31 +44,31 @@ public class TextArea extends Input {
 		this.rows=rows;
 		this.columns=columns;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Override
 	public String getName() {
 		return name;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String asHtml(final State st,
-	                     final boolean rich) {
+						 final boolean rich) {
 		String s="<textarea name=\""+name+"\" ";
-		if (rows!=null) { s+="rows="+rows+" "; }
-		if (columns!=null) { s+="cols="+columns+" "; }
+		if (rows!=null) {s+="rows="+rows+" ";}
+		if (columns!=null) {s+="cols="+columns+" ";}
 		s+="autofocus ";
 		s+=">";
 		s+=value;
 		s+="</textarea>";
 		return s;
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;
 	}
-
+	
 }
