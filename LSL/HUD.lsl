@@ -28,7 +28,6 @@ key radarto=NULL_KEY;
 integer logincomplete=0;
 string charname="Unknown";
 integer rpchannel=0;
-integer BANNERED=FALSE;
 integer SHUTDOWN=TRUE;
 vector titlercolor=<0,0,0>;
 string titlertext="";
@@ -79,7 +78,6 @@ setup() {
 	
 	if (PERMISSIONS_STAGE==1 && URL_STAGE==1 && LISTENER_STAGE==1 && LOGIN_STAGE==0) {
 		startLogin();
-		if (!BANNERED) { banner_hud(); BANNERED=TRUE; }
 		llRegionSayTo(llGetOwner(),broadcastchannel,"{\"hudreplace\":\"hudreplace\"}");
 	}
 }
