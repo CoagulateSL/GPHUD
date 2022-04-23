@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.GPHUD.Data.CharacterGroup;
+import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
@@ -22,11 +23,13 @@ public class MenuArgument extends Argument {
 	final JSONObject meta;
 	@Nullable
 	String override;
+	Menu menu;
 
 	public MenuArgument(final Command command,
-	                    final JSONObject definition) {
+	                    final Menu menu) {
         this.command = command;
-		meta = definition;
+		meta = menu.getJSON();
+		this.menu=menu;
 	}
 
 	// ---------- INSTANCE ----------
@@ -45,7 +48,9 @@ public class MenuArgument extends Argument {
 	@Override
 	public String description() {
 		if (override!=null) { return override; }
-		return "Choice of menu item";
+		String desc=menu.getDescription();
+		if (desc.isBlank()) { desc="Choice of menu item"; }
+		return desc;
 	}
 
 	@Override

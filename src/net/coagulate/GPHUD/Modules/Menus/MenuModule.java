@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Menus;
 
+import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Modules.Command;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
@@ -65,7 +67,7 @@ public class MenuModule extends ModuleAnnotation {
     @Override
     public Command getCommandNullable(@Nonnull final State st,
                                       @Nonnull final String commandname) {
-        return new MenuCommand(st, commandname, Menu.getMenu(st, commandname).getJSON());
+        return new MenuCommand(st, commandname, Menu.getMenu(st, commandname));
     }
 
     @Nonnull
@@ -74,8 +76,10 @@ public class MenuModule extends ModuleAnnotation {
         final Map<String, Command> commands = new TreeMap<>();
         final Map<String, JSONObject> templates = Menu.getTemplates(st);
         for (final Map.Entry<String, JSONObject> entry : templates.entrySet()) {
-            final String name = entry.getKey();
-            commands.put(name, new MenuCommand(st, name, entry.getValue()));
+            try {
+                final String name=entry.getKey();
+                commands.put(name,new MenuCommand(st,name,Menu.getMenu(st,name)));
+            } catch (NoDataException|UserInputLookupFailureException ignore) {}
         }
         return commands;
     }

@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Menus;
 
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument;
 import net.coagulate.GPHUD.Modules.Command;
@@ -21,18 +22,18 @@ import java.util.Map;
  */
 public class MenuCommand extends Command {
 
-	final JSONObject definition;
 	@Nonnull
 	final Command targetcommand;
 	final String description;
 	final String name;
+	final Menu menu;
 
 	public MenuCommand(final State st,
 	                   final String name,
-	                   final JSONObject newdef) {
-        definition = newdef;
+					   final Menu menu) {
 		this.name = name;
 		description="This spawns the "+name+" menu";
+		this.menu=menu;
 		targetcommand=this;
 	}
 
@@ -80,7 +81,7 @@ public class MenuCommand extends Command {
 	@Override
 	public List<Argument> getArguments() {
 		final List<Argument> args=new ArrayList<>();
-		args.add(new MenuArgument(this,definition));
+		args.add(new MenuArgument(this,menu));
 		return args;
 	}
 
@@ -98,6 +99,7 @@ public class MenuCommand extends Command {
     @Override
     public Response execute(@Nonnull final State state,
                             @Nonnull final Map<String, Object> arguments) {
+		JSONObject definition=menu.getJSON();
         final String selected = (String) arguments.get("choice");
         int choice = -1;
         for (int i = 1; i <= MenuModule.MAX_BUTTONS; i++) {
