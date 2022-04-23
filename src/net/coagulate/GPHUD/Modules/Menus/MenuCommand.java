@@ -22,8 +22,6 @@ import java.util.Map;
  */
 public class MenuCommand extends Command {
 	
-	@Nonnull
-	final Command targetcommand;
 	final String description;
 	final String name;
 	final Menu menu;
@@ -35,7 +33,6 @@ public class MenuCommand extends Command {
 		this.name=menu.getName();
 		description="This spawns the "+name+" menu";
 		this.menu=menu;
-		targetcommand=this;
 	}
 	
 	// ---------- INSTANCE ----------
