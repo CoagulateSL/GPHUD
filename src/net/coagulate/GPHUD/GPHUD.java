@@ -157,7 +157,7 @@ public class GPHUD extends SLModule {
 	 */
 	@Nonnull
 	public static String serverVersion() {
-		return "[https://"+ Config.getURLHost()+"/GPHUD/ChangeLog "+SL.getModule("GPHUD").getBuildDateString()+" @"+SL.getModule("GPHUD").commitId()+"] (C) secondlife:///app/agent/"+Config.getCreatorUUID()+"/about";
+		return "[https://"+Config.getURLHost()+"/GPHUD/ChangeLog "+SL.getModule("GPHUD").getBuildDateString()+" @"+SL.getModule("GPHUD").commitId()+"] (C) secondlife:///app/agent/"+Config.getCreatorUUID()+"/about";
 	}
 	
 	/**
