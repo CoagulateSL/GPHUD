@@ -15,13 +15,21 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 
+/** An abstract superclass for all teleporter objects */
 public abstract class Teleporter extends ObjectType {
 	protected Teleporter(final State st,
-	                     @Nonnull final ObjType object) {
+						 @Nonnull final ObjType object) {
 		super(st,object);
 	}
-
+	
 	// ---------- INSTANCE ----------
+	
+	/**
+	 * Obtains the current teleporter target's HUD representation (internal protocol)
+	 *
+	 * @param st State
+	 * @return The landmark, formatted as a string for HUD consumption.
+	 */
 	@Nonnull
 	public String getTeleportTarget(@Nonnull final State st) {
 		final Landmark landmark=Landmark.find(st.getInstance(),json.optString("teleporttarget","unset"));
@@ -30,7 +38,13 @@ public abstract class Teleporter extends ObjectType {
 		}
 		return landmark.getHUDRepresentation(false);
 	}
-
+	
+	/**
+	 * Edit a teleport object type
+	 *
+	 * @param st Current state
+	 * @param t  Table to add the editor to
+	 */
 	public void teleportEditForm(@Nonnull final State st,@Nonnull final Table t) {
 		t.add("Target Landmark").add(TeleportCommands.getDropDownList(st,"target",json.optString("teleporttarget","")));
 		t.openRow();
@@ -39,9 +53,15 @@ public abstract class Teleporter extends ObjectType {
 		t.add("HUD says to wearer").add(new TextInput("hudsays",json.optString("hudsays","")));
 		t.openRow();
 	}
-
+	
+	/**
+	 * Updates a teleport object type
+	 *
+	 * @param st The state
+	 * @return True if anything changed (i.e. update the object)
+	 */
 	public boolean updateTeleport(@Nonnull final State st) {
-		if (!st.postMap().get("target").isEmpty() || !st.postMap().get("teleportersays").isEmpty() || !st.postMap().get("hudsays").isEmpty()) {
+		if (!st.postMap().get("target").isEmpty()||!st.postMap().get("teleportersays").isEmpty()||!st.postMap().get("hudsays").isEmpty()) {
 			boolean update=false;
 			final String target=st.postMap().get("target");
 			if (!target.equals(json.optString("teleporttarget",""))) {
@@ -49,12 +69,12 @@ public abstract class Teleporter extends ObjectType {
 				update=true;
 			}
 			final String teleportersays=st.postMap().get("teleportersays");
-			if (!target.equals(json.optString("teleportersays",""))) {
+			if (!teleportersays.equals(json.optString("teleportersays",""))) {
 				json.put("teleportersays",teleportersays);
 				update=true;
 			}
 			final String hudsays=st.postMap().get("hudsays");
-			if (!target.equals(json.optString("hudsays",""))) {
+			if (!hudsays.equals(json.optString("hudsays",""))) {
 				json.put("hudsays",hudsays);
 				update=true;
 			}
@@ -62,11 +82,11 @@ public abstract class Teleporter extends ObjectType {
 		}
 		return false;
 	}
-
+	
 	// ----- Internal Instance -----
 	@Nonnull
 	Response execute(@Nonnull final State st,
-	                 @Nonnull final Char clicker) {
+					 @Nonnull final Char clicker) {
 		if (!st.hasModule("Teleportation")) {
 			throw new UserConfigurationException("Teleporter can not function ; teleportation module is disabled at this instance.");
 		}
