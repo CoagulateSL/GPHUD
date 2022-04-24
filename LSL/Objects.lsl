@@ -168,7 +168,7 @@ all_listen(integer channel,string name,key id,string text) {
 		if (jsonget("objectdriverversioncheck")!="" && llGetOwnerKey(id)==llGetOwner()) { // If there's an OD version check from a remove object and it's owned by the same as us
 			integer otherversion=(integer)(jsonget("objectdriverversioncheck")); // get the other version
 			if (otherversion>ODVERSION && updatelock<llGetUnixTime()) {  // if their version is bigger than ours
-				if (llGetInventoryType("GPHUD Object Driver Inhibitor")!=INVENTORY_NONE)  { // and we're not inhibited
+				if (llGetInventoryType("GPHUD Object Driver Inhibitor")==INVENTORY_NONE)  { // and we're not inhibited
 					integer pin=0;   // set a pin and request an update
 					updatelock=llGetUnixTime()+300;
 					while (pin>-1000 && pin<1000) {
