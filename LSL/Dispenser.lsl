@@ -30,7 +30,7 @@ integer parcelonly=TRUE;
 integer slave=0;
 integer IN_EXPERIENCE=TRUE;
 integer IS_ACTIVE=FALSE;
-
+integer TERMINATED=FALSE;
 float minz=0;
 float maxz=9999;
 
@@ -214,6 +214,7 @@ process(key id) {
 	}
 	if (jsonget("minz")) { minz=((float)jsonget("minz")); }
 	if (jsonget("maxz")) { maxz=((float)jsonget("maxz")); }
+	if (jsonget("terminate")) { llOwnerSay("Dispenser: Terminated"); IS_ACTIVE=FALSE; TERMINATED=TRUE; }
 	if (jsonget("parcelonly")!="")
 	{
 		if (jsonget("parcelonly")=="true") {
@@ -277,12 +278,13 @@ default {
 	}	
 		
 	timer() {
+	    if (TERMINATED) { llSetTimerEvent(0); return; }
 		if (!IS_ACTIVE && llGetUnixTime()>processafter) { llOwnerSay("Dispenser: Active"); IS_ACTIVE=TRUE; }
 		if (IS_ACTIVE) {execute(); }
 	}
 	on_rez(integer n) { llResetScript(); }
 	listen(integer channel,string name,key id,string message) {
-		if (!IS_ACTIVE) {
+		if (!IS_ACTIVE || TERMINATED) {
 			if (channel==broadcastchannel) {
 				if (message=="GOTHUD") {
 					adduser(llGetOwnerKey(id),-1);
