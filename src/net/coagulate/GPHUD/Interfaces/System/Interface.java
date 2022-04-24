@@ -248,7 +248,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		if (runAsAvatar!=null&&(!(runAsAvatar.isEmpty()))) {
 			st.setAvatar(User.findUsername(runAsAvatar,false));
 			if (st.getAvatar().isSuspended()) {
-				return new TerminateResponse("Your access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
+				return new TerminateResponse("Target's (runAsAvatar) access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
 			}
 			st.isSuid=true;
 		}

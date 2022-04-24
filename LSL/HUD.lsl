@@ -113,6 +113,7 @@ command(string command) {
 }
 
 shutdown() {
+	if (SHUTDOWN) { return; }
 	if (comms_url!="") {
 		json="";
 		jsonput("url",comms_url);
