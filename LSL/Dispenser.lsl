@@ -175,19 +175,24 @@ execute() {
 			
 			// actions
 			if (istage==0) { //querying timed out, rez a hud
+				if (llGetParcelMaxPrims(llGetPos(),TRUE)-llGetParcelPrimCount(llGetPos(),PARCEL_COUNT_TOTAL,TRUE)<37) {
+					llOwnerSay("Parcel has low prim count, HUD rez may fail");
+					llSay(0,"Parcel has low prim count, HUD rez may fail");
+				}
 				// so we shoudl rez them a hud
 				string slscript=getSlaveScript();
 				llMessageLinked(LINK_THIS,2,slscript,(key)((string)isecret));
 				//if (debug) { llOwnerSay("Dispenser:Rez for "+llKey2Name(ik)+" with secret "+(string)isecret+" via slave "+slscript); }
 				stage=llListReplaceList(stage,[1],i,i);
 				time=llListReplaceList(time,[now+10],i,i);
-			}
-			/*
+			}			
 			if (istage==1) { //hud querying us timed out?
-				llSay(0,"Slow rez or failure for "+llKey2Name(ik)+", resetting");
+				llSay(0,"Slow HUD rez or failure for "+llKey2Name(ik));
+				llOwnerSay("Slow HUD rez or failure for "+llKey2Name(ik));
 				listdel(i);
 				return;
 			}
+			/*
 			if (istage==2) { //hud attaching timed out?
 				listdel(i); // we just delete them, this will cause us to ping their HUD :)
 				return;			
