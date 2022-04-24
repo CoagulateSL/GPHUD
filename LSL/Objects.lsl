@@ -309,7 +309,9 @@ state phantom {
 	on_rez(integer parameter) { llResetScript(); }
 	collision_start(integer n) { 
 		for (n--;n>=0;n--) {
-			json=llJsonSetValue("",["collider"],">"+llDetectedName(n));
+			if (llDetectedType(n) & AGENT) {
+				json=llJsonSetValue("",["collider"],">"+llDetectedName(n));
+			}
 		}
 		httpcommand("objects.collided","GPHUD/system");
 	}

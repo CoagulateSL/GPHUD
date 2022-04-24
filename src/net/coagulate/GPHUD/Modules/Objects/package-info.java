@@ -29,7 +29,12 @@
                         description="Allowed to get a copy of the Object Driver script",
                         power=Permission.POWER.MEDIUM)
 
+@Change(date="2022-04-24",type=CHANGETYPE.Fix,component=COMPONENT.ObjectDriver,message="Phantom/Volume Detect/Collision object driver only detects avatar collisions.")
+
 package net.coagulate.GPHUD.Modules.Objects;
 
+import net.coagulate.GPHUD.Classes.COMPONENT;
+import net.coagulate.GPHUD.Classes.Change;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Permission;
+import net.coagulate.SL.ChangeLogging.CHANGETYPE;
