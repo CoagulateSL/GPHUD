@@ -286,6 +286,14 @@ public abstract class Command {
 						button++;
 					}
 					break;
+				case PERMISSIONSGROUP:
+					json.put("arg"+arg+"type","SELECT");
+					button=0;
+					for (final PermissionsGroup pg:PermissionsGroup.getPermissionsGroups(st)) {
+						json.put("arg"+arg+"button"+button,pg.getName());
+						button++;
+					}
+					break;
 				default:
 					throw new SystemImplementationException("Unhandled ENUM TYPE in getJSONTemplate():"+argument.type());
 			}
