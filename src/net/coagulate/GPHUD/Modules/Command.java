@@ -5,7 +5,6 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
-import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Inputs.*;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -24,7 +23,10 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A command, probably derived from Annotations.
@@ -32,7 +34,10 @@ import java.util.*;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Command {
-
+	
+	/** Number of buttons on a dialog page */
+	public static final int DIALOG_PAGE_LIMIT=12;
+	
 	// ----- Internal Statics -----
 	@Nonnull
 	static Object assertNotNull(@Nullable final Object o,
@@ -43,48 +48,113 @@ public abstract class Command {
 		}
 		return o;
 	}
-
+	
 	// ---------- INSTANCE ----------
+	
+	/** Checks if this command is generated (per instance) or global
+	 *
+	 * @return True if this command is instance specific
+	 */
 	public abstract boolean isGenerated();
-
+	
+	/** Returns the description for this command.
+	 *
+	 * @return COmmand description
+	 */
 	public abstract String description();
-
+	
+	/** Returns usage notes for this command.
+	 *
+	 * @return Usage notes
+	 */
 	public abstract String notes();
-
+	
+	/** Returns required permission to invoke this command.
+	 *
+	 * @return Name of the permission
+	 */
 	public abstract String requiresPermission();
-
+	
+	/** Define what level of logon a user must have to access this command.
+	 *
+	 * @return The required context level to run this command.
+	 */
 	public abstract Context context();
-
+	
+	/** Define if this command can be called by HUD (e.g. menus)
+	 *
+	 * @return True if this command should be HUD invokable
+	 */
 	public abstract boolean permitHUD();
-
+	
+	/** Define if this command can be called by an object
+	 *
+	 * @return True if this command may be invoked by an object.
+	 */
 	public abstract boolean permitObject();
-
+	
+	/** Define if this command may be called from the console.
+	 *
+	 * @return True if the user may call this command from the console (/1 or **)
+	 */
 	public abstract boolean permitConsole();
-
+	
+	/** Define if this command may be accessed from the web.
+	 *
+	 * @return True if this command may be called through the web interface
+	 */
 	public abstract boolean permitWeb();
-
+	
+	/** Define if this command may be called from a script (gsAPI*)
+	 *
+	 * @return True if this command may be invoked from a script
+	 */
 	public abstract boolean permitScripting();
-
+	
+	/** Define if this command may be called from the external interface
+	 *
+	 * @return True to permit this command to be called from the external interface.
+	 */
 	public abstract boolean permitExternal();
-
+	
+	/** Return a list of arguments related to this command
+	 *
+	 * @return List of arguments
+	 */
 	@Nonnull
 	public abstract List<Argument> getArguments();
-
-	public int getArgumentCount() { return getArguments().size(); }
-
+	
+	/** Returns the number of arguments for this command
+	 *
+	 * @return Argument count
+	 */
+	public int getArgumentCount() {return getArguments().size();}
+	
+	/** Returns the full command name with module
+	 *
+	 * @return FQ command name
+	 */
 	@Nonnull
 	public abstract String getFullName();
-
+	
+	/**
+	 *
+	 * @return The name of this command without module prefix
+	 */
 	@Nonnull
 	public abstract String getName();
-
+	
 	/**
 	 * Run this command given an array of string arguments.
 	 * Converts them to named parameters and calls the SafeMap version
+	 * @param state State
+	 * @param args Invoked arguments in order
+	 * @return The Response from the command
+	 * @see Command#run(State,SafeMap) Next in chain
 	 */
 	@Nonnull
 	public final Response run(@Nonnull final State state,
-	                          @Nonnull final String[] args) {
+							  @Nonnull final String[] args) {
 		//for (int i=0;i<args.length;i++) { System.out.println("Arg "+i+" : "+args[i]); }
 		final SafeMap map=new SafeMap();
 		int arg=0;
@@ -103,48 +173,45 @@ public abstract class Command {
 		}
 		return run(state,map);
 	}
-
-	/**
-	 * Get the name of the arguments.
+	
+	/** Run a command
 	 *
-	 * @return list of argument names
+	 * @param state State
+	 * @param parameterMap Map of parameter name/value strings
+	 * @see Command#run(State,Map) next in chain
+	 * @return The command's response
 	 */
-	public final List<String> getArgumentNames() {
-		final List<String> arguments=new ArrayList<>();
-		for (final Argument a: getArguments()) {
-			arguments.add(a.name());
-		}
-		return arguments;
-	}
-
 	public final Response run(@Nonnull final State state,
-	                          @Nonnull final SafeMap parameterMap) {
-		state.parameterDebugRaw =parameterMap;
+							  @Nonnull final SafeMap parameterMap) {
+		state.parameterDebugRaw=parameterMap;
 		final Map<String,Object> arguments=new HashMap<>();
 		for (final Argument arg: getArguments()) {
 			String v=parameterMap.get(arg.name()).trim();
-			if (v.isEmpty() || "-".equals(v)) { v=null; }
-			if (v!=null && v.length()>getMaximumLength(arg)) {
+			if (v.isEmpty()||"-".equals(v)) {v=null;}
+			if (v!=null&&v.length()>getMaximumLength(arg)) {
 				return new ErrorResponse(arg.name()+" is "+v.length()+" characters long and must be no more than "+getMaximumLength(arg)+".  Input has not been processed, please try again");
 			}
-			if (arg.type()==ArgumentType.BOOLEAN && v==null) { v="false"; }
-			if (v==null) { arguments.put(arg.name(),null); }
-			else {
+			if (arg.type()==ArgumentType.BOOLEAN&&v==null) {v="false";}
+			if (v==null) {arguments.put(arg.name(),null);} else {
 				try {
 					arguments.put(arg.name(),convertArgument(state,arg,v));
-				}
-				catch (final UserException conversionError) {
+				} catch (final UserException conversionError) {
 					return new ErrorResponse("Argument "+arg.name()+" failed : "+conversionError.getLocalizedMessage());
 				}
 			}
 		}
 		return run(state,arguments);
 	}
-
+	
+	/** Invoke or present a command for a html stream
+	 *
+	 * @param st State
+	 * @param values Valuemap of string,string
+	 */
 	public final void simpleHtml(@Nonnull final State st,
-	                             @Nonnull final SafeMap values) {
+								 @Nonnull final SafeMap values) {
 		//System.out.println("HERE:"+getArgumentCount());
-		if (getArgumentCount()==0 || values.submit()) {
+		if (getArgumentCount()==0||values.submit()) {
 			final Response response=run(st,values);
 			// IF this is an OK response
 			if (response instanceof OKResponse) {
@@ -158,7 +225,12 @@ public abstract class Command {
 		}
 		getHtmlTemplate(st);
 	}
-
+	
+	/** Represent this command as a HUD JSON block
+	 *
+	 * @param st State
+	 * @return JSON Object for the command
+	 */
 	@Nonnull
 	public final JSONObject getJSONTemplate(@Nonnull final State st) {
 		final JSONObject json=new JSONObject();
@@ -174,7 +246,7 @@ public abstract class Command {
 					break;
 				case CHOICE:
 					json.put("arg"+arg+"type","SELECT");
-					int button=0;
+					@SuppressWarnings("LocalVariableUsedAndDeclaredInDifferentSwitchBranches") int button=0;
 					for (final String label: argument.getChoices(st)) {
 						json.put("arg"+arg+"button"+button,label);
 						button++;
@@ -212,10 +284,9 @@ public abstract class Command {
 					break;
 				case CHARACTER_PLAYABLE:
 					final Set<Char> options=Char.getCharacters(st.getInstance(),st.getAvatar());
-					if (options.size()>12) {
+					if (options.size()>DIALOG_PAGE_LIMIT) {
 						json.put("arg"+arg+"type","TEXTBOX");
-					}
-					else {
+					} else {
 						json.put("arg"+arg+"type","SELECT");
 						button=0;
 						for (final Char c: options) {
@@ -226,10 +297,9 @@ public abstract class Command {
 					break;
 				case EFFECT:
 					final Set<Effect> effects=Effect.getAll(st.getInstance());
-					if (effects.size()>12) {
+					if (effects.size()>DIALOG_PAGE_LIMIT) {
 						json.put("arg"+arg+"type","TEXTBOX");
-					}
-					else {
+					} else {
 						json.put("arg"+arg+"type","SELECT");
 						button=0;
 						for (final Effect e: effects) {
@@ -240,10 +310,9 @@ public abstract class Command {
 					break;
 				case CHARACTERGROUP:
 					final List<CharacterGroup> groups=st.getInstance().getCharacterGroups();
-					if (groups.size()>12) {
+					if (groups.size()>DIALOG_PAGE_LIMIT) {
 						json.put("arg"+arg+"type","TEXTBOX");
-					}
-					else {
+					} else {
 						json.put("arg"+arg+"type","SELECT");
 						button=0;
 						for (final CharacterGroup g: groups) {
@@ -265,7 +334,7 @@ public abstract class Command {
 				case INVENTORY:
 					json.put("arg"+arg+"type","SELECT");
 					button=0;
-					for (final Attribute inventory:Inventory.getAll(st)) {
+					for (final Attribute inventory: Inventory.getAll(st)) {
 						json.put("arg"+arg+"button"+button,inventory.getName());
 						button++;
 					}
@@ -273,7 +342,7 @@ public abstract class Command {
 				case SET:
 					json.put("arg"+arg+"type","SELECT");
 					button=0;
-					for (final Attribute set:CharacterSet.getAll(st)) {
+					for (final Attribute set: CharacterSet.getAll(st)) {
 						json.put("arg"+arg+"button"+button,set.getName());
 						button++;
 					}
@@ -281,8 +350,16 @@ public abstract class Command {
 				case ITEM:
 					json.put("arg"+arg+"type","SELECT");
 					button=0;
-					for (final Item item:Item.getAll(st)) {
+					for (final Item item: Item.getAll(st)) {
 						json.put("arg"+arg+"button"+button,item.getName());
+						button++;
+					}
+					break;
+				case PERMISSIONSGROUP:
+					json.put("arg"+arg+"type","SELECT");
+					button=0;
+					for (final PermissionsGroup pg: PermissionsGroup.getPermissionsGroups(st)) {
+						json.put("arg"+arg+"button"+button,pg.getName());
 						button++;
 					}
 					break;
@@ -296,7 +373,11 @@ public abstract class Command {
 		json.put("incommand","runtemplate");
 		return json;
 	}
-
+	
+	/** Return the HTML invoking template for this command
+	 *
+	 * @param st State
+	 */
 	public final void getHtmlTemplate(@Nonnull final State st) {
 		final Form f=st.form();
 		final Table t=new Table();
@@ -305,140 +386,139 @@ public abstract class Command {
 			t.openRow();
 			//                t.add(p.getName());
 			t.add(arg.description());
-			switch (arg.type()) { // FIXME this can be done properly
-				case AVATAR, TEXT_CLEAN, TEXT_INTERNAL_NAME, TEXT_ONELINE, TEXT_MULTILINE, COORDINATES, CHARACTER, CHARACTER_PLAYABLE, FLOAT, INTEGER ->
+			switch (arg.type()) {
+				case AVATAR,TEXT_CLEAN,TEXT_INTERNAL_NAME,TEXT_ONELINE,TEXT_MULTILINE,COORDINATES,CHARACTER,CHARACTER_PLAYABLE,FLOAT,INTEGER ->
 						t.add(new TextInput(arg.name()));
 				case PASSWORD -> t.add(new PasswordInput(arg.name()));
 				case BOOLEAN -> t.add(new CheckBox(arg.name()));
-				case ATTRIBUTE_WRITABLE, ATTRIBUTE -> {
-					final DropDownList attributes = new DropDownList(arg.name());
-					for (final Attribute a : st.getAttributes()) {
-						if (arg.type() == ArgumentType.ATTRIBUTE || a.getSelfModify()) {
+				case ATTRIBUTE_WRITABLE,ATTRIBUTE -> {
+					final DropDownList attributes=new DropDownList(arg.name());
+					for (final Attribute a: st.getAttributes()) {
+						if (arg.type()==ArgumentType.ATTRIBUTE||a.getSelfModify()) {
 							attributes.add(a.getName());
 						}
 					}
 					t.add(attributes);
 				}
 				case CHARACTER_FACTION -> {
-					final DropDownList factionMembers = new DropDownList(arg.name());
-					final CharacterGroup faction = CharacterGroup.getGroup(st, "Faction");
-					if (faction == null) {
+					final DropDownList factionMembers=new DropDownList(arg.name());
+					final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
+					if (faction==null) {
 						throw new UserInputStateException("You are in no faction");
 					}
-					for (final Char c : faction.getMembers()) {
+					for (final Char c: faction.getMembers()) {
 						factionMembers.add(c.getName());
 					}
 					t.add(factionMembers);
 				}
 				case CHARACTER_NEAR -> {
-					final DropDownList characters = new DropDownList(arg.name());
-					for (final Char c : st.getCharacter().getNearbyCharacters(st)) {
+					final DropDownList characters=new DropDownList(arg.name());
+					for (final Char c: st.getCharacter().getNearbyCharacters(st)) {
 						characters.add(c.getName());
 					}
 					t.add(characters);
 				}
 				case EFFECT -> {
-					final DropDownList effectList = new DropDownList(arg.name());
-					for (final Effect effect : Effect.getAll(st.getInstance())) {
+					final DropDownList effectList=new DropDownList(arg.name());
+					for (final Effect effect: Effect.getAll(st.getInstance())) {
 						effectList.add(effect.getName());
 					}
 					t.add(effectList);
 				}
 				case EVENT -> {
-					final DropDownList eventList = new DropDownList(arg.name());
-					for (final Event event : Event.getAll(st.getInstance())) {
+					final DropDownList eventList=new DropDownList(arg.name());
+					for (final Event event: Event.getAll(st.getInstance())) {
 						eventList.add(event.getName());
 					}
 					t.add(eventList);
 				}
 				case MODULE -> {
-					final DropDownList moduleList = new DropDownList(arg.name());
-					for (final Module aModule : Modules.getModules()) {
+					final DropDownList moduleList=new DropDownList(arg.name());
+					for (final Module aModule: Modules.getModules()) {
 						moduleList.add(aModule.getName());
 					}
 					t.add(moduleList);
 				}
 				case CURRENCY -> {
-					final DropDownList currencyList = new DropDownList(arg.name());
-					for (final Currency aCurrency : Currency.getAll(st)) {
+					final DropDownList currencyList=new DropDownList(arg.name());
+					for (final Currency aCurrency: Currency.getAll(st)) {
 						currencyList.add(aCurrency.getName());
 					}
 					t.add(currencyList);
 				}
 				case REGION -> {
-					final DropDownList regionList = new DropDownList(arg.name());
-					for (final Region aRegion : Region.getRegions(st, false)) {
+					final DropDownList regionList=new DropDownList(arg.name());
+					for (final Region aRegion: Region.getRegions(st,false)) {
 						regionList.add(aRegion.getName());
 					}
 					t.add(regionList);
 				}
 				case ZONE -> {
-					final DropDownList zoneList = new DropDownList(arg.name());
-					for (final Zone aZone : Zone.getZones(st)) {
+					final DropDownList zoneList=new DropDownList(arg.name());
+					for (final Zone aZone: Zone.getZones(st)) {
 						zoneList.add(aZone.getName());
 					}
 					t.add(zoneList);
 				}
 				case KVLIST -> {
-					final DropDownList list = new DropDownList(arg.name());
-					for (final String g : Modules.getKVList(st)) {
-						list.add(g, g + " - " + st.getKVDefinition(g).description());
+					final DropDownList list=new DropDownList(arg.name());
+					for (final String g: Modules.getKVList(st)) {
+						list.add(g,g+" - "+st.getKVDefinition(g).description());
 					}
 					t.add(list);
 				}
 				case CHARACTERGROUP -> {
-					final DropDownList charGroupList = new DropDownList(arg.name());
-					for (final CharacterGroup g : st.getInstance().getCharacterGroups()) {
+					final DropDownList charGroupList=new DropDownList(arg.name());
+					for (final CharacterGroup g: st.getInstance().getCharacterGroups()) {
 						charGroupList.add(g.getNameSafe());
 					}
 					t.add(charGroupList);
 				}
 				case PERMISSIONSGROUP -> {
-					final DropDownList permGroupList = new DropDownList(arg.name());
-					for (final PermissionsGroup g : PermissionsGroup.getPermissionsGroups(st)) {
+					final DropDownList permGroupList=new DropDownList(arg.name());
+					for (final PermissionsGroup g: PermissionsGroup.getPermissionsGroups(st)) {
 						permGroupList.add(g.getNameSafe());
 					}
 					t.add(permGroupList);
 				}
 				case PERMISSION -> {
-					final DropDownList permList = new DropDownList(arg.name());
-					for (final Module m : Modules.getModules()) {
-						for (final String entry : m.getPermissions(st).keySet()) {
-							permList.add(m.getName() + "." + entry);
+					final DropDownList permList=new DropDownList(arg.name());
+					for (final Module m: Modules.getModules()) {
+						for (final String entry: m.getPermissions(st).keySet()) {
+							permList.add(m.getName()+"."+entry);
 						}
 					}
 					t.add(permList);
 				}
 				case CHOICE -> {
-					final DropDownList choiceList = new DropDownList(arg.name());
-					for (final String s : arg.getChoices(st)) {
+					final DropDownList choiceList=new DropDownList(arg.name());
+					for (final String s: arg.getChoices(st)) {
 						choiceList.add(s);
 					}
 					t.add(choiceList);
 				}
 				case INVENTORY -> {
-					final DropDownList inventoryList = new DropDownList(arg.name());
-					for (final Attribute attribute : Inventory.getAll(st)) {
+					final DropDownList inventoryList=new DropDownList(arg.name());
+					for (final Attribute attribute: Inventory.getAll(st)) {
 						inventoryList.add(attribute.getName());
 					}
 					t.add(inventoryList);
 				}
 				case SET -> {
-					final DropDownList setList = new DropDownList(arg.name());
-					for (final Attribute attribute : CharacterSet.getAll(st)) {
+					final DropDownList setList=new DropDownList(arg.name());
+					for (final Attribute attribute: CharacterSet.getAll(st)) {
 						setList.add(attribute.getName());
 					}
 					t.add(setList);
 				}
 				case ITEM -> {
-					final DropDownList itemList = new DropDownList(arg.name());
-					for (final String item : Item.getNames(st)) {
+					final DropDownList itemList=new DropDownList(arg.name());
+					for (final String item: Item.getNames(st)) {
 						itemList.add(item);
 					}
 					t.add(itemList);
 				}
-				default ->
-						throw new SystemImplementationException("Unhandled ENUM TYPE in populateForm():" + arg.type());
+				default -> throw new SystemImplementationException("Unhandled ENUM TYPE in populateForm():"+arg.type());
 			}
 		}
 		if (getArgumentCount()>0) {
@@ -447,22 +527,21 @@ public abstract class Command {
 			t.add(new Button("Submit"));
 		}
 	}
-
+	
 	/**
 	 * Run a command based on properly cast arguments.
 	 *
 	 * @param state        Session state
 	 * @param parameterMap Arguments of appropriate type for receiving method (or throws exceptions).  State should be first argument!
-	 *
 	 * @return Command response
 	 */
 	@Nonnull
 	public final Response run(@Nonnull final State state,
-	                          @Nonnull final Map<String,Object> parameterMap) {
-		state.parameterDebug =parameterMap;
+							  @Nonnull final Map<String,Object> parameterMap) {
+		state.parameterDebug=parameterMap;
 		checkCallingInterface(state);
 		// check permission
-		if (!requiresPermission().isEmpty() && !state.hasPermission(requiresPermission())) {
+		if (!requiresPermission().isEmpty()&&!state.hasPermission(requiresPermission())) {
 			throw new UserAccessDeniedException("Permission is denied, you require '"+requiresPermission()+"'",true);
 		}
 		//check arguments
@@ -471,7 +550,7 @@ public abstract class Command {
 			if (parameterMap.containsKey(a.name())) {
 				o=parameterMap.get(a.name());
 			}
-			if (a.mandatory() && o==null) {
+			if (a.mandatory()&&o==null) {
 				return new ErrorResponse("Argument "+a.name()+" is mandatory on command "+getFullName()+" and nothing was passed");
 			}
 		}
@@ -479,15 +558,15 @@ public abstract class Command {
 		checkCallingContext(state);
 		return execute(state,parameterMap);
 	}
-
+	
 	// ----- Internal Instance -----
 	protected abstract Response execute(State state,
-	                                    Map<String,Object> arguments);
-
+										Map<String,Object> arguments);
+	
 	@SuppressWarnings("fallthrough")
 	protected final Object convertArgument(final State state,
-	                                       final Argument argument,
-	                                       String v) {
+										   final Argument argument,
+										   String v) {
 		final ArgumentType type=argument.type();
 		switch (type) {
 			case TEXT_INTERNAL_NAME:
@@ -510,29 +589,26 @@ public abstract class Command {
 				//System.out.println("Adding arg "+v);
 				return v;
 			case BOOLEAN:
-				if (("1".equals(v) || "on".equalsIgnoreCase(v) || "true".equalsIgnoreCase(v) || "t".equalsIgnoreCase(v))) {
+				if (("1".equals(v)||"on".equalsIgnoreCase(v)||"true".equalsIgnoreCase(v)||"t".equalsIgnoreCase(v))) {
 					return Boolean.TRUE;
-				}
-				else {
+				} else {
 					return Boolean.FALSE;
 				}
 			case INTEGER:
 				try {
 					return Integer.valueOf(v);
-				}
-				catch (@Nonnull final NumberFormatException e) {
+				} catch (@Nonnull final NumberFormatException e) {
 					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e);
 				}
 			case FLOAT:
 				try {
 					return Float.valueOf(v);
-				}
-				catch (@Nonnull final NumberFormatException e) {
+				} catch (@Nonnull final NumberFormatException e) {
 					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e);
 				}
 			case MODULE:
 				final Module m=Modules.get(null,v); // null to disable enablement check :)
-				if (m==null) { return new UserInputLookupFailureException("Unable to resolve module "+v); }
+				if (m==null) {return new UserInputLookupFailureException("Unable to resolve module "+v);}
 				return m;
 			//case FLOAT:
 			case ATTRIBUTE_WRITABLE:
@@ -546,9 +622,9 @@ public abstract class Command {
 						if (attr!=null) {
 							throw new SystemConsistencyException("Duplicate attribute definition found for "+v);
 						}
-						if (type==ArgumentType.ATTRIBUTE || a.getSelfModify()) { attr=a; }
-						if (type==ArgumentType.SET && a.getType()== Attribute.ATTRIBUTETYPE.SET) { attr=a; }
-						if (type==ArgumentType.INVENTORY && a.getType()== Attribute.ATTRIBUTETYPE.INVENTORY) { attr=a; }
+						if (type==ArgumentType.ATTRIBUTE||a.getSelfModify()) {attr=a;}
+						if (type==ArgumentType.SET&&a.getType()==Attribute.ATTRIBUTETYPE.SET) {attr=a;}
+						if (type==ArgumentType.INVENTORY&&a.getType()==Attribute.ATTRIBUTETYPE.INVENTORY) {attr=a;}
 					}
 				}
 				if (attr==null) {
@@ -571,37 +647,39 @@ public abstract class Command {
 				if (v.startsWith(">")) {
 					v=v.substring(1);
 					try {
-						final User a = User.findUsername(v, false);
-						targetChar = Char.getActive(a, state.getInstance());
+						final User a=User.findUsername(v,false);
+						targetChar=Char.getActive(a,state.getInstance());
 					} catch (@Nonnull final NoDataException e) {
-						throw new UserInputLookupFailureException("Unable to find character of avatar named '" + v + "'", e);
+						throw new UserInputLookupFailureException("Unable to find character of avatar named '"+v+"'",e);
 					}
 				} else {
-					targetChar = Char.resolve(state, v);
+					targetChar=Char.resolve(state,v);
 				}
-				if (targetChar == null) {
-					throw new UserInputLookupFailureException("Unable to find character named '" + v + "'");
+				if (targetChar==null) {
+					throw new UserInputLookupFailureException("Unable to find character named '"+v+"'");
 				} else {
 					return targetChar;
 				}
 			case REGION:
-				return assertNotNull(Region.findNullable(v, false), v, "region name");
+				return assertNotNull(Region.findNullable(v,false),v,"region name");
 			case EVENT:
-				return assertNotNull(Event.find(state.getInstance(), v), v, "event name");
+				return assertNotNull(Event.find(state.getInstance(),v),v,"event name");
 			case EFFECT:
-				return assertNotNull(Effect.find(state.getInstance(), v), v, "effect name");
+				return assertNotNull(Effect.find(state.getInstance(),v),v,"effect name");
 			case ZONE:
-				return assertNotNull(Zone.findNullable(state.getInstance(), v), v, "zone name");
+				return assertNotNull(Zone.findNullable(state.getInstance(),v),v,"zone name");
 			case AVATAR:
 			case AVATAR_NEAR:
 				final User user=User.findUsernameNullable(v,false);
-				if (user==null) { throw new UserInputLookupFailureException("Unable to find a known avatar named '"+v+"'"); }
+				if (user==null) {
+					throw new UserInputLookupFailureException("Unable to find a known avatar named '"+v+"'");
+				}
 				return assertNotNull(user,v,"avatar");
 			default:
 				throw new SystemImplementationException("Unhandled argument type "+type+" in converter for argument "+argument.name());
 		}
 	}
-
+	
 	private void checkCallingContext(final State state) {
 		switch (context()) {
 			case ANY:
@@ -626,7 +704,7 @@ public abstract class Command {
 				throw new SystemImplementationException("Unhandled CONTEXT enum during pre-flight check in execute()");
 		}
 	}
-
+	
 	private void checkCallingInterface(final State state) {
 		// check required interface
 		if (state.source==Sources.USER) {
@@ -654,29 +732,31 @@ public abstract class Command {
 				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the External API interface");
 			}
 		}
-
+		
 	}
-
+	
+	@SuppressWarnings("MagicNumber")
 	private int getMaximumLength(final Argument argument) {
-		final ArgumentType type = argument.type();
+		final ArgumentType type=argument.type();
 		return switch (type) {
-			case TEXT_CLEAN, TEXT_ONELINE, TEXT_INTERNAL_NAME, TEXT_MULTILINE -> argument.max();
-			case PASSWORD, CHOICE -> 1024;
+			case TEXT_CLEAN,TEXT_ONELINE,TEXT_INTERNAL_NAME,TEXT_MULTILINE -> argument.max();
+			case PASSWORD,CHOICE -> 1024;
 			case BOOLEAN -> 8;
-			case INTEGER, FLOAT -> 32;
-			case CHARACTER, ATTRIBUTE_WRITABLE, ATTRIBUTE, SET, INVENTORY, COORDINATES, ZONE, REGION, MODULE, PERMISSION, PERMISSIONSGROUP, AVATAR_NEAR, AVATAR, CHARACTER_FACTION, CHARACTER_NEAR, CHARACTER_PLAYABLE, EFFECT, CURRENCY ->
+			case INTEGER,FLOAT -> 32;
+			case CHARACTER,ATTRIBUTE_WRITABLE,ATTRIBUTE,SET,INVENTORY,COORDINATES,ZONE,REGION,MODULE,PERMISSION,PERMISSIONSGROUP,AVATAR_NEAR,AVATAR,CHARACTER_FACTION,CHARACTER_NEAR,CHARACTER_PLAYABLE,EFFECT,CURRENCY ->
 					64;
-			case CHARACTERGROUP, EVENT, KVLIST, ITEM -> 128;
+			case CHARACTERGROUP,EVENT,KVLIST,ITEM -> 128;
 		};
 	}
-
-
+	
+	
+	/** Representation of all context levels a login may have */
 	public enum Context {
-		ANY,
-		CHARACTER,
-		AVATAR
+		/** Not even logged in */ ANY,
+		/** Must be fully logged in as a character */ CHARACTER,
+		/** Must have an SL avatar known */ AVATAR
 	}
-
+	
 	/**
 	 * Defines an exposed command.
 	 * That is, something the user can call through web, SL or other user interfaces.
@@ -686,25 +766,48 @@ public abstract class Command {
 	@Target(ElementType.METHOD)
 	public @interface Commands {
 		// ---------- INSTANCE ----------
+		
+		/**
+		 *
+		 * @return Command description
+		 */
 		@Nonnull String description();
-
+		
+		/**
+		 *
+		 * @return Command notes
+		 */
 		@Nonnull String notes() default "";
-
+		
+		/**
+		 *
+		 * @return Command required permission
+		 */
 		@Nonnull String requiresPermission() default "";
-
+		
+		/**
+		 *
+		 * @return Command required context
+		 */
 		@Nonnull Context context();
-
+		
+		/** @return Permit this command from the System JSON interface */
 		boolean permitJSON() default true;
-
+		
+		/** @return Permit this command from the console */
 		boolean permitConsole() default true;
-
+		
+		/** @return Permit this command from the web interface */
 		boolean permitUserWeb() default true;
-
+		
+		/** @return Permit this command from scripting */
 		boolean permitScripting() default true;
-
+		
+		/** @return Permit this command from objects */
 		boolean permitObject() default true;
-
+		
+		/** @return Permit this command from the external interface */
 		boolean permitExternal() default true;
 	}
-
+	
 }
