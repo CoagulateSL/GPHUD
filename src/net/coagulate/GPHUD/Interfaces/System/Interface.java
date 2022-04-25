@@ -10,6 +10,7 @@ import net.coagulate.Core.HTML.Elements.PlainText;
 import net.coagulate.Core.HTML.Page;
 import net.coagulate.Core.Tools.ByteTools;
 import net.coagulate.Core.Tools.JsonTools;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.*;
@@ -338,8 +339,10 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		if (console.startsWith("createinstance ")) {
 			final User ava=st.getAvatarNullable();
 			if (ava==null) {return new ErrorResponse("Null avatar associated with request??");}
-			final boolean ok=ava.isSuperAdmin();
-			//if (ava.canCreate()) { ok=true; }
+			boolean ok=ava.isSuperAdmin();
+			if (Integer.parseInt(ava.getPreference("gphud","instancepermit","0"))>UnixTime.getUnixTime()) {
+				ok=true;
+			}
 			if (!ok) {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");
 			}
@@ -347,6 +350,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			try {Instance.create(console,st.getAvatarNullable());} catch (@Nonnull final UserException e) {
 				return new ErrorResponse("Instance registration failed: "+e.getMessage());
 			}
+			ava.setPreference("gphud","instancepermit",null);
 			final Instance instance=Instance.find(console);
 			st.setInstance(instance);
 			//ava.canCreate(false);
