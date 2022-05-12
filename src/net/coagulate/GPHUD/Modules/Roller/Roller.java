@@ -52,8 +52,8 @@ public class Roller {
 		final List<Integer> rolls=new ArrayList<>();
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
-		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
-		if (sides<1) { throw new UserConfigurationException("Number of sides must be at least 1"); }
+		if (dice>100) { throw new UserConfigurationException("Too many dice.",true); }
+		if (sides<1) { throw new UserConfigurationException("Number of sides must be at least 1",true); }
 		for (int i=0;i<dice;i++) {
 			final int num=ThreadLocalRandom.current().nextInt(1,sides+1);
 			rolls.add(num);
@@ -89,7 +89,7 @@ public class Roller {
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
 		if (reason==null) { reason="No Reason"; }
-		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
+		if (dice>100) { throw new UserConfigurationException("Too many dice.",true); }
 		String event="rolled "+dice+"d"+sides+" ";
 		event+="for "+reason+", and rolled ";
 		final StringBuilder allrolls= new StringBuilder();
@@ -139,7 +139,7 @@ public class Roller {
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
 		if (bias==null) { bias=0; }
 		if (reason==null) { reason="No Reason"; }
-		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
+		if (dice>100) { throw new UserConfigurationException("Too many dice.",true); }
 		String event="rolled "+dice+"d"+sides+" ";
 		if (bias!=0) { event+="(with bias "+bias+") "; }
 		event+="for "+reason+", and rolled ";
@@ -181,7 +181,7 @@ public class Roller {
 	                    description="Any made roll")
 	public static String getRoll(@Nonnull final State st,
 	                             final String key) {
-		if (st.roll==null) { throw new UserInputStateException("No roll made!"); }
+		if (st.roll==null) { throw new UserInputStateException("No roll made!",true); }
 		return st.roll.toString();
 	}
 
@@ -191,9 +191,9 @@ public class Roller {
 	public static String getTargetRoll(@Nonnull final State st,
 	                                   final String key) {
 		if (!st.hasModule("Roller")) { return ""; }
-		if (st.getTargetNullable()==null) { throw new UserInputStateException("No target!"); }
+		if (st.getTargetNullable()==null) { throw new UserInputStateException("No target!",true); }
 		final State target=st.getTargetNullable();
-		if (target.roll==null) { throw new UserInputStateException("Target not rolled!"); }
+		if (target.roll==null) { throw new UserInputStateException("Target not rolled!",true); }
 		return target.roll.toString();
 	}
 
@@ -227,7 +227,7 @@ public class Roller {
 	                                   @Nullable @Arguments(name="reason",description="Logged reason for the roll",
 	                                                        type=ArgumentType.TEXT_ONELINE,
 	                                                        max=512) String reason) {
-		if (target==null) { throw new UserInputStateException("No target selected"); }
+		if (target==null) { throw new UserInputStateException("No target selected",true); }
 		if (dice==null) { dice=st.getKV("roller.defaultcount").intValue(); }
 		if (sides==null) { sides=st.getKV("roller.defaultsides").intValue(); }
 		if (bias==null) { bias=0; }
@@ -235,8 +235,8 @@ public class Roller {
 		if (targetdice==null) { targetdice=dice; }
 		if (targetsides==null) { targetsides=sides; }
 		if (targetbias==null) { targetbias=bias; }
-		if (dice>100) { throw new UserConfigurationException("Too many dice."); }
-		if (targetdice>100) { throw new UserConfigurationException("Too many dice for target."); }
+		if (dice>100) { throw new UserConfigurationException("Too many dice.",true); }
+		if (targetdice>100) { throw new UserConfigurationException("Too many dice for target.",true); }
 		st.setTarget(target);
 
 		int total=0;
@@ -329,7 +329,7 @@ public class Roller {
 	                                                    max=512) final String reason) {
 		//System.out.println("DAMAGE RECEIVED AS "+damage);
 		if (!st.hasModule("Health")) {
-			throw new UserConfigurationException("Health module is required to use rollDamageAgainst");
+			throw new UserConfigurationException("Health module is required to use rollDamageAgainst",true);
 		}
 		if (damage==null) { damage="1"; }
 		final Response response=rollAgainst(st,target,dice,sides,bias,targetdice,targetsides,targetbias,reason);
@@ -339,7 +339,7 @@ public class Roller {
 		if (st.roll>st.getTarget().roll) {
 			damage=damage.replaceAll("==","--");
 			final String output=Templater.template(st,damage,true,true);
-			if (output==null) { throw new NullPointerException("output from damage template was null?"); }
+			if (output==null) { throw new SystemImplementationException("output from damage template was null?"); }
 			Damage.apply(st,target,Integer.parseInt(output),reason);
 			final SayResponse say=(SayResponse) response;
 			say.setText(say.getText()+" - Health now "+st.getRawKV(target,"Health.Health"));
@@ -384,7 +384,7 @@ public class Roller {
 	                                                          type=ArgumentType.TEXT_ONELINE,
 	                                                          max=512) final String reason) {
 		if (!st.hasModule("Health")) {
-			throw new UserConfigurationException("Health module is required to use rollDamageAgainst");
+			throw new UserConfigurationException("Health module is required to use rollDamageAgainst",true);
 		}
 		final Response response=rollAgainst(st,target,dice,sides,bias,targetdice,targetsides,targetbias,reason);
 		if (st.roll==null || st.getTarget().roll==null) {
