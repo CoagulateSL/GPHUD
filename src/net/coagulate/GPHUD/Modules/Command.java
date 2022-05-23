@@ -709,27 +709,27 @@ public abstract class Command {
 		// check required interface
 		if (state.source==Sources.USER) {
 			if (!permitWeb()) {
-				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the Web interface");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the Web interface",true);
 			}
 		}
 		if (state.source==Sources.SYSTEM) {
 			if (!permitHUD()) {
-				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the LSL System interface");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the LSL System interface",true);
 			}
 		}
 		if (state.source==Sources.CONSOLE) {
 			if (!permitConsole()) {
-				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the console");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the console",true);
 			}
 		}
 		if (state.source==Sources.SCRIPTING) {
 			if (!permitScripting()) {
-				throw new UserAccessDeniedException(getFullName()+" command can not be access via the Scripting module");
+				throw new UserAccessDeniedException(getFullName()+" command can not be access via the Scripting module",true);
 			}
 		}
 		if (state.source==Sources.EXTERNAL) {
 			if (!permitExternal()) {
-				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the External API interface");
+				throw new UserAccessDeniedException(getFullName()+" command can not be accessed via the External API interface",true);
 			}
 		}
 		

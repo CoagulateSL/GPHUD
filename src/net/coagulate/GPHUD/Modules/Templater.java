@@ -153,7 +153,7 @@ public abstract class Templater {
 			double parse() {
 				nextChar();
 				final double x=parseExpression();
-				if (pos<str.length()) { throw new UserInputValidationParseException("Unexpected: "+(char) ch+" at position "+pos+" in '"+str+"'"); }
+				if (pos<str.length()) { throw new UserInputValidationParseException("Unexpected: "+(char) ch+" at position "+pos+" in '"+str+"'",true); }
 				return x;
 			}
 
