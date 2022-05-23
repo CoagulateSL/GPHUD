@@ -4,6 +4,7 @@ import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.State;
@@ -141,7 +142,10 @@ public class Alias extends TableRow {
 	}
 
 	public void validate(@Nonnull final State st) {
-		validate();
+		try { validate(); }
+		catch (NoDataException e) {
+			throw new UserInputLookupFailureException("Can not find alias #"+getId(),e,true);
+		}
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Alias / State Instance mismatch");
 		}
