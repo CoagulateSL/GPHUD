@@ -686,18 +686,18 @@ public abstract class Command {
 				break;
 			case CHARACTER:
 				if (state.getInstanceNullable()==null) {
-					throw new UserInputStateException("Character context required and you are not connected to an instance.");
+					throw new UserInputStateException("Character context required and you are not connected to an instance.",true);
 				}
 				if (state.getCharacterNullable()==null) {
-					throw new UserInputStateException("Character context required, your request is lacking a character registration");
+					throw new UserInputStateException("Character context required, your request is lacking a character registration",true);
 				}
 				break;
 			case AVATAR:
 				if (state.getInstanceNullable()==null) {
-					throw new UserInputStateException("Avatar context required and you are not connected to an instance.");
+					throw new UserInputStateException("Avatar context required and you are not connected to an instance.",true);
 				}
 				if (state.getAvatarNullable()==null) {
-					throw new UserInputStateException("Avatar context required, your request is lacking an avatar registration");
+					throw new UserInputStateException("Avatar context required, your request is lacking an avatar registration",true);
 				}
 				break;
 			default:
