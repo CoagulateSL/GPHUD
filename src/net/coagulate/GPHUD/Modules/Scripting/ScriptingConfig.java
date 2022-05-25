@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
+import net.coagulate.Core.Database.NoDataException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Script;
@@ -84,106 +86,109 @@ public class ScriptingConfig {
 	          requiresPermission="Scripting.Create")
 	public static void editScript(@Nonnull final State st,
 	                              @Nonnull final SafeMap values) {
-		final Form f=st.form();
-		final String[] split=st.getDebasedURL().split("/");
-		final String id=split[split.length-1];
-		final Script script=Script.get(Integer.parseInt(id));
-		script.validate(st);
-		if (!values.get("scriptalias").isEmpty()) {
-			script.alias(values.get("scriptalias"));
-		}
-		if (!values.get("scriptsource").isEmpty()) {
-			script.setSource(values.get("scriptsource"));
-			f.p("Script source saved OK!");
-			final String source=script.getSource();
-			final int version=script.getSourceVersion();
-			// try compile
-			try {
-				final ByteArrayInputStream bais=new ByteArrayInputStream(source.getBytes());
-				final GSParser parser=new GSParser(bais);
-				parser.enable_tracing();
-				GSStart gsscript=null;
+		try {
+			final Form f=st.form();
+			final String[] split=st.getDebasedURL().split("/");
+			final String id=split[split.length-1];
+			final Script script=Script.get(Integer.parseInt(id));
+			script.validate(st);
+			if (!values.get("scriptalias").isEmpty()) {
+				script.alias(values.get("scriptalias"));
+			}
+			if (!values.get("scriptsource").isEmpty()) {
+				script.setSource(values.get("scriptsource"));
+				f.p("Script source saved OK!");
+				final String source=script.getSource();
+				final int version=script.getSourceVersion();
+				// try compile
 				try {
-					gsscript=parser.Start();
-				}
-				catch (@Nonnull final Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
-					if (e instanceof final ParseException pe) {
-						final String tokenimage;
-						tokenimage = "Last token: " + pe.currentToken.image + "<br>";
-						f.p("<b>Parse failed:</b> " + e + "<br>" + tokenimage);
-					} else {
-						f.p("<b>Parse failed:</b> " + e);
+					final ByteArrayInputStream bais=new ByteArrayInputStream(source.getBytes());
+					final GSParser parser=new GSParser(bais);
+					parser.enable_tracing();
+					GSStart gsscript=null;
+					try {
+						gsscript=parser.Start();
+					} catch (@Nonnull final
+					Throwable e) { // catch throwable bad, but "lexical error" is an ERROR type... which we're not meant to catch.   but have to.  great.
+						if (e instanceof final ParseException pe) {
+							final String tokenimage;
+							tokenimage="Last token: "+pe.currentToken.image+"<br>";
+							f.p("<b>Parse failed:</b> "+e+"<br>"+tokenimage);
+						} else {
+							f.p("<b>Parse failed:</b> "+e);
+						}
+						Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","ParseFail","Saved script, with parse failures");
 					}
-					Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Save", script.getName(), "", "ParseFail", "Saved script, with parse failures");
-				}
-				if (gsscript!=null) {
-					final GSCompiler compiler=new GSCompiler(gsscript, script.getName());
-					compiler.compile(st);
-					script.setBytecode(compiler.toByteCode(st),version,GSCompiler.COMPILER_VERSION);
-					f.p("Script compiled and saved OK!");
-					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
+					if (gsscript!=null) {
+						final GSCompiler compiler=new GSCompiler(gsscript,script.getName());
+						compiler.compile(st);
+						script.setBytecode(compiler.toByteCode(st),version,GSCompiler.COMPILER_VERSION);
+						f.p("Script compiled and saved OK!");
+						Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","OK!","Saved script and compiled OK!");
+					}
+				} catch (@Nonnull final NullPointerException ex) {
+					throw new GSInternalError("Null pointer exception in compiler",ex);
+				} catch (@Nonnull final Throwable t) {
+					f.p("Compilation failed; "+t);
+					Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,null,"Save",script.getName(),"","CompileFail","Saved script, with compilation failures");
 				}
 			}
-			catch (@Nonnull final NullPointerException ex) {
-				throw new GSInternalError("Null pointer exception in compiler",ex);
-			} catch (@Nonnull final Throwable t) {
-				f.p("Compilation failed; " + t);
-				Audit.audit(true, st, Audit.OPERATOR.AVATAR, null, null, "Save", script.getName(), "", "CompileFail", "Saved script, with compilation failures");
+			f.add(new TextHeader("Edit script "+script.getName()));
+			final Table versions=new Table();
+			versions.add("Source code version").add(String.valueOf(script.getSourceVersion()));
+			versions.openRow();
+			if (script.getSourceVersion()==script.getByteCodeVersion()) {
+				versions.add("Byte code version").add(String.valueOf(script.getByteCodeVersion()));
+			} else {
+				versions.add("<font color=red>Byte code version</font>")
+						.add("<font color=red>"+script.getByteCodeVersion()+"</font>")
+						.add("<font color=red>Compiled version is behind source version, please attempt to SAVE SOURCE</font>");
 			}
+			versions.openRow().add("Script alias").add(new TextInput("scriptalias",script.alias()));
+			f.add(versions);
+			f.br();
+			f.add("<textarea name=scriptsource rows=25 cols=80>"+script.getSource()+"</textarea>");
+			f.br();
+			f.add(new Button("Save Source","Save Source"));
+			f.br().br().add("<hr>").br();
+			f.add("Debugging information: ");
+			f.add(new Button("View Parse Tree","View Parse Tree"));
+			f.add(new Button("View Compiler Output","View Compiler Output"));
+			f.add(new Button("View Raw ByteCode","View Raw ByteCode"));
+			f.add(new Button("View Disassembly","View Disassembly"));
+			f.add(new Button("View Simulation","View Simulation"));
+			f.add(new Button("View Results","View Results"));
+			f.add(new Button("View ALL","View ALL"));
+			//if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
+			f.br();
+			if ("View Parse Tree".equals(values.get("View Parse Tree"))||"View ALL".equals(values.get("View ALL"))) {
+				f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
+				f.add(debug(st,script.getSource(),STAGE.PARSER));
+			}
+			if ("View Compiler Output".equals(values.get("View Compiler Output"))||"View ALL".equals(values.get("View ALL"))) {
+				f.add("<hr>").br().add(new TextSubHeader("Compiler Output"));
+				f.add(debug(st,script.getSource(),STAGE.COMPILER));
+			}
+			if ("View Raw ByteCode".equals(values.get("View Raw ByteCode"))||"View ALL".equals(values.get("View ALL"))) {
+				f.add("<hr>").br().add(new TextSubHeader("Raw ByteCode"));
+				f.add(debug(st,script.getSource(),STAGE.BYTECODE));
+			}
+			if ("View Disassembly".equals(values.get("View Disassembly"))||"View ALL".equals(values.get("View ALL"))) {
+				f.add("<hr>").br().add(new TextSubHeader("Disassembly"));
+				f.add(debug(st,script.getSource(),STAGE.DISASSEMBLY));
+			}
+			if ("View Simulation".equals(values.get("View Simulation"))||"View ALL".equals(values.get("View ALL"))) {
+				f.add("<hr>").br().add(new TextSubHeader("Simulation"));
+				f.add(debug(st,script.getSource(),SIMULATION));
+			}
+			if ("View Results".equals(values.get("View Results"))||"View ALL".equals(values.get("View ALL"))) {
+				f.add("<hr>").br().add(new TextSubHeader("Simulation"));
+				f.add(debug(st,script.getSource(),RESULTS));
+			}
+			//if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
+		} catch (NoDataException e) {
+			throw new UserInputLookupFailureException("Script no longer exists",e,true);
 		}
-		f.add(new TextHeader("Edit script " + script.getName()));
-		final Table versions = new Table();
-		versions.add("Source code version").add(String.valueOf(script.getSourceVersion()));
-		versions.openRow();
-		if (script.getSourceVersion() == script.getByteCodeVersion()) {
-			versions.add("Byte code version").add(String.valueOf(script.getByteCodeVersion()));
-		} else {
-			versions.add("<font color=red>Byte code version</font>")
-					.add("<font color=red>" + script.getByteCodeVersion() + "</font>")
-					.add("<font color=red>Compiled version is behind source version, please attempt to SAVE SOURCE</font>");
-		}
-		versions.openRow().add("Script alias").add(new TextInput("scriptalias", script.alias()));
-		f.add(versions);
-		f.br();
-		f.add("<textarea name=scriptsource rows=25 cols=80>" + script.getSource() + "</textarea>");
-		f.br();
-		f.add(new Button("Save Source", "Save Source"));
-		f.br().br().add("<hr>").br();
-		f.add("Debugging information: ");
-		f.add(new Button("View Parse Tree", "View Parse Tree"));
-		f.add(new Button("View Compiler Output", "View Compiler Output"));
-		f.add(new Button("View Raw ByteCode","View Raw ByteCode"));
-		f.add(new Button("View Disassembly","View Disassembly"));
-		f.add(new Button("View Simulation","View Simulation"));
-		f.add(new Button("View Results","View Results"));
-		f.add(new Button("View ALL","View ALL"));
-		//if (GPHUD.DEV) { f.add(new Button("DEBUG", "DEBUG")); }
-		f.br();
-		if ("View Parse Tree".equals(values.get("View Parse Tree")) || "View ALL".equals(values.get("View ALL"))) {
-			f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
-			f.add(debug(st, script.getSource(), STAGE.PARSER));
-		}
-		if ("View Compiler Output".equals(values.get("View Compiler Output")) || "View ALL".equals(values.get("View ALL"))) {
-			f.add("<hr>").br().add(new TextSubHeader("Compiler Output"));
-			f.add(debug(st, script.getSource(), STAGE.COMPILER));
-		}
-		if ("View Raw ByteCode".equals(values.get("View Raw ByteCode")) || "View ALL".equals(values.get("View ALL"))) {
-			f.add("<hr>").br().add(new TextSubHeader("Raw ByteCode"));
-			f.add(debug(st, script.getSource(), STAGE.BYTECODE));
-		}
-		if ("View Disassembly".equals(values.get("View Disassembly")) || "View ALL".equals(values.get("View ALL"))) {
-			f.add("<hr>").br().add(new TextSubHeader("Disassembly"));
-			f.add(debug(st, script.getSource(), STAGE.DISASSEMBLY));
-		}
-		if ("View Simulation".equals(values.get("View Simulation")) || "View ALL".equals(values.get("View ALL"))) {
-			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st, script.getSource(), SIMULATION));
-		}
-		if ("View Results".equals(values.get("View Results")) || "View ALL".equals(values.get("View ALL"))) {
-			f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-			f.add(debug(st, script.getSource(), RESULTS));
-		}
-		//if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 	}
 
 	// ----- Internal Statics -----
