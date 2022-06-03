@@ -404,7 +404,7 @@ public abstract class Command {
 					final DropDownList factionMembers=new DropDownList(arg.name());
 					final CharacterGroup faction=CharacterGroup.getGroup(st,"Faction");
 					if (faction==null) {
-						throw new UserInputStateException("You are in no faction");
+						throw new UserInputStateException("You are in no faction",true);
 					}
 					for (final Char c: faction.getMembers()) {
 						factionMembers.add(c.getName());
@@ -571,12 +571,12 @@ public abstract class Command {
 		switch (type) {
 			case TEXT_INTERNAL_NAME:
 				if (v.matches(".*[^a-zA-Z\\d].*")) {
-					throw new UserInputValidationFilterException(argument.name()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'");
+					throw new UserInputValidationFilterException(argument.name()+" should only consist of alphanumeric characters (a-z 0-9) and you entered '"+v+"'",true);
 				}
 				// don't put anything here, follow up into the next thing
 			case TEXT_CLEAN:
 				if (v.matches(".*[^a-zA-Z\\d.'\\-, ].*")) {
-					throw new UserInputValidationFilterException(argument.name()+" should only consist of simple characters (a-z 0-9 .'-,) and you entered '"+v+"'");
+					throw new UserInputValidationFilterException(argument.name()+" should only consist of simple characters (a-z 0-9 .'-,) and you entered '"+v+"'",true);
 				}
 				// don't put anything here, follow up into the next thing
 			case TEXT_ONELINE:
@@ -598,13 +598,13 @@ public abstract class Command {
 				try {
 					return Integer.valueOf(v);
 				} catch (@Nonnull final NumberFormatException e) {
-					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e);
+					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e,true);
 				}
 			case FLOAT:
 				try {
 					return Float.valueOf(v);
 				} catch (@Nonnull final NumberFormatException e) {
-					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e);
+					throw new UserInputValidationParseException("Unable to convert '"+v+"' to a number for argument "+argument.name(),e,true);
 				}
 			case MODULE:
 				final Module m=Modules.get(null,v); // null to disable enablement check :)
@@ -650,13 +650,13 @@ public abstract class Command {
 						final User a=User.findUsername(v,false);
 						targetChar=Char.getActive(a,state.getInstance());
 					} catch (@Nonnull final NoDataException e) {
-						throw new UserInputLookupFailureException("Unable to find character of avatar named '"+v+"'",e);
+						throw new UserInputLookupFailureException("Unable to find character of avatar named '"+v+"'",e,true);
 					}
 				} else {
 					targetChar=Char.resolve(state,v);
 				}
 				if (targetChar==null) {
-					throw new UserInputLookupFailureException("Unable to find character named '"+v+"'");
+					throw new UserInputLookupFailureException("Unable to find character named '"+v+"'",true);
 				} else {
 					return targetChar;
 				}
@@ -672,7 +672,7 @@ public abstract class Command {
 			case AVATAR_NEAR:
 				final User user=User.findUsernameNullable(v,false);
 				if (user==null) {
-					throw new UserInputLookupFailureException("Unable to find a known avatar named '"+v+"'");
+					throw new UserInputLookupFailureException("Unable to find a known avatar named '"+v+"'",true);
 				}
 				return assertNotNull(user,v,"avatar");
 			default:
