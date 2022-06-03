@@ -86,7 +86,9 @@ public abstract class GetMessages {
 	private static Response processFactionInvite(@Nonnull final State st,
 	                                             @Nonnull final JSONObject j) {
 		final Char from=Char.get(j.getInt("from"));
-		final CharacterGroup faction=CharacterGroup.get(j.getInt("to"));
+		final CharacterGroup faction;
+		try { faction=CharacterGroup.get(j.getInt("to")); }
+		catch (NoDataException e) { return new ErrorResponse("The targetted faction for this invite no longer exists"); }
 		final JSONObject template=Modules.getJSONTemplate(st,"gphudclient.acceptrejectmessage");
 		try {faction.getName();}
 		catch (final NoDataException e) {
@@ -109,7 +111,9 @@ public abstract class GetMessages {
 				throw new UserInputValidationParseException("Expected Accept or Reject response");
 			}
 		}
-		final CharacterGroup targetgroup=CharacterGroup.get(j.getInt("to"));
+		final CharacterGroup targetgroup;
+		try { targetgroup=CharacterGroup.get(j.getInt("to")); }
+		catch (NoDataException e) { return new ErrorResponse("Faction no longer exists!"); }
 		m.delete();
 		Message.pushMessageCount(st);
 		if (!accepted) {
@@ -126,7 +130,9 @@ public abstract class GetMessages {
 			return new OKResponse("Invitation rejected");
 		}
 		if (targetgroup.getType()!=null) {
-			final CharacterGroup currentgroup=CharacterGroup.getGroup(st,targetgroup.getType());
+			CharacterGroup currentgroup=null;
+			try { currentgroup=CharacterGroup.getGroup(st,targetgroup.getType()); }
+			catch (NoDataException ignored) {} // dont care if existing faction somehow doesn't exist
 			if (currentgroup==targetgroup) {
 				Audit.audit(st,
 				            Audit.OPERATOR.CHARACTER,
