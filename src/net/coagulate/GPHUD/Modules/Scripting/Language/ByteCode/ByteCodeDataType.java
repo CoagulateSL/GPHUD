@@ -38,19 +38,19 @@ public abstract class ByteCodeDataType extends ByteCode {
 	@Nonnull
 	public BCString toBCString() {
 		if (getClass().equals(BCString.class)) { return (BCString) this; }
-		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCString");
+		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCString",true);
 	}
 
 	@Nonnull
 	public BCInteger toBCInteger() {
 		if (getClass().equals(BCInteger.class)) { return (BCInteger) this; }
-		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCInteger");
+		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCInteger",true);
 	}
 
 	@Nonnull
 	public BCFloat toBCFloat() {
 		if (getClass().equals(BCFloat.class)) { return (BCFloat) this; }
-		throw new GSCastException("Can not cast " + getClass().getSimpleName() + " to BCFloat");
+		throw new GSCastException("Can not cast " + getClass().getSimpleName() + " to BCFloat",true);
 	}
 
 	@Nonnull
