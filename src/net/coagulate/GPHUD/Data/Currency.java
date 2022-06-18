@@ -29,18 +29,19 @@ public class Currency extends TableRow {
 	@Nonnull
 	public static Currency find(final State st,
 	                            final String name) {
-		try {
-			return st.getInstance().currencyNameCache.get(
-					name,()->get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?",st.getInstance().getId(),name))
-			);
-		} catch (final NoDataException e) { throw new UserInputLookupFailureException("Can not find currency called "+name,e,true); }
+		Currency c=findNullable(st,name);
+		if (c==null) { throw new UserInputLookupFailureException("Can not find currency called "+name,true); }
+		return c;
 	}
 
 	@Nullable
 	public static Currency findNullable(final State st,
 	                                    final String name) {
-		try { return find(st,name); }
-		catch (final NoDataException e) { return null; }
+		try {
+			return st.getInstance().currencyNameCache.get(
+					name,()->get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?",st.getInstance().getId(),name))
+			);
+		} catch (final NoDataException e) { return null; }
 	}
 
 	@Nonnull
