@@ -29,9 +29,11 @@ public class Currency extends TableRow {
 	@Nonnull
 	public static Currency find(final State st,
 	                            final String name) {
-		return st.getInstance().currencyNameCache.get(
-				name, ()->get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?", st.getInstance().getId(), name))
-		);
+		try {
+			return st.getInstance().currencyNameCache.get(
+					name,()->get(GPHUD.getDB().dqi("select id from currencies where instanceid=? and name like ?",st.getInstance().getId(),name))
+			);
+		} catch (final NoDataException e) { throw new UserInputLookupFailureException("Can not find currency called "+name,e,true); }
 	}
 
 	@Nullable
