@@ -243,8 +243,9 @@ public class Region extends TableRow {
 	}
 	
 	public static Set<Region> getTimedOut() {
-		Set<Region> set=new HashSet<>();
-		for (ResultsRow row: GPHUD.getDB().dq("select regionid from regions where retired=0 and urllast<?",UnixTime.getUnixTime()-Config.getGPHUDRegionTimeout())) {
+		final Set<Region> set=new HashSet<>();
+		for (final ResultsRow row: GPHUD.getDB().dq("select regionid from regions where retired=0 and urllast<?",
+		                                      getUnixTime()-Config.getGPHUDRegionTimeout())) {
 			set.add(Region.get(row.getInt("regionid"),true));
 		}
 		return set;
@@ -252,15 +253,25 @@ public class Region extends TableRow {
 	
 	/** Returns active instances ; that is instances with an active region */
 	public static Set<Instance> getActiveInstances() {
-		Set<Instance> activeInstances=new HashSet<>();
-		for (ResultsRow row: GPHUD.getDB().dq("select distinct instanceid from regions where retired=0")) {
+		final Set<Instance> activeInstances=new HashSet<>();
+		for (final ResultsRow row: GPHUD.getDB().dq("select distinct instanceid from regions where retired=0")) {
 			activeInstances.add(Instance.get(row.getInt("instanceid")));
 		}
 		return activeInstances;
 	}
-	
-	// ---------- INSTANCE ----------
-	
+	public static String getLatestVersionString() {
+		int maxversion=db().dqOne("select max(regionserverversion) as version from regions").getInt("version");
+		final int major=(int)(Math.floor(maxversion/10000));
+		maxversion=maxversion-(major*10000);
+		final int minor=(int)(Math.floor(maxversion/100));
+		final int bugfix=maxversion-(100*minor);
+		final String smajor=String.valueOf(major);
+		String sminor=String.valueOf(minor);
+		String sbugfix=String.valueOf(bugfix);
+		if (sminor.length()==1) { sminor="0"+sminor; }
+		if (sbugfix.length()==1) { sbugfix="0"+sbugfix; }
+		return smajor+"."+sminor+"."+sbugfix;
+	}
 	/**
 	 * Is this region retired
 	 *

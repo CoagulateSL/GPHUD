@@ -71,6 +71,9 @@ public class GSVM {
 		bytecode = run.getByteCode();
 		programCounter = ((BCInteger) (variables.get(" PC"))).getContent();
 		instructionCount = ((BCInteger) (variables.get(" IC"))).getContent();
+		if (variables.containsKey(" SOURCE")) {
+			source = ((BCString) (variables.get(" SOURCE"))).getContent();
+		}
 		suspensions = ((BCInteger) (variables.get(" SUSP"))).getContent();
 		if (variables.containsKey((" ONEXIT"))) {
 			invokeonexit = ((BCString) variables.get(" ONEXIT")).getContent();
@@ -306,6 +309,7 @@ public class GSVM {
 		variables.put(" PC", new BCInteger(null, programCounter));
 		variables.put(" IC", new BCInteger(null, instructionCount));
 		variables.put(" SUSP", new BCInteger(null, suspensions));
+		if (source!=null) { variables.put(" SOURCE",new BCString(null,source)); }
 		if (invokeonexit != null) {
 			variables.put(" ONEXIT", new BCString(null, invokeonexit));
 		}

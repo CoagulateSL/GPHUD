@@ -122,6 +122,7 @@ setup() {
 
 default {
 	state_entry() {
+		llSetText("Rebooting",<1,.5,.5>,1);	
 		setup();
 	}
 	changed(integer change) {

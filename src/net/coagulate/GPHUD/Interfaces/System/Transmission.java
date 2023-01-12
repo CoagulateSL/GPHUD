@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 import static java.util.logging.Level.*;
 
@@ -149,7 +150,20 @@ public class Transmission extends Thread {
 		this.url=url;
 		delay=i;
 	}
+	Map<String,String> headers=null;
 	
+	/** Very direct transmission.  Used mostly by testing.  Call start() or run().
+	 *
+	 * @param headers Map of header name, value
+	 * @param payload JSON Object to transmit
+	 * @param url URL to transmit to
+	 */
+	public Transmission(final Map<String,String> headers,final JSONObject payload,final String url) {
+		this.headers=headers;
+		caller=Thread.currentThread().getStackTrace();
+		json=payload;
+		this.url=url;
+	}
 	// ---------- INSTANCE ----------
 	public boolean failed() {return !succeeded;}
 	
@@ -257,7 +271,7 @@ public class Transmission extends Thread {
 	
 	// ----- Internal Instance -----
 	@Nonnull
-	private String sendAttempt() throws IOException {
+	public String sendAttempt() throws IOException {
 		if (url==null) {throw new IOException("Target URL is nulL");}
 		final URLConnection transmission=new URL(url).openConnection();
 		transmission.setDoOutput(true);
@@ -265,6 +279,11 @@ public class Transmission extends Thread {
 		transmission.setDoInput(true);
 		transmission.setConnectTimeout(5000);
 		transmission.setReadTimeout(35000);
+		if (headers!=null) {
+			for (final Map.Entry<String,String> thing:headers.entrySet()) {
+				transmission.setRequestProperty(thing.getKey(),thing.getValue());
+			}
+		}
 		transmission.connect();
 		
 		final OutputStreamWriter out=new OutputStreamWriter(transmission.getOutputStream());

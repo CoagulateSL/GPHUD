@@ -5,6 +5,7 @@ import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.HTML.Elements.PlainText;
 import net.coagulate.Core.HTML.Page;
@@ -157,7 +158,8 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	
 	// ----- Internal Instance -----
 	protected Response execute(@Nonnull final State st) {
-		final JSONObject obj=st.json();
+		final JSONObject obj=st.jsonNullable();
+		if (obj==null) { throw new UserInputValidationParseException("No JSON payload was presented (Are you a real client or a web browser?"); }
 		// get developer key
 		final String developerkey=obj.getString("developerkey");
 		// resolve the developer, or error
