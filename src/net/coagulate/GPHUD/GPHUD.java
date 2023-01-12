@@ -7,11 +7,9 @@ import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.Core.Tools.ClassTools;
 import net.coagulate.GPHUD.Data.Region;
-import net.coagulate.SL.ChangeLogging;
-import net.coagulate.SL.Config;
+import net.coagulate.GPHUD.Tests.TestFramework;
+import net.coagulate.SL.*;
 import net.coagulate.SL.HTML.ServiceTile;
-import net.coagulate.SL.SL;
-import net.coagulate.SL.SLModule;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -434,5 +432,10 @@ public class GPHUD extends SLModule {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public SelfTest.PassFailRecord selfTest() {
+		return new TestFramework().execute();
 	}
 }

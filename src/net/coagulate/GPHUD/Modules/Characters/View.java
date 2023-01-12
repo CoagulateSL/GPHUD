@@ -33,9 +33,12 @@ import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.URL.URLs;
 import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
+import net.coagulate.GPHUD.Tests.TestFramework;
 import net.coagulate.SL.Config;
+import net.coagulate.SL.TestFrameworkPrototype;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -86,7 +89,13 @@ public abstract class View {
 		else { t.addNoNull(st.getSourceDeveloper().toString()); }
 		return t;
 	}
-
+	
+	@TestFramework.Test(name="Test characters.status")
+	public static TestFrameworkPrototype.TestOutput testCharacterStatus(final TestFramework f) throws IOException {
+		f.primaryRegion.execute("characters.status");
+		return f.primaryRegion.testResultPresenceAndDiscard("output1",false);
+	}
+	
 	@URLs(url="/characters/view/*")
 	public static void viewCharacter(@Nonnull final State st,
 	                                 @Nonnull final SafeMap values) {

@@ -1009,4 +1009,11 @@ public class Char extends TableRow {
 		return protocolCache.get(this, () -> getInt("protocol"));
 	}
 	private static final Cache<Char,Integer> protocolCache=Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
+	
+	/** Write the last active timestamp for this character - note this isn't used by GPHUD main control flow, just used for testing
+	 *
+	 */
+	public void setLastActive(final Integer value) {
+		set("lastactive",value);
+	}
 }
