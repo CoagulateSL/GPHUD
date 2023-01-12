@@ -2,30 +2,28 @@
                          defaultDisable=true,
                          forceConfig=true)
 
-@Permission.Permissions(description="Can configure publishing details",
-                        name="Config",
-                        power=Permission.POWER.LOW)
+@Permission.Permissions(description="Can configure publishing details", name="Config", power=Permission.POWER.LOW)
 
 @KV.KVS(name="PublishGroups",
-        defaultValue ="false",
+        defaultValue="false",
         description="Publish group memberships",
-        editPermission ="Publishing.Config",
+        editPermission="Publishing.Config",
         scope=KV.KVSCOPE.INSTANCE,
         template=false,
         type=KV.KVTYPE.BOOLEAN)
 
 @KV.KVS(name="PublishStatus",
-        defaultValue ="false",
+        defaultValue="false",
         description="Publish instance status",
-        editPermission ="Publishing.Config",
+        editPermission="Publishing.Config",
         scope=KV.KVSCOPE.INSTANCE,
         template=false,
         type=KV.KVTYPE.BOOLEAN)
 
 @KV.KVS(name="PublishStatusAndPlayers",
-        defaultValue ="false",
+        defaultValue="false",
         description="Publish instance status with online player list",
-        editPermission ="Publishing.Config",
+        editPermission="Publishing.Config",
         scope=KV.KVSCOPE.INSTANCE,
         template=false,
         type=KV.KVTYPE.BOOLEAN)

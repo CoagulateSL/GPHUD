@@ -19,52 +19,73 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class EventsCommands {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Creates a new event with an empty configuration",
 	          requiresPermission="Events.Create")
 	public static Response create(@Nonnull final State st,
-	                              @Arguments(name="eventName",description="Name for the event",
+	                              @Arguments(name="eventName",
+	                                         description="Name for the event",
 	                                         type=ArgumentType.TEXT_ONELINE,
 	                                         max=128) final String eventName) {
 		Event.create(st.getInstance(),eventName);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Event",null,eventName,"Event created");
 		return new OKResponse("Created event "+eventName);
 	}
-
+	
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-	          description="Add a zone to an event",
-	          requiresPermission="Events.Locations")
+	@Commands(context=Context.AVATAR, description="Add a zone to an event", requiresPermission="Events.Locations")
 	public static Response addLocation(@Nonnull final State st,
-	                                   @Nonnull @Arguments(name="event",description="Event to add the zone to",
-	                                                       type=ArgumentType.EVENT) final Event event,
-	                                   @Nonnull @Arguments(name="zone",description="Zone to add to the event",
-	                                                       type=ArgumentType.ZONE) final Zone zone) {
+	                                   @Nonnull
+	                                   @Arguments(name="event",
+	                                              description="Event to add the zone to",
+	                                              type=ArgumentType.EVENT) final Event event,
+	                                   @Nonnull
+	                                   @Arguments(name="zone",
+	                                              description="Zone to add to the event",
+	                                              type=ArgumentType.ZONE) final Zone zone) {
 		zone.validate(st);
 		event.validate(st);
 		event.addZone(zone);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"AddLocation","Event/"+event.getName(),null,zone.getName(),"Added zone to event");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "AddLocation",
+		            "Event/"+event.getName(),
+		            null,
+		            zone.getName(),
+		            "Added zone to event");
 		return new OKResponse("Added zone "+zone.getName()+" to event "+event.getName());
 	}
-
+	
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-	          description="Delete zone from event",
-	          requiresPermission="Events.Locations")
+	@Commands(context=Context.AVATAR, description="Delete zone from event", requiresPermission="Events.Locations")
 	public static Response deleteLocation(@Nonnull final State st,
-	                                      @Nonnull @Arguments(name="event",description="Event to remove the zone from",
-	                                                          type=ArgumentType.EVENT) final Event event,
-	                                      @Nonnull @Arguments(name="zone",description="Zone to remove from the event",
-	                                                          type=ArgumentType.ZONE) final Zone zone) {
+	                                      @Nonnull
+	                                      @Arguments(name="event",
+	                                                 description="Event to remove the zone from",
+	                                                 type=ArgumentType.EVENT) final Event event,
+	                                      @Nonnull
+	                                      @Arguments(name="zone",
+	                                                 description="Zone to remove from the event",
+	                                                 type=ArgumentType.ZONE) final Zone zone) {
 		zone.validate(st);
 		event.validate(st);
 		event.deleteZone(zone);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"DeleteLocation","Event/"+event.getName(),zone.getName(),null,"Removed zone from event");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "DeleteLocation",
+		            "Event/"+event.getName(),
+		            zone.getName(),
+		            null,
+		            "Removed zone from event");
 		return new OKResponse("Removed zone "+zone.getName()+" from event "+event.getName());
 	}
-
-
+	
+	
 }

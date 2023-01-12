@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 
 public class Distribution {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Command.Commands(description="Get a new Region Server",
@@ -25,8 +25,10 @@ public class Distribution {
 	                  permitExternal=false)
 	public static Response getServer(@Nonnull final State st) {
 		try {
-			final String distributionregion = Config.getDistributionRegion();
-			if (distributionregion.isBlank()) { return new ErrorResponse("No distribution region has been set up and no new server can be sent to you"); }
+			final String distributionregion=Config.getDistributionRegion();
+			if (distributionregion.isBlank()) {
+				return new ErrorResponse("No distribution region has been set up and no new server can be sent to you");
+			}
 			final JSONObject json=new JSONObject();
 			json.put("incommand","broadcast");
 			json.put("subcommand","giveitemprefix");
@@ -34,14 +36,15 @@ public class Distribution {
 			json.put("givetoname",st.getAvatar().getName());
 			json.put("giveto",st.getAvatar().getUUID());
 			Region.find(distributionregion,false).sendServerSync(json);
-		}
-		catch (@Nonnull final UserException e) {
+		} catch (@Nonnull final UserException e) {
 			throw new UserRemoteFailureException(
-					"Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance [" + e.getLocalizedMessage() + "]", e);
+					"Failed to reach distribution server, please try again in a minute, otherwise wait an hour or two as the region may be under maintenance ["+
+					e.getLocalizedMessage()+"]",
+					e);
 		}
 		return new OKResponse("A new region server should be en route to you from the master server");
 	}
-
+	
 	@Nonnull
 	@Command.Commands(description="Get a new Remote Dispenser",
 	                  requiresPermission="Instance.ServerOperator",
@@ -57,5 +60,5 @@ public class Distribution {
 		st.getRegion().sendServer(json);
 		return new OKResponse("A remote dispenser is being set to you by your region server");
 	}
-
+	
 }

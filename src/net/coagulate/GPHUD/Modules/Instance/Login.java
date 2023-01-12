@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 
 public class Login {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Command.Commands(context=Command.Context.AVATAR,
@@ -29,5 +29,5 @@ public class Login {
 		json.put("target",st.getAvatar().getUUID());
 		return new JSONResponse(json);
 	}
-
+	
 }

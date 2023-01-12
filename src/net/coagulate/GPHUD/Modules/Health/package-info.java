@@ -1,18 +1,13 @@
-@ModuleDefinition(description="Provides health support",
-                  defaultDisable=true)
+@ModuleDefinition(description="Provides health support", defaultDisable=true)
 
-@Permissions(name="config",
-             description="Configure the health module",
-             power=Permission.POWER.MEDIUM)
+@Permissions(name="config", description="Configure the health module", power=Permission.POWER.MEDIUM)
 
-@Permissions(name="sethealth",
-             description="May set any users health value",
-             power=Permission.POWER.LOW)
+@Permissions(name="sethealth", description="May set any users health value", power=Permission.POWER.LOW)
 
 @KVS(name="allowreset",
      description="May user reset their own health",
-     defaultValue ="false",
-     editPermission ="health.config",
+     defaultValue="false",
+     editPermission="health.config",
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.BOOLEAN,
      hierarchy=KVHIERARCHY.DELEGATING,
@@ -20,8 +15,8 @@
 
 @KVS(name="initialhealth",
      description="Initial health value",
-     defaultValue ="10",
-     editPermission ="health.config",
+     defaultValue="10",
+     editPermission="health.config",
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.INTEGER,
      hierarchy=KVHIERARCHY.CUMULATIVE,
@@ -29,16 +24,16 @@
 
 @KVS(name="health",
      description="Current health",
-     editPermission ="health"+".sethealth",
+     editPermission="health"+".sethealth",
      scope=KVSCOPE.COMPLETE,
-     defaultValue ="10",
+     defaultValue="10",
      template=true,
      type=KVTYPE.INTEGER,
      hierarchy=KVHIERARCHY.DELEGATING)
 
 @KVS(name="allowNegative",
-     defaultValue ="false",
-     editPermission ="health.config",
+     defaultValue="false",
+     editPermission="health.config",
      description="Allow health to go negative (otherwise stops at zero)",
      hierarchy=KVHIERARCHY.DELEGATING,
      scope=KVSCOPE.COMPLETE,
@@ -47,10 +42,10 @@
 
 @KVS(name="allowSelfSet",
      description="Allow character to set their own health",
-     editPermission ="health.config",
+     editPermission="health.config",
      hierarchy=KVHIERARCHY.DELEGATING,
      type=KVTYPE.BOOLEAN,
-     defaultValue ="false",
+     defaultValue="false",
      scope=KVSCOPE.COMPLETE,
      template=false)
 

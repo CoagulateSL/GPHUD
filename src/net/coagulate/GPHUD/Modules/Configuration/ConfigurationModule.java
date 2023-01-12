@@ -17,21 +17,29 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConfigurationModule extends ModuleAnnotation {
-
-	public ConfigurationModule(final String name,
-                               final ModuleDefinition annotation) {
-        super(name, annotation);
-    }
-
+	
+	public ConfigurationModule(final String name,final ModuleDefinition annotation) {
+		super(name,annotation);
+	}
+	
+	public static boolean canConfigure(@Nonnull final State state,@Nonnull final Module module) {
+		return canConfigure(state,module.getName());
+	}
+	
+	public static boolean canConfigure(@Nonnull final State state,@Nonnull final String moduleName) {
+		final URL urlHandler=Modules.getURL(state,"/configuration/"+moduleName);
+		return urlHandler.requiresPermission().isBlank()||state.hasPermission(urlHandler.requiresPermission());
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nullable
 	@Override
 	public Set<SideSubMenu> getSideSubMenus(final State st) {
-		final Set<SideSubMenu> submenus = new HashSet<>();
-        final Map<String, SideSubMenu> map = new TreeMap<>();
+		final Set<SideSubMenu> submenus=new HashSet<>();
+		final Map<String,SideSubMenu> map=new TreeMap<>();
 		for (final Module m: Modules.getModules()) {
 			if (m.isEnabled(st)) {
-				if (m.alwaysHasConfig() || !m.getKVDefinitions(st).isEmpty()) {
+				if (m.alwaysHasConfig()||!m.getKVDefinitions(st).isEmpty()) {
 					map.put(m.getName(),new ConfigurationSideSubMenu(m));
 					if (canConfigure(st,m.getName())) {
 						submenus.add(map.get(m.getName()));
@@ -41,20 +49,9 @@ public class ConfigurationModule extends ModuleAnnotation {
 		}
 		int priority=1;
 		for (final SideSubMenu sideSubMenu: map.values()) {
-			((ConfigurationSideSubMenu) sideSubMenu).setPriority(priority);
+			((ConfigurationSideSubMenu)sideSubMenu).setPriority(priority);
 			priority++;
 		}
 		return submenus;
 	}
-
-    public static boolean canConfigure(@Nonnull final State state,
-                                       @Nonnull final String moduleName) {
-        final URL urlHandler = Modules.getURL(state, "/configuration/" + moduleName);
-        return urlHandler.requiresPermission().isBlank() || state.hasPermission(urlHandler.requiresPermission());
-    }
-
-    public static boolean canConfigure(@Nonnull final State state,
-                                       @Nonnull final Module module) {
-        return canConfigure(state, module.getName());
-    }
 }

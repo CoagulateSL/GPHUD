@@ -1,5 +1,4 @@
-@Module.ModuleDefinition(description="Provides commands for managing Character Sets",
-                         canDisable = false)
+@Module.ModuleDefinition(description="Provides commands for managing Character Sets", canDisable=false)
 
 package net.coagulate.GPHUD.Modules.Sets;
 

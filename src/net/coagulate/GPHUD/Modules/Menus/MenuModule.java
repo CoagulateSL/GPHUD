@@ -30,8 +30,7 @@ public class MenuModule extends ModuleAnnotation {
 	 * @param name       Name of the menu module
 	 * @param annotation sourcing annotation
 	 */
-	public MenuModule(final String name,
-					  final ModuleDefinition annotation) {
+	public MenuModule(final String name,final ModuleDefinition annotation) {
 		super(name,annotation);
 	}
 	
@@ -43,11 +42,9 @@ public class MenuModule extends ModuleAnnotation {
 	 * @return A HUD formatted string containing the main menu
 	 */
 	@Nonnull
-	@Template(name="MAINMENU",
-			description="The packaged form of this users main menu")
+	@Template(name="MAINMENU", description="The packaged form of this users main menu")
 	
-	public static String generateMainMenu(final State st,
-										  final String key) {
+	public static String generateMainMenu(final State st,final String key) {
 		if (st.mainMenuTemplate==null) {
 			final JSONObject menu=Modules.getJSONTemplate(st,"menus.main");
 			final int protocol=st.getCharacter().getProtocol();
@@ -83,13 +80,6 @@ public class MenuModule extends ModuleAnnotation {
 	
 	@Nonnull
 	@Override
-	public Command getCommandNullable(@Nonnull final State st,
-									  @Nonnull final String commandname) {
-		return new MenuCommand(Menu.getMenu(st,commandname));
-	}
-	
-	@Nonnull
-	@Override
 	public Map<String,Command> getCommands(@Nonnull final State st) {
 		final Map<String,Command> commands=new TreeMap<>();
 		final Map<String,JSONObject> templates=Menu.getTemplates(st);
@@ -97,9 +87,16 @@ public class MenuModule extends ModuleAnnotation {
 			try {
 				final String name=entry.getKey();
 				commands.put(name,new MenuCommand(Menu.getMenu(st,name)));
-			} catch (final NoDataException|UserInputLookupFailureException ignore) {}
+			} catch (final NoDataException|UserInputLookupFailureException ignore) {
+			}
 		}
 		return commands;
+	}
+	
+	@Nonnull
+	@Override
+	public Command getCommandNullable(@Nonnull final State st,@Nonnull final String commandname) {
+		return new MenuCommand(Menu.getMenu(st,commandname));
 	}
 	
 	@Override

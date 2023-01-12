@@ -19,69 +19,73 @@ import static net.coagulate.Core.Tools.UnixTime.duration;
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 
 public class CharacterPool {
-
+	
 	// ---------- STATICS ----------
+	
+	/**
+	 * Count the number of entries in a Pool
+	 *
+	 * @param st   State inferring character
+	 * @param pool Pool
+	 * @return Count of the entries
+	 */
+	public static int poolEntries(@Nonnull final State st,@Nonnull final Pool pool) {
+		return poolEntries(st.getCharacter(),pool);
+	}
+	
 	/**
 	 * Count the number of entries in a Pool
 	 *
 	 * @param character The character to count the pool of
 	 * @param pool      Pool
-	 *
 	 * @return Count of the entries
 	 */
-	public static int poolEntries(@Nonnull final Char character,
-	                          @Nonnull final Pool pool) {
-		final Integer count=db().dqi("select count(*) from characterpools where characterid=? and poolname like ?",character.getId(),pool.fullName());
-		if (count==null) { return 0; }
+	public static int poolEntries(@Nonnull final Char character,@Nonnull final Pool pool) {
+		final Integer count=db().dqi("select count(*) from characterpools where characterid=? and poolname like ?",
+		                             character.getId(),
+		                             pool.fullName());
+		if (count==null) {
+			return 0;
+		}
 		return count;
 	}
-
+	
+	// ----- Internal Statics -----
+	private static DBConnection db() {
+		return GPHUD.getDB();
+	}
+	
 	/**
-	 * Count the number of entries in a Pool
+	 * Sum all the entries in a Pool
 	 *
 	 * @param st   State inferring character
 	 * @param pool Pool
-	 *
-	 * @return Count of the entries
+	 * @return Sum of the entries
 	 */
-	public static int poolEntries(@Nonnull final State st,
-	                          @Nonnull final Pool pool) {
-		return poolEntries(st.getCharacter(),pool);
+	public static int sumPool(@Nonnull final State st,@Nonnull final Pool pool) {
+		return sumPool(st.getCharacter(),pool);
 	}
-
+	
 	/**
 	 * Sum all the entries in a Pool
 	 *
 	 * @param character The character to sum the pool of
 	 * @param pool      Pool
-	 *
 	 * @return Sum of the entries
 	 */
-	public static int sumPool(@Nonnull final Char character,
-	                          @Nonnull final Pool pool) {
-		return character.poolSumCache.get(pool,()-> {
-			final Integer sum = db().dqi("select sum(adjustment) from characterpools where characterid=? and poolname like ?", character.getId(), pool.fullName());
-			if (sum == null) {
+	public static int sumPool(@Nonnull final Char character,@Nonnull final Pool pool) {
+		return character.poolSumCache.get(pool,()->{
+			final Integer sum=db().dqi(
+					"select sum(adjustment) from characterpools where characterid=? and poolname like ?",
+					character.getId(),
+					pool.fullName());
+			if (sum==null) {
 				return 0;
 			}
 			return sum;
 		});
 	}
-
-	/**
-	 * Sum all the entries in a Pool
-	 *
-	 * @param st   State inferring character
-	 * @param pool Pool
-	 *
-	 * @return Sum of the entries
-	 */
-	public static int sumPool(@Nonnull final State st,
-	                          @Nonnull final Pool pool) {
-		return sumPool(st.getCharacter(),pool);
-	}
-
-
+	
 	/**
 	 * Add an adjustment to a pool from a character.
 	 *
@@ -103,11 +107,10 @@ public class CharacterPool {
 		       st.getCharacterNullable()==null?null:st.getCharacter().getId(),
 		       st.getAvatarNullable()==null?null:st.getAvatar().getId(),
 		       description,
-		       getUnixTime()
-		      );
+		       getUnixTime());
 		target.poolSumCache.purge(pool);
 	}
-
+	
 	/**
 	 * Add an adjustment to a pool, as an administrator (Avatar).
 	 *
@@ -129,11 +132,10 @@ public class CharacterPool {
 		       null,
 		       st.getAvatar().getId(),
 		       description,
-		       getUnixTime()
-		      );
+		       getUnixTime());
 		target.poolSumCache.purge(pool);
 	}
-
+	
 	/**
 	 * Add an adjustment to a pool on behalf of SYSTEM.
 	 *
@@ -155,72 +157,43 @@ public class CharacterPool {
 		       null,
 		       User.getSystem().getId(),
 		       description,
-		       getUnixTime()
-		      );
+		       getUnixTime());
 		target.poolSumCache.purge(pool);
 	}
-
-	/**
-	 * Sum a pool since a given time
-	 *
-	 * @param character The character to sum the pool of
-	 * @param pool      Pool
-	 * @param since     Unix Time to count points since
-	 *
-	 * @return Number of points in the given period.
-	 */
-	public static int sumPoolSince(@Nonnull final Char character,
-	                               @Nonnull final Pool pool,
-	                               final int since) {
-		final Integer sum=db().dqi("select sum(adjustment) from characterpools where characterid=? and poolname like ? and timedate>=?",
-		                           character.getId(),
-		                           pool.fullName(),
-		                           since
-		                          );
-		if (sum==null) { return 0; }
-		return sum;
-	}
-
+	
 	/**
 	 * Sum a pool since a given number of days
 	 *
 	 * @param character Character to sum
 	 * @param pool      Pool
 	 * @param days      Number of days ago to start counting from.
-	 *
 	 * @return Number of points in the pool in the selected time range.
 	 */
-	public static int sumPoolDays(@Nonnull final Char character,
-	                              @Nonnull final Pool pool,
-	                              final float days) {
-		final int seconds=(int) (days*60.0*60.0*24.0);
+	public static int sumPoolDays(@Nonnull final Char character,@Nonnull final Pool pool,final float days) {
+		final int seconds=(int)(days*60.0*60.0*24.0);
 		return sumPoolSince(character,pool,getUnixTime()-seconds);
 	}
-
+	
 	/**
-	 * Calculate the next free point time string for a pool.
+	 * Sum a pool since a given time
 	 *
-	 * @param character Character to find next free point time for
+	 * @param character The character to sum the pool of
 	 * @param pool      Pool
-	 * @param maxxp     Maximum ammount of XP earnable in a period
-	 * @param days      Period (days)
-	 *
-	 * @return Explanation of when the next point is available.
+	 * @param since     Unix Time to count points since
+	 * @return Number of points in the given period.
 	 */
-	@Nonnull
-	public static String poolNextFree(@Nonnull final Char character,
-	                                  @Nonnull final Pool pool,
-	                                  final int maxxp,
-	                                  final float days) {
-		if (maxxp==0) { return "NEVER"; }
-		final int now=getUnixTime();
-		final int nextfree=poolNextFreeAt(character,pool,maxxp,days);
-		if (now >= nextfree) { return "NOW"; }
-
-		final int duration=nextfree-now;
-		return "in "+duration(duration,false);
+	public static int sumPoolSince(@Nonnull final Char character,@Nonnull final Pool pool,final int since) {
+		final Integer sum=db().dqi(
+				"select sum(adjustment) from characterpools where characterid=? and poolname like ? and timedate>=?",
+				character.getId(),
+				pool.fullName(),
+				since);
+		if (sum==null) {
+			return 0;
+		}
+		return sum;
 	}
-
+	
 	/**
 	 * Calculate the next free point time string for a pool.
 	 *
@@ -228,7 +201,6 @@ public class CharacterPool {
 	 * @param pool  Pool
 	 * @param maxxp Maximum ammount of XP earnable in a period
 	 * @param days  Period (days)
-	 *
 	 * @return Explanation of when the next point is available.
 	 */
 	@Nonnull
@@ -238,7 +210,34 @@ public class CharacterPool {
 	                                  final float days) {
 		return poolNextFree(state.getCharacter(),pool,maxxp,days);
 	}
-
+	
+	/**
+	 * Calculate the next free point time string for a pool.
+	 *
+	 * @param character Character to find next free point time for
+	 * @param pool      Pool
+	 * @param maxxp     Maximum ammount of XP earnable in a period
+	 * @param days      Period (days)
+	 * @return Explanation of when the next point is available.
+	 */
+	@Nonnull
+	public static String poolNextFree(@Nonnull final Char character,
+	                                  @Nonnull final Pool pool,
+	                                  final int maxxp,
+	                                  final float days) {
+		if (maxxp==0) {
+			return "NEVER";
+		}
+		final int now=getUnixTime();
+		final int nextfree=poolNextFreeAt(character,pool,maxxp,days);
+		if (now>=nextfree) {
+			return "NOW";
+		}
+		
+		final int duration=nextfree-now;
+		return "in "+duration(duration,false);
+	}
+	
 	/**
 	 * Calculate the date-time of the next free point for a pool.
 	 *
@@ -246,7 +245,6 @@ public class CharacterPool {
 	 * @param pool      Pool
 	 * @param maxxp     Maximum ammount of XP in a period
 	 * @param days      Period in days
-	 *
 	 * @return Date-time of the point of next free (may be in the past, in which case available NOW).
 	 */
 	public static int poolNextFreeAt(@Nonnull final Char character,
@@ -255,61 +253,69 @@ public class CharacterPool {
 	                                 final float days) {
 		final boolean debug=false;
 		final int now=getUnixTime();
-		final int since=(int) (now-(days*60*60*24));
-		final Results res=db().dq("select adjustment,timedate from characterpools where characterid=? and poolname=? and timedate>?",character.getId(),pool.fullName(),since);
+		final int since=(int)(now-(days*60*60*24));
+		final Results res=db().dq(
+				"select adjustment,timedate from characterpools where characterid=? and poolname=? and timedate>?",
+				character.getId(),
+				pool.fullName(),
+				since);
 		int awarded=0;
 		final Map<Integer,Integer> when=new TreeMap<>(); // map time stamps to award.
 		for (final ResultsRow r: res) {
 			final int ammount=r.getInt("adjustment");
 			int at=r.getInt("timedate");
 			awarded+=ammount;
-			while (when.containsKey(at)) { at++; }
+			while (when.containsKey(at)) {
+				at++;
+			}
 			when.put(at,ammount);
 		}
 		int overshoot=awarded-maxxp;
-		if (overshoot<0) { return now; }
+		if (overshoot<0) {
+			return now;
+		}
 		final int datefilled=0;
 		for (final Map.Entry<Integer,Integer> entry: when.entrySet()) {
 			final int ammount=entry.getValue();
 			overshoot-=ammount;
 			if (overshoot<0) {
-				return (int) (entry.getKey()+(days*60*60*24));
+				return (int)(entry.getKey()+(days*60*60*24));
 			}
 		}
 		return now;
 	}
-
+	
 	/**
 	 * Get all the pools this character has.
 	 *
 	 * @param st State infers Character
-	 *
 	 * @return List of Pools
 	 */
 	@Nonnull
-	public static Set<Pool> getPools(@Nonnull final State st,
-	                                 @Nonnull final Char ch) {
+	public static Set<Pool> getPools(@Nonnull final State st,@Nonnull final Char ch) {
 		final Set<Pool> pools=new TreeSet<>();
 		final Results results=db().dq("select distinct poolname from characterpools where characterid=?",ch.getId());
 		for (final ResultsRow r: results) {
 			final String name=r.getString();
 			if (st.hasModule(name)) {
 				final Pool p=Modules.getPoolNullable(st,name);
-				if (p!=null) { pools.add(p); }
+				if (p!=null) {
+					pools.add(p);
+				}
 			}
 		}
 		return pools;
 	}
-
-	// ----- Internal Statics -----
-	private static DBConnection db() { return GPHUD.getDB(); }
-
-    public static void delete(final String fullName, final Instance instance) {
-		GPHUD.getDB().d("delete characterpools from characterpools left join characters on characterpools.characterid=characters.characterid where characterpools.poolname like ? and characters.instanceid=?", fullName, instance.getId());
+	
+	public static void delete(final String fullName,final Instance instance) {
+		GPHUD.getDB()
+		     .d("delete characterpools from characterpools left join characters on characterpools.characterid=characters.characterid where characterpools.poolname like ? and characters.instanceid=?",
+		        fullName,
+		        instance.getId());
 	}
-
-    // ---------- INSTANCE ----------
-
+	
+	// ---------- INSTANCE ----------
+	
 	/**
 	 * Calculate the date-time of the next free point for a pool.
 	 *
@@ -317,13 +323,9 @@ public class CharacterPool {
 	 * @param pool  Pool
 	 * @param maxxp Maximum ammount of XP in a period
 	 * @param days  Period in days
-	 *
 	 * @return Date-time of the point of next free (may be in the past, in which case available NOW).
 	 */
-	public int poolNextFreeAt(@Nonnull final State state,
-	                          @Nonnull final Pool pool,
-	                          final int maxxp,
-	                          final float days) {
+	public int poolNextFreeAt(@Nonnull final State state,@Nonnull final Pool pool,final int maxxp,final float days) {
 		return poolNextFreeAt(state.getCharacter(),pool,maxxp,days);
 	}
 }

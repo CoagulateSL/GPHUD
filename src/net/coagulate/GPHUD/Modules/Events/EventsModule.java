@@ -16,12 +16,11 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class EventsModule extends ModuleAnnotation {
-
-	public EventsModule(final String name,
-                        final ModuleDefinition annotation) {
-        super(name, annotation);
-    }
-
+	
+	public EventsModule(final String name,final ModuleDefinition annotation) {
+		super(name,annotation);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
@@ -33,6 +32,6 @@ public class EventsModule extends ModuleAnnotation {
 		}
 		return ret;
 	}
-
-
+	
+	
 }

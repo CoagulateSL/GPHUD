@@ -25,7 +25,9 @@ import java.util.TreeMap;
  */
 public class Menu extends TableRow {
 	
-	protected Menu(final int id) {super(id);}
+	protected Menu(final int id) {
+		super(id);
+	}
 	
 	// ---------- STATICS ----------
 	
@@ -56,6 +58,24 @@ public class Menu extends TableRow {
 	}
 	
 	/**
+	 * Returns a reference to the Menu named, or throws an exception if it cant be found.
+	 *
+	 * @param st   State
+	 * @param name Name of the menu
+	 * @return The menu object
+	 *
+	 * @throws UserInputLookupFailureException If the menu doesn't exist
+	 */
+	@Nonnull
+	public static Menu getMenu(@Nonnull final State st,@Nonnull final String name) {
+		final Menu ret=getMenuNullable(st,name);
+		if (ret==null) {
+			throw new UserInputLookupFailureException("No menu called "+name+" is found",true);
+		}
+		return ret;
+	}
+	
+	/**
 	 * Load instance menu by name
 	 *
 	 * @param st   State (infers instance)
@@ -63,28 +83,15 @@ public class Menu extends TableRow {
 	 * @return Menus object
 	 */
 	@Nullable
-	public static Menu getMenuNullable(@Nonnull final State st,
-									   @Nonnull final String name) {
+	public static Menu getMenuNullable(@Nonnull final State st,@Nonnull final String name) {
 		try {
-			final int id=db().dqiNotNull("select menuid from menus where instanceid=? and name like ?",st.getInstance().getId(),name);
+			final int id=db().dqiNotNull("select menuid from menus where instanceid=? and name like ?",
+			                             st.getInstance().getId(),
+			                             name);
 			return get(id);
-		} catch (@Nonnull final NoDataException e) {return null;}
-	}
-	
-	/**
-	 * Returns a reference to the Menu named, or throws an exception if it cant be found.
-	 *
-	 * @param st   State
-	 * @param name Name of the menu
-	 * @return The menu object
-	 * @throws UserInputLookupFailureException If the menu doesn't exist
-	 */
-	@Nonnull
-	public static Menu getMenu(@Nonnull final State st,
-							   @Nonnull final String name) {
-		final Menu ret=getMenuNullable(st,name);
-		if (ret==null) {throw new UserInputLookupFailureException("No menu called "+name+" is found",true);}
-		return ret;
+		} catch (@Nonnull final NoDataException e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -95,23 +102,31 @@ public class Menu extends TableRow {
 	 * @param description Description of the new menu
 	 * @param template    JSONObject template for the new menu (belongs to Menus module)
 	 * @return the new Menus object
+	 *
 	 * @throws UserException If the name is invalid or duplicated.
 	 */
 	@Nonnull
 	public static Menu create(@Nonnull final State st,
-							  @Nonnull final String name,
-							  @Nonnull final String description,
-							  @Nonnull final JSONObject template) {
+	                          @Nonnull final String name,
+	                          @Nonnull final String description,
+	                          @Nonnull final JSONObject template) {
 		if (getMenuNullable(st,name)!=null) {
 			throw new UserInputDuplicateValueException("Menu "+name+" already exists");
 		}
 		if (name.matches(".*[^A-Za-z\\d-=_,].*")) {
-			throw new UserInputValidationParseException("Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
+			throw new UserInputValidationParseException(
+					"Menu name must not contain spaces, and mostly only allow A-Z a-z 0-9 - + _ ,");
 		}
-		db().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",st.getInstance().getId(),name,description,template.toString());
+		db().d("insert into menus(instanceid,name,description,json) values(?,?,?,?)",
+		       st.getInstance().getId(),
+		       name,
+		       description,
+		       template.toString());
 		final Menu newalias=getMenuNullable(st,name);
 		if (newalias==null) {
-			throw new SystemConsistencyException("Failed to create alias "+name+" in instance id "+st.getInstance().getId()+", created but not found?");
+			throw new SystemConsistencyException(
+					"Failed to create alias "+name+" in instance id "+st.getInstance().getId()+
+					", created but not found?");
 		}
 		return newalias;
 	}
@@ -125,7 +140,8 @@ public class Menu extends TableRow {
 	@Nonnull
 	public static Map<String,JSONObject> getTemplates(@Nonnull final State st) {
 		final Map<String,JSONObject> aliases=new TreeMap<>();
-		for (final ResultsRow r: db().dq("select name,description,json from menus where instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow r: db().dq("select name,description,json from menus where instanceid=?",
+		                                 st.getInstance().getId())) {
 			aliases.put(r.getString("name"),new JSONObject(r.getString("json")));
 		}
 		return aliases;
@@ -145,7 +161,9 @@ public class Menu extends TableRow {
 	}
 	
 	public void validate(@Nonnull final State st) {
-		if (validated) {return;}
+		if (validated) {
+			return;
+		}
 		validate();
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Menus / State Instance mismatch");
@@ -165,10 +183,14 @@ public class Menu extends TableRow {
 	}
 	
 	@Nullable
-	public String getKVTable() {return null;}
+	public String getKVTable() {
+		return null;
+	}
 	
 	@Nullable
-	public String getKVIdField() {return null;}
+	public String getKVIdField() {
+		return null;
+	}
 	
 	/**
 	 * Deletes this menu, if its not the Main menu
@@ -178,13 +200,16 @@ public class Menu extends TableRow {
 	public void delete(final State st) {
 		final String oldname=getName();
 		if ("Main".equalsIgnoreCase(oldname)) {
-			throw new UserInputInvalidChoiceException("You can not delete the Main menu as this is hard wired to the main HUD button");
+			throw new UserInputInvalidChoiceException(
+					"You can not delete the Main menu as this is hard wired to the main HUD button");
 		}
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"delete","Menus",oldname,"","Deleted menu "+oldname);
 		d("delete from menus where menuid=?",getId());
 	}
 	
-	protected int getNameCacheTime() {return CacheConfig.PERMANENT_CONFIG;} // this name doesn't change, cache 1 hour
+	protected int getNameCacheTime() {
+		return CacheConfig.PERMANENT_CONFIG;
+	} // this name doesn't change, cache 1 hour
 	
 	/**
 	 * Load the JSON payload for this menu.
@@ -194,7 +219,9 @@ public class Menu extends TableRow {
 	@Nonnull
 	public JSONObject getJSON() {
 		final String json=dqs("select json from menus where menuid=?",getId());
-		if (json==null) {throw new SystemBadValueException("No (null) template for menu id "+getId());}
+		if (json==null) {
+			throw new SystemBadValueException("No (null) template for menu id "+getId());
+		}
 		return new JSONObject(json);
 	}
 	
@@ -223,16 +250,20 @@ public class Menu extends TableRow {
 	 *
 	 * @param st State
 	 */
-	public void flushKVCache(@SuppressWarnings("unused") final State st) {}
+	public void flushKVCache(@SuppressWarnings("unused") final State st) {
+	}
 	
-	/** Get the current description.
+	/**
+	 * Get the current description.
 	 *
 	 * @return The current description, or the empty string if not set
 	 */
 	@Nonnull
 	public String getDescription() {
 		final String desc=getString("description");
-		if (desc==null) {return "";}
+		if (desc==null) {
+			return "";
+		}
 		return desc;
 	}
 	

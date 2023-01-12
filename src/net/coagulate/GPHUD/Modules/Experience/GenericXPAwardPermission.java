@@ -11,41 +11,45 @@ import javax.annotation.Nonnull;
  * @author Iain Price
  */
 public class GenericXPAwardPermission extends Permission {
-
+	
 	private final String myname;
-
-	public GenericXPAwardPermission(final String name) { myname=name; }
-
+	
+	public GenericXPAwardPermission(final String name) {
+		myname=name;
+	}
+	
 	// ---------- INSTANCE ----------
 	@Override
 	public Module getModule(final State st) {
 		return Modules.get(st,"Experience");
 	}
-
+	
 	@Override
-	public boolean isGenerated() { return true; }
-
+	public boolean isGenerated() {
+		return true;
+	}
+	
 	@Nonnull
 	@Override
 	public String name() {
 		return "award"+myname;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String description() {
 		return "Allow this user to award "+myname+" XP, up to the weekly limits";
 	}
-
+	
 	@Nonnull
 	@Override
 	public POWER power() {
 		return POWER.LOW;
 	}
-
+	
 	@Override
 	public boolean grantable() {
 		return true;
 	}
-
+	
 }

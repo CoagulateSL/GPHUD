@@ -48,84 +48,28 @@ import java.util.Map;
  */
 public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	public static final boolean DEBUG_JSON=false;
-
+	
 	@Override
-    protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
-        final State st = state();
-        st.source = Sources.EXTERNAL;
-    }
-
-    @Override
-    protected void processPostEntity(final HttpEntity entity, final Map<String, String> parameters) {
-        try {
-            final State st = state();
-            final JSONObject obj;
-            final String message = ByteTools.convertStreamToString(entity.getContent());
-            try {
-                obj = new JSONObject(message);
-                st.setJson(obj);
-            } catch (@Nonnull final JSONException e) {
-                throw new SystemBadValueException("Parse error in '" + message + "'", e);
-            }
-			if (DEBUG_JSON) {
-				System.out.println("EXTERNAL INTERFACE INPUT:\n" + JsonTools.jsonToString(obj));
-			}
-			st.setJson(obj);
-			if (obj.has("callback")) {
-				st.callBackURL(obj.getString("callback"));
-			}
-			if (obj.has("callback")) {
-				Char.refreshURL(obj.getString("callback"));
-            }
-            if (obj.has("callback")) {
-                Region.refreshURL(obj.getString("callback"));
-            }
-            if (obj.has("cookie")) {
-                Cookie.refreshCookie(obj.getString("cookie"));
-            }
-            if (obj.has("interface") && obj.get("interface").equals("object")) {
-                st.source = State.Sources.OBJECT;
-            }
-        } catch (final IOException e) {
-            throw new SystemRemoteFailureException("Failure processing System Interface input", e);
-        }
-	}
-
-    @Override
-    protected Method lookupPageFromUri(final String uri) {
-        try {
-            return getClass().getDeclaredMethod("execute", State.class);
-        } catch (final NoSuchMethodException e) {
-            throw new SystemImplementationException("Local method reflection failed...", e);
-        }
-    }
-
-	@Override
-	protected ContentType getContentType() {
-		return ContentType.APPLICATION_JSON;
-	}
-
-    @Override
-    protected void executePage(final Method content) {
-        final State st = state();
-        Page.page().template(new PlainTextMapper.PlainTextTemplate());
-        final Response response = execute(st);
-        if (response == null) {
-            throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
-        }
-        final JSONObject jsonResponse = response.asJSON(st);
-        // did titler change?
-        if (st.getCharacterNullable() != null) {
-            st.getCharacter().appendConveyance(st, jsonResponse);
+	protected void executePage(final Method content) {
+		final State st=state();
+		Page.page().template(new PlainTextMapper.PlainTextTemplate());
+		final Response response=execute(st);
+		if (response==null) {
+			throw new SystemBadValueException("NULL RESPONSE FROM EXECUTE!!!");
+		}
+		final JSONObject jsonResponse=response.asJSON(st);
+		// did titler change?
+		if (st.getCharacterNullable()!=null) {
+			st.getCharacter().appendConveyance(st,jsonResponse);
 		}
 		jsonResponse.remove("developerkey");
-		jsonResponse.put("responsetype", response.getClass().getSimpleName());
-		final String out = jsonResponse.toString(2);
+		jsonResponse.put("responsetype",response.getClass().getSimpleName());
+		final String out=jsonResponse.toString(2);
 		if (DEBUG_JSON) {
-			System.out.println("EXTERNAL INTERFACE OUTPUT:\n" + JsonTools.jsonToString(jsonResponse));
+			System.out.println("EXTERNAL INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonResponse));
 		}
-		if (out.length() >= 4096) {
-			SL.report("Output exceeds limit of 4096 characters", new SystemImplementationException("Trace"), st);
+		if (out.length()>=4096) {
+			SL.report("Output exceeds limit of 4096 characters",new SystemImplementationException("Trace"),st);
 		}
 		Page.page().root().add(new PlainText(out));
 		/*}
@@ -152,16 +96,42 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			}
 		}*/
 	}
-
+	
+	@Override
+	protected void initialiseState(final HttpRequest request,
+	                               final HttpContext context,
+	                               final Map<String,String> parameters,
+	                               final Map<String,String> cookies) {
+		final State st=state();
+		st.source=Sources.EXTERNAL;
+	}
+	
+	@Override
+	protected Method lookupPageFromUri(final String uri) {
+		try {
+			return getClass().getDeclaredMethod("execute",State.class);
+		} catch (final NoSuchMethodException e) {
+			throw new SystemImplementationException("Local method reflection failed...",e);
+		}
+	}
+	
 	// ----- Internal Instance -----
 	protected Response execute(@Nonnull final State st) {
 		final JSONObject obj=st.jsonNullable();
-		if (obj==null) { throw new UserInputEmptyException("No JSON payload was received with this request, please make a POST request to this URL with a valid JSON structure (See External Access API Documentation for more details)",true); }
-		st.sourceLocation =st.getClientIP();
+		if (obj==null) {
+			throw new UserInputEmptyException(
+					"No JSON payload was received with this request, please make a POST request to this URL with a valid JSON structure (See External Access API Documentation for more details)",
+					true);
+		}
+		st.sourceLocation=st.getClientIP();
 		// get developer key
-		if (!obj.has("developerkey")) { throw new UserInputEmptyException("No developer credentials were supplied in the request"); }
+		if (!obj.has("developerkey")) {
+			throw new UserInputEmptyException("No developer credentials were supplied in the request");
+		}
 		final String developerkey=obj.getString("developerkey");
-		if (developerkey.length()<16) { return new TerminateResponse("Developer key is invalid"); }
+		if (developerkey.length()<16) {
+			return new TerminateResponse("Developer key is invalid");
+		}
 		st.json().remove("developerkey");
 		// resolve the developer, or error
 		final User developer=User.resolveDeveloperKey(developerkey);
@@ -170,49 +140,63 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			return new TerminateResponse("Developer key is not known");
 		}
 		st.setSourceDeveloper(developer);
-		if (obj.has("applicationname")) { st.setSourceName(obj.getString("applicationname")); }
+		if (obj.has("applicationname")) {
+			st.setSourceName(obj.getString("applicationname"));
+		}
 		st.setSourceOwner(developer);
-
+		
 		st.setInstance(decodeInstance(obj));
-
+		
 		if (!InstanceDevelopers.isDeveloper(st.getInstance(),developer)) {
 			return new TerminateResponse("Your developer ID is not authorised at this instance");
 		}
 		st.setAvatar(decodeAvatar(obj));
 		st.setCharacter(decodeCharacter(st,obj));
-
+		
 		if (st.getCharacterNullable()!=null) {
 			if (st.getCharacter().getInstance()!=st.getInstance()) {
-				throw new UserInputStateException("There is a mismatch between the specified instance id and the character's instance id");
+				throw new UserInputStateException(
+						"There is a mismatch between the specified instance id and the character's instance id");
 			}
 			final Region region=st.getCharacter().getRegion();
 			if (region!=null) {
 				st.setRegion(region);
 				if (st.getRegionNullable()!=null) {
 					if (st.getRegion().getInstance()!=st.getInstance()) {
-						throw new UserInputStateException("There is a mismatch between the region's instance id and the character's instance id");
+						throw new UserInputStateException(
+								"There is a mismatch between the region's instance id and the character's instance id");
 					}
 				}
 			}
 		}
-
+		
 		if (obj.has("checkavatarpermission")) {
 			if (obj.isNull("checkavatarpermission")) {
-				throw new UserRemoteFailureException("External API Error - checkavatarpermission key is supplied but null value attached");
+				throw new UserRemoteFailureException(
+						"External API Error - checkavatarpermission key is supplied but null value attached");
 			}
 			final String userid=obj.getString("checkavatarpermission");
-			if (userid.isBlank()) { throw new UserRemoteFailureException("External API Error - checkavatarpermission supplied a blank string",true); }
+			if (userid.isBlank()) {
+				throw new UserRemoteFailureException(
+						"External API Error - checkavatarpermission supplied a blank string",
+						true);
+			}
 			User user=User.findUserKeyNullable(userid);
-			if (user==null) { user=User.findUsername(userid,false); }
+			if (user==null) {
+				user=User.findUsername(userid,false);
+			}
 			final State testPermission=new State(st.getInstance());
 			testPermission.setAvatar(user);
 			if (!testPermission.hasPermission("External.ConnectObjects")) {
-				throw new ExternalInterfaceObjectAccessDeniedException("User "+user.getUsername()+" does not have permission External.ConnectObjects at instance "+testPermission
-						.getInstance());
+				throw new ExternalInterfaceObjectAccessDeniedException(
+						"User "+user.getUsername()+" does not have permission External.ConnectObjects at instance "+
+						testPermission.getInstance());
 			}
 		}
-
-		if (st.getCharacterNullable()!=null) { st.zone=st.getCharacter().getZone(); }
+		
+		if (st.getCharacterNullable()!=null) {
+			st.zone=st.getCharacter().getZone();
+		}
 		final SafeMap parameterMap=new SafeMap();
 		for (final String key: st.json().keySet()) {
 			final String value=st.json().get(key).toString();
@@ -222,12 +206,16 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		final String command=obj.getString("command");
 		st.postMap(parameterMap);
 		GPHUD.getLogger("ExternalInterface")
-		     .fine("Processing command "+command+" from "+st.sourceLocation +" identifying as '"+st.getSourceNameNullable()+"' devKey:"+st.getSourceDeveloper());
+		     .fine("Processing command "+command+" from "+st.sourceLocation+" identifying as '"+
+		           st.getSourceNameNullable()+"' devKey:"+st.getSourceDeveloper());
 		final Response response=Modules.run(st,obj.getString("command"),parameterMap);
-		InstanceDevelopers.accounting(st.getInstance(),developer,1,response.toString().length()+obj.toString().length());
+		InstanceDevelopers.accounting(st.getInstance(),
+		                              developer,
+		                              1,
+		                              response.toString().length()+obj.toString().length());
 		return response;
 	}
-
+	
 	private Instance decodeInstance(final JSONObject obj) {
 		Instance instance=null;
 		if (obj.has("runasinstancename")) {
@@ -238,66 +226,120 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		return instance;
 	}
-
-	private Char decodeCharacter(final State st,
-	                             final JSONObject obj) {
-		Char character=null;
-		if (obj.has("runascharactername")) {
-			final Char newCharacter=Char.resolve(st,obj.getString("runascharactername"));
-			if (newCharacter!=null) { character=newCharacter; }
-		}
-		if (obj.has("runascharacterid")) {
-			character=Char.get(obj.getInt("runascharacterid"));
-		}
-		return character;
-	}
-
+	
 	@Nonnull
 	private User decodeAvatar(final JSONObject obj) {
 		User user=User.getSystem();
 		if (obj.has("runasavatarname")) {
 			final User newUser=User.findUsernameNullable(obj.getString("runasavatarname"),false);
-			if (newUser!=null) { user=newUser; }
+			if (newUser!=null) {
+				user=newUser;
+			}
 		}
 		if (obj.has("runasavatarid")) {
 			final User newUser=User.get(obj.getInt("runasavatarid"));
-			if (newUser!=null) { user=newUser; }
+			if (newUser!=null) {
+				user=newUser;
+			}
 		}
 		if (user.isSuperAdmin()) {
 			throw new UserInputValidationFilterException("Unable to set user to a SUPER-ADMIN");
 		}
 		return user;
 	}
-
-
-    @Override
-    protected void renderUnhandledError(final HttpRequest request, final HttpContext context, final HttpResponse response, final Throwable t) {
-        SL.report("ExtIF UnkEx: " + t.getLocalizedMessage(), t, state());
-        final JSONObject json = new JSONObject();
-        json.put("error", "Sorry, an unhandled internal error occurred.");
-        json.put("responsetype", "UnhandledException");
-        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
-        response.setStatusCode(200);
-    }
-
-    @Override
-    protected void renderSystemError(final HttpRequest request, final HttpContext context, final HttpResponse response, final SystemException systemException) {
-        SL.report("ExtIF SysEx: " + systemException.getLocalizedMessage(), systemException, state());
-        final JSONObject json = new JSONObject();
-        json.put("error", "Sorry, an internal error occurred.");
-        json.put("responsetype", "SystemException");
-        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
-        response.setStatusCode(200);
-    }
-
-    @Override
-    protected void renderUserError(final HttpRequest request, final HttpContext context, final HttpResponse response, final UserException userException) {
-        SL.report("ExtIF User: " + userException.getLocalizedMessage(), userException, state());
-        final JSONObject json = new JSONObject();
-        json.put("error", userException.getLocalizedMessage());
-        json.put("responsetype", "UserException");
-        json.put("errorclass", userException.getClass().getSimpleName());
-        response.setEntity(new StringEntity(json.toString(2), ContentType.APPLICATION_JSON));
-        response.setStatusCode(200);
-    }
+	
+	private Char decodeCharacter(final State st,final JSONObject obj) {
+		Char character=null;
+		if (obj.has("runascharactername")) {
+			final Char newCharacter=Char.resolve(st,obj.getString("runascharactername"));
+			if (newCharacter!=null) {
+				character=newCharacter;
+			}
+		}
+		if (obj.has("runascharacterid")) {
+			character=Char.get(obj.getInt("runascharacterid"));
+		}
+		return character;
+	}
+	
+	@Override
+	protected void renderUserError(final HttpRequest request,
+	                               final HttpContext context,
+	                               final HttpResponse response,
+	                               final UserException userException) {
+		SL.report("ExtIF User: "+userException.getLocalizedMessage(),userException,state());
+		final JSONObject json=new JSONObject();
+		json.put("error",userException.getLocalizedMessage());
+		json.put("responsetype","UserException");
+		json.put("errorclass",userException.getClass().getSimpleName());
+		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+		response.setStatusCode(200);
+	}
+	
+	@Override
+	protected void renderSystemError(final HttpRequest request,
+	                                 final HttpContext context,
+	                                 final HttpResponse response,
+	                                 final SystemException systemException) {
+		SL.report("ExtIF SysEx: "+systemException.getLocalizedMessage(),systemException,state());
+		final JSONObject json=new JSONObject();
+		json.put("error","Sorry, an internal error occurred.");
+		json.put("responsetype","SystemException");
+		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+		response.setStatusCode(200);
+	}
+	
+	@Override
+	protected void renderUnhandledError(final HttpRequest request,
+	                                    final HttpContext context,
+	                                    final HttpResponse response,
+	                                    final Throwable t) {
+		SL.report("ExtIF UnkEx: "+t.getLocalizedMessage(),t,state());
+		final JSONObject json=new JSONObject();
+		json.put("error","Sorry, an unhandled internal error occurred.");
+		json.put("responsetype","UnhandledException");
+		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
+		response.setStatusCode(200);
+	}
+	
+	@Override
+	protected ContentType getContentType() {
+		return ContentType.APPLICATION_JSON;
+	}
+	
+	@Override
+	protected void processPostEntity(final HttpEntity entity,final Map<String,String> parameters) {
+		try {
+			final State st=state();
+			final JSONObject obj;
+			final String message=ByteTools.convertStreamToString(entity.getContent());
+			try {
+				obj=new JSONObject(message);
+				st.setJson(obj);
+			} catch (@Nonnull final JSONException e) {
+				throw new SystemBadValueException("Parse error in '"+message+"'",e);
+			}
+			if (DEBUG_JSON) {
+				System.out.println("EXTERNAL INTERFACE INPUT:\n"+JsonTools.jsonToString(obj));
+			}
+			st.setJson(obj);
+			if (obj.has("callback")) {
+				st.callBackURL(obj.getString("callback"));
+			}
+			if (obj.has("callback")) {
+				Char.refreshURL(obj.getString("callback"));
+			}
+			if (obj.has("callback")) {
+				Region.refreshURL(obj.getString("callback"));
+			}
+			if (obj.has("cookie")) {
+				Cookie.refreshCookie(obj.getString("cookie"));
+			}
+			if (obj.has("interface")&&obj.get("interface").equals("object")) {
+				st.source=State.Sources.OBJECT;
+			}
+		} catch (final IOException e) {
+			throw new SystemRemoteFailureException("Failure processing System Interface input",e);
+		}
+	}
 }

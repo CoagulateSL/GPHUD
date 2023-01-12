@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class TeleportCommands {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Command.Commands(description="Teleport the player to a given X, Y and Z",
@@ -32,15 +32,20 @@ public class TeleportCommands {
 	                  permitObject=false,
 	                  permitExternal=false)
 	public static Response teleportTo(@Nonnull final State st,
-	                                  @Nonnull @Argument.Arguments(name="region",description="Region to teleport to (must be part of the instance",
-	                                                               type=Argument.ArgumentType.REGION) final Region region,
-	                                  @Argument.Arguments(name="x",description="X co-ordinate",
+	                                  @Nonnull
+	                                  @Argument.Arguments(name="region",
+	                                                      description="Region to teleport to (must be part of the instance",
+	                                                      type=Argument.ArgumentType.REGION) final Region region,
+	                                  @Argument.Arguments(name="x",
+	                                                      description="X co-ordinate",
 	                                                      type=Argument.ArgumentType.FLOAT,
 	                                                      max=256) final Float x,
-	                                  @Argument.Arguments(name="y",description="Y co-ordinate",
+	                                  @Argument.Arguments(name="y",
+	                                                      description="Y co-ordinate",
 	                                                      type=Argument.ArgumentType.FLOAT,
 	                                                      max=256) final Float y,
-	                                  @Argument.Arguments(name="z",description="Z co-ordinate",
+	                                  @Argument.Arguments(name="z",
+	                                                      description="Z co-ordinate",
 	                                                      type=Argument.ArgumentType.FLOAT,
 	                                                      max=4096) final Float z) {
 		final JSONObject response=new JSONObject();
@@ -48,10 +53,18 @@ public class TeleportCommands {
 		teleportto+="<"+x+","+y+","+z+">|";
 		teleportto+="<128,256,0>";
 		response.put("teleport",teleportto);
-		Audit.audit(st,Audit.OPERATOR.CHARACTER,null,null,"Move","Avatar","",x+","+y+","+z,"Player teleported to "+x+","+y+","+z);
+		Audit.audit(st,
+		            Audit.OPERATOR.CHARACTER,
+		            null,
+		            null,
+		            "Move",
+		            "Avatar",
+		            "",
+		            x+","+y+","+z,
+		            "Player teleported to "+x+","+y+","+z);
 		return new JSONResponse(response);
 	}
-
+	
 	@Nonnull
 	@Command.Commands(description="Creates a landmark at the current location",
 	                  context=Command.Context.CHARACTER,
@@ -61,41 +74,53 @@ public class TeleportCommands {
 	                  permitExternal=false,
 	                  permitObject=false)
 	public static Response createLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(name="name",description="Name for the landmark, replaces it if it already exists",
+	                                      @Argument.Arguments(name="name",
+	                                                          description="Name for the landmark, replaces it if it already exists",
 	                                                          max=64,
-	                                                          type=Argument.ArgumentType.TEXT_ONELINE) final String name) {
+	                                                          type=Argument.ArgumentType.TEXT_ONELINE)
+	                                      final String name) {
 		String position=null;
 		String rotation=null;
 		for (final Header h: st.req().getAllHeaders()) {
 			if ("X-SecondLife-Local-Position".equalsIgnoreCase(h.getName())) {
-				position = h.getValue();
+				position=h.getValue();
 			}
 			if ("X-SecondLife-Local-Rotation".equalsIgnoreCase(h.getName())) {
-				rotation = h.getValue();
+				rotation=h.getValue();
 			}
 		}
-		if (position==null || rotation==null) {
+		if (position==null||rotation==null) {
 			throw new UserInputEmptyException("Unable to calculate your location/rotation information");
 		}
 		position=position.replaceAll("\\(","").replaceAll("\\)","");
 		rotation=rotation.replaceAll("\\(","").replaceAll("\\)","");
 		final String[] xyz=position.split(",");
 		final String[] xyzs=rotation.split(",");
-
+		
 		final float x=Float.parseFloat(xyz[0]);
 		final float y=Float.parseFloat(xyz[1]);
 		final float z=Float.parseFloat(xyz[2]);
-		final float angle=(float) (-Math.asin(Float.parseFloat(xyzs[2]))*((float) 2));
-
-		final float projectx=(float) Math.cos(angle);
-		final float projecty=-(float) Math.sin(angle);
-
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Set",name,"",x+","+y+","+z,"Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
-
-		Landmark.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+ 1);
-		return new OKResponse("Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+(y+projecty));
+		final float angle=(float)(-Math.asin(Float.parseFloat(xyzs[2]))*((float)2));
+		
+		final float projectx=(float)Math.cos(angle);
+		final float projecty=-(float)Math.sin(angle);
+		
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Set",
+		            name,
+		            "",
+		            x+","+y+","+z,
+		            "Created landmark "+name+" at "+x+","+y+","+z+" look at "+projectx+","+projecty);
+		
+		Landmark.create(st.getRegion(),name,x,y,z,x+projectx,y+projecty,z+1);
+		return new OKResponse(
+				"Landmark created in "+st.getRegion().getName()+" at "+x+","+y+","+z+" looking at "+(x+projectx)+","+
+				(y+projecty));
 	}
-
+	
 	@Nonnull
 	@Command.Commands(description="Remove a landmark by name",
 	                  context=Command.Context.AVATAR,
@@ -104,23 +129,24 @@ public class TeleportCommands {
 	                  permitObject=false,
 	                  permitScripting=false)
 	public static Response deleteLandmark(@Nonnull final State st,
-	                                      @Argument.Arguments(name="name",description="Landmark name to remove",
+	                                      @Argument.Arguments(name="name",
+	                                                          description="Landmark name to remove",
 	                                                          type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                          max=64) final String name) {
 		final Landmark landmark=Landmark.find(st.getInstance(),name);
-		if (landmark==null) { return new ErrorResponse("Can not delete landmark "+name+" - it does not exist"); }
+		if (landmark==null) {
+			return new ErrorResponse("Can not delete landmark "+name+" - it does not exist");
+		}
 		Landmark.obliterate(st.getInstance(),name);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Delete",name,"","","Deleted landmark "+name);
 		return new OKResponse("Deleted landmark "+name);
 	}
-
-	@URL.URLs(url="/configuration/teleportation/deletelandmark",
-			  requiresPermission="Teleportation.DeleteLandmark")
-	public static void toggleTemplatable(@Nonnull final State st,
-										 @Nonnull final SafeMap values) {
+	
+	@URL.URLs(url="/configuration/teleportation/deletelandmark", requiresPermission="Teleportation.DeleteLandmark")
+	public static void toggleTemplatable(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Teleportation.DeleteLandmark",values);
 	}
-
+	
 	@Nonnull
 	@Command.Commands(description="Teleport to a landmark",
 	                  context=Command.Context.CHARACTER,
@@ -129,11 +155,14 @@ public class TeleportCommands {
 	                  permitObject=false,
 	                  permitExternal=false)
 	public static Response go(@Nonnull final State st,
-	                          @Argument.Arguments(name="landmark",description="Landmark name to teleport to",
+	                          @Argument.Arguments(name="landmark",
+	                                              description="Landmark name to teleport to",
 	                                              type=Argument.ArgumentType.TEXT_ONELINE,
 	                                              max=64) final String landmark) {
 		final Landmark lm=Landmark.find(st,landmark);
-		if (lm==null) { return new ErrorResponse("No landmark named '"+landmark+"'"); }
+		if (lm==null) {
+			return new ErrorResponse("No landmark named '"+landmark+"'");
+		}
 		final JSONObject tp=new JSONObject();
 		tp.put("teleport",lm.getHUDRepresentation(false));
 		Audit.audit(true,
@@ -145,15 +174,13 @@ public class TeleportCommands {
 		            st.getCharacter().getName(),
 		            "",
 		            landmark,
-		            "Player teleported to "+landmark+" at "+lm.getRegion(true).getName()+":"+lm.getCoordinates()+" lookat "+lm.getLookAt()
-		           );
+		            "Player teleported to "+landmark+" at "+lm.getRegion(true).getName()+":"+lm.getCoordinates()+
+		            " lookat "+lm.getLookAt());
 		return new JSONResponse(tp);
 	}
-
+	
 	@Nonnull
-	public static DropDownList getDropDownList(@Nonnull final State st,
-	                                           final String name,
-	                                           final String selected) {
+	public static DropDownList getDropDownList(@Nonnull final State st,final String name,final String selected) {
 		final DropDownList list=new DropDownList(name);
 		final Set<Landmark> landmarks=Landmark.getAll(st.getInstance());
 		for (final Landmark landmark: landmarks) {

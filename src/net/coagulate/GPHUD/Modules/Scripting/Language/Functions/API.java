@@ -18,73 +18,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class API {
-	private API() {}
-
+	private API() {
+	}
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command, throwing a script error if the API call fails",
-	                        parameters="Character caller - User invoking the API<br>String apicall - name of API command "+"to"+" call<br>BCList parameters - list of STRING "+"parameters to the target API",
+	                        parameters=
+			                        "Character caller - User invoking the API<br>String apicall - name of API command "+
+			                        "to"+" call<br>BCList parameters - list of STRING "+"parameters to the target API",
 	                        returns="A Response",
 	                        notes="",
 	                        privileged=false,
-	                        category= SCRIPT_CATEGORY.API)
+	                        category=SCRIPT_CATEGORY.API)
 	public static BCResponse gsAPIX(final State st,
 	                                @Nonnull final GSVM vm,
 	                                @Nonnull final BCCharacter caller,
 	                                @Nonnull final BCString apicall,
 	                                @Nonnull final BCList parameters) {
 		final BCResponse response=gsAPI(st,vm,caller,apicall,parameters,false);
-		if (response.isError()) { throw new UserInputStateException(response.toBCString().getContent(),true); }
+		if (response.isError()) {
+			throw new UserInputStateException(response.toBCString().getContent(),true);
+		}
 		return response;
 	}
-
-	@Nonnull
-	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command with full permissions, throwing a script error if the API call fails",
-	                        parameters="Character caller - User invoking the API<br>String apicall - "+"name of API command "+"to"+" call<br>BCList parameters - list of "+"STRING parameters to the target API",
-	                        returns="A Response",
-	                        notes="",
-	                        privileged=true,
-	                        category= SCRIPT_CATEGORY.API)
-	public static BCResponse gsElevatedAPIX(final State st,
-	                                        @Nonnull final GSVM vm,
-	                                        @Nonnull final BCCharacter caller,
-	                                        @Nonnull final BCString apicall,
-	                                        @Nonnull final BCList parameters) {
-		final BCResponse response=gsAPI(st,vm,caller,apicall,parameters,true);
-		if (response.isError()) { throw new UserInputStateException(response.toBCString().getContent(),true); }
-		return response;
-	}
-
-	@Nonnull
-	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command",
-	                        parameters="Character caller - User invoking the API<br>String apicall - name of API command "+"to"+" call<br>BCList parameters - list of STRING "+"parameters to the target API",
-	                        returns="A Response",
-	                        notes="NOTE: Unless you intend to check the response isn't an error, or truely don't care if it is, it's highly recommended you call gsAPIX to avoid silently discarding errors which may confuse debugging",
-	                        privileged=false,
-	                        category= SCRIPT_CATEGORY.API)
-	public static BCResponse gsAPI(final State st,
-	                               @Nonnull final GSVM vm,
-	                               @Nonnull final BCCharacter caller,
-	                               @Nonnull final BCString apicall,
-	                               @Nonnull final BCList parameters) {
-		return gsAPI(st,vm,caller,apicall,parameters,false);
-	}
-
-	@Nonnull
-	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command with full permissions",
-	                        parameters="Character caller - User invoking the API<br>String apicall - "+"name of API command "+"to"+" call<br>BCList parameters - list of "+"STRING parameters to the target API",
-	                        returns="A Response",
-	                        notes="NOTE: Unless you intend to check the response isn't an error, or truely don't care if it is, it's highly recommended you call gsElevatedAPIX to avoid silently discarding errors which may confuse debugging",
-	                        privileged=true,
-	                        category= SCRIPT_CATEGORY.API)
-	public static BCResponse gsElevatedAPI(final State st,
-	                                       @Nonnull final GSVM vm,
-	                                       @Nonnull final BCCharacter caller,
-	                                       @Nonnull final BCString apicall,
-	                                       @Nonnull final BCList parameters) {
-		return gsAPI(st,vm,caller,apicall,parameters,true);
-	}
-
+	
 	// ----- Internal Statics -----
 	private static BCResponse gsAPI(@Nonnull final State st,
 	                                @Nonnull final GSVM vm,
@@ -92,7 +50,9 @@ public class API {
 	                                @Nonnull final BCString apicall,
 	                                @Nonnull final BCList parameters,
 	                                final boolean elevated) {
-		if (vm.simulation) { return new BCResponse(null,new OKResponse("Simulation mode does not call APIs")); }
+		if (vm.simulation) {
+			return new BCResponse(null,new OKResponse("Simulation mode does not call APIs"));
+		}
 		try {
 			final List<String> args=new ArrayList<>();
 			for (final ByteCodeDataType data: parameters.getContent()) {
@@ -101,9 +61,11 @@ public class API {
 			final State callingstate=new State(caller.getContent());
 			callingstate.fleshOut();
 			callingstate.source=State.Sources.SCRIPTING;
-			if (elevated) { callingstate.elevate(true); }
+			if (elevated) {
+				callingstate.elevate(true);
+			}
 			// some things care about this.  like initialise and logon
-			if (st.getCharacterNullable()==caller.getContent() && vm.getInvokerState()!=null) {
+			if (st.getCharacterNullable()==caller.getContent()&&vm.getInvokerState()!=null) {
 				callingstate.setJson(vm.getInvokerState().jsonNullable());
 			}
 			if (callingstate.getInstance()!=st.getInstance()) {
@@ -120,13 +82,68 @@ public class API {
 			//GPHUD.getLogger("gsAPI").fine("gsAPI calling "+apicall+", our state is "+st+" and their state is "+callingstate+", the parameters list is "+paramlist);
 			final Response value=Modules.run(callingstate,apicall.getContent(),args);
 			return new BCResponse(null,value);
-		}
-		catch (@Nonnull final UserException e) {
+		} catch (@Nonnull final UserException e) {
 			return new BCResponse(null,new ErrorResponse(e.getLocalizedMessage()));
 			//throw new GSExecutionException(apicall+" {"+e.getClass().getSimpleName()+"} "+e.getLocalizedMessage(),e);
+		} catch (@Nonnull final RuntimeException e) {
+			throw new GSInternalError("gsAPI runtimed: "+e,e);
 		}
-		catch (@Nonnull final RuntimeException e) { throw new GSInternalError("gsAPI runtimed: "+e,e); }
 	}
-
-
+	
+	@Nonnull
+	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command with full permissions, throwing a script error if the API call fails",
+	                        parameters="Character caller - User invoking the API<br>String apicall - "+
+	                                   "name of API command "+"to"+" call<br>BCList parameters - list of "+
+	                                   "STRING parameters to the target API",
+	                        returns="A Response",
+	                        notes="",
+	                        privileged=true,
+	                        category=SCRIPT_CATEGORY.API)
+	public static BCResponse gsElevatedAPIX(final State st,
+	                                        @Nonnull final GSVM vm,
+	                                        @Nonnull final BCCharacter caller,
+	                                        @Nonnull final BCString apicall,
+	                                        @Nonnull final BCList parameters) {
+		final BCResponse response=gsAPI(st,vm,caller,apicall,parameters,true);
+		if (response.isError()) {
+			throw new UserInputStateException(response.toBCString().getContent(),true);
+		}
+		return response;
+	}
+	
+	@Nonnull
+	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command",
+	                        parameters=
+			                        "Character caller - User invoking the API<br>String apicall - name of API command "+
+			                        "to"+" call<br>BCList parameters - list of STRING "+"parameters to the target API",
+	                        returns="A Response",
+	                        notes="NOTE: Unless you intend to check the response isn't an error, or truely don't care if it is, it's highly recommended you call gsAPIX to avoid silently discarding errors which may confuse debugging",
+	                        privileged=false,
+	                        category=SCRIPT_CATEGORY.API)
+	public static BCResponse gsAPI(final State st,
+	                               @Nonnull final GSVM vm,
+	                               @Nonnull final BCCharacter caller,
+	                               @Nonnull final BCString apicall,
+	                               @Nonnull final BCList parameters) {
+		return gsAPI(st,vm,caller,apicall,parameters,false);
+	}
+	
+	@Nonnull
+	@GSFunctions.GSFunction(description="Calls a standard GPHUD API command with full permissions",
+	                        parameters="Character caller - User invoking the API<br>String apicall - "+
+	                                   "name of API command "+"to"+" call<br>BCList parameters - list of "+
+	                                   "STRING parameters to the target API",
+	                        returns="A Response",
+	                        notes="NOTE: Unless you intend to check the response isn't an error, or truely don't care if it is, it's highly recommended you call gsElevatedAPIX to avoid silently discarding errors which may confuse debugging",
+	                        privileged=true,
+	                        category=SCRIPT_CATEGORY.API)
+	public static BCResponse gsElevatedAPI(final State st,
+	                                       @Nonnull final GSVM vm,
+	                                       @Nonnull final BCCharacter caller,
+	                                       @Nonnull final BCString apicall,
+	                                       @Nonnull final BCList parameters) {
+		return gsAPI(st,vm,caller,apicall,parameters,true);
+	}
+	
+	
 }

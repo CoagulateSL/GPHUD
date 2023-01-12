@@ -38,17 +38,21 @@ public abstract class CookBook {
 		try {
 			st.getKVDefinition("Characters."+attribute);
 			t.add("Already Exists?");
+		} catch (@Nonnull final SystemException|UserException e) {
+			t.add("OK");
 		}
-		catch (@Nonnull final SystemException|UserException e) { t.add("OK"); }
 		if (!act) {
 			t.add("Create a character attribute "+attribute);
 			return;
 		}
 		// act
-		t.add(Modules.run(st,"Characters.CreateAttribute",new String[]{attribute,selfmodify,attributetype,grouptype,useabilitypoints,required,defaultvalue}).asText(st));
+		t.add(Modules.run(st,
+		                  "Characters.CreateAttribute",
+		                  new String[] {attribute,selfmodify,attributetype,grouptype,useabilitypoints,required,
+		                                defaultvalue}).asText(st));
 		st.purgeAttributeCache();
 	}
-
+	
 	protected static void setKV(@Nonnull final State st,
 	                            final boolean act,
 	                            @Nonnull final Table t,
@@ -65,14 +69,13 @@ public abstract class CookBook {
 		try {
 			st.setKV(object,attribute,newvalue);
 			t.add("OK");
-		}
-		catch (@Nonnull final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			SL.report("Cookbook setKV "+object+"/"+attribute+"="+newvalue,e,st);
 			GPHUD.getLogger("CookBook").log(Level.INFO,"Exception in setKV "+object+"/"+attribute+"="+newvalue,e);
 			t.add("Error: "+e.getLocalizedMessage());
 		}
 	}
-
+	
 	protected static void createAlias(@Nonnull final State st,
 	                                  final boolean act,
 	                                  @Nonnull final Table t,
@@ -84,8 +87,9 @@ public abstract class CookBook {
 		try {
 			Modules.getCommandNullable(st,"alias."+aliasname);
 			t.add("Already Exists?");
+		} catch (@Nonnull final UserException e) {
+			t.add("OK");
 		}
-		catch (@Nonnull final UserException e) { t.add("OK"); }
 		if (!act) {
 			t.add("Create Alias "+aliasname+" around command "+target);
 			return;
@@ -94,39 +98,38 @@ public abstract class CookBook {
 			template.put("invoke",target);
 			Alias.create(st,aliasname,template);
 			t.add("Created alias");
-		}
-		catch (@Nonnull final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			//SL.report("Cookbook createAlias "+aliasname+"->"+target+"="+template,e,st);
 			//GPHUD.getLogger("CookBook").log(Level.INFO,"Exception in alias "+aliasname+"->"+target+"="+template,e);
 			t.add("Error: "+e.getLocalizedMessage());
 		}
 	}
-
+	
 	protected static void createMenu(@Nonnull final State st,
 	                                 final boolean act,
 	                                 @Nonnull final Table t,
 	                                 @Nonnull final String name,
 	                                 final String description) {
 		t.openRow();
-		t.add("Create menu '" + name + "'");
-		final Menu existing = Menu.getMenuNullable(st, name);
-		if (existing == null) {
+		t.add("Create menu '"+name+"'");
+		final Menu existing=Menu.getMenuNullable(st,name);
+		if (existing==null) {
 			t.add("OK");
 		} else {
 			t.add("AlreadyExists");
 		}
 		if (!act) {
-			t.add("Create a blank menu: " + description);
+			t.add("Create a blank menu: "+description);
 			return;
 		}
-		if (existing != null) {
+		if (existing!=null) {
 			t.add("Can't complete");
 			return;
 		}
-		Menu.create(st, name, description, new JSONObject());
+		Menu.create(st,name,description,new JSONObject());
 		t.add("OK");
 	}
-
+	
 	protected static void menu(@Nonnull final State st,
 	                           final boolean act,
 	                           @Nonnull final Table t,
@@ -134,7 +137,7 @@ public abstract class CookBook {
 	                           final String command) {
 		menu(st,act,t,"Main",label,command);
 	}
-
+	
 	protected static void menu(@Nonnull final State st,
 	                           final boolean act,
 	                           @Nonnull final Table t,
@@ -145,30 +148,32 @@ public abstract class CookBook {
 		t.add("Add menu item '"+label+"'");
 		final Menu mainmenu=Menu.getMenuNullable(st,menuname);
 		JSONObject menu=null;
-		if (mainmenu!=null) { menu=mainmenu.getJSON(); }
+		if (mainmenu!=null) {
+			menu=mainmenu.getJSON();
+		}
 		int empty=-1;
 		boolean full=true;
 		boolean already=false;
 		if (menu==null) {
 			full=false;
 			already=false;
-		}
-		else {
+		} else {
 			for (int i=1;i<=12;i++) {
-				if (menu.has("button" + i)) {
-					if (menu.getString("button" + i).equals(label)) {
-						already = true;
+				if (menu.has("button"+i)) {
+					if (menu.getString("button"+i).equals(label)) {
+						already=true;
 					}
 				} else {
-					full = false;
-					if (empty == -1) {
-						empty = i;
+					full=false;
+					if (empty==-1) {
+						empty=i;
 					}
 				}
 			}
 		}
-		if (already) { t.add("AlreadyExists"); }
-		else {
+		if (already) {
+			t.add("AlreadyExists");
+		} else {
 			if (full) {
 				t.add("MenuFull");
 			} else {
@@ -184,7 +189,7 @@ public abstract class CookBook {
 			return;
 		}
 		//
-		if (already || full) {
+		if (already||full) {
 			t.add("Can't complete");
 			return;
 		}
@@ -193,15 +198,15 @@ public abstract class CookBook {
 		mainmenu.setJSON(menu);
 		t.add("OK");
 	}
-
-	protected static void confirmButton(@Nonnull final State st,
-	                                    @Nonnull final Form f) {
+	
+	protected static void confirmButton(@Nonnull final State st,@Nonnull final Form f) {
 		f.add("");
 		if (st.hasPermission("Instance.CookBooks")) {
 			f.add(new TextSubHeader("You may click here to enact the cookbook"));
 			f.add(new Button("ACTIVATE COOKBOOK"));
+		} else {
+			f.add("Only the instance owner may run cookbooks");
 		}
-		else { f.add("Only the instance owner may run cookbooks"); }
 	}
-
+	
 }

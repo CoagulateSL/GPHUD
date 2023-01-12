@@ -24,14 +24,12 @@ import javax.annotation.Nonnull;
 public abstract class Messages {
 	// ---------- STATICS ----------
 	@URLs(url="/hud/listmessages")
-	public static void messagesListHUD(@Nonnull final State st,
-	                                   @Nonnull final SafeMap values) {
+	public static void messagesListHUD(@Nonnull final State st,@Nonnull final SafeMap values) {
 		messagesList(st,values);
 	}
-
+	
 	@URLs(url="/messages/list")
-	public static void messagesList(@Nonnull final State st,
-	                                @Nonnull final SafeMap values) {
+	public static void messagesList(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final Message m=Message.getNextMessage(st);
 		final Form f=st.form();
 		if (m==null) {
@@ -46,9 +44,9 @@ public abstract class Messages {
 			return;
 		}
 		throw new SystemConsistencyException("Malformed message "+m.getId()+", contains no message");
-
+		
 	}
-
+	
 	public static void displayFactionInvite(@Nonnull final State st,
 	                                        @Nonnull final SafeMap values,
 	                                        @Nonnull final JSONObject j) {
@@ -59,6 +57,6 @@ public abstract class Messages {
 		f.add("You have been invited to join the "+to.getName()+" by "+from.getName());
 		f.add(new Paragraph());
 		Modules.simpleHtml(st,"gphudclient.acceptrejectmessage",values);
-
+		
 	}
 }

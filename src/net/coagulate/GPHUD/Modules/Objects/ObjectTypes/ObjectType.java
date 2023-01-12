@@ -23,50 +23,46 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public abstract class ObjectType {
-
-	final State state;
-	@Nonnull
-	final ObjType object;
-	@Nonnull
-	final JSONObject json;
-
-	protected ObjectType(final State st,
-	                     @Nonnull final ObjType object) {
+	
+	final          State      state;
+	@Nonnull final ObjType    object;
+	@Nonnull final JSONObject json;
+	
+	protected ObjectType(final State st,@Nonnull final ObjType object) {
 		state=st;
 		this.object=object;
 		json=object.getBehaviour();
 	}
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
-	public static ObjectType materialise(final State st,
-	                                     @Nonnull final ObjType object) {
-		final JSONObject json = object.getBehaviour();
-		final String behaviour = json.optString("behaviour", "");
+	public static ObjectType materialise(final State st,@Nonnull final ObjType object) {
+		final JSONObject json=object.getBehaviour();
+		final String behaviour=json.optString("behaviour","");
 		if ("ClickTeleport".equals(behaviour)) {
-			return new ClickTeleporter(st, object);
+			return new ClickTeleporter(st,object);
 		}
 		if ("PhantomTeleport".equals(behaviour)) {
-			return new PhantomTeleporter(st, object);
+			return new PhantomTeleporter(st,object);
 		}
 		if ("RunCommand".equals(behaviour)) {
-			return new RunCommand(st, object);
+			return new RunCommand(st,object);
 		}
 		if ("RunScript".equals(behaviour)) {
-			return new RunScript(st, object);
+			return new RunScript(st,object);
 		}
 		if ("PhantomScript".equals(behaviour)) {
-			return new PhantomScript(st, object);
+			return new PhantomScript(st,object);
 		}
 		if ("NPC".equals(behaviour)) {
-			return new NPC(st, object);
+			return new NPC(st,object);
 		}
 		if ("PhantomCommand".equals(behaviour)) {
-			return new PhantomCommand(st, object);
+			return new PhantomCommand(st,object);
 		}
-		throw new SystemLookupFailureException("Behaviour " + behaviour + " is not known!", true);
+		throw new SystemLookupFailureException("Behaviour "+behaviour+" is not known!",true);
 	}
-
+	
 	@Nonnull
 	public static Map<String,String> getObjectTypes(final State st) {
 		final Map<String,String> options=new TreeMap<>();
@@ -75,11 +71,12 @@ public abstract class ObjectType {
 		options.put("RunCommand","Causes the character to run a command when they click.");
 		options.put("RunScript","Causes the character to run a script when they click.");
 		options.put("PhantomScript","Causes the character to run a script when they collide; becomes phantom.");
-		options.put("PhantomCommand","Causes the character to run a command when they collide with the object; becomes phantom.");
+		options.put("PhantomCommand",
+		            "Causes the character to run a command when they collide with the object; becomes phantom.");
 		options.put("NPC","Assigns a character to this object and allows it to participate in scripted events");
 		return options;
 	}
-
+	
 	@Nonnull
 	public static DropDownList getDropDownList(final State st) {
 		final DropDownList behaviours=new DropDownList("behaviour");
@@ -89,9 +86,9 @@ public abstract class ObjectType {
 		}
 		return behaviours;
 	}
-
-    public static Set<String> getObjectTypesSet() {
-		final Set<String> types = new HashSet<>();
+	
+	public static Set<String> getObjectTypesSet() {
+		final Set<String> types=new HashSet<>();
 		types.add("ClickTeleport");
 		types.add("PhantomTeleport");
 		types.add("RunCommand");
@@ -100,87 +97,89 @@ public abstract class ObjectType {
 		types.add("PhantomCommand");
 		types.add("NPC");
 		return types;
-    }
-
-    // ---------- INSTANCE ----------
+	}
+	
+	// ---------- INSTANCE ----------
 	@Nonnull
 	public abstract String explainHtml();
-
+	
 	public abstract void editForm(State st);
-
+	
 	public abstract void update(State st);
-
+	
 	@Nonnull
 	public abstract String explainText();
-
+	
 	public void payload(final State st,
 	                    @Nonnull final JSONObject response,
 	                    @Nonnull final Region region,
 	                    @Nullable final String url) {
 		response.put("mode",mode());
 	}
-
+	
 	@Nonnull
 	public abstract MODE mode();
-
+	
 	@Nonnull
-	public Response click(final State st,
-	                      final Char clicker) { return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour"); }
-
+	public Response click(final State st,final Char clicker) {
+		return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour");
+	}
+	
 	@Nonnull
-	public Response collide(final State st,
-	                        final Char collider) { return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour"); }
-
-	protected void populateVmVariables(final State st, final GSVM vm) {
-		if (st.getObject().getObjectType() == null) {
+	public Response collide(final State st,final Char collider) {
+		return new ErrorResponse("Object type "+object.getName()+" does not support collision behaviour");
+	}
+	
+	protected void populateVmVariables(final State st,final GSVM vm) {
+		if (st.getObject().getObjectType()==null) {
 			throw new SystemImplementationException("In object driver but no object type is defined (?)");
 		}
-		vm.introduce("OBJECTNAME", new BCString(null, st.getObject().getName()));
-		vm.introduce("OBJECTTYPE", new BCString(null, st.getObject().getObjectType().getName()));
-		vm.introduce("OBJECTKEY", new BCString(null, st.getObject().getUUID()));
+		vm.introduce("OBJECTNAME",new BCString(null,st.getObject().getName()));
+		vm.introduce("OBJECTTYPE",new BCString(null,st.getObject().getObjectType().getName()));
+		vm.introduce("OBJECTKEY",new BCString(null,st.getObject().getUUID()));
 	}
-
+	
 	@Nullable
 	public Char getCharacter() {
-		if (!json.has("character")) { return null; }
+		if (!json.has("character")) {
+			return null;
+		}
 		final int charid=json.getInt("character");
 		return Char.get(charid);
 	}
-
-	enum MODE {
-		NONE,
-		CLICKABLE,
-		PHANTOM
-	}
-
-	protected final void editFormScript(@Nonnull final State st, @Nonnull final Table t) {
-		final DropDownList scriptsList = DropDownList.getScriptsList(st, "script");
+	
+	protected final void editFormScript(@Nonnull final State st,@Nonnull final Table t) {
+		final DropDownList scriptsList=DropDownList.getScriptsList(st,"script");
 		scriptsList.setValue(json.optString("script",""));
 		t.add("Script").add(scriptsList);
 		t.openRow();
 	}
-
-	protected final void editFormDistance(@Nonnull final State st, @Nonnull final Table t) {
-		final String maxdistance = json.optString("maxdistance", "10");
-		t.add("Max Click Distance (0=any)").add(new TextInput("maxdistance", maxdistance));
+	
+	protected final void editFormDistance(@Nonnull final State st,@Nonnull final Table t) {
+		final String maxdistance=json.optString("maxdistance","10");
+		t.add("Max Click Distance (0=any)").add(new TextInput("maxdistance",maxdistance));
 		t.openRow();
 	}
-
+	
 	protected final boolean updateScript(final State st) {
-		final String script = st.postMap().get("script");
-		if (!script.isBlank() && !script.equals(json.optString("script", ""))) {
-			json.put("script", st.postMap().get("script"));
+		final String script=st.postMap().get("script");
+		if (!script.isBlank()&&!script.equals(json.optString("script",""))) {
+			json.put("script",st.postMap().get("script"));
 			return true;
 		}
 		return false;
 	}
-
+	
 	protected final boolean updateDistance(final State st) {
-		final String maxdistance = st.postMap().get("maxdistance");
-		if (!maxdistance.isBlank() && !maxdistance.equals(json.optString("maxdistance", ""))) {
-			json.put("maxdistance", st.postMap().get("maxdistance"));
+		final String maxdistance=st.postMap().get("maxdistance");
+		if (!maxdistance.isBlank()&&!maxdistance.equals(json.optString("maxdistance",""))) {
+			json.put("maxdistance",st.postMap().get("maxdistance"));
 			return true;
 		}
 		return false;
+	}
+	
+	enum MODE {
+		NONE,CLICKABLE,PHANTOM
 	}
 }

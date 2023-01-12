@@ -8,25 +8,23 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BCNot extends ByteCode {
-    public BCNot(final ParseNode node) {
-        super(node);
-    }
-
-    // ---------- INSTANCE ----------
-    // Pop two, op, push result
-    @Nonnull
-    public String explain() {
-        return "LogicalNot (Pop one, if zero push 1, else push 0)";
-    }
-
-    public void toByteCode(@Nonnull final List<Byte> bytes) {
-        bytes.add(InstructionSet.LogicalNot.get());
-    }
-
+	public BCNot(final ParseNode node) {
+		super(node);
+	}
+	
+	// ---------- INSTANCE ----------
+	// Pop two, op, push result
+	@Nonnull
+	public String explain() {
+		return "LogicalNot (Pop one, if zero push 1, else push 0)";
+	}
+	
+	public void toByteCode(@Nonnull final List<Byte> bytes) {
+		bytes.add(InstructionSet.LogicalNot.get());
+	}
+	
 	@Override
-	public void execute(final State st,
-	                    @Nonnull final GSVM vm,
-	                    final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
 		final BCInteger arg1=vm.popInteger();
 		if (arg1.getContent()==0) {
 			vm.push(new BCInteger(null,1));

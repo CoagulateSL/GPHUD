@@ -30,27 +30,18 @@ import static java.util.logging.Level.*;
  */
 @SuppressWarnings("CallToThreadDumpStack")
 public class Transmission extends Thread {
-	public static final boolean debugspawn=false;
-	@Nullable
-	final String url;
-	@Nullable
-	final StackTraceElement[] caller;
-	@Nullable
-	protected Char character;
-	@Nonnull
-	JSONObject json=new JSONObject();
-	@Nonnull
-	JSONObject jsonresponse=new JSONObject();
-	@Nullable
-	Obj object;
+	public static final boolean             debugspawn=false;
+	@Nullable final     String              url;
+	@Nullable final     StackTraceElement[] caller;
+	@Nullable protected Char                character;
+	@Nonnull  JSONObject json        =new JSONObject();
+	@Nonnull  JSONObject jsonresponse=new JSONObject();
+	@Nullable Obj        object;
 	int delay;
-	@Nullable
-	Region region;
+	@Nullable Region region;
 	boolean succeeded;
 	
-	public Transmission(@Nullable final Char character,
-						@Nonnull final JSONObject json,
-						@Nullable final String url) {
+	public Transmission(@Nullable final Char character,@Nonnull final JSONObject json,@Nullable final String url) {
 		if (debugspawn) {
 			System.out.println("Transmission to character "+character+" on url "+url+" with json "+json);
 			Thread.dumpStack();
@@ -61,8 +52,7 @@ public class Transmission extends Thread {
 		this.json=json;
 	}
 	
-	public Transmission(@Nonnull final Obj obj,
-						@Nonnull final JSONObject json) {
+	public Transmission(@Nonnull final Obj obj,@Nonnull final JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to object "+obj+" with json "+json);
 			Thread.dumpStack();
@@ -73,8 +63,7 @@ public class Transmission extends Thread {
 		this.json=json;
 	}
 	
-	public Transmission(@Nonnull final Char character,
-						@Nonnull final JSONObject json) {
+	public Transmission(@Nonnull final Char character,@Nonnull final JSONObject json) {
 		if (debugspawn) {
 			System.out.println("Transmission to character "+character+" with json "+json);
 			Thread.dumpStack();
@@ -85,9 +74,7 @@ public class Transmission extends Thread {
 		this.json=json;
 	}
 	
-	public Transmission(@Nonnull final Char character,
-						@Nonnull final JSONObject json,
-						final int i) {
+	public Transmission(@Nonnull final Char character,@Nonnull final JSONObject json,final int i) {
 		if (debugspawn) {
 			System.out.println("Transmission to character "+character+" with json "+json);
 			Thread.dumpStack();
@@ -99,8 +86,7 @@ public class Transmission extends Thread {
 		this.json=json;
 	}
 	
-	public Transmission(@Nonnull final Region region,
-						@Nonnull final JSONObject message) {
+	public Transmission(@Nonnull final Region region,@Nonnull final JSONObject message) {
 		if (debugspawn) {
 			System.out.println("Transmission to region "+region+" with json "+json);
 			Thread.dumpStack();
@@ -111,9 +97,7 @@ public class Transmission extends Thread {
 		json=message;
 	}
 	
-	public Transmission(@Nonnull final Region region,
-						@Nonnull final JSONObject message,
-						final int i) {
+	public Transmission(@Nonnull final Region region,@Nonnull final JSONObject message,final int i) {
 		if (debugspawn) {
 			System.out.println("Transmission to region "+region+" with json "+json);
 			Thread.dumpStack();
@@ -125,9 +109,7 @@ public class Transmission extends Thread {
 		json=message;
 	}
 	
-	public Transmission(final Region r,
-						@Nonnull final JSONObject message,
-						@Nullable final String oldurl) {
+	public Transmission(final Region r,@Nonnull final JSONObject message,@Nullable final String oldurl) {
 		if (debugspawn) {
 			System.out.println("Transmission to region "+region+" on url "+oldurl+" with json "+json);
 			Thread.dumpStack();
@@ -137,12 +119,10 @@ public class Transmission extends Thread {
 		json=message;
 	}
 	
-	public Transmission(final Char aChar,
-						@Nonnull final JSONObject ping,
-						@Nullable final String url,
-						final int i) {
+	public Transmission(final Char aChar,@Nonnull final JSONObject ping,@Nullable final String url,final int i) {
 		if (debugspawn) {
-			System.out.println("DELAYED Transmission to character "+aChar+" on url "+url+" with delay "+i+" and json "+json);
+			System.out.println(
+					"DELAYED Transmission to character "+aChar+" on url "+url+" with delay "+i+" and json "+json);
 			Thread.dumpStack();
 		}
 		caller=Thread.currentThread().getStackTrace();
@@ -150,13 +130,15 @@ public class Transmission extends Thread {
 		this.url=url;
 		delay=i;
 	}
+	
 	Map<String,String> headers=null;
 	
-	/** Very direct transmission.  Used mostly by testing.  Call start() or run().
+	/**
+	 * Very direct transmission.  Used mostly by testing.  Call start() or run().
 	 *
 	 * @param headers Map of header name, value
 	 * @param payload JSON Object to transmit
-	 * @param url URL to transmit to
+	 * @param url     URL to transmit to
 	 */
 	public Transmission(final Map<String,String> headers,final JSONObject payload,final String url) {
 		this.headers=headers;
@@ -164,11 +146,16 @@ public class Transmission extends Thread {
 		json=payload;
 		this.url=url;
 	}
+	
 	// ---------- INSTANCE ----------
-	public boolean failed() {return !succeeded;}
+	public boolean failed() {
+		return !succeeded;
+	}
 	
 	@Nullable
-	public JSONObject getResponse() {return jsonresponse;}
+	public JSONObject getResponse() {
+		return jsonresponse;
+	}
 	
 	// can call .start() to background run this, or .run() to async run inline/inthread
 	@Override
@@ -176,22 +163,28 @@ public class Transmission extends Thread {
 		String callerName="UNKNOWN";
 		if (caller!=null) {
 			final StackTraceElement callerElement=caller[2];
-			callerName=callerElement.getClassName().replaceFirst("net.coagulate.","")+"."+callerElement.getMethodName()+":"+callerElement.getLineNumber();
+			callerName=callerElement.getClassName().replaceFirst("net.coagulate.","")+"."+callerElement.getMethodName()+
+			           ":"+callerElement.getLineNumber();
 		}
 		Thread.currentThread().setName("Called from "+callerName);
-		try {runUnwrapped();} catch (@Nonnull final Exception e) {
+		try {
+			runUnwrapped();
+		} catch (@Nonnull final Exception e) {
 			Throwable step=e;
 			int sanity=100;
 			while (step.getCause()!=null&&sanity>=0) {
 				step=step.getCause();
 				sanity--;
 				if (sanity==0) {
-					GPHUD.getLogger("Transmission").log(SEVERE,"Excess exception stepping in Transmission exception reporter");
+					GPHUD.getLogger("Transmission")
+					     .log(SEVERE,"Excess exception stepping in Transmission exception reporter");
 				}
 			}
 			if (step.getCause()==null) {
 				final SystemException se=new SystemImplementationException("Transmission caller stack trace");
-				if (caller!=null) {se.setStackTrace(caller);}
+				if (caller!=null) {
+					se.setStackTrace(caller);
+				}
 				step.initCause(se);
 			}
 			GPHUD.getLogger("Transmission").log(WARNING,"Transmission threw exception from inner wrapper",e);
@@ -201,12 +194,19 @@ public class Transmission extends Thread {
 	
 	public void runUnwrapped() {
 		if (delay>0) {
-			try {Thread.sleep(delay*1000L);} catch (@Nonnull final InterruptedException ignored) {}
+			try {
+				Thread.sleep(delay*1000L);
+			} catch (@Nonnull final InterruptedException ignored) {
+			}
 		}
 		int retries=5;
-		if (character!=null) {character.appendConveyance(new net.coagulate.GPHUD.State(character),json);}
+		if (character!=null) {
+			character.appendConveyance(new net.coagulate.GPHUD.State(character),json);
+		}
 		String response=null;
-		if (url==null||url.isEmpty()) {return;}
+		if (url==null||url.isEmpty()) {
+			return;
+		}
 		if (json.toString().length()>2040) {
 			throw new SystemImplementationException("Transmission is over 2048 chars - "+json);
 		}
@@ -227,7 +227,10 @@ public class Transmission extends Thread {
 			} catch (@Nonnull final IOException e) {
 				retries--;
 				GPHUD.getLogger().log(INFO,"IOException "+e.getMessage()+" retries="+retries+" left");
-				try {Thread.sleep(5*1000);} catch (@Nonnull final InterruptedException ignored) {}
+				try {
+					Thread.sleep(5*1000);
+				} catch (@Nonnull final InterruptedException ignored) {
+				}
 			}
 		}
 		if (response==null) {
@@ -235,19 +238,31 @@ public class Transmission extends Thread {
 			//URLs.purgeURL(url);
 			return;
 		}
-		if (region!=null) {Region.refreshURL(url);}
-		if (character!=null) {Char.refreshURL(url);}
+		if (region!=null) {
+			Region.refreshURL(url);
+		}
+		if (character!=null) {
+			Char.refreshURL(url);
+		}
 		//TODO if (object!=null) { Obj.refreshURL(url); }
 		if (!response.isEmpty()) {
 			try {
 				final JSONObject j=new JSONObject(response);
-				if (Interface.DEBUG_JSON) {System.out.println("TRANSMISSION RESPONSE:\n"+JsonTools.jsonToString(j));}
+				if (Interface.DEBUG_JSON) {
+					System.out.println("TRANSMISSION RESPONSE:\n"+JsonTools.jsonToString(j));
+				}
 				jsonresponse=j;
 				final String incommand=j.optString("incommand","");
 				if ("pong".equals(incommand)) {
-					if (j.has("callback")) {Char.refreshURL(j.getString("callback"));}
-					if (j.has("callback")) {Region.refreshURL(j.getString("callback"));}
-					if (j.has("cookie")) {Cookie.refreshCookie(j.getString("cookie"));}
+					if (j.has("callback")) {
+						Char.refreshURL(j.getString("callback"));
+					}
+					if (j.has("callback")) {
+						Region.refreshURL(j.getString("callback"));
+					}
+					if (j.has("cookie")) {
+						Cookie.refreshCookie(j.getString("cookie"));
+					}
 				}
 			} catch (@Nonnull final Exception e) {
 				GPHUD.getLogger().log(WARNING,"Exception in response parser",e);
@@ -255,7 +270,13 @@ public class Transmission extends Thread {
 				body.append("Character:").append(character==null?"null":character.getNameSafe()).append("\n<br>\n");
 				if (caller!=null) {
 					for (final StackTraceElement ele: caller) {
-						body.append("Caller: ").append(ele.getClassName()).append("/").append(ele.getMethodName()).append(":").append(ele.getLineNumber()).append("\n<br>\n");
+						body.append("Caller: ")
+						    .append(ele.getClassName())
+						    .append("/")
+						    .append(ele.getMethodName())
+						    .append(":")
+						    .append(ele.getLineNumber())
+						    .append("\n<br>\n");
 					}
 				}
 				body.append(response);
@@ -269,10 +290,30 @@ public class Transmission extends Thread {
 		succeeded=true;
 	}
 	
+	private String dumpCaller() {
+		final StringBuilder ret=new StringBuilder();
+		for (int i=2;i<5;i++) {
+			if (caller!=null&&caller.length>i) {
+				final StackTraceElement ele=caller[i];
+				if (!ret.isEmpty()) {
+					ret.append(" <- ");
+				}
+				ret.append(ele.getClassName().replaceFirst("net.coagulate.GPHUD.",""))
+				   .append(".")
+				   .append(ele.getMethodName())
+				   .append(":")
+				   .append(ele.getLineNumber());
+			}
+		}
+		return ret.toString();
+	}
+	
 	// ----- Internal Instance -----
 	@Nonnull
 	public String sendAttempt() throws IOException {
-		if (url==null) {throw new IOException("Target URL is nulL");}
+		if (url==null) {
+			throw new IOException("Target URL is nulL");
+		}
 		final URLConnection transmission=new URL(url).openConnection();
 		transmission.setDoOutput(true);
 		transmission.setAllowUserInteraction(false);
@@ -280,7 +321,7 @@ public class Transmission extends Thread {
 		transmission.setConnectTimeout(5000);
 		transmission.setReadTimeout(35000);
 		if (headers!=null) {
-			for (final Map.Entry<String,String> thing:headers.entrySet()) {
+			for (final Map.Entry<String,String> thing: headers.entrySet()) {
 				transmission.setRequestProperty(thing.getKey(),thing.getValue());
 			}
 		}
@@ -292,22 +333,9 @@ public class Transmission extends Thread {
 		out.close();
 		final String response=ByteTools.convertStreamToString(transmission.getInputStream());
 		if (Config.logRequests()) {
-			System.out.println("ReqLog:'GPHUD/OUTBOUND','"+Thread.currentThread().getName()+"',"+response.length()+","+json.length()+",-1");
+			System.out.println("ReqLog:'GPHUD/OUTBOUND','"+Thread.currentThread().getName()+"',"+response.length()+","+
+			                   json.length()+",-1");
 		}
 		return response;
-	}
-	
-	private String dumpCaller() {
-		final StringBuilder ret=new StringBuilder();
-		for (int i=2;i<5;i++) {
-			if (caller!=null&&caller.length>i) {
-				final StackTraceElement ele=caller[i];
-				if (!ret.isEmpty()) {
-					ret.append(" <- ");
-				}
-				ret.append(ele.getClassName().replaceFirst("net.coagulate.GPHUD.","")).append(".").append(ele.getMethodName()).append(":").append(ele.getLineNumber());
-			}
-		}
-		return ret.toString();
 	}
 }

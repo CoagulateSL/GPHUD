@@ -17,23 +17,24 @@ import java.util.List;
  * @author Iain Price <gphud@predestined.net>
  */
 public class AdminNote extends TableRow {
-
-	protected AdminNote(final int id) { super(id); }
-
-	// ---------- STATICS ----------
-
+	
 	/**
 	 * Factory style constructor
 	 *
 	 * @param id the ID number we want to get
-	 *
 	 * @return An AdminNotes representation
 	 */
 	@Nonnull
 	public static AdminNote get(final int id) {
-		return (AdminNote) factoryPut("AdminNotes",id,AdminNote::new);
+		return (AdminNote)factoryPut("AdminNotes",id,AdminNote::new);
 	}
-
+	
+	// ---------- STATICS ----------
+	
+	protected AdminNote(final int id) {
+		super(id);
+	}
+	
 	/**
 	 * Add a new message to the queue.
 	 *
@@ -57,10 +58,9 @@ public class AdminNote extends TableRow {
 		       target.getId(),
 		       (targetchar==null?null:targetchar.getId()),
 		       note,
-		       adminonly
-		      );
+		       adminonly);
 	}
-
+	
 	/**
 	 * Get a list of admin notes for a specific user or character.
 	 * This returns admin notes against the user (i.e. no character) or against the specific character.
@@ -70,7 +70,6 @@ public class AdminNote extends TableRow {
 	 * @param character Character
 	 * @param showall   False will omit admin-only notes, true returns all notes
 	 * @param toponly   If true, returns only top 3 elements
-	 *
 	 * @return List (possibly empty) of AdminNote elements
 	 */
 	@Nonnull
@@ -80,58 +79,18 @@ public class AdminNote extends TableRow {
 	                             final boolean showall,
 	                             final boolean toponly) {
 		final List<Note> results=new ArrayList<>();
-		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" limit 0,3":""),
-		                                   instance.getId(),
-		                                   user.getId(),
-		                                   character.getId(),
-		                                   user.getId()
-		                                  )) {
+		for (final ResultsRow row: db().dq(
+				"select * from adminnotes where instanceid=? and ((targetuser=? and targetchar=?) or (targetuser=? and targetchar is null))"+
+				(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" limit 0,3":""),
+				instance.getId(),
+				user.getId(),
+				character.getId(),
+				user.getId())) {
 			results.add(resultify(row));
 		}
 		return results;
 	}
-
-	/**
-	 * Get a list of admin notes for a specific user or any of their characters.
-	 *
-	 * @param instance Instance
-	 * @param user     User
-	 * @param showall  False will omit admin-only notes, true returns all notes
-	 * @param toponly  If true, returns only top 3 elements
-	 *
-	 * @return List (possibly empty) of AdminNote elements
-	 */
-	@Nonnull
-	public static List<Note> get(@Nonnull final Instance instance,
-	                             @Nonnull final User user,
-	                             final boolean showall,
-	                             final boolean toponly) {
-		final List<Note> results=new ArrayList<>();
-		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+" order by tds desc"+(toponly?" "+"limit 0,3":""),
-		                                   instance.getId(),
-		                                   user.getId()
-		                                  )) {
-			results.add(resultify(row));
-		}
-		return results;
-	}
-
-	/**
-	 * Return all admin notes for an instance
-	 *
-	 * @param instance Instance ID to get notes for
-	 *
-	 * @return List of AdminNote elements
-	 */
-	@Nonnull
-	public static List<Note> get(@Nonnull final Instance instance) {
-		final List<Note> results=new ArrayList<>();
-		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? order by tds desc",instance.getId())) { results.add(resultify(row)); }
-		return results;
-	}
-
-	// ----- Internal Statics -----
-
+	
 	/**
 	 * Convert a ResultsRow to an AdminNote element
 	 */
@@ -143,59 +102,108 @@ public class AdminNote extends TableRow {
 		                User.get(row.getInt("targetuser")),
 		                (row.getIntNullable("targetchar")==null?null:Char.get(row.getInt("targetchar"))),
 		                row.getStringNullable("note"),
-		                row.getBool("adminonly")
-		);
+		                row.getBool("adminonly"));
 	}
-
+	
+	/**
+	 * Get a list of admin notes for a specific user or any of their characters.
+	 *
+	 * @param instance Instance
+	 * @param user     User
+	 * @param showall  False will omit admin-only notes, true returns all notes
+	 * @param toponly  If true, returns only top 3 elements
+	 * @return List (possibly empty) of AdminNote elements
+	 */
+	@Nonnull
+	public static List<Note> get(@Nonnull final Instance instance,
+	                             @Nonnull final User user,
+	                             final boolean showall,
+	                             final boolean toponly) {
+		final List<Note> results=new ArrayList<>();
+		for (final ResultsRow row: db().dq(
+				"select * from adminnotes where instanceid=? and targetuser=?"+(showall?"":" and adminonly=0")+
+				" order by tds desc"+(toponly?" "+"limit 0,3":""),instance.getId(),user.getId())) {
+			results.add(resultify(row));
+		}
+		return results;
+	}
+	
+	// ----- Internal Statics -----
+	
+	/**
+	 * Return all admin notes for an instance
+	 *
+	 * @param instance Instance ID to get notes for
+	 * @return List of AdminNote elements
+	 */
+	@Nonnull
+	public static List<Note> get(@Nonnull final Instance instance) {
+		final List<Note> results=new ArrayList<>();
+		for (final ResultsRow row: db().dq("select * from adminnotes where instanceid=? order by tds desc",
+		                                   instance.getId())) {
+			results.add(resultify(row));
+		}
+		return results;
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getTableName() {
 		return "adminnotes";
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getIdColumn() {
 		return "id";
 	}
-
+	
 	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
+		if (validated) {
+			return;
+		}
 		validate();
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getNameField() {
 		throw new SystemImplementationException("Admin Notes don't have names");
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getLinkTarget() {
 		return "/notes/view/"+getId();
 	}
-
+	
 	@javax.annotation.Nullable
-	public String getKVTable() { return null; }
-
+	public String getKVTable() {
+		return null;
+	}
+	
 	@javax.annotation.Nullable
-	public String getKVIdField() { return null; }
-
-	protected int getNameCacheTime() { return 0; } // name doesn't exist yet alone get cached
-
-	public void flushKVCache(final State st) {}
-
+	public String getKVIdField() {
+		return null;
+	}
+	
+	protected int getNameCacheTime() {
+		return 0;
+	} // name doesn't exist yet alone get cached
+	
+	public void flushKVCache(final State st) {
+	}
+	
 	public static class Note {
-		public final int tds;
+		public final int      tds;
 		public final Instance instance;
-		public final User admin;
-		public final User targetuser;
-		public final Char targetchar;
-		public final String note;
-		public final boolean adminonly;
-
+		public final User     admin;
+		public final User     targetuser;
+		public final Char     targetchar;
+		public final String   note;
+		public final boolean  adminonly;
+		
 		public Note(final int tds,
 		            final Instance instance,
 		            final User admin,

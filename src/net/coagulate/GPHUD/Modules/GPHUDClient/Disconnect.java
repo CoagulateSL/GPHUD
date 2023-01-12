@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class Disconnect {
-
+	
 	// ---------- STATICS ----------
 	@Commands(description="Disconnects a URL from GPHUD",
 	          context=Context.ANY,
@@ -24,11 +24,12 @@ public class Disconnect {
 	          permitConsole=false)
 	@Nonnull
 	public static Response disconnect(@Nonnull final State state,
-	                                  @Arguments(name="url",description="URL to disconnect",
+	                                  @Arguments(name="url",
+	                                             description="URL to disconnect",
 	                                             type=ArgumentType.TEXT_ONELINE,
 	                                             max=255,
 	                                             mandatory=false) @Nullable final String url) {
-		if (url==null || url.isEmpty()) {
+		if (url==null||url.isEmpty()) {
 			return new NoResponse();
 		}
 		Char.disconnectURL(url);

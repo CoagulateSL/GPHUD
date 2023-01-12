@@ -15,15 +15,16 @@ import javax.annotation.Nonnull;
 public class Logout {
 	// ---------- STATICS ----------
 	@URLs(url="/logout")
-	public static void logout(@Nonnull final State st,
-	                          final SafeMap values) {
+	public static void logout(@Nonnull final State st,final SafeMap values) {
 		st.form().add("Good Bye!");
-		if (st.cookieString !=null) { Cookie.delete(st.cookieString); }
+		if (st.cookieString!=null) {
+			Cookie.delete(st.cookieString);
+		}
 		st.cookie(null);
-		st.cookieString =null;
+		st.cookieString=null;
 		st.setAvatar(null);
 		st.setCharacter(null);
 		st.setInstance(null);
 	}
-
+	
 }

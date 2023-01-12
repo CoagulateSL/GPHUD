@@ -9,18 +9,18 @@ import java.lang.annotation.*;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class SideSubMenu {
-
+	
 	// ---------- INSTANCE ----------
 	public abstract String name();
-
+	
 	public abstract int priority();
-
+	
 	public abstract String requiresPermission();
-
+	
 	public abstract boolean isGenerated();
-
+	
 	public abstract String getURL();
-
+	
 	/**
 	 * Defines a sidemenu "sub" link.
 	 * Must be connected to a method that also contains an @URLs
@@ -31,10 +31,10 @@ public abstract class SideSubMenu {
 	public @interface SideSubMenus {
 		// ---------- INSTANCE ----------
 		@Nonnull String name();
-
+		
 		int priority();
-
+		
 		@Nonnull String requiresPermission() default "";
 	}
-
+	
 }

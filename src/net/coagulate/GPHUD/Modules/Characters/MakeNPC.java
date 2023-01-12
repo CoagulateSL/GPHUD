@@ -22,24 +22,35 @@ public class MakeNPC {
 	                  permitScripting=false,
 	                  permitExternal=false)
 	public static Response makeNPC(@Nonnull final State st,
-	                               @Nullable @Argument.Arguments(name="confirmname",description="Name of the currently active character.  Used to confirm you know what you're doing.",
-	                                                             type=Argument.ArgumentType.TEXT_ONELINE,
-	                                                             max=64,
-	                                                             mandatory=false) String confirmname) {
+	                               @Nullable
+	                               @Argument.Arguments(name="confirmname",
+	                                                   description="Name of the currently active character.  Used to confirm you know what you're doing.",
+	                                                   type=Argument.ArgumentType.TEXT_ONELINE,
+	                                                   max=64,
+	                                                   mandatory=false) String confirmname) {
 		// check the characters name
-		if (confirmname==null) { confirmname=""; }
+		if (confirmname==null) {
+			confirmname="";
+		}
 		final String name=st.getCharacter().getName();
 		if (!name.equalsIgnoreCase(confirmname)) {
 			// welp
 			String commandline="/1Characters.MakeNPC ";
-			if (name.contains(" ")) { commandline+="\""; }
+			if (name.contains(" ")) {
+				commandline+="\"";
+			}
 			commandline+=name;
-			if (name.contains(" ")) { commandline+="\""; }
-			return new ErrorResponse("You must supply the current character's name as the parameter to this command, specifically run the following:\n"+commandline);
+			if (name.contains(" ")) {
+				commandline+="\"";
+			}
+			return new ErrorResponse(
+					"You must supply the current character's name as the parameter to this command, specifically run the following:\n"+
+					commandline);
 		}
 		st.getCharacter().setOwner(User.getSystem());
 		final JSONObject response=new JSONObject();
-		response.put("reboot","Your character has become an NPC and you have been disconnected from it.  Rebooting to restore GPHUD services with a different character.");
+		response.put("reboot",
+		             "Your character has become an NPC and you have been disconnected from it.  Rebooting to restore GPHUD services with a different character.");
 		st.getCharacter().setPlayedBy(null);
 		return new JSONResponse(response);
 	}

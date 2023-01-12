@@ -19,69 +19,71 @@ import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.GROUP;
  * @author Iain Price <gphud@predestined.net>
  */
 public class FactionAttribute extends CharacterAttribute {
-	public FactionAttribute(final int id) { super(id); }
-
+	public FactionAttribute(final int id) {
+		super(id);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String getName() {
 		return "Faction";
 	}
-
+	
 	@Nonnull
 	@Override
 	public ATTRIBUTETYPE getType() {
 		return GROUP;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getSubType() {
 		return "Faction";
 	}
-
+	
 	@Override
 	public boolean usesAbilityPoints() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean getRequired() {
 		return false;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getDefaultValue() {
 		return "";
 	}
-
+	
 	@Override
 	public boolean getSelfModify() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean isKV() {
 		return false;
 	}
-
+	
 	@Nonnull
 	@Override
 	public KV.KVTYPE getKVType() {
 		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getKVDefaultValue() {
 		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
-
+	
 	@Nonnull
 	@Override
 	public KV.KVHIERARCHY getKVHierarchy() {
 		throw new SystemImplementationException("Invalid KV call to faction group attribute");
 	}
-
+	
 }

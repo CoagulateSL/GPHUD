@@ -8,17 +8,20 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class PasswordInput extends TextInput {
-
+	
 	public PasswordInput(final String name) {
 		super(name);
 	}
-
-	public PasswordInput(final String name,
-	                     final String value) { super(name,value); }
-
+	
+	public PasswordInput(final String name,final String value) {
+		super(name,value);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
-	public String getType() { return "password"; }
-
+	public String getType() {
+		return "password";
+	}
+	
 }

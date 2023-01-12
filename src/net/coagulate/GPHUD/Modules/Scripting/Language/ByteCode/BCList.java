@@ -11,48 +11,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BCList extends ByteCodeDataType {
-
+	
 	final List<ByteCodeDataType> content=new ArrayList<>(); // used by the VM
 	int elements; // used by the compiler
-
+	
 	public BCList(final ParseNode node) {
 		super(node);
 	}
-
-	public BCList(final ParseNode n,
-	              final int elements) {
+	
+	public BCList(final ParseNode n,final int elements) {
 		super(n);
 		this.elements=elements;
 	}
-
-	public BCList(final ParseNode n,
-	              final ByteCodeDataType e) {
+	
+	public BCList(final ParseNode n,final ByteCodeDataType e) {
 		super(n);
 		content.add(e);
 		elements++;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explain() {
 		return "List (#"+elements+")";
 	}
-
+	
 	@Override
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.List.get());
 		addShort(bytes,elements);
 	}
-
+	
 	@Nonnull
 	@Override
-	public String htmlDecode() { return "List</td><td>"+elements; }
-
+	public String htmlDecode() {
+		return "List</td><td>"+elements;
+	}
+	
 	@Override
-	public void execute(final State st,
-	                    @Nonnull final GSVM vm,
-	                    final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
 		// pull the list from the stack!
 		for (int i=0;i<elements;i++) {
 			final ByteCodeDataType data=vm.pop();
@@ -64,25 +62,50 @@ public class BCList extends ByteCodeDataType {
 		elements=content.size();
 		vm.push(this);
 	}
-
+	
 	@Nonnull
 	public List<ByteCodeDataType> getContent() {
 		return content;
 	}
-
-	@Nonnull
-	/** Appends a BCDT to the existing list */
-	public BCList append(final ByteCodeDataType value) {
-		content.add(value);
-		elements++;
-		return this;
+	
+	@Nullable
+	@Override
+	/** Performs mathematical addition upon a list, that is, it takes two lists and adds them together to produce a third list for assignment.
+	 * NOT TO BE CONFUSED WITH APPEND.  Would I ever.
+	 */ public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+		final BCList newlist=new BCList(node());
+		newlist.addAll(this);
+		if (var.getClass().equals(BCList.class)) {
+			final BCList varlist=(BCList)var;
+			newlist.addAll(varlist);
+		} else {
+			newlist.append(var);
+		}
+		return newlist;
 	}
-
+	
 	@Nonnull
 	public BCInteger toBCInteger() {
 		return new BCInteger(null,elements);
 	}
-
+	
+	@Nonnull
+	@Override
+	public String toString() {
+		final StringBuilder ret=new StringBuilder(elements+"[");
+		boolean needscomma=false;
+		for (final ByteCodeDataType byteCodeDataType: content) {
+			if (needscomma) {
+				ret.append(",");
+			} else {
+				needscomma=true;
+			} // not first element only
+			ret.append(byteCodeDataType);
+		}
+		ret.append("]");
+		return ret.toString();
+	}
+	
 	@Nonnull
 	@Override
 	public ByteCodeDataType clone() {
@@ -93,39 +116,14 @@ public class BCList extends ByteCodeDataType {
 		}
 		return clone;
 	}
-
-	@Nullable
-	@Override
-	/** Performs mathematical addition upon a list, that is, it takes two lists and adds them together to produce a third list for assignment.
-	 * NOT TO BE CONFUSED WITH APPEND.  Would I ever.
-	 */
-	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
-		final BCList newlist=new BCList(node());
-		newlist.addAll(this);
-		if (var.getClass().equals(BCList.class)) {
-			final BCList varlist=(BCList) var;
-			newlist.addAll(varlist);
-		}
-		else {
-			newlist.append(var);
-		}
-		return newlist;
-	}
-
+	
 	@Nonnull
-	@Override
-	public String toString() {
-		final StringBuilder ret=new StringBuilder(elements+"[");
-		boolean needscomma=false;
-		for (final ByteCodeDataType byteCodeDataType: content) {
-			if (needscomma) { ret.append(","); }
-			else { needscomma=true; } // not first element only
-			ret.append(byteCodeDataType);
-		}
-		ret.append("]");
-		return ret.toString();
+	/** Appends a BCDT to the existing list */ public BCList append(final ByteCodeDataType value) {
+		content.add(value);
+		elements++;
+		return this;
 	}
-
+	
 	public void addAll(final BCList var) {
 		content.addAll(var.content);
 		elements=content.size();

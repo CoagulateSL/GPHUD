@@ -14,31 +14,25 @@ import java.util.Set;
  */
 public class TextArea extends Input {
 	final String name;
-	@Nullable
-	Integer columns;
-	@Nullable
-	Integer rows;
+	@Nullable Integer columns;
+	@Nullable Integer rows;
 	
-	public TextArea(final String name) {this.name=name;}
+	public TextArea(final String name) {
+		this.name=name;
+	}
 	
-	public TextArea(final String name,
-					final String value) {
+	public TextArea(final String name,final String value) {
 		this.name=name;
 		this.value=value;
 	}
 	
-	public TextArea(final String name,
-					final int rows,
-					final int columns) {
+	public TextArea(final String name,final int rows,final int columns) {
 		this.name=name;
 		this.rows=rows;
 		this.columns=columns;
 	}
 	
-	public TextArea(final String name,
-					final String value,
-					final int rows,
-					final int columns) {
+	public TextArea(final String name,final String value,final int rows,final int columns) {
 		this.name=name;
 		this.value=value;
 		this.rows=rows;
@@ -53,11 +47,14 @@ public class TextArea extends Input {
 	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-						 final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		String s="<textarea name=\""+name+"\" ";
-		if (rows!=null) {s+="rows="+rows+" ";}
-		if (columns!=null) {s+="cols="+columns+" ";}
+		if (rows!=null) {
+			s+="rows="+rows+" ";
+		}
+		if (columns!=null) {
+			s+="cols="+columns+" ";
+		}
 		s+="autofocus ";
 		s+=">";
 		s+=value;

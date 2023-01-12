@@ -38,35 +38,44 @@ public class Validators {
 		}
 		return true;
 	}
-
+	
 	public static boolean color(@Nullable final String value) {
-		if (value==null) { return false; }
+		if (value==null) {
+			return false;
+		}
 		// e.g. <1,0.5,1>
 		final String[] parts=value.split(",");
 		if (parts.length!=3) {
 			GPHUD.getLogger("Validation").fine(value+" not 3 parts (commas)");
 			return false;
 		}
-		for (int i=0;i<3;i++) { parts[i]=parts[i].trim(); }
+		for (int i=0;i<3;i++) {
+			parts[i]=parts[i].trim();
+		}
 		// first and last may contain <> surround
-		if (parts[0].startsWith("<")) { parts[0]=parts[0].substring(1); }
-		if (parts[2].endsWith(">")) { parts[2]=parts[2].substring(0,parts[2].length()-1); }
-		for (int i=0;i<3;i++) { parts[i]=parts[i].trim(); }
+		if (parts[0].startsWith("<")) {
+			parts[0]=parts[0].substring(1);
+		}
+		if (parts[2].endsWith(">")) {
+			parts[2]=parts[2].substring(0,parts[2].length()-1);
+		}
+		for (int i=0;i<3;i++) {
+			parts[i]=parts[i].trim();
+		}
 		// each part should parse to a float :P
 		for (int i=0;i<3;i++) {
 			try {
 				final float f=Float.parseFloat(parts[i]);
-				if (f<0 || f>1) {
+				if (f<0||f>1) {
 					GPHUD.getLogger("Validation").fine(value+" failed float range 0<=x<=1 for "+parts[i]);
 					return false;
 				}
-			}
-			catch (@Nonnull final NumberFormatException e) {
+			} catch (@Nonnull final NumberFormatException e) {
 				GPHUD.getLogger("Validation").fine(value+" failed float parse for "+parts[i]);
 				return false;
 			}
 		}
 		return true;
 	}
-
+	
 }

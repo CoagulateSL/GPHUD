@@ -22,10 +22,8 @@ import java.util.Map;
 public abstract class ManagePermissions {
 	// ---------- STATICS ----------
 	@URLs(url="/introspection/permissions")
-	@SideSubMenus(name="Permissions",
-	              priority=20)
-	public static void createForm(@Nonnull final State st,
-	                              final SafeMap values) {
+	@SideSubMenus(name="Permissions", priority=20)
+	public static void createForm(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Permission registrations"));
 		final Table t=new Table();
@@ -36,28 +34,28 @@ public abstract class ManagePermissions {
 				t.add(new HeaderRow().add(new Cell(new TextSubHeader(m.getName()),999)));
 				for (final Map.Entry<String,Permission> entry: permissions.entrySet()) {
 					try {
-						final Row r = new Row();
+						final Row r=new Row();
 						t.add(r);
 						r.setbgcolor(entry.getValue().getColor());
 						t.add(entry.getKey());
 						t.add(entry.getValue().description());
-						boolean bump = true;
-                        if (entry.getValue().isGenerated()) {
-                            t.add("<i>Generated</i>");
-                            bump = false;
-                        }
-                        if (!entry.getValue().grantable()) {
-                            if (bump) {
-                                t.add("");
-                            }
-                            t.add(new Color("red", "Ungrantable"));
-                        }
-                    } catch (final NoDataException ignored) {
-                    }  // data went away mid run
+						boolean bump=true;
+						if (entry.getValue().isGenerated()) {
+							t.add("<i>Generated</i>");
+							bump=false;
+						}
+						if (!entry.getValue().grantable()) {
+							if (bump) {
+								t.add("");
+							}
+							t.add(new Color("red","Ungrantable"));
+						}
+					} catch (final NoDataException ignored) {
+					}  // data went away mid run
 				}
-				t.add(new Row(new Cell(new Separator(), 999)));
+				t.add(new Row(new Cell(new Separator(),999)));
 			}
 		}
 	}
-
+	
 }

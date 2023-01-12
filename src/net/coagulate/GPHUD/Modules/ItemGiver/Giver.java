@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price
  */
 public class Giver {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Command.Context.AVATAR,
@@ -32,7 +32,7 @@ public class Giver {
 		st.getRegion().sendServer(json);
 		return new OKResponse("OK - Sent you an Item Giver");
 	}
-
+	
 	@Nonnull
 	@Commands(context=Command.Context.AVATAR,
 	          description="Get an Item from a giver",
@@ -40,7 +40,8 @@ public class Giver {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response get(@Nonnull final State st,
-	                           @Argument.Arguments(name="item",description="Name of object to give to avatar",
+	                           @Argument.Arguments(name="item",
+	                                               description="Name of object to give to avatar",
 	                                               type=Argument.ArgumentType.TEXT_ONELINE,
 	                                               max=63) final String item) {
 		final JSONObject json=new JSONObject();

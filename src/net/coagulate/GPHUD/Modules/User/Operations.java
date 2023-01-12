@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Operations {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.AVATAR,
@@ -30,21 +30,33 @@ public abstract class Operations {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response setPassword(@Nonnull final State st,
-	                                   @Nonnull @Arguments(name="password",description="New password",
-	                                                       type=ArgumentType.PASSWORD) final String password) {
+	                                   @Nonnull
+	                                   @Arguments(name="password",
+	                                              description="New password",
+	                                              type=ArgumentType.PASSWORD) final String password) {
 		if (st.getSourceDeveloper().getId()!=1) {
 			throw new UserAccessDeniedException("RESTRICTED COMMAND");
 		}
 		if (st.getAvatarNullable()==null) {
-			return new ErrorResponse("Not connected to any user account?  Perhaps you need to register (via User.Register).  Session did not derive a USER context.");
+			return new ErrorResponse(
+					"Not connected to any user account?  Perhaps you need to register (via User.Register).  Session did not derive a USER context.");
 		}
-		try { st.getAvatar().setPassword(password,"Via GPHUD"); }
-		catch (@Nonnull final UserException e) {
+		try {
+			st.getAvatar().setPassword(password,"Via GPHUD");
+		} catch (@Nonnull final UserException e) {
 			return new ErrorResponse(e.getMessage());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Replace","Password","[CENSORED]","[CENSORED]","User set password.");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Replace",
+		            "Password",
+		            "[CENSORED]",
+		            "[CENSORED]",
+		            "User set password.");
 		return new OKResponse("Password set successfully.");
-
+		
 	}
-
+	
 }

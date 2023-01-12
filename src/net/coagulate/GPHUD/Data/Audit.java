@@ -20,7 +20,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public abstract class Audit {
 	// ---------- STATICS ----------
-
+	
 	public static void audit(@Nonnull final State st,
 	                         final OPERATOR op,
 	                         final User targetavatar,
@@ -32,7 +32,7 @@ public abstract class Audit {
 	                         final String note) {
 		audit(true,st,op,targetavatar,targetcharacter,changetype,changeditem,oldvalue,newvalue,note);
 	}
-
+	
 	public static void audit(final boolean log,
 	                         @Nonnull final State st,
 	                         final OPERATOR op,
@@ -45,10 +45,22 @@ public abstract class Audit {
 	                         final String note) {
 		final User sourceavatar=st.getAvatarNullable();
 		Char sourcecharacter=st.getCharacterNullable();
-		if (op==OPERATOR.AVATAR) { sourcecharacter=null; }
-		audit(log,st,sourceavatar,sourcecharacter,targetavatar,targetcharacter,changetype,changeditem,oldvalue,newvalue,note);
+		if (op==OPERATOR.AVATAR) {
+			sourcecharacter=null;
+		}
+		audit(log,
+		      st,
+		      sourceavatar,
+		      sourcecharacter,
+		      targetavatar,
+		      targetcharacter,
+		      changetype,
+		      changeditem,
+		      oldvalue,
+		      newvalue,
+		      note);
 	}
-
+	
 	public static void audit(final boolean log,
 	                         @Nonnull final State st,
 	                         @Nullable final User sourceavatar,
@@ -60,7 +72,7 @@ public abstract class Audit {
 	                         @Nullable final String oldvalue,
 	                         @Nullable final String newvalue,
 	                         final String note) {
-
+		
 		final Instance stinstance=st.getInstanceNullable();
 		if (log) {
 			//String instance = "NoInstance";
@@ -70,31 +82,48 @@ public abstract class Audit {
 				actor+="A:"+sourceavatar.getName();
 			}
 			if (sourcecharacter!=null) {
-				if (!actor.isEmpty()) { actor+=" "; }
+				if (!actor.isEmpty()) {
+					actor+=" ";
+				}
 				actor+="C:"+sourcecharacter.getName()+"#"+sourcecharacter.getId();
 			}
 			String facility="";
-			if (changetype!=null) { facility+=changetype; }
-			if (changeditem!=null) { facility+="/"+changeditem; }
+			if (changetype!=null) {
+				facility+=changetype;
+			}
+			if (changeditem!=null) {
+				facility+="/"+changeditem;
+			}
 			String target="";
 			if (targetavatar!=null) {
 				target+="A:"+targetavatar.getName();
 			}
 			if (targetcharacter!=null) {
-				if (!target.isEmpty()) { target+=" "; }
+				if (!target.isEmpty()) {
+					target+=" ";
+				}
 				target+="C:"+targetcharacter.getName()+"#"+targetcharacter.getId();
 			}
 			String message="Change from '";
-			if (oldvalue==null) { message+="<null>"; }
-			else { message+=oldvalue; }
+			if (oldvalue==null) {
+				message+="<null>";
+			} else {
+				message+=oldvalue;
+			}
 			message+="' to '";
-			if (newvalue==null) { message+="<null>"; }
-			else { message+=newvalue; }
+			if (newvalue==null) {
+				message+="<null>";
+			} else {
+				message+=newvalue;
+			}
 			message+="' on "+target+" : "+note;
 			st.logger().info("<"+actor+"> in "+facility+" - "+message);
 		}
 		try {
-			db().d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+"destcharacterid,"+"changetype,"+"changeditem,"+"oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+"sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,"+"?,?,?,?)",
+			db().d("insert into audit(timedate,"+"instanceid,"+"sourceavatarid,"+"sourcecharacterid,"+"destavatarid,"+
+			       "destcharacterid,"+"changetype,"+"changeditem,"+"oldvalue,"+"newvalue,"+"notes,"+"sourcename,"+
+			       "sourceowner,"+"sourcedeveloper,"+"sourceregion,"+"sourcelocation) values(?,?,?,?,?,?,?,?,?,?,?,?,"+
+			       "?,?,?,?)",
 			       getUnixTime(),
 			       getId(stinstance),
 			       getId(sourceavatar),
@@ -110,30 +139,33 @@ public abstract class Audit {
 			       getId(st.getSourceOwnerNullable()),
 			       getId(st.getSourceDeveloperNullable()),
 			       getId(st.sourceRegion),
-			       st.sourceLocation
-			      );
-		}
-		catch (@Nonnull final DBException ex) {
+			       st.sourceLocation);
+		} catch (@Nonnull final DBException ex) {
 			st.logger().log(WARNING,"Audit logging failure",ex);
 		}
 	}
-
-
+	
+	
 	// ----- Internal Statics -----
-	private static DBConnection db() { return GPHUD.getDB(); }
-
+	private static DBConnection db() {
+		return GPHUD.getDB();
+	}
+	
 	private static Object getId(@Nullable final TableRow r) {
-		if (r==null) { return new NullInteger(); }
+		if (r==null) {
+			return new NullInteger();
+		}
 		return r.getId();
 	}
-
+	
 	private static Object getId(@Nullable final User r) {
-		if (r==null) { return new NullInteger(); }
+		if (r==null) {
+			return new NullInteger();
+		}
 		return r.getId();
 	}
-
+	
 	public enum OPERATOR {
-		AVATAR,
-		CHARACTER
+		AVATAR,CHARACTER
 	}
 }

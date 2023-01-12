@@ -9,8 +9,9 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class DateTime {
-	private DateTime() {}
-
+	private DateTime() {
+	}
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@GSFunctions.GSFunction(description="Gets the current UNIX/Epoch time (e.g. llGetUnixTime)",
@@ -18,9 +19,8 @@ public class DateTime {
 	                        parameters="",
 	                        returns="Integer - current Epoch time (number of "+"seconds since 01/01/1970)",
 	                        privileged=false,
-	                        category= SCRIPT_CATEGORY.DATETIME)
-	public static BCInteger gsGetUnixTime(final State st,
-	                                      final GSVM vm) {
+	                        category=SCRIPT_CATEGORY.DATETIME)
+	public static BCInteger gsGetUnixTime(final State st,final GSVM vm) {
 		return new BCInteger(null,UnixTime.getUnixTime());
 	}
 }

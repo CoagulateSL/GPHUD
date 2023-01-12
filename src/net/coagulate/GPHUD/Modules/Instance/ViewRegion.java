@@ -17,8 +17,7 @@ import javax.annotation.Nonnull;
 public abstract class ViewRegion {
 	// ---------- STATICS ----------
 	@URLs(url="/regions/view/*")
-	public static void viewRegion(@Nonnull final State st,
-	                              final SafeMap values) {
+	public static void viewRegion(@Nonnull final State st,final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -26,10 +25,8 @@ public abstract class ViewRegion {
 		final Region r=Region.get(Integer.parseInt(id),true);
 		viewRegion(st,values,r);
 	}
-
-	public static void viewRegion(@Nonnull final State st,
-	                              final SafeMap values,
-	                              @Nonnull final Region r) {
+	
+	public static void viewRegion(@Nonnull final State st,final SafeMap values,@Nonnull final Region r) {
 		final boolean full=false;
 		final Table map=new Table();
 		st.form().add(map);
@@ -38,6 +35,8 @@ public abstract class ViewRegion {
 		map.openRow().add("Communications").add(r.getOnlineStatus(st.getAvatar().getTimeZone()));
 		map.openRow().add("Server Version").add(r.getServerVersion(true));
 		map.openRow().add("HUD Version").add(r.getHUDVersion(true));
-		if (r.needsUpdate()) { map.openRow().add("").add(new Color("orange","Update Required")); }
+		if (r.needsUpdate()) {
+			map.openRow().add("").add(new Color("orange","Update Required"));
+		}
 	}
 }

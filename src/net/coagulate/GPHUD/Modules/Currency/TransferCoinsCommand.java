@@ -20,11 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 public class TransferCoinsCommand extends Command {
-	private final String name;
+	private final String  name;
 	private final boolean senderPaysTax;
 	
-	public TransferCoinsCommand(final String name,
-								final boolean senderPaysTax) {
+	public TransferCoinsCommand(final String name,final boolean senderPaysTax) {
 		this.name=name;
 		this.senderPaysTax=senderPaysTax;
 	}
@@ -37,12 +36,15 @@ public class TransferCoinsCommand extends Command {
 	
 	@Override
 	public String description() {
-		return "Transfer currency to another player "+(senderPaysTax?"(You will pay any incurred taxes)":"(The recipient will receive the ammount less any incurred taxes)");
+		return "Transfer currency to another player "+(senderPaysTax?"(You will pay any incurred taxes)":
+		                                               "(The recipient will receive the ammount less any incurred taxes)");
 	}
 	
 	@Nonnull
 	@Override
-	public String notes() {return "";}
+	public String notes() {
+		return "";
+	}
 	
 	@Override
 	public String requiresPermission() {
@@ -91,110 +93,167 @@ public class TransferCoinsCommand extends Command {
 		args.add(new Argument() {
 			// ---------- INSTANCE ----------
 			@Override
-			public boolean isGenerated() {return true;}
+			public boolean isGenerated() {
+				return true;
+			}
 			
 			@Nonnull
 			@Override
-			public ArgumentType type() {return ArgumentType.CHARACTER;}
+			public String name() {
+				return "target";
+			}
 			
 			@Nonnull
 			@Override
-			public String description() {return "Character to transfer "+name+" to";}
-			
-			@Override
-			public boolean mandatory() {return true;}
-			
-			@Override
-			public Class<?> objectType() {return Char.class;}
+			public ArgumentType type() {
+				return ArgumentType.CHARACTER;
+			}
 			
 			@Nonnull
 			@Override
-			public String name() {return "target";}
+			public String description() {
+				return "Character to transfer "+name+" to";
+			}
 			
 			@Override
-			public boolean delayTemplating() {return false;}
+			public boolean mandatory() {
+				return true;
+			}
 			
 			@Override
-			public int max() {return 0;}
+			public Class<?> objectType() {
+				return Char.class;
+			}
 			
 			@Override
-			public void overrideDescription(final String n) {}
+			public boolean delayTemplating() {
+				return false;
+			}
+			
+			@Override
+			public int max() {
+				return 0;
+			}
+			
+			@Override
+			public void overrideDescription(final String n) {
+			}
 			
 			@Nonnull
 			@Override
-			public List<String> getChoices(final State st) {throw new SystemImplementationException("This should not be being used");}
+			public List<String> getChoices(final State st) {
+				throw new SystemImplementationException("This should not be being used");
+			}
 		});
 		args.add(new Argument() {
 			// ---------- INSTANCE ----------
 			@Override
-			public boolean isGenerated() {return true;}
+			public boolean isGenerated() {
+				return true;
+			}
 			
 			@Nonnull
 			@Override
-			public ArgumentType type() {return ArgumentType.TEXT_ONELINE;}
+			public String name() {
+				return "ammount";
+			}
 			
 			@Nonnull
 			@Override
-			public String description() {return "Ammount of "+name+" to transfer";}
-			
-			@Override
-			public boolean mandatory() {return true;}
-			
-			@Override
-			public Class<?> objectType() {return String.class;}
+			public ArgumentType type() {
+				return ArgumentType.TEXT_ONELINE;
+			}
 			
 			@Nonnull
 			@Override
-			public String name() {return "ammount";}
+			public String description() {
+				return "Ammount of "+name+" to transfer";
+			}
 			
 			@Override
-			public boolean delayTemplating() {return false;}
+			public boolean mandatory() {
+				return true;
+			}
 			
 			@Override
-			public int max() {return 128;}
+			public Class<?> objectType() {
+				return String.class;
+			}
 			
 			@Override
-			public void overrideDescription(final String n) {}
+			public boolean delayTemplating() {
+				return false;
+			}
+			
+			@Override
+			public int max() {
+				return 128;
+			}
+			
+			@Override
+			public void overrideDescription(final String n) {
+			}
 			
 			@Nonnull
 			@Override
-			public List<String> getChoices(final State st) {throw new SystemImplementationException("This should not be being used");}
+			public List<String> getChoices(final State st) {
+				throw new SystemImplementationException("This should not be being used");
+			}
 		});
 		args.add(new Argument() {
 			// ---------- INSTANCE ----------
 			@Override
-			public boolean isGenerated() {return true;}
+			public boolean isGenerated() {
+				return true;
+			}
 			
 			@Nonnull
 			@Override
-			public ArgumentType type() {return ArgumentType.TEXT_ONELINE;}
+			public String name() {
+				return "reason";
+			}
 			
 			@Nonnull
 			@Override
-			public String description() {return "Reason for transfer";}
-			
-			@Override
-			public boolean mandatory() {return true;}
-			
-			@Override
-			public Class<?> objectType() {return String.class;}
+			public ArgumentType type() {
+				return ArgumentType.TEXT_ONELINE;
+			}
 			
 			@Nonnull
 			@Override
-			public String name() {return "reason";}
+			public String description() {
+				return "Reason for transfer";
+			}
 			
 			@Override
-			public boolean delayTemplating() {return false;}
+			public boolean mandatory() {
+				return true;
+			}
 			
 			@Override
-			public int max() {return 255;}
+			public Class<?> objectType() {
+				return String.class;
+			}
 			
 			@Override
-			public void overrideDescription(final String n) {}
+			public boolean delayTemplating() {
+				return false;
+			}
+			
+			@Override
+			public int max() {
+				return 255;
+			}
+			
+			@Override
+			public void overrideDescription(final String n) {
+			}
 			
 			@Nonnull
 			@Override
-			public List<String> getChoices(final State st) {throw new SystemImplementationException("This should not be being used");}
+			public List<String> getChoices(final State st) {
+				throw new SystemImplementationException("This should not be being used");
+			}
 		});
 		return args;
 	}
@@ -213,12 +272,13 @@ public class TransferCoinsCommand extends Command {
 	
 	// ----- Internal Instance -----
 	@Override
-	protected Response execute(final State state,
-							   final Map<String,Object> arguments) {
+	protected Response execute(final State state,final Map<String,Object> arguments) {
 		final Char target=(Char)arguments.get("target");
 		final Currency currency=Currency.find(state,name);
 		final int amount=currency.decode((String)arguments.get("ammount"));
-		if (amount<1) {return new ErrorResponse("Ammount must be a positive integer");}
+		if (amount<1) {
+			return new ErrorResponse("Ammount must be a positive integer");
+		}
 		final String reason=(String)arguments.get("reason");
 		if (!currency.tradable()) {
 			return new ErrorResponse("Sorry, you are not allowed to transfer "+currency.getName());
@@ -232,9 +292,12 @@ public class TransferCoinsCommand extends Command {
 		final int remainder=amount-taxPayable;
 		
 		int balanceCheck=amount;
-		if (senderPaysTax) {balanceCheck+=taxPayable;}
+		if (senderPaysTax) {
+			balanceCheck+=taxPayable;
+		}
 		if (currency.sum(state)<balanceCheck) {
-			return new ErrorResponse("You do not have enough currency to complete this transaction; you need "+currency.shortTextForm(balanceCheck));
+			return new ErrorResponse("You do not have enough currency to complete this transaction; you need "+
+			                         currency.shortTextForm(balanceCheck));
 		}
 		// check we can send taxes somewhere, else abort before doing anything
 		final String taxRecipient=targetState.getKV("Currency.TransactionTaxRecipient"+currency.getName()).value();
@@ -250,13 +313,19 @@ public class TransferCoinsCommand extends Command {
 		final int received;
 		final int sent;
 		if (senderPaysTax) {
-			currency.spawnInByChar(targetState,state.getCharacter(),-(amount+taxPayable),reason+(taxPayable==0?"":" (Tax:"+currency.shortTextForm(taxPayable)+")"));
+			currency.spawnInByChar(targetState,
+			                       state.getCharacter(),
+			                       -(amount+taxPayable),
+			                       reason+(taxPayable==0?"":" (Tax:"+currency.shortTextForm(taxPayable)+")"));
 			currency.spawnInByChar(state,target,amount,reason);
 			sent=amount+taxPayable;
 			received=amount;
 		} else {
 			currency.spawnInByChar(targetState,state.getCharacter(),-amount,reason);
-			currency.spawnInByChar(state,target,remainder,reason+(taxPayable==0?"":" (Tax:"+currency.shortTextForm(taxPayable)+")"));
+			currency.spawnInByChar(state,
+			                       target,
+			                       remainder,
+			                       reason+(taxPayable==0?"":" (Tax:"+currency.shortTextForm(taxPayable)+")"));
 			received=remainder;
 			sent=amount;
 		}
@@ -264,23 +333,28 @@ public class TransferCoinsCommand extends Command {
 		if (taxTo!=null) {
 			if (senderPaysTax) {
 				currency.spawnInByChar(state,
-						taxTo,
-						taxPayable,
-						"Tax for transfer of "+currency.shortTextForm(amount)+" "+currency.getName()+" to "+target.getName()+": "+reason);
+				                       taxTo,
+				                       taxPayable,
+				                       "Tax for transfer of "+currency.shortTextForm(amount)+" "+currency.getName()+
+				                       " to "+target.getName()+": "+reason);
 			} else {
 				currency.spawnInByChar(targetState,
-						taxTo,
-						taxPayable,
-						"Tax for receipt of "+currency.shortTextForm(amount)+" "+currency.getName()+" from "+state.getCharacter().getName()+": "+reason);
+				                       taxTo,
+				                       taxPayable,
+				                       "Tax for receipt of "+currency.shortTextForm(amount)+" "+currency.getName()+
+				                       " from "+state.getCharacter().getName()+": "+reason);
 			}
 		}
 		// tell target
 		if (target.isOnline()) {
 			final JSONObject json=new JSONObject();
-			JSONResponse.message(json,"You received "+currency.longTextForm(received)+" "+currency.getName()+" from "+state.getCharacter().getName()+" : "+reason,target.getProtocol());
+			JSONResponse.message(json,
+			                     "You received "+currency.longTextForm(received)+" "+currency.getName()+" from "+
+			                     state.getCharacter().getName()+" : "+reason,
+			                     target.getProtocol());
 			new Transmission(target,json).start();
 		}
-		return new OKResponse("Transferred "+currency.longTextForm(sent)+" of "+name+" to "+target.getName()+(taxPayable==0?"":" (Payed to tax: "+currency.shortTextForm(
-				taxPayable)+")"));
+		return new OKResponse("Transferred "+currency.longTextForm(sent)+" of "+name+" to "+target.getName()+
+		                      (taxPayable==0?"":" (Payed to tax: "+currency.shortTextForm(taxPayable)+")"));
 	}
 }

@@ -10,26 +10,28 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class MaxItemsKV extends InventoryKV {
-
+	
 	public MaxItemsKV(@Nonnull final Attribute inventory) {
-        super(inventory);
-    }
-
+		super(inventory);
+	}
+	
 	@Nonnull
 	@Override
 	public String description() {
 		return "Maximum number of types of items storable in "+inventory.getName();
 	}
-
+	
 	@Nonnull
 	@Override
 	public String editPermission() {
 		return "Inventory.ConfigureLimits";
 	}
-
+	
 	@Override
-	public boolean template() { return true; }
-
+	public boolean template() {
+		return true;
+	}
+	
 	@Nonnull
 	@Override
 	protected String suffix() {

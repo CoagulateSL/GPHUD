@@ -13,23 +13,24 @@ import java.util.Set;
  */
 public class Text implements Renderable {
 	final String content;
-
-	public Text(@Nonnull final String s) { content=s; }
-
+	
+	public Text(@Nonnull final String s) {
+		content=s;
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {
 		return content;
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		return content;
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {

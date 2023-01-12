@@ -13,9 +13,9 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class NameComparable implements Comparable<NameComparable> {
-
+	
 	// ---------- INSTANCE ----------
-
+	
 	/**
 	 * Provide a name.
 	 *
@@ -23,7 +23,7 @@ public abstract class NameComparable implements Comparable<NameComparable> {
 	 */
 	@Nonnull
 	public abstract String name();
-
+	
 	/**
 	 * Provide a sorting order based on names.
 	 * Implements the comparison operator for sorting (TreeSet etc)

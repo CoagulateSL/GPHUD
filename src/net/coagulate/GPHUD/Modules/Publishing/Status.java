@@ -14,37 +14,18 @@ import java.util.TreeMap;
 public class Status extends Publishing {
 	// ---------- STATICS ----------
 	@URL.URLs(url="/publishing/status")
-	public static void statusSample(@Nonnull final State st,
-	                                final SafeMap values) {
+	public static void statusSample(@Nonnull final State st,final SafeMap values) {
 		st.form().add(new TextHeader("Instance Status"));
 		published(st,"status/"+st.getInstance().getId());
 	}
-
-	@URL.URLs(url="/published/status/*",
-	          requiresAuthentication=false)
-	public static void status(@Nonnull final State st,
-	                          final SafeMap values) {
+	
+	@URL.URLs(url="/published/status/*", requiresAuthentication=false)
+	public static void status(@Nonnull final State st,final SafeMap values) {
 		status(st,values,false);
 	}
-
-	@URL.URLs(url="/publishing/statusfull")
-	public static void statusFullSample(@Nonnull final State st,
-	                                    final SafeMap values) {
-		st.form().add(new TextHeader("Instance Status"));
-		published(st,"statusfull/"+st.getInstance().getId());
-	}
-
-	@URL.URLs(url="/published/statusfull/*",
-	          requiresAuthentication=false)
-	public static void statusFull(@Nonnull final State st,
-	                              final SafeMap values) {
-		status(st,values,true);
-	}
-
+	
 	// ----- Internal Statics -----
-	private static void status(@Nonnull final State st,
-	                           final SafeMap values,
-	                           final boolean listusers) {
+	private static void status(@Nonnull final State st,final SafeMap values,final boolean listusers) {
 		final Instance instance=Instance.get(getPartInt(st,1));
 		st.setInstance(instance);
 		st.form().add("<b>"+instance.getName()+"</b> <i>GPHUD</i><br><br>");
@@ -53,19 +34,19 @@ public class Status extends Publishing {
 		int players=0;
 		final TreeMap<String,String> playerlist=new TreeMap<>();
 		for (final Region r: Region.getRegions(instance,false)) {
-			String statuscolor = "#c00000";
+			String statuscolor="#c00000";
 			if (r.getOnlineStatus("Europe/London").toLowerCase().startsWith("online")) {
-				statuscolor = "#00c000";
+				statuscolor="#00c000";
 			}
 			if (first) {
-				first = false;
+				first=false;
 			} else {
 				line.append(", ");
 			}
 			line.append("<font color=\"").append(statuscolor).append("\">").append(r.getName()).append("</font>");
-			players = r.getOpenVisitCount();
-			for (final Char c : r.getOpenVisits()) {
-				playerlist.put(c.getOwner().getName(), c.getOwner().getName() + " <i>as</i> " + c.getName() + "<br>");
+			players=r.getOpenVisitCount();
+			for (final Char c: r.getOpenVisits()) {
+				playerlist.put(c.getOwner().getName(),c.getOwner().getName()+" <i>as</i> "+c.getName()+"<br>");
 			}
 		}
 		st.form().add(line+"<br>");
@@ -76,5 +57,16 @@ public class Status extends Publishing {
 			}
 		}
 		contentResizer(st);
+	}
+	
+	@URL.URLs(url="/publishing/statusfull")
+	public static void statusFullSample(@Nonnull final State st,final SafeMap values) {
+		st.form().add(new TextHeader("Instance Status"));
+		published(st,"statusfull/"+st.getInstance().getId());
+	}
+	
+	@URL.URLs(url="/published/statusfull/*", requiresAuthentication=false)
+	public static void statusFull(@Nonnull final State st,final SafeMap values) {
+		status(st,values,true);
 	}
 }

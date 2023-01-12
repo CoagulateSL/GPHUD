@@ -14,18 +14,17 @@ import java.util.Set;
  */
 public interface Renderable {
 	// ---------- INSTANCE ----------
-
+	
 	/**
 	 * Render this element as plain text.
 	 * Used for textual output into Second Life (llSay() etc)
 	 *
 	 * @param st state
-	 *
 	 * @return this element as text
 	 */
 	@Nonnull
 	String asText(State st);
-
+	
 	/**
 	 * Render this element into simple HTML.
 	 * Used for non admin HTML interfaces like the HUD's web panel and Admin interface.
@@ -33,13 +32,11 @@ public interface Renderable {
 	 *
 	 * @param st   state
 	 * @param rich Rich mode
-	 *
 	 * @return this element as html
 	 */
 	@Nonnull
-	String asHtml(State st,
-	              boolean rich);
-
+	String asHtml(State st,boolean rich);
+	
 	@Nullable
 	Set<Renderable> getSubRenderables();
 }

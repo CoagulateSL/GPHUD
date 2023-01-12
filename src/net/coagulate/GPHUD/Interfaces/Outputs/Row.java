@@ -16,36 +16,45 @@ import java.util.Set;
  */
 public class Row implements Renderable {
 	final List<Cell> row=new ArrayList<>();
-	String bgcolor="";
+	String bgcolor  ="";
 	String alignment="";
-
-	public Row() {}
-
-	public Row(final Cell c) { add(c); }
-
-	public Row(final String c) { add(c); }
-
+	
+	public Row() {
+	}
+	
+	public Row(final Cell c) {
+		add(c);
+	}
+	
+	public Row(final String c) {
+		add(c);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public Row add(final Cell c) {
 		row.add(c);
 		return this;
 	}
-
+	
 	@Nonnull
 	public Row add(final String s) {
 		row.add(new Cell(new Text(s)));
 		return this;
 	}
-
+	
 	@Nonnull
 	public Row add(final Renderable r) {
 		row.add(new Cell(r));
 		return this;
 	}
-
-	public boolean isHeader() { return false; }
-
+	
+	@Nonnull
+	@Override
+	public String asHtml(final State st,final boolean rich) {
+		return asHtml(st,rich,0);
+	}
+	
 	@Nonnull
 	@Override
 	public String asText(final State st) {
@@ -58,64 +67,69 @@ public class Row implements Renderable {
 		}
 		return s.toString();
 	}
-
-	@Nonnull
-    @Override
-    public String asHtml(final State st,
-                         final boolean rich) {
-        return asHtml(st, rich, 0);
-    }
-
-    public String asHtml(final State st, final boolean rich, final int rownum) {
-        final StringBuilder s = new StringBuilder("<tr");
-        if (!id.isBlank()) {
+	
+	public String asHtml(final State st,final boolean rich,final int rownum) {
+		final StringBuilder s=new StringBuilder("<tr");
+		if (!id.isBlank()) {
 			s.append(" id=\"").append(id).append("\" ");
 		}
 		if (bgcolor.isEmpty()) {
 			//noinspection BadOddness
-			s.append(" bgcolor=#").append((rownum % 2) == 1 ? "f0f0f0" : "ffffff");
+			s.append(" bgcolor=#").append((rownum%2)==1?"f0f0f0":"ffffff");
 		} else {
 			s.append(" bgcolor=").append(bgcolor);
 		}
 		if (!alignment.isEmpty()) {
 			s.append(" align=").append(alignment);
 		}
-        s.append(">");
-        for (final Cell c : row) {
-            c.header = isHeader();
-            s.append(c.asHtml(st, rich));
-        }
+		s.append(">");
+		for (final Cell c: row) {
+			c.header=isHeader();
+			s.append(c.asHtml(st,rich));
+		}
 		return s+"</tr>";
 	}
-
+	
+	public boolean isHeader() {
+		return false;
+	}
+	
 	private boolean reset;
-	public Row resetNumbering() { reset=true; return this; }
-	public boolean isResetNumbering() { return reset; }
-
+	
+	public Row resetNumbering() {
+		reset=true;
+		return this;
+	}
+	
+	public boolean isResetNumbering() {
+		return reset;
+	}
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return new HashSet<>(row);
 	}
-
+	
 	public void add(final Integer ownerid) {
 		add(String.valueOf(ownerid));
 	}
-
+	
 	public void add(final boolean online) {
 		add(Boolean.toString(online));
 	}
-
+	
 	public void setbgcolor(final String setbgcolor) {
 		bgcolor=setbgcolor;
 	}
-
+	
 	public void align(final String alignment) {
 		this.alignment=alignment;
 	}
+	
 	private String id="";
-
-    public void id(final String rowID) {
-        this.id = rowID;
-    }
+	
+	public void id(final String rowID) {
+		this.id=rowID;
+	}
 }

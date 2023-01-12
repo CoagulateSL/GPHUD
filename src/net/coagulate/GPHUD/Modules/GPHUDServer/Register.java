@@ -31,7 +31,7 @@ import static java.util.logging.Level.WARNING;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Register {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.AVATAR,
@@ -43,18 +43,25 @@ public abstract class Register {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response register(@Nonnull final State st,
-	                                @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                                    name="version",description="Version number of the Server that is connecting",
-	                                                    max=64) final String version,
+	                                @Nonnull
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                           name="versiondate",description="Version date of the Server that is connecting",
+	                                           name="version",
+	                                           description="Version number of the Server that is connecting",
+	                                           max=64) final String version,
+	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                           name="versiondate",
+	                                           description="Version date of the Server that is connecting",
 	                                           max=64) final String versiondate,
 	                                @Arguments(type=ArgumentType.TEXT_ONELINE,
-	                                           name="versiontime",description="Version time of the Server that is connecting",
+	                                           name="versiontime",
+	                                           description="Version time of the Server that is connecting",
 	                                           max=64) final String versiontime) {
 		if (EndOfLifing.hasExpired(version)) {
-			st.logger().warning("Rejected region server connection from end-of-life product version "+version+" from "+versiondate+" "+versiontime);
-			return new TerminateResponse("Sorry, this Region Server is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
+			st.logger()
+			  .warning("Rejected region server connection from end-of-life product version "+version+" from "+
+			           versiondate+" "+versiontime);
+			return new TerminateResponse(
+					"Sorry, this Region Server is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
 		}
 		// check authorisation, servers can only be deployed by the instance owner...
 		final String regionName=st.getRegionName();
@@ -69,29 +76,34 @@ public abstract class Register {
 		for (final Header header: st.req().getAllHeaders()) {
 			if ("X-SecondLife-Region".equalsIgnoreCase(header.getName())) {
 				//System.out.println("Element: "+header.getValue());
-				final Matcher match = Pattern.compile("^.* \\((\\d+), (\\d+)\\)$").matcher(header.getValue());
+				final Matcher match=Pattern.compile("^.* \\((\\d+), (\\d+)\\)$").matcher(header.getValue());
 				if (match.matches()) {
-					region.setGlobalCoordinates(Integer.parseInt(match.group(1)), Integer.parseInt(match.group(2)));
+					region.setGlobalCoordinates(Integer.parseInt(match.group(1)),Integer.parseInt(match.group(2)));
 				} else {
-					st.logger().log(WARNING, "Failed to parse region format: " + header.getValue());
+					st.logger().log(WARNING,"Failed to parse region format: "+header.getValue());
 				}
 			}
 		}
 		String url=null;
-		try { url=st.json().getString("callback"); } catch (@Nonnull final JSONException ignored) {}
-		if (url == null || url.isEmpty()) {
-			st.logger().log(WARNING, "No callback URL sent to GPHUDClient.Register");
+		try {
+			url=st.json().getString("callback");
+		} catch (@Nonnull final JSONException ignored) {
+		}
+		if (url==null||url.isEmpty()) {
+			st.logger().log(WARNING,"No callback URL sent to GPHUDClient.Register");
 			return new ErrorResponse("You are not set up with a callback URL");
 		}
 		region.setURL(url);
-		if (st.objectKey !=null) { region.setPrimUUID(st.objectKey); }
+		if (st.objectKey!=null) {
+			region.setPrimUUID(st.objectKey);
+		}
 		st.logger().log(INFO,"Sending post registration message to "+regionName);
 		final JSONObject registered=new JSONObject().put("incommand","registered");
 		String registrationMessage;
 		registrationMessage=GPHUD.serverVersion()+" "+GPHUD.brandingWithNewline();
 		if (st.getRegion().needsUpdate()) {
-			registrationMessage += """
-
+			registrationMessage+="""
+					
 					=====
 					Update required: This GPHUD Region Server is out of date.  If you are the instance owner, please attach a HUD to be sent a new version.
 					=====""";
@@ -111,7 +123,7 @@ public abstract class Register {
 		instance.updateStatus();
 		return new JSONResponse(j);
 	}
-
+	
 	public static void sendAttachConfig(@Nonnull final State st) {
 		final JSONObject j=new JSONObject();
 		j.put("autoattach",st.getKV("GPHUDServer.AutoAttach"));

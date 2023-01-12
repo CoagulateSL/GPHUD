@@ -25,13 +25,15 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public class GenericConfiguration {
-
+	
 	// ---------- STATICS ----------
 	public static void page(@Nonnull final State st,
 	                        final SafeMap values,
 	                        @Nonnull final TableRow dbo,
-	                        @Nonnull final State simulated) { page(st,values,dbo,simulated,null); }
-
+	                        @Nonnull final State simulated) {
+		page(st,values,dbo,simulated,null);
+	}
+	
 	/**
 	 * Shows a generic configuration page for a module, within a given state, in the context of a particular object (always an Instance presently I think).
 	 *
@@ -55,35 +57,37 @@ public class GenericConfiguration {
 		                           .add("Example Final Value")
 		                           .add("Example Final Value Explanation"));
 		for (final Module module: Modules.getModules()) {
-			if ((m==null || m==module) && module.isEnabled(st)) {
+			if ((m==null||m==module)&&module.isEnabled(st)) {
 				final Map<String,KV> kvmapall=module.getKVAppliesTo(simulated,dbo);
 				for (final KV kv: kvmapall.values()) {
 					if (!kv.hidden()) {
 						kvtable.openRow();
 						if (dbo instanceof Char) {
-							kvtable.add(new Link(module.getName()+"."+kv.name(),st.getFullURL()+"/"+kv.fullName().replace('.','/')));
-						}
-						else {
-							kvtable.add(new Link(module.getName()+"."+kv.name(),"/GPHUD/configuration/view/"+kv.fullName().replace('.','/')));
+							kvtable.add(new Link(module.getName()+"."+kv.name(),
+							                     st.getFullURL()+"/"+kv.fullName().replace('.','/')));
+						} else {
+							kvtable.add(new Link(module.getName()+"."+kv.name(),
+							                     "/GPHUD/configuration/view/"+kv.fullName().replace('.','/')));
 						}
 						kvtable.add(kv.description());
 						String raw=simulated.getRawKV(dbo,kv.fullName());
-						if (raw==null) { raw=""; }
+						if (raw==null) {
+							raw="";
+						}
 						kvtable.add(raw);
 						try {
 							final KVValue kvval=simulated.getKV(kv.fullName());
 							kvtable.add(kvval.value());
 							kvtable.add(kvval.path());
-						}
-						catch (@Nonnull final UserException e) {
+						} catch (@Nonnull final UserException e) {
 							kvtable.add("<b>ERROR</b>");
 							kvtable.add(e.getLocalizedMessage());
 						}
-
+						
 					}
 				}
 			}
 		}
 	}
-
+	
 }

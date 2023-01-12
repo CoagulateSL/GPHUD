@@ -14,27 +14,30 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TextSubHeader implements Renderable {
-
+	
 	final Renderable content;
-
-	public TextSubHeader(final String s) { content=new Text(s); }
-
-	public TextSubHeader(final Renderable r) { content=r; }
-
+	
+	public TextSubHeader(final String s) {
+		content=new Text(s);
+	}
+	
+	public TextSubHeader(final Renderable r) {
+		content=r;
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {
 		return "=== "+content.asText(st)+" ===\n";
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		return "<h3>"+content.asHtml(st,rich)+"</h3>";
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {

@@ -21,11 +21,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class NPC extends ObjectType {
-	protected NPC(final State st,
-	              @Nonnull final ObjType object) {
+	protected NPC(final State st,@Nonnull final ObjType object) {
 		super(st,object);
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
@@ -33,7 +32,7 @@ public class NPC extends ObjectType {
 		final Char ch=getChar();
 		return "An interactive NPC - "+(ch==null?"no character set":ch.toString());
 	}
-
+	
 	@Override
 	public void editForm(@Nonnull final State st) {
 		final Table t=new Table();
@@ -55,24 +54,24 @@ public class NPC extends ObjectType {
 		t.add(new Cell(new Button("Submit"),2));
 		t.openRow();
 		t.add(new Cell(
-				"<b>WARNING:</b> you can only assign a character to ONE object, setting multiple objects to use the same character will cause all but one of them to be "+"shutdown by the server</b>",
-				2
-		));
+				"<b>WARNING:</b> you can only assign a character to ONE object, setting multiple objects to use the same character will cause all but one of them to be "+
+				"shutdown by the server</b>",
+				2));
 		t.openRow();
 		t.add(new Cell(
-				"Your script will have a new variable, TARGET, which is the character interacting with the script.  CALLER will be the NPC character, and AVATAR will be the "+"objects owner and should be ignored",
-				2
-		));
+				"Your script will have a new variable, TARGET, which is the character interacting with the script.  CALLER will be the NPC character, and AVATAR will be the "+
+				"objects owner and should be ignored",
+				2));
 		st.form().add(t);
 	}
-
+	
 	@Override
 	public void update(@Nonnull final State st) {
 		boolean update=false;
 		if (st.postMap().containsKey("character")) {
 			final int charId=Integer.parseInt(st.postMap().get("character"));
 			Char.get(charId).validate(st);
-			if ((!json.has("character")) || charId!=json.getInt("character")) {
+			if ((!json.has("character"))||charId!=json.getInt("character")) {
 				update=true;
 				json.put("character",charId);
 			}
@@ -81,36 +80,44 @@ public class NPC extends ObjectType {
 			final int scriptId=Integer.parseInt(st.postMap().get("script"));
 			final Script script=Script.get(scriptId);
 			script.validate(st);
-			if ((!json.has("script")) || scriptId!=json.getInt("script")) {
+			if ((!json.has("script"))||scriptId!=json.getInt("script")) {
 				json.put("script",scriptId);
 				update=true;
 			}
 		}
-		update=updateDistance(st) || update;
-		if (update) { object.setBehaviour(json); }
+		update=updateDistance(st)||update;
+		if (update) {
+			object.setBehaviour(json);
+		}
 	}
-
+	
 	@Nonnull
 	@Override
 	public String explainText() {
 		return explainHtml();
 	}
-
+	
 	@Override
 	public void payload(@Nonnull final State st,
 	                    @Nonnull final JSONObject response,
 	                    @Nonnull final Region region,
 	                    @Nullable final String url) {
 		super.payload(st,response,region,url);
-		if (!json.has("character")) { return; }
+		if (!json.has("character")) {
+			return;
+		}
 		final int charId=json.getInt("character");
 		final Char ch=Char.get(charId);
 		ch.validate(st);
 		ch.setRegion(region);
-		if (url!=null) { ch.setURL(url); }
+		if (url!=null) {
+			ch.setURL(url);
+		}
 		final State newState=new State(ch);
 		ch.initialConveyances(newState,response);
-		if (json.has("maxdistance")) { response.put("maxdistance",json.get("maxdistance")); }
+		if (json.has("maxdistance")) {
+			response.put("maxdistance",json.get("maxdistance"));
+		}
 		response.remove("qb1texture");
 		response.remove("qb2texture");
 		response.remove("qb3texture");
@@ -128,26 +135,29 @@ public class NPC extends ObjectType {
 		response.remove("qbbalance");
 		response.remove("uixmenus");
 		response.remove("hudcolor");
-
+		
 	}
-
+	
 	@Nonnull
 	@Override
 	public MODE mode() {
 		return MODE.CLICKABLE;
 	}
-
+	
 	@Nonnull
 	@Override
-	public Response click(@Nonnull final State st,
-	                      @Nonnull final Char clicker) {
+	public Response click(@Nonnull final State st,@Nonnull final Char clicker) {
 		// do we have a character set
-		if (!json.has("character")) { return new ErrorResponse("No character is associated with this NPC object"); }
+		if (!json.has("character")) {
+			return new ErrorResponse("No character is associated with this NPC object");
+		}
 		final int charId=json.getInt("character");
 		final Char ch=Char.get(charId);
 		ch.validate(st);
 		st.setCharacter(ch);
-		if (!json.has("script")) { return new ErrorResponse("No script is associated with this NPC object"); }
+		if (!json.has("script")) {
+			return new ErrorResponse("No script is associated with this NPC object");
+		}
 		final int scriptId=json.getInt("script");
 		final Script script=Script.get(scriptId);
 		script.validate(st);
@@ -161,12 +171,14 @@ public class NPC extends ObjectType {
 		clicker.considerPushingConveyances();
 		return new JSONResponse(jsonResponse);
 	}
-
+	
 	// ----- Internal Instance -----
 	@Nullable
 	Char getChar() {
 		final String charId=json.optString("character","");
-		if (charId==null || charId.isEmpty()) { return null; }
+		if (charId==null||charId.isEmpty()) {
+			return null;
+		}
 		return Char.get(Integer.parseInt(charId));
 	}
 }

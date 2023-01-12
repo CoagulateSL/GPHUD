@@ -11,10 +11,10 @@ public class VirtualRegionServer extends JSONDriver {
 	
 	public final String regionName;
 	// suck the logo from the payload
-	public String logo       ="";
-	public String status     ="";
+	public       String logo       ="";
+	public       String status     ="";
 	public       String statuscolor="";
-	public Region region;
+	public       Region region;
 	public       int    gridXY;
 	
 	public VirtualRegionServer(final String name,

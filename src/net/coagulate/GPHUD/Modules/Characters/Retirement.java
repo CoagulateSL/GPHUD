@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  * @author Iain Price
  */
 public abstract class Retirement {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Command.Context.CHARACTER,
@@ -44,30 +44,44 @@ public abstract class Retirement {
 			            "RETIRED",
 			            Boolean.toString(st.getCharacter().retired()),
 			            "true",
-			            "Character self retired"
-			           );
+			            "Character self retired");
 		}
 		final JSONObject json=new JSONObject();
 		json.put("reboot","Character has retired");
 		return new JSONResponse(json);
 	}
-
+	
 	@Nonnull
 	@Commands(context=Command.Context.AVATAR,
 	          description="Force retire a character",
 	          requiresPermission="Characters.Retire",
 	          permitExternal=false)
 	public static Response retireTarget(@Nonnull final State st,
-	                                    @Nullable @Arguments(name="target",description="Character to retire",
-	                                                         type=ArgumentType.CHARACTER) final Char target) {
-		if (target==null) { return new ErrorResponse("Target character was null"); }
+	                                    @Nullable
+	                                    @Arguments(name="target",
+	                                               description="Character to retire",
+	                                               type=ArgumentType.CHARACTER) final Char target) {
+		if (target==null) {
+			return new ErrorResponse("Target character was null");
+		}
 		target.validate(st);
-		if (target.retired()) { return new OKResponse("Target character is already retired"); }
+		if (target.retired()) {
+			return new OKResponse("Target character is already retired");
+		}
 		target.retire();
-		Audit.audit(true,st,Audit.OPERATOR.AVATAR,null,target,"SET","RETIRED",Boolean.toString(target.retired()),"true","Character retired by administrator");
+		Audit.audit(true,
+		            st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            target,
+		            "SET",
+		            "RETIRED",
+		            Boolean.toString(target.retired()),
+		            "true",
+		            "Character retired by administrator");
 		target.hudMessage("This character has been retired by Administrator '"+st.getAvatar().getName()+"'");
 		target.push("reboot","Restarting due to character being retired.");
 		return new OKResponse("Target character is retired");
 	}
-
+	
 }

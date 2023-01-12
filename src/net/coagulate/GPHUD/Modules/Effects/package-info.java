@@ -3,17 +3,11 @@
                          forceConfig=true,
                          implementation="net.coagulate.GPHUD.Modules.Effects.EffectsModule")
 
-@Permission.Permissions(name="Edit",
-                        description="Permission to edit effects",
-                        power=Permission.POWER.LOW)
+@Permission.Permissions(name="Edit", description="Permission to edit effects", power=Permission.POWER.LOW)
 
-@Permission.Permissions(name="Create",
-                        description="Permission to create effects",
-                        power=Permission.POWER.LOW)
+@Permission.Permissions(name="Create", description="Permission to create effects", power=Permission.POWER.LOW)
 
-@Permission.Permissions(name="Delete",
-                        description="Permission to delete effects",
-                        power=Permission.POWER.MEDIUM)
+@Permission.Permissions(name="Delete", description="Permission to delete effects", power=Permission.POWER.MEDIUM)
 
 @Permission.Permissions(name="Apply",
                         description="Permission to administratively (as an avatar) apply effects to a character",
@@ -25,8 +19,8 @@
 
 @KV.KVS(name="ApplyMessage",
         description="Message to send to the character when they gain this effect",
-        defaultValue ="",
-        editPermission ="Effects.Edit",
+        defaultValue="",
+        editPermission="Effects.Edit",
         type=KV.KVTYPE.TEXT,
         template=true,
         scope=KV.KVSCOPE.EFFECT,
@@ -34,8 +28,8 @@
 
 @KV.KVS(name="RemoveMessage",
         description="Message to send to the character when they lose this effect",
-        defaultValue ="",
-        editPermission ="Effects.Edit",
+        defaultValue="",
+        editPermission="Effects.Edit",
         type=KV.KVTYPE.TEXT,
         template=true,
         scope=KV.KVSCOPE.EFFECT,
@@ -43,8 +37,8 @@
 
 @KV.KVS(name="EffectIcon",
         description="UUID of a texture to use to represent this effect in the HUD",
-        defaultValue ="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4",
-        editPermission ="Effects.Edit",
+        defaultValue="b39860d0-8c5c-5d51-9dbf-3ef55dafe8a4",
+        editPermission="Effects.Edit",
         template=false,
         hierarchy=KVHIERARCHY.DELEGATING,
         scope=KVSCOPE.EFFECT,
@@ -52,8 +46,8 @@
 
 @KV.KVS(name="ShowEffect",
         description="Does this effect show up on the HUD summary icons",
-        defaultValue ="true",
-        editPermission ="Effects.Edit",
+        defaultValue="true",
+        editPermission="Effects.Edit",
         template=false,
         hierarchy=KVHIERARCHY.DELEGATING,
         scope=KVSCOPE.EFFECT,

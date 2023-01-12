@@ -14,57 +14,57 @@ import java.util.Set;
  */
 public class TextInput extends Input {
 	final String name;
-	@Nullable
-	Integer width;
-
-	public TextInput(final String name) {this.name=name;}
-
-	public TextInput(final String name,
-	                 final String value) {
+	@Nullable Integer width;
+	
+	public TextInput(final String name) {
+		this.name=name;
+	}
+	
+	public TextInput(final String name,final String value) {
 		this.name=name;
 		this.value=value;
 	}
-
-	public TextInput(final String name,
-	                 final int width) {
+	
+	public TextInput(final String name,final int width) {
 		this.name=name;
 		this.width=width;
 	}
-
-	public TextInput(final String name,
-	                 final String value,
-	                 final int width) {
+	
+	public TextInput(final String name,final String value,final int width) {
 		this.name=name;
 		this.value=value;
 		this.width=width;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Override
 	public String getName() {
 		return name;
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		String s="<input type=\""+getType()+"\" name=\""+name+"\" value=\""+value+"\" ";
-		if (width!=null) { s+="size="+width+" "; }
+		if (width!=null) {
+			s+="size="+width+" ";
+		}
 		//if (!(st.handler instanceof net.coagulate.GPHUD.Interfaces.HUD.Interface)) {
 		s+="autofocus ";
 		//}
 		s+="/>";
 		return s;
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;
 	}
-
+	
 	// ----- Internal Instance -----
 	@Nonnull
-	String getType() { return "text"; }
+	String getType() {
+		return "text";
+	}
 }

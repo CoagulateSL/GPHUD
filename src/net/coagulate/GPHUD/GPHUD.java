@@ -42,29 +42,23 @@ public class GPHUD extends SLModule {
 	/** The interval in seconds for slow events such as refreshing report quota or checking expiration of regions/instances */
 	public static final int SLOW_MAINT_INTERVAL=60*60;
 	/** The allowed variance for the fast timer */
-	public static final int MAINT_VAR_SMALL=5;
+	public static final int MAINT_VAR_SMALL    =5;
 	/** The allowed variance for the slow timer */
-	public static final int MAINT_VAR_LARGE=15*60;
+	public static final int MAINT_VAR_LARGE    =15*60;
+	@Nullable static Logger       log=null;
+	@Nullable static DBConnection db =null;
 	
-	@Override
-	public void registerChanges() {
-		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Change.class)) {
-			for (final Classes.Change a: c.getAnnotationsByType(Classes.Change.class)) {
-				ChangeLogging.add(new ChangeLogging.Change(a.date(),"GPHUD",a.component().name(),a.type(),a.message()));
-			}
+	/**
+	 * branding if present, or empty string.  prefixed with a newline if present.
+	 *
+	 * @return branding if present, or empty string.  prefixed with a newline if present.
+	 */
+	public static String brandingWithNewline() {
+		if (branding().isEmpty()) {
+			return "";
 		}
-		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Changes.class)) {
-			for (final Classes.Changes as: c.getAnnotationsByType(Classes.Changes.class)) {
-				for (final Classes.Change a: as.value()) {
-					ChangeLogging.add(new ChangeLogging.Change(a.date(),"GPHUD",a.component().name(),a.type(),a.message()));
-				}
-			}
-		}
+		return "\n"+branding();
 	}
-	
-	public final String commitId() {return GPHUDBuildInfo.COMMITID;}
-	
-	public Date getBuildDate() {return GPHUDBuildInfo.BUILDDATE;}
 	
 	/**
 	 * branding as an additional note, or blank if no branding
@@ -75,54 +69,10 @@ public class GPHUD extends SLModule {
 		if (!Config.getBrandingName().isBlank()) {
 			return "This server is run by "+Config.getBrandingName()+" ("+Config.getBrandingOwnerSLURL()+")";
 		}
-		if (!Config.isOfficial()) {return "This server is run by a Third Party";}
+		if (!Config.isOfficial()) {
+			return "This server is run by a Third Party";
+		}
 		return "";
-	}
-	
-	/**
-	 * branding if present, or empty string.  prefixed with a newline if present.
-	 *
-	 * @return branding if present, or empty string.  prefixed with a newline if present.
-	 */
-	public static String brandingWithNewline() {
-		if (branding().isEmpty()) {return "";}
-		return "\n"+branding();
-	}
-	
-	@Nullable
-	static Logger log=null;
-	@Nullable
-	static DBConnection db=null;
-	
-	// ---------- STATICS ----------
-	
-	/**
-	 * Get a subspace of the GPHUD logger
-	 *
-	 * @param subspace Sub name
-	 * @return The logger
-	 */
-	public static Logger getLogger(final String subspace) {return Logger.getLogger(log().getName()+"."+subspace);}
-	
-	/**
-	 * Get the main GPHUD Logger
-	 *
-	 * @return The logger
-	 */
-	@Nonnull
-	public static Logger getLogger() {
-		return log();
-	}
-	
-	/**
-	 * Get the GPHUD DB connection
-	 *
-	 * @return The DBConnection
-	 */
-	@Nonnull
-	public static DBConnection getDB() {
-		if (db==null) {throw new SystemInitialisationException("Calling DB before DB is initialised");}
-		return db;
 	}
 	
 	/**
@@ -133,17 +83,17 @@ public class GPHUD extends SLModule {
 	@Nonnull
 	public static String menuPanelEnvironment() {
 		if (Config.isOfficial()) {
-			return "&gt;&nbsp;"+(Config.getDevelopment()?"DEVELOPMENT":"Production")+"<br>"+
-						   "&gt;&nbsp;"+Config.getHostName()+"<br>"+
-						   "&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+SL.getModule("GPHUD").getBuildDateString()+"</a><br>"+
-						   "&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+SL.getModule("GPHUD").commitId()+"</a>";
+			return "&gt;&nbsp;"+(Config.getDevelopment()?"DEVELOPMENT":"Production")+"<br>"+"&gt;&nbsp;"+
+			       Config.getHostName()+"<br>"+"&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+
+			       SL.getModule("GPHUD").getBuildDateString()+"</a><br>"+
+			       "&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+SL.getModule("GPHUD").commitId()+"</a>";
 		} else {
-			return "&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+SL.getModule("GPHUD").getBuildDateString()+"</a><br>"+
-						   "&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+SL.getModule("GPHUD").commitId()+"</a><br>"+
-						   "&gt;&nbsp;<a href=\"https://sl.coagulate.net/landingpage\">(C) Coagulate SL</a><br>"+
-						   "&gt;&nbsp;<b>Operated by:</b><br>"+
-						   "&gt;&nbsp;"+Config.getBrandingName().replaceAll(" ","&nbsp;")+"<br>"+
-						   "&gt;&nbsp;"+Config.getBrandingOwnerHumanReadable().replaceAll(" ","&nbsp;")+"<br>";
+			return "&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+SL.getModule("GPHUD").getBuildDateString()+
+			       "</a><br>"+"&gt;&nbsp;<a href=\"/GPHUD/ChangeLog\" target=\"_new\">"+
+			       SL.getModule("GPHUD").commitId()+"</a><br>"+
+			       "&gt;&nbsp;<a href=\"https://sl.coagulate.net/landingpage\">(C) Coagulate SL</a><br>"+
+			       "&gt;&nbsp;<b>Operated by:</b><br>"+"&gt;&nbsp;"+Config.getBrandingName().replaceAll(" ","&nbsp;")+
+			       "<br>"+"&gt;&nbsp;"+Config.getBrandingOwnerHumanReadable().replaceAll(" ","&nbsp;")+"<br>";
 			
 		}
 	}
@@ -155,8 +105,21 @@ public class GPHUD extends SLModule {
 	 */
 	@Nonnull
 	public static String serverVersion() {
-		return "[https://"+Config.getURLHost()+"/GPHUD/ChangeLog "+SL.getModule("GPHUD").getBuildDateString()+" @"+SL.getModule("GPHUD").commitId()+"] (C) secondlife:///app/agent/"+Config.getCreatorUUID()+"/about";
+		return "[https://"+Config.getURLHost()+"/GPHUD/ChangeLog "+SL.getModule("GPHUD").getBuildDateString()+" @"+
+		       SL.getModule("GPHUD").commitId()+"] (C) secondlife:///app/agent/"+Config.getCreatorUUID()+"/about";
 	}
+
+	/**
+	 * Get the main GPHUD Logger
+	 *
+	 * @return The logger
+	 */
+	@Nonnull
+	public static Logger getLogger() {
+		return log();
+	}
+	
+	// ---------- STATICS ----------
 	
 	/**
 	 * Get a generic logger if available, otherwise exception.
@@ -165,7 +128,9 @@ public class GPHUD extends SLModule {
 	 */
 	@Nonnull
 	public static Logger log() {
-		if (log==null) {throw new SystemInitialisationException("Log not yet initialised");}
+		if (log==null) {
+			throw new SystemInitialisationException("Log not yet initialised");
+		}
 		return log;
 	}
 	
@@ -173,7 +138,12 @@ public class GPHUD extends SLModule {
 	@Override
 	public Map<ServiceTile,Integer> getServices() {
 		final HashMap<ServiceTile,Integer> map=new HashMap<>();
-		map.put(new ServiceTile("GPHUD","Second generation role-play HUD - used to implement attribute/dice based RP environments","/GPHUD/","/resources/serviceicon-gphud.png",commitId(),getBuildDateString()),10);
+		map.put(new ServiceTile("GPHUD",
+		                        "Second generation role-play HUD - used to implement attribute/dice based RP environments",
+		                        "/GPHUD/",
+		                        "/resources/serviceicon-gphud.png",
+		                        commitId(),
+		                        getBuildDateString()),10);
 		return map;
 	}
 	
@@ -187,6 +157,10 @@ public class GPHUD extends SLModule {
 	@Override
 	public String getDescription() {
 		return "General Purpose Heads Up Display Toolkit";
+	}
+	
+	@Override
+	public void shutdown() {
 	}
 	
 	@Override
@@ -210,13 +184,27 @@ public class GPHUD extends SLModule {
 	
 	@Override
 	public void maintenance() {
-		if (nextRun("GPHUD-Maintenance",FAST_MAINT_INTERVAL,MAINT_VAR_SMALL)) {Maintenance.gphudMaintenance();}
-		if (nextRun("GPHUD-Maintenance-Report-Quota",SLOW_MAINT_INTERVAL,MAINT_VAR_LARGE)) {Maintenance.quotaCredits();}
-		if (nextRun("GPHUD-Instance-Cleanup",SLOW_MAINT_INTERVAL,MAINT_VAR_LARGE)) {Maintenance.instanceCleanup();}
+		if (nextRun("GPHUD-Maintenance",FAST_MAINT_INTERVAL,MAINT_VAR_SMALL)) {
+			Maintenance.gphudMaintenance();
+		}
+		if (nextRun("GPHUD-Maintenance-Report-Quota",SLOW_MAINT_INTERVAL,MAINT_VAR_LARGE)) {
+			Maintenance.quotaCredits();
+		}
+		if (nextRun("GPHUD-Instance-Cleanup",SLOW_MAINT_INTERVAL,MAINT_VAR_LARGE)) {
+			Maintenance.instanceCleanup();
+		}
 	}
 	
 	@Override
 	public void maintenanceInternal() {
+	}
+	
+	public final String commitId() {
+		return GPHUDBuildInfo.COMMITID;
+	}
+	
+	public Date getBuildDate() {
+		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
 	@SuppressWarnings("MagicNumber")
@@ -245,112 +233,85 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==3) {
 			log.config("Expand audit columns");
-			GPHUD.getDB().d("ALTER TABLE `audit` CHANGE COLUMN `changetype` `changetype` VARCHAR(128) NULL DEFAULT NULL");
-			GPHUD.getDB().d("ALTER TABLE `audit` CHANGE COLUMN `changeditem` `changeditem` VARCHAR(128) NULL DEFAULT NULL");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `audit` CHANGE COLUMN `changetype` `changetype` VARCHAR(128) NULL DEFAULT NULL");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `audit` CHANGE COLUMN `changeditem` `changeditem` VARCHAR(128) NULL DEFAULT NULL");
 			log.config("Schema upgrade of GPHUD to version 4 is complete");
 			currentVersion=4;
 		}
 		if (currentVersion==4) {
 			log.config("Add kvprecedence column to charactergroups table");
-			GPHUD.getDB().d("ALTER TABLE `charactergroups` ADD COLUMN `kvprecedence` INT(11) NOT NULL DEFAULT 1 AFTER `owner`");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `charactergroups` ADD COLUMN `kvprecedence` INT(11) NOT NULL DEFAULT 1 AFTER `owner`");
 			log.config("Schema upgrade of GPHUD to version 5 is complete");
 			currentVersion=5;
 		}
 		if (currentVersion==5) {
 			log.config("Create table charactersets");
-			GPHUD.getDB().d("CREATE TABLE `charactersets` ("+
-									"	`id` INT NOT NULL AUTO_INCREMENT,"+
-									"	`characterid` INT NOT NULL,"+
-									"	`attributeid` INT NOT NULL,"+
-									"	`element` VARCHAR(128) NOT NULL,"+
-									"	`qty` INT NOT NULL DEFAULT 1,"+
-									"	PRIMARY KEY (`id`),"+
-									"	UNIQUE INDEX `id_UNIQUE` (`id` ASC),"+
-									"	INDEX `characterid_index` (`characterid` ASC),"+
-									"	INDEX `attributeid_index` (`attributeid` ASC),"+
-									"	INDEX `element` (`element` ASC),"+
-									"	CONSTRAINT `characterid_fk`"+
-									"		FOREIGN KEY (`characterid`)"+
-									"		REFERENCES `characters` (`characterid`)"+
-									"		ON DELETE CASCADE"+
-									"		ON UPDATE RESTRICT,"+
-									"	CONSTRAINT `attributeid_fk`"+
-									"		FOREIGN KEY (`attributeid`)"+
-									"		REFERENCES `attributes` (`attributeid`)"+
-									"		ON DELETE CASCADE"+
-									"		ON UPDATE RESTRICT"+
-									")");
-			GPHUD.getDB().d("ALTER TABLE `charactersets` ADD UNIQUE INDEX `charactersets_composite` (`characterid` ASC, `attributeid` ASC, `element` ASC)");
+			GPHUD.getDB()
+			     .d("CREATE TABLE `charactersets` ("+"	`id` INT NOT NULL AUTO_INCREMENT,"+
+			        "	`characterid` INT NOT NULL,"+"	`attributeid` INT NOT NULL,"+
+			        "	`element` VARCHAR(128) NOT NULL,"+"	`qty` INT NOT NULL DEFAULT 1,"+
+			        "	PRIMARY KEY (`id`),"+"	UNIQUE INDEX `id_UNIQUE` (`id` ASC),"+
+			        "	INDEX `characterid_index` (`characterid` ASC),"+
+			        "	INDEX `attributeid_index` (`attributeid` ASC),"+"	INDEX `element` (`element` ASC),"+
+			        "	CONSTRAINT `characterid_fk`"+"		FOREIGN KEY (`characterid`)"+
+			        "		REFERENCES `characters` (`characterid`)"+"		ON DELETE CASCADE"+
+			        "		ON UPDATE RESTRICT,"+"	CONSTRAINT `attributeid_fk`"+
+			        "		FOREIGN KEY (`attributeid`)"+"		REFERENCES `attributes` (`attributeid`)"+
+			        "		ON DELETE CASCADE"+"		ON UPDATE RESTRICT"+")");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `charactersets` ADD UNIQUE INDEX `charactersets_composite` (`characterid` ASC, `attributeid` ASC, `element` ASC)");
 			log.config("Add SET type to attribute attributetype");
-			GPHUD.getDB().d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET') NOT NULL");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET') NOT NULL");
 			log.config("Schema upgrade of GPHUD to version 6 is complete");
 			currentVersion=6;
 		}
 		if (currentVersion==6) {
 			log.config("Add various items/inventory tables");
 			
-			GPHUD.getDB().d("CREATE TABLE `items` ("+
-									"  `id` INT NOT NULL AUTO_INCREMENT,"+
-									"  `instanceid` INT NOT NULL,"+
-									"  `name` VARCHAR(128) NOT NULL,"+
-									"  `description` VARCHAR(256) NOT NULL DEFAULT '',"+
-									"  `weight` INT NOT NULL DEFAULT 0,"+
-									"  `tradable` TINYINT NOT NULL DEFAULT 1,"+
-									"  `destroyable` TINYINT NOT NULL DEFAULT 1,"+
-									"  PRIMARY KEY (`id`),"+
-									"  UNIQUE INDEX `id_UNIQUE` (`id` ASC),"+
-									"  UNIQUE INDEX `instanceid_itemname_unique` (`instanceid` ASC, `name` ASC),"+
-									"  INDEX `itemname_index` (`name` ASC),"+
-									"  CONSTRAINT `items_instanceid_fk`"+
-									"    FOREIGN KEY (`instanceid`)"+
-									"    REFERENCES `instances` (`instanceid`)"+
-									"    ON DELETE CASCADE"+
-									"    ON UPDATE RESTRICT)");
-			GPHUD.getDB().d("CREATE TABLE `iteminventories` ("+
-									"  `itemid` INT NOT NULL,"+
-									"  `inventoryid` INT NOT NULL,"+
-									"  `permitted` TINYINT NOT NULL DEFAULT 1,"+
-									"  PRIMARY KEY (`itemid`, `inventoryid`),"+
-									"  INDEX `itemid_index` (`itemid` ASC),"+
-									"  INDEX `iteminventories_inventoryid_idx` (`inventoryid` ASC),"+
-									"  CONSTRAINT `iteminventories_inventoryid`"+
-									"    FOREIGN KEY (`inventoryid`)"+
-									"    REFERENCES `attributes` (`attributeid`)"+
-									"    ON DELETE CASCADE"+
-									"    ON UPDATE RESTRICT,"+
-									"  CONSTRAINT `iteminventories_itemid`"+
-									"    FOREIGN KEY (`itemid`)"+
-									"    REFERENCES `items` (`id`)"+
-									"    ON DELETE CASCADE"+
-									"    ON UPDATE RESTRICT)");
-			GPHUD.getDB().d("CREATE TABLE `itemverbs` ("+
-									"  `id` INT NOT NULL AUTO_INCREMENT,"+
-									"  `itemid` INT NOT NULL,"+
-									"  `verb` VARCHAR(64) NOT NULL,"+
-									"  `description` VARCHAR(256) NOT NULL DEFAULT '',"+
-									"  `payload` VARCHAR(4096) NOT NULL DEFAULT '{}',"+
-									"  PRIMARY KEY (`id`),"+
-									"  UNIQUE INDEX `id_UNIQUE` (`id` ASC),"+
-									"  INDEX `itemverbs_itemid` (`itemid` ASC),"+
-									"  INDEX `itemverbs_verb` (`verb` ASC),"+
-									"  UNIQUE INDEX `itemid_itemverbs_unique` (`itemid` ASC, `verb` ASC),"+
-									"  CONSTRAINT `itemverbs_itemid_fk`"+
-									"    FOREIGN KEY (`itemid`)"+
-									"    REFERENCES `items` (`id`)"+
-									"    ON DELETE CASCADE"+
-									"    ON UPDATE RESTRICT)");
-			GPHUD.getDB().d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET', 'INVENTORY') NOT NULL");
+			GPHUD.getDB()
+			     .d("CREATE TABLE `items` ("+"  `id` INT NOT NULL AUTO_INCREMENT,"+"  `instanceid` INT NOT NULL,"+
+			        "  `name` VARCHAR(128) NOT NULL,"+"  `description` VARCHAR(256) NOT NULL DEFAULT '',"+
+			        "  `weight` INT NOT NULL DEFAULT 0,"+"  `tradable` TINYINT NOT NULL DEFAULT 1,"+
+			        "  `destroyable` TINYINT NOT NULL DEFAULT 1,"+"  PRIMARY KEY (`id`),"+
+			        "  UNIQUE INDEX `id_UNIQUE` (`id` ASC),"+
+			        "  UNIQUE INDEX `instanceid_itemname_unique` (`instanceid` ASC, `name` ASC),"+
+			        "  INDEX `itemname_index` (`name` ASC),"+"  CONSTRAINT `items_instanceid_fk`"+
+			        "    FOREIGN KEY (`instanceid`)"+"    REFERENCES `instances` (`instanceid`)"+
+			        "    ON DELETE CASCADE"+"    ON UPDATE RESTRICT)");
+			GPHUD.getDB()
+			     .d("CREATE TABLE `iteminventories` ("+"  `itemid` INT NOT NULL,"+"  `inventoryid` INT NOT NULL,"+
+			        "  `permitted` TINYINT NOT NULL DEFAULT 1,"+"  PRIMARY KEY (`itemid`, `inventoryid`),"+
+			        "  INDEX `itemid_index` (`itemid` ASC),"+
+			        "  INDEX `iteminventories_inventoryid_idx` (`inventoryid` ASC),"+
+			        "  CONSTRAINT `iteminventories_inventoryid`"+"    FOREIGN KEY (`inventoryid`)"+
+			        "    REFERENCES `attributes` (`attributeid`)"+"    ON DELETE CASCADE"+"    ON UPDATE RESTRICT,"+
+			        "  CONSTRAINT `iteminventories_itemid`"+"    FOREIGN KEY (`itemid`)"+
+			        "    REFERENCES `items` (`id`)"+"    ON DELETE CASCADE"+"    ON UPDATE RESTRICT)");
+			GPHUD.getDB()
+			     .d("CREATE TABLE `itemverbs` ("+"  `id` INT NOT NULL AUTO_INCREMENT,"+"  `itemid` INT NOT NULL,"+
+			        "  `verb` VARCHAR(64) NOT NULL,"+"  `description` VARCHAR(256) NOT NULL DEFAULT '',"+
+			        "  `payload` VARCHAR(4096) NOT NULL DEFAULT '{}',"+"  PRIMARY KEY (`id`),"+
+			        "  UNIQUE INDEX `id_UNIQUE` (`id` ASC),"+"  INDEX `itemverbs_itemid` (`itemid` ASC),"+
+			        "  INDEX `itemverbs_verb` (`verb` ASC),"+
+			        "  UNIQUE INDEX `itemid_itemverbs_unique` (`itemid` ASC, `verb` ASC),"+
+			        "  CONSTRAINT `itemverbs_itemid_fk`"+"    FOREIGN KEY (`itemid`)"+"    REFERENCES `items` (`id`)"+
+			        "    ON DELETE CASCADE"+"    ON UPDATE RESTRICT)");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `attributes` CHANGE COLUMN `attributetype` `attributetype` ENUM('INTEGER', 'FLOAT', 'GROUP', 'TEXT', 'COLOR', 'EXPERIENCE', 'CURRENCY', 'SET', 'INVENTORY') NOT NULL");
 			log.config("Schema upgrade of GPHUD to version 7 is complete");
 			currentVersion=7;
 		}
 		if (currentVersion==7) {
 			log.config("Add report and quota to instances table");
-			GPHUD.getDB().d("ALTER TABLE `instances` "+
-									"ADD COLUMN `reportquota` INT NULL DEFAULT 0,"+
-									"ADD COLUMN `downloadquota` INT NULL DEFAULT 0,"+
-									"ADD COLUMN `nextquotaincrease` INT NULL DEFAULT 0,"+
-									"ADD COLUMN `report` TEXT NULL,"+
-									"ADD COLUMN `reporttds` INT NULL DEFAULT 0");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `instances` "+"ADD COLUMN `reportquota` INT NULL DEFAULT 0,"+
+			        "ADD COLUMN `downloadquota` INT NULL DEFAULT 0,"+
+			        "ADD COLUMN `nextquotaincrease` INT NULL DEFAULT 0,"+"ADD COLUMN `report` TEXT NULL,"+
+			        "ADD COLUMN `reporttds` INT NULL DEFAULT 0");
 			
 			
 			log.config("Schema upgrade of GPHUD to version 8 is complete");
@@ -358,8 +319,7 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==8) {
 			log.config("Add report generating marker to table");
-			GPHUD.getDB().d("ALTER TABLE `instances` "+
-									"ADD COLUMN `reporting` INT NULL DEFAULT 0");
+			GPHUD.getDB().d("ALTER TABLE `instances` "+"ADD COLUMN `reporting` INT NULL DEFAULT 0");
 			log.config("Schema upgrade of GPHUD to version 9 is complete");
 			currentVersion=9;
 		}
@@ -389,7 +349,8 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==13) {
 			log.config("Add script parameter map to scripts table");
-			GPHUD.getDB().d("ALTER TABLE `scripts` ADD COLUMN `parameterlist` VARCHAR(4096) NULL DEFAULT NULL AFTER `compilerversion`");
+			GPHUD.getDB()
+			     .d("ALTER TABLE `scripts` ADD COLUMN `parameterlist` VARCHAR(4096) NULL DEFAULT NULL AFTER `compilerversion`");
 			log.config("Schema upgrade of GPHUD to version 14 is complete");
 			currentVersion=14;
 		}
@@ -403,6 +364,36 @@ public class GPHUD extends SLModule {
 		return currentVersion;
 	}
 	
+	@Override
+	public void registerChanges() {
+		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Change.class)) {
+			for (final Classes.Change a: c.getAnnotationsByType(Classes.Change.class)) {
+				ChangeLogging.add(new ChangeLogging.Change(a.date(),"GPHUD",a.component().name(),a.type(),a.message()));
+			}
+		}
+		for (final Class<?> c: ClassTools.getAnnotatedClasses(Classes.Changes.class)) {
+			for (final Classes.Changes as: c.getAnnotationsByType(Classes.Changes.class)) {
+				for (final Classes.Change a: as.value()) {
+					ChangeLogging.add(new ChangeLogging.Change(a.date(),
+					                                           "GPHUD",
+					                                           a.component().name(),
+					                                           a.type(),
+					                                           a.message()));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Get a subspace of the GPHUD logger
+	 *
+	 * @param subspace Sub name
+	 * @return The logger
+	 */
+	public static Logger getLogger(final String subspace) {
+		return Logger.getLogger(log().getName()+"."+subspace);
+	}
+	
 	private static final int SCHEMA_VERSION=15;
 	
 	@Override
@@ -412,8 +403,18 @@ public class GPHUD extends SLModule {
 		URLDistribution.register("/GPHUD/",new net.coagulate.GPHUD.Interfaces.User.Interface());
 	}
 	
-	@Override
-	public void shutdown() {}
+	/**
+	 * Get the GPHUD DB connection
+	 *
+	 * @return The DBConnection
+	 */
+	@Nonnull
+	public static DBConnection getDB() {
+		if (db==null) {
+			throw new SystemInitialisationException("Calling DB before DB is initialised");
+		}
+		return db;
+	}
 	
 	@Nullable
 	@Override

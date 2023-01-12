@@ -16,24 +16,28 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class SayResponse implements Response {
-
+	
 	String reason;
-	@Nullable
-	String sayas;
-
-	public SayResponse(final String r) { reason=r; }
-
-	public SayResponse(final String r,
-	                   @Nullable final String sayas) {
+	@Nullable String sayas;
+	
+	public SayResponse(final String r) {
+		reason=r;
+	}
+	
+	public SayResponse(final String r,@Nullable final String sayas) {
 		reason=r;
 		this.sayas=sayas;
 	}
-
+	
 	// ---------- INSTANCE ----------
-	public String getText() { return reason; }
-
-	public void setText(final String text) { reason=text; }
-
+	public String getText() {
+		return reason;
+	}
+	
+	public void setText(final String text) {
+		reason=text;
+	}
+	
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
@@ -41,37 +45,36 @@ public class SayResponse implements Response {
 		JSONResponse.sayAs(json,sayas,"/me "+reason,st.protocol);
 		return json;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return (sayas==null?"":sayas+": ")+reason;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String asText(@Nonnull final State st) {
-		if (st.getCharacterNullable() != null) {
-			final Transmission t = new Transmission(st.getCharacter(), asJSON(st));
+		if (st.getCharacterNullable()!=null) {
+			final Transmission t=new Transmission(st.getCharacter(),asJSON(st));
 			t.start();
 		}
 		final String message;
-		if (sayas == null) {
-			message = "\"" + reason + "\"";
+		if (sayas==null) {
+			message="\""+reason+"\"";
 		} else {
-			message = "\"" + sayas + " " + reason + "\"";
+			message="\""+sayas+" "+reason+"\"";
 		}
 		return message;
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(@Nonnull final State st,
-	                     final boolean rich) {
+	public String asHtml(@Nonnull final State st,final boolean rich) {
 		return new Paragraph(asText(st)).asHtml(st,rich);
 	}
-
-
+	
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {

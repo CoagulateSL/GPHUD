@@ -25,18 +25,28 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class NameCache {
+	@Nullable Map<Integer,String> avatarnames;
+	@Nullable Map<Integer,String> characternames;
+	@Nullable Map<Integer,String> instancenames;
+	@Nullable Map<Integer,String> regionnames;
+	
+	// ---------- INSTANCE ----------
 	@Nullable
-	Map<Integer,String> avatarnames;
+	public String lookup(@Nonnull final User u) {
+		if (avatarnames==null) {
+			avatarnames=User.loadMap();
+		}
+		return avatarnames.get(u.getId());
+	}
+	
 	@Nullable
-	Map<Integer,String> characternames;
-	@Nullable
-	Map<Integer,String> instancenames;
-	@Nullable
-	Map<Integer,String> regionnames;
-
-	// ----- Internal Statics -----
-	private static DBConnection db() { return GPHUD.getDB(); }
-
+	public String lookup(@Nonnull final Char u) {
+		if (characternames==null) {
+			characternames=loadMap("characters","characterid","name");
+		}
+		return characternames.get(u.getId());
+	}
+	
 	@Nonnull
 	private static Map<Integer,String> loadMap(@Nonnull final String tablename,
 	                                           @Nonnull final String idcolumn,
@@ -44,33 +54,32 @@ public class NameCache {
 		final Map<Integer,String> results=new TreeMap<>();
 		final Results rows=db().dq("select "+idcolumn+","+namecolumn+" from "+tablename);
 		for (final ResultsRow r: rows) {
-			results.put(r.getInt(idcolumn),TableRow.getLink(r.getString(namecolumn).replaceAll(" ","&nbsp;"),tablename,r.getInt(idcolumn)));
+			results.put(r.getInt(idcolumn),
+			            TableRow.getLink(r.getString(namecolumn).replaceAll(" ","&nbsp;"),
+			                             tablename,
+			                             r.getInt(idcolumn)));
 		}
 		return results;
 	}
-
-	// ---------- INSTANCE ----------
-	@Nullable
-	public String lookup(@Nonnull final User u) {
-		if (avatarnames==null) { avatarnames=User.loadMap(); }
-		return avatarnames.get(u.getId());
+	
+	// ----- Internal Statics -----
+	private static DBConnection db() {
+		return GPHUD.getDB();
 	}
-
-	@Nullable
-	public String lookup(@Nonnull final Char u) {
-		if (characternames==null) { characternames=loadMap("characters","characterid","name"); }
-		return characternames.get(u.getId());
-	}
-
+	
 	@Nullable
 	public String lookup(@Nonnull final Instance u) {
-		if (instancenames==null) { instancenames=loadMap("instances","instanceid","name"); }
+		if (instancenames==null) {
+			instancenames=loadMap("instances","instanceid","name");
+		}
 		return instancenames.get(u.getId());
 	}
-
+	
 	@Nullable
 	public String lookup(@Nonnull final Region u) {
-		if (regionnames==null) { regionnames=loadMap("regions","regionid","name"); }
+		if (regionnames==null) {
+			regionnames=loadMap("regions","regionid","name");
+		}
 		return regionnames.get(u.getId());
 	}
 }

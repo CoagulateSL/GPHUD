@@ -16,62 +16,75 @@ import java.util.Set;
  * @author iain
  */
 public class Cell implements Renderable {
-
-	@Nullable
-	Renderable e;
+	
+	@Nullable Renderable e;
 	boolean header;
-	int colspan=1;
-	String align="";
-
-	public Cell() {}
-
-	public Cell(final String s) { e=new Text(s); }
-
+	int     colspan=1;
+	String  align  ="";
+	
+	public Cell() {
+	}
+	
+	public Cell(final String s) {
+		e=new Text(s);
+	}
+	
 	public Cell(@Nullable final Renderable e) {
-		if (e==null) { throw new SystemImplementationException("Abstract Cell is not renderable."); }
+		if (e==null) {
+			throw new SystemImplementationException("Abstract Cell is not renderable.");
+		}
 		this.e=e;
 	}
-
-	public Cell(final String s,
-	            final int colspan) {
+	
+	public Cell(final String s,final int colspan) {
 		e=new Text(s);
 		this.colspan=colspan;
 	}
-
-	public Cell(@Nullable final Renderable e,
-	            final int colspan) {
+	
+	public Cell(@Nullable final Renderable e,final int colspan) {
 		if (e==null) {
 			throw new SystemImplementationException("Abstract Cell is not renderable");
 		}
 		this.e=e;
 		this.colspan=colspan;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-		if (header) { return "*"+e().asText(st)+"*"; }
+		if (header) {
+			return "*"+e().asText(st)+"*";
+		}
 		return e().asText(st);
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		String s="";
-		if (header) { s+="<th"; }
-		else { s+="<td"; }
-		if (colspan>1) { s+=" colspan="+colspan; }
-		if (!align.isEmpty()) { s+=" align="+align; }
+		if (header) {
+			s+="<th";
+		} else {
+			s+="<td";
+		}
+		if (colspan>1) {
+			s+=" colspan="+colspan;
+		}
+		if (!align.isEmpty()) {
+			s+=" align="+align;
+		}
 		s+=">";
 		s+=e().asHtml(st,rich);
 		s+="</";
-		if (header) { s+="th>"; }
-		else { s+="td>"; }
+		if (header) {
+			s+="th>";
+		} else {
+			s+="td>";
+		}
 		return s;
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
@@ -79,24 +92,26 @@ public class Cell implements Renderable {
 		r.add(e);
 		return r;
 	}
-
+	
 	@Nonnull
 	public Cell th() {
 		header=true;
 		return this;
 	}
-
+	
 	@Nonnull
 	public Cell align(final String align) {
 		this.align=align;
 		return this;
 	}
-
+	
 	// ----- Internal Instance -----
 	@Nonnull
 	Renderable e() {
-		if (e==null) { throw new SystemBadValueException("Cell content was null"); }
+		if (e==null) {
+			throw new SystemBadValueException("Cell content was null");
+		}
 		return e;
 	}
-
+	
 }

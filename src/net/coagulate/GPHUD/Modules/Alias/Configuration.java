@@ -30,43 +30,41 @@ import java.util.Map;
  */
 public abstract class Configuration {
 	// ---------- STATICS ----------
-	@URLs(url="/configuration/alias",
-	      requiresPermission="Alias.Config")
-	public static void aliasesList(@Nonnull final State st,
-	                               @Nonnull final SafeMap values) {
+	@URLs(url="/configuration/alias", requiresPermission="Alias.Config")
+	public static void aliasesList(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextSubHeader("Alias Configuration"));
-
-		if (values.containsKey("deletealias") && st.hasPermission("alias.config")) {
+		
+		if (values.containsKey("deletealias")&&st.hasPermission("alias.config")) {
 			final Alias alias=Alias.getAlias(st,values.get("deletealias"));
 			if (alias==null) {
 				f.add("<p color=red>Alias '"+values.get("deletealias")+"' was not fount</p>");
-			}
-			else {
+			} else {
 				try {
 					alias.delete();
 					f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been deleted</p>");
+				} catch (final NoDataException e) {
+					f.add("<p color=green>Alias '"+values.get("deletealias")+"' has been (already?) deleted</p>");
 				}
-				catch (final NoDataException e) {
-                    f.add("<p color=green>Alias '" + values.get("deletealias") + "' has been (already?) deleted</p>");
-                }
 			}
 		}
-
+		
 		final Map<String,Alias> aliases=Alias.getAliasMap(st);
 		int counter=0;
 		for (final Map.Entry<String,Alias> entry: aliases.entrySet()) {
 			final String name=entry.getKey();
 			String innercontent="";
 			if (st.hasPermission("alias.config")) {
-				innercontent+="<button style=\"border: 0;\" onclick=\"document.getElementById('delete-"+counter+"').style.display='inline';\">Delete</button>";
+				innercontent+="<button style=\"border: 0;\" onclick=\"document.getElementById('delete-"+counter+
+				              "').style.display='inline';\">Delete</button>";
 				innercontent+="<div id=\"delete-"+counter+"\" style=\"display: none;\">";
 				innercontent+="&nbsp;&nbsp;&nbsp;";
 				innercontent+="CONFIRM DELETE? ";
 				innercontent+="<form style=\"display: inline;\" method=post>";
 				innercontent+="<input type=hidden name=deletealias value=\""+name+"\">";
-				innercontent+="<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>";
+				innercontent+=
+						"<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>";
 				innercontent+="</form>";
 				innercontent+="</div>";
 				innercontent+="&nbsp;&nbsp;&nbsp;";
@@ -79,20 +77,25 @@ public abstract class Configuration {
 		f.add("<br>");
 		f.add(new Form(st,false,"./alias/create","Create"));
 	}
-
-	@URLs(url="/configuration/alias/create",
-	      requiresPermission="Alias.Config")
-	public static void createAlias(@Nonnull final State st,
-	                               @Nonnull final SafeMap values) {
-		if ("Submit".equals(values.get("Submit")) && !values.get("name").isEmpty() && !values.get("command").isEmpty()) {
+	
+	@URLs(url="/configuration/alias/create", requiresPermission="Alias.Config")
+	public static void createAlias(@Nonnull final State st,@Nonnull final SafeMap values) {
+		if ("Submit".equals(values.get("Submit"))&&!values.get("name").isEmpty()&&!values.get("command").isEmpty()) {
 			final JSONObject template=new JSONObject();
 			template.put("invoke",values.get("command"));
 			try {
 				final Alias newalias=Alias.create(st,values.get("name"),template);
-				Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Alias",null,values.get("command"),"Avatar created new alias");
+				Audit.audit(st,
+				            Audit.OPERATOR.AVATAR,
+				            null,
+				            null,
+				            "Create",
+				            "Alias",
+				            null,
+				            values.get("command"),
+				            "Avatar created new alias");
 				throw new RedirectionException("./view/"+newalias.getId());
-			}
-			catch (@Nonnull final UserException e) {
+			} catch (@Nonnull final UserException e) {
 				st.form().add(new Paragraph(new TextError("Creation failed : "+e.getMessage())));
 			}
 		}
@@ -103,19 +106,16 @@ public abstract class Configuration {
 		t.openRow().add("Base Command").add(DropDownList.getCommandsList(st,"command",true));
 		t.openRow().add(new Cell(new Button("Submit"),2));
 	}
-
+	
 	@URLs(url="/configuration/alias/view/*")
-	public static void viewAlias(@Nonnull final State st,
-	                             @Nonnull final SafeMap values) {
+	public static void viewAlias(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final Alias a=Alias.get(Integer.parseInt(id));
 		viewAlias(st,values,a);
 	}
-
-	public static void viewAlias(@Nonnull final State st,
-	                             @Nonnull final SafeMap values,
-	                             @Nonnull final Alias a) {
+	
+	public static void viewAlias(@Nonnull final State st,@Nonnull final SafeMap values,@Nonnull final Alias a) {
 		a.validate(st);
 		final Form f=st.form();
 		if ("Update".equals(values.get("Update"))) {
@@ -123,13 +123,21 @@ public abstract class Configuration {
 				final JSONObject old=a.getTemplate();
 				final JSONObject template=new JSONObject();
 				for (final String k: values.keySet()) {
-					if (!"Update".equals(k) && !"okreturnurl".equals(k) && !values.get(k).isEmpty()) {
+					if (!"Update".equals(k)&&!"okreturnurl".equals(k)&&!values.get(k).isEmpty()) {
 						template.put(k,values.get(k));
 					}
 				}
 				template.put("invoke",old.get("invoke"));
 				a.setTemplate(template);
-				Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Updated",a.getName(),old.toString(),template.toString(),"Avatar updated command alias");
+				Audit.audit(st,
+				            Audit.OPERATOR.AVATAR,
+				            null,
+				            null,
+				            "Updated",
+				            a.getName(),
+				            old.toString(),
+				            template.toString(),
+				            "Avatar updated command alias");
 				f.add(new TextOK("Template Updated"));
 			}
 		}
@@ -139,44 +147,50 @@ public abstract class Configuration {
 		f.add(new Paragraph("Invokes command "+template.getString("invoke")));
 		f.add(new Paragraph(new TextSubHeader("Template")));
 		try {
-			final Command c = Modules.getCommand(st, template.getString("invoke"));
+			final Command c=Modules.getCommand(st,template.getString("invoke"));
 			f.add(t);
-			t.add(new HeaderRow().add("Argument Name").add("Templated Value").add("Originating Type").add("Originating Description").add("Replaced Description"));
-			for (final Argument arg : c.getArguments()) {
+			t.add(new HeaderRow().add("Argument Name")
+			                     .add("Templated Value")
+			                     .add("Originating Type")
+			                     .add("Originating Description")
+			                     .add("Replaced Description"));
+			for (final Argument arg: c.getArguments()) {
 				if (!template.has(arg.name())) {
-					template.put(arg.name(), "");
+					template.put(arg.name(),"");
 				}
 			}
-
-			for (final String name : template.keySet()) {
-				if (!"invoke".equals(name) && !name.endsWith("-desc")) {
-					t.openRow().add(name).add(new TextInput(name, template.getString(name)));
-					Argument arg = null;
-					for (final Argument anarg : c.getArguments()) {
+			
+			for (final String name: template.keySet()) {
+				if (!"invoke".equals(name)&&!name.endsWith("-desc")) {
+					t.openRow().add(name).add(new TextInput(name,template.getString(name)));
+					Argument arg=null;
+					for (final Argument anarg: c.getArguments()) {
 						if (anarg.name().equals(name)) {
-							arg = anarg;
+							arg=anarg;
 						}
 					}
-					if (arg != null) {
+					if (arg!=null) {
 						t.add(arg.type().toString());
 						t.add(arg.description());
-						final String desc = template.optString(name + "-desc", "");
-                        t.add(new TextInput(name + "-desc", desc));
-                        if (arg.delayTemplating()) {
-                            t.add("  <i> ( This parameter uses delayed templating ) </i>");
-                        }
-                    }
-                }
-            }
-            if (st.hasPermission("Alias.Config")) {
-                f.add(new Button("Update", "Update"));
-            }
-        } catch (final UserConfigurationRecursionException e) {
-            f.add("<b>This command has a recursion problem</b>.  Please delete a link in the recursion to resolve this.<br><pre>" + e.getLocalizedMessage() + "</pre>");
-        } catch (final UserInputLookupFailureException e) {
-            f.add("<b>This alias points to an unresolvable command, you should probably delete this alias.<br><pre>" + e.getLocalizedMessage() + "</pre>");
-        }
+						final String desc=template.optString(name+"-desc","");
+						t.add(new TextInput(name+"-desc",desc));
+						if (arg.delayTemplating()) {
+							t.add("  <i> ( This parameter uses delayed templating ) </i>");
+						}
+					}
+				}
+			}
+			if (st.hasPermission("Alias.Config")) {
+				f.add(new Button("Update","Update"));
+			}
+		} catch (final UserConfigurationRecursionException e) {
+			f.add("<b>This command has a recursion problem</b>.  Please delete a link in the recursion to resolve this.<br><pre>"+
+			      e.getLocalizedMessage()+"</pre>");
+		} catch (final UserInputLookupFailureException e) {
+			f.add("<b>This alias points to an unresolvable command, you should probably delete this alias.<br><pre>"+
+			      e.getLocalizedMessage()+"</pre>");
+		}
 	}
-
-
+	
+	
 }

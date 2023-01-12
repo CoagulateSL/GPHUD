@@ -9,560 +9,2084 @@
 
 
 // Imported legacy change logs!
-@Classes.Change(date="2022-04-22", component=DatabaseSchema, type=Add, message="Added retireat/retirewarn to instance table")
-@Classes.Change(date="2022-04-22", component=Core, type=Add, message="Regions are now automatically retired after two weeks of being offline (configurable for cluster)")
-@Classes.Change(date="2022-04-22", component=Core, type=Add, message="Instances now start a 1 month deletion warning, with a 2 week secondary warning, if they have no active regions attached (configurable for cluster)")
-@Classes.Change(date="2022-04-22", component=Core, type=Add, message="Instances now delete automatically when this one month warning period has lapsed (configurable for cluster)")
-@Classes.Change(date="2022-04-04", component=Core, type=Fix, message="Change error when a KV is mass set via scripting to report properly an unknown KV rather than an internal error.")
-@Classes.Change(date="2022-03-28", component=Core, type=Change, message="Migrated to Java 17")
-@Classes.Change(date="2022-03-28", component=Core, type=Change, message="Moved to Version-Number-Less architecture")
-@Classes.Change(date="2022-03-28", component=Core, type=Change, message="Switched to MySQL native Database driver")
-@Classes.Change(date="2022-03-28", component=Core, type=Change, message="Improved cache performance of other deep lists e.g. on the menus page")
-@Classes.Change(date="2022-03-23", component=Core, type=Change, message="Doubled the allowed depth of KV calculations (that is, the number of chained templates in KVs)")
-@Classes.Change(date="2022-03-23", component=Core, type=Fix, message="Improved performance of Configuration Hierarchy (KV management) page for large numbers of groups and scripted commands.  Note that excessively large configuration sets may still generate large generation or download times due to this page containing 'groups X commands' configuration items on it, for some instances this now passes 100,000 elements generating a web page larger than a Windows 95 install media.")
-@Classes.Change(date="2022-03-19", component=Core, type=Fix, message="Paged view pages now left align the search box")
-@Classes.Change(date="2022-03-19", component=Core, type=Add, message="New command GPHUDClient.Reboot that will send a reboot message to the caller.")
-@Classes.Change(date="2022-03-19", component=Core, type=Add, message="New commands Groups.AddSilently and Groups.RemoveSilently that do not send notifications to the targetted user.")
-@Classes.Change(date="2022-03-19", component=Scripting, type=Add, message="New functions to get item's descriptions and weights.")
-@Classes.Change(date="2022-03-19", component=Core, type=Change, message="MariaDB driver replaced with MySQL driver ; now fully MySQL 8.x")
-@Classes.Change(date="2021-11-27", component=Core, type=Fix, message="Performance improvement on the 'View Characters' SQL queries.")
-@Classes.Change(date="2021-11-27", component=Core, type=Change, message="View Characters now only shows characters active in the last three months, use '(including retired)' for a full list.")
-@Classes.Change(date="2021-11-27", component=Scripting, type=Add, message="New function gsDefined - returns 1 if you pass it the string of a variable that exists, 0 otherwise.")
-@Classes.Change(date="2021-11-27", component=Scripting, type=Add, message="Scripts now have an alias which they can be called by, either via scripting.alias or in scripts as a 'function call'; mostly useful for scripts that have unusable symbols in their name e.g. the - symbol means subtract to the scripting language and thus can not be used as a function name.")
-@Classes.Change(date="2021-10-23", component=Scripting, type=Add, message="New GS keyword (was always reserved but had no implementation) - 'Return' - takes an optional argument, e.g.'return; return 33; return 'a string'; etc.  If you 'return', execution of your script stops (with the return value left on the stack...).")
-@Classes.Change(date="2021-10-23", component=Scripting, type=Add, message="You can call another script like you might call a function, note the 'gs' prefix is reserved for internal functions, and that script functions currently take no parameters.  E.g.   Integer number=otherScript();    See also [https://gphuddocs.coagulate.net/wiki/index.php/Scripting#Custom_Function_Calls Scripting Documentation Update]")
-@Classes.Change(date="2021-10-23", component=GSVM, type=Add, message="Added new bytecode operation 'BCBranchRelativeIfZero' - performs the same function as BCBranchIfZero but requires a relative modification to the PC rather than an absolute value.  This operation code permits the compilation of relocatable bytecode.")
-@Classes.Change(date="2021-10-23", component=GSVM, type=Delete, message="BCBranchIfZero is hard deprecated - code remains to enable existing compiled scripts to continue to function but no new compilations will generate this bytecode assembly and code using this remains unable to be relocated.")
-@Classes.Change(date="2021-10-23", component=GSVM, type=Add, message="Scripts are now stored with a 'compiler version', which we can later use to distinguish between code quirks, e.g. use of relative/absolute jump code.  Previously compiled code inherits compiler version 0, compiler version 1 generates relocatable code only.")
-@Classes.Change(date="2021-10-23", component=GSVM, type=Add, message="Add new byte code 'return' which will stack-juggle a return Data Type (any), and pop a vm-random canary and return PC (absolute).")
-@Classes.Change(date="2021-10-23", component=GSVM, type=Add, message="GSVM now (badly) tracks the currently running script.  There are bugs in this, but it's intended to assist in debugging.")
-@Classes.Change(date="2021-10-23", component=Core, type=Add, message="GPHUD Schema Version 12 - Scripts table how has a compiler version int, not null, default 0.  Set to a well known static value on update (effectively).")
-@Classes.Change(date="2021-10-17", component=Core, type=Change, message="Various errors are suppressed (not mailed to developers)")
-@Classes.Change(date="2021-10-17", component=Core, type=Fix, message="Discard any errors that happen from broadcasting messages during event startup/shutdown as this would prevent the event launching/ending properly.")
-@Classes.Change(date="2021-10-17", component=Core, type=Fix, message="Don't throw an internal error if a command line string isn't properly terminated, instead report a string termination user error.")
-@Classes.Change(date="2021-10-17", component=Core, type=Fix, message="Ensure pool deletions are properly contained to a single instance (ouch).")
-@Classes.Change(date="2021-10-17", component=Core, type=Change, message="Return a user error when a GET request is made to the external interface, rather than showing an 'internal error' (which implies an error at our end, which is not the case.  Also if you follow the link from the wiki that mentions the API target URL your web browser will issue a GET request, which now has a meaningful response).")
-@Classes.Change(date="2021-10-17", component=Core, type=Change, message="Removed the auto-revocation of broken URLs from region servers - this is in response to the recent OVH network outage, whereupon all URLs became unreachable and were cleared.  When service was resumed these URLs remained blank, leaving a uni directional connection and incorrect reports about servers being offline.")
-@Classes.Change(date="2021-10-17", component=Core, type=Change, message="If a region server checks in an avatar presence response without having a return URL, reboot the region server.  This was a hotfix reaction to the previous change to cause all region servers to re-establish a connection and register a replacement URL for the one purged previously.")
-@Classes.Change(date="2021-10-17", component=Core, type=Add, message="Scripts can now be deleted from the Configuration page")
-@Classes.Change(date="2021-10-17", component=Core, type=Add, message="The web page now has appropriate linkage to the existing command Teleportation.DeleteLandmark, enabling deletion via the website.")
-@Classes.Change(date="2021-10-17", component=Core, type=Add, message="Object types can now be deleted through Objects.DeleteObjectType or through the web page.")
-@Classes.Change(date="2021-10-17", component=Core, type=Change, message="Scripts in the Configuration page are now sorted by script name rather than the nebulous row ID")
-@Classes.Change(date="2021-10-17", component=Core, type=Add, message="Menus can now be cloned via the Configuration page for the indvidual menu.")
-@Classes.Change(date="2021-10-17", component=Core, type=Add, message="Effects now support a 'metadata' column which can be used to store information for programmatic interrogation without making it part of the name.  This value can be set on new effects at creation time, edited on existing effects via Effects.SetMetaData and the web page.")
-@Classes.Change(date="2021-10-17", component=API, type=Add, message="Effects.SetMetaData")
-@Classes.Change(date="2021-10-17", component=API, type=Add, message="Effects.RemoveByMetaData - removes all effects from a character where the metadata matches (either exact match or substring match) a supplied string.")
-@Classes.Change(date="2021-10-17", component=API, type=Add, message="Effects.RemoveByMetaDataShortestN / RemoveByMetaDataLongestN - Removes effects from a character that match metadata (see above), up to a maximum number of effects to remove.  Prioritises the shortest/longest effects depending which method you call.")
-@Classes.Change(date="2021-10-17", component=RegionServer, type=Fix, message="Ensure a different seeding is used for global broadcast channels etc to better separate DEV and PRODUCTION when both are installed on the same sim.  Note ; this release is not being pushed with a requested in world server upgrade, you only need this version if you are also using DEV at a PRODUCTION instance.")
-@Classes.Change(date="2021-10-17", component=Scripting, type=Fix, message="Ensure that any API call that throws a UserException has it recast into a scripting execution error so it is properly reported.")
-@Classes.Change(date="2021-10-17", component=Scripting, type=Add, message="New function gsMemberOf which can tell if a character is a member of a specific group.")
-@Classes.Change(date="2021-10-17", component=Scripting, type=Add, message="New function gsInventoryList that returns the names of items in an inventory as a List.")
-@Classes.Change(date="2021-10-17", component=Scripting, type=Fix, message="Division by zero now generates a trapped error of GSMathsError which will be reported as a script runtime, rather than the Java core exception which would cause an internal error report.")
-@Classes.Change(date="2021-10-17", component=Scripting, type=Fix, message="Function gsGetEffectMetaData which can read the metadata from an effect into a String.")
-@Classes.Change(date="2021-10-17", component=Core, type=Change, message="Split maintenance operations into 'primary only' and 'all nodes', such that racey tasks can be left to the primary only but e.g. statistics gathering can run on all nodes at all times.")
-@Classes.Change(date="2021-10-17", component=DatabaseSchema, type=Add, message="GPHUD Schema version 11 adds metadata column to effects table.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Added reporting/download credits, one is granted every 12 hours and you may store up to 10 in reserve.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Added report generation via website or command, this requires Instance.Reporting and will cost one Reporting credit to generate.  The system iterates users at 10 per second and will give an estimated duration for the generation phase.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Added report downloading via website, same permission requirement and drains a Download credit.  Downloads as a time/date stamped CSV file that is formatted for Excel and compatible parsers.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="All sorts of internal tweaks to support providing a CSV download (ContentType added to Page() from SLCore, GPHUD State supports suppressOutput() to prevent rendering html surrounding).")
-@Classes.Change(date="2021-03-15", component=Core, type=Fix, message="Migrate the HUD's protocol version when character switching is activated, otherwise the legacy menu is probably assumed and corrupts the HUDs ability to draw the main menu.")
-@Classes.Change(date="2021-03-15", component=Core, type=Fix, message="Internal API to add/remove group member only flusher character's 'member of groups' cache, it now also flushes the group's 'membership' cache.  This would cause group updates to appear to take up to 5 minutes to happen.")
-@Classes.Change(date="2021-03-15", component=Core, type=Change, message="Suppress developer logging of Error Responses that have been converted to Exceptions via gsAPIX / gsElevatedAPIX")
-@Classes.Change(date="2021-03-15", component=Core, type=Fix, message="When an attribute was deleted, the cache of attributes was not properly flushed (incorrect key used) leading to internal errors as the outdated cached list of attributes would refer to a non existent attribute, until the cache naturally expired.")
-@Classes.Change(date="2021-03-15", component=Core, type=Fix, message="Prevent Name API calls for the blank username.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Purge expired script runs, to reduce database garbage accumulating.")
-@Classes.Change(date="2021-03-15", component=Core, type=Change, message="Permissions groups add/remove member commands lost their explicit permissions check.  Presently they all check Instance.ManagePermissions, which is used to change the permissions assigned to a permissions group, and is a dangerous permission as it allows a user to add more permissions to a group they are a member of (i.e. consider people with this permission as having all permissions except Instance.Owner).  The add/remove member code was also checking canInvite/canEject which makes two permissions checks, *either* you must be a member of the permissions group and have the canInvite/canKick permission assigned for that group, OR you have Instance.PermissionsMembers.  The difference is, setting a user as canInvite/canKick on a particular group lets them only add or remove members from that specific group, Instance.PermissionsMembers is a high level override (for the few who admin even the admins of the admins) that lets users with this permission join ANY user to ANY group.  Most of the time you'll want to allow people to add/remove from their own groups only, to avoid them joining people to your super-admin group, however, for a couple of people at a sim, being able to administer all groups is likely required, and for this reason alone (to save you having to join to every single group) there is Instance.PermissionsMembers.  Changes to per-group invite/kick rights are made under the PermissionsGroups menu on the left hand side (go into a group and use 'Set Invite/Kick')")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Added Introspection.ViewStatus permission which is now required to view the Status page under Introspection.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Permissions checks added to various menu elements, e.g. Alias.View was required to look at aliases, but the configuration links were visible to all.  These now check the relevant permissions and aren't links or aren't visible as appropriate.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Items configuration, which shows the items list now requires any Items related permission to view.")
-@Classes.Change(date="2021-03-15", component=Core, type=Add, message="Menu configuration, External API access configuration, Publishing configuration, Scripting configuration (scripts list), Teleportation (list of landmarks) and Zoning require any related permission to view.")
-@Classes.Change(date="2021-03-15", component=Core, type=Fix, message="External interface rejects blank checkavatarpermission rather than trying to look up the key and failing.")
-@Classes.Change(date="2021-03-15", component=RegionServer, type=Fix, message="Fixed issue with Region Server's being uncommunicative ; they now output response messages as local SAY messages, and report any Error messages similarly.</s>")
-@Classes.Change(date="2021-02-13", component=Core, type=Add, message="Added delete buttons for Items and Item Actions (already released)")
-@Classes.Change(date="2021-02-13", component=Core, type=Add, message="Support system protocol 4 for main menu cache conveyance, as well as maintain legacy support for previous protocols.")
-@Classes.Change(date="2021-02-13", component=Core, type=Change, message="Reduced rate of Pings to active connections")
-@Classes.Change(date="2021-02-13", component=Core, type=Change, message="Rewritten database caching module")
-@Classes.Change(date="2021-02-13", component=Core, type=Add, message="Added new KV GPHUDClient.TitlerAttachment that defines the attachment point for the titler, or None for no titler.  There is also a protected KV 'GPHUDClient.TitlerAttachmentConverted' which contains the LSL integer attachment point index for the named attachment point ; this KV is used to convey the numeric form to the HUD (which then requests a Titler from the region server using this attachment point index).")
-@Classes.Change(date="2021-02-13", component=Core, type=Add, message="Added command GPHUDClient.setTitlerAttachPoint which takes an attachment point description to attach to (works better on a menu!), allowing users to set their character's preferred attachment point.  Also added command GPHUDClient.resetTitler with predictable effect.")
-@Classes.Change(date="2021-02-13", component=HUD, type=Change, message="Switch to system protocol 4, decode compacted cached main menu back into UI ready format at the LSL end of the communications.")
-@Classes.Change(date="2021-02-13", component=HUD, type=Change, message="Titler no longer auto attaches along side the HUD, and is instead requested by the HUD.  This allows the Titler to be disabled entirely or, on a group, character, etc basis, the Titler may be attached somewhere other than the Skull.")
-@Classes.Change(date="2021-02-13", component=ObjectDriver, type=Change, message="Switch to system protocol 4. (Main menu cache is not used by object driver but still forms part of the payload)")
-@Classes.Change(date="2021-02-13", component=Protocol, type=Change, message="Bump protocol level to 4 ; alteration of main menu communications from a 'UI ready' JSON structure to a delimited list of options.  This is to overcome the 2KB outbound transmission limit that some menu structures hit when doing 'instance wide updates' (i.e. the admin reconfigures the main menu).")
-@Classes.Change(date="2021-02-13", component=Scripting, type=Fix, message="List variables no longer reverse themselves on a VM suspend/resume operation (which happens when you query a user for something).")
-@Classes.Change(date="2021-01-10", component=Core, type=Add, message="Added template TARGET:LEVEL")
-@Classes.Change(date="2021-01-10", component=Core, type=Add, message="Added Inventory and Items modules and configuration, support for Items and INVENTORY as an attribute type.  See [[Inventories]] for more details.")
-@Classes.Change(date="2021-01-10", component=Core, type=Add, message="Added commands Inventory.add, Inventory.destroyItem, Inventory.giveItem, Inventory.Interact, Inventory.InteractItem, Inventory.InteractItemVerb, Inventory.MoveItem, Inventory.set and Inventory.view, Items.Edit and Items.EditInventories - See the [https://sl.coagulate.net/GPHUD/introspection/api/ API introspection page] for more or [[Inventories]] for more details.")
-@Classes.Change(date="2021-01-10", component=Scripting, type=Fix, message="Fixed a bug in gsSetCharacterKVs that would not set values for KVs that had not previously had a value set.")
-@Classes.Change(date="2021-01-10", component=Scripting, type=Add, message="Added functions gsInventoryAdd, gsInventoryCount, gsInventoryGet, gsInventoryQuantity and gsInventoryWeight, see [[Inventories]] and [https://sl.coagulate.net/GPHUD/introspection/gsfunctions the application's Introspection/GSFunctions] for more details")
-@Classes.Change(date="2021-01-10", component=RegionServer, type=Fix, message="Added code to express terminate/suspend messages properly (lost in the refactoring of GPHUDHeader previously).")
-@Classes.Change(date="2020-12-21", component=Core, type=Add, message="New AttributeType 'SET' bound to the character directly.")
-@Classes.Change(date="2020-12-21", component=Core, type=Add, message="Sets are displayed on the character view page, items can be added or removed (set quantity to zero) from here if you have the appropriate permission (Characters.Set''AttributeName'')")
-@Classes.Change(date="2020-12-21", component=Core, type=Add, message="New command set 'Sets.*', see introspection/API for more information (Sets.Add, Sets.Set, Sets.View, Sets.Wipe)")
-@Classes.Change(date="2020-12-21", component=Scripting, type=Add, message="Set related functions added - see introspection/GSFunctions for more details (gsSetAdd, gsSetCopy, gsSetCount, gsSetGet, gsSetList, gsSetMap, gsSetQuantity, gsSetSet, gsSetWipe)")
-@Classes.Change(date="2020-12-17", component=Core, type=Fix, message="Exceptions that wrap another exception now inherit the 'Suppression' flag which prevents developers getting emailed about certain user generated errors ; this fixes that suppression flag getting lost and error emails getting generated for 'developmentally uninteresting' errors (such as typing in garbage into colour selectors, typing words into numeric inputs, failing char name validation etc etc)")
-@Classes.Change(date="2020-12-17", component=Core, type=Add, message="Added support for suspending a user from the service at a cluster-wide level.")
-@Classes.Change(date="2020-12-17", component=Core, type=Add, message="Clickable object types (ClickTeleporter, RunCommand, RunScript and NPC) can have a maximum interaction distance set in their object type, default is 10 meters for new objects, existing objects remain at unlimited range but can be changed via the web page.")
-@Classes.Change(date="2020-12-17", component=Core, type=Fix, message="Fixed a leak of available permissions between instances (though they have no effect either)")
-@Classes.Change(date="2020-12-17", component=Core, type=Add, message="Added KV Experience.MaxLevel which 'caps' the level characters can achieve.  A character at maximum level no longer receives experience.  This may cause some characters to display negative ability points if you reduce their current level by setting this.")
-@Classes.Change(date="2020-12-17", component=Core, type=Add, message="Character groups now have a 'KV Precedence' setting which affects their ordering ; this only affects the DELEGATING KV types (as CUMULATIVE cares not for the order as it adds them all up).  Lower precedence groups appear 'higher' in the KV hierarchy and thus higher precedence numbered groups end up dominant (if set) in a DELEGATING hierarchy type KV.  For AUTHORITATIVE KVs this behaviour would be reversed (not that any AUTHORITATIVE KVs exist presently).  Precedence values are shown in parenthesis in the group type on the KV editor pages and should be in order here (DELEGATING prefers values further down this list).  Default precedence level for all existing groups is 1.  Range for precedence values is a signed 32 bit integer (approx +/- 2.1 billion).  Negative numbers are permitted.  For groups with the same precedence value the internal ID number of the group is a secondary level of ordering providing a consistent interpretation of KV orderings within groups.  Precedence values may be edited via the Groups menu element.")
-@Classes.Change(date="2020-12-17", component=ObjectDriver, type=Add, message="Object Driver supports a maximum click distance.")
-@Classes.Change(date="2020-12-17", component=Scripting, type=Add, message="Added GPHUDClient.AllowManualByDefault which controls the behaviour of gsSelectCharacter's 'Manual Selection' option ; this KV is instance only and defaults to TRUE which is the legacy behaviour, setting this to false will remove the Manual Entry option from all gsSelectCharacter calls to the HUD.  If no avatars are nearby the HUD emits an 'Unable to detect any nearby players' error and the script stops (or specifically fails to resume).")
-@Classes.Change(date="2020-12-17", component=Scripting, type=Add, message="New function call gsSelectCharacterSpecifyManual which takes an integer value, 0 disables manual selection and 1 enables it, this function call overrides the GPHUDClient.AllowManualByDefault preference for this call (i.e. you can set the default and have specific exceptions either way with this function)")
-@Classes.Change(date="2020-12-17", component=Scripting, type=Add, message="Two new function calls, gsGetPlayersName and gsGetPlayersUUID which can resolve a Character into the player's Avatar name or UUID, if the character is logged in.")
-@Classes.Change(date="2020-12-17", component=Scripting, type=Add, message="New function call, gsGetCharacter which will resolve a String name into a Character type.")
-@Classes.Change(date="2020-12-17", component=HUD, type=Fix, message="Titler/HUD now correctly recommunicate the titler's Z offset if the titler starts up after the HUD, or is otherwise reset.")
-@Classes.Change(date="2020-11-29", component=Core, type=Add, message="Added recursion protection to command execution.")
-@Classes.Change(date="2020-11-29", component=Core, type=Change, message="Aliases may now invoke any other command, including generated ones (including other aliases, enjoy finding new ways to break things!)")
-@Classes.Change(date="2020-11-29", component=Core, type=Change, message="GPHUDClient quick button commands may be invoked from console/scripting")
-@Classes.Change(date="2020-11-29", component=Core, type=Fix, message="Alias editing page handles errors that can occur as a result of enabling generated commands aliasing")
-@Classes.Change(date="2020-11-29", component=Core, type=Add, message="Some basic instrumentation for I/O indicating the nature of the request, the payloads transferred and run time ; to hopefully point the direction of some possible optimisations. (must be enabled in server's properties file)")
-@Classes.Change(date="2020-11-29", component=Core, type=Change, message="Suppressed developer emails for a variety of uninteresting errors (permission denied, filtered characters in name, character not online when messaging, health reset denied)")
-@Classes.Change(date="2020-11-29", component=Core, type=Change, message="Purge any URL that fails all 5 retry connections (over 25 seconds), currently we only purge URLs that fail to validate as URLs or that generate 404's from the remote server, however, it also seems error 503's may be a permanent failure of the URL.  So now we revoke any URL that fails all retries too.")
-@Classes.Change(date="2020-11-29", component=Core, type=Change, message="Altered a parameter of the apache config (keepalive) ; seems there are occasional '502' errors from my service that report an issue with the upstream connection, suspicion is this relates to held open connections that expire at inopportune moments (race condition).  Removing connection keepalive may solve this (in a not so great way), monitoring ongoing (Update: Issue which surfaced maybe twice per hour for 1 request has no longer shown up at all in 2.5 days).")
-@Classes.Change(date="2020-11-29", component=Protocol, type=Add, message="'Protocol version' numbers are logged for region servers, characters (HUDs) and objects, this enables 'breaking changes' to be implemented for new versions while maintaining backwards compatability in some cases.")
-@Classes.Change(date="2020-11-29", component=Protocol, type=Change, message="Added a new HUD 'message/say' protocol supported by HUD version 3, this format correctly orders outputs which mostly affects scripting.")
-@Classes.Change(date="2020-11-29", component=Protocol, type=Fix, message="Fixed a bug with various uses of core GPHUD Libraries which emitted certain messages as 'local say' messages ; notably this caused broadcast messages such as event start messages to emit in nearby chat as well as the intended OwnerSay.  Core GPHUD libraries are no longer allowed to emit text (and a replication of some code was made into the Object Driver as suitable).")
-@Classes.Change(date="2020-11-29", component=Protocol, type=Add, message="All components communicate an arbitrary 'protocol' number to the server, assumed to be zero if unset, this value is increased when the protocol needs to fork one of two paths only.")
-@Classes.Change(date="2020-11-29", component=Scripting, type=Add, message="Objects of type 'RunScript' and 'PhantomScript' will introduce the variable CALLERUUID into the script which contains the SL Avatar's UUID for the interactor.  NPC types also support this variable under the name of 'TARGETUUID' (as CALLER in an NPC script is the NPC its self)")
-@Classes.Change(date="2020-11-29", component=Scripting, type=Change, message="Uses protocol versioned 'Say/SayAs/SayAsHud' messages ; new HUDs will correctly emit messages in the order the script queued them, rather than in 'blocks' by type.")
-@Classes.Change(date="2020-11-29", component=HUD, type=Change, message="Support the new HUD messages protocol (v3).")
-@Classes.Change(date="2020-11-29", component=ObjectDriver, type=Change, message="Support the new HUD messages protocol (v3) (note: the OwnerSay method is intentionally unimplemented in the object driver ; OwnerSays will be silently discarded)")
-@Classes.Change(date="2020-11-01", component=Core, type=Fix, message="Emergency bugfix for incorrect permissions on flagging notecard in HUD...")
-@Classes.Change(date="2020-11-01", component=Core, type=Fix, message="Fix issue creating a currency coin that shares a short name with another currency.")
-@Classes.Change(date="2020-11-01", component=Core, type=Fix, message="Fixed a couple of places a deleted attribute might error the web application (this is a symptom fix, not a root cause fix, sadly)")
-@Classes.Change(date="2020-11-01", component=Core, type=Fix, message="Fixed a couple of places a null objecttype might error the application (again not quite the root cause fix)")
-@Classes.Change(date="2020-11-01", component=Core, type=Add, message="Added new template --HEALTHMAX-- which shows the maximum (initial) health value for the character, or more specifically, what the health will be if 'resetHealth' is called.")
-@Classes.Change(date="2020-11-01", component=Core, type=Fix, message="Fixed issue with group eject page recursing the URL until it 404'ed")
-@Classes.Change(date="2020-11-01", component=Core, type=Fix, message="Prevent creation of ObjectTypes with no behaviour (which later causes an exception when 'materialising' the unknown object type)")
-@Classes.Change(date="2020-11-01", component=Core, type=Change, message="Character level KV updates now only trigger a re-check of the character's KVs rather than the whole instance.")
-@Classes.Change(date="2020-11-01", component=ObjectDriver, type=Add, message="Now has an auto update mechanism, though you will have to manually update object driver scripts to the new version (which supports the auto update mechanism).  As updates can only be applied by the object owner, there is now an inert Object Driver script in the Region Server and GPHUD its self, which beacons once every 15 minutes with its version number, and objects owned by the same owner will request updates from it.")
-@Classes.Change(date="2020-11-01", component=ObjectDriver, type=Add, message="Object Driver types that invoke scripts pass on certain variables about the calling object, namely OBJECTNAME which contains the (last registered) name of the connecting object (reset the object or wait 15 minutes if you change this), OBJECTTYPE containing the name of the object type invoked, and OBJECTKEY which contains the Primitive's UUID that was interacted with.  (This specifically only covers NPC types and ClickScript / PhantomScript - using the standard click/collision types will not pass on these OBJECT details if you indirectly invoke a script via the Scripting.* commands)")
-@Classes.Change(date="2020-11-01", component=ObjectDriver, type=Add, message="The object driver will pass the description of the object to the server when checking in.  This must contain a valid JSON structure and currently only supports one parameter - objecttype, e.g. {'objecttype':'Buff Wizard'} - note that setting this up with an NPC type will shut down other objects due to the invalidity of logging in a character more than once at a time.")
-@Classes.Change(date="2020-11-01", component=ObjectDriver, type=Add, message="Support of three new ObjectTypes - PhantomCommand that runs a standard command on collision, and PhantomScript/RunScript which are comparable to RunCommand and PhantomCommand but use the new interface described above to pass variables about the source object to the script.")
-@Classes.Change(date="2020-11-01", component=ObjectDriver, type=Add, message="Support for emitting link messages from the object driver")
-@Classes.Change(date="2020-11-01", component=HUD, type=Add, message="Now contains an inert Object Driver for updating any objects this user might own.")
-@Classes.Change(date="2020-11-01", component=HUD, type=Add, message="Titler now re-requests title from the HUD on reboots, this helps if the Titler starts up after, or is rebooted after, the HUD completes its initial login stages.")
-@Classes.Change(date="2020-11-01", component=RegionServer, type=Add, message="The contained inert Object Driver (the same one given by getObjectDriver) will now beacon its version and auto update any objects owned by the same owner as the region server (probably the instance owner)")
-@Classes.Change(date="2020-11-01", component=RegionServer, type=Fix, message="Fix a flaw with the console interface")
-@Classes.Change(date="2020-11-01", component=Scripting, type=Add, message="Float support properly added to GSScripting - please be aware of type inference (1/2 is the integer (whole number) 1 divided by the integer 2, with an integer result... of zero.    1.0/2.0 is the floating point 1 divided by floating point 2 which produces floating point 0.5.  These same caveats apply to LSL)")
-@Classes.Change(date="2020-11-01", component=Scripting, type=Add, message="New function gsSetCharacterKVs, for efficiently setting multiple character level KVs at once (this method triggers a single user update after all values are set, legacy behaviour recalculated every logged in user after every update, and even the more refined version in this patch above still recalculates the character every change, bulk setting provides significant speed boosts)")
-@Classes.Change(date="2020-11-01", component=Scripting, type=Add, message="New function gsObjectEmitLinkMessage which can be used to cause a given Object (via Object Driver) to emit a link message")
-@Classes.Change(date="2020-11-01", component=Protocol, type=Add, message="Allow for suppression of boot stage link messages, not very useful for single script solutions and just generates 'noise' for the Object driver script objects")
-@Classes.Change(date="2020-10-11", component=Core, type=Fix, message="bug selecting characters with long names in a group and one very minor addition.")
-@Classes.Change(date="2020-10-11", component=HUD, type=Fix, message="Fix problem where selection of nearby character would often select the wrong character.")
-@Classes.Change(date="2020-10-11", component=Scripting, type=Add, message="Added gsNewLine() which returns the new line character for use in dialog titles, gsSay etc")
-@Classes.Change(date="2020-10-06", component=Core, type=Fix, message="Attempt to mitigate a few ConcurrentModificationExceptions observed during slowdowns.")
-@Classes.Change(date="2020-10-06", component=Core, type=Change, message="Characters.Show and Characters.Look are now allowed to be called from scripting.")
-@Classes.Change(date="2020-10-06", component=Core, type=Add, message="Added display of online time in last 1 week and 4 weeks to character sheet.")
-@Classes.Change(date="2020-10-06", component=HUD, type=Fix, message="Prevent a duplicate HUD element from removing ALL titlers (duplicate or otherwise).  Dependant on race condition.")
-@Classes.Change(date="2020-10-06", component=Scripting, type=Add, message="Added gsGetAbilityPoints(Character) which gets the available ability points for a character.")
-@Classes.Change(date="2020-10-06", component=Core, type=Fix, message="Unify the SL username format (and retroactively update existing usernames) to avoid flooding the SL Name Lookup API service and getting my key blocked.")
-@Classes.Change(date="2020-10-06", component=Core, type=Change, message="Ensure results from SL Name Lookup API are cached, and report duplicate queries (as this implies incorrect lookups)")
-@Classes.Change(date="2020-10-06", component=Core, type=Add, message="Added process to do name lookup on all known UUIDs to attempt to finally compensate for the SL name change process.")
-@Classes.Change(date="2020-09-20", component=Core, type=Fix, message="Don't write blank values, or the website's internal 'okreturnurl' to the alias data structure.")
-@Classes.Change(date="2020-09-20", component=Core, type=Add, message="Event Queue mechanics (work in progress)")
-@Classes.Change(date="2020-09-16", component=Core, type=Fix, message="Move template wrapper caching into the connection's state only.")
-@Classes.Change(date="2020-09-16", component=Core, type=Add, message="Initial support for event queueing")
-@Classes.Change(date="2020-09-07", component=Core, type=Fix, message="Fix bug breaking all links in Introspection/GSFunctions")
-@Classes.Change(date="2020-09-07", component=Core, type=Fix, message="Fix bug in packaging of zone information that would only include one area per zone")
-@Classes.Change(date="2020-09-07", component=Core, type=Fix, message="TotalXP column on characters view page did not include EventXP")
-@Classes.Change(date="2020-09-07", component=Core, type=Fix, message="Event KV's are only included in calculation if the Character is in one of the Event's Zones")
-@Classes.Change(date="2020-09-07", component=HUD, type=Fix, message="Retransmit zone information on login (as a zone transition may occur before a character is selected, and the server won't know where to store this information).")
-@Classes.Change(date="2020-09-07", component=HUD, type=Add, message="Support for outputting RP channel messages without the Character Name prefix (see GPHUDClient.NamelessRPPrefix).  Note there is no way of retroactively attributing who authored a message that has no prefix like this (I think).")
-@Classes.Change(date="2020-09-07", component=RegionServer, type=Add, message="Support for altitude ranging for meter auto dispense/attach (see GPHUDServer.DispenserMinimumZ / GPHUDServer.DispenserMaximumZ)")
-@Classes.Change(date="2020-08-30", component=Core, type=Change, message="Open sourced the GPHUD project, now on GitHub. - see [[Open Source]]")
-@Classes.Change(date="2020-08-30", component=Core, type=Add, message="Split software services into modules, of which GPHUD is one.  There are other non-open source modules I use.")
-@Classes.Change(date="2020-08-30", component=Core, type=Add, message="Provide packaged releases for SLCore (useless standalone) and GPHUD, as well as a private 'full stack' release.")
-@Classes.Change(date="2020-08-30", component=Core, type=Add, message="Release JSLBot-Bridge module and new package for GPHUD Module with JSLBotBridge support.")
-@Classes.Change(date="2020-08-30", component=Core, type=Add, message="Move to Java-11.")
-@Classes.Change(date="2020-08-30", component=Core, type=Add, message="Automated builds/releases.")
-@Classes.Change(date="2020-08-30", component=Core, type=Add, message="Support for external configuration file for Java systems and LSL scripts")
-@Classes.Change(date="2020-08-30", component=Core, type=Delete, message="Purging of all secrets previously stored in the (private) repositories and purged from git history.")
-@Classes.Change(date="2020-08-30", component=Core, type=Change, message="Rebuild the URL and Page handling code (in SLCore), modified appropriate connectors for GPHUD services.")
-@Classes.Change(date="2020-08-30", component=Core, type=Fix, message="Created bug with region distribution servers, and fixed it")
-@Classes.Change(date="2020-08-30", component=Core, type=Change, message="Support for alternative branding, for open source project.")
-@Classes.Change(date="2020-08-30", component=Core, type=Add, message="Experimental (functional) support for OSGrid (/opensim?) based regions.")
-@Classes.Change(date="2020-08-30", component=Core, type=Delete, message="Remove camera permissions request in GPHUD for now to permit OSGrid version of auto attachment.")
-@Classes.Change(date="2020-07-15", component=Core, type=Fix, message="Change Data API for Characters login to *require* a valid set of arguments (seems some null URLs are leaking in to a login here)")
-@Classes.Change(date="2020-07-15", component=Core, type=Add, message="Added command 'Faction.Leave' which lets a player leave their current faction (unless they're the leader, who can only leave if they're the last person in the faction)")
-@Classes.Change(date="2020-07-15", component=Core, type=Add, message="Added secondary characters list, one shows retired characters, one does not.")
-@Classes.Change(date="2020-07-15", component=Core, type=Add, message="Added 'Groups.Leave' command which can be used to leave an open group, if the group has a type (maps to an attribute) then the attribute must be self modifiable.")
-@Classes.Change(date="2020-07-15", component=Core, type=Change, message="Increased number of menu elements to (arbitarily) 40, Submit button moved to top of page :P")
-@Classes.Change(date="2020-07-15", component=Core, type=Add, message="Command types now have a notes field, which is displayed in Introspection under a command's description, but doesn't pollute the 'list of commands'")
-@Classes.Change(date="2020-07-15", component=Core, type=Change, message="Main menu changed so it can be per user - rather than a static central definition with sneaky conveyance backdoors, it's now invoked via a template (dynamic per user values) templated into a conveyed KV to replace this functionality, which leads to:")
-@Classes.Change(date="2020-07-15", component=Core, type=Add, message="Menu items can now have a permission, permissions group and character group associated with them.  If any of these are set, the user must have one of these for the menu to show.  Default behaviour (all values unset) shows the menu item to all")
-@Classes.Change(date="2020-07-15", component=HUD, type=Change, message="Now display 10 elements on a paged menu, rather than 9 (which didn't translate into UIX designs very well).")
-@Classes.Change(date="2020-07-15", component=HUD, type=Change, message="UIX Main Menu first page is generated by UI module rather than UIX as this then re-uses the multi-page code properly")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="Fixed the getAgentID caller to not break if a single word username is suffixed with a space - the space would normally indicate a 'two part' username but if the space is a trailing space this would 'array index out of bounds' getting the lastname.")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="Fixed an issue where certain templated paged tables (audit and pool logs) would break on 2nd plus pages.")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="Resolved an issue where the version checker would poll ALL regions version information, including retired regions, which could not be updated, thus generating false alerts about out of date versions.")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="'Fixed' length checking issues with username formatter")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="Fixed a problem where the permissions editing page would struggle with Currency based permissions (Due to currency module not following the lower casing standards)")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="JSON Templating for CURRENCY inputs now correctly guides the HUD to a TEXTBOX.")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="Prevent creation of a currency coin with a value less than 2.  Setting a coins value to 1 misses the point of base coins, and setting it to zero breaks the currency entirely.")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="Fix bug with currency transfer to an offline character.")
-@Classes.Change(date="2020-06-28", component=Core, type=Delete, message="Removed support for Login Protocol Version 1")
-@Classes.Change(date="2020-06-28", component=Core, type=Delete, message="Removed all support for the 'PrimaryCharacters' table whose functionality has been replaced by the more reliable mechanism of 'most recently used by this avatar at this instance' approach.")
-@Classes.Change(date="2020-06-28", component=Core, type=Add, message="Added commands Configuration.deltaCharInt and Configuration.deltaCharFloat which will adjust a character's KV.  Handles delegating and cumulative types appropriately, see API description for more details.")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="The Effects icons (transparent by default) will no longer generate errors about Effects not being enabled on instances configured such, the API call will be aborted into a silent NO-OP.")
-@Classes.Change(date="2020-06-28", component=Core, type=Fix, message="Fixes a bug where titler/hud text might fail to update on login.  This was caused by setting KVs in a character initialisation script, which would trigger an 'immediate update' to the client which would load all the conveyances.  The character login code would later on manually change these to 'Initialising character...' and such other things ; since this bypassed conveyances this would not then get dynamically updated as it should until the value was next changed or reloaded.  Resolution is to purge the conveyance cache for titler/hud text+color attributes such that they'll be repopulated in the final response to logging in.  Of note (to self), the setting of KVs during initialisation triggers a 'push Conveyances' via the region server to the characters HUD, thus bypassing the normal Login flow of not loading conveyances until the end.  This may have other implications.")
-@Classes.Change(date="2020-06-28", component=Core, type=Add, message="Color parser added to COLOR type fields, this accepts LSL format (float triplet between 0 and 1 optionally with <> around it), RGB triplet format (0-255), HTML format (6 char hex string with optional # at the front) or a list of W3C supported color names (e.g. blue, green, etc, see [https://www.w3schools.com/colors/colors_names.asp W3C list here])")
-@Classes.Change(date="2020-06-28", component=Core, type=Add, message="Added template --CURRENCY:LONG-- which gives the long coin named version of the currency sum")
-@Classes.Change(date="2020-06-28", component=Scripting, type=Add, message="Multi message support added to GSScripting - adding multiple gsSayToChar etc will now generate separate say's in the HUD rather than attempting to merge them into one post with newlines ; this allows longer messages to be transmitted overall.  WARNING:  There is a 4 kilobyte limit on the response from a script which will include some basic HUD overheads and any potential 'next action' the HUD might have to take (e.g. further input from the user), stacking too much text will result in a failure of the communications protocol entirely (most likely) as the LSL received is set to max input of 4KB (an upper limit is required at the LSL end to avoid hitting the 64KB limit that all scripts CODE and all DATA must fit within ; bearing in mind that due to the way LSL works we must assume a 4KB transmission requires 8KB of ram due to 'pass by value' to function calls etc).")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Added a new module, Currency")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="The Character configuration page allows a new type of attribute to be created, CURRENCY, if the Currency module is enabled.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Character attribute population (that which happens at login time) will assign the 'default' value of currency to characters as a starting balance, if and only if the character has no existing transactions for this currency type.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="The characters module exposes a dynamic set of permissions ; Currency.Create<name> and Currency.Destroy<name> for every type of currency configured.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="The characters module exposes some administrative commands for creating/destroying currency ; Currency.Create<Name> and Currency.Destroy<Name> requiring the same named permission.")
-@Classes.Change(date="2020-05-31", component=Core, type=Change, message="Character Pool page shows a cumulative total (useful for currency pools)")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Added summary row to character sheet (in web page) displaying the currency totals, in short and long coin name formats.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Various internal extensions to Pools objects to avoid everything going through static methods.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Commands added for configuring currencies - setBaseCoinNames, addCoin and removeCoin, all exposed through typical API endpoints and the web interface.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Currencies are optionally transferable between players, with taxation being applyable.  Two commands, currency.transfer(paytax)(currencyname) spawn, e.g. currency.transferPayTaxGold (see introspection for your instances details).  the 'paytax' version causes the sender to pay extra to cover the tax, the other version assumes the tax is deducted from the recipients ammount.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Templates are supported that match the attribute name and contain the short form text balance, e.g. --GOLD--")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="Tax can be paid to a central character by setting KV Currency.TransactionTaxRecipient<currencyname> .  Note if this character does not exist, all transactions will be prevented until resolved.")
-@Classes.Change(date="2020-05-31", component=Core, type=Add, message="GS Functions are now assigned to a primitive 'category' which is used to order their arrangement in the Introspection module.")
-@Classes.Change(date="2020-05-31", component=Scripting, type=Add, message="Function gsGetBalance for retrieving a users current balance (as a raw number of base coins)")
-@Classes.Change(date="2020-05-31", component=Scripting, type=Add, message="Functions gsFormatCoins and gsFormatCoinsLong for converting a balance into a textual format (e.g. 123 becomes 1s 23c / 1 silver 23 copper )")
-@Classes.Change(date="2020-05-31", component=Scripting, type=Add, message="Function gsParseCoin which will reverse the above, e.g. converting '1s 2copper' into an integer of 102 basecoins)")
-@Classes.Change(date="2020-05-26", component=Core, type=Fix, message="Object Type bindings (connecting an object to an object type) now correctly discovers region/URL from the object's data rather than trying to read it from the (NPC) character, which prior to it being connected (which is what we're trying to do) will generate errors about no region being set (appropriately).")
-@Classes.Change(date="2020-05-26", component=Core, type=Change, message="Cluster database changed.")
-@Classes.Change(date="2020-05-26", component=Core, type=Fix, message="Fix regions reporting as stalled due to callback passing changes (new server only).")
-@Classes.Change(date="2020-05-26", component=Core, type=Change, message="Convert InputStream reading code to all use Scanners.")
-@Classes.Change(date="2020-05-26", component=Core, type=Add, message="Menus configuration now allows you to delete menus.  Other than Main, which would make the HUD stuff unhappy.")
-@Classes.Change(date="2020-05-26", component=Core, type=Add, message="The command channel (/1) can now be opened to listen to scripted objects (e.g. attachments) on channel one, it will check the owner of the scripted object is the same as you.  Note this opens some security weaknesses if you rez random objects other people give you.  This feature is controlled by a KV 'GPHUDClient.OpenListener'.  The inspiring use was 'outfits' in Second Life for a character that includes an attachment which switches the logged in character automatically.  Please let me know of any abuse of this feature, it could be secured further with e.g. passwords (that you set) if necessary.")
-@Classes.Change(date="2020-05-26", component=Core, type=Add, message="Version checking is performed against an 'end of life' schedule.  Inspite of sending new region servers, and messages, to the instance owner every single time they log in a character, some instance owners haven't updated their region server in 6 months.  As some changes are 'breaking changes' ; i.e. the communications between HUD and Server are changing in a way that isn't backwards compatible, it is NECESSARY to upgrade the Region Server for continued functionality (though this is not enforced for simply 'new features').  Now, versions can be marked as end of life.  Messages will be sent out two weeks prior to their withdrawl time, every hour, to instance administrators (those set to receive messages).  After the deadline expires, products will be met with a SHUTDOWN response when they attempt to communicate with the server.")
-@Classes.Change(date="2020-05-26", component=Scripting, type=Fix, message="Fix an issue with parameter ordering for binary operators")
-@Classes.Change(date="2020-05-26", component=Scripting, type=Fix, message="Scripting supports the unary negative operator, i.e. negative numbers, e.g. Integer a=-4;")
-@Classes.Change(date="2020-05-26", component=Scripting, type=Add, message="New GS Function gsGetCharacterKV which returns only the character level value for a KV (rather than the result of the hierarchy).  Note you usually want gsGetKV instead.")
-@Classes.Change(date="2020-05-26", component=Scripting, type=Change, message="gsSayAsChar / gsSayToChar / gsSayAsHUD reworked to use multi-message support in HUD.  This feature will be deployed once Region Server (and thus HUD) upgrades have been completed.")
-@Classes.Change(date="2020-05-26", component=HUD, type=Add, message="Multi-message support (more than one say/sayas/sayto per communication, rather than forcing newline formatting).")
-@Classes.Change(date="2020-05-26", component=HUD, type=Add, message="Supports opening the command channel (1) without the Owner filter set, and then checks all command messages are either from the HUD's owner, or an object owned by the HUD owner, if 'open command channel' mode is set in the appropriate (conveyed) KV.")
-@Classes.Change(date="2020-05-17", component=Core, type=Fix, message="Fixed an issue where viewing a character's page, who may have some former 'pool' allocations that are no longer valid, would crash the page by trying to instantiate non existent pools.  getPoolNullable now works properly and such pools are silently ignored.")
-@Classes.Change(date="2020-05-17", component=Core, type=Change, message="The search field on the 'View Characters' main page now performs a substring search for characters name, so a fragment of a characters name can be used.")
-@Classes.Change(date="2020-05-17", component=Core, type=Fix, message="Fixed an issue with the HTML Interface (User web interface) that would truncate posts that came through the network in multiple chunks, this would truncate inputs and produce odd results or internal errors in the encoding-decoder code.")
-@Classes.Change(date="2020-05-17", component=Core, type=Fix, message="Changed the argument type to 'CLEAN' text for groups.create to avoid a group being created with an unsupported character in the name.")
-@Classes.Change(date="2020-05-17", component=Core, type=Fix, message="Edit character level KV pages weren't working properly in the web site.")
-@Classes.Change(date="2020-05-17", component=Core, type=Fix, message="Links on the index page version of viewing yourself did not link properly.")
-@Classes.Change(date="2020-05-17", component=Scripting, type=Change, message="Operator precedence implemented, this will only affect script (changed and) compiled AFTER this patch is deployed.  E.g. 1+2*3 would have previously evaluated as 9 but now uses the correct mathematical ordering and evaluates as 7.")
-@Classes.Change(date="2020-05-17", component=Scripting, type=Add, message="Added logical AND (&&), OR (||) and NOT (!) to the language.  Note that these work on integers and use 0 for false, 1 for true, and anything else counts as true for inputs.  E.g. (0 && 1) outputs 0 (FALSE), while (4 || 5) will output 1 (TRUE).")
-@Classes.Change(date="2020-05-17", component=Scripting, type=Add, message="Added list concatenation.  Beware that 'overloads' list + integer ; typically a list evaluated in an integer context returns its length (e.g. Integer size=list; returns list's size), however we're now adding that 'list+integer' adds integer to the list, rather than adding the constant number to the size of the list.  If the list's length is required it's recommended to use a straight casting statement with no maths, e.g. the Integer size=list; line, then perform maths on that value afterwards to avoid triggering concatenation).")
-@Classes.Change(date="2020-05-12", component=Core, type=Change, message="Added paged view to the audit tables")
-@Classes.Change(date="2020-05-12", component=Core, type=Change, message="Added paged view to characters list")
-@Classes.Change(date="2020-05-12", component=Core, type=Change, message="Moved various detailed stuff from a characters page to sub pages")
-@Classes.Change(date="2020-05-12", component=Core, type=Change, message="Removed the weird XP suffix from all Experience Pools")
-@Classes.Change(date="2020-05-12", component=Core, type=Add, message="Added pools view to the character sheet")
-@Classes.Change(date="2020-05-12", component=Core, type=Change, message="Internal reworking about Pools and Experience based pools, attempting to unify everything ahead of adding more pools and pool views.")
-@Classes.Change(date="2020-05-12", component=RegionServer, type=Fix, message="Tweaked a couple of places where DEV and Production are evaluated in the HUD to avoid it trying to connect to the wrong cluster sometimes.")
-@Classes.Change(date="2020-05-08", component=Core, type=Change, message="Reworked the internal way Commands get executed (see below)")
-@Classes.Change(date="2020-05-08", component=HUD, type=Fix, message="Prototype new HUD repeated all local chat on the RP channel ; now it only repeats its owners.")
-@Classes.Change(date="2020-05-08", component=Scripting, type=Add, message="Added three new functions (gsSayToCharIfOnline, gsSayAsHUDIfOnline, gsSayAsCharIfOnline) that relay messages and discard the message if they're offline, rather than erroring your script.  NOTE this will NOT protect you against using the HUD to target a nearby avatar that is not wearing the HUD as avatars often have multiple characters, and an avatar without a HUD can't be traced to a particular character.")
-@Classes.Change(date="2020-05-08", component=Scripting, type=Add, message="Added new function gsHasPermission to check if a character's driver has a particular permission.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="New login methodology, hooking existing characters.initialise/switch/create code, logins now performed through GPHUDClient.connect/disconnect/postconnect.  Resumption of an existing session (e.g. on region transition within a multi region instance) now properly supported rather than the HUD being replaced and reinitialised.")
-@Classes.Change(date="2020-05-03", component=Core, type=Change, message="Characters.login/logout now marked as deprecated.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Add 'status' introspection page that shows connected entities and various other real time data.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Create UIX driver in GPHUDClient module, responsible for driving the layout of the HUD UI")
-@Classes.Change(date="2020-05-03", component=Core, type=Fix, message="Fixed a bug in adding to a pool that assumed a character was selected (pools e.g. xp can be awarded administratively without an active character)")
-@Classes.Change(date="2020-05-03", component=Core, type=Fix, message="Fixed a bug in the Generic XPPool awarding code that would check if the 'character was the same as self' without accepting there might not be an active character (due to administrative awards)")
-@Classes.Change(date="2020-05-03", component=Core, type=Fix, message="Fixed a bug in the old login process that wouldn't properly pass on state to a virtual machine running the character creation script in some circumstances leading to an internal error")
-@Classes.Change(date="2020-05-03", component=Core, type=Fix, message="Fixed a bug in character creation which wouldn't immediately connect the request to a newly created character, generating a deeper error about no character being selected.")
-@Classes.Change(date="2020-05-03", component=Core, type=Fix, message="Fixed a typo in the Visit XP awarded message.")
-@Classes.Change(date="2020-05-03", component=Core, type=Fix, message="Prevented 'Safe Mode' name get method from throwing unexpected exceptions")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="The External interface now supports a new JSON parameter - 'checkavatarpermission', if set it will ensure the supplied avatar name/uuid has permission External.ConnectObjects otherwise it will reject the connection - this can be used to provide a simplistic permissions check to ensure a given avatar is authorised at a given instance (instance owners automatically pass such checks at their own instance).")
-@Classes.Change(date="2020-05-03", component=Core, type=Change, message="Downgraded a 'Unexpected EOF' error from the External interface from a System exception (as it is in the normal LSL interface) to User exception so that it is properly reported back to the caller, rather than the masked 'Sorry internal error' of System exceptions.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Added static utility class to call the Linden Labs 'getAgentID' lookup service and resolve usernames to a UUID.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="If a username is presented that is not known the Linden Labs name lookup service will be called ; if a valid avatar key is found the entry is either created in the database (if the key doesn't currently exist) or located by key, and the name updated if it doesn't match the current name.  This handles LL name changes where some component only provides the new username and we have no previous record of it.  It was anticipated to adopt names wherever Second Life told us names, but apparently it still sometimes tells us old names (..........)")
-@Classes.Change(date="2020-05-03", component=Core, type=Delete, message="Avatar name reservation has been removed ; formerly a character could not be named after an Avatar as that name would be reserved for that avatar.  With the 'Name Change' changes this caused non-resident suffixed names to be resolved to avatars via the LL getAgentID service, thus was blocking a lot of character creations unnecessarily.  Sim administration can handle any potential grief cases themselves and thus this check has been completely removed from Characters.Create at this time.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Added new (conveyed) KV, 'GPHUDClient.UIXMenus', if set to true this enables use of UIX for choice based dialog boxes.  This can be set on groups (so users can opt in or out), individual users, etc.  Please test before engaging as performance may vary (untested at this time).")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Added new (conveyed) KV, 'GPHUDClient.UIXBalance', if set to true, this balances the layout of the quickbuttons, placing 3 on either side of the main HUD panel.  This helps the UIX dialog choices look less unbalanced as everything is now more symmetric around the center point.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Communicate Effects timers upon apply/unapply of the effect, and append this package to the response at connect time.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Added 'onUpdate' support to KVs allowing a method to be invoked on value change.  This was considered as an alternative to conveying UI configuration but ultimately was not used.  As the infrastructural code may be useful in the future the feature has been left in the code but is presently unused.")
-@Classes.Change(date="2020-05-03", component=Core, type=Change, message="Max server response size increased to 4KB")
-@Classes.Change(date="2020-05-03", component=Core, type=Fix, message="Character creation will skip attributes of Group type where there are no open groups of that type.  This presently sends an empty list to the HUD which will cause a dialog box with a default 'OK' on it, which will then try join a group called OK.  Now, this attribute will be ignored by the login sequence (both v1 and v2) if there are no available options (open groups of that type), even if the attribute is 'mandatory'.")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Added new KV to Effects - Effects.ShowEffect, if set to false the HUD will hide the effect entirely from its buff timers (UIX capable HUD only)")
-@Classes.Change(date="2020-05-03", component=Core, type=Add, message="Added new KV to Effects - Effects.EffectIcon which defines the UUID of the texture for the icon.  If not supplied will use a little Coagulate logo :P")
-@Classes.Change(date="2020-05-03", component=HUD, type=Change, message="Login and flow control rewritten to login protocol v2.")
-@Classes.Change(date="2020-05-03", component=HUD, type=Add, message="Added UIX script to process UIX control messages and modify prim parameters (sizes, positions, textures, text, etc).  Prim Descriptions become the controlling name (which is converted into a block of #defines rather than looked up at runtime).")
-@Classes.Change(date="2020-05-03", component=HUD, type=Add, message="Added prims and control interfaces for presenting a menu of up to 12 parameters.  This can be used in place of dialog boxes by setting the GPHUDClient.UIXMenus KV to true.")
-@Classes.Change(date="2020-05-03", component=HUD, type=Add, message="Support for rebinding the HUD main button to pop up a menu rather than dialog (controlled by GPHUDClient.UIXMenus).")
-@Classes.Change(date="2020-05-03", component=HUD, type=Add, message="Support for a balanced layout of quick buttons (GPHUDClient.UIXBalance).")
-@Classes.Change(date="2020-05-03", component=HUD, type=Add, message="Support for up to 3 effects timers and logos.  Timer to update these uses diminishing intervals - per second for effects <60 seconds, per 5 seconds if below 2 minutes, per 15 seconds if under 5 minutes and so on.  Slowest update interval is 60 seconds or on reception of a message updating these effects from the server.")
-@Classes.Change(date="2020-05-03", component=HUD, type=Fix, message="HUD Titler now properly supports blank or short title texts ; in the Config supplying a 'space' as the TitlerText will now properly blank the Titler Text rather than breaking the display entirely.")
-@Classes.Change(date="2020-05-03", component=RegionServer, type=Change, message="Disable callback validation.  Disable DIGEST and COOKIE inclusion.")
-@Classes.Change(date="2020-05-03", component=RegionServer, type=Change, message="Command prefix changed to ** to make it less reactive to emotive text.  ( DEV instances use prefix !!, not that anyone has these )")
-@Classes.Change(date="2020-05-03", component=ObjectDriver, type=Change, message="Disable callback validation.  Disable DIGEST and COOKIE inclusion.")
-@Classes.Change(date="2020-05-03", component=Scripting, type=Add, message="Added new function call gsGetZone to get the current zone name a character is in.")
-@Classes.Change(date="2020-05-03", component=Scripting, type=Add, message="Added two new function calls, gsAPIX and gsElevatedAPIX, which are equivalent to gsAPI and gsElevatedAPI but will throw a script error if the API call fails.  The non-X versions simply return a response that is 'an error' (see evaluating it as an integer etc).  However since this boilerplate checking code is tedious it's often omitted, however in most cases the API call failing is significant and problematic.  It is recommended you use gsAPIX / gsElevatedAPIX wherever possible, only using the non-X versions if you either intend to check for errors yourself, or truely don't care if the operation fails.  Otherwise debugging becomes quite difficult.")
-@Classes.Change(date="2020-04-05", component=Core, type=Add, message="New module 'External', must be enabled to allow External API access, and individual developers must be both allocated a developer key by Iain Maltz and enabled to allow them to connect to a particular instance.")
-@Classes.Change(date="2020-04-05", component=Core, type=Add, message="Admin/Developer commands ; User.(Dis|En)ableDeveloper (SuperAdmin only) to allow a user developer access at all / External.GetDeveloperKey / External.(De)Authorise to allow a developer to access a particular instance")
-@Classes.Change(date="2020-04-05", component=Core, type=Add, message="Added a new Interface Access Type of External ; almost all commands are available to an External component, other than those which create strange things, or delete things.  Changes may be made in response to reasonable request.")
-@Classes.Change(date="2020-04-05", component=Core, type=Add, message="Added various 'External' API calls for getting record format information (rather than the simple message format the HUD needs) - External.Status dumps information about the connection in JSON format, and External.LookupAvatar will get an information dump about the set avatar.")
-@Classes.Change(date="2020-04-02", component=Core, type=Fix, message="Fixed configuration.set* not properly allowing null values as target values.")
-@Classes.Change(date="2020-04-02", component=Core, type=Add, message="Added gsSayAsHUD (requires new region server + HUD from it)")
-@Classes.Change(date="2020-04-02", component=Core, type=Fix, message="Periodic VisitXP checks would not properly apply to instances using the default Experience module enabled state, only working on instances that had disabled and re-enabled it.  Resolved to now check all instances that are set or have never been changed.")
-@Classes.Change(date="2020-04-02", component=Core, type=Change, message="Reviewed and refactored the database driver core and the data object layer.")
-@Classes.Change(date="2020-04-02", component=DatabaseSchema, type=Fix, message="New table to store pairings of instance IDs and authorise developer IDs.")
-@Classes.Change(date="2020-03-29", component=Core, type=Add, message="Added Effects module.")
-@Classes.Change(date="2020-03-29", component=Core, type=Add, message="Effects bring two KVs ; Effects.ApplyMessage and Effects.RemoveMessage, communicated to the user when the effect is added/removed.")
-@Classes.Change(date="2020-03-29", component=Core, type=Add, message="Web admin to create effects.  Their effect is configured through normal KV methods (e.g. go to Characters and edit an attribute)")
-@Classes.Change(date="2020-03-29", component=Core, type=Add, message="New commands Effects.Create and Effects.Delete.  Associated permissions exist.")
-@Classes.Change(date="2020-03-29", component=Core, type=Add, message="New commands Effects.Apply and Effects.Remove to provide /administrative/ commands to add/remove effects - this is not an in character action (for e.g. a spellcaster), this is logged as the avatar using administrative powers, use for admin only.")
-@Classes.Change(date="2020-03-29", component=Core, type=Add, message="New command Effects.Show which shows any effects acting upon your character.")
-@Classes.Change(date="2020-03-29", component=Core, type=Add, message="Added command Configuration.SetEffect for setting a KV upon an Effect")
-@Classes.Change(date="2020-03-29", component=Scripting, type=Add, message="Added the ability to assign a List type to an Integer, which will place the size of the list in the integer (previously would produce an unsupported cast error).")
-@Classes.Change(date="2020-03-29", component=Scripting, type=Add, message="New function gsGetEffects that returns a List of active effects on a character.")
-@Classes.Change(date="2020-03-29", component=Scripting, type=Add, message="New function gsEffectDuration that returns the time remaining on a given effect on a character.")
-@Classes.Change(date="2020-03-29", component=Scripting, type=Add, message="New functions gsApplyEffect and gsRemoveEffect that allow one character (or NPC Object) to buff another character (or themselves)")
-@Classes.Change(date="2020-03-29", component=DatabaseSchema, type=Add, message="Create table 'effects' to bind a named effect to an instance")
-@Classes.Change(date="2020-03-29", component=DatabaseSchema, type=Add, message="Create KV store for effects")
-@Classes.Change(date="2020-03-29", component=DatabaseSchema, type=Add, message="Table to connect effects and characters, with expiration times.")
-@Classes.Change(date="2020-03-24", component=Core, type=Add, message="Added TemplateWrapper module, creates KVs for configuring prefix / suffix characters and creates Wrapped forms (WRAPPED:) of all existing templates, wrapping them in the prefix / suffix if and only if they contain content.")
-@Classes.Change(date="2020-03-22", component=Core, type=Fix, message="An oddity in character switching would leave the 'callback URL' associated with the old, disconnected character.  Ensured this isn't miss-re-populated.  Probably doesn't have much effect on anything, but still an anomaly that I should fix.")
-@Classes.Change(date="2020-03-22", component=Core, type=Change, message="Attribute creation now checks for conflicting template names.  Notably this will prevent creating an attribute called 'Health' or 'Name' which are likely to cause unexpected issues at some point.")
-@Classes.Change(date="2020-03-22", component=Core, type=Fix, message="Roller now enforces number of sides on the dice to be at least 1, gsRand(x,y) now requires that x <= y, avoiding a deeper exception in the Java API that then gets re-thrown as a masked System Exception")
-@Classes.Change(date="2020-03-22", component=Core, type=Fix, message="Added some guard code to SL API parser to catch some broken requests better.")
-@Classes.Change(date="2020-03-22", component=Core, type=Add, message="KV Instance.AllowedNamingSymbols which defines what symbols (characters) are allowed in the name of a character, by default A-Z, a-z and space are allowed with a few other characters added by the default template, add any additional desired symbols here, otherwise they are filtered.  This is yet ANOTHER attempt to stop people entering non name stuff into their name (e.g. Scent: Smelly), which will now reject the characters people use to make a list items (e.g. the colon).  Inspite of the LARGE ALL CAPITALS TEXT in the dialog box they enter a name into, some people are still doing this.  Probably there will always be 'one'.")
-@Classes.Change(date="2020-03-22", component=Core, type=Add, message="KV Instance.FilteredNamingList provides a comma separated list of banned words in a characters name - their name is split into 'parts' (based on dash, dot, space) and compares against the words in this list, if any are found the name is rejected.  Note this filter list does NOT apply to 'automatically named characters' (which are named after the avatar) as this would leave them unable to create an initial presence in the instance.  Expected usages are a list like 'god,king,queen,emperor' or whatever other muses your players may have.")
-@Classes.Change(date="2020-03-22", component=Core, type=Change, message="Region level KVs now have a red background and an advisory to normally use Instance level values, which is what most people should be doing.  Region level settings only make sense if you have multiple regions and want them to behave differently.  Instance level affects all regions, present and future.")
-@Classes.Change(date="2020-03-22", component=Core, type=Change, message="Cookbooks no longer email developers with any implementation errors (such as running it multiple times).")
-@Classes.Change(date="2020-03-22", component=Core, type=Add, message="Added Zoning.Delete and an associated HTML component for removing zones.  Triggers zone definition updates to appropriate region(s).")
-@Classes.Change(date="2020-03-22", component=Core, type=Add, message="System now invites instance owners to [secondlife:///app/group/34ead140-555f-42f9-2b54-bb887554b70f/about GPHUD Instance Owners] which is used for low volume high priority traffic, features or feedback requests.  There is also the [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about GPHUD Updates and Notices] group which anyone can join/invite to and gets notification of every release.  There's also an open/free invite mostly dead support group [secondlife:///app/group/3b4def47-e6a7-bac7-cd13-7e9428b41f6d/about GPHUD Support]")
-@Classes.Change(date="2020-03-22", component=Core, type=Change, message="Recently, Second Life has stopped sending the 'Object's Owners Name' information properly with the request (I guess name lookups can always be risky if the central services at LL fail), this would generate null exceptions and other undesirable behaviour.  This was changed to fall back to using a local key->username mapping lookup if there is no information supplied by the grid.  Changed in several places, all of which occur during early request processing.")
-@Classes.Change(date="2020-03-22", component=Scripting, type=Add, message="Added two new functions that return a List of Strings - gsGetGroupsByType and gsGetOpenGroupsByType.")
-@Classes.Change(date="2020-03-22", component=RegionServer, type=Change, message="Contains updated HUD component.")
-@Classes.Change(date="2020-03-22", component=HUD, type=Fix, message="Avatar (character) selection types (SENSOR, CHARACTER, gsSelectCharacter, etc) will now properly display the description in the character-selection dialog box, not just the manual entry page.")
-@Classes.Change(date="2020-03-09", component=Core, type=Fix, message="Produce a more meaningful error message if there is more than one attribute using a 'group type'.")
-@Classes.Change(date="2020-03-09", component=Core, type=Add, message="Add ability to suppress various errors from being mailed to developers")
-@Classes.Change(date="2020-03-09", component=Core, type=Change, message="Suppress error mailout for avatar->char lookup failure (aka 'avatar xxx is not wearing the hud or not logged in')")
-@Classes.Change(date="2020-03-09", component=Core, type=Change, message="Improved the description of various KVs relating to experience awards to clarify the purpose and units used")
-@Classes.Change(date="2020-03-09", component=Core, type=Fix, message="Some calls to methods, e.g. characters.initialise that chains characters.login require the JSON (originating request) to e.g. retrieve the callback URL (in this case).  Calls made to gsAPI set up a fresh state since they can be invoked using a variety of 'initiators' (CALLER, TARGET etc), this would cause some issues with character initialisation and now the GS virtual machine allows an initial state to be supplied, if the invoker for the gsAPI is the same as the VM invoker then the JSON request object is copied to the new state allowing the retrieval of JSON request data by the deeper API.  Essentially fixes some oddities around character initialisation.")
-@Classes.Change(date="2020-03-09", component=Core, type=Fix, message="Zone transitioning mistakenly had the 'new zone' parameter set to mandatory, however it is possible to leave all zones in an instance upon which this will be blank/null, and thus is now set to not mandatory.")
-@Classes.Change(date="2020-02-09", component=Core, type=Fix, message="Fix oversight with a region with no avatars on it.")
-@Classes.Change(date="2020-02-09", component=Core, type=Change, message="Switch texture-service to use picture-service (LL change).")
-@Classes.Change(date="2020-02-09", component=Core, type=Fix, message="Properly scale the logo's displayed on the website.")
-@Classes.Change(date="2020-02-09", component=Core, type=Fix, message="Publishing of a group returns a meaningful error if that group no longer exists.")
-@Classes.Change(date="2020-02-09", component=Core, type=Fix, message="Provide a meaningful error if a user somehow calls zoning.deleteVolume with an invalid volumeID.")
-@Classes.Change(date="2020-02-09", component=Core, type=Change, message="Reboot remote Objects that provide no callback URL (workaround).")
-@Classes.Change(date="2020-02-09", component=Core, type=Change, message="Scripting compilation is now State sensitive.")
-@Classes.Change(date="2020-02-09", component=Core, type=Add, message="Scripting now supports privileged operations, these can only be compiled by a user with permission Scripting.CompilePrivileged.")
-@Classes.Change(date="2020-02-09", component=Core, type=Add, message="Scripting added function call gsElevatedAPI, the same as gsAPI but bypasses all permissions checks (except explicit instance owner checks, or cluster superuser checks)")
-@Classes.Change(date="2020-02-09", component=Core, type=Fix, message="Fix the Scripting configuration page to only show your own instance's scripts rather than all (globally) scripts.  Accessing another instances data, including scripts, causes an internal 'consistency violation' (Logon State / Data State mismatch), which is ultimately masked as an 'Internal Error' to end users.")
-@Classes.Change(date="2020-01-05", component=Core, type=Fix, message="Reduce max size of 'disseminate' command to region server from 3KB to just under 2KB, this is because the region server will return the request as a response to us, but truncate it at 2K causing a JSON parsing exception.  This is related to updating conveyances en mass, e.g. titler text changing.")
-@Classes.Change(date="2020-01-05", component=Core, type=Fix, message="Ensure menu contains an element for the called command, rather than simply JSON erroring and throwing a System level exception as a result.")
-@Classes.Change(date="2020-01-05", component=Core, type=Fix, message="Prevent quick buttons from calling quick buttons (someone wired a quick button to invoke its self, which just smashes the stack eventually)")
-@Classes.Change(date="2020-01-05", component=Core, type=Fix, message="Prevent aliases from calling quick buttons (to avoid another possible loop that hasn't been seen)")
-@Classes.Change(date="2020-01-05", component=Core, type=Fix, message="The 'command argument is mandatory' checker wasn't working properly, which would cause internal errors later on if arguments that are mandatory were not supplied.  Fixed.")
-@Classes.Change(date="2019-12-22", component=Core, type=Fix, message="Recursive templating no longer kills the server.  You'll get a painfully long error about something recursing instead.")
-@Classes.Change(date="2019-12-22", component=Core, type=Add, message="Rate limiting on error reporting emails ; emails are 'signatured' by the exception and location it originates and suppressed to 1 every 15 minutes.  Getting a few thousand mails in a minute is something my infrastructure handles, but not my mail readers (android gmail reader crashes, thunderbird locks up ^^)")
-@Classes.Change(date="2019-12-22", component=Core, type=Add, message="*Instance.Login works near the GPHUD server (update required) and will IM you a login URL, useful if you cant get the HUD to start any more.")
-@Classes.Change(date="2019-12-22", component=Core, type=Fix, message="Fix issue with events where visits would only be registered if there was an event entry message (both for zone transitions during event, as well as presence in zone when event starts)")
-@Classes.Change(date="2019-12-22", component=Core, type=Fix, message="Write closure time to any event visits when avatar disconnects, or is disconnected")
-@Classes.Change(date="2019-12-22", component=Core, type=Fix, message="Fix a failure of login state to inherit the instance from the character, causing a weird 'no instance selected' despite a character selected, which would previously auto-resolve at next page load anyway...")
-@Classes.Change(date="2019-12-22", component=Core, type=Change, message="Reverted domain name change due to lack of stability of TLD in new domain (?!)")
-@Classes.Change(date="2019-12-22", component=Core, type=Change, message="Drop regionserver/HUD ping interval to 5 minutes to improve accountability.")
-@Classes.Change(date="2019-12-22", component=RegionServer, type=Add, message="Added method to send IM to a given user on the sim ; used by instance.login, since the user maybe has no HUD to communicate with.")
-@Classes.Change(date="2019-12-22", component=ObjectDriver, type=Fix, message="Object driver no longer owner-says event related start/stop messages.")
-@Classes.Change(date="2019-12-19", component=Core, type=Fix, message="Patch to fix issue with templater converting nulls into empty strings, which would cause various KVs to be not hierarchically processed properly, including the 'Name' conveyance that goes out to the HUD, which would break the RP Channel prefixing.")
-@Classes.Change(date="2019-12-19", component=Core, type=Fix, message="Internal reworking of nullable calls, nullable/nonnull annotation marking and code analysis as a result.  May be some initial teething issues but code is of better quality now.")
-@Classes.Change(date="2019-12-19", component=Core, type=Fix, message="Cleared 2000+ code inspection notes, tightened things up, etc etc")
-@Classes.Change(date="2019-12-19", component=Core, type=Change, message="Database interface changed ; no longer a single method with an 'optional' flag that permitted nulls versus exceptioned, there are now two separate calls, xxxNullable which may return nulls, and xxx which will exception on null data (this is inverted at the SQL level with 'nn' for 'nonnull' methods, as they are less 'pure' here).  This enables proper analysis of Null flow as otherwise the methods are always ambiguous to static analysis.")
-@Classes.Change(date="2019-12-19", component=Core, type=Fix, message="Conversion to StringBuilders (it pleases the IDE :P)")
-@Classes.Change(date="2019-12-12", component=Core, type=Change, message="Rewrote 'User Interface' (web site) preamble to better log in and select characters and stuff.  Likely no-one other than me will notice at this point.")
-@Classes.Change(date="2019-12-12", component=Core, type=Change, message="Cleaned up a bunch of compiler warnings, should have no effect on anything.")
-@Classes.Change(date="2019-12-12", component=Core, type=Change, message="Rebranded URLs to 'HTTPS://Coagulate.SL'")
-@Classes.Change(date="2019-12-12", component=Core, type=Fix, message="Corrected an internal error when trying to assign an object behaviour type to an object")
-@Classes.Change(date="2019-12-12", component=Core, type=Fix, message="Fix issue with Objects NPC editing form")
-@Classes.Change(date="2019-12-12", component=Scripting, type=Add, message="Added function gsGetUnixTime which works comparably to llGetUnixTime (which is a fairly universal standard called Unix time or Epoch time), it returns an Integer.  As integers are 32bit, like Second Life, this implementation is prone to the 2038 bug [https://en.wikipedia.org/wiki/Year_2038_problem (Wikipedia:Year 2038 Problem)]")
-@Classes.Change(date="2019-12-12", component=Scripting, type=Change, message="Support for zero argument GSFunctions")
-@Classes.Change(date="2019-11-21", component=Scripting, type=Add, message="Added Scripting function gsIsANumber, which will tell you if a string->integer cast will succeed or crash your script, if attempted.")
-@Classes.Change(date="2019-11-21", component=DatabaseSchema, type=Add, message="New table Objects for logging connecting objects")
-@Classes.Change(date="2019-11-21", component=DatabaseSchema, type=Add, message="New table ObjectTypes for configuring object behaviours")
-@Classes.Change(date="2019-11-21", component=Core, type=Add, message="Objects module - see [[Objects]]")
-@Classes.Change(date="2019-11-21", component=Core, type=Add, message="Obliterate developerkey in JSON responses and callbacks")
-@Classes.Change(date="2019-11-21", component=Core, type=Delete, message="Removed GPHUDClient.close, for closing the web panel, which escaped the purge.")
-@Classes.Change(date="2019-11-21", component=Core, type=Change, message="Prefix errors with >>> not *** which upsets nearby region servers")
-@Classes.Change(date="2019-11-21", component=Core, type=Add, message="Support transmissions to objects")
-@Classes.Change(date="2019-11-21", component=Core, type=Add, message="New interface type 'Object' determining what calls an object can make")
-@Classes.Change(date="2019-11-21", component=Core, type=Change, message="Upon login to the web interface (not via SSO from SL), if no instance or character is selected, assume the most recently active character/instance rather than prompting.")
-@Classes.Change(date="2019-11-21", component=Core, type=Add, message="Primitive support for NPCs, you can make a character and '/1characters.makeNPC' it which will reassign its ownership to the SYSTEM account, which can then be used by Objects.  Conveyances and titler text work in general.")
-@Classes.Change(date="2019-11-21", component=Core, type=Fix, message="Fixed issue where events from scripts to people other than the caller weren't being dequeued properly, preventing cross character interactions.")
-@Classes.Change(date="2019-11-21", component=HUD, type=Change, message="Revised shutdown/terminate handlers, release URL on shutdown.")
-@Classes.Change(date="2019-11-21", component=RegionServer, type=Change, message="Revised shutdown/terminate handlers, release URL on shutdown.")
-@Classes.Change(date="2019-11-21", component=ObjectDriver, type=Add, message="New feature (script) available from the region server")
-@Classes.Change(date="2019-11-21", component=ObjectDriver, type=Add, message="Operating (interacting) modes: CLICK, NONE and PHANTOM (volume detect greeter style)")
-@Classes.Change(date="2019-11-15", component=DatabaseSchema, type=Add, message="Extend Region table to include global x,y co-ordinates.")
-@Classes.Change(date="2019-11-15", component=DatabaseSchema, type=Add, message="Add landmarks table.")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Record region global co-ordinates on connection.")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Created Teleportation module, see Introspection/API and Introspection/Permissions for new added stuff.  Also gsTeleport for use in scripts.")
-@Classes.Change(date="2019-11-15", component=Core, type=Delete, message="Removed the HUD web panel code")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Added KV Instance.RunOnLogin and permission Instance.SetLoginScript for causing players to run commands on login (e.g. teleporting to faction homes)")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Fixed issue with joininstance a new region that would give an error about no instance selected")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Ensure module errors don't break a permissions group's display (such as disabling a module while permissions are assigned from it giving 'module x is not enabled')")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Added (and removed from instance.owner bindings) permissions 'Instance.PermissionsMembers', 'Instance.CookBooks'")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Transfer URL on character switch earlier, to avoid early logon scripts from failing with 'not online' errors")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Added script function gsTeleport to teleport a user")
-@Classes.Change(date="2019-11-15", component=Core, type=Add, message="Script create/save is audited, along with the compilation state (one of: parse failure, compilation failure, all ok)")
-@Classes.Change(date="2019-11-15", component=Core, type=Change, message="Shorten release notes URL at login")
-@Classes.Change(date="2019-11-15", component=HUD, type=Add, message="Support 'teleport' command to initiate teleport of wearer.")
-@Classes.Change(date="2019-11-15", component=HUD, type=Add, message="Support logon script")
-@Classes.Change(date="2019-11-11", component=Scripting, type=Add, message="Add gsGetGroupByType function to Scripting")
-@Classes.Change(date="2019-11-11", component=Core, type=Add, message="Ability to chain command calls into the GS VM exist state")
-@Classes.Change(date="2019-11-11", component=Core, type=Add, message="KV 'Instance.CharInitScript' which can define a script name which is called during early character logon ; see the [[Scripting]] documentation for more information!")
-@Classes.Change(date="2019-11-11", component=Core, type=Change, message="Permissions editing page is now a bunch of tickboxes.  Individual permissions can still be added/removed through the appropriate 'COMMAND's.")
-@Classes.Change(date="2019-11-11", component=Core, type=Change, message="Reworked permissions so less things are locked exclusively to the instance owner (instance.owner permission).  Instance owner permission is now only used to protect a few fields that even the instance owner shouldn't change.")
-@Classes.Change(date="2019-11-11", component=Core, type=Add, message="Whole bunch of new permissions to cover off abilities formerly only available to the Instance Owner (instance.owner).")
-@Classes.Change(date="2019-11-11", component=Core, type=Add, message="Permissions now have an attached 'power level', based on their ability to cause large scale disruption to an instance, or perform actions that are difficult/impossible to reverse.")
-@Classes.Change(date="2019-11-11", component=Core, type=Change, message="Permissions pages now colour the permissions red/yellow/green based on their high/medium/low power ranking, this is an attempt to stop people just blindly assigning instance-destroying permissions without realising it.")
-@Classes.Change(date="2019-11-11", component=Core, type=Change, message="Region servers can now be deployed by any user with the appropriate permission (Instance.ServerOperator).")
-@Classes.Change(date="2019-11-08", component=DatabaseSchema, type=Add, message="Added 'scripts' and 'scriptruns' tables")
-@Classes.Change(date="2019-11-08", component=Scripting, type=Add, message="Added Scripting module.  See the specific documentation here [[Scripting]]")
-@Classes.Change(date="2019-11-08", component=HUD, type=Change, message="Allow message to contain both ownersay and localsay content")
-@Classes.Change(date="2019-10-29", component=Core, type=Fix, message="Communicate URLs to open on a different keyword")
-@Classes.Change(date="2019-10-29", component=HUD, type=Fix, message="Correctly pick up the URL to open and don't assume its our inbound URL.")
-@Classes.Change(date="2019-10-27", component=Core, type=Fix, message="Fix missing 'spend ability points' on login.  Actual problem was HUD not internally relaying 'incoming' pushed messages from the HUD to UI module, thus 'pushed' UI elements would fail.")
-@Classes.Change(date="2019-10-23", component=DatabaseSchema, type=Add, message="Added tables to store notes against an avatar (per instance) and against a character.")
-@Classes.Change(date="2019-10-23", component=Core, type=Add, message="Added 'health.set' command and KV 'health.allowSelfSet' which enables this command and simply lets health be set to a number, assuming it meets allowNegative and initialHealth range checks.")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Avoid internal error if no name is given for new character.")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Couple of race conditions where an item is removed by another actor while we are trying to view it")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Departing Avatars code no longer does weird indirect lookups via character, this will prevent 'visits' from being left in the 'open' state and accumulating limitless visitation time, visits are now closed out for the avatar completely when the avatar is no longer reported as being on sim (by the region server)")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Ping out to character connections when silent for 10 minutes, ensure they're still alive, or log out the character.")
-@Classes.Change(date="2019-10-23", component=Core, type=Add, message="Logout command which the HUD will call during shutdowns (/1shutdown)")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Fix problem where templated COLOR types would become surrounded twice, e.g. <<1,1,1>>, this causes a black HUD titler in SL as it's an invalid format.")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Fix a problem where printing state might struggle if there is no character selected")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Fix a problem where unresolvable character/avatar might return an error about 'incorrect number of arguments' rather than explain what couldn't be found")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Fix an issue where module enablement checks took place before instance had been decoded and thus always returned false, when navigating to @URLs")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="@URLs are now case insensitive")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Character HUD ping checks now update the lastrx timer and only occur every ten minutes")
-@Classes.Change(date="2019-10-23", component=Core, type=Add, message="Added Notes module, see introspection.  Can make notes against characters, or avatars, they can be shared with the player or admin only.  Notes.View permission to view others notes and admin only notes, Notes.Add permission to add notes.  Commands *Notes.Avatar and *Notes.Character available to use, available in web page, notes summary appears in character summaries, main menu has 'View Admin Notes' button.  Module is optional and must be enabled (defaults to disabled)")
-@Classes.Change(date="2019-10-23", component=Core, type=Add, message="Added release date to info panel (top left) on website.  Version and release date link to the release notes (this)")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Bug in boolean parser of database information (incorrect equality test)")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Fixed a bug in the 'input interface' checker - commands are now correctly restricted as listed in the API")
-@Classes.Change(date="2019-10-23", component=Core, type=Fix, message="Changed State detection method during cluster node pre-startup checks")
-@Classes.Change(date="2019-10-23", component=Core, type=Add, message="Added 'Publishing' module which allows configuration of publicly published information about your instance, most likely for inclusion in your own web content.")
-@Classes.Change(date="2019-10-23", component=HUD, type=Add, message="Logout command which the HUD will call during shutdowns (/1shutdown)")
-@Classes.Change(date="2019-10-23", component=HUD, type=Change, message="Communications library rewrite, now CommsV3 using a set of Virtual to Real host mappings randomly.  Performance improvements likely.  Loss of ability to retransmit failed messages, however, this should generally 'never' happen (and is being monitored).  Comms will cycle virtual nodes if one fails, but the transmission will have been lost.  Virtual nodes are remapped automatically prior to any planned outage of a particular node thus is transparent to the communications library.")
-@Classes.Change(date="2019-10-23", component=RegionServer, type=Fix, message="Fixed the remote dispenser(?)")
-@Classes.Change(date="2019-10-23", component=RegionServer, type=Change, message="Incorporated CommsV3 into server code")
-@Classes.Change(date="2019-10-23", component=RegionServer, type=Change, message="Merged Dispenser and Visitor module since they perform comparable tasks (regularly seeing 'who is on sim/parcel').  Upgraded to CommsV3.")
-@Classes.Change(date="2019-06-22", component=Core, type=Fix, message="Enhance logging or close various Null exceptions, mostly caused by things being edited in two places at once or no value supplied.")
-@Classes.Change(date="2019-06-22", component=Core, type=Change, message="Modified name input to contain lots of capitals pointing out that 'name' means 'name'")
-@Classes.Change(date="2019-06-22", component=Core, type=Fix, message="Support for populating INT/FLOAT/TEXT input types at character's login (i.e. first time).  No longer exception loops and breaks the HUD.")
-@Classes.Change(date="2019-06-22", component=Core, type=Fix, message="Changing to same owner would error when 'same' was 'no' owner")
-@Classes.Change(date="2019-06-22", component=Core, type=Change, message="Log failed 'transmission reply' parsing.  This is probably people entering stuff with [] or {} surroundings and will be fixed by the changes to the HUD too.")
-@Classes.Change(date="2019-06-22", component=Core, type=Add, message="Added Instance.GetServer command and Instance.GetDispenser")
-@Classes.Change(date="2019-06-22", component=Core, type=Fix, message="Escape substituted strings, prevents 'Has $20' producing various 'missing group' errors")
-@Classes.Change(date="2019-06-22", component=Core, type=Fix, message="Correct JSON response encoding to preserve 'non standard' characters in e.g. titler text")
-@Classes.Change(date="2019-06-22", component=Core, type=Fix, message="Prohibit names starting with > (used to imply dereferencing an avatar into a character field, used by dumb radar code)")
-@Classes.Change(date="2019-06-22", component=Core, type=Add, message="Added command groups.join which allows players to change groups connected to an attribute, provided the attribute allows self-change and the target group is open.")
-@Classes.Change(date="2019-06-22", component=DatabaseSchema, type=Change, message="KV tables changed V column to binary rather than text, similarly auditing oldvalue/newvalue/notes.  This allows them to store and preserve 'non standard' characters.")
-@Classes.Change(date="2019-06-22", component=HUD, type=Fix, message="GPHUD emergency shutdown now works, preventing the HUD ultimately crashing into the 'spam control' when registration looped.")
-@Classes.Change(date="2019-06-22", component=HUD, type=Change, message="If registration fails, click the HUD for a new attempt (up to the max of 10), rather than just spam the server as fast as possible until the max is hit.")
-@Classes.Change(date="2019-06-22", component=HUD, type=Change, message="Block input surrounded by [ and ] as well as { and } due to bugs in LL's JSON implementation")
-@Classes.Change(date="2019-06-22", component=HUD, type=Fix, message="Minor tweaks to attachment/detachment routines to try make huds go away (some weird viewer glitch), as well as on region crossing")
-@Classes.Change(date="2019-06-22", component=HUD, type=Add, message="/1shutdown command supported by HUD, mostly just for testing sake")
-@Classes.Change(date="2019-06-22", component=RegionServer, type=Add, message="Supports remote dispensers (see Instance.getDispenser)")
-@Classes.Change(date="2019-06-17", component=Core, type=Add, message="Added healing module command healRollChance which enables pass/fail fronting to healing.")
-@Classes.Change(date="2019-06-17", component=Core, type=Fix, message="Guard against null/empty attribute type during creation")
-@Classes.Change(date="2019-06-17", component=Core, type=Fix, message="Prevent issue with isAdmin for a permissions group where the check is against a non member")
-@Classes.Change(date="2019-06-17", component=Core, type=Fix, message="Block against adding permission that resolves to a null reference (no longer exists?)")
-@Classes.Change(date="2019-04-30", component=Core, type=Add, message="Added new KV scope 'NONSPATIAL' which excludes region zone and event from calculations ; this is important for some things such as XP awards where the target character may not even be logged in, and thus only 'persistent' information such as groups, character and instance data should be taken into consideration.")
-@Classes.Change(date="2019-04-30", component=Core, type=Change, message="The following KV scopes have been altered ; their previous setting allowed some configurations that didn't make sense and wouldn't really be implementable, e.g. having different 'max XP per week' in different regions ; why would anyone do this, and what does this even mean for an offline character ; alternatively offline characters couldn't receive XP.  Instead it makes sense to ignore the 'location' of an avatar when working out 'max XP'")
-@Classes.Change(date="2019-04-30", component=Core, type=Change, message="'Experience.GenericXPLimit' (implements custom XP types) - KV scope reduced from COMPLETE to NONSPATIAL to remove dependance on location of character.")
-@Classes.Change(date="2019-04-30", component=Core, type=Change, message="'Experience.GenericXPPeriod' (implements custom XP types) - KV scope reduced from COMPLETE to NONSPATIAL for the same reason.")
-@Classes.Change(date="2019-04-30", component=Core, type=Change, message="'Experience.AbilityPoints' (ability points available to character) - reduced from COMPLETE to NONSPATIAL.")
-@Classes.Change(date="2019-04-30", component=Core, type=Change, message="'Faction.XPPerCycle' reduced from COMPLETE to NONSPATIAL")
-@Classes.Change(date="2019-04-30", component=Core, type=Change, message="'Faction.XPCycleLength' reduced from COMPLETE to NONSPATIAL")
-@Classes.Change(date="2019-04-30", component=Core, type=Fix, message="XP types now properly compute the limits from the /targets/ hierarchy not yours, which would create inconsistent results in awarding and the 'next available' timer.")
-@Classes.Change(date="2019-04-30", component=Core, type=Fix, message="Setting an XP limit to zero prevents XP being awarded (this behaviour is not changed), however it now reports the next XP award is available 'NEVER' rather than 'NOW'.")
-@Classes.Change(date="2019-04-29", component=Core, type=Fix, message="Allow unknown permissions in permissions groups without internal erroring (when an attribute has been deleted for example)")
-@Classes.Change(date="2019-04-29", component=Core, type=Add, message="Groups module has groups.invite and groups.eject, for admins/owners of character groups.  Faction invite/eject is now a stub for this that just fills in the player's faction automatically.  Note 'groups.invite' requires a group as the first parameter, faction.invite does not as it is implicit.  You can alias these commands to use e.g. --FACTION-- (or more sensibly --GUILD-- etc) to use the invokers current group, where the group is of a 'type' (a character can only be in one group of a given type, e.g. race, class, guild, faction - groups with no type have no exclusivity)")
-@Classes.Change(date="2019-04-29", component=Core, type=Fix, message="Various sorting issues on the character summary page")
-@Classes.Change(date="2019-04-20", component=Core, type=Add, message="Added GPHUDClient.TitlerAltitude KV, a delegating float that defines the offset of the titler component from the avatar's head (vertically).  This can be set globally, group, character, etc.")
-@Classes.Change(date="2019-04-20", component=Core, type=Add, message="Added command 'GPHudClient.SetAltitude' which permits the player to define their per-character z-offset for the titler (height above head). (Requires GPHUD Region Server 3.6.2 on the sim)")
-@Classes.Change(date="2019-04-20", component=Core, type=Change, message="Now branded as 'GPHUD Cluster', the 'server' term is deprecated due to ambiguity between region servers (LSL scripts) and cluster servers (Linux virtual machines)")
-@Classes.Change(date="2019-04-20", component=Core, type=Change, message="Added Cluster banner to startup sequence.")
-@Classes.Change(date="2019-04-20", component=Core, type=Add, message="Instance Owners now get warned during HUD attach if their region server is out of date.")
-@Classes.Change(date="2019-04-20", component=Core, type=Add, message="Registering region servers now get a warning message on connecting, which they say locally.")
-@Classes.Change(date="2019-04-20", component=Core, type=Add, message="Aliases can now be deleted.")
-@Classes.Change(date="2019-04-20", component=Core, type=Add, message="Give the Instance Owner a new GPHUD Region Server if it is out of date, when they attach the HUD.")
-@Classes.Change(date="2019-04-20", component=RegionServer, type=Change, message="Rebranded as 'Region Server' rather than 'Server'.")
-@Classes.Change(date="2019-04-20", component=RegionServer, type=Change, message="Reduced startup banner size")
-@Classes.Change(date="2019-04-20", component=RegionServer, type=Add, message="Emits warning on startup if out of date")
-@Classes.Change(date="2019-04-20", component=HUD, type=Fix, message="Support dialog box options longer than 24 characters (as well as one can), this otherwise would cause issues for certain long character names and reducing name length to 24 causes issues with 'xxx resident' names")
-@Classes.Change(date="2019-04-20", component=HUD, type=Add, message="Added ability to move the titler up and down, based on delegating KV 'GPHUDClient.TitlerAltitude' (see server section above)")
-@Classes.Change(date="2019-04-20", component=HUD, type=Change, message="Reduced startup banner size")
-@Classes.Change(date="2019-04-20", component=HUD, type=Add, message="Instance Owners now get warned during HUD attach if their region server is out of date.")
-@Classes.Change(date="2019-04-20", component=ItemGiver, type=Change, message="Now shows what it gave, to who, and when, in floating text.  Just for fun really.")
-@Classes.Change(date="2019-04-20", component=ItemGiver, type=Change, message="Now supports prefix matching for giving out items (not publicly usable feature presently)")
-@Classes.Change(date="2019-04-15", component=Core, type=Add, message="EXPERIENCE attributes now support a 'group type', and owner/admin of those groups can award the xp to their group members through experience.award, without avatar level permissions.  Like faction XP I guess. (hmm)")
-@Classes.Change(date="2019-04-05", component=Core, type=Add, message="Support for custom EXPERIENCE attributes.")
-@Classes.Change(date="2019-04-01", component=Core, type=Add, message="Updated KV editor to be inline/javascript, particularly 'command' type KVs are now selected from dropdown.")
-@Classes.Change(date="2019-04-01", component=Core, type=Change, message="United spelling of colour (British, as I am) to the American form color.")
-@Classes.Change(date="2019-04-01", component=Core, type=Add, message="Cookbooks give better error reports sometimes, added ability for Cookbooks to create a new menu.")
-@Classes.Change(date="2019-04-01", component=Core, type=Add, message="Cookbook to configure a generic 'Multiple characters' setup")
-@Classes.Change(date="2019-04-01", component=Core, type=Add, message="Cookbook to create 'Retire Self' setup, along with confirmation submenu")
-@Classes.Change(date="2019-04-01", component=Core, type=Add, message="Validation framework added to KV setting, e.g. UUIDs and Colors are checked as being of appropriate form.  Unless they're a template.")
-@Classes.Change(date="2019-04-01", component=Core, type=Change, message="Disable templating on character attributes ; they themselves become templates but should not be templatable at a character level.")
-@Classes.Change(date="2019-04-01", component=Core, type=Fix, message="Broken links to factions in the factions page (side menu worked fine)")
-@Classes.Change(date="2019-04-01", component=Core, type=Fix, message="Broken links to create group from a 'type specific' group listing page")
-@Classes.Change(date="2019-04-01", component=Core, type=Fix, message="Fix internal exception in Instance.sendAdmins (see Instance.admin command) which tried to use an unnecessarily and inappropriately sorted structure.")
-@Classes.Change(date="2019-04-01", component=Core, type=Add, message="Created new command argument type TEXT_CLEAN which enforces 'typable characters', used for setting names and stuff")
-@Classes.Change(date="2019-04-01", component=Core, type=Add, message="Created new command argument type TEXT_INTERNAL_NAME which enforces typable characters and no spacing, used for naming some things")
-@Classes.Change(date="2019-04-01", component=Core, type=Fix, message="Remove secondary and unpopulated MOTD login message ('Instance MOTD goes here')")
-@Classes.Change(date="2019-03-27", component=Core, type=Fix, message="Possible exception caused by 'tick boxes' in pages ; added NPE guard to length-checking validation.")
-@Classes.Change(date="2019-03-27", component=Core, type=Change, message="Only email developer on logged Exceptions if Exception is of severity INFO or higher ; 'errors' in the template introspection page were logged as 'FINE' (debug) level messages, but were filling my work queue to 'fix'")
-@Classes.Change(date="2019-03-24", component=Core, type=Add, message="Added maximum-length attribute to arguments, implemented for all created commands.")
-@Classes.Change(date="2019-03-24", component=Core, type=Add, message="Logos on pages, including instance selection")
-@Classes.Change(date="2019-03-24", component=Core, type=Change, message="Names limited to 32 characters, to ensure they can be retired.  If names are longer than 32 characters consider what's a name and what's a title :P")
-@Classes.Change(date="2019-03-24", component=HUD, type=Add, message="If character fails registration/login (e.g. to a name too long), the process will be retried up to 10 times before the GPHUD shuts down.")
-@Classes.Change(date="2019-03-24", component=HUD, type=Add, message="Mitigate against SL bug where input is surrounded by {}, which some people seem to surround names with.")
-@Classes.Change(date="2019-03-14", component=Core, type=Add, message="Push GPHUDClient.widthmultiplier as conveyance 'sizeratio' to HUD")
-@Classes.Change(date="2019-03-14", component=Core, type=Fix, message="Error in character login if experience/ability points module not enabled")
-@Classes.Change(date="2019-03-14", component=Core, type=Fix, message="Typos in line when awarded Visit XP")
-@Classes.Change(date="2019-03-14", component=Core, type=Fix, message="Tighten pre-page filters to require an instance to be selected, to avoid crashing pages.  Help and Logout are exempt.")
-@Classes.Change(date="2019-03-14", component=Core, type=Fix, message="Corrected user (to avatar) links on Audit page.  Annotated SYSTEM avatar with 'explanation'.")
-@Classes.Change(date="2019-03-14", component=Core, type=Change, message="Modified Titler Color cookbook to add an instance default value for characters.titlercolor as white")
-@Classes.Change(date="2019-03-14", component=HUD, type=Fix, message="HUD now accepts blank lines as inputs, so you can erase e.g titler text by entering no value.")
-@Classes.Change(date="2019-03-14", component=HUD, type=Fix, message="Double quotes (') will now work in titler text.  Use proper escaping for JSON transmission to titler.")
-@Classes.Change(date="2019-03-14", component=HUD, type=Add, message=" HUD will now resize/position its self in response to the GPHUDClient.widthmultiplier value")
-@Classes.Change(date="2019-02-25", component=Core, type=Add, message="Added Cookbooks - automatic configuration of GPHUD.")
-@Classes.Change(date="2019-02-25", component=Core, type=Add, message="Added cookbooks to allow user to pick titler text / color")
-@Classes.Change(date="2019-02-25", component=Core, type=Add, message="Added roller.rollOnly, essentially the same as roll but without bias or roll summation.")
-@Classes.Change(date="2019-02-25", component=Core, type=Change, message="Command aliases may now override the description of wrapped commands")
-@Classes.Change(date="2019-02-25", component=Core, type=Change, message="Removed GPHUD specific understanding of avatars")
-@Classes.Change(date="2019-02-25", component=Core, type=Change, message="Server code rolled into core cluster services.")
-@Classes.Change(date="2019-02-25", component=Protocol, type=Change, message="Communications stub rewritten.  Twice.  Now faster and more reliable (TM)")
-@Classes.Change(date="2019-02-25", component=HUD, type=Add, message="HUD now detaches when you transition into an unsupported region (TERMINATE response now works).  Unlikely to matter for experience/autoattach users.")
-@Classes.Change(date="2018-11-23", component=Core, type=Fix, message="Don't reset HUD on same-region teleportation.")
-@Classes.Change(date="2018-11-23", component=Core, type=Fix, message="Coded work around to sim-stalling SEC-6284 (details not available).")
-@Classes.Change(date="2018-11-23", component=Core, type=Change, message="Integrated remaining external services into cluster.")
-@Classes.Change(date="2018-11-23", component=Core, type=Add, message="New server mesh model.")
-@Classes.Change(date="2018-10-29", component=Core, type=Add, message="Support MAX for Character Attributes.")
-@Classes.Change(date="2018-10-29", component=Core, type=Add, message="New module 'ItemGiver'")
-@Classes.Change(date="2018-10-29", component=Core, type=Add, message="Run 'ItemGiver.getGiver', stock it, and alias 'ItemGiver.get'")
-@Classes.Change(date="2018-10-29", component=HUD, type=Fix, message=" HUD - correctly limits >12 sensor results to 11/12 nearest results.")
-@Classes.Change(date="2018-10-29", component=Core, type=Add, message="Added template --HEALTH--")
-@Classes.Change(date="2018-10-29", component=Core, type=Fix, message="Website links to active node to avoid outage issues.")
-@Classes.Change(date="2018-10-29", component=Core, type=Fix, message="User error on unknown alias.")
-@Classes.Change(date="2018-10-29", component=Core, type=Fix, message="Spending ability points loops until all spent.")
-@Classes.Change(date="2018-10-29", component=Core, type=Add, message="Ability point spend loop is fired on login.")
-@Classes.Change(date="2018-10-28", component=Core, type=Add, message="Added health module.")
-@Classes.Change(date="2018-10-28", component=Core, type=Change, message="Updated RollAgainst command.")
-@Classes.Change(date="2018-10-28", component=Core, type=Add, message="Added RollAttackAgainst command.")
-@Classes.Change(date="2018-10-28", component=Core, type=Add, message="Added support for nested aliases.")
-@Classes.Change(date="2018-10-28", component=Core, type=Fix, message="Fixed issue where char named after avatar would be targetted in preferences to whatever char the avatar is actually playing (eager 'character' lookup matching avatar name thus not falling back to indirect lookup via avatar).  HUD now marks avatars with '>' prefix in character fields.")
-@Classes.Change(date="2018-10-25", component=Core, type=Add, message="Added ability to link random 3rd party website to the user.")
-@Classes.Change(date="2018-10-25", component=Core, type=Change, message="Migrated architecture to fit on 3-node mariadb cluster; this is likely to be better exploited in the future.")
-@Classes.Change(date="2018-09-04", component=Core, type=Change, message="Improvements - retiring a character (self / admin)")
-@Classes.Change(date="2018-09-04", component=Core, type=Change, message="Groups on 'view characters' page.")
-@Classes.Change(date="2018-09-04", component=Core, type=Change, message="Remote reset of hud for forced character switching.")
-@Classes.Change(date="2018-09-01", component=Core, type=Fix, message="Bug fixes (Undefined BOOLEAN in Menu templating, incorrect check for INTEGER/FLOAT ability point expense types, exception handling esp with broken templates)")
-@Classes.Change(date="2018-08-22", component=Core, type=Fix, message="Fix bug that prevented zone transitioning to 'no zone'")
-@Classes.Change(date="2018-08-20", component=Core, type=Change, message="Clean up a flawed permissions check in setting up permissions groups.")
-@Classes.Change(date="2018-08-20", component=Core, type=Add, message="Support for RPChannel, defaults to /2")
-@Classes.Change(date="2018-08-20", component=Core, type=Fix, message="Fix issues with CHARACTER_PLAYABLE selection type, used by characters.switch command.")
-@Classes.Change(date="2018-05-19", component=Core, type=Add, message="Release to support CharGroup selection and menus >12 elements")
-@Classes.Change(date="2018-03-08", component=Core, type=Add, message="Initial release")
+@Classes.Change(date="2022-04-22",
+                component=DatabaseSchema,
+                type=Add,
+                message="Added retireat/retirewarn to instance table") @Classes.Change(date="2022-04-22",
+                                                                                       component=Core,
+                                                                                       type=Add,
+                                                                                       message="Regions are now automatically retired after two weeks of being offline (configurable for cluster)") @Classes.Change(
+		date="2022-04-22",
+		component=Core,
+		type=Add,
+		message="Instances now start a 1 month deletion warning, with a 2 week secondary warning, if they have no active regions attached (configurable for cluster)") @Classes.Change(
+		date="2022-04-22",
+		component=Core,
+		type=Add,
+		message="Instances now delete automatically when this one month warning period has lapsed (configurable for cluster)") @Classes.Change(
+		date="2022-04-04",
+		component=Core,
+		type=Fix,
+		message="Change error when a KV is mass set via scripting to report properly an unknown KV rather than an internal error.") @Classes.Change(
+		date="2022-03-28",
+		component=Core,
+		type=Change,
+		message="Migrated to Java 17") @Classes.Change(date="2022-03-28",
+                                                       component=Core,
+                                                       type=Change,
+                                                       message="Moved to Version-Number-Less architecture") @Classes.Change(
+		date="2022-03-28",
+		component=Core,
+		type=Change,
+		message="Switched to MySQL native Database driver") @Classes.Change(date="2022-03-28",
+                                                                            component=Core,
+                                                                            type=Change,
+                                                                            message="Improved cache performance of other deep lists e.g. on the menus page") @Classes.Change(
+		date="2022-03-23",
+		component=Core,
+		type=Change,
+		message="Doubled the allowed depth of KV calculations (that is, the number of chained templates in KVs)") @Classes.Change(
+		date="2022-03-23",
+		component=Core,
+		type=Fix,
+		message="Improved performance of Configuration Hierarchy (KV management) page for large numbers of groups and scripted commands.  Note that excessively large configuration sets may still generate large generation or download times due to this page containing 'groups X commands' configuration items on it, for some instances this now passes 100,000 elements generating a web page larger than a Windows 95 install media.") @Classes.Change(
+		date="2022-03-19",
+		component=Core,
+		type=Fix,
+		message="Paged view pages now left align the search box") @Classes.Change(date="2022-03-19",
+                                                                                  component=Core,
+                                                                                  type=Add,
+                                                                                  message="New command GPHUDClient.Reboot that will send a reboot message to the caller.") @Classes.Change(
+		date="2022-03-19",
+		component=Core,
+		type=Add,
+		message="New commands Groups.AddSilently and Groups.RemoveSilently that do not send notifications to the targetted user.") @Classes.Change(
+		date="2022-03-19",
+		component=Scripting,
+		type=Add,
+		message="New functions to get item's descriptions and weights.") @Classes.Change(date="2022-03-19",
+                                                                                         component=Core,
+                                                                                         type=Change,
+                                                                                         message="MariaDB driver replaced with MySQL driver ; now fully MySQL 8.x") @Classes.Change(
+		date="2021-11-27",
+		component=Core,
+		type=Fix,
+		message="Performance improvement on the 'View Characters' SQL queries.") @Classes.Change(date="2021-11-27",
+                                                                                                 component=Core,
+                                                                                                 type=Change,
+                                                                                                 message="View Characters now only shows characters active in the last three months, use '(including retired)' for a full list.") @Classes.Change(
+		date="2021-11-27",
+		component=Scripting,
+		type=Add,
+		message="New function gsDefined - returns 1 if you pass it the string of a variable that exists, 0 otherwise.") @Classes.Change(
+		date="2021-11-27",
+		component=Scripting,
+		type=Add,
+		message="Scripts now have an alias which they can be called by, either via scripting.alias or in scripts as a 'function call'; mostly useful for scripts that have unusable symbols in their name e.g. the - symbol means subtract to the scripting language and thus can not be used as a function name.") @Classes.Change(
+		date="2021-10-23",
+		component=Scripting,
+		type=Add,
+		message="New GS keyword (was always reserved but had no implementation) - 'Return' - takes an optional argument, e.g.'return; return 33; return 'a string'; etc.  If you 'return', execution of your script stops (with the return value left on the stack...).") @Classes.Change(
+		date="2021-10-23",
+		component=Scripting,
+		type=Add,
+		message="You can call another script like you might call a function, note the 'gs' prefix is reserved for internal functions, and that script functions currently take no parameters.  E.g.   Integer number=otherScript();    See also [https://gphuddocs.coagulate.net/wiki/index.php/Scripting#Custom_Function_Calls Scripting Documentation Update]") @Classes.Change(
+		date="2021-10-23",
+		component=GSVM,
+		type=Add,
+		message="Added new bytecode operation 'BCBranchRelativeIfZero' - performs the same function as BCBranchIfZero but requires a relative modification to the PC rather than an absolute value.  This operation code permits the compilation of relocatable bytecode.") @Classes.Change(
+		date="2021-10-23",
+		component=GSVM,
+		type=Delete,
+		message="BCBranchIfZero is hard deprecated - code remains to enable existing compiled scripts to continue to function but no new compilations will generate this bytecode assembly and code using this remains unable to be relocated.") @Classes.Change(
+		date="2021-10-23",
+		component=GSVM,
+		type=Add,
+		message="Scripts are now stored with a 'compiler version', which we can later use to distinguish between code quirks, e.g. use of relative/absolute jump code.  Previously compiled code inherits compiler version 0, compiler version 1 generates relocatable code only.") @Classes.Change(
+		date="2021-10-23",
+		component=GSVM,
+		type=Add,
+		message="Add new byte code 'return' which will stack-juggle a return Data Type (any), and pop a vm-random canary and return PC (absolute).") @Classes.Change(
+		date="2021-10-23",
+		component=GSVM,
+		type=Add,
+		message="GSVM now (badly) tracks the currently running script.  There are bugs in this, but it's intended to assist in debugging.") @Classes.Change(
+		date="2021-10-23",
+		component=Core,
+		type=Add,
+		message="GPHUD Schema Version 12 - Scripts table how has a compiler version int, not null, default 0.  Set to a well known static value on update (effectively).") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Change,
+		message="Various errors are suppressed (not mailed to developers)") @Classes.Change(date="2021-10-17",
+                                                                                            component=Core,
+                                                                                            type=Fix,
+                                                                                            message="Discard any errors that happen from broadcasting messages during event startup/shutdown as this would prevent the event launching/ending properly.") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Fix,
+		message="Don't throw an internal error if a command line string isn't properly terminated, instead report a string termination user error.") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Fix,
+		message="Ensure pool deletions are properly contained to a single instance (ouch).") @Classes.Change(date="2021-10-17",
+                                                                                                             component=Core,
+                                                                                                             type=Change,
+                                                                                                             message="Return a user error when a GET request is made to the external interface, rather than showing an 'internal error' (which implies an error at our end, which is not the case.  Also if you follow the link from the wiki that mentions the API target URL your web browser will issue a GET request, which now has a meaningful response).") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Change,
+		message="Removed the auto-revocation of broken URLs from region servers - this is in response to the recent OVH network outage, whereupon all URLs became unreachable and were cleared.  When service was resumed these URLs remained blank, leaving a uni directional connection and incorrect reports about servers being offline.") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Change,
+		message="If a region server checks in an avatar presence response without having a return URL, reboot the region server.  This was a hotfix reaction to the previous change to cause all region servers to re-establish a connection and register a replacement URL for the one purged previously.") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Add,
+		message="Scripts can now be deleted from the Configuration page") @Classes.Change(date="2021-10-17",
+                                                                                          component=Core,
+                                                                                          type=Add,
+                                                                                          message="The web page now has appropriate linkage to the existing command Teleportation.DeleteLandmark, enabling deletion via the website.") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Add,
+		message="Object types can now be deleted through Objects.DeleteObjectType or through the web page.") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Change,
+		message="Scripts in the Configuration page are now sorted by script name rather than the nebulous row ID") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Add,
+		message="Menus can now be cloned via the Configuration page for the indvidual menu.") @Classes.Change(date="2021-10-17",
+                                                                                                              component=Core,
+                                                                                                              type=Add,
+                                                                                                              message="Effects now support a 'metadata' column which can be used to store information for programmatic interrogation without making it part of the name.  This value can be set on new effects at creation time, edited on existing effects via Effects.SetMetaData and the web page.") @Classes.Change(
+		date="2021-10-17",
+		component=API,
+		type=Add,
+		message="Effects.SetMetaData") @Classes.Change(date="2021-10-17",
+                                                       component=API,
+                                                       type=Add,
+                                                       message="Effects.RemoveByMetaData - removes all effects from a character where the metadata matches (either exact match or substring match) a supplied string.") @Classes.Change(
+		date="2021-10-17",
+		component=API,
+		type=Add,
+		message="Effects.RemoveByMetaDataShortestN / RemoveByMetaDataLongestN - Removes effects from a character that match metadata (see above), up to a maximum number of effects to remove.  Prioritises the shortest/longest effects depending which method you call.") @Classes.Change(
+		date="2021-10-17",
+		component=RegionServer,
+		type=Fix,
+		message="Ensure a different seeding is used for global broadcast channels etc to better separate DEV and PRODUCTION when both are installed on the same sim.  Note ; this release is not being pushed with a requested in world server upgrade, you only need this version if you are also using DEV at a PRODUCTION instance.") @Classes.Change(
+		date="2021-10-17",
+		component=Scripting,
+		type=Fix,
+		message="Ensure that any API call that throws a UserException has it recast into a scripting execution error so it is properly reported.") @Classes.Change(
+		date="2021-10-17",
+		component=Scripting,
+		type=Add,
+		message="New function gsMemberOf which can tell if a character is a member of a specific group.") @Classes.Change(
+		date="2021-10-17",
+		component=Scripting,
+		type=Add,
+		message="New function gsInventoryList that returns the names of items in an inventory as a List.") @Classes.Change(
+		date="2021-10-17",
+		component=Scripting,
+		type=Fix,
+		message="Division by zero now generates a trapped error of GSMathsError which will be reported as a script runtime, rather than the Java core exception which would cause an internal error report.") @Classes.Change(
+		date="2021-10-17",
+		component=Scripting,
+		type=Fix,
+		message="Function gsGetEffectMetaData which can read the metadata from an effect into a String.") @Classes.Change(
+		date="2021-10-17",
+		component=Core,
+		type=Change,
+		message="Split maintenance operations into 'primary only' and 'all nodes', such that racey tasks can be left to the primary only but e.g. statistics gathering can run on all nodes at all times.") @Classes.Change(
+		date="2021-10-17",
+		component=DatabaseSchema,
+		type=Add,
+		message="GPHUD Schema version 11 adds metadata column to effects table.") @Classes.Change(date="2021-03-15",
+                                                                                                  component=Core,
+                                                                                                  type=Add,
+                                                                                                  message="Added reporting/download credits, one is granted every 12 hours and you may store up to 10 in reserve.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Add,
+		message="Added report generation via website or command, this requires Instance.Reporting and will cost one Reporting credit to generate.  The system iterates users at 10 per second and will give an estimated duration for the generation phase.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Add,
+		message="Added report downloading via website, same permission requirement and drains a Download credit.  Downloads as a time/date stamped CSV file that is formatted for Excel and compatible parsers.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Add,
+		message="All sorts of internal tweaks to support providing a CSV download (ContentType added to Page() from SLCore, GPHUD State supports suppressOutput() to prevent rendering html surrounding).") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Fix,
+		message="Migrate the HUD's protocol version when character switching is activated, otherwise the legacy menu is probably assumed and corrupts the HUDs ability to draw the main menu.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Fix,
+		message="Internal API to add/remove group member only flusher character's 'member of groups' cache, it now also flushes the group's 'membership' cache.  This would cause group updates to appear to take up to 5 minutes to happen.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Change,
+		message="Suppress developer logging of Error Responses that have been converted to Exceptions via gsAPIX / gsElevatedAPIX") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Fix,
+		message="When an attribute was deleted, the cache of attributes was not properly flushed (incorrect key used) leading to internal errors as the outdated cached list of attributes would refer to a non existent attribute, until the cache naturally expired.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Fix,
+		message="Prevent Name API calls for the blank username.") @Classes.Change(date="2021-03-15",
+                                                                                  component=Core,
+                                                                                  type=Add,
+                                                                                  message="Purge expired script runs, to reduce database garbage accumulating.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Change,
+		message="Permissions groups add/remove member commands lost their explicit permissions check.  Presently they all check Instance.ManagePermissions, which is used to change the permissions assigned to a permissions group, and is a dangerous permission as it allows a user to add more permissions to a group they are a member of (i.e. consider people with this permission as having all permissions except Instance.Owner).  The add/remove member code was also checking canInvite/canEject which makes two permissions checks, *either* you must be a member of the permissions group and have the canInvite/canKick permission assigned for that group, OR you have Instance.PermissionsMembers.  The difference is, setting a user as canInvite/canKick on a particular group lets them only add or remove members from that specific group, Instance.PermissionsMembers is a high level override (for the few who admin even the admins of the admins) that lets users with this permission join ANY user to ANY group.  Most of the time you'll want to allow people to add/remove from their own groups only, to avoid them joining people to your super-admin group, however, for a couple of people at a sim, being able to administer all groups is likely required, and for this reason alone (to save you having to join to every single group) there is Instance.PermissionsMembers.  Changes to per-group invite/kick rights are made under the PermissionsGroups menu on the left hand side (go into a group and use 'Set Invite/Kick')") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Add,
+		message="Added Introspection.ViewStatus permission which is now required to view the Status page under Introspection.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Add,
+		message="Permissions checks added to various menu elements, e.g. Alias.View was required to look at aliases, but the configuration links were visible to all.  These now check the relevant permissions and aren't links or aren't visible as appropriate.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Add,
+		message="Items configuration, which shows the items list now requires any Items related permission to view.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Add,
+		message="Menu configuration, External API access configuration, Publishing configuration, Scripting configuration (scripts list), Teleportation (list of landmarks) and Zoning require any related permission to view.") @Classes.Change(
+		date="2021-03-15",
+		component=Core,
+		type=Fix,
+		message="External interface rejects blank checkavatarpermission rather than trying to look up the key and failing.") @Classes.Change(
+		date="2021-03-15",
+		component=RegionServer,
+		type=Fix,
+		message="Fixed issue with Region Server's being uncommunicative ; they now output response messages as local SAY messages, and report any Error messages similarly.</s>") @Classes.Change(
+		date="2021-02-13",
+		component=Core,
+		type=Add,
+		message="Added delete buttons for Items and Item Actions (already released)") @Classes.Change(date="2021-02-13",
+                                                                                                      component=Core,
+                                                                                                      type=Add,
+                                                                                                      message="Support system protocol 4 for main menu cache conveyance, as well as maintain legacy support for previous protocols.") @Classes.Change(
+		date="2021-02-13",
+		component=Core,
+		type=Change,
+		message="Reduced rate of Pings to active connections") @Classes.Change(date="2021-02-13",
+                                                                               component=Core,
+                                                                               type=Change,
+                                                                               message="Rewritten database caching module") @Classes.Change(
+		date="2021-02-13",
+		component=Core,
+		type=Add,
+		message="Added new KV GPHUDClient.TitlerAttachment that defines the attachment point for the titler, or None for no titler.  There is also a protected KV 'GPHUDClient.TitlerAttachmentConverted' which contains the LSL integer attachment point index for the named attachment point ; this KV is used to convey the numeric form to the HUD (which then requests a Titler from the region server using this attachment point index).") @Classes.Change(
+		date="2021-02-13",
+		component=Core,
+		type=Add,
+		message="Added command GPHUDClient.setTitlerAttachPoint which takes an attachment point description to attach to (works better on a menu!), allowing users to set their character's preferred attachment point.  Also added command GPHUDClient.resetTitler with predictable effect.") @Classes.Change(
+		date="2021-02-13",
+		component=HUD,
+		type=Change,
+		message="Switch to system protocol 4, decode compacted cached main menu back into UI ready format at the LSL end of the communications.") @Classes.Change(
+		date="2021-02-13",
+		component=HUD,
+		type=Change,
+		message="Titler no longer auto attaches along side the HUD, and is instead requested by the HUD.  This allows the Titler to be disabled entirely or, on a group, character, etc basis, the Titler may be attached somewhere other than the Skull.") @Classes.Change(
+		date="2021-02-13",
+		component=ObjectDriver,
+		type=Change,
+		message="Switch to system protocol 4. (Main menu cache is not used by object driver but still forms part of the payload)") @Classes.Change(
+		date="2021-02-13",
+		component=Protocol,
+		type=Change,
+		message="Bump protocol level to 4 ; alteration of main menu communications from a 'UI ready' JSON structure to a delimited list of options.  This is to overcome the 2KB outbound transmission limit that some menu structures hit when doing 'instance wide updates' (i.e. the admin reconfigures the main menu).") @Classes.Change(
+		date="2021-02-13",
+		component=Scripting,
+		type=Fix,
+		message="List variables no longer reverse themselves on a VM suspend/resume operation (which happens when you query a user for something).") @Classes.Change(
+		date="2021-01-10",
+		component=Core,
+		type=Add,
+		message="Added template TARGET:LEVEL") @Classes.Change(date="2021-01-10",
+                                                               component=Core,
+                                                               type=Add,
+                                                               message="Added Inventory and Items modules and configuration, support for Items and INVENTORY as an attribute type.  See [[Inventories]] for more details.") @Classes.Change(
+		date="2021-01-10",
+		component=Core,
+		type=Add,
+		message="Added commands Inventory.add, Inventory.destroyItem, Inventory.giveItem, Inventory.Interact, Inventory.InteractItem, Inventory.InteractItemVerb, Inventory.MoveItem, Inventory.set and Inventory.view, Items.Edit and Items.EditInventories - See the [https://sl.coagulate.net/GPHUD/introspection/api/ API introspection page] for more or [[Inventories]] for more details.") @Classes.Change(
+		date="2021-01-10",
+		component=Scripting,
+		type=Fix,
+		message="Fixed a bug in gsSetCharacterKVs that would not set values for KVs that had not previously had a value set.") @Classes.Change(
+		date="2021-01-10",
+		component=Scripting,
+		type=Add,
+		message="Added functions gsInventoryAdd, gsInventoryCount, gsInventoryGet, gsInventoryQuantity and gsInventoryWeight, see [[Inventories]] and [https://sl.coagulate.net/GPHUD/introspection/gsfunctions the application's Introspection/GSFunctions] for more details") @Classes.Change(
+		date="2021-01-10",
+		component=RegionServer,
+		type=Fix,
+		message="Added code to express terminate/suspend messages properly (lost in the refactoring of GPHUDHeader previously).") @Classes.Change(
+		date="2020-12-21",
+		component=Core,
+		type=Add,
+		message="New AttributeType 'SET' bound to the character directly.") @Classes.Change(date="2020-12-21",
+                                                                                            component=Core,
+                                                                                            type=Add,
+                                                                                            message="Sets are displayed on the character view page, items can be added or removed (set quantity to zero) from here if you have the appropriate permission (Characters.Set''AttributeName'')") @Classes.Change(
+		date="2020-12-21",
+		component=Core,
+		type=Add,
+		message="New command set 'Sets.*', see introspection/API for more information (Sets.Add, Sets.Set, Sets.View, Sets.Wipe)") @Classes.Change(
+		date="2020-12-21",
+		component=Scripting,
+		type=Add,
+		message="Set related functions added - see introspection/GSFunctions for more details (gsSetAdd, gsSetCopy, gsSetCount, gsSetGet, gsSetList, gsSetMap, gsSetQuantity, gsSetSet, gsSetWipe)") @Classes.Change(
+		date="2020-12-17",
+		component=Core,
+		type=Fix,
+		message="Exceptions that wrap another exception now inherit the 'Suppression' flag which prevents developers getting emailed about certain user generated errors ; this fixes that suppression flag getting lost and error emails getting generated for 'developmentally uninteresting' errors (such as typing in garbage into colour selectors, typing words into numeric inputs, failing char name validation etc etc)") @Classes.Change(
+		date="2020-12-17",
+		component=Core,
+		type=Add,
+		message="Added support for suspending a user from the service at a cluster-wide level.") @Classes.Change(date="2020-12-17",
+                                                                                                                 component=Core,
+                                                                                                                 type=Add,
+                                                                                                                 message="Clickable object types (ClickTeleporter, RunCommand, RunScript and NPC) can have a maximum interaction distance set in their object type, default is 10 meters for new objects, existing objects remain at unlimited range but can be changed via the web page.") @Classes.Change(
+		date="2020-12-17",
+		component=Core,
+		type=Fix,
+		message="Fixed a leak of available permissions between instances (though they have no effect either)") @Classes.Change(
+		date="2020-12-17",
+		component=Core,
+		type=Add,
+		message="Added KV Experience.MaxLevel which 'caps' the level characters can achieve.  A character at maximum level no longer receives experience.  This may cause some characters to display negative ability points if you reduce their current level by setting this.") @Classes.Change(
+		date="2020-12-17",
+		component=Core,
+		type=Add,
+		message="Character groups now have a 'KV Precedence' setting which affects their ordering ; this only affects the DELEGATING KV types (as CUMULATIVE cares not for the order as it adds them all up).  Lower precedence groups appear 'higher' in the KV hierarchy and thus higher precedence numbered groups end up dominant (if set) in a DELEGATING hierarchy type KV.  For AUTHORITATIVE KVs this behaviour would be reversed (not that any AUTHORITATIVE KVs exist presently).  Precedence values are shown in parenthesis in the group type on the KV editor pages and should be in order here (DELEGATING prefers values further down this list).  Default precedence level for all existing groups is 1.  Range for precedence values is a signed 32 bit integer (approx +/- 2.1 billion).  Negative numbers are permitted.  For groups with the same precedence value the internal ID number of the group is a secondary level of ordering providing a consistent interpretation of KV orderings within groups.  Precedence values may be edited via the Groups menu element.") @Classes.Change(
+		date="2020-12-17",
+		component=ObjectDriver,
+		type=Add,
+		message="Object Driver supports a maximum click distance.") @Classes.Change(date="2020-12-17",
+                                                                                    component=Scripting,
+                                                                                    type=Add,
+                                                                                    message="Added GPHUDClient.AllowManualByDefault which controls the behaviour of gsSelectCharacter's 'Manual Selection' option ; this KV is instance only and defaults to TRUE which is the legacy behaviour, setting this to false will remove the Manual Entry option from all gsSelectCharacter calls to the HUD.  If no avatars are nearby the HUD emits an 'Unable to detect any nearby players' error and the script stops (or specifically fails to resume).") @Classes.Change(
+		date="2020-12-17",
+		component=Scripting,
+		type=Add,
+		message="New function call gsSelectCharacterSpecifyManual which takes an integer value, 0 disables manual selection and 1 enables it, this function call overrides the GPHUDClient.AllowManualByDefault preference for this call (i.e. you can set the default and have specific exceptions either way with this function)") @Classes.Change(
+		date="2020-12-17",
+		component=Scripting,
+		type=Add,
+		message="Two new function calls, gsGetPlayersName and gsGetPlayersUUID which can resolve a Character into the player's Avatar name or UUID, if the character is logged in.") @Classes.Change(
+		date="2020-12-17",
+		component=Scripting,
+		type=Add,
+		message="New function call, gsGetCharacter which will resolve a String name into a Character type.") @Classes.Change(
+		date="2020-12-17",
+		component=HUD,
+		type=Fix,
+		message="Titler/HUD now correctly recommunicate the titler's Z offset if the titler starts up after the HUD, or is otherwise reset.") @Classes.Change(
+		date="2020-11-29",
+		component=Core,
+		type=Add,
+		message="Added recursion protection to command execution.") @Classes.Change(date="2020-11-29",
+                                                                                    component=Core,
+                                                                                    type=Change,
+                                                                                    message="Aliases may now invoke any other command, including generated ones (including other aliases, enjoy finding new ways to break things!)") @Classes.Change(
+		date="2020-11-29",
+		component=Core,
+		type=Change,
+		message="GPHUDClient quick button commands may be invoked from console/scripting") @Classes.Change(date="2020-11-29",
+                                                                                                           component=Core,
+                                                                                                           type=Fix,
+                                                                                                           message="Alias editing page handles errors that can occur as a result of enabling generated commands aliasing") @Classes.Change(
+		date="2020-11-29",
+		component=Core,
+		type=Add,
+		message="Some basic instrumentation for I/O indicating the nature of the request, the payloads transferred and run time ; to hopefully point the direction of some possible optimisations. (must be enabled in server's properties file)") @Classes.Change(
+		date="2020-11-29",
+		component=Core,
+		type=Change,
+		message="Suppressed developer emails for a variety of uninteresting errors (permission denied, filtered characters in name, character not online when messaging, health reset denied)") @Classes.Change(
+		date="2020-11-29",
+		component=Core,
+		type=Change,
+		message="Purge any URL that fails all 5 retry connections (over 25 seconds), currently we only purge URLs that fail to validate as URLs or that generate 404's from the remote server, however, it also seems error 503's may be a permanent failure of the URL.  So now we revoke any URL that fails all retries too.") @Classes.Change(
+		date="2020-11-29",
+		component=Core,
+		type=Change,
+		message="Altered a parameter of the apache config (keepalive) ; seems there are occasional '502' errors from my service that report an issue with the upstream connection, suspicion is this relates to held open connections that expire at inopportune moments (race condition).  Removing connection keepalive may solve this (in a not so great way), monitoring ongoing (Update: Issue which surfaced maybe twice per hour for 1 request has no longer shown up at all in 2.5 days).") @Classes.Change(
+		date="2020-11-29",
+		component=Protocol,
+		type=Add,
+		message="'Protocol version' numbers are logged for region servers, characters (HUDs) and objects, this enables 'breaking changes' to be implemented for new versions while maintaining backwards compatability in some cases.") @Classes.Change(
+		date="2020-11-29",
+		component=Protocol,
+		type=Change,
+		message="Added a new HUD 'message/say' protocol supported by HUD version 3, this format correctly orders outputs which mostly affects scripting.") @Classes.Change(
+		date="2020-11-29",
+		component=Protocol,
+		type=Fix,
+		message="Fixed a bug with various uses of core GPHUD Libraries which emitted certain messages as 'local say' messages ; notably this caused broadcast messages such as event start messages to emit in nearby chat as well as the intended OwnerSay.  Core GPHUD libraries are no longer allowed to emit text (and a replication of some code was made into the Object Driver as suitable).") @Classes.Change(
+		date="2020-11-29",
+		component=Protocol,
+		type=Add,
+		message="All components communicate an arbitrary 'protocol' number to the server, assumed to be zero if unset, this value is increased when the protocol needs to fork one of two paths only.") @Classes.Change(
+		date="2020-11-29",
+		component=Scripting,
+		type=Add,
+		message="Objects of type 'RunScript' and 'PhantomScript' will introduce the variable CALLERUUID into the script which contains the SL Avatar's UUID for the interactor.  NPC types also support this variable under the name of 'TARGETUUID' (as CALLER in an NPC script is the NPC its self)") @Classes.Change(
+		date="2020-11-29",
+		component=Scripting,
+		type=Change,
+		message="Uses protocol versioned 'Say/SayAs/SayAsHud' messages ; new HUDs will correctly emit messages in the order the script queued them, rather than in 'blocks' by type.") @Classes.Change(
+		date="2020-11-29",
+		component=HUD,
+		type=Change,
+		message="Support the new HUD messages protocol (v3).") @Classes.Change(date="2020-11-29",
+                                                                               component=ObjectDriver,
+                                                                               type=Change,
+                                                                               message="Support the new HUD messages protocol (v3) (note: the OwnerSay method is intentionally unimplemented in the object driver ; OwnerSays will be silently discarded)") @Classes.Change(
+		date="2020-11-01",
+		component=Core,
+		type=Fix,
+		message="Emergency bugfix for incorrect permissions on flagging notecard in HUD...") @Classes.Change(date="2020-11-01",
+                                                                                                             component=Core,
+                                                                                                             type=Fix,
+                                                                                                             message="Fix issue creating a currency coin that shares a short name with another currency.") @Classes.Change(
+		date="2020-11-01",
+		component=Core,
+		type=Fix,
+		message="Fixed a couple of places a deleted attribute might error the web application (this is a symptom fix, not a root cause fix, sadly)") @Classes.Change(
+		date="2020-11-01",
+		component=Core,
+		type=Fix,
+		message="Fixed a couple of places a null objecttype might error the application (again not quite the root cause fix)") @Classes.Change(
+		date="2020-11-01",
+		component=Core,
+		type=Add,
+		message="Added new template --HEALTHMAX-- which shows the maximum (initial) health value for the character, or more specifically, what the health will be if 'resetHealth' is called.") @Classes.Change(
+		date="2020-11-01",
+		component=Core,
+		type=Fix,
+		message="Fixed issue with group eject page recursing the URL until it 404'ed") @Classes.Change(date="2020-11-01",
+                                                                                                       component=Core,
+                                                                                                       type=Fix,
+                                                                                                       message="Prevent creation of ObjectTypes with no behaviour (which later causes an exception when 'materialising' the unknown object type)") @Classes.Change(
+		date="2020-11-01",
+		component=Core,
+		type=Change,
+		message="Character level KV updates now only trigger a re-check of the character's KVs rather than the whole instance.") @Classes.Change(
+		date="2020-11-01",
+		component=ObjectDriver,
+		type=Add,
+		message="Now has an auto update mechanism, though you will have to manually update object driver scripts to the new version (which supports the auto update mechanism).  As updates can only be applied by the object owner, there is now an inert Object Driver script in the Region Server and GPHUD its self, which beacons once every 15 minutes with its version number, and objects owned by the same owner will request updates from it.") @Classes.Change(
+		date="2020-11-01",
+		component=ObjectDriver,
+		type=Add,
+		message="Object Driver types that invoke scripts pass on certain variables about the calling object, namely OBJECTNAME which contains the (last registered) name of the connecting object (reset the object or wait 15 minutes if you change this), OBJECTTYPE containing the name of the object type invoked, and OBJECTKEY which contains the Primitive's UUID that was interacted with.  (This specifically only covers NPC types and ClickScript / PhantomScript - using the standard click/collision types will not pass on these OBJECT details if you indirectly invoke a script via the Scripting.* commands)") @Classes.Change(
+		date="2020-11-01",
+		component=ObjectDriver,
+		type=Add,
+		message="The object driver will pass the description of the object to the server when checking in.  This must contain a valid JSON structure and currently only supports one parameter - objecttype, e.g. {'objecttype':'Buff Wizard'} - note that setting this up with an NPC type will shut down other objects due to the invalidity of logging in a character more than once at a time.") @Classes.Change(
+		date="2020-11-01",
+		component=ObjectDriver,
+		type=Add,
+		message="Support of three new ObjectTypes - PhantomCommand that runs a standard command on collision, and PhantomScript/RunScript which are comparable to RunCommand and PhantomCommand but use the new interface described above to pass variables about the source object to the script.") @Classes.Change(
+		date="2020-11-01",
+		component=ObjectDriver,
+		type=Add,
+		message="Support for emitting link messages from the object driver") @Classes.Change(date="2020-11-01",
+                                                                                             component=HUD,
+                                                                                             type=Add,
+                                                                                             message="Now contains an inert Object Driver for updating any objects this user might own.") @Classes.Change(
+		date="2020-11-01",
+		component=HUD,
+		type=Add,
+		message="Titler now re-requests title from the HUD on reboots, this helps if the Titler starts up after, or is rebooted after, the HUD completes its initial login stages.") @Classes.Change(
+		date="2020-11-01",
+		component=RegionServer,
+		type=Add,
+		message="The contained inert Object Driver (the same one given by getObjectDriver) will now beacon its version and auto update any objects owned by the same owner as the region server (probably the instance owner)") @Classes.Change(
+		date="2020-11-01",
+		component=RegionServer,
+		type=Fix,
+		message="Fix a flaw with the console interface") @Classes.Change(date="2020-11-01",
+                                                                         component=Scripting,
+                                                                         type=Add,
+                                                                         message="Float support properly added to GSScripting - please be aware of type inference (1/2 is the integer (whole number) 1 divided by the integer 2, with an integer result... of zero.    1.0/2.0 is the floating point 1 divided by floating point 2 which produces floating point 0.5.  These same caveats apply to LSL)") @Classes.Change(
+		date="2020-11-01",
+		component=Scripting,
+		type=Add,
+		message="New function gsSetCharacterKVs, for efficiently setting multiple character level KVs at once (this method triggers a single user update after all values are set, legacy behaviour recalculated every logged in user after every update, and even the more refined version in this patch above still recalculates the character every change, bulk setting provides significant speed boosts)") @Classes.Change(
+		date="2020-11-01",
+		component=Scripting,
+		type=Add,
+		message="New function gsObjectEmitLinkMessage which can be used to cause a given Object (via Object Driver) to emit a link message") @Classes.Change(
+		date="2020-11-01",
+		component=Protocol,
+		type=Add,
+		message="Allow for suppression of boot stage link messages, not very useful for single script solutions and just generates 'noise' for the Object driver script objects") @Classes.Change(
+		date="2020-10-11",
+		component=Core,
+		type=Fix,
+		message="bug selecting characters with long names in a group and one very minor addition.") @Classes.Change(date="2020-10-11",
+                                                                                                                    component=HUD,
+                                                                                                                    type=Fix,
+                                                                                                                    message="Fix problem where selection of nearby character would often select the wrong character.") @Classes.Change(
+		date="2020-10-11",
+		component=Scripting,
+		type=Add,
+		message="Added gsNewLine() which returns the new line character for use in dialog titles, gsSay etc") @Classes.Change(
+		date="2020-10-06",
+		component=Core,
+		type=Fix,
+		message="Attempt to mitigate a few ConcurrentModificationExceptions observed during slowdowns.") @Classes.Change(
+		date="2020-10-06",
+		component=Core,
+		type=Change,
+		message="Characters.Show and Characters.Look are now allowed to be called from scripting.") @Classes.Change(date="2020-10-06",
+                                                                                                                    component=Core,
+                                                                                                                    type=Add,
+                                                                                                                    message="Added display of online time in last 1 week and 4 weeks to character sheet.") @Classes.Change(
+		date="2020-10-06",
+		component=HUD,
+		type=Fix,
+		message="Prevent a duplicate HUD element from removing ALL titlers (duplicate or otherwise).  Dependant on race condition.") @Classes.Change(
+		date="2020-10-06",
+		component=Scripting,
+		type=Add,
+		message="Added gsGetAbilityPoints(Character) which gets the available ability points for a character.") @Classes.Change(
+		date="2020-10-06",
+		component=Core,
+		type=Fix,
+		message="Unify the SL username format (and retroactively update existing usernames) to avoid flooding the SL Name Lookup API service and getting my key blocked.") @Classes.Change(
+		date="2020-10-06",
+		component=Core,
+		type=Change,
+		message="Ensure results from SL Name Lookup API are cached, and report duplicate queries (as this implies incorrect lookups)") @Classes.Change(
+		date="2020-10-06",
+		component=Core,
+		type=Add,
+		message="Added process to do name lookup on all known UUIDs to attempt to finally compensate for the SL name change process.") @Classes.Change(
+		date="2020-09-20",
+		component=Core,
+		type=Fix,
+		message="Don't write blank values, or the website's internal 'okreturnurl' to the alias data structure.") @Classes.Change(
+		date="2020-09-20",
+		component=Core,
+		type=Add,
+		message="Event Queue mechanics (work in progress)") @Classes.Change(date="2020-09-16",
+                                                                            component=Core,
+                                                                            type=Fix,
+                                                                            message="Move template wrapper caching into the connection's state only.") @Classes.Change(
+		date="2020-09-16",
+		component=Core,
+		type=Add,
+		message="Initial support for event queueing") @Classes.Change(date="2020-09-07",
+                                                                      component=Core,
+                                                                      type=Fix,
+                                                                      message="Fix bug breaking all links in Introspection/GSFunctions") @Classes.Change(
+		date="2020-09-07",
+		component=Core,
+		type=Fix,
+		message="Fix bug in packaging of zone information that would only include one area per zone") @Classes.Change(
+		date="2020-09-07",
+		component=Core,
+		type=Fix,
+		message="TotalXP column on characters view page did not include EventXP") @Classes.Change(date="2020-09-07",
+                                                                                                  component=Core,
+                                                                                                  type=Fix,
+                                                                                                  message="Event KV's are only included in calculation if the Character is in one of the Event's Zones") @Classes.Change(
+		date="2020-09-07",
+		component=HUD,
+		type=Fix,
+		message="Retransmit zone information on login (as a zone transition may occur before a character is selected, and the server won't know where to store this information).") @Classes.Change(
+		date="2020-09-07",
+		component=HUD,
+		type=Add,
+		message="Support for outputting RP channel messages without the Character Name prefix (see GPHUDClient.NamelessRPPrefix).  Note there is no way of retroactively attributing who authored a message that has no prefix like this (I think).") @Classes.Change(
+		date="2020-09-07",
+		component=RegionServer,
+		type=Add,
+		message="Support for altitude ranging for meter auto dispense/attach (see GPHUDServer.DispenserMinimumZ / GPHUDServer.DispenserMaximumZ)") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Change,
+		message="Open sourced the GPHUD project, now on GitHub. - see [[Open Source]]") @Classes.Change(date="2020-08-30",
+                                                                                                        component=Core,
+                                                                                                        type=Add,
+                                                                                                        message="Split software services into modules, of which GPHUD is one.  There are other non-open source modules I use.") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Add,
+		message="Provide packaged releases for SLCore (useless standalone) and GPHUD, as well as a private 'full stack' release.") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Add,
+		message="Release JSLBot-Bridge module and new package for GPHUD Module with JSLBotBridge support.") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Add,
+		message="Move to Java-11.") @Classes.Change(date="2020-08-30",
+                                                    component=Core,
+                                                    type=Add,
+                                                    message="Automated builds/releases.") @Classes.Change(date="2020-08-30",
+                                                                                                          component=Core,
+                                                                                                          type=Add,
+                                                                                                          message="Support for external configuration file for Java systems and LSL scripts") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Delete,
+		message="Purging of all secrets previously stored in the (private) repositories and purged from git history.") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Change,
+		message="Rebuild the URL and Page handling code (in SLCore), modified appropriate connectors for GPHUD services.") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Fix,
+		message="Created bug with region distribution servers, and fixed it") @Classes.Change(date="2020-08-30",
+                                                                                              component=Core,
+                                                                                              type=Change,
+                                                                                              message="Support for alternative branding, for open source project.") @Classes.Change(
+		date="2020-08-30",
+		component=Core,
+		type=Add,
+		message="Experimental (functional) support for OSGrid (/opensim?) based regions.") @Classes.Change(date="2020-08-30",
+                                                                                                           component=Core,
+                                                                                                           type=Delete,
+                                                                                                           message="Remove camera permissions request in GPHUD for now to permit OSGrid version of auto attachment.") @Classes.Change(
+		date="2020-07-15",
+		component=Core,
+		type=Fix,
+		message="Change Data API for Characters login to *require* a valid set of arguments (seems some null URLs are leaking in to a login here)") @Classes.Change(
+		date="2020-07-15",
+		component=Core,
+		type=Add,
+		message="Added command 'Faction.Leave' which lets a player leave their current faction (unless they're the leader, who can only leave if they're the last person in the faction)") @Classes.Change(
+		date="2020-07-15",
+		component=Core,
+		type=Add,
+		message="Added secondary characters list, one shows retired characters, one does not.") @Classes.Change(date="2020-07-15",
+                                                                                                                component=Core,
+                                                                                                                type=Add,
+                                                                                                                message="Added 'Groups.Leave' command which can be used to leave an open group, if the group has a type (maps to an attribute) then the attribute must be self modifiable.") @Classes.Change(
+		date="2020-07-15",
+		component=Core,
+		type=Change,
+		message="Increased number of menu elements to (arbitarily) 40, Submit button moved to top of page :P") @Classes.Change(
+		date="2020-07-15",
+		component=Core,
+		type=Add,
+		message="Command types now have a notes field, which is displayed in Introspection under a command's description, but doesn't pollute the 'list of commands'") @Classes.Change(
+		date="2020-07-15",
+		component=Core,
+		type=Change,
+		message="Main menu changed so it can be per user - rather than a static central definition with sneaky conveyance backdoors, it's now invoked via a template (dynamic per user values) templated into a conveyed KV to replace this functionality, which leads to:") @Classes.Change(
+		date="2020-07-15",
+		component=Core,
+		type=Add,
+		message="Menu items can now have a permission, permissions group and character group associated with them.  If any of these are set, the user must have one of these for the menu to show.  Default behaviour (all values unset) shows the menu item to all") @Classes.Change(
+		date="2020-07-15",
+		component=HUD,
+		type=Change,
+		message="Now display 10 elements on a paged menu, rather than 9 (which didn't translate into UIX designs very well).") @Classes.Change(
+		date="2020-07-15",
+		component=HUD,
+		type=Change,
+		message="UIX Main Menu first page is generated by UI module rather than UIX as this then re-uses the multi-page code properly") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="Fixed the getAgentID caller to not break if a single word username is suffixed with a space - the space would normally indicate a 'two part' username but if the space is a trailing space this would 'array index out of bounds' getting the lastname.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="Fixed an issue where certain templated paged tables (audit and pool logs) would break on 2nd plus pages.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="Resolved an issue where the version checker would poll ALL regions version information, including retired regions, which could not be updated, thus generating false alerts about out of date versions.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="'Fixed' length checking issues with username formatter") @Classes.Change(date="2020-06-28",
+                                                                                          component=Core,
+                                                                                          type=Fix,
+                                                                                          message="Fixed a problem where the permissions editing page would struggle with Currency based permissions (Due to currency module not following the lower casing standards)") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="JSON Templating for CURRENCY inputs now correctly guides the HUD to a TEXTBOX.") @Classes.Change(date="2020-06-28",
+                                                                                                                  component=Core,
+                                                                                                                  type=Fix,
+                                                                                                                  message="Prevent creation of a currency coin with a value less than 2.  Setting a coins value to 1 misses the point of base coins, and setting it to zero breaks the currency entirely.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="Fix bug with currency transfer to an offline character.") @Classes.Change(date="2020-06-28",
+                                                                                           component=Core,
+                                                                                           type=Delete,
+                                                                                           message="Removed support for Login Protocol Version 1") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Delete,
+		message="Removed all support for the 'PrimaryCharacters' table whose functionality has been replaced by the more reliable mechanism of 'most recently used by this avatar at this instance' approach.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Add,
+		message="Added commands Configuration.deltaCharInt and Configuration.deltaCharFloat which will adjust a character's KV.  Handles delegating and cumulative types appropriately, see API description for more details.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="The Effects icons (transparent by default) will no longer generate errors about Effects not being enabled on instances configured such, the API call will be aborted into a silent NO-OP.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Fix,
+		message="Fixes a bug where titler/hud text might fail to update on login.  This was caused by setting KVs in a character initialisation script, which would trigger an 'immediate update' to the client which would load all the conveyances.  The character login code would later on manually change these to 'Initialising character...' and such other things ; since this bypassed conveyances this would not then get dynamically updated as it should until the value was next changed or reloaded.  Resolution is to purge the conveyance cache for titler/hud text+color attributes such that they'll be repopulated in the final response to logging in.  Of note (to self), the setting of KVs during initialisation triggers a 'push Conveyances' via the region server to the characters HUD, thus bypassing the normal Login flow of not loading conveyances until the end.  This may have other implications.") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Add,
+		message="Color parser added to COLOR type fields, this accepts LSL format (float triplet between 0 and 1 optionally with <> around it), RGB triplet format (0-255), HTML format (6 char hex string with optional # at the front) or a list of W3C supported color names (e.g. blue, green, etc, see [https://www.w3schools.com/colors/colors_names.asp W3C list here])") @Classes.Change(
+		date="2020-06-28",
+		component=Core,
+		type=Add,
+		message="Added template --CURRENCY:LONG-- which gives the long coin named version of the currency sum") @Classes.Change(
+		date="2020-06-28",
+		component=Scripting,
+		type=Add,
+		message="Multi message support added to GSScripting - adding multiple gsSayToChar etc will now generate separate say's in the HUD rather than attempting to merge them into one post with newlines ; this allows longer messages to be transmitted overall.  WARNING:  There is a 4 kilobyte limit on the response from a script which will include some basic HUD overheads and any potential 'next action' the HUD might have to take (e.g. further input from the user), stacking too much text will result in a failure of the communications protocol entirely (most likely) as the LSL received is set to max input of 4KB (an upper limit is required at the LSL end to avoid hitting the 64KB limit that all scripts CODE and all DATA must fit within ; bearing in mind that due to the way LSL works we must assume a 4KB transmission requires 8KB of ram due to 'pass by value' to function calls etc).") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="Added a new module, Currency") @Classes.Change(date="2020-05-31",
+                                                                component=Core,
+                                                                type=Add,
+                                                                message="The Character configuration page allows a new type of attribute to be created, CURRENCY, if the Currency module is enabled.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="Character attribute population (that which happens at login time) will assign the 'default' value of currency to characters as a starting balance, if and only if the character has no existing transactions for this currency type.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="The characters module exposes a dynamic set of permissions ; Currency.Create<name> and Currency.Destroy<name> for every type of currency configured.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="The characters module exposes some administrative commands for creating/destroying currency ; Currency.Create<Name> and Currency.Destroy<Name> requiring the same named permission.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Change,
+		message="Character Pool page shows a cumulative total (useful for currency pools)") @Classes.Change(date="2020-05-31",
+                                                                                                            component=Core,
+                                                                                                            type=Add,
+                                                                                                            message="Added summary row to character sheet (in web page) displaying the currency totals, in short and long coin name formats.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="Various internal extensions to Pools objects to avoid everything going through static methods.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="Commands added for configuring currencies - setBaseCoinNames, addCoin and removeCoin, all exposed through typical API endpoints and the web interface.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="Currencies are optionally transferable between players, with taxation being applyable.  Two commands, currency.transfer(paytax)(currencyname) spawn, e.g. currency.transferPayTaxGold (see introspection for your instances details).  the 'paytax' version causes the sender to pay extra to cover the tax, the other version assumes the tax is deducted from the recipients ammount.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="Templates are supported that match the attribute name and contain the short form text balance, e.g. --GOLD--") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="Tax can be paid to a central character by setting KV Currency.TransactionTaxRecipient<currencyname> .  Note if this character does not exist, all transactions will be prevented until resolved.") @Classes.Change(
+		date="2020-05-31",
+		component=Core,
+		type=Add,
+		message="GS Functions are now assigned to a primitive 'category' which is used to order their arrangement in the Introspection module.") @Classes.Change(
+		date="2020-05-31",
+		component=Scripting,
+		type=Add,
+		message="Function gsGetBalance for retrieving a users current balance (as a raw number of base coins)") @Classes.Change(
+		date="2020-05-31",
+		component=Scripting,
+		type=Add,
+		message="Functions gsFormatCoins and gsFormatCoinsLong for converting a balance into a textual format (e.g. 123 becomes 1s 23c / 1 silver 23 copper )") @Classes.Change(
+		date="2020-05-31",
+		component=Scripting,
+		type=Add,
+		message="Function gsParseCoin which will reverse the above, e.g. converting '1s 2copper' into an integer of 102 basecoins)") @Classes.Change(
+		date="2020-05-26",
+		component=Core,
+		type=Fix,
+		message="Object Type bindings (connecting an object to an object type) now correctly discovers region/URL from the object's data rather than trying to read it from the (NPC) character, which prior to it being connected (which is what we're trying to do) will generate errors about no region being set (appropriately).") @Classes.Change(
+		date="2020-05-26",
+		component=Core,
+		type=Change,
+		message="Cluster database changed.") @Classes.Change(date="2020-05-26",
+                                                             component=Core,
+                                                             type=Fix,
+                                                             message="Fix regions reporting as stalled due to callback passing changes (new server only).") @Classes.Change(
+		date="2020-05-26",
+		component=Core,
+		type=Change,
+		message="Convert InputStream reading code to all use Scanners.") @Classes.Change(date="2020-05-26",
+                                                                                         component=Core,
+                                                                                         type=Add,
+                                                                                         message="Menus configuration now allows you to delete menus.  Other than Main, which would make the HUD stuff unhappy.") @Classes.Change(
+		date="2020-05-26",
+		component=Core,
+		type=Add,
+		message="The command channel (/1) can now be opened to listen to scripted objects (e.g. attachments) on channel one, it will check the owner of the scripted object is the same as you.  Note this opens some security weaknesses if you rez random objects other people give you.  This feature is controlled by a KV 'GPHUDClient.OpenListener'.  The inspiring use was 'outfits' in Second Life for a character that includes an attachment which switches the logged in character automatically.  Please let me know of any abuse of this feature, it could be secured further with e.g. passwords (that you set) if necessary.") @Classes.Change(
+		date="2020-05-26",
+		component=Core,
+		type=Add,
+		message="Version checking is performed against an 'end of life' schedule.  Inspite of sending new region servers, and messages, to the instance owner every single time they log in a character, some instance owners haven't updated their region server in 6 months.  As some changes are 'breaking changes' ; i.e. the communications between HUD and Server are changing in a way that isn't backwards compatible, it is NECESSARY to upgrade the Region Server for continued functionality (though this is not enforced for simply 'new features').  Now, versions can be marked as end of life.  Messages will be sent out two weeks prior to their withdrawl time, every hour, to instance administrators (those set to receive messages).  After the deadline expires, products will be met with a SHUTDOWN response when they attempt to communicate with the server.") @Classes.Change(
+		date="2020-05-26",
+		component=Scripting,
+		type=Fix,
+		message="Fix an issue with parameter ordering for binary operators") @Classes.Change(date="2020-05-26",
+                                                                                             component=Scripting,
+                                                                                             type=Fix,
+                                                                                             message="Scripting supports the unary negative operator, i.e. negative numbers, e.g. Integer a=-4;") @Classes.Change(
+		date="2020-05-26",
+		component=Scripting,
+		type=Add,
+		message="New GS Function gsGetCharacterKV which returns only the character level value for a KV (rather than the result of the hierarchy).  Note you usually want gsGetKV instead.") @Classes.Change(
+		date="2020-05-26",
+		component=Scripting,
+		type=Change,
+		message="gsSayAsChar / gsSayToChar / gsSayAsHUD reworked to use multi-message support in HUD.  This feature will be deployed once Region Server (and thus HUD) upgrades have been completed.") @Classes.Change(
+		date="2020-05-26",
+		component=HUD,
+		type=Add,
+		message="Multi-message support (more than one say/sayas/sayto per communication, rather than forcing newline formatting).") @Classes.Change(
+		date="2020-05-26",
+		component=HUD,
+		type=Add,
+		message="Supports opening the command channel (1) without the Owner filter set, and then checks all command messages are either from the HUD's owner, or an object owned by the HUD owner, if 'open command channel' mode is set in the appropriate (conveyed) KV.") @Classes.Change(
+		date="2020-05-17",
+		component=Core,
+		type=Fix,
+		message="Fixed an issue where viewing a character's page, who may have some former 'pool' allocations that are no longer valid, would crash the page by trying to instantiate non existent pools.  getPoolNullable now works properly and such pools are silently ignored.") @Classes.Change(
+		date="2020-05-17",
+		component=Core,
+		type=Change,
+		message="The search field on the 'View Characters' main page now performs a substring search for characters name, so a fragment of a characters name can be used.") @Classes.Change(
+		date="2020-05-17",
+		component=Core,
+		type=Fix,
+		message="Fixed an issue with the HTML Interface (User web interface) that would truncate posts that came through the network in multiple chunks, this would truncate inputs and produce odd results or internal errors in the encoding-decoder code.") @Classes.Change(
+		date="2020-05-17",
+		component=Core,
+		type=Fix,
+		message="Changed the argument type to 'CLEAN' text for groups.create to avoid a group being created with an unsupported character in the name.") @Classes.Change(
+		date="2020-05-17",
+		component=Core,
+		type=Fix,
+		message="Edit character level KV pages weren't working properly in the web site.") @Classes.Change(date="2020-05-17",
+                                                                                                           component=Core,
+                                                                                                           type=Fix,
+                                                                                                           message="Links on the index page version of viewing yourself did not link properly.") @Classes.Change(
+		date="2020-05-17",
+		component=Scripting,
+		type=Change,
+		message="Operator precedence implemented, this will only affect script (changed and) compiled AFTER this patch is deployed.  E.g. 1+2*3 would have previously evaluated as 9 but now uses the correct mathematical ordering and evaluates as 7.") @Classes.Change(
+		date="2020-05-17",
+		component=Scripting,
+		type=Add,
+		message="Added logical AND (&&), OR (||) and NOT (!) to the language.  Note that these work on integers and use 0 for false, 1 for true, and anything else counts as true for inputs.  E.g. (0 && 1) outputs 0 (FALSE), while (4 || 5) will output 1 (TRUE).") @Classes.Change(
+		date="2020-05-17",
+		component=Scripting,
+		type=Add,
+		message="Added list concatenation.  Beware that 'overloads' list + integer ; typically a list evaluated in an integer context returns its length (e.g. Integer size=list; returns list's size), however we're now adding that 'list+integer' adds integer to the list, rather than adding the constant number to the size of the list.  If the list's length is required it's recommended to use a straight casting statement with no maths, e.g. the Integer size=list; line, then perform maths on that value afterwards to avoid triggering concatenation).") @Classes.Change(
+		date="2020-05-12",
+		component=Core,
+		type=Change,
+		message="Added paged view to the audit tables") @Classes.Change(date="2020-05-12",
+                                                                        component=Core,
+                                                                        type=Change,
+                                                                        message="Added paged view to characters list") @Classes.Change(
+		date="2020-05-12",
+		component=Core,
+		type=Change,
+		message="Moved various detailed stuff from a characters page to sub pages") @Classes.Change(date="2020-05-12",
+                                                                                                    component=Core,
+                                                                                                    type=Change,
+                                                                                                    message="Removed the weird XP suffix from all Experience Pools") @Classes.Change(
+		date="2020-05-12",
+		component=Core,
+		type=Add,
+		message="Added pools view to the character sheet") @Classes.Change(date="2020-05-12",
+                                                                           component=Core,
+                                                                           type=Change,
+                                                                           message="Internal reworking about Pools and Experience based pools, attempting to unify everything ahead of adding more pools and pool views.") @Classes.Change(
+		date="2020-05-12",
+		component=RegionServer,
+		type=Fix,
+		message="Tweaked a couple of places where DEV and Production are evaluated in the HUD to avoid it trying to connect to the wrong cluster sometimes.") @Classes.Change(
+		date="2020-05-08",
+		component=Core,
+		type=Change,
+		message="Reworked the internal way Commands get executed (see below)") @Classes.Change(date="2020-05-08",
+                                                                                               component=HUD,
+                                                                                               type=Fix,
+                                                                                               message="Prototype new HUD repeated all local chat on the RP channel ; now it only repeats its owners.") @Classes.Change(
+		date="2020-05-08",
+		component=Scripting,
+		type=Add,
+		message="Added three new functions (gsSayToCharIfOnline, gsSayAsHUDIfOnline, gsSayAsCharIfOnline) that relay messages and discard the message if they're offline, rather than erroring your script.  NOTE this will NOT protect you against using the HUD to target a nearby avatar that is not wearing the HUD as avatars often have multiple characters, and an avatar without a HUD can't be traced to a particular character.") @Classes.Change(
+		date="2020-05-08",
+		component=Scripting,
+		type=Add,
+		message="Added new function gsHasPermission to check if a character's driver has a particular permission.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="New login methodology, hooking existing characters.initialise/switch/create code, logins now performed through GPHUDClient.connect/disconnect/postconnect.  Resumption of an existing session (e.g. on region transition within a multi region instance) now properly supported rather than the HUD being replaced and reinitialised.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Change,
+		message="Characters.login/logout now marked as deprecated.") @Classes.Change(date="2020-05-03",
+                                                                                     component=Core,
+                                                                                     type=Add,
+                                                                                     message="Add 'status' introspection page that shows connected entities and various other real time data.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Create UIX driver in GPHUDClient module, responsible for driving the layout of the HUD UI") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Fix,
+		message="Fixed a bug in adding to a pool that assumed a character was selected (pools e.g. xp can be awarded administratively without an active character)") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Fix,
+		message="Fixed a bug in the Generic XPPool awarding code that would check if the 'character was the same as self' without accepting there might not be an active character (due to administrative awards)") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Fix,
+		message="Fixed a bug in the old login process that wouldn't properly pass on state to a virtual machine running the character creation script in some circumstances leading to an internal error") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Fix,
+		message="Fixed a bug in character creation which wouldn't immediately connect the request to a newly created character, generating a deeper error about no character being selected.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Fix,
+		message="Fixed a typo in the Visit XP awarded message.") @Classes.Change(date="2020-05-03",
+                                                                                 component=Core,
+                                                                                 type=Fix,
+                                                                                 message="Prevented 'Safe Mode' name get method from throwing unexpected exceptions") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="The External interface now supports a new JSON parameter - 'checkavatarpermission', if set it will ensure the supplied avatar name/uuid has permission External.ConnectObjects otherwise it will reject the connection - this can be used to provide a simplistic permissions check to ensure a given avatar is authorised at a given instance (instance owners automatically pass such checks at their own instance).") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Change,
+		message="Downgraded a 'Unexpected EOF' error from the External interface from a System exception (as it is in the normal LSL interface) to User exception so that it is properly reported back to the caller, rather than the masked 'Sorry internal error' of System exceptions.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Added static utility class to call the Linden Labs 'getAgentID' lookup service and resolve usernames to a UUID.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="If a username is presented that is not known the Linden Labs name lookup service will be called ; if a valid avatar key is found the entry is either created in the database (if the key doesn't currently exist) or located by key, and the name updated if it doesn't match the current name.  This handles LL name changes where some component only provides the new username and we have no previous record of it.  It was anticipated to adopt names wherever Second Life told us names, but apparently it still sometimes tells us old names (..........)") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Delete,
+		message="Avatar name reservation has been removed ; formerly a character could not be named after an Avatar as that name would be reserved for that avatar.  With the 'Name Change' changes this caused non-resident suffixed names to be resolved to avatars via the LL getAgentID service, thus was blocking a lot of character creations unnecessarily.  Sim administration can handle any potential grief cases themselves and thus this check has been completely removed from Characters.Create at this time.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Added new (conveyed) KV, 'GPHUDClient.UIXMenus', if set to true this enables use of UIX for choice based dialog boxes.  This can be set on groups (so users can opt in or out), individual users, etc.  Please test before engaging as performance may vary (untested at this time).") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Added new (conveyed) KV, 'GPHUDClient.UIXBalance', if set to true, this balances the layout of the quickbuttons, placing 3 on either side of the main HUD panel.  This helps the UIX dialog choices look less unbalanced as everything is now more symmetric around the center point.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Communicate Effects timers upon apply/unapply of the effect, and append this package to the response at connect time.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Added 'onUpdate' support to KVs allowing a method to be invoked on value change.  This was considered as an alternative to conveying UI configuration but ultimately was not used.  As the infrastructural code may be useful in the future the feature has been left in the code but is presently unused.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Change,
+		message="Max server response size increased to 4KB") @Classes.Change(date="2020-05-03",
+                                                                             component=Core,
+                                                                             type=Fix,
+                                                                             message="Character creation will skip attributes of Group type where there are no open groups of that type.  This presently sends an empty list to the HUD which will cause a dialog box with a default 'OK' on it, which will then try join a group called OK.  Now, this attribute will be ignored by the login sequence (both v1 and v2) if there are no available options (open groups of that type), even if the attribute is 'mandatory'.") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Added new KV to Effects - Effects.ShowEffect, if set to false the HUD will hide the effect entirely from its buff timers (UIX capable HUD only)") @Classes.Change(
+		date="2020-05-03",
+		component=Core,
+		type=Add,
+		message="Added new KV to Effects - Effects.EffectIcon which defines the UUID of the texture for the icon.  If not supplied will use a little Coagulate logo :P") @Classes.Change(
+		date="2020-05-03",
+		component=HUD,
+		type=Change,
+		message="Login and flow control rewritten to login protocol v2.") @Classes.Change(date="2020-05-03",
+                                                                                          component=HUD,
+                                                                                          type=Add,
+                                                                                          message="Added UIX script to process UIX control messages and modify prim parameters (sizes, positions, textures, text, etc).  Prim Descriptions become the controlling name (which is converted into a block of #defines rather than looked up at runtime).") @Classes.Change(
+		date="2020-05-03",
+		component=HUD,
+		type=Add,
+		message="Added prims and control interfaces for presenting a menu of up to 12 parameters.  This can be used in place of dialog boxes by setting the GPHUDClient.UIXMenus KV to true.") @Classes.Change(
+		date="2020-05-03",
+		component=HUD,
+		type=Add,
+		message="Support for rebinding the HUD main button to pop up a menu rather than dialog (controlled by GPHUDClient.UIXMenus).") @Classes.Change(
+		date="2020-05-03",
+		component=HUD,
+		type=Add,
+		message="Support for a balanced layout of quick buttons (GPHUDClient.UIXBalance).") @Classes.Change(date="2020-05-03",
+                                                                                                            component=HUD,
+                                                                                                            type=Add,
+                                                                                                            message="Support for up to 3 effects timers and logos.  Timer to update these uses diminishing intervals - per second for effects <60 seconds, per 5 seconds if below 2 minutes, per 15 seconds if under 5 minutes and so on.  Slowest update interval is 60 seconds or on reception of a message updating these effects from the server.") @Classes.Change(
+		date="2020-05-03",
+		component=HUD,
+		type=Fix,
+		message="HUD Titler now properly supports blank or short title texts ; in the Config supplying a 'space' as the TitlerText will now properly blank the Titler Text rather than breaking the display entirely.") @Classes.Change(
+		date="2020-05-03",
+		component=RegionServer,
+		type=Change,
+		message="Disable callback validation.  Disable DIGEST and COOKIE inclusion.") @Classes.Change(date="2020-05-03",
+                                                                                                      component=RegionServer,
+                                                                                                      type=Change,
+                                                                                                      message="Command prefix changed to ** to make it less reactive to emotive text.  ( DEV instances use prefix !!, not that anyone has these )") @Classes.Change(
+		date="2020-05-03",
+		component=ObjectDriver,
+		type=Change,
+		message="Disable callback validation.  Disable DIGEST and COOKIE inclusion.") @Classes.Change(date="2020-05-03",
+                                                                                                      component=Scripting,
+                                                                                                      type=Add,
+                                                                                                      message="Added new function call gsGetZone to get the current zone name a character is in.") @Classes.Change(
+		date="2020-05-03",
+		component=Scripting,
+		type=Add,
+		message="Added two new function calls, gsAPIX and gsElevatedAPIX, which are equivalent to gsAPI and gsElevatedAPI but will throw a script error if the API call fails.  The non-X versions simply return a response that is 'an error' (see evaluating it as an integer etc).  However since this boilerplate checking code is tedious it's often omitted, however in most cases the API call failing is significant and problematic.  It is recommended you use gsAPIX / gsElevatedAPIX wherever possible, only using the non-X versions if you either intend to check for errors yourself, or truely don't care if the operation fails.  Otherwise debugging becomes quite difficult.") @Classes.Change(
+		date="2020-04-05",
+		component=Core,
+		type=Add,
+		message="New module 'External', must be enabled to allow External API access, and individual developers must be both allocated a developer key by Iain Maltz and enabled to allow them to connect to a particular instance.") @Classes.Change(
+		date="2020-04-05",
+		component=Core,
+		type=Add,
+		message="Admin/Developer commands ; User.(Dis|En)ableDeveloper (SuperAdmin only) to allow a user developer access at all / External.GetDeveloperKey / External.(De)Authorise to allow a developer to access a particular instance") @Classes.Change(
+		date="2020-04-05",
+		component=Core,
+		type=Add,
+		message="Added a new Interface Access Type of External ; almost all commands are available to an External component, other than those which create strange things, or delete things.  Changes may be made in response to reasonable request.") @Classes.Change(
+		date="2020-04-05",
+		component=Core,
+		type=Add,
+		message="Added various 'External' API calls for getting record format information (rather than the simple message format the HUD needs) - External.Status dumps information about the connection in JSON format, and External.LookupAvatar will get an information dump about the set avatar.") @Classes.Change(
+		date="2020-04-02",
+		component=Core,
+		type=Fix,
+		message="Fixed configuration.set* not properly allowing null values as target values.") @Classes.Change(date="2020-04-02",
+                                                                                                                component=Core,
+                                                                                                                type=Add,
+                                                                                                                message="Added gsSayAsHUD (requires new region server + HUD from it)") @Classes.Change(
+		date="2020-04-02",
+		component=Core,
+		type=Fix,
+		message="Periodic VisitXP checks would not properly apply to instances using the default Experience module enabled state, only working on instances that had disabled and re-enabled it.  Resolved to now check all instances that are set or have never been changed.") @Classes.Change(
+		date="2020-04-02",
+		component=Core,
+		type=Change,
+		message="Reviewed and refactored the database driver core and the data object layer.") @Classes.Change(date="2020-04-02",
+                                                                                                               component=DatabaseSchema,
+                                                                                                               type=Fix,
+                                                                                                               message="New table to store pairings of instance IDs and authorise developer IDs.") @Classes.Change(
+		date="2020-03-29",
+		component=Core,
+		type=Add,
+		message="Added Effects module.") @Classes.Change(date="2020-03-29",
+                                                         component=Core,
+                                                         type=Add,
+                                                         message="Effects bring two KVs ; Effects.ApplyMessage and Effects.RemoveMessage, communicated to the user when the effect is added/removed.") @Classes.Change(
+		date="2020-03-29",
+		component=Core,
+		type=Add,
+		message="Web admin to create effects.  Their effect is configured through normal KV methods (e.g. go to Characters and edit an attribute)") @Classes.Change(
+		date="2020-03-29",
+		component=Core,
+		type=Add,
+		message="New commands Effects.Create and Effects.Delete.  Associated permissions exist.") @Classes.Change(date="2020-03-29",
+                                                                                                                  component=Core,
+                                                                                                                  type=Add,
+                                                                                                                  message="New commands Effects.Apply and Effects.Remove to provide /administrative/ commands to add/remove effects - this is not an in character action (for e.g. a spellcaster), this is logged as the avatar using administrative powers, use for admin only.") @Classes.Change(
+		date="2020-03-29",
+		component=Core,
+		type=Add,
+		message="New command Effects.Show which shows any effects acting upon your character.") @Classes.Change(date="2020-03-29",
+                                                                                                                component=Core,
+                                                                                                                type=Add,
+                                                                                                                message="Added command Configuration.SetEffect for setting a KV upon an Effect") @Classes.Change(
+		date="2020-03-29",
+		component=Scripting,
+		type=Add,
+		message="Added the ability to assign a List type to an Integer, which will place the size of the list in the integer (previously would produce an unsupported cast error).") @Classes.Change(
+		date="2020-03-29",
+		component=Scripting,
+		type=Add,
+		message="New function gsGetEffects that returns a List of active effects on a character.") @Classes.Change(date="2020-03-29",
+                                                                                                                   component=Scripting,
+                                                                                                                   type=Add,
+                                                                                                                   message="New function gsEffectDuration that returns the time remaining on a given effect on a character.") @Classes.Change(
+		date="2020-03-29",
+		component=Scripting,
+		type=Add,
+		message="New functions gsApplyEffect and gsRemoveEffect that allow one character (or NPC Object) to buff another character (or themselves)") @Classes.Change(
+		date="2020-03-29",
+		component=DatabaseSchema,
+		type=Add,
+		message="Create table 'effects' to bind a named effect to an instance") @Classes.Change(date="2020-03-29",
+                                                                                                component=DatabaseSchema,
+                                                                                                type=Add,
+                                                                                                message="Create KV store for effects") @Classes.Change(
+		date="2020-03-29",
+		component=DatabaseSchema,
+		type=Add,
+		message="Table to connect effects and characters, with expiration times.") @Classes.Change(date="2020-03-24",
+                                                                                                   component=Core,
+                                                                                                   type=Add,
+                                                                                                   message="Added TemplateWrapper module, creates KVs for configuring prefix / suffix characters and creates Wrapped forms (WRAPPED:) of all existing templates, wrapping them in the prefix / suffix if and only if they contain content.") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Fix,
+		message="An oddity in character switching would leave the 'callback URL' associated with the old, disconnected character.  Ensured this isn't miss-re-populated.  Probably doesn't have much effect on anything, but still an anomaly that I should fix.") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Change,
+		message="Attribute creation now checks for conflicting template names.  Notably this will prevent creating an attribute called 'Health' or 'Name' which are likely to cause unexpected issues at some point.") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Fix,
+		message="Roller now enforces number of sides on the dice to be at least 1, gsRand(x,y) now requires that x <= y, avoiding a deeper exception in the Java API that then gets re-thrown as a masked System Exception") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Fix,
+		message="Added some guard code to SL API parser to catch some broken requests better.") @Classes.Change(date="2020-03-22",
+                                                                                                                component=Core,
+                                                                                                                type=Add,
+                                                                                                                message="KV Instance.AllowedNamingSymbols which defines what symbols (characters) are allowed in the name of a character, by default A-Z, a-z and space are allowed with a few other characters added by the default template, add any additional desired symbols here, otherwise they are filtered.  This is yet ANOTHER attempt to stop people entering non name stuff into their name (e.g. Scent: Smelly), which will now reject the characters people use to make a list items (e.g. the colon).  Inspite of the LARGE ALL CAPITALS TEXT in the dialog box they enter a name into, some people are still doing this.  Probably there will always be 'one'.") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Add,
+		message="KV Instance.FilteredNamingList provides a comma separated list of banned words in a characters name - their name is split into 'parts' (based on dash, dot, space) and compares against the words in this list, if any are found the name is rejected.  Note this filter list does NOT apply to 'automatically named characters' (which are named after the avatar) as this would leave them unable to create an initial presence in the instance.  Expected usages are a list like 'god,king,queen,emperor' or whatever other muses your players may have.") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Change,
+		message="Region level KVs now have a red background and an advisory to normally use Instance level values, which is what most people should be doing.  Region level settings only make sense if you have multiple regions and want them to behave differently.  Instance level affects all regions, present and future.") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Change,
+		message="Cookbooks no longer email developers with any implementation errors (such as running it multiple times).") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Add,
+		message="Added Zoning.Delete and an associated HTML component for removing zones.  Triggers zone definition updates to appropriate region(s).") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Add,
+		message="System now invites instance owners to [secondlife:///app/group/34ead140-555f-42f9-2b54-bb887554b70f/about GPHUD Instance Owners] which is used for low volume high priority traffic, features or feedback requests.  There is also the [secondlife:///app/group/2a6790d0-c594-7467-804b-c8e398970188/about GPHUD Updates and Notices] group which anyone can join/invite to and gets notification of every release.  There's also an open/free invite mostly dead support group [secondlife:///app/group/3b4def47-e6a7-bac7-cd13-7e9428b41f6d/about GPHUD Support]") @Classes.Change(
+		date="2020-03-22",
+		component=Core,
+		type=Change,
+		message="Recently, Second Life has stopped sending the 'Object's Owners Name' information properly with the request (I guess name lookups can always be risky if the central services at LL fail), this would generate null exceptions and other undesirable behaviour.  This was changed to fall back to using a local key->username mapping lookup if there is no information supplied by the grid.  Changed in several places, all of which occur during early request processing.") @Classes.Change(
+		date="2020-03-22",
+		component=Scripting,
+		type=Add,
+		message="Added two new functions that return a List of Strings - gsGetGroupsByType and gsGetOpenGroupsByType.") @Classes.Change(
+		date="2020-03-22",
+		component=RegionServer,
+		type=Change,
+		message="Contains updated HUD component.") @Classes.Change(date="2020-03-22",
+                                                                   component=HUD,
+                                                                   type=Fix,
+                                                                   message="Avatar (character) selection types (SENSOR, CHARACTER, gsSelectCharacter, etc) will now properly display the description in the character-selection dialog box, not just the manual entry page.") @Classes.Change(
+		date="2020-03-09",
+		component=Core,
+		type=Fix,
+		message="Produce a more meaningful error message if there is more than one attribute using a 'group type'.") @Classes.Change(
+		date="2020-03-09",
+		component=Core,
+		type=Add,
+		message="Add ability to suppress various errors from being mailed to developers") @Classes.Change(date="2020-03-09",
+                                                                                                          component=Core,
+                                                                                                          type=Change,
+                                                                                                          message="Suppress error mailout for avatar->char lookup failure (aka 'avatar xxx is not wearing the hud or not logged in')") @Classes.Change(
+		date="2020-03-09",
+		component=Core,
+		type=Change,
+		message="Improved the description of various KVs relating to experience awards to clarify the purpose and units used") @Classes.Change(
+		date="2020-03-09",
+		component=Core,
+		type=Fix,
+		message="Some calls to methods, e.g. characters.initialise that chains characters.login require the JSON (originating request) to e.g. retrieve the callback URL (in this case).  Calls made to gsAPI set up a fresh state since they can be invoked using a variety of 'initiators' (CALLER, TARGET etc), this would cause some issues with character initialisation and now the GS virtual machine allows an initial state to be supplied, if the invoker for the gsAPI is the same as the VM invoker then the JSON request object is copied to the new state allowing the retrieval of JSON request data by the deeper API.  Essentially fixes some oddities around character initialisation.") @Classes.Change(
+		date="2020-03-09",
+		component=Core,
+		type=Fix,
+		message="Zone transitioning mistakenly had the 'new zone' parameter set to mandatory, however it is possible to leave all zones in an instance upon which this will be blank/null, and thus is now set to not mandatory.") @Classes.Change(
+		date="2020-02-09",
+		component=Core,
+		type=Fix,
+		message="Fix oversight with a region with no avatars on it.") @Classes.Change(date="2020-02-09",
+                                                                                      component=Core,
+                                                                                      type=Change,
+                                                                                      message="Switch texture-service to use picture-service (LL change).") @Classes.Change(
+		date="2020-02-09",
+		component=Core,
+		type=Fix,
+		message="Properly scale the logo's displayed on the website.") @Classes.Change(date="2020-02-09",
+                                                                                       component=Core,
+                                                                                       type=Fix,
+                                                                                       message="Publishing of a group returns a meaningful error if that group no longer exists.") @Classes.Change(
+		date="2020-02-09",
+		component=Core,
+		type=Fix,
+		message="Provide a meaningful error if a user somehow calls zoning.deleteVolume with an invalid volumeID.") @Classes.Change(
+		date="2020-02-09",
+		component=Core,
+		type=Change,
+		message="Reboot remote Objects that provide no callback URL (workaround).") @Classes.Change(date="2020-02-09",
+                                                                                                    component=Core,
+                                                                                                    type=Change,
+                                                                                                    message="Scripting compilation is now State sensitive.") @Classes.Change(
+		date="2020-02-09",
+		component=Core,
+		type=Add,
+		message="Scripting now supports privileged operations, these can only be compiled by a user with permission Scripting.CompilePrivileged.") @Classes.Change(
+		date="2020-02-09",
+		component=Core,
+		type=Add,
+		message="Scripting added function call gsElevatedAPI, the same as gsAPI but bypasses all permissions checks (except explicit instance owner checks, or cluster superuser checks)") @Classes.Change(
+		date="2020-02-09",
+		component=Core,
+		type=Fix,
+		message="Fix the Scripting configuration page to only show your own instance's scripts rather than all (globally) scripts.  Accessing another instances data, including scripts, causes an internal 'consistency violation' (Logon State / Data State mismatch), which is ultimately masked as an 'Internal Error' to end users.") @Classes.Change(
+		date="2020-01-05",
+		component=Core,
+		type=Fix,
+		message="Reduce max size of 'disseminate' command to region server from 3KB to just under 2KB, this is because the region server will return the request as a response to us, but truncate it at 2K causing a JSON parsing exception.  This is related to updating conveyances en mass, e.g. titler text changing.") @Classes.Change(
+		date="2020-01-05",
+		component=Core,
+		type=Fix,
+		message="Ensure menu contains an element for the called command, rather than simply JSON erroring and throwing a System level exception as a result.") @Classes.Change(
+		date="2020-01-05",
+		component=Core,
+		type=Fix,
+		message="Prevent quick buttons from calling quick buttons (someone wired a quick button to invoke its self, which just smashes the stack eventually)") @Classes.Change(
+		date="2020-01-05",
+		component=Core,
+		type=Fix,
+		message="Prevent aliases from calling quick buttons (to avoid another possible loop that hasn't been seen)") @Classes.Change(
+		date="2020-01-05",
+		component=Core,
+		type=Fix,
+		message="The 'command argument is mandatory' checker wasn't working properly, which would cause internal errors later on if arguments that are mandatory were not supplied.  Fixed.") @Classes.Change(
+		date="2019-12-22",
+		component=Core,
+		type=Fix,
+		message="Recursive templating no longer kills the server.  You'll get a painfully long error about something recursing instead.") @Classes.Change(
+		date="2019-12-22",
+		component=Core,
+		type=Add,
+		message="Rate limiting on error reporting emails ; emails are 'signatured' by the exception and location it originates and suppressed to 1 every 15 minutes.  Getting a few thousand mails in a minute is something my infrastructure handles, but not my mail readers (android gmail reader crashes, thunderbird locks up ^^)") @Classes.Change(
+		date="2019-12-22",
+		component=Core,
+		type=Add,
+		message="*Instance.Login works near the GPHUD server (update required) and will IM you a login URL, useful if you cant get the HUD to start any more.") @Classes.Change(
+		date="2019-12-22",
+		component=Core,
+		type=Fix,
+		message="Fix issue with events where visits would only be registered if there was an event entry message (both for zone transitions during event, as well as presence in zone when event starts)") @Classes.Change(
+		date="2019-12-22",
+		component=Core,
+		type=Fix,
+		message="Write closure time to any event visits when avatar disconnects, or is disconnected") @Classes.Change(
+		date="2019-12-22",
+		component=Core,
+		type=Fix,
+		message="Fix a failure of login state to inherit the instance from the character, causing a weird 'no instance selected' despite a character selected, which would previously auto-resolve at next page load anyway...") @Classes.Change(
+		date="2019-12-22",
+		component=Core,
+		type=Change,
+		message="Reverted domain name change due to lack of stability of TLD in new domain (?!)") @Classes.Change(date="2019-12-22",
+                                                                                                                  component=Core,
+                                                                                                                  type=Change,
+                                                                                                                  message="Drop regionserver/HUD ping interval to 5 minutes to improve accountability.") @Classes.Change(
+		date="2019-12-22",
+		component=RegionServer,
+		type=Add,
+		message="Added method to send IM to a given user on the sim ; used by instance.login, since the user maybe has no HUD to communicate with.") @Classes.Change(
+		date="2019-12-22",
+		component=ObjectDriver,
+		type=Fix,
+		message="Object driver no longer owner-says event related start/stop messages.") @Classes.Change(date="2019-12-19",
+                                                                                                         component=Core,
+                                                                                                         type=Fix,
+                                                                                                         message="Patch to fix issue with templater converting nulls into empty strings, which would cause various KVs to be not hierarchically processed properly, including the 'Name' conveyance that goes out to the HUD, which would break the RP Channel prefixing.") @Classes.Change(
+		date="2019-12-19",
+		component=Core,
+		type=Fix,
+		message="Internal reworking of nullable calls, nullable/nonnull annotation marking and code analysis as a result.  May be some initial teething issues but code is of better quality now.") @Classes.Change(
+		date="2019-12-19",
+		component=Core,
+		type=Fix,
+		message="Cleared 2000+ code inspection notes, tightened things up, etc etc") @Classes.Change(date="2019-12-19",
+                                                                                                     component=Core,
+                                                                                                     type=Change,
+                                                                                                     message="Database interface changed ; no longer a single method with an 'optional' flag that permitted nulls versus exceptioned, there are now two separate calls, xxxNullable which may return nulls, and xxx which will exception on null data (this is inverted at the SQL level with 'nn' for 'nonnull' methods, as they are less 'pure' here).  This enables proper analysis of Null flow as otherwise the methods are always ambiguous to static analysis.") @Classes.Change(
+		date="2019-12-19",
+		component=Core,
+		type=Fix,
+		message="Conversion to StringBuilders (it pleases the IDE :P)") @Classes.Change(date="2019-12-12",
+                                                                                        component=Core,
+                                                                                        type=Change,
+                                                                                        message="Rewrote 'User Interface' (web site) preamble to better log in and select characters and stuff.  Likely no-one other than me will notice at this point.") @Classes.Change(
+		date="2019-12-12",
+		component=Core,
+		type=Change,
+		message="Cleaned up a bunch of compiler warnings, should have no effect on anything.") @Classes.Change(date="2019-12-12",
+                                                                                                               component=Core,
+                                                                                                               type=Change,
+                                                                                                               message="Rebranded URLs to 'HTTPS://Coagulate.SL'") @Classes.Change(
+		date="2019-12-12",
+		component=Core,
+		type=Fix,
+		message="Corrected an internal error when trying to assign an object behaviour type to an object") @Classes.Change(
+		date="2019-12-12",
+		component=Core,
+		type=Fix,
+		message="Fix issue with Objects NPC editing form") @Classes.Change(date="2019-12-12",
+                                                                           component=Scripting,
+                                                                           type=Add,
+                                                                           message="Added function gsGetUnixTime which works comparably to llGetUnixTime (which is a fairly universal standard called Unix time or Epoch time), it returns an Integer.  As integers are 32bit, like Second Life, this implementation is prone to the 2038 bug [https://en.wikipedia.org/wiki/Year_2038_problem (Wikipedia:Year 2038 Problem)]") @Classes.Change(
+		date="2019-12-12",
+		component=Scripting,
+		type=Change,
+		message="Support for zero argument GSFunctions") @Classes.Change(date="2019-11-21",
+                                                                         component=Scripting,
+                                                                         type=Add,
+                                                                         message="Added Scripting function gsIsANumber, which will tell you if a string->integer cast will succeed or crash your script, if attempted.") @Classes.Change(
+		date="2019-11-21",
+		component=DatabaseSchema,
+		type=Add,
+		message="New table Objects for logging connecting objects") @Classes.Change(date="2019-11-21",
+                                                                                    component=DatabaseSchema,
+                                                                                    type=Add,
+                                                                                    message="New table ObjectTypes for configuring object behaviours") @Classes.Change(
+		date="2019-11-21",
+		component=Core,
+		type=Add,
+		message="Objects module - see [[Objects]]") @Classes.Change(date="2019-11-21",
+                                                                    component=Core,
+                                                                    type=Add,
+                                                                    message="Obliterate developerkey in JSON responses and callbacks") @Classes.Change(
+		date="2019-11-21",
+		component=Core,
+		type=Delete,
+		message="Removed GPHUDClient.close, for closing the web panel, which escaped the purge.") @Classes.Change(date="2019-11-21",
+                                                                                                                  component=Core,
+                                                                                                                  type=Change,
+                                                                                                                  message="Prefix errors with >>> not *** which upsets nearby region servers") @Classes.Change(
+		date="2019-11-21",
+		component=Core,
+		type=Add,
+		message="Support transmissions to objects") @Classes.Change(date="2019-11-21",
+                                                                    component=Core,
+                                                                    type=Add,
+                                                                    message="New interface type 'Object' determining what calls an object can make") @Classes.Change(
+		date="2019-11-21",
+		component=Core,
+		type=Change,
+		message="Upon login to the web interface (not via SSO from SL), if no instance or character is selected, assume the most recently active character/instance rather than prompting.") @Classes.Change(
+		date="2019-11-21",
+		component=Core,
+		type=Add,
+		message="Primitive support for NPCs, you can make a character and '/1characters.makeNPC' it which will reassign its ownership to the SYSTEM account, which can then be used by Objects.  Conveyances and titler text work in general.") @Classes.Change(
+		date="2019-11-21",
+		component=Core,
+		type=Fix,
+		message="Fixed issue where events from scripts to people other than the caller weren't being dequeued properly, preventing cross character interactions.") @Classes.Change(
+		date="2019-11-21",
+		component=HUD,
+		type=Change,
+		message="Revised shutdown/terminate handlers, release URL on shutdown.") @Classes.Change(date="2019-11-21",
+                                                                                                 component=RegionServer,
+                                                                                                 type=Change,
+                                                                                                 message="Revised shutdown/terminate handlers, release URL on shutdown.") @Classes.Change(
+		date="2019-11-21",
+		component=ObjectDriver,
+		type=Add,
+		message="New feature (script) available from the region server") @Classes.Change(date="2019-11-21",
+                                                                                         component=ObjectDriver,
+                                                                                         type=Add,
+                                                                                         message="Operating (interacting) modes: CLICK, NONE and PHANTOM (volume detect greeter style)") @Classes.Change(
+		date="2019-11-15",
+		component=DatabaseSchema,
+		type=Add,
+		message="Extend Region table to include global x,y co-ordinates.") @Classes.Change(date="2019-11-15",
+                                                                                           component=DatabaseSchema,
+                                                                                           type=Add,
+                                                                                           message="Add landmarks table.") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Add,
+		message="Record region global co-ordinates on connection.") @Classes.Change(date="2019-11-15",
+                                                                                    component=Core,
+                                                                                    type=Add,
+                                                                                    message="Created Teleportation module, see Introspection/API and Introspection/Permissions for new added stuff.  Also gsTeleport for use in scripts.") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Delete,
+		message="Removed the HUD web panel code") @Classes.Change(date="2019-11-15",
+                                                                  component=Core,
+                                                                  type=Add,
+                                                                  message="Added KV Instance.RunOnLogin and permission Instance.SetLoginScript for causing players to run commands on login (e.g. teleporting to faction homes)") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Add,
+		message="Fixed issue with joininstance a new region that would give an error about no instance selected") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Add,
+		message="Ensure module errors don't break a permissions group's display (such as disabling a module while permissions are assigned from it giving 'module x is not enabled')") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Add,
+		message="Added (and removed from instance.owner bindings) permissions 'Instance.PermissionsMembers', 'Instance.CookBooks'") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Add,
+		message="Transfer URL on character switch earlier, to avoid early logon scripts from failing with 'not online' errors") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Add,
+		message="Added script function gsTeleport to teleport a user") @Classes.Change(date="2019-11-15",
+                                                                                       component=Core,
+                                                                                       type=Add,
+                                                                                       message="Script create/save is audited, along with the compilation state (one of: parse failure, compilation failure, all ok)") @Classes.Change(
+		date="2019-11-15",
+		component=Core,
+		type=Change,
+		message="Shorten release notes URL at login") @Classes.Change(date="2019-11-15",
+                                                                      component=HUD,
+                                                                      type=Add,
+                                                                      message="Support 'teleport' command to initiate teleport of wearer.") @Classes.Change(
+		date="2019-11-15",
+		component=HUD,
+		type=Add,
+		message="Support logon script") @Classes.Change(date="2019-11-11",
+                                                        component=Scripting,
+                                                        type=Add,
+                                                        message="Add gsGetGroupByType function to Scripting") @Classes.Change(
+		date="2019-11-11",
+		component=Core,
+		type=Add,
+		message="Ability to chain command calls into the GS VM exist state") @Classes.Change(date="2019-11-11",
+                                                                                             component=Core,
+                                                                                             type=Add,
+                                                                                             message="KV 'Instance.CharInitScript' which can define a script name which is called during early character logon ; see the [[Scripting]] documentation for more information!") @Classes.Change(
+		date="2019-11-11",
+		component=Core,
+		type=Change,
+		message="Permissions editing page is now a bunch of tickboxes.  Individual permissions can still be added/removed through the appropriate 'COMMAND's.") @Classes.Change(
+		date="2019-11-11",
+		component=Core,
+		type=Change,
+		message="Reworked permissions so less things are locked exclusively to the instance owner (instance.owner permission).  Instance owner permission is now only used to protect a few fields that even the instance owner shouldn't change.") @Classes.Change(
+		date="2019-11-11",
+		component=Core,
+		type=Add,
+		message="Whole bunch of new permissions to cover off abilities formerly only available to the Instance Owner (instance.owner).") @Classes.Change(
+		date="2019-11-11",
+		component=Core,
+		type=Add,
+		message="Permissions now have an attached 'power level', based on their ability to cause large scale disruption to an instance, or perform actions that are difficult/impossible to reverse.") @Classes.Change(
+		date="2019-11-11",
+		component=Core,
+		type=Change,
+		message="Permissions pages now colour the permissions red/yellow/green based on their high/medium/low power ranking, this is an attempt to stop people just blindly assigning instance-destroying permissions without realising it.") @Classes.Change(
+		date="2019-11-11",
+		component=Core,
+		type=Change,
+		message="Region servers can now be deployed by any user with the appropriate permission (Instance.ServerOperator).") @Classes.Change(
+		date="2019-11-08",
+		component=DatabaseSchema,
+		type=Add,
+		message="Added 'scripts' and 'scriptruns' tables") @Classes.Change(date="2019-11-08",
+                                                                           component=Scripting,
+                                                                           type=Add,
+                                                                           message="Added Scripting module.  See the specific documentation here [[Scripting]]") @Classes.Change(
+		date="2019-11-08",
+		component=HUD,
+		type=Change,
+		message="Allow message to contain both ownersay and localsay content") @Classes.Change(date="2019-10-29",
+                                                                                               component=Core,
+                                                                                               type=Fix,
+                                                                                               message="Communicate URLs to open on a different keyword") @Classes.Change(
+		date="2019-10-29",
+		component=HUD,
+		type=Fix,
+		message="Correctly pick up the URL to open and don't assume its our inbound URL.") @Classes.Change(date="2019-10-27",
+                                                                                                           component=Core,
+                                                                                                           type=Fix,
+                                                                                                           message="Fix missing 'spend ability points' on login.  Actual problem was HUD not internally relaying 'incoming' pushed messages from the HUD to UI module, thus 'pushed' UI elements would fail.") @Classes.Change(
+		date="2019-10-23",
+		component=DatabaseSchema,
+		type=Add,
+		message="Added tables to store notes against an avatar (per instance) and against a character.") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Add,
+		message="Added 'health.set' command and KV 'health.allowSelfSet' which enables this command and simply lets health be set to a number, assuming it meets allowNegative and initialHealth range checks.") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Avoid internal error if no name is given for new character.") @Classes.Change(date="2019-10-23",
+                                                                                               component=Core,
+                                                                                               type=Fix,
+                                                                                               message="Couple of race conditions where an item is removed by another actor while we are trying to view it") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Departing Avatars code no longer does weird indirect lookups via character, this will prevent 'visits' from being left in the 'open' state and accumulating limitless visitation time, visits are now closed out for the avatar completely when the avatar is no longer reported as being on sim (by the region server)") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Ping out to character connections when silent for 10 minutes, ensure they're still alive, or log out the character.") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Add,
+		message="Logout command which the HUD will call during shutdowns (/1shutdown)") @Classes.Change(date="2019-10-23",
+                                                                                                        component=Core,
+                                                                                                        type=Fix,
+                                                                                                        message="Fix problem where templated COLOR types would become surrounded twice, e.g. <<1,1,1>>, this causes a black HUD titler in SL as it's an invalid format.") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Fix a problem where printing state might struggle if there is no character selected") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Fix a problem where unresolvable character/avatar might return an error about 'incorrect number of arguments' rather than explain what couldn't be found") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Fix an issue where module enablement checks took place before instance had been decoded and thus always returned false, when navigating to @URLs") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="@URLs are now case insensitive") @Classes.Change(date="2019-10-23",
+                                                                  component=Core,
+                                                                  type=Fix,
+                                                                  message="Character HUD ping checks now update the lastrx timer and only occur every ten minutes") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Add,
+		message="Added Notes module, see introspection.  Can make notes against characters, or avatars, they can be shared with the player or admin only.  Notes.View permission to view others notes and admin only notes, Notes.Add permission to add notes.  Commands *Notes.Avatar and *Notes.Character available to use, available in web page, notes summary appears in character summaries, main menu has 'View Admin Notes' button.  Module is optional and must be enabled (defaults to disabled)") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Add,
+		message="Added release date to info panel (top left) on website.  Version and release date link to the release notes (this)") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Bug in boolean parser of database information (incorrect equality test)") @Classes.Change(date="2019-10-23",
+                                                                                                           component=Core,
+                                                                                                           type=Fix,
+                                                                                                           message="Fixed a bug in the 'input interface' checker - commands are now correctly restricted as listed in the API") @Classes.Change(
+		date="2019-10-23",
+		component=Core,
+		type=Fix,
+		message="Changed State detection method during cluster node pre-startup checks") @Classes.Change(date="2019-10-23",
+                                                                                                         component=Core,
+                                                                                                         type=Add,
+                                                                                                         message="Added 'Publishing' module which allows configuration of publicly published information about your instance, most likely for inclusion in your own web content.") @Classes.Change(
+		date="2019-10-23",
+		component=HUD,
+		type=Add,
+		message="Logout command which the HUD will call during shutdowns (/1shutdown)") @Classes.Change(date="2019-10-23",
+                                                                                                        component=HUD,
+                                                                                                        type=Change,
+                                                                                                        message="Communications library rewrite, now CommsV3 using a set of Virtual to Real host mappings randomly.  Performance improvements likely.  Loss of ability to retransmit failed messages, however, this should generally 'never' happen (and is being monitored).  Comms will cycle virtual nodes if one fails, but the transmission will have been lost.  Virtual nodes are remapped automatically prior to any planned outage of a particular node thus is transparent to the communications library.") @Classes.Change(
+		date="2019-10-23",
+		component=RegionServer,
+		type=Fix,
+		message="Fixed the remote dispenser(?)") @Classes.Change(date="2019-10-23",
+                                                                 component=RegionServer,
+                                                                 type=Change,
+                                                                 message="Incorporated CommsV3 into server code") @Classes.Change(
+		date="2019-10-23",
+		component=RegionServer,
+		type=Change,
+		message="Merged Dispenser and Visitor module since they perform comparable tasks (regularly seeing 'who is on sim/parcel').  Upgraded to CommsV3.") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Fix,
+		message="Enhance logging or close various Null exceptions, mostly caused by things being edited in two places at once or no value supplied.") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Change,
+		message="Modified name input to contain lots of capitals pointing out that 'name' means 'name'") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Fix,
+		message="Support for populating INT/FLOAT/TEXT input types at character's login (i.e. first time).  No longer exception loops and breaks the HUD.") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Fix,
+		message="Changing to same owner would error when 'same' was 'no' owner") @Classes.Change(date="2019-06-22",
+                                                                                                 component=Core,
+                                                                                                 type=Change,
+                                                                                                 message="Log failed 'transmission reply' parsing.  This is probably people entering stuff with [] or {} surroundings and will be fixed by the changes to the HUD too.") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Add,
+		message="Added Instance.GetServer command and Instance.GetDispenser") @Classes.Change(date="2019-06-22",
+                                                                                              component=Core,
+                                                                                              type=Fix,
+                                                                                              message="Escape substituted strings, prevents 'Has $20' producing various 'missing group' errors") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Fix,
+		message="Correct JSON response encoding to preserve 'non standard' characters in e.g. titler text") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Fix,
+		message="Prohibit names starting with > (used to imply dereferencing an avatar into a character field, used by dumb radar code)") @Classes.Change(
+		date="2019-06-22",
+		component=Core,
+		type=Add,
+		message="Added command groups.join which allows players to change groups connected to an attribute, provided the attribute allows self-change and the target group is open.") @Classes.Change(
+		date="2019-06-22",
+		component=DatabaseSchema,
+		type=Change,
+		message="KV tables changed V column to binary rather than text, similarly auditing oldvalue/newvalue/notes.  This allows them to store and preserve 'non standard' characters.") @Classes.Change(
+		date="2019-06-22",
+		component=HUD,
+		type=Fix,
+		message="GPHUD emergency shutdown now works, preventing the HUD ultimately crashing into the 'spam control' when registration looped.") @Classes.Change(
+		date="2019-06-22",
+		component=HUD,
+		type=Change,
+		message="If registration fails, click the HUD for a new attempt (up to the max of 10), rather than just spam the server as fast as possible until the max is hit.") @Classes.Change(
+		date="2019-06-22",
+		component=HUD,
+		type=Change,
+		message="Block input surrounded by [ and ] as well as { and } due to bugs in LL's JSON implementation") @Classes.Change(
+		date="2019-06-22",
+		component=HUD,
+		type=Fix,
+		message="Minor tweaks to attachment/detachment routines to try make huds go away (some weird viewer glitch), as well as on region crossing") @Classes.Change(
+		date="2019-06-22",
+		component=HUD,
+		type=Add,
+		message="/1shutdown command supported by HUD, mostly just for testing sake") @Classes.Change(date="2019-06-22",
+                                                                                                     component=RegionServer,
+                                                                                                     type=Add,
+                                                                                                     message="Supports remote dispensers (see Instance.getDispenser)") @Classes.Change(
+		date="2019-06-17",
+		component=Core,
+		type=Add,
+		message="Added healing module command healRollChance which enables pass/fail fronting to healing.") @Classes.Change(
+		date="2019-06-17",
+		component=Core,
+		type=Fix,
+		message="Guard against null/empty attribute type during creation") @Classes.Change(date="2019-06-17",
+                                                                                           component=Core,
+                                                                                           type=Fix,
+                                                                                           message="Prevent issue with isAdmin for a permissions group where the check is against a non member") @Classes.Change(
+		date="2019-06-17",
+		component=Core,
+		type=Fix,
+		message="Block against adding permission that resolves to a null reference (no longer exists?)") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Add,
+		message="Added new KV scope 'NONSPATIAL' which excludes region zone and event from calculations ; this is important for some things such as XP awards where the target character may not even be logged in, and thus only 'persistent' information such as groups, character and instance data should be taken into consideration.") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Change,
+		message="The following KV scopes have been altered ; their previous setting allowed some configurations that didn't make sense and wouldn't really be implementable, e.g. having different 'max XP per week' in different regions ; why would anyone do this, and what does this even mean for an offline character ; alternatively offline characters couldn't receive XP.  Instead it makes sense to ignore the 'location' of an avatar when working out 'max XP'") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Change,
+		message="'Experience.GenericXPLimit' (implements custom XP types) - KV scope reduced from COMPLETE to NONSPATIAL to remove dependance on location of character.") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Change,
+		message="'Experience.GenericXPPeriod' (implements custom XP types) - KV scope reduced from COMPLETE to NONSPATIAL for the same reason.") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Change,
+		message="'Experience.AbilityPoints' (ability points available to character) - reduced from COMPLETE to NONSPATIAL.") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Change,
+		message="'Faction.XPPerCycle' reduced from COMPLETE to NONSPATIAL") @Classes.Change(date="2019-04-30",
+                                                                                            component=Core,
+                                                                                            type=Change,
+                                                                                            message="'Faction.XPCycleLength' reduced from COMPLETE to NONSPATIAL") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Fix,
+		message="XP types now properly compute the limits from the /targets/ hierarchy not yours, which would create inconsistent results in awarding and the 'next available' timer.") @Classes.Change(
+		date="2019-04-30",
+		component=Core,
+		type=Fix,
+		message="Setting an XP limit to zero prevents XP being awarded (this behaviour is not changed), however it now reports the next XP award is available 'NEVER' rather than 'NOW'.") @Classes.Change(
+		date="2019-04-29",
+		component=Core,
+		type=Fix,
+		message="Allow unknown permissions in permissions groups without internal erroring (when an attribute has been deleted for example)") @Classes.Change(
+		date="2019-04-29",
+		component=Core,
+		type=Add,
+		message="Groups module has groups.invite and groups.eject, for admins/owners of character groups.  Faction invite/eject is now a stub for this that just fills in the player's faction automatically.  Note 'groups.invite' requires a group as the first parameter, faction.invite does not as it is implicit.  You can alias these commands to use e.g. --FACTION-- (or more sensibly --GUILD-- etc) to use the invokers current group, where the group is of a 'type' (a character can only be in one group of a given type, e.g. race, class, guild, faction - groups with no type have no exclusivity)") @Classes.Change(
+		date="2019-04-29",
+		component=Core,
+		type=Fix,
+		message="Various sorting issues on the character summary page") @Classes.Change(date="2019-04-20",
+                                                                                        component=Core,
+                                                                                        type=Add,
+                                                                                        message="Added GPHUDClient.TitlerAltitude KV, a delegating float that defines the offset of the titler component from the avatar's head (vertically).  This can be set globally, group, character, etc.") @Classes.Change(
+		date="2019-04-20",
+		component=Core,
+		type=Add,
+		message="Added command 'GPHudClient.SetAltitude' which permits the player to define their per-character z-offset for the titler (height above head). (Requires GPHUD Region Server 3.6.2 on the sim)") @Classes.Change(
+		date="2019-04-20",
+		component=Core,
+		type=Change,
+		message="Now branded as 'GPHUD Cluster', the 'server' term is deprecated due to ambiguity between region servers (LSL scripts) and cluster servers (Linux virtual machines)") @Classes.Change(
+		date="2019-04-20",
+		component=Core,
+		type=Change,
+		message="Added Cluster banner to startup sequence.") @Classes.Change(date="2019-04-20",
+                                                                             component=Core,
+                                                                             type=Add,
+                                                                             message="Instance Owners now get warned during HUD attach if their region server is out of date.") @Classes.Change(
+		date="2019-04-20",
+		component=Core,
+		type=Add,
+		message="Registering region servers now get a warning message on connecting, which they say locally.") @Classes.Change(
+		date="2019-04-20",
+		component=Core,
+		type=Add,
+		message="Aliases can now be deleted.") @Classes.Change(date="2019-04-20",
+                                                               component=Core,
+                                                               type=Add,
+                                                               message="Give the Instance Owner a new GPHUD Region Server if it is out of date, when they attach the HUD.") @Classes.Change(
+		date="2019-04-20",
+		component=RegionServer,
+		type=Change,
+		message="Rebranded as 'Region Server' rather than 'Server'.") @Classes.Change(date="2019-04-20",
+                                                                                      component=RegionServer,
+                                                                                      type=Change,
+                                                                                      message="Reduced startup banner size") @Classes.Change(
+		date="2019-04-20",
+		component=RegionServer,
+		type=Add,
+		message="Emits warning on startup if out of date") @Classes.Change(date="2019-04-20",
+                                                                           component=HUD,
+                                                                           type=Fix,
+                                                                           message="Support dialog box options longer than 24 characters (as well as one can), this otherwise would cause issues for certain long character names and reducing name length to 24 causes issues with 'xxx resident' names") @Classes.Change(
+		date="2019-04-20",
+		component=HUD,
+		type=Add,
+		message="Added ability to move the titler up and down, based on delegating KV 'GPHUDClient.TitlerAltitude' (see server section above)") @Classes.Change(
+		date="2019-04-20",
+		component=HUD,
+		type=Change,
+		message="Reduced startup banner size") @Classes.Change(date="2019-04-20",
+                                                               component=HUD,
+                                                               type=Add,
+                                                               message="Instance Owners now get warned during HUD attach if their region server is out of date.") @Classes.Change(
+		date="2019-04-20",
+		component=ItemGiver,
+		type=Change,
+		message="Now shows what it gave, to who, and when, in floating text.  Just for fun really.") @Classes.Change(
+		date="2019-04-20",
+		component=ItemGiver,
+		type=Change,
+		message="Now supports prefix matching for giving out items (not publicly usable feature presently)") @Classes.Change(
+		date="2019-04-15",
+		component=Core,
+		type=Add,
+		message="EXPERIENCE attributes now support a 'group type', and owner/admin of those groups can award the xp to their group members through experience.award, without avatar level permissions.  Like faction XP I guess. (hmm)") @Classes.Change(
+		date="2019-04-05",
+		component=Core,
+		type=Add,
+		message="Support for custom EXPERIENCE attributes.") @Classes.Change(date="2019-04-01",
+                                                                             component=Core,
+                                                                             type=Add,
+                                                                             message="Updated KV editor to be inline/javascript, particularly 'command' type KVs are now selected from dropdown.") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Change,
+		message="United spelling of colour (British, as I am) to the American form color.") @Classes.Change(date="2019-04-01",
+                                                                                                            component=Core,
+                                                                                                            type=Add,
+                                                                                                            message="Cookbooks give better error reports sometimes, added ability for Cookbooks to create a new menu.") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Add,
+		message="Cookbook to configure a generic 'Multiple characters' setup") @Classes.Change(date="2019-04-01",
+                                                                                               component=Core,
+                                                                                               type=Add,
+                                                                                               message="Cookbook to create 'Retire Self' setup, along with confirmation submenu") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Add,
+		message="Validation framework added to KV setting, e.g. UUIDs and Colors are checked as being of appropriate form.  Unless they're a template.") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Change,
+		message="Disable templating on character attributes ; they themselves become templates but should not be templatable at a character level.") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Fix,
+		message="Broken links to factions in the factions page (side menu worked fine)") @Classes.Change(date="2019-04-01",
+                                                                                                         component=Core,
+                                                                                                         type=Fix,
+                                                                                                         message="Broken links to create group from a 'type specific' group listing page") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Fix,
+		message="Fix internal exception in Instance.sendAdmins (see Instance.admin command) which tried to use an unnecessarily and inappropriately sorted structure.") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Add,
+		message="Created new command argument type TEXT_CLEAN which enforces 'typable characters', used for setting names and stuff") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Add,
+		message="Created new command argument type TEXT_INTERNAL_NAME which enforces typable characters and no spacing, used for naming some things") @Classes.Change(
+		date="2019-04-01",
+		component=Core,
+		type=Fix,
+		message="Remove secondary and unpopulated MOTD login message ('Instance MOTD goes here')") @Classes.Change(date="2019-03-27",
+                                                                                                                   component=Core,
+                                                                                                                   type=Fix,
+                                                                                                                   message="Possible exception caused by 'tick boxes' in pages ; added NPE guard to length-checking validation.") @Classes.Change(
+		date="2019-03-27",
+		component=Core,
+		type=Change,
+		message="Only email developer on logged Exceptions if Exception is of severity INFO or higher ; 'errors' in the template introspection page were logged as 'FINE' (debug) level messages, but were filling my work queue to 'fix'") @Classes.Change(
+		date="2019-03-24",
+		component=Core,
+		type=Add,
+		message="Added maximum-length attribute to arguments, implemented for all created commands.") @Classes.Change(
+		date="2019-03-24",
+		component=Core,
+		type=Add,
+		message="Logos on pages, including instance selection") @Classes.Change(date="2019-03-24",
+                                                                                component=Core,
+                                                                                type=Change,
+                                                                                message="Names limited to 32 characters, to ensure they can be retired.  If names are longer than 32 characters consider what's a name and what's a title :P") @Classes.Change(
+		date="2019-03-24",
+		component=HUD,
+		type=Add,
+		message="If character fails registration/login (e.g. to a name too long), the process will be retried up to 10 times before the GPHUD shuts down.") @Classes.Change(
+		date="2019-03-24",
+		component=HUD,
+		type=Add,
+		message="Mitigate against SL bug where input is surrounded by {}, which some people seem to surround names with.") @Classes.Change(
+		date="2019-03-14",
+		component=Core,
+		type=Add,
+		message="Push GPHUDClient.widthmultiplier as conveyance 'sizeratio' to HUD") @Classes.Change(date="2019-03-14",
+                                                                                                     component=Core,
+                                                                                                     type=Fix,
+                                                                                                     message="Error in character login if experience/ability points module not enabled") @Classes.Change(
+		date="2019-03-14",
+		component=Core,
+		type=Fix,
+		message="Typos in line when awarded Visit XP") @Classes.Change(date="2019-03-14",
+                                                                       component=Core,
+                                                                       type=Fix,
+                                                                       message="Tighten pre-page filters to require an instance to be selected, to avoid crashing pages.  Help and Logout are exempt.") @Classes.Change(
+		date="2019-03-14",
+		component=Core,
+		type=Fix,
+		message="Corrected user (to avatar) links on Audit page.  Annotated SYSTEM avatar with 'explanation'.") @Classes.Change(
+		date="2019-03-14",
+		component=Core,
+		type=Change,
+		message="Modified Titler Color cookbook to add an instance default value for characters.titlercolor as white") @Classes.Change(
+		date="2019-03-14",
+		component=HUD,
+		type=Fix,
+		message="HUD now accepts blank lines as inputs, so you can erase e.g titler text by entering no value.") @Classes.Change(
+		date="2019-03-14",
+		component=HUD,
+		type=Fix,
+		message="Double quotes (') will now work in titler text.  Use proper escaping for JSON transmission to titler.") @Classes.Change(
+		date="2019-03-14",
+		component=HUD,
+		type=Add,
+		message=" HUD will now resize/position its self in response to the GPHUDClient.widthmultiplier value") @Classes.Change(
+		date="2019-02-25",
+		component=Core,
+		type=Add,
+		message="Added Cookbooks - automatic configuration of GPHUD.") @Classes.Change(date="2019-02-25",
+                                                                                       component=Core,
+                                                                                       type=Add,
+                                                                                       message="Added cookbooks to allow user to pick titler text / color") @Classes.Change(
+		date="2019-02-25",
+		component=Core,
+		type=Add,
+		message="Added roller.rollOnly, essentially the same as roll but without bias or roll summation.") @Classes.Change(
+		date="2019-02-25",
+		component=Core,
+		type=Change,
+		message="Command aliases may now override the description of wrapped commands") @Classes.Change(date="2019-02-25",
+                                                                                                        component=Core,
+                                                                                                        type=Change,
+                                                                                                        message="Removed GPHUD specific understanding of avatars") @Classes.Change(
+		date="2019-02-25",
+		component=Core,
+		type=Change,
+		message="Server code rolled into core cluster services.") @Classes.Change(date="2019-02-25",
+                                                                                  component=Protocol,
+                                                                                  type=Change,
+                                                                                  message="Communications stub rewritten.  Twice.  Now faster and more reliable (TM)") @Classes.Change(
+		date="2019-02-25",
+		component=HUD,
+		type=Add,
+		message="HUD now detaches when you transition into an unsupported region (TERMINATE response now works).  Unlikely to matter for experience/autoattach users.") @Classes.Change(
+		date="2018-11-23",
+		component=Core,
+		type=Fix,
+		message="Don't reset HUD on same-region teleportation.") @Classes.Change(date="2018-11-23",
+                                                                                 component=Core,
+                                                                                 type=Fix,
+                                                                                 message="Coded work around to sim-stalling SEC-6284 (details not available).") @Classes.Change(
+		date="2018-11-23",
+		component=Core,
+		type=Change,
+		message="Integrated remaining external services into cluster.") @Classes.Change(date="2018-11-23",
+                                                                                        component=Core,
+                                                                                        type=Add,
+                                                                                        message="New server mesh model.") @Classes.Change(
+		date="2018-10-29",
+		component=Core,
+		type=Add,
+		message="Support MAX for Character Attributes.") @Classes.Change(date="2018-10-29",
+                                                                         component=Core,
+                                                                         type=Add,
+                                                                         message="New module 'ItemGiver'") @Classes.Change(
+		date="2018-10-29",
+		component=Core,
+		type=Add,
+		message="Run 'ItemGiver.getGiver', stock it, and alias 'ItemGiver.get'") @Classes.Change(date="2018-10-29",
+                                                                                                 component=HUD,
+                                                                                                 type=Fix,
+                                                                                                 message=" HUD - correctly limits >12 sensor results to 11/12 nearest results.") @Classes.Change(
+		date="2018-10-29",
+		component=Core,
+		type=Add,
+		message="Added template --HEALTH--") @Classes.Change(date="2018-10-29",
+                                                             component=Core,
+                                                             type=Fix,
+                                                             message="Website links to active node to avoid outage issues.") @Classes.Change(
+		date="2018-10-29",
+		component=Core,
+		type=Fix,
+		message="User error on unknown alias.") @Classes.Change(date="2018-10-29",
+                                                                component=Core,
+                                                                type=Fix,
+                                                                message="Spending ability points loops until all spent.") @Classes.Change(
+		date="2018-10-29",
+		component=Core,
+		type=Add,
+		message="Ability point spend loop is fired on login.") @Classes.Change(date="2018-10-28",
+                                                                               component=Core,
+                                                                               type=Add,
+                                                                               message="Added health module.") @Classes.Change(
+		date="2018-10-28",
+		component=Core,
+		type=Change,
+		message="Updated RollAgainst command.") @Classes.Change(date="2018-10-28",
+                                                                component=Core,
+                                                                type=Add,
+                                                                message="Added RollAttackAgainst command.") @Classes.Change(
+		date="2018-10-28",
+		component=Core,
+		type=Add,
+		message="Added support for nested aliases.") @Classes.Change(date="2018-10-28",
+                                                                     component=Core,
+                                                                     type=Fix,
+                                                                     message="Fixed issue where char named after avatar would be targetted in preferences to whatever char the avatar is actually playing (eager 'character' lookup matching avatar name thus not falling back to indirect lookup via avatar).  HUD now marks avatars with '>' prefix in character fields.") @Classes.Change(
+		date="2018-10-25",
+		component=Core,
+		type=Add,
+		message="Added ability to link random 3rd party website to the user.") @Classes.Change(date="2018-10-25",
+                                                                                               component=Core,
+                                                                                               type=Change,
+                                                                                               message="Migrated architecture to fit on 3-node mariadb cluster; this is likely to be better exploited in the future.") @Classes.Change(
+		date="2018-09-04",
+		component=Core,
+		type=Change,
+		message="Improvements - retiring a character (self / admin)") @Classes.Change(date="2018-09-04",
+                                                                                      component=Core,
+                                                                                      type=Change,
+                                                                                      message="Groups on 'view characters' page.") @Classes.Change(
+		date="2018-09-04",
+		component=Core,
+		type=Change,
+		message="Remote reset of hud for forced character switching.") @Classes.Change(date="2018-09-01",
+                                                                                       component=Core,
+                                                                                       type=Fix,
+                                                                                       message="Bug fixes (Undefined BOOLEAN in Menu templating, incorrect check for INTEGER/FLOAT ability point expense types, exception handling esp with broken templates)") @Classes.Change(
+		date="2018-08-22",
+		component=Core,
+		type=Fix,
+		message="Fix bug that prevented zone transitioning to 'no zone'") @Classes.Change(date="2018-08-20",
+                                                                                          component=Core,
+                                                                                          type=Change,
+                                                                                          message="Clean up a flawed permissions check in setting up permissions groups.") @Classes.Change(
+		date="2018-08-20",
+		component=Core,
+		type=Add,
+		message="Support for RPChannel, defaults to /2") @Classes.Change(date="2018-08-20",
+                                                                         component=Core,
+                                                                         type=Fix,
+                                                                         message="Fix issues with CHARACTER_PLAYABLE selection type, used by characters.switch command.") @Classes.Change(
+		date="2018-05-19",
+		component=Core,
+		type=Add,
+		message="Release to support CharGroup selection and menus >12 elements") @Classes.Change(date="2018-03-08",
+                                                                                                 component=Core,
+                                                                                                 type=Add,
+                                                                                                 message="Initial release")
 
 
 package net.coagulate.GPHUD;

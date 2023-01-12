@@ -7,11 +7,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Map;
+
 public class VirtualHUD extends JSONDriver {
 	private final VirtualRegionServer       server;
-	public int                       charKey  =-1;
-	public Char                      character=null;
-	public net.coagulate.GPHUD.State state    =null;
+	public        int                       charKey  =-1;
+	public        Char                      character=null;
+	public        net.coagulate.GPHUD.State state    =null;
 	
 	public VirtualHUD(final String name,
 	                  final TestFramework caller,
@@ -36,6 +37,7 @@ public class VirtualHUD extends JSONDriver {
 		}
 		return true;
 	}
+	
 	public void connect() throws IOException {
 		final JSONObject json=new JSONObject();
 		json.put("version",Region.getLatestVersionString());

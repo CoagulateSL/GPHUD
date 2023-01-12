@@ -32,8 +32,7 @@ import java.util.Set;
 public abstract class Management {
 	// ---------- STATICS ----------
 	@URLs(url="/factions")
-	public static void manage(@Nonnull final State st,
-	                          final SafeMap values) {
+	public static void manage(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		final Table t=new Table();
@@ -44,7 +43,9 @@ public abstract class Management {
 		for (final CharacterGroup g: factions) {
 			t.openRow().add(new Link(g.getName(),"/GPHUD/factions/view/"+g.getId()));
 			String owner="None";
-			if (g.getOwner()!=null) { owner=g.getOwner().asHtml(st,true); }
+			if (g.getOwner()!=null) {
+				owner=g.getOwner().asHtml(st,true);
+			}
 			t.add(owner);
 			t.add(g.getMembers().size()+" members");
 		}
@@ -56,34 +57,31 @@ public abstract class Management {
 			create.add(new Button("Create Faction"));
 		}
 	}
-
-	@URLs(url="/factions/create",
-	      requiresPermission="Faction.Create")
-	public static void createForm(@Nonnull final State st,
-	                              @Nonnull final SafeMap values) {
+	
+	@URLs(url="/factions/create", requiresPermission="Faction.Create")
+	public static void createForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Faction.create",values);
 	}
-
+	
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-	          description="Create a faction group",
-	          requiresPermission="Faction.Create")
+	@Commands(context=Context.AVATAR, description="Create a faction group", requiresPermission="Faction.Create")
 	public static Response create(@Nonnull final State st,
 	                              @Arguments(type=ArgumentType.TEXT_CLEAN,
-	                                         name="name",description="Name of the faction",
+	                                         name="name",
+	                                         description="Name of the faction",
 	                                         max=128) final String name) {
-		try { st.getInstance().createCharacterGroup(name,false,"Faction"); }
-		catch (@Nonnull final UserException e) {
+		try {
+			st.getInstance().createCharacterGroup(name,false,"Faction");
+		} catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to create faction: "+e.getMessage());
 		}
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create Faction",name,null,name,"Created new faction "+name);
 		return new OKResponse("Successfully created faction group");
 	}
-
+	
 	@URLs(url="/factions/view/*")
-	public static void viewFaction(@Nonnull final State st,
-	                               final SafeMap values) {
-
+	public static void viewFaction(@Nonnull final State st,final SafeMap values) {
+		
 		//System.out.println(st.uri);
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -91,15 +89,12 @@ public abstract class Management {
 		final CharacterGroup faction=CharacterGroup.get(Integer.parseInt(id));
 		if ("Faction".equals(faction.getType())) {
 			viewFaction(st,values,faction);
-		}
-		else {
+		} else {
 			st.form().add(new TextError("This is not a faction group"));
 		}
 	}
-
-	public static void viewFaction(@Nonnull final State st,
-	                               final SafeMap values,
-	                               @Nonnull final CharacterGroup faction) {
+	
+	public static void viewFaction(@Nonnull final State st,final SafeMap values,@Nonnull final CharacterGroup faction) {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextHeader(faction.getName()));
@@ -132,12 +127,27 @@ public abstract class Management {
 				removeform.add(new Button("Kick Member",true));
 				t.add(new Cell(removeform));
 			}
-			if (faction.isAdmin(c)) { t.add(new Cell(new Color("Red","Admin"))); }
-			else { t.add(""); }
-			if (c==factionowner) { t.add(new Cell(new Color("Red","Leader"))); }
-			else { t.add(""); }
-			if (c==factionowner || st.hasPermission("Faction.Create")) {
-				t.add(new Form(st,true,"../setadmin","Toggle Admin","faction",faction.getName(),"character",c.getName(),"Admin",faction.isAdmin(c)?"":"true"));
+			if (faction.isAdmin(c)) {
+				t.add(new Cell(new Color("Red","Admin")));
+			} else {
+				t.add("");
+			}
+			if (c==factionowner) {
+				t.add(new Cell(new Color("Red","Leader")));
+			} else {
+				t.add("");
+			}
+			if (c==factionowner||st.hasPermission("Faction.Create")) {
+				t.add(new Form(st,
+				               true,
+				               "../setadmin",
+				               "Toggle Admin",
+				               "faction",
+				               faction.getName(),
+				               "character",
+				               c.getName(),
+				               "Admin",
+				               faction.isAdmin(c)?"":"true"));
 			}
 		}
 		if (st.hasPermission("Faction.SetFaction")) {
@@ -147,46 +157,58 @@ public abstract class Management {
 			t.openRow().add(new Cell(new Form(st,false,"../delete","Delete Faction","faction",faction.getName()),2));
 		}
 	}
-
-	@URLs(url="/factions/setowner",
-	      requiresPermission="Faction.SetOwner")
-	public static void setOwnerForm(@Nonnull final State st,
-	                                @Nonnull final SafeMap values) {
+	
+	@URLs(url="/factions/setowner", requiresPermission="Faction.SetOwner")
+	public static void setOwnerForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Faction.SetOwner",values);
 	}
-
+	
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-	          description="Set the leader of a faction",
-	          requiresPermission="Faction.SetOwner")
+	@Commands(context=Context.AVATAR, description="Set the leader of a faction", requiresPermission="Faction.SetOwner")
 	public static Response setOwner(@Nonnull final State st,
-	                                @Nonnull @Arguments(name="faction",description="Faction to change the leader of",
-	                                                    type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction,
-	                                @Nullable @Arguments(name="newowner",description="New leader, optionally",
-	                                                     type=ArgumentType.CHARACTER,
-	                                                     mandatory=false) final Char newowner) {
+	                                @Nonnull
+	                                @Arguments(name="faction",
+	                                           description="Faction to change the leader of",
+	                                           type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction,
+	                                @Nullable
+	                                @Arguments(name="newowner",
+	                                           description="New leader, optionally",
+	                                           type=ArgumentType.CHARACTER,
+	                                           mandatory=false) final Char newowner) {
 		// group must be a faction group
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
 		}
 		final Char oldowner=faction.getOwner();
 		String oldownername=null;
-		if (oldowner!=null) { oldownername=oldowner.getName(); }
+		if (oldowner!=null) {
+			oldownername=oldowner.getName();
+		}
 		if (newowner==oldowner) {
-			if (newowner==null) { return new OKResponse("There is already no faction leader for this faction"); }
+			if (newowner==null) {
+				return new OKResponse("There is already no faction leader for this faction");
+			}
 			return new OKResponse("That character ("+newowner.getName()+") is already the faction leader");
 		}
 		if (newowner==null) {
 			faction.setOwner(null);
-			Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"SetOwner",faction.getName(),oldownername,null,"Faction leader removed");
+			Audit.audit(st,
+			            Audit.OPERATOR.AVATAR,
+			            null,
+			            null,
+			            "SetOwner",
+			            faction.getName(),
+			            oldownername,
+			            null,
+			            "Faction leader removed");
 			oldowner.hudMessage(("You are no longer the faction leader for "+faction.getName()));
 			return new OKResponse("Faction leader removed.");
 		}
 		// or a member
 		boolean ingroup=false;
 		for (final Char c: faction.getMembers()) {
-			if (c == newowner) {
-				ingroup = true;
+			if (c==newowner) {
+				ingroup=true;
 				break;
 			}
 		}
@@ -198,128 +220,181 @@ public abstract class Management {
 		}
 		newowner.hudMessage("You are now the faction leader for "+faction.getName());
 		faction.setOwner(newowner);
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newowner,"SetOwner",faction.getName(),oldownername,newowner.getName(),"Faction leader changed");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            newowner,
+		            "SetOwner",
+		            faction.getName(),
+		            oldownername,
+		            newowner.getName(),
+		            "Faction leader changed");
 		return new OKResponse("Faction leader updated");
 	}
-
-	@URLs(url="/factions/add",
-	      requiresPermission="Faction.SetFaction")
-	public static void addForm(@Nonnull final State st,
-	                           @Nonnull final SafeMap values) {
+	
+	@URLs(url="/factions/add", requiresPermission="Faction.SetFaction")
+	public static void addForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Faction.Add",values);
 	}
-
+	
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-	          description="Add a member to this faction",
-	          requiresPermission="Faction.SetOwner")
+	@Commands(context=Context.AVATAR, description="Add a member to this faction", requiresPermission="Faction.SetOwner")
 	public static Response add(@Nonnull final State st,
-	                           @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                               name="faction",description="Faction to add character to") final CharacterGroup faction,
-	                           @Nonnull @Arguments(name="newmember",description="Character to add to the faction",
-	                                               type=ArgumentType.CHARACTER) final Char newmember) {
+	                           @Nonnull
+	                           @Arguments(type=ArgumentType.CHARACTERGROUP,
+	                                      name="faction",
+	                                      description="Faction to add character to") final CharacterGroup faction,
+	                           @Nonnull
+	                           @Arguments(name="newmember",
+	                                      description="Character to add to the faction",
+	                                      type=ArgumentType.CHARACTER) final Char newmember) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
 		}
 		final CharacterGroup existingfaction=CharacterGroup.getGroup(newmember,"Faction");
 		// refuse if they're the faction leader
 		//System.out.println("EXISTINGFACTION "+existingfaction.getId());
-		if (existingfaction!=null && existingfaction.getOwner()==newmember) {
-			return new ErrorResponse("Refusing to move character "+newmember.getName()+", they are currently faction leader of "+existingfaction.getName()+", you must "+"manually eject them from that position");
+		if (existingfaction!=null&&existingfaction.getOwner()==newmember) {
+			return new ErrorResponse(
+					"Refusing to move character "+newmember.getName()+", they are currently faction leader of "+
+					existingfaction.getName()+", you must "+"manually eject them from that position");
 		}
 		final String success="";
-		if (existingfaction!=null) { existingfaction.removeMember(newmember); }
-		try { faction.addMember(newmember); }
-		catch (@Nonnull final UserException e) {
-			return new ErrorResponse("Failed to add "+newmember.getName()+" to "+faction.getName()+", they are probably in no faction now! - "+e.getMessage());
+		if (existingfaction!=null) {
+			existingfaction.removeMember(newmember);
+		}
+		try {
+			faction.addMember(newmember);
+		} catch (@Nonnull final UserException e) {
+			return new ErrorResponse("Failed to add "+newmember.getName()+" to "+faction.getName()+
+			                         ", they are probably in no faction now! - "+e.getMessage());
 		}
 		String oldfactionname=null;
-		if (existingfaction!=null) { oldfactionname=existingfaction.getName(); }
+		if (existingfaction!=null) {
+			oldfactionname=existingfaction.getName();
+		}
 		String result=newmember.getName()+" is now in faction "+faction.getName();
 		if (existingfaction!=null) {
-			result=newmember.getName()+" was moved into faction "+faction.getName()+" (was formerly in "+existingfaction.getName()+")";
+			result=newmember.getName()+" was moved into faction "+faction.getName()+" (was formerly in "+
+			       existingfaction.getName()+")";
 		}
 		newmember.hudMessage("You have been added to the faction "+faction.getName());
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,newmember,"AddMember",faction.getName(),oldfactionname,faction.getName(),result);
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            newmember,
+		            "AddMember",
+		            faction.getName(),
+		            oldfactionname,
+		            faction.getName(),
+		            result);
 		return new OKResponse(result);
 	}
-
-	@URLs(url="/factions/remove",
-	      requiresPermission="Faction.SetFaction")
-	public static void removeForm(@Nonnull final State st,
-	                              @Nonnull final SafeMap values) {
+	
+	@URLs(url="/factions/remove", requiresPermission="Faction.SetFaction")
+	public static void removeForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Faction.Remove",values);
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Remove a member from this faction",
 	          requiresPermission="Faction.SetOwner")
 	public static Response remove(@Nonnull final State st,
-	                              @Nonnull @Arguments(type=ArgumentType.CHARACTERGROUP,
-	                                                  name="faction",description="Faction to remove character from") final CharacterGroup faction,
-	                              @Nonnull @Arguments(name="member",description="Character to remove from the faction",
-	                                                  type=ArgumentType.CHARACTER) final Char member) {
+	                              @Nonnull
+	                              @Arguments(type=ArgumentType.CHARACTERGROUP,
+	                                         name="faction",
+	                                         description="Faction to remove character from")
+	                              final CharacterGroup faction,
+	                              @Nonnull
+	                              @Arguments(name="member",
+	                                         description="Character to remove from the faction",
+	                                         type=ArgumentType.CHARACTER) final Char member) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
 		}
 		final CharacterGroup existingfaction=CharacterGroup.getGroup(member,"Faction");
 		// refuse if they're not in this group (!)
-		if (existingfaction==null) { return new ErrorResponse("User is not presently in any faction"); }
+		if (existingfaction==null) {
+			return new ErrorResponse("User is not presently in any faction");
+		}
 		if (existingfaction!=faction) {
-			return new ErrorResponse("Can not remove "+member.getName()+" from "+faction.getName()+" because they are instead in "+existingfaction.getName());
+			return new ErrorResponse(
+					"Can not remove "+member.getName()+" from "+faction.getName()+" because they are instead in "+
+					existingfaction.getName());
 		}
 		// refuse if they're the faction leader
 		if (faction.getOwner()==member) {
-			return new ErrorResponse("Will not remove "+member.getName()+" from "+faction.getName()+", they are the faction leader, you must demote them by replacing them "+"or"+" leaving the faction leaderless.");
+			return new ErrorResponse("Will not remove "+member.getName()+" from "+faction.getName()+
+			                         ", they are the faction leader, you must demote them by replacing them "+"or"+
+			                         " leaving the faction leaderless.");
 		}
-		try { existingfaction.removeMember(member); }
-		catch (@Nonnull final UserException e) {
+		try {
+			existingfaction.removeMember(member);
+		} catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove member - "+e.getMessage());
 		}
-		member.hudMessage("You have been removed from faction "+faction.getName()+" by (( "+st.getAvatar().getName()+" ))");
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,member,"RemoveMember",faction.getName(),faction.getName(),null,"Removed member from faction group");
+		member.hudMessage(
+				"You have been removed from faction "+faction.getName()+" by (( "+st.getAvatar().getName()+" ))");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            member,
+		            "RemoveMember",
+		            faction.getName(),
+		            faction.getName(),
+		            null,
+		            "Removed member from faction group");
 		return new OKResponse(member.getName()+" was removed from their faction "+faction.getName());
 	}
-
-	@URLs(url="/factions/delete",
-	      requiresPermission="Faction.Delete")
-	public static void deleteForm(@Nonnull final State st,
-	                              @Nonnull final SafeMap values) {
+	
+	@URLs(url="/factions/delete", requiresPermission="Faction.Delete")
+	public static void deleteForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Faction.Delete",values);
 	}
-
+	
 	@Nonnull
-	@Commands(context=Context.AVATAR,
-	          description="Delete a faction",
-	          requiresPermission="Faction.Delete")
+	@Commands(context=Context.AVATAR, description="Delete a faction", requiresPermission="Faction.Delete")
 	public static Response delete(@Nonnull final State st,
-	                              @Nonnull @Arguments(name="faction",description="Faction to delete",
-	                                                  type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction) {
+	                              @Nonnull
+	                              @Arguments(name="faction",
+	                                         description="Faction to delete",
+	                                         type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
 		}
 		final String factionname=faction.getName();
 		faction.delete();
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"DeleteFaction",factionname,factionname,null,"Faction was deleted");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "DeleteFaction",
+		            factionname,
+		            factionname,
+		            null,
+		            "Faction was deleted");
 		return new OKResponse(factionname+" was deleted");
 	}
-
+	
 	@URLs(url="/factions/setadmin")
-	public static void setAdminForm(@Nonnull final State st,
-	                                @Nonnull final SafeMap values) {
+	public static void setAdminForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"Faction.SetAdmin",values);
 	}
-
+	
 	@Nonnull
-	@Commands(context=Context.ANY,
-	          description="Set the faction admin flag on a user")
+	@Commands(context=Context.ANY, description="Set the faction admin flag on a user")
 	public static Response setAdmin(@Nonnull final State st,
-	                                @Nonnull @Arguments(name="faction",description="Faction to set the character's admin flag on",
-	                                                    type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction,
-	                                @Nonnull @Arguments(name="character",description="Character to set the admin flag on",
-	                                                    type=ArgumentType.CHARACTER) final Char character,
-	                                @Arguments(name="admin",description="Admin flag to set on the character in this faction",
+	                                @Nonnull
+	                                @Arguments(name="faction",
+	                                           description="Faction to set the character's admin flag on",
+	                                           type=ArgumentType.CHARACTERGROUP) final CharacterGroup faction,
+	                                @Nonnull
+	                                @Arguments(name="character",
+	                                           description="Character to set the admin flag on",
+	                                           type=ArgumentType.CHARACTER) final Char character,
+	                                @Arguments(name="admin",
+	                                           description="Admin flag to set on the character in this faction",
 	                                           type=ArgumentType.BOOLEAN) final boolean admin) {
 		if (!"Faction".equals(faction.getType())) {
 			return new ErrorResponse(faction.getName()+" is not a faction.");
@@ -328,8 +403,10 @@ public abstract class Management {
 			return new ErrorResponse(character.getName()+" is not a member of faction "+faction.getName());
 		}
 		// must be instance admin or faction owner
-		boolean ok = faction.getOwner() == st.getCharacter();
-		if (!ok && st.hasPermission("Faction.Create")) {ok=true; }
+		boolean ok=faction.getOwner()==st.getCharacter();
+		if (!ok&&st.hasPermission("Faction.Create")) {
+			ok=true;
+		}
 		if (!ok) {
 			return new ErrorResponse("You must be faction owner, or have Faction.Create permissions to set admin flags");
 		}
@@ -337,13 +414,20 @@ public abstract class Management {
 		faction.setAdmin(character,admin);
 		if (admin) {
 			character.hudMessage("You are now a faction administrator for "+faction.getName());
-		}
-		else {
+		} else {
 			character.hudMessage("You are no longer a faction administrator for "+faction.getName());
 		}
-		Audit.audit(st, Audit.OPERATOR.AVATAR, null, character, "SetAdmin", faction.getName(), String.valueOf(oldflag), String.valueOf(admin), "Set admin flag");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            character,
+		            "SetAdmin",
+		            faction.getName(),
+		            String.valueOf(oldflag),
+		            String.valueOf(admin),
+		            "Set admin flag");
 		return new OKResponse("Successfully altered admin flag on "+character+" in "+faction);
 	}
-
-
+	
+	
 }

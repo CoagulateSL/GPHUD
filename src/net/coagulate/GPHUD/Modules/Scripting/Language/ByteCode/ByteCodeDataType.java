@@ -36,38 +36,52 @@ public abstract class ByteCodeDataType extends ByteCode {
 	}
 	
 	@Nonnull
-	public BCString toBCString() {
-		if (getClass().equals(BCString.class)) {return (BCString)this;}
-		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCString",true);
+	public BCList toBCList() {
+		if (getClass().equals(BCList.class)) {
+			return (BCList)this;
+		}
+		return new BCList(node(),this);
+	}
+	
+	public int toInteger() {
+		return toBCInteger().getContent();
 	}
 	
 	@Nonnull
 	public BCInteger toBCInteger() {
-		if (getClass().equals(BCInteger.class)) {return (BCInteger)this;}
+		if (getClass().equals(BCInteger.class)) {
+			return (BCInteger)this;
+		}
 		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCInteger",true);
+	}
+	
+	public float toFloat() {
+		return toBCFloat().getContent();
 	}
 	
 	@Nonnull
 	public BCFloat toBCFloat() {
-		if (getClass().equals(BCFloat.class)) {return (BCFloat)this;}
+		if (getClass().equals(BCFloat.class)) {
+			return (BCFloat)this;
+		}
 		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCFloat",true);
 	}
 	
 	@Nonnull
-	public BCList toBCList() {
-		if (getClass().equals(BCList.class)) {return (BCList)this;}
-		return new BCList(node(),this);
+	public String toString() {
+		return toBCString().getContent();
 	}
-	
-	public int toInteger() {return toBCInteger().getContent();}
-	
-	public float toFloat() {return toBCFloat().getContent();}
 	
 	@Nullable
 	public abstract ByteCodeDataType clone();
 	
 	@Nonnull
-	public String toString() {return toBCString().getContent();}
+	public BCString toBCString() {
+		if (getClass().equals(BCString.class)) {
+			return (BCString)this;
+		}
+		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCString",true);
+	}
 	
 	public void stack(@Nonnull final GSVM vm) {
 		vm.push(this);

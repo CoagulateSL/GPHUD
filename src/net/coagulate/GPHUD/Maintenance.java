@@ -27,7 +27,7 @@ public class Maintenance extends Thread {
 	private static final int ONE_DAY=60*60*24;
 	
 	/** Number of minutes before we ping the HUD to refresh the URL timer */
-	public static final int PINGHUDINTERVAL=15;
+	public static final int PINGHUDINTERVAL   =15;
 	/** Number of minutes before we ping a region server to refresh the URL timer */
 	public static final int PINGSERVERINTERVAL=5;
 	
@@ -60,6 +60,67 @@ public class Maintenance extends Thread {
 		}
 	}
 	
+	/**
+	 * Call maintenance code for GPHUD.
+	 * <p>
+	 * Specifically:
+	 * Purging expired script runs
+	 * Refreshing character URLs
+	 * Refreshing region URLs
+	 * Starting events
+	 * Purging old cookies
+	 * Purging old URLs
+	 * Running visit XP awards
+	 * Updating instance region server status text
+	 */
+	public static void gphudMaintenance() {
+		try {
+			ScriptRun.maintenance();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance script run expiration caught an exception",e);
+		}
+		try {
+			Maintenance.refreshCharacterURLs();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e);
+		}
+		try {
+			Maintenance.refreshRegionURLs();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance refresh region URLs caught an exception",e);
+		}
+		
+		try {
+			Maintenance.startEvents();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance start events caught an exception",e);
+		}
+		
+		try {
+			Maintenance.purgeOldCookies();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance run purge cookies caught an exception",e);
+		}
+		
+		try {
+			Maintenance.purgeConnections();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance run purge connections caught an exception",e);
+		}
+		
+		try {
+			Visit.runAwards();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance run awards run caught an exception",e);
+		}
+		
+		try {
+			Maintenance.updateInstances();
+		} catch (@Nonnull final Exception e) {
+			GPHUD.getLogger().log(SEVERE,"Maintenance update Instances caught an exception",e);
+		}
+	}
+	
 	/** Sents a ping command to any char that needs pinging (see Char.getPingable */
 	public static void refreshCharacterURLs() {
 		// note limit 0,30, we do no more than 30 of these per minute
@@ -70,9 +131,13 @@ public class Maintenance extends Thread {
 			for (final ResultsRow r: results) {
 				//System.out.println("About to background for a callback to character:"+r.getString("name"));
 				final JSONObject ping=new JSONObject().put("incommand","ping");
-				final Transmission t=new PingTransmission(Char.get(r.getInt("characterid")),ping,r.getStringNullable("url"));
+				final Transmission t=
+						new PingTransmission(Char.get(r.getInt("characterid")),ping,r.getStringNullable("url"));
 				t.start();
-				try {Thread.sleep(1000);} catch (@Nonnull final InterruptedException ignored) {}
+				try {
+					Thread.sleep(1000);
+				} catch (@Nonnull final InterruptedException ignored) {
+				}
 			}
 		} //else { GPHUD.getLogger().log(FINE,"Pinging out to no character URLs"); }
 	}
@@ -89,22 +154,9 @@ public class Maintenance extends Thread {
 				final JSONObject ping=new JSONObject().put("incommand","ping");
 				final Transmission t=new Transmission((Region)null,ping,r.getStringNullable("url"));
 				t.start();
-				try {Thread.sleep(1000);} catch (@Nonnull final InterruptedException ignored) {}
-			}
-		}
-	}
-	
-	/** Push status update to all instance region servers via Instance.updateStatus() */
-	public static void updateInstances() {
-		for (final Instance i: Instance.getInstances()) {
-			try {
-				//GPHUD.getLogger().log(FINER,"Pushing status update for instance "+i.getName());
-				i.updateStatus();
-			} catch (@Nonnull final Exception e) {
-				if (Config.getDevelopment()) {
-					GPHUD.getLogger().log(WARNING,"Exception while pushing status update for instance "+i.getNameSafe(),e);
-				} else {
-					GPHUD.getLogger().log(WARNING,"Exception while pushing status update for instance "+i.getNameSafe());
+				try {
+					Thread.sleep(1000);
+				} catch (@Nonnull final InterruptedException ignored) {
 				}
 			}
 		}
@@ -119,48 +171,21 @@ public class Maintenance extends Thread {
 	
 	// for calling from OTHER MAINTENANCE CODE (GPHUD from SL)
 	
-	/**
-	 * Call maintenance code for GPHUD.
-	 * <p>
-	 * Specifically:
-	 * Purging expired script runs
-	 * Refreshing character URLs
-	 * Refreshing region URLs
-	 * Starting events
-	 * Purging old cookies
-	 * Purging old URLs
-	 * Running visit XP awards
-	 * Updating instance region server status text
-	 */
-	public static void gphudMaintenance() {
-		try {ScriptRun.maintenance();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance script run expiration caught an exception",e);
-		}
-		try {Maintenance.refreshCharacterURLs();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance refresh character URLs caught an exception",e);
-		}
-		try {Maintenance.refreshRegionURLs();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance refresh region URLs caught an exception",e);
-		}
-		
-		try {Maintenance.startEvents();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance start events caught an exception",e);
-		}
-		
-		try {Maintenance.purgeOldCookies();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance run purge cookies caught an exception",e);
-		}
-		
-		try {Maintenance.purgeConnections();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance run purge connections caught an exception",e);
-		}
-		
-		try {Visit.runAwards();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance run awards run caught an exception",e);
-		}
-		
-		try {Maintenance.updateInstances();} catch (@Nonnull final Exception e) {
-			GPHUD.getLogger().log(SEVERE,"Maintenance update Instances caught an exception",e);
+	/** Push status update to all instance region servers via Instance.updateStatus() */
+	public static void updateInstances() {
+		for (final Instance i: Instance.getInstances()) {
+			try {
+				//GPHUD.getLogger().log(FINER,"Pushing status update for instance "+i.getName());
+				i.updateStatus();
+			} catch (@Nonnull final Exception e) {
+				if (Config.getDevelopment()) {
+					GPHUD.getLogger()
+					     .log(WARNING,"Exception while pushing status update for instance "+i.getNameSafe(),e);
+				} else {
+					GPHUD.getLogger()
+					     .log(WARNING,"Exception while pushing status update for instance "+i.getNameSafe());
+				}
+			}
 		}
 	}
 	
@@ -198,36 +223,33 @@ public class Maintenance extends Thread {
 			final String name=region.getName();
 			region.retire();
 			GPHUD.getLogger(instance).log(INFO,"Region "+name+" was retired due to inactivity.");
-			SL.im(region.getInstance().getOwner().getUUID(),"=== GPHUD Information ===\n"+
-																	"Instance: "+instance+"\n"+
-																	"Region: "+name+"\n"+
-																	"-\n"+
-																	"The above region has been marked 'retired' due to extended inactivity.");
+			SL.im(region.getInstance().getOwner().getUUID(),
+			      "=== GPHUD Information ===\n"+"Instance: "+instance+"\n"+"Region: "+name+"\n"+"-\n"+
+			      "The above region has been marked 'retired' due to extended inactivity.");
 		}
 		for (final Instance instance: Instance.getExpiredInstances()) {
 			final String name=instance.getName();
 			final String owner=instance.getOwner().getUUID();
 			instance.delete();
 			GPHUD.getLogger(name).log(SEVERE,"Instance passed termination time and is being deleted.");
-			SL.im(owner,"=== GPHUD Warning ===\n"+
-								"Instance: "+instance+"\n"+
-								"-\n"+
-								"This instance has passed its expiration date and has been deleted.");
+			SL.im(owner,
+			      "=== GPHUD Warning ===\n"+"Instance: "+instance+"\n"+"-\n"+
+			      "This instance has passed its expiration date and has been deleted.");
 		}
 		final Set<Instance> activeInstances=Region.getActiveInstances();
 		for (final Instance instance: Instance.getNonRetiringInstances()) {
 			// all instances with zero active regions should have retireat set, otherwise we set it now.
 			final String name=instance.getName();
 			if (!activeInstances.contains(instance)) {
-				GPHUD.getLogger(name).log(WARNING,"Instance has no active regions and is being scheduled for termination.");
+				GPHUD.getLogger(name)
+				     .log(WARNING,"Instance has no active regions and is being scheduled for termination.");
 				instance.setRetireAt(UnixTime.getUnixTime()+Config.getGPHUDInstanceTimeout());
 				instance.setRetireWarn(UnixTime.getUnixTime()+(Config.getGPHUDInstanceTimeout()/2));
-				SL.im(instance.getOwner().getUUID(),"=== GPHUD Warning ===\n"+
-															"Instance: "+instance+"\n"+
-															"Deletes At: "+UnixTime.fromUnixTime(instance.retireAt(),"UTC")+" UTC\n"+
-															"Deletes In: "+UnixTime.durationRelativeToNow(instance.retireAt(),true)+"\n"+
-															"-\n"+
-															"This instance no longer has any active regions associated with it and it will be automatically deleted when the above time has elapsed.");
+				SL.im(instance.getOwner().getUUID(),
+				      "=== GPHUD Warning ===\n"+"Instance: "+instance+"\n"+"Deletes At: "+
+				      UnixTime.fromUnixTime(instance.retireAt(),"UTC")+" UTC\n"+"Deletes In: "+
+				      UnixTime.durationRelativeToNow(instance.retireAt(),true)+"\n"+"-\n"+
+				      "This instance no longer has any active regions associated with it and it will be automatically deleted when the above time has elapsed.");
 			}
 		}
 		for (final Instance instance: Instance.getWarnableInstances()) {
@@ -235,13 +257,12 @@ public class Maintenance extends Thread {
 			final String name=instance.getName();
 			if (!activeInstances.contains(instance)) {
 				GPHUD.getLogger(name).log(WARNING,"Instance passed termination warning time.");
-				SL.im(instance.getOwner().getUUID(),"=== GPHUD Warning ===\n"+
-															"Instance: "+instance+"\n"+
-															"Deletes At: "+UnixTime.fromUnixTime(instance.retireAt(),"UTC")+" UTC\n"+
-															"Deletes In: "+UnixTime.durationRelativeToNow(instance.retireAt(),true)+"\n"+
-															"-\n"+
-															"This instance no longer has any active regions associated with it and it will be automatically deleted when the above time has elapsed.\n"+
-															"This is a second, and final warning.  You will be informed next once the instance has been deleted.");
+				SL.im(instance.getOwner().getUUID(),
+				      "=== GPHUD Warning ===\n"+"Instance: "+instance+"\n"+"Deletes At: "+
+				      UnixTime.fromUnixTime(instance.retireAt(),"UTC")+" UTC\n"+"Deletes In: "+
+				      UnixTime.durationRelativeToNow(instance.retireAt(),true)+"\n"+"-\n"+
+				      "This instance no longer has any active regions associated with it and it will be automatically deleted when the above time has elapsed.\n"+
+				      "This is a second, and final warning.  You will be informed next once the instance has been deleted.");
 				instance.setRetireWarn(UnixTime.getUnixTime()+Config.getGPHUDInstanceTimeout()+(ONE_DAY));
 			}
 		}
@@ -249,14 +270,16 @@ public class Maintenance extends Thread {
 	
 	/** Wraps a simple ping check, if the transmission doesn't fail, then all is well... */
 	public static class PingTransmission extends Transmission {
-		/** Initiates a ping check against a particular character, using a particular json, on a particular URL
+		/**
+		 * Initiates a ping check against a particular character, using a particular json, on a particular URL
+		 *
 		 * @param character The character associated with this transmission (can be null)
-		 * @param json The JSON payload to ping with
-		 * @param url The URL to ping
+		 * @param json      The JSON payload to ping with
+		 * @param url       The URL to ping
 		 */
 		public PingTransmission(@Nullable final Char character,
-								@Nonnull final JSONObject json,
-								@Nonnull final String url) {
+		                        @Nonnull final JSONObject json,
+		                        @Nonnull final String url) {
 			super(character,json,url);
 		}
 		

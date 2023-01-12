@@ -13,31 +13,34 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Paragraph implements Renderable {
-
+	
 	final Renderable content;
-
-	public Paragraph(final String s) { content=new Text(s); }
-
-	public Paragraph(final Renderable r) { content=r; }
-
+	
+	public Paragraph(final String s) {
+		content=new Text(s);
+	}
+	
+	public Paragraph(final Renderable r) {
+		content=r;
+	}
+	
 	public Paragraph() {
 		content=new Text("");
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {
 		return content.asText(st)+"\n";
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		return "<p>"+content.asHtml(st,rich)+"</p>";
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {

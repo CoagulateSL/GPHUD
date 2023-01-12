@@ -15,6 +15,6 @@ import org.json.JSONObject;
 public interface Response extends Renderable {
 	// ---------- INSTANCE ----------
 	JSONObject asJSON(State st);
-
+	
 	String scriptResponse();
 }

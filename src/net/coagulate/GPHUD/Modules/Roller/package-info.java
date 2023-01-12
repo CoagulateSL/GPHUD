@@ -4,8 +4,8 @@
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.INTEGER,
      description="Number of sides on the default dice roll",
-     editPermission ="roller.config",
-     defaultValue ="100",
+     editPermission="roller.config",
+     defaultValue="100",
      hierarchy=KVHIERARCHY.DELEGATING,
      template=true)
 
@@ -13,14 +13,12 @@
      scope=KVSCOPE.COMPLETE,
      type=KVTYPE.INTEGER,
      description="Number of dice to roll by default",
-     editPermission ="roller.config",
-     defaultValue ="1",
+     editPermission="roller.config",
+     defaultValue="1",
      hierarchy=KVHIERARCHY.DELEGATING,
      template=true)
 
-@Permissions(name="config",
-             description="Ability to configure the dice roller module",
-             power=Permission.POWER.LOW)
+@Permissions(name="config", description="Ability to configure the dice roller module", power=Permission.POWER.LOW)
 
 package net.coagulate.GPHUD.Modules.Roller;
 

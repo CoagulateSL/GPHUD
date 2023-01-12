@@ -24,12 +24,11 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class EventsPages {
-
-
+	
+	
 	// ---------- STATICS ----------
 	@URLs(url="/events")
-	public static void listEvents(@Nonnull final State st,
-	                              final SafeMap values) {
+	public static void listEvents(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextHeader("Events Listing"));
@@ -42,22 +41,19 @@ public class EventsPages {
 		if (st.hasPermission("events.create")) {
 			f.add(new Form(st,true,"./events/create","Create Event"));
 		}
-
+		
 	}
-
-	@URLs(url="/events/create",
-	      requiresPermission="events.create")
-	public static void createEvent(@Nonnull final State st,
-	                               @Nonnull final SafeMap values) {
+	
+	@URLs(url="/events/create", requiresPermission="events.create")
+	public static void createEvent(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final Form f=st.form();
 		Modules.simpleHtml(st,"events.create",values);
 		final Command c=Modules.getCommandNullable(st,"events.create");
 	}
-
-
+	
+	
 	@URLs(url="/event/*")
-	public static void viewEvent(@Nonnull final State st,
-	                             final SafeMap values) {
+	public static void viewEvent(@Nonnull final State st,final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -65,7 +61,7 @@ public class EventsPages {
 		final Event e=Event.get(Integer.parseInt(id));
 		viewEvent(st,values,e,false);
 	}
-
+	
 	public static void viewEvent(@Nonnull final State st,
 	                             final SafeMap values,
 	                             @Nonnull final Event e,
@@ -74,7 +70,7 @@ public class EventsPages {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextHeader("Event: "+e.getName()));
-
+		
 		f.add(new TextSubHeader("Zones"));
 		final Table z=new Table();
 		f.add(z);
@@ -88,7 +84,7 @@ public class EventsPages {
 		if (st.hasPermission("events.locations")) {
 			z.openRow().add(new Cell(new Form(st,true,"./addlocation","Add Zone","event",e.getName()),2));
 		}
-
+		
 		final String tz=st.getAvatar().getTimeZone();
 		//f.add(new TextSubHeader("Schedule"));
 		final Set<EventSchedule> schedule=e.getSchedule();
@@ -99,7 +95,7 @@ public class EventsPages {
 		for (final EventSchedule es: schedule) {
 			final Row esrow=es.asRow(tz);
 			if (st.hasPermission("events.schedule")) {
-				esrow.add(new Form(st, true, "./deleteschedule", "Remove", "eventscheduleid", String.valueOf(es.getId())));
+				esrow.add(new Form(st,true,"./deleteschedule","Remove","eventscheduleid",String.valueOf(es.getId())));
 			}
 			sch.add(esrow);
 		}
@@ -109,25 +105,19 @@ public class EventsPages {
 		f.add(new TextSubHeader("KV influences"));
 		GenericConfiguration.page(st,values,e,st);
 	}
-
-	@URLs(url="/event/addlocation",
-	      requiresPermission="events.locations")
-	public static void addLocation(@Nonnull final State st,
-	                               @Nonnull final SafeMap values) {
+	
+	@URLs(url="/event/addlocation", requiresPermission="events.locations")
+	public static void addLocation(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"events.addlocation",values);
 	}
-
-	@URLs(url="/event/deletelocation",
-	      requiresPermission="events.locations")
-	public static void deleteLocation(@Nonnull final State st,
-	                                  @Nonnull final SafeMap values) {
+	
+	@URLs(url="/event/deletelocation", requiresPermission="events.locations")
+	public static void deleteLocation(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"events.deletelocation",values);
 	}
-
-	@URLs(url="/event/deleteschedule",
-	      requiresPermission="events.schedule")
-	public static void deleteSchedule(@Nonnull final State st,
-	                                  @Nonnull final SafeMap values) {
+	
+	@URLs(url="/event/deleteschedule", requiresPermission="events.schedule")
+	public static void deleteSchedule(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final String id=values.get("eventscheduleid");
 		final EventSchedule es=EventSchedule.get(Integer.parseInt(id));
 		es.validate(st);
@@ -139,16 +129,13 @@ public class EventsPages {
 		            es.getEvent().getName(),
 		            es.describe("America/Los_Angeles")+" SLT",
 		            null,
-		            "Avatar deleted event schedule"
-		           );
+		            "Avatar deleted event schedule");
 		es.delete();
 		throw new RedirectionException(values);
 	}
-
-	@URLs(url="/event/addschedule",
-	      requiresPermission="events.schedule")
-	public static void addSchedule(@Nonnull final State st,
-	                               @Nonnull final SafeMap values) {
+	
+	@URLs(url="/event/addschedule", requiresPermission="events.schedule")
+	public static void addSchedule(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final String eventname=values.get("event");
 		final String defaulttz=st.getAvatar().getTimeZone();
 		final Event event=Event.find(st.getInstance(),eventname);
@@ -170,12 +157,11 @@ public class EventsPages {
 				            "AddSchedule",
 				            event.getName(),
 				            null,
-				            DateTime.fromUnixTime(startdate,"America/Los_Angeles")+" SLT repeat "+UnixTime.duration(repeat),
-				            "Schedule added to event"
-				           );
+				            DateTime.fromUnixTime(startdate,"America/Los_Angeles")+" SLT repeat "+
+				            UnixTime.duration(repeat),
+				            "Schedule added to event");
 				throw new RedirectionException(values);
-			}
-			catch (@Nonnull final UserException e) {
+			} catch (@Nonnull final UserException e) {
 				st.form().add(new TextError(e.getMessage()));
 			}
 		}
@@ -190,11 +176,11 @@ public class EventsPages {
 		t.add(DateTime.inputDateTimeRow("End",values,tz));
 		t.add(DateTime.inputIntervalRow("Repeat",values,true));
 		t.add(new Cell(new Button("Add"),999));
-
+		
 		f.br();
 		f.add("Note DAY MONTH YEAR ordering, also note the HOURS is 24 hour clock!");
-
+		
 	}
-
-
+	
+	
 }
