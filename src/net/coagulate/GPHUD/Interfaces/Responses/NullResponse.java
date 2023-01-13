@@ -22,33 +22,32 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class NullResponse implements Response {
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
 		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
-
+	
 	@Nonnull
 	@Override
 	public String scriptResponse() {
 		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
-
+	
 	@Nonnull
 	@Override
 	public String asText(final State st) {
 		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		throw new SystemImplementationException("You can not interrogate the null response.");
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {

@@ -17,12 +17,11 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class FactionsModule extends ModuleAnnotation {
-
-	public FactionsModule(final String name,
-                          final ModuleDefinition annotation) {
-        super(name, annotation);
-    }
-
+	
+	public FactionsModule(final String name,final ModuleDefinition annotation) {
+		super(name,annotation);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
@@ -34,7 +33,7 @@ public class FactionsModule extends ModuleAnnotation {
 		}
 		return ret;
 	}
-
+	
 	@Nonnull
 	@Override
 	public Set<CharacterAttribute> getAttributes(final State st) {
@@ -42,6 +41,6 @@ public class FactionsModule extends ModuleAnnotation {
 		ret.add(new FactionAttribute(-1));
 		return ret;
 	}
-
-
+	
+	
 }

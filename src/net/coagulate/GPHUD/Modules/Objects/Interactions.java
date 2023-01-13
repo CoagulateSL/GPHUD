@@ -23,11 +23,14 @@ public class Interactions {
 	                  permitScripting=false,
 	                  permitExternal=false)
 	public static Response clicked(@Nonnull final State st,
-	                               @Argument.Arguments(name="clicker",description="Character clicking the object",
+	                               @Argument.Arguments(name="clicker",
+	                                                   description="Character clicking the object",
 	                                                   type=Argument.ArgumentType.CHARACTER) final Char clicker) {
-
+		
 		final Obj object=Obj.findOrNull(st,st.objectKey);
-		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
+		if (object==null) {
+			return new ErrorResponse("This object is not properly registered with GPHUD(?)");
+		}
 		final ObjType objectType=object.getObjectType();
 		if (objectType==null) {
 			return new ErrorResponse("This object is not configured with an object type in GPHUD");
@@ -35,7 +38,7 @@ public class Interactions {
 		final ObjectType ot=ObjectType.materialise(st,objectType);
 		return ot.click(st,clicker);
 	}
-
+	
 	@Nonnull
 	@Command.Commands(description="Collided/VolumeDetect Objects generate this command",
 	                  context=Command.Context.AVATAR,
@@ -45,11 +48,14 @@ public class Interactions {
 	                  permitScripting=false,
 	                  permitExternal=false)
 	public static Response collided(@Nonnull final State st,
-	                                @Argument.Arguments(name="collider",description="Character colliding with the object",
+	                                @Argument.Arguments(name="collider",
+	                                                    description="Character colliding with the object",
 	                                                    type=Argument.ArgumentType.CHARACTER) final Char collider) {
-
+		
 		final Obj object=Obj.findOrNull(st,st.objectKey);
-		if (object==null) { return new ErrorResponse("This object is not properly registered with GPHUD(?)"); }
+		if (object==null) {
+			return new ErrorResponse("This object is not properly registered with GPHUD(?)");
+		}
 		final ObjType objectType=object.getObjectType();
 		if (objectType==null) {
 			return new ErrorResponse("This object is not configured with an object type in GPHUD");

@@ -14,35 +14,41 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class GSFunctions {
-	private static final Map<String,Method> functionMap =new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
+	private static final Map<String,Method> functionMap=new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	public static Method get(final String functionName) {
-		if (functionMap.containsKey(functionName)) { return functionMap.get(functionName); }
+		if (functionMap.containsKey(functionName)) {
+			return functionMap.get(functionName);
+		}
 		throw new GSUnknownIdentifier("Function call "+functionName+" is not defined.");
 	}
+	
 	@Nullable
-	public static Method getNullable(@Nonnull final String functionName) { return functionMap.get(functionName); }
-
-	public static void register(final String string,
-	                            final Method method) {
+	public static Method getNullable(@Nonnull final String functionName) {
+		return functionMap.get(functionName);
+	}
+	
+	public static void register(final String string,final Method method) {
 		if (functionMap.containsKey(string)) {
 			throw new SystemImplementationException("Duplicate definition for gsFunction "+string);
 		}
 		functionMap.put(string,method);
 	}
-
+	
 	@Nonnull
-	public static Map<String,Method> getAll() { return functionMap; }
-
-	public static void assertModule(final State st,
-	                                final String moduleName) {
+	public static Map<String,Method> getAll() {
+		return functionMap;
+	}
+	
+	public static void assertModule(final State st,final String moduleName) {
 		if (!Modules.get(null,moduleName).isEnabled(st)) {
-			throw new GSResourceUnavailableException(moduleName+" module is disabled, thus its function calls are disabled.");
+			throw new GSResourceUnavailableException(
+					moduleName+" module is disabled, thus its function calls are disabled.");
 		}
 	}
-
+	
 	public enum SCRIPT_CATEGORY {
 		API,
 		AVATAR,
@@ -61,7 +67,7 @@ public class GSFunctions {
 		UTILITY,
 		ITEMS
 	}
-
+	
 	/**
 	 * Defines an exposed command.
 	 * That is, something the user can call through web, SL or other user interfaces.
@@ -72,17 +78,17 @@ public class GSFunctions {
 	public @interface GSFunction {
 		// ---------- INSTANCE ----------
 		@Nonnull String description();
-
+		
 		@Nonnull String parameters();
-
+		
 		@Nonnull String returns();
-
+		
 		@Nonnull String notes();
-
+		
 		@Nonnull SCRIPT_CATEGORY category();
-
+		
 		boolean privileged();
 	}
-
-
+	
+	
 }

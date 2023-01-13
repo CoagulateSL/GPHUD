@@ -12,11 +12,10 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class Configuration {
-
+	
 	// ---------- STATICS ----------
 	@URL.URLs(url="/configuration/Effects")
-	public static void configPage(@Nonnull final State st,
-	                              final SafeMap values) {
+	public static void configPage(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Defined Effects"));
 		f.noForm();
@@ -26,9 +25,16 @@ public class Configuration {
 		for (final Effect effect: Effect.getAll(st.getInstance())) {
 			at.openRow();
 			at.add(effect);
-			final String metaData = effect.getMetaData();
+			final String metaData=effect.getMetaData();
 			if (st.hasPermission("Effects.Edit")) {
-				at.add(new Form(st,true,"./Effects/SetMetaData",metaData.isEmpty()?"None Set":metaData,"effect",effect.getName(),"metadata",metaData));
+				at.add(new Form(st,
+				                true,
+				                "./Effects/SetMetaData",
+				                metaData.isEmpty()?"None Set":metaData,
+				                "effect",
+				                effect.getName(),
+				                "metadata",
+				                metaData));
 			} else {
 				at.add(metaData);
 			}
@@ -40,5 +46,5 @@ public class Configuration {
 			f.add(new Form(st,true,"./Effects/Create","Create Effect"));
 		}
 	}
-
+	
 }

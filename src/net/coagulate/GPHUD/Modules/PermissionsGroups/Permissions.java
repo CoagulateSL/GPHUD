@@ -25,13 +25,11 @@ import javax.annotation.Nonnull;
  */
 public abstract class Permissions {
 	// ---------- STATICS ----------
-	@URLs(url="/permissionsgroups/addpermission",
-	      requiresPermission="Instance.ManagePermissions")
-	public static void addPermissionForm(@Nonnull final State st,
-	                                     @Nonnull final SafeMap values) {
+	@URLs(url="/permissionsgroups/addpermission", requiresPermission="Instance.ManagePermissions")
+	public static void addPermissionForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"permissionsgroups.addpermission",values);
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Add a permission to a permission group",
@@ -40,10 +38,15 @@ public abstract class Permissions {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response addPermission(@Nonnull final State st,
-	                                     @Nonnull @Arguments(name="permissionsgroup",description="Permissions group to add permission to",
-	                                                         type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup,
-	                                     @Nonnull @Arguments(name="permission",description="Permission to add to group",
-	                                                         type=ArgumentType.PERMISSION) final String permission) {
+	                                     @Nonnull
+	                                     @Arguments(name="permissionsgroup",
+	                                                description="Permissions group to add permission to",
+	                                                type=ArgumentType.PERMISSIONSGROUP)
+	                                     final PermissionsGroup permissionsgroup,
+	                                     @Nonnull
+	                                     @Arguments(name="permission",
+	                                                description="Permission to add to group",
+	                                                type=ArgumentType.PERMISSION) final String permission) {
 		Modules.validatePermission(st,permission);
 		final Permission permissionref=Modules.getPermission(st,permission);
 		if (permissionref==null) {
@@ -52,21 +55,28 @@ public abstract class Permissions {
 		if (!permissionref.grantable()) {
 			return new ErrorResponse("The permission '"+permission+"' is not grantable through user action.");
 		}
-		try { permissionsgroup.addPermission(st,permission); }
-		catch (@Nonnull final UserException e) {
+		try {
+			permissionsgroup.addPermission(st,permission);
+		} catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to add permission to permissions group - "+e.getMessage());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Add Permission",permissionsgroup.getNameSafe(),null,permission,"Permission added to permissions group");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Add Permission",
+		            permissionsgroup.getNameSafe(),
+		            null,
+		            permission,
+		            "Permission added to permissions group");
 		return new OKResponse("Added "+permission+" to permissions group "+permissionsgroup.getNameSafe());
 	}
-
-	@URLs(url="/permissionsgroups/delpermission",
-	      requiresPermission="Instance.ManagePermissions")
-	public static void delPermissionForm(@Nonnull final State st,
-	                                     @Nonnull final SafeMap values) {
+	
+	@URLs(url="/permissionsgroups/delpermission", requiresPermission="Instance.ManagePermissions")
+	public static void delPermissionForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"permissionsgroups.delpermission",values);
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Remove a permission from a permissions group",
@@ -75,16 +85,29 @@ public abstract class Permissions {
 	          permitExternal=false,
 	          permitObject=false)
 	public static Response delPermission(@Nonnull final State st,
-	                                     @Nonnull @Arguments(name="permissionsgroup",description="Permissions group to remove permission from",
-	                                                         type=ArgumentType.PERMISSIONSGROUP) final PermissionsGroup permissionsgroup,
-	                                     @Arguments(name="permission",description="Permission to remove from group",
+	                                     @Nonnull
+	                                     @Arguments(name="permissionsgroup",
+	                                                description="Permissions group to remove permission from",
+	                                                type=ArgumentType.PERMISSIONSGROUP)
+	                                     final PermissionsGroup permissionsgroup,
+	                                     @Arguments(name="permission",
+	                                                description="Permission to remove from group",
 	                                                type=ArgumentType.TEXT_CLEAN,
 	                                                max=256) final String permission) {
-		try { permissionsgroup.removePermission(permission); }
-		catch (@Nonnull final UserException e) {
+		try {
+			permissionsgroup.removePermission(permission);
+		} catch (@Nonnull final UserException e) {
 			return new ErrorResponse("Failed to remove permission from permissions group - "+e.getMessage());
 		}
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Del Permission",permissionsgroup.getNameSafe(),permission,null,"Permission removed from permissions group");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Del Permission",
+		            permissionsgroup.getNameSafe(),
+		            permission,
+		            null,
+		            "Permission removed from permissions group");
 		return new OKResponse("Removed "+permission+" from permissions group "+permissionsgroup.getNameSafe());
 	}
 }

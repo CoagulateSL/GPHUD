@@ -13,9 +13,9 @@ import javax.annotation.Nonnull;
  */
 public class OKResponse extends TextOK implements Response {
 	public OKResponse(final String content) {
-        super(content);
-    }
-
+		super(content);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
@@ -24,11 +24,11 @@ public class OKResponse extends TextOK implements Response {
 		JSONResponse.message(j,asText(st),st.protocol);
 		return j;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String scriptResponse() {
-        return "OK: " + content;
+		return "OK: "+content;
 	}
-
+	
 }

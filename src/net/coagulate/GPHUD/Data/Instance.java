@@ -9,7 +9,6 @@ import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -34,12 +33,16 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Instance extends TableRow {
 	
-	private static final int ADMIN_PESTER_INTERVAL=3600; // seconds
-	private static final int SERVER_UPDATE_INTERVAL=30;
-	private static final Map<String,Integer> lastStatus=new TreeMap<>(); // naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
-	final Cache<String,Currency> currencyNameCache=Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
+	private static final int                    ADMIN_PESTER_INTERVAL =3600; // seconds
+	private static final int                    SERVER_UPDATE_INTERVAL=30;
+	private static final Map<String,Integer>    lastStatus            =new TreeMap<>();
+			// naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
+	final                Cache<String,Currency> currencyNameCache     =
+			Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
 	
-	protected Instance(final int id) {super(id);}
+	protected Instance(final int id) {
+		super(id);
+	}
 	
 	// ---------- STATICS ----------
 	
@@ -52,7 +55,9 @@ public class Instance extends TableRow {
 	public static Set<Instance> getInstances() {
 		final Set<Instance> instances=new TreeSet<>();
 		final Results instanceRows=db().dq("select instanceid from instances");
-		for (final ResultsRow r: instanceRows) {instances.add(Instance.get(r.getInt()));}
+		for (final ResultsRow r: instanceRows) {
+			instances.add(Instance.get(r.getInt()));
+		}
 		return instances;
 	}
 	
@@ -75,8 +80,7 @@ public class Instance extends TableRow {
 	 * @throws UserInputEmptyException          if the instance name is rejected
 	 * @throws UserInputDuplicateValueException if the instance name is already taken
 	 */
-	public static void create(@Nonnull final String name,
-							  @Nonnull final User caller) {
+	public static void create(@Nonnull final String name,@Nonnull final User caller) {
 		if (name.isEmpty()) {
 			throw new UserInputEmptyException("Can't create null or empty instance");
 		}
@@ -123,19 +127,20 @@ public class Instance extends TableRow {
 	public static void quotaCredits() {
 		final int quotaLimit=Config.getQuotaLimit();
 		final int quotaInterval=Config.getQuotaInterval();
-		for (final ResultsRow row: db().dq("select instanceid from instances where nextquotaincrease<?",getUnixTime())) {
+		for (final ResultsRow row: db().dq("select instanceid from instances where nextquotaincrease<?",
+		                                   getUnixTime())) {
 			db().d("update instances set reportquota=least(reportquota+1,?),downloadquota=least(downloadquota+1,?),nextquotaincrease=? where instanceid=?",
-					quotaLimit,
-					quotaLimit,
-					getUnixTime()+quotaInterval,
-					row.getInt());
+			       quotaLimit,
+			       quotaLimit,
+			       getUnixTime()+quotaInterval,
+			       row.getInt());
 		}
 	}
 	
 	@Nonnull
 	public static Set<Instance> getNonRetiringInstances() {
-		Set<Instance> instances=new HashSet<>();
-		for (ResultsRow row: GPHUD.getDB().dq("select instanceid from instances where retireat is null")) {
+		final Set<Instance> instances=new HashSet<>();
+		for (final ResultsRow row: GPHUD.getDB().dq("select instanceid from instances where retireat is null")) {
 			instances.add(Instance.get(row.getInt("instanceid")));
 		}
 		return instances;
@@ -143,18 +148,19 @@ public class Instance extends TableRow {
 	
 	@Nonnull
 	public static Set<Instance> getWarnableInstances() {
-		Set<Instance> instances=new HashSet<>();
-		for (ResultsRow row: GPHUD.getDB().
-									 dq("select instanceid from instances where retireat is not null and retirewarn<?",UnixTime.getUnixTime())) {
+		final Set<Instance> instances=new HashSet<>();
+		for (final ResultsRow row: GPHUD.getDB()
+		                                .dq("select instanceid from instances where retireat is not null and retirewarn<?",
+		                                    getUnixTime())) {
 			instances.add(Instance.get(row.getInt("instanceid")));
 		}
 		return instances;
 	}
 	
 	public static Set<Instance> getExpiredInstances() {
-		Set<Instance> instances=new HashSet<>();
-		for (ResultsRow row: GPHUD.getDB().
-									 dq("select instanceid from instances where retireat<?",UnixTime.getUnixTime())) {
+		final Set<Instance> instances=new HashSet<>();
+		for (final ResultsRow row: GPHUD.getDB()
+		                                .dq("select instanceid from instances where retireat<?",getUnixTime())) {
 			instances.add(Instance.get(row.getInt("instanceid")));
 		}
 		return instances;
@@ -193,7 +199,9 @@ public class Instance extends TableRow {
 	}
 	
 	public void validate(@Nonnull final State st) {
-		if (validated) {return;}
+		if (validated) {
+			return;
+		}
 		validate();
 	}
 	
@@ -205,7 +213,9 @@ public class Instance extends TableRow {
 	
 	@Nonnull
 	@Override
-	public String getLinkTarget() {return "instances";}
+	public String getLinkTarget() {
+		return "instances";
+	}
 	
 	@Nonnull
 	@Override
@@ -221,7 +231,9 @@ public class Instance extends TableRow {
 		return "instanceid";
 	}
 	
-	protected int getNameCacheTime() {return 60*60;} // this name doesn't change, cache 1 hour
+	protected int getNameCacheTime() {
+		return 60*60;
+	} // this name doesn't change, cache 1 hour
 	
 	/**
 	 * Push updated status to all region server.
@@ -230,29 +242,46 @@ public class Instance extends TableRow {
 		String statusColor="<0.5,1,0.5>";
 		int level=0;
 		final StringBuilder newStatus=new StringBuilder();
-		final Integer minVersion=dqi("select min(regionserverversion) from regions where regionserverversion is not null and instanceid=? and retired=0",getId());
-		if (minVersion==null) {return;} // no active instances?
+		final Integer minVersion=dqi(
+				"select min(regionserverversion) from regions where regionserverversion is not null and instanceid=? and retired=0",
+				getId());
+		if (minVersion==null) {
+			return;
+		} // no active instances?
 		final Float expiresIn=EndOfLifing.expiresIn(minVersion);
 		String updateWithin="";
 		if (expiresIn!=null) {
-			updateWithin=((int)expiresIn.floatValue())+" days "+((int)((expiresIn-((int)expiresIn.floatValue()))*24.0f))+" hours";
+			updateWithin=
+					((int)expiresIn.floatValue())+" days "+((int)((expiresIn-((int)expiresIn.floatValue()))*24.0f))+
+					" hours";
 		}
 		String eol="";
-		if (expiresIn!=null&&expiresIn>14) {eol+="EOL: "+updateWithin;}
-		if (Config.getDevelopment()) {newStatus.append("===DEVELOPMENT===\n \n");}
+		if (expiresIn!=null&&expiresIn>14) {
+			eol+="EOL: "+updateWithin;
+		}
+		if (Config.getDevelopment()) {
+			newStatus.append("===DEVELOPMENT===\n \n");
+		}
 		final String version=SL.getModule("GPHUD").getBuildDateString()+" @"+SL.getModule("GPHUD").commitId();
-		newStatus.append("Server: ").append(Config.getHostName()).append(" - ").append(version).append("\n").append(eol).append("\n \n");
+		newStatus.append("Server: ")
+		         .append(Config.getHostName())
+		         .append(" - ")
+		         .append(version)
+		         .append("\n")
+		         .append(eol)
+		         .append("\n \n");
 		if (expiresIn!=null) {
 			if (expiresIn<7&&canStatus("expiring-"+getId())) {
 				broadcastAdmins(null,
-						"SYSTEM : Alert, this version will be unsupported and marked end of line in "+updateWithin+".  Please ensure the GPHUD Region Server is upgraded by then to continue your service."
-				);
+				                "SYSTEM : Alert, this version will be unsupported and marked end of line in "+
+				                updateWithin+
+				                ".  Please ensure the GPHUD Region Server is upgraded by then to continue your service.");
 			}
 			if (expiresIn<=14) {
 				if (expiresIn<3) {
 					newStatus.append("!!!ALERT!!!\nThis version is out of date\nand must be upgraded within\n")
-							.append(updateWithin)
-							.append("\nIt will stop working at this time\n!!!ALERT!!!\n \n");
+					         .append(updateWithin)
+					         .append("\nIt will stop working at this time\n!!!ALERT!!!\n \n");
 				} else {
 					newStatus.append("Update REQUIRED within ").append(updateWithin).append("\n \n");
 				}
@@ -264,11 +293,15 @@ public class Instance extends TableRow {
 			final Integer visitors=r.getOpenVisitCount();
 			final String url=dqs("select url from regions where regionid=?",r.getId());
 			Integer urlLast=dqi("select urllast from regions where regionid=?",r.getId());
-			if (urlLast==null) {urlLast=getUnixTime();}
+			if (urlLast==null) {
+				urlLast=getUnixTime();
+			}
 			if (url==null||url.isEmpty()) {
 				newStatus.append("ERROR:DISCONNECTED]");
 				if (canStatus("admins-"+getId())) {
-					broadcastAdmins(null,"SYSTEM : Alert, region server for '"+r.getName()+"' is not connected to GPHUD Server.");
+					broadcastAdmins(null,
+					                "SYSTEM : Alert, region server for '"+r.getName()+
+					                "' is not connected to GPHUD Server.");
 				}
 				if (level<2) {
 					statusColor="<1.0,0.5,0.5>";
@@ -278,7 +311,9 @@ public class Instance extends TableRow {
 				if ((getUnixTime()-urlLast)>(15*60)) {
 					newStatus.append("*STALLED*");
 					if (canStatus("admins-"+getId())) {
-						broadcastAdmins(null,"SYSTEM : Alert, region server for '"+r.getName()+"' is not communicating (STALLED / CRASHED)??.");
+						broadcastAdmins(null,
+						                "SYSTEM : Alert, region server for '"+r.getName()+
+						                "' is not communicating (STALLED / CRASHED)??.");
 					}
 					if (level<2) {
 						statusColor="<1.0,0.5,0.5>";
@@ -337,6 +372,43 @@ public class Instance extends TableRow {
 	}
 	
 	/**
+	 * Determine if a message should be sent to the given URL
+	 * We rate limit status updates to 1 every 30 seconds for servers.
+	 * We use a fake url of "admins" to limit broadcast updates to admins (for server faults).
+	 *
+	 * @param url The URL of the region server, or "admins" for checking admin updates
+	 * @return true if it is permitted to send an update to this target at this time
+	 */
+	private boolean canStatus(final String url) {
+		final int now=getUnixTime();
+		if (lastStatus.containsKey(url)) {
+			final int last=lastStatus.get(url);
+			if (url.startsWith("admins-")||
+			    url.startsWith("expiring-")) {  // bodge, admins get weird INTERVAL minute pestering :P
+				if ((now-last)>ADMIN_PESTER_INTERVAL) {
+					lastStatus.put(url,now);
+					return true;
+				}
+				return false;
+			}
+			if ("expiring".equals(url)) {  // bodge, admins get 15 minute pestering :P
+				if ((now-last)>ADMIN_PESTER_INTERVAL) {
+					lastStatus.put(url,now);
+					return true;
+				}
+				return false;
+			}
+			if ((now-last)>SERVER_UPDATE_INTERVAL) {
+				lastStatus.put(url,now);
+				return true;
+			}
+			return false;
+		}
+		lastStatus.put(url,now);
+		return true;
+	}
+	
+	/**
 	 * Push a message to all admins of this instance.
 	 * Sends message individually to the admins - note this could probably be refitted with the bulk delivery mechanism, on the other hand the number of people getting these
 	 * alerts is probably small.
@@ -345,20 +417,27 @@ public class Instance extends TableRow {
 	 * @param message Message to send to admins
 	 * @return count of the number of users the message is sent to.
 	 */
-	public int broadcastAdmins(@Nullable final State st,
-							   final String message) {
+	public int broadcastAdmins(@Nullable final State st,final String message) {
 		final JSONObject j=new JSONObject();
 		JSONResponse.message(j,"ADMIN : "+message,0); //hardwired protocol as a singular (spammed) transmission
 		final Set<User> targets=new HashSet<>();
 		targets.add(getOwner());
 		//System.out.println("Pre broadcast!");
-		final Results results=dq("select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups"+".permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like "+"'instance.receiveadminmessages'",getId());
-		for (final ResultsRow r: results) {targets.add(User.get(r.getInt()));}
+		final Results results=
+				dq("select avatarid from permissionsgroupmembers,permissionsgroups,permissions where permissionsgroupmembers.permissionsgroupid=permissionsgroups"+
+				   ".permissionsgroupid and permissionsgroups.instanceid=? and permissionsgroups.permissionsgroupid=permissions.permissionsgroupid and permission like "+
+				   "'instance.receiveadminmessages'",getId());
+		for (final ResultsRow r: results) {
+			targets.add(User.get(r.getInt()));
+		}
 		//System.out.println("Avatars:"+targets.size());
 		//for (User target:targets) { System.out.println(target.getName()); }
 		final Set<Char> chars=new TreeSet<>();
 		for (final User a: targets) {
-			final Results charList=dq("select characterid from characters where instanceid=? and playedby=? and url is not null",getId(),a.getId());
+			final Results charList=dq(
+					"select characterid from characters where instanceid=? and playedby=? and url is not null",
+					getId(),
+					a.getId());
 			//System.out.println("select characterid from characters where instanceid="+getId()+" and playedby="+a.getId()+" and url is not null;");
 			//System.out.println("In chars:"+charList.size());
 			for (final ResultsRow rr: charList) {
@@ -390,8 +469,8 @@ public class Instance extends TableRow {
 	 */
 	@Nonnull
 	public List<CharacterSummary> getCharacterSummary(@Nonnull final State st,
-													  @Nonnull final String search,
-													  final boolean showRetired) {
+	                                                  @Nonnull final String search,
+	                                                  final boolean showRetired) {
 		String sortBy=st.getDebasedURL().replaceAll("%20"," ");
 		sortBy=sortBy.replaceFirst(".*?sort=","");
 		final User searchUser=User.findUsernameNullable(search,false);
@@ -407,7 +486,9 @@ public class Instance extends TableRow {
 		if (st.hasModule("Faction")) {
 			groupHeaders.add("Faction");
 		}
-		for (final ResultsRow r: dq("select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'",getId())) {
+		for (final ResultsRow r: dq(
+				"select name from attributes where instanceid=? and grouptype is not null and attributetype='GROUP'",
+				getId())) {
 			groupHeaders.add(r.getStringNullable());
 		}
 		final List<Object> parameters=new ArrayList<>();
@@ -433,7 +514,8 @@ public class Instance extends TableRow {
 			}
 			additional+=") ";
 		}
-		for (final ResultsRow r: getDatabase().dqSlow("select * from characters where instanceid=? "+additional,parameters.toArray())) {
+		for (final ResultsRow r: getDatabase().dqSlow("select * from characters where instanceid=? "+additional,
+		                                              parameters.toArray())) {
 			final int retired=r.getInt("retired");
 			final int charId=r.getInt("characterid");
 			final CharacterSummary cr=new CharacterSummary();
@@ -447,9 +529,9 @@ public class Instance extends TableRow {
 			idMap.put(charId,cr);
 		}
 		for (final ResultsRow r: getDatabase().dqSlow(
-				"select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers"+".charactergroupid=charactergroups.charactergroupid and instanceid=?",
-				getId()
-		)) {
+				"select charactergroupmembers.characterid,charactergroups.type,charactergroups.name from charactergroupmembers,charactergroups where charactergroupmembers"+
+				".charactergroupid=charactergroups.charactergroupid and instanceid=?",
+				getId())) {
 			final int charId=r.getInt("characterid");
 			final String groupType=r.getStringNullable("type");
 			final String groupName=r.getStringNullable("name");
@@ -459,21 +541,29 @@ public class Instance extends TableRow {
 			}
 		}
 		for (final ResultsRow r: getDatabase().dqSlow(
-				"select visits.characterid,sum(endtime-starttime) as totaltime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is not null group by characterid"
-				,getId())) {
+				"select visits.characterid,sum(endtime-starttime) as totaltime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+
+				charactersScoping+" and endtime is not null group by characterid",
+				getId())) {
 			final int id=r.getInt("characterid");
-			if (idMap.containsKey(id)) {idMap.get(id).totalvisits=r.getInt("totaltime");}
+			if (idMap.containsKey(id)) {
+				idMap.get(id).totalvisits=r.getInt("totaltime");
+			}
 		}
 		for (final ResultsRow r: getDatabase().dqSlow(
-				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is not null and starttime>? group by characterid",getId(),
-				getUnixTime()-(Experience.getCycle(st))
-		)) {
+				"select visits.characterid,sum(endtime-starttime) as totaltime from visits  inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+
+				charactersScoping+" and endtime is not null and starttime>? group by characterid",
+				getId(),
+				getUnixTime()-(Experience.getCycle(st)))) {
 			final int id=r.getInt("characterid");
 			if (idMap.containsKey(id)) {
 				idMap.get(id).recentvisits=r.getInt("totaltime");
 			}
 		}
-		for (final ResultsRow r: getDatabase().dqSlow("select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and endtime is null and starttime>?",getId(),getUnixTime()-(Experience.getCycle(st)))) {
+		for (final ResultsRow r: getDatabase().dqSlow(
+				"select visits.characterid,starttime from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? "+
+				charactersScoping+" and endtime is null and starttime>?",
+				getId(),
+				getUnixTime()-(Experience.getCycle(st)))) {
 			final int id=r.getInt("characterid");
 			final int add=getUnixTime()-r.getInt("starttime");
 			if (idMap.containsKey(id)) {
@@ -482,9 +572,15 @@ public class Instance extends TableRow {
 			}
 		}
 		for (final ResultsRow r: getDatabase().dqSlow(
-				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? "+charactersScoping+" and (poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP') group by "+"characterid",getId())) {
+				"select characterpools.characterid,sum(adjustment) as total from characterpools inner join characters on characterpools.characterid=characters.characterid where characters.instanceid=? "+
+				charactersScoping+
+				" and (poolname like 'Experience.%' or poolname like 'Faction.FactionXP' or poolname like 'Events.EventXP') group by "+
+				"characterid",
+				getId())) {
 			final int id=r.getInt("characterid");
-			if (idMap.containsKey(id)) {idMap.get(id).totalxp=r.getInt("total");}
+			if (idMap.containsKey(id)) {
+				idMap.get(id).totalxp=r.getInt("total");
+			}
 		}
 		final Map<Integer,String> avatarNames=User.getIdToNameMap();
 		for (final CharacterSummary cs: idMap.values()) {
@@ -492,20 +588,28 @@ public class Instance extends TableRow {
 		}
 		
 		final List<CharacterSummary> sortedlist=new ArrayList<>();
-		if (sortBy.isEmpty()) {sortBy="name";}
+		if (sortBy.isEmpty()) {
+			sortBy="name";
+		}
 		sortBy=sortBy.toLowerCase();
 		if ("name".equals(sortBy)||"owner".equals(sortBy)) {
 			final Map<String,Set<CharacterSummary>> sorted=new TreeMap<>();
 			for (final CharacterSummary cs: idMap.values()) {
 				String value=cs.name;
-				if ("owner".equals(sortBy)) {value=cs.ownername;}
+				if ("owner".equals(sortBy)) {
+					value=cs.ownername;
+				}
 				Set<CharacterSummary> records=new HashSet<>();
-				if (sorted.containsKey(value)) {records=sorted.get(value);}
+				if (sorted.containsKey(value)) {
+					records=sorted.get(value);
+				}
 				records.add(cs);
 				sorted.put(value,records);
 			}
 			final List<String> sortedKeys=new ArrayList<>(sorted.keySet());
-			if (reverse) {sortedKeys.sort(Collections.reverseOrder());} else {
+			if (reverse) {
+				sortedKeys.sort(Collections.reverseOrder());
+			} else {
 				Collections.sort(sortedKeys);
 			}
 			for (final String key: sortedKeys) {
@@ -516,7 +620,9 @@ public class Instance extends TableRow {
 			final Map<Integer,Set<CharacterSummary>> sorted=new TreeMap<>();
 			for (final CharacterSummary cs: idMap.values()) {
 				int value=cs.lastactive;
-				if ("total visit time".equals(sortBy)) {value=cs.totalvisits;}
+				if ("total visit time".equals(sortBy)) {
+					value=cs.totalvisits;
+				}
 				if (sortBy.equals("visit time (last "+Experience.getCycleLabel(st).toLowerCase()+")")) {
 					value=cs.recentvisits;
 				}
@@ -562,24 +668,12 @@ public class Instance extends TableRow {
 	@Nonnull
 	public Set<CharacterGroup> getGroupsForKeyword(final String keyword) {
 		final Set<CharacterGroup> groups=new TreeSet<>();
-		for (final ResultsRow r: dq("select charactergroupid from charactergroups where instanceid=? and type=?",getId(),keyword)) {
+		for (final ResultsRow r: dq("select charactergroupid from charactergroups where instanceid=? and type=?",
+		                            getId(),
+		                            keyword)) {
 			groups.add(CharacterGroup.get(r.getInt()));
 		}
 		return groups;
-	}
-	
-	/**
-	 * Create a character group.
-	 *
-	 * @param name    Name of the group to create
-	 * @param open    Is the group open to join (otherwise invite only)?
-	 * @param keyword Type of the group, optionally.
-	 * @throws UserException If the group can not be created, already exists, etc.
-	 */
-	public void createCharacterGroup(final String name,
-									 final boolean open,
-									 final String keyword) {
-		CharacterGroup.create(this,name,open,keyword);
 	}
 	
 	/**
@@ -606,6 +700,18 @@ public class Instance extends TableRow {
 	}
 	
 	/**
+	 * Create a character group.
+	 *
+	 * @param name    Name of the group to create
+	 * @param open    Is the group open to join (otherwise invite only)?
+	 * @param keyword Type of the group, optionally.
+	 * @throws UserException If the group can not be created, already exists, etc.
+	 */
+	public void createCharacterGroup(final String name,final boolean open,final String keyword) {
+		CharacterGroup.create(this,name,open,keyword);
+	}
+	
+	/**
 	 * Recompute all possibly conveyances for all logged in characters.
 	 * Bulk update via server dissemination where necessary.
 	 */
@@ -623,11 +729,14 @@ public class Instance extends TableRow {
 					}
 					final User user=c.getPlayedByNullable();
 					String playedby=null;
-					if (user!=null) {playedby=user.getUUID();}
+					if (user!=null) {
+						playedby=user.getUUID();
+					}
 					if (playedby==null) { // maybe its an object
 						try {
 							playedby=dqs("select uuid from objects where url like ?",c.getURL());
-						} catch (@Nonnull final NoDataException ignored) {}
+						} catch (@Nonnull final NoDataException ignored) {
+						}
 					}
 					if (playedby!=null) {
 						final String payloadString=payload.toString();
@@ -644,19 +753,6 @@ public class Instance extends TableRow {
 			final Region region=entry.getKey();
 			region.sendServer(entry.getValue());
 		}
-	}
-	
-	/**
-	 * Get this instance level logo
-	 *
-	 * @param st State to get instance from
-	 * @return A String reference to the SL texture service's URL for the logo, or a reference to banner-gphud.png
-	 */
-	@Nonnull
-	public String getLogoURL(@Nonnull final State st) {
-		final String logoUuid=st.getKV(this,"GPHUDClient.logo");
-		if (logoUuid==null||logoUuid.isEmpty()) {return "/resources/banner-gphud.png";}
-		return SL.textureURL(logoUuid);
 	}
 	
 	/**
@@ -683,39 +779,18 @@ public class Instance extends TableRow {
 	}
 	
 	/**
-	 * Determine if a message should be sent to the given URL
-	 * We rate limit status updates to 1 every 30 seconds for servers.
-	 * We use a fake url of "admins" to limit broadcast updates to admins (for server faults).
+	 * Get this instance level logo
 	 *
-	 * @param url The URL of the region server, or "admins" for checking admin updates
-	 * @return true if it is permitted to send an update to this target at this time
+	 * @param st State to get instance from
+	 * @return A String reference to the SL texture service's URL for the logo, or a reference to banner-gphud.png
 	 */
-	private boolean canStatus(final String url) {
-		final int now=getUnixTime();
-		if (lastStatus.containsKey(url)) {
-			final int last=lastStatus.get(url);
-			if (url.startsWith("admins-")||url.startsWith("expiring-")) {  // bodge, admins get weird INTERVAL minute pestering :P
-				if ((now-last)>ADMIN_PESTER_INTERVAL) {
-					lastStatus.put(url,now);
-					return true;
-				}
-				return false;
-			}
-			if ("expiring".equals(url)) {  // bodge, admins get 15 minute pestering :P
-				if ((now-last)>ADMIN_PESTER_INTERVAL) {
-					lastStatus.put(url,now);
-					return true;
-				}
-				return false;
-			}
-			if ((now-last)>SERVER_UPDATE_INTERVAL) {
-				lastStatus.put(url,now);
-				return true;
-			}
-			return false;
+	@Nonnull
+	public String getLogoURL(@Nonnull final State st) {
+		final String logoUuid=st.getKV(this,"GPHUDClient.logo");
+		if (logoUuid==null||logoUuid.isEmpty()) {
+			return "/resources/banner-gphud.png";
 		}
-		lastStatus.put(url,now);
-		return true;
+		return SL.textureURL(logoUuid);
 	}
 	
 	public Set<Char> getCharacters() {
@@ -744,15 +819,23 @@ public class Instance extends TableRow {
 		return dqinn("select count(*) from characters where instanceid=?",getId());
 	}
 	
-	public int reportCredits() {return getInt("reportquota");}
+	public int reportCredits() {
+		return getInt("reportquota");
+	}
 	
-	public int downloadCredits() {return getInt("downloadquota");}
-	
-	public int lastReport() {return getInt("reporttds");}
+	public int downloadCredits() {
+		return getInt("downloadquota");
+	}
 	
 	public String getReport() {
-		if (lastReport()==0) {throw new UserInputStateException("No report has been generated");}
+		if (lastReport()==0) {
+			throw new UserInputStateException("No report has been generated");
+		}
 		return getString("report");
+	}
+	
+	public int lastReport() {
+		return getInt("reporttds");
 	}
 	
 	public boolean spendDownloadCredit() {
@@ -772,7 +855,7 @@ public class Instance extends TableRow {
 		set("reporting",value);
 	}
 	
-	public void setRetireAt(@Nullable Integer retireat) {
+	public void setRetireAt(@Nullable final Integer retireat) {
 		set("retireat",retireat);
 	}
 	
@@ -781,12 +864,14 @@ public class Instance extends TableRow {
 		return getIntNullable("retireat");
 	}
 	
-	public void setRetireWarn(@Nullable Integer warnAt) {
+	public void setRetireWarn(@Nullable final Integer warnAt) {
 		set("retirewarn",warnAt);
 	}
 	
 	@Nullable
-	public Integer retireWarn() {return getIntNullable("retirewarn");}
+	public Integer retireWarn() {
+		return getIntNullable("retirewarn");
+	}
 	
 	public void delete() {
 		d("delete from instances where instanceid=?",getId());

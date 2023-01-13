@@ -29,16 +29,14 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Config {
-
+	
 	// ---------- STATICS ----------
-	@URLs(url="/configuration/external",
-		  requiresPermission = "External.*")
-	public static void configPage(@Nonnull final State st,
-	                              final SafeMap values) { configPage(st,values,st.simulate(st.getCharacterNullable())); }
-
-	public static void configPage(@Nonnull final State st,
-	                              final SafeMap values,
-	                              final State simulated) {
+	@URLs(url="/configuration/external", requiresPermission="External.*")
+	public static void configPage(@Nonnull final State st,final SafeMap values) {
+		configPage(st,values,st.simulate(st.getCharacterNullable()));
+	}
+	
+	public static void configPage(@Nonnull final State st,final SafeMap values,final State simulated) {
 		final Form f=st.form();
 		f.noForm();
 		f.add("<h1>External API access</h1><br>");
@@ -50,13 +48,14 @@ public class Config {
 			//if (!user.isSuperAdmin()) {
 			final boolean enabled=InstanceDevelopers.isDeveloper(st.getInstance(),user);
 			String col="#ffe0e0";
-			if (enabled) { col="#e0ffe0"; }
+			if (enabled) {
+				col="#e0ffe0";
+			}
 			f.add("<tr bgcolor="+col+">");
 			f.add("<td>"+user.getName()+"</td><td>");
 			if (enabled) {
 				f.add(new Form(st,true,"./external/deauthorise","Disable Developer Access","developer",user.getName()));
-			}
-			else {
+			} else {
 				f.add(new Form(st,true,"./external/authorise","Enable Developer Access","developer",user.getName()));
 			}
 			f.add("</td></tr>");
@@ -64,15 +63,13 @@ public class Config {
 		}
 		f.add("</table></p>");
 	}
-
-
-	@URLs(url="/configuration/external/authorise",
-	      requiresPermission="External.Authorise")
-	public static void authoriseForm(@Nonnull final State st,
-	                                 @Nonnull final SafeMap values) {
+	
+	
+	@URLs(url="/configuration/external/authorise", requiresPermission="External.Authorise")
+	public static void authoriseForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"External.Authorise",values);
 	}
-
+	
 	@Commands(description="Authorise a developer at this instance",
 	          permitExternal=false,
 	          permitObject=false,
@@ -81,21 +78,24 @@ public class Config {
 	          context=Context.AVATAR)
 	@Nonnull
 	public static Response authorise(@Nonnull final State state,
-	                                 @Arguments(name="developer",description="Developer to authorise",
+	                                 @Arguments(name="developer",
+	                                            description="Developer to authorise",
 	                                            type=ArgumentType.AVATAR) @Nonnull final User developer) {
-		if (!developer.hasDeveloperKey()) { return new ErrorResponse("That user is not a developer, please have them register with Iain Maltz"); }
-		if (InstanceDevelopers.isDeveloper(state.getInstance(),developer)) { return new ErrorResponse("That user is already a developer at this instance"); }
+		if (!developer.hasDeveloperKey()) {
+			return new ErrorResponse("That user is not a developer, please have them register with Iain Maltz");
+		}
+		if (InstanceDevelopers.isDeveloper(state.getInstance(),developer)) {
+			return new ErrorResponse("That user is already a developer at this instance");
+		}
 		InstanceDevelopers.authorise(state,state.getInstance(),developer);
 		return new OKResponse("Developer "+developer+" is now authorised for external access at "+state.getInstance());
 	}
-
-	@URLs(url="/configuration/external/deauthorise",
-	      requiresPermission="External.DeAuthorise")
-	public static void deAuthoriseForm(@Nonnull final State st,
-	                                   @Nonnull final SafeMap values) {
+	
+	@URLs(url="/configuration/external/deauthorise", requiresPermission="External.DeAuthorise")
+	public static void deAuthoriseForm(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"External.DeAuthorise",values);
 	}
-
+	
 	@Commands(description="Authorise a developer at this instance",
 	          permitExternal=false,
 	          permitObject=false,
@@ -104,11 +104,14 @@ public class Config {
 	          context=Context.AVATAR)
 	@Nonnull
 	public static Response deAuthorise(@Nonnull final State state,
-	                                   @Arguments(name="developer",description="Developer to deauthorise",
+	                                   @Arguments(name="developer",
+	                                              description="Developer to deauthorise",
 	                                              type=ArgumentType.AVATAR) @Nonnull final User developer) {
-		if (!InstanceDevelopers.isDeveloper(state.getInstance(),developer)) { return new ErrorResponse("That user not a developer at this instance"); }
+		if (!InstanceDevelopers.isDeveloper(state.getInstance(),developer)) {
+			return new ErrorResponse("That user not a developer at this instance");
+		}
 		InstanceDevelopers.deAuthorise(state,state.getInstance(),developer);
 		return new OKResponse("Developer "+developer+" is now deauthorised at "+state.getInstance());
 	}
-
+	
 }

@@ -12,25 +12,24 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Separator implements Renderable {
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String asText(final State st) {
 		return "----------\n";
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		return "<hr>";
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;
 	}
-
+	
 }

@@ -15,12 +15,11 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public class GroupModule extends ModuleAnnotation {
-
-	public GroupModule(final String name,
-                       final ModuleDefinition annotation) {
-        super(name, annotation);
-    }
-
+	
+	public GroupModule(final String name,final ModuleDefinition annotation) {
+		super(name,annotation);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
@@ -29,11 +28,12 @@ public class GroupModule extends ModuleAnnotation {
 		int pri=1;
 		for (final String submenu: st.getCharacterGroupTypes()) {
 			if (!submenu.isEmpty()) {
-				ret.add(new StaticSideSubMenu(submenu,pri++,"/groups/type/"+submenu,""));
+				ret.add(new StaticSideSubMenu(submenu,pri,"/groups/type/"+submenu,""));
+				pri++;
 			}
 		}
 		ret.add(new StaticSideSubMenu("Other",pri+1,"/groups/type/BLANK",""));
 		return ret;
 	}
-
+	
 }

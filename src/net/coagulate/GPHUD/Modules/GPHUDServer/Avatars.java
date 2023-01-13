@@ -35,23 +35,29 @@ public abstract class Avatars {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response setRegionAvatars(@Nonnull final State st,
-	                                        @Nullable @Arguments(name="userlist",description="Comma separated list of avatar key=names on the sim",
-	                                                             type=ArgumentType.TEXT_ONELINE,
-	                                                             max=65536,
-	                                                             mandatory=false) String userlist) {
-
+	                                        @Nullable
+	                                        @Arguments(name="userlist",
+	                                                   description="Comma separated list of avatar key=names on the sim",
+	                                                   type=ArgumentType.TEXT_ONELINE,
+	                                                   max=65536,
+	                                                   mandatory=false) String userlist) {
+		
 		// check authorisation, servers can only be deployed by the instance owner...
 		if (st.getSourceDeveloper().getId()!=1) {
 			return new ErrorResponse("Invalid developer source for priviledged call.");
 		}
 		final Region region=st.getRegion();
-		if (st.objectKey !=null) { region.setPrimUUID(st.objectKey); }
+		if (st.objectKey!=null) {
+			region.setPrimUUID(st.objectKey);
+		}
 		/*if (!region.getURL().equals(st.callbackurl())) {
 			return new ErrorResponse("Invalid callback URL, you do not match the registered region server");
 		}*/
-		if (userlist==null) { userlist=""; }
+		if (userlist==null) {
+			userlist="";
+		}
 		final Set<User> openvisits=region.getAvatarOpenVisits();
-
+		
 		for (final String element: userlist.split(",")) {
 			//System.out.println(element);
 			final String[] p=element.split("=");
@@ -60,8 +66,7 @@ public abstract class Avatars {
 					final User thisavi=User.findOrCreate(p[1].trim(),p[0].trim(),false);
 					// we DONT init visits this way =)  character registration does
 					openvisits.remove(thisavi);
-				}
-				catch (@Nonnull final Exception e) {
+				} catch (@Nonnull final Exception e) {
 					st.logger().log(WARNING,"Avatar joiner registration failed, ",e);
 				}
 			}
@@ -80,5 +85,5 @@ public abstract class Avatars {
 		}
 		return new JSONResponse(json);
 	}
-
+	
 }

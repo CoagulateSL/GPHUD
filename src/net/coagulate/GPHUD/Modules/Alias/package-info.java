@@ -10,9 +10,7 @@
                   implementation="net.coagulate.GPHUD.Modules.Alias.AliasModule",
                   forceConfig=true)
 
-@Permissions(description="Permission to create modify and delete aliases",
-             name="Config",
-             power=Permission.POWER.MEDIUM)
+@Permissions(description="Permission to create modify and delete aliases", name="Config", power=Permission.POWER.MEDIUM)
 
 package net.coagulate.GPHUD.Modules.Alias;
 

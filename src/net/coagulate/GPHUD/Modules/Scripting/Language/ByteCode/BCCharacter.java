@@ -12,52 +12,54 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BCCharacter extends ByteCodeDataType {
-	@Nullable
-	private Char content;
-
+	@Nullable private Char content;
+	
 	public BCCharacter(final ParseNode node) {
-        super(node);
-    }
-
-	public BCCharacter(final ParseNode n,
-	                   @Nonnull final Char content) {
+		super(node);
+	}
+	
+	public BCCharacter(final ParseNode n,@Nonnull final Char content) {
 		super(n);
 		this.content=content;
 	}
-
-	// ---------- INSTANCE ----------
+	
 	@Nonnull
-	public Char getContent() {
-		if (content==null) { throw new GSInternalError("Getting an uninitialised BCCharacter's contents"); }
-		return content;
+	public String explain() {
+		return "Character ("+content+")";
 	}
-
-	@Nonnull
-	public String explain() { return "Character ("+content+")"; }
-
+	
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Character.get());
 		if (content==null) {
-			bytes.add((byte) 0xff);
-			bytes.add((byte) 0xff);
-			bytes.add((byte) 0xff);
-			bytes.add((byte) 0xff);
+			bytes.add((byte)0xff);
+			bytes.add((byte)0xff);
+			bytes.add((byte)0xff);
+			bytes.add((byte)0xff);
 			return;
 		}
 		addInt(bytes,content.getId());
 	}
-
+	
 	@Nonnull
 	@Override
-	public String htmlDecode() { return "Character</td><td>"+getContent().getId(); }
-
+	public String htmlDecode() {
+		return "Character</td><td>"+getContent().getId();
+	}
+	
+	// ---------- INSTANCE ----------
+	@Nonnull
+	public Char getContent() {
+		if (content==null) {
+			throw new GSInternalError("Getting an uninitialised BCCharacter's contents");
+		}
+		return content;
+	}
+	
 	@Override
-	public void execute(final State st,
-	                    @Nonnull final GSVM vm,
-	                    final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
 		vm.push(this);
 	}
-
+	
 	@Nullable
 	@Override
 	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
@@ -66,37 +68,37 @@ public class BCCharacter extends ByteCodeDataType {
 		}
 		throw new GSInvalidExpressionException("Can't add BCCharacter + "+var.getClass().getSimpleName());
 	}
-
+	
 	@Nonnull
 	@Override
 	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can't subtract with BCCharacter");
 	}
-
+	
 	@Nonnull
 	@Override
 	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can't multiply with BCCharacter");
 	}
-
+	
 	@Nonnull
 	@Override
 	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
 		throw new GSInvalidExpressionException("Can't divide with BCCharacter");
 	}
-
+	
 	@Nonnull
 	@Override
 	public BCString toBCString() {
 		return new BCString(node(),getContent().getName());
 	}
-
+	
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {
 		return new BCCharacter(node(),getContent());
 	}
-
+	
 	public boolean isOnline() {
 		return getContent().isOnline();
 	}

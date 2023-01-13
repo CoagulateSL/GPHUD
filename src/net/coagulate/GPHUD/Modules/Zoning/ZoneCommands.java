@@ -31,8 +31,9 @@ import java.util.Set;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class ZoneCommands {
-	private ZoneCommands() {}
-
+	private ZoneCommands() {
+	}
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.AVATAR,
@@ -42,15 +43,16 @@ public abstract class ZoneCommands {
 	          permitScripting=false,
 	          permitExternal=false)
 	public static Response create(@Nonnull final State st,
-	                              @Arguments(name="name",description="Name of the zone",
+	                              @Arguments(name="name",
+	                                         description="Name of the zone",
 	                                         type=ArgumentType.TEXT_ONELINE,
 	                                         max=64) final String name) {
 		Zone.create(st.getInstance(),name);
 		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Create","Zone","",name,"New zone created");
 		return new OKResponse("Zone '"+name+"' created.");
-
+		
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Delete a zone",
@@ -59,20 +61,25 @@ public abstract class ZoneCommands {
 	          permitScripting=false,
 	          permitObject=false)
 	public static Response delete(@Nonnull final State st,
-	                              @Arguments(name="zone",description="Name of the zone to delete",
+	                              @Arguments(name="zone",
+	                                         description="Name of the zone to delete",
 	                                         type=ArgumentType.ZONE) final Zone zone) {
 		zone.validate(st);
 		final String zonename=zone.getName();
 		final Set<Region> toupdate=new HashSet<>();
 		for (final ZoneArea area: zone.getZoneAreas()) {
-			try { toupdate.add(area.getRegion(false)); }
-			catch (final UserException|SystemException ignore) {}
+			try {
+				toupdate.add(area.getRegion(false));
+			} catch (final UserException|SystemException ignore) {
+			}
 		}
 		zone.delete(st);
-		for (final Region region: toupdate) { region.pushZoning(); }
+		for (final Region region: toupdate) {
+			region.pushZoning();
+		}
 		return new OKResponse("Deleted zone "+zonename);
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Add a volume to a zone",
@@ -81,21 +88,37 @@ public abstract class ZoneCommands {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response addVolume(@Nonnull final State st,
-	                                 @Nonnull @Arguments(type=ArgumentType.ZONE,
-	                                                     name="zone",description="Zone we are adding the volume to") final Zone zone,
-	                                 @Nonnull @Arguments(type=ArgumentType.REGION,
-	                                                     name="region",description="Region for the volume") final Region region,
+	                                 @Nonnull
+	                                 @Arguments(type=ArgumentType.ZONE,
+	                                            name="zone",
+	                                            description="Zone we are adding the volume to") final Zone zone,
+	                                 @Nonnull
+	                                 @Arguments(type=ArgumentType.REGION,
+	                                            name="region",
+	                                            description="Region for the volume") final Region region,
 	                                 @Arguments(type=ArgumentType.COORDINATES,
-	                                            name="cornerOne",description="Co-ordinates for one corner of the volume cube") final String cornerOne,
+	                                            name="cornerOne",
+	                                            description="Co-ordinates for one corner of the volume cube")
+	                                 final String cornerOne,
 	                                 @Arguments(type=ArgumentType.COORDINATES,
-	                                            name="cornerTwo",description="Co-ordinates for the opposing corner of the volume cube.") final String cornerTwo) {
+	                                            name="cornerTwo",
+	                                            description="Co-ordinates for the opposing corner of the volume cube.")
+	                                 final String cornerTwo) {
 		zone.addArea(region,cornerOne,cornerTwo);
 		region.pushZoning();
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Add Volume",zone.getName(),null,cornerOne+" - "+cornerTwo,"Added new volume to zone");
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Add Volume",
+		            zone.getName(),
+		            null,
+		            cornerOne+" - "+cornerTwo,
+		            "Added new volume to zone");
 		return new OKResponse("Added new volume to zone "+zone.getName());
-
+		
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.ANY,
 	          permitScripting=false,
@@ -105,37 +128,47 @@ public abstract class ZoneCommands {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response zoneTransition(@Nonnull final State st,
-	                                      @Nullable @Arguments(name="zone",description="Name of zone we transitioned into",
-	                                                           type=ArgumentType.ZONE,
-	                                                           mandatory=false) final Zone zone) {
+	                                      @Nullable
+	                                      @Arguments(name="zone",
+	                                                 description="Name of zone we transitioned into",
+	                                                 type=ArgumentType.ZONE,
+	                                                 mandatory=false) final Zone zone) {
 		// note the weird context.  the HUD may call this when it notices a zone transition even before a character is created
 		// this is actually problematic as the HUD won't re-send zone awareness
-		if (st.getCharacterNullable()==null) { return new JSONResponse(new JSONObject()); }
+		if (st.getCharacterNullable()==null) {
+			return new JSONResponse(new JSONObject());
+		}
 		// check some things make sense
 		// note zone may be null, legally, and fairly often probably.
-		if (zone!=null) { zone.validate(st); }
+		if (zone!=null) {
+			zone.validate(st);
+		}
 		final Zone oldzone=st.getCharacter().getZone();
 		st.getCharacter().setZone(zone);
 		st.zone=zone;
 		final String entrymessage=st.getKV("Zoning.EntryMessage").value();
 		final JSONObject response=new JSONObject();
-		if (entrymessage!=null && !entrymessage.isEmpty()) {
+		if (entrymessage!=null&&!entrymessage.isEmpty()) {
 			JSONResponse.message(response,entrymessage,st.protocol);
 		}
-		if (st.hasModule("events")) { EventsMaintenance.zoneTransition(st,response,oldzone,zone); }
+		if (st.hasModule("events")) {
+			EventsMaintenance.zoneTransition(st,response,oldzone,zone);
+		}
 		return new JSONResponse(response);
 	}
-
+	
 	@Nonnull
-	@Template(name="ZONE",
-	          description="Current zone")
-	public static String getZone(@Nonnull final State st,
-	                             final String key) {
-		if (!st.hasModule("Zoning")) { return ""; }
-		if (st.zone==null) { return ""; }
+	@Template(name="ZONE", description="Current zone")
+	public static String getZone(@Nonnull final State st,final String key) {
+		if (!st.hasModule("Zoning")) {
+			return "";
+		}
+		if (st.zone==null) {
+			return "";
+		}
 		return st.zone.getName();
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.AVATAR,
 	          description="Delete a zone area",
@@ -145,18 +178,33 @@ public abstract class ZoneCommands {
 	          permitScripting=false)
 	public static Response deleteVolume(@Nonnull final State st,
 	                                    @Arguments(type=ArgumentType.INTEGER,
-	                                               name="zoneareaid",description="Internal ID for the zone volume") final Integer zoneareaid) {
+	                                               name="zoneareaid",
+	                                               description="Internal ID for the zone volume")
+	                                    final Integer zoneareaid) {
 		final ZoneArea za=ZoneArea.get(zoneareaid);
-		try { za.validate(st); }
-		catch (final NoDataException e) { return new ErrorResponse("There is no zone containing a volume with ID "+zoneareaid); }
+		try {
+			za.validate(st);
+		} catch (final NoDataException e) {
+			return new ErrorResponse("There is no zone containing a volume with ID "+zoneareaid);
+		}
 		final Zone zone=za.getZone();
 		zone.validate(st);
 		final String[] vectors=za.getVectors();
 		final Region region=za.getRegion(true);
 		za.delete();
 		String position="NoPosition";
-		if (vectors!=null) { position=vectors[0]+" - "+vectors[1]; }
-		Audit.audit(st,Audit.OPERATOR.AVATAR,null,null,"Delete Area",zone.getName(),position,null,"Area removed from zone");
+		if (vectors!=null) {
+			position=vectors[0]+" - "+vectors[1];
+		}
+		Audit.audit(st,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Delete Area",
+		            zone.getName(),
+		            position,
+		            null,
+		            "Area removed from zone");
 		region.pushZoning();
 		return new OKResponse("Zone area removed from zone "+zone.getName());
 	}

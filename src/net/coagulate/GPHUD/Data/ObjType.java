@@ -22,20 +22,13 @@ public class ObjType extends TableRow {
 	public ObjType(final int id) {
 		super(id);
 	}
-
-	// ---------- STATICS ----------
-	@Nonnull
-	public static ObjType get(final int id) {
-		return (ObjType) factoryPut("ObjectTypes",id,ObjType::new);
-	}
-
+	
 	/**
 	 * Create a new object type
 	 *
 	 * @param st        State
 	 * @param name      Name of object type
 	 * @param behaviour The JSON object describing the object's behaviour (See Objects module)
-	 *
 	 * @return a new ObjectTypes
 	 *
 	 * @throws UserInputDuplicateValueException if the object type already exists
@@ -44,21 +37,34 @@ public class ObjType extends TableRow {
 	public static ObjType create(@Nonnull final State st,
 	                             @Nonnull final String name,
 	                             @Nonnull final JSONObject behaviour) {
-		final int existing=db().dqiNotNull("select count(*) from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		final int existing=db().dqiNotNull("select count(*) from objecttypes where instanceid=? and name like ?",
+		                                   st.getInstance().getId(),
+		                                   name);
 		if (existing>0) {
-			throw new UserInputDuplicateValueException("ObjectType "+name+" already exists in instance "+st.getInstance());
+			throw new UserInputDuplicateValueException(
+					"ObjectType "+name+" already exists in instance "+st.getInstance());
 		}
-		db().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",st.getInstance().getId(),name,behaviour.toString());
-		final int newid=db().dqiNotNull("select id from objecttypes where instanceid=? and name like ?",st.getInstance().getId(),name);
+		db().d("insert into objecttypes(instanceid,name,behaviour) values (?,?,?)",
+		       st.getInstance().getId(),
+		       name,
+		       behaviour.toString());
+		final int newid=db().dqiNotNull("select id from objecttypes where instanceid=? and name like ?",
+		                                st.getInstance().getId(),
+		                                name);
 		return get(newid);
 	}
-
+	
+	// ---------- STATICS ----------
+	@Nonnull
+	public static ObjType get(final int id) {
+		return (ObjType)factoryPut("ObjectTypes",id,ObjType::new);
+	}
+	
 	/**
 	 * A horrible bodge that creates a web page of object types.
 	 * FIXME
 	 *
 	 * @param st The state
-	 *
 	 * @return A HTML string...
 	 */
 	@Nonnull
@@ -74,14 +80,20 @@ public class ObjType extends TableRow {
 			 .append(row.getStringNullable("name"))
 			 .append("</a></td>");
 			r.append("<td>");
-			try { r.append(ObjectType.materialise(st,ot).explainHtml()); }
-			catch (final SystemLookupFailureException e) {
+			try {
+				r.append(ObjectType.materialise(st,ot).explainHtml());
+			} catch (final SystemLookupFailureException e) {
 				r.append("<i>NoType</i>");
 			}
 			r.append("</td>");
 			if (st.hasPermission("Objects.ObjectTypes")) {
 				r.append("<td>");
-				r.append(new Form(st,true,"/GPHUD/Configuration/Objects/DeleteObjectType","Delete","name",row.getStringNullable("name")).asHtml(st,true));
+				r.append(new Form(st,
+				                  true,
+				                  "/GPHUD/Configuration/Objects/DeleteObjectType",
+				                  "Delete",
+				                  "name",
+				                  row.getStringNullable("name")).asHtml(st,true));
 				r.append("</td>");
 			}
 			r.append("</tr>");
@@ -89,84 +101,94 @@ public class ObjType extends TableRow {
 		r.append("</table>");
 		return r.toString();
 	}
-
+	
 	/**
 	 * Gets a set of all the object type names at this instance.
 	 *
 	 * @param st State
-	 *
 	 * @return A Set of Strings of objecttype names
 	 */
 	@Nonnull
 	public static Set<String> getObjectTypes(@Nonnull final State st) {
 		final Set<String> set=new TreeSet<>();
-		for (final ResultsRow row: db().dq("select name from objecttypes where instanceid=?",st.getInstance().getId())) {
+		for (final ResultsRow row: db().dq("select name from objecttypes where instanceid=?",
+		                                   st.getInstance().getId())) {
 			set.add(row.getStringNullable("name"));
 		}
 		return set;
 	}
-
+	
 	/**
 	 * Creates a DropDownList of all the object types available at this instance.
 	 *
 	 * @param st   State
 	 * @param name Name of the HTML DropDownList component
-	 *
 	 * @return a DropDownList containing all the object types that will put the ID number in the HTML form
 	 */
 	@Nonnull
-	public static DropDownList getDropDownList(@Nonnull final State st,
-	                                           @Nonnull final String name) {
+	public static DropDownList getDropDownList(@Nonnull final State st,@Nonnull final String name) {
 		final DropDownList list=new DropDownList(name);
-		for (final ResultsRow row: db().dq("select name,id from objecttypes where instanceid=?",st.getInstance().getId())) {
-			list.add(String.valueOf(row.getInt("id")), row.getStringNullable("name"));
+		for (final ResultsRow row: db().dq("select name,id from objecttypes where instanceid=?",
+		                                   st.getInstance().getId())) {
+			list.add(String.valueOf(row.getInt("id")),row.getStringNullable("name"));
 		}
 		return list;
 	}
-
-	public static ObjType get(final State state, final String objecttype) {
+	
+	public static ObjType get(final State state,final String objecttype) {
 		try {
-			return get(GPHUD.getDB().dqiNotNull("select id from objecttypes where instanceid=? and name like ?", state.getInstance().getId(), objecttype));
+			return get(GPHUD.getDB()
+			                .dqiNotNull("select id from objecttypes where instanceid=? and name like ?",
+			                            state.getInstance().getId(),
+			                            objecttype));
 		} catch (final NoDataException e) {
-			throw new UserConfigurationException("Object type " + objecttype + " does not exist", e, true);
+			throw new UserConfigurationException("Object type "+objecttype+" does not exist",e,true);
 		}
 	}
-
-    // ---------- INSTANCE ----------
+	
+	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
-	public String getIdColumn() { return "id"; }
-
+	public String getIdColumn() {
+		return "id";
+	}
+	
 	@Override
 	public void validate(@Nonnull final State st) {
-		if (validated) { return; }
+		if (validated) {
+			return;
+		}
 		validate();
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("ObjectTypes / State Instance mismatch");
 		}
 	}
-
+	
 	@Nonnull
 	@Override
-	public String getNameField() { return "name"; }
-
+	public String getNameField() {
+		return "name";
+	}
+	
 	@Nonnull
 	@Override
-	public String getLinkTarget() { return "/GPHUD/configuration/objects/objecttypes/"+getId(); }
-
+	public String getLinkTarget() {
+		return "/GPHUD/configuration/objects/objecttypes/"+getId();
+	}
+	
 	@Nullable
 	@Override
 	public String getKVTable() {
 		return null;
 	}
-
+	
 	@Nullable
 	@Override
 	public String getKVIdField() {
 		return null;
 	}
 	// ----- Internal Instance -----
-
+	
 	/**
 	 * Returns the instance associated with this objecttype.
 	 *
@@ -176,7 +198,7 @@ public class ObjType extends TableRow {
 	public Instance getInstance() {
 		return Instance.get(getInt("instanceid"));
 	}
-
+	
 	/**
 	 * Gets the behaviour JSON for this objecttype.
 	 *
@@ -185,12 +207,16 @@ public class ObjType extends TableRow {
 	@Nonnull
 	public JSONObject getBehaviour() {
 		String s=null;
-		try { s=getStringNullable("behaviour"); } catch (final NoDataException ignore) {
+		try {
+			s=getStringNullable("behaviour");
+		} catch (final NoDataException ignore) {
 		}
-		if (s==null || s.isEmpty()) { return new JSONObject(); }
+		if (s==null||s.isEmpty()) {
+			return new JSONObject();
+		}
 		return new JSONObject(s);
 	}
-
+	
 	/**
 	 * Set this objecttype's behaviour JSON
 	 *
@@ -199,13 +225,13 @@ public class ObjType extends TableRow {
 	public void setBehaviour(@Nonnull final JSONObject json) {
 		set("behaviour",json.toString());
 	}
-
+	
 	@Nonnull
 	@Override
 	public String getTableName() {
 		return "objecttypes";
 	}
-
+	
 	public void delete() {
 		d("delete from objecttypes where id=?",getId());
 	}

@@ -9,21 +9,21 @@ import java.lang.annotation.*;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class SideMenu {
-
+	
 	// ---------- INSTANCE ----------
 	public abstract boolean isGenerated();
-
+	
 	@Nonnull
 	public abstract String name();
-
+	
 	public abstract int priority();
-
+	
 	@Nonnull
 	public abstract String url();
-
+	
 	@Nonnull
 	public abstract String requiresPermission();
-
+	
 	/**
 	 * Defines a sidemenu section for this module.
 	 */
@@ -33,11 +33,11 @@ public abstract class SideMenu {
 	public @interface SideMenus {
 		// ---------- INSTANCE ----------
 		@Nonnull String name();
-
+		
 		int priority();
-
+		
 		@Nonnull String url();
-
+		
 		@Nonnull String requiresPermission() default "";
 	}
 }

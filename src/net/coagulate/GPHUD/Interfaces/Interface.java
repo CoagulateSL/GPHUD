@@ -22,15 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Interface extends URLMapper<Method> {
-
+	
 	private static final Map<Thread,State> threadState=new ConcurrentHashMap<>();
-
-	@Nullable
-	public static String base;
-
+	
+	@Nullable public static String base;
+	
 	// ---------- STATICS ----------
-	public static String getNode() { return Config.getHostName(); }
-
+	public static String getNode() {
+		return Config.getHostName();
+	}
+	
 	@Nonnull
 	public static String base() {
 		if (base==null) {
@@ -38,62 +39,70 @@ public abstract class Interface extends URLMapper<Method> {
 		}
 		return base;
 	}
-
+	
 	// we don't really know about "/app" but apache does, and then hides it from us, which is both nice, and arbitrary, either way really.
 	// it doesn't any more :)
 	@Nonnull
-	public static String generateURL(final State st,
-	                                 final String ending) {
+	public static String generateURL(final State st,final String ending) {
 		return "https://"+Config.getURLHost()+"/"+base()+"/"+ending;
 	}
-
+	
 	public static int convertVersion(@Nonnull final String version) {
 		final String[] versionParts=version.split("\\.");
 		final int major=Integer.parseInt(versionParts[0]);
 		final int minor=Integer.parseInt(versionParts[1]);
 		final int bugfix=Integer.parseInt(versionParts[2]);
-		if (major>99) { throw new SystemBadValueException("Major version number too high"); }
-		if (minor>99) { throw new SystemBadValueException("Minor version number too high"); }
-		if (bugfix>99) { throw new SystemBadValueException("Bugfix version number too high"); }
+		if (major>99) {
+			throw new SystemBadValueException("Major version number too high");
+		}
+		if (minor>99) {
+			throw new SystemBadValueException("Minor version number too high");
+		}
+		if (bugfix>99) {
+			throw new SystemBadValueException("Bugfix version number too high");
+		}
 		return 10000*major+100*minor+bugfix;
 	}
-
-	protected State state() {
-        return threadState.get(Thread.currentThread());
-    }
-
-    @Override
-    protected void earlyInitialiseState(final HttpRequest request, final HttpContext context) {
-        super.earlyInitialiseState(request, context);
-        threadState.put(Thread.currentThread(), new State(request, context));
-    }
-
-    @Override
-    protected Method lookupPageFromUri(final String uri) {
-        final State st = state();
-        st.setURL(uri);
-        return super.lookupPageFromUri(uri);
-    }
-
-    @Override
-    protected void initialiseState(final HttpRequest request, final HttpContext context, final Map<String, String> parameters, final Map<String, String> cookies) {
-    }
-
+	
+	@Override
+	protected void earlyInitialiseState(final HttpRequest request,final HttpContext context) {
+		super.earlyInitialiseState(request,context);
+		threadState.put(Thread.currentThread(),new State(request,context));
+	}
+	
 	@Override
 	protected void loadSession() {
-
+	
 	}
-
-    @Override
-    protected boolean checkAuthenticationNeeded(final Method content) {
-        return false;
-    }
-
-    @Override
-    protected void executePage(final Method content) {
-
-    }
-
+	
+	@Override
+	protected boolean checkAuthenticationNeeded(final Method content) {
+		return false;
+	}
+	
+	@Override
+	protected void executePage(final Method content) {
+	
+	}
+	
+	@Override
+	protected void initialiseState(final HttpRequest request,
+	                               final HttpContext context,
+	                               final Map<String,String> parameters,
+	                               final Map<String,String> cookies) {
+	}
+	
+	@Override
+	protected Method lookupPageFromUri(final String uri) {
+		final State st=state();
+		st.setURL(uri);
+		return super.lookupPageFromUri(uri);
+	}
+	
+	protected State state() {
+		return threadState.get(Thread.currentThread());
+	}
+	
 	@Override
 	protected void cleanup() {
 		threadState.remove(Thread.currentThread());

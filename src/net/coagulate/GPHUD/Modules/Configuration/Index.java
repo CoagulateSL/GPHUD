@@ -21,35 +21,38 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Index {
-
+	
 	// ---------- STATICS ----------
 	@URLs(url="/configuration/")
-	public static void createForm(@Nonnull final State st,
-	                              final SafeMap values) {
+	public static void createForm(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.add(new TextHeader("GPHUD Module Configuration"));
-		f.add(new Paragraph("Here, the <b>INSTANCE OWNER</b> may enable and disable certain (non-core) modules to enable or disable functionality."));
+		f.add(new Paragraph(
+				"Here, the <b>INSTANCE OWNER</b> may enable and disable certain (non-core) modules to enable or disable functionality."));
 		f.add(new TextSubHeader("Core Modules"));
-		f.add(new Paragraph("These may not be disabled as they provide core functionality needed for the system to operate"));
+		f.add(new Paragraph(
+				"These may not be disabled as they provide core functionality needed for the system to operate"));
 		final Table core=new Table();
 		f.add(core);
 		core.add(new HeaderRow().add("Name").add("Description"));
 		f.add(new TextSubHeader("Optional Modules"));
 		f.add(new Paragraph(
-				"These modules can be disabled as they are optional, though you may consider some of them, such as the 'roller', to be 'core', it can be disabled, but "+"probably makes no sense to do so.  Be aware certain modules may depend on other modules and may refuse to enable themselves."));
+				"These modules can be disabled as they are optional, though you may consider some of them, such as the 'roller', to be 'core', it can be disabled, but "+
+				"probably makes no sense to do so.  Be aware certain modules may depend on other modules and may refuse to enable themselves."));
 		final Table configurable=new Table();
 		f.add(configurable);
 		configurable.add(new HeaderRow().add("Name").add("Description").add("Status"));
 		for (final Module m: Modules.getModules()) {
 			boolean hasconfig=!(m.getKVDefinitions(st).isEmpty());
-			if (m.hasConfig(st)) { hasconfig=true; }
+			if (m.hasConfig(st)) {
+				hasconfig=true;
+			}
 			if (m.canDisable()) {
 				configurable.openRow();
-				if (hasconfig && m.isEnabled(st) && ConfigurationModule.canConfigure(st,m)) {
+				if (hasconfig&&m.isEnabled(st)&&ConfigurationModule.canConfigure(st,m)) {
 					configurable.add(new Link(m.getName(),"/GPHUD/configuration/"+m.getName()));
-				}
-				else {
+				} else {
 					configurable.add(m.getName());
 				}
 				configurable.add(m.description());
@@ -63,8 +66,7 @@ public abstract class Index {
 						disable.add(new Button("Disable "+m.getName(),true));
 						configurable.add(disable);
 					}
-				}
-				else {
+				} else {
 					configurable.add(new Color("red","Disabled"));
 					if (st.hasPermission("instance.moduleenablement")) {
 						// only enableable if all the dependancies are enabled.  Note we dont check this on disables because reverse deps are annoying, and deps just disable
@@ -77,13 +79,11 @@ public abstract class Index {
 						configurable.add(enable);
 					}
 				}
-			}
-			else {  // note how this renders in one loop but produces two tables.  it feels a bit odd.
+			} else {  // note how this renders in one loop but produces two tables.  it feels a bit odd.
 				core.openRow();
-				if (hasconfig && ConfigurationModule.canConfigure(st,m)) {
+				if (hasconfig&&ConfigurationModule.canConfigure(st,m)) {
 					core.add(new Link(m.getName(),"/GPHUD/configuration/"+m.getName()));
-				}
-				else {
+				} else {
 					core.add(m.getName());
 				}
 				core.add(m.description());
@@ -91,9 +91,11 @@ public abstract class Index {
 		}
 		f.add(new TextSubHeader("Cookbooks"));
 		f.add(new Paragraph(
-				"Cookbooks provide a set of sequenced operations that modify your configuration and add features.  Everything these do can be done by hand and they merely "+"provide a convenience measure."));
+				"Cookbooks provide a set of sequenced operations that modify your configuration and add features.  Everything these do can be done by hand and they merely "+
+				"provide a convenience measure."));
 		f.add(new Paragraph(
-				"Clicking a cookbook will show you the steps that would be enacted.  Anyone may view a cookbook, but only the Instance.PlayCookBook may enact the cookbook "+"due to the scale of changes"));
+				"Clicking a cookbook will show you the steps that would be enacted.  Anyone may view a cookbook, but only the Instance.PlayCookBook may enact the cookbook "+
+				"due to the scale of changes"));
 		final Table books=new Table();
 		f.add(books);
 		books.add(new HeaderRow().add("Name").add("Description"));
@@ -103,22 +105,24 @@ public abstract class Index {
 		books.openRow()
 		     .add(new Link("User Changable Titler Color","/GPHUD/configuration/cookbooks/user-titler-color"))
 		     .add("Allows the character to modify a text string that changes their titler color (should be an LSL color, e.g. <0,1,0> for green");
-		books.openRow().add(new Link("Allow Multiple Characters","/GPHUD/configuration/cookbooks/multi-char")).add("Allows the user to create and name multiple characters");
-		books.openRow().add(new Link("Allow Self Retirement","/GPHUD/configuration/cookbooks/self-retire")).add("Allows a character to elect to 'retire' themselves");
+		books.openRow()
+		     .add(new Link("Allow Multiple Characters","/GPHUD/configuration/cookbooks/multi-char"))
+		     .add("Allows the user to create and name multiple characters");
+		books.openRow()
+		     .add(new Link("Allow Self Retirement","/GPHUD/configuration/cookbooks/self-retire"))
+		     .add("Allows a character to elect to 'retire' themselves");
 	}
-
+	
 	@URLs(url="/configuration/view/*")
-	public static void kvDetailPage(@Nonnull final State st,
-	                                @Nonnull final SafeMap values) {
+	public static void kvDetailPage(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final String kvname=st.getDebasedURL().replaceFirst("/configuration/view/","").replaceFirst("/",".");
 		final KV kv=st.getKVDefinition(kvname);
 		st.form().noForm();
 		st.form().add(new ConfigurationHierarchy(st,kv,st,values));
 	}
-
+	
 	@URLs(url="/configuration/*")
-	public static void genericConfigurationPage(@Nonnull final State st,
-	                                            @Nonnull final SafeMap values) {
+	public static void genericConfigurationPage(@Nonnull final State st,@Nonnull final SafeMap values) {
 		String module=st.getDebasedURL().replaceFirst("/configuration/","");
 		String key=null;
 		st.form().noForm();
@@ -132,10 +136,9 @@ public abstract class Index {
 		final Module m=Modules.get(st,module);
 		if (key==null) {
 			m.kvConfigPage(st);
-		}
-		else {
+		} else {
 			final KV kv=st.getKVDefinition(module+"."+key);
-
+			
 			st.form().add(new ConfigurationHierarchy(st,kv,st.simulate(st.getCharacter()),values));
 		}
 	}

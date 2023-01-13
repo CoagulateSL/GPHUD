@@ -12,7 +12,7 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class CurrencyFunctions {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@GSFunctions.GSFunction(description="Gets the players current balance",
@@ -20,7 +20,7 @@ public class CurrencyFunctions {
 	                        returns="Integer - Number of basecoins the character has",
 	                        notes="",
 	                        privileged=false,
-	                        category= SCRIPT_CATEGORY.CURRENCY)
+	                        category=SCRIPT_CATEGORY.CURRENCY)
 	public static BCInteger gsGetBalance(@Nonnull final State st,
 	                                     @Nonnull final GSVM vm,
 	                                     @Nonnull final BCCharacter target,
@@ -29,14 +29,14 @@ public class CurrencyFunctions {
 		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCInteger(null,currency.sum(new State(target.getContent())));
 	}
-
+	
 	@Nonnull
 	@GSFunction(description="Converts a number of base coins into a short format text string",
 	            parameters="BCString - Currency name<br>BCInteger - ammount of basecoins",
 	            returns="BCString - Formatted representation of the currency",
 	            notes="",
 	            privileged=false,
-	            category= SCRIPT_CATEGORY.CURRENCY)
+	            category=SCRIPT_CATEGORY.CURRENCY)
 	public static BCString gsFormatCoins(@Nonnull final State st,
 	                                     @Nonnull final GSVM vm,
 	                                     @Nonnull final BCString currencyname,
@@ -45,14 +45,14 @@ public class CurrencyFunctions {
 		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCString(null,currency.shortTextForm(ammount.getContent()));
 	}
-
+	
 	@Nonnull
 	@GSFunction(description="Converts a number of base coins into a long format text string",
 	            parameters="BCString - Currency name<br>BCInteger - ammount of basecoins",
 	            returns="BCString - Formatted representation of the currency",
 	            notes="",
 	            privileged=false,
-	            category= SCRIPT_CATEGORY.CURRENCY)
+	            category=SCRIPT_CATEGORY.CURRENCY)
 	public static BCString gsFormatCoinsLong(@Nonnull final State st,
 	                                         @Nonnull final GSVM vm,
 	                                         @Nonnull final BCString currencyname,
@@ -61,14 +61,14 @@ public class CurrencyFunctions {
 		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCString(null,currency.longTextForm(ammount.getContent()));
 	}
-
+	
 	@Nonnull
 	@GSFunction(description="Converts a formatted currency string into a number of base coins",
 	            parameters="BCString - Currency name<br>BCString - formatted currency",
 	            returns="BCInteger - number of base coins this represented",
 	            notes="",
 	            privileged=false,
-	            category= SCRIPT_CATEGORY.CURRENCY)
+	            category=SCRIPT_CATEGORY.CURRENCY)
 	public static BCInteger gsParseCoins(@Nonnull final State st,
 	                                     @Nonnull final GSVM vm,
 	                                     @Nonnull final BCString currencyname,
@@ -77,6 +77,6 @@ public class CurrencyFunctions {
 		final Currency currency=Currency.find(st,currencyname.getContent());
 		return new BCInteger(null,currency.decode(ammount.getContent()));
 	}
-
-
+	
+	
 }

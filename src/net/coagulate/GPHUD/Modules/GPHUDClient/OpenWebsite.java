@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class OpenWebsite {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
@@ -38,7 +38,7 @@ public class OpenWebsite {
 		//System.out.println("OPENURL:"+json.toString());
 		return new JSONResponse(json);
 	}
-
+	
 	@Nonnull
 	@Commands(context=Context.ANY,
 	          description="Causes the GPHUD to send an llOpenURL to the user with a custom URL/description",
@@ -46,10 +46,12 @@ public class OpenWebsite {
 	          permitObject=false,
 	          permitExternal=false)
 	public static Response offerWebsite(@Nonnull final State st,
-	                                    @Argument.Arguments(name="url",description="URL to offer to user",
+	                                    @Argument.Arguments(name="url",
+	                                                        description="URL to offer to user",
 	                                                        type=Argument.ArgumentType.TEXT_ONELINE,
 	                                                        max=255) final String url,
-	                                    @Argument.Arguments(name="description",description="Description to offer with the URL",
+	                                    @Argument.Arguments(name="description",
+	                                                        description="Description to offer with the URL",
 	                                                        type=Argument.ArgumentType.TEXT_MULTILINE,
 	                                                        max=254) final String description) {
 		final JSONObject json=new JSONObject();

@@ -12,19 +12,21 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class NoResponse extends TextOK implements Response {
-	public NoResponse() { super(""); }
-
+	public NoResponse() {
+		super("");
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
 		return new JSONObject();
 	}
-
+	
 	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<No Response>";
 	}
-
+	
 }

@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class NOOP {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.CHARACTER,
@@ -27,5 +27,5 @@ public abstract class NOOP {
 	public static Response noop(final State st) {
 		return new JSONResponse(new JSONObject());
 	}
-
+	
 }

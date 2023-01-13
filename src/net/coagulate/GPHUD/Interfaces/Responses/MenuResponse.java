@@ -18,42 +18,47 @@ import java.util.Set;
  * @author iain
  */
 public class MenuResponse implements Response {
-
-	private final List<Renderable> menu=new ArrayList<>();
-	@Nullable
-	private String header;
-
-	public MenuResponse() {}
-
-	public MenuResponse(@Nullable final String title) { header=title; }
-
+	
+	private final     List<Renderable> menu=new ArrayList<>();
+	@Nullable private String           header;
+	
+	public MenuResponse() {
+	}
+	
+	public MenuResponse(@Nullable final String title) {
+		header=title;
+	}
+	
 	// ---------- INSTANCE ----------
-	public void add(final Renderable r) { menu.add(r); }
-
+	public void add(final Renderable r) {
+		menu.add(r);
+	}
+	
 	@Nonnull
 	@Override
 	public JSONObject asJSON(final State st) {
 		throw new SystemImplementationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-
+	
 	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<A menu response>";
 	}
-
+	
 	@Nonnull
 	@Override
 	public String asText(final State st) {
 		throw new SystemImplementationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		final StringBuilder s=new StringBuilder();
-		if (header!=null && !header.isEmpty()) { s.append(new TextHeader(header).asHtml(st,rich)); }
+		if (header!=null&&!header.isEmpty()) {
+			s.append(new TextHeader(header).asHtml(st,rich));
+		}
 		for (final Renderable r: menu) {
 			if (!s.isEmpty()) {
 				if (rich) {
@@ -66,11 +71,11 @@ public class MenuResponse implements Response {
 		}
 		return s.toString();
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		throw new SystemImplementationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-
+	
 }

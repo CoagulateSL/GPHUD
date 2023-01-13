@@ -21,13 +21,9 @@ import java.util.TreeMap;
  */
 public abstract class URLHandlers {
 	// ---------- STATICS ----------
-	@URLs(url="/introspection/urlhandlers",
-		  requiresPermission = "User.SuperAdmin")
-	@SideSubMenus(name="URL Handlers",
-	              requiresPermission = "User.SuperAdmin",
-	              priority=99)
-	public static void createForm(@Nonnull final State st,
-	                              final SafeMap values) {
+	@URLs(url="/introspection/urlhandlers", requiresPermission="User.SuperAdmin")
+	@SideSubMenus(name="URL Handlers", requiresPermission="User.SuperAdmin", priority=99)
+	public static void createForm(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("URL Handler registrations"));
 		if (!st.isSuperUser()) {

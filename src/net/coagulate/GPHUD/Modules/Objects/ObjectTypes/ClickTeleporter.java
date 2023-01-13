@@ -17,8 +17,7 @@ import javax.annotation.Nullable;
  * An implementation of the teleporter that activates on click
  */
 public class ClickTeleporter extends Teleporter {
-	ClickTeleporter(final State st,
-					@Nonnull final ObjType object) {
+	ClickTeleporter(final State st,@Nonnull final ObjType object) {
 		super(st,object);
 	}
 	
@@ -30,17 +29,25 @@ public class ClickTeleporter extends Teleporter {
 	}
 	
 	@Nonnull
-	public String explainText() {return explainHtml();}
+	public String explainText() {
+		return explainHtml();
+	}
+	
+	@Override
+	public void payload(final State st,
+	                    @Nonnull final JSONObject response,
+	                    @Nonnull final Region region,
+	                    @Nullable final String url) {
+		super.payload(st,response,region,url);
+		if (json.has("maxdistance")) {
+			response.put("maxdistance",json.get("maxdistance"));
+		}
+	}
 	
 	@Nonnull
 	@Override
-	public MODE mode() {return MODE.CLICKABLE;}
-	
-	@Nonnull
-	@Override
-	public Response click(@Nonnull final State st,
-						  @Nonnull final Char clicker) {
-		return execute(st,clicker);
+	public MODE mode() {
+		return MODE.CLICKABLE;
 	}
 	
 	@Override
@@ -62,12 +69,10 @@ public class ClickTeleporter extends Teleporter {
 		}
 	}
 	
+	@Nonnull
 	@Override
-	public void payload(final State st,@Nonnull final JSONObject response,@Nonnull final Region region,@Nullable final String url) {
-		super.payload(st,response,region,url);
-		if (json.has("maxdistance")) {
-			response.put("maxdistance",json.get("maxdistance"));
-		}
+	public Response click(@Nonnull final State st,@Nonnull final Char clicker) {
+		return execute(st,clicker);
 	}
 	
 }

@@ -12,30 +12,29 @@ import java.lang.annotation.*;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class URL {
-
-
+	
+	
 	// ---------- INSTANCE ----------
 	public abstract boolean isGenerated();
-
+	
 	public abstract String url();
-
+	
 	@Nonnull
 	public abstract String requiresPermission();
-
+	
 	public abstract boolean requiresAuthentication();
-
+	
 	public abstract String getFullName();
-
+	
 	public abstract String getName();
-
+	
 	@Nonnull
 	public abstract String getMethodName();
-
-	public abstract void run(State st,
-	                         SafeMap values);
-
+	
+	public abstract void run(State st,SafeMap values);
+	
 	public abstract Module getModule();
-
+	
 	/**
 	 * Defines an exposed command.
 	 * That is, something the user can call through web, SL or other user interfaces.
@@ -46,9 +45,9 @@ public abstract class URL {
 	public @interface URLs {
 		// ---------- INSTANCE ----------
 		@Nonnull String url();
-
+		
 		@Nonnull String requiresPermission() default "";
-
+		
 		boolean requiresAuthentication() default true;
 	}
 }

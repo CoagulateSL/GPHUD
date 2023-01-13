@@ -19,19 +19,19 @@ import java.util.List;
 import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
 
 public class PoolTable extends PagedSQL {
-
+	
 	final NameCache cache=new NameCache();
-	final Char forchar;
-	final String timezone;
+	final Char      forchar;
+	final String    timezone;
 	String olddate="";
 	final String poolname;
 	String cachedwhere;
-
+	
 	/**
 	 * Defines an audit table view.
 	 */
-
-
+	
+	
 	public PoolTable(final State state,
 	                 final String prefix,
 	                 final SafeMap parameters,
@@ -41,15 +41,17 @@ public class PoolTable extends PagedSQL {
 		timezone=state.getAvatar().getTimeZone();
 		this.forchar=forchar;
 		this.poolname=poolname;
-		if (state.getInstance()!=forchar.getInstance()) { throw new SystemConsistencyException("State/char instance mismatch"); }
+		if (state.getInstance()!=forchar.getInstance()) {
+			throw new SystemConsistencyException("State/char instance mismatch");
+		}
 	}
-
+	
 	// ----- Internal Instance -----
 	@Override
 	protected boolean maxWidth() {
 		return false;
 	}
-
+	
 	@Override
 	@Nonnull
 	protected List<String> getHeaders() {
@@ -61,27 +63,28 @@ public class PoolTable extends PagedSQL {
 		headers.add("Total");
 		return headers;
 	}
-
+	
 	@Override
 	@Nonnull
-	protected String formatRow(@Nonnull final State state,
-	                           @Nonnull final ResultsRow row) {
+	protected String formatRow(@Nonnull final State state,@Nonnull final ResultsRow row) {
 		final String timezone=state.getAvatar().getTimeZone();
 		String ret="";
 		final String[] datetime=fromUnixTime(row.getString("timedate"),timezone).split(" ");
 		if (!olddate.equals(datetime[0])) {
-			ret+="<td colspan=9999><table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\">"+datetime[0]+"</span"+"></td><td width=50%><hr></td></tr></table></td></tr><tr>";
+			ret+=
+					"<td colspan=9999><table width=100%><tr width=100%><td width=50%><hr></td><td><span style=\"display: inline-block; white-space: nowrap;\">"+
+					datetime[0]+"</span"+"></td><td width=50%><hr></td></tr></table></td></tr><tr>";
 			olddate=datetime[0];
 		}
 		ret+="<td>"+datetime[1]+"</td>";
-
+		
 		final String srcav=formatavatar(cache,row.getIntNullable("adjustedbyavatar"));
 		final String srcch=formatchar(cache,row.getIntNullable("adjustedbycharacter"));
 		ret+="<td align=right>";
-		ret+=(srcav+(srcav.isEmpty() || srcch.isEmpty()?"":"/")+srcch);
+		ret+=(srcav+(srcav.isEmpty()||srcch.isEmpty()?"":"/")+srcch);
 		ret+="</td>";
-		final String newvaluestr = String.valueOf(row.getInt("adjustment"));
-		final Renderable notes = new Text(cleanse(row.getStringNullable("description")));
+		final String newvaluestr=String.valueOf(row.getInt("adjustment"));
+		final Renderable notes=new Text(cleanse(row.getStringNullable("description")));
 		ret+="<td align=right>";
 		if (poolname.toLowerCase().startsWith("currency.")) {
 			ret+=Currency.find(state,poolname.substring(9)).shortTextForm(row.getInt("adjustment"));
@@ -96,29 +99,35 @@ public class PoolTable extends PagedSQL {
 		if (poolname.toLowerCase().startsWith("currency.")) {
 			ret+=Currency.find(state,poolname.substring(9)).shortTextForm((int)(row.getFloat("cumsum")));
 		} else {
-			ret += String.valueOf((int) (row.getFloat("cumsum")));
+			ret+=String.valueOf((int)(row.getFloat("cumsum")));
 		}
 		ret+="</td>";
 		return ret;
 	}
-
+	
 	@Override
 	protected int getRowCount() {
-		return db().dqiNotNull("select count(*) from characterpools where poolname=? and characterid="+forchar.getId()+" "+getAdditionalWhere()+" order by timedate desc ",
-		                  poolname
-		                 );
+		return db().dqiNotNull(
+				"select count(*) from characterpools where poolname=? and characterid="+forchar.getId()+" "+
+				getAdditionalWhere()+" order by timedate desc ",poolname);
 	}
-
+	
 	@Nonnull
 	@Override
 	protected Results runQuery() {
 		//return db().dq("select * from characterpools where poolname=? and characterid="+forchar.getId()+" "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit(),
 		//               poolname);
-		return db().dq("select * from (select *,@runtot:=@runtot+adjustment as cumsum from ( select * from characterpools where poolname like ? and characterid="+forchar.getId()+" order by timedate asc) t join (select @runtot:=0) r order by timedate) q where 1=1 "+getAdditionalWhere()+" order by timedate desc "+getSQLLimit(),poolname);
+		return db().dq(
+				"select * from (select *,@runtot:=@runtot+adjustment as cumsum from ( select * from characterpools where poolname like ? and characterid="+
+				forchar.getId()+" order by timedate asc) t join (select @runtot:=0) r order by timedate) q where 1=1 "+
+				getAdditionalWhere()+" order by timedate desc "+getSQLLimit(),
+				poolname);
 	}
-
+	
 	private String getAdditionalWhere() {
-		if (cachedwhere!=null) { return cachedwhere; }
+		if (cachedwhere!=null) {
+			return cachedwhere;
+		}
 		cachedwhere="";
 		if (!searchtext.isEmpty()) {
 			final User avatar=User.findUsernameNullable(searchtext,false);

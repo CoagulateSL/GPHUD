@@ -8,6 +8,7 @@ import net.coagulate.GPHUD.Tests.TestFramework;
 import net.coagulate.SL.TestFrameworkPrototype;
 
 import java.io.ByteArrayInputStream;
+
 public class Tests {
 	
 	@TestFramework.Test(name="Test gsGetCharacter")

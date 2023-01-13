@@ -1,9 +1,7 @@
 @ModuleDefinition(description="Allows configuration of the External Access API.  See documentation.",
                   defaultDisable=true)
 
-@Permissions(description="Allows authorisation of a developer to the instance",
-             power=POWER.HIGH,
-             name="Authorise")
+@Permissions(description="Allows authorisation of a developer to the instance", power=POWER.HIGH, name="Authorise")
 
 @Permissions(description="Allows deauthorisation of a developer to the instance",
              power=POWER.MEDIUM,

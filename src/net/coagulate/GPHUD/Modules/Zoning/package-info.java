@@ -1,15 +1,11 @@
-@ModuleDefinition(defaultDisable=true,
-                  description="Zoning management",
-                  forceConfig=true)
+@ModuleDefinition(defaultDisable=true, description="Zoning management", forceConfig=true)
 
-@Permissions(description="Permission to create or modify zones",
-             name="Config",
-             power=Permission.POWER.LOW)
+@Permissions(description="Permission to create or modify zones", name="Config", power=Permission.POWER.LOW)
 
 @KVS(name="EntryMessage",
-     defaultValue ="",
+     defaultValue="",
      description="Message emitted when zone is entered",
-     editPermission ="Zoning.Config",
+     editPermission="Zoning.Config",
      scope=KVSCOPE.ZONE,
      type=KVTYPE.TEXT,
      template=false)

@@ -13,16 +13,16 @@ import javax.annotation.Nonnull;
  * @author iain
  */
 public class IntrospectionMenu {
-
+	
 	// ---------- STATICS ----------
 	@URLs(url="/introspection/")
-	public static void menu(@Nonnull final State st,
-	                        final SafeMap values) {
+	public static void menu(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("GPHUD Introspection"));
 		f.add(new TextSubHeader("Global definitions"));
 		f.p("This is a developer feature that allows you to look around the internals of GPHUD.");
-		f.p("Please see the documentation site at <a href=\"/Docs/GPHUD/index.php/Main_Page.html\">https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html</a> for more"+".");
+		f.p("Please see the documentation site at <a href=\"/Docs/GPHUD/index.php/Main_Page.html\">https://sl.coagulate.net/Docs/GPHUD/index.php/Main_Page.html</a> for more"+
+		    ".");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/api/\">API</a>"));
 		f.p("The API documentation provides an overview of callable functions provided by GPHUD and further details about individual commands.");
 		f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/kvmap\">Keyvalue Mappings</a>"));
@@ -42,7 +42,7 @@ public class IntrospectionMenu {
 			f.p("Classes that are hooking into URLs.");
 			f.add(new TextSubHeader("<a href=\"/GPHUD/introspection/sql\">SQL Audit</a>"));
 			f.p("SQL statement count and execution times.");
-
+			
 		}
 		f.add(new TextSubHeader("Configuration specific"));
 		if (st.hasModule("Experience")) {
@@ -50,5 +50,5 @@ public class IntrospectionMenu {
 			f.p("Shows the mapping of XP to levels currently employed at this instance");
 		}
 	}
-
+	
 }

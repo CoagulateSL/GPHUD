@@ -7,15 +7,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ColorNormaliser {
-	private ColorNormaliser() {}
-
+	private ColorNormaliser() {
+	}
+	
 	// ---------- STATICS ----------
 	@Nullable
 	public static String normalise(@Nullable final String value) {
 		// meh
-		if (value==null) { return null; }
+		if (value==null) {
+			return null;
+		}
 		// if already a valid format, well thats nice, the user followed instructions :P
-		if (Validators.color(value)) { return value; }
+		if (Validators.color(value)) {
+			return value;
+		}
 		// so they didn't.
 		if (value.split(",").length==3) {
 			// so they input some kind of triplet.  try parse this
@@ -29,15 +34,17 @@ public class ColorNormaliser {
 		}
 		// sometimes they just type in words
 		final String decodedword=decodeColorName(value);
-		if (decodedword!=null) { return decodedword; }
+		if (decodedword!=null) {
+			return decodedword;
+		}
 		// otherwise who knows.  just spit the input out so it can generate the inevitable "unparsable junk" exception
 		return value;
 	}
-
+	
 	// ----- Internal Statics -----
 	@Nullable
 	private static String decodeColorName(@Nullable final String name) {
-		if (name == null) {
+		if (name==null) {
 			return null;
 		}
 		/*
@@ -45,469 +52,476 @@ public class ColorNormaliser {
 		wget https://www.w3schools.com/colors/colors_names.asp -O/dev/stdout -q|egrep "colornamespan|colorhexspan" colors_names.asp |cut -d"=" -f5-|cut -d'"' -f1|grep -v '^\.'|awk 'NR%2{printf "%s ",$0;next;}1'|sed 's/ /")) { return reformatTriplets(tripletise("/'|sed 's/^/if (name.equalsIgnoreCase("/'|sed 's/$/"),true); }/'
 		*/
 		if ("AliceBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F0F8FF"), true);
+			return reformatTriplets(tripletise("F0F8FF"),true);
 		}
 		if ("AntiqueWhite".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FAEBD7"), true);
+			return reformatTriplets(tripletise("FAEBD7"),true);
 		}
 		if ("Aqua".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00FFFF"), true);
+			return reformatTriplets(tripletise("00FFFF"),true);
 		}
 		if ("Aquamarine".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("7FFFD4"), true);
+			return reformatTriplets(tripletise("7FFFD4"),true);
 		}
 		if ("Azure".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F0FFFF"), true);
+			return reformatTriplets(tripletise("F0FFFF"),true);
 		}
 		if ("Beige".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F5F5DC"), true);
+			return reformatTriplets(tripletise("F5F5DC"),true);
 		}
 		if ("Bisque".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFE4C4"), true);
+			return reformatTriplets(tripletise("FFE4C4"),true);
 		}
 		if ("Black".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("000000"), true);
+			return reformatTriplets(tripletise("000000"),true);
 		}
 		if ("BlanchedAlmond".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFEBCD"), true);
+			return reformatTriplets(tripletise("FFEBCD"),true);
 		}
 		if ("Blue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("0000FF"), true);
+			return reformatTriplets(tripletise("0000FF"),true);
 		}
 		if ("BlueViolet".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("8A2BE2"), true);
+			return reformatTriplets(tripletise("8A2BE2"),true);
 		}
 		if ("Brown".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("A52A2A"), true);
+			return reformatTriplets(tripletise("A52A2A"),true);
 		}
 		if ("BurlyWood".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("DEB887"), true);
+			return reformatTriplets(tripletise("DEB887"),true);
 		}
 		if ("CadetBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("5F9EA0"), true);
+			return reformatTriplets(tripletise("5F9EA0"),true);
 		}
 		if ("Chartreuse".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("7FFF00"), true);
+			return reformatTriplets(tripletise("7FFF00"),true);
 		}
 		if ("Chocolate".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("D2691E"), true);
+			return reformatTriplets(tripletise("D2691E"),true);
 		}
 		if ("Coral".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF7F50"), true);
+			return reformatTriplets(tripletise("FF7F50"),true);
 		}
 		if ("CornflowerBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("6495ED"), true);
+			return reformatTriplets(tripletise("6495ED"),true);
 		}
 		if ("Cornsilk".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFF8DC"), true);
+			return reformatTriplets(tripletise("FFF8DC"),true);
 		}
 		if ("Crimson".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("DC143C"), true);
+			return reformatTriplets(tripletise("DC143C"),true);
 		}
 		if ("Cyan".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00FFFF"), true);
+			return reformatTriplets(tripletise("00FFFF"),true);
 		}
 		if ("DarkBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00008B"), true);
+			return reformatTriplets(tripletise("00008B"),true);
 		}
 		if ("DarkCyan".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("008B8B"), true);
+			return reformatTriplets(tripletise("008B8B"),true);
 		}
 		if ("DarkGoldenRod".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("B8860B"), true);
+			return reformatTriplets(tripletise("B8860B"),true);
 		}
 		if ("DarkGray".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("A9A9A9"), true);
+			return reformatTriplets(tripletise("A9A9A9"),true);
 		}
 		if ("DarkGrey".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("A9A9A9"), true);
+			return reformatTriplets(tripletise("A9A9A9"),true);
 		}
 		if ("DarkGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("006400"), true);
+			return reformatTriplets(tripletise("006400"),true);
 		}
 		if ("DarkKhaki".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("BDB76B"), true);
+			return reformatTriplets(tripletise("BDB76B"),true);
 		}
 		if ("DarkMagenta".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("8B008B"), true);
+			return reformatTriplets(tripletise("8B008B"),true);
 		}
 		if ("DarkOliveGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("556B2F"), true);
+			return reformatTriplets(tripletise("556B2F"),true);
 		}
 		if ("DarkOrange".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF8C00"), true);
+			return reformatTriplets(tripletise("FF8C00"),true);
 		}
 		if ("DarkOrchid".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("9932CC"), true);
+			return reformatTriplets(tripletise("9932CC"),true);
 		}
 		if ("DarkRed".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("8B0000"), true);
+			return reformatTriplets(tripletise("8B0000"),true);
 		}
 		if ("DarkSalmon".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("E9967A"), true);
+			return reformatTriplets(tripletise("E9967A"),true);
 		}
 		if ("DarkSeaGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("8FBC8F"), true);
+			return reformatTriplets(tripletise("8FBC8F"),true);
 		}
 		if ("DarkSlateBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("483D8B"), true);
+			return reformatTriplets(tripletise("483D8B"),true);
 		}
 		if ("DarkSlateGray".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("2F4F4F"), true);
+			return reformatTriplets(tripletise("2F4F4F"),true);
 		}
 		if ("DarkSlateGrey".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("2F4F4F"), true);
+			return reformatTriplets(tripletise("2F4F4F"),true);
 		}
 		if ("DarkTurquoise".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00CED1"), true);
+			return reformatTriplets(tripletise("00CED1"),true);
 		}
 		if ("DarkViolet".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("9400D3"), true);
+			return reformatTriplets(tripletise("9400D3"),true);
 		}
 		if ("DeepPink".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF1493"), true);
+			return reformatTriplets(tripletise("FF1493"),true);
 		}
 		if ("DeepSkyBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00BFFF"), true);
+			return reformatTriplets(tripletise("00BFFF"),true);
 		}
 		if ("DimGray".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("696969"), true);
+			return reformatTriplets(tripletise("696969"),true);
 		}
 		if ("DimGrey".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("696969"), true);
+			return reformatTriplets(tripletise("696969"),true);
 		}
 		if ("DodgerBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("1E90FF"), true);
+			return reformatTriplets(tripletise("1E90FF"),true);
 		}
 		if ("FireBrick".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("B22222"), true);
+			return reformatTriplets(tripletise("B22222"),true);
 		}
 		if ("FloralWhite".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFFAF0"), true);
+			return reformatTriplets(tripletise("FFFAF0"),true);
 		}
 		if ("ForestGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("228B22"), true);
+			return reformatTriplets(tripletise("228B22"),true);
 		}
 		if ("Fuchsia".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF00FF"), true);
+			return reformatTriplets(tripletise("FF00FF"),true);
 		}
 		if ("Gainsboro".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("DCDCDC"), true);
+			return reformatTriplets(tripletise("DCDCDC"),true);
 		}
 		if ("GhostWhite".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F8F8FF"), true);
+			return reformatTriplets(tripletise("F8F8FF"),true);
 		}
 		if ("Gold".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFD700"), true);
+			return reformatTriplets(tripletise("FFD700"),true);
 		}
 		if ("GoldenRod".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("DAA520"), true);
+			return reformatTriplets(tripletise("DAA520"),true);
 		}
 		if ("Gray".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("808080"), true);
+			return reformatTriplets(tripletise("808080"),true);
 		}
 		if ("Grey".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("808080"), true);
+			return reformatTriplets(tripletise("808080"),true);
 		}
 		if ("Green".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("008000"), true);
+			return reformatTriplets(tripletise("008000"),true);
 		}
 		if ("GreenYellow".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("ADFF2F"), true);
+			return reformatTriplets(tripletise("ADFF2F"),true);
 		}
 		if ("HoneyDew".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F0FFF0"), true);
+			return reformatTriplets(tripletise("F0FFF0"),true);
 		}
 		if ("HotPink".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF69B4"), true);
+			return reformatTriplets(tripletise("FF69B4"),true);
 		}
 		if ("IndianRed".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise(" CD5C5C"), true);
+			return reformatTriplets(tripletise(" CD5C5C"),true);
 		}
 		if ("Indigo".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("  4B0082"), true);
+			return reformatTriplets(tripletise("  4B0082"),true);
 		}
 		if ("Ivory".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFFFF0"), true);
+			return reformatTriplets(tripletise("FFFFF0"),true);
 		}
 		if ("Khaki".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F0E68C"), true);
+			return reformatTriplets(tripletise("F0E68C"),true);
 		}
 		if ("Lavender".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("E6E6FA"), true);
+			return reformatTriplets(tripletise("E6E6FA"),true);
 		}
 		if ("LavenderBlush".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFF0F5"), true);
+			return reformatTriplets(tripletise("FFF0F5"),true);
 		}
 		if ("LawnGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("7CFC00"), true);
+			return reformatTriplets(tripletise("7CFC00"),true);
 		}
 		if ("LemonChiffon".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFFACD"), true);
+			return reformatTriplets(tripletise("FFFACD"),true);
 		}
 		if ("LightBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("ADD8E6"), true);
+			return reformatTriplets(tripletise("ADD8E6"),true);
 		}
 		if ("LightCoral".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F08080"), true);
+			return reformatTriplets(tripletise("F08080"),true);
 		}
 		if ("LightCyan".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("E0FFFF"), true);
+			return reformatTriplets(tripletise("E0FFFF"),true);
 		}
 		if ("LightGoldenRodYellow".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FAFAD2"), true);
+			return reformatTriplets(tripletise("FAFAD2"),true);
 		}
 		if ("LightGray".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("D3D3D3"), true);
+			return reformatTriplets(tripletise("D3D3D3"),true);
 		}
 		if ("LightGrey".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("D3D3D3"), true);
+			return reformatTriplets(tripletise("D3D3D3"),true);
 		}
 		if ("LightGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("90EE90"), true);
+			return reformatTriplets(tripletise("90EE90"),true);
 		}
 		if ("LightPink".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFB6C1"), true);
+			return reformatTriplets(tripletise("FFB6C1"),true);
 		}
 		if ("LightSalmon".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFA07A"), true);
+			return reformatTriplets(tripletise("FFA07A"),true);
 		}
 		if ("LightSeaGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("20B2AA"), true);
+			return reformatTriplets(tripletise("20B2AA"),true);
 		}
 		if ("LightSkyBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("87CEFA"), true);
+			return reformatTriplets(tripletise("87CEFA"),true);
 		}
 		if ("LightSlateGray".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("778899"), true);
+			return reformatTriplets(tripletise("778899"),true);
 		}
 		if ("LightSlateGrey".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("778899"), true);
+			return reformatTriplets(tripletise("778899"),true);
 		}
 		if ("LightSteelBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("B0C4DE"), true);
+			return reformatTriplets(tripletise("B0C4DE"),true);
 		}
 		if ("LightYellow".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFFFE0"), true);
+			return reformatTriplets(tripletise("FFFFE0"),true);
 		}
 		if ("Lime".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00FF00"), true);
+			return reformatTriplets(tripletise("00FF00"),true);
 		}
 		if ("LimeGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("32CD32"), true);
+			return reformatTriplets(tripletise("32CD32"),true);
 		}
 		if ("Linen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FAF0E6"), true);
+			return reformatTriplets(tripletise("FAF0E6"),true);
 		}
 		if ("Magenta".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF00FF"), true);
+			return reformatTriplets(tripletise("FF00FF"),true);
 		}
 		if ("Maroon".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("800000"), true);
+			return reformatTriplets(tripletise("800000"),true);
 		}
 		if ("MediumAquaMarine".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("66CDAA"), true);
+			return reformatTriplets(tripletise("66CDAA"),true);
 		}
 		if ("MediumBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("0000CD"), true);
+			return reformatTriplets(tripletise("0000CD"),true);
 		}
 		if ("MediumOrchid".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("BA55D3"), true);
+			return reformatTriplets(tripletise("BA55D3"),true);
 		}
 		if ("MediumPurple".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("9370DB"), true);
+			return reformatTriplets(tripletise("9370DB"),true);
 		}
 		if ("MediumSeaGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("3CB371"), true);
+			return reformatTriplets(tripletise("3CB371"),true);
 		}
 		if ("MediumSlateBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("7B68EE"), true);
+			return reformatTriplets(tripletise("7B68EE"),true);
 		}
 		if ("MediumSpringGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00FA9A"), true);
+			return reformatTriplets(tripletise("00FA9A"),true);
 		}
 		if ("MediumTurquoise".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("48D1CC"), true);
+			return reformatTriplets(tripletise("48D1CC"),true);
 		}
 		if ("MediumVioletRed".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("C71585"), true);
+			return reformatTriplets(tripletise("C71585"),true);
 		}
 		if ("MidnightBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("191970"), true);
+			return reformatTriplets(tripletise("191970"),true);
 		}
 		if ("MintCream".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F5FFFA"), true);
+			return reformatTriplets(tripletise("F5FFFA"),true);
 		}
 		if ("MistyRose".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFE4E1"), true);
+			return reformatTriplets(tripletise("FFE4E1"),true);
 		}
 		if ("Moccasin".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFE4B5"), true);
+			return reformatTriplets(tripletise("FFE4B5"),true);
 		}
 		if ("NavajoWhite".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFDEAD"), true);
+			return reformatTriplets(tripletise("FFDEAD"),true);
 		}
 		if ("Navy".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("000080"), true);
+			return reformatTriplets(tripletise("000080"),true);
 		}
 		if ("OldLace".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FDF5E6"), true);
+			return reformatTriplets(tripletise("FDF5E6"),true);
 		}
 		if ("Olive".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("808000"), true);
+			return reformatTriplets(tripletise("808000"),true);
 		}
 		if ("OliveDrab".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("6B8E23"), true);
+			return reformatTriplets(tripletise("6B8E23"),true);
 		}
 		if ("Orange".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFA500"), true);
+			return reformatTriplets(tripletise("FFA500"),true);
 		}
 		if ("OrangeRed".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF4500"), true);
+			return reformatTriplets(tripletise("FF4500"),true);
 		}
 		if ("Orchid".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("DA70D6"), true);
+			return reformatTriplets(tripletise("DA70D6"),true);
 		}
 		if ("PaleGoldenRod".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("EEE8AA"), true);
+			return reformatTriplets(tripletise("EEE8AA"),true);
 		}
 		if ("PaleGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("98FB98"), true);
+			return reformatTriplets(tripletise("98FB98"),true);
 		}
 		if ("PaleTurquoise".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("AFEEEE"), true);
+			return reformatTriplets(tripletise("AFEEEE"),true);
 		}
 		if ("PaleVioletRed".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("DB7093"), true);
+			return reformatTriplets(tripletise("DB7093"),true);
 		}
 		if ("PapayaWhip".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFEFD5"), true);
+			return reformatTriplets(tripletise("FFEFD5"),true);
 		}
 		if ("PeachPuff".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFDAB9"), true);
+			return reformatTriplets(tripletise("FFDAB9"),true);
 		}
 		if ("Peru".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("CD853F"), true);
+			return reformatTriplets(tripletise("CD853F"),true);
 		}
 		if ("Pink".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFC0CB"), true);
+			return reformatTriplets(tripletise("FFC0CB"),true);
 		}
 		if ("Plum".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("DDA0DD"), true);
+			return reformatTriplets(tripletise("DDA0DD"),true);
 		}
 		if ("PowderBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("B0E0E6"), true);
+			return reformatTriplets(tripletise("B0E0E6"),true);
 		}
 		if ("Purple".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("800080"), true);
+			return reformatTriplets(tripletise("800080"),true);
 		}
 		if ("RebeccaPurple".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("663399"), true);
+			return reformatTriplets(tripletise("663399"),true);
 		}
 		if ("Red".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF0000"), true);
+			return reformatTriplets(tripletise("FF0000"),true);
 		}
 		if ("RosyBrown".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("BC8F8F"), true);
+			return reformatTriplets(tripletise("BC8F8F"),true);
 		}
 		if ("RoyalBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("4169E1"), true);
+			return reformatTriplets(tripletise("4169E1"),true);
 		}
 		if ("SaddleBrown".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("8B4513"), true);
+			return reformatTriplets(tripletise("8B4513"),true);
 		}
 		if ("Salmon".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FA8072"), true);
+			return reformatTriplets(tripletise("FA8072"),true);
 		}
 		if ("SandyBrown".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F4A460"), true);
+			return reformatTriplets(tripletise("F4A460"),true);
 		}
 		if ("SeaGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("2E8B57"), true);
+			return reformatTriplets(tripletise("2E8B57"),true);
 		}
 		if ("SeaShell".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFF5EE"), true);
+			return reformatTriplets(tripletise("FFF5EE"),true);
 		}
 		if ("Sienna".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("A0522D"), true);
+			return reformatTriplets(tripletise("A0522D"),true);
 		}
 		if ("Silver".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("C0C0C0"), true);
+			return reformatTriplets(tripletise("C0C0C0"),true);
 		}
 		if ("SkyBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("87CEEB"), true);
+			return reformatTriplets(tripletise("87CEEB"),true);
 		}
 		if ("SlateBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("6A5ACD"), true);
+			return reformatTriplets(tripletise("6A5ACD"),true);
 		}
 		if ("SlateGray".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("708090"), true);
+			return reformatTriplets(tripletise("708090"),true);
 		}
 		if ("SlateGrey".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("708090"), true);
+			return reformatTriplets(tripletise("708090"),true);
 		}
 		if ("Snow".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFFAFA"), true);
+			return reformatTriplets(tripletise("FFFAFA"),true);
 		}
 		if ("SpringGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("00FF7F"), true);
+			return reformatTriplets(tripletise("00FF7F"),true);
 		}
 		if ("SteelBlue".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("4682B4"), true);
+			return reformatTriplets(tripletise("4682B4"),true);
 		}
 		if ("Tan".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("D2B48C"), true);
+			return reformatTriplets(tripletise("D2B48C"),true);
 		}
 		if ("Teal".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("008080"), true);
+			return reformatTriplets(tripletise("008080"),true);
 		}
 		if ("Thistle".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("D8BFD8"), true);
+			return reformatTriplets(tripletise("D8BFD8"),true);
 		}
 		if ("Tomato".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FF6347"), true);
+			return reformatTriplets(tripletise("FF6347"),true);
 		}
 		if ("Turquoise".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("40E0D0"), true);
+			return reformatTriplets(tripletise("40E0D0"),true);
 		}
 		if ("Violet".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("EE82EE"), true);
+			return reformatTriplets(tripletise("EE82EE"),true);
 		}
 		if ("Wheat".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F5DEB3"), true);
+			return reformatTriplets(tripletise("F5DEB3"),true);
 		}
 		if ("White".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFFFFF"), true);
+			return reformatTriplets(tripletise("FFFFFF"),true);
 		}
 		if ("WhiteSmoke".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("F5F5F5"), true);
+			return reformatTriplets(tripletise("F5F5F5"),true);
 		}
 		if ("Yellow".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("FFFF00"), true);
+			return reformatTriplets(tripletise("FFFF00"),true);
 		}
 		if ("YellowGreen".equalsIgnoreCase(name)) {
-			return reformatTriplets(tripletise("9ACD32"), true);
+			return reformatTriplets(tripletise("9ACD32"),true);
 		}
 		return null;
 	}
-
+	
 	@Nullable
 	private static String[] tripletise(@Nullable final String hexstring) {
 		// fairly straight forward internal use only blah blah
-		if (hexstring==null) { return null; }
-		final Matcher tripletise=Pattern.compile("#?([\\da-fA-F][\\da-fA-F])([\\da-fA-F][\\da-fA-F])([\\da-fA-F][\\da-fA-F])").matcher(hexstring);
-		if (!tripletise.matches()) { return null; } // really shouldn't be a thing
+		if (hexstring==null) {
+			return null;
+		}
+		final Matcher tripletise=
+				Pattern.compile("#?([\\da-fA-F][\\da-fA-F])([\\da-fA-F][\\da-fA-F])([\\da-fA-F][\\da-fA-F])")
+				       .matcher(hexstring);
+		if (!tripletise.matches()) {
+			return null;
+		} // really shouldn't be a thing
 		final String[] triplet=new String[3];
 		triplet[0]=tripletise.group(1);
 		triplet[1]=tripletise.group(2);
 		triplet[2]=tripletise.group(3);
 		return triplet;
 	}
-
+	
 	@Nullable
-	private static String reformatTriplets(@Nullable final String[] component,
-	                                       boolean knownhex) {
-		if (component==null || component[0]==null || component[1]==null || component[2]==null) { return null; }
+	private static String reformatTriplets(@Nullable final String[] component,boolean knownhex) {
+		if (component==null||component[0]==null||component[1]==null||component[2]==null) {
+			return null;
+		}
 		// the fun part.
 		component[0]=cleanseValue(component[0]);
 		component[1]=cleanseValue(component[1]);
@@ -515,28 +529,33 @@ public class ColorNormaliser {
 		// is it a hex thing?  we may already know this but just in case
 		if (!knownhex) {
 			final Pattern hexchar=Pattern.compile("[A-Fa-f]+");
-			if (hexchar.matcher(component[0]).matches() || hexchar.matcher(component[1]).matches() || hexchar.matcher(component[2]).matches()) { knownhex=true; }
+			if (hexchar.matcher(component[0]).matches()||hexchar.matcher(component[1]).matches()||
+			    hexchar.matcher(component[2]).matches()) {
+				knownhex=true;
+			}
 		}
 		// okay then, it's hex
-		if (knownhex) { return hexToFloat(component); }
+		if (knownhex) {
+			return hexToFloat(component);
+		}
 		// at this point there's the 0-255 and 0-1 possibilities.  if the user did 0-1 and everything else in the code works, they shouldn't get here
 		// so lets assume its a typical 24 bit int thing
 		return intToFloat(component);
 	}
-
+	
 	private static String intToFloat(final String[] component) {
 		// fine, 3 integers 0-255 to turn into fun with floats
 		try {
-			final float r= Integer.parseInt(component[0]) /255.0f;
-			final float g= Integer.parseInt(component[1]) /255.0f;
-			final float b= Integer.parseInt(component[2]) /255.0f;
+			final float r=Integer.parseInt(component[0])/255.0f;
+			final float g=Integer.parseInt(component[1])/255.0f;
+			final float b=Integer.parseInt(component[2])/255.0f;
 			// and so
 			return "<"+r+","+g+","+b+">";
+		} catch (final NumberFormatException ignored) {
 		}
-		catch (final NumberFormatException ignored) {}
 		return null;
 	}
-
+	
 	private static String hexToFloat(final String[] component) {
 		// sort of cheating, sort of reusing code :P
 		try {
@@ -544,11 +563,11 @@ public class ColorNormaliser {
 			component[1]=String.valueOf(Integer.parseInt(component[1],16));
 			component[2]=String.valueOf(Integer.parseInt(component[2],16));
 			return intToFloat(component);
+		} catch (final NumberFormatException ignored) {
 		}
-		catch (final NumberFormatException ignored) {}
 		return null;
 	}
-
+	
 	private static String cleanseValue(final String v) {
 		// remove anything that isn't a number, hex digit or decimal point
 		return v.replaceAll("[^A-Fa-f\\d.]","");

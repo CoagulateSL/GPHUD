@@ -37,17 +37,9 @@ import java.util.logging.Logger;
  */
 public abstract class Classes {
 	public enum COMPONENT {Core,Scripting,GSVM,RegionServer,DatabaseSchema,HUD,ItemGiver,API,ObjectDriver,Protocol}
-	@Retention(RetentionPolicy.RUNTIME)
-	@Documented
-	@Target(ElementType.PACKAGE)
-	@Repeatable(Changes.class)
-	public @interface Change {
-		// ---------- INSTANCE ----------
-		@Nonnull String date();
-		@Nonnull COMPONENT component();
-		@Nonnull ChangeLogging.CHANGETYPE type();
-		@Nonnull String message();
-	}
+	
+	private static final     boolean LOGREGISTERS=false;
+	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Target(ElementType.PACKAGE)
@@ -55,11 +47,37 @@ public abstract class Classes {
 		// ---------- INSTANCE ----------
 		@Nonnull Change[] value();
 	}
+	@Nullable private static Logger  log;
 
-	private static final boolean LOGREGISTERS=false;
-	@Nullable
-	private static Logger log;
-
+	private static void loadModules() {
+		for (final Class<?> c: ClassTools.getAnnotatedClasses(ModuleDefinition.class)) {
+			try {
+				final ModuleDefinition a=c.getAnnotation(ModuleDefinition.class);
+				final String implementation=a.implementation();
+				final String modulename=getModuleName(c);
+				if (LOGREGISTERS) {
+					log().config(
+							"Registering module "+modulename+(implementation.isEmpty()?"":" ["+implementation+"]"));
+				}
+				String creatingclass="net.coagulate.GPHUD.Modules.ModuleAnnotation";
+				if (!implementation.isEmpty()) {
+					creatingclass=implementation;
+				}
+				final Class<?> target=Class.forName(creatingclass);
+				final Constructor<?> cons=target.getConstructor(String.class,ModuleDefinition.class);
+				cons.newInstance(modulename,a);
+			} catch (@Nonnull final ClassNotFoundException|
+			                        NoSuchMethodException|
+			                        SecurityException|
+			                        InstantiationException|
+			                        IllegalAccessException|
+			                        IllegalArgumentException|
+			                        InvocationTargetException ex) {
+				throw new SystemImplementationException("Instansiating module failed: "+ex,ex);
+			}
+		}
+	}
+	
 	// ----- Internal Statics -----
 	// Start recursing through the elements in the classpath.  So many exceptions returned!
 	static void initialise() {
@@ -74,166 +92,204 @@ public abstract class Classes {
 		loadTemplates();
 		loadGSFunctions();
 	}
-
+	
 	private static String getModuleName(@Nonnull final Class<?> c) {
 		final String name=c.getName().substring("net.coagulate.GPHUD.Modules.".length());
 		final String[] split=name.split("\\.");
 		return split[0];
 	}
-
-	private static void loadModules() {
-		for (final Class<?> c: ClassTools.getAnnotatedClasses(ModuleDefinition.class)) {
-			try {
-				final ModuleDefinition a=c.getAnnotation(ModuleDefinition.class);
-				final String implementation=a.implementation();
-				final String modulename=getModuleName(c);
-				if (LOGREGISTERS) { log().config("Registering module "+modulename+(implementation.isEmpty()?"":" ["+implementation+"]")); }
-				String creatingclass="net.coagulate.GPHUD.Modules.ModuleAnnotation";
-				if (!implementation.isEmpty()) { creatingclass=implementation; }
-				final Class<?> target=Class.forName(creatingclass);
-				final Constructor<?> cons=target.getConstructor(String.class,ModuleDefinition.class);
-				cons.newInstance(modulename,a);
-			}
-			catch (@Nonnull
-			final ClassNotFoundException|NoSuchMethodException|SecurityException|InstantiationException|IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-				throw new SystemImplementationException("Instansiating module failed: "+ex,ex);
-			}
+	
+	@Nonnull
+	private static Logger log() {
+		if (log==null) {
+			log=GPHUD.getLogger("Classes");
 		}
+		return log;
 	}
-
+	
 	private static void loadPermissions() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Permissions.class)) {
 			final String modulename=getModuleName(c);
 			for (final Permissions a: c.getAnnotationsByType(Permissions.class)) {
-				if (LOGREGISTERS) { log().config("Registering permission "+modulename+"/"+ a.name()); }
-				((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,modulename));
+				if (LOGREGISTERS) {
+					log().config("Registering permission "+modulename+"/"+a.name());
+				}
+				((ModuleAnnotation)Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,
+				                                                                                             modulename));
 			}
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Permissionss.class)) {
 			final String modulename=getModuleName(c);
 			for (final Permissionss as: c.getAnnotationsByType(Permissionss.class)) {
 				for (final Permissions a: as.value()) {
-					if (LOGREGISTERS) { log().config("Registering permissions "+modulename+"/"+a.name()); }
-					((ModuleAnnotation) Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,modulename));
+					if (LOGREGISTERS) {
+						log().config("Registering permissions "+modulename+"/"+a.name());
+					}
+					((ModuleAnnotation)Modules.get(null,modulename)).registerPermission(new PermissionAnnotation(a,
+					                                                                                             modulename));
 				}
 			}
 		}
 	}
-
+	
 	private static void loadKVMaps() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(KVS.class)) {
 			final String modulename=getModuleName(c);
 			final KVS a=c.getAnnotation(KVS.class);
-			if (LOGREGISTERS) { log().config("Registering KV "+modulename+"/"+a.name()); }
-			((ModuleAnnotation) Modules.get(null,modulename)).registerKV(new KVAnnotation(Modules.get(null,modulename),a));
+			if (LOGREGISTERS) {
+				log().config("Registering KV "+modulename+"/"+a.name());
+			}
+			((ModuleAnnotation)Modules.get(null,modulename)).registerKV(new KVAnnotation(Modules.get(null,modulename),
+			                                                                             a));
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(KVSS.class)) {
 			final String modulename=getModuleName(c);
 			final KVSS a=c.getAnnotation(KVSS.class);
 			for (final KVS element: a.value()) {
-				if (LOGREGISTERS) { log().config("Registering KVS "+modulename+"/"+element.name()); }
-				((ModuleAnnotation) Modules.get(null,modulename)).registerKV(new KVAnnotation(Modules.get(null,modulename),element));
+				if (LOGREGISTERS) {
+					log().config("Registering KVS "+modulename+"/"+element.name());
+				}
+				((ModuleAnnotation)Modules.get(null,modulename)).registerKV(new KVAnnotation(Modules.get(null,
+				                                                                                         modulename),
+				                                                                             element));
 			}
 		}
 	}
-
+	
 	private static void loadPools() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Pools.class)) {
 			final String modulename=getModuleName(c);
 			final Pools a=c.getAnnotation(Pools.class);
-			if (LOGREGISTERS) { log().config("Registering pool "+modulename+"/"+a.name()); }
-			((ModuleAnnotation) Modules.get(null,modulename)).registerPool(new PoolAnnotation(Modules.get(null,modulename),a));
+			if (LOGREGISTERS) {
+				log().config("Registering pool "+modulename+"/"+a.name());
+			}
+			((ModuleAnnotation)Modules.get(null,modulename)).registerPool(new PoolAnnotation(Modules.get(null,
+			                                                                                             modulename),
+			                                                                                 a));
 		}
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(Poolss.class)) {
 			final String modulename=getModuleName(c);
 			final Poolss a=c.getAnnotation(Poolss.class);
 			for (final Pools element: a.value()) {
-				if (LOGREGISTERS) { log().config("Registering pools "+modulename+"/"+((Pools) a).name()); }
-				((ModuleAnnotation) Modules.get(null,modulename)).registerPool(new PoolAnnotation(Modules.get(null,modulename),(Pools) a));
+				if (LOGREGISTERS) {
+					log().config("Registering pools "+modulename+"/"+((Pools)a).name());
+				}
+				((ModuleAnnotation)Modules.get(null,modulename)).registerPool(new PoolAnnotation(Modules.get(null,
+				                                                                                             modulename),
+				                                                                                 (Pools)a));
 			}
 		}
 	}
-
+	
 	private static void loadCommands() {
 		for (final Method m: ClassTools.getAnnotatedMethods(Commands.class)) {
 			final String modulename=getModuleName(m.getDeclaringClass());
 			final Annotation a=m.getAnnotation(Commands.class);
-			if (LOGREGISTERS) { log().config("Registering command "+modulename+"/"+m.getName()); }
-			((ModuleAnnotation) Modules.get(null,modulename)).registerCommand(new CommandAnnotation(Modules.get(null,modulename),m));
+			if (LOGREGISTERS) {
+				log().config("Registering command "+modulename+"/"+m.getName());
+			}
+			((ModuleAnnotation)Modules.get(null,modulename)).registerCommand(new CommandAnnotation(Modules.get(null,
+			                                                                                                   modulename),
+			                                                                                       m));
 			// validate command argument annotations
 			boolean firstparam=true;
 			for (final Parameter p: m.getParameters()) {
-				if (firstparam) { firstparam=false; }
-				else {
-					final Argument.Arguments[] annotations = p.getAnnotationsByType(Argument.Arguments.class);
-					if (annotations.length != 1) {
-						throw new SystemImplementationException("Command " + modulename + "/" + m.getName() + " parameter " + p.getName() + " has no Arguments annotation");
+				if (firstparam) {
+					firstparam=false;
+				} else {
+					final Argument.Arguments[] annotations=p.getAnnotationsByType(Argument.Arguments.class);
+					if (annotations.length!=1) {
+						throw new SystemImplementationException(
+								"Command "+modulename+"/"+m.getName()+" parameter "+p.getName()+
+								" has no Arguments annotation");
 					}
-					final Argument.Arguments annotation = annotations[0];
-					final boolean requiresmax = switch (annotation.type()) {
-						case TEXT_CLEAN, TEXT_ONELINE, TEXT_INTERNAL_NAME, TEXT_MULTILINE -> true;
-						case PASSWORD, INTEGER, FLOAT, BOOLEAN, CHOICE, CHARACTER, CHARACTER_PLAYABLE, CHARACTER_NEAR, CHARACTER_FACTION, AVATAR, AVATAR_NEAR, PERMISSIONSGROUP, PERMISSION, CHARACTERGROUP, KVLIST, MODULE, REGION, ZONE, COORDINATES, EVENT, EFFECT, ATTRIBUTE, ATTRIBUTE_WRITABLE, CURRENCY, INVENTORY, SET, ITEM ->
+					final Argument.Arguments annotation=annotations[0];
+					final boolean requiresmax=switch (annotation.type()) {
+						case TEXT_CLEAN,TEXT_ONELINE,TEXT_INTERNAL_NAME,TEXT_MULTILINE -> true;
+						case PASSWORD,INTEGER,FLOAT,BOOLEAN,CHOICE,CHARACTER,CHARACTER_PLAYABLE,CHARACTER_NEAR,CHARACTER_FACTION,AVATAR,AVATAR_NEAR,PERMISSIONSGROUP,PERMISSION,CHARACTERGROUP,KVLIST,MODULE,REGION,ZONE,COORDINATES,EVENT,EFFECT,ATTRIBUTE,ATTRIBUTE_WRITABLE,CURRENCY,INVENTORY,SET,ITEM ->
 								false;
 					};
-					if (requiresmax && annotation.max() < 0) {
-						throw new SystemImplementationException("Missing MAX parameter on argument annotation in [" + modulename + "]" + m.getClass()
-								.getSimpleName() + "/" + m.getName() + "/" + p.getName());
+					if (requiresmax&&annotation.max()<0) {
+						throw new SystemImplementationException(
+								"Missing MAX parameter on argument annotation in ["+modulename+"]"+
+								m.getClass().getSimpleName()+"/"+m.getName()+"/"+p.getName());
 					}
 				}
 			}
 		}
 	}
-
+	
 	private static void loadURLs() {
 		for (final Method m: ClassTools.getAnnotatedMethods(URLs.class)) {
 			if (m.getDeclaringClass().getName().startsWith("net.coagulate.GPHUD.Modules")) {
 				final String modulename=getModuleName(m.getDeclaringClass());
 				final Annotation a=m.getAnnotation(URLs.class);
-				if (LOGREGISTERS) { log().config("Registering URL handler "+modulename+"/"+m.getName()); }
-				((ModuleAnnotation) Modules.get(null,modulename)).registerContent(new URLAnnotation(Modules.get(null,modulename),m));
+				if (LOGREGISTERS) {
+					log().config("Registering URL handler "+modulename+"/"+m.getName());
+				}
+				((ModuleAnnotation)Modules.get(null,modulename)).registerContent(new URLAnnotation(Modules.get(null,
+				                                                                                               modulename),
+				                                                                                   m));
 			}
 		}
 	}
-
+	
 	private static void loadSideMenus() {
 		for (final Class<?> c: ClassTools.getAnnotatedClasses(SideMenus.class)) {
 			final String modulename=getModuleName(c);
 			final SideMenus a=c.getAnnotation(SideMenus.class);
-			if (LOGREGISTERS) { log().config("Registering side menu "+modulename+"/"+a.name()); }
-			((ModuleAnnotation) Modules.get(null,modulename)).setSideMenu(null,new SideMenuAnnotation(a));
+			if (LOGREGISTERS) {
+				log().config("Registering side menu "+modulename+"/"+a.name());
+			}
+			((ModuleAnnotation)Modules.get(null,modulename)).setSideMenu(null,new SideMenuAnnotation(a));
 		}
 		for (final Method m: ClassTools.getAnnotatedMethods(SideSubMenus.class)) {
 			if (m.getDeclaringClass().getName().startsWith("net.coagulate.GPHUD.Modules")) {
 				final String modulename=getModuleName(m.getDeclaringClass());
 				final SideSubMenus a=m.getAnnotation(SideSubMenus.class);
-				if (LOGREGISTERS) { log().config("Registering side sub menu "+modulename+"/"+a.name()); }
-				((ModuleAnnotation) Modules.get(null,modulename)).registerSideSubMenu(null,new SideSubMenuAnnotation(m));
+				if (LOGREGISTERS) {
+					log().config("Registering side sub menu "+modulename+"/"+a.name());
+				}
+				((ModuleAnnotation)Modules.get(null,modulename)).registerSideSubMenu(null,new SideSubMenuAnnotation(m));
 			}
 		}
 	}
-
+	
 	private static void loadTemplates() {
 		for (final Method m: ClassTools.getAnnotatedMethods(Template.class)) {
 			if (m.getDeclaringClass().getName().startsWith("net.coagulate.GPHUD.Modules")) {
 				final String modulename=getModuleName(m.getDeclaringClass());
 				final Template a=m.getAnnotation(Template.class);
-				if (LOGREGISTERS) { log().config("Registering template "+a.name()); }
+				if (LOGREGISTERS) {
+					log().config("Registering template "+a.name());
+				}
 				Templater.register(a,m);
 			}
 		}
 	}
-
+	
 	private static void loadGSFunctions() {
 		for (final Method m: ClassTools.getAnnotatedMethods(GSFunctions.GSFunction.class)) {
 			final Annotation a=m.getAnnotation(GSFunctions.GSFunction.class);
-			if (LOGREGISTERS) { log().config("Registering gsFunction "+m.getName()); }
+			if (LOGREGISTERS) {
+				log().config("Registering gsFunction "+m.getName());
+			}
 			GSFunctions.register(m.getName(),m);
 		}
 	}
-
-	@Nonnull
-	private static Logger log() {
-		if (log==null) { log=GPHUD.getLogger("Classes"); }
-		return log;
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Target(ElementType.PACKAGE)
+	@Repeatable(Changes.class)
+	public @interface Change {
+		// ---------- INSTANCE ----------
+		@Nonnull String date();
+		
+		@Nonnull COMPONENT component();
+		
+		@Nonnull ChangeLogging.CHANGETYPE type();
+		
+		@Nonnull String message();
 	}
 }

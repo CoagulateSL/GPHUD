@@ -16,23 +16,22 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ByteCode {
-
-    public static final Map<Byte, InstructionSet> map = new HashMap<>();
-    @Nullable
-    private ParseNode sourceNode;
-
-    protected ByteCode(@Nullable final ParseNode node) {
-        sourceNode = node;
-    }
-
-    // ---------- STATICS ----------
-    @Nonnull
-    public static ByteCode load(@Nonnull final GSVM vm) {
-        final byte instruction = vm.bytecode[vm.programCounter];
-        final InstructionSet decode = ByteCode.get(instruction);
-        if (decode == null) {
-            throw new GSInternalError("Unable to decode instruction " + instruction + " at index " + vm.programCounter);
-        }
+	
+	public static final Map<Byte,InstructionSet> map=new HashMap<>();
+	@Nullable private   ParseNode                sourceNode;
+	
+	protected ByteCode(@Nullable final ParseNode node) {
+		sourceNode=node;
+	}
+	
+	// ---------- STATICS ----------
+	@Nonnull
+	public static ByteCode load(@Nonnull final GSVM vm) {
+		final byte instruction=vm.bytecode[vm.programCounter];
+		final InstructionSet decode=ByteCode.get(instruction);
+		if (decode==null) {
+			throw new GSInternalError("Unable to decode instruction "+instruction+" at index "+vm.programCounter);
+		}
 		vm.programCounter++;
 		switch (decode) {
 			case Add:
@@ -56,11 +55,11 @@ public abstract class ByteCode {
 				final int length=vm.getShort();
 				final byte[] string=new byte[length];
 				try {
-					System.arraycopy(vm.bytecode, vm.programCounter, string, 0, length);
+					System.arraycopy(vm.bytecode,vm.programCounter,string,0,length);
 				} catch (@Nonnull final RuntimeException e) {
-					throw new GSInternalError("Failed to arraycopy " + length + " from pos " + vm.programCounter, e);
+					throw new GSInternalError("Failed to arraycopy "+length+" from pos "+vm.programCounter,e);
 				}
-				vm.programCounter += length;
+				vm.programCounter+=length;
 				final String str=new String(string);
 				return new BCString(null,str);
 			case Debug:
@@ -130,113 +129,114 @@ public abstract class ByteCode {
 		}
 		throw new SystemImplementationException("Failed to materialise instruction "+decode);
 	}
-
-	public static InstructionSet get(final byte b) { return map.get(b); }
-
+	
+	public static InstructionSet get(final byte b) {
+		return map.get(b);
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public ByteCode node(final ParseNode n) {
-		sourceNode =n;
+		sourceNode=n;
 		return this;
 	}
-
+	
 	@Nullable
-	public ParseNode node() { return sourceNode; }
-
+	public ParseNode node() {
+		return sourceNode;
+	}
+	
 	@Nonnull
 	public abstract String explain();
-
+	
 	public abstract void toByteCode(List<Byte> bytes);
-
+	
 	@Nullable
 	public String htmlDecode() {
 		return getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
 	}
-
-	public abstract void execute(State st,
-	                             GSVM vm,
-	                             boolean simulation);
-
+	
+	public abstract void execute(State st,GSVM vm,boolean simulation);
+	
 	// ----- Internal Instance -----
-	void addInt(@Nonnull final List<Byte> bytes,
-	            final int a) {
+	void addInt(@Nonnull final List<Byte> bytes,final int a) {
 		/*System.out.println("Writing "+
 				((byte)((a>>24) & 0xff))+" "+
 				((byte)((a>>16) & 0xff))+" "+
 				((byte)((a>>8) & 0xff))+" "+
 				((byte)(a&0xff)));*/
-		bytes.add((byte) ((a >> 24)&0xff));
-		bytes.add((byte) ((a >> 16)&0xff));
-		bytes.add((byte) ((a >> 8)&0xff));
-		bytes.add((byte) (a&0xff));
+		bytes.add((byte)((a>>24)&0xff));
+		bytes.add((byte)((a>>16)&0xff));
+		bytes.add((byte)((a>>8)&0xff));
+		bytes.add((byte)(a&0xff));
 	}
-
-	void addFloat(@Nonnull final List<Byte> bytes,
-				final float a) {
-		final int asInt = Float.floatToIntBits(a);
-		bytes.add((byte) ((asInt >> 24)&0xff));
-		bytes.add((byte) ((asInt >> 16)&0xff));
-		bytes.add((byte) ((asInt >> 8)&0xff));
-		bytes.add((byte) (asInt&0xff));
+	
+	void addFloat(@Nonnull final List<Byte> bytes,final float a) {
+		final int asInt=Float.floatToIntBits(a);
+		bytes.add((byte)((asInt>>24)&0xff));
+		bytes.add((byte)((asInt>>16)&0xff));
+		bytes.add((byte)((asInt>>8)&0xff));
+		bytes.add((byte)(asInt&0xff));
 	}
-
-	void addShort(@Nonnull final List<Byte> bytes,
-	              final int a) {
-		bytes.add((byte) ((a >> 8)&0xff));
-		bytes.add((byte) (a&0xff));
+	
+	void addShort(@Nonnull final List<Byte> bytes,final int a) {
+		bytes.add((byte)((a>>8)&0xff));
+		bytes.add((byte)(a&0xff));
 	}
-
+	
 	public enum InstructionSet { // max 255 instructions (haha)
-		Debug((byte) 0),
-		Add((byte) 1),
-		Store((byte) 2),
-		Avatar((byte) 3),
-		BranchIfZero((byte) 4),
-		Character((byte) 5),
-		Divide((byte) 6),
-		Equality((byte) 7),
-		Group((byte) 8),
-		Inequality((byte) 9),
-		Initialise((byte) 10),
-		Integer((byte) 11),
-		Invoke((byte) 12),
-		Load((byte) 13),
-		Multiply((byte) 14),
-		Response((byte) 15),
-		String((byte) 16),
-		Subtract((byte) 17),
-		List((byte) 18),
-		LoadIndexed((byte) 19),
-		StoreIndexed((byte) 20),
-		GreaterThan((byte) 21),
-		LessThan((byte) 22),
-		GreaterThanEqual((byte) 23),
-		LessThanEqual((byte) 24),
-		LogicalAnd((byte) 25),
-		LogicalOr((byte) 26),
-		LogicalNot((byte) 27),
-		Subtract2((byte) 28),
-		Add2((byte) 29),
-		LessThan2((byte) 30),
-		LessThanEqual2((byte) 31),
-		GreaterThan2((byte) 32),
-		GreaterThanEqual2((byte) 33),
-		Divide2((byte) 34),
-		Negate((byte) 35),
+		Debug((byte)0),
+		Add((byte)1),
+		Store((byte)2),
+		Avatar((byte)3),
+		BranchIfZero((byte)4),
+		Character((byte)5),
+		Divide((byte)6),
+		Equality((byte)7),
+		Group((byte)8),
+		Inequality((byte)9),
+		Initialise((byte)10),
+		Integer((byte)11),
+		Invoke((byte)12),
+		Load((byte)13),
+		Multiply((byte)14),
+		Response((byte)15),
+		String((byte)16),
+		Subtract((byte)17),
+		List((byte)18),
+		LoadIndexed((byte)19),
+		StoreIndexed((byte)20),
+		GreaterThan((byte)21),
+		LessThan((byte)22),
+		GreaterThanEqual((byte)23),
+		LessThanEqual((byte)24),
+		LogicalAnd((byte)25),
+		LogicalOr((byte)26),
+		LogicalNot((byte)27),
+		Subtract2((byte)28),
+		Add2((byte)29),
+		LessThan2((byte)30),
+		LessThanEqual2((byte)31),
+		GreaterThan2((byte)32),
+		GreaterThanEqual2((byte)33),
+		Divide2((byte)34),
+		Negate((byte)35),
 		Float((byte)36),
 		BranchRelativeIfZero((byte)37),
 		Return((byte)38),
 		DebugSource((byte)39),
 		Discard((byte)40);
 		private final byte value;
-
-
+		
+		
 		InstructionSet(final byte value) {
 			this.value=value;
 			map.put(value,this);
 		}
-
+		
 		// ---------- INSTANCE ----------
-		public byte get() { return value; }
+		public byte get() {
+			return value;
+		}
 	}
 }

@@ -14,50 +14,55 @@ import java.util.List;
 import java.util.Map;
 
 public class GSCompiler {
-
-	/** Used to note which compilation engine we compiled with, where it matters
+	
+	/**
+	 * Used to note which compilation engine we compiled with, where it matters
 	 * 0 - The original (pre relative jumps) compiler, note some operator ordering changed prior to this (version 2 BC ops)
 	 * 1 - Relocatable code compiler - this compiler only generates relative jumps, previously we only generated absolute jumps
-	 *   - Code compiled with version 1 compiler can run at any memory location so supports being included and memory mapped
-	 *   - Code compiled prior to version 1 uses absolute jumps and will corrupt the script state if relocated from base address 0x0
+	 * - Code compiled with version 1 compiler can run at any memory location so supports being included and memory mapped
+	 * - Code compiled prior to version 1 uses absolute jumps and will corrupt the script state if relocated from base address 0x0
 	 */
-	public static final int COMPILER_VERSION = 1;
-	@Nonnull
-	private final ParseNode startnode;
-	private int jumpnumber=1;
-	private int lastdebuglineno=-1;
-	private int lastdebugcolno=-1;
-	private String scriptname;
-
+	public static final    int       COMPILER_VERSION=1;
+	@Nonnull private final ParseNode startnode;
+	private final          String    scriptname;
+	private                int       jumpnumber      =1;
+	private                int       lastdebuglineno =-1;
+	private                int       lastdebugcolno  =-1;
+	
 	public GSCompiler(final Node passednode,@Nonnull final String scriptname) {
 		if (!(passednode instanceof ParseNode)) {
-			throw new SystemImplementationException("Compiler error - passed node is of type "+passednode.getClass()
-			                                                                                             .getCanonicalName()+" which is not a ParseNode implementation");
+			throw new SystemImplementationException(
+					"Compiler error - passed node is of type "+passednode.getClass().getCanonicalName()+
+					" which is not a ParseNode implementation");
 		}
-		startnode=(ParseNode) passednode;
+		startnode=(ParseNode)passednode;
 		this.scriptname=scriptname;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public Byte[] toByteCode(final State st) {
 		final List<ByteCode> bytecodelist=compile(st);
 		// twopass
 		List<Byte> bytecode=new ArrayList<>();
-		for (final ByteCode bc: bytecodelist) { bc.toByteCode(bytecode); }
+		for (final ByteCode bc: bytecodelist) {
+			bc.toByteCode(bytecode);
+		}
 		// redo. now that forward references are completed
 		bytecode=new ArrayList<>();
-		for (final ByteCode bc: bytecodelist) { bc.toByteCode(bytecode); }
-		return bytecode.toArray(new Byte[]{});
+		for (final ByteCode bc: bytecodelist) {
+			bc.toByteCode(bytecode);
+		}
+		return bytecode.toArray(new Byte[] {});
 	}
-
+	
 	// The compiler has a stack (Last In First Out) which it uses to store 'things'
 	// we also have a 'script' which is just a list of things, this time including instructions
 	@Nonnull
 	public List<ByteCode> compile(final State st) {
 		lastdebuglineno=-1;
 		lastdebugcolno=-1;
-		final List<ByteCode> code = new ArrayList<>();
+		final List<ByteCode> code=new ArrayList<>();
 		code.add(new BCString(null,scriptname));
 		code.add(new BCDebugSource(null));
 		code.addAll(compile(st,startnode));
@@ -65,72 +70,139 @@ public class GSCompiler {
 		code.add(new BCReturn(null));
 		return code;
 	}
-
+	
 	// ----- Internal Instance -----
 	private int expectedChildren(final ParseNode node) {
-		if (node instanceof GSStart) { return -1; }
-		if (node instanceof GSInitialiser) { return 3; }
-		if (node instanceof GSExpression) { return 1; }
-		if (node instanceof GSParameter) { return 1; }
-		if (node instanceof GSTerm) { return 1; }
-		if (node instanceof GSFunctionCall) { return -1; }
-		if (node instanceof GSStringConstant) { return 0; }
-		if (node instanceof GSFloatConstant) { return 0; }
-		if (node instanceof GSIntegerConstant) { return 0; }
-		if (node instanceof GSIdentifier) { return 0; }
-		if (node instanceof GSParameters) { return -1; }
-		if (node instanceof GSConditional) { return -1; }
-		if (node instanceof GSAssignment) { return 2; }
-		if (node instanceof GSStatement) { return -1; }
-		if (node instanceof GSList) { return -1; }
-		if (node instanceof GSListIndex) { return 2; }
-		if (node instanceof GSWhileLoop) { return 2; }
-		if (node instanceof GSLogicalAnd) { return -1; }
-		if (node instanceof GSLogicalOr) { return -1; }
-		if (node instanceof GSInEquality) { return -1; }
-		if (node instanceof GSEquality) { return -1; }
-		if (node instanceof GSGreaterThan) { return -1; }
-		if (node instanceof GSLessThan) { return -1; }
-		if (node instanceof GSGreaterOrEqualThan) { return -1; }
-		if (node instanceof GSLessOrEqualThan) { return -1; }
-		if (node instanceof GSAdd) { return -1; }
-		if (node instanceof GSSubtract) { return -1; }
-		if (node instanceof GSMultiply) { return -1; }
-		if (node instanceof GSDivide) { return -1; }
-		if (node instanceof GSLogicalNot) { return 1; }
-		if (node instanceof GSUnaryMinus) { return 1; }
-		if (node instanceof GSReturn) { return -1; }
-		if (node instanceof GSDiscardExpression) { return -1; }
-		throw new SystemImplementationException("Expected Children not defined for node "+node.getClass()
-		                                                                                      .getName()+" at line "+node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
+		if (node instanceof GSStart) {
+			return -1;
+		}
+		if (node instanceof GSInitialiser) {
+			return 3;
+		}
+		if (node instanceof GSExpression) {
+			return 1;
+		}
+		if (node instanceof GSParameter) {
+			return 1;
+		}
+		if (node instanceof GSTerm) {
+			return 1;
+		}
+		if (node instanceof GSFunctionCall) {
+			return -1;
+		}
+		if (node instanceof GSStringConstant) {
+			return 0;
+		}
+		if (node instanceof GSFloatConstant) {
+			return 0;
+		}
+		if (node instanceof GSIntegerConstant) {
+			return 0;
+		}
+		if (node instanceof GSIdentifier) {
+			return 0;
+		}
+		if (node instanceof GSParameters) {
+			return -1;
+		}
+		if (node instanceof GSConditional) {
+			return -1;
+		}
+		if (node instanceof GSAssignment) {
+			return 2;
+		}
+		if (node instanceof GSStatement) {
+			return -1;
+		}
+		if (node instanceof GSList) {
+			return -1;
+		}
+		if (node instanceof GSListIndex) {
+			return 2;
+		}
+		if (node instanceof GSWhileLoop) {
+			return 2;
+		}
+		if (node instanceof GSLogicalAnd) {
+			return -1;
+		}
+		if (node instanceof GSLogicalOr) {
+			return -1;
+		}
+		if (node instanceof GSInEquality) {
+			return -1;
+		}
+		if (node instanceof GSEquality) {
+			return -1;
+		}
+		if (node instanceof GSGreaterThan) {
+			return -1;
+		}
+		if (node instanceof GSLessThan) {
+			return -1;
+		}
+		if (node instanceof GSGreaterOrEqualThan) {
+			return -1;
+		}
+		if (node instanceof GSLessOrEqualThan) {
+			return -1;
+		}
+		if (node instanceof GSAdd) {
+			return -1;
+		}
+		if (node instanceof GSSubtract) {
+			return -1;
+		}
+		if (node instanceof GSMultiply) {
+			return -1;
+		}
+		if (node instanceof GSDivide) {
+			return -1;
+		}
+		if (node instanceof GSLogicalNot) {
+			return 1;
+		}
+		if (node instanceof GSUnaryMinus) {
+			return 1;
+		}
+		if (node instanceof GSReturn) {
+			return -1;
+		}
+		if (node instanceof GSDiscardExpression) {
+			return -1;
+		}
+		throw new SystemImplementationException(
+				"Expected Children not defined for node "+node.getClass().getName()+" at line "+
+				node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
 	}
-
-	private void addDebug(@Nonnull final List<ByteCode> compiled,
-	                      @Nonnull final ParseNode node) {
+	
+	private void addDebug(@Nonnull final List<ByteCode> compiled,@Nonnull final ParseNode node) {
 		final Token firsttoken=node.jjtGetFirstToken();
 		if (firsttoken!=null) {
 			final int lineno=firsttoken.beginLine;
 			final int colno=firsttoken.beginColumn;
-			if (lineno!=lastdebuglineno || colno!=lastdebugcolno) {
+			if (lineno!=lastdebuglineno||colno!=lastdebugcolno) {
 				compiled.add(new BCDebug(node,lineno,colno));
 				lastdebuglineno=lineno;
 				lastdebugcolno=colno;
 			}
 		}
 	}
-
+	
 	@Nonnull
-	private List<ByteCode> compile(@Nonnull final State st,
-	                               @Nonnull final ParseNode node) {
+	private List<ByteCode> compile(@Nonnull final State st,@Nonnull final ParseNode node) {
 		final List<ByteCode> compiled=new ArrayList<>();
-		if (expectedChildren(node)>-1 && node.jjtGetNumChildren()!=expectedChildren(node)) {
-			throw new SystemImplementationException(node.getClass()
-			                                            .getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+node
-					.jjtGetFirstToken().beginColumn);
+		if (expectedChildren(node)>-1&&node.jjtGetNumChildren()!=expectedChildren(node)) {
+			throw new SystemImplementationException(
+					node.getClass().getSimpleName()+" had "+node.jjtGetNumChildren()+" children, expected "+
+					expectedChildren(node)+" at line "+node.jjtGetFirstToken().beginLine+", column "+
+					node.jjtGetFirstToken().beginColumn);
 		}
-
-
-		if (node instanceof GSStart || node instanceof GSExpression || node instanceof GSParameter || node instanceof GSTerm || node instanceof GSStatement) { // expression
+		
+		
+		if (node instanceof GSStart||node instanceof GSExpression||node instanceof GSParameter||node instanceof GSTerm||
+		    node instanceof GSStatement) { // expression
 			// just breaks down into 1 of X executable subtypes
 			// Start expands to a list of Statement (types)
 			for (int i=0;i<node.jjtGetNumChildren();i++) {
@@ -138,7 +210,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSInitialiser) {
 			// 3 children node, type, name, value
 			checkType(node,0,GSTypeSpecifier.class);
@@ -149,38 +221,39 @@ public class GSCompiler {
 			// INITIALISE the variable - reverse place name and null content.  Then we just implement "set variable".
 			if ("String".equals(type)) {
 				compiled.add(new BCString(node));
-				typed = true;
+				typed=true;
 			}
 			if ("Response".equals(type)) {
 				compiled.add(new BCResponse(node));
-				typed = true;
+				typed=true;
 			}
 			if ("Integer".equals(type)) {
 				compiled.add(new BCInteger(node));
-				typed = true;
+				typed=true;
 			}
 			if ("Float".equals(type)) {
 				compiled.add(new BCFloat(node));
-				typed = true;
+				typed=true;
 			}
 			if ("Avatar".equals(type)) {
 				compiled.add(new BCAvatar(node));
-				typed = true;
+				typed=true;
 			}
 			if ("Group".equals(type)) {
 				compiled.add(new BCGroup(node));
-				typed = true;
+				typed=true;
 			}
 			if ("Character".equals(type)) {
 				compiled.add(new BCCharacter(node));
-				typed = true;
+				typed=true;
 			}
 			if ("List".equals(type)) {
 				compiled.add(new BCList(node));
-				typed = true;
+				typed=true;
 			}
 			if (!typed) {
-				throw new SystemImplementationException("Unable to initialise variable of type " + type + " (not implemented)");
+				throw new SystemImplementationException(
+						"Unable to initialise variable of type "+type+" (not implemented)");
 			}
 			final BCString identifier=new BCString(node.child(1),node.child(1).tokens());
 			compiled.add(identifier);
@@ -215,36 +288,41 @@ public class GSCompiler {
 				compiled.add(new BCStoreIndexed(node));
 				return compiled;
 			}
-			throw new SystemImplementationException("Compiler error: Unknown type of Assignment: "+target.getClass().getName());
+			throw new SystemImplementationException(
+					"Compiler error: Unknown type of Assignment: "+target.getClass().getName());
 		}
-
+		
 		if (node instanceof GSStringConstant) {
 			String string=node.tokens();
 			string=string.substring(1,string.length()-1);
 			compiled.add(new BCString(node,string));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSIntegerConstant) {
 			compiled.add(new BCInteger(node,node.tokens()));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSFloatConstant) {
 			compiled.add(new BCFloat(node,node.tokens()));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSConditional) {
 			// conditional branch
 			checkType(node,0,GSExpression.class);
 			checkType(node,1,GSStatement.class);
 			// evaluate the condition, branch if zero, otherwise run the statement
 			compiled.addAll(compile(st,node.child(0))); // compile condition
-			final BCLabel jumpsource=new BCLabel(node,jumpnumber++);
-			final BCLabel posttruth=new BCLabel(node,jumpnumber++);
-			final BCLabel prefalse=new BCLabel(node,jumpnumber++);
-			final BCLabel postfalse=new BCLabel(node,jumpnumber++);
+			final BCLabel jumpsource=new BCLabel(node,jumpnumber);
+			jumpnumber++;
+			final BCLabel posttruth=new BCLabel(node,jumpnumber);
+			jumpnumber++;
+			final BCLabel prefalse=new BCLabel(node,jumpnumber);
+			jumpnumber++;
+			final BCLabel postfalse=new BCLabel(node,jumpnumber);
+			jumpnumber++;
 			addDebug(compiled,node);
 			compiled.add(jumpsource);
 			compiled.add(new BCBranchRelativeIfZero(node,jumpsource,posttruth)); // if false, branch to posttruth
@@ -253,18 +331,24 @@ public class GSCompiler {
 			compiled.add(prefalse);
 			compiled.add(new BCBranchRelativeIfZero(node,prefalse,postfalse)); // branch to end of whole statement
 			compiled.add(posttruth); // where we go if false
-			if (node.children()==3) { compiled.addAll(compile(st,node.child(2))); }
+			if (node.children()==3) {
+				compiled.addAll(compile(st,node.child(2)));
+			}
 			compiled.add(postfalse); // end of the whole thing
 			return compiled;
 		}
-
+		
 		if (node instanceof GSWhileLoop) {
 			checkType(node,0,GSExpression.class);
 			checkType(node,1,GSStatement.class);
-			final BCLabel start=new BCLabel(node,jumpnumber++);
-			final BCLabel conditionstart=new BCLabel(node,jumpnumber++);
-			final BCLabel loopend=new BCLabel(node,jumpnumber++);
-			final BCLabel end=new BCLabel(node,jumpnumber++);
+			final BCLabel start=new BCLabel(node,jumpnumber);
+			jumpnumber++;
+			final BCLabel conditionstart=new BCLabel(node,jumpnumber);
+			jumpnumber++;
+			final BCLabel loopend=new BCLabel(node,jumpnumber);
+			jumpnumber++;
+			final BCLabel end=new BCLabel(node,jumpnumber);
+			jumpnumber++;
 			// check condition, exit if false, code block, repeat
 			addDebug(compiled,node);
 			compiled.add(start);
@@ -278,36 +362,43 @@ public class GSCompiler {
 			compiled.add(end);
 			return compiled;
 		}
-
+		
 		if (node instanceof GSFunctionCall) {
 			// lots of random glue lives in here, but actually the function call at this level is easy enough, it has a name and some parameters
 			checkType(node,0,GSFunctionName.class);
-			if (node.jjtGetNumChildren()>1) { checkType(node,1,GSParameters.class); }
+			if (node.jjtGetNumChildren()>1) {
+				checkType(node,1,GSParameters.class);
+			}
 			// validate the function name
 			final String functionname=node.child(0).tokens();
 			/*if (!validFunction(functionname)) {
 				throw new GSUnknownIdentifier("Function "+functionname+" does not exist");
 			}*/ // no longer relevant as this code formation is used to call other scripts
-			if (priviledgedFunction(functionname) && !st.hasPermission("Scripting.CompilePrivileged")) {
-				throw new UserInputStateException("You can not call function "+functionname+" due to not having the permission Scripting.CompilePrivileged");
+			if (priviledgedFunction(functionname)&&!st.hasPermission("Scripting.CompilePrivileged")) {
+				throw new UserInputStateException("You can not call function "+functionname+
+				                                  " due to not having the permission Scripting.CompilePrivileged");
 			}
 			// dump the paramters, in reverse order, (which starts with the paramter count), and finally the name and the invoking bytecode
-			if (node.jjtGetNumChildren()>1) { compiled.addAll(compile(st,node.child(1))); } // assuming it has parameters
-			else { compiled.add(new BCInteger(node,0)); } // else zero parameters
+			if (node.jjtGetNumChildren()>1) {
+				compiled.addAll(compile(st,node.child(1)));
+			} // assuming it has parameters
+			else {
+				compiled.add(new BCInteger(node,0));
+			} // else zero parameters
 			compiled.add(new BCString(node,(node.child(0).tokens())));
 			addDebug(compiled,node);
 			compiled.add(new BCInvoke(node));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSParameters) {
-			for (int i=node.jjtGetNumChildren()-1;i >= 0;i--) {
+			for (int i=node.jjtGetNumChildren()-1;i>=0;i--) {
 				compiled.addAll(compile(st,node.child(i)));
 			}
 			compiled.add(new BCInteger(node,node.children()));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSLogicalOr) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -316,7 +407,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSLogicalAnd) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -325,7 +416,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSInEquality) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -334,7 +425,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSEquality) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -343,7 +434,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSLessThan) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -352,7 +443,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSGreaterThan) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -361,7 +452,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSLessOrEqualThan) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -370,7 +461,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSGreaterOrEqualThan) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -379,7 +470,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSAdd) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -388,7 +479,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSSubtract) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -397,7 +488,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSMultiply) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -406,7 +497,7 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSDivide) {
 			compiled.addAll(compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
@@ -415,19 +506,19 @@ public class GSCompiler {
 			}
 			return compiled;
 		}
-
+		
 		if (node instanceof GSLogicalNot) {
 			compiled.addAll(compile(st,node.child(0)));
 			compiled.add(new BCNot(node));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSUnaryMinus) {
 			compiled.addAll(compile(st,node.child(0)));
 			compiled.add(new BCNegate(node));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSIdentifier) {
 			// pull the variable onto the stack.  Kinda
 			compiled.add(new BCString(node,node.tokens()));
@@ -435,16 +526,16 @@ public class GSCompiler {
 			compiled.add(new BCLoad(node));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSList) {
 			// pop the list, in reverse order, then short the size, and then the command.
-			for (int i=node.children()-1;i >= 0;i--) {
+			for (int i=node.children()-1;i>=0;i--) {
 				compiled.addAll(compile(st,node.child(i)));
 			}
 			compiled.add(new BCList(node,node.children()));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSListIndex) { // a list index in an evaluatable position
 			checkType(node,0,GSIdentifier.class);
 			checkType(node,1,GSExpression.class);
@@ -455,9 +546,11 @@ public class GSCompiler {
 			compiled.add(new BCLoadIndexed(node));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSReturn) { // a return statement with an optional value, otherwise we insert int 0
-			if (node.children()>1) { throw new GSInternalError("Compilation error, 0 or 1 children expected"); }
+			if (node.children()>1) {
+				throw new GSInternalError("Compilation error, 0 or 1 children expected");
+			}
 			addDebug(compiled,node);
 			if (node.children()==1) {
 				compiled.addAll(compile(st,node.child(0)));
@@ -467,47 +560,59 @@ public class GSCompiler {
 			compiled.add(new BCReturn(node));
 			return compiled;
 		}
-
+		
 		if (node instanceof GSDiscardExpression) { // a top level expression where the result is not assigned and should be binned from the stack
-			if (node.children() != 1) {
+			if (node.children()!=1) {
 				throw new GSInternalError("Compilation error, 1 children expected");
 			}
-			addDebug(compiled, node);
-			compiled.addAll(compile(st, node.child(0)));
+			addDebug(compiled,node);
+			compiled.addAll(compile(st,node.child(0)));
 			compiled.add(new BCDiscard(node));
 			return compiled;
 		}
-
-		throw new SystemImplementationException("Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
+		
+		throw new SystemImplementationException(
+				"Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
 	}
-
+	
 	private void checkType(@Nonnull final ParseNode node,
 	                       final int pos,
 	                       @Nonnull final Class<? extends ParseNode> clazz) {
 		if (node.jjtGetNumChildren()<pos) {
-			throw new GSInternalError("Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+clazz.getName());
+			throw new GSInternalError(
+					"Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+
+					clazz.getName());
 		}
 		final Node child=node.jjtGetChild(pos);
 		if (!child.getClass().equals(clazz)) {
-			throw new GSInternalError("Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+" not the expected "+clazz.getName());
+			throw new GSInternalError(
+					"Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+
+					" not the expected "+clazz.getName());
 		}
 	}
-
+	
 	private boolean validFunction(final String name) {
 		for (final String funname: GSFunctions.getAll().keySet()) {
-			if (funname.equals(name)) { return true; }
+			if (funname.equals(name)) {
+				return true;
+			}
 		}
 		return false;
 	}
-
+	
 	private boolean priviledgedFunction(final String name) {
 		final Map<String,Method> functionsmap=GSFunctions.getAll();
 		for (final String funname: functionsmap.keySet()) {
-			if (funname.equals(name)) { return functionsmap.get(name).getAnnotation(GSFunctions.GSFunction.class).privileged(); }
+			if (funname.equals(name)) {
+				return functionsmap.get(name).getAnnotation(GSFunctions.GSFunction.class).privileged();
+			}
 		}
 		if (name.startsWith("gs")) {
-			throw new SystemImplementationException("Failed to find function for priviledge check using reserved prefix 'gs'");
-		} else { return false; }
+			throw new SystemImplementationException(
+					"Failed to find function for priviledge check using reserved prefix 'gs'");
+		} else {
+			return false;
+		}
 	}
-
+	
 }

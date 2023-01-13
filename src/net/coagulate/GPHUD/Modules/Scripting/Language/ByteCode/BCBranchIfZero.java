@@ -9,59 +9,61 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Deprecated(forRemoval = true,since = "3.19.3") // non relative jumps are to be abandoned.
+@Deprecated(forRemoval=true, since="3.19.3") // non relative jumps are to be abandoned.
 public class BCBranchIfZero extends ByteCode {
-
-	@Nullable
-	private final BCLabel target;
-
-	public BCBranchIfZero(final ParseNode n,
-	                      @Nullable final BCLabel target) {
+	
+	@Nullable private final BCLabel target;
+	
+	public BCBranchIfZero(final ParseNode n,@Nullable final BCLabel target) {
 		super(n);
 		this.target=target;
 	}
-
-	public BCBranchIfZero(final ParseNode n,
-	                      final int pc) {
+	
+	public BCBranchIfZero(final ParseNode n,final int pc) {
 		super(n);
 		target=new BCLabel(node(),-1,pc);
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
-	public String explain() { return "BranchIfZero#"+target().id+" (Pop one, branch if zero)"; }
-
+	public String explain() {
+		return "BranchIfZero#"+target().id+" (Pop one, branch if zero)";
+	}
+	
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.BranchIfZero.get());
 		if (target().address==null) {
-			bytes.add((byte) 0xff);
-			bytes.add((byte) 0xff);
-			bytes.add((byte) 0xff);
-			bytes.add((byte) 0xff);
+			bytes.add((byte)0xff);
+			bytes.add((byte)0xff);
+			bytes.add((byte)0xff);
+			bytes.add((byte)0xff);
+		} else {
+			addInt(bytes,target().address());
 		}
-		else { addInt(bytes,target().address()); }
 	}
-
+	
 	@Nullable
 	@Override
-	public String htmlDecode() { return "BranchIfZero</td><td>"+target().address(); }
-
+	public String htmlDecode() {
+		return "BranchIfZero</td><td>"+target().address();
+	}
+	
 	@Override
-	public void execute(final State st,
-	                    @Nonnull final GSVM vm,
-	                    final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
 		// pop an int
 		final BCInteger conditional=vm.popInteger();
 		// set PC if zero
-		if (conditional.getContent() == 0) {
-			vm.programCounter = target().address();
+		if (conditional.getContent()==0) {
+			vm.programCounter=target().address();
 		}
 	}
-
+	
 	// ----- Internal Instance -----
 	@Nonnull
 	private BCLabel target() {
-		if (target==null) { throw new GSInternalError("Target is null"); }
+		if (target==null) {
+			throw new GSInternalError("Target is null");
+		}
 		return target;
 	}
 }

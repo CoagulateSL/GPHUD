@@ -42,7 +42,7 @@ public class BasicCommands {
 		json.put("sourcedeveloper",st.getSourceDeveloperNullable());
 		return new JSONResponse(json);
 	}
-
+	
 	@Commands(description="Gets your developer key",
 	          permitUserWeb=false,
 	          permitJSON=false,
@@ -53,11 +53,12 @@ public class BasicCommands {
 	@Nonnull
 	public static Response getDeveloperKey(@Nonnull final State st) {
 		if (!st.getAvatar().hasDeveloperKey()) {
-			return new ErrorResponse("You have no developer key, please contact Iain Maltz if you believe this to be in error");
+			return new ErrorResponse(
+					"You have no developer key, please contact Iain Maltz if you believe this to be in error");
 		}
 		return new OKResponse("Your developer key is: "+st.getAvatar().getDeveloperKey());
 	}
-
+	
 	@Commands(description="Look up information about the avatar",
 	          permitScripting=false,
 	          permitObject=false,
@@ -65,10 +66,11 @@ public class BasicCommands {
 	          permitUserWeb=false,
 	          permitConsole=false,
 	          context=Context.AVATAR)
-
+	
 	@Nonnull
 	public static Response lookupAvatar(@Nonnull final State state,
-	                                    @Arguments(name="user",description="Avatar to lookup",
+	                                    @Arguments(name="user",
+	                                               description="Avatar to lookup",
 	                                               type=ArgumentType.AVATAR) @Nonnull final User user) {
 		final JSONObject json=new JSONObject();
 		json.put("avatarid",user.getId());
@@ -77,7 +79,9 @@ public class BasicCommands {
 		json.put("playingcharacterid",character.getId());
 		json.put("playingcharactername",character.getName());
 		final Region region=character.getRegion();
-		if (region!=null) { json.put("playingcharacterregion",region.getName()); }
+		if (region!=null) {
+			json.put("playingcharacterregion",region.getName());
+		}
 		final Zone zone=character.getZone();
 		if (zone!=null) {
 			json.put("playingcharacterzone",zone.getName());

@@ -27,9 +27,9 @@ import java.util.Map;
  */
 public abstract class MenuConfig {
 	/** Number of columns in the description text area */
-	public static final int DESCRIPTION_COLUMNS=40;
+	public static final  int DESCRIPTION_COLUMNS=40;
 	/** Number of rows in the description text area */
-	private static final int DESCRIPTION_ROWS=5;
+	private static final int DESCRIPTION_ROWS   =5;
 	
 	// ---------- STATICS ----------
 	
@@ -39,10 +39,8 @@ public abstract class MenuConfig {
 	 * @param st     State
 	 * @param values Parameter map
 	 */
-	@URLs(url="/configuration/menus",
-			requiresPermission="Menus.*")
-	public static void configure(@Nonnull final State st,
-								 final SafeMap values) {
+	@URLs(url="/configuration/menus", requiresPermission="Menus.*")
+	public static void configure(@Nonnull final State st,final SafeMap values) {
 		final boolean candelete=st.hasPermission("Menus.Delete");
 		final Form f=st.form();
 		f.noForm();
@@ -67,17 +65,15 @@ public abstract class MenuConfig {
 		final Map<String,Integer> menus=Menu.getMenusMap(st);
 		for (final Map.Entry<String,Integer> entry: menus.entrySet()) {
 			if (candelete) {
-				final String innercontent="<button "+("Main"
-															  .equalsIgnoreCase(entry.getKey())?"disabled":"")+" style=\"border: 0;\" onclick=\"document.getElementById('delete-"+entry.getValue()+"').style.display='inline';\">Delete</button>"+
-												  "<div id=\"delete-"+entry.getValue()+"\" style=\"display: none;\">"+
-												  "&nbsp;&nbsp;&nbsp;"+
-												  "CONFIRM DELETE? "+
-												  "<form style=\"display: inline;\" method=post>"+
-												  "<input type=hidden name=deletemenu value=\""+entry.getValue()+"\">"+
-												  "<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>"+
-												  "</form>"+
-												  "</div>"+
-												  "&nbsp;&nbsp;&nbsp;";
+				final String innercontent="<button "+("Main".equalsIgnoreCase(entry.getKey())?"disabled":"")+
+				                          " style=\"border: 0;\" onclick=\"document.getElementById('delete-"+
+				                          entry.getValue()+"').style.display='inline';\">Delete</button>"+
+				                          "<div id=\"delete-"+entry.getValue()+"\" style=\"display: none;\">"+
+				                          "&nbsp;&nbsp;&nbsp;"+"CONFIRM DELETE? "+
+				                          "<form style=\"display: inline;\" method=post>"+
+				                          "<input type=hidden name=deletemenu value=\""+entry.getValue()+"\">"+
+				                          "<button style=\"border:0; background-color: #ffc0c0;\" type=submit>Yes, Delete!</button>"+
+				                          "</form>"+"</div>"+"&nbsp;&nbsp;&nbsp;";
 				f.add(innercontent);
 			}
 			f.add("<a href=\"./menus/view/"+entry.getValue()+"\">"+entry.getKey()+"</a><br>");
@@ -94,8 +90,7 @@ public abstract class MenuConfig {
 	 * @param values Parameter map
 	 */
 	@URLs(url="/configuration/menus/view/*")
-	public static void viewMenus(@Nonnull final State st,
-								 @Nonnull final SafeMap values) {
+	public static void viewMenus(@Nonnull final State st,@Nonnull final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final Menu m=Menu.get(Integer.parseInt(id));
@@ -109,9 +104,7 @@ public abstract class MenuConfig {
 	 * @param values Parameter map
 	 * @param m      Menu
 	 */
-	public static void viewMenus(@Nonnull final State st,
-								 @Nonnull final SafeMap values,
-								 @Nonnull final Menu m) {
+	public static void viewMenus(@Nonnull final State st,@Nonnull final SafeMap values,@Nonnull final Menu m) {
 		if (m.getInstance()!=st.getInstance()) {
 			throw new UserInputStateException("That menu belongs to a different instance");
 		}
@@ -123,7 +116,9 @@ public abstract class MenuConfig {
 				if (!button.isEmpty()&&!command.isEmpty()) {
 					json.put("button"+i,button);
 					json.put("command"+i,command);
-					if (!values.get("permission"+i).isEmpty()) {json.put("permission"+i,values.get("permission"+i));}
+					if (!values.get("permission"+i).isEmpty()) {
+						json.put("permission"+i,values.get("permission"+i));
+					}
 					if (!values.get("permissiongroup"+i).isEmpty()) {
 						json.put("permissiongroup"+i,values.get("permissiongroup"+i));
 					}
@@ -146,10 +141,12 @@ public abstract class MenuConfig {
 		final Form f=st.form();
 		f.add(new TextHeader("Menu '"+m.getName()+"'"));
 		f.add(new Paragraph(
-				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will "+"be omitted from the menu.  Layout of buttons is as follows:"));
+				"Select buttons and relevant commands for the HUD, note you can select another menu as a command.  Commands the user does not have permission to access will "+
+				"be omitted from the menu.  Layout of buttons is as follows:"));
 		f.add(new Paragraph(
 				"Buttons <B>MUST</B> have labels shorter than 24 characters, and likely only the first twelve or so will fit on the users screen (if UIX is not enabled in GPHUDClient)."));
-		f.add(new Paragraph("If you ARE using UIX (GPHUDClient.UIXMenus) then the full length text of menu labels will appear to the end user, and the ordering will be linearly across rows, left to right"));
+		f.add(new Paragraph(
+				"If you ARE using UIX (GPHUDClient.UIXMenus) then the full length text of menu labels will appear to the end user, and the ordering will be linearly across rows, left to right"));
 		final Table example=new Table();
 		f.add(example);
 		example.openRow().add("10").add("11").add("12");
@@ -166,12 +163,19 @@ public abstract class MenuConfig {
 					f.add(new TextError("Unable to clone menu to "+newname+", it already exists"));
 				}
 			}
-			f.add("You may clone this menu with a new name:").add(new TextInput("cloneas","")).add(new Button("Clone")).br();
+			f.add("You may clone this menu with a new name:")
+			 .add(new TextInput("cloneas",""))
+			 .add(new Button("Clone"))
+			 .br();
 		}
-		f.add("Description:").add(new TextArea("description",m.getDescription(),DESCRIPTION_ROWS,DESCRIPTION_COLUMNS)).br();
+		f.add("Description:")
+		 .add(new TextArea("description",m.getDescription(),DESCRIPTION_ROWS,DESCRIPTION_COLUMNS))
+		 .br();
 		final Table t=new Table();
 		f.add(new TextSubHeader("Button configuration"));
-		if (st.hasPermission("Menus.Config")) {f.add(new Button("Submit"));}
+		if (st.hasPermission("Menus.Config")) {
+			f.add(new Button("Submit"));
+		}
 		f.add(t);
 		final JSONObject j=m.getJSON();
 		for (int i=1;i<=MenuModule.MAX_BUTTONS;i++) {
@@ -208,10 +212,8 @@ public abstract class MenuConfig {
 	 * @param st     State
 	 * @param values Parameter Map
 	 */
-	@URLs(url="/configuration/menus/create",
-			requiresPermission="Menus.Config")
-	public static void createMenu(@Nonnull final State st,
-								  @Nonnull final SafeMap values) {
+	@URLs(url="/configuration/menus/create", requiresPermission="Menus.Config")
+	public static void createMenu(@Nonnull final State st,@Nonnull final SafeMap values) {
 		if ("Submit".equals(values.get("Submit"))&&!values.get("name").isEmpty()) {
 			final Menu menu=Menu.create(st,values.get("name"),values.get("description"),new JSONObject());
 			throw new RedirectionException("./view/"+menu.getId());

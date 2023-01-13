@@ -22,12 +22,10 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class ZonePages {
-
+	
 	// ---------- STATICS ----------
-	@URLs(url="/configuration/zoning",
-		  requiresPermission = "Zoning.*")
-	public static void listZones(@Nonnull final State st,
-	                             final SafeMap values) {
+	@URLs(url="/configuration/zoning", requiresPermission="Zoning.*")
+	public static void listZones(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.p(new TextHeader("Zoning configuration"));
@@ -37,7 +35,7 @@ public abstract class ZonePages {
 			f.add(new Link(zone.getName(),"./zoning/view/"+zone.getId()));
 			if (st.hasPermission("Zoning.config")) {
 				f.add("</td><td>");
-				f.add(new Form(st, true, "./Zoning/Delete", "Delete Zone", "zone", zone.getName()));
+				f.add(new Form(st,true,"./Zoning/Delete","Delete Zone","zone",zone.getName()));
 			}
 			f.add("</td></tr>");
 		}
@@ -48,81 +46,72 @@ public abstract class ZonePages {
 		}
 		Modules.get(st,"Zoning").kvConfigPage(st);
 	}
-
+	
 	@URLs(url="/configuration/zoning/create")
-	public static void createZone(@Nonnull final State st,
-	                              @Nonnull final SafeMap values) {
+	public static void createZone(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.create",values);
 	}
-
+	
 	@URLs(url="/configuration/zoning/delete")
-	public static void deleteZone(@Nonnull final State st,
-	                              @Nonnull final SafeMap values) {
+	public static void deleteZone(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.delete",values);
 	}
-
+	
 	@URLs(url="/configuration/zoning/view/*")
-	public static void viewZone(@Nonnull final State st,
-	                            final SafeMap values) {
+	public static void viewZone(@Nonnull final State st,final SafeMap values) {
 		final String[] split=st.getDebasedURL().split("/");
 		final String id=split[split.length-1];
 		final Zone z=Zone.get(Integer.parseInt(id));
 		viewZone(st,values,z,false);
 	}
-
+	
 	public static void viewZone(@Nonnull final State st,
 	                            final SafeMap values,
 	                            @Nonnull final Zone z,
 	                            final boolean brief) {
-		final boolean full = false;
-		final boolean admin = st.hasPermission("zoning.config");
-		final Form f = st.form();
+		final boolean full=false;
+		final boolean admin=st.hasPermission("zoning.config");
+		final Form f=st.form();
 		f.noForm();
-		f.add(new TextHeader("Zone: " + z.getName()));
-		final Table t = new Table();
+		f.add(new TextHeader("Zone: "+z.getName()));
+		final Table t=new Table();
 		f.add(t);
 		t.border(false);
-		for (final ZoneArea a : z.getZoneAreas()) {
-			String name = "NoPosition";
-			final String[] vectors = a.getVectors();
-			if (vectors != null) {
-				name = vectors[0] + " - " + vectors[1];
+		for (final ZoneArea a: z.getZoneAreas()) {
+			String name="NoPosition";
+			final String[] vectors=a.getVectors();
+			if (vectors!=null) {
+				name=vectors[0]+" - "+vectors[1];
 			}
-			t.openRow().add("Location").add(a.getRegion(true).getName() + ", " + name);
+			t.openRow().add("Location").add(a.getRegion(true).getName()+", "+name);
 			if (admin) {
-				t.add(new Form(st, true, "../deletearea", "Delete Area", "zoneareaid", String.valueOf(a.getId())));
+				t.add(new Form(st,true,"../deletearea","Delete Area","zoneareaid",String.valueOf(a.getId())));
 			}
 		}
-		if (admin) { t.openRow().add("").add(new Form(st,true,"../addarea","Add Area","zone",z.getName())); }
+		if (admin) {
+			t.openRow().add("").add(new Form(st,true,"../addarea","Add Area","zone",z.getName()));
+		}
 		f.add(new TextSubHeader("Influenced KVs"));
 		GenericConfiguration.page(st,values,z,st.simulate(st.getCharacter()));
 	}
-
-	@URLs(url="/configuration/zoning/setcorner1",
-	      requiresPermission="zoning.config")
-	public static void setCornerOne(@Nonnull final State st,
-	                                @Nonnull final SafeMap values) {
+	
+	@URLs(url="/configuration/zoning/setcorner1", requiresPermission="zoning.config")
+	public static void setCornerOne(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.setcornerone",values);
 	}
-
-	@URLs(url="/configuration/zoning/setcorner2",
-	      requiresPermission="zoning.config")
-	public static void setCornerTwo(@Nonnull final State st,
-	                                @Nonnull final SafeMap values) {
+	
+	@URLs(url="/configuration/zoning/setcorner2", requiresPermission="zoning.config")
+	public static void setCornerTwo(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.setcornertwo",values);
 	}
-
-	@URLs(url="/configuration/zoning/addarea",
-	      requiresPermission="zoning.config")
-	public static void addVolume(@Nonnull final State st,
-	                             @Nonnull final SafeMap values) {
+	
+	@URLs(url="/configuration/zoning/addarea", requiresPermission="zoning.config")
+	public static void addVolume(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.simpleHtml(st,"zoning.addvolume",values);
 	}
-
-	@URLs(url="/configuration/zoning/deletearea",
-	      requiresPermission="zoning.config")
-	public static void delVolume(@Nonnull final State st,
-	                             @Nonnull final SafeMap values) {
+	
+	@URLs(url="/configuration/zoning/deletearea", requiresPermission="zoning.config")
+	public static void delVolume(@Nonnull final State st,@Nonnull final SafeMap values) {
 		Modules.run(st,"zoning.deletevolume",values);
 		throw new RedirectionException(values.get("okreturnurl"));
 	}

@@ -24,7 +24,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Visit {
 	// ---------- STATICS ----------
-
+	
 	/**
 	 * Start a visit record.
 	 * Ends any existing visit records for this avatar.
@@ -33,71 +33,91 @@ public class Visit {
 	 * @param character character that is visiting
 	 * @param region    region that is being visited
 	 */
-	public static void initVisit(@Nonnull final State st,
-	                             @Nonnull final Char character,
-	                             @Nonnull final Region region) {
+	public static void initVisit(@Nonnull final State st,@Nonnull final Char character,@Nonnull final Region region) {
 		final User avatar=st.getAvatar();
-		final int updates=db().dqiNotNull("select count(*) from visits where avatarid=? and endtime is null",avatar.getId());
+		final int updates=
+				db().dqiNotNull("select count(*) from visits where avatarid=? and endtime is null",avatar.getId());
 		if (updates>0) {
 			st.logger().fine("Force terminating "+updates+" visits");
 			db().d("update visits set endtime=? where avatarid=? and endtime is null",getUnixTime(),avatar.getId());
 			final Set<User> avatarset=new HashSet<>();
 			avatarset.add(avatar);
-			for (final Region reg: Region.getRegions(st,false)) { reg.departingAvatars(st,avatarset); }
+			for (final Region reg: Region.getRegions(st,false)) {
+				reg.departingAvatars(st,avatarset);
+			}
 		}
-		st.logger().fine("Starting visit for "+character.getNameSafe()+" at "+region.getNameSafe()+" on avatar "+avatar.getName());
-		db().d("insert into visits(avatarid,characterid,regionid,starttime) values(?,?,?,?)",avatar.getId(),character.getId(),region.getId(),getUnixTime());
+		st.logger()
+		  .fine("Starting visit for "+character.getNameSafe()+" at "+region.getNameSafe()+" on avatar "+
+		        avatar.getName());
+		db().d("insert into visits(avatarid,characterid,regionid,starttime) values(?,?,?,?)",
+		       avatar.getId(),
+		       character.getId(),
+		       region.getId(),
+		       getUnixTime());
 	}
-
+	
+	// ----- Internal Statics -----
+	private static DBConnection db() {
+		return GPHUD.getDB();
+	}
+	
 	/**
 	 * Close the visits for a character.
 	 *
 	 * @param state State infers character
 	 */
-
+	
 	public static void closeVisits(@Nonnull final State state) {
-		if (state.getInstance()!=state.getCharacter().getInstance()) { throw new SystemConsistencyException("State character instanceid mismatch"); }
+		if (state.getInstance()!=state.getCharacter().getInstance()) {
+			throw new SystemConsistencyException("State character instanceid mismatch");
+		}
 		closeVisits(state.getCharacter(),state.getRegion());
 	}
-
+	
 	/**
 	 * Close the visits for a character
 	 *
 	 * @param character The character
 	 */
-	public static void closeVisits(@Nonnull final Char character,
-	                               @Nullable final Region region) {
-		db().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?", character.getId());
-		if (region == null) {
-			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and endtime is null", character.getId());
+	public static void closeVisits(@Nonnull final Char character,@Nullable final Region region) {
+		db().d("update eventvisits set endtime=UNIX_TIMESTAMP() where characterid=?",character.getId());
+		if (region==null) {
+			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and endtime is null",
+			       character.getId());
 		} else {
-			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null", character.getId(), region.getId());
+			db().d("update visits set endtime=UNIX_TIMESTAMP() where characterid=? and regionid=? and endtime is null",
+			       character.getId(),
+			       region.getId());
 		}
 	}
-
-
+	
 	/**
 	 * Sum visit time on sim.
 	 *
 	 * @param character Who to sum visit times for
 	 * @param since     Ignore visits that end before this time (Unix Time)
-	 *
 	 * @return Total number of seconds the character has visited the sim for since the specified time
 	 */
-	public static int sumVisits(@Nonnull final Char character,
-	                            final int since) {
+	public static int sumVisits(@Nonnull final Char character,final int since) {
 		final int now=getUnixTime();
-		final Results visits=db().dq("select starttime,endtime from visits where characterid=? and (endtime is null or endtime>?)",character.getId(),since);
+		final Results visits=db().dq(
+				"select starttime,endtime from visits where characterid=? and (endtime is null or endtime>?)",
+				character.getId(),
+				since);
 		int seconds=0;
 		for (final ResultsRow r: visits) {
 			Integer end=r.getIntNullable("endtime");
 			final Integer start=r.getIntNullable("starttime");
-			if (end==null) { end=now; }
-			if (start!=null) { seconds=seconds+(end-start); }
+			if (end==null) {
+				end=now;
+			}
+			if (start!=null) {
+				seconds=seconds+(end-start);
+			}
 		}
 		return seconds;
 	}
-
+	
 	public static Table statusDump(final State st) {
 		final Table t=new Table().border();
 		t.header("Avatar");
@@ -107,8 +127,7 @@ public class Visit {
 		t.header("End Time (empty, visit is open)");
 		for (final ResultsRow row: db().dq(
 				"select visits.* from visits inner join characters on visits.characterid=characters.characterid where characters.instanceid=? and visits.endtime is null",
-				st.getInstance().getId()
-		                                  )) {
+				st.getInstance().getId())) {
 			t.openRow();
 			final Integer avatar=row.getIntNullable("avatarid");
 			t.add(avatar==null?"Null?":User.get(avatar).getName()+"[#"+avatar+"]");
@@ -120,23 +139,19 @@ public class Visit {
 		}
 		return t;
 	}
-
-
+	
 	// TODO consider purging this SQL.  maybe just instantiate all instances and then check their KV.  all but one instance has this enabled or default enabled
 	public static void runAwards() {
 		try {
 			final Results results=GPHUD.getDB()
-					.dq("select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k "+"like 'experience.enabled' where v is null or v like 'true'");
+			                           .dq("select instances.instanceid from instances left join instancekvstore on instances.instanceid=instancekvstore.instanceid and k "+
+			                               "like 'experience.enabled' where v is null or v like 'true'");
 			for (final ResultsRow r: results) {
 				final Instance i=Instance.get(r.getInt());
 				new VisitXP(-1).runAwards(i); // hmm
 			}
-		}
-		catch (@Nonnull final Exception e) {
+		} catch (@Nonnull final Exception e) {
 			GPHUD.getLogger().log(SEVERE,"Exception running awards outer task",e);
 		}
 	}
-
-	// ----- Internal Statics -----
-	private static DBConnection db() { return GPHUD.getDB(); }
 }

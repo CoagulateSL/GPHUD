@@ -26,95 +26,76 @@ import java.util.TreeSet;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class Module {
-
-	final String name;
+	
+	final String           name;
 	final ModuleDefinition annotation;
-
-
-	protected Module(final String name,
-					 final ModuleDefinition annotation) {
-		this.name = name;
-		this.annotation = annotation;
+	
+	
+	protected Module(final String name,final ModuleDefinition annotation) {
+		this.name=name;
+		this.annotation=annotation;
 		Modules.register(this);
-
+		
 	}
-
+	
 	// ----- Internal Statics -----
 	protected static void checkPublicStatic(@Nonnull final Method m) {
 		if (!Modifier.isStatic(m.getModifiers())) {
-			throw new SystemImplementationException("Method " + m.getDeclaringClass().getName() + "/" + m.getName() + " must be static");
+			throw new SystemImplementationException(
+					"Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be static");
 		}
 		if (!Modifier.isPublic(m.getModifiers())) {
-			throw new SystemImplementationException("Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
+			throw new SystemImplementationException(
+					"Method "+m.getDeclaringClass().getName()+"/"+m.getName()+" must be public");
 		}
 	}
-
+	
 	// ---------- INSTANCE ----------
 	public void kvConfigPage(@Nonnull final State st) {
 		st.form().add(new TextHeader("KV Configuration for module "+getName()));
 		GenericConfiguration.page(st,new SafeMap(),st.getInstance(),st.simulate(st.getCharacterNullable()),this);
 	}
-
+	
 	public abstract boolean isGenerated();
-
-	public String getName() { return name; }
-
+	
+	@Nonnull
+	public String requires(final State st) {
+		return annotation.requires();
+	}
+	
 	@Nullable
 	public abstract Set<SideSubMenu> getSideSubMenus(State st);
-
-	@Nonnull
-	public String requires(final State st) { return annotation.requires(); }
-
+	
 	@Nullable
-	public abstract URL getURL(State st,
-	                           String url);
-
+	public abstract URL getURL(State st,String url);
+	
+	public abstract KV getKVDefinition(State st,String qualifiedname);
+	
 	@Nonnull
 	public abstract Map<String,KV> getKVDefinitions(State st);
-
-	public abstract KV getKVDefinition(State st,
-	                                   String qualifiedname);
-
-	@Nullable
-	public abstract Command getCommandNullable(State st,
-	                                           String commandname);
-
+	
 	@Nonnull
-	public Command getCommand(final State st,
-	                          final String commandname) {
-		final Command ret=getCommandNullable(st,commandname);
-		if (ret==null) {
-			throw new UserInputLookupFailureException("Unable to find command "+commandname+" in module "+getName());
-		}
-		return ret;
+	public abstract Pool getPool(State st,String itemname);
+	
+	public abstract Permission getPermission(State st,String itemname);
+	
+	public boolean hasConfig(final State st) {
+		return alwaysHasConfig();
 	}
-
-	@Nonnull
-	public abstract Pool getPool(State st,
-	                             String itemname);
-
-	public abstract Permission getPermission(State st,
-	                                         String itemname);
-
-	@Nonnull
-	public abstract Map<String,Pool> getPoolMap(State st);
-
-	@Nonnull
-	public abstract Map<String,Command> getCommands(State st);
-
-	//public abstract boolean hasPool(State st, Pools p);
-
-	public boolean hasConfig(final State st) { return alwaysHasConfig(); }
-
+	
 	public boolean dependanciesEnabled(final State st) {
-		if (requires(st).isEmpty()) { return true; }
+		if (requires(st).isEmpty()) {
+			return true;
+		}
 		final String[] deps=requires(st).split(",");
 		for (final String dep: deps) {
-			if (!Modules.get(null,dep).isEnabled(st)) { return false; }
+			if (!Modules.get(null,dep).isEnabled(st)) {
+				return false;
+			}
 		}
 		return true;
 	}
-
+	
 	public boolean isEnabled(@Nullable final State st) {
 		final boolean debug=false;
 		if (!canDisable()) {
@@ -127,37 +108,32 @@ public abstract class Module {
 			return false;
 		}
 		final String enabled=st.getKV(getName()+".enabled").value();
-		if (enabled==null || enabled.isEmpty()) {
+		if (enabled==null||enabled.isEmpty()) {
 			return !defaultDisable();
 		}
 		return Boolean.parseBoolean(enabled);
 	}
-
-	/**
-	 * Return a Map of lowercase string -> permission things
-	 *
-	 * @param st State for which to generate permissions for
-	 *
-	 * @return Map of lower case string permission names (not fully qualified) mapping to the permission object
-	 */
-	public abstract Map<String,Permission> getPermissions(State st);
-
-	@Nullable
-	public abstract SideMenu getSideMenu(State st);
-
+	
 	@Nonnull
-	public abstract Set<URL> getAllContents(State st);
-
+	public abstract Map<String,Pool> getPoolMap(State st);
+	
 	@Nonnull
-	public String description() { return annotation.description(); }
-
-	public boolean canDisable() { return annotation.canDisable(); }
-
-	public boolean defaultDisable() { return annotation.defaultDisable(); }
-
+	public String description() {
+		return annotation.description();
+	}
+	
+	//public abstract boolean hasPool(State st, Pools p);
+	
+	public boolean canDisable() {
+		return annotation.canDisable();
+	}
+	
+	public boolean defaultDisable() {
+		return annotation.defaultDisable();
+	}
+	
 	@Nonnull
-	public Map<String,KV> getKVAppliesTo(final State st,
-	                                     final TableRow dbo) {
+	public Map<String,KV> getKVAppliesTo(final State st,final TableRow dbo) {
 		final Map<String,KV> fullset=getKVDefinitions(st);
 		final Map<String,KV> filtered=new TreeMap<>();
 		for (final Map.Entry<String,KV> entry: fullset.entrySet()) {
@@ -168,16 +144,24 @@ public abstract class Module {
 		}
 		return filtered;
 	}
-
-	public void validateKV(final State st,
-	                       @Nonnull final String key) {
+	
+	@Nullable
+	public abstract SideMenu getSideMenu(State st);
+	
+	@Nonnull
+	public abstract Set<URL> getAllContents(State st);
+	
+	public void validateKV(final State st,@Nonnull final String key) {
 		if (getKVDefinitions(st).containsKey(key.toLowerCase())) {
 			throw new SystemImplementationException("KV does not exist ["+key+"] in ["+getName()+"]");
 		}
 	}
-
-	public void validatePermission(final State st,
-	                               @Nonnull final String permission) {
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void validatePermission(final State st,@Nonnull final String permission) {
 		if ("*".equals(permission)) { // just check the module exists here really, which we did by getting this far
 			return;
 		}
@@ -185,6 +169,26 @@ public abstract class Module {
 		if (!perms.containsKey(permission.toLowerCase())) {
 			throw new SystemImplementationException("Permission does not exist ["+permission+"] in ["+getName()+"]");
 		}
+	}
+	
+	/**
+	 * Return a Map of lowercase string -> permission things
+	 *
+	 * @param st State for which to generate permissions for
+	 * @return Map of lower case string permission names (not fully qualified) mapping to the permission object
+	 */
+	public abstract Map<String,Permission> getPermissions(State st);
+	
+	public void validateCommand(final State st,@Nonnull final String command) {
+		if (!getCommands(st).containsKey(command.toLowerCase())) {
+			throw new SystemImplementationException("Command does not exist ["+command+"] in ["+getName()+"]");
+		}
+	}
+	
+	@Nonnull
+	public abstract Map<String,Command> getCommands(State st);
+	
+	public void addTemplateDescriptions(final State st,final Map<String,String> cumulativeMap) {
 	}
     
     /*
@@ -203,58 +207,56 @@ dead code?
         return filtered;
     }
     */
-
-	public void validateCommand(final State st,
-	                            @Nonnull final String command) {
-		if (!getCommands(st).containsKey(command.toLowerCase())) {
-			throw new SystemImplementationException("Command does not exist ["+command+"] in ["+getName()+"]");
-		}
+	
+	public void addTemplateMethods(final State st,final Map<String,Method> cumulativeMap) {
 	}
-
+	
 	public boolean alwaysHasConfig() {
 		return annotation.forceConfig();
 	}
-
-	public void addTemplateDescriptions(final State st,
-                                        final Map<String, String> cumulativeMap) {
-    }
-
-    public void addTemplateMethods(final State st,
-                                   final Map<String, Method> cumulativeMap) {
-    }
-
+	
+	// ----- Internal Instance -----
+	@Nonnull
+	Response run(@Nonnull final State st,final String commandname,@Nonnull final String[] args) {
+		final Command command=getCommand(st,commandname);
+		return command.run(st,args);
+	}
+	
+	@Nonnull
+	public Command getCommand(final State st,final String commandname) {
+		final Command ret=getCommandNullable(st,commandname);
+		if (ret==null) {
+			throw new UserInputLookupFailureException("Unable to find command "+commandname+" in module "+getName());
+		}
+		return ret;
+	}
+	
+	@Nullable
+	public abstract Command getCommandNullable(State st,String commandname);
+	
 	@Nonnull
 	public Set<CharacterAttribute> getAttributes(final State st) {
 		return new TreeSet<>();
 	}
-
-	// ----- Internal Instance -----
-	@Nonnull
-	Response run(@Nonnull final State st,
-	             final String commandname,
-	             @Nonnull final String[] args) {
-		final Command command=getCommand(st,commandname);
-		return command.run(st,args);
-	}
-
+	
 	protected abstract void initialiseInstance(State st);
-
+	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Target(ElementType.PACKAGE)
 	public @interface ModuleDefinition {
 		// ---------- INSTANCE ----------
 		@Nonnull String description();
-
+		
 		boolean canDisable() default true;
-
+		
 		boolean defaultDisable() default false;
-
+		
 		@Nonnull String implementation() default "";
-
+		
 		boolean forceConfig() default false;
-
+		
 		@Nonnull String requires() default "";
 	}
-
+	
 }

@@ -10,7 +10,6 @@ import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -41,7 +40,8 @@ import static net.coagulate.Core.Tools.UnixTime.*;
  */
 public class Region extends TableRow {
 	
-	protected Region(final int id) {super(id);}
+	private static final Cache<Region,Boolean> retiredCache=
+			Cache.getCache("gphud/regionretired",CacheConfig.OPERATIONAL_CONFIG);
 	
 	// ---------- STATICS ----------
 	
@@ -53,14 +53,47 @@ public class Region extends TableRow {
 	 * @return Set of Regions
 	 */
 	@Nonnull
-	public static Set<Region> getInstanceNodeRegions(@Nonnull final Instance instance,
-													 final boolean allowretired) {
-		final Results results=db().dq("select regionid from regions where instanceid=? and authnode=? and retired<?",instance.getId(),Interface.getNode(),allowretired?2:1);
+	public static Set<Region> getInstanceNodeRegions(@Nonnull final Instance instance,final boolean allowretired) {
+		final Results results=db().dq("select regionid from regions where instanceid=? and authnode=? and retired<?",
+		                              instance.getId(),
+		                              Interface.getNode(),
+		                              allowretired?2:1);
 		final Set<Region> regions=new TreeSet<>();
 		for (final ResultsRow row: results) {
 			regions.add(Region.get(row.getInt("regionid"),allowretired));
 		}
 		return regions;
+	}
+	
+	/**
+	 * Factory style constructor
+	 *
+	 * @param id the ID number we want to get
+	 * @return A Region representation
+	 */
+	@Nonnull
+	public static Region get(final int id,final boolean allowretired) {
+		final Region r=(Region)factoryPut("Region",id,Region::new);
+		if (r.isRetired()&&(!allowretired)) {
+			final UserException exception=
+					new UserInputStateException("Attempt to access retired region "+r.getName(),true);
+			GPHUD.getLogger("Regions").log(WARNING,"Attempt to access retired region",exception);
+			throw exception;
+		}
+		return r;
+	}
+	
+	protected Region(final int id) {
+		super(id);
+	}
+	
+	/**
+	 * Is this region retired
+	 *
+	 * @return retirement flag
+	 */
+	public boolean isRetired() {
+		return retiredCache.get(this,()->getBool("retired"));
 	}
 	
 	/**
@@ -71,8 +104,11 @@ public class Region extends TableRow {
 	public static void refreshURL(@Nonnull final String url) {
 		final String t="regions";
 		final int refreshifolderthan=getUnixTime()-TableRow.REFRESH_INTERVAL;
-		final int toupdate=db().dqiNotNull("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
-		if (toupdate==0) {return;}
+		final int toupdate=
+				db().dqiNotNull("select count(*) from "+t+" where url=? and urllast<?",url,refreshifolderthan);
+		if (toupdate==0) {
+			return;
+		}
 		if (toupdate>1) {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
 		}
@@ -80,20 +116,11 @@ public class Region extends TableRow {
 		db().d("update "+t+" set urllast=?,authnode=? where url=?",getUnixTime(),Interface.getNode(),url);
 	}
 	
-	/**
-	 * Factory style constructor
-	 *
-	 * @param id the ID number we want to get
-	 * @return A Region representation
-	 */
 	@Nonnull
-	public static Region get(final int id,
-							 final boolean allowretired) {
-		final Region r=(Region)factoryPut("Region",id,Region::new);
-		if (r.isRetired()&&(!allowretired)) {
-			final UserException exception=new UserInputStateException("Attempt to access retired region "+r.getName(),true);
-			GPHUD.getLogger("Regions").log(WARNING,"Attempt to access retired region",exception);
-			throw exception;
+	public static Region find(@Nonnull final String name,final boolean allowretired) {
+		final Region r=findNullable(name,allowretired);
+		if (r==null) {
+			throw new UserInputLookupFailureException("No active region named '"+name+"' found");
 		}
 		return r;
 	}
@@ -105,20 +132,13 @@ public class Region extends TableRow {
 	 * @return Region object for that region, or null if none is found.
 	 */
 	@Nullable
-	public static Region findNullable(@Nonnull final String name,
-									  final boolean allowretired) {
+	public static Region findNullable(@Nonnull final String name,final boolean allowretired) {
 		try {
 			final int regionid=db().dqiNotNull("select regionid from regions where name=?",name);
 			return get(regionid,allowretired);
-		} catch (@Nonnull final NoDataException e) {return null;}
-	}
-	
-	@Nonnull
-	public static Region find(@Nonnull final String name,
-							  final boolean allowretired) {
-		final Region r=findNullable(name,allowretired);
-		if (r==null) {throw new UserInputLookupFailureException("No active region named '"+name+"' found");}
-		return r;
+		} catch (@Nonnull final NoDataException e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -129,8 +149,7 @@ public class Region extends TableRow {
 	 * @return A blank string on success, or a text hudMessage explaining any problem.
 	 */
 	@Nonnull
-	public static String joinInstance(@Nonnull final String region,
-									  @Nonnull final Instance i) {
+	public static String joinInstance(@Nonnull final String region,@Nonnull final Instance i) {
 		// TO DO - lacks validation
 		final int exists=db().dqiNotNull("select count(*) from regions where name=?",region);
 		if (exists==0) {
@@ -150,28 +169,11 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public static Results getPingable() {
-		return db().dq("select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+"asc limit 0,"+"30",
+		return db().dq(
+				"select regionid,name,url,urllast from regions where url is not null and url!='' and authnode like ? and urllast<? order by urllast "+
+				"asc limit 0,"+"30",
 				Interface.getNode(),
-				getUnixTime()-(Maintenance.PINGSERVERINTERVAL*60)
-		);
-	}
-	
-	/**
-	 * Get all the regions associated with this instance
-	 *
-	 * @param instance     The instance to get regions for
-	 * @param allowretired Return retired instances or not
-	 * @return Set of Regions
-	 */
-	@Nonnull
-	public static Set<Region> getRegions(@Nonnull final Instance instance,
-										 final boolean allowretired) {
-		final Results results=db().dq("select regionid from regions where instanceid=? and retired<?",instance.getId(),allowretired?2:1);
-		final Set<Region> regions=new TreeSet<>();
-		for (final ResultsRow row: results) {
-			regions.add(Region.get(row.getInt("regionid"),allowretired));
-		}
-		return regions;
+				getUnixTime()-(Maintenance.PINGSERVERINTERVAL*60));
 	}
 	
 	/**
@@ -182,9 +184,29 @@ public class Region extends TableRow {
 	 * @return Set of Regions
 	 */
 	@Nonnull
-	public static Set<Region> getRegions(@Nonnull final State st,
-										 final boolean allowretired) {
+	public static Set<Region> getRegions(@Nonnull final State st,final boolean allowretired) {
 		return getRegions(st.getInstance(),allowretired);
+	}
+	
+	// ----- Internal Statics -----
+	
+	/**
+	 * Get all the regions associated with this instance
+	 *
+	 * @param instance     The instance to get regions for
+	 * @param allowretired Return retired instances or not
+	 * @return Set of Regions
+	 */
+	@Nonnull
+	public static Set<Region> getRegions(@Nonnull final Instance instance,final boolean allowretired) {
+		final Results results=db().dq("select regionid from regions where instanceid=? and retired<?",
+		                              instance.getId(),
+		                              allowretired?2:1);
+		final Set<Region> regions=new TreeSet<>();
+		for (final ResultsRow row: results) {
+			regions.add(Region.get(row.getInt("regionid"),allowretired));
+		}
+		return regions;
 	}
 	
 	public static Table statusDump(final State st) {
@@ -216,39 +238,13 @@ public class Region extends TableRow {
 			t.add(row.getIntNullable("regionx"));
 			t.add(row.getIntNullable("regiony"));
 			Integer retired=row.getIntNullable("retired");
-			if (retired==null) {retired=0;}
+			if (retired==null) {
+				retired=0;
+			}
 			t.add(retired==0?"":"Retired");
 			t.add(row.getInt("protocol"));
 		}
 		return t;
-	}
-	
-	// ----- Internal Statics -----
-	
-	/**
-	 * Wipe the region KV store of a particular K
-	 *
-	 * @param instance Instance to wipe KV store for
-	 * @param key      K to wipe
-	 */
-	static void wipeKV(@Nonnull final Instance instance,
-					   @Nonnull final String key) {
-		final String kvtable="regionkvstore";
-		final String maintable="regions";
-		final String idcolumn="regionid";
-		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",
-				key,
-				instance.getId()
-		);
-	}
-	
-	public static Set<Region> getTimedOut() {
-		final Set<Region> set=new HashSet<>();
-		for (final ResultsRow row: GPHUD.getDB().dq("select regionid from regions where retired=0 and urllast<?",
-		                                      getUnixTime()-Config.getGPHUDRegionTimeout())) {
-			set.add(Region.get(row.getInt("regionid"),true));
-		}
-		return set;
 	}
 	
 	/** Returns active instances ; that is instances with an active region */
@@ -259,6 +255,31 @@ public class Region extends TableRow {
 		}
 		return activeInstances;
 	}
+	
+	/**
+	 * Wipe the region KV store of a particular K
+	 *
+	 * @param instance Instance to wipe KV store for
+	 * @param key      K to wipe
+	 */
+	static void wipeKV(@Nonnull final Instance instance,@Nonnull final String key) {
+		final String kvtable="regionkvstore";
+		final String maintable="regions";
+		final String idcolumn="regionid";
+		db().d("delete from "+kvtable+" using "+kvtable+","+maintable+" where "+kvtable+".k like ? and "+kvtable+"."+
+		       idcolumn+"="+maintable+"."+idcolumn+" and "+maintable+".instanceid=?",key,instance.getId());
+	}
+	
+	public static Set<Region> getTimedOut() {
+		final Set<Region> set=new HashSet<>();
+		for (final ResultsRow row: GPHUD.getDB()
+		                                .dq("select regionid from regions where retired=0 and urllast<?",
+		                                    getUnixTime()-Config.getGPHUDRegionTimeout())) {
+			set.add(Region.get(row.getInt("regionid"),true));
+		}
+		return set;
+	}
+	
 	public static String getLatestVersionString() {
 		int maxversion=db().dqOne("select max(regionserverversion) as version from regions").getInt("version");
 		final int major=(int)(Math.floor(maxversion/10000));
@@ -268,20 +289,14 @@ public class Region extends TableRow {
 		final String smajor=String.valueOf(major);
 		String sminor=String.valueOf(minor);
 		String sbugfix=String.valueOf(bugfix);
-		if (sminor.length()==1) { sminor="0"+sminor; }
-		if (sbugfix.length()==1) { sbugfix="0"+sbugfix; }
+		if (sminor.length()==1) {
+			sminor="0"+sminor;
+		}
+		if (sbugfix.length()==1) {
+			sbugfix="0"+sbugfix;
+		}
 		return smajor+"."+sminor+"."+sbugfix;
 	}
-	/**
-	 * Is this region retired
-	 *
-	 * @return retirement flag
-	 */
-	public boolean isRetired() {
-		return retiredCache.get(this,()->getBool("retired"));
-	}
-	
-	private static final Cache<Region,Boolean> retiredCache=Cache.getCache("gphud/regionretired",CacheConfig.OPERATIONAL_CONFIG);
 	
 	/**
 	 * Gets the instance associated with this region
@@ -306,7 +321,9 @@ public class Region extends TableRow {
 	}
 	
 	public void validate(@Nonnull final State st) {
-		if (validated) {return;}
+		if (validated) {
+			return;
+		}
 		validate();
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Region / State Instance mismatch");
@@ -321,7 +338,9 @@ public class Region extends TableRow {
 	
 	@Nonnull
 	@Override
-	public String getLinkTarget() {return "regions";}
+	public String getLinkTarget() {
+		return "regions";
+	}
 	
 	@Nonnull
 	@Override
@@ -335,7 +354,9 @@ public class Region extends TableRow {
 		return "regionid";
 	}
 	
-	public String getPrimUUID() {return getStringNullable("primuuid");}
+	public String getPrimUUID() {
+		return getStringNullable("primuuid");
+	}
 	
 	public void setPrimUUID(final String objectkey) {
 		if (!objectkey.equalsIgnoreCase(getPrimUUID())) {
@@ -347,7 +368,9 @@ public class Region extends TableRow {
 		}
 	}
 	
-	protected int getNameCacheTime() {return 60*60;} // this name doesn't change, cache 1 hour
+	protected int getNameCacheTime() {
+		return 60*60;
+	} // this name doesn't change, cache 1 hour
 	
 	/**
 	 * Gets the URL associated with this region's server
@@ -363,6 +386,7 @@ public class Region extends TableRow {
 	 * Gets the URL associated with this region's server
 	 *
 	 * @return the URL, or user errors
+	 *
 	 * @throws UserRemoteFailureException If the region does not have a URL
 	 */
 	@Nonnull
@@ -395,7 +419,8 @@ public class Region extends TableRow {
 		
 		if (oldurl!=null&&!(oldurl.isEmpty())) {
 			GPHUD.getLogger().info("Sending shutdown to old URL : "+oldurl);
-			final JSONObject tx=new JSONObject().put("incommand","shutdown").put("shutdown","Connection replaced by new region server");
+			final JSONObject tx=new JSONObject().put("incommand","shutdown")
+			                                    .put("shutdown","Connection replaced by new region server");
 			final Transmission t=new Transmission(this,tx,oldurl);
 			t.start();
 		}
@@ -419,22 +444,25 @@ public class Region extends TableRow {
 	 * @param st      State
 	 * @param avatars List of Avatar UUIDs or Names that have left the sim.
 	 */
-	public void departingAvatars(@Nonnull final State st,
-								 @Nonnull final Set<User> avatars) {
+	public void departingAvatars(@Nonnull final State st,@Nonnull final Set<User> avatars) {
 		for (final User avatar: avatars) {
 			// for all the departing avatars
 			try {
 				final int avatarid=avatar.getId();
 				// if the avatar exists, see if there's a visit
-				final Results rows=dq("select characterid from visits where avatarid=? and regionid=? and endtime is null",avatarid,getId());
+				final Results rows=dq(
+						"select characterid from visits where avatarid=? and regionid=? and endtime is null",
+						avatarid,
+						getId());
 				final int count=rows.size();
 				if (count>0) {
 					st.logger().info("Disconnected avatar "+avatar.getName());
-					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters"+".owner=? and characters.instanceid=?",
-							avatarid,
-							st.getInstance().getId()
-					);
-					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",getUnixTime(),getId(),avatarid);
+					d("update eventvisits inner join characters on eventvisits.characterid=characters.characterid set eventvisits.endtime=UNIX_TIMESTAMP() where characters"+
+					  ".owner=? and characters.instanceid=?",avatarid,st.getInstance().getId());
+					d("update visits set endtime=? where endtime is null and regionid=? and avatarid=?",
+					  getUnixTime(),
+					  getId(),
+					  avatarid);
 				}
 				// compute visit XP ((TODO REFACTOR ME?))
 				for (final ResultsRow r: rows) {
@@ -444,7 +472,10 @@ public class Region extends TableRow {
 					new VisitXP(-1).runAwards(st,temp.getCharacter());
 				}
 				final int instanceid=getInstance().getId();
-				final Results urls=dq("select url from characters where instanceid=? and playedby=? and url is not null",instanceid,avatarid);
+				final Results urls=
+						dq("select url from characters where instanceid=? and playedby=? and url is not null",
+						   instanceid,
+						   avatarid);
 				// if the visitor (character) has URLs send them a ping, which will probably 404 and remove its self
 				for (final ResultsRow row: urls) {
 					final String url=row.getStringNullable("url");
@@ -467,27 +498,65 @@ public class Region extends TableRow {
 	 * @param versiontime Preprocessor macro _TIME_ in Firestorm
 	 */
 	public void recordHUDVersion(@Nonnull final State st,
-								 @Nonnull final String version,
-								 @Nonnull final String versiondate,
-								 @Nonnull final String versiontime,
-								 final int protocol) {
+	                             @Nonnull final String version,
+	                             @Nonnull final String versiondate,
+	                             @Nonnull final String versiontime,
+	                             final int protocol) {
 		recordVersion(st,"hud",version,versiondate,versiontime,protocol);
 	}
 	
 	/**
-	 * Convenience method that logs a Server version
+	 * Log a product's version information.
 	 *
 	 * @param st          State
-	 * @param version     Version "XX.YY.ZZ"
-	 * @param versiondate Preprocessor macro _DATE_
-	 * @param versiontime Preprocessor macro _TIME_
+	 * @param type        Type of product (hud, server)
+	 * @param version     Version string (XX.YY.ZZ format) NOTE XX/YY/ZZ should not exceed 2 digits (as it's stored literally as XXYYZZ integer)
+	 * @param versiondate Parsable date (see FireStorm preprocessor macro __DATE__)
+	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
 	 */
-	public void recordServerVersion(@Nonnull final State st,
-									@Nonnull final String version,
-									@Nonnull final String versiondate,
-									@Nonnull final String versiontime,
-									final int protocol) {
-		recordVersion(st,"server",version,versiondate,versiontime,protocol);
+	private void recordVersion(@Nonnull final State st,
+	                           @Nonnull final String type,
+	                           @Nonnull final String version,
+	                           @Nonnull final String versiondate,
+	                           @Nonnull final String versiontime,
+	                           int protocol) { // may be overwritten to avoid logging HUD versions in REGIONS table (reserved for server version)
+		final Date d;
+		try {
+			final SimpleDateFormat df=new SimpleDateFormat("MMM d yyyy HH:mm:ss");
+			df.setLenient(true);
+			String datetime=versiondate+" "+versiontime;
+			datetime=datetime.replaceAll(" {2}"," ");
+			d=df.parse(datetime);
+		} catch (@Nonnull final ParseException ex) {
+			throw new SystemImplementationException("Failed to parse date time from "+versiondate+" "+versiontime,ex);
+		}
+		final ResultsRow regiondata=
+				dqone("select region"+type+"version,region"+type+"datetime from regions where regionid=?",getId());
+		final Integer oldversion=regiondata.getIntNullable("region"+type+"version");
+		final Integer olddatetime=regiondata.getIntNullable("region"+type+"datetime");
+		final int newversion=Interface.convertVersion(version);
+		final int newdatetime=(int)(d.getTime()/1000.0);
+		final int oldprotocol=protocol();
+		if ("hud".equalsIgnoreCase(type)) {
+			protocol=oldprotocol;
+		} // we don't log this in the regions table, just the region server protocol
+		if (oldversion==null||olddatetime==null||olddatetime<newdatetime||oldversion<newversion||protocol>oldprotocol) {
+			d("update regions set region"+type+"version=?,region"+type+"datetime=?,protocol=? where regionid=?",
+			  newversion,
+			  newdatetime,
+			  protocol,
+			  getId());
+			final String olddesc=formatVersion(oldversion,olddatetime,false);
+			final String newdesc=formatVersion(newversion,newdatetime,false);
+			st.logger()
+			  .info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc+" protocol "+oldprotocol+" to "+
+			        protocol);
+			final State fake=new State();
+			fake.setInstance(st.getInstance());
+			fake.setAvatar(User.getSystem());
+			final String updown=(olddatetime==null||olddatetime<newdatetime?"Upgrade":"Downgrade");
+			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,updown,type,olddesc,newdesc,"Product version "+updown);
+		}
 	}
 	
 	/**
@@ -505,39 +574,40 @@ public class Region extends TableRow {
 		return characters;
 	}
 	
-	/**
-	 * Return the avatars currently visiting this region
-	 *
-	 * @return Set of User currently visiting this region.
-	 */
-	@Nonnull
-	public Set<User> getAvatarOpenVisits() {
-		final Set<User> users=new HashSet<>();
-		final Results results=dq("select avatarid from visits where regionid=? and endtime is null",getId());
-		for (final ResultsRow r: results) {
-			try {users.add(User.get(r.getInt("avatarid")));} catch (@Nonnull final Exception ignored) {}
-		}
-		return users;
+	public int protocol() {
+		return getInt("protocol");
 	}
 	
 	/**
-	 * Return the online/offline status of this region as a string
+	 * Internal method to reconstruct a human readable version/datetime string for this region's versions.
 	 *
-	 * @return String, starts with OFFLINE or STALLED if problematic, otherwise "Online"
+	 * @param version  Version number, XXYYZZ (XX.YY.ZZ where XX*10000+YY*100+ZZ)
+	 * @param datetime Unix DateTime stamp of the version
+	 * @param html     To HTML or not
+	 * @return String form of the version information passed
 	 */
 	@Nonnull
-	public String getOnlineStatus(final String timezone) {
-		final int urllast=getURLLast();
-		if (isRetired()) {return "Retired";}
-		if (urllast==0) {return "OFFLINE forever?";}
-		if (getURLNullable()==null||getURLNullable().isEmpty()) {
-			return "OFFLINE for "+duration(getUnixTime()-urllast);
+	private String formatVersion(@Nullable final Integer version,@Nullable final Integer datetime,final boolean html) {
+		String v="";
+		final DateFormat df=DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
+		df.setTimeZone(TimeZone.getTimeZone("GMT"));
+		if (version==null) {
+			v+="v??? ";
+		} else {
+			v=v+"v"+(version/10000)+"."+((version/100)%100)+"."+(version%100)+" ";
 		}
-		final String authnode=getAuthNode();
-		if ((getUnixTime()-urllast)>(15*60)) {
-			return "STALLED at "+fromUnixTime(urllast,timezone)+" via server "+authnode;
+		if (datetime==null) {
+			v+="???";
+		} else {
+			if (html) {
+				v+="<i>( ";
+			}
+			v+=df.format(new Date((long)(1000.0*datetime)));
+			if (html) {
+				v+=" )</i>";
+			}
 		}
-		return "Online at "+fromUnixTime(urllast,timezone)+" via server "+authnode;
+		return v;
 	}
 	
 	/**
@@ -551,15 +621,19 @@ public class Region extends TableRow {
 	}
 	
 	/**
-	 * Extract the currently known server version.
+	 * Convenience method that logs a Server version
 	 *
-	 * @param html As HTML?
-	 * @return Server version string
+	 * @param st          State
+	 * @param version     Version "XX.YY.ZZ"
+	 * @param versiondate Preprocessor macro _DATE_
+	 * @param versiontime Preprocessor macro _TIME_
 	 */
-	@Nonnull
-	public String getServerVersion(final boolean html) {
-		final ResultsRow r=dqone("select regionserverversion,regionserverdatetime from regions where regionid=?",getId());
-		return formatVersion(r.getIntNullable("regionserverversion"),r.getIntNullable("regionserverdatetime"),html);
+	public void recordServerVersion(@Nonnull final State st,
+	                                @Nonnull final String version,
+	                                @Nonnull final String versiondate,
+	                                @Nonnull final String versiontime,
+	                                final int protocol) {
+		recordVersion(st,"server",version,versiondate,versiontime,protocol);
 	}
 	
 	/**
@@ -597,11 +671,22 @@ public class Region extends TableRow {
 		new Transmission(this,json).start();
 	}
 	
-	public void sendServerSync(@Nonnull final JSONObject json) {
-		final Transmission t=new Transmission(this,json);
-		//noinspection CallToThreadRun
-		t.run();
-		if (t.failed()) {throw new UserRemoteFailureException("Connection to server failed");}
+	/**
+	 * Return the avatars currently visiting this region
+	 *
+	 * @return Set of User currently visiting this region.
+	 */
+	@Nonnull
+	public Set<User> getAvatarOpenVisits() {
+		final Set<User> users=new HashSet<>();
+		final Results results=dq("select avatarid from visits where regionid=? and endtime is null",getId());
+		for (final ResultsRow r: results) {
+			try {
+				users.add(User.get(r.getInt("avatarid")));
+			} catch (@Nonnull final Exception ignored) {
+			}
+		}
+		return users;
 	}
 	
 	/**
@@ -639,13 +724,60 @@ public class Region extends TableRow {
 	}
 	
 	/**
+	 * Return the online/offline status of this region as a string
+	 *
+	 * @return String, starts with OFFLINE or STALLED if problematic, otherwise "Online"
+	 */
+	@Nonnull
+	public String getOnlineStatus(final String timezone) {
+		final int urllast=getURLLast();
+		if (isRetired()) {
+			return "Retired";
+		}
+		if (urllast==0) {
+			return "OFFLINE forever?";
+		}
+		if (getURLNullable()==null||getURLNullable().isEmpty()) {
+			return "OFFLINE for "+duration(getUnixTime()-urllast);
+		}
+		final String authnode=getAuthNode();
+		if ((getUnixTime()-urllast)>(15*60)) {
+			return "STALLED at "+fromUnixTime(urllast,timezone)+" via server "+authnode;
+		}
+		return "Online at "+fromUnixTime(urllast,timezone)+" via server "+authnode;
+	}
+	
+	/**
+	 * Extract the currently known server version.
+	 *
+	 * @param html As HTML?
+	 * @return Server version string
+	 */
+	@Nonnull
+	public String getServerVersion(final boolean html) {
+		final ResultsRow r=
+				dqone("select regionserverversion,regionserverdatetime from regions where regionid=?",getId());
+		return formatVersion(r.getIntNullable("regionserverversion"),r.getIntNullable("regionserverdatetime"),html);
+	}
+	
+	// ----- Internal Instance -----
+	
+	public void sendServerSync(@Nonnull final JSONObject json) {
+		final Transmission t=new Transmission(this,json);
+		//noinspection CallToThreadRun
+		t.run();
+		if (t.failed()) {
+			throw new UserRemoteFailureException("Connection to server failed");
+		}
+	}
+	
+	/**
 	 * update the global co-ordinates for this region
 	 *
 	 * @param x Global X
 	 * @param y Global Y
 	 */
-	public void setGlobalCoordinates(final int x,
-									 final int y) {
+	public void setGlobalCoordinates(final int x,final int y) {
 		d("update regions set regionx=?,regiony=? where regionid=?",x,y,getId());
 	}
 	
@@ -660,86 +792,10 @@ public class Region extends TableRow {
 		final Integer x=r.getIntNullable("regionx");
 		final Integer y=r.getIntNullable("regiony");
 		if (x==null||y==null) {
-			throw new UserRemoteFailureException("Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server");
+			throw new UserRemoteFailureException(
+					"Unable to extract "+getNameSafe()+"'s global co-ordinates.  Try '*reboot'ing the region server");
 		}
 		return "<"+x+","+y+",0>";
-	}
-	
-	// ----- Internal Instance -----
-	
-	/**
-	 * Log a product's version information.
-	 *
-	 * @param st          State
-	 * @param type        Type of product (hud, server)
-	 * @param version     Version string (XX.YY.ZZ format) NOTE XX/YY/ZZ should not exceed 2 digits (as it's stored literally as XXYYZZ integer)
-	 * @param versiondate Parsable date (see FireStorm preprocessor macro __DATE__)
-	 * @param versiontime Parsable time (see FireStorm preprocessor macro __TIME__)
-	 */
-	private void recordVersion(@Nonnull final State st,
-							   @Nonnull final String type,
-							   @Nonnull final String version,
-							   @Nonnull final String versiondate,
-							   @Nonnull final String versiontime,
-							   int protocol) { // may be overwritten to avoid logging HUD versions in REGIONS table (reserved for server version)
-		final Date d;
-		try {
-			final SimpleDateFormat df=new SimpleDateFormat("MMM d yyyy HH:mm:ss");
-			df.setLenient(true);
-			String datetime=versiondate+" "+versiontime;
-			datetime=datetime.replaceAll(" {2}"," ");
-			d=df.parse(datetime);
-		} catch (@Nonnull final ParseException ex) {
-			throw new SystemImplementationException("Failed to parse date time from "+versiondate+" "+versiontime,ex);
-		}
-		final ResultsRow regiondata=dqone("select region"+type+"version,region"+type+"datetime from regions where regionid=?",getId());
-		final Integer oldversion=regiondata.getIntNullable("region"+type+"version");
-		final Integer olddatetime=regiondata.getIntNullable("region"+type+"datetime");
-		final int newversion=Interface.convertVersion(version);
-		final int newdatetime=(int)(d.getTime()/1000.0);
-		final int oldprotocol=protocol();
-		if ("hud".equalsIgnoreCase(type)) {
-			protocol=oldprotocol;
-		} // we don't log this in the regions table, just the region server protocol
-		if (oldversion==null||olddatetime==null||olddatetime<newdatetime||oldversion<newversion||protocol>oldprotocol) {
-			d("update regions set region"+type+"version=?,region"+type+"datetime=?,protocol=? where regionid=?",newversion,newdatetime,protocol,getId());
-			final String olddesc=formatVersion(oldversion,olddatetime,false);
-			final String newdesc=formatVersion(newversion,newdatetime,false);
-			st.logger().info("Version upgrade of "+type+" from "+olddesc+" to "+newdesc+" protocol "+oldprotocol+" to "+protocol);
-			final State fake=new State();
-			fake.setInstance(st.getInstance());
-			fake.setAvatar(User.getSystem());
-			final String updown=(olddatetime==null||olddatetime<newdatetime?"Upgrade":"Downgrade");
-			Audit.audit(fake,Audit.OPERATOR.AVATAR,null,null,updown,type,olddesc,newdesc,"Product version "+updown);
-		}
-	}
-	
-	public int protocol() {return getInt("protocol");}
-	
-	/**
-	 * Internal method to reconstruct a human readable version/datetime string for this region's versions.
-	 *
-	 * @param version  Version number, XXYYZZ (XX.YY.ZZ where XX*10000+YY*100+ZZ)
-	 * @param datetime Unix DateTime stamp of the version
-	 * @param html     To HTML or not
-	 * @return String form of the version information passed
-	 */
-	@Nonnull
-	private String formatVersion(@Nullable final Integer version,
-								 @Nullable final Integer datetime,
-								 final boolean html) {
-		String v="";
-		final DateFormat df=DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
-		df.setTimeZone(TimeZone.getTimeZone("GMT"));
-		if (version==null) {v+="v??? ";} else {
-			v=v+"v"+(version/10000)+"."+((version/100)%100)+"."+(version%100)+" ";
-		}
-		if (datetime==null) {v+="???";} else {
-			if (html) {v+="<i>( ";}
-			v+=df.format(new Date((long)(1000.0*datetime)));
-			if (html) {v+=" )</i>";}
-		}
-		return v;
 	}
 	
 	public void retire() {

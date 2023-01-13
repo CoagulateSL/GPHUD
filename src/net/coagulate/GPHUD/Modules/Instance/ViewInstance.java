@@ -20,8 +20,7 @@ public abstract class ViewInstance {
 	
 	// ---------- STATICS ----------
 	@URLs(url="/instances/view/*")
-	public static void viewInstance(@Nonnull final State st,
-									final SafeMap values) {
+	public static void viewInstance(@Nonnull final State st,final SafeMap values) {
 		//System.out.println(st.uri);
 		final String[] split=st.getDebasedURL().split("/");
 		//System.out.println(split.length);
@@ -30,9 +29,7 @@ public abstract class ViewInstance {
 		viewInstance(st,values,i);
 	}
 	
-	public static void viewInstance(@Nonnull final State st,
-									final SafeMap values,
-									@Nonnull final Instance i) {
+	public static void viewInstance(@Nonnull final State st,final SafeMap values,@Nonnull final Instance i) {
 		final String tz=st.getAvatar().getTimeZone();
 		final boolean full=false;
 		final Table map=new Table();
@@ -43,11 +40,16 @@ public abstract class ViewInstance {
 			map.openRow().add("Region").add(r).add(r.getOnlineStatus(tz));
 			map.openRow().add("").add("").add("Server "+r.getServerVersion(true));
 			map.openRow().add("").add("").add("HUD "+r.getHUDVersion(true));
-			if (r.needsUpdate()) {map.openRow().add("").add("").add(new Color("orange","Update Required"));}
+			if (r.needsUpdate()) {
+				map.openRow().add("").add("").add(new Color("orange","Update Required"));
+			}
 		}
-		Integer retireAt=i.retireAt();
+		final Integer retireAt=i.retireAt();
 		if (retireAt!=null) {
-			map.openRow().add("<font color=red>Will delete at</font>").add(UnixTime.fromUnixTime(retireAt,"UTC")).add("<font color=red>"+UnixTime.durationRelativeToNow(retireAt,true)+"</font>");
+			map.openRow()
+			   .add("<font color=red>Will delete at</font>")
+			   .add(UnixTime.fromUnixTime(retireAt,"UTC"))
+			   .add("<font color=red>"+UnixTime.durationRelativeToNow(retireAt,true)+"</font>");
 		}
 	}
 	

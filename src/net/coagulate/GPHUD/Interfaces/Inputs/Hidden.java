@@ -13,32 +13,30 @@ import java.util.Set;
  * @author iain
  */
 public class Hidden extends Input {
-
+	
 	final String name;
-
-	public Hidden(final String name,
-	              final String value) {
+	
+	public Hidden(final String name,final String value) {
 		this.name=name;
 		this.value=value;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Override
 	public String getName() {
 		return name;
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		return "<input type=hidden name=\""+getName()+"\" value=\""+value+"\">";
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {
 		return null;
 	}
-
+	
 }

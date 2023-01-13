@@ -17,45 +17,45 @@ import javax.annotation.Nonnull;
  * @author iain
  */
 public class AttributePermission extends Permission {
-
+	
 	final Attribute a;
-
+	
 	public AttributePermission(@Nonnull final Attribute a) {
 		this.a=a;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Override
 	public Module getModule(final State st) {
 		return Modules.get(st,"Characters");
 	}
-
+	
 	@Override
 	public boolean isGenerated() {
 		return true;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String name() {
 		return "Set"+a.getName();
 	}
-
+	
 	@Nonnull
 	@Override
 	public String description() {
 		return "Permission to admin set attribute "+a.getNameSafe();
 	}
-
+	
 	@Nonnull
 	@Override
 	public POWER power() {
 		return POWER.LOW;
 	}
-
+	
 	@Override
 	public boolean grantable() {
 		return true;
 	}
-
+	
 }

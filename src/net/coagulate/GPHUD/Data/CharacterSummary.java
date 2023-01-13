@@ -23,30 +23,31 @@ import static net.coagulate.Core.Tools.UnixTime.fromUnixTime;
  * @author Iain Price <gphud@predestined.net>
  */
 public class CharacterSummary implements Comparable<CharacterSummary> {
-	final Map<String,String> groups=new HashMap<>();
-	public boolean retired;
+	final  Map<String,String> groups=new HashMap<>();
+	public boolean            retired;
 	int id;
-	@Nonnull
-	String name="";
-	int ownerid;
-	String ownername="";
-	int lastactive;
+	@Nonnull String name="";
+	int     ownerid;
+	String  ownername="";
+	int     lastactive;
 	boolean online;
-	int totalvisits;
-	int recentvisits;
-	int totalxp;
-	@Nonnull
-	List<String> groupheaders=new ArrayList<>();
-
+	int     totalvisits;
+	int     recentvisits;
+	int     totalxp;
+	@Nonnull List<String> groupheaders=new ArrayList<>();
+	
 	// ----- Internal Statics -----
 	@Nonnull
-	static String sortLink(final String current,
-	                       @Nonnull final String link) {
-		if (link.equals(current)) { return "<a href=\"?sort=-"+link+"\">"+link+"</a> &darr;"; }
-		if (("-"+link).equals(current)) { return "<a href=\"?sort="+link+"\">"+link+"</a> &uarr;"; }
+	static String sortLink(final String current,@Nonnull final String link) {
+		if (link.equals(current)) {
+			return "<a href=\"?sort=-"+link+"\">"+link+"</a> &darr;";
+		}
+		if (("-"+link).equals(current)) {
+			return "<a href=\"?sort="+link+"\">"+link+"</a> &uarr;";
+		}
 		return "<a href=\"?sort="+link+"\">"+link+"</a>";
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public Row headers(@Nonnull final State st) {
@@ -68,11 +69,13 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		}
 		return r;
 	}
-
+	
 	@Nonnull
 	public Row asRow(@Nonnull final State st) {
 		final Row r=new Row();
-		if (retired) { r.setbgcolor("#ffe0e0"); }
+		if (retired) {
+			r.setbgcolor("#ffe0e0");
+		}
 		r.add(Char.getLink(name,"characters",id));
 		r.add(User.getGPHUDLink(ownername,ownerid));
 		final String tz=st.getAvatar().getTimeZone();
@@ -82,7 +85,9 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		r.add(duration(recentvisits));
 		for (final String group: groupheaders) {
 			String add=groups.get(group);
-			if (add==null) { add=""; }
+			if (add==null) {
+				add="";
+			}
 			r.add(add);
 		}
 		if (st.hasModule("Experience")) {
@@ -91,15 +96,14 @@ public class CharacterSummary implements Comparable<CharacterSummary> {
 		}
 		return r;
 	}
-
+	
 	@Override
 	public int compareTo(@Nonnull final CharacterSummary o) {
 		return Integer.compare(id,o.id);
 	}
-
+	
 	// ----- Internal Instance -----
-	void setGroup(final String grouptype,
-	              final String groupname) {
+	void setGroup(final String grouptype,final String groupname) {
 		groups.put(grouptype,groupname);
 	}
 }

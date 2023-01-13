@@ -28,35 +28,36 @@ import java.util.Map;
  * @author Iain Price <gphud@predestined.net>
  */
 public class AliasCommand extends Command {
-
+	
 	final JSONObject definition;
-	@Nullable
-	Command targetcommand;
+	@Nullable Command targetcommand;
 	final String name;
-	@Nonnull
-	String fail="";
-
-	public AliasCommand(@Nonnull final State st,
-	                    final String name,
-	                    final JSONObject newdef) {
+	@Nonnull String fail="";
+	
+	public AliasCommand(@Nonnull final State st,final String name,final JSONObject newdef) {
 		definition=newdef;
 		this.name=name;
 		if (st.hasModule(definition.getString("invoke"))) {
-			try { targetcommand=Modules.getCommandNullable(st,definition.getString("invoke")); }
-			catch (final UserConfigurationRecursionException e) {
-                targetcommand = null;
-                fail = e.getLocalizedMessage();
-            }
-		}
-		else {
+			try {
+				targetcommand=Modules.getCommandNullable(st,definition.getString("invoke"));
+			} catch (final UserConfigurationRecursionException e) {
+				targetcommand=null;
+				fail=e.getLocalizedMessage();
+			}
+		} else {
 			targetcommand=null;
 			fail="Module "+Modules.extractModule(definition.getString("invoke"))+" is not enabled.";
 		}
 	}
-
-	// ---------- INSTANCE ----------
-	public JSONObject getDefinition() { return definition; }
-
+	
+	@Override
+	public String description() {
+		if (targetcommand==null) {
+			return "The target command is not reachable, "+fail;
+		}
+		return targetcommand.description();
+	}
+	
 	@Nonnull
 	public Command getTargetCommand() {
 		if (targetcommand==null) {
@@ -64,102 +65,65 @@ public class AliasCommand extends Command {
 		}
 		return targetcommand;
 	}
-
+	
 	@Override
 	public boolean isGenerated() {
 		return true;
 	}
-
-	@Override
-	public String description() {
-		if (targetcommand==null) { return "The target command is not reachable, "+fail; }
-		return targetcommand.description();
-	}
-
+	
 	@Nonnull
 	@Override
 	public String notes() {
-		if (targetcommand==null) { return ""; }
+		if (targetcommand==null) {
+			return "";
+		}
 		return targetcommand.notes();
 	}
-
-	@Override
-	public String requiresPermission() {
-		if (targetcommand==null) { return ""; }
-		return targetcommand.requiresPermission();
-	}
-
-	@Override
-	public Context context() {
-		if (targetcommand==null) { return Context.ANY; }
-		return targetcommand.context();
-	}
-
-	@Override
-	public boolean permitHUD() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitHUD();
-	}
-
+	
 	@Override
 	public boolean permitObject() {
-		if (targetcommand==null) { return false; }
+		if (targetcommand==null) {
+			return false;
+		}
 		return targetcommand.permitObject();
 	}
-
-	@Override
-	public boolean permitConsole() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitConsole();
-	}
-
-	@Override
-	public boolean permitWeb() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitWeb();
-	}
-
-	@Override
-	public boolean permitScripting() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitScripting();
-	}
-
-	@Override
-	public boolean permitExternal() {
-		if (targetcommand==null) { return false; }
-		return targetcommand.permitExternal();
-	}
-
+	
 	@Nonnull
 	@Override
 	public List<Argument> getArguments() {
-		if (targetcommand==null) { return new ArrayList<>(); }
+		if (targetcommand==null) {
+			return new ArrayList<>();
+		}
 		final List<Argument> args=targetcommand.getArguments();
 		final List<Argument> remainingargs=new ArrayList<>();
 		for (final Argument a: args) {
-			if (!definition.has(a.name())) { remainingargs.add(a); }
-			if (definition.has(a.name()+"-desc") && !definition.optString(a.name()+"-desc","").isEmpty()) {
+			if (!definition.has(a.name())) {
+				remainingargs.add(a);
+			}
+			if (definition.has(a.name()+"-desc")&&!definition.optString(a.name()+"-desc","").isEmpty()) {
 				a.overrideDescription(definition.getString(a.name()+"-desc"));
 			}
 		}
 		return remainingargs;
 	}
-
-	@Override
-	public int getArgumentCount() { return getArguments().size(); }
-
+	
 	@Nonnull
 	@Override
-	public String getFullName() { return "Alias."+getName(); }
-
-	@Nonnull
-	public String getName() { return name; }
-
+	public String getFullName() {
+		return "Alias."+getName();
+	}
+	
+	@Override
+	public String requiresPermission() {
+		if (targetcommand==null) {
+			return "";
+		}
+		return targetcommand.requiresPermission();
+	}
+	
 	// ----- Internal Instance -----
 	@Override
-	protected Response execute(final State state,
-	                           final Map<String,Object> arguments) {
+	protected Response execute(final State state,final Map<String,Object> arguments) {
 		if (targetcommand==null) {
 			throw new UserConfigurationException("Error: Alias targets command "+name+", "+fail);
 		}
@@ -171,30 +135,31 @@ public class AliasCommand extends Command {
 		if (getDefinition().has("target")) {
 			arguments.put("target",getDefinition().getString("target"));
 		}
-
+		
 		if (arguments.containsKey("target")) {
 			final Object vobject=arguments.get("target");
 			if (vobject instanceof String v) {
 				final Char targchar;
 				if (v.startsWith(">")) {
-					v = v.substring(1);
+					v=v.substring(1);
 					try {
-						final User a = User.findUsername(v, false);
-						targchar = Char.getActive(a, state.getInstance());
+						final User a=User.findUsername(v,false);
+						targchar=Char.getActive(a,state.getInstance());
 					} catch (@Nonnull final NoDataException e) {
-						throw new UserInputLookupFailureException("Unable to find character or avatar named '" + v + "'", e);
+						throw new UserInputLookupFailureException("Unable to find character or avatar named '"+v+"'",e);
 					}
-				}
-				else {
+				} else {
 					targchar=Char.resolve(state,v);
 				}
-				if (targchar!=null) { state.setTarget(targchar); }
+				if (targchar!=null) {
+					state.setTarget(targchar);
+				}
 			}
 			if (vobject instanceof Char) {
-				state.setTarget((Char) vobject);
+				state.setTarget((Char)vobject);
 			}
 		}
-
+		
 		for (final String key: getDefinition().keySet()) {
 			if (!"invoke".equalsIgnoreCase(key)) {
 				boolean numeric=false;
@@ -202,19 +167,25 @@ public class AliasCommand extends Command {
 				boolean delaytemplating=false;
 				for (final Argument arg: getTargetCommand().getArguments()) {
 					if (arg.name().equals(key)) {
-						if (arg.type() == ArgumentType.FLOAT || arg.type() == ArgumentType.INTEGER) {
-							numeric = true;
-							if (arg.type() == ArgumentType.INTEGER) {
-								integer = true;
+						if (arg.type()==ArgumentType.FLOAT||arg.type()==ArgumentType.INTEGER) {
+							numeric=true;
+							if (arg.type()==ArgumentType.INTEGER) {
+								integer=true;
 							}
 						}
 						if (arg.delayTemplating()) {
-							delaytemplating = true;
+							delaytemplating=true;
 						}
 						if (delaytemplating) {
-							arguments.put(key, convertArgument(state, arg, getDefinition().getString(key)));
+							arguments.put(key,convertArgument(state,arg,getDefinition().getString(key)));
 						} else {
-							arguments.put(key, convertArgument(state, arg, Templater.template(state, getDefinition().getString(key), numeric, integer)));
+							arguments.put(key,
+							              convertArgument(state,
+							                              arg,
+							                              Templater.template(state,
+							                                                 getDefinition().getString(key),
+							                                                 numeric,
+							                                                 integer)));
 						}
 					}
 				}
@@ -222,5 +193,68 @@ public class AliasCommand extends Command {
 		}
 		return getTargetCommand().run(state,arguments);
 	}
-
+	
+	@Override
+	public boolean permitWeb() {
+		if (targetcommand==null) {
+			return false;
+		}
+		return targetcommand.permitWeb();
+	}
+	
+	@Override
+	public boolean permitHUD() {
+		if (targetcommand==null) {
+			return false;
+		}
+		return targetcommand.permitHUD();
+	}
+	
+	@Override
+	public boolean permitConsole() {
+		if (targetcommand==null) {
+			return false;
+		}
+		return targetcommand.permitConsole();
+	}
+	
+	@Override
+	public boolean permitScripting() {
+		if (targetcommand==null) {
+			return false;
+		}
+		return targetcommand.permitScripting();
+	}
+	
+	@Override
+	public boolean permitExternal() {
+		if (targetcommand==null) {
+			return false;
+		}
+		return targetcommand.permitExternal();
+	}
+	
+	@Override
+	public Context context() {
+		if (targetcommand==null) {
+			return Context.ANY;
+		}
+		return targetcommand.context();
+	}
+	
+	@Nonnull
+	public String getName() {
+		return name;
+	}
+	
+	@Override
+	public int getArgumentCount() {
+		return getArguments().size();
+	}
+	
+	// ---------- INSTANCE ----------
+	public JSONObject getDefinition() {
+		return definition;
+	}
+	
 }

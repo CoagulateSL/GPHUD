@@ -14,6 +14,7 @@ import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
+
 public class TestFramework extends TestFrameworkPrototype {
 	
 	public static final String              instanceName   ="_TestInstance";
@@ -59,6 +60,7 @@ public class TestFramework extends TestFrameworkPrototype {
 	private void preSetupTests() {
 		runTest("Check an OK thing",()->new TestOutput(true,"ok!"));
 	}
+	
 	private void setup() throws IOException {
 		primaryRegion=new VirtualRegionServer("Primary Region","_TestRegion1",this,developer,1);
 		secondaryRegion=new VirtualRegionServer("Secondary Region","_TestRegion2",this,developer,2);
@@ -123,6 +125,7 @@ public class TestFramework extends TestFrameworkPrototype {
 			});
 		}
 	}
+	
 	private void teardown() {
 		if (primaryHUD!=null) {
 			primaryHUD.shutdown();
@@ -140,8 +143,10 @@ public class TestFramework extends TestFrameworkPrototype {
 			secondaryRegion.shutdown();
 			secondaryRegion=null;
 		}
-		try { Instance.find(instanceName).delete(); }
-		catch (final Exception ignore) {}
+		try {
+			Instance.find(instanceName).delete();
+		} catch (final Exception ignore) {
+		}
 	}
 	
 	@Retention(RetentionPolicy.RUNTIME)

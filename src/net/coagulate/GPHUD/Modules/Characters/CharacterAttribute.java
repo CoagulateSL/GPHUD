@@ -15,46 +15,58 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class CharacterAttribute extends Attribute {
-
-	protected CharacterAttribute(final int id) {super(id); } //throw new SystemException("Not valid on auto generated attribute");}
-
+	
+	protected CharacterAttribute(final int id) {
+		super(id);
+	} //throw new SystemException("Not valid on auto generated attribute");}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	public abstract String getName();
-
-	@Nonnull
-	public Instance getInstance() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
+	
 	@Nonnull
 	@Override
-	public String getTableName() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
+	public String getTableName() {
+		throw new SystemImplementationException("Not valid on auto generated attribute");
+	}
+	
 	@Nonnull
 	@Override
-	public String getIdColumn() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
+	public String getIdColumn() {
+		throw new SystemImplementationException("Not valid on auto generated attribute");
+	}
+	
+	@Nonnull
+	@Override
+	public String getNameField() {
+		throw new SystemImplementationException("Not valid on auto generated attribute");
+	}
+	
 	public void validate(@Nonnull final State st) {
 		validate();
 	}
-
+	
 	@Nonnull
 	@Override
-	public String getNameField() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
+	public String getLinkTarget() {
+		throw new SystemImplementationException("Not valid on auto generated attribute");
+	}
+	
 	@Nonnull
-	@Override
-	public String getLinkTarget() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
+	public Instance getInstance() {
+		throw new SystemImplementationException("Not valid on auto generated attribute");
+	}
+	
 	@Nonnull
 	public abstract ATTRIBUTETYPE getType();
-
+	
 	@Nonnull
 	public abstract String getSubType();
-
+	
 	public abstract boolean usesAbilityPoints();
-
+	
 	public abstract boolean getRequired();
-
+	
 	/**
 	 * Sets the required flag.
 	 *
@@ -63,10 +75,10 @@ public abstract class CharacterAttribute extends Attribute {
 	public void setRequired(final boolean required) {
 		throw new UserInputStateException("Not valid on auto generated attribute");
 	}
-
+	
 	@Nonnull
 	public abstract String getDefaultValue();
-
+	
 	/**
 	 * Set the default value for this attribute.
 	 *
@@ -75,9 +87,9 @@ public abstract class CharacterAttribute extends Attribute {
 	public void setDefaultValue(final String defaultValue) {
 		throw new UserInputStateException("Not valid on auto generated attribute");
 	}
-
+	
 	public abstract boolean getSelfModify();
-
+	
 	/**
 	 * Set the self modify flag.
 	 *
@@ -86,18 +98,18 @@ public abstract class CharacterAttribute extends Attribute {
 	public void setSelfModify(final Boolean selfModify) {
 		throw new UserInputStateException("Not valid on auto generated attribute");
 	}
-
+	
 	public abstract boolean isKV();
-
+	
 	@Nonnull
 	public abstract KV.KVTYPE getKVType();
-
+	
 	@Nonnull
 	public abstract String getKVDefaultValue();
-
+	
 	@Nonnull
 	public abstract KV.KVHIERARCHY getKVHierarchy();
-
+	
 	/**
 	 * Set the uses abilitypoints flag.
 	 *
@@ -106,25 +118,26 @@ public abstract class CharacterAttribute extends Attribute {
 	public void setUsesAbilityPoints(final Boolean usesAbilityPoints) {
 		throw new SystemImplementationException("Not valid on auto generated attribute");
 	}
-
-	/**
-	 * Deletes this attribute, and its data.
-	 */
-	public void delete() {throw new SystemImplementationException("Not valid on auto generated attribute");}
-
+	
+	@Override
+	public void templatable(final State st,final boolean newValue) {
+		throw new UserInputStateException("Non user attribute can not have its templatable flag changed");
+	}
+	
 	public boolean readOnly() {
 		return true;
 	}
-
+	
 	@Override
 	public boolean templatable() {
 		return false;
 	}
-
-	@Override
-	public void templatable(final State st,
-	                        final boolean newValue) {
-		throw new UserInputStateException("Non user attribute can not have its templatable flag changed");
+	
+	/**
+	 * Deletes this attribute, and its data.
+	 */
+	public void delete() {
+		throw new SystemImplementationException("Not valid on auto generated attribute");
 	}
 }
 

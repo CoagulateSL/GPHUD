@@ -10,81 +10,81 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class ConveyanceKV extends KV {
-
+	
 	final String name;
-
+	
 	public ConveyanceKV(final String attribute) {
 		name=attribute;
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Override
 	public boolean isGenerated() {
 		return true;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String fullName() {
 		return "GPHUDClient."+name();
 	}
-
+	
 	@Nonnull
 	@Override
 	public KVSCOPE scope() {
 		return KVSCOPE.CHARACTER;
 	}
-
+	
 	@Nonnull
 	@Override
 	public KVTYPE type() {
 		return KVTYPE.TEXT;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String description() {
 		return "Conveyance memory, internal use only";
 	}
-
+	
 	@Nonnull
 	@Override
 	public String editPermission() {
 		return "instance.owner";
 	}
-
+	
 	@Nonnull
 	@Override
 	public String defaultValue() {
 		return "";
 	}
-
+	
 	@Nonnull
 	@Override
 	public String conveyAs() {
 		return ""; // NEVER.  NO.  DONT.  :P
 	}
-
+	
 	@Nonnull
 	@Override
 	public KVHIERARCHY hierarchy() {
 		return KVHIERARCHY.NONE;
 	}
-
+	
 	@Override
 	public boolean template() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean hidden() {
 		return true;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String name() {
 		return name;
 	}
-
+	
 }

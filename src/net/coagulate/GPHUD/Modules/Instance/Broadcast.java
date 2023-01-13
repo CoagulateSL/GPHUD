@@ -16,14 +16,13 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class Broadcast {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
-	@Commands(context=Context.ANY,
-	          description="Send admin message",
-	          requiresPermission="instance.SendAdminMessages")
+	@Commands(context=Context.ANY, description="Send admin message", requiresPermission="instance.SendAdminMessages")
 	public static Response admin(@Nonnull final State st,
-	                             @Arguments(name="sendmessage",description="Message to broadcast",
+	                             @Arguments(name="sendmessage",
+	                                        description="Message to broadcast",
 	                                        type=ArgumentType.TEXT_ONELINE,
 	                                        max=200) final String sendmessage) {
 		String message="(From ";
@@ -33,7 +32,9 @@ public class Broadcast {
 			message+=avfrom;
 		}
 		if (st.getCharacterNullable()!=null) {
-			if (!st.getCharacter().getName().equals(avfrom)) { message+="/"+st.getCharacter().getName(); }
+			if (!st.getCharacter().getName().equals(avfrom)) {
+				message+="/"+st.getCharacter().getName();
+			}
 		}
 		message+=") : "+sendmessage;
 		final int sent=st.getInstance().broadcastAdmins(st,message);

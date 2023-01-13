@@ -24,18 +24,20 @@ import java.util.Map;
 public abstract class API {
 	// ---------- STATICS ----------
 	@URLs(url="/introspection/api/*")
-	public static void renderCommand(@Nonnull final State st,
-	                                 final SafeMap values) {
+	public static void renderCommand(@Nonnull final State st,final SafeMap values) {
 		String uri=st.getDebasedURL();
-		if (!uri.startsWith("/introspection/api/")) { throw new SystemImplementationException("URL Misconfiguratin?"); }
+		if (!uri.startsWith("/introspection/api/")) {
+			throw new SystemImplementationException("URL Misconfiguratin?");
+		}
 		uri=uri.substring("/introspection/api/".length());
-
+		
 		// if we get here, we're investigating a specific command
 		final Form f=st.form();
 		String proposedcommand=uri;
 		proposedcommand=proposedcommand.replaceAll("/",".");
-		proposedcommand=proposedcommand.replaceAll("[^A-Za-z\\d.]","");  // limited character set.  XSS protect etc blah blah tainted user input blah
-
+		proposedcommand=proposedcommand.replaceAll("[^A-Za-z\\d.]",
+		                                           "");  // limited character set.  XSS protect etc blah blah tainted user input blah
+		
 		final Command c=Modules.getCommandNullable(st,proposedcommand);
 		if (c==null) {
 			f.add(new TextError("COMMAND NOT FOUND!"));
@@ -45,7 +47,9 @@ public abstract class API {
 		// ooh...
 		f.add(new TextSubHeader("Description"));
 		f.add(new Paragraph(c.description()));
-		if (!c.notes().isEmpty()) { f.add(new Paragraph(c.notes())); }
+		if (!c.notes().isEmpty()) {
+			f.add(new Paragraph(c.notes()));
+		}
 		f.add(new TextSubHeader("Arguments"));
 		final Table args=new Table();
 		for (final Argument p: c.getArguments()) {
@@ -63,10 +67,10 @@ public abstract class API {
 				f.add(" ["+options+"]");
 			}
 			f.add(" - Mandatory: "+p.mandatory());
-			f.add(" - " + p.description());
+			f.add(" - "+p.description());
 			f.add("<br>");
 		}
-		if (c.requiresPermission() != null && !c.requiresPermission().isEmpty()) {
+		if (c.requiresPermission()!=null&&!c.requiresPermission().isEmpty()) {
 			f.add(new TextSubHeader("Permission Required to Invoke"));
 			f.add(c.requiresPermission());
 		}
@@ -74,49 +78,47 @@ public abstract class API {
 		f.add(c.context().toString());
 		f.add(new TextSubHeader("Interface Access"));
 		if (c.permitConsole()) {
-			f.add(new Color("green", "Accessible via console"));
+			f.add(new Color("green","Accessible via console"));
 		} else {
-			f.add(new Color("red", "Console access denied"));
+			f.add(new Color("red","Console access denied"));
 		}
 		f.add("<br>");
 		if (c.permitHUD()) {
-			f.add(new Color("green", "Accessible via HUD"));
+			f.add(new Color("green","Accessible via HUD"));
 		} else {
-			f.add(new Color("red", "HUD access denied"));
+			f.add(new Color("red","HUD access denied"));
 		}
 		f.add("<br>");
 		if (c.permitWeb()) {
-			f.add(new Color("green", "Accessible via Web"));
+			f.add(new Color("green","Accessible via Web"));
 		} else {
-			f.add(new Color("red", "Web access denied"));
+			f.add(new Color("red","Web access denied"));
 		}
 		f.add("<br>");
 		if (c.permitScripting()) {
-			f.add(new Color("green", "Accessible via Scripting module"));
+			f.add(new Color("green","Accessible via Scripting module"));
 		} else {
-			f.add(new Color("red", "Scripting access denied"));
+			f.add(new Color("red","Scripting access denied"));
 		}
 		f.add("<br>");
 		if (c.permitObject()) {
-			f.add(new Color("green", "Accessible via Object API"));
+			f.add(new Color("green","Accessible via Object API"));
 		} else {
-			f.add(new Color("red", "Object access denied"));
+			f.add(new Color("red","Object access denied"));
 		}
 		f.add("<br>");
 		if (c.permitExternal()) {
-			f.add(new Color("green", "Accessible via External API"));
+			f.add(new Color("green","Accessible via External API"));
 		} else {
-			f.add(new Color("red", "External access denied"));
+			f.add(new Color("red","External access denied"));
 		}
 		f.add("<br>");
 		f.add("<br>");
 	}
-
+	
 	@URLs(url="/introspection/api/")
-	@SideSubMenus(name="API",
-	              priority=1)
-	public static void APIIndex(@Nonnull final State st,
-	                            final SafeMap values) {
+	@SideSubMenus(name="API", priority=1)
+	public static void APIIndex(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		final Table t=new Table();
 		//t.border(true);
@@ -130,42 +132,56 @@ public abstract class API {
 					final Command c=entry.getValue();
 					t.openRow();
 					t.add(c.context().toString());
-					t.add("<a href=\"/GPHUD/introspection/api/"+m.getName()+"/"+entry.getKey()+"\">"+c.getName()+"</a>");
+					t.add("<a href=\"/GPHUD/introspection/api/"+m.getName()+"/"+entry.getKey()+"\">"+c.getName()+
+					      "</a>");
 					t.add(c.description());
-					if (c.requiresPermission().isEmpty()) { t.add(""); }
-					else {
+					if (c.requiresPermission().isEmpty()) {
+						t.add("");
+					} else {
 						t.add(" [ "+c.requiresPermission()+" ] ");
 					}
-					if (c.permitConsole()) { t.add(new Color("green","Console")); }
-					else {
+					if (c.permitConsole()) {
+						t.add(new Color("green","Console"));
+					} else {
 						t.add(new Color("red","Console"));
 					}
-					if (c.permitHUD()) { t.add(new Color("green","HUD")); }
-					else { t.add(new Color("red","HUD")); }
-					if (c.permitWeb()) { t.add(new Color("green","Web")); }
-					else {
+					if (c.permitHUD()) {
+						t.add(new Color("green","HUD"));
+					} else {
+						t.add(new Color("red","HUD"));
+					}
+					if (c.permitWeb()) {
+						t.add(new Color("green","Web"));
+					} else {
 						t.add(new Color("red","Web"));
 					}
-					if (c.permitScripting()) { t.add(new Color("green","Scripting")); }
-					else {
+					if (c.permitScripting()) {
+						t.add(new Color("green","Scripting"));
+					} else {
 						t.add(new Color("red","Scripting"));
 					}
-					if (c.permitObject()) { t.add(new Color("green","Object")); }
-					else {
+					if (c.permitObject()) {
+						t.add(new Color("green","Object"));
+					} else {
 						t.add(new Color("red","Object"));
 					}
-					if (c.permitExternal()) { t.add(new Color("green","External")); }
-					else {
+					if (c.permitExternal()) {
+						t.add(new Color("green","External"));
+					} else {
 						t.add(new Color("red","External"));
 					}
-					if (c.isGenerated()) { t.add(new Color("blue","Generated")); }
-					else { t.add(""); }
+					if (c.isGenerated()) {
+						t.add(new Color("blue","Generated"));
+					} else {
+						t.add("");
+					}
+				} catch (@Nonnull final Exception e) {
+					t.add("ERR:"+e);
 				}
-				catch (@Nonnull final Exception e) { t.add("ERR:"+e); }
 			}
 			t.openRow();
 			t.add(new Cell(new Separator(),999));
 		}
 	}
-
+	
 }

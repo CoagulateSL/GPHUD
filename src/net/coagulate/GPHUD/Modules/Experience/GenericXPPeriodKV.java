@@ -9,38 +9,62 @@ import javax.annotation.Nonnull;
  */
 public class GenericXPPeriodKV extends KV {
 	private final String myname;
-
-	public GenericXPPeriodKV(final String name) { myname=name; }
-
+	
+	public GenericXPPeriodKV(final String name) {
+		myname=name;
+	}
+	
 	// ---------- INSTANCE ----------
-	public boolean isGenerated() { return true; }
-
+	public boolean isGenerated() {
+		return true;
+	}
+	
 	@Nonnull
-	public String fullName() { return "Experience."+myname; }
-
+	public String fullName() {
+		return "Experience."+myname;
+	}
+	
 	@Nonnull
-	public KVSCOPE scope() { return KVSCOPE.NONSPATIAL; }
-
+	public KVSCOPE scope() {
+		return KVSCOPE.NONSPATIAL;
+	}
+	
 	@Nonnull
-	public KVTYPE type() { return KVTYPE.FLOAT; }
-
+	public KVTYPE type() {
+		return KVTYPE.FLOAT;
+	}
+	
 	@Nonnull
-	public String description() { return "Cycle length, in days, for "+myname+" limit"; }
-
+	public String description() {
+		return "Cycle length, in days, for "+myname+" limit";
+	}
+	
 	@Nonnull
-	public String editPermission() { return "Experience.ConfigureXP"; }
-
+	public String editPermission() {
+		return "Experience.ConfigureXP";
+	}
+	
 	@Nonnull
-	public String defaultValue() { return "6.75"; }
-
+	public String defaultValue() {
+		return "6.75";
+	}
+	
 	@Nonnull
-	public String conveyAs() { return ""; }
-
+	public String conveyAs() {
+		return "";
+	}
+	
 	@Nonnull
-	public KVHIERARCHY hierarchy() { return KVHIERARCHY.CUMULATIVE; }
-
-	public boolean template() { return true; }
-
+	public KVHIERARCHY hierarchy() {
+		return KVHIERARCHY.CUMULATIVE;
+	}
+	
+	public boolean template() {
+		return true;
+	}
+	
 	@Nonnull
-	public String name() { return myname; }
+	public String name() {
+		return myname;
+	}
 }

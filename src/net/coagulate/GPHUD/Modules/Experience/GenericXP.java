@@ -13,25 +13,35 @@ import javax.annotation.Nonnull;
  */
 public class GenericXP extends QuotaedXP {
 	private final String myname;
-
+	
 	public GenericXP(final String name) {
 		super(-1);
 		myname=name;
 	}
-
+	
 	// ---------- INSTANCE ----------
-	public Module getModule() { return Modules.get(null,"Experience"); }
-
+	public Module getModule() {
+		return Modules.get(null,"Experience");
+	}
+	
 	@Nonnull
-	public String poolName(final State st) {return "Experience."+myname;}
-
+	public String periodKV(final State st) {
+		return "Experience."+myname+"XPPeriod";
+	}
+	
 	@Nonnull
-	public String quotaKV(final State st) {return "Experience."+myname+"XPLimit"; }
-
+	public String poolName(final State st) {
+		return "Experience."+myname;
+	}
+	
 	@Nonnull
-	public String periodKV(final State st) { return "Experience."+myname+"XPPeriod"; }
-
+	public String quotaKV(final State st) {
+		return "Experience."+myname+"XPLimit";
+	}
+	
 	@Nonnull
-	public String getName() { return myname; }
-
+	public String getName() {
+		return myname;
+	}
+	
 }

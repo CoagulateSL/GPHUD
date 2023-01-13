@@ -26,10 +26,8 @@ import static java.util.logging.Level.FINE;
 public abstract class Templates {
 	// ---------- STATICS ----------
 	@URLs(url="/introspection/templates")
-	@SideSubMenus(name="Templates",
-	              priority=25)
-	public static void listTemplates(@Nonnull final State st,
-	                                 final SafeMap values) {
+	@SideSubMenus(name="Templates", priority=25)
+	public static void listTemplates(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("Templates available"));
 		final Table t=new Table();
@@ -43,13 +41,15 @@ public abstract class Templates {
 			t.openRow();
 			t.add(template);
 			t.add(entry.getValue());
-			if (m==null) { t.add("<i>NULL</i>"); }
-			else {
+			if (m==null) {
+				t.add("<i>NULL</i>");
+			} else {
 				t.add(m.getDeclaringClass().getName()+"."+m.getName()+"()");
 			}
 			String value;
-			try { value=Templater.getValue(st,template,false,false); }
-			catch (@Nonnull final UserException e) {
+			try {
+				value=Templater.getValue(st,template,false,false);
+			} catch (@Nonnull final UserException e) {
 				value="ERROR:"+e.getMessage();
 				st.logger().log(FINE,"Template gave user exception (not unexpected)",e);
 			}

@@ -28,19 +28,25 @@ public class DeveloperAccess {
 	          permitJSON=false,
 	          permitUserWeb=false)
 	public static Response enableDeveloper(@Nonnull final State state,
-	                                       @Arguments(name="user",description="User to grant developer access to",
+	                                       @Arguments(name="user",
+	                                                  description="User to grant developer access to",
 	                                                  type=ArgumentType.AVATAR) @Nonnull final User user) {
-		if (!state.getAvatar().isSuperAdmin()) { throw new UserAccessDeniedException("Caller is not a super admin!"); }
-		if (user.hasDeveloperKey()) { return new ErrorResponse("User is already a developer"); }
+		if (!state.getAvatar().isSuperAdmin()) {
+			throw new UserAccessDeniedException("Caller is not a super admin!");
+		}
+		if (user.hasDeveloperKey()) {
+			return new ErrorResponse("User is already a developer");
+		}
 		final String developerkey=Tokens.generateToken();
 		user.setDeveloperKey(developerkey);
 		SL.im(user.getUUID(),
-		                  "Notice from GPHUD "+(Config.getDevelopment()?"DEVELOPMENT":"Production")+" service\n \nYou have been assigned developer access\nKey: "+developerkey+"\n[https://sl.coagulate.net/Docs/GPHUD/index.php/External_Access_API.html Please see here for a brief developer reference]"
-		                 );
+		      "Notice from GPHUD "+(Config.getDevelopment()?"DEVELOPMENT":"Production")+
+		      " service\n \nYou have been assigned developer access\nKey: "+developerkey+
+		      "\n[https://sl.coagulate.net/Docs/GPHUD/index.php/External_Access_API.html Please see here for a brief developer reference]");
 		return new OKResponse("User "+user+" now has a developer key");
-
+		
 	}
-
+	
 	@Nonnull
 	@Commands(description="Disabled an account for developer access",
 	          context=Context.AVATAR,
@@ -51,12 +57,17 @@ public class DeveloperAccess {
 	          permitJSON=false,
 	          permitUserWeb=false)
 	public static Response disableDeveloper(@Nonnull final State state,
-	                                        @Arguments(name="user",description="User to revoke developer access from",
+	                                        @Arguments(name="user",
+	                                                   description="User to revoke developer access from",
 	                                                   type=ArgumentType.AVATAR) @Nonnull final User user) {
-		if (!state.getAvatar().isSuperAdmin()) { throw new UserAccessDeniedException("Caller is not a super admin!"); }
-		if (!user.hasDeveloperKey()) { return new ErrorResponse("User is not a developer"); }
+		if (!state.getAvatar().isSuperAdmin()) {
+			throw new UserAccessDeniedException("Caller is not a super admin!");
+		}
+		if (!user.hasDeveloperKey()) {
+			return new ErrorResponse("User is not a developer");
+		}
 		user.setDeveloperKey(null);
 		return new OKResponse("User "+user+" now has no developer key");
 	}
-
+	
 }

@@ -35,45 +35,61 @@ import java.util.List;
  */
 public class Connect {
 	
-	private Connect() {}
+	private Connect() {
+	}
 	
 	/**
 	 * Connects GPHUD
-	 * @param st State
-	 * @param version Version number issued by connecting object
+	 *
+	 * @param st          State
+	 * @param version     Version number issued by connecting object
 	 * @param versiondate Version date stamp issued by connecting object
 	 * @param versiontime Version time stamp issued by connecting object
-	 * @param url Inbound URL for the target object
+	 * @param url         Inbound URL for the target object
 	 * @param characterid Existing character login if available
 	 * @return JSON Response for the HUD setting up the initial state.
 	 */
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Context.AVATAR,
-			permitConsole=false,
-			permitUserWeb=false,
-			permitScripting=false,
-			description="Bind a running GPHUD HUD to a particular character, potentially auto creating, or prompting for naming if auto create is off",
-			permitObject=false,
-			permitExternal=false)
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          permitScripting=false,
+	          description="Bind a running GPHUD HUD to a particular character, potentially auto creating, or prompting for naming if auto create is off",
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response connect(@Nonnull final State st,
-								   @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-										   name="version", description="Version number of the HUD that is connecting",
-										   max=128) final String version,
-								   @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-										   name="versiondate", description="Version date of the HUD that is connecting",
-										   max=128) final String versiondate,
-								   @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-										   name="versiontime", description="Version time of the HUD that is connecting",
-										   max=128) final String versiontime,
-								   @Nonnull @Arguments(type=ArgumentType.TEXT_ONELINE,
-										   name="url", description="URL for the client",
-										   max=256) final String url,
-								   @Nonnull @Arguments(type=ArgumentType.INTEGER,
-										   name="characterid", description="Resume session for character id") final Integer characterid) {
+	                               @Nonnull
+	                               @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                          name="version",
+	                                          description="Version number of the HUD that is connecting",
+	                                          max=128) final String version,
+	                               @Nonnull
+	                               @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                          name="versiondate",
+	                                          description="Version date of the HUD that is connecting",
+	                                          max=128) final String versiondate,
+	                               @Nonnull
+	                               @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                          name="versiontime",
+	                                          description="Version time of the HUD that is connecting",
+	                                          max=128) final String versiontime,
+	                               @Nonnull
+	                               @Arguments(type=ArgumentType.TEXT_ONELINE,
+	                                          name="url",
+	                                          description="URL for the client",
+	                                          max=256) final String url,
+	                               @Nonnull
+	                               @Arguments(type=ArgumentType.INTEGER,
+	                                          name="characterid",
+	                                          description="Resume session for character id")
+	                               final Integer characterid) {
 		if (EndOfLifing.hasExpired(version)) {
-			st.logger().warning("Rejected HUD connection from end-of-life product version "+version+" from "+versiondate+" "+versiontime);
-			return new TerminateResponse("Sorry, this HUD is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
+			st.logger()
+			  .warning("Rejected HUD connection from end-of-life product version "+version+" from "+versiondate+" "+
+			           versiontime);
+			return new TerminateResponse(
+					"Sorry, this HUD is so old it is no longer supported.\nPlease tell your sim administrator to deploy an update.");
 		}
 		st.json(); // ensure we have the jsons
 		// log client version
@@ -95,10 +111,10 @@ public class Connect {
 			else {
 				final JSONResponse response=new JSONResponse(Modules.getJSONTemplate(st,"characters.create"));
 				response.asJSON(st)
-						.put("hudtext","Creating character...")
-						.put("hudcolor","<1.0,0.75,0.75>")
-						.put("titlertext","Creating character...")
-						.put("titlercolor","<1.0,0.75,0.75>");
+				        .put("hudtext","Creating character...")
+				        .put("hudcolor","<1.0,0.75,0.75>")
+				        .put("titlertext","Creating character...")
+				        .put("titlercolor","<1.0,0.75,0.75>");
 				response.message("Welcome.  You do not have any characters, please create a new one.",st.protocol);
 				return response;
 			}
@@ -108,7 +124,9 @@ public class Connect {
 		// set up the state so postConnect can do stuff
 		st.setCharacter(character);
 		// IS this the same as the old character?
-		if (character.getId()==characterid) {return new OKResponse("GPHUD Connection Re-established");}
+		if (character.getId()==characterid) {
+			return new OKResponse("GPHUD Connection Re-established");
+		}
 		// and purge the conveyances so they get re-set
 		character.wipeConveyances(st);
 		character.setProtocol(st.protocol);
@@ -117,27 +135,33 @@ public class Connect {
 	}
 	
 	
-	/** Post connect sequence to check character setup
+	/**
+	 * Post connect sequence to check character setup
+	 *
 	 * @param st State
 	 * @return JSON Response
 	 */
 	@Nonnull
 	@Commands(context=Context.AVATAR,
-			permitConsole=false,
-			permitUserWeb=false,
-			permitScripting=false,
-			description="Performs character login checks, called repeatedly until character passes all creation time tests and is considered complete",
-			permitObject=false,
-			permitExternal=false)
+	          permitConsole=false,
+	          permitUserWeb=false,
+	          permitScripting=false,
+	          description="Performs character login checks, called repeatedly until character passes all creation time tests and is considered complete",
+	          permitObject=false,
+	          permitExternal=false)
 	public static Response postConnect(@Nonnull final State st) {
 		final List<String> loginmessages=new ArrayList<>();
 		
 		// Run the character initialisation script, if it exists.
 		Response interception=runCharacterInitScript(st,loginmessages);
-		if (interception!=null) {return interception;}
+		if (interception!=null) {
+			return interception;
+		}
 		// and the default attribute populator
 		interception=populateCharacterAttributes(st);
-		if (interception!=null) {return interception;}
+		if (interception!=null) {
+			return interception;
+		}
 		
 		// server version note
 		loginmessages.add(GPHUD.serverVersion()+" "+GPHUD.brandingWithNewline());
@@ -200,12 +224,35 @@ public class Connect {
 		return new JSONResponse(rawresponse);
 	}
 	
+	@Nullable
+	private static Response runCharacterInitScript(final State st,final List<String> loginmessages) {
+		final String initscript=st.getKV("Instance.CharInitScript").toString();
+		if (initscript!=null&&(!initscript.isEmpty())) {
+			// let the init script have a "run"
+			final Script init=Script.findNullable(st,initscript);
+			if (init==null) {
+				loginmessages.add("===> Character initialisation script "+initscript+" was not found");
+				return null;
+			} else {
+				final GSVM initialisecharacter=new GSVM(init);
+				initialisecharacter.invokeOnExit("GPHUDClient.postConnect");
+				final Response response=initialisecharacter.execute(st);
+				if (initialisecharacter.suspended()) { // bail here
+					return response;
+				} // else carry on and discard the response
+			}
+		}
+		return null;
+	}
+	
 	// ----- Internal Statics -----
 	@Nullable
 	private static Response populateCharacterAttributes(@Nonnull final State st) {
 		for (final Attribute a: st.getAttributes()) {
 			boolean required=a.getRequired();
-			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {required=true;}
+			if (a.getType()==ATTRIBUTETYPE.CURRENCY) {
+				required=true;
+			}
 			if (required) {
 				final Attribute.ATTRIBUTETYPE type=a.getType();
 				switch (type) {
@@ -213,17 +260,21 @@ public class Connect {
 					case FLOAT:
 					case INTEGER:
 						final String value=st.getRawKV(st.getCharacter(),"characters."+a.getName());
-						if (value==null||value.isEmpty()) {return requestTextInput(st,a);}
+						if (value==null||value.isEmpty()) {
+							return requestTextInput(st,a);
+						}
 						break;
 					case GROUP:
-						if (a.getSubType()!=null&&CharacterGroup.getGroup(st.getCharacter(),a.getSubType())==null&&CharacterGroup.hasChoices(st,a)) {
+						if (a.getSubType()!=null&&CharacterGroup.getGroup(st.getCharacter(),a.getSubType())==null&&
+						    CharacterGroup.hasChoices(st,a)) {
 							return requestChoiceInput(st,a);
 						}
 						break;
 					case CURRENCY:
 						if (st.hasModule("Currency")) {
 							final Currency currency=Currency.findNullable(st,a.getName());
-							if (currency!=null&&currency.entries(st,st.getCharacter())==0&&a.getDefaultValue()!=null&&!a.getDefaultValue().isEmpty()) {
+							if (currency!=null&&currency.entries(st,st.getCharacter())==0&&a.getDefaultValue()!=null&&
+							    !a.getDefaultValue().isEmpty()) {
 								final int ammount=Integer.parseInt(a.getDefaultValue());
 								currency.spawnInAsSystem(st,st.getCharacter(),ammount,"Starting balance issued");
 							}
@@ -242,14 +293,45 @@ public class Connect {
 	}
 	
 	@Nonnull
-	private static Response requestChoiceInput(@Nonnull final State st,
-											   @Nonnull final Attribute a) {
+	private static Response requestTextInput(@Nonnull final State st,@Nonnull final Attribute a) {
+		final KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
+		Float max=null;
+		if (!maxkv.value().isEmpty()) {
+			max=maxkv.floatValue();
+		}
+		String maxstring="";
+		if (max!=null&&max>0) {
+			maxstring=", which must be no greater than "+max;
+		}
 		final JSONObject json=new JSONObject();
 		json.put("hudtext","Initialising character...")
-				.put("hudcolor","<1.0,0.75,0.75>")
-				.put("titlertext","Initialising character...")
-				.put("titlercolor","<1.0,0.75,0.75>");
-		JSONResponse.message(json,"Character creation requires you to select a choice for attribute "+a.getName(),st.protocol);
+		    .put("hudcolor","<1.0,0.75,0.75>")
+		    .put("titlertext","Initialising character...")
+		    .put("titlercolor","<1.0,0.75,0.75>");
+		JSONResponse.message(json,
+		                     "Character creation requires you to input attribute "+a.getName()+maxstring,
+		                     st.protocol);
+		json.put("incommand","runtemplate");
+		json.put("invoke","characters.initialise");
+		json.put("args","1");
+		json.put("attribute",a.getName());
+		json.put("arg0name","value");
+		json.put("arg0description",
+		         "You must select a "+a.getName()+" for your Character before you can use it"+maxstring);
+		json.put("arg0type","TEXTBOX");
+		return new JSONResponse(json);
+	}
+	
+	@Nonnull
+	private static Response requestChoiceInput(@Nonnull final State st,@Nonnull final Attribute a) {
+		final JSONObject json=new JSONObject();
+		json.put("hudtext","Initialising character...")
+		    .put("hudcolor","<1.0,0.75,0.75>")
+		    .put("titlertext","Initialising character...")
+		    .put("titlercolor","<1.0,0.75,0.75>");
+		JSONResponse.message(json,
+		                     "Character creation requires you to select a choice for attribute "+a.getName(),
+		                     st.protocol);
 		CharacterGroup.createChoice(st,json,"arg0",a);
 		json.put("incommand","runtemplate");
 		json.put("invoke","characters.initialise");
@@ -257,52 +339,6 @@ public class Connect {
 		json.put("attribute",a.getName());
 		json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it");
 		return new JSONResponse(json);
-	}
-	
-	@Nonnull
-	private static Response requestTextInput(@Nonnull final State st,
-											 @Nonnull final Attribute a) {
-		final KVValue maxkv=st.getKV("characters."+a.getName()+"MAX");
-		Float max=null;
-		if (!maxkv.value().isEmpty()) {max=maxkv.floatValue();}
-		String maxstring="";
-		if (max!=null&&max>0) {maxstring=", which must be no greater than "+max;}
-		final JSONObject json=new JSONObject();
-		json.put("hudtext","Initialising character...")
-				.put("hudcolor","<1.0,0.75,0.75>")
-				.put("titlertext","Initialising character...")
-				.put("titlercolor","<1.0,0.75,0.75>");
-		JSONResponse.message(json,"Character creation requires you to input attribute "+a.getName()+maxstring,st.protocol);
-		json.put("incommand","runtemplate");
-		json.put("invoke","characters.initialise");
-		json.put("args","1");
-		json.put("attribute",a.getName());
-		json.put("arg0name","value");
-		json.put("arg0description","You must select a "+a.getName()+" for your Character before you can use it"+maxstring);
-		json.put("arg0type","TEXTBOX");
-		return new JSONResponse(json);
-	}
-	
-	@Nullable
-	private static Response runCharacterInitScript(final State st,
-												   final List<String> loginmessages) {
-		final String initscript=st.getKV("Instance.CharInitScript").toString();
-		if (initscript!=null&&(!initscript.isEmpty())) {
-			// let the init script have a "run"
-			final Script init=Script.findNullable(st,initscript);
-			if (init==null) {
-				loginmessages.add("===> Character initialisation script "+initscript+" was not found");
-				return null;
-			} else {
-				final GSVM initialisecharacter=new GSVM(init);
-				initialisecharacter.invokeOnExit("GPHUDClient.postConnect");
-				final Response response=initialisecharacter.execute(st);
-				if (initialisecharacter.suspended()) { // bail here
-					return response;
-				} // else carry on and discard the response
-			}
-		}
-		return null;
 	}
 	
 }

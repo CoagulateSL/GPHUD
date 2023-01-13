@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public abstract class ZoneTransport {
-
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	public static String createZoneTransport(@Nonnull final Region r) {
@@ -27,5 +27,5 @@ public abstract class ZoneTransport {
 		}
 		return response.toString();
 	}
-
+	
 }

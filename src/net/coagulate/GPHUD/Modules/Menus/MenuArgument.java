@@ -20,11 +20,10 @@ import java.util.List;
  */
 public class MenuArgument extends Argument {
 	/** Limitation from SL */
-	public static final int SECONDLIFE_MAX_DIALOG_BUTTON_LENGTH=24;
-	final Command command;
-	final JSONObject meta;
-	@Nullable
-	String override;
+	public static final int        SECONDLIFE_MAX_DIALOG_BUTTON_LENGTH=24;
+	final               Command    command;
+	final               JSONObject meta;
+	@Nullable String override;
 	Menu menu;
 	
 	/**
@@ -33,8 +32,7 @@ public class MenuArgument extends Argument {
 	 * @param command Command to generate argument for
 	 * @param menu    Menu for the argument
 	 */
-	public MenuArgument(final Command command,
-						final Menu menu) {
+	public MenuArgument(final Command command,final Menu menu) {
 		this.command=command;
 		meta=menu.getJSON();
 		this.menu=menu;
@@ -55,9 +53,13 @@ public class MenuArgument extends Argument {
 	@Nonnull
 	@Override
 	public String description() {
-		if (override!=null) {return override;}
+		if (override!=null) {
+			return override;
+		}
 		String desc=menu.getDescription();
-		if (desc.isBlank()) {desc="Choice of menu item";}
+		if (desc.isBlank()) {
+			desc="Choice of menu item";
+		}
 		return desc;
 	}
 	
@@ -103,13 +105,17 @@ public class MenuArgument extends Argument {
 				boolean passespermission=false;
 				if (meta.has("permission"+i)&&st.getAvatarNullable()!=null) {
 					haspermissions=true;
-					if (st.hasPermission(meta.getString("permission"+i))) {passespermission=true;}
+					if (st.hasPermission(meta.getString("permission"+i))) {
+						passespermission=true;
+					}
 				}
 				if (meta.has("permissiongroup"+i)) {
 					haspermissions=true;
 					final PermissionsGroup pg=PermissionsGroup.resolveNullable(st,meta.getString("permissiongroup"+i));
 					if (pg!=null&&st.getAvatarNullable()!=null) {
-						if (pg.hasMember(st.getAvatar())) {passespermission=true;}
+						if (pg.hasMember(st.getAvatar())) {
+							passespermission=true;
+						}
 					}
 				}
 				
@@ -117,10 +123,14 @@ public class MenuArgument extends Argument {
 					haspermissions=true;
 					final CharacterGroup cg=CharacterGroup.resolve(st,meta.getString("charactergroup"+i));
 					if (cg!=null) {
-						if (cg.hasMember(st.getCharacter())) {passespermission=true;}
+						if (cg.hasMember(st.getCharacter())) {
+							passespermission=true;
+						}
 					}
 				}
-				if (!haspermissions||passespermission) {options.add(meta.getString("button"+i));}
+				if (!haspermissions||passespermission) {
+					options.add(meta.getString("button"+i));
+				}
 			}
 		}
 		return options;

@@ -2,9 +2,7 @@
                          defaultDisable=true,
                          implementation="net.coagulate.GPHUD.Modules.TemplateWrapper.TemplateWrapper")
 
-@Permission.Permissions(description="Ability to alter affixes",
-                        name="EditAffix",
-                        power=Permission.POWER.LOW)
+@Permission.Permissions(description="Ability to alter affixes", name="EditAffix", power=Permission.POWER.LOW)
 
 package net.coagulate.GPHUD.Modules.TemplateWrapper;
 

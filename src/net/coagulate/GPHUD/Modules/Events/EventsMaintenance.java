@@ -32,21 +32,24 @@ public abstract class EventsMaintenance {
 		for (final EventSchedule schedule: events) {
 			final Event e=schedule.getEvent();
 			final Set<Char> inzone=new HashSet<>();
-			GPHUD.getLogger().log(INFO,"Starting event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
+			GPHUD.getLogger()
+			     .log(INFO,"Starting event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
 			final Map<String,String> config=e.loadKVs();
 			String message=config.get("events.zonestartmessage");
 			for (final Zone loc: e.getZones()) {
-				if (message!=null && !message.isEmpty()) {
-					try { loc.broadcastMessage("[Event:"+e.getName()+"] "+message); }
-					catch (final UserRemoteFailureException ignore) {
+				if (message!=null&&!message.isEmpty()) {
+					try {
+						loc.broadcastMessage("[Event:"+e.getName()+"] "+message);
+					} catch (final UserRemoteFailureException ignore) {
 					}
 				}
 				inzone.addAll(Char.getInZone(loc));
 			}
 			message=config.get("events.broadcaststartmessage");
-			if (message!=null && !message.isEmpty()) {
-				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); } catch (final
-				UserRemoteFailureException ignore) {
+			if (message!=null&&!message.isEmpty()) {
+				try {
+					e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message);
+				} catch (final UserRemoteFailureException ignore) {
 				}
 			}
 			schedule.started();
@@ -54,32 +57,39 @@ public abstract class EventsMaintenance {
 				schedule.startVisit(c);
 			}
 		}
-
+		
 		events=Event.getStoppingEvents();
 		for (final EventSchedule schedule: events) {
 			final Event e=schedule.getEvent();
-			GPHUD.getLogger().log(INFO,"Stopping event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
+			GPHUD.getLogger()
+			     .log(INFO,"Stopping event "+e.getName()+"#"+e.getId()+" for instance "+e.getInstance().getName());
 			final Map<String,String> config=e.loadKVs();
 			String message=config.get("events.zonestopmessage");
-			if (message!=null && !message.isEmpty()) {
+			if (message!=null&&!message.isEmpty()) {
 				for (final Zone loc: e.getZones()) {
-					try { loc.broadcastMessage("[Event:"+e.getName()+"] "+message); } catch (final
-					UserRemoteFailureException ignore) {
+					try {
+						loc.broadcastMessage("[Event:"+e.getName()+"] "+message);
+					} catch (final UserRemoteFailureException ignore) {
 					}
 				}
 			}
 			message=config.get("events.broadcaststopmessage");
-			if (message!=null && !message.isEmpty()) {
-				try { e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message); } catch (final
-				UserRemoteFailureException ignore) {
+			if (message!=null&&!message.isEmpty()) {
+				try {
+					e.getInstance().broadcastMessage("[Event:"+e.getName()+"] "+message);
+				} catch (final UserRemoteFailureException ignore) {
 				}
 			}
 			final State temp=new State();
 			temp.setInstance(e.getInstance());
 			String limit=temp.getKV(e,"Events.ThisEventXPLimit");
 			String minutes=temp.getKV(e,"Events.ThisEventXPMinutes");
-			if (limit==null) { limit=temp.getKV("Events.ThisEventXPLimit").value(); }
-			if (minutes==null) { minutes=temp.getKV("Events.ThisEventXPMinutes").value(); }
+			if (limit==null) {
+				limit=temp.getKV("Events.ThisEventXPLimit").value();
+			}
+			if (minutes==null) {
+				minutes=temp.getKV("Events.ThisEventXPMinutes").value();
+			}
 			if (limit==null) {
 				throw new SystemConsistencyException("Limit is null in maintenance events awards closure");
 			}
@@ -88,54 +98,66 @@ public abstract class EventsMaintenance {
 			}
 			schedule.awardFinalXP(Integer.parseInt(minutes),Integer.parseInt(limit));
 			schedule.ended();
-			e.getInstance().pushConveyances(); // TODO also something that pushes XP update messages.  probably another generated conveyance or something :P
+			e.getInstance()
+			 .pushConveyances(); // TODO also something that pushes XP update messages.  probably another generated conveyance or something :P
 			final int repeat=schedule.getRepeat();
 			if (repeat==0) {
 				schedule.delete();
-			}
-			else {
+			} else {
 				schedule.offsetSchedule(repeat);
 			}
 		}
 	}
-
+	
 	public static void zoneTransition(@Nonnull final State st,
 	                                  @Nonnull final JSONObject response,
 	                                  @Nullable final Zone oldzone,
 	                                  @Nullable final Zone zone) {
 		final boolean debug=false;
-		if (oldzone!=null) { oldzone.validate(st); }
-		if (zone!=null) { zone.validate(st); }
+		if (oldzone!=null) {
+			oldzone.validate(st);
+		}
+		if (zone!=null) {
+			zone.validate(st);
+		}
 		final Set<EventSchedule> events=EventSchedule.getActive(st);
 		EventSchedule wasin=null;
 		EventSchedule nowin=null;
 		for (final EventSchedule es: events) {
 			final Event e=es.getEvent();
 			for (final Zone loczone: e.getZones()) {
-				if (loczone==zone) { nowin=es; }
-				if (loczone==oldzone) { wasin=es; }
+				if (loczone==zone) {
+					nowin=es;
+				}
+				if (loczone==oldzone) {
+					wasin=es;
+				}
 			}
 		}
-		if (wasin==null && nowin==null) { return; } //didn't enter
-		if (wasin==nowin) { return; } // didn't leave
+		if (wasin==null&&nowin==null) {
+			return;
+		} //didn't enter
+		if (wasin==nowin) {
+			return;
+		} // didn't leave
 		//noinspection ConstantConditions // simply looks clearer
 		if (wasin!=nowin) { //transitioned
 			if (wasin!=null) {
 				final String exitmessage=st.getKV(wasin.getEvent(),"events.eventexitmessage");
-				if (exitmessage!=null && !exitmessage.isEmpty()) {
+				if (exitmessage!=null&&!exitmessage.isEmpty()) {
 					response.put("eventmessage1","[Event:"+wasin.getEvent().getName()+"] "+exitmessage);
 				}
 				wasin.endVisit(st.getCharacter());
 			}
 			if (nowin!=null) {
 				final String entrymessage=st.getKV(nowin.getEvent(),"events.evententrymessage");
-				if (entrymessage!=null && !entrymessage.isEmpty()) {
+				if (entrymessage!=null&&!entrymessage.isEmpty()) {
 					response.put("eventmessage2","[Event:"+nowin.getEvent().getName()+"] "+entrymessage);
 				}
 				nowin.startVisit(st.getCharacter());
 			}
 		}
 	}
-
-
+	
+	
 }

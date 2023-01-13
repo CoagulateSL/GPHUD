@@ -12,22 +12,27 @@ import java.util.TreeMap;
  */
 @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
 public class SafeMap extends TreeMap<String,String> {
-	@Serial
-    private static final long serialVersionUID=1L;
-
+	@Serial private static final long serialVersionUID=1L;
+	
+	// ---------- INSTANCE ----------
+	public boolean submit() {
+		return ("Submit".equals(get("Submit")));
+	}
+	
+	@Nonnull
+	public String get(final String key) {
+		return nonull(super.get(key));
+	}
+	
 	// ----- Internal Statics -----
 	@Nonnull
 	private static String nonull(@Nullable final String s) {
-		if (s==null) { return ""; }
+		if (s==null) {
+			return "";
+		}
 		return s;
 	}
-
-	// ---------- INSTANCE ----------
-	public boolean submit() { return ("Submit".equals(get("Submit"))); }
-
-	@Nonnull
-	public String get(final String key) { return nonull(super.get(key)); }
-
+	
 	public void debugDump() {
 		for (final String k: keySet()) {
 			System.out.println("DEBUG DUMP SAFEMAP: "+k+"="+get(k));

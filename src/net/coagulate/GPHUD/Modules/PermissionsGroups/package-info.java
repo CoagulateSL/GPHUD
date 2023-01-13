@@ -1,9 +1,6 @@
-@SideMenus(name="PermissionsGroups",
-           url="/permissionsgroups/",
-           priority=810)
+@SideMenus(name="PermissionsGroups", url="/permissionsgroups/", priority=810)
 
-@ModuleDefinition(canDisable=false,
-                  description="Manages permissions groups within the instance")
+@ModuleDefinition(canDisable=false, description="Manages permissions groups within the instance")
 
 package net.coagulate.GPHUD.Modules.PermissionsGroups;
 

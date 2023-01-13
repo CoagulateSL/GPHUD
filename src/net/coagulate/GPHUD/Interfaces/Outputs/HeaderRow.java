@@ -6,20 +6,22 @@ package net.coagulate.GPHUD.Interfaces.Outputs;
  * @author Iain Price <gphud@predestined.net>
  */
 public class HeaderRow extends Row {
-
+	
 	public HeaderRow() {
 	}
-
+	
 	public HeaderRow(final Cell c) {
 		super(c);
 	}
-
+	
 	public HeaderRow(final String c) {
 		super(c);
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Override
-	public boolean isHeader() { return true; }
-
+	public boolean isHeader() {
+		return true;
+	}
+	
 }

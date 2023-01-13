@@ -29,9 +29,9 @@ public class ConfigurationRow extends Row {
 		add(kv.editPermission());
 		if (kv.type()==KVTYPE.UUID) {
 			add(kv.defaultValue()+"<br><img height=48 width=48 src=\""+SL.textureURL(kv.defaultValue())+"\">");
-			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\""+SL.textureURL(simulated.getRawKV(dbo,kvname)+"\">"));
-		}
-		else {
+			add(simulated.getRawKV(dbo,kvname)+"<br><img height=48 width=48 src=\""+
+			    SL.textureURL(simulated.getRawKV(dbo,kvname)+"\">"));
+		} else {
 			add(kv.defaultValue());
 			add(simulated.getRawKV(dbo,kv.fullName()));
 		}
@@ -52,6 +52,6 @@ public class ConfigurationRow extends Row {
 			add(rv);
 		}
 	}
-
-
+	
+	
 }

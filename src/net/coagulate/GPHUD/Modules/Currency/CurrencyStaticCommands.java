@@ -12,10 +12,9 @@ import net.coagulate.GPHUD.State;
 import javax.annotation.Nonnull;
 
 public class CurrencyStaticCommands {
-
+	
 	// ---------- STATICS ----------
-	@Commands(description="Shows your current total balance",
-	          context=Context.CHARACTER)
+	@Commands(description="Shows your current total balance", context=Context.CHARACTER)
 	public static Response balance(@Nonnull final State state) {
 		final StringBuilder report=new StringBuilder("Current balance:");
 		for (final Attribute a: Attribute.getAttributes(state.getInstance())) {

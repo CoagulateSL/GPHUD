@@ -13,29 +13,28 @@ import java.util.Set;
  */
 public class TextError implements Renderable {
 	protected final String content;
-
-    public TextError(final String content) {
-        this.content = content;
-    }
-
-    // ---------- INSTANCE ----------
-    public String getMessage(final State st) {
-        return content;
-    }
-
+	
+	public TextError(final String content) {
+		this.content=content;
+	}
+	
+	// ---------- INSTANCE ----------
+	public String getMessage(final State st) {
+		return content;
+	}
+	
 	@Nonnull
 	@Override
 	public String asText(final State st) {
-        return ">>> ERROR : " + content;
+		return ">>> ERROR : "+content;
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
-        return "<font color=red><b> *** ERROR : " + content + " ***</b></font>";
+	public String asHtml(final State st,final boolean rich) {
+		return "<font color=red><b> *** ERROR : "+content+" ***</b></font>";
 	}
-
+	
 	@Nullable
 	@Override
 	public Set<Renderable> getSubRenderables() {

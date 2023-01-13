@@ -10,22 +10,26 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Randomness {
-	private Randomness() {}
-
+	private Randomness() {
+	}
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@GSFunctions.GSFunction(description="Produces a random whole number in the range provided",
 	                        notes="",
-	                        parameters="Integer minimum - smallest number that can be returned "+"by this function.<br>"+"Integer maximum - largest number that can be "+"returned by this function.",
+	                        parameters="Integer minimum - smallest number that can be returned "+
+	                                   "by this function.<br>"+"Integer maximum - largest number that can be "+
+	                                   "returned by this function.",
 	                        returns="Integer - random number in the range (inclusive) "+"minimum-maximum",
 	                        privileged=false,
-	                        category= SCRIPT_CATEGORY.RANDOMNESS)
+	                        category=SCRIPT_CATEGORY.RANDOMNESS)
 	public static BCInteger gsRand(final State st,
 	                               final GSVM vm,
 	                               @Nonnull final BCInteger minimum,
 	                               @Nonnull final BCInteger maximum) {
 		if ((maximum.toInteger())<(minimum.toInteger())) {
-			throw new GSInvalidFunctionCall("Maximum must be greater than or equal to minuimum ("+minimum+" should be <= "+maximum+")",true);
+			throw new GSInvalidFunctionCall(
+					"Maximum must be greater than or equal to minuimum ("+minimum+" should be <= "+maximum+")",true);
 		}
 		return new BCInteger(null,ThreadLocalRandom.current().nextInt(minimum.toInteger(),maximum.toInteger()+1));
 	}

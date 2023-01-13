@@ -8,10 +8,9 @@ import net.coagulate.GPHUD.Modules.ModuleAnnotation;
  * @author Iain Price <gphud@predestined.net>
  */
 public class EffectsModule extends ModuleAnnotation {
-
-	public EffectsModule(final String name,
-                         final ModuleDefinition annotation) {
-        super(name, annotation);
-    }
-
+	
+	public EffectsModule(final String name,final ModuleDefinition annotation) {
+		super(name,annotation);
+	}
+	
 }

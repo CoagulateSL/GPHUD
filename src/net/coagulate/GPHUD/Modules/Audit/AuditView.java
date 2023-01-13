@@ -13,15 +13,13 @@ import javax.annotation.Nonnull;
  * @author Iain Price <gphud@predestined.net>
  */
 public class AuditView {
-
+	
 	// ---------- STATICS ----------
-	@URLs(url="/audit",
-	      requiresPermission="audit.view")
-	public static void audit(@Nonnull final State st,
-	                         final SafeMap values) {
+	@URLs(url="/audit", requiresPermission="audit.view")
+	public static void audit(@Nonnull final State st,final SafeMap values) {
 		final AuditTable table=new AuditTable(st,"audit",values);
 		st.form().add(table);
 	}
-
-
+	
+	
 }

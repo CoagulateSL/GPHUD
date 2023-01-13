@@ -21,10 +21,8 @@ import java.util.Map;
 public abstract class KVMap {
 	// ---------- STATICS ----------
 	@URLs(url="/introspection/kvmap")
-	@SideSubMenus(name="KeyValue Map",
-	              priority=10)
-	public static void kvmap(@Nonnull final State st,
-	                         final SafeMap values) {
+	@SideSubMenus(name="KeyValue Map", priority=10)
+	public static void kvmap(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.add(new TextHeader("KV Mappings"));
 		final Table t=new Table();
@@ -46,7 +44,9 @@ public abstract class KVMap {
 				                     .add("Hooked"));
 				for (final KV kv: kvmap.values()) {
 					final Row r=new Row();
-					if (kv.hidden()) { r.setbgcolor("#e0e0e0"); }
+					if (kv.hidden()) {
+						r.setbgcolor("#e0e0e0");
+					}
 					t.add(r);
 					r.add(kv.name());
 					r.add(kv.scope().toString());
@@ -58,12 +58,15 @@ public abstract class KVMap {
 					r.add(kv.conveyAs().isEmpty()?"":"Conv");
 					r.add(kv.template()?"Tmpl":"");
 					r.add(kv.onUpdate().isEmpty()?"":"Upd");
-					if (kv.isGenerated()) { r.add(new Color("blue","Generated")); }
-					else { r.add(""); }
+					if (kv.isGenerated()) {
+						r.add(new Color("blue","Generated"));
+					} else {
+						r.add("");
+					}
 				}
 			}
 		}
 	}
-
-
+	
+	
 }

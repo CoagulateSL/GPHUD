@@ -17,18 +17,17 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 
 public class PhantomCommand extends ObjectType {
-	protected PhantomCommand(final State st,
-                             @Nonnull final ObjType object) {
+	protected PhantomCommand(final State st,@Nonnull final ObjType object) {
 		super(st,object);
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public String explainHtml() {
 		return "Runs command "+json.optString("command","unset")+" on collision; becomes phantom";
 	}
-
+	
 	@Override
 	public void editForm(@Nonnull final State st) {
 		final Table t=new Table();
@@ -37,7 +36,7 @@ public class PhantomCommand extends ObjectType {
 		t.add(new Cell(new Button("Submit"),2));
 		st.form().add(t);
 	}
-
+	
 	@Override
 	public void update(@Nonnull final State st) {
 		final String command=st.postMap().get("command");
@@ -46,28 +45,27 @@ public class PhantomCommand extends ObjectType {
 			object.setBehaviour(json);
 		}
 	}
-
+	
 	@Nonnull
 	@Override
 	public String explainText() {
 		return explainHtml();
 	}
-
+	
 	@Nonnull
 	@Override
 	public MODE mode() {
 		return MODE.PHANTOM;
 	}
-
+	
 	@Nonnull
-    @Override
-    public Response collide(@Nonnull final State st,
-                            @Nonnull final Char collider) {
-        if (json.optString("command", "").isEmpty()) {
-            return new ErrorResponse("Command to invoke is not configured in this object type");
-        }
-        final JSONObject resp = Modules.getJSONTemplate(st, json.getString("command"));
-        new Transmission(collider, resp).start();
-        return new JSONResponse(new JSONObject());
-    }
+	@Override
+	public Response collide(@Nonnull final State st,@Nonnull final Char collider) {
+		if (json.optString("command","").isEmpty()) {
+			return new ErrorResponse("Command to invoke is not configured in this object type");
+		}
+		final JSONObject resp=Modules.getJSONTemplate(st,json.getString("command"));
+		new Transmission(collider,resp).start();
+		return new JSONResponse(new JSONObject());
+	}
 }

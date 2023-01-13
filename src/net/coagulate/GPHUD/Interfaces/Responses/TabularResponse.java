@@ -14,13 +14,15 @@ import javax.annotation.Nullable;
  * @author Iain Price <gphud@predestined.net>
  */
 public class TabularResponse extends Table implements Response {
-	@Nullable
-	String title;
-
-	public TabularResponse() {}
-
-	public TabularResponse(@Nullable final String message) { title=message; }
-
+	@Nullable String title;
+	
+	public TabularResponse() {
+	}
+	
+	public TabularResponse(@Nullable final String message) {
+		title=message;
+	}
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
@@ -29,27 +31,30 @@ public class TabularResponse extends Table implements Response {
 		JSONResponse.message(j,asText(st),st.protocol);
 		return j;
 	}
-
+	
 	@Nonnull
 	@Override
 	public String scriptResponse() {
 		return "<A tablulated response>";
 	}
-
+	
 	@Nonnull
 	public String asText(final State st) {
 		String s="";
-		if (title!=null && !title.isEmpty()) { s+=new TextHeader(title).asText(st); }
+		if (title!=null&&!title.isEmpty()) {
+			s+=new TextHeader(title).asText(st);
+		}
 		s+=super.asText(st);
 		return s;
 	}
-
+	
 	@Nonnull
 	@Override
-	public String asHtml(final State st,
-	                     final boolean rich) {
+	public String asHtml(final State st,final boolean rich) {
 		String s="";
-		if (title!=null && !title.isEmpty()) { s+=new TextHeader(title).asHtml(st,rich); }
+		if (title!=null&&!title.isEmpty()) {
+			s+=new TextHeader(title).asHtml(st,rich);
+		}
 		s+=super.asHtml(st,rich);
 		return s;
 	}

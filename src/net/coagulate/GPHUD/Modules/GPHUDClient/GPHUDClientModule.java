@@ -19,27 +19,27 @@ import java.util.TreeMap;
  * @author Iain Price <gphud@predestined.net>
  */
 public class GPHUDClientModule extends ModuleAnnotation {
-
+	
 	final Map<String,KV> base=new TreeMap<>();
-
-	public GPHUDClientModule(final String name,
-                             final ModuleDefinition annotation) {
-        super(name, annotation);
-    }
-
+	
+	public GPHUDClientModule(final String name,final ModuleDefinition annotation) {
+		super(name,annotation);
+	}
+	
 	// ---------- STATICS ----------
 	@Nonnull
 	@Commands(context=Command.Context.CHARACTER,
 	          description="Set your Titler's Altitude (height above avatar)",
 	          permitExternal=false)
 	public static Response setAltitude(@Nonnull final State st,
-	                                   @Arguments(name="offset",description="Offset, in meters",
+	                                   @Arguments(name="offset",
+	                                              description="Offset, in meters",
 	                                              max=3,
 	                                              type=Argument.ArgumentType.FLOAT) final Float offset) {
-		st.setKV(st.getCharacter(), "GPHUDClient.TitlerAltitude", String.valueOf(offset));
+		st.setKV(st.getCharacter(),"GPHUDClient.TitlerAltitude",String.valueOf(offset));
 		return new OKResponse("Updated your Titler altitude to "+offset);
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
@@ -57,24 +57,24 @@ public class GPHUDClientModule extends ModuleAnnotation {
 		keyConveyances(kv,base);
 		return kv;
 	}
-
+	
 	@Override
-	public KV getKVDefinition(final State st,
-	                          @Nonnull final String qualifiedname) {
+	public KV getKVDefinition(final State st,@Nonnull final String qualifiedname) {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
-		if (base.containsKey(qualifiedname.toLowerCase())) { return base.get(qualifiedname.toLowerCase()); }
+		if (base.containsKey(qualifiedname.toLowerCase())) {
+			return base.get(qualifiedname.toLowerCase());
+		}
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}
-
+	
 	@Override
 	public void registerKV(@Nonnull final KV a) {
 		base.put(a.name().toLowerCase(),a);
 	}
-
+	
 	// ----- Internal Instance -----
-	private void keyConveyances(@Nonnull final Map<String,KV> filterinto,
-	                            @Nonnull final Map<String,KV> filterfrom) {
-		final Map<String,KV> copy= new HashMap<>(filterfrom); // lame concurrency fix?
+	private void keyConveyances(@Nonnull final Map<String,KV> filterinto,@Nonnull final Map<String,KV> filterfrom) {
+		final Map<String,KV> copy=new HashMap<>(filterfrom); // lame concurrency fix?
 		for (final KV kv: copy.values()) {
 			final String conveyas=kv.conveyAs();
 			if (!conveyas.isEmpty()) {
@@ -84,5 +84,5 @@ public class GPHUDClientModule extends ModuleAnnotation {
 			}
 		}
 	}
-
+	
 }

@@ -48,9 +48,9 @@ import static java.util.logging.Level.WARNING;
  */
 public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	/** Enable debugging of JSON payloads */
-	public static final boolean DEBUG_JSON=false;
+	public static final boolean DEBUG_JSON          =false;
 	/** Maximum size of a response being transmitted to SL */
-	public static final int MAX_SL_RESPONSE_SIZE=4096;
+	public static final int     MAX_SL_RESPONSE_SIZE=4096;
 	
 	@Override
 	protected void earlyInitialiseState(final HttpRequest request,final HttpContext context) {
@@ -127,7 +127,9 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			System.out.println("SYSTEM INTERFACE OUTPUT:\n"+JsonTools.jsonToString(jsonResponse));
 		}
 		if (out.length()>=MAX_SL_RESPONSE_SIZE) {
-			SL.report("Output exceeds limit of "+MAX_SL_RESPONSE_SIZE+" characters",new SystemImplementationException("Trace"),st);
+			SL.report("Output exceeds limit of "+MAX_SL_RESPONSE_SIZE+" characters",
+			          new SystemImplementationException("Trace"),
+			          st);
 		}
 		Page.page().template(new PlainTextMapper.PlainTextTemplate());
 		Page.page().root().add(new PlainText(out));
@@ -159,7 +161,10 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	// ----- Internal Instance -----
 	protected Response execute(@Nonnull final State st) {
 		final JSONObject obj=st.jsonNullable();
-		if (obj==null) { throw new UserInputValidationParseException("No JSON payload was presented (Are you a real client or a web browser?"); }
+		if (obj==null) {
+			throw new UserInputValidationParseException(
+					"No JSON payload was presented (Are you a real client or a web browser?");
+		}
 		// get developer key
 		final String developerkey=obj.getString("developerkey");
 		// resolve the developer, or error
@@ -184,13 +189,27 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			//Log.log(Log.INFO,"SYSTEM","SystemInterface",h.getName()+"="+h.getValue());
 			final String name=h.getName();
 			final String value=h.getValue();
-			if ("X-SecondLife-Owner-Name".equals(name)) {ownerName=value;}
-			if ("X-SecondLife-Owner-Key".equals(name)) {ownerKey=value;}
-			if ("X-SecondLife-Object-Key".equals(name)) {objectKey=value;}
-			if ("X-SecondLife-Region".equals(name)) {regionName=value;}
-			if ("X-SecondLife-Object-Name".equals(name)) {objectName=value;}
-			if ("X-SecondLife-Shard".equals(name)) {shard=value;}
-			if ("X-SecondLife-Local-Position".equals(name)) {position=value;}
+			if ("X-SecondLife-Owner-Name".equals(name)) {
+				ownerName=value;
+			}
+			if ("X-SecondLife-Owner-Key".equals(name)) {
+				ownerKey=value;
+			}
+			if ("X-SecondLife-Object-Key".equals(name)) {
+				objectKey=value;
+			}
+			if ("X-SecondLife-Region".equals(name)) {
+				regionName=value;
+			}
+			if ("X-SecondLife-Object-Name".equals(name)) {
+				objectName=value;
+			}
+			if ("X-SecondLife-Shard".equals(name)) {
+				shard=value;
+			}
+			if ("X-SecondLife-Local-Position".equals(name)) {
+				position=value;
+			}
 		}
 		if (Config.enforceShardCheck()) {
 			if ((!("Production".equals(shard)))) {
@@ -218,13 +237,19 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		if (ownerName==null||ownerName.isEmpty()) {
 			final User userLookup=User.findUserKeyNullable(ownerKey);
-			if (userLookup!=null) {ownerName=userLookup.getName();}
+			if (userLookup!=null) {
+				ownerName=userLookup.getName();
+			}
 			if (ownerName==null||ownerName.isEmpty()) {
 				GPHUD.getLogger().severe("Failed to extract owner name header from SL or owner key lookup via DB");
-				SL.report("Parse failure",new SystemRemoteFailureException("Owner name is blank, even from DB cache."),st);
+				SL.report("Parse failure",
+				          new SystemRemoteFailureException("Owner name is blank, even from DB cache."),
+				          st);
 				return new TerminateResponse("Parse failure");
 			} else {
-				GPHUD.getLogger().info("Failed to get owner name from headers for key "+ownerKey+", looked up in DB as "+ownerName+".");
+				GPHUD.getLogger()
+				     .info("Failed to get owner name from headers for key "+ownerKey+", looked up in DB as "+ownerName+
+				           ".");
 			}
 		}
 		regionName=regionName.replaceFirst(" \\(\\d+, \\d+\\)","");
@@ -235,30 +260,41 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		st.sourceRegion=Region.findNullable(regionName,true);
 		if (st.sourceRegion!=null&&st.sourceRegion.isRetired()) {
 			//SL.report("Retired region connecting",new UserInputStateException("Region "+regionName+" is retired!"),st);
-			return new TerminateResponse("This region has been used previously and marked as retired, please contact Iain Maltz to rectify this.");
+			return new TerminateResponse(
+					"This region has been used previously and marked as retired, please contact Iain Maltz to rectify this.");
 		}
 		st.sourceLocation=position;
 		final User owner=User.findOrCreate(ownerName,ownerKey,false);
 		if (owner.isSuspended()) {
-			return new TerminateResponse("Your access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
+			return new TerminateResponse(
+					"Your access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
 		}
 		st.setSourceOwner(owner);
 		st.objectKey=objectKey;
 		st.setAvatar(owner);
 		// hooks to allow things to run as "not the objects owner" (the default)
 		String runAsAvatar=null;
-		try {runAsAvatar=obj.getString("runasavatar");} catch (@Nonnull final JSONException ignored) {}
+		try {
+			runAsAvatar=obj.getString("runasavatar");
+		} catch (@Nonnull final JSONException ignored) {
+		}
 		if (runAsAvatar!=null&&(!(runAsAvatar.isEmpty()))) {
 			st.setAvatar(User.findUsername(runAsAvatar,false));
 			if (st.getAvatar().isSuspended()) {
-				return new TerminateResponse("Target's (runAsAvatar) access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
+				return new TerminateResponse(
+						"Target's (runAsAvatar) access to GPHUD has been suspended.  If you feel this is in error please contact the system operator ");
 			}
 			st.isSuid=true;
 		}
 		st.object=Obj.findOrNull(st,objectKey);
-		if (st.object!=null) {st.object.updateRX();}
+		if (st.object!=null) {
+			st.object.updateRX();
+		}
 		String runAsCharacter=null;
-		try {runAsCharacter=obj.getString("runascharacter");} catch (@Nonnull final JSONException ignored) {}
+		try {
+			runAsCharacter=obj.getString("runascharacter");
+		} catch (@Nonnull final JSONException ignored) {
+		}
 		if (runAsCharacter!=null&&(!(runAsCharacter.isEmpty()))) {
 			st.setCharacter(Char.get(Integer.parseInt(runAsCharacter)));
 			st.isSuid=true;
@@ -319,12 +355,15 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		if (st.getSourceDeveloper().getId()!=1||!st.getSourceName().startsWith("GPHUD Region Server")) {
 			GPHUD.getLogger()
-					.log(WARNING,
-							"Region '"+regionName+"' not registered but connecting with "+st.getSourceName()+" from developer "+st.getSourceDeveloper()+" owner by "+st.getSourceOwner()
-					);
+			     .log(WARNING,
+			          "Region '"+regionName+"' not registered but connecting with "+st.getSourceName()+
+			          " from developer "+st.getSourceDeveloper()+" owner by "+st.getSourceOwner());
 			return new TerminateResponse("Region not registered.");
 		}
-		GPHUD.getLogger().log(WARNING,"Region '"+regionName+"' not registered but connecting, recognised as GPHUD server owned by "+st.getSourceOwner());
+		GPHUD.getLogger()
+		     .log(WARNING,
+		          "Region '"+regionName+"' not registered but connecting, recognised as GPHUD server owned by "+
+		          st.getSourceOwner());
 		if (!"console".equals(st.json().getString("command"))) {
 			return new ErrorResponse("Region not registered, only pre-registration commands may be run");
 		}
@@ -340,7 +379,9 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		}
 		if (console.startsWith("createinstance ")) {
 			final User ava=st.getAvatarNullable();
-			if (ava==null) {return new ErrorResponse("Null avatar associated with request??");}
+			if (ava==null) {
+				return new ErrorResponse("Null avatar associated with request??");
+			}
 			boolean ok=ava.isSuperAdmin();
 			if (Integer.parseInt(ava.getPreference("gphud","instancepermit","0"))>UnixTime.getUnixTime()) {
 				ok=true;
@@ -349,7 +390,9 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 				return new ErrorResponse("You are not authorised to register a new instance, please contact Iain Maltz");
 			}
 			console=console.replaceFirst("createinstance ","");
-			try {Instance.create(console,st.getAvatarNullable());} catch (@Nonnull final UserException e) {
+			try {
+				Instance.create(console,st.getAvatarNullable());
+			} catch (@Nonnull final UserException e) {
 				return new ErrorResponse("Instance registration failed: "+e.getMessage());
 			}
 			ava.setPreference("gphud","instancepermit",null);
@@ -389,24 +432,34 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 		if (console.startsWith("listinstances")) {
 			final StringBuilder response=new StringBuilder("Instances:\n");
 			final Set<Instance> instances=Instance.getInstances(st.getAvatarNullable());
-			for (final Instance i: instances) {response.append(i.getName()).append("\n");}
+			for (final Instance i: instances) {
+				response.append(i.getName()).append("\n");
+			}
 			return new OKResponse(response.toString());
 		}
-		return new ErrorResponse("Pre-Registration command not recognised.  Use *listinstances, *createinstance <name>, or *joininstance <name>");
+		return new ErrorResponse(
+				"Pre-Registration command not recognised.  Use *listinstances, *createinstance <name>, or *joininstance <name>");
 	}
 	
 	@Override
-	protected void renderUnhandledError(final HttpRequest request,final HttpContext context,final HttpResponse response,final Throwable t) {
-		SL.report("SysIF UnkEx: "+t.getLocalizedMessage(),t,state());
+	protected void renderUserError(final HttpRequest request,
+	                               final HttpContext context,
+	                               final HttpResponse response,
+	                               final UserException userException) {
+		SL.report("SysIF User: "+userException.getLocalizedMessage(),userException,state());
 		final JSONObject json=new JSONObject();
-		json.put("error","Sorry, an unhandled internal error occurred.");
-		json.put("responsetype","UnhandledException");
+		json.put("error",userException.getLocalizedMessage());
+		json.put("responsetype","UserException");
+		json.put("errorclass",userException.getClass().getSimpleName());
 		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
 		response.setStatusCode(HttpStatus.SC_OK);
 	}
 	
 	@Override
-	protected void renderSystemError(final HttpRequest request,final HttpContext context,final HttpResponse response,final SystemException systemException) {
+	protected void renderSystemError(final HttpRequest request,
+	                                 final HttpContext context,
+	                                 final HttpResponse response,
+	                                 final SystemException systemException) {
 		SL.report("SysIF SysEx: "+systemException.getLocalizedMessage(),systemException,state());
 		final JSONObject json=new JSONObject();
 		json.put("error","Sorry, an internal error occurred.");
@@ -416,12 +469,14 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	}
 	
 	@Override
-	protected void renderUserError(final HttpRequest request,final HttpContext context,final HttpResponse response,final UserException userException) {
-		SL.report("SysIF User: "+userException.getLocalizedMessage(),userException,state());
+	protected void renderUnhandledError(final HttpRequest request,
+	                                    final HttpContext context,
+	                                    final HttpResponse response,
+	                                    final Throwable t) {
+		SL.report("SysIF UnkEx: "+t.getLocalizedMessage(),t,state());
 		final JSONObject json=new JSONObject();
-		json.put("error",userException.getLocalizedMessage());
-		json.put("responsetype","UserException");
-		json.put("errorclass",userException.getClass().getSimpleName());
+		json.put("error","Sorry, an unhandled internal error occurred.");
+		json.put("responsetype","UnhandledException");
 		response.setEntity(new StringEntity(json.toString(2),ContentType.APPLICATION_JSON));
 		response.setStatusCode(HttpStatus.SC_OK);
 	}

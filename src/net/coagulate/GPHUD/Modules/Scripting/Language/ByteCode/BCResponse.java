@@ -11,45 +11,48 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BCResponse extends ByteCodeDataType {
-	String message="";
+	String  message="";
 	boolean error;
-
+	
 	public BCResponse(final ParseNode node) {
-        super(node);
-    }
-
-	public BCResponse(final ParseNode n,
-	                  @Nonnull final Response content) {
+		super(node);
+	}
+	
+	public BCResponse(final ParseNode n,@Nonnull final Response content) {
 		super(n);
 		message=content.scriptResponse();
-		if (content instanceof ErrorResponse) { error=true; }
+		if (content instanceof ErrorResponse) {
+			error=true;
+		}
 	}
-
+	
 	// ---------- INSTANCE ----------
 	@Nonnull
-	public String explain() { return "Response ("+(error?"ERROR:":"")+message+")"; }
-
+	public String explain() {
+		return "Response ("+(error?"ERROR:":"")+message+")";
+	}
+	
 	public void toByteCode(@Nonnull final List<Byte> bytes) {
 		bytes.add(InstructionSet.Response.get());
 		//throw new SystemException("Not implemented");
 	}
-
+	
 	@Override
-	public void execute(final State st,
-	                    @Nonnull final GSVM vm,
-	                    final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
 		vm.push(this);
 	}
-
+	
 	@Nonnull
 	@Override
 	public BCString toBCString() {
 		return new BCString(null,message);
 	}
-
+	
 	@Nonnull
-	public BCInteger toBCInteger() { return new BCInteger(null,(error?1:0)); }
-
+	public BCInteger toBCInteger() {
+		return new BCInteger(null,(error?1:0));
+	}
+	
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {
@@ -58,7 +61,7 @@ public class BCResponse extends ByteCodeDataType {
 		copy.error=error;
 		return copy;
 	}
-
+	
 	public boolean isError() {
 		return error;
 	}
