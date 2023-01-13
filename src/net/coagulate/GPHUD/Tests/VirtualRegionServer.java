@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Tests;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
@@ -33,7 +34,8 @@ public class VirtualRegionServer extends JSONDriver {
 		json.put("versiondate","Jan 01 2010");
 		json.put("versiontime","00:00:00");
 		execute("gphudserver.register",json);
-		region=Region.find(regionName,false);
+		try { region=null; region=Region.find(regionName,false); }
+		catch (final UserInputLookupFailureException ignore) {}
 	}
 	
 	public void createInstance(final String name) throws IOException {
