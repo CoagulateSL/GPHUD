@@ -26,6 +26,7 @@ import org.apache.http.entity.ContentType;
 import javax.annotation.Nonnull;
 import java.io.StringWriter;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class Reporting {
 	@URL.URLs(url="/reporting/download", requiresPermission="Instance.Reporting")
@@ -111,43 +112,38 @@ public class Reporting {
 				csv.print(ch.getOwner().getName());
 				csv.print(UnixTime.fromUnixTime(ch.getLastPlayed(),"America/Los_Angeles"));
 				for (final Attribute attribute: attributes) {
-					switch (attribute.getType()) {
-						case SET:
-							csv.print(new CharacterSet(ch,attribute).textList());
-							break;
-						case POOL:
-							if (QuotaedXP.class.isAssignableFrom(attribute.getClass())) {
-								final QuotaedXP xp=(QuotaedXP)attribute;
-								csv.print(CharacterPool.sumPool(charState,(xp.getPool(charState))));
-							} else {
-								csv.print("SomeKindOfPool (?)");
+					try {
+						switch (attribute.getType()) {
+							case SET -> csv.print(new CharacterSet(ch,attribute).textList());
+							case POOL -> {
+								if (QuotaedXP.class.isAssignableFrom(attribute.getClass())) {
+									final QuotaedXP xp=(QuotaedXP)attribute;
+									csv.print(CharacterPool.sumPool(charState,(xp.getPool(charState))));
+								} else {
+									csv.print("SomeKindOfPool (?)");
+								}
 							}
-							break;
-						case GROUP:
-							final String subType=attribute.getSubType();
-							if (subType==null) {
-								csv.print("");
-							} else {
-								final CharacterGroup groupMembership=CharacterGroup.getGroup(ch,subType);
-								csv.print(groupMembership==null?"":groupMembership.getName());
+							case GROUP -> {
+								final String subType=attribute.getSubType();
+								if (subType==null) {
+									csv.print("");
+								} else {
+									final CharacterGroup groupMembership=CharacterGroup.getGroup(ch,subType);
+									csv.print(groupMembership==null?"":groupMembership.getName());
+								}
 							}
-							break;
-						case CURRENCY:
-							csv.print(Currency.find(charState,attribute.getName()).sum(charState));
-							break;
-						case INVENTORY:
-							csv.print(new Inventory(ch,attribute).textList());
-							break;
-						case EXPERIENCE:
-							csv.print(CharacterPool.sumPool(charState,
-							                                (new GenericXP(attribute.getName()).getPool(charState))));
-							break;
-						case COLOR:
-						case INTEGER:
-						case TEXT:
-						case FLOAT:
-							csv.print(charState.getKV("Characters."+attribute.getName()).toString());
-							break;
+							case CURRENCY -> csv.print(Currency.find(charState,attribute.getName()).sum(charState));
+							case INVENTORY -> csv.print(new Inventory(ch,attribute).textList());
+							case EXPERIENCE -> csv.print(CharacterPool.sumPool(charState,
+							                                                   (new GenericXP(attribute.getName()).getPool(
+									                                                   charState))));
+							case COLOR,INTEGER,TEXT,FLOAT ->
+									csv.print(charState.getKV("Characters."+attribute.getName()).toString());
+						}
+					} catch (final Exception e) {
+						csv.print("EXCEPTION");
+						SL.log("Reporting").log(Level.WARNING,"Exception reporting attribute "+attribute.getName()+" for char "+ch.getName()+"#"+ch.getId()+": "+
+						                                      e,e);
 					}
 				}
 				final int xp=Experience.getExperience(charState,ch);
