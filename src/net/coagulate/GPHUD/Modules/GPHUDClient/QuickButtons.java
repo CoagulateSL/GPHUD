@@ -84,7 +84,7 @@ public class QuickButtons {
 		}
 		if (commandname.toLowerCase().startsWith("gphudclient.quickbutton")) {
 			throw new UserConfigurationException(
-					"Quick button "+button+" is not permitted to call another quick button ("+commandname+")");
+					"Quick button "+button+" is not permitted to call another quick button ("+commandname+")",true);
 		}
 		return templateOrRun(st,commandname);
 	}
