@@ -80,7 +80,7 @@ public class Reporting {
 		}
 		new Thread(()->runReport(state)).start();
 		return new OKResponse("Report generation in progress, this will probably take "+
-		                      UnixTime.duration(state.getInstance().countCharacters()/20,true));
+		                      UnixTime.duration(state.getInstance().countCharacters()*state.getAttributes().size()/40,true));
 	}
 	
 	public static void runReport(final State state) {
@@ -145,16 +145,16 @@ public class Reporting {
 						SL.log("Reporting").log(Level.WARNING,"Exception reporting attribute "+attribute.getName()+" for char "+ch.getName()+"#"+ch.getId()+": "+
 						                                      e,e);
 					}
+					try {
+						Thread.sleep(25);
+					} catch (final InterruptedException ignored) {
+					}
 				}
 				final int xp=Experience.getExperience(charState,ch);
 				csv.print(xp);
 				csv.print(Experience.toLevel(charState,xp));
 				
 				csv.println();
-				try {
-					Thread.sleep(50);
-				} catch (final InterruptedException ignored) {
-				}
 			}
 			state.getInstance().setReport(output.toString());
 			SL.log("Reporting")
