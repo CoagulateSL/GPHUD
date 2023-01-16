@@ -171,8 +171,14 @@
              description="Allowed to spend reporting credits on generating and downloading reports",
              power=Permission.POWER.MEDIUM)
 
+@Classes.Change(component=Classes.COMPONENT.Core,
+                type=ChangeLogging.CHANGETYPE.Fix,
+                date="2023-01-14",
+                message="Fixed issue in reporting, guarding against any errors during a report generation.  This will now report EXCEPTION in the output CSV rather than aborting the whole report run.")
+
 package net.coagulate.GPHUD.Modules.Instance;
 
+import net.coagulate.GPHUD.Classes;
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
 import net.coagulate.GPHUD.Modules.KV.KVS;
 import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
@@ -181,4 +187,5 @@ import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
 import net.coagulate.GPHUD.Modules.SideMenu.SideMenus;
+import net.coagulate.SL.ChangeLogging;
 
