@@ -268,6 +268,10 @@ public class Maintenance extends Thread {
 		}
 	}
 	
+	public static void truncateLogs() {
+		Audit.truncate();
+	}
+	
 	/** Wraps a simple ping check, if the transmission doesn't fail, then all is well... */
 	public static class PingTransmission extends Transmission {
 		/**
