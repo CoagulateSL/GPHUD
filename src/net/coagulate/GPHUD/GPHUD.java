@@ -38,15 +38,17 @@ Short form here.
 public class GPHUD extends SLModule {
 	
 	/** The interval in seconds for fast events, like checking event start */
-	public static final int FAST_MAINT_INTERVAL=60;
+	public static final  int          FAST_MAINT_INTERVAL=60;
 	/** The interval in seconds for slow events such as refreshing report quota or checking expiration of regions/instances */
-	public static final int SLOW_MAINT_INTERVAL=60*60;
+	public static final  int          SLOW_MAINT_INTERVAL=60*60;
 	/** The allowed variance for the fast timer */
-	public static final int MAINT_VAR_SMALL    =5;
+	public static final  int          MAINT_VAR_SMALL    =5;
 	/** The allowed variance for the slow timer */
-	public static final int MAINT_VAR_LARGE    =15*60;
-	@Nullable static Logger       log=null;
-	@Nullable static DBConnection db =null;
+	public static final  int          MAINT_VAR_LARGE    =15*60;
+	private static final int          DAY_MAINT_INTERVAL =60*60*24;
+	private static final int          MAINT_VAR_DAY_LARGE=60*60;
+	@Nullable static     Logger       log                =null;
+	@Nullable static     DBConnection db                 =null;
 	
 	/**
 	 * branding if present, or empty string.  prefixed with a newline if present.
@@ -108,7 +110,7 @@ public class GPHUD extends SLModule {
 		return "[https://"+Config.getURLHost()+"/GPHUD/ChangeLog "+SL.getModule("GPHUD").getBuildDateString()+" @"+
 		       SL.getModule("GPHUD").commitId()+"] (C) secondlife:///app/agent/"+Config.getCreatorUUID()+"/about";
 	}
-
+	
 	/**
 	 * Get the main GPHUD Logger
 	 *
@@ -192,6 +194,9 @@ public class GPHUD extends SLModule {
 		}
 		if (nextRun("GPHUD-Instance-Cleanup",SLOW_MAINT_INTERVAL,MAINT_VAR_LARGE)) {
 			Maintenance.instanceCleanup();
+		}
+		if (nextRun("GPHUD-Truncate-Logs",DAY_MAINT_INTERVAL,MAINT_VAR_DAY_LARGE)) {
+			Maintenance.truncateLogs();
 		}
 	}
 	

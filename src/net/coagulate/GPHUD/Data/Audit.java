@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.DBConnection;
 import net.coagulate.Core.Database.DBException;
 import net.coagulate.Core.Database.NullInteger;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -163,6 +164,10 @@ public abstract class Audit {
 			return new NullInteger();
 		}
 		return r.getId();
+	}
+	
+	public static void truncate() {
+		GPHUD.getDB().d("delete from audit where timedate<?",getUnixTime()-UnixTime.YEAR);
 	}
 	
 	public enum OPERATOR {

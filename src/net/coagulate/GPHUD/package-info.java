@@ -9,6 +9,7 @@
 
 
 // Imported legacy change logs!
+
 @Classes.Change(date="2022-04-22",
                 component=DatabaseSchema,
                 type=Add,
@@ -2088,8 +2089,13 @@
                                                                                                  type=Add,
                                                                                                  message="Initial release")
 
-
+		@Change(date="2023-01-26", component=DatabaseSchema, type=Add, message="Drop Audit table history from more than 1 year ago automatically")
+		
 package net.coagulate.GPHUD;
 
 import static net.coagulate.GPHUD.Classes.COMPONENT.*;
-import static net.coagulate.SL.ChangeLogging.CHANGETYPE.*;
+import static net.coagulate.GPHUD.Classes.Change;
+import static net.coagulate.SL.ChangeLogging.CHANGETYPE.Add;
+import static net.coagulate.SL.ChangeLogging.CHANGETYPE.Change;
+import static net.coagulate.SL.ChangeLogging.CHANGETYPE.Delete;
+import static net.coagulate.SL.ChangeLogging.CHANGETYPE.Fix;
