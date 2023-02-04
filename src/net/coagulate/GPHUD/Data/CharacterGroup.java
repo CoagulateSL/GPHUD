@@ -183,6 +183,8 @@ public class CharacterGroup extends TableRow {
 			return CharacterGroup.get(group);
 		} catch (@Nonnull final NoDataException e) {
 			return null;
+		} catch (final TooMuchDataException e) {
+			throw new UserInputDuplicateValueException("Character "+character.getName()+" is in multiple groups of type "+grouptype+", please contact your Sim Administration to resolve this issue",e,true);
 		}
 	}
 	
