@@ -2089,8 +2089,11 @@
                                                                                                  type=Add,
                                                                                                  message="Initial release")
 
-		@Change(date="2023-01-26", component=DatabaseSchema, type=Add, message="Drop Audit table history from more than 1 year ago automatically")
-		
+@Change(date="2023-01-26",
+        component=DatabaseSchema,
+        type=Add,
+        message="Drop Audit table history from more than 1 year ago automatically")
+
 package net.coagulate.GPHUD;
 
 import static net.coagulate.GPHUD.Classes.COMPONENT.*;
