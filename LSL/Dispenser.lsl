@@ -9,8 +9,10 @@
 #define COMMS_DONT_CHECK_CALLBACK
 #include "SLCore/LSL/CommsV3.lsl"
 #include "SLCore/LSL/SetDev.lsl"
+//#define DEBUG
 
-list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :P)
+// ----- Storage for known avatars - replaced
+// using linkset data - key value is avatar UUID, value value (!) is a space separated string consisting of <stage time secret>
 // stages are
 // stage % 100
 // 0 - querying them for an existing HUD
@@ -18,15 +20,13 @@ list keys=[]; // key,stage, "time" (to next pay attention to this, starts at 0 :
 // 2 - hud rezzed and told where to go, should get a checkin response (eventually)
 // 99 - complete
 // stage / 100 is the attachment point (INTEGER DIVISION - ALWAYS ROUND DOWN)
+
 integer cycle=0;
-list stage=[];
-list time=[];
-list secret=[];
+
 integer listens=4;
 
 integer autoattach=FALSE;
 integer parcelonly=TRUE;
-//integer debug=FALSE;
 integer slave=0;
 integer IN_EXPERIENCE=TRUE;
 integer IS_ACTIVE=FALSE;
@@ -48,11 +48,11 @@ string getSlaveScript() {
     return name;
 }
 gphud_hang(string reason) { llResetScript(); }
-listdel(integer i) {
-	keys=llDeleteSubList(keys,i,i);
-	stage=llDeleteSubList(stage,i,i);
-	time=llDeleteSubList(time,i,i);
-	secret=llDeleteSubList(secret,i,i);
+removeUser(key remove) {
+  llLinksetDataDelete((string)remove);
+}
+integer existsUser(key check) {
+	return llGetListLength(llLinksetDataFindKeys((string)check,0,100));
 }
 #ifndef NOEXPERIENCES
 /*
@@ -85,12 +85,28 @@ validateExperience() {
 	return "Experience error : "+experiencename+" - "+statemessage;
 }*/
 #endif
+integer getStage(key who) {
+	return ((integer)(llList2String(llParseString2List(llLinksetDataRead((string)who),[" "],[]),0)));
+}
+integer getTime(key who) {
+	return ((integer)(llList2String(llParseString2List(llLinksetDataRead((string)who),[" "],[]),1)));
+}
+integer getSecret(key who) {
+	return ((integer)(llList2String(llParseString2List(llLinksetDataRead((string)who),[" "],[]),2)));
+}
+key findSecret(integer secret) {
+	integer ii=0;
+	for (ii=llLinksetDataCountKeys()-1;ii>=0;ii--) {
+		key check=((key)(llList2String(llLinksetDataFindKeys(".*",ii,1),0)));
+		if (((integer)getSecret(check))==secret) { return check; }
+	}
+	return "";
+}
 forcedispense(key who) {
 	adduser(who,llGetUnixTime()+10);
-	integer i=llListFindList(keys,[who]);
-	if (i==-1) { return; }
-	stage=llListReplaceList(stage,[0],i,i);
-	time=llListReplaceList(time,[0],i,i);
+	integer secret=getSecret(who);
+	if (secret==0) { return; }
+	llLinksetDataWrite((string)who,"0 0 "+((string)getSecret(who)));
 }
 adduser(key check,integer when) {
 	if (minz!=0 || maxz!=9999) { 
@@ -100,19 +116,19 @@ adduser(key check,integer when) {
 		//llSay(0,llKey2Name(check)+" at z "+((string)(pos.z))+" range "+((string)minz)+" - "+((string)maxz));
 		if ((pos.z)<minz || (pos.z)>maxz) { return; }
 	}
-	if (llListFindList(keys,[check])!=-1) { return; }
-	//if (debug) { llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when); }
-	keys+=[check];
-	if (when==-1) { stage+=[299]; } else { stage+=[200]; } // default attachment point 2, stage is 0 or 99 (start or completed)
-	time+=[when];
+	if (existsUser(check)>0) { return; }
+	#ifdef DEBUG
+	llOwnerSay("Dispenser:New user "+llKey2Name(check)+" @"+(string)when);
+	#endif
+	integer stage=200;
+	if (when==-1) { stage=299; } // default attachment point 2, stage is 0 or 99 (start or completed)
 	integer asecret=1000+((integer)llFrand(999999999));
 	asecret=asecret/3;
 	asecret=asecret*3;
 	// secret mod 3 is now zero, we would like to change this as follows:
 	if (llGetObjectDesc()=="DEV") { asecret+=1; }
 	if (llGetObjectDesc()=="DEV-iain") { asecret+=2; }
-	secret+=[asecret];
-	//attachment+=[2];
+	llLinksetDataWrite((string)check,((string)stage)+" "+((string)when)+" "+((string)asecret));
 	llRegionSayTo(check,broadcastchannel,"GOTHUD");
 }
 execute() {
@@ -132,6 +148,7 @@ execute() {
 		if (parcelonly) { scope=AGENT_LIST_PARCEL; }
 		list newkeys=llGetAgentList(scope,[]);
 		if ((cycle % 30) == 1) {
+			// report our known avatars list to the server every 30 seconds
 			json="";
 			json+="{\"userlist\":\"";
 			integer ii=0;
@@ -145,17 +162,19 @@ execute() {
 		if (autoattach) {
 			// purge leavers
 			integer ii=0;
-			for (ii=llGetListLength(keys)-1;ii>=0;ii--) {
-				key check=llList2Key(keys,ii);
+			for (ii=llLinksetDataCountKeys()-1;ii>=0;ii--) {
+				key check=((key)(llList2String(llLinksetDataFindKeys(".*",ii,1),0)));
 				if (llListFindList(newkeys,[check])==-1) {
-					//if (debug) { llOwnerSay("Dispenser:Left user "+llKey2Name(check)); }
-					listdel(ii);
+					#ifdef DEBUG
+					llOwnerSay("Dispenser:Left user "+llKey2Name(check));
+					#endif
+					removeUser(check);
 				}
 			}
 			// add new people
 			for (ii=0;ii<llGetListLength(newkeys);ii++) {
 				key check=llList2Key(newkeys,ii);
-				if (llListFindList(keys,[check])==-1) {
+				if (existsUser(check)==0) {
 					adduser(check,now+5);
 				}
 			}
@@ -164,14 +183,16 @@ execute() {
 	// every cycle, progress a number of these "things"
 	integer actions=1;
 	integer i=0;
-	for (i=0;i<llGetListLength(keys);i++) {
-		key ik=llList2Key(keys,i);
-		integer istage=llList2Integer(stage,i) % 100;
-		integer itime=llList2Integer(time,i);
-		integer isecret=llList2Integer(secret,i);
+	for (i=0;i<llLinksetDataCountKeys();i++) {
+		key ik=((key)(llList2String(llLinksetDataFindKeys(".*",i,1),0)));
+		integer istage=getStage(ik) % 100;
+		integer itime=getTime(ik);
+		integer isecret=getSecret(ik);
 		if (istage>=0 && istage<99 && itime<=now && actions>0) {
 			actions--;
-			//if (debug) { llOwnerSay("Dispenser:Acting on "+llKey2Name(ik)+" in stage "+(string)istage+", "+(string)actions+" actions remain"); }
+			#ifdef DEBUG
+			llOwnerSay("Dispenser:Acting on "+llKey2Name(ik)+" in stage "+(string)istage+", "+(string)actions+" actions remain");
+			#endif
 			
 			// actions
 			if (istage==0) { //querying timed out, rez a hud
@@ -182,22 +203,24 @@ execute() {
 				// so we shoudl rez them a hud
 				string slscript=getSlaveScript();
 				llMessageLinked(LINK_THIS,2,slscript,(key)((string)isecret));
-				//if (debug) { llOwnerSay("Dispenser:Rez for "+llKey2Name(ik)+" with secret "+(string)isecret+" via slave "+slscript); }
-				stage=llListReplaceList(stage,[1],i,i);
-				time=llListReplaceList(time,[now+10],i,i);
+				#ifdef DEBUG
+				llOwnerSay("Dispenser:Rez for "+llKey2Name(ik)+" with secret "+(string)isecret+" via slave "+slscript);
+				#endif
+				llLinksetDataWrite((string)ik,"1 "+((string)(now+10))+" "+((string)(getSecret(ik))));
+				
 			}			
 			if (istage==1) { //hud querying us timed out?
 				llSay(0,"Slow HUD rez or failure for "+llKey2Name(ik));
 				llOwnerSay("Slow HUD rez or failure for "+llKey2Name(ik));
-				listdel(i);
+				removeUser(ik);
 				return;
 			}
 			/*
 			if (istage==2) { //hud attaching timed out?
-				listdel(i); // we just delete them, this will cause us to ping their HUD :)
+				removeUser(ik); // we just delete them, this will cause us to ping their HUD :)
 				return;			
 			}*/
-			if (istage==1 || istage==2) { listdel(i); }
+			if (istage==1 || istage==2) { removeUser(ik); }
 			if (actions==0) { return; }
 		}
 	}
@@ -240,6 +263,7 @@ default {
 		//llOwnerSay(validateExperience());
 		validateExperience();
 #endif		
+		llLinksetDataReset();
 		llOwnerSay("Dispenser: Standby...");
 	}
 	link_message(integer from,integer num,string message,key id) {
@@ -264,20 +288,16 @@ default {
 			integer scriptnumber=getSlaveId();
 			llMessageLinked(LINK_THIS,LINK_IM_SLAVE_0-scriptnumber,message,id);
 		}
-		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser mem: "+(string)llGetFreeMemory()+" elements "+(string)llGetListLength(keys)); }
+		if (num==LINK_DIAGNOSTICS) { llSay(0,"Dispenser mem: "+(string)llGetFreeMemory()+" elements "+(string)llLinksetDataCountKeys()); }
 		if (num==LINK_DISPENSE) { forcedispense(id); }
 		if (num==LINK_DISPENSE_TITLER) {
 			string slscript=getSlaveScript();
 			integer match=-1;
-			integer i=0;
-			for (i=0;i<llGetListLength(keys);i++) {
-				if (id==llList2Key(keys,i)) { match=i; }
-			}
-			if (match!=-1) {
-				integer newstage=llList2Integer(stage,match); newstage=newstage%100; // wipe the attachment
+			if (existsUser(id)>0) {
+				integer newstage=getStage(id); newstage=newstage%100; // wipe the attachment
 				newstage=newstage+(((integer)message)*100);			
-				stage=llListReplaceList(stage,[newstage],match,match);
-				llMessageLinked(LINK_THIS,3,slscript,(key)((string)llList2Integer(secret,match)));
+				llLinksetDataWrite((string)id,((string)newstage)+" "+((string)getTime(id))+" "+((string)getSecret(id)));
+				llMessageLinked(LINK_THIS,3,slscript,(key)((string)getSecret(id)));
 			}
 		}		
 	}	
@@ -300,28 +320,30 @@ default {
 		{
 			if (channel==broadcastchannel+1) {
 				integer sec=(integer)message;
-				integer i=llListFindList(secret,[sec]);
-				if (i!=-1) {
-					//if (debug) { llOwnerSay("Responded to attachment query for "+llKey2Name(llList2Key(keys,i))); }
-					integer attachment=llList2Integer(stage,i); attachment=attachment/100;
-					llRegionSayTo(id,broadcastchannel+2,(string)llList2Key(keys,i)+"|"+(string)attachment);
-					integer newstage=llList2Integer(stage,i); newstage=newstage/100; newstage=newstage*100; // wipe the stage
+				key userkey=findSecret(sec);
+				if (userkey!="") {
+					#ifdef DEBUG
+					llOwnerSay("Responded to attachment query for "+llKey2Name(userkey));
+					#endif
+					integer attachment=getStage(userkey); attachment=attachment/100;
+					llRegionSayTo(id,broadcastchannel+2,(string)userkey+"|"+(string)attachment);
+					integer newstage=getStage(userkey); newstage=newstage/100; newstage=newstage*100; // wipe the stage
 					newstage=newstage+2;
-					stage=llListReplaceList(stage,[newstage],i,i);
-					time=llListReplaceList(time,[llGetUnixTime()+180],i,i);
+					llLinksetDataWrite((string)userkey,((string)newstage)+" "+((string)(llGetUnixTime()+180))+" "+((string)sec));
 				}
 			}
 			if (channel==broadcastchannel) {
 				if (message=="GOTHUD") {
 					key k=llGetOwnerKey(id);
-					//if (debug) { llOwnerSay("Dispenser:Has Hud "+llKey2Name(k)); }
-					integer n=llListFindList(keys,[k]);
-					if (n!=-1) {
-						integer newstage=llList2Integer(stage,n);
+					#ifdef DEBUG
+					llOwnerSay("Dispenser:Has Hud "+llKey2Name(k));
+					#endif
+					if (existsUser(k)) {
+						integer newstage=getStage(k);
 						newstage=newstage/100;
 						newstage=newstage*100; // wipe the stage
 						newstage=newstage+99;
-						stage=llListReplaceList(stage,[newstage],n,n);
+						llLinksetDataWrite((string)k,((string)newstage)+" "+((string)(getTime(k)))+" "+((string)(getSecret(k))));
 					}
 				}
 				json=message;

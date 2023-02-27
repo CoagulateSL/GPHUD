@@ -43,6 +43,12 @@
         component=COMPONENT.RegionServer,
         type=CHANGETYPE.Add,
         message="Server emits warnings if there are insufficient prims before attempting to rez a HUD, and warns if a HUD rez doesn't succeed.")
+		
+@Change(date="2023-02-27",
+        component=COMPONENT.RegionServer,
+        type=CHANGETYPE.Change,
+        message="Modified dispenser component to store persistent user list in object storage rather than script memory, in an attempt to enable the dispenser to track past 100 concurrent users.")
+		
 package net.coagulate.GPHUD.Modules.GPHUDServer;
 
 import net.coagulate.GPHUD.Classes.COMPONENT;
