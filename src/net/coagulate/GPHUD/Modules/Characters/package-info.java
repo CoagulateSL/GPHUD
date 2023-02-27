@@ -29,10 +29,17 @@
            url="/characters/list?sort=Name")
 
 
+@Classes.Change(date="2023-02-27",
+                component=Classes.COMPONENT.Core,
+                message="Require the permission Characters.ViewAll to actually display other users character sheets (rather than only blocking access via the main characters list)",
+                type=ChangeLogging.CHANGETYPE.Change)
+		
 package net.coagulate.GPHUD.Modules.Characters;
 
+import net.coagulate.GPHUD.Classes;
 import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
 import net.coagulate.GPHUD.Modules.SideMenu.SideMenus;
+import net.coagulate.SL.ChangeLogging;
 

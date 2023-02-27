@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.Characters;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.UnixTime;
@@ -113,6 +114,9 @@ public abstract class View {
 		if (split.length==4) {
 			final String id=split[split.length-1];
 			final Char c=Char.get(Integer.parseInt(id));
+			if (!st.hasPermission("Characters.ViewAll") && c.getOwner().getId()!=st.getCharacter().getOwner().getId()) {
+				throw new UserAccessDeniedException("You do not have permission Characters.ViewAll and may only view your own character sheet");
+			}
 			viewCharacter(st,values,c,false);
 			return;
 		}
@@ -120,6 +124,9 @@ public abstract class View {
 			final String id=split[3];
 			final Char c=Char.get(Integer.parseInt(id));
 			final String attribute=split[4]+"."+split[5];
+			if (!st.hasPermission("Characters.ViewAll") && c.getOwner().getId()!=st.getCharacter().getOwner().getId()) {
+				throw new UserAccessDeniedException("You do not have permission Characters.ViewAll and may only view your own character sheet");
+			}
 			st.form().add(new ConfigurationHierarchy(st,st.getKVDefinition(attribute),st.simulate(c),values));
 			return;
 		}
