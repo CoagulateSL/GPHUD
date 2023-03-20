@@ -212,6 +212,8 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
+	private static final int SCHEMA_VERSION=15;
+
 	@SuppressWarnings("MagicNumber")
 	@Override
 	protected int schemaUpgrade(final DBConnection db,final String schemaName,int currentVersion) {
@@ -366,6 +368,13 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 15 is complete");
 			currentVersion=15;
 		}
+		if (currentVersion==15) {
+			log.config("Add index to audit table for truncation purposes");
+			GPHUD.getDB().d("ALTER TABLE audit ADD INDEX audit_timedate (timedate)");
+			log.config("Schema upgrade of GPHUD to version 16 is complete");
+			currentVersion=16;
+		}
+
 		return currentVersion;
 	}
 	
@@ -399,7 +408,6 @@ public class GPHUD extends SLModule {
 		return Logger.getLogger(log().getName()+"."+subspace);
 	}
 	
-	private static final int SCHEMA_VERSION=15;
 	
 	@Override
 	public void startup() {
