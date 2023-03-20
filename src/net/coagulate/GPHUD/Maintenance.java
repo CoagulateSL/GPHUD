@@ -134,10 +134,6 @@ public class Maintenance extends Thread {
 				final Transmission t=
 						new PingTransmission(Char.get(r.getInt("characterid")),ping,r.getStringNullable("url"));
 				t.start();
-				try {
-					Thread.sleep(1000);
-				} catch (@Nonnull final InterruptedException ignored) {
-				}
 			}
 		} //else { GPHUD.getLogger().log(FINE,"Pinging out to no character URLs"); }
 	}
