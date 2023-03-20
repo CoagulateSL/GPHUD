@@ -212,7 +212,7 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
-	private static final int SCHEMA_VERSION=15;
+	private static final int SCHEMA_VERSION=16;
 
 	@SuppressWarnings("MagicNumber")
 	@Override
