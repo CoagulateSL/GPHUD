@@ -826,10 +826,10 @@ public void login(final User user,final Region region,final String url) {
 		for (final Map.Entry<KV,String> entry: oldConveyances.entrySet()) {
 			final KV kv=entry.getKey();
 			if (kv!=null) {
-				final String oldValue=entry.getValue();
-				final String newValue=st.getKV(kv.fullName()).value();
 				final String conveyAs=kv.conveyAs();
 				if (!conveyAs.isEmpty()) {
+					final String oldValue=entry.getValue();
+					final String newValue=st.getKV(kv.fullName()).value();
 					payload.put(conveyAs,newValue); // always put in init
 					if (!oldValue.equals(newValue)) {
 						setKV(st,"gphudclient.conveyance-"+kv.conveyAs(),newValue); // skip cache flush
