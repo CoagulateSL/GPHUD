@@ -10,7 +10,6 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.GPHUD.Data.Currency;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -28,7 +27,10 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.logging.Level.SEVERE;
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.*;
@@ -258,25 +260,18 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 	
 	// ---------- INSTANCE ----------
-	private Set<Attribute> lastAttributeSet=null;
-	private Map<String,KV> kvDefinitions=null;
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
-		final Set<Attribute> attrSet=st.getAttributes();
-		if (kvDefinitions!=null && lastAttributeSet!=null && lastAttributeSet==attrSet) {
-			return kvDefinitions; // piggy back off the fact the input is the same
-		}
+		//String attributes=st.getKV("Characters.Attributes");
 		final Map<String,KV> kv=new TreeMap<>();
-		for (final Attribute attribute: attrSet) {
+		for (final Attribute attribute: st.getAttributes()) {
 			if (attribute.isKV()) {
 				kv.put(attribute.getName().toLowerCase(),new AttributeKV(attribute));
 				kv.put(attribute.getName().toLowerCase()+"max",new AttributeMaxKV(attribute));
 			}
 		}
-		kvDefinitions=kv;
-		lastAttributeSet=attrSet;
-		return kvDefinitions;
+		return kv;
 	}
 	
 	@Override
