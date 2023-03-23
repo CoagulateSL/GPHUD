@@ -86,13 +86,17 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getLinkTarget();
 	
-	private String name=null;
+	protected void clearNameCache() {
+		nameCache.purge(this);
+	}
 	
 	@Nonnull
 	@Override
 	public String toString() {
 		return getNameSafe()+"[#"+getId()+"]";
 	}
+	
+	private static final Cache<TableRow,String> nameCache=Cache.getCache("GPHUD/nameCache",CacheConfig.MUTABLE);
 	
 	/**
 	 * Highly protected version of getName() that never fails.
@@ -121,16 +125,9 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		if (getNameField()==null) {
 			throw new SystemConsistencyException("Getting name of something with a null getNameField()");
 		}
-		if (name==null) {
-			name=getStringNullable(getNameField());
-		}
-		return name;
+		return nameCache.get(this,()->getStringNullable(getNameField()));
 	}
-
-	protected void setName(final String name) {
-		this.name=name;
-		set(getNameField(),name);
-	}
+	
 	/**
 	 * Convert this object to text.
 	 *
