@@ -86,7 +86,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	@Nullable
 	public abstract String getLinkTarget();
 	
-	private String name=null;
+	private static String name=null;
 	
 	@Nonnull
 	@Override
