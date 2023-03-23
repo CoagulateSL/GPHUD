@@ -128,7 +128,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 
 	protected void setName(final String name) {
-		this.name=name;
+		TableRow.name=name;
 		set(getNameField(),name);
 	}
 	/**
