@@ -977,7 +977,8 @@ public void login(final User user,final Region region,final String url) {
 			throw new UserInputDuplicateValueException(
 					"Unable to rename character '"+getName()+"' to '"+newName+"', that name is already taken.",true);
 		}
-		setName(newName);
+		set("name",newName);
+		clearNameCache();
 	}
 	
 	/**
