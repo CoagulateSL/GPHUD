@@ -10,6 +10,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
@@ -259,21 +260,25 @@ public class CharactersModule extends ModuleAnnotation {
 		return getKVDefinitions(st).get(qualifiedname.toLowerCase());
 	}
 	
+	// naive never flushed cache with short life time.  Just to see if this actually helps much
+	private static final Cache<Instance,Map<String,KV>> kvDefsCache=Cache.getCache("GPHUD/CharactersModuleKVDefinitions",CacheConfig.SHORT);
+
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(@Nonnull final State st) {
 		//String attributes=st.getKV("Characters.Attributes");
-		final Map<String,KV> kv=new TreeMap<>();
-		for (final Attribute attribute: st.getAttributes()) {
-			if (attribute.isKV()) {
-				kv.put(attribute.getName().toLowerCase(),new AttributeKV(attribute));
-				kv.put(attribute.getName().toLowerCase()+"max",new AttributeMaxKV(attribute));
+		return kvDefsCache.get(st.getInstance(),()->{
+			final Map<String,KV> kv=new TreeMap<>();
+			for (final Attribute attribute: st.getAttributes()) {
+				if (attribute.isKV()) {
+					kv.put(attribute.getName().toLowerCase(),new AttributeKV(attribute));
+					kv.put(attribute.getName().toLowerCase()+"max",new AttributeMaxKV(attribute));
+				}
 			}
-		}
-		return kv;
+			return kv;
+		});
 	}
-	
 	@Override
 	public Permission getPermission(final State st,@Nonnull final String itemname) {
 		final Permission p=super.getPermission(st,itemname);
