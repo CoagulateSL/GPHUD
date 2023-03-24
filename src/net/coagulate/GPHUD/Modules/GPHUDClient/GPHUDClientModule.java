@@ -1,5 +1,8 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
+import net.coagulate.Core.Tools.Cache;
+import net.coagulate.GPHUD.Data.CacheConfig;
+import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.*;
@@ -40,24 +43,28 @@ public class GPHUDClientModule extends ModuleAnnotation {
 		return new OKResponse("Updated your Titler altitude to "+offset);
 	}
 	
+	private static final Cache<Instance,Map<String,KV>> kvDefinitions=Cache.getCache("GPHUD/GPHUDClientModuleKVDefinitions",
+	                                                                                 CacheConfig.SHORT);
+
 	// ---------- INSTANCE ----------
 	@Nonnull
 	@Override
 	public Map<String,KV> getKVDefinitions(final State st) {
-		final Map<String,KV> kv=new TreeMap<>(base); // anotation defined KVs for us.
-		// note we must NOT use modules.getallKVs() (ok thats not its name) because it will come back through here and thus infinite loop.
-		// instead we'll enumerate the modules other than ourselves, and then deal with ourselves.
-		for (final Module m: Modules.getModules()) {
-			if (m.isEnabled(st)) {
-				if (m!=this) {
-					keyConveyances(kv,m.getKVDefinitions(st));
+		return kvDefinitions.get(st.getInstance(),()->{
+			final Map<String,KV> kv=new TreeMap<>(base); // anotation defined KVs for us.
+			// note we must NOT use modules.getallKVs() (ok thats not its name) because it will come back through here and thus infinite loop.
+			// instead we'll enumerate the modules other than ourselves, and then deal with ourselves.
+			for (final Module m: Modules.getModules()) {
+				if (m.isEnabled(st)) {
+					if (m!=this) {
+						keyConveyances(kv,m.getKVDefinitions(st));
+					}
 				}
 			}
-		}
-		keyConveyances(kv,base);
-		return kv;
+			keyConveyances(kv,base);
+			return kv;
+		});
 	}
-	
 	@Override
 	public KV getKVDefinition(final State st,@Nonnull final String qualifiedname) {
 		// avoid infinite loops as we look up definitions and try get our attributes to make more defintiions etc
