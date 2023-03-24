@@ -5,6 +5,9 @@ import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Cache;
+import net.coagulate.GPHUD.Data.CacheConfig;
+import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.SL;
 
@@ -30,6 +33,11 @@ public abstract class Templater {
 	
 	// ---------- STATICS ----------
 	
+	private static final Cache<Instance,Map<String,String>> templatesCache=Cache.getCache("GPHUD/TemplaterTemplates",
+	                                                                                      CacheConfig.SHORT);
+	private static final Cache<Instance,Map<String,Method>> templatesMethodsCache=Cache.getCache("GPHUD/TemplaterMethods",
+	                                                                                      CacheConfig.SHORT);
+	
 	/**
 	 * Returns a list of templates and their descriptions.
 	 *
@@ -38,22 +46,25 @@ public abstract class Templater {
 	 */
 	@Nonnull
 	public static Map<String,String> getTemplates(final State st) {
-		final Map<String,String> ret=new TreeMap<>(templates);
-		for (final Module m: Modules.getModules()) {
-			m.addTemplateDescriptions(st,ret);
-		}
-		return ret;
+		return templatesCache.get(st.getInstance(),()->{
+			final Map<String,String> ret=new TreeMap<>(templates);
+			for (final Module m: Modules.getModules()) {
+				m.addTemplateDescriptions(st,ret);
+			}
+			return ret;
+		});
 	}
-	
+
 	@Nonnull
 	public static Map<String,Method> getMethods(final State st) {
-		final Map<String,Method> ret=new TreeMap<>(methods);
-		for (final Module m: Modules.getModules()) {
-			m.addTemplateMethods(st,ret);
-		}
-		return ret;
+		return templatesMethodsCache.get(st.getInstance(),()->{
+			final Map<String,Method> ret=new TreeMap<>(methods);
+			for (final Module m: Modules.getModules()) {
+				m.addTemplateMethods(st,ret);
+			}
+			return ret;
+		});
 	}
-	
 	public static void register(@Nonnull final Template template,final Method m) {
 		add(template.name(),template.description(),m);
 	}
