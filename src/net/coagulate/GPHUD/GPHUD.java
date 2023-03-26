@@ -376,7 +376,7 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==16) {
 			log.config("Add index to characters table for name resolution at instance");
-			GPHUD.getDB().d("ALTER TABLE `gphud`.`characters` ADD UNIQUE INDEX `characters_instance_names` (`instanceid` ASC, `name` ASC)");
+			GPHUD.getDB().d("ALTER TABLE `characters` ADD UNIQUE INDEX `characters_instance_names` (`instanceid` ASC, `name` ASC)");
 			log.config("Schema upgrade of GPHUD to version 17 is complete");
 			currentVersion=17;
 		}
