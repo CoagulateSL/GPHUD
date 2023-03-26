@@ -212,7 +212,7 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
-	private static final int SCHEMA_VERSION=16;
+	private static final int SCHEMA_VERSION=17;
 
 	@SuppressWarnings("MagicNumber")
 	@Override
@@ -374,8 +374,14 @@ public class GPHUD extends SLModule {
 			log.config("Schema upgrade of GPHUD to version 16 is complete");
 			currentVersion=16;
 		}
-
+		if (currentVersion==16) {
+			log.config("Add index to characters table for name resolution at instance");
+			GPHUD.getDB().d("ALTER TABLE `gphud`.`characters` ADD UNIQUE INDEX `characters_instance_names` (`instanceid` ASC, `name` ASC)");
+			log.config("Schema upgrade of GPHUD to version 17 is complete");
+			currentVersion=17;
+		}
 		return currentVersion;
+		// UPDATE THE CURRENT VERSION NUMBER ABOVE THIS FUNC
 	}
 	
 	@Override
