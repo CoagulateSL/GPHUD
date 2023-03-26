@@ -10,6 +10,7 @@
 
 // Imported legacy change logs!
 
+
 @Classes.Change(date="2022-04-22",
                 component=DatabaseSchema,
                 type=Add,
@@ -2093,7 +2094,11 @@
         component=DatabaseSchema,
         type=Add,
         message="Drop Audit table history from more than 1 year ago automatically")
-
+@Change(date="2023-03-26",
+        component=Core,
+        type=Fix,
+        message="Various performance improvements, little visible from an end user client but CPU spikes reduced by 80%")
+		
 package net.coagulate.GPHUD;
 
 import static net.coagulate.GPHUD.Classes.COMPONENT.*;
