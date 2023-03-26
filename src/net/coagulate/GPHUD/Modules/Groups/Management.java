@@ -401,6 +401,10 @@ public abstract class Management {
 					"Refusing to move character "+newMember.getName()+", they are currently group leader of "+
 					existingGroup.getName()+", you must manually "+"eject them from that position");
 		}
+		if (existingGroup!=null && group!=null && existingGroup.getId()==group.getId()) {
+			// moving character to group they're already in.
+			return new OKResponse("No action taken ; character is already in this group.");
+		}
 		if (existingGroup!=null) {
 			existingGroup.removeMember(newMember);
 		}
