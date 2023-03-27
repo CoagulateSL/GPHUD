@@ -156,6 +156,6 @@ public class Visit {
 	}
 	
 	public static void truncate() {
-		GPHUD.getDB().d("delete from visits where endtime<?",getUnixTime()-(UnixTime.DAY*90));
+		GPHUD.getDB().dSlow("delete from visits where endtime<?",getUnixTime()-(UnixTime.DAY*90));
 	}
 }
