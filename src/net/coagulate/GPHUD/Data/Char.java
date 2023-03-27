@@ -24,7 +24,6 @@ import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Modules;
-import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
@@ -51,7 +50,7 @@ public class Char extends TableRow {
 			Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Char,Zone> zoneCache=Cache.getCache("gphud/characterZone",CacheConfig.MUTABLE);
 	// ---------- STATICS ----------
-	protected final Cache<Pool,Integer> poolSumCache=
+	protected final Cache<String,Integer> poolSumCache=
 			Cache.getCache("GPHUD/characterPoolSums/"+getId(),CacheConfig.OPERATIONAL_CONFIG);
 	
 	/**

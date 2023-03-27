@@ -74,7 +74,7 @@ public class CharacterPool {
 	 * @return Sum of the entries
 	 */
 	public static int sumPool(@Nonnull final Char character,@Nonnull final Pool pool) {
-		return character.poolSumCache.get(pool,()->{
+		return character.poolSumCache.get(pool.fullName(),()->{
 			final Integer sum=db().dqi(
 					"select sum(adjustment) from characterpools where characterid=? and poolname like ?",
 					character.getId(),
@@ -108,7 +108,7 @@ public class CharacterPool {
 		       st.getAvatarNullable()==null?null:st.getAvatar().getId(),
 		       description,
 		       getUnixTime());
-		target.poolSumCache.purge(pool);
+		target.poolSumCache.purge(pool.fullName());
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class CharacterPool {
 		       st.getAvatar().getId(),
 		       description,
 		       getUnixTime());
-		target.poolSumCache.purge(pool);
+		target.poolSumCache.purge(pool.fullName());
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public class CharacterPool {
 		       User.getSystem().getId(),
 		       description,
 		       getUnixTime());
-		target.poolSumCache.purge(pool);
+		target.poolSumCache.purge(pool.fullName());
 	}
 	
 	/**
