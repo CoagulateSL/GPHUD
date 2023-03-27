@@ -620,7 +620,7 @@ public class Instance extends TableRow {
 			final Map<Integer,Set<CharacterSummary>> sorted=new TreeMap<>();
 			for (final CharacterSummary cs: idMap.values()) {
 				int value=cs.lastactive;
-				if ("total visit time".equals(sortBy)) {
+				if ("total visit time (3 months)".equals(sortBy)) {
 					value=cs.totalvisits;
 				}
 				if (sortBy.equals("visit time (last "+Experience.getCycleLabel(st).toLowerCase()+")")) {

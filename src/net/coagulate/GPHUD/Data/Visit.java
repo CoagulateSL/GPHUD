@@ -154,4 +154,8 @@ public class Visit {
 			GPHUD.getLogger().log(SEVERE,"Exception running awards outer task",e);
 		}
 	}
+	
+	public static void truncate() {
+		GPHUD.getDB().d("delete from visits where endtime<?",getUnixTime()-(UnixTime.DAY*90));
+	}
 }

@@ -167,7 +167,7 @@ public abstract class Audit {
 	}
 	
 	public static void truncate() {
-		GPHUD.getDB().d("delete from audit where timedate<?",getUnixTime()-UnixTime.YEAR);
+		GPHUD.getDB().d("delete from audit where timedate<?",getUnixTime()-(UnixTime.DAY*90));
 	}
 	
 	public enum OPERATOR {
