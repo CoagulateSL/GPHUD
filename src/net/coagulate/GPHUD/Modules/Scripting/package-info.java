@@ -23,6 +23,11 @@
                                                                                                 type=ChangeLogging.CHANGETYPE.Add,
                                                                                                 message="New top level language construct, the DiscardExpression.  No longer must every expression have an assignment, e.g. 'Response discard=gsAPI(Stuff)', but can just be written as gsAPI(Stuff), the result will now be automatically discarded.")
 
+@Classes.Change(date="2023-03-28",
+                type=ChangeLogging.CHANGETYPE.Add,
+                component=Classes.COMPONENT.GSVM,
+                message="Doubled script instruction count limit from 10K to 20K instructions as scripting does not seem to be the primary CPU load on the server and recent optimisations in other areas have made this seem safe to relax.")
+		
 package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.GPHUD.Classes;
