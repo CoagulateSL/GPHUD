@@ -39,6 +39,7 @@ public class Instance extends TableRow {
 			// naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
 	final                Cache<String,Currency> currencyNameCache     =
 			Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
+	Cache<String,Attribute> attributeNameResolution=Cache.getCache("gphud/instanceAttributeNameResolution/"+getId(),CacheConfig.PERMANENT_CONFIG);
 	
 	protected Instance(final int id) {
 		super(id);

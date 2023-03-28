@@ -125,6 +125,8 @@ public class Region extends TableRow {
 		return r;
 	}
 	
+	private static final Cache<String,Integer> regionNameCache=Cache.getCache("GPHUD/RegionNameLookup",CacheConfig.PERMANENT_CONFIG);
+
 	/**
 	 * Find a region by name.
 	 *
@@ -133,14 +135,17 @@ public class Region extends TableRow {
 	 */
 	@Nullable
 	public static Region findNullable(@Nonnull final String name,final boolean allowretired) {
+		final Integer regionId=regionNameCache.get(name,()->{
 		try {
 			final int regionid=db().dqiNotNull("select regionid from regions where name=?",name);
-			return get(regionid,allowretired);
+			return regionid;
 		} catch (@Nonnull final NoDataException e) {
 			return null;
-		}
+		}});
+		if (regionId==null) { return null; }
+		return get(regionId,allowretired);
 	}
-	
+
 	/**
 	 * Register a region against an instance.
 	 *
@@ -156,6 +161,7 @@ public class Region extends TableRow {
 			GPHUD.getLogger().info("Joined region '"+region+"' to instance "+i);
 			db().d("insert into regions(name,instanceid) values(?,?)",region,i.getId());
 			db().d("update instances set retireat=null,retirewarn=null where instanceid=?",i.getId());
+			regionNameCache.purge(region);
 			return "";
 		}
 		return "Region is already registered!";
