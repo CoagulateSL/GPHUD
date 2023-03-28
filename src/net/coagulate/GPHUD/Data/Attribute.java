@@ -55,7 +55,7 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute find(@Nonnull final Instance instance,@Nonnull final String name) {
-		instance.attributeNameResolution.get(name,()->{
+		return instance.attributeNameResolution.get(name,()->{
 			try {
 				final int id=db().dqiNotNull("select attributeid from attributes where name like ? and instanceid=?",
 				                             name,
