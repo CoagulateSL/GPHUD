@@ -133,7 +133,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		if (getNameField()==null) {
 			throw new SystemConsistencyException("Setting name of something with a null getNameField()");
 		}
-		set(getNameField(),String value);
+		set(getNameField(),value);
 		nameCache.set(this,value);
 	}
 	
