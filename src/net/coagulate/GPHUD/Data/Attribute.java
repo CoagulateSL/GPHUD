@@ -55,16 +55,18 @@ public class Attribute extends TableRow {
 	 */
 	@Nonnull
 	public static Attribute find(@Nonnull final Instance instance,@Nonnull final String name) {
-		try {
-			final int id=db().dqiNotNull("select attributeid from attributes where name like ? and instanceid=?",
-			                             name,
-			                             instance.getId());
-			return get(id);
-		} catch (@Nonnull final NoDataException e) {
-			throw new UserInputLookupFailureException("Unable to find attribute '"+name+"' in instance '"+instance+"'",
-			                                          e,
-			                                          true);
-		}
+		instance.attributeNameResolution.get(name,()->{
+			try {
+				final int id=db().dqiNotNull("select attributeid from attributes where name like ? and instanceid=?",
+				                             name,
+				                             instance.getId());
+				return get(id);
+			} catch (@Nonnull final NoDataException e) {
+				throw new UserInputLookupFailureException("Unable to find attribute '"+name+"' in instance '"+instance+"'",
+				                                          e,
+				                                          true);
+			}
+		});
 	}
 	
 	/**
@@ -138,6 +140,7 @@ public class Attribute extends TableRow {
 		       usesAbilityPoints,
 		       required,
 		       defaultValue);
+		instance.attributeNameResolution.purge(name);
 		attributeSetCache.purge(instance);
 	}
 	
@@ -634,7 +637,9 @@ public class Attribute extends TableRow {
 				c.delete(st);
 			}
 		}
+		final String name=getName();
 		d("delete from attributes where attributeid=?",getId());
+		instance.attributeNameResolution.purge(name);
 		attributeSetCache.purge(getInstance());
 		attributeTypeCache.purge(this);
 		usesAbilityPointsCache.purge(this);
