@@ -44,6 +44,7 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Char extends TableRow {
 	
+	final Cache<String,CharacterGroup> groupTypeCache=Cache.getCache("GPHUD/charGroupTypeCache/"+getId(),CacheConfig.SHORT);
 	private static final Cache<Char,Instance> instanceCache=
 			Cache.getCache("GPHUD/charInstance",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Char,Integer> protocolCache=
@@ -976,7 +977,7 @@ public void login(final User user,final Region region,final String url) {
 			throw new UserInputDuplicateValueException(
 					"Unable to rename character '"+getName()+"' to '"+newName+"', that name is already taken.",true);
 		}
-		set("name",newName);
+		setName(newName);
 		clearNameCache();
 	}
 	

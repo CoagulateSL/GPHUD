@@ -163,29 +163,35 @@ public class CharacterGroup extends TableRow {
 	// ---------- INSTANCE ----------
 	
 	/**
-	 * Get the character group of a given type.
+	 * Joins a character to this group.
+	 * Character must not already be in this group, and must not be in a competing group.
 	 *
-	 * @param character Character to get the group of
-	 * @param grouptype Group type string
-	 * @return The CharacterGroup or null
+	 * @param character Character to add
+	 * @throws UserInputDuplicateValueException if the character is already in this group, or in a group of a conflicting type
 	 */
-	@Nullable
-	public static CharacterGroup getGroup(@Nonnull final Char character,@Nonnull final String grouptype) {
-		try {
-			final Integer group=db().dqi(
-					"select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers"+
-					".charactergroupid where characterid=? and charactergroups.type=?",
-					character.getId(),
-					grouptype);
-			if (group==null) {
-				return null;
-			}
-			return CharacterGroup.get(group);
-		} catch (@Nonnull final NoDataException e) {
-			return null;
-		} catch (final TooMuchDataException e) {
-			throw new UserInputDuplicateValueException("Character "+character.getName()+" is in multiple groups of type "+grouptype+", please contact your Sim Administration to resolve this issue",e,true);
+	public void addMember(@Nonnull final Char character) {
+		// in group?
+		if (character.getInstance()!=getInstance()) {
+			throw new SystemConsistencyException("Character (group) / Instance mismatch");
 		}
+		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
+		                       getId(),
+		                       character.getId());
+		if (exists>0) {
+			throw new UserInputDuplicateValueException("Character is already a member of group?");
+		}
+		// in competing group?
+		if (getType()!=null) {
+			final CharacterGroup competition=CharacterGroup.getGroup(character,getType());
+			if (competition!=null) {
+				throw new UserInputDuplicateValueException(
+						"Unable to join new group, already in a group of type "+getType()+" - "+competition.getName());
+			}
+			character.groupTypeCache.purge(getType());
+		}
+		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
+		characterGroupsCache.purge(character);
+		groupMembershipCache.purge(this);
 	}
 	
 	/**
@@ -329,34 +335,33 @@ public class CharacterGroup extends TableRow {
 	}
 	
 	/**
-	 * Joins a character to this group.
-	 * Character must not already be in this group, and must not be in a competing group.
+	 * Get the character group of a given type.
 	 *
-	 * @param character Character to add
-	 * @throws UserInputDuplicateValueException if the character is already in this group, or in a group of a conflicting type
+	 * @param character Character to get the group of
+	 * @param grouptype Group type string
+	 * @return The CharacterGroup or null
 	 */
-	public void addMember(@Nonnull final Char character) {
-		// in group?
-		if (character.getInstance()!=getInstance()) {
-			throw new SystemConsistencyException("Character (group) / Instance mismatch");
-		}
-		final int exists=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
-		                       getId(),
-		                       character.getId());
-		if (exists>0) {
-			throw new UserInputDuplicateValueException("Character is already a member of group?");
-		}
-		// in competing group?
-		if (getType()!=null) {
-			final CharacterGroup competition=CharacterGroup.getGroup(character,getType());
-			if (competition!=null) {
+	@Nullable
+	public static CharacterGroup getGroup(@Nonnull final Char character,@Nonnull final String grouptype) {
+		return character.groupTypeCache.get(grouptype,()->{
+			try {
+				final Integer group=db().dqi(
+						"select charactergroups.charactergroupid from charactergroups inner join charactergroupmembers on charactergroups.charactergroupid=charactergroupmembers"+
+						".charactergroupid where characterid=? and charactergroups.type=?",
+						character.getId(),
+						grouptype);
+				if (group==null) {
+					return null;
+				}
+				return CharacterGroup.get(group);
+			} catch (@Nonnull final NoDataException e) {
+				return null;
+			} catch (final TooMuchDataException e) {
 				throw new UserInputDuplicateValueException(
-						"Unable to join new group, already in a group of type "+getType()+" - "+competition.getName());
+						"Character "+character.getName()+" is in multiple groups of type "+grouptype+
+						", please contact your Sim Administration to resolve this issue",e,true);
 			}
-		}
-		d("insert into charactergroupmembers(charactergroupid,characterid) values(?,?)",getId(),character.getId());
-		characterGroupsCache.purge(character);
-		groupMembershipCache.purge(this);
+		});
 	}
 	
 	/**
@@ -382,6 +387,9 @@ public class CharacterGroup extends TableRow {
 		                       getId(),
 		                       character.getId());
 		d("delete from charactergroupmembers where charactergroupid=? and characterid=?",getId(),character.getId());
+		if (getType()!=null) {
+			character.groupTypeCache.purge(getType());
+		}
 		characterGroupsCache.purge(character);
 		groupMembershipCache.purge(this);
 		if (exists==0) {
