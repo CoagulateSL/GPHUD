@@ -160,7 +160,7 @@ public class GSVM {
 	
 	private void increaseIC() {
 		instructionCount++;
-		if (instructionCount>10000) {
+		if (instructionCount>20000) {
 			throw new GSResourceLimitExceededException("Instruction count exceeded, infinite loop (or complex script)?");
 		}
 	}
