@@ -34,15 +34,15 @@ public class Attribute extends TableRow {
 	private static final Cache<Attribute,Instance> instanceCache=
 			Cache.getCache("GPHUD/attributeInstance",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Attribute,ATTRIBUTETYPE> attributeTypeCache=
-			Cache.getCache("GPHUD/AttributeType",CacheConfig.OPERATIONAL_CONFIG);
+			Cache.getCache("GPHUD/AttributeType",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Attribute,String> subTypeCache=
-			Cache.getCache("GPHUD/AttributeSubType",CacheConfig.OPERATIONAL_CONFIG);
+			Cache.getCache("GPHUD/AttributeSubType",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Attribute,Boolean> usesAbilityPointsCache=
 			Cache.getCache("GPHUD/AttributeAbilityPoints",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Attribute,Boolean> requiredCache=
-			Cache.getCache("gphud/attributeRequired",CacheConfig.OPERATIONAL_CONFIG);
+			Cache.getCache("gphud/attributeRequired",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Attribute,Boolean> templatableCache=
-			Cache.getCache("gphud/attributeTemplatable",CacheConfig.OPERATIONAL_CONFIG);
+			Cache.getCache("gphud/attributeTemplatable",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Find an attribute in an instance ; NOTE this only finds database attributes.
