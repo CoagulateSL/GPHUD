@@ -40,6 +40,7 @@ public class Instance extends TableRow {
 	final                Cache<String,Currency> currencyNameCache     =
 			Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
 	Cache<String,Attribute> attributeNameResolution=Cache.getCache("gphud/instanceAttributeNameResolution/"+getId(),CacheConfig.PERMANENT_CONFIG);
+	Cache<String,CharacterGroup> characterGroupResolveCache=Cache.getCache("gphud/instanceCharacterGroupResolveCache/"+getId(),CacheConfig.PERMANENT_CONFIG);
 	
 	protected Instance(final int id) {
 		super(id);

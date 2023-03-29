@@ -75,11 +75,13 @@ public class CharacterGroup extends TableRow {
 	 */
 	@Nullable
 	public static CharacterGroup resolve(@Nonnull final State st,@Nonnull final String name) {
-		final int id=new CharacterGroup(-1).resolveToID(st,name,true);
-		if (id==0) {
-			return null;
-		}
-		return get(id);
+		return st.getInstance().characterGroupResolveCache.get(name,()->{
+			final int id=new CharacterGroup(-1).resolveToID(st,name,true);
+			if (id==0) {
+				return null;
+			}
+			return get(id);
+		});
 	}
 	
 	/**
@@ -271,6 +273,7 @@ public class CharacterGroup extends TableRow {
 		       open,
 		       keyword);
 		instanceGroupsCache.purge(instance);
+		instance.characterGroupResolveCache.purge(name);
 	}
 	
 	@Nonnull
@@ -316,12 +319,14 @@ public class CharacterGroup extends TableRow {
 	 */
 	public void delete() {
 		final Instance instance=getInstance();
+		final String name=getName();
 		d("delete from charactergroups where charactergroupid=?",getId());
 		groupMembershipCache.purge(this);
 		characterGroupsCache.purgeAll();
 		kvCache.purge(this);
 		typeCache.purge(this);
 		instanceGroupsCache.purge(instance);
+		instance.characterGroupResolveCache.purge(name);
 	}
 	
 	/**
