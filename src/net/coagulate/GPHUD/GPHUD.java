@@ -6,6 +6,7 @@ import net.coagulate.Core.Database.MySqlDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.Core.Tools.ClassTools;
+import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Tests.TestFramework;
 import net.coagulate.SL.*;
@@ -463,5 +464,10 @@ public class GPHUD extends SLModule {
 	@Override
 	public SelfTest.PassFailRecord selfTest() {
 		return new TestFramework().execute();
+	}
+	
+	@Override
+	public void preLoadCaches() {
+		Char.preLoadCache();
 	}
 }
