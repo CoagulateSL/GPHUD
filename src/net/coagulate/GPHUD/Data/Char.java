@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static java.util.logging.Level.SEVERE;
@@ -443,6 +444,16 @@ public class Char extends TableRow {
 			}
 		}
 	}
+	
+	public static void preLoadCache() {
+		final AtomicInteger loaded=new AtomicInteger();
+		db().dqSlow("select characterid,name from characters").forEach((row)->{
+			get(row.getInt("characterid")).setNameCache(row.getString("name"));
+			loaded.getAndIncrement();
+		});
+		GPHUD.getLogger("PreLoadCache").config("Loaded "+loaded+" character records");
+	}
+	
 	/**
 	 * Get the owning avatar for this character.
 	 *

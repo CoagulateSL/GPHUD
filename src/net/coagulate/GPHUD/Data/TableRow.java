@@ -129,6 +129,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 			return getStringNullable(getNameField());
 		});
 	}
+	protected void setNameCache(@Nonnull final String value) { nameCache.set(this,value); }
 	public void setName(@Nonnull final String value) {
 		if (getNameField()==null) {
 			throw new SystemConsistencyException("Setting name of something with a null getNameField()");
