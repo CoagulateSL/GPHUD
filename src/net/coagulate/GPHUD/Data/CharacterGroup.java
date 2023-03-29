@@ -485,16 +485,9 @@ public class CharacterGroup extends TableRow {
 	 * @return true/false
 	 */
 	public boolean hasMember(@Nonnull final Char character) {
-		final int count=dqinn("select count(*) from charactergroupmembers where charactergroupid=? and characterid=?",
-		                      getId(),
-		                      character.getId());
-		if (count>1) {
-			throw new TooMuchDataException(
-					"Matched too many members ("+count+") for "+character+" in CG "+getId()+" - "+getName());
-		}
-		return count==1;
+		return getMembers().contains(character);
 	}
-	
+
 	/**
 	 * Gets groups type, or "" if not a typed group
 	 *
