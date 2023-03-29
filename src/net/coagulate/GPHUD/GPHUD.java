@@ -469,5 +469,6 @@ public class GPHUD extends SLModule {
 	@Override
 	public void preLoadCaches() {
 		Char.preLoadCache();
+		getDB().resetSQLLogs();
 	}
 }
