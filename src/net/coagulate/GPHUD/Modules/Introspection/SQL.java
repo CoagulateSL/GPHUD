@@ -10,6 +10,8 @@ import net.coagulate.GPHUD.SafeMap;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -37,7 +39,9 @@ public class SQL {
 		final Map<String,Long> time=new HashMap<>();
 		final Map<String,Double> per=new HashMap<>();
 		
-		GPHUD.getDB().getSqlLogs(count,time,per);
+		final long minutes=Duration.between(GPHUD.getDB().getSqlLogs(count,time,per),Instant.now())
+		                           .dividedBy(Duration.ofMinutes(1));
+		
 		
 		final Map<Integer,Set<Row>> bycount=new TreeMap<>(Collections.reverseOrder());
 		final Map<Long,Set<Row>> bytime=new TreeMap<>(Collections.reverseOrder());
@@ -49,6 +53,9 @@ public class SQL {
 			final Long t=time.get(sql);
 			final Row newrow=new Row();
 			newrow.add(c);
+			if (minutes>0) {
+				newrow.add(Integer.toString(Math.round(c/minutes)));
+			} else { newrow.add("-"); }
 			newrow.add(sql);
 			if (t==null) {
 				newrow.add("-");
@@ -86,7 +93,7 @@ public class SQL {
 		f.add(new TextSubHeader("By per call execution time"));
 		Table t=new Table();
 		f.add(t);
-		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
+		t.add(new HeaderRow().add("Count").add("C/Min").add("Query").add("Total time").add("Avg time"));
 		for (final Set<Row> set: byper.values()) {
 			for (final Row r: set) {
 				t.add(r);
@@ -95,7 +102,7 @@ public class SQL {
 		f.add(new TextSubHeader("By total execution time"));
 		t=new Table();
 		f.add(t);
-		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
+		t.add(new HeaderRow().add("Count").add("C/Min").add("Query").add("Total time").add("Avg time"));
 		for (final Set<Row> set: bytime.values()) {
 			for (final Row r: set) {
 				t.add(r);
@@ -104,7 +111,7 @@ public class SQL {
 		f.add(new TextSubHeader("By execution count"));
 		t=new Table();
 		f.add(t);
-		t.add(new HeaderRow().add("Count").add("Query").add("Total time").add("Avg time"));
+		t.add(new HeaderRow().add("Count").add("C/Min").add("Query").add("Total time").add("Avg time"));
 		for (final Set<Row> set: bycount.values()) {
 			for (final Row r: set) {
 				t.add(r);
