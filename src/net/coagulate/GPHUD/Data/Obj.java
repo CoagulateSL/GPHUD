@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Interfaces.Interface;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -150,6 +151,17 @@ public class Obj extends TableRow {
 		super(id);
 	}
 	
+	private static final Cache<String,Obj> objectUUIDCache=Cache.getCache("GPHUD/ObjectUUIDResolution",CacheConfig.PERMANENT_CONFIG);
+	
+	@Nullable
+	public static Obj findOrNull(final State st,final String uuid) {
+		try {
+			return find(st,uuid);
+		} catch (@Nonnull final NoDataException e) {
+			return null;
+		}
+	}
+	
 	/**
 	 * Connect an object
 	 *
@@ -217,22 +229,16 @@ public class Obj extends TableRow {
 			final ObjType objType=ObjType.get(st,boot.getString("objecttype"));
 			object.setObjectType(objType);
 		}
+		objectUUIDCache.set(uuid,object);
 		return object;
-	}
-	
-	@Nullable
-	public static Obj findOrNull(final State st,final String uuid) {
-		try {
-			return find(st,uuid);
-		} catch (@Nonnull final NoDataException e) {
-			return null;
-		}
 	}
 	
 	@Nonnull
 	public static Obj find(final State st,final String uuid) {
-		final int id=db().dqiNotNull("select id from objects where uuid=?",uuid);
-		return new Obj(id);
+		return objectUUIDCache.get(uuid,()->{
+			final int id=db().dqiNotNull("select id from objects where uuid=?",uuid);
+			return new Obj(id);
+		});
 	}
 	
 	/**
