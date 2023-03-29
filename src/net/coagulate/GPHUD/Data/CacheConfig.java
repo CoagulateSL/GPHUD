@@ -13,7 +13,5 @@ public final class CacheConfig {
 	public static final int OPERATIONAL_CONFIG=FIVE_MINUTES;
 	private static final int FIFTEEN_MINUTES=ONE_MINUTE*15;
 	private static final int ONE_HOUR       =ONE_MINUTE*60;
-	public static final int PERMANENT_CONFIG  =ONE_HOUR; // cachable forever, but frees up memory.
-			// for things that update, but we might want to cache for the remainder of this request
-	
+	public static final int PERMANENT_CONFIG  =ONE_HOUR*24*7; // cachable forever, but frees up memory.
 }
