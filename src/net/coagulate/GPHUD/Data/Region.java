@@ -304,6 +304,8 @@ public class Region extends TableRow {
 		return smajor+"."+sminor+"."+sbugfix;
 	}
 	
+	private static final Cache<Integer,Instance> regionToInstanceCache=Cache.getCache("GPHUD/RegionInstanceCache",CacheConfig.PERMANENT_CONFIG);
+
 	/**
 	 * Gets the instance associated with this region
 	 *
@@ -311,7 +313,7 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public Instance getInstance() {
-		return Instance.get(getInt("instanceid"));
+		return regionToInstanceCache.get(getId(),()->Instance.get(getInt("instanceid")));
 	}
 	
 	@Nonnull
