@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.GPHUD;
@@ -209,19 +210,7 @@ public class Currency extends TableRow {
 		return getString("basecoinshort");
 	}
 	
-	public void removeCoin(final State st,final int basevalue) {
-		d("delete from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
-		Audit.audit(true,
-		            st,
-		            OPERATOR.AVATAR,
-		            null,
-		            null,
-		            "Delete",
-		            getName(),
-		            String.valueOf(basevalue),
-		            "",
-		            "Removed coin of value "+basevalue);
-	}
+	private static final Cache<Integer,Results> currencyCoinCache=Cache.getCache("GPHUD/CurrencyCoinSet",CacheConfig.PERMANENT_CONFIG);
 	
 	public void setBaseCoinNames(final State state,final String basecoinshortname,final String basecoinname) {
 		final String old=getBaseCoinName()+" ("+getBaseCoinNameShort()+")";
@@ -239,6 +228,29 @@ public class Currency extends TableRow {
 		            "Set base coin names");
 	}
 	
+	public void removeCoin(final State st,final int basevalue) {
+		d("delete from currencycoins where currencyid=? and basemultiple=?",getId(),basevalue);
+		Audit.audit(true,
+		            st,
+		            OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Delete",
+		            getName(),
+		            String.valueOf(basevalue),
+		            "",
+		            "Removed coin of value "+basevalue);
+		currencyCoinCache.purge(getId());
+	}
+	
+	public List<Coin> getCoins() {
+		final List<Coin> list=new ArrayList<>();
+		for (final ResultsRow row: getCurrencyCoins()) {
+			list.add(new Coin(row.getInt("basemultiple"),row.getString("coinname"),row.getString("coinnameshort")));
+		}
+		return list;
+	}
+
 	public void addCoin(@Nonnull final State st,
 	                    final int basevalue,
 	                    @Nonnull final String coinshortname,
@@ -276,20 +288,14 @@ public class Currency extends TableRow {
 		            "",
 		            coinname,
 		            "Created coin "+coinname+" ("+coinshortname+") = "+basevalue+" "+getBaseCoinName());
+		currencyCoinCache.purge(getId());
 	}
-	
-	public List<Coin> getCoins() {
-		final List<Coin> list=new ArrayList<>();
-		for (final ResultsRow row: getCurrencyCoins()) {
-			list.add(new Coin(row.getInt("basemultiple"),row.getString("coinname"),row.getString("coinnameshort")));
-		}
-		return list;
-	}
-	
+
 	private Results getCurrencyCoins() {
-		return dq(
+		return currencyCoinCache.get(getId(),()->
+			dq(
 				"select basemultiple,coinname,coinnameshort from currencycoins where currencyid=? order by basemultiple desc",
-				getId());
+				getId()));
 	}
 	
 	public int sum(final State st) {
