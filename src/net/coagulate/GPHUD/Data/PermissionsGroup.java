@@ -232,7 +232,7 @@ public class PermissionsGroup extends TableRow {
 			throw new UserInputDuplicateValueException("Avatar is already a member of group?");
 		}
 		d("insert into permissionsgroupmembers(permissionsgroupid,avatarid) values(?,?)",getId(),avatar.getId());
-		permissionsGroupMembershipCache.purge(getId());a
+		permissionsGroupMembershipCache.purge(getId());
 	}
 
 	/**
