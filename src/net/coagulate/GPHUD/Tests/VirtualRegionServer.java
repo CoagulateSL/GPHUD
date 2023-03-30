@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Tests;
 
+import net.coagulate.Core.Database.DBUnexpectedNullValueException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.SL.Data.User;
@@ -30,8 +31,11 @@ public class VirtualRegionServer extends JSONDriver {
 	
 	public void connect() throws IOException {
 		final JSONObject json=new JSONObject();
-		json.put("version",Region.getLatestVersionString());
-		json.put("versiondate","Jan 01 2010");
+		String latestVersion="3.10.02";
+		try { latestVersion=Region.getLatestVersionString(); }
+		catch (final DBUnexpectedNullValueException ignore) {} // might happen if there's zero active instances
+		json.put("version",latestVersion);
+		json.put("versiondate","Jan 01 2021");
 		json.put("versiontime","00:00:00");
 		execute("gphudserver.register",json);
 		try { region=null; region=Region.find(regionName,false); }
