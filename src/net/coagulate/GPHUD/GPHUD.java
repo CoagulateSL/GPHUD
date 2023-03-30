@@ -167,7 +167,7 @@ public class GPHUD extends SLModule {
 	}
 	
 	@Override
-	public void initialise() {
+	public boolean initialise() {
 		GPHUD.log=Logger.getLogger("net.coagulate.GPHUD");
 		
 		// Initialise the Database layer
@@ -183,6 +183,7 @@ public class GPHUD extends SLModule {
 			GPHUD.log().config("Database calling path verification is enabled for GPHUD");
 			GPHUD.db.permit("net.coagulate.GPHUD.Data");
 		}
+		return true;
 	}
 	
 	@Override
