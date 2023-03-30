@@ -151,7 +151,7 @@ public class Obj extends TableRow {
 		super(id);
 	}
 	
-	private static final Cache<String,Obj> objectUUIDCache=Cache.getCache("GPHUD/ObjectUUIDResolution",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<String,Obj> objectUUIDCache=Cache.getCache("GPHUD/ObjectUUIDResolution",CacheConfig.PERMANENT_CONFIG,true);
 	
 	@Nullable
 	public static Obj findOrNull(final State st,final String uuid) {
