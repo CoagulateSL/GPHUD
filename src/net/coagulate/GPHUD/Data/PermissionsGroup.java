@@ -71,15 +71,17 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nullable
 	public static PermissionsGroup find(@Nonnull final String name,@Nonnull final Instance i) {
-		try {
-			final int id=db().dqiNotNull(
-					"select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",
-					name,
-					i.getId());
-			return get(id);
-		} catch (@Nonnull final NoDataException e) {
-			return null;
-		}
+		return i.permissionsGroupResolverCache.get(name,()->{
+			try {
+				final int id=db().dqiNotNull(
+						"select permissionsgroupid from permissionsgroups where name like ? and instanceid=?",
+						name,
+						i.getId());
+				return get(id);
+			} catch (@Nonnull final NoDataException e) {
+				return null;
+			}
+		});
 	}
 	
 	/**
@@ -132,6 +134,7 @@ public class PermissionsGroup extends TableRow {
 		            name,
 		            "Avatar created new permissions group");
 		permissionsGroupsSetCache.purge(st.getInstance());
+		st.getInstance().permissionsGroupResolverCache.purge(name);
 	}
 	
 	/**
@@ -244,8 +247,10 @@ public class PermissionsGroup extends TableRow {
 	 */
 	public void delete() {
 		final Instance instance=getInstance();
+		final String name=getName();
 		d("delete from permissionsgroups where permissionsgroupid=?",getId());
 		permissionsGroupsSetCache.purge(instance);
+		getInstance().permissionsGroupResolverCache.purge(name);
 	}
 	
 	/**
