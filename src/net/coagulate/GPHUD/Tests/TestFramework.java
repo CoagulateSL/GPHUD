@@ -66,6 +66,8 @@ public class TestFramework extends TestFrameworkPrototype {
 		secondaryRegion=new VirtualRegionServer("Secondary Region","_TestRegion2",this,developer,2);
 		primaryHUD=new VirtualHUD("Primary HUD",this,developer,primaryRegion);
 		secondaryHUD=new VirtualHUD("Secondary HUD",this,User.findUsername("Kate Burner",false),secondaryRegion);
+		// Sorry if you're debugging why your test instance complained here
+		
 		
 		// start up the region servers
 		

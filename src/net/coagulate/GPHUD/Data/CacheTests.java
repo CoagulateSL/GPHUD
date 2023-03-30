@@ -1,80 +1,99 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.GPHUD.GPHUD;
+import net.coagulate.GPHUD.State;
+import net.coagulate.GPHUD.Tests.TestFramework;
+import net.coagulate.SL.Data.SystemManagement;
+import net.coagulate.SL.TestFrameworkPrototype;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * series of tests to affirm cache operation (and its various operation modes)
  */
 public class CacheTests {
-	/*
+	
 	@TestFramework.Test(name="Test cache write through to DB")
 	public static TestFrameworkPrototype.TestOutput testWriteThroughCacheToDB(final TestFramework t) {
 		final Char target=getChar(t);
-		target.setLastActive(999);
-		return new TestFrameworkPrototype.TestOutput(getDBLastActive(t)==999,
-		                                             "Verify written last active 999 matches DB get ("+
-		                                             getDBLastActive(t)+")");
+		target.setProtocol(999);
+		return new TestFrameworkPrototype.TestOutput(getDBProtocol(t)==999,
+		                                             "Verify written last active 999 matches DB get ("+getDBProtocol(t)+
+		                                             ")");
 	}
 	
 	private static Char getChar(final TestFramework t) {
 		return Char.get(t.primaryHUD.charKey);
 	}
 	
-	private static int getDBLastActive(final TestFramework t) {
+	private static int getDBProtocol(final TestFramework t) {
 		return GPHUD.getDB()
-		            .dqOne("select lastactive from characters where characterid=?",getChar(t).getId())
-		            .getInt("lastactive");
+		            .dqOne("select protocol from characters where characterid=?",getChar(t).getId())
+		            .getInt("protocol");
 	}
 	
 	@TestFramework.Test(name="Test cache write through to cache")
 	public static TestFrameworkPrototype.TestOutput testWriteThroughCacheToCache(final TestFramework t) {
 		final Char target=getChar(t);
-		target.setLastActive(998);
-		return new TestFrameworkPrototype.TestOutput(target.getLastPlayed()==998,
+		target.setProtocol(998);
+		return new TestFrameworkPrototype.TestOutput(target.getProtocol()==998,
 		                                             "Verify written last active 998 matches cached get ("+
-		                                             target.getLastPlayed()+")");
+		                                             target.getProtocol()+")");
 	}
 	
 	@TestFramework.Test(name="Test Cache blindness to DB update")
 	public static TestFrameworkPrototype.TestOutput testCacheBlindness(final TestFramework t) {
 		final Char target=getChar(t);
-		target.setLastActive(997);
-		if (target.getLastPlayed()!=997) {
+		target.setProtocol(997);
+		if (target.getProtocol()!=997) {
 			throw new SystemConsistencyException("Applied last active not reflected in cache");
 		}
-		if (getDBLastActive(t)!=997) {
+		if (getDBProtocol(t)!=997) {
 			throw new SystemConsistencyException("Applied last active not reflected in DB");
 		}
 		// fudge the DB
-		setDBLastActive(t,996);
-		return new TestFrameworkPrototype.TestOutput(target.getLastPlayed()==997,
+		setDBProtocol(t,996);
+		return new TestFrameworkPrototype.TestOutput(target.getProtocol()==997,
 		                                             "Caching is blind to database update, wrote 996, cached "+
-		                                             target.getLastPlayed()+", db "+getDBLastActive(t));
+		                                             target.getProtocol()+", db "+getDBProtocol(t));
 	}
 	
-	private static void setDBLastActive(final TestFramework t,final int newLastActive) {
-		GPHUD.getDB().d("update characters set lastactive=? where characterid=?",newLastActive,getChar(t).getId());
+	private static void setDBProtocol(final TestFramework t,final int newProtocol) {
+		GPHUD.getDB().d("update characters set protocol=? where characterid=?",newProtocol,getChar(t).getId());
 	}
 	
 	@TestFramework.Test(name="Test Cache disablement")
 	public static TestFrameworkPrototype.TestOutput testCacheDisable(final TestFramework t) {
 		Char target=getChar(t);
-		target.setLastActive(995);
-		if (target.getLastPlayed()!=995) {
+		target.setProtocol(995);
+		if (target.getProtocol()!=995) {
 			throw new SystemConsistencyException("Applied last active not reflected in cache");
 		}
-		if (getDBLastActive(t)!=995) {
+		if (getDBProtocol(t)!=995) {
 			throw new SystemConsistencyException("Applied last active not reflected in DB");
 		}
 		// fudge the DB
-		RowCachingTableRow.disableCache();
-		setDBLastActive(t,994);
-		waitASec(); // might need tuning if you change the cache minimum refresh period
+		SystemManagement.restrictCaches();
+		setDBProtocol(t,994);
+		waitASec(1); // might need tuning if you change the cache minimum refresh period
+		final int intermediateProtocol=target.getProtocol();
+		waitASec(5);
 		target=getChar(t);
-		final TestFrameworkPrototype.TestOutput output=
-				new TestFrameworkPrototype.TestOutput(target.getLastPlayed()==994,
-				                                      "Cache disable causes fast refresh, wrote 994, cached "+
-				                                      target.getLastPlayed()+", db "+getDBLastActive(t));
-		RowCachingTableRow.enableCache();
+		final TestFrameworkPrototype.TestOutput output=new TestFrameworkPrototype.TestOutput(target.getProtocol()==994,
+		                                                                                     "Cache disable causes fast refresh, wrote 994, cached initial "+
+		                                                                                     intermediateProtocol+
+		                                                                                     " became "+
+		                                                                                     target.getProtocol()+
+		                                                                                     ", db "+getDBProtocol(t));
+		SystemManagement.unrestrictCaches();
 		return output;
+	}
+	
+	private static void waitASec(final int secs) {
+		for (int i=0;i<secs;i++) {
+			waitASec();
+		}
 	}
 	
 	private static void waitASec() {
@@ -87,21 +106,32 @@ public class CacheTests {
 	@TestFramework.Test(name="Test Cache flush")
 	public static TestFrameworkPrototype.TestOutput testCacheFlush(final TestFramework t) {
 		Char target=getChar(t);
-		target.setLastActive(993);
-		if (target.getLastPlayed()!=993) {
+		target.setProtocol(993);
+		if (target.getProtocol()!=993) {
 			throw new SystemConsistencyException("Applied last active not reflected in cache");
 		}
-		if (getDBLastActive(t)!=993) {
+		if (getDBProtocol(t)!=993) {
 			throw new SystemConsistencyException("Applied last active not reflected in DB");
 		}
 		// fudge the DB
-		setDBLastActive(t,992);
+		setDBProtocol(t,992);
 		// did you know, enabling the cache purges them?
-		RowCachingTableRow.enableCache();
+		SystemManagement.unrestrictCaches();
 		target=getChar(t);
-		return new TestFrameworkPrototype.TestOutput(target.getLastPlayed()==992,
+		return new TestFrameworkPrototype.TestOutput(target.getProtocol()==992,
 		                                             "Cache enable purges cache, wrote 992, cached "+
-		                                             target.getLastPlayed()+", db "+getDBLastActive(t));
+		                                             target.getLastPlayed()+", db "+getDBProtocol(t));
 	}
-	*/
+	
+	
+	@TestFramework.Test(name="KV Write Test")
+	public static TestFrameworkPrototype.TestOutput testKVWrite(final TestFramework t) {
+		final Char target=getChar(t);
+		final State state=new State(target);
+		final String kvtext=state.getKV("GPHUDClient.HUDText").value();
+		final String targetValue="NewValue:"+ThreadLocalRandom.current().nextInt();
+		state.setKV(target,"GPHUDClient.HUDText",targetValue);
+		final String cachecheck=state.getKV("GPHUDClient.HUDText").value();
+		return new TestFrameworkPrototype.TestOutput(targetValue.equals(cachecheck),"KV was "+kvtext+" set to "+targetValue+" cache updated to "+cachecheck);
+	}
 }
