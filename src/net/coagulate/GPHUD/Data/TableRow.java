@@ -217,7 +217,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		} else {
 			d("replace into "+getKVTable()+"("+getKVIdField()+",k,v) values(?,?,?)",getId(),key,value);
 		}
-		loadKVs().put(key,value);
+		loadKVs().put(key.toLowerCase(),value);
 	}
 	
 	/**
