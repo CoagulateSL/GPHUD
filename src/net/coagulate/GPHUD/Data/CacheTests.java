@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.GPHUD.Tests.TestFramework;
@@ -134,4 +135,21 @@ public class CacheTests {
 		final String cachecheck=state.getKV("GPHUDClient.HUDText").value();
 		return new TestFrameworkPrototype.TestOutput(targetValue.equals(cachecheck),"KV was "+kvtext+" set to "+targetValue+" cache updated to "+cachecheck);
 	}
+	
+	@TestFramework.Test(name="Case insensitive cache test")
+	public static TestFrameworkPrototype.TestOutput testInsensitiveCache(final TestFramework t) {
+		final Cache<String,String> test=Cache.getCache("test/testInsensitive",CacheConfig.MUTABLE,true);
+		test.set("Test","CACHED");
+		final String result=test.get("test",()->"UNCACHED");
+		return new TestFrameworkPrototype.TestOutput("CACHED".equals(result),"Stored Test and retrieved test keys on insensitive cache, got "+result);
+	}
+	
+	@TestFramework.Test(name="Case sensitive cache test")
+	public static TestFrameworkPrototype.TestOutput testSensitiveCache(final TestFramework t) {
+		final Cache<String,String> test=Cache.getCache("test/testSensitive",CacheConfig.MUTABLE,false);
+		test.set("Test","CACHED");
+		final String result=test.get("test",()->"UNCACHED");
+		return new TestFrameworkPrototype.TestOutput("UNCACHED".equals(result),"Stored Test and retrieved test keys on sensitive cache, got "+result);
+	}
+
 }
