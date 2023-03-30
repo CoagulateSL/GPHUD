@@ -77,11 +77,19 @@ public abstract class JSONDriver extends Thread {
 	}
 	
 	public void assertResponse(final String test,final String key,final String value) {
-		final JSONObject json=peek();
-		if (json.getString(key).equals(value)) {
-			master.result(true,test,"Response "+key+" matches "+value);
-		} else {
-			master.result(false,test,"Response "+key+" expected "+value+" but got "+json.getString(key));
+		final JSONObject json;
+		try { json=peek(); }catch (final Exception e) {
+			master.result(false, test,"Getting JSON (for key "+key+") gave exception "+e);
+			return;
+		}
+		try {
+			if (json.getString(key).equals(value)) {
+				master.result(true,test,"Response "+key+" matches "+value);
+			} else {
+				master.result(false,test,"Response "+key+" expected "+value+" but got "+json.getString(key));
+			}
+		} catch (final Exception e) {
+			master.result(false, test,"Getting JSON key "+key+" gave exception "+e);
 		}
 	}
 	
