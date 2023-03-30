@@ -34,7 +34,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	}
 	
 	protected static final Cache<TableRow,Map<String,String>> kvCache=
-			Cache.getCache("GPHUD/kvCache",CacheConfig.MUTABLE);
+			Cache.getCache("GPHUD/kvCache",CacheConfig.DURABLE_CONFIG);
 	
 	protected TableRow() {
 	}
@@ -217,7 +217,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 		} else {
 			d("replace into "+getKVTable()+"("+getKVIdField()+",k,v) values(?,?,?)",getId(),key,value);
 		}
-		kvCache.purge(this);
+		loadKVs().put(key,value);
 	}
 	
 	/**
