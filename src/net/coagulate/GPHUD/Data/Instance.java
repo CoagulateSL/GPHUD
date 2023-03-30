@@ -42,6 +42,7 @@ public class Instance extends TableRow {
 	Cache<String,Attribute> attributeNameResolution=Cache.getCache("gphud/instanceAttributeNameResolution/"+getId(),CacheConfig.PERMANENT_CONFIG);
 	Cache<String,CharacterGroup> characterGroupResolveCache=Cache.getCache("gphud/instanceCharacterGroupResolveCache/"+getId(),CacheConfig.PERMANENT_CONFIG);
 	Cache<String,PermissionsGroup>         permissionsGroupResolverCache=Cache.getCache("gphud/instancePermissionsGroupResolver",CacheConfig.DURABLE_CONFIG);
+	Cache<String,Item> itemNameResolveCache=Cache.getCache("gphud/instanceItemNameResolver",CacheConfig.DURABLE_CONFIG);
 	
 	protected Instance(final int id) {
 		super(id);

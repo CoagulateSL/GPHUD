@@ -80,6 +80,7 @@ public class Item extends TableRow {
 		}
 		Audit.audit(true,state,Audit.OPERATOR.AVATAR,null,null,"Add","Item",null,name,"Created new item");
 		create(state.getInstance(),name);
+		state.getInstance().itemNameResolveCache.purge(name);
 		item=findNullable(state.getInstance(),name);
 		if (item!=null) {
 			return item;
@@ -89,15 +90,17 @@ public class Item extends TableRow {
 	}
 	
 	public static Item findNullable(@Nonnull final Instance instance,@Nonnull final String name) {
-		Integer id=null;
-		try {
-			id=db().dqi("select id from items where name like ? and instanceid=?",name,instance.getId());
-		} catch (final NoDataException ignored) {
-		}
-		if (id==null) {
-			return null;
-		}
-		return Item.get(id);
+		return instance.itemNameResolveCache.get(name,()->{
+			Integer id=null;
+			try {
+				id=db().dqi("select id from items where name like ? and instanceid=?",name,instance.getId());
+			} catch (final NoDataException ignored) {
+			}
+			if (id==null) {
+				return null;
+			}
+			return Item.get(id);
+		});
 	}
 	
 	private static void create(@Nonnull final Instance instance,@Nonnull final String name) {
@@ -195,6 +198,9 @@ public class Item extends TableRow {
 	
 	public void delete() {
 		Inventory.deleteAll(getInstance(),getName());
+		final String name=getName();
+		final Instance instance=getInstance();
 		d("delete from items where id=?",getId());
+		instance.itemNameResolveCache.purge(name);
 	}
 }
