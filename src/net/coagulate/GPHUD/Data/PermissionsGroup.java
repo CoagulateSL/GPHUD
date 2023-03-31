@@ -333,7 +333,10 @@ public class PermissionsGroup extends TableRow {
 	}
 	
 	public boolean hasMember(@Nonnull final User avatar) {
-		return getMembers().contains(avatar);
+		for (final PermissionsGroupMembership member:getMembers()) {
+			if (member.avatar==avatar) { return true; }
+		}
+		return false;
 	}
 	
 	/**
