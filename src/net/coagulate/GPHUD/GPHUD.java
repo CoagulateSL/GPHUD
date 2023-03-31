@@ -214,7 +214,7 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
-	private static final int SCHEMA_VERSION=18;
+	private static final int SCHEMA_VERSION=19;
 
 	@SuppressWarnings("MagicNumber")
 	@Override
@@ -387,6 +387,47 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("ALTER TABLE `characterpools` ADD INDEX `characterpools_character_pools` (`characterid` ASC, `poolname` ASC)");
 			log.config("Schema upgrade of GPHUD to version 18 is complete");
 			currentVersion=18;
+		}
+		if (currentVersion==18) {
+			log.config("Drop some unused indexes");
+			GPHUD.getDB().d("drop index adminnotes_adminid on adminnotes");
+			GPHUD.getDB().d("drop index adminnotes_targetchar on adminnotes");
+			GPHUD.getDB().d("drop index sourceregion_fk_idx on audit");
+			GPHUD.getDB().d("drop index audit_sourcedeveloper_fk_idx on audit");
+			GPHUD.getDB().d("drop index audit_sourceowner_fk_idx on audit");
+			GPHUD.getDB().d("drop index charactergroupkvstore_k on charactergroupkvstore");
+			GPHUD.getDB().d("drop index charactergroupkvstore_charactergroupid on charactergroupkvstore");
+			GPHUD.getDB().d("drop index charactergroups_owner_idx on charactergroups");
+			GPHUD.getDB().d("drop index keyword_index on characterkvstore");
+			GPHUD.getDB().d("drop index adjustedby_fk_idx on characterpools");
+			GPHUD.getDB().d("drop index characterpools_adjustedbyavatar_fk_idx on characterpools");
+			GPHUD.getDB().d("drop index characters_zoneid_fk_idx on characters");
+			GPHUD.getDB().d("drop index characters_regionid_fk on characters");
+			GPHUD.getDB().d("drop index element on charactersets");
+			GPHUD.getDB().d("drop index cookies_instanceid_fk_idx on cookies");
+			GPHUD.getDB().d("drop index cookies_avatarid_fk_idx on cookies");
+			GPHUD.getDB().d("drop index entityid_fk_idx on cookies");
+			GPHUD.getDB().d("drop index cookie_index on cookies");
+			GPHUD.getDB().d("drop index eventvisits_eventscheduleid on eventvisits");
+			GPHUD.getDB().d("drop index eventvisits_awarded on eventvisits");
+			GPHUD.getDB().d("drop index eventvisits_endtime on eventvisits");
+			GPHUD.getDB().d("drop index eventvisits_starttime on eventvisits");
+			GPHUD.getDB().d("drop index instancedevelopers_developerid_fk_idx on instancedevelopers");
+			GPHUD.getDB().d("drop index indexid_instance on instancekvstore");
+			GPHUD.getDB().d("drop index itemid_index on iteminventories");
+			GPHUD.getDB().d("drop index iteminventories_inventoryid_idx on iteminventories");
+			GPHUD.getDB().d("drop index itemname_index on items");
+			GPHUD.getDB().d("drop index itemverbs_verb on itemverbs");
+			GPHUD.getDB().d("drop index landmarks_regionid on landmarks");
+			GPHUD.getDB().d("drop index messages_expires on messages");
+			GPHUD.getDB().d("drop index objects_owner_fk_idx on objects");
+			GPHUD.getDB().d("drop index visits_avatarid_fk_idx on visits");
+			GPHUD.getDB().d("drop index regionid_fk_idx on visits");
+			GPHUD.getDB().d("drop index characterid_fk_idx on visits");
+			GPHUD.getDB().d("drop index zonekvstore_key on zonekvstore");
+			GPHUD.getDB().d("drop index zonekvstore_zoneid on zonekvstore");
+			log.config("Schema upgrade of GPHUD to version 19 is complete");
+			currentVersion=19;
 		}
 		return currentVersion;
 		// UPDATE THE CURRENT VERSION NUMBER ABOVE THIS FUNC
