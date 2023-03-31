@@ -214,7 +214,7 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
-	private static final int SCHEMA_VERSION=18;
+	private static final int SCHEMA_VERSION=19;
 
 	@SuppressWarnings("MagicNumber")
 	@Override
@@ -387,6 +387,23 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("ALTER TABLE `characterpools` ADD INDEX `characterpools_character_pools` (`characterid` ASC, `poolname` ASC)");
 			log.config("Schema upgrade of GPHUD to version 18 is complete");
 			currentVersion=18;
+		}
+		if (currentVersion==18) {
+			log.config("Drop some unused indexes");
+			GPHUD.getDB().d("drop index charactergroupkvstore_k on charactergroupkvstore");
+			GPHUD.getDB().d("drop index keyword_index on characterkvstore");
+			GPHUD.getDB().d("drop index element on charactersets");
+			GPHUD.getDB().d("drop index cookie_index on cookies");
+			GPHUD.getDB().d("drop index eventvisits_awarded on eventvisits");
+			GPHUD.getDB().d("drop index eventvisits_endtime on eventvisits");
+			GPHUD.getDB().d("drop index eventvisits_starttime on eventvisits");
+			GPHUD.getDB().d("drop index itemid_index on iteminventories");
+			GPHUD.getDB().d("drop index itemname_index on items");
+			GPHUD.getDB().d("drop index itemverbs_verb on itemverbs");
+			GPHUD.getDB().d("drop index messages_expires on messages");
+			GPHUD.getDB().d("drop index zonekvstore_key on zonekvstore");
+			log.config("Schema upgrade of GPHUD to version 19 is complete");
+			currentVersion=19;
 		}
 		return currentVersion;
 		// UPDATE THE CURRENT VERSION NUMBER ABOVE THIS FUNC
