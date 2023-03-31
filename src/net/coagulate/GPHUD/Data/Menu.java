@@ -9,6 +9,7 @@ import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -75,24 +76,7 @@ public class Menu extends TableRow {
 		return ret;
 	}
 	
-	/**
-	 * Load instance menu by name
-	 *
-	 * @param st   State (infers instance)
-	 * @param name Name of the menu to load
-	 * @return Menus object
-	 */
-	@Nullable
-	public static Menu getMenuNullable(@Nonnull final State st,@Nonnull final String name) {
-		try {
-			final int id=db().dqiNotNull("select menuid from menus where instanceid=? and name like ?",
-			                             st.getInstance().getId(),
-			                             name);
-			return get(id);
-		} catch (@Nonnull final NoDataException e) {
-			return null;
-		}
-	}
+	private static final Cache<Menu,JSONObject> menuJsonCache=Cache.getCache("GPHUD/MenuJson",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Create a new menu,by name and description, with the given json data blob
@@ -122,6 +106,7 @@ public class Menu extends TableRow {
 		       name,
 		       description,
 		       template.toString());
+		st.getInstance().menuNameResolveCache.purge(name);
 		final Menu newalias=getMenuNullable(st,name);
 		if (newalias==null) {
 			throw new SystemConsistencyException(
@@ -193,6 +178,31 @@ public class Menu extends TableRow {
 	}
 	
 	/**
+	 * Load instance menu by name
+	 *
+	 * @param st   State (infers instance)
+	 * @param name Name of the menu to load
+	 * @return Menus object
+	 */
+	@Nullable
+	public static Menu getMenuNullable(@Nonnull final State st,@Nonnull final String name) {
+		return st.getInstance().menuNameResolveCache.get(name,()->{
+			try {
+				final int id=db().dqiNotNull("select menuid from menus where instanceid=? and name like ?",
+				                             st.getInstance().getId(),
+				                             name);
+				return get(id);
+			} catch (@Nonnull final NoDataException e) {
+				return null;
+			}
+		});
+	}
+	
+	protected int getNameCacheTime() {
+		return CacheConfig.PERMANENT_CONFIG;
+	} // this name doesn't change, cache 1 hour
+	
+	/**
 	 * Deletes this menu, if its not the Main menu
 	 *
 	 * @param st The State
@@ -204,12 +214,9 @@ public class Menu extends TableRow {
 					"You can not delete the Main menu as this is hard wired to the main HUD button");
 		}
 		Audit.audit(true,st,OPERATOR.AVATAR,null,null,"delete","Menus",oldname,"","Deleted menu "+oldname);
+		st.getInstance().menuNameResolveCache.purge(oldname);
 		d("delete from menus where menuid=?",getId());
 	}
-	
-	protected int getNameCacheTime() {
-		return CacheConfig.PERMANENT_CONFIG;
-	} // this name doesn't change, cache 1 hour
 	
 	/**
 	 * Load the JSON payload for this menu.
@@ -218,11 +225,13 @@ public class Menu extends TableRow {
 	 */
 	@Nonnull
 	public JSONObject getJSON() {
-		final String json=dqs("select json from menus where menuid=?",getId());
-		if (json==null) {
-			throw new SystemBadValueException("No (null) template for menu id "+getId());
-		}
-		return new JSONObject(json);
+		return menuJsonCache.get(this,()->{
+			final String json=dqs("select json from menus where menuid=?",getId());
+			if (json==null) {
+				throw new SystemBadValueException("No (null) template for menu id "+getId());
+			}
+			return new JSONObject(json);
+		});
 	}
 	
 	/**
@@ -232,6 +241,7 @@ public class Menu extends TableRow {
 	 */
 	public void setJSON(@Nonnull final JSONObject template) {
 		d("update menus set json=? where menuid=?",template.toString(),getId());
+		menuJsonCache.set(this,template);
 	}
 	
 	/**
@@ -253,6 +263,8 @@ public class Menu extends TableRow {
 	public void flushKVCache(@SuppressWarnings("unused") final State st) {
 	}
 	
+	private static final Cache<Menu,String> descriptions=Cache.getCache("GPHUD/MenuDescriptions",CacheConfig.PERMANENT_CONFIG);
+	
 	/**
 	 * Get the current description.
 	 *
@@ -260,11 +272,13 @@ public class Menu extends TableRow {
 	 */
 	@Nonnull
 	public String getDescription() {
-		final String desc=getString("description");
-		if (desc==null) {
-			return "";
-		}
-		return desc;
+		return descriptions.get(this,()->{
+			final String desc=getString("description");
+			if (desc==null) {
+				return "";
+			}
+			return desc;
+		});
 	}
 	
 	/**
@@ -274,5 +288,6 @@ public class Menu extends TableRow {
 	 */
 	public void setDescription(@Nullable final String description) {
 		set("description",description);
+		descriptions.set(this,description);
 	}
 }
