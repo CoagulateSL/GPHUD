@@ -202,20 +202,15 @@ public class Currency extends TableRow {
 		throw new UserInputLookupFailureException("Unable to resolve a coin named "+coin,true);
 	}
 	
-	public String getBaseCoinName() {
-		return getString("basecoin");
-	}
-	
-	public String getBaseCoinNameShort() {
-		return getString("basecoinshort");
-	}
-	
-	private static final Cache<Integer,Results> currencyCoinCache=Cache.getCache("GPHUD/CurrencyCoinSet",CacheConfig.PERMANENT_CONFIG);
-	
+	private static final Cache<Currency,String> baseCoinNameCache     =Cache.getCache("GPHUD/CurrencyBaseCoinName",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Currency,String> baseCoinNameShortCache=Cache.getCache("GPHUD/CurrencyBaseCoinName",CacheConfig.PERMANENT_CONFIG);
+
 	public void setBaseCoinNames(final State state,final String basecoinshortname,final String basecoinname) {
 		final String old=getBaseCoinName()+" ("+getBaseCoinNameShort()+")";
 		set("basecoin",basecoinname);
 		set("basecoinshort",basecoinshortname);
+		baseCoinNameCache.set(this,basecoinname);
+		baseCoinNameShortCache.set(this,basecoinshortname);
 		Audit.audit(true,
 		            state,
 		            OPERATOR.AVATAR,
@@ -226,6 +221,16 @@ public class Currency extends TableRow {
 		            old,
 		            basecoinname+" ("+basecoinshortname+")",
 		            "Set base coin names");
+	}
+
+	public String getBaseCoinName() {
+		return baseCoinNameCache.get(this,()->getString("basecoin"));
+	}
+	
+	private static final Cache<Integer,Results> currencyCoinCache=Cache.getCache("GPHUD/CurrencyCoinSet",CacheConfig.PERMANENT_CONFIG);
+	
+	public String getBaseCoinNameShort() {
+		return baseCoinNameShortCache.get(this,()->getString("basecoinshort"));
 	}
 	
 	public void removeCoin(final State st,final int basevalue) {
