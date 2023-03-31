@@ -400,10 +400,8 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("drop index itemid_index on iteminventories");
 			GPHUD.getDB().d("drop index itemname_index on items");
 			GPHUD.getDB().d("drop index itemverbs_verb on itemverbs");
-			GPHUD.getDB().d("drop index landmarks_regionid on landmarks");
 			GPHUD.getDB().d("drop index messages_expires on messages");
 			GPHUD.getDB().d("drop index zonekvstore_key on zonekvstore");
-			GPHUD.getDB().d("drop index zonekvstore_zoneid on zonekvstore");
 			log.config("Schema upgrade of GPHUD to version 19 is complete");
 			currentVersion=19;
 		}
