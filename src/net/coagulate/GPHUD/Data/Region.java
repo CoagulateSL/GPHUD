@@ -96,6 +96,8 @@ public class Region extends TableRow {
 		return retiredCache.get(this,()->getBool("retired"));
 	}
 	
+	private static final Cache<Region,Integer> urlLastCache=Cache.getCache("GPHUD/RegionURLLast",CacheConfig.PERMANENT_CONFIG);
+	
 	/**
 	 * Update the last used time of a URL.
 	 *
@@ -113,8 +115,17 @@ public class Region extends TableRow {
 			GPHUD.getLogger().warning("Unexpected anomoly, "+toupdate+" rows to update on "+t+" url "+url);
 		}
 		//Log.log(Log.DEBUG,"SYSTEM","DB_Region","Refreshing REGION url "+url);
-		db().d("update "+t+" set urllast=?,authnode=? where url=?",getUnixTime(),Interface.getNode(),url);
+		final int now=getUnixTime();
+		db().dq("select regionid,authnode,urllast from regions where url=?",url).forEach((row)->{
+			final Region region=get(row.getInt("regionid"),false);
+			region.setURLLast(now);
+			if (!row.getString("authnode").equals(Interface.getNode())) {
+				region.set("authnode",Interface.getNode());
+			}
+		});
+		db().d("update "+t+" set urllast=?,authnode=? where url=?",now,Interface.getNode(),url);
 	}
+	
 	
 	@Nonnull
 	public static Region find(@Nonnull final String name,final boolean allowretired) {
@@ -366,14 +377,13 @@ public class Region extends TableRow {
 		return getStringNullable("primuuid");
 	}
 	
-	public void setPrimUUID(final String objectkey) {
-		if (!objectkey.equalsIgnoreCase(getPrimUUID())) {
-			d("update regions set primuuid=? where regionid=?",objectkey,getId());
-		}
-		final int now=getUnixTime();
-		if ((now-getURLLast())>60) {
-			d("update regions set urllast=?,authnode=? where regionid=?",now,Interface.getNode(),getId());
-		}
+	/**
+	 * Gets the UNIX time the region's server last checked in.
+	 *
+	 * @return UnixTime the last time this server's url was refreshed / used
+	 */
+	public int getURLLast() {
+		return urlLastCache.get(this,()->getInt("urllast"));
 	}
 	
 	protected int getNameCacheTime() {
@@ -382,35 +392,10 @@ public class Region extends TableRow {
 	
 	public static final Cache<Integer,String> regionURLCache=Cache.getCache("GPHUD/regionURLCache",CacheConfig.PERMANENT_CONFIG);
 	
-	/**
-	 * Sets the region's URL to callback to the server - CALL THIS FREQUENTLY.
-	 * This does not /just/ set the region's url, it checks if it needs to be set firstly, it also updates it if and only if necessary, along with shutting down the URL it
-	 * replaced.
-	 * It also updates the "urllast used" timer if it's more than 60 seconds old.  (used for 'is alive' and 'ping' checking etc etc).
-	 *
-	 * @param url Targets URL
-	 */
-	public void setURL(final String url) {
-		final String oldurl=getURLNullable();
-		final int now=getUnixTime();
-		
-		if (oldurl!=null&&oldurl.equals(url)) {
-			if ((now-getURLLast())>60) {
-				d("update regions set urllast=?,authnode=? where regionid=?",now,Interface.getNode(),getId());
-			}
-			return;
-		}
-		
-		if (oldurl!=null&&!(oldurl.isEmpty())) {
-			GPHUD.getLogger().info("Sending shutdown to old URL : "+oldurl);
-			final JSONObject tx=new JSONObject().put("incommand","shutdown")
-			                                    .put("shutdown","Connection replaced by new region server");
-			final Transmission t=new Transmission(this,tx,oldurl);
-			t.start();
-		}
-		regionURLCache.set(getId(),url);
-		d("update regions set url=?, urllast=?, authnode=? where regionid=?",url,now,Interface.getNode(),getId());
-		
+	public void setURLLast(final int timestamp) {
+		if (timestamp-getURLLast()<60) { return; }
+		set("urllast",timestamp);
+		urlLastCache.set(this,timestamp);
 	}
 	
 	/**
@@ -439,15 +424,43 @@ public class Region extends TableRow {
 		return regionURLCache.get(getId(),()->getStringNullable("url"));
 	}
 	
-	/**
-	 * Gets the UNIX time the region's server last checked in.
-	 *
-	 * @return UnixTime the last time this server's url was refreshed / used
-	 */
-	public int getURLLast() {
-		return getInt("urllast");
+	public void setPrimUUID(final String objectkey) {
+		if (!objectkey.equalsIgnoreCase(getPrimUUID())) {
+			d("update regions set primuuid=? where regionid=?",objectkey,getId());
+		}
+		final int now=getUnixTime();
+		setURLLast(now);
 	}
-	
+
+	/**
+	 * Sets the region's URL to callback to the server - CALL THIS FREQUENTLY.
+	 * This does not /just/ set the region's url, it checks if it needs to be set firstly, it also updates it if and only if necessary, along with shutting down the URL it
+	 * replaced.
+	 * It also updates the "urllast used" timer if it's more than 60 seconds old.  (used for 'is alive' and 'ping' checking etc etc).
+	 *
+	 * @param url Targets URL
+	 */
+	public void setURL(final String url) {
+		final String oldurl=getURLNullable();
+		final int now=getUnixTime();
+		
+		if (oldurl!=null&&oldurl.equals(url)) {
+			setURLLast(now);
+			return;
+		}
+		
+		if (oldurl!=null&&!(oldurl.isEmpty())) {
+			GPHUD.getLogger().info("Sending shutdown to old URL : "+oldurl);
+			final JSONObject tx=new JSONObject().put("incommand","shutdown")
+			                                    .put("shutdown","Connection replaced by new region server");
+			final Transmission t=new Transmission(this,tx,oldurl);
+			t.start();
+		}
+		regionURLCache.set(getId(),url);
+		d("update regions set url=?, urllast=?, authnode=? where regionid=?",url,now,Interface.getNode(),getId());
+		urlLastCache.set(this,now);
+		
+	}
 	/**
 	 * Update the visits noting the following avatars left the sim.
 	 *
