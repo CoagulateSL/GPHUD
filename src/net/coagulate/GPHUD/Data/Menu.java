@@ -106,13 +106,13 @@ public class Menu extends TableRow {
 		       name,
 		       description,
 		       template.toString());
+		st.getInstance().menuNameResolveCache.purge(name);
 		final Menu newalias=getMenuNullable(st,name);
 		if (newalias==null) {
 			throw new SystemConsistencyException(
 					"Failed to create alias "+name+" in instance id "+st.getInstance().getId()+
 					", created but not found?");
 		}
-		st.getInstance().menuNameResolveCache.set(name,newalias);
 		return newalias;
 	}
 	
