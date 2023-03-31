@@ -391,7 +391,6 @@ public class GPHUD extends SLModule {
 		if (currentVersion==18) {
 			log.config("Drop some unused indexes");
 			GPHUD.getDB().d("drop index charactergroupkvstore_k on charactergroupkvstore");
-			GPHUD.getDB().d("drop index charactergroups_owner_idx on charactergroups");
 			GPHUD.getDB().d("drop index keyword_index on characterkvstore");
 			GPHUD.getDB().d("drop index element on charactersets");
 			GPHUD.getDB().d("drop index cookie_index on cookies");
