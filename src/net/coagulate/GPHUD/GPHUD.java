@@ -398,7 +398,6 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("drop index eventvisits_endtime on eventvisits");
 			GPHUD.getDB().d("drop index eventvisits_starttime on eventvisits");
 			GPHUD.getDB().d("drop index itemid_index on iteminventories");
-			GPHUD.getDB().d("drop index iteminventories_inventoryid_idx on iteminventories");
 			GPHUD.getDB().d("drop index itemname_index on items");
 			GPHUD.getDB().d("drop index itemverbs_verb on itemverbs");
 			GPHUD.getDB().d("drop index landmarks_regionid on landmarks");
