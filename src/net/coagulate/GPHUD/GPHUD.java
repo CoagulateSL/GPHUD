@@ -394,11 +394,9 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("drop index keyword_index on characterkvstore");
 			GPHUD.getDB().d("drop index element on charactersets");
 			GPHUD.getDB().d("drop index cookie_index on cookies");
-			GPHUD.getDB().d("drop index eventvisits_eventscheduleid on eventvisits");
 			GPHUD.getDB().d("drop index eventvisits_awarded on eventvisits");
 			GPHUD.getDB().d("drop index eventvisits_endtime on eventvisits");
 			GPHUD.getDB().d("drop index eventvisits_starttime on eventvisits");
-			GPHUD.getDB().d("drop index indexid_instance on instancekvstore");
 			GPHUD.getDB().d("drop index itemid_index on iteminventories");
 			GPHUD.getDB().d("drop index iteminventories_inventoryid_idx on iteminventories");
 			GPHUD.getDB().d("drop index itemname_index on items");
