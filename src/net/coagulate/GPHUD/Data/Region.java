@@ -125,7 +125,7 @@ public class Region extends TableRow {
 		return r;
 	}
 	
-	private static final Cache<String,Integer> regionNameCache=Cache.getCache("GPHUD/RegionNameLookup",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<String,Integer> regionNameCache=Cache.getCache("GPHUD/RegionNameLookup",CacheConfig.PERMANENT_CONFIG,true);
 
 	/**
 	 * Find a region by name.

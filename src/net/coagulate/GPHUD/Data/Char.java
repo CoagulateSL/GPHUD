@@ -45,15 +45,15 @@ import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
  */
 public class Char extends TableRow {
 	
-	final Cache<String,CharacterGroup> groupTypeCache=Cache.getCache("GPHUD/charGroupTypeCache/"+getId(),CacheConfig.SHORT);
+	// ---------- STATICS ----------
+	protected final Cache<String,Integer> poolSumCache=
+			Cache.getCache("GPHUD/characterPoolSums/"+getId(),CacheConfig.OPERATIONAL_CONFIG,true);
 	private static final Cache<Char,Instance> instanceCache=
 			Cache.getCache("GPHUD/charInstance",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Char,Integer> protocolCache=
 			Cache.getCache("GPHUD/charProtocol",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Char,Zone> zoneCache=Cache.getCache("gphud/characterZone",CacheConfig.MUTABLE);
-	// ---------- STATICS ----------
-	protected final Cache<String,Integer> poolSumCache=
-			Cache.getCache("GPHUD/characterPoolSums/"+getId(),CacheConfig.OPERATIONAL_CONFIG);
+	final Cache<String,CharacterGroup> groupTypeCache=Cache.getCache("GPHUD/charGroupTypeCache/"+getId(),CacheConfig.SHORT,true);
 	
 	/**
 	 * Return a set of all characters inside a given zone.

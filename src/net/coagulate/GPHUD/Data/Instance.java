@@ -38,11 +38,11 @@ public class Instance extends TableRow {
 	private static final Map<String,Integer>    lastStatus            =new TreeMap<>();
 			// naughty, static data, but that's okay really for this, ensures we don't spam admins/region servers
 	final                Cache<String,Currency> currencyNameCache     =
-			Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG);
-	Cache<String,Attribute> attributeNameResolution=Cache.getCache("gphud/instanceAttributeNameResolution/"+getId(),CacheConfig.PERMANENT_CONFIG);
-	Cache<String,CharacterGroup> characterGroupResolveCache=Cache.getCache("gphud/instanceCharacterGroupResolveCache/"+getId(),CacheConfig.PERMANENT_CONFIG);
-	Cache<String,PermissionsGroup>         permissionsGroupResolverCache=Cache.getCache("gphud/instancePermissionsGroupResolver",CacheConfig.DURABLE_CONFIG);
-	Cache<String,Item> itemNameResolveCache=Cache.getCache("gphud/instanceItemNameResolver",CacheConfig.DURABLE_CONFIG);
+			Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
+	Cache<String,Attribute> attributeNameResolution=Cache.getCache("gphud/instanceAttributeNameResolution/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
+	Cache<String,CharacterGroup> characterGroupResolveCache=Cache.getCache("gphud/instanceCharacterGroupResolveCache/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
+	Cache<String,PermissionsGroup>         permissionsGroupResolverCache=Cache.getCache("gphud/instancePermissionsGroupResolver",CacheConfig.DURABLE_CONFIG,true);
+	Cache<String,Item> itemNameResolveCache=Cache.getCache("gphud/instanceItemNameResolver",CacheConfig.DURABLE_CONFIG,true);
 	
 	protected Instance(final int id) {
 		super(id);
