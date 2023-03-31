@@ -263,6 +263,8 @@ public class Menu extends TableRow {
 	public void flushKVCache(@SuppressWarnings("unused") final State st) {
 	}
 	
+	private static final Cache<Menu,String> descriptions=Cache.getCache("GPHUD/MenuDescriptions",CacheConfig.PERMANENT_CONFIG);
+	
 	/**
 	 * Get the current description.
 	 *
@@ -270,11 +272,13 @@ public class Menu extends TableRow {
 	 */
 	@Nonnull
 	public String getDescription() {
-		final String desc=getString("description");
-		if (desc==null) {
-			return "";
-		}
-		return desc;
+		return descriptions.get(this,()->{
+			final String desc=getString("description");
+			if (desc==null) {
+				return "";
+			}
+			return desc;
+		});
 	}
 	
 	/**
@@ -284,5 +288,6 @@ public class Menu extends TableRow {
 	 */
 	public void setDescription(@Nullable final String description) {
 		set("description",description);
+		descriptions.set(this,description);
 	}
 }
