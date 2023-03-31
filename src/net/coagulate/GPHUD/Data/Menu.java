@@ -113,6 +113,7 @@ public class Menu extends TableRow {
 					"Failed to create alias "+name+" in instance id "+st.getInstance().getId()+
 					", created but not found?");
 		}
+		menuJsonCache.set(newalias,template);
 		return newalias;
 	}
 	

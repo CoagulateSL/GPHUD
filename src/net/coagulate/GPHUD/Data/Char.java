@@ -515,6 +515,16 @@ public void wipeConveyances(@Nonnull final State st) {
 	public void setActive() {
 		db().d("update characters set lastactive=? where characterid=?",getUnixTime()+1,getId());
 	}
+	private static final Cache<Char,User> playedByCache=Cache.getCache("GPHUD/CharPlayedBy",CacheConfig.PERMANENT_CONFIG);/**
+	 * Gets the characters personal URL
+	 *
+	 * @return The URL, or null
+	 */
+	@Nullable
+	public String getURL() {
+		return getStringNullable("url");
+	}
+	
 public void login(final User user,final Region region,final String url) {
 		disconnectURL(url);
 		logoutByAvatar(user,this);
@@ -537,39 +547,7 @@ public void login(final User user,final Region region,final String url) {
 		  //region id
 		  getId()); // where char id
 		zoneCache.purge(this);
-	}/**
-	 * Gets the characters personal URL
-	 *
-	 * @return The URL, or null
-	 */
-	@Nullable
-	public String getURL() {
-		return getStringNullable("url");
-	}
-	
-	/**
-	 * Disconnects a character.  Does not send a terminate to the URL
-	 */
-	public void disconnect() {
-		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",
-		  null,
-		  //playedby
-		  getUnixTime()-1,
-		  //lastactive
-		  null,
-		  //url
-		  null,
-		  //urlfirst
-		  null,
-		  //urllast
-		  null,
-		  //authnode
-		  null,
-		  //zone
-		  null,
-		  //region
-		  getId()); //character id
-		zoneCache.purge(this);
+		playedByCache.set(this,user);
 	}
 	
 	public void wipeConveyance(final State st,final String conveyance) {
@@ -928,17 +906,45 @@ public void login(final User user,final Region region,final String url) {
 	}
 	
 	/**
+	 * Disconnects a character.  Does not send a terminate to the URL
+	 */
+	public void disconnect() {
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",
+		  null,
+		  //playedby
+		  getUnixTime()-1,
+		  //lastactive
+		  null,
+		  //url
+		  null,
+		  //urlfirst
+		  null,
+		  //urllast
+		  null,
+		  //authnode
+		  null,
+		  //zone
+		  null,
+		  //region
+		  getId()); //character id
+		zoneCache.purge(this);
+		playedByCache.set(this,null);
+	}
+	
+	/**
 	 * Select the played by avatar for this character.
 	 *
 	 * @return Avatar
 	 */
 	@Nullable
 	public User getPlayedByNullable() {
-		final Integer avatarId=dqi("select playedby from characters where characterid=?",getId());
-		if (avatarId==null) {
-			return null;
-		}
-		return User.get(avatarId);
+		return playedByCache.get(this,()->{
+			final Integer avatarId=dqi("select playedby from characters where characterid=?",getId());
+			if (avatarId==null) {
+				return null;
+			}
+			return User.get(avatarId);
+		});
 	}
 	
 	/**
@@ -947,6 +953,7 @@ public void login(final User user,final Region region,final String url) {
 	 * @param avatar Avatar who is playing this character.
 	 */
 	public void setPlayedBy(@Nullable final User avatar) {
+		playedByCache.set(this,avatar);
 		if (avatar==null) {
 			set("playedby",(Integer)null);
 		} else {
