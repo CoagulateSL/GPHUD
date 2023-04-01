@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.Audit.OPERATOR;
+import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Experience.GenericXP;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.KV;
@@ -17,6 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.coagulate.GPHUD.Data.Attribute.ATTRIBUTETYPE.*;
 
@@ -238,7 +240,9 @@ public class Attribute extends TableRow {
 	}
 	
 	public static void preLoadCache() {
+		final AtomicInteger loaded=new AtomicInteger();
 		db().dq("select * from attributes").forEach((row)->{
+			loaded.getAndIncrement();
 			Attribute a=get(row.getInt("attributeid"));
 			instanceCache.set(a,Instance.get(row.getInt("instanceid")));
 			a.setNameCache(row.getString("name"));
@@ -248,7 +252,7 @@ public class Attribute extends TableRow {
 			requiredCache.set(a,row.getBool("required"));
 			templatableCache.set(a,row.getBool("templatable"));
 		});
-	
+		GPHUD.getLogger("PreLoadCache").config("Loaded "+loaded+" attribute records");
 	}
 	
 	@Nonnull
