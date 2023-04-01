@@ -6,6 +6,7 @@ import net.coagulate.Core.Database.MySqlDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.Core.Tools.ClassTools;
+import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Tests.TestFramework;
@@ -487,6 +488,7 @@ public class GPHUD extends SLModule {
 	@Override
 	public void preLoadCaches() {
 		Char.preLoadCache();
+		Attribute.preLoadCache();
 		getDB().resetSQLLogs();
 	}
 }

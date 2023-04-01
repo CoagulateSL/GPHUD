@@ -237,6 +237,20 @@ public class Attribute extends TableRow {
 		return get(id);
 	}
 	
+	public static void preLoadCache() {
+		db().dq("select * from attributes").forEach((row)->{
+			Attribute a=get(row.getInt("attributeid"));
+			instanceCache.set(a,Instance.get(row.getInt("instanceid")));
+			a.setNameCache(row.getString("name"));
+			attributeTypeCache.set(a,ATTRIBUTETYPE.valueOf(row.getString("attributetype")));
+			subTypeCache.set(a,row.getString("grouptype"));
+			usesAbilityPointsCache.set(a,row.getBool("usesabilitypoints"));
+			requiredCache.set(a,row.getBool("required"));
+			templatableCache.set(a,row.getBool("templatable"));
+		});
+	
+	}
+	
 	@Nonnull
 	@Override
 	public String getTableName() {
