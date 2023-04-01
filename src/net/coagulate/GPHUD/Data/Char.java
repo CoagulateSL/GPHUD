@@ -183,6 +183,7 @@ public class Char extends TableRow {
 		       st.getAvatar().getId(),
 		       0,
 		       0);
+		st.getInstance().mostRecentlyPlayedCache.purge(st.getAvatar());
 	}
 	
 	/**
@@ -219,19 +220,21 @@ public class Char extends TableRow {
 		if (optionalInstance==null) {
 			return getMostRecent(avatar);
 		}
-		final Results results=db().dq(
-				"select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",
-				avatar.getId(),
-				optionalInstance.getId());
-		if (results.empty()) {
-			return null;
-		}
-		try {
-			return Char.get(results.iterator().next().getInt("characterid"));
-		} catch (@Nonnull final Exception e) { // weird
-			GPHUD.getLogger().log(SEVERE,"Exception while instansiating most recently used character?",e);
-			return null;
-		}
+		return optionalInstance.mostRecentlyPlayedCache.get(avatar,()->{
+			final Results results=db().dq(
+					"select characterid from characters where owner=? and retired=0 and instanceid=? order by lastactive desc limit 0,1",
+					avatar.getId(),
+					optionalInstance.getId());
+			if (results.empty()) {
+				return null;
+			}
+			try {
+				return Char.get(results.iterator().next().getInt("characterid"));
+			} catch (@Nonnull final Exception e) { // weird
+				GPHUD.getLogger().log(SEVERE,"Exception while instansiating most recently used character?",e);
+				return null;
+			}
+		});
 	}
 	
 	/**
@@ -500,6 +503,7 @@ public class Char extends TableRow {
 		  Interface.getNode(),
 		  getId());
 		
+		
 	}
 	
 	// ---------- INSTANCE ----------
@@ -514,6 +518,7 @@ public void wipeConveyances(@Nonnull final State st) {
 		@Deprecated
 	public void setActive() {
 		db().d("update characters set lastactive=? where characterid=?",getUnixTime()+1,getId());
+		getInstance().mostRecentlyPlayedCache.set(getOwner(),this);
 	}
 	private static final Cache<Char,User> playedByCache=Cache.getCache("GPHUD/CharPlayedBy",CacheConfig.PERMANENT_CONFIG);/**
 	 * Gets the characters personal URL
@@ -548,6 +553,7 @@ public void login(final User user,final Region region,final String url) {
 		  getId()); // where char id
 		zoneCache.purge(this);
 		playedByCache.set(this,user);
+		getInstance().mostRecentlyPlayedCache.set(user,this);
 	}
 	
 	public void wipeConveyance(final State st,final String conveyance) {
@@ -909,6 +915,7 @@ public void login(final User user,final Region region,final String url) {
 	 * Disconnects a character.  Does not send a terminate to the URL
 	 */
 	public void disconnect() {
+		User player=getPlayedByNullable();
 		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",
 		  null,
 		  //playedby
@@ -929,6 +936,9 @@ public void login(final User user,final Region region,final String url) {
 		  getId()); //character id
 		zoneCache.purge(this);
 		playedByCache.set(this,null);
+		if (player!=null) {
+			getInstance().mostRecentlyPlayedCache.purge(player);
+		}
 	}
 	
 	/**
@@ -1080,18 +1090,6 @@ public void login(final User user,final Region region,final String url) {
 	public void setLastActive(final Integer value) {
 		set("lastactive",value);
 	}
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
 	
 	/**
 	 * Used to load a list of conveyances
