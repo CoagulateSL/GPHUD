@@ -41,9 +41,10 @@ public class Instance extends TableRow {
 			Cache.getCache("gphud/instanceCurrency/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
 	Cache<String,Attribute> attributeNameResolution=Cache.getCache("gphud/instanceAttributeNameResolution/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
 	Cache<String,CharacterGroup> characterGroupResolveCache=Cache.getCache("gphud/instanceCharacterGroupResolveCache/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
-	Cache<String,PermissionsGroup>         permissionsGroupResolverCache=Cache.getCache("gphud/instancePermissionsGroupResolver",CacheConfig.PERMANENT_CONFIG,true);
-	Cache<String,Item> itemNameResolveCache=Cache.getCache("gphud/instanceItemNameResolver",CacheConfig.PERMANENT_CONFIG,true);
+	Cache<String,PermissionsGroup>         permissionsGroupResolverCache=Cache.getCache("gphud/instancePermissionsGroupResolver/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
+	Cache<String,Item> itemNameResolveCache=Cache.getCache("gphud/instanceItemNameResolver/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
 	Cache<String,Menu> menuNameResolveCache=Cache.getCache("gphud/instanceMenuNameResolveCache/"+getId(),CacheConfig.PERMANENT_CONFIG,true);
+	Cache<User,Char> mostRecentlyPlayedCache=Cache.getCache("gphud/instanceMostRecentlyPlayed/"+getId(),CacheConfig.PERMANENT_CONFIG);
 	
 	protected Instance(final int id) {
 		super(id);
