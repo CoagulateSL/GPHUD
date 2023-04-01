@@ -249,8 +249,8 @@ public class Attribute extends TableRow {
 			attributeTypeCache.set(a,ATTRIBUTETYPE.valueOf(row.getString("attributetype")));
 			subTypeCache.set(a,row.getStringNullable("grouptype"));
 			usesAbilityPointsCache.set(a,row.getBool("usesabilitypoints"));
-			requiredCache.set(a,row.getBool("required"));
-			templatableCache.set(a,row.getBool("templatable"));
+			requiredCache.set(a,row.getBoolNullable("required")==null?false:row.getBool("required"));
+			templatableCache.set(a,row.getBoolNullable("templatable")==null?false:row.getBool("templatable"));
 		});
 		GPHUD.getLogger("PreLoadCache").config("Loaded "+loaded+" attribute records");
 	}
