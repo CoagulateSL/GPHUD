@@ -450,8 +450,11 @@ public class Char extends TableRow {
 	
 	public static void preLoadCache() {
 		final AtomicInteger loaded=new AtomicInteger();
-		db().dqSlow("select characterid,name from characters").forEach((row)->{
-			get(row.getInt("characterid")).setNameCache(row.getString("name"));
+		db().dqSlow("select * from characters").forEach((row)->{
+			Char c=get(row.getInt("characterid"));
+			c.setNameCache(row.getString("name"));
+			instanceCache.set(c,Instance.get(row.getInt("instanceid")));
+			ownerCache.set(c,User.get(row.getInt("owner")));
 			loaded.getAndIncrement();
 		});
 		GPHUD.getLogger("PreLoadCache").config("Loaded "+loaded+" character records");
