@@ -815,7 +815,7 @@ public class State extends DumpableState {
 				}
 			}
 		}
-		purgeCache(dbo);
+		purgeCache(dbo); // seriously why two.  there is a reason though.
 		dbo.setKV(this,key,value);
 		purgeCache(dbo);
 		definition.callOnUpdate(this,dbo,value);

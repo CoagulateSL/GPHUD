@@ -200,7 +200,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public void setKV(final State st,@Nonnull final String key,@Nullable final String value) {
 		kvCheck();
-		String oldValue=loadKVs().get(key);
+		String oldValue=loadKVs().get(key.toLowerCase());
 		if (value==null&&oldValue==null) {
 			return;
 		}
