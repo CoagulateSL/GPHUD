@@ -152,4 +152,15 @@ public class CacheTests {
 		return new TestFrameworkPrototype.TestOutput("UNCACHED".equals(result),"Stored Test and retrieved test keys on sensitive cache, got "+result);
 	}
 
+	@TestFramework.Test(name="Null KV write test")
+	public static TestFrameworkPrototype.TestOutput testNullKV(final TestFramework t) {
+		final String original=t.primaryHUD.state.getKV("GPHUDClient.logo").toString();
+		t.primaryHUD.character.setKV(t.primaryHUD.state,"GPHUDClient.logo","NOT-REAL");
+		final String intermediate=t.primaryHUD.state.getKV("GPHUDClient.logo").toString();
+		t.primaryHUD.character.setKV(t.primaryHUD.state,"GPHUDClient.logo",null);
+		final String last=t.primaryHUD.state.getKV("GPHUDClient.logo").toString();
+		boolean okay=original.equals(last);
+		if (original.equals(intermediate)) { okay=false; }
+		return new TestFrameworkPrototype.TestOutput(okay,"Test KV Set then null, value went "+original+" -> "+intermediate+" -> "+last+", last and first should match");
+	}
 }
