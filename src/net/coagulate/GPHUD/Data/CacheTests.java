@@ -156,8 +156,8 @@ public class CacheTests {
 	public static TestFrameworkPrototype.TestOutput testNullKV(final TestFramework t) {
 		final String original=t.primaryHUD.state.getKV("GPHUDClient.logo").toString();
 		t.primaryHUD.character.setKV(t.primaryHUD.state,"GPHUDClient.logo","NOT-REAL");
-		final String intermediate=t.primaryHUD.state.getKV("GPHUDClient.logo").toString();
-		t.primaryHUD.character.setKV(t.primaryHUD.state,"GPHUDClient.logo",null);
+		final String intermediate=t.primaryHUD.state.getKV("GPHUDCLIENT.LOGO").toString();
+		t.primaryHUD.character.setKV(t.primaryHUD.state,"GPHUDClient.LOGO",null);
 		final String last=t.primaryHUD.state.getKV("GPHUDClient.logo").toString();
 		boolean okay=original.equals(last);
 		if (original.equals(intermediate)) { okay=false; }
