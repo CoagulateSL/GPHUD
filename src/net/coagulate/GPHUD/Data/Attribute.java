@@ -107,7 +107,6 @@ public class Attribute extends TableRow {
 	                          final boolean required,
 	                          @Nullable final String defaultValue) {
 		create(st.getInstance(),name,selfModify,attributetype,groupType,usesAbilityPoints,required,defaultValue);
-		attributeSetCache.purge(st.getInstance());
 	}
 	
 	/**
@@ -144,6 +143,9 @@ public class Attribute extends TableRow {
 		       defaultValue);
 		instance.attributeNameResolution.purge(name);
 		attributeSetCache.purge(instance);
+		switch (attributetype) {
+			case CURRENCY -> instance.currencyNameCache.purge(name);
+		}
 	}
 	
 	// ----- Internal Statics -----
