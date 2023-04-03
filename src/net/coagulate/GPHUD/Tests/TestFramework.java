@@ -62,6 +62,8 @@ public class TestFramework extends TestFrameworkPrototype {
 	}
 	
 	private void setup() throws IOException {
+		try { Instance.find(instanceName).delete(); }
+		catch (Exception ignore) {}
 		primaryRegion=new VirtualRegionServer("Primary Region","_TestRegion1",this,developer,1);
 		secondaryRegion=new VirtualRegionServer("Secondary Region","_TestRegion2",this,developer,2);
 		primaryHUD=new VirtualHUD("Primary HUD",this,developer,primaryRegion);

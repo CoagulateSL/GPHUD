@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * series of tests to affirm cache operation (and its various operation modes)
  */
-public class CacheTests {
+public class TestCache extends TestTools {
 	
 	@TestFramework.Test(name="Test cache write through to DB")
 	public static TestFrameworkPrototype.TestOutput testWriteThroughCacheToDB(final TestFramework t) {
@@ -24,10 +24,7 @@ public class CacheTests {
 		                                             ")");
 	}
 	
-	private static Char getChar(final TestFramework t) {
-		return Char.get(t.primaryHUD.charKey);
-	}
-	
+
 	private static int getDBProtocol(final TestFramework t) {
 		return GPHUD.getDB()
 		            .dqOne("select protocol from characters where characterid=?",getChar(t).getId())
@@ -90,19 +87,7 @@ public class CacheTests {
 		SystemManagement.unrestrictCaches();
 		return output;
 	}
-	
-	private static void waitASec(final int secs) {
-		for (int i=0;i<secs;i++) {
-			waitASec();
-		}
-	}
-	
-	private static void waitASec() {
-		try {
-			Thread.sleep(1000L);
-		} catch (final InterruptedException ignore) {
-		}
-	}
+
 	
 	@TestFramework.Test(name="Test Cache flush")
 	public static TestFrameworkPrototype.TestOutput testCacheFlush(final TestFramework t) {
