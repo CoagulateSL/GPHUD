@@ -19,6 +19,11 @@
         component=Core,
         message="Altered error from conflicting group memberships to properly report a fixable condition to the user")
 
+@Change(type=Change,
+        date="2023-04-03",
+        component=Core,
+        message="Character renames are now checked against the name filtering policy")
+		
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.SL.ChangeLogging;
