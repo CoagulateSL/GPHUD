@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * series of tests to affirm cache operation (and its various operation modes)
  */
-public class CacheTests {
+public class TestCache {
 	
 	@TestFramework.Test(name="Test cache write through to DB")
 	public static TestFrameworkPrototype.TestOutput testWriteThroughCacheToDB(final TestFramework t) {
