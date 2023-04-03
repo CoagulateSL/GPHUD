@@ -982,7 +982,7 @@ public void login(final User user,final Region region,final String url) {
 			return;
 		}
 		final String now=new SimpleDateFormat("yyyyMMdd").format(new Date());
-		rename(getName()+" (Retired "+now+")");
+		rename(new State(this),getName()+" (Retired "+now+")");
 		set("retired",true);
 	}
 	
@@ -1000,7 +1000,7 @@ public void login(final User user,final Region region,final String url) {
 	 *
 	 * @param newName The characters new name
 	 */
-	public void rename(final String newName) {
+	public void rename(@Nonnull final State st,@Nonnull final String newName) {
 		final int count=dqinn("select count(*) from characters where name like ? and instanceid=?",
 		                      newName,
 		                      getInstance().getId());
@@ -1008,6 +1008,8 @@ public void login(final User user,final Region region,final String url) {
 			throw new UserInputDuplicateValueException(
 					"Unable to rename character '"+getName()+"' to '"+newName+"', that name is already taken.",true);
 		}
+		checkAllowedNamingSymbols(st,newName);
+		checkFilteredNamingList(st,newName);
 		setName(newName);
 		clearNameCache();
 	}
