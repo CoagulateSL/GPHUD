@@ -203,7 +203,7 @@ public class Currency extends TableRow {
 	}
 	
 	private static final Cache<Currency,String> baseCoinNameCache     =Cache.getCache("GPHUD/CurrencyBaseCoinName",CacheConfig.PERMANENT_CONFIG);
-	private static final Cache<Currency,String> baseCoinNameShortCache=Cache.getCache("GPHUD/CurrencyBaseCoinName",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Currency,String> baseCoinNameShortCache=Cache.getCache("GPHUD/CurrencyBaseCoinShortName",CacheConfig.PERMANENT_CONFIG);
 
 	public void setBaseCoinNames(final State state,final String basecoinshortname,final String basecoinname) {
 		final String old=getBaseCoinName()+" ("+getBaseCoinNameShort()+")";
@@ -227,7 +227,7 @@ public class Currency extends TableRow {
 		return baseCoinNameCache.get(this,()->getString("basecoin"));
 	}
 	
-	private static final Cache<Integer,Results> currencyCoinCache=Cache.getCache("GPHUD/CurrencyCoinSet",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Currency,Results> currencyCoinCache=Cache.getCache("GPHUD/CurrencyCoinSet",CacheConfig.PERMANENT_CONFIG);
 	
 	public String getBaseCoinNameShort() {
 		return baseCoinNameShortCache.get(this,()->getString("basecoinshort"));
@@ -245,7 +245,7 @@ public class Currency extends TableRow {
 		            String.valueOf(basevalue),
 		            "",
 		            "Removed coin of value "+basevalue);
-		currencyCoinCache.purge(getId());
+		currencyCoinCache.purge(this);
 	}
 	
 	public List<Coin> getCoins() {
@@ -293,11 +293,11 @@ public class Currency extends TableRow {
 		            "",
 		            coinname,
 		            "Created coin "+coinname+" ("+coinshortname+") = "+basevalue+" "+getBaseCoinName());
-		currencyCoinCache.purge(getId());
+		currencyCoinCache.purge(this);
 	}
 
 	private Results getCurrencyCoins() {
-		return currencyCoinCache.get(getId(),()->
+		return currencyCoinCache.get(this,()->
 			dq(
 				"select basemultiple,coinname,coinnameshort from currencycoins where currencyid=? order by basemultiple desc",
 				getId()));
@@ -359,9 +359,13 @@ public class Currency extends TableRow {
 		if (st.getInstance()!=getInstance()) {
 			throw new SystemConsistencyException("Currency delete instance/state instance mismatch");
 		}
+		final String currencyName=getName();
 		getPool(st).delete(st);
 		d("delete from currencies where id=?",getId());
-		st.getInstance().currencyNameCache.purgeAll();
+		st.getInstance().currencyNameCache.purge(currencyName);
+		baseCoinNameCache.purge(this);
+		baseCoinNameShortCache.purge(this);
+		currencyCoinCache.purge(this);
 	}
 	
 	public Pool getPool(final State st) {
