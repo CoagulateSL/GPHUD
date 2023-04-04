@@ -26,7 +26,7 @@ public class Rename {
 	                                                  description="New name for character",
 	                                                  max=40,
 	                                                  type=Argument.ArgumentType.TEXT_ONELINE) final String newname) {
-		oldname.rename(st,newname);
+		oldname.rename(st,newname,true);
 		return new OKResponse("Character has been renamed");
 	}
 }
