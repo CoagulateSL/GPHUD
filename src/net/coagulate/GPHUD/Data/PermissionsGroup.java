@@ -9,6 +9,7 @@ import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
+import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -18,6 +19,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Reference to a permissions group.
@@ -41,11 +43,13 @@ public class PermissionsGroup extends TableRow {
 	 */
 	@Nullable
 	public static PermissionsGroup resolveNullable(@Nonnull final State st,@Nonnull final String name) {
-		final int id=new PermissionsGroup(-1).resolveToID(st,name,true);
+		/*final int id=new PermissionsGroup(-1).resolveToID(st,name,true);
 		if (id==0) {
 			return null;
 		}
 		return get(id);
+		 */
+		return find(name,st.getInstance()); // caches
 	}
 	
 	/**
@@ -153,6 +157,16 @@ public class PermissionsGroup extends TableRow {
 			}
 			return set;
 		});
+	}
+	
+	public static void preLoadCache() {
+		final AtomicInteger pgs=new AtomicInteger();
+		db().dqSlow("select permissionsgroupid,name,instanceid from permissionsgroups").forEach((row)->{
+			pgs.getAndIncrement();
+			PermissionsGroup pg=get(row.getInt("permissionsgroupid"));
+			Instance.get(row.getInt("instanceid")).permissionsGroupResolverCache.set(row.getString("name"),pg);
+		});
+		GPHUD.getLogger("PreLoadCache").config("Loaded "+pgs+" permissions groups");
 	}
 	
 	
