@@ -6,6 +6,7 @@ import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
+import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.User.Form;
@@ -206,16 +207,20 @@ public class ObjType extends TableRow {
 	 */
 	@Nonnull
 	public JSONObject getBehaviour() {
-		String s=null;
-		try {
-			s=getStringNullable("behaviour");
-		} catch (final NoDataException ignore) {
-		}
-		if (s==null||s.isEmpty()) {
-			return new JSONObject();
-		}
-		return new JSONObject(s);
+		return behaviourCache.get(getId(),()->{
+			String s=null;
+			try {
+				s=getStringNullable("behaviour");
+			} catch (final NoDataException ignore) {
+			}
+			if (s==null||s.isEmpty()) {
+				return new JSONObject();
+			}
+			return new JSONObject(s);
+		});
 	}
+	
+	private static Cache<Integer,JSONObject> behaviourCache=Cache.getCache("GPHUD/ObjectTypeBehaviour",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Set this objecttype's behaviour JSON
@@ -224,6 +229,7 @@ public class ObjType extends TableRow {
 	 */
 	public void setBehaviour(@Nonnull final JSONObject json) {
 		set("behaviour",json.toString());
+		behaviourCache.set(getId(),json);
 	}
 	
 	@Nonnull
@@ -233,6 +239,7 @@ public class ObjType extends TableRow {
 	}
 	
 	public void delete() {
+		behaviourCache.purge(getId());
 		d("delete from objecttypes where id=?",getId());
 	}
 }

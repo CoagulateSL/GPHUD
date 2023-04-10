@@ -180,8 +180,10 @@ public class Instance extends TableRow {
 	 * @return Avatar that owns the instance
 	 */
 	public User getOwner() {
-		return User.get(getInt("owner"));
+		return instanceOwnerCache.get(getId(),()->User.get(getInt("owner")));
 	}
+	
+	private static final Cache<Integer,User> instanceOwnerCache=Cache.getCache("GPHUD/InstanceOwner",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Set the owner of this instance.
@@ -190,6 +192,7 @@ public class Instance extends TableRow {
 	 */
 	public void setOwner(@Nonnull final User id) {
 		d("update instances set owner=? where instanceid=?",id.getId(),getId());
+		instanceOwnerCache.set(getId(),id);
 	}
 	
 	@Nonnull

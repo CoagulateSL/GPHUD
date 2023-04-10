@@ -8,6 +8,7 @@ import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.Core.Tools.ClassTools;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Tests.TestFramework;
 import net.coagulate.SL.*;
@@ -489,6 +490,7 @@ public class GPHUD extends SLModule {
 	public void preLoadCaches() {
 		Char.preLoadCache();
 		Attribute.preLoadCache();
+		PermissionsGroup.preLoadCache();
 		getDB().resetSQLLogs();
 	}
 }
