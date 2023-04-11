@@ -389,21 +389,30 @@ public class Obj extends TableRow {
 		return "objects";
 	}
 	
+	private static final Cache<Obj,Integer> lastRXCache=Cache.getCache("GPHUD/ObjLastRX",CacheConfig.PERMANENT_CONFIG);
+	
 	/**
 	 * Update the lastrx timer for this object
 	 */
 	public void updateRX() {
-		Integer lastrx=getIntNullable("lastrx");
+		Integer lastrx=getLastRx();
 		if (lastrx==null) {
 			lastrx=0;
 		}
 		final int diff=UnixTime.getUnixTime()-lastrx;
 		if (diff>60) {
+			final int time=UnixTime.getUnixTime();
 			db().d("update objects set lastrx=?,authnode=? where id=?",
-			       UnixTime.getUnixTime(),
+			       time,
 			       Interface.getNode(),
 			       getId());
+			lastRXCache.set(this,time);
 		}
+	}
+
+	@Nullable
+	public Integer getLastRx() {
+		return lastRXCache.get(this,()->getIntNullable("lastrx"));
 	}
 	
 	public String getUUID() {
