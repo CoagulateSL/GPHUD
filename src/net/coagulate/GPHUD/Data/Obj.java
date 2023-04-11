@@ -3,6 +3,7 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.ResultsRow;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Interfaces.Interface;
@@ -151,7 +152,8 @@ public class Obj extends TableRow {
 		super(id);
 	}
 	
-	private static final Cache<String,Obj> objectUUIDCache=Cache.getCache("GPHUD/ObjectUUIDResolution",CacheConfig.PERMANENT_CONFIG,true);
+	private static final Cache<String,Obj> objectUUIDCache=
+			net.coagulate.Core.Tools.Cache.getCache("GPHUD/ObjectUUIDResolution",CacheConfig.PERMANENT_CONFIG,true);
 	
 	@Nullable
 	public static Obj findOrNull(final State st,final String uuid) {
@@ -235,10 +237,13 @@ public class Obj extends TableRow {
 	
 	@Nonnull
 	public static Obj find(final State st,final String uuid) {
-		return objectUUIDCache.get(uuid,()->{
-			final int id=db().dqiNotNull("select id from objects where uuid=?",uuid);
+		final Obj obj=objectUUIDCache.get(uuid,()->{
+			final Integer id=db().dqi("select id from objects where uuid=?",uuid);
+			if (id==null) { return null; }
 			return new Obj(id);
 		});
+		if (obj==null) { throw new UserInputLookupFailureException("Object "+uuid+" is not registered"); }
+		return obj;
 	}
 	
 	/**
@@ -289,6 +294,7 @@ public class Obj extends TableRow {
 		}
 		return t;
 	}
+	private static final Cache<Obj,ObjType> objectTypeCache=Cache.getCache("GPHUD/ObjTypeCache",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Get the Object Type for this object
@@ -297,15 +303,18 @@ public class Obj extends TableRow {
 	 */
 	@Nullable
 	public ObjType getObjectType() {
-		final Integer otid=getIntNullable("objecttype");
-		if (otid==null) {
-			return null;
-		}
-		return ObjType.get(otid);
+		return objectTypeCache.get(this,()->{
+			final Integer otid=getIntNullable("objecttype");
+			if (otid==null) {
+				return null;
+			}
+			return ObjType.get(otid);
+		});
 	}
 	
 	public void setObjectType(@Nonnull final ObjType objType) {
 		set("objecttype",objType.getId());
+		objectTypeCache.set(this,objType);
 	}
 	
 	@Nonnull
@@ -380,21 +389,30 @@ public class Obj extends TableRow {
 		return "objects";
 	}
 	
+	private static final Cache<Obj,Integer> lastRXCache=Cache.getCache("GPHUD/ObjLastRX",CacheConfig.PERMANENT_CONFIG);
+	
 	/**
 	 * Update the lastrx timer for this object
 	 */
 	public void updateRX() {
-		Integer lastrx=getIntNullable("lastrx");
+		Integer lastrx=getLastRx();
 		if (lastrx==null) {
 			lastrx=0;
 		}
 		final int diff=UnixTime.getUnixTime()-lastrx;
 		if (diff>60) {
+			final int time=UnixTime.getUnixTime();
 			db().d("update objects set lastrx=?,authnode=? where id=?",
-			       UnixTime.getUnixTime(),
+			       time,
 			       Interface.getNode(),
 			       getId());
+			lastRXCache.set(this,time);
 		}
+	}
+
+	@Nullable
+	public Integer getLastRx() {
+		return lastRXCache.get(this,()->getIntNullable("lastrx"));
 	}
 	
 	public String getUUID() {

@@ -451,7 +451,7 @@ public class Char extends TableRow {
 	public static void preLoadCache() {
 		final AtomicInteger loaded=new AtomicInteger();
 		db().dqSlow("select * from characters").forEach((row)->{
-			Char c=get(row.getInt("characterid"));
+			final Char c=get(row.getInt("characterid"));
 			c.setNameCache(row.getString("name"));
 			instanceCache.set(c,Instance.get(row.getInt("instanceid")));
 			ownerCache.set(c,User.get(row.getInt("owner")));
@@ -533,31 +533,7 @@ public void wipeConveyances(@Nonnull final State st) {
 		return getStringNullable("url");
 	}
 	
-public void login(final User user,final Region region,final String url) {
-		disconnectURL(url);
-		logoutByAvatar(user,this);
-		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",
-		  user.getId(),
-		  // played by
-		  getUnixTime(),
-		  // last active
-		  url,
-		  // url
-		  getUnixTime(),
-		  //urlfirst
-		  getUnixTime(),
-		  // urllast
-		  Interface.getNode(),
-		  //node
-		  null,
-		  //zone
-		  region.getId(),
-		  //region id
-		  getId()); // where char id
-		zoneCache.purge(this);
-		playedByCache.set(this,user);
-		getInstance().mostRecentlyPlayedCache.set(user,this);
-	}
+	private static final Cache<Char,Region> currentRegionCache=Cache.getCache("GPHUD/CharRegionMapping",CacheConfig.PERMANENT_CONFIG,false);
 	
 	public void wipeConveyance(final State st,final String conveyance) {
 		db().d("delete from characterkvstore where characterid=? and k like ?",
@@ -654,22 +630,52 @@ public void login(final User user,final Region region,final String url) {
 					e,
 					true);
 		}
-	}	/**
+	}
+public void login(final User user,final Region region,final String url) {
+		disconnectURL(url);
+		logoutByAvatar(user,this);
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",
+		  user.getId(),
+		  // played by
+		  getUnixTime(),
+		  // last active
+		  url,
+		  // url
+		  getUnixTime(),
+		  //urlfirst
+		  getUnixTime(),
+		  // urllast
+		  Interface.getNode(),
+		  //node
+		  null,
+		  //zone
+		  region.getId(),
+		  //region id
+		  getId()); // where char id
+		zoneCache.purge(this);
+		playedByCache.set(this,user);
+		if (getRegion()!=region) { currentRegionCache.set(this,region); }
+		getInstance().mostRecentlyPlayedCache.set(user,this);
+	}
+	
+/**
 	 * Get the current region for this character
 	 *
 	 * @return Region - nulls the retired region
 	 */
 	@Nullable
 	public Region getRegion() {
-		final Integer region=getIntNullable("regionid");
-		if (region==null) {
-			return null;
-		}
-		final Region r=Region.get(region,true);
-		if (r.isRetired()) {
-			return null;
-		}
-		return r;
+		return currentRegionCache.get(this,()->{
+			final Integer region=getIntNullable("regionid");
+			if (region==null) {
+				return null;
+			}
+			final Region r=Region.get(region,true);
+			if (r.isRetired()) {
+				return null;
+			}
+			return r;
+		});
 	}
 	
 	/**
@@ -914,33 +920,16 @@ public void login(final User user,final Region region,final String url) {
 				"Character "+getName()+" is not currently registered as being played by any Agent.");
 	}
 	
-	/**
-	 * Disconnects a character.  Does not send a terminate to the URL
+/**
+	 * Set the current region for this character
+	 *
+	 * @param r Region
 	 */
-	public void disconnect() {
-		User player=getPlayedByNullable();
-		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",
-		  null,
-		  //playedby
-		  getUnixTime()-1,
-		  //lastactive
-		  null,
-		  //url
-		  null,
-		  //urlfirst
-		  null,
-		  //urllast
-		  null,
-		  //authnode
-		  null,
-		  //zone
-		  null,
-		  //region
-		  getId()); //character id
-		zoneCache.purge(this);
-		playedByCache.set(this,null);
-		if (player!=null) {
-			getInstance().mostRecentlyPlayedCache.purge(player);
+	public void setRegion(@Nonnull final Region r) {
+		//System.out.println("Setting region to "+r+" for "+getName()+" where it is currently "+getRegion());
+		if (getRegion()!=r) {
+			set("regionid",r.getId());
+			currentRegionCache.set(this,r);
 		}
 	}
 	
@@ -1070,15 +1059,35 @@ public void login(final User user,final Region region,final String url) {
 				}
 			}
 		}
-	}	/**
-	 * Set the current region for this character
-	 *
-	 * @param r Region
+	}
+	/**
+	 * Disconnects a character.  Does not send a terminate to the URL
 	 */
-	public void setRegion(@Nonnull final Region r) {
-		//System.out.println("Setting region to "+r+" for "+getName()+" where it is currently "+getRegion());
-		if (getRegion()!=r) {
-			set("regionid",r.getId());
+	public void disconnect() {
+		final User player=getPlayedByNullable();
+		d("update characters set playedby=?,lastactive=?,url=?,urlfirst=?,urllast=?,authnode=?,zoneid=?,regionid=? where characterid=?",
+		  null,
+		  //playedby
+		  getUnixTime()-1,
+		  //lastactive
+		  null,
+		  //url
+		  null,
+		  //urlfirst
+		  null,
+		  //urllast
+		  null,
+		  //authnode
+		  null,
+		  //zone
+		  null,
+		  //region
+		  getId()); //character id
+		zoneCache.purge(this);
+		playedByCache.set(this,null);
+		currentRegionCache.set(this,null);
+		if (player!=null) {
+			getInstance().mostRecentlyPlayedCache.purge(player);
 		}
 	}
 	
