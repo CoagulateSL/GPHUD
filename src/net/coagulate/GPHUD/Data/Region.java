@@ -157,26 +157,7 @@ public class Region extends TableRow {
 		return get(regionId,allowretired);
 	}
 
-	/**
-	 * Register a region against an instance.
-	 *
-	 * @param region Name of region to register
-	 * @param i      Instance object to register the region with
-	 * @return A blank string on success, or a text hudMessage explaining any problem.
-	 */
-	@Nonnull
-	public static String joinInstance(@Nonnull final String region,@Nonnull final Instance i) {
-		// TO DO - lacks validation
-		final int exists=db().dqiNotNull("select count(*) from regions where name=?",region);
-		if (exists==0) {
-			GPHUD.getLogger().info("Joined region '"+region+"' to instance "+i);
-			db().d("insert into regions(name,instanceid) values(?,?)",region,i.getId());
-			db().d("update instances set retireat=null,retirewarn=null where instanceid=?",i.getId());
-			regionNameCache.purge(region);
-			return "";
-		}
-		return "Region is already registered!";
-	}
+	private static final Cache<Instance,Set<Region>> instanceRegionSetCache=Cache.getCache("gphud/RegionPerInstanceSetCache",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Returns a set of servers that need pinging
@@ -206,7 +187,31 @@ public class Region extends TableRow {
 	}
 	
 	// ----- Internal Statics -----
+	private static final Cache<Instance,Set<Region>> instanceRegionSetCacheUnretired=Cache.getCache("gphud/RegionPerInstanceSetCacheUnretired",CacheConfig.PERMANENT_CONFIG);
 	
+	/**
+	 * Register a region against an instance.
+	 *
+	 * @param region Name of region to register
+	 * @param i      Instance object to register the region with
+	 * @return A blank string on success, or a text hudMessage explaining any problem.
+	 */
+	@Nonnull
+	public static String joinInstance(@Nonnull final String region,@Nonnull final Instance i) {
+		// TO DO - lacks validation
+		final int exists=db().dqiNotNull("select count(*) from regions where name=?",region);
+		if (exists==0) {
+			GPHUD.getLogger().info("Joined region '"+region+"' to instance "+i);
+			db().d("insert into regions(name,instanceid) values(?,?)",region,i.getId());
+			db().d("update instances set retireat=null,retirewarn=null where instanceid=?",i.getId());
+			regionNameCache.purge(region);
+			instanceRegionSetCache.purge(i);
+			instanceRegionSetCacheUnretired.purge(i);
+			return "";
+		}
+		return "Region is already registered!";
+	}
+
 	/**
 	 * Get all the regions associated with this instance
 	 *
@@ -216,14 +221,17 @@ public class Region extends TableRow {
 	 */
 	@Nonnull
 	public static Set<Region> getRegions(@Nonnull final Instance instance,final boolean allowretired) {
-		final Results results=db().dq("select regionid from regions where instanceid=? and retired<?",
-		                              instance.getId(),
-		                              allowretired?2:1);
-		final Set<Region> regions=new TreeSet<>();
-		for (final ResultsRow row: results) {
-			regions.add(Region.get(row.getInt("regionid"),allowretired));
-		}
-		return regions;
+		final Cache<Instance,Set<Region>> selectedCache=allowretired?instanceRegionSetCache:instanceRegionSetCacheUnretired;
+		return selectedCache.get(instance,()->{
+			final Results results=db().dq("select regionid from regions where instanceid=? and retired<?",
+			                              instance.getId(),
+			                              allowretired?2:1);
+			final Set<Region> regions=new TreeSet<>();
+			for (final ResultsRow row: results) {
+				regions.add(Region.get(row.getInt("regionid"),allowretired));
+			}
+			return regions;
+		});
 	}
 	
 	public static Table statusDump(final State st) {
@@ -823,6 +831,7 @@ public class Region extends TableRow {
 	
 	public void retire() {
 		set("retired",1);
-		retiredCache.purge(this);
+		retiredCache.set(this,true);
+		instanceRegionSetCacheUnretired.purge(getInstance());
 	}
 }
