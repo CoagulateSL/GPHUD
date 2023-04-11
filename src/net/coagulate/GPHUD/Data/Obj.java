@@ -152,7 +152,8 @@ public class Obj extends TableRow {
 		super(id);
 	}
 	
-	private static final Cache<String,Obj> objectUUIDCache=Cache.getCache("GPHUD/ObjectUUIDResolution",CacheConfig.PERMANENT_CONFIG,true);
+	private static final Cache<String,Obj> objectUUIDCache=
+			net.coagulate.Core.Tools.Cache.getCache("GPHUD/ObjectUUIDResolution",CacheConfig.PERMANENT_CONFIG,true);
 	
 	@Nullable
 	public static Obj findOrNull(final State st,final String uuid) {
@@ -293,6 +294,7 @@ public class Obj extends TableRow {
 		}
 		return t;
 	}
+	private static final Cache<Obj,ObjType> objectTypeCache=Cache.getCache("GPHUD/ObjTypeCache",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Get the Object Type for this object
@@ -301,15 +303,18 @@ public class Obj extends TableRow {
 	 */
 	@Nullable
 	public ObjType getObjectType() {
-		final Integer otid=getIntNullable("objecttype");
-		if (otid==null) {
-			return null;
-		}
-		return ObjType.get(otid);
+		return objectTypeCache.get(this,()->{
+			final Integer otid=getIntNullable("objecttype");
+			if (otid==null) {
+				return null;
+			}
+			return ObjType.get(otid);
+		});
 	}
 	
 	public void setObjectType(@Nonnull final ObjType objType) {
 		set("objecttype",objType.getId());
+		objectTypeCache.set(this,objType);
 	}
 	
 	@Nonnull
