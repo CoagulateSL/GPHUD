@@ -241,7 +241,7 @@ public class Obj extends TableRow {
 		final Obj obj=objectUUIDCache.get(uuid,()->{
 			final Integer id=db().dqi("select id from objects where uuid=?",uuid);
 			if (id==null) { return null; }
-			return new Obj(id);
+			return Obj.get(id);
 		});
 		if (obj==null) { throw new UserInputLookupFailureException("Object "+uuid+" is not registered"); }
 		return obj;
