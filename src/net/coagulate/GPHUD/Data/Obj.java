@@ -71,7 +71,10 @@ public class Obj extends TableRow {
 				} else {
 					final Integer oldobjecttype=row.getIntNullable("objecttype");
 					if (oldobjecttype==null||oldobjecttype!=Integer.parseInt(objecttype)) {
-						db().d("update objects set objecttype=? where id=?",objecttype,row.getIntNullable("id"));
+						final Obj obj=Obj.get(row.getInt("id"));
+						final ObjType otraw=ObjType.get(Integer.parseInt(objecttype));
+						final ObjectType ot=ObjectType.materialise(st,otraw);
+						obj.setObjectType(otraw);
 						Audit.audit(st,
 						            Audit.OPERATOR.AVATAR,
 						            null,
@@ -82,8 +85,6 @@ public class Obj extends TableRow {
 						            objecttype,
 						            "Set object type for "+row.getStringNullable("name")+" "+
 						            row.getStringNullable("uuid"));
-						final Obj obj=Obj.get(row.getInt("id"));
-						final ObjectType ot=ObjectType.materialise(st,ObjType.get(Integer.parseInt(objecttype)));
 						final JSONObject reconfigurepayload=new JSONObject();
 						ot.payload(st,reconfigurepayload,obj.getRegion(),obj.getURL());
 						new Transmission(Obj.get(row.getInt("id")),reconfigurepayload).start();
