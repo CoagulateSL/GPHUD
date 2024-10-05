@@ -34,10 +34,10 @@ public class List {
 	                        privileged=false,
 	                        category=GSFunctions.SCRIPT_CATEGORY.UTILITY)
 	public static BCInteger gsListFindFrom(@Nonnull final State st,
-	                                   @Nonnull final GSVM vm,
-	                                   @Nonnull final BCList list,
-									   @Nonnull final BCInteger startAt,
-	                                   @Nonnull final ByteCodeDataType find) {
+	                                       @Nonnull final GSVM vm,
+	                                       @Nonnull final BCList list,
+	                                       @Nonnull final BCInteger startAt,
+	                                       @Nonnull final ByteCodeDataType find) {
 		return new BCInteger(null,listFindFrom(st,vm,list,startAt,find));
 	}
 	
@@ -45,9 +45,13 @@ public class List {
 	                                @Nonnull final GSVM vm,
 	                                @Nonnull final BCList list,
 	                                @Nonnull final BCInteger startAt,
-                                    @Nonnull final ByteCodeDataType find) {
-		if (list.isEmpty()) { return -1; }  // nothing to search in
-		if (startAt.getContent()>=list.size()) { return -1; } // search past end of list
+	                                @Nonnull final ByteCodeDataType find) {
+		if (list.isEmpty()) {
+			return -1;
+		}  // nothing to search in
+		if (startAt.getContent()>=list.size()) {
+			return -1;
+		} // search past end of list
 		for (int i=startAt.getContent();i<list.size();i++) {
 			if (list.getElement(i).strictlyEquals(find)) {
 				return i;
@@ -57,7 +61,6 @@ public class List {
 	}
 	
 	/*** TEST SCRIPT
-	 *
 	 * List l=[1,2,3,"banana",3.0,2];
 	 * // TEST, failure to find
 	 * Integer test_FailFind=(gsListFind(l,4)==-1);
