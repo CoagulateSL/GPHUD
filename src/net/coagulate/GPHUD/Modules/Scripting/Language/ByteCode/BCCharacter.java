@@ -102,4 +102,13 @@ public class BCCharacter extends ByteCodeDataType {
 	public boolean isOnline() {
 		return getContent().isOnline();
 	}
+	
+	@Override
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
+	public boolean strictlyEquals(final ByteCodeDataType find) {
+		if (!(find instanceof BCCharacter)) {
+			return false;
+		}
+		return ((BCCharacter)find).content.getId()==content.getId();
+	}
 }

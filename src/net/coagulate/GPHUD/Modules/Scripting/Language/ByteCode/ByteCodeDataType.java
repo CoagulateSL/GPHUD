@@ -86,4 +86,7 @@ public abstract class ByteCodeDataType extends ByteCode {
 	public void stack(@Nonnull final GSVM vm) {
 		vm.push(this);
 	}
+	
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
+	public abstract boolean strictlyEquals(final ByteCodeDataType find);
 }

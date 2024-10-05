@@ -27,6 +27,11 @@
                 type=ChangeLogging.CHANGETYPE.Add,
                 component=Classes.COMPONENT.GSVM,
                 message="Doubled script instruction count limit from 10K to 20K instructions as scripting does not seem to be the primary CPU load on the server and recent optimisations in other areas have made this seem safe to relax.")
+
+@Classes.Change(date="2024-10-05",
+                type=ChangeLogging.CHANGETYPE.Add,
+                component=Classes.COMPONENT.Scripting,
+                message="Added functions gsListFind and gsListFindFrom, for efficient list searching ; see introspection, gsFunctions, Utility for details ")
 		
 package net.coagulate.GPHUD.Modules.Scripting;
 
