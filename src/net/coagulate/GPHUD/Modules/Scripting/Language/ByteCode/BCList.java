@@ -128,4 +128,34 @@ public class BCList extends ByteCodeDataType {
 		content.addAll(var.content);
 		elements=content.size();
 	}
+	
+	public boolean isEmpty() {
+		return elements==0;
+	}
+	
+	@Override
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
+	public boolean strictlyEquals(final ByteCodeDataType find) {
+		if (!(find instanceof final BCList findl)) {
+			return false;
+		}
+		if (this==findl) { return true; } // trivial case ; exact same object so no need to go into depth
+		if (findl.size()!=size()) { return false; } // size mismatch
+		if (size()==0) { return true; } // must be same sizes, both empty, easy match
+		for (int i=0;i<size();i++) {
+			if (!findl.getElement(i).strictlyEquals(getElement(i))) {
+				// element mismatch
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public int size() {
+		return elements;
+	}
+	
+	public ByteCodeDataType getElement(final int i) {
+		return content.get(i);
+	}
 }

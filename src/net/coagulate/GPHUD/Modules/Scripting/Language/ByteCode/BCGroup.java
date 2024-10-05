@@ -69,4 +69,13 @@ public class BCGroup extends ByteCodeDataType {
 	public ByteCodeDataType clone() {
 		return new BCGroup(node(),content);
 	}
+	
+	@Override
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
+	public boolean strictlyEquals(final ByteCodeDataType find) {
+		if (!(find instanceof BCGroup)) {
+			return false;
+		}
+		return ((BCGroup)find).content.getId()==content.getId();
+	}
 }

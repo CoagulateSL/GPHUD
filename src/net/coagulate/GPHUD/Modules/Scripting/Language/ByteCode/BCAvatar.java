@@ -102,6 +102,15 @@ public class BCAvatar extends ByteCodeDataType {
 		return new BCString(node(),getContent().getName());
 	}
 	
+	@Override
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
+	public boolean strictlyEquals(final ByteCodeDataType find) {
+		if (!(find instanceof BCAvatar)) {
+			return false;
+		}
+		return ((BCAvatar)find).content.getId()==content.getId();
+	}
+	
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {
