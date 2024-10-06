@@ -15,7 +15,7 @@ public class Reboot {
 	                  permitExternal=false,
 	                  permitScripting=false)
 	public static Response reboot(@Nonnull final State st) {
-		return new RebootResponse("The GPHUDClient.Reboot command was invoked, generating this reboot message.");
+		return new RebootResponse("The GPHUDClient.Reboot command was invoked.");
 	}
 	
 }

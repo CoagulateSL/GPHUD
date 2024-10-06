@@ -160,10 +160,13 @@ integer process(key requestid) {
 		gphud_hang("Shutdown requested: "+jsonget("shutdown"),TRUE);
 	}	
 	if (incommand=="reboot" || jsonget("reboot")!="") {
-		llOwnerSay("Rebooting at request from server: "+jsonget("reboot"));
+		llOwnerSay("Restarting: "+jsonget("reboot"));
 		shutdown();
-		setup();
 	}
+	if (jsonget("disconnected")=="disconnected") {
+		llOwnerSay("Disconnected, reconnecting...");
+		setup();
+	}		
 	if (incommand=="forcereconnect") { startLogin(); }
 	integer DONOTRESPOND=FALSE;
 	string retjson="";

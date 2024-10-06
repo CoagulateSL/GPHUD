@@ -296,7 +296,10 @@
                                                                           component=COMPONENT.HUD,
                                                                           message="Truncated general version startup messages")
 
-
+@Change(date="2024-10-06",
+        type=CHANGETYPE.Fix,
+        component=COMPONENT.HUD,
+        message="Resolved a race condition on reboot calls to the HUD, e.g. GPHUDClient.Reboot, where the HUD would reconnect instantly and may end up logging its self out.  HUD now waits for logout to complete before reconnecting.  <b>Requires region server update.</b>")
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.GPHUD.Classes.COMPONENT;
