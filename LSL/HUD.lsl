@@ -161,8 +161,7 @@ integer process(key requestid) {
 	}	
 	if (incommand=="reboot" || jsonget("reboot")!="") {
 		llOwnerSay("Rebooting at request from server: "+jsonget("reboot"));
-		shutdown();
-		setup();
+		llResetScript();
 	}
 	if (incommand=="forcereconnect") { startLogin(); }
 	integer DONOTRESPOND=FALSE;
