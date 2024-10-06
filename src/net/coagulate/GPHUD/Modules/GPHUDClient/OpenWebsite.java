@@ -44,7 +44,9 @@ public class OpenWebsite {
 	          description="Causes the GPHUD to send an llOpenURL to the user with a custom URL/description",
 	          permitUserWeb=false,
 	          permitObject=false,
-	          permitExternal=false)
+	          permitExternal=false,
+	          permitConsole=false,
+	          permitScripting=false)
 	public static Response offerWebsite(@Nonnull final State st,
 	                                    @Argument.Arguments(name="url",
 	                                                        description="URL to offer to user",
