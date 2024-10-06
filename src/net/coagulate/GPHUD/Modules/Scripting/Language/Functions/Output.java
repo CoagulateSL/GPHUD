@@ -3,7 +3,9 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.GPHUD.Data.Landmark;
 import net.coagulate.GPHUD.Data.Obj;
+import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
+import net.coagulate.GPHUD.Modules.GPHUDClient.OpenWebsite;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCInteger;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
@@ -204,6 +206,26 @@ public class Output {
 		send.put("linkmessage",message.toString());
 		send.put("linkid",id.toString());
 		new Transmission(object,send).start();
+		return new BCInteger(null,0);
+	}
+	
+	@Nonnull
+	@GSFunctions.GSFunction(description="Offer a website to a specific character",
+	                        parameters="Character - Character to offer to<br>String - URL to offer, must be http:// or https://<br>String - Description to show for the URL",
+	                        notes="",
+	                        returns="Integer - One if the character is offline, zero otherwise",
+	                        privileged=false,
+	                        category=SCRIPT_CATEGORY.OUTPUT)
+	public static BCInteger gsOfferWebsite(final State st,
+	                                       @Nonnull final GSVM vm,
+	                                       @Nonnull final BCCharacter target,
+	                                       @Nonnull final BCString URL,
+	                                       @Nonnull final BCString description) {
+		if (!target.isOnline()) { return new BCInteger(null,1); }
+		final State bypass=new State(st.getInstanceNullable(),st.getRegionNullable(),st.zone,st.getCharacterNullable());
+		bypass.source=State.Sources.SYSTEM;
+		final Response response=OpenWebsite.offerWebsite(bypass,URL.getContent(),description.getContent());
+		target.getContent().push(response.asJSON(st));
 		return new BCInteger(null,0);
 	}
 }
