@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.GPHUD.Data.Char;
+import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.NoResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Argument.ArgumentType;
@@ -8,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Command.Context;
 import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,6 +35,6 @@ public class Disconnect {
 			return new NoResponse();
 		}
 		Char.disconnectURL(url);
-		return new NoResponse();
+		return new JSONResponse(new JSONObject().put("disconnected","disconnected"));
 	}
 }
