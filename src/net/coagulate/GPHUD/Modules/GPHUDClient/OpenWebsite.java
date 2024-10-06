@@ -45,7 +45,6 @@ public class OpenWebsite {
 	          permitUserWeb=false,
 	          permitObject=false,
 	          permitExternal=false,
-	          permitConsole=false,
 	          permitScripting=false)
 	public static Response offerWebsite(@Nonnull final State st,
 	                                    @Argument.Arguments(name="url",
