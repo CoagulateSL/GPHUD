@@ -35,6 +35,9 @@ public class BCInvoke extends ByteCode {
 		final int argcount=vm.popInteger().getContent();
 		if (function==null) {
 			if (argcount!=0) {
+				if (Script.findNullable(st,functionname)==null) {
+					throw new GSUnknownIdentifier("Function call '"+functionname+"' is not resolvable as a script, alias, or internal function call.");
+				}
 				throw new GSInvalidFunctionCall("Calls to other scripts do not currently take parameters");
 			}
 			executeCall(st,vm,simulation,functionname);
