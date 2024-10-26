@@ -1,7 +1,10 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.Functions;
 
+import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
+import net.coagulate.GPHUD.Data.CharacterPool;
 import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions.SCRIPT_CATEGORY;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidFunctionCall;
@@ -131,5 +134,35 @@ public class KV {
 		}
 		character.getContent().considerPushingConveyances();
 		return new BCInteger(null,0);
+	}
+	
+	@Nonnull
+	@GSFunctions.GSFunction(description="Returns the value of an experience pool",
+	                        returns="Integer - the experience value",
+	                        parameters="Character character - The character to look the "+
+	                                   "experience up for"+
+	                                   "<br>String xpName - The name of the experience pool to lookup, e.g. 'Experience.VisitXP' or 'Experience.CustomXP' or 'Events.EventXP'",
+	                        notes="See the bottom of your character sheet for the full names of experience pools (E.g. View Events.EventXP History link)",
+	                        privileged=false,
+	                        category=SCRIPT_CATEGORY.KV)
+	public static BCInteger gsGetExperience(@Nonnull final State st,
+	                               final GSVM vm,
+	                               @Nonnull final BCCharacter character,
+	                               @Nonnull final BCString xpName) {
+		if (character.getContent().getInstance()!=st.getInstance()) {
+			throw new GSInvalidFunctionCall("Character "+character+" belongs to a different instance!");
+		}
+		final State altState=new State(character.getContent());
+		final Attribute attr=st.getAttribute(Modules.extractReference(xpName.getContent()));
+		if (attr==null) {
+			throw new GSUnknownIdentifier("There was no attribute named '"+xpName.getContent()+"' found.");
+		}
+		if (attr.getType()!=Attribute.ATTRIBUTETYPE.EXPERIENCE &&attr.getType()!=Attribute.ATTRIBUTETYPE.POOL) {
+			throw new GSInvalidFunctionCall("Attribute '"+attr+"' is of type '"+attr.getType()+"', but gsGetExperience only works on Experience/Pool attributes.");
+		}
+		final Pool pool=Modules.getPool(st,xpName.getContent());
+		// that said getPool just dumps the prefix right now
+		//if (pool==null) { throw new SystemImplementationException("Retrieved null pool for '"+xpName.getContent()+"' after validation"); }
+		return new BCInteger(null,CharacterPool.sumPool(st,pool));
 	}
 }
