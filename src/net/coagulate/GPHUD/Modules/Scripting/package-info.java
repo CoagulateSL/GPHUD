@@ -32,6 +32,11 @@
                 type=ChangeLogging.CHANGETYPE.Add,
                 component=Classes.COMPONENT.Scripting,
                 message="Added functions gsListFind and gsListFindFrom, for efficient list searching ; see introspection, gsFunctions, Utility for details ")
+
+@Classes.Change(date="2024-10-26",
+                type=ChangeLogging.CHANGETYPE.Add,
+                component=Classes.COMPONENT.Scripting,
+                message="Added gsGetExperience(char,poolname) function to get a current experience value")
 		
 package net.coagulate.GPHUD.Modules.Scripting;
 
