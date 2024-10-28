@@ -54,9 +54,9 @@ public class ScriptResponses {
 						"Failed to resolve input to a valid character at your instance",
 						true);
 			}
-			final GSVM vm=new GSVM(run,st);
+			final GSVM vm=GSVM.create(2,run,st); // FIX ME
 			// inject response
-			vm.push(new BCCharacter(null,response));
+			vm.setReturn(new BCCharacter(null,response));
 			return vm.resume(st);
 		} catch (final NoDataException e) {
 			throw new UserInputStateException("Your script run has expired or been replaced by a newer script run",
@@ -89,9 +89,9 @@ public class ScriptResponses {
 			if (run.getRespondant()!=st.getCharacter()) {
 				return new ErrorResponse("Script was not expecting a response from you (?)");
 			}
-			final GSVM vm=new GSVM(run,st);
+			final GSVM vm=GSVM.create(2,run,st); // TODO FIX ME
 			// inject response
-			vm.push(new BCString(null,response));
+			vm.setReturn(new BCString(null,response));
 			return vm.resume(st);
 		} catch (final NoDataException e) {
 			throw new UserInputStateException("Your script run has expired or been replaced by a newer script run",

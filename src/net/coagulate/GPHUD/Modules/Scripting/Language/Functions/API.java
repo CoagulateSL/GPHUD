@@ -50,7 +50,7 @@ public class API {
 	                                @Nonnull final BCString apicall,
 	                                @Nonnull final BCList parameters,
 	                                final boolean elevated) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCResponse(null,new OKResponse("Simulation mode does not call APIs"));
 		}
 		try {

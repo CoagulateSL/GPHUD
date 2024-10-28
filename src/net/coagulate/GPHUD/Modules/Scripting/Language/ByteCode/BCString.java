@@ -41,7 +41,7 @@ public class BCString extends ByteCodeDataType {
 	}
 	
 	@Override
-	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSStackVM vm,final boolean simulation) {
 		vm.push(this);
 	}
 	

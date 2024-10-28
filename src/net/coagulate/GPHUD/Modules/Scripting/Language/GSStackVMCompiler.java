@@ -23,20 +23,12 @@ public class GSStackVMCompiler extends GSCompiler {
 	 * - Code compiled prior to version 1 uses absolute jumps and will corrupt the script state if relocated from base address 0x0
 	 */
 	public static final    int       COMPILER_VERSION=1;
-	@Nonnull private final ParseNode startnode;
-	private final          String    scriptname;
 	private                int       jumpnumber      =1;
 	private                int       lastdebuglineno =-1;
 	private                int       lastdebugcolno  =-1;
 	
 	public GSStackVMCompiler(final Node passednode,@Nonnull final String scriptname) {
-		if (!(passednode instanceof ParseNode)) {
-			throw new SystemImplementationException(
-					"Compiler error - passed node is of type "+passednode.getClass().getCanonicalName()+
-					" which is not a ParseNode implementation");
-		}
-		startnode=(ParseNode)passednode;
-		this.scriptname=scriptname;
+		super(passednode,scriptname);
 	}
 	
 	// ---------- INSTANCE ----------
@@ -63,119 +55,21 @@ public class GSStackVMCompiler extends GSCompiler {
 		lastdebuglineno=-1;
 		lastdebugcolno=-1;
 		final List<ByteCode> code=new ArrayList<>();
-		code.add(new BCString(null,scriptname));
+		code.add(new BCString(null,scriptname()));
 		code.add(new BCDebugSource(null));
-		code.addAll(compile(st,startnode));
+		code.addAll(compile(st,startnode()));
 		code.add(new BCInteger(null,0));
 		code.add(new BCReturn(null));
 		return code;
 	}
 	
-	// ----- Internal Instance -----
-	private int expectedChildren(final ParseNode node) {
-		if (node instanceof GSStart) {
-			return -1;
-		}
-		if (node instanceof GSInitialiser) {
-			return 3;
-		}
-		if (node instanceof GSExpression) {
-			return 1;
-		}
-		if (node instanceof GSParameter) {
-			return 1;
-		}
-		if (node instanceof GSTerm) {
-			return 1;
-		}
-		if (node instanceof GSFunctionCall) {
-			return -1;
-		}
-		if (node instanceof GSStringConstant) {
-			return 0;
-		}
-		if (node instanceof GSFloatConstant) {
-			return 0;
-		}
-		if (node instanceof GSIntegerConstant) {
-			return 0;
-		}
-		if (node instanceof GSIdentifier) {
-			return 0;
-		}
-		if (node instanceof GSParameters) {
-			return -1;
-		}
-		if (node instanceof GSConditional) {
-			return -1;
-		}
-		if (node instanceof GSAssignment) {
-			return 2;
-		}
-		if (node instanceof GSStatement) {
-			return -1;
-		}
-		if (node instanceof GSList) {
-			return -1;
-		}
-		if (node instanceof GSListIndex) {
-			return 2;
-		}
-		if (node instanceof GSWhileLoop) {
-			return 2;
-		}
-		if (node instanceof GSLogicalAnd) {
-			return -1;
-		}
-		if (node instanceof GSLogicalOr) {
-			return -1;
-		}
-		if (node instanceof GSInEquality) {
-			return -1;
-		}
-		if (node instanceof GSEquality) {
-			return -1;
-		}
-		if (node instanceof GSGreaterThan) {
-			return -1;
-		}
-		if (node instanceof GSLessThan) {
-			return -1;
-		}
-		if (node instanceof GSGreaterOrEqualThan) {
-			return -1;
-		}
-		if (node instanceof GSLessOrEqualThan) {
-			return -1;
-		}
-		if (node instanceof GSAdd) {
-			return -1;
-		}
-		if (node instanceof GSSubtract) {
-			return -1;
-		}
-		if (node instanceof GSMultiply) {
-			return -1;
-		}
-		if (node instanceof GSDivide) {
-			return -1;
-		}
-		if (node instanceof GSLogicalNot) {
-			return 1;
-		}
-		if (node instanceof GSUnaryMinus) {
-			return 1;
-		}
-		if (node instanceof GSReturn) {
-			return -1;
-		}
-		if (node instanceof GSDiscardExpression) {
-			return -1;
-		}
-		throw new SystemImplementationException(
-				"Expected Children not defined for node "+node.getClass().getName()+" at line "+
-				node.jjtGetFirstToken().beginLine+", column "+node.jjtGetFirstToken().beginColumn);
+	@Override
+	public int version() {
+		return COMPILER_VERSION;
 	}
+	
+	// ----- Internal Instance -----
+
 	
 	private void addDebug(@Nonnull final List<ByteCode> compiled,@Nonnull final ParseNode node) {
 		final Token firsttoken=node.jjtGetFirstToken();
@@ -574,23 +468,7 @@ public class GSStackVMCompiler extends GSCompiler {
 		throw new SystemImplementationException(
 				"Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
 	}
-	
-	private void checkType(@Nonnull final ParseNode node,
-	                       final int pos,
-	                       @Nonnull final Class<? extends ParseNode> clazz) {
-		if (node.jjtGetNumChildren()<pos) {
-			throw new GSInternalError(
-					"Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+
-					clazz.getName());
-		}
-		final Node child=node.jjtGetChild(pos);
-		if (!child.getClass().equals(clazz)) {
-			throw new GSInternalError(
-					"Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+
-					" not the expected "+clazz.getName());
-		}
-	}
-	
+
 	private boolean validFunction(final String name) {
 		for (final String funname: GSFunctions.getAll().keySet()) {
 			if (funname.equals(name)) {

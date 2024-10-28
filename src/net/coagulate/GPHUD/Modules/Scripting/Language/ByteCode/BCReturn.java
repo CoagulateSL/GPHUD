@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
@@ -27,7 +27,7 @@ public class BCReturn extends ByteCode {
 	}
 	
 	@Override
-	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSStackVM vm,final boolean simulation) {
 		// this function is funky.  We expect to find the following on the stack:
 		// 1) A return value, whatever the last evaluation left behind
 		// 2) A canary, should match the vm's random canary

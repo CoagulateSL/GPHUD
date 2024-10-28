@@ -2,7 +2,7 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
@@ -47,7 +47,7 @@ public class BCGroup extends ByteCodeDataType {
 	}
 	
 	@Override
-	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSStackVM vm,final boolean simulation) {
 		vm.push(this);
 	}
 	

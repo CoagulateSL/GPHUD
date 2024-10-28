@@ -2,11 +2,11 @@ package net.coagulate.GPHUD.Modules.Scripting;
 
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Interfaces.Inputs.Button;
 import net.coagulate.GPHUD.Interfaces.Inputs.CheckBox;
+import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.Inputs.TextInput;
 import net.coagulate.GPHUD.Interfaces.Outputs.Paragraph;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
@@ -15,7 +15,6 @@ import net.coagulate.GPHUD.Interfaces.Outputs.TextSubHeader;
 import net.coagulate.GPHUD.Interfaces.RedirectionException;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCode;
-import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCodeDataType;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSCompiler;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
@@ -31,7 +30,6 @@ import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.RESULTS;
 import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULATION;
@@ -105,6 +103,7 @@ public class ScriptingConfig {
 			if (!values.get("scriptalias").isEmpty()) {
 				script.alias(values.get("scriptalias"));
 			}
+			String compilerVersion=values.get("Compiler");
 			if (!values.get("scriptsource").isEmpty()) {
 				script.setSource(values.get("scriptsource"));
 				f.p("Script source saved OK!");
@@ -139,9 +138,9 @@ public class ScriptingConfig {
 						            "Saved script, with parse failures");
 					}
 					if (gsscript!=null) {
-						final GSCompiler compiler=new GSCompiler(gsscript,script.getName());
+						final GSCompiler compiler=GSCompiler.create(compilerVersion,gsscript,script.getName());
 						compiler.compile(st);
-						script.setBytecode(compiler.toByteCode(st),version,GSCompiler.COMPILER_VERSION);
+						script.setBytecode(compiler.toByteCode(st),version,compiler.version());
 						f.p("Script compiled and saved OK!");
 						Audit.audit(true,
 						            st,
@@ -186,6 +185,8 @@ public class ScriptingConfig {
 			f.br();
 			f.add("<textarea name=scriptsource rows=25 cols=80>"+script.getSource()+"</textarea>");
 			f.br();
+			if (compilerVersion==null || compilerVersion.isBlank()) { compilerVersion="V2-GSStackVM/Relative"; }
+			f.add(new DropDownList("Compiler").add("V2-GSStackVM/Relative").add("V3-GSJavaVM").setValue(compilerVersion));
 			f.add(new Button("Save Source","Save Source"));
 			f.br().br().add("<hr>").br();
 			f.add("Debugging information: ");
@@ -200,29 +201,29 @@ public class ScriptingConfig {
 			f.br();
 			if ("View Parse Tree".equals(values.get("View Parse Tree"))||"View ALL".equals(values.get("View ALL"))) {
 				f.add("<hr>").br().add(new TextSubHeader("Parse Tree Output"));
-				f.add(debug(st,script.getSource(),STAGE.PARSER));
+				f.add(debug(st,compilerVersion,script.getSource(),STAGE.PARSER));
 			}
 			if ("View Compiler Output".equals(values.get("View Compiler Output"))||
 			    "View ALL".equals(values.get("View ALL"))) {
 				f.add("<hr>").br().add(new TextSubHeader("Compiler Output"));
-				f.add(debug(st,script.getSource(),STAGE.COMPILER));
+				f.add(debug(st,compilerVersion,script.getSource(),STAGE.COMPILER));
 			}
 			if ("View Raw ByteCode".equals(values.get("View Raw ByteCode"))||
 			    "View ALL".equals(values.get("View ALL"))) {
 				f.add("<hr>").br().add(new TextSubHeader("Raw ByteCode"));
-				f.add(debug(st,script.getSource(),STAGE.BYTECODE));
+				f.add(debug(st,compilerVersion,script.getSource(),STAGE.BYTECODE));
 			}
 			if ("View Disassembly".equals(values.get("View Disassembly"))||"View ALL".equals(values.get("View ALL"))) {
 				f.add("<hr>").br().add(new TextSubHeader("Disassembly"));
-				f.add(debug(st,script.getSource(),STAGE.DISASSEMBLY));
+				f.add(debug(st,compilerVersion,script.getSource(),STAGE.DISASSEMBLY));
 			}
 			if ("View Simulation".equals(values.get("View Simulation"))||"View ALL".equals(values.get("View ALL"))) {
 				f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-				f.add(debug(st,script.getSource(),SIMULATION));
+				f.add(debug(st,compilerVersion,script.getSource(),SIMULATION));
 			}
 			if ("View Results".equals(values.get("View Results"))||"View ALL".equals(values.get("View ALL"))) {
 				f.add("<hr>").br().add(new TextSubHeader("Simulation"));
-				f.add(debug(st,script.getSource(),RESULTS));
+				f.add(debug(st,compilerVersion,script.getSource(),RESULTS));
 			}
 			//if (GPHUD.DEV && values.get("DEBUG").equals("DEBUG")) { Scripts.test(); }
 		} catch (final NoDataException e) {
@@ -232,7 +233,7 @@ public class ScriptingConfig {
 	
 	// ----- Internal Statics -----
 	@Nonnull
-	private static String debug(@Nonnull final State st,@Nonnull final String script,final STAGE stage) {
+	private static String debug(@Nonnull final State st,@Nonnull final String compilerVersion,@Nonnull final String script,final STAGE stage) {
 		final ByteArrayInputStream bais=new ByteArrayInputStream(script.getBytes());
 		final GSParser parser=new GSParser(bais);
 		parser.enable_tracing();
@@ -254,7 +255,8 @@ public class ScriptingConfig {
 		
 		final GSCompiler compiler;
 		try {
-			compiler=new GSCompiler(gsscript,"SIMULATION");
+			
+			compiler=GSCompiler.create(compilerVersion,gsscript,"SIMULATION");
 			if (stage==STAGE.COMPILER) {
 				final List<ByteCode> bytecode=compiler.compile(st);
 				final StringBuilder code=new StringBuilder("<pre><table border=0>");
@@ -295,7 +297,7 @@ public class ScriptingConfig {
 			return bcstring.toString();
 		}
 		
-		final GSVM gsvm=new GSVM(rawcode);
+		final GSVM gsvm=GSVM.create(2,rawcode);  // TODO, probably fix me
 		if (stage==STAGE.DISASSEMBLY) {
 			return gsvm.toHtml();
 		}
@@ -303,7 +305,7 @@ public class ScriptingConfig {
 		try {
 			if (stage==SIMULATION||stage==RESULTS) {
 				final long start=System.currentTimeMillis();
-				final List<GSVM.ExecutionStep> steps=gsvm.simulate(st);
+				final List<GSVM.GSVMExecutionStep> steps=gsvm.simulate(st);
 				final long end=System.currentTimeMillis();
 				final StringBuilder output=new StringBuilder("<p><i>Run time: "+(end-start)+
 				                                             " ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th"+
@@ -315,14 +317,14 @@ public class ScriptingConfig {
 						index=0;
 					}
 					for (;index<steps.size();index++) {
-						output.append(formatStep(steps.get(index)));
+						output.append(steps.get(index).formatStep());
 					}
 				} else {
 					if (steps.size()>1) {
-						output.append(formatStep(steps.get(steps.size()-2)));
+						output.append(steps.get(steps.size()-2).formatStep());
 					}
 					if (!steps.isEmpty()) {
-						output.append(formatStep(steps.get(steps.size()-1)));
+						output.append(steps.get(steps.size()-1).formatStep());
 					}
 				}
 				output.append("</table>");
@@ -338,46 +340,7 @@ public class ScriptingConfig {
 		return "Did nothing (?)";
 	}
 	
-	@Nonnull
-	private static String formatStep(@Nonnull final GSVM.ExecutionStep step) {
-		final StringBuilder output=new StringBuilder();
-		output.append("<tr><td>")
-		      .append(step.instructionCount)
-		      .append("</td><th>")
-		      .append(step.programCounter)
-		      .append("</th><td>")
-		      .append(step.decode)
-		      .append("</td><td><table>");
-		for (int i=0;i<step.resultingstack.size();i++) {
-			output.append("<tr><th>")
-			      .append(i)
-			      .append("</th><td>")
-			      .append(step.resultingstack.get(i).htmlDecode())
-			      .append("</td></tr>");
-		}
-		output.append("</table></td><td><table>");
-		for (final Map.Entry<String,ByteCodeDataType> entry: step.resultingvariables.entrySet()) {
-			String decode="???";
-			final boolean italics=entry.getKey().startsWith(" ");
-			if (entry.getValue()!=null) {
-				decode=entry.getValue().htmlDecode();
-			}
-			output.append("<tr><th>")
-			      .append(italics?"<i>":"")
-			      .append(entry.getKey())
-			      .append(italics?"</i>":"")
-			      .append("</th><td>")
-			      .append(italics?"<i>":"")
-			      .append(decode.replaceAll("<td>","<td>"+(italics?"<i>":"")))
-			      .append(italics?"</i>":"")
-			      .append("</td></tr>");
-		}
-		output.append("</table></td></tr>");
-		if (step.t!=null) {
-			output.append("<tr><td colspan=100>").append(ExceptionTools.toHTML(step.t)).append("</td></tr>");
-		}
-		return output.toString();
-	}
+
 	
 	public enum STAGE {
 		PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS

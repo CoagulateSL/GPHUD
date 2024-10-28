@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSCastException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 
 import javax.annotation.Nonnull;
@@ -81,10 +80,6 @@ public abstract class ByteCodeDataType extends ByteCode {
 			return (BCString)this;
 		}
 		throw new GSCastException("Can not cast "+getClass().getSimpleName()+" to BCString",true);
-	}
-	
-	public void stack(@Nonnull final GSVM vm) {
-		vm.push(this);
 	}
 	
 	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */

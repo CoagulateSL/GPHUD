@@ -234,7 +234,7 @@ public class Connect {
 				loginmessages.add("===> Character initialisation script "+initscript+" was not found");
 				return null;
 			} else {
-				final GSVM initialisecharacter=new GSVM(init);
+				final GSVM initialisecharacter=GSVM.create(init);
 				initialisecharacter.invokeOnExit("GPHUDClient.postConnect");
 				final Response response=initialisecharacter.execute(st);
 				if (initialisecharacter.suspended()) { // bail here

@@ -2,12 +2,12 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.Core.Exceptions.SystemException;
 import net.coagulate.Core.Exceptions.UserException;
+import net.coagulate.Core.Tools.ExceptionTools;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Data.ScriptRun;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
-import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
@@ -20,29 +20,23 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GSStackVM extends GSVM {
 	// GPHUD Scripting Virtual Machine ... smiley face
 	
-	public final    Stack<ByteCodeDataType>      stack        =new Stack<>();
-	public final    Map<String,ByteCodeDataType> variables    =new TreeMap<>();
-	final           Map<Char,JSONObject>         queue        =new HashMap<>();
-	final           Map<String,ByteCodeDataType> introductions=new HashMap<>();
-	@Nonnull public byte[]                       bytecode;
+	public final    Stack<ByteCodeDataType> stack=new Stack<>();
+	@Nonnull public byte[]                  bytecode;
 	/**
 	 * As in what instruction we're executing ; R15 if you ARM
 	 */
-	public          int                          programCounter;
-	public          int                          row;
-	public          int                          column;
-	public          boolean                      simulation;
-	public          String                       source;
+	public          int                     programCounter;
+	public          int                     row;
+	public          int                     column;
+	public          String                  source;
 	/**
 	 * Total number of instructions executed, not to be confused with programCounter ; this is a resource limit counter
 	 */
 	int instructionCount;
 	@Nullable String invokeonexit;
 	boolean suspended;
-	private           int   startPC;
-	private           int   pid;
-	private           int   suspensions;
-	@Nullable private State invokerstate;
+	private int startPC;
+	private int suspensions;
 	
 	public GSStackVM(@Nonnull final Byte[] code) {
 		bytecode=new byte[code.length];
@@ -60,9 +54,6 @@ public class GSStackVM extends GSVM {
 		introduce(" CANARY",new BCInteger(null,ThreadLocalRandom.current().nextInt()));
 	}
 	
-	public void introduce(final String target,final ByteCodeDataType data) {
-		introductions.put(target,data);
-	}
 	
 	public GSStackVM(@Nonnull final ScriptRun run,@Nonnull final State st) {
 		st.vm=this;
@@ -72,14 +63,14 @@ public class GSStackVM extends GSVM {
 		executeloop(st);
 		// stack and variables should now be restored, configure for resuming the run.
 		bytecode=run.getByteCode();
-		programCounter=((BCInteger)(variables.get(" PC"))).getContent();
-		instructionCount=((BCInteger)(variables.get(" IC"))).getContent();
-		if (variables.containsKey(" SOURCE")) {
-			source=((BCString)(variables.get(" SOURCE"))).getContent();
+		programCounter=getInteger(" PC",false).getContent();
+		instructionCount=getInteger(" IC",false).getContent();
+		if (existsVariable(" SOURCE")) {
+			source=getString(" SOURCE",false).getContent();
 		}
-		suspensions=((BCInteger)(variables.get(" SUSP"))).getContent();
-		if (variables.containsKey((" ONEXIT"))) {
-			invokeonexit=((BCString)variables.get(" ONEXIT")).getContent();
+		suspensions=getInteger(" SUSP",false).getContent();
+		if (existsVariable(" ONEXIT")) {
+			invokeonexit=getString(" ONEXIT",false).getContent();
 		}
 		// caller should now call resume() to return to the program.  caller may want to tickle the stack first though, if thats why we suspended.
 	}
@@ -93,16 +84,15 @@ public class GSStackVM extends GSVM {
 		startPC=0;
 		row=0;
 		column=0;
-		variables.clear();
-		simulation=false;
-		variables.putAll(introductions);
-		if (!variables.containsKey("CALLER")) {
-			variables.put("CALLER",new BCCharacter(null,st.getCharacter()));
+		clearVariables();
+		
+		if (!existsVariable("CALLER")) {
+			putVariable("CALLER",new BCCharacter(null,st.getCharacter()));
 		}
-		if (!variables.containsKey("AVATAR")) {
-			variables.put("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
+		if (!existsVariable("AVATAR")) {
+			putVariable("AVATAR",new BCAvatar(null,st.getAvatarNullable()));
 		}
-		invokerstate=st;
+		setInvokerState(st);
 		// return compatible stack state
 		if (!skipCanary) {
 			push(new BCInteger(null,-1));
@@ -112,12 +102,12 @@ public class GSStackVM extends GSVM {
 	
 	@Nonnull
 	private Response executeloop(@Nonnull final State st) {
-		ExecutionStep currentstep=new ExecutionStep();
+		GSStackVMExecutionStep currentstep=new GSStackVMExecutionStep();
 		try {
 			while (programCounter>=0&&programCounter<bytecode.length&&!suspended) {
 				increaseIC();
 				//noinspection UnusedAssignment
-				currentstep=new ExecutionStep();
+				currentstep=new GSStackVMExecutionStep();
 				startPC=programCounter;
 				ByteCode.load(this).execute(st,this,false);
 			}
@@ -151,7 +141,7 @@ public class GSStackVM extends GSVM {
 	}
 	
 	public int getCanary() {
-		final ByteCodeDataType canary=variables.get(" CANARY");
+		final ByteCodeDataType canary=getVariable(" CANARY",true);
 		if (canary==null) {
 			throw new GSInternalError("Canary not found? ("+source+" - "+row+":"+column+")");
 		}
@@ -172,33 +162,6 @@ public class GSStackVM extends GSVM {
 		        "");
 	}
 	
-	@Nonnull
-	public Response dequeue(final State st,final Char target) {
-		final boolean debug=false;
-		JSONObject totarget=new JSONObject();
-		if (target!=null) {
-			totarget=getQueue(target);
-			if (pid!=0) {
-				totarget.put("processid",String.valueOf(pid));
-			}
-			queue.remove(target);
-		}
-		for (final Char k: queue.keySet()) {
-			final JSONObject totransmit=getQueue(k);
-			if (pid!=0) {
-				totransmit.put("processid",String.valueOf(pid));
-			}
-			new Transmission(k,totransmit).start();
-		}
-		return new JSONResponse(totarget);
-	}
-	
-	private JSONObject getQueue(final Char c) {
-		if (!queue.containsKey(c)) {
-			queue.put(c,new JSONObject());
-		}
-		return queue.get(c);
-	}
 	
 	// ---------- INSTANCE ----------
 	// AN INSTANCE IS NOT THREAD SAFE :P  make many instances :P
@@ -220,35 +183,31 @@ public class GSStackVM extends GSVM {
 	
 	public void set(final String k,@Nonnull final ByteCodeDataType v) {
 		// does it already exist?
-		final ByteCodeDataType existing=get(k);
+		final ByteCodeDataType existing=getVariable(k,true);
 		if (existing==null) {
-			variables.put(k,v); // hopefully we're initialising :P
+			putVariable(k,v); // hopefully we're initialising :P
 			return;
 		}
 		if (existing.getClass().equals(v.getClass())) {
-			variables.put(k,v);
+			putVariable(k,v);
 			return;
 		}
 		// auto polymorphism.
 		if (existing.getClass().equals(BCString.class)) {
-			variables.put(k,v.toBCString());
+			putVariable(k,v.toBCString());
 			return;
 		}
 		if (existing.getClass().equals(BCInteger.class)) {
-			variables.put(k,v.toBCInteger());
+			putVariable(k,v.toBCInteger());
 			return;
 		}
 		if (existing.getClass().equals(BCFloat.class)) {
-			variables.put(k,v.toBCFloat());
+			putVariable(k,v.toBCFloat());
 			return;
 		}
 		throw new GSInvalidExpressionException(
 				"Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+
 				existing.getClass().getSimpleName(),true);
-	}
-	
-	public ByteCodeDataType get(final String k) {
-		return variables.get(k);
 	}
 	
 	@Nonnull
@@ -278,7 +237,7 @@ public class GSStackVM extends GSVM {
 	
 	@Nonnull
 	public BCList getList(final String name) {
-		final ByteCodeDataType raw=get(name);
+		final ByteCodeDataType raw=getVariable(name,true);
 		if (raw==null) {
 			throw new GSInvalidExpressionException("Variable "+name+" does not exist");
 		}
@@ -303,7 +262,7 @@ public class GSStackVM extends GSVM {
 		}
 		ret.append("</table>");
 		ret.append("<h3>Variable store</h3><br><table>");
-		for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
+		for (final Map.Entry<String,ByteCodeDataType> entry: variables().entrySet()) {
 			ret.append("<tr><th>").append(entry.getKey()).append("</th>");
 			final ByteCodeDataType value=entry.getValue();
 			ret.append("<td>")
@@ -346,90 +305,29 @@ public class GSStackVM extends GSVM {
 		return line+"</td></tr></table>";
 	}
 	
-	public void queueSayAs(@Nonnull final Char ch,final String message) {
-		final JSONObject out=getQueue(ch);
-		JSONResponse.sayAs(out,ch.getName(),message,ch.getProtocol());
-	}
-	
-	public void queueSay(@Nonnull final Char ch,final String message) {
-		final JSONObject out=getQueue(ch);
-		JSONResponse.sayAsHud(out,message,ch.getProtocol());
-	}
-	
-	public void queueTeleport(final Char ch,final String hudRepresentation) {
-		final JSONObject queue=getQueue(ch);
-		queue.put("teleport",hudRepresentation);
-	}
-	
-	@Nonnull
-	public Response resume(@Nonnull final State st) {
-		invokerstate=st;
-		return executeloop(st);
-	}
-	
-	public void queueOwnerSay(final Char ch,final String message) {
-		final JSONObject out=getQueue(ch);
-		JSONResponse.ownerSay(out,message,ch.getProtocol());
-	}
-	
-	public void queueSelectCharacter(final Char ch,final String description,final boolean allowManualSelection) {
-		final JSONObject out=getQueue(ch);
-		out.put("args",1);
-		out.put("arg0name","response");
-		out.put("arg0type","SENSORCHAR");
-		if (allowManualSelection) {
-			out.put("arg0manual","yes");
-		}
-		out.put("arg0description",description);
-		out.put("incommand","runtemplate");
-		out.put("invoke","Scripting.CharacterResponse");
-	}
-	
-	public void queueGetText(final Char ch,final String description) {
-		final JSONObject out=getQueue(ch);
-		out.put("args",1);
-		out.put("arg0name","response");
-		out.put("arg0type","TEXTBOX");
-		out.put("arg0description",description);
-		out.put("incommand","runtemplate");
-		out.put("invoke","Scripting.StringResponse");
-	}
-	
-	public void queueGetChoice(final Char ch,final String description,@Nonnull final List<String> options) {
-		final JSONObject out=getQueue(ch);
-		out.put("args",1);
-		out.put("arg0name","response");
-		out.put("arg0type","SELECT");
-		out.put("arg0description",description);
-		for (int i=0;i<options.size();i++) {
-			out.put("arg"+0+"button"+i,options.get(i));
-		}
-		out.put("incommand","runtemplate");
-		out.put("invoke","Scripting.StringResponse");
-	}
-	
 	public void suspend(final State st,@Nonnull final Char respondant) {
-		variables.put(" PC",new BCInteger(null,programCounter));
-		variables.put(" IC",new BCInteger(null,instructionCount));
-		variables.put(" SUSP",new BCInteger(null,suspensions));
+		putVariable(" PC",new BCInteger(null,programCounter));
+		putVariable(" IC",new BCInteger(null,instructionCount));
+		putVariable(" SUSP",new BCInteger(null,suspensions));
 		if (source!=null) {
-			variables.put(" SOURCE",new BCString(null,source));
+			putVariable(" SOURCE",new BCString(null,source));
 		}
 		if (invokeonexit!=null) {
-			variables.put(" ONEXIT",new BCString(null,invokeonexit));
+			putVariable(" ONEXIT",new BCString(null,invokeonexit));
 		}
 		suspensions++;
 		if (suspensions>10) {
 			throw new GSResourceLimitExceededException(
 					"Maximum number of VM suspensions reached - too many user input requests?");
 		}
+		putVariable(" SUSPENSIONS",new BCInteger(null,suspensions));
 		// simulations dont suspend.  but do update the variables and fake a suspension count.  for completeness :P
-		if (simulation) {
+		if (simulation()) {
 			return;
 		}
 		suspended=true;
 		final List<ByteCode> initlist=new ArrayList<>(stack);
-		for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
+		for (final Map.Entry<String,ByteCodeDataType> entry: variables().entrySet()) {
 			final ByteCodeDataType bcd=entry.getValue();
 			if (bcd.getClass().equals(BCList.class)) {
 				final BCList list=(BCList)bcd;
@@ -465,21 +363,27 @@ public class GSStackVM extends GSVM {
 		//return dequeue(st,st.getCharacter(),run.getId());
 	}
 	
-	@Nullable
-	public State getInvokerState() {
-		return invokerstate;
+	@Override
+	public void setReturn(final ByteCodeDataType bcdt) {
+	
 	}
 	
 	@Nonnull
-	public List<ExecutionStep> simulate(@Nonnull final State st) {
-		invokerstate=st;
-		final List<ExecutionStep> simulationsteps=new ArrayList<>();
+	public Response resume(@Nonnull final State st) {
+		setInvokerState(st);
+		return executeloop(st);
+	}
+	
+	@Nonnull
+	public List<GSVMExecutionStep> simulate(@Nonnull final State st) {
+		setInvokerState(st);
+		final List<GSVMExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM(st,false);
-		simulation=true;
+		setSimulation();
 		try {
 			while (programCounter>=0&&programCounter<bytecode.length) {
 				increaseIC();
-				final ExecutionStep frame=new ExecutionStep();
+				final GSStackVMExecutionStep frame=new GSStackVMExecutionStep();
 				frame.programCounter=programCounter;
 				startPC=programCounter;
 				final ByteCode instruction=ByteCode.load(this);
@@ -488,7 +392,7 @@ public class GSStackVM extends GSVM {
 				for (int i=0;i<stack.size();i++) {
 					frame.resultingstack.push(stack.elementAt(i).clone());
 				}
-				for (final Map.Entry<String,ByteCodeDataType> entry: variables.entrySet()) {
+				for (final Map.Entry<String,ByteCodeDataType> entry: variables().entrySet()) {
 					ByteCodeDataType clone=null;
 					if (entry.getValue()!=null) {
 						clone=entry.getValue().clone();
@@ -499,7 +403,7 @@ public class GSStackVM extends GSVM {
 				simulationsteps.add(frame);
 			}
 		} catch (@Nonnull final Throwable e) {
-			final ExecutionStep step=new ExecutionStep();
+			final GSStackVMExecutionStep step=new GSStackVMExecutionStep();
 			step.t=e;
 			step.decode=at();
 			simulationsteps.add(step);
@@ -530,12 +434,54 @@ public class GSStackVM extends GSVM {
 		return ret;
 	}
 	
-	public static class ExecutionStep {
+	public static class GSStackVMExecutionStep extends GSVMExecutionStep {
 		public final     Stack<ByteCodeDataType>      resultingstack    =new Stack<>();
 		public final     Map<String,ByteCodeDataType> resultingvariables=new TreeMap<>();
 		public           int                          programCounter;
 		@Nullable public String                       decode            ="";
 		@Nullable public Throwable                    t;
 		public           int                          instructionCount;
+		
+		@Nonnull
+		@Override
+		public String formatStep() {
+			final StringBuilder output=new StringBuilder();
+			output.append("<tr><td>")
+			      .append(instructionCount)
+			      .append("</td><th>")
+			      .append(programCounter)
+			      .append("</th><td>")
+			      .append(decode)
+			      .append("</td><td><table>");
+			for (int i=0;i<resultingstack.size();i++) {
+				output.append("<tr><th>")
+				      .append(i)
+				      .append("</th><td>")
+				      .append(resultingstack.get(i).htmlDecode())
+				      .append("</td></tr>");
+			}
+			output.append("</table></td><td><table>");
+			for (final Map.Entry<String,ByteCodeDataType> entry: resultingvariables.entrySet()) {
+				String decode="???";
+				final boolean italics=entry.getKey().startsWith(" ");
+				if (entry.getValue()!=null) {
+					decode=entry.getValue().htmlDecode();
+				}
+				output.append("<tr><th>")
+				      .append(italics?"<i>":"")
+				      .append(entry.getKey())
+				      .append(italics?"</i>":"")
+				      .append("</th><td>")
+				      .append(italics?"<i>":"")
+				      .append(decode.replaceAll("<td>","<td>"+(italics?"<i>":"")))
+				      .append(italics?"</i>":"")
+				      .append("</td></tr>");
+			}
+			output.append("</table></td></tr>");
+			if (t!=null) {
+				output.append("<tr><td colspan=100>").append(ExceptionTools.toHTML(t)).append("</td></tr>");
+			}
+			return output.toString();
+		}
 	}
 }

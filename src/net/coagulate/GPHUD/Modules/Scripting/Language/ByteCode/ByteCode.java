@@ -4,7 +4,7 @@ import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.Data.User;
@@ -26,7 +26,7 @@ public abstract class ByteCode {
 	
 	// ---------- STATICS ----------
 	@Nonnull
-	public static ByteCode load(@Nonnull final GSVM vm) {
+	public static ByteCode load(@Nonnull final GSStackVM vm) {
 		final byte instruction=vm.bytecode[vm.programCounter];
 		final InstructionSet decode=ByteCode.get(instruction);
 		if (decode==null) {
@@ -156,7 +156,7 @@ public abstract class ByteCode {
 		return getClass().getSimpleName().replaceFirst("BC","")+"</td><td>";
 	}
 	
-	public abstract void execute(State st,GSVM vm,boolean simulation);
+	public abstract void execute(State st,GSStackVM vm,boolean simulation);
 	
 	// ----- Internal Instance -----
 	void addInt(@Nonnull final List<Byte> bytes,final int a) {

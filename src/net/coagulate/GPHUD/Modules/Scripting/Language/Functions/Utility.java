@@ -15,7 +15,7 @@ public class Utility {
 	                        parameters="String - name of variable",
 	                        returns="Integer - 1 if the variable exists, otherwise 0")
 	public static BCInteger gsDefined(final State st,final GSVM vm,@Nonnull final BCString variableName) {
-		if (vm.variables.containsKey(variableName.getContent())) {
+		if (vm.variables().containsKey(variableName.getContent())) {
 			return new BCInteger(null,1);
 		}
 		return new BCInteger(null,0);

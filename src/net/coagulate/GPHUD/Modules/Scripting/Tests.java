@@ -21,8 +21,8 @@ public class Tests {
 	
 	private static void compileScript(final TestFramework f,final String script) throws ParseException {
 		final ByteArrayInputStream bais=new ByteArrayInputStream(script.getBytes());
-		final GSCompiler compiler=new GSCompiler(new GSParser(bais).Start(),"Internal Test Script");
+		final GSCompiler compiler=GSCompiler.create("V2-GSStackVM/Relative",new GSParser(bais).Start(),"Internal Test Script");
 		compiler.compile(f.primaryHUD.state);
-		new GSVM(compiler.toByteCode(f.primaryHUD.state)).execute(f.primaryHUD.state);
+		GSVM.create(2,compiler.toByteCode(f.primaryHUD.state)).execute(f.primaryHUD.state);
 	}
 }

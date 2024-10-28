@@ -131,8 +131,9 @@ public class DropDownList extends Input {
 	}
 	
 	// ---------- INSTANCE ----------
-	public void add(final String choice) {
+	public DropDownList add(final String choice) {
 		choices.put(choice,choice);
+		return this;
 	}
 	
 	@Nonnull

@@ -29,7 +29,7 @@ public class Input {
 	                                            @Nonnull final GSVM vm,
 	                                            @Nonnull final BCCharacter target,
 	                                            @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			vm.suspend(st,st.getCharacter());
 			return target;
 		}
@@ -56,7 +56,7 @@ public class Input {
 	                                                         @Nonnull final BCCharacter target,
 	                                                         @Nonnull final BCString message,
 	                                                         @Nonnull final BCInteger allowManual) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			vm.suspend(st,st.getCharacter());
 			return target;
 		}
@@ -82,7 +82,7 @@ public class Input {
 	                                 @Nonnull final GSVM vm,
 	                                 @Nonnull final BCCharacter target,
 	                                 @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			vm.suspend(st,st.getCharacter());
 			return new BCString(null,"Simulated user input");
 		}
@@ -108,7 +108,7 @@ public class Input {
 	                                   @Nonnull final BCCharacter target,
 	                                   @Nonnull final BCString message,
 	                                   @Nonnull final BCList choices) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			vm.suspend(st,st.getCharacter());
 			if (choices.getContent().isEmpty()) {
 				return new BCString(null,"Simulation with empty choice list");

@@ -1,6 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
@@ -24,7 +24,7 @@ public class BCDivide2 extends ByteCode {
 	}
 	
 	@Override
-	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSStackVM vm,final boolean simulation) {
 		final ByteCodeDataType arg2=vm.pop();
 		final ByteCodeDataType arg1=vm.pop();
 		vm.push(arg1.divide(arg2));

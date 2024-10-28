@@ -1,7 +1,7 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
@@ -35,7 +35,7 @@ public class BCLabel extends ByteCode {
 	}
 	
 	@Override
-	public void execute(final State st,final GSVM vm,final boolean simulation) {
+	public void execute(final State st,final GSStackVM vm,final boolean simulation) {
 		throw new GSInternalError(
 				"Can not execute the LABEL instruction, it is a pseudocode marker for compilation only");
 	}

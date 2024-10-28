@@ -84,7 +84,7 @@ public class RunScript extends ObjectType {
 			return new ErrorResponse("Script '"+json.getString("script")+"' does not exist");
 		}
 		script.validate(st);
-		final GSVM vm=new GSVM(script);
+		final GSVM vm=GSVM.create(script);
 		vm.introduce("CALLER",new BCCharacter(null,clicker));
 		vm.introduce("CALLERUUID",new BCString(null,clicker.getPlayedBy().getUUID()));
 		populateVmVariables(st,vm);

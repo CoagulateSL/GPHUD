@@ -6,6 +6,7 @@ import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
 import net.coagulate.GPHUD.Modules.Scripting.Language.*;
 import net.coagulate.GPHUD.State;
+import org.apache.commons.lang3.NotImplementedException;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +30,7 @@ public class BCInvoke extends ByteCode {
 	}
 	
 	@Override
-	public void execute(final State st,@Nonnull final GSVM vm,final boolean simulation) {
+	public void execute(final State st,@Nonnull final GSStackVM vm,final boolean simulation) {
 		final String functionname=vm.popString().getContent();
 		final Method function=GSFunctions.getNullable(functionname);
 		final int argcount=vm.popInteger().getContent();
@@ -64,7 +65,7 @@ public class BCInvoke extends ByteCode {
 			if (parameters.length==3&&parameters[2].equals(ByteCodeDataType[].class)) {
 				// yes and the 3rd parameter catches them all (varargs style)
 				final Object[] pass={st,vm,args};
-				invoke(st,vm,function,pass);
+				vm.push(invoke(st,vm,function,pass));
 				return;
 			}
 			// otherwise we have multiple arguments at both ends, does it match?
@@ -86,19 +87,21 @@ public class BCInvoke extends ByteCode {
 				}
 				pass[i+2]=args[i];
 			}
-			invoke(st,vm,function,pass);
+			vm.push(invoke(st,vm,function,pass));
 			return;
 		}
 		// no arguments
-		invoke(st,vm,function,new Object[] {st,vm});
+		vm.push(invoke(st,vm,function,new Object[] {st,vm}));
 	}
 	
 	private void executeCall(final State st,
-	                         @Nonnull final GSVM vm,
+	                         @Nonnull final GSStackVM vm,
 	                         final boolean simulation,
 	                         @Nonnull final String scriptname) {
 		// well then.  We need the function in memory, set up the return function and jump to it, also dealing with debug info and stuff.  ehh
 		// 1) Load function
+		throw new NotImplementedException("This needs coding");
+		/*
 		if (vm.get(" CODEBASE "+scriptname)==null) { // function is not loaded
 			final Script script=Script.findNullable(st,scriptname);
 			if (script==null) {
@@ -123,13 +126,14 @@ public class BCInvoke extends ByteCode {
 		// 3) Call function
 		vm.programCounter=targetPC;
 		// 4) Restore debug - can't do this here, we lose control in (3) - compiler must reassert this :)
+		 */
 	}
 	
 	// ----- Internal Instance -----
-	private void invoke(final State st,
-	                    @Nonnull final GSVM vm,
-	                    @Nonnull final Method function,
-	                    final Object[] parameters) {
+	private ByteCodeDataType invoke(final State st,
+	                                @Nonnull final GSVM vm,
+	                                @Nonnull final Method function,
+	                                final Object[] parameters) {
 		final Object rawret;
 		try {
 			rawret=function.invoke(null,parameters);
@@ -158,7 +162,6 @@ public class BCInvoke extends ByteCode {
 					"No cause to invocation target exception from "+function.getDeclaringClass().getSimpleName()+"/"+
 					function.getName(),e);
 		}
-		final ByteCodeDataType ret=(ByteCodeDataType)rawret;
-		ret.stack(vm);
+		return (ByteCodeDataType)rawret;
 	}
 }

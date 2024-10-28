@@ -35,7 +35,7 @@ public class Output {
 	                                    @Nonnull final GSVM vm,
 	                                    @Nonnull final BCCharacter target,
 	                                    @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCInteger(null,0);
 		}
 		if (!target.isOnline()) {
@@ -57,7 +57,7 @@ public class Output {
 	                                   @Nonnull final GSVM vm,
 	                                   @Nonnull final BCCharacter target,
 	                                   @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCInteger(null,0);
 		}
 		if (!target.isOnline()) {
@@ -79,7 +79,7 @@ public class Output {
 	                                    @Nonnull final GSVM vm,
 	                                    @Nonnull final BCCharacter target,
 	                                    @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCInteger(null,0);
 		}
 		if (!target.isOnline()) {
@@ -100,7 +100,7 @@ public class Output {
 	                                   @Nonnull final GSVM vm,
 	                                   @Nonnull final BCCharacter target,
 	                                   @Nonnull final BCString landmark) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCInteger(null,0);
 		}
 		GSFunctions.assertModule(st,"Teleportation");
@@ -127,7 +127,7 @@ public class Output {
 	                                            @Nonnull final GSVM vm,
 	                                            @Nonnull final BCCharacter target,
 	                                            @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCInteger(null,0);
 		}
 		if (!target.isOnline()) {
@@ -149,7 +149,7 @@ public class Output {
 	                                           @Nonnull final GSVM vm,
 	                                           @Nonnull final BCCharacter target,
 	                                           @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCInteger(null,0);
 		}
 		if (!target.isOnline()) {
@@ -171,7 +171,7 @@ public class Output {
 	                                            @Nonnull final GSVM vm,
 	                                            @Nonnull final BCCharacter target,
 	                                            @Nonnull final BCString message) {
-		if (vm.simulation) {
+		if (vm.simulation()) {
 			return new BCInteger(null,0);
 		}
 		if (!target.isOnline()) {
