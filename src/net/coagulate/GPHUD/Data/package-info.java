@@ -26,8 +26,6 @@
 		
 package net.coagulate.GPHUD.Data;
 
-import net.coagulate.SL.ChangeLogging;
-
 import static net.coagulate.GPHUD.Classes.COMPONENT.Core;
 import static net.coagulate.GPHUD.Classes.Change;
 import static net.coagulate.SL.ChangeLogging.CHANGETYPE.Change;

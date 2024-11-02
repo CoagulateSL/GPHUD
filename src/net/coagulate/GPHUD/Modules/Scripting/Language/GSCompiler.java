@@ -20,8 +20,8 @@ import java.util.List;
 public abstract class GSCompiler {
 	private final ParseNode startnode;
 	private final String    scriptname;
-	private final int sourceVersion;
-	protected State compiledState=null;
+	private final int       sourceVersion;
+	protected     State     compiledState=null;
 	
 	protected GSCompiler(final Node passednode,final String scriptname,final int sourceVersion) {
 		if (!(passednode instanceof ParseNode)) {
@@ -41,8 +41,11 @@ public abstract class GSCompiler {
 	public String scriptname() {
 		return scriptname;
 	}
-
-	public static GSCompiler create(final String compiler,final GSStart gsscript,final String name,final int sourceVersion) {
+	
+	public static GSCompiler create(final String compiler,
+	                                final GSStart gsscript,
+	                                final String name,
+	                                final int sourceVersion) {
 		if ("V2-GSStackVM/Relative".equalsIgnoreCase(compiler)) {
 			return new GSStackVMCompiler(gsscript,name,sourceVersion);
 		}
@@ -51,12 +54,15 @@ public abstract class GSCompiler {
 		}
 		throw new UserInputInvalidChoiceException("Compiler '"+compiler+"'  is not handled");
 	}
-
+	
 	public int sourceVersion() {
 		return sourceVersion;
 	}
-
-	public State getCompiledState() { return compiledState; }
+	
+	public State getCompiledState() {
+		return compiledState;
+	}
+	
 	public List<ByteCode> compile(final State st) {
 		compiledState=st;
 		return _compile(st,startnode());
@@ -175,8 +181,8 @@ public abstract class GSCompiler {
 	
 	
 	protected void checkType(@Nonnull final ParseNode node,
-	                       final int pos,
-	                       @Nonnull final Class<? extends ParseNode> clazz) {
+	                         final int pos,
+	                         @Nonnull final Class<? extends ParseNode> clazz) {
 		if (node.jjtGetNumChildren()<pos) {
 			throw new GSInternalError(
 					"Checking type failed = has "+node.jjtGetNumChildren()+" and we asked for pos_0: "+pos+" in clazz "+

@@ -22,10 +22,10 @@ public class GSStackVMCompiler extends GSCompiler {
 	 * - Code compiled with version 2 compiler can run at any memory location so supports being included and memory mapped
 	 * - Code compiled prior to version 1 uses absolute jumps and will corrupt the script state if relocated from base address 0x0
 	 */
-	public static final    int       COMPILER_VERSION=1;
-	private                int       jumpnumber      =1;
-	private                int       lastdebuglineno =-1;
-	private                int       lastdebugcolno  =-1;
+	public static final int COMPILER_VERSION=1;
+	private             int jumpnumber      =1;
+	private             int lastdebuglineno =-1;
+	private             int lastdebugcolno  =-1;
 	
 	public GSStackVMCompiler(final Node passednode,@Nonnull final String scriptname,final int sourceVersion) {
 		super(passednode,scriptname,sourceVersion);
@@ -69,7 +69,7 @@ public class GSStackVMCompiler extends GSCompiler {
 	}
 	
 	// ----- Internal Instance -----
-
+	
 	
 	private void addDebug(@Nonnull final List<ByteCode> compiled,@Nonnull final ParseNode node) {
 		final Token firsttoken=node.jjtGetFirstToken();
@@ -84,7 +84,7 @@ public class GSStackVMCompiler extends GSCompiler {
 		}
 	}
 	
-
+	
 	@Nonnull
 	@Override
 	protected List<ByteCode> _compile(@Nonnull final State st,@Nonnull final ParseNode node) {
@@ -470,7 +470,7 @@ public class GSStackVMCompiler extends GSCompiler {
 		throw new SystemImplementationException(
 				"Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
 	}
-
+	
 	private boolean validFunction(final String name) {
 		for (final String funname: GSFunctions.getAll().keySet()) {
 			if (funname.equals(name)) {

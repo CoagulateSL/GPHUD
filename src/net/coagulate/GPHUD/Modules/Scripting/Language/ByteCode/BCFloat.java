@@ -113,9 +113,10 @@ public class BCFloat extends ByteCodeDataType {
 	public ByteCodeDataType clone() {
 		return new BCFloat(node(),content);
 	}
+	
 	@Override
-	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
-	public boolean strictlyEquals(final ByteCodeDataType find) {
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
+			final ByteCodeDataType find) {
 		if (!(find instanceof BCFloat)) {
 			return false;
 		}

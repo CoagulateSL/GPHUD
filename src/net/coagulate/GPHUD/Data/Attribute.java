@@ -245,14 +245,14 @@ public class Attribute extends TableRow {
 		final AtomicInteger loaded=new AtomicInteger();
 		db().dq("select * from attributes").forEach((row)->{
 			loaded.getAndIncrement();
-			Attribute a=get(row.getInt("attributeid"));
+			final Attribute a=get(row.getInt("attributeid"));
 			instanceCache.set(a,Instance.get(row.getInt("instanceid")));
 			a.setNameCache(row.getString("name"));
-			attributeTypeCache.set(a,ATTRIBUTETYPE.valueOf(row.getString("attributetype")));
+			attributeTypeCache.set(a,valueOf(row.getString("attributetype")));
 			subTypeCache.set(a,row.getStringNullable("grouptype"));
 			usesAbilityPointsCache.set(a,row.getBool("usesabilitypoints"));
-			requiredCache.set(a,row.getBoolNullable("required")==null?false:row.getBool("required"));
-			templatableCache.set(a,row.getBoolNullable("templatable")==null?false:row.getBool("templatable"));
+			requiredCache.set(a,row.getBoolNullable("required")!=null&&row.getBool("required"));
+			templatableCache.set(a,row.getBoolNullable("templatable")!=null&&row.getBool("templatable"));
 		});
 		GPHUD.getLogger("PreLoadCache").config("Loaded "+loaded+" attribute records");
 	}

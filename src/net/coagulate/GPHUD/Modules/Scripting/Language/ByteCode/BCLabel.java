@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BCLabel extends ByteCode {
-	final int id;
+	final     int     id;
 	@Nullable Integer address;
 	
 	public BCLabel(final ParseNode n,final int id) {

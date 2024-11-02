@@ -163,7 +163,7 @@ public class PermissionsGroup extends TableRow {
 		final AtomicInteger pgs=new AtomicInteger();
 		db().dqSlow("select permissionsgroupid,name,instanceid from permissionsgroups").forEach((row)->{
 			pgs.getAndIncrement();
-			PermissionsGroup pg=get(row.getInt("permissionsgroupid"));
+			final PermissionsGroup pg=get(row.getInt("permissionsgroupid"));
 			Instance.get(row.getInt("instanceid")).permissionsGroupResolverCache.set(row.getString("name"),pg);
 		});
 		GPHUD.getLogger("PreLoadCache").config("Loaded "+pgs+" permissions groups");

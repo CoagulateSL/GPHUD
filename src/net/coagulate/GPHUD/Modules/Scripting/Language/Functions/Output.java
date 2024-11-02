@@ -221,7 +221,9 @@ public class Output {
 	                                       @Nonnull final BCCharacter target,
 	                                       @Nonnull final BCString URL,
 	                                       @Nonnull final BCString description) {
-		if (!target.isOnline()) { return new BCInteger(null,1); }
+		if (!target.isOnline()) {
+			return new BCInteger(null,1);
+		}
 		final State bypass=new State(st.getInstanceNullable(),st.getRegionNullable(),st.zone,st.getCharacterNullable());
 		bypass.source=State.Sources.SYSTEM;
 		final Response response=OpenWebsite.offerWebsite(bypass,URL.getContent(),description.getContent());

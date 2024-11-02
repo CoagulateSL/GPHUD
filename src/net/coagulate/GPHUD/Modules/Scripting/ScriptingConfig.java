@@ -186,8 +186,12 @@ public class ScriptingConfig {
 			f.br();
 			f.add("<textarea name=scriptsource rows=25 cols=80>"+script.getSource()+"</textarea>");
 			f.br();
-			if (compilerVersion==null || compilerVersion.isBlank()) { compilerVersion="V2-GSStackVM/Relative"; }
-			f.add(new DropDownList("Compiler").add("V2-GSStackVM/Relative").add("V3-GSJavaVM").setValue(compilerVersion));
+			if (compilerVersion==null||compilerVersion.isBlank()) {
+				compilerVersion="V2-GSStackVM/Relative";
+			}
+			f.add(new DropDownList("Compiler").add("V2-GSStackVM/Relative")
+			                                  .add("V3-GSJavaVM")
+			                                  .setValue(compilerVersion));
 			f.add(new Button("Save Source","Save Source"));
 			f.br().br().add("<hr>").br();
 			f.add("Debugging information: ");
@@ -234,7 +238,10 @@ public class ScriptingConfig {
 	
 	// ----- Internal Statics -----
 	@Nonnull
-	private static String debug(@Nonnull final State st,@Nonnull final String compilerVersion,@Nonnull final String script,final STAGE stage) {
+	private static String debug(@Nonnull final State st,
+	                            @Nonnull final String compilerVersion,
+	                            @Nonnull final String script,
+	                            final STAGE stage) {
 		final ByteArrayInputStream bais=new ByteArrayInputStream(script.getBytes());
 		final GSParser parser=new GSParser(bais);
 		parser.enable_tracing();
@@ -257,7 +264,10 @@ public class ScriptingConfig {
 		final GSCompiler compiler;
 		try {
 			
-			compiler=GSCompiler.create(compilerVersion,gsscript,"SIMULATION",-(ThreadLocalRandom.current().nextInt(100000,999999)));
+			compiler=GSCompiler.create(compilerVersion,
+			                           gsscript,
+			                           "SIMULATION",
+			                           -(ThreadLocalRandom.current().nextInt(100000,999999)));
 			if (stage==STAGE.COMPILER) {
 				final List<ByteCode> bytecode=compiler.compile(st);
 				final StringBuilder code=new StringBuilder("<pre><table border=0>");
@@ -341,7 +351,6 @@ public class ScriptingConfig {
 		return "Did nothing (?)";
 	}
 	
-
 	
 	public enum STAGE {
 		PARSER,COMPILER,BYTECODE,DISASSEMBLY,SIMULATION,RESULTS

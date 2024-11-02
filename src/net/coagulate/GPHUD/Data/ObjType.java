@@ -220,7 +220,7 @@ public class ObjType extends TableRow {
 		});
 	}
 	
-	private static Cache<Integer,JSONObject> behaviourCache=Cache.getCache("GPHUD/ObjectTypeBehaviour",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Integer,JSONObject> behaviourCache=Cache.getCache("GPHUD/ObjectTypeBehaviour",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Set this objecttype's behaviour JSON

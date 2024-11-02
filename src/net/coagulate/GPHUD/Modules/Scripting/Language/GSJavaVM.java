@@ -16,11 +16,13 @@ import java.util.List;
 /** A wrapper for the execution of scripts compiled as java code */
 
 public class GSJavaVM extends GSVM {
-	GSJavaCompiler compiler;
+	GSJavaCompiler              compiler;
 	List<GSVMJavaExecutionStep> steps=new ArrayList<>();
+	
 	public GSJavaVM(final Script init) {
-	  throw new SystemImplementationException("GSJavaVM(Script) not implemented");
+		throw new SystemImplementationException("GSJavaVM(Script) not implemented");
 	}
+	
 	public GSJavaVM(final ScriptRun run,final State st) {
 		throw new SystemImplementationException("GSJavaVM(ScriptRun,State) not implemented");
 	}
@@ -29,26 +31,25 @@ public class GSJavaVM extends GSVM {
 		this.compiler=(GSJavaCompiler)compiler;
 		compiler.compile(st);
 		//if (compiler.compiledState==null) { compiler.compiledState=st; }
-
+		
 	}
 	
 	@Override
 	public void invokeOnExit(final String apiCommand) {
 		throw new SystemImplementationException("invokeOnExit not implemented in GSJavaVM");
 	}
-
+	
 	@Override
-	public Response execute(final State st) { return execute(st,null); }
+	public Response execute(final State st) {
+		return execute(st,null);
+	}
 	
 	public Response execute(final State st,final List<GSVMJavaExecutionStep> debug) {
 		try {
 			final Class c=GSJavaVMDynamicClassLoader.get().loadClass(compiler.fullClassName());
 			final Object o=c.getDeclaredConstructor(GSVM.class,List.class).newInstance(this,debug);
 			return ((Response)c.getMethod("execute").invoke(o));
-		} catch (final ClassNotFoundException|
-		               NoSuchMethodException|
-		               InstantiationException|
-		               IllegalAccessException e) {
+		} catch (final ClassNotFoundException|NoSuchMethodException|InstantiationException|IllegalAccessException e) {
 			throw new GSInternalError("Java VM messed up",e);
 		} catch (final InvocationTargetException e) {
 			throw new GSInternalError("Java compiled script messed up",e.getCause());
@@ -74,12 +75,12 @@ public class GSJavaVM extends GSVM {
 	public void setReturn(final ByteCodeDataType bcdt) {
 		throw new SystemImplementationException("setReturn not implemented in GSJavaVM");
 	}
-
+	
 	@Override
 	public Response resume(final State st) {
 		throw new SystemImplementationException("resume not implemented in GSJavaVM");
 	}
-
+	
 	@Override
 	public List<? extends GSVMExecutionStep> simulate(@Nonnull final State st) {
 		setSimulation();

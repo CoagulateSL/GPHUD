@@ -119,8 +119,8 @@ public class BCString extends ByteCodeDataType {
 	}
 	
 	@Override
-	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
-	public boolean strictlyEquals(final ByteCodeDataType find) {
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
+			final ByteCodeDataType find) {
 		if (!(find instanceof BCString)) {
 			return false;
 		}

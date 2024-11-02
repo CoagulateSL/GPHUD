@@ -28,15 +28,15 @@ import java.util.TreeMap;
 
 public abstract class GSVM {
 	
-	final     Map<Char,JSONObject> queue=new HashMap<>();
+	final             Map<Char,JSONObject>         queue        =new HashMap<>();
 	private final     Map<String,ByteCodeDataType> variables    =new TreeMap<>();
 	private final     Map<String,ByteCodeDataType> introductions=new HashMap<>();
-	protected int                  pid;
+	protected         int                          pid;
 	/** Some stash of the invokers state */
 	@Nullable private State                        invokerstate;
 	/** Simulating behaviour ; dont update data, dont make gsAPI or HUD calls */
-	private boolean SIMULATION=false;
-
+	private           boolean                      SIMULATION   =false;
+	
 	/** Create a GSVM of the appropriate type for the compiled version of this script */
 	public static GSVM create(final Script init) {
 		final int language=init.getByteCodeVersion();
@@ -49,16 +49,24 @@ public abstract class GSVM {
 		throw new SystemImplementationException("Unrecognised language byte code version '"+language+"'");
 	}
 	
-	public static GSVM create(final int vmVersion,final ScriptRun run,final State  st) {
-		if (vmVersion==1 || vmVersion==2) { return new GSStackVM(run,st); }
-		if (vmVersion==3) { return new GSJavaVM(run,st); }
+	public static GSVM create(final int vmVersion,final ScriptRun run,final State st) {
+		if (vmVersion==1||vmVersion==2) {
+			return new GSStackVM(run,st);
+		}
+		if (vmVersion==3) {
+			return new GSJavaVM(run,st);
+		}
 		throw new SystemImplementationException("Unknown virtual machine version "+vmVersion);
 	}
 	
 	public static GSVM create(final State st,final GSCompiler compiler) {
 		final int vmVersion=compiler.version();
-		if (vmVersion==1 || vmVersion==2) { return new GSStackVM(compiler); }
-		if (vmVersion==3) { return new GSJavaVM(st,compiler); }
+		if (vmVersion==1||vmVersion==2) {
+			return new GSStackVM(compiler);
+		}
+		if (vmVersion==3) {
+			return new GSJavaVM(st,compiler);
+		}
 		throw new SystemImplementationException("Unknown virtual machine version "+vmVersion);
 	}
 	
@@ -97,9 +105,11 @@ public abstract class GSVM {
 	
 	/** Simulate an execution and return its execution steps */
 	public abstract List<? extends GSVMExecutionStep> simulate(@Nonnull final State st);
-
-	public State getInvokerState() { return invokerstate; }
-
+	
+	public State getInvokerState() {
+		return invokerstate;
+	}
+	
 	/** Stash the state used by the person who originally invoked this script */
 	protected void setInvokerState(final State st) {
 		invokerstate=st;
@@ -124,7 +134,10 @@ public abstract class GSVM {
 		}
 		return bcdt;
 	}
-	protected Map<String,ByteCodeDataType> getVariables() { return variables; }
+	
+	protected Map<String,ByteCodeDataType> getVariables() {
+		return variables;
+	}
 	
 	public BCString getString(final String name,final boolean nullifNotFound) {
 		try {
@@ -154,7 +167,7 @@ public abstract class GSVM {
 	public Map<String,ByteCodeDataType> variables() {
 		return variables;
 	}
-
+	
 	public void queueOwnerSay(final Char ch,final String message) {
 		final JSONObject out=getQueue(ch);
 		JSONResponse.ownerSay(out,message,ch.getProtocol());

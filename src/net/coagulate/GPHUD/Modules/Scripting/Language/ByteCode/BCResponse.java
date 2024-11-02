@@ -67,14 +67,18 @@ public class BCResponse extends ByteCodeDataType {
 	}
 	
 	@Override
-	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */
-	public boolean strictlyEquals(final ByteCodeDataType find) {
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
+			final ByteCodeDataType find) {
 		if (!(find instanceof final BCResponse findr)) {
 			return false;
 		}
-		if (findr.isError()!=isError()) { return false; }
+		if (findr.isError()!=isError()) {
+			return false;
+		}
 		return findr.getMessage().equals(getMessage());
 	}
 	
-	public String getMessage() { return message; }
+	public String getMessage() {
+		return message;
+	}
 }

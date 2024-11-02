@@ -64,8 +64,8 @@ import java.util.*;
  */
 
 public class GSJavaCompiler extends GSCompiler {
-	private StringBuilder          sb         =new StringBuilder();
-	private int                    indent     =0;
+	private       StringBuilder          sb         =new StringBuilder();
+	private       int                    indent     =0;
 	private       int                    usedBlockId=0;
 	private final Map<String,SourceCode> sourceCodes=new HashMap<String,SourceCode>();
 	private       byte[]                 bytesOut;
@@ -74,12 +74,10 @@ public class GSJavaCompiler extends GSCompiler {
 		super(gsscript,name,sourceVersion);
 	}
 	
-	public String fullClassName() { return "net.coagulate.GPHUD.Modules.Scripting.Scripts."+getCompiledState().getInstance().getName().replaceAll("[^A-Za-z0-9]","")+"."+className(); }
-	private String className() {
-		return scriptname()+((sourceVersion()<0)?"Simulation":"")+Math.abs(sourceVersion());
-	}
 	public List<ByteCode> compile(final State st) {
-		if (compiledState==null) { compiledState=st; }
+		if (compiledState==null) {
+			compiledState=st;
+		}
 		final String instancename=st.getInstance().getName().replaceAll("[^A-Za-z0-9]","");
 		final String classname=fullClassName();
 		System.out.println("Entering compiler:");
@@ -167,6 +165,15 @@ public class GSJavaCompiler extends GSCompiler {
 			throw new GSInternalError("No execute method?",e);
 		}*/
 		return null;
+	}
+	
+	private String className() {
+		return scriptname()+((sourceVersion()<0)?"Simulation":"")+Math.abs(sourceVersion());
+	}
+	
+	public String fullClassName() {
+		return "net.coagulate.GPHUD.Modules.Scripting.Scripts."+
+		       getCompiledState().getInstance().getName().replaceAll("[^A-Za-z0-9]","")+"."+className();
 	}
 	
 	protected List<ByteCode> _compile(final State st,final ParseNode node) {
@@ -526,7 +533,9 @@ public class GSJavaCompiler extends GSCompiler {
 		sb.append("public class ").append(className()).append(" extends GSJavaVMClass {");
 		indent++;
 		newline();
-		sb.append("public ").append(className()).append("(GSVM vm,List<GSVMJavaExecutionStep> debug) { super(vm,debug); }");
+		sb.append("public ")
+		  .append(className())
+		  .append("(GSVM vm,List<GSVMJavaExecutionStep> debug) { super(vm,debug); }");
 		newline();
 		sb.append("public Response execute() {");
 		indent++;
@@ -664,9 +673,11 @@ public class GSJavaCompiler extends GSCompiler {
 		public OutputStream openOutputStream() throws IOException {
 			return baos;
 		}
-
+		
 		public byte[] getByteCode() {
-			if (tba==null) { tba=baos.toByteArray(); }
+			if (tba==null) {
+				tba=baos.toByteArray();
+			}
 			return tba;
 		}
 	}
@@ -701,7 +712,8 @@ public class GSJavaCompiler extends GSCompiler {
 		 * @param fileManager delegate to this file manager
 		 * @param cl
 		 */
-		protected ExtendedStandardJavaFileManager(final JavaFileManager fileManager,final GSJavaVMDynamicClassLoader cl) {
+		protected ExtendedStandardJavaFileManager(final JavaFileManager fileManager,
+		                                          final GSJavaVMDynamicClassLoader cl) {
 			super(fileManager);
 			this.cl=cl;
 		}
