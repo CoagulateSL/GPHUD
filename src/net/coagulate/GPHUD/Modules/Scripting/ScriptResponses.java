@@ -89,7 +89,7 @@ public class ScriptResponses {
 			if (run.getRespondant()!=st.getCharacter()) {
 				return new ErrorResponse("Script was not expecting a response from you (?)");
 			}
-			final GSVM vm=GSVM.create(2,run,st); // TODO FIX ME
+			final GSVM vm=GSVM.create(run.getCompilerVersion(),run,st); // TODO FIX ME
 			// inject response
 			vm.setReturn(new BCString(null,response));
 			return vm.resume(st);

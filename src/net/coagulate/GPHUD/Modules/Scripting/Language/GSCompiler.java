@@ -20,8 +20,10 @@ import java.util.List;
 public abstract class GSCompiler {
 	private final ParseNode startnode;
 	private final String    scriptname;
+	private final int sourceVersion;
+	protected State compiledState=null;
 	
-	protected GSCompiler(final Node passednode,final String scriptname) {
+	protected GSCompiler(final Node passednode,final String scriptname,final int sourceVersion) {
 		if (!(passednode instanceof ParseNode)) {
 			throw new SystemImplementationException(
 					"Compiler error - passed node is of type "+passednode.getClass().getCanonicalName()+
@@ -29,16 +31,7 @@ public abstract class GSCompiler {
 		}
 		startnode=(ParseNode)passednode;
 		this.scriptname=scriptname;
-	}
-	
-	public static GSCompiler create(final String compiler,final GSStart gsscript,final String name) {
-		if ("V2-GSStackVM/Relative".equalsIgnoreCase(compiler)) {
-			return new GSStackVMCompiler(gsscript,name);
-		}
-		if ("V3-GSJavaVM".equalsIgnoreCase(compiler)) {
-			return new GSJavaCompiler(gsscript,name);
-		}
-		throw new UserInputInvalidChoiceException("Compiler '"+compiler+"'  is not handled");
+		this.sourceVersion=sourceVersion;
 	}
 	
 	public ParseNode startnode() {
@@ -48,8 +41,28 @@ public abstract class GSCompiler {
 	public String scriptname() {
 		return scriptname;
 	}
+
+	public static GSCompiler create(final String compiler,final GSStart gsscript,final String name,final int sourceVersion) {
+		if ("V2-GSStackVM/Relative".equalsIgnoreCase(compiler)) {
+			return new GSStackVMCompiler(gsscript,name,sourceVersion);
+		}
+		if ("V3-GSJavaVM".equalsIgnoreCase(compiler)) {
+			return new GSJavaCompiler(gsscript,name,sourceVersion);
+		}
+		throw new UserInputInvalidChoiceException("Compiler '"+compiler+"'  is not handled");
+	}
+
+	public int sourceVersion() {
+		return sourceVersion;
+	}
+
+	public State getCompiledState() { return compiledState; }
+	public List<ByteCode> compile(final State st) {
+		compiledState=st;
+		return _compile(st,startnode());
+	}
 	
-	public abstract List<ByteCode> compile(final State st);
+	protected abstract List<ByteCode> _compile(final State st,ParseNode node);
 	
 	public abstract Byte[] toByteCode(final State st);
 	

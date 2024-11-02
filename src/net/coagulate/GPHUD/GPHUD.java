@@ -216,12 +216,12 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
-	private static final int SCHEMA_VERSION=19;
+	private static final int SCHEMA_VERSION=20;
 
 	@SuppressWarnings("MagicNumber")
 	@Override
 	protected int schemaUpgrade(final DBConnection db,final String schemaName,int currentVersion) {
-		// CHANGE SCHEMA CHECK CALL IN INITIALISE()
+		// CHANGE SCHEMA CHECK CALL IN INITIALISE() (erm the constant above)
 		final Logger log=GPHUD.getLogger("SchemaUpgrade");
 		if (currentVersion==1) {
 			log.config("Schema for GPHUD is at version 1, upgrading to version 2");
@@ -406,6 +406,12 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("drop index zonekvstore_key on zonekvstore");
 			log.config("Schema upgrade of GPHUD to version 19 is complete");
 			currentVersion=19;
+		}
+		if (currentVersion==19) {
+			log.config("Add language version to scriptruns, along with the bytecode");
+			GPHUD.getDB().d("ALTER TABLE `scriptruns` ADD COLUMN `compilerversion` INT NOT NULL AFTER `expires`;");
+			log.config("Schema upgrade of GPHUD to version 19 is complete");
+			currentVersion=20;
 		}
 		return currentVersion;
 		// UPDATE THE CURRENT VERSION NUMBER ABOVE THIS FUNC

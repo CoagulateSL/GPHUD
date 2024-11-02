@@ -19,16 +19,17 @@ public class ScriptRun extends TableRow {
 	 * @return ScriptRuns object
 	 */
 	@Nonnull
-	public static ScriptRun create(final byte[] code,final byte[] initialiser,@Nonnull final Char respondant) {
+	public static ScriptRun create(final byte[] code,final byte[] initialiser,@Nonnull final Char respondant,final int compilerversion) {
 		// user can only have one respondant open, this helps us get the ID but also is down to the stupidity of the HUD,
 		// and/or how painful/impractical it is to write complex IO in SL
 		db().d("delete from scriptruns where respondant=?",respondant.getId());
 		final int expires=UnixTime.getUnixTime()+900;
-		db().d("replace into scriptruns(bytecode,initialiser,respondant,expires) values(?,?,?,?)",
+		db().d("replace into scriptruns(bytecode,initialiser,respondant,expires,compilerversion) values(?,?,?,?,?)",
 		       code,
 		       initialiser,
 		       respondant.getId(),
-		       expires);
+		       expires,
+		       compilerversion);
 		return get(db().dqiNotNull("select id from scriptruns where initialiser=? and respondant=? and expires=?",
 		                           initialiser,
 		                           respondant.getId(),
@@ -132,5 +133,9 @@ public class ScriptRun extends TableRow {
 	@Nonnull
 	public byte[] getByteCode() {
 		return getBytes("bytecode");
+	}
+	
+	public int getCompilerVersion() {
+		return getInt("compilerversion");
 	}
 }

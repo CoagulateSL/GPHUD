@@ -49,13 +49,16 @@ public abstract class GSVM {
 		throw new SystemImplementationException("Unrecognised language byte code version '"+language+"'");
 	}
 	
-	public static GSVM create(final int vmVersion,final Byte[] rawcode) {
-		if (vmVersion==2) { return new GSStackVM(rawcode); }
+	public static GSVM create(final int vmVersion,final ScriptRun run,final State  st) {
+		if (vmVersion==1 || vmVersion==2) { return new GSStackVM(run,st); }
+		if (vmVersion==3) { return new GSJavaVM(run,st); }
 		throw new SystemImplementationException("Unknown virtual machine version "+vmVersion);
 	}
 	
-	public static GSVM create(final int vmVersion,final ScriptRun run,final State  st) {
-		if (vmVersion==2) { return new GSStackVM(run,st); }
+	public static GSVM create(final State st,final GSCompiler compiler) {
+		final int vmVersion=compiler.version();
+		if (vmVersion==1 || vmVersion==2) { return new GSStackVM(compiler); }
+		if (vmVersion==3) { return new GSJavaVM(st,compiler); }
 		throw new SystemImplementationException("Unknown virtual machine version "+vmVersion);
 	}
 	
@@ -93,7 +96,7 @@ public abstract class GSVM {
 	public abstract Response resume(final State st);
 	
 	/** Simulate an execution and return its execution steps */
-	public abstract List<GSVMExecutionStep> simulate(@Nonnull final State st);
+	public abstract List<? extends GSVMExecutionStep> simulate(@Nonnull final State st);
 
 	public State getInvokerState() { return invokerstate; }
 
@@ -121,6 +124,7 @@ public abstract class GSVM {
 		}
 		return bcdt;
 	}
+	protected Map<String,ByteCodeDataType> getVariables() { return variables; }
 	
 	public BCString getString(final String name,final boolean nullifNotFound) {
 		try {

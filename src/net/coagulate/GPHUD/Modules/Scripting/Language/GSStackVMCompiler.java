@@ -27,8 +27,8 @@ public class GSStackVMCompiler extends GSCompiler {
 	private                int       lastdebuglineno =-1;
 	private                int       lastdebugcolno  =-1;
 	
-	public GSStackVMCompiler(final Node passednode,@Nonnull final String scriptname) {
-		super(passednode,scriptname);
+	public GSStackVMCompiler(final Node passednode,@Nonnull final String scriptname,final int sourceVersion) {
+		super(passednode,scriptname,sourceVersion);
 	}
 	
 	// ---------- INSTANCE ----------
@@ -57,7 +57,7 @@ public class GSStackVMCompiler extends GSCompiler {
 		final List<ByteCode> code=new ArrayList<>();
 		code.add(new BCString(null,scriptname()));
 		code.add(new BCDebugSource(null));
-		code.addAll(compile(st,startnode()));
+		code.addAll(_compile(st,startnode()));
 		code.add(new BCInteger(null,0));
 		code.add(new BCReturn(null));
 		return code;
@@ -84,8 +84,10 @@ public class GSStackVMCompiler extends GSCompiler {
 		}
 	}
 	
+
 	@Nonnull
-	private List<ByteCode> compile(@Nonnull final State st,@Nonnull final ParseNode node) {
+	@Override
+	protected List<ByteCode> _compile(@Nonnull final State st,@Nonnull final ParseNode node) {
 		final List<ByteCode> compiled=new ArrayList<>();
 		if (expectedChildren(node)>-1&&node.jjtGetNumChildren()!=expectedChildren(node)) {
 			throw new SystemImplementationException(
@@ -100,7 +102,7 @@ public class GSStackVMCompiler extends GSCompiler {
 			// just breaks down into 1 of X executable subtypes
 			// Start expands to a list of Statement (types)
 			for (int i=0;i<node.jjtGetNumChildren();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 			}
 			return compiled;
 		}
@@ -154,7 +156,7 @@ public class GSStackVMCompiler extends GSCompiler {
 			addDebug(compiled,node);
 			compiled.add(new BCInitialise(node));
 			// variable initialised.  Assign variable wants to pop the name then content, so content first
-			compiled.addAll(compile(st,node.child(2)));
+			compiled.addAll(_compile(st,node.child(2)));
 			compiled.add(identifier);
 			addDebug(compiled,node);
 			compiled.add(new BCStore(node));
@@ -167,7 +169,7 @@ public class GSStackVMCompiler extends GSCompiler {
 			// this may be a NORMAL VARIABLE (GSIdentifier) or a SPECIFIC LIST ELEMENT (GSIdentifierWithIndex)
 			if (target.getClass().equals(GSIdentifier.class)) {
 				// assign/varname/value
-				compiled.addAll(compile(st,node.child(1)));
+				compiled.addAll(_compile(st,node.child(1)));
 				compiled.add(new BCString(node.child(0),node.child(0).tokens()));
 				addDebug(compiled,node);
 				compiled.add(new BCStore(node));
@@ -175,8 +177,8 @@ public class GSStackVMCompiler extends GSCompiler {
 			}
 			if (target.getClass().equals(GSIdentifierWithIndex.class)) {
 				//assignelement/varname/elementno/value
-				compiled.addAll(compile(st,node.child(1))); // the value
-				compiled.addAll(compile(st,target.child(1))); // evaluate index onto stack
+				compiled.addAll(_compile(st,node.child(1))); // the value
+				compiled.addAll(_compile(st,target.child(1))); // evaluate index onto stack
 				compiled.add(new BCString(target.child(0),target.child(0).tokens())); // push name
 				addDebug(compiled,node);
 				compiled.add(new BCStoreIndexed(node));
@@ -208,7 +210,7 @@ public class GSStackVMCompiler extends GSCompiler {
 			checkType(node,0,GSExpression.class);
 			checkType(node,1,GSStatement.class);
 			// evaluate the condition, branch if zero, otherwise run the statement
-			compiled.addAll(compile(st,node.child(0))); // compile condition
+			compiled.addAll(_compile(st,node.child(0))); // compile condition
 			final BCLabel jumpsource=new BCLabel(node,jumpnumber);
 			jumpnumber++;
 			final BCLabel posttruth=new BCLabel(node,jumpnumber);
@@ -220,13 +222,13 @@ public class GSStackVMCompiler extends GSCompiler {
 			addDebug(compiled,node);
 			compiled.add(jumpsource);
 			compiled.add(new BCBranchRelativeIfZero(node,jumpsource,posttruth)); // if false, branch to posttruth
-			compiled.addAll(compile(st,node.child(1))); // truth
+			compiled.addAll(_compile(st,node.child(1))); // truth
 			compiled.add(new BCInteger(node,0)); // if we're still here (in truth)
 			compiled.add(prefalse);
 			compiled.add(new BCBranchRelativeIfZero(node,prefalse,postfalse)); // branch to end of whole statement
 			compiled.add(posttruth); // where we go if false
 			if (node.children()==3) {
-				compiled.addAll(compile(st,node.child(2)));
+				compiled.addAll(_compile(st,node.child(2)));
 			}
 			compiled.add(postfalse); // end of the whole thing
 			return compiled;
@@ -246,10 +248,10 @@ public class GSStackVMCompiler extends GSCompiler {
 			// check condition, exit if false, code block, repeat
 			addDebug(compiled,node);
 			compiled.add(start);
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			compiled.add(conditionstart);
 			compiled.add(new BCBranchRelativeIfZero(node,conditionstart,end));
-			compiled.addAll(compile(st,node.child(1)));
+			compiled.addAll(_compile(st,node.child(1)));
 			compiled.add(new BCInteger(node,0));
 			compiled.add(loopend);
 			compiled.add(new BCBranchRelativeIfZero(node,loopend,start));
@@ -274,7 +276,7 @@ public class GSStackVMCompiler extends GSCompiler {
 			}
 			// dump the paramters, in reverse order, (which starts with the paramter count), and finally the name and the invoking bytecode
 			if (node.jjtGetNumChildren()>1) {
-				compiled.addAll(compile(st,node.child(1)));
+				compiled.addAll(_compile(st,node.child(1)));
 			} // assuming it has parameters
 			else {
 				compiled.add(new BCInteger(node,0));
@@ -287,128 +289,128 @@ public class GSStackVMCompiler extends GSCompiler {
 		
 		if (node instanceof GSParameters) {
 			for (int i=node.jjtGetNumChildren()-1;i>=0;i--) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 			}
 			compiled.add(new BCInteger(node,node.children()));
 			return compiled;
 		}
 		
 		if (node instanceof GSLogicalOr) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCOr(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSLogicalAnd) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCAnd(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSInEquality) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCInequality(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSEquality) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCEquality(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSLessThan) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCLessThan2(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSGreaterThan) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCGreaterThan2(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSLessOrEqualThan) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCLessThanEqual2(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSGreaterOrEqualThan) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCGreaterThanEqual2(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSAdd) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCAdd2(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSSubtract) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCSubtract2(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSMultiply) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCMultiply(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSDivide) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			for (int i=1;i<node.children();i++) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 				compiled.add(new BCDivide2(node));
 			}
 			return compiled;
 		}
 		
 		if (node instanceof GSLogicalNot) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			compiled.add(new BCNot(node));
 			return compiled;
 		}
 		
 		if (node instanceof GSUnaryMinus) {
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			compiled.add(new BCNegate(node));
 			return compiled;
 		}
@@ -424,7 +426,7 @@ public class GSStackVMCompiler extends GSCompiler {
 		if (node instanceof GSList) {
 			// pop the list, in reverse order, then short the size, and then the command.
 			for (int i=node.children()-1;i>=0;i--) {
-				compiled.addAll(compile(st,node.child(i)));
+				compiled.addAll(_compile(st,node.child(i)));
 			}
 			compiled.add(new BCList(node,node.children()));
 			return compiled;
@@ -434,7 +436,7 @@ public class GSStackVMCompiler extends GSCompiler {
 			checkType(node,0,GSIdentifier.class);
 			checkType(node,1,GSExpression.class);
 			// pop name, pop index
-			compiled.addAll(compile(st,node.child(1)));
+			compiled.addAll(_compile(st,node.child(1)));
 			compiled.add(new BCString(node.child(0),node.child(0).tokens()));
 			addDebug(compiled,node);
 			compiled.add(new BCLoadIndexed(node));
@@ -447,7 +449,7 @@ public class GSStackVMCompiler extends GSCompiler {
 			}
 			addDebug(compiled,node);
 			if (node.children()==1) {
-				compiled.addAll(compile(st,node.child(0)));
+				compiled.addAll(_compile(st,node.child(0)));
 			} else {
 				compiled.add(new BCInteger(node,0));
 			}
@@ -460,7 +462,7 @@ public class GSStackVMCompiler extends GSCompiler {
 				throw new GSInternalError("Compilation error, 1 children expected");
 			}
 			addDebug(compiled,node);
-			compiled.addAll(compile(st,node.child(0)));
+			compiled.addAll(_compile(st,node.child(0)));
 			compiled.add(new BCDiscard(node));
 			return compiled;
 		}

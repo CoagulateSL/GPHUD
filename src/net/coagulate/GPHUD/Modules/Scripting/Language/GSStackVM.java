@@ -38,7 +38,8 @@ public class GSStackVM extends GSVM {
 	private int startPC;
 	private int suspensions;
 	
-	public GSStackVM(@Nonnull final Byte[] code) {
+	public GSStackVM(@Nonnull final GSCompiler compiler) {
+		final Byte[] code=compiler.toByteCode(compiler.getCompiledState());
 		bytecode=new byte[code.length];
 		{
 			for (int i=0;i<code.length;i++) {
@@ -358,7 +359,7 @@ public class GSStackVM extends GSVM {
 			initialiser[i]=initialisertyped[i];
 		}
 		
-		final ScriptRun run=ScriptRun.create(bytecode,initialiser,respondant);
+		final ScriptRun run=ScriptRun.create(bytecode,initialiser,respondant,2);
 		pid=run.getId();
 		//return dequeue(st,st.getCharacter(),run.getId());
 	}
@@ -375,7 +376,7 @@ public class GSStackVM extends GSVM {
 	}
 	
 	@Nonnull
-	public List<GSVMExecutionStep> simulate(@Nonnull final State st) {
+	public List<? extends GSVMExecutionStep> simulate(@Nonnull final State st) {
 		setInvokerState(st);
 		final List<GSVMExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM(st,false);

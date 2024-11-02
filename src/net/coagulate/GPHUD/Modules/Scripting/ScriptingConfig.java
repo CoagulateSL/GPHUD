@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.RESULTS;
 import static net.coagulate.GPHUD.Modules.Scripting.ScriptingConfig.STAGE.SIMULATION;
@@ -138,7 +139,7 @@ public class ScriptingConfig {
 						            "Saved script, with parse failures");
 					}
 					if (gsscript!=null) {
-						final GSCompiler compiler=GSCompiler.create(compilerVersion,gsscript,script.getName());
+						final GSCompiler compiler=GSCompiler.create(compilerVersion,gsscript,script.getName(),version);
 						compiler.compile(st);
 						script.setBytecode(compiler.toByteCode(st),version,compiler.version());
 						f.p("Script compiled and saved OK!");
@@ -256,7 +257,7 @@ public class ScriptingConfig {
 		final GSCompiler compiler;
 		try {
 			
-			compiler=GSCompiler.create(compilerVersion,gsscript,"SIMULATION");
+			compiler=GSCompiler.create(compilerVersion,gsscript,"SIMULATION",-(ThreadLocalRandom.current().nextInt(100000,999999)));
 			if (stage==STAGE.COMPILER) {
 				final List<ByteCode> bytecode=compiler.compile(st);
 				final StringBuilder code=new StringBuilder("<pre><table border=0>");
@@ -284,8 +285,8 @@ public class ScriptingConfig {
 			return "<b>Compilation failed:</b> "+e;
 		}
 		
-		final Byte[] rawcode=compiler.toByteCode(st);
 		if (stage==STAGE.BYTECODE) {
+			final Byte[] rawcode=compiler.toByteCode(st);
 			final StringBuilder bcstring=new StringBuilder("<pre><table border=0><tr>");
 			for (int i=0;i<rawcode.length;i++) {
 				if ((i%25)==0) {
@@ -297,7 +298,7 @@ public class ScriptingConfig {
 			return bcstring.toString();
 		}
 		
-		final GSVM gsvm=GSVM.create(2,rawcode);  // TODO, probably fix me
+		final GSVM gsvm=GSVM.create(st,compiler);
 		if (stage==STAGE.DISASSEMBLY) {
 			return gsvm.toHtml();
 		}
@@ -305,7 +306,7 @@ public class ScriptingConfig {
 		try {
 			if (stage==SIMULATION||stage==RESULTS) {
 				final long start=System.currentTimeMillis();
-				final List<GSVM.GSVMExecutionStep> steps=gsvm.simulate(st);
+				final List<? extends GSVM.GSVMExecutionStep> steps=gsvm.simulate(st);
 				final long end=System.currentTimeMillis();
 				final StringBuilder output=new StringBuilder("<p><i>Run time: "+(end-start)+
 				                                             " ms</i></p><table border=1><td>IC</td><th>PC</th><th>OpCode</th><th>OpArgs</th"+
