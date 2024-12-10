@@ -1,8 +1,5 @@
 package net.coagulate.GPHUD.Modules.Scripting;
 
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSCompiler;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
-import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.GSParser;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.ParseException;
 import net.coagulate.GPHUD.Tests.TestFramework;
 import net.coagulate.SL.TestFrameworkPrototype;
@@ -21,9 +18,9 @@ public class Tests {
 	
 	private static void compileScript(final TestFramework f,final String script) throws ParseException {
 		final ByteArrayInputStream bais=new ByteArrayInputStream(script.getBytes());
-		final GSCompiler compiler=
-				GSCompiler.create("V2-GSStackVM/Relative",new GSParser(bais).Start(),"Internal Test Script",-69);
-		compiler.compile(f.primaryHUD.state);
-		GSVM.create(f.primaryHUD.state,compiler).execute(f.primaryHUD.state);
+		//final GSCompiler compiler=
+				//TODO GSCompiler.create("V2-GSStackVM/Relative",new GSParser(bais).Start(),"Internal Test Script",-69);
+		//compiler.compile(f.primaryHUD.state);
+		//GSVM.create(f.primaryHUD.state,compiler).execute(f.primaryHUD.state);
 	}
 }

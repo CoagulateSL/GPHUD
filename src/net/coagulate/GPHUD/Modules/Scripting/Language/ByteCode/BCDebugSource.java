@@ -28,6 +28,6 @@ public class BCDebugSource extends ByteCode {
 	
 	@Override
 	public void execute(final State st,@Nonnull final GSStackVM vm,final boolean simulation) {
-		vm.source=vm.stack.pop().toBCString().getContent();
+		vm.source=vm.pop().toBCString().getContent();
 	}
 }

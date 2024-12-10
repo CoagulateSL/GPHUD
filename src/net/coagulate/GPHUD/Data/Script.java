@@ -288,16 +288,17 @@ public class Script extends TableRow {
 	 * Set the source code for this script
 	 *
 	 * @param scriptsource String source code
+	 * @return True if updated, false if the source is unchanged
 	 */
-	public void setSource(@Nonnull final String scriptsource) {
+	public boolean setSource(@Nonnull final String scriptsource) {
 		validate();
-		final String s=getSource();
-		if (scriptsource.equals(s)) {
-			return;
+		if (scriptsource.equals(getSource())) {
+			return false;
 		}
 		int version=getSourceVersion();
 		version++;
 		d("update scripts set source=?, sourceversion=? where id=?",scriptsource,version,getId());
+		return true;
 	}
 	
 public void alias(@Nullable final String newAlias) {

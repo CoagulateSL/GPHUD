@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -74,26 +73,68 @@ public class BCAvatar extends ByteCodeDataType {
 		if (var.getClass().equals(BCString.class)) {
 			return new BCString(node(),toString()+var);
 		}
-		throw new GSInvalidExpressionException("Can not perform BCAvatar + "+var.getClass().getSimpleName());
+		throw fail(var);
 	}
 	
 	@Nonnull
 	@Override
 	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
-		// never makes sense
-		throw new GSInvalidExpressionException("Can not perform subtraction on a BCAvatar");
+		throw fail();
 	}
 	
 	@Nonnull
 	@Override
 	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can not perform multiplication on a BCAvatar");
+		throw fail();
 	}
 	
 	@Nonnull
 	@Override
 	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can not perform division on a BCAvatar");
+		throw fail();
+	}
+	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof BCAvatar) {
+			return toBoolean(getContent().getId()==((BCAvatar)var).getContent().getId());
+		}
+		if (var instanceof BCString) {
+			return toBoolean(getContent().getName().equalsIgnoreCase(((BCString)var).getContent()));
+		}
+		if (var instanceof BCInteger) {
+			return toBoolean(getContent().getId()==((BCInteger)var).getContent());
+		}
+		throw fail(var);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Override
+	public BCInteger not() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger toBCInteger() {
+		return new BCInteger(null,getContent().getId());
 	}
 	
 	@Nonnull
@@ -102,18 +143,29 @@ public class BCAvatar extends ByteCodeDataType {
 		return new BCString(node(),getContent().getName());
 	}
 	
+	@Nonnull
 	@Override
-	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
-			final ByteCodeDataType find) {
-		if (!(find instanceof BCAvatar)) {
-			return false;
-		}
-		return ((BCAvatar)find).content.getId()==content.getId();
+	public BCFloat toBCFloat() {
+		return new BCFloat(null,((float)getContent().getId()));
+	}
+	
+	@Override
+	public boolean toBoolean() {
+		throw fail();
 	}
 	
 	@Nullable
 	@Override
 	public ByteCodeDataType clone() {
 		return new BCAvatar(node(),getContent());
+	}
+	
+	@Override
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
+			final ByteCodeDataType find) {
+		if (!(find instanceof BCAvatar)) {
+			return false;
+		}
+		return ((BCAvatar)find).getContent().getId()==getContent().getId();
 	}
 }

@@ -97,6 +97,29 @@ public class BCFloat extends ByteCodeDataType {
 		return new BCFloat(node(),toFloat()/var.toFloat());
 	}
 	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		return new BCFloat(node(),-content);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		if (toFloat()==var.toFloat()) {
+			return truth();
+		}
+		return falseness();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		if (toFloat()<var.toFloat()) {
+			return truth();
+		}
+		return falseness();
+	}
+	
 	@Nonnull
 	@Override
 	public BCString toBCString() {
@@ -104,8 +127,22 @@ public class BCFloat extends ByteCodeDataType {
 	}
 	
 	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		if (toFloat()>var.toFloat()) {
+			return truth();
+		}
+		return falseness();
+	}
+	
+	@Nonnull
 	public BCInteger toBCInteger() {
 		return new BCInteger(node(),content.intValue());
+	}
+	
+	@Override
+	public BCInteger not() {
+		throw fail();
 	}
 	
 	@Nullable
@@ -114,9 +151,21 @@ public class BCFloat extends ByteCodeDataType {
 		return new BCFloat(node(),content);
 	}
 	
+	@Nonnull
 	@Override
-	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
-			final ByteCodeDataType find) {
+	public BCFloat toBCFloat() {
+		return this;
+	}
+
+	@Override
+	public boolean toBoolean() {
+		return toFloat()!=0.0f;
+	}
+	
+	@Override
+	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks
+	 *
+	 */ public boolean strictlyEquals(final ByteCodeDataType find) {
 		if (!(find instanceof BCFloat)) {
 			return false;
 		}

@@ -59,6 +59,16 @@ public class BCGreaterThanEqual2 extends ByteCode {
 		if (type.equals(BCList.class)) {
 			throw new GSInvalidExpressionException("Can not compare lists.  Yet.");
 		}
+		if (type.equals(BCFloat.class)) {
+			final float s1=var1.toFloat();
+			final float s2=var2.toFloat();
+			if (s1>=s2) {
+				vm.push(new BCInteger(null,1));
+			} else {
+				vm.push(new BCInteger(null,0));
+			}
+			return;
+		}
 		
 		throw new GSInternalError(
 				"Unable to calculate greater than or equal between types "+var1.getClass().getSimpleName()+" and "+

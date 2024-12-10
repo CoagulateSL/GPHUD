@@ -15,10 +15,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * The abstract superclass of all compiled code runners
@@ -32,22 +29,12 @@ public abstract class GSVM {
 	private final     Map<String,ByteCodeDataType> variables    =new TreeMap<>();
 	private final     Map<String,ByteCodeDataType> introductions=new HashMap<>();
 	protected         int                          pid;
+	protected final   Stack<ByteCodeDataType>      stack        =new Stack<>();
 	/** Some stash of the invokers state */
 	@Nullable private State                        invokerstate;
 	/** Simulating behaviour ; dont update data, dont make gsAPI or HUD calls */
 	private           boolean                      SIMULATION   =false;
-	
-	/** Create a GSVM of the appropriate type for the compiled version of this script */
-	public static GSVM create(final Script init) {
-		final int language=init.getByteCodeVersion();
-		if (language==1||language==2) {
-			return new GSStackVM(init);
-		}
-		if (language==3) {
-			return new GSJavaVM(init);
-		}
-		throw new SystemImplementationException("Unrecognised language byte code version '"+language+"'");
-	}
+	private List<GSVMExecutionStep> steps=new ArrayList<>();
 	
 	public static GSVM create(final int vmVersion,final ScriptRun run,final State st) {
 		if (vmVersion==1||vmVersion==2) {
@@ -87,6 +74,18 @@ public abstract class GSVM {
 		introductions.put(target,data);
 	}
 	
+	/** Create a GSVM of the appropriate type for the compiled version of this script */
+	public static GSVM create(final Script init) {
+		final int language=init.getCompilerVersion();
+		if (language==1||language==2) {
+			return new GSStackVM(init);
+		}
+		if (language==3) {
+			return new GSJavaVM(init);
+		}
+		throw new SystemImplementationException("Unrecognised language byte code version '"+language+"'");
+	}
+	
 	/** Returns the simulation flag. */
 	public final boolean simulation() {
 		return SIMULATION;
@@ -103,8 +102,22 @@ public abstract class GSVM {
 	
 	public abstract Response resume(final State st);
 	
+	protected Map<String,ByteCodeDataType> introductions() {
+		return introductions;
+	}
+	
+	public final List<? extends GSVMExecutionStep> simulate(@Nonnull final State st) {
+		steps=new ArrayList<>();
+		_simulate(st,steps);
+		return steps;
+	}
+	
 	/** Simulate an execution and return its execution steps */
-	public abstract List<? extends GSVMExecutionStep> simulate(@Nonnull final State st);
+	protected abstract void _simulate(@Nonnull final State st,@Nonnull final List<GSVMExecutionStep> steps);
+	
+	public List<GSVMExecutionStep> getSteps() {
+		return steps;
+	}
 	
 	public State getInvokerState() {
 		return invokerstate;
@@ -135,7 +148,7 @@ public abstract class GSVM {
 		return bcdt;
 	}
 	
-	protected Map<String,ByteCodeDataType> getVariables() {
+	public Map<String,ByteCodeDataType> getVariables() {
 		return variables;
 	}
 	
@@ -256,4 +269,30 @@ public abstract class GSVM {
 	public abstract static class GSVMExecutionStep {
 		public abstract String formatStep();
 	}
+	
+	@Nonnull
+	public BCString popString() {
+		final ByteCodeDataType raw=pop();
+		if (!raw.getClass().equals(BCString.class)) {
+			throw new GSInvalidPopError("Expected BCString on stack, got "+raw.getClass().getSimpleName());
+		}
+		return (BCString)raw;
+	}
+	
+	public ByteCodeDataType pop() {
+		if (stack.empty()) {
+			throw new GSInternalError("Attempted to pop from the stack but it is empty!");
+		}
+		return stack.pop();
+	}
+	
+	@Nonnull
+	public BCInteger popInteger() {
+		final ByteCodeDataType raw=pop();
+		if (!raw.getClass().equals(BCInteger.class)) {
+			throw new GSInvalidPopError("Expected BCInteger on stack, got "+raw.getClass().getSimpleName());
+		}
+		return (BCInteger)raw;
+	}
+	
 }

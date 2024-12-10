@@ -10,6 +10,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.Config;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -18,9 +19,10 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GSStackVM extends GSVM {
+	public static final int INSTRUCTION_COUNT_LIMIT=20000;
+	//public static final int INSTRUCTION_COUNT_LIMIT=2000000;
 	// GPHUD Scripting Virtual Machine ... smiley face
 	
-	public final    Stack<ByteCodeDataType> stack=new Stack<>();
 	@Nonnull public byte[]                  bytecode;
 	/**
 	 * As in what instruction we're executing ; R15 if you ARM
@@ -149,11 +151,9 @@ public class GSStackVM extends GSVM {
 		return canary.toInteger();
 	}
 	
-	private void increaseIC() {
-		instructionCount++;
-		if (instructionCount>20000) {
-			throw new GSResourceLimitExceededException("Instruction count exceeded, infinite loop (or complex script)?");
-		}
+	@Override
+	public void setReturn(final ByteCodeDataType bcdt) {
+		push(bcdt); // TODO CHECK ME
 	}
 	
 	@Nonnull
@@ -209,31 +209,6 @@ public class GSStackVM extends GSVM {
 		throw new GSInvalidExpressionException(
 				"Can not assign value of type "+v.getClass().getSimpleName()+" to "+k+" which is of type "+
 				existing.getClass().getSimpleName(),true);
-	}
-	
-	@Nonnull
-	public BCString popString() {
-		final ByteCodeDataType raw=pop();
-		if (!raw.getClass().equals(BCString.class)) {
-			throw new GSInvalidPopError("Expected BCString on stack, got "+raw.getClass().getSimpleName());
-		}
-		return (BCString)raw;
-	}
-	
-	public ByteCodeDataType pop() {
-		if (stack.empty()) {
-			throw new GSInternalError("Attempted to pop from the stack but it is empty!");
-		}
-		return stack.pop();
-	}
-	
-	@Nonnull
-	public BCInteger popInteger() {
-		final ByteCodeDataType raw=pop();
-		if (!raw.getClass().equals(BCInteger.class)) {
-			throw new GSInvalidPopError("Expected BCInteger on stack, got "+raw.getClass().getSimpleName());
-		}
-		return (BCInteger)raw;
 	}
 	
 	@Nonnull
@@ -364,21 +339,9 @@ public class GSStackVM extends GSVM {
 		//return dequeue(st,st.getCharacter(),run.getId());
 	}
 	
-	@Override
-	public void setReturn(final ByteCodeDataType bcdt) {
-	
-	}
-	
 	@Nonnull
-	public Response resume(@Nonnull final State st) {
+	protected void _simulate(@Nonnull final State st,@Nonnull final List<GSVMExecutionStep> steps) {
 		setInvokerState(st);
-		return executeloop(st);
-	}
-	
-	@Nonnull
-	public List<? extends GSVMExecutionStep> simulate(@Nonnull final State st) {
-		setInvokerState(st);
-		final List<GSVMExecutionStep> simulationsteps=new ArrayList<>();
 		initialiseVM(st,false);
 		setSimulation();
 		try {
@@ -401,15 +364,28 @@ public class GSStackVM extends GSVM {
 					frame.resultingvariables.put(entry.getKey(),clone);
 				}
 				frame.instructionCount=instructionCount;
-				simulationsteps.add(frame);
+				steps.add(frame);
 			}
 		} catch (@Nonnull final Throwable e) {
 			final GSStackVMExecutionStep step=new GSStackVMExecutionStep();
 			step.t=e;
 			step.decode=at();
-			simulationsteps.add(step);
+			steps.add(step);
 		}
-		return simulationsteps;
+	}
+	
+	@Nonnull
+	public Response resume(@Nonnull final State st) {
+		setInvokerState(st);
+		return executeloop(st);
+	}
+	
+	private void increaseIC() {
+		instructionCount++;
+		if (Config.getDevelopment()) { return; }
+		if (instructionCount>INSTRUCTION_COUNT_LIMIT) {
+			throw new GSResourceLimitExceededException("Instruction count exceeded, infinite loop (or complex script)?");
+		}
 	}
 	
 	public float getFloat() {

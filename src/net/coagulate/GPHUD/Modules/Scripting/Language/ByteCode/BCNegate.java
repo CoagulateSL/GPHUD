@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -25,7 +26,16 @@ public class BCNegate extends ByteCode {
 	
 	@Override
 	public void execute(final State st,@Nonnull final GSStackVM vm,final boolean simulation) {
-		final BCInteger arg1=vm.popInteger();
-		vm.push(new BCInteger(null,-arg1.getContent()));
+		final ByteCodeDataType arg=vm.pop();
+		if (arg instanceof BCInteger) {
+			vm.push(new BCInteger(null,-arg.toInteger()));
+			return;
+		}
+		if (arg instanceof BCFloat) {
+			vm.push(new BCFloat(null,-arg.toFloat()));
+			return;
+		}
+		throw new GSInternalError(
+				"Unable to calculate unary minus of type "+arg.getClass().getSimpleName());
 	}
 }

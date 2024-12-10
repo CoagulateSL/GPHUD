@@ -69,11 +69,7 @@ public class BCString extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
-		// if the 2nd type is a number then we'll do number stuff :P
-		if (var.getClass().equals(BCInteger.class)) {
-			toBCInteger().subtract(var);
-		}
-		throw new GSInvalidExpressionException("Can not perform BCString - "+var.getClass().getSimpleName(),true);
+		throw fail(var);
 	}
 	
 	@Nonnull
@@ -89,11 +85,27 @@ public class BCString extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
-		// if the 2nd type is a number then we'll do number stuff :P
-		if (var.getClass().equals(BCInteger.class)) {
-			toBCInteger().subtract(var);
+		throw fail(var) ;
+	}
+	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		return toBoolean(getContent().equals(var.toString()));
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		if (toString().compareTo(var.toString())<0) {
+			return new BCInteger(null,1);
 		}
-		throw new GSInvalidExpressionException("Can not perform BCString / "+var.getClass().getSimpleName(),true);
+		return new BCInteger(null,0);
 	}
 	
 	// ---------- INSTANCE ----------
@@ -118,6 +130,20 @@ public class BCString extends ByteCodeDataType {
 		return new BCString(node(),content);
 	}
 	
+	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		if (toString().compareTo(var.toString())>0) {
+			return new BCInteger(null,1);
+		}
+		return new BCInteger(null,0);
+	}
+	
+	@Override
+	public BCInteger not() {
+		throw fail();
+	}
+	
 	@Override
 	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
 			final ByteCodeDataType find) {
@@ -126,4 +152,17 @@ public class BCString extends ByteCodeDataType {
 		}
 		return ((BCString)find).content.equals(content);
 	}
+
+	@Nonnull
+	@Override
+	public BCString toBCString() {
+		return this;
+	}
+	
+	@Override
+	public boolean toBoolean() {
+		return content.isEmpty();
+	}
+	
+	
 }

@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -61,6 +60,17 @@ import java.util.*;
  * gsSayAsHud(a)
  *
  * Then all these blocks can just be arranged in a stream of cases in a switch(runBlock) type command.
+ *
+ *
+ *
+ * All the above was written before i deconstructed expressions into stacks again, cos I need to be able to suspend the
+ * vm if someone calls something like
+ * String reply=gsGetText(CALLER,"Enter a first name)+" "+gsGetText(CALLER,"Enter a last name");
+ * here we need to be able to suspend the VM after one of the getText calls and resume the VM later in the middle of
+ * evaluating this expression.  If I just convert the expression on one line we have the same problem of suspend/resume
+ * needing a checkpoint ; i.e. a runstep case break in the current build.
+ *
+ * So now maths is done with a stack just like the other VM.
  */
 
 public class GSJavaCompiler extends GSCompiler {
@@ -69,21 +79,193 @@ public class GSJavaCompiler extends GSCompiler {
 	private       int                    usedBlockId=0;
 	private final Map<String,SourceCode> sourceCodes=new HashMap<String,SourceCode>();
 	private       byte[]                 bytesOut;
+	private final Map<String,String> dataTypes=new HashMap<>();
+	Map<String,Integer> localisers=new HashMap<>();
+	private       String                 sourceCode =null;
+	private GSException   storedError=null;
 	
 	public GSJavaCompiler(final GSStart gsscript,final String name,final int sourceVersion) {
 		super(gsscript,name,sourceVersion);
 	}
+	private final StringBuilder localiser=new StringBuilder();
 	
-	public List<ByteCode> compile(final State st) {
+	private String className() {
+		return scriptname()+((sourceVersion()<0)?"Simulation":"")+Math.abs(sourceVersion());
+	}
+	private       int localiserid=0;
+	private final int discardid  =1;
+
+	protected static String base64encode(final String plaintext) {
+		return Base64.getEncoder().encodeToString(plaintext.getBytes());
+	}
+
+	protected static String base64decode(final String base64) {
+		return new String(Base64.getDecoder().decode(base64));
+	}
+
+	private void addDebug() {
+		sb.append("if(debug){step();}");
+		newline();
+	}
+
+	private void addDebugEnter(final int id) {
+		sb.append("if(debug){stepIn("+id+");}");
+		newline();
+	}
+	
+	public String fullClassName() {
+		return "net.coagulate.GPHUD.Modules.Scripting.Scripts."+
+		       getCompiledState().getInstance().getName().replaceAll("[^A-Za-z0-9]","")+"."+className();
+	}
+	
+	private void addDebugExit(final int id) {
+		sb.append("if(debug){stepOut("+id+");}");
+		newline();
+	}
+	
+	private void funcOp(final String funcname,final State st,final ParseNode node) {
+		if (node.children()==1) {
+			_compile(st,node.child(0));
+			return;
+		}
+		for(int i=node.children()-1;i>=0;i--) {
+			_compile(st,node.child(i));
+			newline();
+		}
+		for(int i=node.children()-1;i>0;i--) {
+			sb.append("push(pop()."+funcname+"(pop()));");
+			newline();
+		}
+	}
+	
+	private String createSource(final State st,final String instancename) {
+		sb=new StringBuilder();
+		indent=0;
+		
+		usedBlockId=0;
+		sb.append("package net.coagulate.GPHUD.Modules.Scripting.Scripts.").append(instancename).append(";");
+		newline();
+		sb.append("""
+				          import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;
+				          import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.*;
+				          import net.coagulate.GPHUD.State;
+				          import net.coagulate.GPHUD.Modules.Scripting.Language.*;
+				          import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
+				          import net.coagulate.GPHUD.Interfaces.Responses.Response;
+				          import java.util.List;
+				          import java.util.Base64;
+				          public class\s""")
+		  .append(className())
+		  .append("""
+				           extends GSJavaVMClass {
+				          \tpublic\s""")
+		  .append(className())
+		  .append("""
+				          (GSVM vm,State st,List<GSVMJavaExecutionStep> debug) { super(vm,st,debug); }
+				                  // ----- BEGIN GENERATED CODE -----
+				          """);
+		indent=2;
+		newline();
+		startBlock(0);
+		_compile(st,startnode());
+		newline();
+		sb.append("runstep=-1;");
+		endBlock();
+		newline();
+		sb.append("""
+				     \n\tprivate int runstep=0;
+				     \tprotected Response _execute() {
+				     \t\twhile (runstep>=0) {
+				     \t\t\tswitch (runstep) {
+				     """);
+		for (int i=0;i<=usedBlockId;i++) {
+			sb.append("\t\t\t\tcase "+i+": runStep"+i+"(); break;");
+			newline();
+		}
+		sb.append("""
+				     \t\t\t\tdefault: throw new GSInternalError("Runstep "+runstep+" unknown");
+				     \t\t\t}
+				     \t\t}
+				     \t\treturn new OKResponse("Script completed ok");
+				     \t}""");
+		appendLocaliser();
+		sb.append("}\n");
+		return sb.toString();
+	}
+	
+	private void startBlock(final int id) {
+		sb.append("private void runStep").append(id).append("() {");
+		indent++;
+		newline();
+	}
+	
+	@Override
+	public int version() {
+		return 3;
+	}
+	
+	private void endBlock() {
+		sb.append("}");
+		indent--;
+		newline();
+	}
+	
+	private void block(final int id) {
+		endBlock();
+		startBlock(id);
+	}
+	
+	private int localise(final ParseNode node) {
+		final String encode=base64encode(node.tokens());
+		if (localisers.containsKey(encode)) { return localisers.get(encode); }
+		localiserid++;
+		sb.append("locality="+localiserid+";"); newline();
+		localiser.append("\t\t\tcase ").append(localiserid).append(": ");
+		localiser.append("sourceLine=\"").append(base64encode(node.tokens())).append("\"; ");
+		localiser.append("startRow=").append(node.jjtGetFirstToken().beginLine).append("; ");
+		localiser.append("endRow=").append(node.jjtGetLastToken().endLine).append("; ");
+		localiser.append("startCol=").append(node.jjtGetFirstToken().beginColumn).append("; ");
+		localiser.append("endCol=").append(node.jjtGetLastToken().endColumn).append("; ");
+		localiser.append("break;\n");
+		localisers.put(encode,localiserid);
+		return localiserid;
+	}
+	
+	private void appendLocaliser() {
+		sb.append("  protected void getLocal(final int locality) {\n");
+		sb.append("    switch (locality) {\n");
+		sb.append(localiser);
+		sb.append("    }\n");
+		sb.append("  }\n");
+	}
+
+	@Override
+	public String diagnosticOutput(final State st) {
+		if (sourceCode==null) {
+			return "";
+		}
+		final String[] lines=sourceCode.split("\n");
+		final StringBuilder s=new StringBuilder();
+		s.append("<pre>");
+		int lineno=1;
+		for (final String line: lines) {
+			s.append(lineno).append(": ").append(line).append("\n");
+			lineno++;
+		}
+		s.append("</pre>");
+		return s.toString();
+	}
+
+	public void compile(final State st) {
 		if (compiledState==null) {
 			compiledState=st;
 		}
 		final String instancename=st.getInstance().getName().replaceAll("[^A-Za-z0-9]","");
 		final String classname=fullClassName();
-		System.out.println("Entering compiler:");
-		System.out.println("Instance name: "+instancename);
-		System.out.println("Class name: "+classname);
-		final String sourceCode=createSource(st,instancename);
+		sourceCode=createSource(st,instancename);
+		if (storedError!=null) {
+			throw storedError;
+		}
 		final JavaCompiler javac=ToolProvider.getSystemJavaCompiler();
 		final GSJavaVMDynamicClassLoader classLoader=GSJavaVMDynamicClassLoader.get();
 		sourceCodes.put(classname,new SourceCode(classname,sourceCode));
@@ -91,7 +273,6 @@ public class GSJavaCompiler extends GSCompiler {
 		final CompiledCode[] code;
 		
 		code=new CompiledCode[compilationUnits.size()];
-		System.out.println("code is of length "+code.length);
 		final Iterator<SourceCode> iter=compilationUnits.iterator();
 		for (int i=0;i<code.length;i++) {
 			try {
@@ -106,7 +287,7 @@ public class GSJavaCompiler extends GSCompiler {
 		final JavaCompiler.CompilationTask task=javac.getTask(null,fileManager,collector,null,null,compilationUnits);
 		final boolean result=task.call();
 		if (!result||collector.getDiagnostics().size()>0) {
-			final StringBuffer exceptionMsg=new StringBuffer();
+			final StringBuilder exceptionMsg=new StringBuilder();
 			exceptionMsg.append("Unable to compile the source");
 			boolean hasWarnings=false;
 			boolean hasErrors=false;
@@ -164,16 +345,6 @@ public class GSJavaCompiler extends GSCompiler {
 		} catch (NoSuchMethodException e) {
 			throw new GSInternalError("No execute method?",e);
 		}*/
-		return null;
-	}
-	
-	private String className() {
-		return scriptname()+((sourceVersion()<0)?"Simulation":"")+Math.abs(sourceVersion());
-	}
-	
-	public String fullClassName() {
-		return "net.coagulate.GPHUD.Modules.Scripting.Scripts."+
-		       getCompiledState().getInstance().getName().replaceAll("[^A-Za-z0-9]","")+"."+className();
 	}
 	
 	protected List<ByteCode> _compile(final State st,final ParseNode node) {
@@ -184,23 +355,27 @@ public class GSJavaCompiler extends GSCompiler {
 					node.jjtGetFirstToken().beginColumn);
 		}
 		
-		
 		if (node instanceof GSStart||node instanceof GSExpression||node instanceof GSParameter||node instanceof GSTerm||
 		    node instanceof GSStatement) { // expression
 			// just breaks down into 1 of X executable subtypes
 			// Start expands to a list of Statement (types)
 			for (int i=0;i<node.jjtGetNumChildren();i++) {
-				if (node instanceof GSStatement) {
-					final String line=node.tokens().replaceAll("\"","\\\"");
-					sb.append("if(debug){step(\"ENTER : ").append(line).append("\");}");
+				final int locid=localise(node);
+				if (!(node instanceof GSStart)) {
+					addDebugEnter(locid);
+					sb.append("// "+node.tokens());
 					newline();
 				}
 				_compile(st,node.child(i));
-				if (node instanceof GSStatement) {
-					final String line=node.tokens().replaceAll("\"","\\\"");
-					sb.append("if(debug){step(\"EXIT  : ").append(line).append("\");}");
-					newline();
+				if (!(node instanceof GSStart)) {
+					addDebugExit(locid);
 				}
+				/*TODO PROBABLY TRASH THIS
+				   if (node instanceof GSStatement) {
+					usedBlockId++;
+					runstep(usedBlockId);
+					block(usedBlockId);
+				}*/
 			}
 			return null;
 		}
@@ -210,15 +385,52 @@ public class GSJavaCompiler extends GSCompiler {
 			checkType(node,0,GSTypeSpecifier.class);
 			checkType(node,1,GSIdentifier.class);
 			checkType(node,2,GSExpression.class);
-			final boolean typed=false;
+			boolean typed=false;
 			final String type=node.child(0).tokens();
-			// INITIALISE the variable - reverse place name and null content.  Then we just implement "set variable".
+			if ("String".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCString");
+				typed=true;
+			}
+			if ("Response".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCResponse");
+				typed=true;
+			}
+			if ("Integer".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCInteger");
+				typed=true;
+			}
+			if ("Float".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCFloat");
+				typed=true;
+			}
+			if ("Avatar".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCAvatar");
+				typed=true;
+			}
+			if ("Group".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCGroup");
+				typed=true;
+			}
+			if ("Character".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCCharacter");
+				typed=true;
+			}
+			if ("List".equals(type)) {
+				dataTypes.put(node.child(1).tokens(),"toBCList");
+				typed=true;
+			}
+			if (!typed) {
+				throw new SystemImplementationException(
+						"Unable to initialise variable of type "+type+" (not implemented)");
+			}
+			// INITIALISE the variable - stuff the value on the stack and pop it
+			_compile(st,node.child(2));
 			sb.append("vm.putVariable(\"");
 			sb.append(node.child(1).tokens());  // identifier
 			sb.append("\"");
 			sb.append(",");
-			_compile(st,node.child(2));
-			sb.append(");");
+			sb.append("pop());");
+			newline();
 			return null;
 		}
 		if (node instanceof GSAssignment) { // similar to end of GSInitialiser code
@@ -227,24 +439,34 @@ public class GSJavaCompiler extends GSCompiler {
 			final ParseNode target=node.child(0).child(0);
 			// this may be a NORMAL VARIABLE (GSIdentifier) or a SPECIFIC LIST ELEMENT (GSIdentifierWithIndex)
 			if (target.getClass().equals(GSIdentifier.class)) {
+				final String type=dataTypes.get(node.child(0).tokens());
+				if (type==null&&storedError==null) {
+					storedError=
+							new GSInvalidExpressionException("Variable "+node.child(0).tokens()+" is not initialised");
+				}
 				// assign/varname/value
+				_compile(st,node.child(1));
 				sb.append("vm.putVariable(\"");
 				sb.append(node.child(0).tokens()); // identifier
-				sb.append("\",");
-				_compile(st,node.child(1));
+				sb.append("\",pop()");
+				if (type!=null) {
+					sb.append(".").append(type).append("()");
+				}
 				sb.append(");");
+				newline();
 				return null;
 			}
 			if (target.getClass().equals(GSIdentifierWithIndex.class)) {
 				//assignelement/varname/elementno/value
-				sb.append("((BCList)getVariable(\"");
+				_compile(st,node.child(1));
+				sb.append("((BCList)vm.getVariable(\"");
 				sb.append(target.child(0).tokens());
 				sb.append("\",false))");
 				sb.append(".getContent().set(");
 				sb.append(Integer.parseInt(target.child(1).tokens()));
-				sb.append(",");
-				sb.append(node.child(1).tokens());
-				sb.append(";");
+				sb.append(",pop()");
+				sb.append(");");
+				newline();
 				return null;
 			}
 			throw new SystemImplementationException(
@@ -255,30 +477,22 @@ public class GSJavaCompiler extends GSCompiler {
 			// engage paranoia
 			String string=node.tokens();
 			string=string.substring(1,string.length()-1);
-			final byte[] bytes=string.getBytes(StandardCharsets.UTF_8);
-			sb.append("(");
-			sb.append("new String(new byte[]{");
-			boolean first=true;
-			for (final byte b: bytes) {
-				if (first) {
-					first=false;
-				} else {
-					sb.append(", ");
-				}
-				sb.append("(byte)");
-				sb.append(Byte.toUnsignedInt(b));
-			}
-			sb.append("})");
+			sb.append("push(").append("new BCString(null,new String(Base64.getDecoder().decode(\"");
+			sb.append(base64encode(string));
+			sb.append("\"))));");
+			newline();
 			return null;
 		}
 		
 		if (node instanceof GSIntegerConstant) {
-			sb.append("(new BCInteger(null,").append(node.tokens().trim()).append("))");
+			sb.append("push(new BCInteger(null,").append(node.tokens().trim()).append("));");
+			newline();
 			return null;
 		}
 		
 		if (node instanceof GSFloatConstant) {
-			sb.append(node.tokens());
+			sb.append("push(new BCFloat(null,").append(node.tokens().trim()).append("f));");
+			newline();
 			return null;
 		}
 		
@@ -295,9 +509,12 @@ public class GSJavaCompiler extends GSCompiler {
 			usedBlockId++;
 			final int postblock=usedBlockId;
 			
-			sb.append("if (");
 			_compile(st,node.child(0));
-			sb.append(") { runstep=").append(truthblock).append("; } else { runstep=").append(falseblock).append("; }");
+			sb.append("if (pop().toBoolean()) { runstep=")
+			  .append(truthblock)
+			  .append("; } else { runstep=")
+			  .append(falseblock)
+			  .append("; }");
 			newline();
 			
 			block(truthblock);
@@ -308,8 +525,8 @@ public class GSJavaCompiler extends GSCompiler {
 			if (node.children()==3) {
 				_compile(st,node.child(2));
 			}
-			
-			block(postblock,false);
+			runstep(postblock);
+			block(postblock);
 			return null;
 		}
 		
@@ -323,22 +540,26 @@ public class GSJavaCompiler extends GSCompiler {
 			final int runcode=usedBlockId;
 			usedBlockId++;
 			final int endpoint=usedBlockId;
-			
-			block(condition,false);
-			sb.append("if (");
+			runstep(condition);
+			block(condition);
 			_compile(st,node.child(0));
-			sb.append(") { runstep=").append(runcode).append("; } else { runstep=").append(endpoint).append("; }");
+			sb.append("if (pop().toBoolean()) { runstep=")
+			  .append(runcode)
+			  .append("; } else { runstep=")
+			  .append(endpoint)
+			  .append("; }");
 			newline();
 			
-			block(runcode,true);
+			block(runcode);
 			_compile(st,node.child(1));
 			runstep(condition);
 			
-			block(endpoint,true);
+			block(endpoint);
 			return null;
 		}
 		
-		if (node instanceof GSFunctionCall) {/*
+		if (node instanceof GSFunctionCall) {
+			/*
 			// lots of random glue lives in here, but actually the function call at this level is easy enough, it has a name and some parameters
 			checkType(node,0,GSFunctionName.class);
 			if (node.jjtGetNumChildren()>1) {
@@ -351,17 +572,43 @@ public class GSJavaCompiler extends GSCompiler {
 				                                  " due to not having the permission Scripting.CompilePrivileged");
 			}
 			// dump the paramters, in reverse order, (which starts with the paramter count), and finally the name and the invoking bytecode
+			final Method function=GSFunctions.getNullable(functionname);
+			if (function!=null) {
+				// THIS IS A WELL DEFINED GS INTERNAL FUNCTION ; set it up and call it natively with java, nothing really that fancy here
+				// internal function's signature is always a State followed by a GSVM followed by parameters.
+				final Class<?>[] parameterTypes=function.getParameterTypes();
+				final ParseNode parameters=((ParseNode)(node.jjtGetChild(1)));
+				if (parameterTypes.length<2) {
+					throw new GSInternalError(
+							"Calling GSFunction "+functionname+" which does not require at least 2 parameters?");
+				}
+				sb.append(function.getDeclaringClass().getCanonicalName())
+				  .append(".")
+				  .append(functionname)
+				  .append("(state,vm");
+				if (parameters.jjtGetNumChildren()!=(parameterTypes.length-2)) {
+					throw new GSInternalError("Parameter count mismatch - calling function "+functionname+" with "+
+					                          node.jjtGetNumChildren()+" arguments, but we want "+
+					                          (parameterTypes.length-2));
+				}
+				for (int i=2;i<parameterTypes.length;i++) {
+					sb.append(",");
+					_compile(st,parameters.child(i-2));
+				}
+				sb.append(")");
+				return null;
+			} else {
+				// This is NOT a well defined GS function and is either a script to script call or just is botched.
+				throw new GSInternalError("Not implemented - func call to script or unknown");
+			}/*
 			if (node.jjtGetNumChildren()>1) {
 				compiled.addAll(compile(st,node.child(1)));
 			} // assuming it has parameters
 			else {
 				compiled.add(new BCInteger(node,0));
 			} // else zero parameters
-			compiled.add(new BCString(node,(node.child(0).tokens())));
-			addDebug(compiled,node);
-			compiled.add(new BCInvoke(node));
-			return compiled;*/
-			// TODO :P
+*/
+			return null;
 		}
 		
 		if (node instanceof GSParameters) {
@@ -370,104 +617,117 @@ public class GSJavaCompiler extends GSCompiler {
 			}
 			compiled.add(new BCInteger(node,node.children()));
 			return compiled;*/ // TODO
+			return null;
 		}
 		
 		if (node instanceof GSLogicalOr) {
-			op(st,node,"||",true);
+			funcOp("logicalOr",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSLogicalAnd) {
-			op(st,node,"&&",true);
+			funcOp("logicalAnd",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSInEquality) {
-			op(st,node,"!=",false);
+			funcOp("valueEquals",st,node);
+			if (node.children()==2) {
+				sb.append("push(pop().not());");
+				newline();
+			}
 			return null;
 		}
 		
 		if (node instanceof GSEquality) {
-			funcop(st,node,"strictlyEquals",false);
+			funcOp("valueEquals",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSLessThan) {
-			op(st,node,"<",false);
+			funcOp("lessThan",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSGreaterThan) {
-			op(st,node,">",false);
+			funcOp("greaterThan",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSLessOrEqualThan) {
-			op(st,node,"<=",false);
+			funcOp("lessThanOrEqual",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSGreaterOrEqualThan) {
-			op(st,node,">=",false);
+			funcOp("greaterThanOrEqual",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSAdd) {
-			funcop(st,node,"add",false);
+			funcOp("add",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSSubtract) {
-			op(st,node,"-",false);
+			funcOp("subtract",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSMultiply) {
-			op(st,node,"*",false);
+			funcOp("multiply",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSDivide) {
-			op(st,node,"/",false);
+			funcOp("divide",st,node);
 			return null;
 		}
 		
 		if (node instanceof GSLogicalNot) {
-			sb.append("!(");
 			_compile(st,node.child(0));
-			sb.append(")");
+			sb.append("push(pop().not());");
+			newline();
+			if (node.children()>2) { throw new GSInternalError("NOT had more than 2 children in java compiler"); }
 			return null;
 		}
 		
 		if (node instanceof GSUnaryMinus) {
-			sb.append("(-");
 			_compile(st,node.child(0));
-			sb.append(")");
+			sb.append("push(pop().unaryMinus());");
+			newline();
+			if (node.children()>2) { throw new GSInternalError("Unary minus had more than 2 children in java compiler"); }
 			return null;
 		}
 		
 		if (node instanceof GSIdentifier) {
-			sb.append("vm.getVariable(\"").append(node.tokens()).append("\",false)");
+			sb.append("push(vm.getVariable(\"").append(node.tokens()).append("\",false));");
+			newline();
 			return null;
 		}
 		
 		if (node instanceof GSList) {
-			/*
-			// pop the list, in reverse order, then short the size, and then the command.
 			for (int i=node.children()-1;i>=0;i--) {
-				compiled.addAll(compile(st,node.child(i)));
+				_compile(st,node.child(i));
 			}
-			compiled.add(new BCList(node,node.children()));
-			return compiled;*/ // TODO
+			sb.append("push(new BCList(null)");
+			for (int i=0;i<node.children();i++) {
+				sb.append(".append(pop())");
+			}
+			sb.append(");");
+			newline();
+			return null;
 		}
 		
 		if (node instanceof GSListIndex) { // a list index in an evaluatable position
 			checkType(node,0,GSIdentifier.class);
 			checkType(node,1,GSExpression.class);
 			// pop name, pop index
-			sb.append("((GSList)vm.getVariable(\"").append(node.child(0).tokens()).append("\",false)).get(");
 			_compile(st,node.child(1));
-			sb.append(")");
+			sb.append("push(((BCList)vm.getVariable(\"")
+			  .append(node.child(0).tokens())
+			  .append("\",false)).getElement(pop().toInteger()));");
+			newline();
 			return null;
 		}
 		
@@ -491,156 +751,14 @@ public class GSJavaCompiler extends GSCompiler {
 				throw new GSInternalError("Compilation error, 1 children expected");
 			}
 			_compile(st,node.child(0));
+			newline();
+			sb.append("pop(); // discard");
+			newline();
 			return null;
 		}
 		
 		throw new SystemImplementationException(
 				"Compilation not implemented for node type '"+node.getClass().getSimpleName()+"'");
-	}
-	
-	@Override
-	public Byte[] toByteCode(final State st) {
-		compile(st);
-		return ArrayUtils.toObject(bytesOut);
-	}
-	
-	@Override
-	public int version() {
-		return 3;
-	}
-	
-	private String createSource(final State st,final String instancename) {
-		sb=new StringBuilder();
-		indent=0;
-		
-		usedBlockId=0;
-		sb.append("package net.coagulate.GPHUD.Modules.Scripting.Scripts.").append(instancename).append(";");
-		newline();
-		sb.append("import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.*;");
-		newline();
-		sb.append("import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.*;");
-		newline();
-		sb.append("import net.coagulate.GPHUD.State;");
-		newline();
-		sb.append("import net.coagulate.GPHUD.Modules.Scripting.Language.*;");
-		newline();
-		sb.append("import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;");
-		newline();
-		sb.append("import net.coagulate.GPHUD.Interfaces.Responses.Response;");
-		newline();
-		sb.append("import java.util.List;");
-		newline();
-		sb.append("public class ").append(className()).append(" extends GSJavaVMClass {");
-		indent++;
-		newline();
-		sb.append("public ")
-		  .append(className())
-		  .append("(GSVM vm,List<GSVMJavaExecutionStep> debug) { super(vm,debug); }");
-		newline();
-		sb.append("public Response execute() {");
-		indent++;
-		newline();
-		sb.append("int runstep=0;");
-		newline();
-		sb.append("while (runstep>=0) {");
-		indent++;
-		newline();
-		sb.append("if (debug) { step(\"Entering runstep \"+runstep); }");
-		newline();
-		sb.append("switch (runstep) {");
-		indent++;
-		newline();
-		startBlock(0);
-		_compile(st,startnode());
-		newline();
-		sb.append("runstep=-1;");
-		newline();
-		endBlock();
-		sb.append("default: throw new GSInternalError(\"Could not find block \"+runstep+\" to execute\");");
-		newline();
-		indent--;
-		newline();
-		sb.append("}");
-		newline();
-		indent--;
-		newline();
-		sb.append("}");
-		newline();
-		sb.append("if(debug){step(\"SCRIPT EXIT\");}");
-		sb.append("System.out.println(\"Execution completed\");");
-		newline();
-		sb.append("return new OKResponse(\"Script completed ok\");");
-		newline();
-		indent--;
-		newline();
-		sb.append("}");
-		newline();
-		indent--;
-		newline();
-		sb.append("}");
-		newline();
-		System.out.println("---------- SOURCE CODE GENERATED ----------");
-		System.out.println(sb);
-		System.out.println("-------------------------------------------");
-		return sb.toString();
-	}
-	
-	private void block(final int id) {
-		endBlock();
-		startBlock(id);
-	}
-	
-	private void block(final int id,final boolean breaks) {
-		endBlock(breaks);
-		startBlock(id);
-	}
-	
-	private void startBlock(final int id) {
-		sb.append("case ").append(id).append(":");
-		indent++;
-		newline();
-		//sb.append("System.out.println(\"Class \"+this.getClass().getName()+\" entering runstep "+id+"\\n\");");
-	}
-	
-	private void endBlock() {
-		endBlock(true);
-	}
-	
-	private void endBlock(final boolean br) {
-		if (br) {
-			sb.append("break;");
-		}
-		indent--;
-		newline();
-	}
-	
-	private void op(final State st,final ParseNode node,final String op,final boolean linebreak) {
-		_compile(st,node.child(0));
-		for (int i=1;i<node.children();i++) {
-			sb.append(" ").append(op);
-			if (linebreak) {
-				newline();
-			} else {
-				sb.append(" ");
-			}
-			_compile(st,node.child(i));
-		}
-		
-	}
-	
-	private void funcop(final State st,final ParseNode node,final String op,final boolean linebreak) {
-		_compile(st,node.child(0));
-		for (int i=1;i<node.children();i++) {
-			sb.append(".").append(op).append("(");
-			_compile(st,node.child(i));
-			sb.append(")");
-			if (linebreak) {
-				newline();
-			} else {
-				sb.append(" ");
-			}
-		}
-		
 	}
 	
 	private void runstep(final int postblock) {
@@ -739,4 +857,15 @@ public class GSJavaCompiler extends GSCompiler {
 			}
 		}
 	}
+	
+	@Override
+	public Byte[] toByteCode(final State st) {
+		try { compile(st); }
+		catch (final Exception e) {
+			System.out.println(sb.toString());
+			throw(e);
+		}
+		return ArrayUtils.toObject(bytesOut);
+	}
 }
+

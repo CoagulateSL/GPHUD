@@ -101,10 +101,38 @@ public class BCInteger extends ByteCodeDataType {
 		return new BCInteger(node(),toInteger()/var.toInteger());
 	}
 	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		return new BCInteger(node(),-content);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		return toBoolean(toInteger()==var.toInteger());
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		return toBoolean(toInteger()<var.toInteger());
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		return toBoolean(toInteger()>var.toInteger());
+	}
+	
 	@Nonnull
 	@Override
 	public BCString toBCString() {
 		return new BCString(node(),content.toString());
+	}
+	
+	@Override
+	public BCInteger not() {
+		return toBoolean(!toBoolean());
 	}
 	
 	@Nonnull
@@ -126,5 +154,16 @@ public class BCInteger extends ByteCodeDataType {
 			return false;
 		}
 		return ((BCInteger)find).content.intValue()==content.intValue();
+	}
+
+	@Nonnull
+	@Override
+	public BCInteger toBCInteger() {
+		return this;
+	}
+	
+	@Override
+	public boolean toBoolean() {
+		return getContent()!=0;
 	}
 }

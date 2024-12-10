@@ -2,7 +2,6 @@ package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInternalError;
-import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
@@ -18,8 +17,8 @@ public class BCCharacter extends ByteCodeDataType {
 		super(node);
 	}
 	
-	public BCCharacter(final ParseNode n,@Nonnull final Char content) {
-		super(n);
+	public BCCharacter(final ParseNode node,@Nonnull final Char content) {
+		super(node);
 		this.content=content;
 	}
 	
@@ -60,37 +59,83 @@ public class BCCharacter extends ByteCodeDataType {
 		vm.push(this);
 	}
 	
-	@Nullable
+	@Nonnull
 	@Override
 	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
 		if (var.getClass().equals(BCString.class)) {
 			return new BCString(node(),toString()+var);
 		}
-		throw new GSInvalidExpressionException("Can't add BCCharacter + "+var.getClass().getSimpleName());
+		if (var.getClass().equals(BCInteger.class)) {
+			return new BCInteger(node(),toInteger()+var.toInteger());
+		}
+		throw fail(var);
 	}
 	
 	@Nonnull
 	@Override
 	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can't subtract with BCCharacter");
+		throw fail();
 	}
 	
 	@Nonnull
 	@Override
 	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can't multiply with BCCharacter");
+		throw fail();
 	}
 	
 	@Nonnull
 	@Override
 	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
-		throw new GSInvalidExpressionException("Can't divide with BCCharacter");
+		throw fail();
+	}
+	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof BCCharacter) {
+			return toBoolean(((BCCharacter)var).getContent().getId()==getContent().getId());
+		}
+		if (var instanceof BCInteger) {
+			return toBoolean(((BCInteger)var).getContent()==getContent().getId());
+		}
+		if (var instanceof BCString) {
+			return toBoolean(((BCString)var).getContent().equalsIgnoreCase(getContent().getName()));
+		}
+		throw fail(var);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Override
+	public BCInteger not() {
+		throw fail();
 	}
 	
 	@Nonnull
 	@Override
 	public BCString toBCString() {
 		return new BCString(node(),getContent().getName());
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger toBCInteger() {
+		return new BCInteger(null,getContent().getId());
 	}
 	
 	@Nullable
@@ -103,12 +148,23 @@ public class BCCharacter extends ByteCodeDataType {
 		return getContent().isOnline();
 	}
 	
+	@Nonnull
+	@Override
+	public BCFloat toBCFloat() {
+		return new BCFloat(null,((float)(getContent().getId())));
+	}
+
+	@Override
+	public boolean toBoolean() {
+		throw fail();
+	}
+	
 	@Override
 	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
 			final ByteCodeDataType find) {
 		if (!(find instanceof BCCharacter)) {
 			return false;
 		}
-		return ((BCCharacter)find).content.getId()==content.getId();
+		return ((BCCharacter)find).getContent().getId()==getContent().getId();
 	}
 }

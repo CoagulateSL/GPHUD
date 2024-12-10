@@ -1,12 +1,12 @@
 package net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode;
 
+import net.coagulate.GPHUD.Modules.Scripting.Language.GSArrayIndexOutOfBoundsException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSInvalidExpressionException;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSStackVM;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ParseNode;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +19,13 @@ public class BCList extends ByteCodeDataType {
 		super(node);
 	}
 	
-	public BCList(final ParseNode n,final int elements) {
-		super(n);
+	public BCList(final ParseNode node,final int elements) {
+		super(node);
 		this.elements=elements;
 	}
 	
-	public BCList(final ParseNode n,final ByteCodeDataType e) {
-		super(n);
+	public BCList(final ParseNode node,final ByteCodeDataType e) {
+		super(node);
 		content.add(e);
 		elements++;
 	}
@@ -46,7 +46,15 @@ public class BCList extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public String htmlDecode() {
-		return "List</td><td>"+elements;
+		final StringBuilder sb=new StringBuilder();
+		sb.append("List</td><td>").append(elements).append("[");
+		boolean comma=false;
+		for (final ByteCodeDataType element:content) {
+			if (comma) { sb.append(","); } else { comma=true; }
+			sb.append(element.toString());
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 	
 	@Override
@@ -68,7 +76,7 @@ public class BCList extends ByteCodeDataType {
 		return content;
 	}
 	
-	@Nullable
+	@Nonnull
 	@Override
 	/** Performs mathematical addition upon a list, that is, it takes two lists and adds them together to produce a third list for assignment.
 	 * NOT TO BE CONFUSED WITH APPEND.  Would I ever.
@@ -85,8 +93,69 @@ public class BCList extends ByteCodeDataType {
 	}
 	
 	@Nonnull
+	@Override
+	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof final BCList v) {
+			if (v.size()!=size()) {
+				return falseness();
+			}
+			for (int i=0;i<v.size();i++) {
+				if (!v.getElement(i).valueEquals(getElement(i)).toBoolean()) {
+					return falseness();
+				}
+			}
+			return truth();
+		}
+		if (var instanceof BCInteger) {
+			return toBoolean(((BCInteger)var).getContent()==size());
+		}
+		throw fail(var);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof BCInteger) {
+			return toBoolean(((BCInteger)var).getContent()<size());
+		}
+		throw fail(var);
+	}
+	
+	@Nonnull
 	public BCInteger toBCInteger() {
 		return new BCInteger(null,elements);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof BCInteger) {
+			return toBoolean(((BCInteger)var).getContent()>size());
+		}
+		throw fail(var);
 	}
 	
 	@Nonnull
@@ -115,6 +184,17 @@ public class BCList extends ByteCodeDataType {
 			clone.content.add(element.clone());
 		}
 		return clone;
+	}
+	
+	@Override
+	public BCInteger not() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCFloat toBCFloat() {
+		return new BCFloat(null,((float)(size())));
 	}
 	
 	@Nonnull
@@ -161,7 +241,32 @@ public class BCList extends ByteCodeDataType {
 		return elements;
 	}
 	
+	@Nonnull
+	@Override
+	public BCString toBCString() {
+		final StringBuilder sb=new StringBuilder();
+		sb.append("[");
+		boolean commait=false;
+		for (final ByteCodeDataType data: getContent()) {
+			if (commait) {
+				sb.append(",");
+			} else {
+				commait=true;
+			}
+			sb.append(data.toString());
+		}
+		sb.append("]");
+		return new BCString(null,sb.toString());
+	}
+
+	@Override
+	public boolean toBoolean() {
+		return size()>0;
+	}
+	
 	public ByteCodeDataType getElement(final int i) {
+		if (i>=content.size()) { throw new GSArrayIndexOutOfBoundsException("Index "+i+" is greater than or equal to the size "+content.size()); }
 		return content.get(i);
 	}
+	
 }

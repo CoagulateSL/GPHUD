@@ -17,6 +17,61 @@ public class BCGroup extends ByteCodeDataType {
 		super(node);
 	}
 	
+	@Nonnull
+	@Override
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof BCString) { return new BCString(null,this+((BCString)var).getContent()); }
+		throw fail(var);
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof BCGroup) { return toBoolean(content.getId()==((BCGroup)var).content.getId()); }
+		if (var instanceof BCString) { return toBoolean(content.getName().equalsIgnoreCase(var.toString())); }
+		throw fail(var);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Override
+	public BCInteger not() {
+		throw fail();
+	}
+	
 	public BCGroup(final ParseNode node,@Nullable final CharacterGroup content) {
 		super(node);
 		this.content=content;
@@ -42,8 +97,8 @@ public class BCGroup extends ByteCodeDataType {
 	
 	@Nonnull
 	@Override
-	public String htmlDecode() {
-		return "Avatar</td><td>"+getContent().getId();
+	public BCInteger toBCInteger() {
+		return new BCInteger(null,content.getId());
 	}
 	
 	@Override
@@ -70,6 +125,18 @@ public class BCGroup extends ByteCodeDataType {
 		return new BCGroup(node(),content);
 	}
 	
+	@Nonnull
+	@Override
+	public BCFloat toBCFloat() {
+		return new BCFloat(null,((float)(content.getId())));
+	}
+	
+	@Nonnull
+	@Override
+	public BCString toBCString() {
+		return new BCString(null,content.getName());
+	}
+	
 	@Override
 	/** Compares the contents, true if equals.  Requires type match, so no auto casting here thanks */ public boolean strictlyEquals(
 			final ByteCodeDataType find) {
@@ -77,5 +144,16 @@ public class BCGroup extends ByteCodeDataType {
 			return false;
 		}
 		return ((BCGroup)find).content.getId()==content.getId();
+	}
+
+	@Override
+	public boolean toBoolean() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public String htmlDecode() {
+		return "Group</td><td>"+getContent().getId();
 	}
 }

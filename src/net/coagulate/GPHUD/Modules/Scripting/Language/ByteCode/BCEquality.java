@@ -86,11 +86,21 @@ public class BCEquality extends ByteCode {
 			}
 			return;
 		}
+		if (type.equals(BCFloat.class)) {
+			final float id1=var1.toFloat();
+			final float id2=var2.toFloat();
+			if (id1==id2) {
+				vm.push(new BCInteger(null,1));
+			} else {
+				vm.push(new BCInteger(null,0));
+			}
+			return;
+		}
 		if (type.equals(BCList.class)) {
 			throw new GSInvalidExpressionException("Can not compare lists.  Yet.");
 		}
 		
-		throw new GSInternalError("Not implemented equality match");
+		throw new GSInternalError("Not implemented equality match on "+var1.getClass()+" and "+var2.getClass());
 		
 	}
 }

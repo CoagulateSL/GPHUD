@@ -18,6 +18,49 @@ public class BCResponse extends ByteCodeDataType {
 		super(node);
 	}
 	
+	@Nonnull
+	@Override
+	public ByteCodeDataType add(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType subtract(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType multiply(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public ByteCodeDataType divide(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Override
+	public ByteCodeDataType unaryMinus() {
+		throw fail();
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger valueEquals(@Nonnull final ByteCodeDataType var) {
+		if (var instanceof BCInteger) { return toBoolean(toInteger()==var.toInteger()); }
+		if (var instanceof BCString) { return toBoolean(toString().equalsIgnoreCase(((BCString)var).getContent())); }
+		throw fail(var);
+	}
+	
+	@Nonnull
+	@Override
+	public BCInteger lessThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
 	public BCResponse(final ParseNode n,@Nonnull final Response content) {
 		super(n);
 		message=content.scriptResponse();
@@ -49,8 +92,19 @@ public class BCResponse extends ByteCodeDataType {
 	}
 	
 	@Nonnull
+	@Override
+	public BCInteger greaterThan(@Nonnull final ByteCodeDataType var) {
+		throw fail();
+	}
+	
+	@Nonnull
 	public BCInteger toBCInteger() {
 		return new BCInteger(null,(error?1:0));
+	}
+	
+	@Override
+	public BCInteger not() {
+		throw fail();
 	}
 	
 	@Nullable
@@ -80,5 +134,16 @@ public class BCResponse extends ByteCodeDataType {
 	
 	public String getMessage() {
 		return message;
+	}
+
+	@Nonnull
+	@Override
+	public BCFloat toBCFloat() {
+		return new BCFloat(null,error?1.0f:0.0f);
+	}
+	
+	@Override
+	public boolean toBoolean() {
+		return error;
 	}
 }

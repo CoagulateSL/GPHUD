@@ -2,12 +2,16 @@ package net.coagulate.GPHUD.Modules.Scripting.Language;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
+import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.ByteCode;
+import net.coagulate.GPHUD.Modules.Scripting.Language.Functions.GSFunctions;
 import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.*;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The abstract superclass of all compilers
@@ -44,16 +48,17 @@ public abstract class GSCompiler {
 	
 	public static GSCompiler create(final String compiler,
 	                                final GSStart gsscript,
-	                                final String name,
-	                                final int sourceVersion) {
+	                                final Script script) {
 		if ("V2-GSStackVM/Relative".equalsIgnoreCase(compiler)) {
-			return new GSStackVMCompiler(gsscript,name,sourceVersion);
+			return new GSStackVMCompiler(gsscript,script.getName(),script.getSourceVersion());
 		}
 		if ("V3-GSJavaVM".equalsIgnoreCase(compiler)) {
-			return new GSJavaCompiler(gsscript,name,sourceVersion);
+			return new GSJavaCompiler(gsscript,script.getName(),script.getSourceVersion());
 		}
 		throw new UserInputInvalidChoiceException("Compiler '"+compiler+"'  is not handled");
 	}
+	
+	public abstract String diagnosticOutput(State st);
 	
 	public int sourceVersion() {
 		return sourceVersion;
@@ -63,9 +68,9 @@ public abstract class GSCompiler {
 		return compiledState;
 	}
 	
-	public List<ByteCode> compile(final State st) {
+	public void compile(final State st) {
 		compiledState=st;
-		return _compile(st,startnode());
+		_compile(st,startnode());
 	}
 	
 	protected abstract List<ByteCode> _compile(final State st,ParseNode node);
@@ -193,6 +198,21 @@ public abstract class GSCompiler {
 			throw new GSInternalError(
 					"Child_0 "+pos+" of "+node.getClass().getName()+" is of type "+child.getClass().getName()+
 					" not the expected "+clazz.getName());
+		}
+	}
+	
+	protected boolean priviledgedFunction(final String name) {
+		final Map<String,Method> functionsmap=GSFunctions.getAll();
+		for (final String funname: functionsmap.keySet()) {
+			if (funname.equals(name)) {
+				return functionsmap.get(name).getAnnotation(GSFunctions.GSFunction.class).privileged();
+			}
+		}
+		if (name.startsWith("gs")) {
+			throw new SystemImplementationException(
+					"Failed to find function for priviledge check using reserved prefix 'gs'");
+		} else {
+			return false;
 		}
 	}
 	

@@ -8,10 +8,8 @@ import net.coagulate.GPHUD.Modules.Scripting.Language.Generated.*;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class GSStackVMCompiler extends GSCompiler {
 	
@@ -31,36 +29,41 @@ public class GSStackVMCompiler extends GSCompiler {
 		super(passednode,scriptname,sourceVersion);
 	}
 	
-	// ---------- INSTANCE ----------
-	@Nonnull
-	public Byte[] toByteCode(final State st) {
-		final List<ByteCode> bytecodelist=compile(st);
-		// twopass
-		List<Byte> bytecode=new ArrayList<>();
-		for (final ByteCode bc: bytecodelist) {
-			bc.toByteCode(bytecode);
+	public List<ByteCode> code=new ArrayList<>();
+	
+	@Override
+	public String diagnosticOutput(final State st) {
+		final StringBuilder output=new StringBuilder("<pre><table border=0>");
+		for (final ByteCode bc: code) {
+			final ParseNode bcnode=bc.node();
+			output.append("<tr><td>")
+			    .append(bcnode!=null?bcnode.tokens():"")
+			    .append("</td><td>")
+			    .append(bc.explain().replaceFirst(" \\(","</td><td><i>("))
+			    .append("</i></td><td>");
+			final ArrayList<Byte> bcl=new ArrayList<>();
+			bc.toByteCode(bcl);
+			for (final Byte b: bcl) {
+				output.append(b).append(" ");
+			}
+			output.append("</td></tr>");
 		}
-		// redo. now that forward references are completed
-		bytecode=new ArrayList<>();
-		for (final ByteCode bc: bytecodelist) {
-			bc.toByteCode(bytecode);
-		}
-		return bytecode.toArray(new Byte[] {});
+		output.append("</table></pre>");
+		return output.toString();
 	}
 	
 	// The compiler has a stack (Last In First Out) which it uses to store 'things'
 	// we also have a 'script' which is just a list of things, this time including instructions
 	@Nonnull
-	public List<ByteCode> compile(final State st) {
+	public void compile(final State st) {
 		lastdebuglineno=-1;
 		lastdebugcolno=-1;
-		final List<ByteCode> code=new ArrayList<>();
+		code=new ArrayList<>();
 		code.add(new BCString(null,scriptname()));
 		code.add(new BCDebugSource(null));
 		code.addAll(_compile(st,startnode()));
 		code.add(new BCInteger(null,0));
 		code.add(new BCReturn(null));
-		return code;
 	}
 	
 	@Override
@@ -480,19 +483,20 @@ public class GSStackVMCompiler extends GSCompiler {
 		return false;
 	}
 	
-	private boolean priviledgedFunction(final String name) {
-		final Map<String,Method> functionsmap=GSFunctions.getAll();
-		for (final String funname: functionsmap.keySet()) {
-			if (funname.equals(name)) {
-				return functionsmap.get(name).getAnnotation(GSFunctions.GSFunction.class).privileged();
-			}
+	// ---------- INSTANCE ----------
+	@Nonnull
+	public Byte[] toByteCode(final State st) {
+		if (code.isEmpty()) { compile(st); }
+		// twopass
+		List<Byte> bytecode=new ArrayList<>();
+		for (final ByteCode bc: code) {
+			bc.toByteCode(bytecode);
 		}
-		if (name.startsWith("gs")) {
-			throw new SystemImplementationException(
-					"Failed to find function for priviledge check using reserved prefix 'gs'");
-		} else {
-			return false;
+		// redo. now that forward references are completed
+		bytecode=new ArrayList<>();
+		for (final ByteCode bc: code) {
+			bc.toByteCode(bytecode);
 		}
+		return bytecode.toArray(new Byte[] {});
 	}
-	
 }
