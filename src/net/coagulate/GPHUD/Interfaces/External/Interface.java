@@ -4,10 +4,7 @@ import net.coagulate.Core.Exceptions.System.SystemBadValueException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.System.SystemRemoteFailureException;
 import net.coagulate.Core.Exceptions.SystemException;
-import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
-import net.coagulate.Core.Exceptions.User.UserInputValidationFilterException;
-import net.coagulate.Core.Exceptions.User.UserRemoteFailureException;
+import net.coagulate.Core.Exceptions.User.*;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.HTML.Elements.PlainText;
 import net.coagulate.Core.HTML.Page;
@@ -218,11 +215,19 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 	
 	private Instance decodeInstance(final JSONObject obj) {
 		Instance instance=null;
-		if (obj.has("runasinstancename")) {
-			instance=Instance.find(obj.getString("runasinstancename"));
+		try {
+			if (obj.has("runasinstancename")) {
+				instance=Instance.find(obj.getString("runasinstancename"));
+			}
+		} catch (final UserInputLookupFailureException e) {
+			throw new UserInputLookupFailureException("Specified runasinstancename '"+obj.optString("runasinstancename","NOTFOUND")+"' does not exist",e,true);
 		}
-		if (obj.has("runasinstanceid")) {
-			instance=Instance.get(obj.getInt("runasinstanceid"));
+		try {
+			if (obj.has("runasinstanceid")) {
+				instance=Instance.get(obj.getInt("runasinstanceid"));
+			}
+		} catch (final UserInputLookupFailureException e) {
+			throw new UserInputLookupFailureException("Specified runasinstanceid '"+obj.optString("runasinstanceid","NOTFOUND")+"' does not exist",e,true);
 		}
 		return instance;
 	}
