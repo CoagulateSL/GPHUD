@@ -153,16 +153,16 @@ public class KV {
 			throw new GSInvalidFunctionCall("Character "+character+" belongs to a different instance!");
 		}
 		final State altState=new State(character.getContent());
-		final Attribute attr=st.getAttribute(Modules.extractReference(xpName.getContent()));
+		final Attribute attr=altState.getAttribute(Modules.extractReference(xpName.getContent()));
 		if (attr==null) {
 			throw new GSUnknownIdentifier("There was no attribute named '"+xpName.getContent()+"' found.");
 		}
 		if (attr.getType()!=Attribute.ATTRIBUTETYPE.EXPERIENCE &&attr.getType()!=Attribute.ATTRIBUTETYPE.POOL) {
 			throw new GSInvalidFunctionCall("Attribute '"+attr+"' is of type '"+attr.getType()+"', but gsGetExperience only works on Experience/Pool attributes.");
 		}
-		final Pool pool=Modules.getPool(st,xpName.getContent());
+		final Pool pool=Modules.getPool(altState,xpName.getContent());
 		// that said getPool just dumps the prefix right now
 		//if (pool==null) { throw new SystemImplementationException("Retrieved null pool for '"+xpName.getContent()+"' after validation"); }
-		return new BCInteger(null,CharacterPool.sumPool(st,pool));
+		return new BCInteger(null,CharacterPool.sumPool(altState,pool));
 	}
 }

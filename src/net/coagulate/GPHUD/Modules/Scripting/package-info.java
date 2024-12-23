@@ -37,6 +37,11 @@
                 type=ChangeLogging.CHANGETYPE.Add,
                 component=Classes.COMPONENT.Scripting,
                 message="Added gsGetExperience(char,poolname) function to get a current experience value")
+
+@Classes.Change(date="2024-12-23",
+                type=ChangeLogging.CHANGETYPE.Fix,
+                component=Classes.COMPONENT.Scripting,
+                message="Fixed gsGetExperience to use the fabricated state for the target character, rather than the caller's state")
 		
 package net.coagulate.GPHUD.Modules.Scripting;
 
