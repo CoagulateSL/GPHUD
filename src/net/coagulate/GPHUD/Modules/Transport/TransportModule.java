@@ -137,8 +137,8 @@ public class TransportModule extends ModuleAnnotation {
 	 * +-------------------------+
 	 * | adminnotes              | (Char data)
 	 * | aliases                 |
-	 * | attributes              |
-	 * | audit                   |
+	 * | attributes              | (Implemented)
+	 * | audit                   | (Don't export)
 	 * | charactergroupkvstore   |
 	 * | charactergroupmembers   |
 	 * | charactergroups         |
@@ -158,7 +158,7 @@ public class TransportModule extends ModuleAnnotation {
 	 * | eventsschedule          |
 	 * | eventvisits             |
 	 * | instancedevelopers      |
-	 * | instancekvstore         | (Exportable)
+	 * | instancekvstore         | (Implemented)
 	 * | instances               | (NEVER export :)
 	 * | iteminventories         | (Char data?)
 	 * | items                   |
