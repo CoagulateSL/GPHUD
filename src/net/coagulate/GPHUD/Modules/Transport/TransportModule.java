@@ -1,56 +1,133 @@
 package net.coagulate.GPHUD.Modules.Transport;
 
-import net.coagulate.GPHUD.Interfaces.Outputs.Link;
-import net.coagulate.GPHUD.Interfaces.Outputs.Paragraph;
-import net.coagulate.GPHUD.Interfaces.Outputs.TextHeader;
-import net.coagulate.GPHUD.Interfaces.User.Form;
+import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
-import net.coagulate.GPHUD.Modules.SideSubMenu;
-import net.coagulate.GPHUD.Modules.URL;
-import net.coagulate.GPHUD.SafeMap;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Permission;
+import net.coagulate.GPHUD.Modules.Transport.Transports.InstanceKVs;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.TreeMap;
 
+/**
+ * Import/export module for GPHUD.
+ * <p>
+ * Exports configuration data to a JSON file, and supports reimporting it.
+ * Largely one module per table / object type we manage.
+ * Ensure you consider dependancies ; e.g. probably a bad idea to import ItemInventories before Inventories
+ */
 public class TransportModule extends ModuleAnnotation {
 	
-	private static final Transporter[] transports={
+	static final Transporter[] transports={
+			// Instance level
+			new InstanceKVs()};  // an importantly ordered list, dependancies in the DB
 	
-	};  // an importantly ordered list, dependancies in the DB
+	@Override
+	@Nullable
+	public Permission getPermission(final State st,@Nonnull final String itemname) {
+		Permission p=super.getPermission(st,itemname);
+		if (p!=null) {
+			return p;
+		}
+		p=getPermissions(st).getOrDefault(itemname,null);
+		return p;
+	}
 	
+	@Override
+	public Map<String,Permission> getPermissions(final State st) {
+		final Map<String,Permission> map=new TreeMap<>(super.getPermissions(st));
+		for (final Transporter t: transports) {
+			map.put("Import"+t.transportName(),new Permission() {
+				@Override
+				public Module getModule(final State st) {
+					return Modules.get(st,"Transport");
+				}
+				
+				@Override
+				public boolean isGenerated() {
+					return true;
+				}
+				
+				@Nonnull
+				@Override
+				public String name() {
+					return "Import"+t.transportName();
+				}
+				
+				@Nonnull
+				@Override
+				public String description() {
+					return "Allows the importing of "+t.transportName();
+				}
+				
+				@Nonnull
+				@Override
+				public POWER power() {
+					return POWER.HIGH;
+				}
+				
+				@Override
+				public boolean grantable() {
+					return true;
+				}
+			});
+			map.put("Export"+t.transportName(),new Permission() {
+				@Override
+				public Module getModule(final State st) {
+					return Modules.get(st,"Transport");
+				}
+				
+				@Override
+				public boolean isGenerated() {
+					return true;
+				}
+				
+				@Nonnull
+				@Override
+				public String name() {
+					return "Export"+t.transportName();
+				}
+				
+				@Nonnull
+				@Override
+				public String description() {
+					return "Allows the exporting of "+t.transportName();
+				}
+				
+				@Nonnull
+				@Override
+				public POWER power() {
+					return POWER.MEDIUM;
+				}
+				
+				@Override
+				public boolean grantable() {
+					return true;
+				}
+			});
+		}
+		return map;
+	}
 	
 	public TransportModule(final String name,final ModuleDefinition annotation) {
 		super(name,annotation);
 	}
 	
-	@URL.URLs(url="/transport")
-	public static void transportPage(@Nonnull final State st,final SafeMap values) {
-		final Form f=st.form();
-		f.add(new TextHeader("Transport Module"));
-		f.add(new Paragraph(
-				"The transport module provides a mechanism for importing or exporting data.  This can be used to copy CONFIGURATION data between instances or even different GPHUD servers."));
-		f.add(new Paragraph("Note that currently the transport of character data is not supported"));
-		f.add(new Link("Import Settings","/transport/import"));
-		f.add(new Link("Export Settings","/transport/import"));
-	}
+	/* JSON Export Format
+	 * {
+	 *      identifier: "GPHUD Export",                 Used to verify import file
+	 *      exportedBy: "SL User Name",                 Decorative
+	 *      exportedByKey: "123456-12345678(...)",      Decorative
+	 *      exportedWhen: "2024-12-24 00:00:00",        Decorative
+	 *      version: 1,                                 Reserved for future blah
+	 *      module -> {module specific JSON object}     Module specific data blob (usually a map of object name -> object data as json object)
+	 *      (...)                                       for all modules
+	 * }
+	 */
 	
-	@SideSubMenu.SideSubMenus(name="Import", priority=1, requiresPermission="transport.*")
-	@URL.URLs(url="/transport/import")
-	public static void importPage(@Nonnull final State st,final SafeMap values) {
-		final Form f=st.form();
-		f.add(new TextHeader("Transport Module, Import"));
-		f.add(new Paragraph("This page can be used to Import saved settings."));
-		f.p("Please note the import is MERGED into your current system ; new items are created, items with the same name will be overwritten, items not present in the import will not be deleted.");
-		f.p("It is <b>STRONGLY</b> recommended you run the import in preview mode first and review any errors/warnings");
-	}
-	
-	@SideSubMenu.SideSubMenus(name="Export", priority=2, requiresPermission="transport.*")
-	@URL.URLs(url="/transport/export")
-	public static void exportPage(@Nonnull final State st,final SafeMap values) {
-		final Form f=st.form();
-		f.add(new TextHeader("Transport Module, Export"));
-		f.p("Here you may download specific items or whole sections of your configuration which can then be imported later.");
-	}
 	
 	/*
 	 * Mark tables off below when added to import/export
@@ -80,8 +157,8 @@ public class TransportModule extends ModuleAnnotation {
 	 * | eventsschedule          |
 	 * | eventvisits             |
 	 * | instancedevelopers      |
-	 * | instancekvstore         |
-	 * | instances               |
+	 * | instancekvstore         | (Exportable)
+	 * | instances               | (NEVER export :)
 	 * | iteminventories         |
 	 * | items                   |
 	 * | itemverbs               |

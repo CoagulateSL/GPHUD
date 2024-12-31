@@ -4,7 +4,9 @@
  * Or doing backups I suppose.
  */
 
-@Module.ModuleDefinition(description="Allows import and export of configuration", defaultDisable=true)
+@Module.ModuleDefinition(description="Allows import and export of configuration",
+                         defaultDisable=true,
+                         implementation="net.coagulate.GPHUD.Modules.Transport.TransportModule")
 
 @SideMenus(name="Transport", priority=875, requiresPermission="transport.*", url="/transport")
 
