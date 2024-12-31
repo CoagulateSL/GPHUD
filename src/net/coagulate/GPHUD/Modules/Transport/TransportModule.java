@@ -22,7 +22,7 @@ import java.util.TreeMap;
  */
 public class TransportModule extends ModuleAnnotation {
 	
-	static final Transporter[] transports={
+	static final Transporter[] transports={new AttributeTransport(),
 			// Instance level
 			new InstanceKVTransport()};  // an importantly ordered list, dependancies in the DB
 	
