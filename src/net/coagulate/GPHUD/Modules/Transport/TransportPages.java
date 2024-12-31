@@ -146,19 +146,20 @@ public class TransportPages {
 				    		}
 				    	})" >DeSelect ALL</button>
 				    """);
+		f.add("<table border=0 margin=0>");
 		f.add("<div id=exports>");
 		final Map<String,List<String>> pendingExports=new HashMap<>();
 		for (final Transporter t: TransportModule.transports) {
 			if (st.hasPermission("Transport.Export"+t.transportName())) {
-				f.add("<b>"+t.transportName()+"</b> - ");
-				f.add(t.description()+" ");
+				f.add("<tr><th align=left>"+t.transportName()+"</th><td>");
+				f.add(t.description()+"</td><td align=left>");
 				f.add("<button type=\"button\" onClick=\""+t.transportName()+".hidden=!"+t.transportName()+
 				      ".hidden;\">Expand</button>");
 				f.add("<button type=\"button\" onClick=\"document.getElementById('"+t.transportName()+
 				      "').childNodes.forEach(x=>{ if (x.nodeName=='INPUT') { x.checked=true; } } )\">Select All</button>");
 				f.add("<button type=\"button\" onClick=\"document.getElementById('"+t.transportName()+
 				      "').childNodes.forEach(x=>{ if (x.nodeName=='INPUT') { x.checked=false; } } )\">DeSelect All</button>");
-				f.add("<br>");
+				f.add("</td></tr><tr><td colspan=3>");
 				f.add("<div hidden id=\""+t.transportName()+"\">");
 				for (@Nonnull final String element: t.getExportableElements(st)) {
 					final String key=t.transportName()+"."+element;
@@ -172,9 +173,11 @@ public class TransportPages {
 					}
 				}
 				f.add("</div>");
+				f.add("</td></tr>");
 			}
 		}
 		f.add("</div>");
+		f.add("</table>");
 		f.p("");
 		f.add(new Button("Download"));
 		if (values.containsKey("Download")) {
