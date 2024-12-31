@@ -1,6 +1,5 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
-import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Transport.ImportReport;
@@ -47,6 +46,11 @@ public class InstanceKVTransport extends Transporter {
 	                          final boolean simulation) {
 		final String currentValue=state.getRawKV(state.getInstance(),name);
 		final String newValue=element.getString("value");
+		importValue(state,simulation,report,state.getInstance().getName(),name,currentValue,newValue,()->{
+			state.setKV(state.getInstance(),name,newValue);
+		});
+		
+		/*
 		if (currentValue!=null&&currentValue.equalsIgnoreCase(newValue)) {
 			report.noop("InstanceKV - value for '"+name+"' has not changed");
 		} else {
@@ -66,5 +70,6 @@ public class InstanceKVTransport extends Transporter {
 				report.info("InstanceKV - updated '"+name+"' from '"+currentValue+"' to '"+newValue+"'");
 			}
 		}
+		 */
 	}
 }
