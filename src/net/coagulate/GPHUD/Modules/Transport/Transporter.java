@@ -1,9 +1,11 @@
 package net.coagulate.GPHUD.Modules.Transport;
 
+import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -99,4 +101,53 @@ public abstract class Transporter {
 	                                      @Nonnull final String name,
 	                                      @Nonnull final JSONObject element,
 	                                      final boolean simulation);
+	
+	/**
+	 * Generic value importer function, for sub classes utility.
+	 *
+	 * Effectively checks if something needs changing, updates the report, simulates or writes the value.
+	 *
+	 * @param state      Caller's state, used in audit log entry
+	 * @param simulation Are we simulating this import
+	 * @param report     Report to update
+	 * @param targetName Name of the target we're updating
+	 * @param targetAttr Attribute on the named target we're updating
+	 * @param oldvalue   The old value
+	 * @param newvalue   The proposed new value
+	 * @param writeValue Functional primitive to actually write the newvalue if necessary
+	 */
+	protected void importValue(@Nonnull final State state,
+	                           final boolean simulation,
+	                           @Nonnull final ImportReport report,
+	                           @Nonnull final String targetName,
+	                           @Nonnull final String targetAttr,
+	                           @Nullable final Object oldvalue,
+	                           @Nullable final Object newvalue,
+	                           @Nonnull final Runnable writeValue) {
+		if (newvalue==null&&oldvalue==null) {
+			report.noop("InstanceKV - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
+			return;
+		}
+		if (newvalue!=null&&newvalue.equals(oldvalue)) {
+			report.noop("InstanceKV - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
+			return;
+		}
+		if (simulation) {
+			report.info(
+					transportName()+" - "+targetName+" would update "+targetAttr+" from '"+oldvalue+"' to '"+newvalue+
+					"'");
+			return;
+		}
+		report.info(transportName()+" - "+targetName+" updated "+targetAttr+" from '"+oldvalue+"' to '"+newvalue+"'");
+		writeValue.run();
+		Audit.audit(state,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Import "+transportName(),
+		            targetName+" - "+targetAttr,
+		            oldvalue!=null?oldvalue.toString():null,
+		            newvalue!=null?newvalue.toString():null,
+		            "Updated "+targetAttr+" via attribute import");
+	}
 }
