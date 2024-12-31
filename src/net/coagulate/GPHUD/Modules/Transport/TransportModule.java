@@ -4,7 +4,8 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Permission;
-import net.coagulate.GPHUD.Modules.Transport.Transports.InstanceKVs;
+import net.coagulate.GPHUD.Modules.Transport.Transports.AttributeTransport;
+import net.coagulate.GPHUD.Modules.Transport.Transports.InstanceKVTransport;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -23,7 +24,7 @@ public class TransportModule extends ModuleAnnotation {
 	
 	static final Transporter[] transports={
 			// Instance level
-			new InstanceKVs()};  // an importantly ordered list, dependancies in the DB
+			new InstanceKVTransport()};  // an importantly ordered list, dependancies in the DB
 	
 	@Override
 	@Nullable
@@ -134,22 +135,22 @@ public class TransportModule extends ModuleAnnotation {
 	 * +-------------------------+
 	 * | Tables_in_gphud         |
 	 * +-------------------------+
-	 * | adminnotes              |
+	 * | adminnotes              | (Char data)
 	 * | aliases                 |
 	 * | attributes              |
 	 * | audit                   |
 	 * | charactergroupkvstore   |
 	 * | charactergroupmembers   |
 	 * | charactergroups         |
-	 * | characterkvstore        |
-	 * | characterpools          |
-	 * | characters              |
-	 * | charactersets           |
+	 * | characterkvstore        | (Char data)
+	 * | characterpools          | (Char data)
+	 * | characters              | (Char data)
+	 * | charactersets           | (Char data)
 	 * | cookies                 |
 	 * | currencies              |
 	 * | currencycoins           |
 	 * | effects                 |
-	 * | effectsapplications     |
+	 * | effectsapplications     | (Char data)
 	 * | effectskvstore          |
 	 * | events                  |
 	 * | eventskvstore           |
@@ -159,7 +160,7 @@ public class TransportModule extends ModuleAnnotation {
 	 * | instancedevelopers      |
 	 * | instancekvstore         | (Exportable)
 	 * | instances               | (NEVER export :)
-	 * | iteminventories         |
+	 * | iteminventories         | (Char data?)
 	 * | items                   |
 	 * | itemverbs               |
 	 * | landmarks               |
@@ -170,14 +171,14 @@ public class TransportModule extends ModuleAnnotation {
 	 * | permissions             |
 	 * | permissionsgroupmembers |
 	 * | permissionsgroups       |
-	 * | ping                    |
-	 * | primarycharacters       |
-	 * | regionkvstore           |
-	 * | regions                 |
-	 * | schemaversions          |
-	 * | scriptruns              |
+	 * | ping                    | (Non instanced data)
+	 * | primarycharacters       | (Char data, if not entirely obsoleted)
+	 * | regionkvstore           | (Don't export)
+	 * | regions                 | (Don't export)
+	 * | schemaversions          | (Non instanced data)
+	 * | scriptruns              | (Char data)
 	 * | scripts                 |
-	 * | visits                  |
+	 * | visits                  | (Char data)
 	 * | zoneareas               |
 	 * | zonekvstore             |
 	 * | zones                   |

@@ -53,7 +53,7 @@ public abstract class Transporter {
 	 * @return A unique name for this transport.  Defaults to the class name.
 	 */
 	public String transportName() {
-		return this.getClass().getSimpleName();
+		return this.getClass().getSimpleName().replaceAll("Transport","");
 	}
 	
 	/**

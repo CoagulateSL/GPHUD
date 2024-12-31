@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class InstanceKVs extends Transporter {
+public class InstanceKVTransport extends Transporter {
 	@Override
 	public String description() {
 		return "Instance level KVs";
