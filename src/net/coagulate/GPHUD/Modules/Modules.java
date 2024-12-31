@@ -397,7 +397,7 @@ public abstract class Modules {
 	
 	@Nonnull
 	public static Set<KV> getKVSet(final State st) {
-		final Set<KV> kvs=new HashSet<>();
+		final Set<KV> kvs=new TreeSet<>();
 		for (final Module m: getModules()) {
 			if (m.isEnabled(st)) {
 				final Map<String,KV> getkvs=m.getKVDefinitions(st);
