@@ -125,11 +125,11 @@ public abstract class Transporter {
 	                           @Nullable final Object newvalue,
 	                           @Nonnull final Runnable writeValue) {
 		if (newvalue==null&&oldvalue==null) {
-			report.noop("InstanceKV - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
+			report.noop(transportName()+" - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
 			return;
 		}
 		if (newvalue!=null&&newvalue.equals(oldvalue)) {
-			report.noop("InstanceKV - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
+			report.noop(transportName()+" - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
 			return;
 		}
 		if (simulation) {
