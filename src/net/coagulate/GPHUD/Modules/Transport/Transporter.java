@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * Abstract definition of a transport ; a module that imports/exports a group of data.
@@ -123,12 +125,64 @@ public abstract class Transporter {
 	                           @Nonnull final String targetAttr,
 	                           @Nullable final Object oldvalue,
 	                           @Nullable final Object newvalue,
+	                           @Nonnull final Consumer writeValue) {
+		importValue(state,simulation,report,targetName,targetAttr,oldvalue,newvalue,()->writeValue.accept(newvalue));
+	}
+	
+	/**
+	 * Generic value importer function, for sub classes utility.
+	 *
+	 * Effectively checks if something needs changing, updates the report, simulates or writes the value.
+	 *
+	 * @param state      Caller's state, used in audit log entry
+	 * @param simulation Are we simulating this import
+	 * @param report     Report to update
+	 * @param targetName Name of the target we're updating
+	 * @param targetAttr Attribute on the named target we're updating
+	 * @param oldvalue   The old value
+	 * @param newvalue   The proposed new value
+	 * @param writeValue Functional primitive to actually write the newvalue if necessary
+	 */
+	protected void importValue(@Nonnull final State state,
+	                           final boolean simulation,
+	                           @Nonnull final ImportReport report,
+	                           @Nonnull final String targetName,
+	                           @Nonnull final String targetAttr,
+	                           @Nullable final Object oldvalue,
+	                           @Nullable final Object newvalue,
 	                           @Nonnull final Runnable writeValue) {
+		importValue(state,simulation,report,targetName,targetAttr,oldvalue,newvalue,writeValue,Object::equals);
+	}
+	
+	/**
+	 * Generic value importer function, for sub classes utility.
+	 *
+	 * Effectively checks if something needs changing, updates the report, simulates or writes the value.
+	 *
+	 * @param state      Caller's state, used in audit log entry
+	 * @param simulation Are we simulating this import
+	 * @param report     Report to update
+	 * @param targetName Name of the target we're updating
+	 * @param targetAttr Attribute on the named target we're updating
+	 * @param oldvalue   The old value
+	 * @param newvalue   The proposed new value
+	 * @param writeValue Functional primitive to actually write the newvalue if necessary
+	 * @param comparator Functional interface for comparison
+	 */
+	protected void importValue(@Nonnull final State state,
+	                           final boolean simulation,
+	                           @Nonnull final ImportReport report,
+	                           @Nonnull final String targetName,
+	                           @Nonnull final String targetAttr,
+	                           @Nullable final Object oldvalue,
+	                           @Nullable final Object newvalue,
+	                           @Nonnull final Runnable writeValue,
+	                           @Nonnull final BiFunction<Object,Object,Boolean> comparator) {
 		if (newvalue==null&&oldvalue==null) {
 			report.noop(transportName()+" - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
 			return;
 		}
-		if (newvalue!=null&&newvalue.equals(oldvalue)) {
+		if (newvalue!=null&&comparator.apply(newvalue,oldvalue)) {
 			report.noop(transportName()+" - value for '"+targetName+"' - '"+targetAttr+"' has not changed");
 			return;
 		}
@@ -149,5 +203,40 @@ public abstract class Transporter {
 		            oldvalue!=null?oldvalue.toString():null,
 		            newvalue!=null?newvalue.toString():null,
 		            "Updated "+targetAttr+" via attribute import");
+	}
+	
+	/**
+	 * Check if the passed object exists and if not create it.
+	 *
+	 * Just a utility method for subclasses
+	 *
+	 * @param state      Callers state
+	 * @param simulation Are we simulating?
+	 * @param report     Report to update
+	 * @param check      Object to check - we only do anything if this ended up as null
+	 */
+	protected void existCheck(@Nonnull final State state,
+	                          final boolean simulation,
+	                          @Nonnull final ImportReport report,
+	                          @Nullable final Object check,
+	                          @Nonnull final String name,
+	                          @Nonnull final Runnable create) {
+		if (check!=null) {
+			return;
+		}
+		report.info(transportName()+" - Create new "+name);
+		if (simulation) {
+			return;
+		}
+		create.run();
+		Audit.audit(state,
+		            Audit.OPERATOR.AVATAR,
+		            null,
+		            null,
+		            "Import "+transportName(),
+		            "Create "+transportName(),
+		            null,
+		            name,
+		            "Created new "+transportName()+" via import");
 	}
 }
