@@ -5,6 +5,7 @@ import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Transport.Transports.AttributeTransport;
+import net.coagulate.GPHUD.Modules.Transport.Transports.CurrencyTransport;
 import net.coagulate.GPHUD.Modules.Transport.Transports.InstanceKVTransport;
 import net.coagulate.GPHUD.State;
 
@@ -22,7 +23,7 @@ import java.util.TreeMap;
  */
 public class TransportModule extends ModuleAnnotation {
 	
-	static final Transporter[] transports={new AttributeTransport(),
+	static final Transporter[] transports={new AttributeTransport(),new CurrencyTransport(),
 			// Instance level
 			new InstanceKVTransport()};  // an importantly ordered list, dependancies in the DB
 	
@@ -147,8 +148,8 @@ public class TransportModule extends ModuleAnnotation {
 	 * | characters              | (Char data)
 	 * | charactersets           | (Char data)
 	 * | cookies                 |
-	 * | currencies              |
-	 * | currencycoins           |
+	 * | currencies              | (Implemented)
+	 * | currencycoins           | (Implemented)
 	 * | effects                 |
 	 * | effectsapplications     | (Char data)
 	 * | effectskvstore          |
