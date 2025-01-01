@@ -131,23 +131,35 @@ public class TransportPages {
 		// yes the duplication is sorta shameful :)
 		f.p("""
 				    <button type="button"
-				    	onClick="document.getElementById('exports').childNodes
+				    	onClick="document.getElementById('exports').childNodes[1].childNodes[1].childNodes
 				    	.forEach(x=>{
-				    		if (x.nodeName=='DIV') {
-				    			document.getElementById(x.id).childNodes.forEach(y=>{if (y.nodeName=='INPUT') {  y.checked=true; } } );
+				    	    if (x.nodeName=='TR') {
+				     	    if (x.childNodes.length>0) {
+				     	        if (x.childNodes[0].nodeName=='TD') {
+				       		if (x.childNodes[0].childNodes.length>1 && x.childNodes[0].childNodes[1].nodeName=='DIV') {
+				      			    document.getElementById(x.childNodes[0].childNodes[1].id).childNodes.forEach(y=>{if (y.nodeName=='INPUT') {  y.checked=true; } } );
+				    		            }
+				    		        }
+				    		    }
 				    		}
 				    	})" >Select ALL</button>
 				    """+"""
 				    <button type="button"
-				    	onClick="document.getElementById('exports').childNodes
+				    	onClick="document.getElementById('exports').childNodes[1].childNodes[1].childNodes
 				    	.forEach(x=>{
-				    		if (x.nodeName=='DIV') {
-				    			document.getElementById(x.id).childNodes.forEach(y=>{if (y.nodeName=='INPUT') {  y.checked=false; } } );
+				    	    if (x.nodeName=='TR') {
+				     	    if (x.childNodes.length>0) {
+				     	        if (x.childNodes[0].nodeName=='TD') {
+				       		if (x.childNodes[0].childNodes.length>1 && x.childNodes[0].childNodes[1].nodeName=='DIV') {
+				      			    document.getElementById(x.childNodes[0].childNodes[1].id).childNodes.forEach(y=>{if (y.nodeName=='INPUT') {  y.checked=false; } } );
+				    		            }
+				    		        }
+				    		    }
 				    		}
 				    	})" >DeSelect ALL</button>
 				    """);
-		f.add("<table border=0 margin=0>");
 		f.add("<div id=exports>");
+		f.add("<table border=0 margin=0>");
 		final Map<String,List<String>> pendingExports=new HashMap<>();
 		for (final Transporter t: TransportModule.transports) {
 			if (st.hasPermission("Transport.Export"+t.transportName())) {
@@ -172,8 +184,8 @@ public class TransportPages {
 						pendingExports.get(t.transportName()).add(element);
 					}
 				}
-				f.add("</div>");
 				f.add("</td></tr>");
+				f.add("</div>");
 			}
 		}
 		f.add("</div>");
