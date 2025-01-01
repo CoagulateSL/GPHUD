@@ -49,27 +49,5 @@ public class InstanceKVTransport extends Transporter {
 		importValue(state,simulation,report,state.getInstance().getName(),name,currentValue,newValue,()->{
 			state.setKV(state.getInstance(),name,newValue);
 		});
-		
-		/*
-		if (currentValue!=null&&currentValue.equalsIgnoreCase(newValue)) {
-			report.noop("InstanceKV - value for '"+name+"' has not changed");
-		} else {
-			if (simulation) {
-				report.info("InstanceKV - would update value for '"+name+"' from '"+currentValue+"' to '"+newValue+"'");
-			} else {
-				Audit.audit(state,
-				            Audit.OPERATOR.AVATAR,
-				            null,
-				            null,
-				            "Import",
-				            name,
-				            currentValue,
-				            newValue,
-				            "Transport module imported change");
-				state.setKV(state.getInstance(),name,newValue);
-				report.info("InstanceKV - updated '"+name+"' from '"+currentValue+"' to '"+newValue+"'");
-			}
-		}
-		 */
 	}
 }
