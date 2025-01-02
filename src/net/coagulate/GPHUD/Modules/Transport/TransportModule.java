@@ -4,10 +4,7 @@ import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.ModuleAnnotation;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Permission;
-import net.coagulate.GPHUD.Modules.Transport.Transports.AliasTransport;
-import net.coagulate.GPHUD.Modules.Transport.Transports.AttributeTransport;
-import net.coagulate.GPHUD.Modules.Transport.Transports.CurrencyTransport;
-import net.coagulate.GPHUD.Modules.Transport.Transports.InstanceKVTransport;
+import net.coagulate.GPHUD.Modules.Transport.Transports.*;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -25,7 +22,8 @@ import java.util.TreeMap;
 public class TransportModule extends ModuleAnnotation {
 	
 	static final Transporter[] transports=
-			{new AttributeTransport(),new CurrencyTransport(),new AliasTransport(),new InstanceKVTransport()};
+			{new AttributeTransport(),new CurrencyTransport(),new AliasTransport(),new InstanceKVTransport(),
+			 new PermissionsGroupTransport()};
 	// an importantly ordered list, dependancies in the DB
 	
 	@Override
@@ -148,7 +146,7 @@ public class TransportModule extends ModuleAnnotation {
 	 * | characterpools          | (Char data)
 	 * | characters              | (Char data)
 	 * | charactersets           | (Char data)
-	 * | cookies                 |
+	 * | cookies                 | (Don't export)
 	 * | currencies              | (Implemented)
 	 * | currencycoins           | (Implemented)
 	 * | effects                 |
@@ -168,11 +166,11 @@ public class TransportModule extends ModuleAnnotation {
 	 * | landmarks               |
 	 * | menus                   |
 	 * | messages                |
-	 * | objects                 |
+	 * | objects                 | (Do not export)
 	 * | objecttypes             |
-	 * | permissions             |
-	 * | permissionsgroupmembers |
-	 * | permissionsgroups       |
+	 * | permissions             | (Implemented)
+	 * | permissionsgroupmembers | (Implemented)
+	 * | permissionsgroups       | (Implemented)
 	 * | ping                    | (Non instanced data)
 	 * | primarycharacters       | (Char data, if not entirely obsoleted)
 	 * | regionkvstore           | (Don't export)
