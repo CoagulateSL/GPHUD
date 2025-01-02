@@ -85,7 +85,11 @@ public abstract class Transporter {
 	                           final boolean simulation) {
 		state.checkPermission("Transport.Import"+transportName());
 		for (final String key: elements.keySet()) {
-			importElement(state,report,key,elements.getJSONObject(key),simulation);
+			try {
+				importElement(state,report,key,elements.getJSONObject(key),simulation);
+			} catch (final Exception e) {
+				report.error(transportName()+" - "+key+" failed import - "+e);
+			}
 		}
 	}
 	
