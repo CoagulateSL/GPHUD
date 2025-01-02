@@ -1023,8 +1023,9 @@ public class State extends DumpableState {
 		return avatar;
 	}
 	
-	public void setAvatar(@Nullable final User avatar) {
+	public State setAvatar(@Nullable final User avatar) {
 		this.avatar=avatar;
+		return this;
 	}
 	
 	@Nullable
