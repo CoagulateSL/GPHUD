@@ -1,6 +1,9 @@
 package net.coagulate.GPHUD.Modules.Transport;
 
 import net.coagulate.GPHUD.Data.Audit;
+import net.coagulate.GPHUD.Data.TableRow;
+import net.coagulate.GPHUD.Modules.KV;
+import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
 import org.json.JSONObject;
 
@@ -242,5 +245,15 @@ public abstract class Transporter {
 		            null,
 		            name,
 		            "Created new "+transportName()+" via import");
+	}
+	
+	public JSONObject kvStore(@Nonnull final State st,final TableRow row) {
+		final JSONObject kvStore=new JSONObject();
+		for (@Nonnull final KV x: Modules.getKVSet(st)) {
+			if (x.appliesTo(row)&&(!x.hidden())&&st.getRawKV(row,x.fullName())!=null) {
+				kvStore.put(x.fullName(),st.getRawKV(row,x.fullName()));
+			}
+		}
+		return kvStore;
 	}
 }

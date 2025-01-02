@@ -2,8 +2,6 @@ package net.coagulate.GPHUD.Modules.Transport.Transports;
 
 import net.coagulate.GPHUD.Data.Effect;
 import net.coagulate.GPHUD.Data.TableRow;
-import net.coagulate.GPHUD.Modules.KV;
-import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Transport.ImportReport;
 import net.coagulate.GPHUD.Modules.Transport.Transporter;
 import net.coagulate.GPHUD.State;
@@ -30,13 +28,7 @@ public class EffectsTransport extends Transporter {
 	                             @Nonnull final JSONObject exportTo) {
 		final Effect effect=Effect.get(st,element);
 		exportTo.put("metadata",effect.getMetaData());
-		final JSONObject kvStore=new JSONObject();
-		exportTo.put("kvstore",kvStore);
-		for (@Nonnull final KV x: Modules.getKVSet(st)) {
-			if (x.appliesTo(effect)&&(!x.hidden())&&st.getRawKV(effect,x.fullName())!=null) {
-				kvStore.put(x.fullName(),st.getRawKV(effect,x.fullName()));
-			}
-		}
+		exportTo.put("kvstore",kvStore(st,effect));
 	}
 	
 	@Override
