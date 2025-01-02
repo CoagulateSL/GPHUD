@@ -1,0 +1,73 @@
+package net.coagulate.GPHUD.Modules.Transport.Transports;
+
+import net.coagulate.GPHUD.Data.Effect;
+import net.coagulate.GPHUD.Data.TableRow;
+import net.coagulate.GPHUD.Modules.KV;
+import net.coagulate.GPHUD.Modules.Modules;
+import net.coagulate.GPHUD.Modules.Transport.ImportReport;
+import net.coagulate.GPHUD.Modules.Transport.Transporter;
+import net.coagulate.GPHUD.State;
+import org.json.JSONObject;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+
+public class EffectsTransport extends Transporter {
+	@Override
+	public String description() {
+		return "Effects transport";
+	}
+	
+	@Nonnull
+	@Override
+	public List<String> getExportableElements(@Nonnull final State st) {
+		return Effect.getAll(st.getInstance()).stream().map(TableRow::getName).toList();
+	}
+	
+	@Override
+	protected void exportElement(@Nonnull final State st,
+	                             @Nonnull final String element,
+	                             @Nonnull final JSONObject exportTo) {
+		final Effect effect=Effect.get(st,element);
+		exportTo.put("metadata",effect.getMetaData());
+		final JSONObject kvStore=new JSONObject();
+		exportTo.put("kvstore",kvStore);
+		for (@Nonnull final KV x: Modules.getKVSet(st)) {
+			if (x.appliesTo(effect)&&(!x.hidden())&&st.getRawKV(effect,x.fullName())!=null) {
+				kvStore.put(x.fullName(),st.getRawKV(effect,x.fullName()));
+			}
+		}
+	}
+	
+	@Override
+	protected void importElement(@Nonnull final State state,
+	                             @Nonnull final ImportReport report,
+	                             @Nonnull final String name,
+	                             @Nonnull final JSONObject element,
+	                             final boolean simulation) {
+		existCheck(state,simulation,report,Effect.getNullable(state,name),name,()->Effect.create(state,name,""));
+		final Effect effect=Effect.getNullable(state,name);
+		if (simulation&&effect==null) { // probably created it in simulation mode
+			return;
+		}
+		importValue(state,
+		            simulation,
+		            report,
+		            name,
+		            "metadata",
+		            effect.getMetaData(),
+		            element.getString("metadata"),
+		            x->effect.setMetaData((String)x));
+		final JSONObject kvs=element.getJSONObject("kvstore");
+		for (final String k: kvs.keySet()) {
+			importValue(state,
+			            simulation,
+			            report,
+			            name,
+			            k,
+			            state.getRawKV(effect,k),
+			            kvs.getString(k),
+			            (x)->state.setKV(effect,k,(String)x));
+		}
+	}
+}

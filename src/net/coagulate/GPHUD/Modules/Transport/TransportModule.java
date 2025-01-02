@@ -23,7 +23,7 @@ public class TransportModule extends ModuleAnnotation {
 	
 	static final Transporter[] transports=
 			{new AttributeTransport(),new CurrencyTransport(),new AliasTransport(),new InstanceKVTransport(),
-			 new PermissionsGroupTransport()};
+			 new PermissionsGroupTransport(),new EffectsTransport()};
 	// an importantly ordered list, dependancies in the DB
 	
 	@Override
@@ -149,9 +149,9 @@ public class TransportModule extends ModuleAnnotation {
 	 * | cookies                 | (Don't export)
 	 * | currencies              | (Implemented)
 	 * | currencycoins           | (Implemented)
-	 * | effects                 |
+	 * | effects                 | (Implemented)
 	 * | effectsapplications     | (Char data)
-	 * | effectskvstore          |
+	 * | effectskvstore          | (Implemented)
 	 * | events                  |
 	 * | eventskvstore           |
 	 * | eventslocations         |
