@@ -23,7 +23,7 @@ public class TransportModule extends ModuleAnnotation {
 	
 	static final Transporter[] transports=
 			{new AttributeTransport(),new CurrencyTransport(),new AliasTransport(),new InstanceKVTransport(),
-			 new PermissionsGroupTransport(),new EffectsTransport(),new CharacterGroupTransport()};
+			 new PermissionsGroupTransport(),new EffectTransport(),new CharacterGroupTransport()};
 	// an importantly ordered list, dependancies in the DB
 	
 	@Override

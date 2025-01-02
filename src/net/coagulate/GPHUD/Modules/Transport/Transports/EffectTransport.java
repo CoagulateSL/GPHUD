@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EffectsTransport extends Transporter {
+public class EffectTransport extends Transporter {
 	@Override
 	public String description() {
 		return "Effects transport";
