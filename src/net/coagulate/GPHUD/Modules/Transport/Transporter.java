@@ -247,6 +247,13 @@ public abstract class Transporter {
 		            "Created new "+transportName()+" via import");
 	}
 	
+	/**
+	 * Stores a KV set in a JSONObject.
+	 *
+	 * @param st  State
+	 * @param row Database entry
+	 * @return JSONObject map of KV pairs
+	 */
 	public JSONObject kvStore(@Nonnull final State st,final TableRow row) {
 		final JSONObject kvStore=new JSONObject();
 		for (@Nonnull final KV x: Modules.getKVSet(st)) {
@@ -256,4 +263,23 @@ public abstract class Transporter {
 		}
 		return kvStore;
 	}
+	
+	public void kvRestore(@Nonnull final State state,
+	                      final boolean simulation,
+	                      @Nonnull final ImportReport report,
+	                      @Nonnull final JSONObject kvstore,
+	                      @Nonnull final String name,
+	                      @Nonnull final TableRow row) {
+		for (final String k: kvstore.keySet()) {
+			importValue(state,
+			            simulation,
+			            report,
+			            name,
+			            k,
+			            state.getRawKV(row,k),
+			            kvstore.getString(k),
+			            (x)->state.setKV(row,k,(String)x));
+		}
+	}
+	
 }

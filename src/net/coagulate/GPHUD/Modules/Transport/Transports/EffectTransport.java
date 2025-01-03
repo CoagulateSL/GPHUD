@@ -51,15 +51,6 @@ public class EffectTransport extends Transporter {
 		            element.getString("metadata"),
 		            x->effect.setMetaData((String)x));
 		final JSONObject kvs=element.getJSONObject("kvstore");
-		for (final String k: kvs.keySet()) {
-			importValue(state,
-			            simulation,
-			            report,
-			            name,
-			            k,
-			            state.getRawKV(effect,k),
-			            kvs.getString(k),
-			            (x)->state.setKV(effect,k,(String)x));
-		}
+		kvRestore(state,simulation,report,element.getJSONObject("kvstore"),name,effect);
 	}
 }
