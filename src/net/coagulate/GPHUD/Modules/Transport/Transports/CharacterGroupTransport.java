@@ -83,7 +83,7 @@ public class CharacterGroupTransport extends Transporter {
 				            "Changed kv precedence via character group import");
 			}
 		}
-		if (cg.getTypeNotNull().equals(subtype)) {
+		if (!cg.getTypeNotNull().equals(subtype)) {
 			report.error("CharacterGroup - group sub type wants to change from '"+cg.getTypeNotNull()+"' to '"+subtype+
 			             "' but changing subtypes is not allowed");
 		}
