@@ -32,7 +32,7 @@ public class EventTransport extends Transporter {
 		final Event event=Event.find(st.getInstance(),element);
 		exportTo.put("kvstore",kvStore(st,event));
 		final JSONArray zones=new JSONArray();
-		zones.putAll(event.getZones().stream().map(TableRow::getName));
+		zones.putAll(event.getZones().stream().map(TableRow::getName).toList());
 		exportTo.put("zones",zones);
 	}
 	
