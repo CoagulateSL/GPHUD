@@ -29,7 +29,7 @@ public class CharacterGroupTransport extends Transporter {
 	                             @Nonnull final JSONObject exportTo) {
 		final CharacterGroup cg=CharacterGroup.resolve(st,element);
 		exportTo.put("open",cg.isOpen());
-		exportTo.put("type",cg.getType());
+		exportTo.put("type",cg.getTypeNotNull());
 		exportTo.put("kvprecedence",cg.getKVPrecedence());
 		exportTo.put("kvstore",kvStore(st,cg));
 	}
