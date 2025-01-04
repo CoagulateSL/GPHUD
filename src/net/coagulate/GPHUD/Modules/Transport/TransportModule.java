@@ -25,7 +25,7 @@ public class TransportModule extends ModuleAnnotation {
 			{new AttributeTransport(),new CurrencyTransport(),new MenuTransport(),new AliasTransport(),
 			 new InstanceKVTransport(),
 			 new PermissionsGroupTransport(),new EffectTransport(),new CharacterGroupTransport(),new EventTransport(),
-			 new ItemTransport()};
+			 new ItemTransport(),new ObjectTypeTransport()};
 	// an importantly ordered list, dependancies in the DB
 	
 	@Override
@@ -169,7 +169,7 @@ public class TransportModule extends ModuleAnnotation {
 	 * | menus                   | (Implemented)
 	 * | messages                | (Char data)
 	 * | objects                 | (Do not export)
-	 * | objecttypes             |
+	 * | objecttypes             | (Implemented)
 	 * | permissions             | (Implemented)
 	 * | permissionsgroupmembers | (Implemented)
 	 * | permissionsgroups       | (Implemented)
