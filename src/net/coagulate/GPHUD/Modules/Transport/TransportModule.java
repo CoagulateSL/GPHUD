@@ -22,10 +22,10 @@ import java.util.TreeMap;
 public class TransportModule extends ModuleAnnotation {
 	
 	static final Transporter[] transports=
-			{new AttributeTransport(),new CurrencyTransport(),new ScriptTransport(),new MenuTransport(),
-			 new AliasTransport(),new InstanceKVTransport(),new PermissionsGroupTransport(),new EffectTransport(),
-			 new CharacterGroupTransport(),new EventTransport(),new ItemTransport(),new ObjectTypeTransport(),
-			 new ZoneTransport()};
+			{new ModulesTransport(),new AttributeTransport(),new CurrencyTransport(),new ScriptTransport(),
+			 new MenuTransport(),new AliasTransport(),new InstanceKVTransport(),new PermissionsGroupTransport(),
+			 new EffectTransport(),new CharacterGroupTransport(),new EventTransport(),new ItemTransport(),
+			 new ObjectTypeTransport(),new ZoneTransport()};
 	// an importantly ordered list, dependancies in the DB
 	
 	@Override
