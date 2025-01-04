@@ -22,10 +22,10 @@ import java.util.TreeMap;
 public class TransportModule extends ModuleAnnotation {
 	
 	static final Transporter[] transports=
-			{new AttributeTransport(),new CurrencyTransport(),new MenuTransport(),new AliasTransport(),
-			 new InstanceKVTransport(),
-			 new PermissionsGroupTransport(),new EffectTransport(),new CharacterGroupTransport(),new EventTransport(),
-			 new ItemTransport(),new ObjectTypeTransport(),new ZoneTransport()};
+			{new AttributeTransport(),new CurrencyTransport(),new ScriptTransport(),new MenuTransport(),
+			 new AliasTransport(),new InstanceKVTransport(),new PermissionsGroupTransport(),new EffectTransport(),
+			 new CharacterGroupTransport(),new EventTransport(),new ItemTransport(),new ObjectTypeTransport(),
+			 new ZoneTransport()};
 	// an importantly ordered list, dependancies in the DB
 	
 	@Override
@@ -179,7 +179,7 @@ public class TransportModule extends ModuleAnnotation {
 	 * | regions                 | (Don't export)
 	 * | schemaversions          | (Non instanced data)
 	 * | scriptruns              | (Char data)
-	 * | scripts                 |
+	 * | scripts                 | (Implemented)
 	 * | visits                  | (Char data)
 	 * | zoneareas               | (Implemented)
 	 * | zonekvstore             | (Implemented)
