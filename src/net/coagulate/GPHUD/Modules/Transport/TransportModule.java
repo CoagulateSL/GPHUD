@@ -22,7 +22,8 @@ import java.util.TreeMap;
 public class TransportModule extends ModuleAnnotation {
 	
 	static final Transporter[] transports=
-			{new AttributeTransport(),new CurrencyTransport(),new AliasTransport(),new InstanceKVTransport(),
+			{new AttributeTransport(),new CurrencyTransport(),new MenuTransport(),new AliasTransport(),
+			 new InstanceKVTransport(),
 			 new PermissionsGroupTransport(),new EffectTransport(),new CharacterGroupTransport(),new EventTransport(),
 			 new ItemTransport()};
 	// an importantly ordered list, dependancies in the DB
@@ -158,15 +159,15 @@ public class TransportModule extends ModuleAnnotation {
 	 * | eventslocations         | (Implemented)
 	 * | eventsschedule          | (Implemented)
 	 * | eventvisits             | (Char data)
-	 * | instancedevelopers      |
+	 * | instancedevelopers      | (Skip?)
 	 * | instancekvstore         | (Implemented)
 	 * | instances               | (NEVER export :)
 	 * | iteminventories         | (Char data?)
 	 * | items                   | (Implemented)
 	 * | itemverbs               | (Implemented)
-	 * | landmarks               |
-	 * | menus                   |
-	 * | messages                |
+	 * | landmarks               | (Skipped)
+	 * | menus                   | (Implemented)
+	 * | messages                | (Char data)
 	 * | objects                 | (Do not export)
 	 * | objecttypes             |
 	 * | permissions             | (Implemented)
