@@ -72,7 +72,7 @@ public class ZoneTransport extends Transporter {
 				if (region.getInstance()==state.getInstance()) {
 					boolean exists=false;
 					for (final ZoneArea compare: zone.getZoneAreas()) {
-						if (!(coord1.equals(compare.getVectors()[0])&&coord2.equals(compare.getVectors()[1]))) {
+						if (compare.compareCoord(1,coord1)&&compare.compareCoord(2,coord2)) {
 							exists=true;
 						}
 					}
