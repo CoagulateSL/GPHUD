@@ -35,8 +35,13 @@ public class ObjectTypeTransport extends Transporter {
 	                             @Nonnull final JSONObject element,
 	                             final boolean simulation) {
 		final JSONObject behaviour=element.getJSONObject("behaviour");
-		existCheck(state,simulation,report,ObjType.get(state,name),name,()->ObjType.create(state,name,behaviour));
-		final ObjType ot=ObjType.get(state,name);
+		existCheck(state,
+		           simulation,
+		           report,
+		           ObjType.getNullable(state,name),
+		           name,
+		           ()->ObjType.create(state,name,behaviour));
+		final ObjType ot=ObjType.getNullable(state,name);
 		if (simulation&&ot==null) {
 			return;
 		}

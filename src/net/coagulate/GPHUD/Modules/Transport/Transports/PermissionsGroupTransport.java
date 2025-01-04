@@ -63,6 +63,9 @@ public class PermissionsGroupTransport extends Transporter {
 		           name,
 		           ()->PermissionsGroup.create(state,name));
 		final PermissionsGroup pg=PermissionsGroup.find(name,state.getInstance());
+		if (pg==null&&simulation) {
+			return;
+		}
 		final JSONArray permissions=element.getJSONArray("permissions");
 		permissions.iterator().forEachRemaining(x->{
 			if (!pg.hasPermission(state,(String)x)) {

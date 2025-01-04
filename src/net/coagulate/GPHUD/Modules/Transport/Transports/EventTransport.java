@@ -49,6 +49,9 @@ public class EventTransport extends Transporter {
 		           name,
 		           ()->Event.create(state.getInstance(),name));
 		final Event event=Event.find(state.getInstance(),name);
+		if (event==null&&simulation) {
+			return;
+		}
 		kvRestore(state,simulation,report,element.getJSONObject("kvstore"),name,event);
 		element.getJSONArray("zones").forEach((x)->{
 			final Zone zone=Zone.findNullable(state.getInstance(),(String)x);

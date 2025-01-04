@@ -40,6 +40,9 @@ public class AliasTransport extends Transporter {
 		           Alias.getAlias(state,name),
 		           name,
 		           ()->Alias.create(state,name,element.getJSONObject("template")));
+		if (Alias.getAlias(state,name)==null&&simulation) {
+			return;
+		}
 		importValue(state,
 		            simulation,
 		            report,

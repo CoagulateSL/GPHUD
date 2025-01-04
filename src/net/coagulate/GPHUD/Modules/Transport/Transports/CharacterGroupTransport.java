@@ -50,6 +50,9 @@ public class CharacterGroupTransport extends Transporter {
 		           name,
 		           ()->CharacterGroup.create(state.getInstance(),name,open,subtype));
 		final CharacterGroup cg=CharacterGroup.resolve(state,name);
+		if (cg==null&&simulation) {
+			return;
+		}
 		kvRestore(state,simulation,report,element.getJSONObject("kvstore"),name,cg);
 		if (open!=cg.isOpen()) {
 			report.info("CharacterGroup - changing open flag on "+name+" to "+open);
