@@ -71,8 +71,7 @@ public class ItemTransport extends Transporter {
 		            name,
 		            "destroyable",
 		            item.destroyable(),
-		            destroyable,
-		            ()->item.tradable(destroyable));
+		            destroyable,()->item.destroyable(destroyable));
 		for (final String verbname: verbs.keySet()) {
 			final JSONObject verbImport=verbs.getJSONObject(verbname);
 			existCheck(state,
