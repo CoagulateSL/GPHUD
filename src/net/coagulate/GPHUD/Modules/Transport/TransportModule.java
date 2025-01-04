@@ -25,7 +25,7 @@ public class TransportModule extends ModuleAnnotation {
 			{new AttributeTransport(),new CurrencyTransport(),new MenuTransport(),new AliasTransport(),
 			 new InstanceKVTransport(),
 			 new PermissionsGroupTransport(),new EffectTransport(),new CharacterGroupTransport(),new EventTransport(),
-			 new ItemTransport(),new ObjectTypeTransport()};
+			 new ItemTransport(),new ObjectTypeTransport(),new ZoneTransport()};
 	// an importantly ordered list, dependancies in the DB
 	
 	@Override
@@ -181,9 +181,9 @@ public class TransportModule extends ModuleAnnotation {
 	 * | scriptruns              | (Char data)
 	 * | scripts                 |
 	 * | visits                  | (Char data)
-	 * | zoneareas               |
-	 * | zonekvstore             |
-	 * | zones                   |
+	 * | zoneareas               | (Implemented)
+	 * | zonekvstore             | (Implemented)
+	 * | zones                   | (Implemented)
 	 * +-------------------------+
 	 */
 }
