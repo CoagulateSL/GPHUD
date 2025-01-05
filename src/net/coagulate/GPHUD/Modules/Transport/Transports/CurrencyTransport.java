@@ -2,6 +2,7 @@ package net.coagulate.GPHUD.Modules.Transport.Transports;
 
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Currency;
+import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Modules.Transport.ImportReport;
 import net.coagulate.GPHUD.Modules.Transport.Transporter;
 import net.coagulate.GPHUD.State;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transports currency definitions only.  Not character balances. */
 public class CurrencyTransport extends Transporter {
 	@Override
 	public String description() {
@@ -20,7 +22,7 @@ public class CurrencyTransport extends Transporter {
 	@Nonnull
 	@Override
 	public List<String> getExportableElements(@Nonnull final State st) {
-		return Currency.getAll(st).stream().map((x)->x.getName()).toList();
+		return Currency.getAll(st).stream().map(TableRow::getName).toList();
 	}
 	
 	@Override

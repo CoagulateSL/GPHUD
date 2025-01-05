@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Effect;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Modules.Transport.ImportReport;
@@ -10,6 +11,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transports effect configuration.  Not applications to characters though */
 public class EffectTransport extends Transporter {
 	@Override
 	public String description() {
@@ -42,6 +44,9 @@ public class EffectTransport extends Transporter {
 		if (simulation&&effect==null) { // probably created it in simulation mode
 			return;
 		}
+		if (effect==null) {
+			throw new UserInputLookupFailureException("Could not find effect "+name);
+		}
 		importValue(state,
 		            simulation,
 		            report,
@@ -50,7 +55,6 @@ public class EffectTransport extends Transporter {
 		            effect.getMetaData(),
 		            element.getString("metadata"),
 		            x->effect.setMetaData((String)x));
-		final JSONObject kvs=element.getJSONObject("kvstore");
 		kvRestore(state,simulation,report,element.getJSONObject("kvstore"),name,effect);
 	}
 }

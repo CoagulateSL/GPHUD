@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Menu;
 import net.coagulate.GPHUD.Modules.Transport.ImportReport;
 import net.coagulate.GPHUD.Modules.Transport.Transporter;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transport menus */
 public class MenuTransport extends Transporter {
 	@Override
 	public String description() {
@@ -47,6 +49,9 @@ public class MenuTransport extends Transporter {
 		final Menu menu=Menu.getMenuNullable(state,name);
 		if (menu==null&&simulation) {
 			return;
+		}
+		if (menu==null) {
+			throw new UserInputLookupFailureException("Can not find recently created menu "+name);
 		}
 		importValue(state,
 		            simulation,

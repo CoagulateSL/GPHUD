@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Modules.Transport.ImportReport;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/** Transport attribute definitions */
 public class AttributeTransport extends Transporter {
 	@Override
 	public String description() {
@@ -33,7 +35,10 @@ public class AttributeTransport extends Transporter {
 	protected void exportElement(@Nonnull final State st,
 	                             @Nonnull final String element,
 	                             @Nonnull final JSONObject exportTo) {
-		final Attribute attr=Attribute.find(st.getInstance(),element);
+		final Attribute attr=Attribute.findNullable(st,element);
+		if (attr==null) {
+			throw new UserInputLookupFailureException("Could not find Attribute "+element);
+		}
 		exportTo.put("selfmodify",attr.getSelfModify());
 		exportTo.put("attributetype",attr.getType());
 		exportTo.put("grouptype",attr.getSubType());

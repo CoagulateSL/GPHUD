@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/** Transport instance KV settings */
 public class InstanceKVTransport extends Transporter {
 	@Override
 	public String description() {
@@ -46,8 +47,13 @@ public class InstanceKVTransport extends Transporter {
 	                          final boolean simulation) {
 		final String currentValue=state.getRawKV(state.getInstance(),name);
 		final String newValue=element.getString("value");
-		importValue(state,simulation,report,state.getInstance().getName(),name,currentValue,newValue,()->{
-			state.setKV(state.getInstance(),name,newValue);
-		});
+		importValue(state,
+		            simulation,
+		            report,
+		            state.getInstance().getName(),
+		            name,
+		            currentValue,
+		            newValue,
+		            ()->state.setKV(state.getInstance(),name,newValue));
 	}
 }

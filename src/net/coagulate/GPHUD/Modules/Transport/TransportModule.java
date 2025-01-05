@@ -115,6 +115,12 @@ public class TransportModule extends ModuleAnnotation {
 		return map;
 	}
 	
+	/**
+	 * Construct the transport module
+	 *
+	 * @param name       Name of the module
+	 * @param annotation Annotation for the module
+	 */
 	public TransportModule(final String name,final ModuleDefinition annotation) {
 		super(name,annotation);
 	}

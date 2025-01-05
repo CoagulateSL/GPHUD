@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputNotFoundException;
 import net.coagulate.GPHUD.Data.Item;
 import net.coagulate.GPHUD.Data.ItemVerb;
 import net.coagulate.GPHUD.Data.TableRow;
@@ -11,6 +13,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transport item and verb definitions */
 public class ItemTransport extends Transporter {
 	@Override
 	public String description() {
@@ -62,7 +65,10 @@ public class ItemTransport extends Transporter {
 		final Item item=Item.findNullable(state.getInstance(),name);
 		if (item==null&&simulation) {
 			return;
-		} // just created it?
+		}
+		if (item==null) {
+			throw new UserInputLookupFailureException("Can not find recently created item "+name);
+		}
 		importValue(state,simulation,report,name,"weight",item.weight(),weight,()->item.weight(weight));
 		importValue(state,simulation,report,name,"tradable",item.tradable(),tradable,()->item.tradable(tradable));
 		importValue(state,
@@ -70,8 +76,7 @@ public class ItemTransport extends Transporter {
 		            report,
 		            name,
 		            "destroyable",
-		            item.destroyable(),
-		            destroyable,()->item.destroyable(destroyable));
+		            item.destroyable(),destroyable,()->item.destroyable(destroyable));
 		for (final String verbname: verbs.keySet()) {
 			final JSONObject verbImport=verbs.getJSONObject(verbname);
 			existCheck(state,
@@ -82,6 +87,9 @@ public class ItemTransport extends Transporter {
 			           ()->ItemVerb.create(item,verbname));
 			final ItemVerb verb=ItemVerb.findNullable(item,verbname);
 			if (!(verb==null&&simulation)) {
+				if (verb==null) {
+					throw new UserInputNotFoundException("Created ItemVerb "+verbname+" not found");
+				}
 				if (!verb.description().equals(verbImport.getString("description"))) {
 					verb.description(verbImport.getString("description"));
 				}

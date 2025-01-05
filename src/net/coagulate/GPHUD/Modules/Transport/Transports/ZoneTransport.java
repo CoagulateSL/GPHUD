@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Data.Zone;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Export zone configuration, importable only if you have same region names */
 public class ZoneTransport extends Transporter {
 	@Override
 	public String description() {
@@ -34,12 +36,14 @@ public class ZoneTransport extends Transporter {
 		final JSONArray zones=new JSONArray();
 		exportTo.put("zones",zones);
 		for (final ZoneArea area: zone.getZoneAreas()) {
-			final JSONObject z=new JSONObject();
-			zones.put(z);
-			z.put("region",area.getRegion(true).getName());
 			final String[] vectors=area.getVectors();
-			z.put("coord1",vectors[0]);
-			z.put("coord2",vectors[1]);
+			if (vectors!=null) {
+				final JSONObject z=new JSONObject();
+				zones.put(z);
+				z.put("region",area.getRegion(true).getName());
+				z.put("coord1",vectors[0]);
+				z.put("coord2",vectors[1]);
+			}
 		}
 	}
 	
@@ -59,6 +63,9 @@ public class ZoneTransport extends Transporter {
 		final Zone zone=Zone.findNullable(state.getInstance(),name);
 		if (zone==null&&simulation) {
 			return;
+		}
+		if (zone==null) {
+			throw new UserInputLookupFailureException("Recently created zone is not found");
 		}
 		kvRestore(state,simulation,report,element.getJSONObject("kvstore"),name,zone);
 		final JSONArray areas=element.getJSONArray("zones");

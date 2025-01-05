@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Script;
 import net.coagulate.GPHUD.Data.TableRow;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSCompiler;
@@ -14,6 +15,7 @@ import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+/** Transport scripts */
 public class ScriptTransport extends Transporter {
 	@Override
 	public String description() {
@@ -46,6 +48,9 @@ public class ScriptTransport extends Transporter {
 		final Script s=Script.findNullable(state,name);
 		if (s==null&&simulation) {
 			return;
+		}
+		if (s==null) {
+			throw new UserInputLookupFailureException("Can not find recently created script "+name);
 		}
 		final String source=element.getString("source");
 		final int version=element.getInt("sourceversion");

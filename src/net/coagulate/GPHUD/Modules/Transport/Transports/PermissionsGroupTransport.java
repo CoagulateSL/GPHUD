@@ -1,5 +1,7 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
+import net.coagulate.Core.Exceptions.User.UserInputNotFoundException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Data.TableRow;
@@ -15,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/** Transport permissions groups and members if possible */
 public class PermissionsGroupTransport extends Transporter {
 	@Override
 	public String description() {
@@ -32,6 +35,9 @@ public class PermissionsGroupTransport extends Transporter {
 	                             @Nonnull final String element,
 	                             @Nonnull final JSONObject exportTo) {
 		final PermissionsGroup pg=PermissionsGroup.find(element,st.getInstance());
+		if (pg==null) {
+			throw new UserInputLookupFailureException("Can not find selected permissions group "+element);
+		}
 		final JSONArray permissions=new JSONArray();
 		for (final String permission: pg.getPermissions(st)) {
 			permissions.put(permission);
@@ -65,6 +71,9 @@ public class PermissionsGroupTransport extends Transporter {
 		final PermissionsGroup pg=PermissionsGroup.find(name,state.getInstance());
 		if (pg==null&&simulation) {
 			return;
+		}
+		if (pg==null) {
+			throw new UserInputNotFoundException("Can not find recently created permissions group "+name);
 		}
 		final JSONArray permissions=element.getJSONArray("permissions");
 		permissions.iterator().forEachRemaining(x->{
@@ -115,9 +124,9 @@ public class PermissionsGroupTransport extends Transporter {
 				final boolean newKick=userData.getBoolean("cankick");
 				if (currentInvite!=newInvite||currentKick!=newKick) {
 					noop.set(false);
-					report.info(
-							"PermissionsGroup - Update "+user.getName()+" to kick:"+(newKick?"true":"false")+" invite:"+
-							(newInvite?"true":"false"));
+					report.info("PermissionsGroup - Update "+user.getName()+" in group "+name+" from kick:"+
+					            (currentKick?"true":"false")+" invite:"+(currentInvite?"true":"false")+" to kick:"+
+					            (newKick?"true":"false")+" invite:"+(newInvite?"true":"false"));
 					if (!simulation) {
 						pg.setUserPermissions(user,newInvite,newKick);
 						Audit.audit(state,

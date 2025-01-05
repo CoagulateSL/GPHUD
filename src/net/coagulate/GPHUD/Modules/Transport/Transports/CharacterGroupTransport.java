@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.CharacterGroup;
 import net.coagulate.GPHUD.Data.TableRow;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transports character group config and KVs.  Not character members */
 public class CharacterGroupTransport extends Transporter {
 	@Override
 	public String description() {
@@ -28,6 +30,9 @@ public class CharacterGroupTransport extends Transporter {
 	                             @Nonnull final String element,
 	                             @Nonnull final JSONObject exportTo) {
 		final CharacterGroup cg=CharacterGroup.resolve(st,element);
+		if (cg==null) {
+			throw new UserInputLookupFailureException("Couldn't find marked Character Group "+element);
+		}
 		exportTo.put("open",cg.isOpen());
 		exportTo.put("type",cg.getTypeNotNull());
 		exportTo.put("kvprecedence",cg.getKVPrecedence());
@@ -52,6 +57,9 @@ public class CharacterGroupTransport extends Transporter {
 		final CharacterGroup cg=CharacterGroup.resolve(state,name);
 		if (cg==null&&simulation) {
 			return;
+		}
+		if (cg==null) {
+			throw new UserInputLookupFailureException("Could not find character group '"+name+"' after creating it?");
 		}
 		kvRestore(state,simulation,report,element.getJSONObject("kvstore"),name,cg);
 		if (open!=cg.isOpen()) {

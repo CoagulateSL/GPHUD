@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.ObjType;
 import net.coagulate.GPHUD.Modules.Transport.ImportReport;
 import net.coagulate.GPHUD.Modules.Transport.Transporter;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transport object types */
 public class ObjectTypeTransport extends Transporter {
 	@Override
 	public String description() {
@@ -44,6 +46,9 @@ public class ObjectTypeTransport extends Transporter {
 		final ObjType ot=ObjType.getNullable(state,name);
 		if (simulation&&ot==null) {
 			return;
+		}
+		if (ot==null) {
+			throw new UserInputLookupFailureException("Can not find created object type "+name);
 		}
 		importValue(state,
 		            simulation,

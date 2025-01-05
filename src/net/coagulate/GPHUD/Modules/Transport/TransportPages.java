@@ -20,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -28,7 +27,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** The web interface for transport */
 public class TransportPages {
+	/**
+	 * Main transport page
+	 *
+	 * @param st     State
+	 * @param values Web parameters
+	 */
 	@URL.URLs(url="/transport")
 	public static void transportPage(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
@@ -40,9 +46,15 @@ public class TransportPages {
 		f.p(new Link("Export Settings","transport/export"));
 	}
 	
+	/**
+	 * The import page
+	 *
+	 * @param st     State
+	 * @param values Web parameters
+	 */
 	@SideSubMenu.SideSubMenus(name="Import", priority=1, requiresPermission="transport.*")
 	@URL.URLs(url="/transport/import")
-	public static void importPage(@Nonnull final State st,final SafeMap values) throws IOException {
+	public static void importPage(@Nonnull final State st,final SafeMap values) {
 		final Form f=st.form();
 		f.noForm();
 		f.add("<form method=\"POST\" enctype=\"multipart/form-data\">");
@@ -55,8 +67,6 @@ public class TransportPages {
 		f.br();
 		f.add("<input type=\"file\" id=\"importFile\" name=\"import.json\">");
 		f.add(new Button("Begin Import","Begin Import"));
-		//System.out.println("Begin import presence: "+values.containsKey("Begin Import"));
-		//System.out.println("Import.json presence: "+values.containsKey("import.json"));
 		if (values.containsKey("Begin Import")&&values.containsKey("import.json")) {
 			try {
 				final JSONObject json=new JSONObject(values.get("import.json"));
@@ -121,6 +131,12 @@ public class TransportPages {
 		return report;
 	}
 	
+	/**
+	 * The export page
+	 *
+	 * @param st     State
+	 * @param values Web form values
+	 */
 	@SideSubMenu.SideSubMenus(name="Export", priority=2, requiresPermission="transport.*")
 	@URL.URLs(url="/transport/export")
 	public static void exportPage(@Nonnull final State st,final SafeMap values) {

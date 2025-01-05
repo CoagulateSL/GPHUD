@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.Transport.Transports;
 
+import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.GPHUD.Data.Audit;
 import net.coagulate.GPHUD.Data.Event;
 import net.coagulate.GPHUD.Data.TableRow;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transport events and their KVs, possibly their zones if they can be resolved on import */
 public class EventTransport extends Transporter {
 	@Override
 	public String description() {
@@ -22,7 +24,7 @@ public class EventTransport extends Transporter {
 	@Nonnull
 	@Override
 	public List<String> getExportableElements(@Nonnull final State st) {
-		return Event.getAll(st.getInstance()).stream().map(x->x.getName()).toList();
+		return Event.getAll(st.getInstance()).stream().map(TableRow::getName).toList();
 	}
 	
 	@Override
@@ -30,6 +32,9 @@ public class EventTransport extends Transporter {
 	                             @Nonnull final String element,
 	                             @Nonnull final JSONObject exportTo) {
 		final Event event=Event.find(st.getInstance(),element);
+		if (event==null) {
+			throw new UserInputLookupFailureException("Can not find event "+element);
+		}
 		exportTo.put("kvstore",kvStore(st,event));
 		final JSONArray zones=new JSONArray();
 		zones.putAll(event.getZones().stream().map(TableRow::getName).toList());
@@ -51,6 +56,9 @@ public class EventTransport extends Transporter {
 		final Event event=Event.find(state.getInstance(),name);
 		if (event==null&&simulation) {
 			return;
+		}
+		if (event==null) {
+			throw new UserInputLookupFailureException("Can not find recently created event "+name);
 		}
 		kvRestore(state,simulation,report,element.getJSONObject("kvstore"),name,event);
 		element.getJSONArray("zones").forEach((x)->{

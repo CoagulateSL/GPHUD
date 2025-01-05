@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/** Transport module enablement settings */
 public class ModulesTransport extends Transporter {
 	@Override
 	public String description() {
@@ -36,18 +37,14 @@ public class ModulesTransport extends Transporter {
 	
 	@Override
 	protected void importElement(@Nonnull final State state,
-	                             @Nonnull final ImportReport report,
-	                             @Nonnull final String name2,
+	                             @Nonnull final ImportReport report,@Nonnull final String name,
 	                             @Nonnull final JSONObject element,
 	                             final boolean simulation) {
 		for (final String enableme: element.keySet()) {
 			for (final Module m: Modules.getModules()) {
 				if (enableme.equals(m.getName())) {
-					System.out.println("HERE1");
 					if (element.getBoolean(enableme)) {
-						System.out.println("HERE2");
 						if (!m.isEnabled(state)) {
-							System.out.println("HERE3");
 							report.info("Module - Enabling module "+m.getName());
 							if (!simulation) {
 								state.setKV(state.getInstance(),m.getName()+".Enabled","true");

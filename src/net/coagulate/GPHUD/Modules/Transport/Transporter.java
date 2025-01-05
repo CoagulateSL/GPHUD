@@ -77,6 +77,7 @@ public abstract class Transporter {
 	/**
 	 * Imports a bunch of stuff.
 	 *
+	 * @param state      Callers state.
 	 * @param report     An updatable data structure for reporting results into.
 	 * @param elements   The JSON Object (as produced by exportElements()) to import
 	 * @param simulation If true, do not actually import, just report what would happen.
@@ -113,7 +114,6 @@ public abstract class Transporter {
 	
 	/**
 	 * Generic value importer function, for sub classes utility.
-	 *
 	 * Effectively checks if something needs changing, updates the report, simulates or writes the value.
 	 *
 	 * @param state      Caller's state, used in audit log entry
@@ -138,7 +138,6 @@ public abstract class Transporter {
 	
 	/**
 	 * Generic value importer function, for sub classes utility.
-	 *
 	 * Effectively checks if something needs changing, updates the report, simulates or writes the value.
 	 *
 	 * @param state      Caller's state, used in audit log entry
@@ -163,7 +162,6 @@ public abstract class Transporter {
 	
 	/**
 	 * Generic value importer function, for sub classes utility.
-	 *
 	 * Effectively checks if something needs changing, updates the report, simulates or writes the value.
 	 *
 	 * @param state      Caller's state, used in audit log entry
@@ -214,7 +212,6 @@ public abstract class Transporter {
 	
 	/**
 	 * Check if the passed object exists and if not create it.
-	 *
 	 * Just a utility method for subclasses
 	 *
 	 * @param state      Callers state
@@ -228,6 +225,7 @@ public abstract class Transporter {
 	                          @Nullable final Object check,
 	                          @Nonnull final String name,
 	                          @Nonnull final Runnable create) {
+		//noinspection VariableNotUsedInsideIf
 		if (check!=null) {
 			return;
 		}
@@ -264,6 +262,16 @@ public abstract class Transporter {
 		return kvStore;
 	}
 	
+	/**
+	 * Restores a KV Store set
+	 *
+	 * @param state      Callers state
+	 * @param simulation Simulation mode only if true
+	 * @param report     Report to update
+	 * @param kvstore    KV Store JSONObject (from kvStore())
+	 * @param name       Name of the item being restored.
+	 * @param row        Row to update KVs on.
+	 */
 	public void kvRestore(@Nonnull final State state,
 	                      final boolean simulation,
 	                      @Nonnull final ImportReport report,
