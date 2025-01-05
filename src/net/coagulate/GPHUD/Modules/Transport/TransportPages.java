@@ -143,6 +143,7 @@ public class TransportPages {
 		final Form f=st.form();
 		f.add(new TextHeader("Transport Module, Export"));
 		f.p("Here you may download specific items or whole sections of your configuration which can then be imported later.");
+		f.p("<b>NOTE:</b> By default, no options are selected, either press Select ALL or select the sections you wish to be exported.  Sections may be expanded to provide fine grain control over the exports.");
 		f.add(new TextSubHeader("Select data to export"));
 		// yes the duplication is sorta shameful :)
 		f.p("""
