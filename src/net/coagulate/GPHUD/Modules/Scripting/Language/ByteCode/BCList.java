@@ -46,7 +46,16 @@ public class BCList extends ByteCodeDataType {
 	@Nonnull
 	@Override
 	public String htmlDecode() {
-		return "List</td><td>"+elements;
+		final StringBuilder sb=new StringBuilder();
+		sb.append("List</td><td>").append(elements);
+		sb.append(" [");
+		boolean isfirst=true;
+		for (final ByteCodeDataType e:content) {
+			if (isfirst) { isfirst=false; } else { sb.append(", "); }
+			sb.append(e.htmlDecode());
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 	
 	@Override
