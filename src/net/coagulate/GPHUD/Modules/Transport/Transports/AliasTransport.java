@@ -58,8 +58,10 @@ public class AliasTransport extends Transporter {
 		            simulation,
 		            report,
 		            name,
-		            "template",alias.getTemplate(),
-		            element.getJSONObject("template"),()->alias.setTemplate(element.getJSONObject("template")),
+		            "template",
+		            alias.getTemplate(),
+		            element.getJSONObject("template"),
+		            ()->alias.setTemplate(element.getJSONObject("template")),
 		            (x,y)->((JSONObject)x).similar(y));
 	}
 }
