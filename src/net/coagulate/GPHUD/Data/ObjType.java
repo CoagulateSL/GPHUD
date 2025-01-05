@@ -136,6 +136,17 @@ public class ObjType extends TableRow {
 		return list;
 	}
 	
+	@Nullable
+	public static ObjType getNullable(final State state,final String objecttype) {
+		try {
+			return get(GPHUD.getDB()
+			                .dqiNotNull("select id from objecttypes where instanceid=? and name like ?",
+			                            state.getInstance().getId(),
+			                            objecttype));
+		} catch (final NoDataException e) {
+			return null;
+		}
+	}
 	public static ObjType get(final State state,final String objecttype) {
 		try {
 			return get(GPHUD.getDB()
@@ -220,7 +231,7 @@ public class ObjType extends TableRow {
 		});
 	}
 	
-	private static Cache<Integer,JSONObject> behaviourCache=Cache.getCache("GPHUD/ObjectTypeBehaviour",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Integer,JSONObject> behaviourCache=Cache.getCache("GPHUD/ObjectTypeBehaviour",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Set this objecttype's behaviour JSON

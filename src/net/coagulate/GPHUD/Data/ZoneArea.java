@@ -197,5 +197,12 @@ public class ZoneArea extends TableRow {
 	
 	public void flushKVCache(final State st) {
 	}
+	
+	/** Compare a co-ordiante to element 1 or 2 of our zone area */
+	public boolean compareCoord(final int i,final String coord2) {
+		final int[] s=Utils.parseVector(getVectors()[i-1]);
+		final int[] d=Utils.parseVector(coord2);
+		return ((s[0]==d[0])&&(s[1]==d[1])&&(s[2]==d[2]));
+	}
 }
 

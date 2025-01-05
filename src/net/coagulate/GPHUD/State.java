@@ -3,6 +3,7 @@ package net.coagulate.GPHUD;
 import net.coagulate.Core.Exceptions.System.SystemConsistencyException;
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.SystemException;
+import net.coagulate.Core.Exceptions.User.UserAccessDeniedException;
 import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
@@ -1022,8 +1023,9 @@ public class State extends DumpableState {
 		return avatar;
 	}
 	
-	public void setAvatar(@Nullable final User avatar) {
+	public State setAvatar(@Nullable final User avatar) {
 		this.avatar=avatar;
+		return this;
 	}
 	
 	@Nullable
@@ -1186,6 +1188,12 @@ public class State extends DumpableState {
 	
 	public boolean suppressOutput() {
 		return suppressOutput;
+	}
+	
+	public void checkPermission(@Nonnull final String permission) {
+		if (!hasPermission(permission)) {
+			throw new UserAccessDeniedException("You require permission "+permission);
+		}
 	}
 	
 	public enum Sources {
