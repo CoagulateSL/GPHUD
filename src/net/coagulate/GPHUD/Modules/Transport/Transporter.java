@@ -44,7 +44,7 @@ public abstract class Transporter {
 	 */
 	@Nonnull
 	public JSONObject exportElements(@Nonnull final State st,@Nonnull final List<String> elements) {
-		st.checkPermission("Transport.Import"+transportName());
+		st.checkPermission("Transport.Export"+transportName());
 		final JSONObject objects=new JSONObject();
 		for (final String element: elements) {
 			final JSONObject object=new JSONObject();
