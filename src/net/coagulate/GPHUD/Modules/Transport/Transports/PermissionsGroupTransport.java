@@ -77,27 +77,31 @@ public class PermissionsGroupTransport extends Transporter {
 		}
 		final JSONArray permissions=element.getJSONArray("permissions");
 		permissions.iterator().forEachRemaining(x->{
-			if (!pg.hasPermission(state,(String)x)) {
-				if (Modules.getPermission(state,(String)x).grantable()) {
-					noop.set(false);
-					if (simulation) {
-						report.info("PermissionsGroup - Would add permission "+x+" to "+name);
+			if (Modules.getPermission(state,(String)x)==null) {
+				report.info("PermissionsGroup - Can not add unknown permission "+x+" to "+name);
+			} else {
+				if (!pg.hasPermission(state,(String)x)) {
+					if (Modules.getPermission(state,(String)x).grantable()) {
+						noop.set(false);
+						if (simulation) {
+							report.info("PermissionsGroup - Would add permission "+x+" to "+name);
+						} else {
+							report.info("PermissionsGroup - Added permission "+x+" to "+name);
+							pg.addPermission(state,(String)x);
+							Audit.audit(state,
+							            Audit.OPERATOR.AVATAR,
+							            null,
+							            null,
+							            "Import Permissions Group Permission",
+							            name,
+							            null,
+							            (String)x,
+							            "Added permission to permissions group via import");
+						}
 					} else {
-						report.info("PermissionsGroup - Added permission "+x+" to "+name);
-						pg.addPermission(state,(String)x);
-						Audit.audit(state,
-						            Audit.OPERATOR.AVATAR,
-						            null,
-						            null,
-						            "Import Permissions Group Permission",
-						            name,
-						            null,
-						            (String)x,
-						            "Added permission to permissions group via import");
+						report.error("PermissionsGroup - Adding permissions "+x+" to "+name+
+						             " denied, permissions is not grantable.");
 					}
-				} else {
-					report.error("PermissionsGroup - Adding permissions "+x+" to "+name+
-					             " denied, permissions is not grantable.");
 				}
 			}
 		});
