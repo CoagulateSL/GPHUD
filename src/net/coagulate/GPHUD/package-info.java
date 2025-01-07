@@ -6,7 +6,10 @@
  * <p>
  * The name sucks.  I know.  No-one inspired me with anything better in time.  Sorry.
  */
-
+@Change(date="2025-01-07",
+        component=Core,
+        type=Fix,
+        message="Fixed incorrect use of TreeMap over HashMap in KVs causing some conveyance values to be lost, notably titler configuration if using a custom attribute 'titlertext', which the default playbook uses.")
 
 // Imported legacy change logs!
 

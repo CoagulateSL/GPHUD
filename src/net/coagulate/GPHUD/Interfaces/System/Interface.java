@@ -132,6 +132,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			          st);
 		}
 		Page.page().template(new PlainTextMapper.PlainTextTemplate());
+		Page.page().contentType(ContentType.APPLICATION_JSON);
 		Page.page().root().add(new PlainText(out));
 		/*}
 		catch (@Nonnull final UserException e) {
