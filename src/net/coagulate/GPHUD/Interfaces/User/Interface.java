@@ -336,7 +336,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			}
 		} else {
 			s.append("<i>Not logged in</i><hr width=150px><a href=\"/GPHUD/\">Index</a><br><br>");
-			s.append("<a href=\"/GPHUD/Help\">Documentation</a><br>");
+			s.append("<a href=\"https://docs.sl.coagulate.net/\" target=\"_new\">Documentation</a><br>");
 			s.append("<a href=\"/GPHUD/ChangeLog\">Change Log</a><br>");
 			s.append("<hr width=150px>");
 			return s.toString();
@@ -357,7 +357,7 @@ public class Interface extends net.coagulate.GPHUD.Interfaces.Interface {
 			s.append(dynamicSideMenus(st));
 			s.append("<br>");
 		}
-		s.append("<a href=\"/GPHUD/Help\">Documentation</a><br>");
+		s.append("<a href=\"https://docs.sl.coagulate.net/\" target=\"_new\">Documentation</a><br>");
 		s.append("<a href=\"/GPHUD/ChangeLog\">Change Log</a><br>");
 		s.append("<hr width=150px>");
 		String sectionHead="<b>PERMISSIONS:</b><br>";
