@@ -13,11 +13,11 @@ jobs:
       packages: read
       
     steps:
-      - name: Checkout JavaCore
+      - name: Checkout GPHUD
         uses: actions/checkout@v2
         with:
-          repository: 'CoagulateSL/JavaCore'
-          path: JavaCore
+          repository: 'CoagulateSL/GPHUD'
+          path: GPHUD
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
@@ -26,6 +26,6 @@ jobs:
       - name: Build with Maven
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
-        working-directory: JavaCore
+        working-directory: GPHUD
         run: mvn --batch-mode clean compile
         
