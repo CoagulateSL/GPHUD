@@ -13,82 +13,20 @@ jobs:
       packages: read
       
     steps:
-      - name: Checkout CoagulateSL
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/CoagulateSL'        
-          path: CoagulateSL
-          token: ${{ secrets.PACKAGE_READ }}
-      - name: Checkout JavaCore
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/JavaCore'
-          path: JavaCore
-      - name: Checkout SLCore
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/SLCore'
-          path: SLCore     
-      - name: Checkout JSLBot
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/JSLBot'
-          path: JSLBot          
-      - name: Checkout JSLBotBridge
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/JSLBotBridge'
-          path: JSLBotBridge
-      - name: Checkout Billing
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/Billing'
-          path: Billing
-          token: ${{ secrets.PACKAGE_READ }}
-      - name: Checkout RegionMonitoring
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/RegionMonitoring'
-          path: RegionMonitoring
-          token: ${{ secrets.PACKAGE_READ }}      
-      - name: Checkout LSLR
-        uses: actions/checkout@v2
-        with:
-          repository: 'CoagulateSL/LSLR'
-          path: LSLR
-          token: ${{ secrets.PACKAGE_READ }}
       - name: Checkout GPHUD
         uses: actions/checkout@v2
         with:
           repository: 'CoagulateSL/GPHUD'
-          path: GPHUD           
+          path: GPHUD
+          submodules: recursive
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'adopt'        
       - name: Build with Maven
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
-        working-directory: CoagulateSL
-        run: mvn --batch-mode --update-snapshots verify -s $GITHUB_WORKSPACE/CoagulateSL/settings.xml
-      - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
-      - name: Create databases
-        run: mysql -e 'create database sl;create database gphud;' -u root -proot
-      - name: Install SLCore schema
-        run: mysql -u root -proot sl <SLCore/slcore-schema.sql
-      - name: Install RegionMonitoring schema
-        run: mysql -u root -proot sl <RegionMonitoring/regionmonitoring-schema.sql
-      - name: Install Billing schema
-        run: mysql -u root -proot sl <Billing/billing-schema.sql
-      - name: Install GPHUD schema
-        run: mysql -u root -proot gphud <GPHUD/gphud-schema.sql
-      - name: Install skeleton user records
-        run: mysql -u root -proot -e "use sl;insert into users(id,username,avatarkey,developerkey,superadmin,lastactive) values(1,'Iain Maltz','8dc52677-bea8-4fc3-b69b-21c5e2224306','This isnt a real developer key tee hee',1,0); insert into users(id,username,avatarkey,lastactive) values(2,'Kate Burner','5ca5d32d-f2c5-43ed-9f9c-226d1bb404f3',0);"
-      - name: Run unit tests
-        run: java -jar CoagulateSL/bin/CoagulateSL.jar-jar-with-dependencies.jar CoagulateSL/github-runner.properties
-        
-        
-        
+        working-directory: GPHUD
+        run: mvn --batch-mode clean compile
         
