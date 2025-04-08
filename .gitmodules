@@ -1,0 +1,3 @@
+[submodule "SLCore"]
+	path = SLCore
+	url = https://github.com/CoagulateSL/SLCore
