@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.Data.User;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -25,6 +25,7 @@ import net.coagulate.GPHUD.Modules.Experience.Experience;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;
 

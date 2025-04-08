@@ -7,6 +7,7 @@ import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

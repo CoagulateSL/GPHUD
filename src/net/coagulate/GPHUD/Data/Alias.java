@@ -8,6 +8,7 @@ import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;

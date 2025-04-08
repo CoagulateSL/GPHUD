@@ -22,6 +22,7 @@ import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.Modules.Templater.Template;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.SL;
 import org.json.JSONObject;
 
@@ -261,7 +262,8 @@ public class CharactersModule extends ModuleAnnotation {
 	}
 	
 	// naive never flushed cache with short life time.  Just to see if this actually helps much
-	private static final Cache<Instance,Map<String,KV>> kvDefsCache=Cache.getCache("GPHUD/CharactersModuleKVDefinitions",CacheConfig.SHORT);
+	private static final Cache<Instance,Map<String,KV>> kvDefsCache=
+			Cache.getCache("GPHUD/CharactersModuleKVDefinitions",CacheConfig.SHORT);
 
 	// ---------- INSTANCE ----------
 	@Nonnull

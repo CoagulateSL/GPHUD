@@ -15,6 +15,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.Config;
 
 import javax.annotation.Nonnull;

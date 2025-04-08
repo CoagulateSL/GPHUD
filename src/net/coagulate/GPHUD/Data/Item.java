@@ -9,6 +9,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.HeaderRow;
 import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Table;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

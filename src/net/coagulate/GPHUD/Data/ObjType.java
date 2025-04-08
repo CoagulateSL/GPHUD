@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Interfaces.Inputs.DropDownList;
 import net.coagulate.GPHUD.Interfaces.User.Form;
 import net.coagulate.GPHUD.Modules.Objects.ObjectTypes.ObjectType;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -231,7 +232,8 @@ public class ObjType extends TableRow {
 		});
 	}
 	
-	private static final Cache<Integer,JSONObject> behaviourCache=Cache.getCache("GPHUD/ObjectTypeBehaviour",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Integer,JSONObject> behaviourCache=
+			Cache.getCache("GPHUD/ObjectTypeBehaviour",CacheConfig.PERMANENT_CONFIG);
 	
 	/**
 	 * Set this objecttype's behaviour JSON
