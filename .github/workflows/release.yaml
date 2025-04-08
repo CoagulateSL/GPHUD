@@ -6,7 +6,7 @@ on:
       - master
     
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,5 +31,5 @@ jobs:
           git config --global user.name 'Git bot'
           git config --global user.email 'bot@noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/CoagulateSL/CoagulateSL
-          git commit -am "Auto updated submodule references" && git push || echo "No changes to commit"
+          git commit -am "Updated GPHUD" && git push || echo "No changes to commit"
           
