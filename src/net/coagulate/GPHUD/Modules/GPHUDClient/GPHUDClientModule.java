@@ -1,7 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.GPHUD.Data.CacheConfig;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
@@ -10,6 +9,7 @@ import net.coagulate.GPHUD.Modules.Argument.Arguments;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Command.Commands;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

@@ -5,6 +5,7 @@ import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.State;
 import net.coagulate.GPHUD.Tests.TestFramework;
+import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.Data.SystemManagement;
 import net.coagulate.SL.TestFrameworkPrototype;
 

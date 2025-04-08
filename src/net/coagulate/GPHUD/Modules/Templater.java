@@ -6,9 +6,9 @@ import net.coagulate.Core.Exceptions.User.UserConfigurationException;
 import net.coagulate.Core.Exceptions.User.UserInputValidationParseException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
-import net.coagulate.GPHUD.Data.CacheConfig;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.SL;
 
 import javax.annotation.Nonnull;

@@ -6,12 +6,15 @@ import net.coagulate.Core.Database.MySqlDBConnection;
 import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.Core.Tools.ClassTools;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.Data.Attribute;
 import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Modules.Instance.Distribution;
 import net.coagulate.GPHUD.Tests.TestFramework;
 import net.coagulate.SL.*;
+import net.coagulate.SL.Data.User;
 import net.coagulate.SL.HTML.ServiceTile;
 import org.json.JSONObject;
 
@@ -477,6 +480,26 @@ public class GPHUD extends SLModule {
 				json.put("instantmessagemessage",arguments[1]);
 				r.sendServerSync(json);
 			}
+		}
+		if ("permit".equalsIgnoreCase(command)) {
+			final User user=User.findUsername((String)arguments[0],false);
+			user.setPreference("gphud","instancepermit",Integer.toString(UnixTime.getUnixTime()+(60*60*24*7)));
+			final net.coagulate.GPHUD.State gpstate=new net.coagulate.GPHUD.State();
+			gpstate.setAvatar(user);
+			SL.im(user.getUUID(),"""
+					===== GPHUD Information =====
+					You have been issued a permit to create an installation of GPHUD.
+					This permit expires in one week.
+					
+					You should have been given an item named GPHUD Region Server.
+					Rez this on one of your regions and say into local chat
+					**createinstance <shortname>
+					Replacing <shortname> with a reasonable name for your installation.
+					
+					Once complete, allow 60 seconds for the device to start up and then
+					click the server to be given a HUD.  From here the bottom right quick button
+					will take you to the website for further configuration.""");
+			Distribution.getServer(gpstate);
 		}
 		return null;
 	}

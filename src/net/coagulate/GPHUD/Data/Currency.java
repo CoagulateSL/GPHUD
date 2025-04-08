@@ -15,6 +15,7 @@ import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.Modules.Pool;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -202,7 +203,8 @@ public class Currency extends TableRow {
 		throw new UserInputLookupFailureException("Unable to resolve a coin named "+coin,true);
 	}
 	
-	private static final Cache<Currency,String> baseCoinNameCache     =Cache.getCache("GPHUD/CurrencyBaseCoinName",CacheConfig.PERMANENT_CONFIG);
+	private static final Cache<Currency,String> baseCoinNameCache=
+			Cache.getCache("GPHUD/CurrencyBaseCoinName",CacheConfig.PERMANENT_CONFIG);
 	private static final Cache<Currency,String> baseCoinNameShortCache=Cache.getCache("GPHUD/CurrencyBaseCoinShortName",CacheConfig.PERMANENT_CONFIG);
 
 	public void setBaseCoinNames(final State state,final String basecoinshortname,final String basecoinname) {

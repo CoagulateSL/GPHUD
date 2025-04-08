@@ -18,6 +18,7 @@ import net.coagulate.GPHUD.Maintenance;
 import net.coagulate.GPHUD.Modules.Experience.VisitXP;
 import net.coagulate.GPHUD.Modules.Zoning.ZoneTransport;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.User;
 import org.json.JSONObject;

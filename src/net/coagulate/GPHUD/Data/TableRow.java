@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Interfaces.Outputs.Link;
 import net.coagulate.GPHUD.Interfaces.Outputs.Renderable;
 import net.coagulate.GPHUD.Modules.Modules;
 import net.coagulate.GPHUD.State;
+import net.coagulate.SL.CacheConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -200,7 +201,7 @@ public abstract class TableRow extends net.coagulate.Core.Database.TableRow impl
 	 */
 	public void setKV(final State st,@Nonnull final String key,@Nullable final String value) {
 		kvCheck();
-		String oldValue=loadKVs().get(key.toLowerCase());
+		final String oldValue=loadKVs().get(key.toLowerCase());
 		if (value==null&&oldValue==null) {
 			return;
 		}
