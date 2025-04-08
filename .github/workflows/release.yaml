@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      
+    steps:
+      - name: Checkout depender CoagulateSL
+        uses: actions/checkout@v2
+        with:
+          repository: 'CoagulateSL/CoagulateSL'
+          path: CoagulateSL
+          token: ${{ secrets.PACKAGE_READ }}
+          submodules: true
+      - name: Git Submodule Update
+        working-directory: CoagulateSL
+        run: |
+          git pull --recurse-submodules
+          git submodule update --remote --recursive
+      - name: Commit update
+        working-directory: CoagulateSL
+        run: |
+          git config --global user.name 'Git bot'
+          git config --global user.email 'bot@noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/CoagulateSL/CoagulateSL
+          git commit -am "Auto updated submodule references" && git push || echo "No changes to commit"
+          
