@@ -1,0 +1,17 @@
+stages:
+  - update
+
+update-job:
+  stage: update
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+    - git config --global url."https://gitlab-ci-token:$ACCESS@git.coagulate.net/".insteadOf "https://git.coagulate.net/"
+    - git clone https://git.coagulate.net/CoagulateSL/CoagulateSL.git || exit 1
+    - cd CoagulateSL || exit 1
+    - git submodule init || exit 1
+    - git submodule update --remote --recursive || exit 1
+    - git config --global user.name 'GitLab bot' || exit 1
+    - git config --global user.email 'gitlabbot@predestined.net' || exit 1
+    - git commit -am "Updated GPHUD" && git push || echo "No changes to commit" || exit 1
+    - cd .. || exit 1
