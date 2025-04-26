@@ -1,6 +1,8 @@
 stages:
   - update
-
+  - compile
+  - release
+  
 update-job:
   stage: update
   rules:
@@ -15,3 +17,42 @@ update-job:
     - git config --global user.email 'gitlabbot@predestined.net' || exit 1
     - git commit -am "Updated GPHUD" && git push || echo "No changes to commit" || exit 1
     - cd .. || exit 1
+
+compile-job:
+  stage: compile
+  script:
+    - git submodule init || exit 1
+    - git submodule update --remote --recursive --init || exit 1
+    - for a in GPHUD GPHUD/SLCore/JavaCore GPHUD/SLCore; do
+    - pushd $a
+    - BUILDINFO=`ls -1 src/net/coagulate/Core/BuildInfo/*.java`
+    - CLASSNAME=`echo $BUILDINFO|sed 's/.*\/\([^\/]*\).java/\1/;'`
+    - SHA=`git rev-parse --short HEAD`
+    - BUILDDATE=`git show -s --format=%at`
+    - echo Write version date $BUILDDATE sha $SHA to file $BUILDINFO
+    - echo 'package net.coagulate.Core.BuildInfo;' >$BUILDINFO
+    - echo 'import java.util.Date;'  >>$BUILDINFO
+    - echo 'public class '$CLASSNAME' {'  >>$BUILDINFO
+    - echo '  public static final String COMMITID="'$SHA'";'  >>$BUILDINFO
+    - echo '  public static final Date BUILDDATE=new Date('$BUILDDATE'000L);'  >>$BUILDINFO
+    - echo '}'  >>$BUILDINFO
+    - popd
+    - done    
+    - echo "Compiling the code..."
+    - mvn clean compile package || exit 1
+    - echo "Compile complete."
+    - mv bin/GPHUD.jar-jar-with-dependencies.jar GPHUD.jar || exit 1
+  artifacts:
+    paths: [ "GPHUD.jar" ]
+    expose_as: "GPHUD"
+    name: "GPHUD.jar"
+    expire_in: 1 day
+
+release-job:
+  stage: release
+  needs: [ "compile-job" ]
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  script:
+    - echo Push to releases
+    - curl -T GPHUD.jar https://releases.coagulate.net/GPHUD.jar || exit 1
