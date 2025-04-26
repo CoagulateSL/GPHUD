@@ -23,7 +23,7 @@ compile-job:
   script:
     - git submodule init || exit 1
     - git submodule update --remote --recursive --init || exit 1
-    - for a in GPHUD GPHUD/SLCore/JavaCore GPHUD/SLCore; do
+    - for a in . SLCore/JavaCore SLCore; do
     - pushd $a
     - BUILDINFO=`ls -1 src/net/coagulate/Core/BuildInfo/*.java`
     - CLASSNAME=`echo $BUILDINFO|sed 's/.*\/\([^\/]*\).java/\1/;'`
