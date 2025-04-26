@@ -41,7 +41,7 @@ compile-job:
     - echo "Compiling the code..."
     - mvn clean compile package || exit 1
     - echo "Compile complete."
-    - mv bin/GPHUD.jar-jar-with-dependencies.jar GPHUD.jar || exit 1
+    - mv bin/GPHUD-Release-jar-with-dependencies.jar GPHUD.jar || exit 1
   artifacts:
     paths: [ "GPHUD.jar" ]
     expose_as: "GPHUD"
