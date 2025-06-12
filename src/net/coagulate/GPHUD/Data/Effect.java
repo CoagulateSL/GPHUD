@@ -384,6 +384,7 @@ public class Effect extends TableRow {
 		}
 		d("delete from effectsapplications where effectid=? and characterid=?",getId(),target.getId());
 		d("insert into effectsapplications(effectid,characterid,expires) values(?,?,?)",getId(),target.getId(),expires);
+		effectCache.purge(target);
 		Audit.OPERATOR operator=Audit.OPERATOR.CHARACTER;
 		if (administrative) {
 			operator=Audit.OPERATOR.AVATAR;
