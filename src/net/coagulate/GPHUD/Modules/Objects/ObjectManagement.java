@@ -123,7 +123,9 @@ public class ObjectManagement {
 		final Form f=st.form();
 		f.add(new TextHeader("Object Type: "+t.getName()));
 		final ObjectType ot=ObjectType.materialise(st,t);
-		ot.update(st);
+		if (!st.postMap().isEmpty()) {
+			ot.update(st);
+		}
 		f.add(ot.explainHtml());
 		ot.editForm(st);
 	}

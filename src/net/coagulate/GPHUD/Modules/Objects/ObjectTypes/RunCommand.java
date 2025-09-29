@@ -33,7 +33,9 @@ public class RunCommand extends ObjectType {
 	@Override
 	public void editForm(@Nonnull final State st) {
 		final Table t=new Table();
-		t.add("Command").add(DropDownList.getCommandsList(st,"command",true));
+		final DropDownList commands=DropDownList.getCommandsList(st,"command",true);
+		commands.setValue(json.optString("command",""));
+		t.add("Command").add(commands);
 		t.openRow();
 		editFormDistance(st,t);
 		t.add(new Cell(new Button("Submit"),2));
