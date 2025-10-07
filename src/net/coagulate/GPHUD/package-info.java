@@ -2101,7 +2101,10 @@
         component=Core,
         type=Fix,
         message="Various performance improvements, little visible from an end user client but CPU spikes reduced by 80%")
-		
+@Change(date="2025-06-12",
+        component=HUD,
+        type=Fix,
+        message="Fixed race condition where HUD may not update effects properly (credit: ggscott@github)")
 package net.coagulate.GPHUD;
 
 import static net.coagulate.GPHUD.Classes.COMPONENT.*;
