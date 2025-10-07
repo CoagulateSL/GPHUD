@@ -382,8 +382,7 @@ public class Effect extends TableRow {
 			// already has a same or longer lasting effect
 			return false;
 		}
-		d("delete from effectsapplications where effectid=? and characterid=?",getId(),target.getId());
-		d("insert into effectsapplications(effectid,characterid,expires) values(?,?,?)",getId(),target.getId(),expires);
+        d("replace into effectsapplications(effectid,characterid,expires) values(?,?,?)",getId(),target.getId(),expires);
 		effectCache.purge(target);
 		Audit.OPERATOR operator=Audit.OPERATOR.CHARACTER;
 		if (administrative) {
