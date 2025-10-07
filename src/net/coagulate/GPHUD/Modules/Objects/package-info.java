@@ -30,7 +30,10 @@
         type=CHANGETYPE.Fix,
         component=COMPONENT.ObjectDriver,
         message="Phantom/Volume Detect/Collision object driver only detects avatar collisions.")
-
+@Change(date="2025-09-29",
+        type=CHANGETYPE.Fix,
+        component=COMPONENT.Core,
+        message="Prevent unnecessary rebuilding of the runcommand dropdown lists (credit: ggscott@github)")
 package net.coagulate.GPHUD.Modules.Objects;
 
 import net.coagulate.GPHUD.Classes.COMPONENT;

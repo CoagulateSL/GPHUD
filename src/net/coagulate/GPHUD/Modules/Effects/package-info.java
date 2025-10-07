@@ -52,12 +52,17 @@
         hierarchy=KVHIERARCHY.DELEGATING,
         scope=KVSCOPE.EFFECT,
         type=KVTYPE.BOOLEAN)
-
+@Classes.Change(date="2025-10-07",
+                type=ChangeLogging.CHANGETYPE.Fix,
+                component=Classes.COMPONENT.Core,
+                message="Fixed a possible error applying an effect due to non atomic SQL update (credit: ggscott@github)")
 package net.coagulate.GPHUD.Modules.Effects;
 
+import net.coagulate.GPHUD.Classes;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.KV.KVHIERARCHY;
 import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
 import net.coagulate.GPHUD.Modules.KV.KVTYPE;
 import net.coagulate.GPHUD.Modules.Module;
 import net.coagulate.GPHUD.Modules.Permission;
+import net.coagulate.SL.ChangeLogging;
