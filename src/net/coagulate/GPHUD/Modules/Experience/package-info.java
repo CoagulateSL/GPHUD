@@ -89,8 +89,15 @@
      name="MaxLevel",
      template=false)
 
+		
+@Classes.Change(date="2025-10-26",
+                component=Classes.COMPONENT.HUD,
+                type=ChangeLogging.CHANGETYPE.Fix,
+                message="Correctly list the visit XP awared, rather than always showing 1")
+		
 package net.coagulate.GPHUD.Modules.Experience;
 
+import net.coagulate.GPHUD.Classes;
 import net.coagulate.GPHUD.Modules.KV;
 import net.coagulate.GPHUD.Modules.KV.KVS;
 import net.coagulate.GPHUD.Modules.KV.KVSCOPE;
@@ -99,4 +106,5 @@ import net.coagulate.GPHUD.Modules.Module.ModuleDefinition;
 import net.coagulate.GPHUD.Modules.Permission;
 import net.coagulate.GPHUD.Modules.Permission.Permissions;
 import net.coagulate.GPHUD.Modules.Pool.Pools;
+import net.coagulate.SL.ChangeLogging;
 

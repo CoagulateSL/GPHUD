@@ -80,8 +80,8 @@ public class VisitXP extends QuotaedXP {
 				final State fakestate=new State();
 				fakestate.setInstance(st.getInstance());
 				fakestate.setAvatar(User.getSystem());
-				ch.hudMessage(
-						"You were awarded 1 point of Visit XP, you will be eligible for your next point "+nextFree(st));
+				ch.hudMessage("You were awarded "+wanttogive+" point"+(wanttogive==1?"":"s")+
+				              " of Visit XP, you will be eligible for your next point "+nextFree(st));
 				Audit.audit(fakestate,
 				            Audit.OPERATOR.AVATAR,
 				            null,
