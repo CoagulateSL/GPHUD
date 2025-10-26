@@ -93,7 +93,7 @@
 @Classes.Change(date="2025-10-26",
                 component=Classes.COMPONENT.HUD,
                 type=ChangeLogging.CHANGETYPE.Fix,
-                message="Correctly list the visit XP awared, rather than always showing 1")
+                message="Correctly list the visit XP awarded, rather than always showing 1")
 		
 package net.coagulate.GPHUD.Modules.Experience;
 
