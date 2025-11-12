@@ -34,7 +34,9 @@ public class KVValue {
 	
 	@Nonnull
 	public Integer intValue() {
-		return Integer.valueOf(value());
+		String value=value();
+		if (value==null || value.isBlank()) { return 0; }
+		return Integer.valueOf(value);
 	}
 	
 	@Nonnull
