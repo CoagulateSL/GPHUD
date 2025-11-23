@@ -271,6 +271,7 @@ public class Effect extends TableRow {
 			            "Effect "+getName()+" expired from character");
 		}
 		d("delete from effectsapplications where characterid=? and effectid=?",character.getId(),getId());
+        effectCache.purge(character);
 		final String applykv=st.getKV(this,"Effects.RemoveMessage");
 		final JSONObject message=new JSONObject();
 		if (applykv!=null&&(!applykv.isEmpty())) {
