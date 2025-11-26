@@ -23,7 +23,10 @@
         date="2023-04-03",
         component=Core,
         message="Character renames are now checked against the name filtering policy")
-		
+@Change(type=Fix,
+        date="2025-11-26",
+        component=Core,
+        message="Stale cache used that may result in titler not updating properly (credit to ggscott)")
 package net.coagulate.GPHUD.Data;
 
 import net.coagulate.SL.ChangeLogging;
