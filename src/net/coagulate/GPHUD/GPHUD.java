@@ -413,7 +413,7 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==19) {
 			log.config("Schema update 20 - reporting rewrite");
-			GPHUD.getDB().d("ALTER TABLE `instances` DROP COLUMN, `reporttds` DROP COLUMN `report`, "+
+			GPHUD.getDB().d("ALTER TABLE `instances` DROP COLUMN `reporttds`, DROP COLUMN `report`, "+
 			                "ADD COLUMN `reportstart` INT(11) NULL DEFAULT 0 AFTER `reporting`,"+
 			                "ADD COLUMN `reportend` INT(11) NULL DEFAULT 0 AFTER `reportstart`,"+
 			                "ADD COLUMN `instancescol` VARCHAR(45) NULL AFTER `retirewarn`,"+
