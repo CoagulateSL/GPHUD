@@ -419,7 +419,7 @@ public class GPHUD extends SLModule {
 			                "CHANGE COLUMN `reporting` `reporting` TINYINT NULL DEFAULT 0");
 			GPHUD.getDB().d("CREATE TABLE `reports` (`instanceid` INT NOT NULL,"+
 			                "  `characterid` INT NOT NULL, `column` VARCHAR(128) NOT NULL,"+
-			                "  `data` VARCHAR(4096) NULL, PRIMARY KEY (`instanceid`, `characterid`, `column`),"+
+			                "  `data` VARBINARY(4096) NULL, PRIMARY KEY (`instanceid`, `characterid`, `column`),"+
 			                "  INDEX `reports_characterid_idx` (`characterid` ASC) VISIBLE,"+
 			                "  CONSTRAINT `reports_instanceid` FOREIGN KEY (`instanceid`)"+
 			                "    REFERENCES `instances` (`instanceid`) ON DELETE CASCADE"+
