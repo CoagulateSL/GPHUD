@@ -42,4 +42,5 @@ jobs:
       - name: Install skeleton user records
         run: mysql -u root -proot -e "use sl;insert into users(id,username,avatarkey,developerkey,superadmin,lastactive) values(1,'Iain Maltz','8dc52677-bea8-4fc3-b69b-21c5e2224306','This isnt a real developer key tee hee',1,0); insert into users(id,username,avatarkey,lastactive) values(2,'Kate Burner','5ca5d32d-f2c5-43ed-9f9c-226d1bb404f3',0);"
       - name: Run unit tests
-        run: java -jar CoagulateSL/bin/CoagulateSL.jar-jar-with-dependencies.jar CoagulateSL/github-runner.properties        
+        working-directory: GPHUD
+        run: java -jar bin/GPHUD-Release-jar-with-dependencies.jar github-runner.properties        
