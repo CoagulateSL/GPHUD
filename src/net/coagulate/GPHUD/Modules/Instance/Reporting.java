@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class Reporting extends Thread {
 	
 	public static final int SLEEP_WHEN_NO_REPORTS_IN_MILLIS=5000;
-	public static final int REPORTING_TICK_IN_MILLIS =20;
+	public static final int REPORTING_TICK_IN_MILLIS =100;
 	
 	@SuppressWarnings("InfiniteLoopStatement")
 	public void run() {
