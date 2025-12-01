@@ -28,7 +28,7 @@ jobs:
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
         working-directory: GPHUD
-        run: mvn --batch-mode clean compile
+        run: mvn --batch-mode clean compile package
       - name: Start MySQL
         run: sudo /etc/init.d/mysql start
       - name: Create databases
