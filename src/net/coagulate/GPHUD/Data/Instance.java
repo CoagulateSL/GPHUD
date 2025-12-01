@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Data;
 
+import net.coagulate.Core.Database.DBException;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
@@ -967,20 +968,41 @@ public class Instance extends TableRow {
 		final int xp=Experience.getExperience(charState,character);
 		output.put("Total XP",String.valueOf(xp));
 		output.put("Level",String.valueOf(Experience.toLevel(charState,xp)));
-		Object[] params=new Object[4*output.size()];
-		StringBuilder sql=new StringBuilder("INSERT INTO reports(`instanceid`,`characterid`,`column`,`data`) VALUES ");
-		boolean isfirst=true;
-		int index=0;
-		for (Map.Entry<String,String> e:output.entrySet()) {
-			if (isfirst) { isfirst=false; } else { sql.append(","); }
-			sql.append("(?,?,?,?)");
-			params[index*4]=instance.getId();
-			params[index*4+1]=character.getId();
-			params[index*4+2]=e.getKey();
-			params[index*4+3]=e.getValue();
-			index++;
+		try {
+			// batch insert
+			Object[] params=new Object[4*output.size()];
+			StringBuilder sql=
+					new StringBuilder("INSERT INTO reports(`instanceid`,`characterid`,`column`,`data`) VALUES ");
+			boolean isfirst=true;
+			int index=0;
+			for (Map.Entry<String,String> e: output.entrySet()) {
+				if (isfirst) {
+					isfirst=false;
+				} else {
+					sql.append(",");
+				}
+				sql.append("(?,?,?,?)");
+				params[index*4]=instance.getId();
+				params[index*4+1]=character.getId();
+				params[index*4+2]=e.getKey();
+				params[index*4+3]=e.getValue();
+				index++;
+			}
+			db().d(sql.toString(),params);
+		} catch (DBException e) {
+			// fine then, try it one by one
+			for (Map.Entry<String,String> entry: output.entrySet()) {
+				try {
+					db().d("INSERT INTO reports(`instanceid`,`characterid`,`column`,`data`) VALUES(?,?,?,?)",instance.getId(),character.getId(),entry.getKey(),entry.getValue());
+				} catch (DBException f) {
+					log.log(Level.WARNING,"Unable to insert report result for "+instance+" char "+character+" entry "+entry.getKey()+"="+entry.getValue(),f);
+					try {db().d("INSERT INTO reports(`instanceid`,`characterid`,`column`,`data`) VALUES(?,?,?,'EXCEPTION')",instance.getId(),character.getId(),entry.getKey()); }
+					catch (DBException g) {
+						log.log(Level.WARNING,"Unable to insert report result for "+instance+" char "+character+" entry "+entry.getKey()+" - could not even write that this was EXCEPTION",g);
+					}
+				}
+			}
 		}
-		db().d(sql.toString(),params);
 	}
 	
 	public String getReport() {
