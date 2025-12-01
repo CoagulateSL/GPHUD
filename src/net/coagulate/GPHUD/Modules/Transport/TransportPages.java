@@ -216,7 +216,7 @@ public class TransportPages {
 			Page.page()
 			    .addHeader("content-disposition",
 			               "attachment; filename=\""+st.getInstance().getName()+" - "+
-			               UnixTime.fromUnixTime(st.getInstance().lastReport(),st.getAvatar().getTimeZone())+" "+
+			               UnixTime.fromUnixTime(UnixTime.getUnixTime(),st.getAvatar().getTimeZone())+" "+
 			               st.getAvatar().getTimeZone()+".json\"");
 			Page.page().contentType(ContentType.create("text/json"));
 			final JSONObject payload=new JSONObject();

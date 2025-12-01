@@ -3,27 +3,37 @@ package net.coagulate.GPHUD.Data;
 import net.coagulate.Core.Database.NoDataException;
 import net.coagulate.Core.Database.Results;
 import net.coagulate.Core.Database.ResultsRow;
+import net.coagulate.Core.Exceptions.System.SystemImplementationException;
 import net.coagulate.Core.Exceptions.User.UserInputDuplicateValueException;
 import net.coagulate.Core.Exceptions.User.UserInputEmptyException;
 import net.coagulate.Core.Exceptions.User.UserInputLookupFailureException;
-import net.coagulate.Core.Exceptions.User.UserInputStateException;
 import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.Core.Tools.Cache;
+import net.coagulate.Core.Tools.UnixTime;
 import net.coagulate.GPHUD.EndOfLifing;
 import net.coagulate.GPHUD.GPHUD;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.System.Transmission;
 import net.coagulate.GPHUD.Modules.Experience.Experience;
+import net.coagulate.GPHUD.Modules.Experience.GenericXP;
+import net.coagulate.GPHUD.Modules.Experience.QuotaedXP;
 import net.coagulate.GPHUD.State;
 import net.coagulate.SL.CacheConfig;
 import net.coagulate.SL.Config;
 import net.coagulate.SL.Data.User;
 import net.coagulate.SL.SL;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static net.coagulate.Core.Tools.UnixTime.getUnixTime;
 
@@ -690,7 +700,7 @@ public class Instance extends TableRow {
 	 * Get all character groups for this instance.
 	 * Ignores the group type element.
 	 *
-	 * @return Set of CharacterGroups
+	 * @return Listr of CharacterGroups
 	 */
 	@Nonnull
 	public List<CharacterGroup> getCharacterGroups() {
@@ -811,11 +821,6 @@ public class Instance extends TableRow {
 		return chars;
 	}
 	
-	public void setReport(@Nonnull final String report) {
-		set("report",report);
-		set("reporttds",getUnixTime());
-	}
-	
 	public boolean spendReportCredit() {
 		final int quota=getInt("reportquota");
 		if (quota>0) {
@@ -837,16 +842,6 @@ public class Instance extends TableRow {
 		return getInt("downloadquota");
 	}
 	
-	public String getReport() {
-		if (lastReport()==0) {
-			throw new UserInputStateException("No report has been generated");
-		}
-		return getString("report");
-	}
-	
-	public int lastReport() {
-		return getInt("reporttds");
-	}
 	
 	public boolean spendDownloadCredit() {
 		final int quota=getInt("downloadquota");
@@ -857,12 +852,31 @@ public class Instance extends TableRow {
 		return false;
 	}
 	
-	public int generating() {
-		return getInt("reporting");
+	public void startReport() {
+		d("delete from reports where instanceid=?",getId());
+		set("reporting",true);
+		set("reportstart",UnixTime.getUnixTime());
 	}
 	
-	public void generating(final int value) {
-		set("reporting",value);
+	public void endReport() {
+		set("reporting",false);
+		set("reportend",UnixTime.getUnixTime());
+	}
+	
+	public int reportingStartTime() {
+		return getInt("reportstart");
+	}
+	
+	public int reportingEndTime() {
+		return getInt("reportend");
+	}
+	
+	public int countReportedCharacters() {
+		return dqinn("select count(distinct characterid) from reports where instanceid=?",getId());
+	}
+	
+	public boolean reporting() {
+		return getBool("reporting");
 	}
 	
 	public void setRetireAt(@Nullable final Integer retireat) {
@@ -885,5 +899,116 @@ public class Instance extends TableRow {
 	
 	public void delete() {
 		d("delete from instances where instanceid=?",getId());
+	}
+	
+	public static void reportingTick(final Logger log) {
+		GPHUD.getDB().dq("select instanceid from instances where reporting=1").forEach(x->{
+			Instance i=Instance.get(x.getInt());
+			// grab a character
+			try {
+				Integer charid=GPHUD.getDB()
+				                    .dqi("SELECT characters.characterid FROM characters LEFT JOIN reports ON characters.characterid = reports.characterid where characters.instanceid=? and reports.characterid is null limit 0,1",
+				                         i.getId());
+				if (charid==null) {
+					i.endReport();
+				} else {
+					try {
+						reportCharacter(log,i,Char.get(charid));
+					} catch (RuntimeException e) {
+						log.log(Level.WARNING,"Error generating report for character "+charid+" in instance "+i,e);
+					}
+				}
+			} catch (NoDataException done) { i.endReport(); }
+		});
+	}
+	
+	static void reportCharacter(final Logger log, final Instance instance,final Char character) {
+		// we basically make a KV map then write it as a series of rows
+		final State charState=new State(character);
+		Map<String,String> output=new HashMap<>();
+		output.put("ID",Integer.toString(character.getId()));
+		output.put("Character Name",character.getName());
+		output.put("Retired",Boolean.toString(character.retired()));
+		output.put("Owner Name",character.getOwner().getName());
+		output.put("Last Active (SLT)",UnixTime.fromUnixTime(character.getLastPlayed(),"America/Los_Angeles"));
+		for (final Attribute attribute: charState.getAttributes()) {
+			String value="EXCEPTION";
+			try {
+				switch (attribute.getType()) {
+					case SET -> value=new CharacterSet(character,attribute).textList();
+					case POOL -> {
+						if (QuotaedXP.class.isAssignableFrom(attribute.getClass())) {
+							final QuotaedXP xp=(QuotaedXP)attribute;
+							value=String.valueOf(CharacterPool.sumPool(charState,(xp.getPool(charState))));
+						} else {
+							value="SomeKindOfPool (?)";
+						}
+					}
+					case GROUP -> {
+						final String subType=attribute.getSubType();
+						if (subType==null) {
+							value="";
+						} else {
+							final CharacterGroup groupMembership=CharacterGroup.getGroup(character,subType);
+							value=(groupMembership==null?"":groupMembership.getName());
+						}
+					}
+					case CURRENCY -> value=String.valueOf((Currency.find(charState,attribute.getName()).sum(charState)));
+					case INVENTORY -> value=(new Inventory(character,attribute).textList());
+					case EXPERIENCE -> value=String.valueOf((CharacterPool.sumPool(charState,(new GenericXP(attribute.getName()).getPool(charState)))));
+					case COLOR,INTEGER,TEXT,FLOAT ->
+							value=(charState.getKV("Characters."+attribute.getName()).toString());
+				}
+			} catch (final Exception e) {
+				SL.log("Reporting").log(Level.WARNING,"Exception reporting attribute "+attribute.getName()+" for char "+character.getName()+"#"+character.getId()+": "+e,e);
+			}
+			output.put(attribute.getName(),value);
+		}
+		final int xp=Experience.getExperience(charState,character);
+		output.put("Total XP",String.valueOf(xp));
+		output.put("Level",String.valueOf(Experience.toLevel(charState,xp)));
+		Object[] params=new Object[4*output.size()];
+		StringBuilder sql=new StringBuilder("INSERT INTO reports(`instanceid`,`characterid`,`column`,`data`) VALUES ");
+		boolean isfirst=true;
+		int index=0;
+		for (Map.Entry<String,String> e:output.entrySet()) {
+			if (isfirst) { isfirst=false; } else { sql.append(","); }
+			sql.append("(?,?,?,?)");
+			params[index*4]=instance.getId();
+			params[index*4+1]=character.getId();
+			params[index*4+2]=e.getKey();
+			params[index*4+3]=e.getValue();
+			index++;
+		}
+		db().d(sql.toString(),params);
+	}
+	
+	public String getReport() {
+		try {
+			final StringWriter output=new StringWriter();
+			final CSVPrinter csv=new CSVPrinter(output,CSVFormat.EXCEL);
+			Results columns=dq("SELECT DISTINCT `column` FROM reports where instanceid=?",getId());
+			String[] headers=new String[columns.size()];
+			final AtomicInteger index=new AtomicInteger(0);
+			columns.forEach(header->{
+				headers[index.getAndIncrement()]=header.getString();
+			});
+			for (String header:headers) { csv.print(header); }
+			csv.println();
+			// for all characters
+			dq("SELECT DISTINCT characterid FROM reports").forEach(charidrow->{
+				try {
+					Map<String,String> charmap=new HashMap<>();
+					dq("SELECT `column`,`data` FROM reports where `characterid`=?",charidrow.getInt()).forEach(row->{
+						charmap.put(row.getString("column"),row.getString("data"));
+					});
+					for (String header: headers) {
+						csv.print(charmap.getOrDefault(header,""));
+					}
+					csv.println();
+				} catch (IOException f) { throw new SystemImplementationException("Unexpected IO Exception generating report CSV per char",f); }
+			});
+			return output.toString();
+		} catch (IOException e) { throw new SystemImplementationException("Unexpected IO Exception generating report CSV",e); }
 	}
 }

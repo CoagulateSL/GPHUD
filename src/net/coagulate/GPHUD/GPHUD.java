@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Data.Char;
 import net.coagulate.GPHUD.Data.PermissionsGroup;
 import net.coagulate.GPHUD.Data.Region;
 import net.coagulate.GPHUD.Modules.Instance.Distribution;
+import net.coagulate.GPHUD.Modules.Instance.Reporting;
 import net.coagulate.GPHUD.Tests.TestFramework;
 import net.coagulate.SL.*;
 import net.coagulate.SL.Data.User;
@@ -412,7 +413,7 @@ public class GPHUD extends SLModule {
 		}
 		if (currentVersion==19) {
 			log.config("Schema update 20 - reporting rewrite");
-			GPHUD.getDB().d("ALTER TABLE `instances` DROP COLUMN `reporttds` DROP COLUMN `report`, "+
+			GPHUD.getDB().d("ALTER TABLE `instances` DROP COLUMN, `reporttds` DROP COLUMN `report`, "+
 			                "ADD COLUMN `reportstart` INT(11) NULL DEFAULT 0 AFTER `reporting`,"+
 			                "ADD COLUMN `reportend` INT(11) NULL DEFAULT 0 AFTER `reportstart`,"+
 			                "ADD COLUMN `instancescol` VARCHAR(45) NULL AFTER `retirewarn`,"+
@@ -470,6 +471,7 @@ public class GPHUD extends SLModule {
 		URLDistribution.register("/GPHUD/external",new net.coagulate.GPHUD.Interfaces.External.Interface());
 		URLDistribution.register("/GPHUD/system",new net.coagulate.GPHUD.Interfaces.System.Interface());
 		URLDistribution.register("/GPHUD/",new net.coagulate.GPHUD.Interfaces.User.Interface());
+		new Reporting().start();
 	}
 	
 	/**

@@ -176,6 +176,11 @@
                 date="2023-01-14",
                 message="Fixed issue in reporting, guarding against any errors during a report generation.  This will now report EXCEPTION in the output CSV rather than aborting the whole report run.")
 
+@Classes.Change(component=Classes.COMPONENT.Core,
+                type=ChangeLogging.CHANGETYPE.Change,
+                date="2025-12-01",
+                message="Reporting rewritten ; rather than running a singular process expected to run the entire report, this is now queued up and run piece by piece by a background thread.  This fixes issues where a cluster transition may happen mid report generation which would abort the generation and leave the instance unable to generate new reports, instead now it will migrate report generation between the nodes.")
+		
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.GPHUD.Classes;
