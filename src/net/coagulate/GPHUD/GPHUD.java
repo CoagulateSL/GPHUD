@@ -416,17 +416,16 @@ public class GPHUD extends SLModule {
 			GPHUD.getDB().d("ALTER TABLE `instances` DROP COLUMN `reporttds`, DROP COLUMN `report`, "+
 			                "ADD COLUMN `reportstart` INT(11) NULL DEFAULT 0 AFTER `reporting`,"+
 			                "ADD COLUMN `reportend` INT(11) NULL DEFAULT 0 AFTER `reportstart`,"+
-			                "ADD COLUMN `instancescol` VARCHAR(45) NULL AFTER `retirewarn`,"+
 			                "CHANGE COLUMN `reporting` `reporting` TINYINT NULL DEFAULT 0");
 			GPHUD.getDB().d("CREATE TABLE `reports` (`instanceid` INT NOT NULL,"+
 			                "  `characterid` INT NOT NULL, `column` VARCHAR(128) NOT NULL,"+
 			                "  `data` VARCHAR(4096) NULL, PRIMARY KEY (`instanceid`, `characterid`, `column`),"+
 			                "  INDEX `reports_characterid_idx` (`characterid` ASC) VISIBLE,"+
 			                "  CONSTRAINT `reports_instanceid` FOREIGN KEY (`instanceid`)"+
-			                "    REFERENCES `gphuddev`.`instances` (`instanceid`) ON DELETE CASCADE"+
+			                "    REFERENCES `instances` (`instanceid`) ON DELETE CASCADE"+
 			                "    ON UPDATE RESTRICT, CONSTRAINT `reports_characterid`"+
 			                "    FOREIGN KEY (`characterid`)"+
-			                "    REFERENCES `gphuddev`.`characters` (`characterid`) ON DELETE CASCADE"+
+			                "    REFERENCES `characters` (`characterid`) ON DELETE CASCADE"+
 			                "    ON UPDATE RESTRICT)");
 			log.config("Schema upgrade of GPHUD to version 20 is complete");
 			currentVersion=20;
