@@ -102,7 +102,7 @@ public class Reporting extends Thread {
 					f.add(new Paragraph("Reporting took "+UnixTime.duration(reportEnd-reportStart)));
 				}
 				if (state.isSuperUser()||state.getInstance().downloadCredits()>0) {
-					f.add(new Paragraph(new Link("Download this report","/GPHUD/reporting/download")));
+					f.add(new Paragraph(new Link("Download this report (NOTE: This link may take a while to option, just wait while the loader spins)","/GPHUD/reporting/download")));
 				}
 			}
 		}
