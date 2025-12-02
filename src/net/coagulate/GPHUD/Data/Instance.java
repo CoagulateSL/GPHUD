@@ -1018,7 +1018,7 @@ public class Instance extends TableRow {
 			for (String header:headers) { csv.print(header); }
 			csv.println();
 			// for all characters
-			dq("SELECT DISTINCT characterid FROM reports").forEach(charidrow->{
+			dq("SELECT DISTINCT characterid FROM reports where instanceid=?",getId()).forEach(charidrow->{
 				try {
 					Map<String,String> charmap=new HashMap<>();
 					dq("SELECT `column`,`data` FROM reports where `characterid`=?",charidrow.getInt()).forEach(row->{
