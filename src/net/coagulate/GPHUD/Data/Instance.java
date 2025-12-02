@@ -854,9 +854,10 @@ public class Instance extends TableRow {
 	}
 	
 	public void startReport() {
+		d("update characters set reported=0 where instanceid=?",getId());
 		d("delete from reports where instanceid=?",getId());
-		set("reporting",true);
 		set("reportstart",UnixTime.getUnixTime());
+		set("reporting",true);
 	}
 	
 	public void endReport() {
@@ -908,12 +909,12 @@ public class Instance extends TableRow {
 			// grab a character
 			try {
 				Integer charid=GPHUD.getDB()
-				                    .dqi("SELECT characters.characterid FROM characters LEFT JOIN reports ON characters.characterid = reports.characterid where characters.instanceid=? and reports.characterid is null limit 0,1",
-				                         i.getId());
+				                    .dqi("SELECT characterid FROM characters WHERE instanceid=? and reported=0 limit 0,1",i.getId());
 				if (charid==null) {
 					i.endReport();
 				} else {
 					try {
+						GPHUD.getDB().d("UPDATE characters SET reported=1 WHERE characterid=?",charid);
 						reportCharacter(log,i,Char.get(charid));
 					} catch (RuntimeException e) {
 						log.log(Level.WARNING,"Error generating report for character "+charid+" in instance "+i,e);
