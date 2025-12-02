@@ -28,5 +28,19 @@ jobs:
         env: 
           PACKAGE_READ: ${{ secrets.PACKAGE_READ }}
         working-directory: GPHUD
-        run: mvn --batch-mode clean compile
-        
+        run: mvn --batch-mode clean compile package
+      - name: Start MySQL
+        run: sudo /etc/init.d/mysql start
+      - name: Create databases
+        run: mysql -e 'create database sl;create database gphud;' -u root -proot
+      - name: Install SLCore schema
+        working-directory: GPHUD
+        run: mysql -u root -proot sl <SLCore/slcore-schema.sql
+      - name: Install GPHUD schema
+        working-directory: GPHUD
+        run: mysql -u root -proot gphud <gphud-schema.sql
+      - name: Install skeleton user records
+        run: mysql -u root -proot -e "use sl;insert into users(id,username,avatarkey,developerkey,superadmin,lastactive) values(1,'Iain Maltz','8dc52677-bea8-4fc3-b69b-21c5e2224306','This isnt a real developer key tee hee',1,0); insert into users(id,username,avatarkey,lastactive) values(2,'Kate Burner','5ca5d32d-f2c5-43ed-9f9c-226d1bb404f3',0);"
+      - name: Run unit tests
+        working-directory: GPHUD
+        run: java -jar bin/GPHUD-Release-jar-with-dependencies.jar github-runner.properties        
