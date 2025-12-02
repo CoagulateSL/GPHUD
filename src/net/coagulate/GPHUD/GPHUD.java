@@ -220,7 +220,7 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
-	private static final int SCHEMA_VERSION=20;
+	private static final int SCHEMA_VERSION=21;
 
 	@SuppressWarnings("MagicNumber")
 	@Override
@@ -429,6 +429,14 @@ public class GPHUD extends SLModule {
 			                "    ON UPDATE RESTRICT)");
 			log.config("Schema upgrade of GPHUD to version 20 is complete");
 			currentVersion=20;
+		}
+		if (currentVersion==20) {
+			log.config("Schema update 21 - move reported flag to characters rather than rely on a slow join");
+			GPHUD.getDB().d("ALTER TABLE `characters` "+
+			                "ADD COLUMN `reported` TINYINT NOT NULL DEFAULT 0 AFTER `protocol`,"+
+			                "ADD INDEX `characters_reported` (`instanceid` ASC, `reported` ASC)");
+			log.config("Schema upgrade of GPHUD to version 21 is complete");
+			currentVersion=21;
 		}
 		return currentVersion;
 		// UPDATE THE CURRENT VERSION NUMBER ABOVE THIS FUNC
