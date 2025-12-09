@@ -161,6 +161,8 @@
 
 @Permissions(name="SetLoginScript", description="Can change the 'run at login' command", power=Permission.POWER.MEDIUM)
 
+@Permissions(name="Broadcast",description="Can send broadcast messages",power=Permission.POWER.LOW)
+
 // a cheaty thing that belongs to Characters, really
 @SideMenus(name="(including retired)",
            priority=251,
