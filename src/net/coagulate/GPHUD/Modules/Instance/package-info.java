@@ -183,6 +183,11 @@
                 date="2025-12-01",
                 message="Reporting rewritten ; rather than running a singular process expected to run the entire report, this is now queued up and run piece by piece by a background thread.  This fixes issues where a cluster transition may happen mid report generation which would abort the generation and leave the instance unable to generate new reports, instead now it will migrate report generation between the nodes.")
 		
+@Classes.Change(component=Classes.COMPONENT.Core,
+                type=ChangeLogging.CHANGETYPE.Add,
+                date="2025-12-09",
+                message="Added commands Instance.regionBroadcast, Instance.broadcast, and a permission Instance.Broadcast which sends a message to all HUDs in a given region, or all regions belonging to your instance.  Is also a superuser only command to broadcast to all regions in all instances (for emergency downtime messages etc)")
+		
 package net.coagulate.GPHUD.Modules.Instance;
 
 import net.coagulate.GPHUD.Classes;
