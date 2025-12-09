@@ -835,4 +835,14 @@ public class Region extends TableRow {
 		retiredCache.set(this,true);
 		instanceRegionSetCacheUnretired.purge(getInstance());
 	}
+	
+	public boolean broadcastMessage(final State st,final String sendmessage) {
+		JSONObject json=new JSONObject();
+		json.put("eventmessage1",sendmessage); // this is kinda inappropriate and eventmessages should probably be considered for retirement
+		// BUT the server will ownersay normal messageX proving that say protocol 3 isn't going to be the last iteration :P
+		// but for now this cludge avoids us rolling a new region server/HUD package.
+		json.put("incommand","broadcast");
+		try { sendServerSync(json); } catch (UserRemoteFailureException e) { return false; }
+		return true;
+	}
 }
