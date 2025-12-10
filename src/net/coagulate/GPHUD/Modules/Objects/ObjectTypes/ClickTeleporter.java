@@ -71,7 +71,7 @@ public class ClickTeleporter extends Teleporter {
 	
 	@Nonnull
 	@Override
-	public Response click(@Nonnull final State st,@Nonnull final Char clicker) {
+	public Response click(@Nonnull final State st,@Nonnull final Char clicker,@Nonnull final Float distance) {
 		return execute(st,clicker);
 	}
 	

@@ -11,6 +11,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCFloat;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
@@ -75,7 +76,7 @@ public class RunScript extends ObjectType {
 	
 	@Nonnull
 	@Override
-	public Response click(@Nonnull final State st,@Nonnull final Char clicker) {
+	public Response click(@Nonnull final State st,@Nonnull final Char clicker,@Nonnull final Float distance) {
 		if (json.optString("script","").isEmpty()) {
 			return new ErrorResponse("Script to invoke is not configured in this object type");
 		}
@@ -87,6 +88,7 @@ public class RunScript extends ObjectType {
 		final GSVM vm=new GSVM(script);
 		vm.introduce("CALLER",new BCCharacter(null,clicker));
 		vm.introduce("CALLERUUID",new BCString(null,clicker.getPlayedBy().getUUID()));
+		vm.introduce("CALLERDISTANCE",new BCFloat(null,distance));
 		populateVmVariables(st,vm);
 		return new JSONResponse(vm.execute(st).asJSON(st));
 	}

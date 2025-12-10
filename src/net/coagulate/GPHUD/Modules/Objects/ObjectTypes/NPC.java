@@ -12,6 +12,7 @@ import net.coagulate.GPHUD.Interfaces.Responses.ErrorResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.JSONResponse;
 import net.coagulate.GPHUD.Interfaces.Responses.Response;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCCharacter;
+import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCFloat;
 import net.coagulate.GPHUD.Modules.Scripting.Language.ByteCode.BCString;
 import net.coagulate.GPHUD.Modules.Scripting.Language.GSVM;
 import net.coagulate.GPHUD.State;
@@ -146,7 +147,7 @@ public class NPC extends ObjectType {
 	
 	@Nonnull
 	@Override
-	public Response click(@Nonnull final State st,@Nonnull final Char clicker) {
+	public Response click(@Nonnull final State st,@Nonnull final Char clicker,@Nonnull final Float distance) {
 		// do we have a character set
 		if (!json.has("character")) {
 			return new ErrorResponse("No character is associated with this NPC object");
@@ -164,6 +165,7 @@ public class NPC extends ObjectType {
 		final GSVM vm=new GSVM(script);
 		vm.introduce("TARGET",new BCCharacter(null,clicker));
 		vm.introduce("TARGETUUID",new BCString(null,clicker.getPlayedBy().getUUID()));
+		vm.introduce("TARGETDISTANCE",new BCFloat(null,distance));
 		populateVmVariables(st,vm);
 		final JSONObject jsonResponse=vm.execute(st).asJSON(st);
 		//System.out.println(response.asJSON(st));

@@ -121,7 +121,7 @@ public abstract class ObjectType {
 	public abstract MODE mode();
 	
 	@Nonnull
-	public Response click(final State st,final Char clicker) {
+	public Response click(final State st,final Char clicker,final Float distance) {
 		return new ErrorResponse("Object type "+object.getName()+" does not support click behaviour");
 	}
 	
