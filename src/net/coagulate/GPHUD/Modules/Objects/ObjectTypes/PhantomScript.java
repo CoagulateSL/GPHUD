@@ -28,6 +28,6 @@ public class PhantomScript extends RunScript {
 	@Nonnull
 	@Override
 	public Response collide(final State st,final Char collider) {
-		return click(st,collider);
+		return click(st,collider,(float)0);
 	}
 }

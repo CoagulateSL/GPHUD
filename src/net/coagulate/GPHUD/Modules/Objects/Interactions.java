@@ -25,7 +25,11 @@ public class Interactions {
 	public static Response clicked(@Nonnull final State st,
 	                               @Argument.Arguments(name="clicker",
 	                                                   description="Character clicking the object",
-	                                                   type=Argument.ArgumentType.CHARACTER) final Char clicker) {
+	                                                   type=Argument.ArgumentType.CHARACTER) final Char clicker,
+	                               @Argument.Arguments(name="distance",
+	                                                   description="Distance to clicker",
+	                                                   type=Argument.ArgumentType.FLOAT,
+	                                                   mandatory=false) Float distance) {
 		
 		final Obj object=Obj.findOrNull(st,st.objectKey);
 		if (object==null) {
@@ -36,7 +40,8 @@ public class Interactions {
 			return new ErrorResponse("This object is not configured with an object type in GPHUD");
 		}
 		final ObjectType ot=ObjectType.materialise(st,objectType);
-		return ot.click(st,clicker);
+		if (distance==null) { distance=Float.valueOf(-1); }
+		return ot.click(st,clicker,distance);
 	}
 	
 	@Nonnull

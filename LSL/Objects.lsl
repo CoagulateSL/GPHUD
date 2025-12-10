@@ -19,7 +19,7 @@
 #define CHECKIN_MINUTES 15
 string MODE="NONE";
 
-integer ODVERSION=10;
+integer ODVERSION=11;
 
 float maxTouchDistance=0.0;
 
@@ -282,6 +282,7 @@ state clickable {
 			float toucherDist=llVecDist(toucherPos,llGetPos());
 			if (maxTouchDistance==0.0 || maxTouchDistance>toucherDist) {
 				json=llJsonSetValue("",["clicker"],">"+llDetectedName(n));
+				json=llJsonSetValue(json,["distance"],(string)toucherDist);
 				httpcommand("objects.clicked","GPHUD/system");
 			}
 		}
