@@ -89,11 +89,24 @@
      name="MaxLevel",
      template=false)
 
-		
+@KVS(defaultValue="0",
+     description="Disable the internal ability points spending code, on login, via command, or automatic popup",
+     editPermission="Experience.ConfigureLevels",
+     hierarchy=KV.KVHIERARCHY.DELEGATING,
+     type=KVTYPE.BOOLEAN,
+     scope=KVSCOPE.INSTANCE,
+     name="DisableAbilityPoints",
+     template=false)
+
 @Classes.Change(date="2025-10-26",
                 component=Classes.COMPONENT.HUD,
                 type=ChangeLogging.CHANGETYPE.Fix,
                 message="Correctly list the visit XP awarded, rather than always showing 1")
+
+@Classes.Change(date="2025-12-11",
+                component=Classes.COMPONENT.Core,
+                type=ChangeLogging.CHANGETYPE.Add,
+                message="Added Experience.DisableAbilityPoints for disabling the internal commands, logon behaviour and notifications that use the internal ability points calculations, useful if you want to roll your own system")
 		
 package net.coagulate.GPHUD.Modules.Experience;
 
