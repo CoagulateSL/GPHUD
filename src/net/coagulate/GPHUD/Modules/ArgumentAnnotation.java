@@ -1,6 +1,7 @@
 package net.coagulate.GPHUD.Modules;
 
 import net.coagulate.Core.Exceptions.System.SystemImplementationException;
+import net.coagulate.Core.Exceptions.UserException;
 import net.coagulate.GPHUD.State;
 
 import javax.annotation.Nonnull;
@@ -131,6 +132,13 @@ public class ArgumentAnnotation extends Argument {
 			throw new SystemImplementationException(
 					"Argument problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
 		} catch (@Nonnull final InvocationTargetException ex) {
+			final Throwable content=ex.getCause();
+			if (content==null) {
+				throw new SystemImplementationException("Null invocation target exception cause",ex);
+			}
+			if (UserException.class.isAssignableFrom(content.getClass())) {
+				throw (UserException)content;
+			}
 			throw new SystemImplementationException(
 					"Target method problem loading choices from "+command.getFullName()+"/"+choiceMethod()+"()",ex);
 		} catch (@Nonnull final SecurityException ex) {
