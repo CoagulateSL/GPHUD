@@ -183,9 +183,11 @@ public class Connect {
 		
 		// but we might populate it with the spend ability point command
 		if (st.hasModule("Experience")) {
-			final int apremain=CharactersModule.abilityPointsRemaining(st);
-			if (apremain>0) {
-				rawresponse=Modules.getJSONTemplate(st,"characters.spendabilitypoint");
+			if (st.getKV("Experience.DisableAbilityPoints").boolValue()==false) {
+				final int apremain=CharactersModule.abilityPointsRemaining(st);
+				if (apremain>0) {
+					rawresponse=Modules.getJSONTemplate(st,"characters.spendabilitypoint");
+				}
 			}
 		}
 		
