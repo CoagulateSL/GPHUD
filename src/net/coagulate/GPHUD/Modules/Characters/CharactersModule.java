@@ -150,6 +150,9 @@ public class CharactersModule extends ModuleAnnotation {
 	 */
 	@Nonnull
 	public static List<String> getRaisableAttributesList(@Nonnull final State st) {
+		if (st.getKV("Experience.DisableAbilityPoints").boolValue()) {
+			throw new UserInputStateException("This installation does not permit ability points to be increased this way.",true);
+		}
 		final List<String> ret=new ArrayList<>();
 		for (final Attribute attribute: st.getAttributes()) {
 			if (attribute.isKV()&&attribute.usesAbilityPoints()) {
@@ -171,6 +174,9 @@ public class CharactersModule extends ModuleAnnotation {
 	                                                    name="attribute",
 	                                                    description="Attribute to spend an ability point on",
 	                                                    type=Argument.ArgumentType.CHOICE) final String attribute) {
+		if (st.getKV("Experience.DisableAbilityPoints").boolValue()) {
+			return new ErrorResponse("The ability to increase ability points via this command is disabled at this installation");
+		}
 		int remain=abilityPointsRemaining(st);
 		if (remain<=0) {
 			return new ErrorResponse("You have no remaining ability points to spend.");
