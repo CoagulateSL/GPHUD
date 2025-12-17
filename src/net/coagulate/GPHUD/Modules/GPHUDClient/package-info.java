@@ -230,6 +230,16 @@
      template=false,
      type=KVTYPE.FLOAT)
 
+@KVS(name="HUDHeight",
+     defaultValue="0",
+     conveyAs="hudz",
+     description="HUD Height (offset above bottom of screen)",
+     editPermission="gphudclient.config",
+     hierarchy=KVHIERARCHY.DELEGATING,
+     scope=KVSCOPE.COMPLETE,
+     template=false,
+     type=KVTYPE.FLOAT)
+
 @KVS(name="UIXMenus",
      type=KVTYPE.BOOLEAN,
      description="Use the HUD UIX panel for menu rendering",
@@ -310,6 +320,11 @@
         type=CHANGETYPE.Add,
         component=COMPONENT.Scripting,
         message="Added gsOfferWebsite which properly formate a GPHUDClient.offerWebsite response and forwards it to the player's HUD")
+
+@Change(date="2025-12-16",
+        type=CHANGETYPE.Add,
+        component=COMPONENT.HUD,
+        message="Added GPHUDClient.HUDHeight for offsetting the HUD above the base ; conveys to a new HUD (Post 16-dec-2025) to adjust position ; players may self ajdust via *GPHUDClient.setHeight")
 		
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 

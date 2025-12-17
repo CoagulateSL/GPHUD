@@ -45,6 +45,7 @@
 #define HUD_QUICKBUTTON_3 37
 
 integer SHUTDOWN=TRUE;
+string hudz="0.00";
 
 uixMain() {
 	string text=""; if (inventoryshown==0) { text=hudtext; }
@@ -52,7 +53,7 @@ uixMain() {
 		[
 			PRIM_LINK_TARGET, HUD_MAIN,
 				PRIM_TEXTURE, ALL_SIDES, logo, <1,1,1>, <0,0,0>, 0,
-				PRIM_POS_LOCAL, hudpos,
+				PRIM_POS_LOCAL, hudpos + <0,0,(float)hudz>,
 				PRIM_SIZE, hudsize,
 				PRIM_TEXT,text,hudtextcolor,1,
 			PRIM_LINK_TARGET, HUD_QUICKBUTTON_1,
@@ -315,6 +316,8 @@ process() {
 		redrawEffects();
 	}
 	if (jsonget("sizeratio")!="") { main=TRUE; sizeratio=((float)jsonget("sizeratio")); reposition=TRUE; }
+	if (jsonget("hudz")!="") { hudz=jsonget("hudz"); reposition=TRUE; }
+
 	if (jsonget("qbbalance")!="") {
 		if (jsonget("qbbalance")=="true")
 		{ qbbalanced=TRUE; }

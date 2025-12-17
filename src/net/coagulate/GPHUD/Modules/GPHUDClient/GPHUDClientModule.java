@@ -1,5 +1,6 @@
 package net.coagulate.GPHUD.Modules.GPHUDClient;
 
+import net.coagulate.Core.Exceptions.User.UserInputInvalidChoiceException;
 import net.coagulate.Core.Tools.Cache;
 import net.coagulate.GPHUD.Data.Instance;
 import net.coagulate.GPHUD.Interfaces.Responses.OKResponse;
@@ -42,7 +43,20 @@ public class GPHUDClientModule extends ModuleAnnotation {
 		st.setKV(st.getCharacter(),"GPHUDClient.TitlerAltitude",String.valueOf(offset));
 		return new OKResponse("Updated your Titler altitude to "+offset);
 	}
-	
+	@Nonnull
+	@Commands(context=Command.Context.CHARACTER,
+	          description="Set your HUD's Height (height above bottom of screen)",
+	          permitExternal=false)
+	public static Response setHeight(@Nonnull final State st,
+	                                   @Arguments(name="height",
+	                                              description="Height, in meters",
+	                                              type=Argument.ArgumentType.FLOAT) final Float height) {
+		final float h=height;
+		if (h<-1) { throw new UserInputInvalidChoiceException("Numbers below -1 are not supported",true); }
+		if (h>0.13) { throw new UserInputInvalidChoiceException("Numbers above 0.13 are not supported",true); }
+		st.setKV(st.getCharacter(),"GPHUDClient.HUDHeight",Float.toString(h));
+		return new OKResponse("Updated your HUD Height to "+h);
+	}
 	private static final Cache<Instance,Map<String,KV>> kvDefinitions=Cache.getCache("GPHUD/GPHUDClientModuleKVDefinitions",
 	                                                                                 CacheConfig.SHORT);
 
