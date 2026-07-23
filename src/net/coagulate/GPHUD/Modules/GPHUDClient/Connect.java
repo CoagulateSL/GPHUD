@@ -119,6 +119,8 @@ public class Connect {
 				return response;
 			}
 		}
+		// debug the login, try figure out why a character isn't getting a URL set
+		GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+" starting login at "+st.getRegion().getName()+" with url "+url);
 		// connect the character we found, which disconnects the avatar from other characters and closes old URLs if its a restart
 		character.login(st.getAvatar(),st.getRegion(),url);
 		// set up the state so postConnect can do stuff
@@ -223,6 +225,7 @@ public class Connect {
 		st.getCharacter().wipeConveyance(st,"hudcolor");
 		st.getCharacter().wipeConveyance(st,"titlertext");
 		st.getCharacter().wipeConveyance(st,"titlercolor");
+		GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+" finishing login at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL());
 		return new JSONResponse(rawresponse);
 	}
 	
