@@ -7,10 +7,7 @@ import net.coagulate.Core.Exceptions.System.SystemInitialisationException;
 import net.coagulate.Core.HTTP.URLDistribution;
 import net.coagulate.Core.Tools.ClassTools;
 import net.coagulate.Core.Tools.UnixTime;
-import net.coagulate.GPHUD.Data.Attribute;
-import net.coagulate.GPHUD.Data.Char;
-import net.coagulate.GPHUD.Data.PermissionsGroup;
-import net.coagulate.GPHUD.Data.Region;
+import net.coagulate.GPHUD.Data.*;
 import net.coagulate.GPHUD.Modules.Instance.Distribution;
 import net.coagulate.GPHUD.Modules.Instance.Reporting;
 import net.coagulate.GPHUD.Tests.TestFramework;
@@ -21,9 +18,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -193,6 +188,65 @@ public class GPHUD extends SLModule {
 	}
 	
 	@Override
+	public void postStartup() {
+		postChangeLog();
+	}
+	
+	
+	private void postChangeLog() {
+		final Map<String,Map<String,Map<String,Set<ChangeLogging.Change>>>>  changes=ChangeLogging.changes();
+		// it maps dates -> a map of applications -> map component to Set of changes
+		final boolean stashall=ChangeLogLog.empty();
+		final Stack<ChangeLogging.Change> stack=new Stack<>();
+		// dates, but we dont care about them
+		for (final Map<String,Map<String,Set<ChangeLogging.Change>>> bydate:changes.values()) {
+			if (bydate.containsKey("GPHUD")) {
+				final Map<String,Set<ChangeLogging.Change>> bycomponent=bydate.get("GPHUD");
+				for (final Set<ChangeLogging.Change> changeset:bycomponent.values()) {
+					for (final ChangeLogging.Change change:changeset) {
+						final String dbindex=databaseFormatChange(change);
+						if (stashall) {
+							// validation only
+							changeSubject(change); changeBody(change);
+							ChangeLogLog.store(dbindex);
+						} else {
+							if (ChangeLogLog.notLogged(dbindex)) {
+								ChangeLogLog.store(dbindex);
+								stack.push(change);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		final String groupuuid=Config.getGPHUDChangeLogGroup();
+		if (!stack.empty() && !groupuuid.isEmpty()) {
+			for (final ChangeLogging.Change change:stack) {
+				SL.weakInvoke("JSLBotBridge","groupnotice",groupuuid,changeSubject(change),changeBody(change));
+			}
+		}
+	}
+	private static String changeSubject(final ChangeLogging.Change change) {
+		final int i=change.message().indexOf(':');
+		if (i>0 && i<80) {
+			return change.message().substring(0,i);
+		}
+		return change.component()+" "+change.type().name();
+	}
+	private static String changeBody(final ChangeLogging.Change change) {
+		final int i=change.message().indexOf(':');
+		String message=change.message();
+		if (i>0 && i<80) {
+			message=change.message().substring(i+1);
+		}
+		return "Component ["+change.component()+"] - Change Type ["+change.type().name()+"]\n\n"+message;
+	}
+	private static String databaseFormatChange(final ChangeLogging.Change c) {
+		return c.date()+":"+c.application()+":"+c.component()+":"+c.message();
+	}
+	
+	@Override
 	public void maintenance() {
 		if (nextRun("GPHUD-Maintenance",FAST_MAINT_INTERVAL,MAINT_VAR_SMALL)) {
 			Maintenance.gphudMaintenance();
@@ -220,7 +274,7 @@ public class GPHUD extends SLModule {
 		return GPHUDBuildInfo.BUILDDATE;
 	}
 	
-	private static final int SCHEMA_VERSION=21;
+	private static final int SCHEMA_VERSION=22;
 
 	@SuppressWarnings("MagicNumber")
 	@Override
@@ -437,6 +491,13 @@ public class GPHUD extends SLModule {
 			                "ADD INDEX `characters_reported` (`instanceid` ASC, `reported` ASC)");
 			log.config("Schema upgrade of GPHUD to version 21 is complete");
 			currentVersion=21;
+		}
+		if (currentVersion==21) {
+			log.config("Schema update 22 - create a changelog logging table");
+			GPHUD.getDB().d("CREATE TABLE `changelogged` "+
+			                "(`message` VARCHAR(4096))");
+			log.config("Schema upgrade of GPHUD to version 22 is complete");
+			currentVersion=22;
 		}
 		return currentVersion;
 		// UPDATE THE CURRENT VERSION NUMBER ABOVE THIS FUNC
