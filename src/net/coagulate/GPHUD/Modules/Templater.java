@@ -246,7 +246,7 @@ public abstract class Templater {
 	
 	@Nonnull
 	private static String getValue(@Nonnull final State st,final String keyword) {
-		if (Thread.currentThread().getStackTrace().length>150) {
+		if (Thread.currentThread().getStackTrace().length>300) {
 			throw new UserConfigurationException("Recursion detected loading template "+keyword+" for "+st);
 		}
 		final Method m=getMethods(st).get(keyword);
