@@ -222,20 +222,20 @@ public class GPHUD extends SLModule {
 		
 		final String groupuuid=Config.getGPHUDChangeLogGroup();
 		if (!stack.empty() && !groupuuid.isEmpty()) {
-			for (ChangeLogging.Change change:stack) {
+			for (final ChangeLogging.Change change:stack) {
 				SL.weakInvoke("JSLBotBridge","groupnotice",groupuuid,changeSubject(change),changeBody(change));
 			}
 		}
 	}
 	private static String changeSubject(final ChangeLogging.Change change) {
-		final int i=change.message().indexOf(":");
+		final int i=change.message().indexOf(':');
 		if (i>0 && i<80) {
 			return change.message().substring(0,i);
 		}
 		return change.component()+" "+change.type().name();
 	}
 	private static String changeBody(final ChangeLogging.Change change) {
-		final int i=change.message().indexOf(":");
+		final int i=change.message().indexOf(':');
 		String message=change.message();
 		if (i>0 && i<80) {
 			message=change.message().substring(i+1);
