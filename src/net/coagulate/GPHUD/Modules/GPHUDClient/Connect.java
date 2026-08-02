@@ -122,10 +122,10 @@ public class Connect {
 			}
 		}
 		// debug the login, try figure out why a character isn't getting a URL set
-		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+" starting WHOLE NEW (currently characterless) login at "+st.getRegion().getName()+" with url "+url); }
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+character.getName()+" starting WHOLE NEW (currently characterless) login at "+st.getRegion().getName()+" with url "+url); }
 		// connect the character we found, which disconnects the avatar from other characters and closes old URLs if its a restart
 		character.login(st.getAvatar(),st.getRegion(),url);
-		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post first stage login at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+character.getName()+" post first stage login at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// set up the state so postConnect can do stuff
 		st.setCharacter(character);
 		// IS this the same as the old character?
