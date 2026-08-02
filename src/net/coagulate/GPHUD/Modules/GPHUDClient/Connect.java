@@ -34,6 +34,8 @@ import java.util.List;
  * This class handles GPHUD logons, now known as "connecting"
  */
 public class Connect {
+
+	private static final boolean DEBUG_LOGIN=true;
 	
 	private Connect() {
 	}
@@ -120,9 +122,10 @@ public class Connect {
 			}
 		}
 		// debug the login, try figure out why a character isn't getting a URL set
-		GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+" starting login at "+st.getRegion().getName()+" with url "+url);
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" starting login at "+st.getRegion().getName()+" with url "+url); }
 		// connect the character we found, which disconnects the avatar from other characters and closes old URLs if its a restart
 		character.login(st.getAvatar(),st.getRegion(),url);
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post first stage login at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// set up the state so postConnect can do stuff
 		st.setCharacter(character);
 		// IS this the same as the old character?
@@ -131,7 +134,9 @@ public class Connect {
 		}
 		// and purge the conveyances so they get re-set
 		character.wipeConveyances(st);
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post first wipe conveyance at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		character.setProtocol(st.protocol);
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" calling postconnect at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// chain postConnect
 		return postConnect(st);
 	}
@@ -154,17 +159,19 @@ public class Connect {
 	public static Response postConnect(@Nonnull final State st) {
 		final List<String> loginmessages=new ArrayList<>();
 		
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" starting post connect at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// Run the character initialisation script, if it exists.
 		Response interception=runCharacterInitScript(st,loginmessages);
 		if (interception!=null) {
 			return interception;
 		}
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post connect post init script "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// and the default attribute populator
 		interception=populateCharacterAttributes(st);
 		if (interception!=null) {
 			return interception;
 		}
-		
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post connect post populate character attributes at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// server version note
 		loginmessages.add(GPHUD.serverVersion()+" "+GPHUD.brandingWithNewline());
 		
@@ -179,7 +186,7 @@ public class Connect {
 		
 		// start a player visit
 		Visit.initVisit(st,st.getCharacter(),st.getRegion());
-		
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post init visit at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// create the post create "all ok" response, it's a blank object by default
 		JSONObject rawresponse=new JSONObject();
 		
@@ -192,7 +199,7 @@ public class Connect {
 				}
 			}
 		}
-		
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post connect post spend ability points at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		// we dump the main menu this way for now, seems like it could be a conveyance too.
 		// rawresponse.put("legacymenu",Modules.getJSONTemplate(st,"menus.main").toString());
 		// and maybe now it is (?)
@@ -225,7 +232,7 @@ public class Connect {
 		st.getCharacter().wipeConveyance(st,"hudcolor");
 		st.getCharacter().wipeConveyance(st,"titlertext");
 		st.getCharacter().wipeConveyance(st,"titlercolor");
-		GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+" finishing login at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL());
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" finishing login at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
 		return new JSONResponse(rawresponse);
 	}
 	
