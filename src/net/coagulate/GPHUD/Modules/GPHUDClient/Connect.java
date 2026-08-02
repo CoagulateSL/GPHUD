@@ -122,7 +122,7 @@ public class Connect {
 			}
 		}
 		// debug the login, try figure out why a character isn't getting a URL set
-		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" starting login at "+st.getRegion().getName()+" with url "+url); }
+		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+" starting WHOLE NEW (currently characterless) login at "+st.getRegion().getName()+" with url "+url); }
 		// connect the character we found, which disconnects the avatar from other characters and closes old URLs if its a restart
 		character.login(st.getAvatar(),st.getRegion(),url);
 		if (DEBUG_LOGIN) { GPHUD.getLogger("Login Sequence").info(st.getAvatar().getName()+"/"+st.getCharacter().getName()+" post first stage login at "+st.getRegion().getName()+" with url "+st.getCharacter().getURL()); }
@@ -192,7 +192,7 @@ public class Connect {
 		
 		// but we might populate it with the spend ability point command
 		if (st.hasModule("Experience")) {
-			if (st.getKV("Experience.DisableAbilityPoints").boolValue()==false) {
+			if (!st.getKV("Experience.DisableAbilityPoints").boolValue()) {
 				final int apremain=CharactersModule.abilityPointsRemaining(st);
 				if (apremain>0) {
 					rawresponse=Modules.getJSONTemplate(st,"characters.spendabilitypoint");
